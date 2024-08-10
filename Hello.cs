@@ -4,12 +4,12 @@ public class Hello
 {
     public static void SayHello()
     {
-        Debug.Log("Hello from HotUpdate!");
+        Debug.Log("Hello World!!!!!!!!!");
     }
 
     public static void TestType<T>(T obj)
     {
-        if (obj != null) Debug.Log(obj.GetType());
+        if (obj != null) Debug.Log(obj);
     }
 
     public static void TestAddComponent()
