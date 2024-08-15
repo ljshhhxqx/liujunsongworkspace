@@ -4,10 +4,8 @@ public class Hello
 {
     public static void SayHello()
     {
-        Debug.Log("Hello");
-        Debug.Log("Hello!");
-        Debug.Log("Hello!!#");
-        Debug.Log("Hello?#");
+        Debug.Log("SayHello");
+        Debug.Log("SayHello?#");
     }
 
     public static void TestType<T>(T obj)
