@@ -7,7 +7,7 @@ public class TestComponent : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("TestComponent Start called 111111");
+        Debug.Log($"TestComponent Start called {name}");
     }
 
     // Update is called once per frame

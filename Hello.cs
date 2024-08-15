@@ -4,10 +4,10 @@ public class Hello
 {
     public static void SayHello()
     {
-        Debug.Log("Hello World!!!!!!!!!");
-        Debug.Log("Hello World!!!!!!!!!");
-        Debug.Log("Hello World!!!!!!!!!");
-        Debug.Log("Hello World!!!!!!!!!");
+        Debug.Log("SayHello");
+        Debug.Log("SayHello!");
+        Debug.Log("SayHello!!#");
+        Debug.Log("SayHello!?#");
     }
 
     public static void TestType<T>(T obj)
@@ -17,7 +17,7 @@ public class Hello
 
     public static void TestAddComponent()
     {
-        var go = new GameObject("Test");
+        var go = new GameObject("aaaaaaa");
         go.AddComponent<TestComponent>();
     }
 }
