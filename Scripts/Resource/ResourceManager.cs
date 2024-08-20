@@ -22,7 +22,7 @@ public class ResourceDataInfo
     public ResourceData resourceData;
 }
 
-public class ResourceManager
+public class ResourceManager : Singleton<ResourceManager>
 {
     [Serializable]
     private class ResourceLoadTask
@@ -42,8 +42,7 @@ public class ResourceManager
     private readonly List<ResourceData> preloadResourcesList = new List<ResourceData>(); // 预加载资源列表
     private readonly List<ResourceLoadTask> loadQueue = new List<ResourceLoadTask>();
 
-    [Inject]
-    private ResourceManager()
+    public ResourceManager()
     {
         Debug.Log("ResourceManager Init");
     }
@@ -90,7 +89,7 @@ public class ResourceManager
         {
             try
             {
-                var resource = await Addressables.LoadAssetAsync<T>("Assets/Res/"+ resourceData.Address).Task;
+                var resource = await Addressables.LoadAssetAsync<T>("Assets/HotUpdate/Res/"+ resourceData.Address).Task;
                 if (resource is GameObject go)
                 {
                     if (!go.TryGetComponent<ResourceComponent>(out var resourceComponent))

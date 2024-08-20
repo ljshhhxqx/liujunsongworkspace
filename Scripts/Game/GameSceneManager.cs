@@ -13,14 +13,12 @@ namespace Game
     public class GameSceneManager
     {
         private IGameMapLifeScope _currentMapLifeScope;
-        private readonly ResourceManager _resourceManager;
         private readonly UIManager _uiManager;
         private readonly GameEventManager _gameEventManager;
 
         [Inject]
-        private GameSceneManager(ResourceManager resourceManager, UIManager uiManager, GameEventManager gameEventManager)
+        private GameSceneManager(UIManager uiManager, GameEventManager gameEventManager)
         {
-            _resourceManager = resourceManager;
             _uiManager = uiManager;
             _gameEventManager = gameEventManager;
         }

@@ -8,9 +8,9 @@ namespace Game.Map
     public class GameMapResourcesLoader : MonoBehaviour, IInjectableObject
     {
         [Inject]
-        private async UniTask Init(ResourceManager resourceManager, GameEventManager gameEventManager)
+        private async UniTask Init(GameEventManager gameEventManager)
         {
-            await resourceManager.GetMapResource("Main");
+            await ResourceManager.Instance.GetMapResource("Main");
             Debug.Log("Map resources loaded");
             gameEventManager.Publish(new GameSceneResourcesLoadedEvent("MainGame"));
         }

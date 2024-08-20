@@ -11,14 +11,12 @@ namespace Network.Server
     public class NetworkManagerCustom : NetworkManager, IInjectableObject
     {
         private GameEventManager _gameEventManager;
-        private ResourceManager _resourceManager;
         private NetworkStartPosition[] _spawnPoints;
         private NetworkManagerHUD _networkManagerHUD;
 
         [Inject]
-        private void Init(ResourceManager resourceManager, GameEventManager gameEventManager)
+        private void Init(GameEventManager gameEventManager)
         {
-            _resourceManager = resourceManager;
             _gameEventManager = gameEventManager;
             _spawnPoints = FindObjectsByType<NetworkStartPosition>(FindObjectsSortMode.None);
             _networkManagerHUD = GetComponent<NetworkManagerHUD>();
@@ -55,7 +53,7 @@ namespace Network.Server
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
             var res = DataJsonManager.Instance.GetResourceData("Player");
-            var resInfo = _resourceManager.GetResource<GameObject>(res);
+            var resInfo = ResourceManager.Instance.GetResource<GameObject>(res);
             if (resInfo)
             {
                 //currentPlayer = resInfo.gameObject;

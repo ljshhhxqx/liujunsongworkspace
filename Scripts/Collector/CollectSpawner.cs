@@ -7,17 +7,15 @@ namespace Collector
 {
     public class CollectSpawner
     {
-        private ResourceManager _resourceManager;
         private GameDataConfig gameDataConfig;
         private Dictionary<CollectType, GameObject> collects = new Dictionary<CollectType, GameObject>();
         private Transform _collectParent;
         private MapBoundDefiner _mapBoundDefiner; // 地图边界定义器
 
         [Inject]
-        private void Init(IConfigProvider configProvider, ResourceManager resourceManager, MapBoundDefiner mapBoundDefiner)
+        private void Init(IConfigProvider configProvider, MapBoundDefiner mapBoundDefiner)
         {
             gameDataConfig = configProvider.GetConfig<GameDataConfig>();
-            _resourceManager = resourceManager;
             _mapBoundDefiner = mapBoundDefiner;
             _collectParent = GameObject.FindWithTag("SpawnedObjects").transform;
         }
@@ -34,7 +32,7 @@ namespace Collector
                 var collectPrefab = GameDefine.GetCollectPrefabName(collectType);
                 if (!string.IsNullOrEmpty(collectPrefab))
                 {
-                    prefab = _resourceManager.GetResource<GameObject>(new ResourceData{ Name = collectPrefab});
+                    prefab = ResourceManager.Instance.GetResource<GameObject>(new ResourceData { Name = collectPrefab });
                     collects.Add(collectType, prefab);
                 }
             }

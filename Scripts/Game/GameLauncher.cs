@@ -34,7 +34,6 @@ namespace Game
         [Inject] private UIManager _uiManager;
         [Inject] private PlayFabAccountManager _playFabAccountManager;
         [Inject] private GameEventManager _gameEventManager;
-        [Inject] private ResourceManager _resourceManager;
         [Inject] private ConfigManager _configManager;
         [Inject] private CollectItemSpawner _collectItemSpawner;
         [Inject] private GameSceneManager _gameSceneManager;
@@ -60,7 +59,7 @@ namespace Game
         {
             try
             {
-                await _resourceManager.LoadPermanentResources();
+                await ResourceManager.Instance.LoadPermanentResources();
             }
             catch (Exception e)
             {
@@ -72,7 +71,7 @@ namespace Game
             {
                 _uiManager.InitPermanentUI();
                 _uiManager.SwitchUI<LoadingScreenUI>();
-                await _resourceManager.PreloadResources();
+                await ResourceManager.Instance.PreloadResources();
             }
             catch (Exception e)
             {
@@ -83,7 +82,7 @@ namespace Game
             _gameEventManager.Subscribe<GameMessageListeningEvent>(OnGameMessageListening);
             _uiManager.CloseUI(UIType.Loading);
             //blackboard.gameObject.SetActive(false);
-            _configManager.InitConfigs(_resourceManager.GetAllScriptableObjects());
+            _configManager.InitConfigs(ResourceManager.Instance.GetAllScriptableObjects());
             _uiManager.InitUIs();
         }
 

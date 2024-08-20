@@ -10,16 +10,14 @@ namespace Collector
         private Vector3 _mapMinBoundary; // 地图最小边界
         private Vector3 _mapMaxBoundary; // 地图最大边界
         private LayerMask _spawnLayer; // 用于检测生成点是否被阻挡的层级
-        private ResourceManager _resourceManager; // 资源管理器
         private MapBoundDefiner _mapBoundDefiner; // 地图边界定义器
         private GameDataConfig _gameDataConfig; // 游戏数据配置
 
         private readonly System.Random _random = new System.Random();
 
         [Inject]
-        private void Init(ResourceManager resourceManager, MapBoundDefiner mapBoundDefiner, IConfigProvider configProvider)
+        private void Init(MapBoundDefiner mapBoundDefiner, IConfigProvider configProvider)
         {
-            _resourceManager = resourceManager;
             _mapBoundDefiner = mapBoundDefiner;
             _gameDataConfig = configProvider.GetConfig<GameDataConfig>();
         }

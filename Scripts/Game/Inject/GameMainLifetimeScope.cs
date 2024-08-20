@@ -28,7 +28,6 @@ namespace Game.Inject
         {
             builder.RegisterEntryPoint<GameLauncher>();
             builder.Register<ConfigManager>(Lifetime.Singleton);
-            builder.Register<ResourceManager>(Lifetime.Singleton);
             builder.Register<PlayerManager>(Lifetime.Singleton);
             builder.Register<GameCommonVariant>(Lifetime.Singleton);
             builder.Register<CollectItemSpawner>(Lifetime.Singleton);

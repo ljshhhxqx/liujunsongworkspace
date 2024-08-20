@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Common;
+using HotUpdate.Scripts.UI.UIs.Popup;
 using Resource;
 using UI.UIs.Exception;
 using UI.UIs.Popup;
@@ -18,26 +19,24 @@ namespace UI.UIBase
         private ScreenUIBase _currentActiveScreenUI1;
         private ScreenUIBase _currentActiveScreenUI2;
         private UICanvasRoot[] _roots;
-        private ResourceManager _resourceManager;
         private IObjectInjector _injector;
         private readonly Dictionary<UIType, ScreenUIBase> _uiDict = new Dictionary<UIType, ScreenUIBase>();
 
         [Inject]
-        private void Init(ResourceManager resourceManager, IObjectInjector injector)
+        private void Init(IObjectInjector injector)
         {
-            _resourceManager = resourceManager;
             _injector = injector;
             _roots = Object.FindObjectsOfType<UICanvasRoot>();
         }
 
         public void InitPermanentUI()
         {
-            GetUIResources(_resourceManager.GetPermanentUI());
+            GetUIResources(ResourceManager.Instance.GetPermanentUI());
         }
 
         public void InitUIs()
         {
-            GetUIResources(_resourceManager.GetAllUIObjects());
+            GetUIResources(ResourceManager.Instance.GetAllUIObjects());
         }
 
         private void GetUIResources(IReadOnlyCollection<GameObject> uiObjects)
@@ -163,7 +162,7 @@ namespace UI.UIBase
             {
                 if (_uIPrefabs[i].TryGetComponent<ResourceComponent>(out var resourceComponent))
                 {
-                    _resourceManager.UnloadResource(resourceComponent.ResourceData);
+                    ResourceManager.Instance.UnloadResource(resourceComponent.ResourceData);
                 }
             }
         }
