@@ -46,9 +46,9 @@ namespace UI.UIBase
                 foreach (var t in uiObjects)
                 {
                     var ui = t.GetComponent<ScreenUIBase>();
-                    if (ui)
+                    if (ui != null)
                     {
-                        if (!_uIPrefabs.FirstOrDefault(t1 => t1.Type == ui.Type))
+                        if (_uIPrefabs.FirstOrDefault(t1 => t1.Type == ui.Type) != null)
                         {
                             _uIPrefabs.Add(ui);
                         }
@@ -106,12 +106,6 @@ namespace UI.UIBase
             var ui = GetUI<T>();
             if (ui) 
             {
-                // if (_uiDict.TryGetValue(ui.Type, out var ui1))
-                // {
-                //     _uiDict.Remove(ui.Type);
-                //     Object.Destroy(ui1.gameObject);
-                // }
-
                 var uIType = ui.Type;
                 var root = _roots.FirstOrDefault(t => t.CanvasType == ui.CanvasType)?.transform;
                 var go = Object.Instantiate(ui.gameObject, root);

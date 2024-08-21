@@ -10,7 +10,7 @@ using VContainer;
 
 namespace UI.UIs
 {
-    public class LoginScreenUI : UIBase.ScreenUIBase
+    public class LoginScreenUI : ScreenUIBase
     {
         [SerializeField]
         private TMP_InputField accountInputField;

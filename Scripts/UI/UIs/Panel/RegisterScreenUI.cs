@@ -8,7 +8,7 @@ using VContainer;
 
 namespace UI.UIs
 {
-    public class RegisterScreenUI : UIBase.ScreenUIBase
+    public class RegisterScreenUI : ScreenUIBase
     {
         [SerializeField]
         private TMP_InputField accountInputField;
