@@ -6,6 +6,9 @@ using Resource;
 using UI.UIBase;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.ResourceManagement.ResourceProviders;
+using UnityEngine.SceneManagement;
 using VContainer;
 
 [Serializable]
@@ -77,6 +80,20 @@ public class ResourceManager : Singleton<ResourceManager>
         }
     }
 
+    public AsyncOperationHandle<SceneInstance> LoadSceneAsync(string sceneName, LoadSceneMode mode = LoadSceneMode.Single)
+    {
+        try
+        {
+            var scene = DataJsonManager.Instance.GetResourceData(sceneName);
+            var sceneAddress = "Assets/HotUpdate/Res" + scene.Address;
+            return Addressables.LoadSceneAsync(sceneAddress, mode);
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Load scene failed: {sceneName}", e);
+        }
+    }
+
     // 异步加载资源
     public async UniTask<T> LoadResourceAsync<T>(ResourceData resourceData)
     {
@@ -89,7 +106,7 @@ public class ResourceManager : Singleton<ResourceManager>
         {
             try
             {
-                var resource = await Addressables.LoadAssetAsync<T>("Assets/HotUpdate/Res/"+ resourceData.Address).Task;
+                var resource = await Addressables.LoadAssetAsync<T>("Assets/HotUpdate/Res"+ resourceData.Address).Task;
                 if (resource is GameObject go)
                 {
                     if (!go.TryGetComponent<ResourceComponent>(out var resourceComponent))

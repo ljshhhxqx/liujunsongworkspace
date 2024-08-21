@@ -14,6 +14,7 @@ using UnityEngine.Networking;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceLocations;
 using UnityEngine.ResourceManagement.ResourceProviders;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace HotUpdate
@@ -56,10 +57,9 @@ namespace HotUpdate
             }
             else
             {
-                _text.text = "正在加载资源...";
                 Debug.Log("无需更新目录或资源");
             }
-            Debug.Log("start load dll");
+            _text.text = "正在加载资源...";
             await LoadAndApplyHotUpdateDLL();
             await LoadLoginSceneAsync();
         }
@@ -87,6 +87,7 @@ namespace HotUpdate
 
             if (size > 0)
             {
+                _text.text = $"发现了{size / 1024}...KB需要下载的资源";
                 Debug.Log($"需要下载的内容大小: {size} bytes");
 
                 // 开始下载
@@ -97,6 +98,7 @@ namespace HotUpdate
             }
             else
             {
+                _text.text = "无需更新资源";
                 Debug.Log("无需下载任何内容");
             }
             Addressables.Release(sizeOperation);
@@ -209,7 +211,7 @@ namespace HotUpdate
 
         private async UniTask LoadLoginSceneAsync()
         {
-            var operation = Addressables.LoadSceneAsync("LoginScene");
+            var operation = ResourceManager.Instance.LoadSceneAsync("Login");
             while (!operation.IsDone)
             {
                 _text.text = $"正在加载主场景... {operation.PercentComplete:P}";
