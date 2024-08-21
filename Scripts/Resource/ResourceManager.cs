@@ -106,7 +106,7 @@ public class ResourceManager : Singleton<ResourceManager>
         {
             try
             {
-                var resource = await Addressables.LoadAssetAsync<T>("Assets/HotUpdate/Res"+ resourceData.Address).Task;
+                var resource = await Addressables.LoadAssetAsync<T>("Assets/HotUpdate/Res"+ resourceData.Address).Task.AsUniTask();
                 if (resource is GameObject go)
                 {
                     if (!go.TryGetComponent<ResourceComponent>(out var resourceComponent))
@@ -116,7 +116,7 @@ public class ResourceManager : Singleton<ResourceManager>
                     resourceComponent.ResourceData = resourceData;
                     Debug.Log($"Load resource success: {resourceData.Name}");
                 }
-                _resources.Add(resourceData, new ResourceInfo { Resource = resource, RefCount = 1 });
+                _resources.TryAdd(resourceData, new ResourceInfo { Resource = resource, RefCount = 1 });
                 return resource;
             }
             catch (Exception e)
@@ -285,7 +285,7 @@ public static class ResourceManagerExtensions
     public static async UniTask<List<GameObject>> GetMapResource(this ResourceManager manager, string mapName)
     {
         var list = new List<GameObject>();
-        var data = DataJsonManager.Instance.GetResourcesDataByAddress($"Map/{mapName}");
+        var data = DataJsonManager.Instance.GetResourcesDataByAddress($"/Map/{mapName}");
         if (data != null)
         {
             foreach (var resourceData in data)

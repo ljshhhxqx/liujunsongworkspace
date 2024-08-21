@@ -26,11 +26,11 @@ namespace Game
         public async UniTask LoadScene(string mapName, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
         {
             _uiManager.SwitchUI<LoadingScreenUI>();
-            var mapScene = SceneManager.LoadSceneAsync(mapName, loadSceneMode);
+            var mapScene = ResourceManager.Instance.LoadSceneAsync(mapName, loadSceneMode);
 
-            while (!mapScene.isDone)
+            while (!mapScene.IsDone)
             {
-                var progress = Mathf.Clamp01(mapScene.progress / 0.9f);
+                var progress = Mathf.Clamp01(mapScene.PercentComplete / 0.9f);
                 var progressStr = progress.ToString("P1");
                 _gameEventManager.Publish(new GameSceneLoadingEvent(mapName, progress.ToString("P1")));
                 Debug.Log($"Map {mapName} loading... {progressStr}");

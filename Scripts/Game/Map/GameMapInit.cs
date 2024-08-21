@@ -1,12 +1,19 @@
 using System;
 using Common;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Game.Map
 {
     public class GameMapInit : MonoBehaviour
     {
-        private void Start()
+        private async void Start()
+        {
+            InjectGameObjects();
+            await LoadGameResources();
+        }
+
+        private void InjectGameObjects()
         {
             var injectObject = GameObject.FindGameObjectWithTag("InjectObjects");
             if (injectObject == null)
@@ -34,6 +41,20 @@ namespace Game.Map
                         }
                     }
                 }
+            }
+        }
+
+        private async UniTask LoadGameResources()
+        {
+            var mapResource = await ResourceManager.Instance.GetMapResource("Main");
+            if (mapResource == null)
+            {
+                throw new UnityException("Main map resource not found.");
+            }
+
+            foreach (var resource in mapResource)
+            {
+                Debug.Log($"加载资源成功: {resource.name}");
             }
         }
     }

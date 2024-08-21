@@ -30,7 +30,7 @@ public class DataJsonManager : Singleton<DataJsonManager>
         var data = JsonUtility.FromJson<ResourcesContainer>(json);
         if (address == null) throw new System.Exception("Address is null.");
 
-        return data.Resources.Where(item => item.Address.StartsWith(address)).ToList();
+        return data.Resources.Where(item => item.Address.Contains(address)).ToList();
     }
 
     public string GetJson(DataType type)
