@@ -6,6 +6,7 @@ using System.Reflection;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.UI.UIs.Popup;
 using HybridCLR;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.AddressableAssets.ResourceLocators;
@@ -19,15 +20,17 @@ namespace HotUpdate
 {
     public class HotUpdateCheckManager : Singleton<HotUpdateCheckManager>
     {
-        private Text _text;
+        private TextMeshProUGUI _text;
         private Slider _slider;
         private CommonTipsPopup _commonTipsPopup;
         
         public async UniTask CheckForUpdates()
         {
-            _text ??= GameObject.Find("InfoText").GetComponent<Text>();
+            _text ??= GameObject.Find("InfoText").GetComponent<TextMeshProUGUI>();
             _slider??= GameObject.Find("Progress").GetComponent<Slider>();
             _commonTipsPopup ??= GameObject.Find("TipsPopup").GetComponent<CommonTipsPopup>();
+            _commonTipsPopup.gameObject.SetActive(false);
+            _slider.gameObject.SetActive(false);
             _slider.value = 0;
             _text.text = "正在检查更新...";
             // 初始化 Addressables
