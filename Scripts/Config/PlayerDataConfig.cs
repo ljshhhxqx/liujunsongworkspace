@@ -29,10 +29,10 @@ public class PlayerConfigData
     public float RotateSpeed;
     public float JumpSpeed;
     public float GroundCheckRadius = 0.3f;
-    public float StairsCheckRadius = 0.6f;
-    public float SlopeLimit = 30f;
-    public float MaxPredictPositionTime = 5f;
-    public float MaxPredictDistance = 0.5f;
+    public float StairsCheckDistance = 0.6f;
+    // public float SlopeLimit = 30f;
+    // public float MaxPredictPositionTime = 5f;
+    // public float MaxPredictDistance = 0.5f;
 
     #endregion
 }

@@ -1,11 +1,11 @@
-﻿using System;
-using Mirror;
+﻿using Mirror;
+using Network.Client;
 using Network.Data;
 using Tool.GameEvent;
 using Tool.Message;
 using UnityEngine;
 
-namespace Network.Client.Player
+namespace HotUpdate.Scripts.Network.Client.Player
 {
     public class PlayerControlClient : ClientBase
     {
@@ -37,13 +37,6 @@ namespace Network.Client.Player
         private Vector3 _stairsNormal;
         private Vector3 _inputMovement;
         private GameDataConfig _gameDataConfig;
-
-        private void OnDrawGizmos()
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(_checkGroundTransform.position, _playerDataConfig.PlayerConfigData.GroundCheckRadius);
-            Gizmos.DrawSphere(_checkStairsTransform.position, _playerDataConfig.PlayerConfigData.StairsCheckRadius);
-        }
 
         protected override void InitCallback()
         {
@@ -107,22 +100,15 @@ namespace Network.Client.Player
         [Client]
         private void HandleMovement()
         {
-            if (CheckStairs())
+            if (CheckStairs(out _stairsNormal, out var hitNormal))
             {
                 Debug.Log("On stairs");
                 _rigidbody.useGravity = false;
-                var right = transform.right;
-                var alongStairs = Vector3.Cross(right, _stairsNormal).normalized;
-                _movement = _inputMovement.x * alongStairs + right * _inputMovement.z;
+                _movement = _inputMovement.z * _stairsNormal.normalized + transform.right * _inputMovement.x;
                 if (_isJumpRequested)
                 {
                     _isJumpRequested = false;
-                    _rigidbody.AddForce(Vector3.up * _playerDataConfig.PlayerConfigData.JumpSpeed, ForceMode.Impulse);
-                    
-                    // 在楼梯上跳跃
-                    var jumpDirection = _stairsNormal + Vector3.up;
-                    jumpDirection.Normalize();
-                    _rigidbody.AddForce(jumpDirection * (_playerDataConfig.PlayerConfigData.JumpSpeed * StairsJumpMultiplier), ForceMode.Impulse);
+                    _rigidbody.AddForce(hitNormal * _playerDataConfig.PlayerConfigData.JumpSpeed, ForceMode.Impulse);
                 }
             }
             else if (CheckGrounded())
@@ -168,18 +154,21 @@ namespace Network.Client.Player
             gameEventManager.Publish(new PlayerVerticalSpeedChangeEvent(_velocity.y));
         }
         
-        //[Client]
+        [Client]
         private bool CheckGrounded()
         {
             return Physics.CheckSphere(_checkGroundTransform.position, _playerDataConfig.PlayerConfigData.GroundCheckRadius, _gameDataConfig.GameConfigData.GroundSceneLayer);
         }
 
-        //[Client]
-        private bool CheckStairs()
+        [Client]
+        private bool CheckStairs(out Vector3 direction, out Vector3 hitNormal)
         {
-            if (Physics.Raycast(_checkStairsTransform.position, -transform.up, out var hit, _playerDataConfig.PlayerConfigData.StairsCheckRadius, _gameDataConfig.GameConfigData.StairSceneLayer))
+            direction = Vector3.zero;
+            hitNormal = Vector3.zero;
+            if (Physics.Raycast(transform.position, transform.forward, out var hit, _playerDataConfig.PlayerConfigData.StairsCheckDistance, _gameDataConfig.GameConfigData.StairSceneLayer))
             {
-                _stairsNormal = hit.normal;
+                hitNormal = hit.normal;
+                direction = Vector3.Cross(hit.normal, transform.right).normalized;
                 return true;
             }
             return false;
