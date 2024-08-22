@@ -20,8 +20,6 @@ MonoBehaviour:
     RunSpeed: 10
     RotateSpeed: 4
     JumpSpeed: 25
+    StairsJumpSpeed: 50
     GroundCheckRadius: 0.22
-    StairsCheckRadius: 0.5
-    SlopeLimit: 30
-    MaxPredictPositionTime: 5
-    MaxPredictDistance: 0.5
+    StairsCheckDistance: 0.6

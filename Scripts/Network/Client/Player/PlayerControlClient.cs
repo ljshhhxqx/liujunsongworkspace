@@ -76,9 +76,11 @@ namespace HotUpdate.Scripts.Network.Client.Player
             _hasMovementInput = Mathf.Abs(_inputMovement.x) > 0 || Mathf.Abs(_inputMovement.z) > 0;
             _isSprinting = _hasMovementInput && Input.GetButton("Running");
             messageCenter.Post(new PlayerInputMessage(_isSprinting));
-            if (Input.GetButtonDown("Jump") && !_isJumpRequested && CheckGrounded())
+            if (Input.GetButtonDown("Jump") && !_isJumpRequested && (CheckGrounded() || _isOnStairs))
             {
                 _isJumpRequested = true;
+                _rigidbody.velocity = Vector3.zero;
+                _rigidbody.useGravity = true;
             }
         }
         
@@ -102,19 +104,22 @@ namespace HotUpdate.Scripts.Network.Client.Player
         {
             if (CheckStairs(out _stairsNormal, out var hitNormal))
             {
-                Debug.Log("On stairs");
+                _isOnStairs = true;
+                //Debug.Log("On stairs");
                 _rigidbody.useGravity = false;
-                _movement = _inputMovement.z * _stairsNormal.normalized + transform.right * _inputMovement.x;
+                _movement = _inputMovement.z * -_stairsNormal.normalized + transform.right * _inputMovement.x;
                 if (_isJumpRequested)
                 {
                     _isJumpRequested = false;
-                    _rigidbody.AddForce(hitNormal * _playerDataConfig.PlayerConfigData.JumpSpeed, ForceMode.Impulse);
+                    //Debug.Log("Jump on stairs");
+                    _rigidbody.AddForce(hitNormal.normalized * _playerDataConfig.PlayerConfigData.StairsJumpSpeed, ForceMode.Impulse);
                 }
             }
             else if (CheckGrounded())
             {
+                _isOnStairs = false;
                 _rigidbody.useGravity = false;
-                Debug.Log("On ground");
+                //Debug.Log("On ground");
                 _movement = _inputMovement.magnitude <= 0.1f ? _inputMovement : _camera.transform.TransformDirection(_inputMovement);
                 _movement.y = _inputMovement.magnitude <= 0.1f ? _movement.y : 0f;
                 _targetSpeed = _isSprinting ? _playerDataConfig.PlayerConfigData.RunSpeed : _hasMovementInput ? _playerDataConfig.PlayerConfigData.MoveSpeed : 0;
@@ -129,9 +134,10 @@ namespace HotUpdate.Scripts.Network.Client.Player
             }
             else
             {
+                _isOnStairs = false;
                 _rigidbody.useGravity = true;
                 // 如果在空中，只应用水平移动，不改变方向
-                Debug.Log("In air");
+                //Debug.Log("In air");
                 _inputMovement = transform.TransformDirection(_inputMovement);
                 _inputMovement *= _playerDataConfig.PlayerConfigData.MoveSpeed;
                 _hasMovementInput = Mathf.Abs(_inputMovement.x) > 0 || Mathf.Abs(_inputMovement.z) > 0;

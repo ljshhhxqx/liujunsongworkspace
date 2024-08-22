@@ -28,6 +28,7 @@ public class PlayerConfigData
     public float RunSpeed = 10f;
     public float RotateSpeed;
     public float JumpSpeed;
+    public float StairsJumpSpeed = 100f;
     public float GroundCheckRadius = 0.3f;
     public float StairsCheckDistance = 0.6f;
     // public float SlopeLimit = 30f;
