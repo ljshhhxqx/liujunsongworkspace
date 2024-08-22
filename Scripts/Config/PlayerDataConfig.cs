@@ -25,12 +25,13 @@ public class PlayerConfigData
     #region Player
 
     public float MoveSpeed;
-    public float RunSpeed = 10f;
+    public float RunSpeed;
     public float RotateSpeed;
+    public float OnStairsSpeed = 3f;
     public float JumpSpeed;
-    public float StairsJumpSpeed = 100f;
-    public float GroundCheckRadius = 0.3f;
-    public float StairsCheckDistance = 0.6f;
+    public float StairsJumpSpeed;
+    public float GroundCheckRadius;
+    public float StairsCheckDistance;
     // public float SlopeLimit = 30f;
     // public float MaxPredictPositionTime = 5f;
     // public float MaxPredictDistance = 0.5f;

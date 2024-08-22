@@ -108,6 +108,9 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 //Debug.Log("On stairs");
                 _rigidbody.useGravity = false;
                 _movement = _inputMovement.z * -_stairsNormal.normalized + transform.right * _inputMovement.x;
+                //Debug.Log($"OnStairsSpeed {_playerDataConfig.PlayerConfigData.OnStairsSpeed}");
+                _targetSpeed = _isSprinting ? _playerDataConfig.PlayerConfigData.MoveSpeed : _playerDataConfig.PlayerConfigData.OnStairsSpeed;
+                //Debug.Log($"_targetSpeed {_targetSpeed}");
                 if (_isJumpRequested)
                 {
                     _isJumpRequested = false;
@@ -119,6 +122,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             {
                 _isOnStairs = false;
                 _rigidbody.useGravity = false;
+                _rigidbody.velocity = Vector3.zero;
                 //Debug.Log("On ground");
                 _movement = _inputMovement.magnitude <= 0.1f ? _inputMovement : _camera.transform.TransformDirection(_inputMovement);
                 _movement.y = _inputMovement.magnitude <= 0.1f ? _movement.y : 0f;
@@ -150,6 +154,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             var position = transform.position;
             
             _currentSpeed = Mathf.SmoothDamp(_currentSpeed, _targetSpeed, ref _speedSmoothVelocity, SpeedSmoothTime);
+            //Debug.Log($"_currentSpeed {_currentSpeed}");
             _movement = _movement.normalized * (_currentSpeed * Time.fixedDeltaTime);
             _rigidbody.MovePosition(_movement + position);
         }

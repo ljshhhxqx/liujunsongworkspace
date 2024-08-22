@@ -19,7 +19,8 @@ MonoBehaviour:
     MoveSpeed: 5
     RunSpeed: 10
     RotateSpeed: 4
+    OnStairsSpeed: 3
     JumpSpeed: 25
-    StairsJumpSpeed: 50
+    StairsJumpSpeed: 35
     GroundCheckRadius: 0.22
     StairsCheckDistance: 0.6
