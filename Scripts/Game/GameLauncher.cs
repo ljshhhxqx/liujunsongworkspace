@@ -6,6 +6,7 @@ using Cysharp.Threading.Tasks;
 using Data;
 using Game.Inject;
 using Game.Map;
+using HotUpdate.Scripts.Collector;
 using Network.Data;
 using Network.Server.Edgegap;
 using Network.Server.PlayFab;

@@ -23,3 +23,5 @@ MonoBehaviour:
     Weight: 15
   - CollectType: 5
     Weight: 15
+  collectData:
+    MaxWeight: 100

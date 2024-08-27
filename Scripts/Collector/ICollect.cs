@@ -45,3 +45,11 @@ public enum CollectType
     StrengthGem,
     SpeedGem,
 }
+
+[Serializable]
+public enum CollectObjectClass
+{
+    TreasureChest,
+    Score,
+    Buff,
+}

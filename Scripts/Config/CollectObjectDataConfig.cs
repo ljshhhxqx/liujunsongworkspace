@@ -9,6 +9,9 @@ namespace Config
     { 
         [SerializeField]
         private List<CollectObjectData> collectConfigDatas;
+        [SerializeField]
+        private CollectData collectData;
+        public CollectData CollectData => collectData;
         public List<CollectObjectData> CollectConfigDatas => collectConfigDatas;
         
         public CollectObjectData GetCollectObjectData(CollectType collectType)
@@ -29,8 +32,15 @@ namespace Config
     public class CollectObjectData
     {
         public CollectType CollectType;
-        public float Weight;
-        
+        public CollectObjectClass CollectObjectClass;
+        public int Weight;
+    }
+
+    [Serializable]
+    public class CollectData
+    {
+        public int MaxWeight;
+        public float ItemSpacing;
     }
 
 }

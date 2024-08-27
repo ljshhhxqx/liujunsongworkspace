@@ -10,7 +10,9 @@ namespace Network.Server.Collect
     public class CollectInteractComponent : CollectObject
     {
         [SerializeField]
-        CollectType collectType;
+        private CollectType collectType;
+        [SerializeField]
+        private CollectObjectClass collectObjectClass;
         private CollectObjectData _collectObjectData;
         
         public override CollectType CollectType => collectType;

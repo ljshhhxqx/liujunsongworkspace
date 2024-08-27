@@ -4,6 +4,7 @@ using Common;
 using Config;
 using Data;
 using Game.Map;
+using HotUpdate.Scripts.Collector;
 using Model;
 using Network.Server;
 using Network.Server.Edgegap;
@@ -31,7 +32,6 @@ namespace Game.Inject
             builder.Register<PlayerManager>(Lifetime.Singleton);
             builder.Register<GameCommonVariant>(Lifetime.Singleton);
             builder.Register<CollectItemSpawner>(Lifetime.Singleton);
-            builder.Register<CollectSpawner>(Lifetime.Singleton);
             builder.Register<PlayFabAccountManager>(Lifetime.Singleton);
             builder.Register<PlayFabMessageHandler>(Lifetime.Singleton);
             builder.Register<PlayFabRoomManager>(Lifetime.Singleton);

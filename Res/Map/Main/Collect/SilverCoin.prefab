@@ -219,6 +219,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collectType: 1
+  collectObjectClass: 1
 --- !u!114 &3476315079879504576
 MonoBehaviour:
   m_ObjectHideFlags: 0

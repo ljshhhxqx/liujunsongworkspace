@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using Collector;
+using Config;
 using UnityEngine;
 using VContainer;
 
-namespace Collector
+namespace HotUpdate.Scripts.Collector
 {
     public class CollectItemSpawner
     {
@@ -11,7 +13,7 @@ namespace Collector
         private Vector3 _mapMaxBoundary; // 地图最大边界
         private LayerMask _spawnLayer; // 用于检测生成点是否被阻挡的层级
         private MapBoundDefiner _mapBoundDefiner; // 地图边界定义器
-        private GameDataConfig _gameDataConfig; // 游戏数据配置
+        private CollectObjectDataConfig _collectObjectData; // 游戏数据配置
 
         private readonly System.Random _random = new System.Random();
 
@@ -19,13 +21,16 @@ namespace Collector
         private void Init(MapBoundDefiner mapBoundDefiner, IConfigProvider configProvider)
         {
             _mapBoundDefiner = mapBoundDefiner;
-            _gameDataConfig = configProvider.GetConfig<GameDataConfig>();
+            _collectObjectData = configProvider.GetConfig<CollectObjectDataConfig>();
+            _mapMinBoundary = _mapBoundDefiner.MapMinBoundary;
+            _mapMaxBoundary = _mapBoundDefiner.MapMaxBoundary;
+            _spawnLayer = LayerMask.NameToLayer("Scene");
         }
 
         public int GenerateRandomWeight()
         {
             // 根据需要生成随机权重
-            return _random.Next(1, 100);
+            return _random.Next(_collectObjectData.CollectData.MaxWeight-10, _collectObjectData.CollectData.MaxWeight+10);
         }
 
         public int GenerateRandomSpawnMethod()
@@ -54,7 +59,7 @@ namespace Collector
 
             switch (spawnMethod)
             {
-                case 0: // 较小的随机X的权重
+                case 0: 
                     while (weight > 0)
                     {
                         itemsList.Add(_itemPrefabs[0]); // a物品
@@ -66,7 +71,7 @@ namespace Collector
                         }
                     }
                     break;
-                case 1: // 中等的随机Y的权重
+                case 1: 
                     while (weight > 0)
                     {
                         int itemIndex = (weight > GetItemWeight(_itemPrefabs[1]) && itemsList.Count > 0) ? 1 : 0;
@@ -78,7 +83,7 @@ namespace Collector
                         }
                     }
                     break;
-                case 2: // 较大数量的随机Z权重
+                case 2: 
                     while (weight > 0)
                     {
                         int itemIndex = itemsList.Count % 2;
@@ -86,7 +91,7 @@ namespace Collector
                         weight -= GetItemWeight(_itemPrefabs[itemIndex]);
                     }
                     break;
-                case 3: // 大量的随机P权重
+                case 3: 
                     while (weight > 0)
                     {
                         int itemIndex = _random.Next(0, _itemPrefabs.Length);
@@ -137,7 +142,7 @@ namespace Collector
 
             foreach (Collider collider in colliders)
             {
-                if (collider.gameObject.layer == LayerMask.NameToLayer("Scene"))
+                if (collider.gameObject.layer == _spawnLayer)
                 {
                     if (Physics.Raycast(point, Vector3.up, out var hit))
                     {
@@ -153,5 +158,12 @@ namespace Collector
 
             return true;
         }
+    }
+
+    public class CollectItemInfo
+    {
+        public GameObject ItemPrefab { get; set; }
+        public int Weight { get; set; }
+        public Vector3 SpawnPoint { get; set; }
     }
 }
