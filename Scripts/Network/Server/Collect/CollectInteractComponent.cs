@@ -3,6 +3,7 @@ using Tool.Message;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VContainer;
 
 namespace Network.Server.Collect
@@ -10,13 +11,9 @@ namespace Network.Server.Collect
     public class CollectInteractComponent : CollectObject
     {
         [SerializeField]
-        private CollectType collectType;
-        [SerializeField]
-        private CollectObjectClass collectObjectClass;
-        private CollectObjectData _collectObjectData;
+        private CollectObjectData collectObjectData;
         
-        public override CollectType CollectType => collectType;
-        public override CollectObjectData CollectData => _collectObjectData;
+        public override CollectObjectData CollectData => collectObjectData;
         public override Collider Collider => _collider;
         
         private MessageCenter _messageCenter;
@@ -32,7 +29,7 @@ namespace Network.Server.Collect
                 .Subscribe(OnTriggerEnterObserver)
                 .AddTo(this);
             _collectObjectDataConfig = configProvider.GetConfig<CollectObjectDataConfig>();
-            _collectObjectData = _collectObjectDataConfig.GetCollectObjectData(collectType);
+            collectObjectData = _collectObjectDataConfig.GetCollectObjectData(collectObjectData.CollectType);
         }
 
         private void OnTriggerEnterObserver(Collider other)
@@ -50,7 +47,7 @@ namespace Network.Server.Collect
         
         protected override void Collect(int pickerId, PickerType pickerType)
         {
-            _messageCenter.Post(new PlayerTouchedCollectMessage(CollectId, CollectType));
+            _messageCenter.Post(new PlayerTouchedCollectMessage(CollectId, collectObjectData.CollectType));
         }
     }
 }

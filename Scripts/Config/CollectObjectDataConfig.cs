@@ -40,7 +40,11 @@ namespace Config
     public class CollectData
     {
         public int MaxWeight;
-        public float ItemSpacing;
+        public float ItemSpacing = 0.5f;
+        public int MaxGridItems = 10;
+        public float ItemHeight = 1f;
+        public float GridSize = 10f;
+        public int OnceSpawnCount = 10;
     }
 
 }

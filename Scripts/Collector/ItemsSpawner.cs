@@ -21,12 +21,12 @@ public class ItemSpawner : MonoBehaviour
     private LayerMask _sceneLayer;
     private Dictionary<Vector2Int, Grid> _gridMap = new Dictionary<Vector2Int, Grid>();
     private Dictionary<int, CollectibleItemData> _spawnedItems = new Dictionary<int, CollectibleItemData>();
-    private int _currentId = 0;
-    private const float _itemHeight = 0.5f;
-    private const float _itemSpacing = 0.5f;
-    private const int _maxGridItems = 10;
-    private const float _gridSize = 10f; // Size of each grid cell
-    private const int OnceSpawnCount = 10;
+    private int _currentId;
+    private static float _itemSpacing = 0.5f;
+    private static int _maxGridItems = 10;
+    private static float _itemHeight = 1f;
+    private static float _gridSize = 10f; // Size of each grid cell
+    private static int OnceSpawnCount = 10;
     
     private MapBoundDefiner _mapBoundDefiner;
 
@@ -57,12 +57,9 @@ public class ItemSpawner : MonoBehaviour
         if (_collectiblePrefabs.Count > 0)
         {
             var res = ResourceManager.Instance.GetMapCollectObject(mapName);
-            _collectiblePrefabs = res.Select(x =>
+            _collectiblePrefabs = res.Select(x => new CollectibleItemData
             {
-                return new CollectibleItemData
-                {
-                    component = x.GetComponent<CollectInteractComponent>(),
-                };
+                component = x.GetComponent<CollectInteractComponent>(),
             }).ToList();
         }
         var allSpawnedIDs = new List<CollectibleItemData>();
@@ -104,13 +101,16 @@ public class ItemSpawner : MonoBehaviour
 
     private void OnGameResourceLoaded(GameResourceLoadedEvent gameResourceLoadedEvent)
     {
-        var config = _configProvider.GetConfig<GameDataConfig>();
-        
+        var config = _configProvider.GetConfig<CollectObjectDataConfig>();
+        _itemSpacing = config.CollectData.ItemSpacing;
+        _maxGridItems = config.CollectData.MaxGridItems;
+        _itemHeight = config.CollectData.ItemHeight;
+        _gridSize = config.CollectData.GridSize;
     }
 
     public List<CollectibleItemData> SpawnItems(int totalWeight, int spawnMode)
     {
-        List<CollectibleItemData> itemsToSpawn = new List<CollectibleItemData>();
+        var itemsToSpawn = new List<CollectibleItemData>();
         int remainingWeight = totalWeight;
 
         switch (spawnMode)
@@ -199,7 +199,7 @@ public class ItemSpawner : MonoBehaviour
     {
         while (remainingWeight > 0)
         {
-            var randomType = (Random.value > 0.5f) ? CollectObjectClass.Score : CollectObjectClass.Buff;
+            var randomType = (Random.Range(0, 1) > 0.5f) ? CollectObjectClass.Score : CollectObjectClass.Buff;
             var item = GetRandomItem(randomType);
             if (item != null)
             {
@@ -230,8 +230,7 @@ public class ItemSpawner : MonoBehaviour
         for (int i = 0; i < itemsToSpawn.Count; i++)
         {
             var item = itemsToSpawn[i];
-            var itemCollider = item.component.GetComponent<BoxCollider>();
-            var position = startPoint + _itemSpacing * i * direction + Vector3.up * itemCollider.size.y;
+            var position = startPoint + _itemSpacing * i * direction + Vector3.up * _itemHeight;
 
             if (!IsPositionValid(position, itemsToSpawn[i]))
             {
@@ -244,7 +243,7 @@ public class ItemSpawner : MonoBehaviour
             if (IsWithinBoundary(position))
             {
                 var id = GenerateID();
-                item.Id = id;
+                item.id = id;
                 item.position = position;
                 _spawnedItems[id] = item;
 
@@ -294,7 +293,7 @@ public class ItemSpawner : MonoBehaviour
 
     private bool IsPositionValid(Vector3 position, CollectibleItemData itemPrefab)
     {
-        Vector2Int gridPos = GetGridPosition(position);
+        var gridPos = GetGridPosition(position);
         if (_gridMap.TryGetValue(gridPos, out Grid grid))
         {
             if (grid.itemIDs.Count > _maxGridItems)
@@ -309,7 +308,7 @@ public class ItemSpawner : MonoBehaviour
                     var hitColliders = Physics.OverlapBox(position, itemCollider.bounds.extents, Quaternion.identity, _sceneLayer);
                     foreach (var hitCollider in hitColliders)
                     {
-                        if (hitCollider.gameObject == itemPrefab.component.gameObject)
+                        if (hitCollider.gameObject.GetInstanceID() == itemPrefab.component.gameObject.GetInstanceID())
                         {
                             return false;
                         }
@@ -329,7 +328,7 @@ public class ItemSpawner : MonoBehaviour
 
 public class CollectibleItemData
 {
-    public int Id;
+    public int id;
     public CollectInteractComponent component;
     public Vector3 position;
 }

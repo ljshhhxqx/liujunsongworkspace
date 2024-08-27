@@ -19,13 +19,11 @@ namespace Collector
         private CollectObjectData _collectObjectData;
         private ChestDataConfig _chestDataConfig;
         private MessageCenter _messageCenter;
-
-        public override CollectType CollectType => CollectType.TreasureChest;
         public override CollectObjectData CollectData => _chestDataConfig.ChestConfigData;
         public override Collider Collider => collider;
         protected override void Collect(int pickerId, PickerType pickerType)
         {
-            _messageCenter.Post(new PlayerCollectChestMessage(CollectId, CollectType));
+            _messageCenter.Post(new PlayerCollectChestMessage(CollectId, CollectType.TreasureChest));
         }
 
         [Inject]
