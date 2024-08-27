@@ -1,8 +1,8 @@
-using System.Collections.Generic;
 using Collector;
 using Config;
 using Cysharp.Threading.Tasks;
 using Network.Server.Collect;
+using System.Collections.Generic;
 using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
@@ -20,9 +20,10 @@ public class ItemSpawner : MonoBehaviour
     private Dictionary<Vector2Int, Grid> _gridMap = new Dictionary<Vector2Int, Grid>();
     private Dictionary<int, CollectibleItemData> _spawnedItems = new Dictionary<int, CollectibleItemData>();
     private int _currentId = 0;
-    private float _itemHeight = 0.5f;
-    private float _itemSpacing = 0.5f;
-    private float _gridSize = 10f; // Size of each grid cell
+    private const float _itemHeight = 0.5f;
+    private const float _itemSpacing = 0.5f;
+    private const int _maxGridItems = 10;
+    private const float _gridSize = 10f; // Size of each grid cell
     private const int OnceSpawnCount = 10;
     
     private MapBoundDefiner _mapBoundDefiner;
@@ -35,6 +36,7 @@ public class ItemSpawner : MonoBehaviour
         _configProvider = configProvider;
         _mapBoundDefiner = mapBoundDefiner;
     }
+
     private void Start()
     {
         InitializeGrid();
@@ -54,11 +56,15 @@ public class ItemSpawner : MonoBehaviour
         for (int i = 0; i < OnceSpawnCount; i++)
         {
             var spawnedIDs = SpawnItems(Random.Range(10, 20), Random.Range(1, 4));
+            if (spawnedIDs.Count == 0)
+            {
+                continue;
+            }
             allSpawnedIDs.AddRange(spawnedIDs);
             await UniTask.Yield(); // Yield to spread the work over multiple frames
         }
 
-        foreach (var id in allSpawnedIDs)
+        foreach (var data in allSpawnedIDs)
         {
             
         }
@@ -210,7 +216,9 @@ public class ItemSpawner : MonoBehaviour
 
         for (int i = 0; i < itemsToSpawn.Count; i++)
         {
-            var position = startPoint + direction * _itemSpacing * i + Vector3.up * _itemHeight;
+            var item = itemsToSpawn[i];
+            var itemCollider = item.component.GetComponent<BoxCollider>();
+            var position = startPoint + _itemSpacing * i * direction + Vector3.up * itemCollider.size.y;
 
             if (!IsPositionValid(position, itemsToSpawn[i]))
             {
@@ -222,8 +230,9 @@ public class ItemSpawner : MonoBehaviour
 
             if (IsWithinBoundary(position))
             {
-                var item = itemsToSpawn[i];
                 var id = GenerateID();
+                item.Id = id;
+                item.position = position;
                 _spawnedItems[id] = item;
 
                 var gridPos = GetGridPosition(position);
@@ -238,6 +247,7 @@ public class ItemSpawner : MonoBehaviour
             else
             {
                 Debug.LogWarning("Item out of boundary, retrying spawn.");
+                SpawnItems(Random.Range(10, 20), Random.Range(1, 4));
                 return new List<CollectibleItemData>(); // Return an empty list if the placement fails
             }
         }
@@ -275,6 +285,10 @@ public class ItemSpawner : MonoBehaviour
         Vector2Int gridPos = GetGridPosition(position);
         if (_gridMap.TryGetValue(gridPos, out Grid grid))
         {
+            if (grid.itemIDs.Count > _maxGridItems)
+            {
+                return false;
+            }
             if (itemPrefab != null)
             {
                 var itemCollider = itemPrefab.component.GetComponent<BoxCollider>();
@@ -283,7 +297,7 @@ public class ItemSpawner : MonoBehaviour
                     var hitColliders = Physics.OverlapBox(position, itemCollider.bounds.extents, Quaternion.identity, _sceneLayer);
                     foreach (var hitCollider in hitColliders)
                     {
-                        if (hitCollider.gameObject != itemPrefab.component.gameObject)
+                        if (hitCollider.gameObject == itemPrefab.component.gameObject)
                         {
                             return false;
                         }
@@ -303,6 +317,7 @@ public class ItemSpawner : MonoBehaviour
 
 public class CollectibleItemData
 {
+    public int Id;
     public CollectObjectData collectObjectData;
     public CollectInteractComponent component;
     public Vector3 position;
