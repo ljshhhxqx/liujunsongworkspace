@@ -3,6 +3,8 @@ using Config;
 using Cysharp.Threading.Tasks;
 using Network.Server.Collect;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
@@ -47,11 +49,22 @@ public class ItemSpawner : MonoBehaviour
         return _currentId++;
     }
 
-    public async UniTask SpawnManyItems()
+    public async UniTask SpawnManyItems(string mapName)
     {
         _currentId = 0;
         _spawnedItems.Clear();
         _gridMap.Clear();
+        if (_collectiblePrefabs.Count > 0)
+        {
+            var res = ResourceManager.Instance.GetMapCollectObject(mapName);
+            _collectiblePrefabs = res.Select(x =>
+            {
+                return new CollectibleItemData
+                {
+                    component = x.GetComponent<CollectInteractComponent>(),
+                };
+            }).ToList();
+        }
         var allSpawnedIDs = new List<CollectibleItemData>();
         for (int i = 0; i < OnceSpawnCount; i++)
         {
@@ -126,7 +139,7 @@ public class ItemSpawner : MonoBehaviour
             if (scoreItem != null)
             {
                 itemsToSpawn.Add(scoreItem);
-                remainingWeight -= scoreItem.collectObjectData.Weight;
+                remainingWeight -= scoreItem.component.CollectData.Weight;
                 scoreCount++;
             }
 
@@ -137,7 +150,7 @@ public class ItemSpawner : MonoBehaviour
             if (buffItem != null)
             {
                 itemsToSpawn.Add(buffItem);
-                remainingWeight -= buffItem.collectObjectData.Weight;
+                remainingWeight -= buffItem.component.CollectData.Weight;
                 break; // Buff item added last
             }
         }
@@ -164,14 +177,14 @@ public class ItemSpawner : MonoBehaviour
             if (scoreItem != null)
             {
                 scoreItems.Add(scoreItem);
-                remainingWeight -= scoreItem.collectObjectData.Weight;
+                remainingWeight -= scoreItem.component.CollectData.Weight;
             }
 
             var buffItem = GetRandomItem(CollectObjectClass.Buff);
             if (buffItem != null)
             {
                 buffItems.Add(buffItem);
-                remainingWeight -= buffItem.collectObjectData.Weight;
+                remainingWeight -= buffItem.component.CollectData.Weight;
             }
 
             if (scoreItems.Count + buffItems.Count >= 100) break;
@@ -191,14 +204,14 @@ public class ItemSpawner : MonoBehaviour
             if (item != null)
             {
                 itemsToSpawn.Add(item);
-                remainingWeight -= item.collectObjectData.Weight;
+                remainingWeight -= item.component.CollectData.Weight;
             }
         }
     }
     
     private CollectibleItemData GetRandomItem(CollectObjectClass itemClass)
     {
-        var filteredItems = _collectiblePrefabs.FindAll(item => item.collectObjectData.CollectObjectClass == itemClass);
+        var filteredItems = _collectiblePrefabs.FindAll(item => item.component.CollectData.CollectObjectClass == itemClass);
         if (filteredItems.Count > 0)
         {
             int randomIndex = Random.Range(0, filteredItems.Count);
@@ -273,7 +286,6 @@ public class ItemSpawner : MonoBehaviour
         }
     }
     
-    
     private Vector3 GetRandomDirection()
     {
         float angle = Random.Range(0, 360);
@@ -318,7 +330,6 @@ public class ItemSpawner : MonoBehaviour
 public class CollectibleItemData
 {
     public int Id;
-    public CollectObjectData collectObjectData;
     public CollectInteractComponent component;
     public Vector3 position;
 }
