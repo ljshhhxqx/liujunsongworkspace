@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chestConfigData:
     CollectType: 0
+    CollectObjectClass: 0
     Weight: 0
     OpenSpeed: 4.5
     InitEulerAngles: {x: 0, y: 90, z: 0}

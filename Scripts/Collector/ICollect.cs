@@ -37,8 +37,8 @@ public enum PickerType
 public enum CollectType
 {
     TreasureChest,
-    SliverGold,
-    Gold,
+    SliverCoin,
+    GoldCoin,
     Gem,
     StrengthGem,
     SpeedGem,

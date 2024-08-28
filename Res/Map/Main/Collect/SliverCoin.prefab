@@ -99,7 +99,7 @@ GameObject:
   - component: {fileID: -2970214308389679516}
   - component: {fileID: 3476315079879504576}
   m_Layer: 0
-  m_Name: SilverCoin
+  m_Name: SliverCoin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

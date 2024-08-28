@@ -17,6 +17,6 @@ public class Hello
     public static void TestAddComponent()
     {
         var go = new GameObject("aaaaaaa");
-        go.AddComponent<TestComponent>();
+        //go.AddComponent<TestComponent>();
     }
 }

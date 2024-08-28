@@ -1,0 +1,212 @@
+{
+    "Resources": [
+        {
+            "UID": 0,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "LoadingPanel",
+            "IsPermanent": true,
+            "IsPreload": false,
+            "Address": "/Permanent/LoadingPanel.prefab"
+        },
+        {
+            "UID": 100000,
+            "ResourceType": "UnityEditor.SceneAsset",
+            "Name": "Login",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Scenes/Login.unity"
+        },
+        {
+            "UID": 100001,
+            "ResourceType": "UnityEditor.SceneAsset",
+            "Name": "MainGame",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Scenes/MainGame.unity"
+        },
+        {
+            "UID": 200000,
+            "ResourceType": "Config.ChestDataConfig",
+            "Name": "ChestConfigData",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/Config/ChestConfigData.asset"
+        },
+        {
+            "UID": 300000,
+            "ResourceType": "Config.CollectObjectDataConfig",
+            "Name": "CollectObjectDataConfig",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/Config/CollectObjectDataConfig.asset"
+        },
+        {
+            "UID": 400000,
+            "ResourceType": "GameDataConfig",
+            "Name": "GameData",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/Config/GameData.asset"
+        },
+        {
+            "UID": 500000,
+            "ResourceType": "PlayerDataConfig",
+            "Name": "PlayerData",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/Config/PlayerData.asset"
+        },
+        {
+            "UID": 600000,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "CreateRoomUI",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/CreateRoomUI.prefab"
+        },
+        {
+            "UID": 600001,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "DevelopUI",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/DevelopUI.prefab"
+        },
+        {
+            "UID": 600002,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "HelpPopup",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/HelpPopup.prefab"
+        },
+        {
+            "UID": 600003,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "InfoPanel",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/InfoPanel.prefab"
+        },
+        {
+            "UID": 600004,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "LoginPanel",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/LoginPanel.prefab"
+        },
+        {
+            "UID": 600005,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "MainUI",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/MainUI.prefab"
+        },
+        {
+            "UID": 600006,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "ModifyNameUI",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/ModifyNameUI.prefab"
+        },
+        {
+            "UID": 600007,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "PasswordUI",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/PasswordUI.prefab"
+        },
+        {
+            "UID": 600008,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "RegistPanel",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/RegistPanel.prefab"
+        },
+        {
+            "UID": 600009,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "RoomListUI",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/RoomListUI.prefab"
+        },
+        {
+            "UID": 600010,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "RoomUI",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/RoomUI.prefab"
+        },
+        {
+            "UID": 600011,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "TipPopup",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/TipPopup.prefab"
+        },
+        {
+            "UID": 600012,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "Chest",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Main/Collect/Chest.prefab"
+        },
+        {
+            "UID": 600013,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "Gem",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Main/Collect/Gem.prefab"
+        },
+        {
+            "UID": 600014,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "GoldCoin",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Main/Collect/GoldCoin.prefab"
+        },
+        {
+            "UID": 600015,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "SliverCoin",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Main/Collect/SliverCoin.prefab"
+        },
+        {
+            "UID": 600016,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "SpeedGem",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Main/Collect/SpeedGem.prefab"
+        },
+        {
+            "UID": 600017,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "StrengthGem",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Main/Collect/StrengthGem.prefab"
+        },
+        {
+            "UID": 600018,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "Player",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Main/Player/Player.prefab"
+        }
+    ]
+}

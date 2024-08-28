@@ -3,7 +3,6 @@ using Config;
 using Cysharp.Threading.Tasks;
 using Network.Server.Collect;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Tool.GameEvent;
 using UnityEngine;
@@ -27,6 +26,7 @@ public class ItemSpawner : MonoBehaviour
     private static float _itemHeight = 1f;
     private static float _gridSize = 10f; // Size of each grid cell
     private static int OnceSpawnCount = 10;
+    private Transform _spawnedParent;
     
     private MapBoundDefiner _mapBoundDefiner;
 
@@ -37,6 +37,7 @@ public class ItemSpawner : MonoBehaviour
         _sceneLayer = LayerMask.NameToLayer("Scene");
         _configProvider = configProvider;
         _mapBoundDefiner = mapBoundDefiner;
+        _spawnedParent = GameObject.FindGameObjectWithTag("SpawnedObjects").transform;
     }
 
     private void Start()
@@ -62,21 +63,25 @@ public class ItemSpawner : MonoBehaviour
                 component = x.GetComponent<CollectInteractComponent>(),
             }).ToList();
         }
-        var allSpawnedIDs = new List<CollectibleItemData>();
+        var allSpawnedItems = new List<CollectibleItemData>();
         for (int i = 0; i < OnceSpawnCount; i++)
         {
-            var spawnedIDs = SpawnItems(Random.Range(10, 20), Random.Range(1, 4));
-            if (spawnedIDs.Count == 0)
+            var spawnedItems = SpawnItems(Random.Range(10, 20), Random.Range(1, 4));
+            if (spawnedItems.Count == 0)
             {
                 continue;
             }
-            allSpawnedIDs.AddRange(spawnedIDs);
+            allSpawnedItems.AddRange(spawnedItems);
             await UniTask.Yield(); // Yield to spread the work over multiple frames
         }
 
-        foreach (var data in allSpawnedIDs)
+        foreach (var data in allSpawnedItems)
         {
-            
+            var go = Object.Instantiate(data.component.gameObject);
+            var componet = go.GetComponent<CollectAnimationComponent>();
+            go.transform.localPosition = data.position;
+            go.transform.SetParent(_spawnedParent);
+            componet.Play();
         }
     }
 

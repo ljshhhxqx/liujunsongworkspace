@@ -14,14 +14,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   collectConfigDatas:
   - CollectType: 1
+    CollectObjectClass: 1
     Weight: 5
   - CollectType: 2
+    CollectObjectClass: 1
     Weight: 10
   - CollectType: 3
+    CollectObjectClass: 1
     Weight: 20
   - CollectType: 4
+    CollectObjectClass: 2
     Weight: 15
   - CollectType: 5
+    CollectObjectClass: 2
     Weight: 15
   collectData:
     MaxWeight: 100
+    ItemSpacing: 0.5
+    MaxGridItems: 10
+    ItemHeight: 1
+    GridSize: 10
+    OnceSpawnCount: 10
