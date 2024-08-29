@@ -13,7 +13,7 @@ public struct Grid
     public List<CollectibleItemData> itemIDs;
 }
 
-public class ItemSpawner : MonoBehaviour
+public class ItemSpawner : SingletonNetMono<ItemSpawner>
 {
     private List<CollectibleItemData> _collectiblePrefabs = new List<CollectibleItemData>();
     private IConfigProvider _configProvider;
@@ -38,10 +38,6 @@ public class ItemSpawner : MonoBehaviour
         _configProvider = configProvider;
         _mapBoundDefiner = mapBoundDefiner;
         _spawnedParent = GameObject.FindGameObjectWithTag("SpawnedObjects").transform;
-    }
-
-    private void Start()
-    {
         InitializeGrid();
     }
     

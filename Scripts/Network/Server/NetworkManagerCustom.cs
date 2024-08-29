@@ -1,7 +1,7 @@
-﻿using System;
-using Game.Map;
+﻿using Game.Map;
 using Mirror;
 using Tool.GameEvent;
+using UI.UIBase;
 using UnityEngine;
 using VContainer;
 using Random = UnityEngine.Random;
@@ -12,25 +12,26 @@ namespace Network.Server
     {
         private GameEventManager _gameEventManager;
         private NetworkStartPosition[] _spawnPoints;
-        private NetworkManagerHUD _networkManagerHUD;
+       // private NetworkManagerHUD _networkManagerHUD;
+        private UIManager _uiManager;
 
         [Inject]
-        private void Init(GameEventManager gameEventManager)
+        private void Init(GameEventManager gameEventManager, UIManager uIManager)
         {
             _gameEventManager = gameEventManager;
             _spawnPoints = FindObjectsByType<NetworkStartPosition>(FindObjectsSortMode.None);
-            _networkManagerHUD = GetComponent<NetworkManagerHUD>();
-            _networkManagerHUD.enabled = false;
+            //_networkManagerHUD = GetComponent<NetworkManagerHUD>();
+            //_networkManagerHUD.enabled = false;
             _gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnSceneResourcesLoaded);
             //this.playerManager = playerManager;
         }
 
         private void OnSceneResourcesLoaded(GameSceneResourcesLoadedEvent sceneResourcesLoadedEvent)
         {
-            if (sceneResourcesLoadedEvent.SceneName == "MainGame")
-            {
-                _networkManagerHUD.enabled = true;
-            }
+            //if (sceneResourcesLoadedEvent.SceneName == "MainGame")
+            //{
+            //    _networkManagerHUD.enabled = true;
+            //}
         }
 
         [Server]
