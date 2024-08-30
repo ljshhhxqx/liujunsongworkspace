@@ -7,9 +7,9 @@ using VContainer;
 public class GameLoopController : SingletonNetMono<GameLoopController>
 {
     [SyncVar]
-    private static int mainGameTime = 180; // 3分钟的倒计时
+    private int mainGameTime = 180; // 3分钟的倒计时
     [SyncVar]
-    private static int warmupTime = 10; // 10秒热身时间
+    private int warmupTime = 10; // 10秒热身时间
     private CancellationTokenSource cts;
 
     [Inject]
