@@ -26,6 +26,14 @@
         },
         {
             "UID": 200000,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "GameLoopController",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Main/GameLoopController.prefab"
+        },
+        {
+            "UID": 300000,
             "ResourceType": "Config.ChestDataConfig",
             "Name": "ChestConfigData",
             "IsPermanent": false,
@@ -33,7 +41,7 @@
             "Address": "/Preload/Config/ChestConfigData.asset"
         },
         {
-            "UID": 300000,
+            "UID": 400000,
             "ResourceType": "Config.CollectObjectDataConfig",
             "Name": "CollectObjectDataConfig",
             "IsPermanent": false,
@@ -41,7 +49,7 @@
             "Address": "/Preload/Config/CollectObjectDataConfig.asset"
         },
         {
-            "UID": 400000,
+            "UID": 500000,
             "ResourceType": "GameDataConfig",
             "Name": "GameData",
             "IsPermanent": false,
@@ -49,7 +57,7 @@
             "Address": "/Preload/Config/GameData.asset"
         },
         {
-            "UID": 500000,
+            "UID": 600000,
             "ResourceType": "PlayerDataConfig",
             "Name": "PlayerData",
             "IsPermanent": false,
@@ -57,7 +65,7 @@
             "Address": "/Preload/Config/PlayerData.asset"
         },
         {
-            "UID": 600000,
+            "UID": 700000,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "CreateRoomUI",
             "IsPermanent": false,
@@ -65,7 +73,7 @@
             "Address": "/Preload/UI/CreateRoomUI.prefab"
         },
         {
-            "UID": 600001,
+            "UID": 700001,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "DevelopUI",
             "IsPermanent": false,
@@ -73,7 +81,7 @@
             "Address": "/Preload/UI/DevelopUI.prefab"
         },
         {
-            "UID": 600002,
+            "UID": 700002,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "HelpPopup",
             "IsPermanent": false,
@@ -81,7 +89,7 @@
             "Address": "/Preload/UI/HelpPopup.prefab"
         },
         {
-            "UID": 600003,
+            "UID": 700003,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "InfoPanel",
             "IsPermanent": false,
@@ -89,7 +97,7 @@
             "Address": "/Preload/UI/InfoPanel.prefab"
         },
         {
-            "UID": 600004,
+            "UID": 700004,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "LoginPanel",
             "IsPermanent": false,
@@ -97,7 +105,7 @@
             "Address": "/Preload/UI/LoginPanel.prefab"
         },
         {
-            "UID": 600005,
+            "UID": 700005,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "MainUI",
             "IsPermanent": false,
@@ -105,7 +113,7 @@
             "Address": "/Preload/UI/MainUI.prefab"
         },
         {
-            "UID": 600006,
+            "UID": 700006,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "ModifyNameUI",
             "IsPermanent": false,
@@ -113,7 +121,7 @@
             "Address": "/Preload/UI/ModifyNameUI.prefab"
         },
         {
-            "UID": 600007,
+            "UID": 700007,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "PasswordUI",
             "IsPermanent": false,
@@ -121,7 +129,7 @@
             "Address": "/Preload/UI/PasswordUI.prefab"
         },
         {
-            "UID": 600008,
+            "UID": 700008,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "RegistPanel",
             "IsPermanent": false,
@@ -129,7 +137,7 @@
             "Address": "/Preload/UI/RegistPanel.prefab"
         },
         {
-            "UID": 600009,
+            "UID": 700009,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "RoomListUI",
             "IsPermanent": false,
@@ -137,7 +145,7 @@
             "Address": "/Preload/UI/RoomListUI.prefab"
         },
         {
-            "UID": 600010,
+            "UID": 700010,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "RoomUI",
             "IsPermanent": false,
@@ -145,7 +153,7 @@
             "Address": "/Preload/UI/RoomUI.prefab"
         },
         {
-            "UID": 600011,
+            "UID": 700011,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "TipPopup",
             "IsPermanent": false,
@@ -153,7 +161,7 @@
             "Address": "/Preload/UI/TipPopup.prefab"
         },
         {
-            "UID": 600012,
+            "UID": 700012,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "Chest",
             "IsPermanent": false,
@@ -161,7 +169,7 @@
             "Address": "/Map/Main/Collect/Chest.prefab"
         },
         {
-            "UID": 600013,
+            "UID": 700013,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "Gem",
             "IsPermanent": false,
@@ -169,7 +177,7 @@
             "Address": "/Map/Main/Collect/Gem.prefab"
         },
         {
-            "UID": 600014,
+            "UID": 700014,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "GoldCoin",
             "IsPermanent": false,
@@ -177,7 +185,7 @@
             "Address": "/Map/Main/Collect/GoldCoin.prefab"
         },
         {
-            "UID": 600015,
+            "UID": 700015,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "SliverCoin",
             "IsPermanent": false,
@@ -185,7 +193,7 @@
             "Address": "/Map/Main/Collect/SliverCoin.prefab"
         },
         {
-            "UID": 600016,
+            "UID": 700016,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "SpeedGem",
             "IsPermanent": false,
@@ -193,7 +201,7 @@
             "Address": "/Map/Main/Collect/SpeedGem.prefab"
         },
         {
-            "UID": 600017,
+            "UID": 700017,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "StrengthGem",
             "IsPermanent": false,
@@ -201,7 +209,7 @@
             "Address": "/Map/Main/Collect/StrengthGem.prefab"
         },
         {
-            "UID": 600018,
+            "UID": 700018,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "Player",
             "IsPermanent": false,

@@ -1,38 +1,50 @@
-using UnityEngine;
-using Cysharp.Threading.Tasks;
 using System.Threading;
+using AOTScripts.Tool.ECS;
+using Cysharp.Threading.Tasks;
 using Mirror;
+using Tool.GameEvent;
+using Tool.Message;
+using UnityEngine;
 using VContainer;
 
-public class GameLoopController : SingletonNetMono<GameLoopController>
+public class GameLoopController : NetworkMonoController
 {
     [SyncVar]
     private int mainGameTime = 180; // 3分钟的倒计时
     [SyncVar]
     private int warmupTime = 10; // 10秒热身时间
     private CancellationTokenSource cts;
-
+    private GameEventManager _gameEventManager;
+    private MessageCenter _messageCenter;
+    private ItemsSpawner _itemsSpawner;
+    private string _gameSceneName;
+        
     [Inject]
-    private void Init()
+    private void Init(MessageCenter messageCenter, GameEventManager gameEventManager, IObjectResolver objectResolver)
     {
-        cts = new CancellationTokenSource();
-        StartGameLoop(cts.Token).Forget();
+        _messageCenter = messageCenter;
+        _gameEventManager = gameEventManager;
+        _itemsSpawner = GetComponent<ItemsSpawner>();
+        _gameEventManager.Subscribe<GameReadyEvent>(OnGameReady);
+        objectResolver.Inject(_itemsSpawner);
     }
 
-    private async UniTaskVoid StartGameLoop(CancellationToken token)
+    private void OnGameReady(GameReadyEvent gameReadyEvent)
+    {
+        _gameSceneName = gameReadyEvent.SceneName;
+        StartGameLoop().Forget();
+    }
+
+    private async UniTaskVoid StartGameLoop()
     {
         // 1. 热身阶段
         Debug.Log("Game Warmup Started");
-        await UniTask.Delay(warmupTime * 1000, cancellationToken: token);
+        await UniTask.Delay(warmupTime * 1000, cancellationToken: cts.Token);
         Debug.Log("Warmup Complete. Game Start!");
 
-        // 2. 生成物品（模拟）
-        Debug.Log("Generating Items...");
-        await GenerateItemsAsync(token);
-
-        // 3. 开始总的倒计时
+        // 2. 开始总的倒计时
         Debug.Log("Main game timer starts now!");
-        await StartMainGameTimerAsync(mainGameTime, token);
+        await StartMainGameTimerAsync(mainGameTime, cts.Token);
 
         Debug.Log("Main game over. Exiting...");
     }

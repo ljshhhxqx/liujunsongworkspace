@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using Network.Server.Collect;
 using System.Collections.Generic;
 using System.Linq;
+using AOTScripts.Tool.ECS;
 using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
@@ -13,7 +14,7 @@ public struct Grid
     public List<CollectibleItemData> itemIDs;
 }
 
-public class ItemSpawner : SingletonNetMono<ItemSpawner>
+public class ItemsSpawner : NetworkMonoComponent
 {
     private List<CollectibleItemData> _collectiblePrefabs = new List<CollectibleItemData>();
     private IConfigProvider _configProvider;
@@ -25,7 +26,7 @@ public class ItemSpawner : SingletonNetMono<ItemSpawner>
     private static int _maxGridItems = 10;
     private static float _itemHeight = 1f;
     private static float _gridSize = 10f; // Size of each grid cell
-    private static int OnceSpawnCount = 10;
+    private static int _onceSpawnCount = 10;
     private Transform _spawnedParent;
     
     private MapBoundDefiner _mapBoundDefiner;
@@ -37,7 +38,7 @@ public class ItemSpawner : SingletonNetMono<ItemSpawner>
         _sceneLayer = LayerMask.NameToLayer("Scene");
         _configProvider = configProvider;
         _mapBoundDefiner = mapBoundDefiner;
-        _spawnedParent = GameObject.FindGameObjectWithTag("SpawnedObjects").transform;
+        _spawnedParent = transform;
         InitializeGrid();
     }
     
@@ -60,7 +61,7 @@ public class ItemSpawner : SingletonNetMono<ItemSpawner>
             }).ToList();
         }
         var allSpawnedItems = new List<CollectibleItemData>();
-        for (int i = 0; i < OnceSpawnCount; i++)
+        for (int i = 0; i < _onceSpawnCount; i++)
         {
             var spawnedItems = SpawnItems(Random.Range(10, 20), Random.Range(1, 4));
             if (spawnedItems.Count == 0)
@@ -73,10 +74,8 @@ public class ItemSpawner : SingletonNetMono<ItemSpawner>
 
         foreach (var data in allSpawnedItems)
         {
-            var go = Object.Instantiate(data.component.gameObject);
+            var go = GameObjectPoolManger.Instance.GetObject(data.component.gameObject, data.position, Quaternion.identity, _spawnedParent);
             var componet = go.GetComponent<CollectAnimationComponent>();
-            go.transform.localPosition = data.position;
-            go.transform.SetParent(_spawnedParent);
             componet.Play();
         }
     }
@@ -109,7 +108,7 @@ public class ItemSpawner : SingletonNetMono<ItemSpawner>
         _gridSize = config.CollectData.GridSize;
     }
 
-    public List<CollectibleItemData> SpawnItems(int totalWeight, int spawnMode)
+    private List<CollectibleItemData> SpawnItems(int totalWeight, int spawnMode)
     {
         var itemsToSpawn = new List<CollectibleItemData>();
         int remainingWeight = totalWeight;

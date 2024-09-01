@@ -28,7 +28,16 @@ namespace Tool.GameEvent
             SceneName = sceneName;
         }
     }
-    
+
+    public class GameReadyEvent : GameEvent
+    {
+        public string SceneName { get; private set; }
+        public GameReadyEvent(string sceneName)
+        {
+            SceneName = sceneName;
+        }
+    }
+
     public class GameSceneLoadingEvent : GameEvent
     {
         public string SceneName { get; private set; }

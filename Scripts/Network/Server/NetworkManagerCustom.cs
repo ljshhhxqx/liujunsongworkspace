@@ -1,9 +1,11 @@
-﻿using Game.Map;
+﻿using AOTScripts.Tool.ECS;
+using Game.Map;
 using Mirror;
 using Tool.GameEvent;
 using UI.UIBase;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 using Random = UnityEngine.Random;
 
 namespace Network.Server
@@ -12,26 +14,28 @@ namespace Network.Server
     {
         private GameEventManager _gameEventManager;
         private NetworkStartPosition[] _spawnPoints;
-       // private NetworkManagerHUD _networkManagerHUD;
+        private NetworkManagerHUD _networkManagerHUD;
         private UIManager _uiManager;
+        private IObjectResolver _objectResolver;
 
         [Inject]
-        private void Init(GameEventManager gameEventManager, UIManager uIManager)
+        private void Init(GameEventManager gameEventManager, UIManager uIManager, IObjectResolver objectResolver)
         {
             _gameEventManager = gameEventManager;
             _spawnPoints = FindObjectsByType<NetworkStartPosition>(FindObjectsSortMode.None);
-            //_networkManagerHUD = GetComponent<NetworkManagerHUD>();
-            //_networkManagerHUD.enabled = false;
+            _networkManagerHUD = GetComponent<NetworkManagerHUD>();
+            _networkManagerHUD.enabled = false;
             _gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnSceneResourcesLoaded);
+            _objectResolver = objectResolver;
             //this.playerManager = playerManager;
         }
 
         private void OnSceneResourcesLoaded(GameSceneResourcesLoadedEvent sceneResourcesLoadedEvent)
         {
-            //if (sceneResourcesLoadedEvent.SceneName == "MainGame")
-            //{
-            //    _networkManagerHUD.enabled = true;
-            //}
+            if (sceneResourcesLoadedEvent.SceneName == "MainGame")
+            {
+                _networkManagerHUD.enabled = true;
+            }
         }
 
         [Server]
@@ -51,8 +55,15 @@ namespace Network.Server
         }
 
         [Server]
-        public override void OnServerAddPlayer(NetworkConnectionToClient conn)
+        public override async void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
+            // 生成物体
+            var spawnedObjectsAddress = DataJsonManager.Instance.GetResourceData("SpawnedObjects");
+            var spawnedObjects = await ResourceManager.Instance.LoadResourceAsync<GameObject>(spawnedObjectsAddress);
+            var contorller = spawnedObjects.GetComponent<NetworkMonoController>();
+            _objectResolver.Inject(contorller);
+            _gameEventManager.Publish(new GameReadyEvent("MainGame"));
+            // 服务器端添加玩家
             var res = DataJsonManager.Instance.GetResourceData("Player");
             var resInfo = ResourceManager.Instance.GetResource<GameObject>(res);
             if (resInfo)
