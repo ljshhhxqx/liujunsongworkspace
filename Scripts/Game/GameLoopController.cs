@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using AOTScripts.Tool.ECS;
 using Cysharp.Threading.Tasks;
@@ -6,6 +7,7 @@ using Tool.GameEvent;
 using Tool.Message;
 using UnityEngine;
 using VContainer;
+using Random = UnityEngine.Random;
 
 public class GameLoopController : NetworkMonoController
 {
@@ -84,45 +86,87 @@ public class GameLoopController : NetworkMonoController
     private async UniTask StartMainGameTimerAsync(int totalTime, CancellationToken token)
     {
         int remainingTime = totalTime;
+        bool isSubCycleRunning = false;
+
+        // 定义结束条件和随机事件处理逻辑
+        Func<bool> endCondition = () => Random.value < 0.2f; // 示例条件：20% 概率结束小循环
+        Func<UniTask> randomEventHandler = async () =>
+        {
+            Debug.Log("Handling random event...");
+            await UniTask.Delay(500); // 模拟处理时间
+            Debug.Log("Random event handled.");
+        };
 
         while (remainingTime > 0 && !token.IsCancellationRequested)
         {
-            // 启动或继续小循环
-            await StartSubCycleAsync(token);
-
             Debug.Log($"Main Game Timer: {remainingTime} seconds remaining");
 
-            // 这里模拟了每分钟（或其他时间段）减少的行为
+            // 如果当前没有小循环运行，启动一个新的小循环
+            if (!isSubCycleRunning)
+            {
+                isSubCycleRunning = true;
+                var subCycle = new SubCycle(10, 30, endCondition, randomEventHandler);
+                _ = subCycle.StartAsync(token).ContinueWith(result => isSubCycleRunning = false);
+            }
+
+            // 每秒倒计时
             await UniTask.Delay(1000, cancellationToken: token);
             remainingTime--;
-
         }
-        cts.Cancel();
-    }
-
-    private async UniTask StartSubCycleAsync(CancellationToken token)
-    {
-        int subCycleTime = Random.Range(10, 30); // 随着循环进行，时间可能会变化
-        Debug.Log($"Starting SubCycle with {subCycleTime} seconds");
-
-        // 模拟物品被拾取完或时间耗尽
-        bool allItemsCollected = false;
-        while (subCycleTime > 0 && !allItemsCollected && !token.IsCancellationRequested)
-        {
-            // 在这里检测是否所有物品都被拾取
-            // allItemsCollected = CheckIfAllItemsCollected();
-
-            await UniTask.Delay(1000, cancellationToken: token);
-            subCycleTime--;
-
-            Debug.Log($"SubCycle Timer: {subCycleTime} seconds remaining");
-        }
-
-        Debug.Log("SubCycle Ended");
+        cts.Cancel(); 
+        
     }
 
     private void OnDestroy()
     {
         cts.Cancel();
     }
+    private class SubCycle
+    {
+        private int subCycleTime;
+        private Func<bool> endCondition;
+        private Func<UniTask> randomEventHandler;
+
+        public SubCycle(int minTime, int maxTime, Func<bool> endCondition, Func<UniTask> randomEventHandler = null)
+        {
+            // 初始化小循环的持续时间
+            subCycleTime = UnityEngine.Random.Range(minTime, maxTime);
+            this.endCondition = endCondition;
+            this.randomEventHandler = randomEventHandler;
+        }
+
+        public async UniTask<bool> StartAsync(CancellationToken token)
+        {
+            Debug.Log($"Starting SubCycle with {subCycleTime} seconds");
+
+            int elapsedTime = 0;
+
+            while (elapsedTime < subCycleTime && !endCondition() && !token.IsCancellationRequested)
+            {
+                // 如果有随机事件处理函数，随机决定是否触发事件
+                if (randomEventHandler != null && UnityEngine.Random.value < 0.1f) // 10% 概率触发
+                {
+                    Debug.Log("Random event triggered.");
+                    await randomEventHandler();
+                }
+
+                await UniTask.Delay(1000, cancellationToken: token);
+                elapsedTime++;
+
+                Debug.Log($"SubCycle Timer: {subCycleTime - elapsedTime} seconds remaining");
+            }
+
+            if (endCondition())
+            {
+                Debug.Log("End condition met. SubCycle Ended.");
+                return true;
+            }
+            else
+            {
+                Debug.Log("SubCycle timer ended without meeting end condition.");
+                return false;
+            }
+        }
+    }
+
 }
