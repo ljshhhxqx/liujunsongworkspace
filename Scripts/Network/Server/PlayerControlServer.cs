@@ -17,9 +17,9 @@ namespace Network.Server
         {
             _gameDataConfig = configProvider.GetConfig<GameDataConfig>();
             _playerConfigData = configProvider.GetConfig<PlayerDataConfig>();
-            messageCenter.Register<PlayerMovedMessage>(MessageType.PlayerMoved, OnPlayerMoved);
-            messageCenter.Register<PlayerRotatedMessage>(MessageType.PlayerRotated, OnPlayerRotated);
-            messageCenter.Register<PlayerInputMessage>(MessageType.PlayerInput, OnPlayerInput);
+            messageCenter.Register<PlayerMovedMessage>(OnPlayerMoved);
+            messageCenter.Register<PlayerRotatedMessage>(OnPlayerRotated);
+            messageCenter.Register<PlayerInputMessage>(OnPlayerInput);
             repeatedTask.StartRepeatingTask(AdjustPosition, 1);
         }
 

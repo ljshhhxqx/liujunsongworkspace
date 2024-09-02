@@ -1,11 +1,12 @@
+using System.Collections.Generic;
+using System.Linq;
+using AOTScripts.Tool.ECS;
 using Collector;
 using Config;
 using Cysharp.Threading.Tasks;
 using Network.Server.Collect;
-using System.Collections.Generic;
-using System.Linq;
-using AOTScripts.Tool.ECS;
 using Tool.GameEvent;
+using Tool.Message;
 using UnityEngine;
 using VContainer;
 
@@ -18,6 +19,8 @@ public class ItemsSpawner : NetworkMonoComponent
 {
     private List<CollectibleItemData> _collectiblePrefabs = new List<CollectibleItemData>();
     private IConfigProvider _configProvider;
+    private MapBoundDefiner _mapBoundDefiner;
+    private MessageCenter _messageCenter;
     private LayerMask _sceneLayer;
     private Dictionary<Vector2Int, Grid> _gridMap = new Dictionary<Vector2Int, Grid>();
     private Dictionary<int, CollectibleItemData> _spawnedItems = new Dictionary<int, CollectibleItemData>();
@@ -29,19 +32,33 @@ public class ItemsSpawner : NetworkMonoComponent
     private static int _onceSpawnCount = 10;
     private Transform _spawnedParent;
     
-    private MapBoundDefiner _mapBoundDefiner;
+    public int CurrentRound { get; set; }
 
     [Inject]
-    private void Init(MapBoundDefiner mapBoundDefiner, IConfigProvider configProvider, GameEventManager gameEventManager)
+    private void Init(MapBoundDefiner mapBoundDefiner, IConfigProvider configProvider, GameEventManager gameEventManager, MessageCenter messageCenter)
     {
         gameEventManager.Subscribe<GameResourceLoadedEvent>(OnGameResourceLoaded);
+        _messageCenter = messageCenter;
+        _messageCenter.Register<PlayerTouchedCollectMessage>(OnPlayerTouchedCollect);
         _sceneLayer = LayerMask.NameToLayer("Scene");
         _configProvider = configProvider;
         _mapBoundDefiner = mapBoundDefiner;
         _spawnedParent = transform;
         InitializeGrid();
     }
-    
+
+    private void OnPlayerTouchedCollect(PlayerTouchedCollectMessage message)
+    {
+        if (_spawnedItems.ContainsKey(message.CollectID))
+        {
+            _spawnedItems.Remove(message.CollectID);
+            if (_spawnedItems.Count == 0)
+            {
+                _messageCenter.Post(new CollectObjectsEmptyMessage(CurrentRound));
+            }
+        }
+    }
+
     private int GenerateID()
     {
         return _currentId++;
@@ -57,7 +74,7 @@ public class ItemsSpawner : NetworkMonoComponent
             var res = ResourceManager.Instance.GetMapCollectObject(mapName);
             _collectiblePrefabs = res.Select(x => new CollectibleItemData
             {
-                component = x.GetComponent<CollectInteractComponent>(),
+                component = x.GetComponent<CollectObjectController>(),
             }).ToList();
         }
         var allSpawnedItems = new List<CollectibleItemData>();
@@ -329,6 +346,6 @@ public class ItemsSpawner : NetworkMonoComponent
 public class CollectibleItemData
 {
     public int id;
-    public CollectInteractComponent component;
+    public CollectObjectController component;
     public Vector3 position;
 }

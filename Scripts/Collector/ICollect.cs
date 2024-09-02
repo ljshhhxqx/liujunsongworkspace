@@ -1,4 +1,5 @@
 using System;
+using AOTScripts.Tool.ECS;
 using Config;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ public interface ICollect
     Collider Collider { get; }
 }
 
-public abstract class CollectObject : MonoBehaviour, ICollect
+public abstract class CollectObject : NetworkMonoController, ICollect
 {
     public int CollectId { get; set; }
     public abstract CollectObjectData CollectData { get; }

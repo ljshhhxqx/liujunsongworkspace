@@ -6,38 +6,40 @@ namespace Tool.Message
 {
     public interface INetworkMessageCenter
     {
-        void Register<T>(MessageType eventType, Action<T> callback) where T : Message;
-        void Unregister<T>(MessageType eventType, Action<T> callback) where T : Message;
+        void Register<T>(Action<T> callback) where T : Message;
+        void Unregister<T>(Action<T> callback) where T : Message;
         void Post<T>(T message) where T : Message;
     }
     
     public class MessageCenter : INetworkMessageCenter
     {
-        private readonly Dictionary<MessageType, Queue<Delegate>> listeners = new Dictionary<MessageType, Queue<Delegate>>();
+        private readonly Dictionary<Type, Queue<Delegate>> listeners = new Dictionary<Type, Queue<Delegate>>();
 
         // 注册事件
-        public void Register<T>(MessageType eventType, Action<T> callback) where T : Message
+        public void Register<T>(Action<T> callback) where T : Message
         {
-            if (!listeners.ContainsKey(eventType))
+            var t = typeof(T);
+            if (!listeners.ContainsKey(t))
             {
-                listeners[eventType] = new Queue<Delegate>();
+                listeners[t] = new Queue<Delegate>();
             }
-            listeners[eventType].Enqueue(callback);
+            listeners[t].Enqueue(callback);
         }
 
         // 注销事件
-        public void Unregister<T>(MessageType eventType, Action<T> callback) where T : Message
+        public void Unregister<T>(Action<T> callback) where T : Message
         {
-            if (listeners.ContainsKey(eventType))
+            var t = typeof(T);
+            if (listeners.ContainsKey(t))
             {
-                var newQueue = new Queue<Delegate>(listeners[eventType].Where(d => !d.Equals(callback)));
+                var newQueue = new Queue<Delegate>(listeners[t].Where(d => !d.Equals(callback)));
                 if (newQueue.Count == 0)
                 {
-                    listeners.Remove(eventType);
+                    listeners.Remove(t);
                 }
                 else
                 {
-                    listeners[eventType] = newQueue;
+                    listeners[t] = newQueue;
                 }
             }
         }
@@ -45,8 +47,7 @@ namespace Tool.Message
         // 发送消息
         public void Post<T>(T message) where T : Message
         {
-            var eventType = message.Type;
-            if (listeners.TryGetValue(eventType, out var queue))
+            if (listeners.TryGetValue(message.GetType(), out var queue))
             {
                 int count = queue.Count;
                 for (int i = 0; i < count; i++)

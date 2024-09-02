@@ -10,10 +10,14 @@ using VContainer;
 
 namespace Network.Server.Collect
 {
-    public class CollectInteractComponent : CollectObject
+    public class CollectObjectController : CollectObject
     {
         [SerializeField]
         private CollectObjectData collectObjectData;
+        [SerializeField]
+        private CollectParticlePlayer collectParticlePlayer;
+        [SerializeField]
+        private CollectAnimationComponent collectAnimationComponent;
         
         public override CollectObjectData CollectData => collectObjectData;
         public override Collider Collider => _collider;
@@ -50,6 +54,7 @@ namespace Network.Server.Collect
         protected override void Collect(int pickerId, PickerType pickerType)
         {
             _messageCenter.Post(new PlayerTouchedCollectMessage(CollectId, collectObjectData.CollectType));
+            collectParticlePlayer.Play(collectAnimationComponent.OutlineColorValue);
         }
 
         [Button("重置配置数据")]

@@ -12,8 +12,8 @@ namespace Network.Server.Collect
         private void Init(MessageCenter messageCenter)
         {
             _messageCenter = messageCenter;
-            _messageCenter.Register<PlayerTouchedCollectMessage>(MessageType.PlayerTouchedCollectable, OnPlayerTouchedCollect);
-            _messageCenter.Register<PlayerCollectChestMessage>(MessageType.PlayerTouchedChest, OnPlayerTouchedChest);
+            _messageCenter.Register<PlayerTouchedCollectMessage>(OnPlayerTouchedCollect);
+            _messageCenter.Register<PlayerCollectChestMessage>(OnPlayerTouchedChest);
         }
 
         private void OnPlayerTouchedChest(PlayerCollectChestMessage playerCollectChestMessage)

@@ -14,6 +14,7 @@ namespace Network.Server.Collect
         private Sequence _scaleSequence;
         private Color _originalColor;
         private static readonly int OutlineColor = Shader.PropertyToID("_OutlineColor");
+        public Color OutlineColorValue => _originalColor;
 
         private void Awake()
         {

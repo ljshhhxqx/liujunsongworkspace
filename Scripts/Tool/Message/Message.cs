@@ -6,14 +6,6 @@ namespace Tool.Message
     public abstract class Message
     {
         public int UID { get; set; }
-        
-        //消息类型
-        public MessageType Type { get; private set; }
-
-        protected Message(MessageType type)
-        {
-            Type = type;
-        }
     }
     
     public class PlayerMovedMessage : Message
@@ -22,7 +14,7 @@ namespace Tool.Message
         public Vector3 Movement { get;  set; }
         public float VerticalSpeed { get; set; }
         
-        public PlayerMovedMessage(Vector3 previousPosition, Vector3 movement, float verticalSpeed): base(MessageType.PlayerMoved)
+        public PlayerMovedMessage(Vector3 previousPosition, Vector3 movement, float verticalSpeed)
         {
             PreviousPosition = previousPosition;
             Movement = movement;
@@ -34,7 +26,7 @@ namespace Tool.Message
     {
         public float VerticalSpeed { get; set; }
 
-        public PlayerGravityEffectMessage(float verticalSpeed): base(MessageType.PlayerGravityEffect)
+        public PlayerGravityEffectMessage(float verticalSpeed)
         {
             VerticalSpeed = verticalSpeed;
         }
@@ -44,7 +36,7 @@ namespace Tool.Message
     {
         public Quaternion Quaternion { get;set; }
 
-        public PlayerRotatedMessage(Quaternion quaternion): base(MessageType.PlayerRotated)
+        public PlayerRotatedMessage(Quaternion quaternion)
         {
             Quaternion = quaternion;
         }
@@ -56,7 +48,7 @@ namespace Tool.Message
         public bool IsJumping { get;set; }
         public bool IsRushing { get;set; }
 
-        public PlayerInputMessage(bool isRunning): base(MessageType.PlayerRotated)
+        public PlayerInputMessage(bool isRunning)
         {
             IsRunning = isRunning;
         }
@@ -67,7 +59,7 @@ namespace Tool.Message
         public int CollectID { get; set; }
         public CollectType CollectType { get; set; }
 
-        public PlayerTouchedCollectMessage(int collectID, CollectType collectType) : base(MessageType.PlayerTouchedCollectable)
+        public PlayerTouchedCollectMessage(int collectID, CollectType collectType)
         {
             CollectID = collectID;
             CollectType = collectType;
@@ -79,10 +71,49 @@ namespace Tool.Message
         public int CollectID { get; set; }
         public CollectType CollectType { get; set; }
 
-        public PlayerCollectChestMessage(int collectID, CollectType collectType) : base(MessageType.PlayerTouchedChest)
+        public PlayerCollectChestMessage(int collectID, CollectType collectType)
         {
             CollectID = collectID;
             CollectType = collectType;
+        }
+    }
+
+    public class CollectObjectsEmptyMessage : Message
+    {
+        public int Round { get; set; }
+        public CollectObjectsEmptyMessage(int round)
+        {
+            Round = round;
+        }
+    }
+
+    public class GameWarmupMessage : Message
+    {
+        public float TimeLeft { get; set; }
+
+        public GameWarmupMessage(float timeLeft)
+        {
+            TimeLeft = timeLeft;
+        }
+    }
+
+    public class GameStartMessage : Message
+    {
+        public string LevelName { get; set; }
+
+        public GameStartMessage(string levelName)
+        {
+            LevelName = levelName;
+        }
+    }
+
+    public class GameCountDownMessage : Message
+    {
+        public float TimeLeft { get; set; }
+
+        public GameCountDownMessage(float timeLeft)
+        {
+            TimeLeft = timeLeft;
         }
     }
 }

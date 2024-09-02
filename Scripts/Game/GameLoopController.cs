@@ -10,23 +10,33 @@ using VContainer;
 public class GameLoopController : NetworkMonoController
 {
     [SyncVar]
-    private int mainGameTime = 180; // 3分钟的倒计时
+    private int mainGameTime = 180 * 1000; // 3分钟的倒计时
     [SyncVar]
-    private int warmupTime = 10; // 10秒热身时间
+    private int warmupTime = 10 * 1000; // 10秒热身时间
+    [SyncVar]
+    private int currentRound = 1; // 当前轮数
     private CancellationTokenSource cts;
     private GameEventManager _gameEventManager;
+    private GameDataConfig _gameDataConfig;
     private MessageCenter _messageCenter;
     private ItemsSpawner _itemsSpawner;
     private string _gameSceneName;
         
     [Inject]
-    private void Init(MessageCenter messageCenter, GameEventManager gameEventManager, IObjectResolver objectResolver)
+    private void Init(MessageCenter messageCenter, GameEventManager gameEventManager, IObjectResolver objectResolver, IConfigProvider configProvider)
     {
         _messageCenter = messageCenter;
         _gameEventManager = gameEventManager;
         _itemsSpawner = GetComponent<ItemsSpawner>();
+        _gameDataConfig = configProvider.GetConfig<GameDataConfig>();
         _gameEventManager.Subscribe<GameReadyEvent>(OnGameReady);
+        _messageCenter.Register<CollectObjectsEmptyMessage>(OnCollectObjectsEmpty);
         objectResolver.Inject(_itemsSpawner);
+    }
+
+    private void OnCollectObjectsEmpty(CollectObjectsEmptyMessage collectObjectsEmptyMessage)
+    {
+        
     }
 
     private void OnGameReady(GameReadyEvent gameReadyEvent)
@@ -39,22 +49,37 @@ public class GameLoopController : NetworkMonoController
     {
         // 1. 热身阶段
         Debug.Log("Game Warmup Started");
-        await UniTask.Delay(warmupTime * 1000, cancellationToken: cts.Token);
+        await StartWarmupAsync(cts.Token);
         Debug.Log("Warmup Complete. Game Start!");
 
         // 2. 开始总的倒计时
         Debug.Log("Main game timer starts now!");
+        _messageCenter.Post(new GameStartMessage(_gameSceneName));
         await StartMainGameTimerAsync(mainGameTime, cts.Token);
 
         Debug.Log("Main game over. Exiting...");
     }
 
-    private async UniTask GenerateItemsAsync(CancellationToken token)
+    private async UniTask StartWarmupAsync(CancellationToken token)
     {
-        // 假设物品生成需要一些时间，异步模拟
-        await UniTask.Delay(2000, cancellationToken: token); // 生成物品的延迟
-        Debug.Log("All Items Generated.");
+        Debug.Log("Warmup Started");
+        int remainingTime = warmupTime;
+
+        while (remainingTime > 0 && !token.IsCancellationRequested)
+        {
+            Debug.Log($"Warmup Timer: {remainingTime} seconds remaining");
+            await UniTask.Delay(1000, cancellationToken: token);
+            remainingTime--;
+            _messageCenter.Post(new GameWarmupMessage(remainingTime));
+        }
     }
+
+    // private async UniTask GenerateItemsAsync(CancellationToken token)
+    // {
+    //     // 假设物品生成需要一些时间，异步模拟
+    //     await UniTask.Delay(2000, cancellationToken: token); // 生成物品的延迟
+    //     Debug.Log("All Items Generated.");
+    // }
 
     private async UniTask StartMainGameTimerAsync(int totalTime, CancellationToken token)
     {
