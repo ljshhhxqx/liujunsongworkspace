@@ -135,10 +135,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7367b0d8025045f09894bf82205c3110, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collectObjectData:
-    CollectType: 1
-    CollectObjectClass: 0
-    Weight: 0
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  collectType: 5
 --- !u!114 &991584643400051567
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -16,18 +16,33 @@ MonoBehaviour:
   - CollectType: 1
     CollectObjectClass: 1
     Weight: 5
+    PropertyType:
+      Type: 5
+      Value: 5
   - CollectType: 2
     CollectObjectClass: 1
     Weight: 10
+    PropertyType:
+      Type: 5
+      Value: 10
   - CollectType: 3
     CollectObjectClass: 1
     Weight: 20
+    PropertyType:
+      Type: 5
+      Value: 20
   - CollectType: 4
     CollectObjectClass: 2
     Weight: 15
+    PropertyType:
+      Type: 0
+      Value: 5
   - CollectType: 5
     CollectObjectClass: 2
     Weight: 15
+    PropertyType:
+      Type: 0
+      Value: 2
   collectData:
     MaxWeight: 100
     ItemSpacing: 0.5

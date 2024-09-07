@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using AOTScripts.Tool.ECS;
 using Cysharp.Threading.Tasks;
+using HotUpdate.Scripts.Collector;
 using Mirror;
 using Tool.GameEvent;
 using Tool.Message;

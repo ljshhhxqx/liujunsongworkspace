@@ -15,6 +15,7 @@ using Tool.GameEvent;
 using Tool.Message;
 using UI.UIBase;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using VContainer;
 using VContainer.Unity;
 
@@ -25,12 +26,16 @@ namespace Game.Inject
     /// </summary>
     public class GameMainLifetimeScope : LifetimeScope
     {
+        private IContainerBuilder _builder;
+        
         protected override void Configure(IContainerBuilder builder)
         {
+            _builder = builder;
+            Dispose();
             builder.RegisterEntryPoint<GameLauncher>();
             builder.Register<ConfigManager>(Lifetime.Singleton);
-            builder.Register<PlayerManager>(Lifetime.Singleton);
-            builder.Register<GameCommonVariant>(Lifetime.Singleton);
+            //builder.Register<PlayerManager>(Lifetime.Singleton);
+            //builder.Register<GameCommonVariant>(Lifetime.Singleton);
             builder.Register<CollectItemSpawner>(Lifetime.Singleton);
             builder.Register<PlayFabAccountManager>(Lifetime.Singleton);
             builder.Register<PlayFabMessageHandler>(Lifetime.Singleton);
@@ -51,6 +56,11 @@ namespace Game.Inject
             builder.RegisterComponentInHierarchy<ObjectInjectProvider>();
             builder.RegisterComponentInHierarchy<RepeatedTask>();
             Debug.Log("GameLifetimeScope Configure");
+        }
+
+        public new void OnDestroy()
+        {
+            
         }
     }
 }

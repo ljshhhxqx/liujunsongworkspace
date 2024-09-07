@@ -34,6 +34,7 @@ namespace Config
         public CollectType CollectType;
         public CollectObjectClass CollectObjectClass;
         public int Weight;
+        public PropertyType PropertyType;
     }
 
     [Serializable]

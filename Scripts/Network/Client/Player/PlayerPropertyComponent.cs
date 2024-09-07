@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using AOTScripts.Tool.ECS;
 using UniRx;
+using UnityEngine;
 using VContainer;
 
 namespace HotUpdate.Scripts.Network.Client.Player
@@ -13,9 +14,9 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private ReactiveProperty<PropertyType> Strength { get; } = new ReactiveProperty<PropertyType>(new PropertyType(PropertyTypeEnum.Strength, 50));
         private ReactiveProperty<PropertyType> Speed { get; } = new ReactiveProperty<PropertyType>(new PropertyType(PropertyTypeEnum.Speed, 10));
         private ReactiveProperty<PropertyType> Attack { get; } = new ReactiveProperty<PropertyType>(new PropertyType(PropertyTypeEnum.Attack, 20));
-
+        private ReactiveProperty<PropertyType> Score { get; } = new ReactiveProperty<PropertyType>(new PropertyType(PropertyTypeEnum.Score, 10));
         private readonly Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>> _properties = new Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>>();
-
+        
         [Inject]
         private void Init()
         {

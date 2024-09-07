@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using HotUpdate.Scripts.Network.Client.Player;
+using HotUpdate.Scripts.Network.Server.InGame;
 using UniRx;
+using UnityEngine;
 
 public class BuffManager
 {
-    private List<IBuff> _activeBuffs = new List<IBuff>();
+    private readonly List<IBuff> _activeBuffs = new List<IBuff>();
+    private readonly PlayerInGameManager _playerInGameManager;
     private BuffDatabase _buffDatabase;
     private IDisposable _disposable;
+    
 
     public void StartBuffManager(BuffDatabase buffDatabase)
     {
@@ -25,7 +29,7 @@ public class BuffManager
         var buffData = _buffDatabase.GetBuffData(buffType);
         if (buffData.HasValue)
         {
-            var newBuff = new Buff(buffData.Value.buffType, buffData.Value.propertyTypeEnum, buffData.Value.duration, buffData.Value.effectStrength);
+            var newBuff = new Buff(buffData.Value.buffType, buffData.Value.propertyTypeEnum, buffData.Value.duration, buffData.Value.effectStrength, targetStats.PlayerId);
             ApplyBuff(newBuff, targetStats);
             _activeBuffs.Add(newBuff);
         }
@@ -34,7 +38,7 @@ public class BuffManager
             var randomBuffData = _buffDatabase.GetRandomBuffData(buffType);
             if (randomBuffData.HasValue)
             {
-                var newRandomBuff = new RandomBuff(randomBuffData.Value.buffType, randomBuffData.Value.propertyTypeEnum, randomBuffData.Value.durationRange, randomBuffData.Value.effectStrengthRange);
+                var newRandomBuff = new RandomBuff(randomBuffData.Value.buffType, randomBuffData.Value.propertyTypeEnum, randomBuffData.Value.durationRange, randomBuffData.Value.effectStrengthRange, targetStats.PlayerId);
                 ApplyBuff(newRandomBuff, targetStats);
                 _activeBuffs.Add(newRandomBuff);
             }
@@ -51,17 +55,18 @@ public class BuffManager
         targetStats.RevertProperty(buff.PropertyTypeEnum, buff.EffectStrength);
     }
 
-    void Update()
+    private void Update()
     {
-        // for (int i = activeBuffs.Count - 1; i >= 0; i--)
-        // {
-        //     IBuff buff = activeBuffs[i];
-        //     buff.Update(Time.deltaTime);
-        //     if (buff.IsExpired())
-        //     {
-        //         RemoveBuff(buff, targetStats);
-        //         activeBuffs.RemoveAt(i);
-        //     }
-        // }
+        for (var i = _activeBuffs.Count - 1; i >= 0; i--)
+        {
+            var buff = _activeBuffs[i];
+            buff.Update(Time.deltaTime);
+            if (buff.IsExpired())
+            {
+                var targetStats = _playerInGameManager.GetPlayer(buff.TargetPlayerId);
+                RemoveBuff(buff, targetStats.PlayerProperty);
+                _activeBuffs.RemoveAt(i);
+            }
+        }
     }
 }

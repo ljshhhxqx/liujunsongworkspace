@@ -1,6 +1,9 @@
-﻿using Config;
-using Sirenix.OdinInspector;
+﻿using System;
 using System.IO;
+using Config;
+using HotUpdate.Scripts.Collector;
+using Network.Server.Collect;
+using Sirenix.OdinInspector;
 using Tool.Message;
 using UniRx;
 using UniRx.Triggers;
@@ -8,16 +11,15 @@ using UnityEditor;
 using UnityEngine;
 using VContainer;
 
-namespace Network.Server.Collect
+namespace HotUpdate.Scripts.Network.Server.Collect
 {
     public class CollectObjectController : CollectObject
     {
-        [SerializeField]
+        [SerializeField] 
+        private CollectType collectType;
         private CollectObjectData collectObjectData;
-        [SerializeField]
-        private CollectParticlePlayer collectParticlePlayer;
-        [SerializeField]
-        private CollectAnimationComponent collectAnimationComponent;
+        private CollectParticlePlayer _collectParticlePlayer;
+        private CollectAnimationComponent _collectAnimationComponent;
         
         public override CollectObjectData CollectData => collectObjectData;
         public override Collider Collider => _collider;
@@ -30,6 +32,8 @@ namespace Network.Server.Collect
         private void Init(MessageCenter messageCenter, IConfigProvider configProvider)
         {
             _messageCenter = messageCenter;
+            _collectParticlePlayer = GetComponentInChildren<CollectParticlePlayer>();
+            _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
             _collider = GetComponent<Collider>();
             _collider.OnTriggerEnterAsObservable()
                 .Subscribe(OnTriggerEnterObserver)
@@ -54,7 +58,18 @@ namespace Network.Server.Collect
         protected override void Collect(int pickerId, PickerType pickerType)
         {
             _messageCenter.Post(new PlayerTouchedCollectMessage(CollectId, collectObjectData.CollectType));
-            collectParticlePlayer.Play(collectAnimationComponent.OutlineColorValue);
+            _collectParticlePlayer.Play(_collectAnimationComponent.OutlineColorValue);
+        }
+        
+        [Button("设置CollectType")]
+        private void SetCollectType()
+        {
+            if (Enum.TryParse(gameObject.name, out CollectType type))
+            {
+                collectType = type;
+                return;
+            }
+            throw new ArgumentException("GameObject name is not a valid CollectType");
         }
 
         [Button("重置配置数据")]

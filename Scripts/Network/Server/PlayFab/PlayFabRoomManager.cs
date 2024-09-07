@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Data;
+using HotUpdate.Scripts.Network.Server.InGame;
 using Network.Data;
 using PlayFab;
 using PlayFab.CloudScriptModels;
@@ -19,10 +20,12 @@ namespace Network.Server.PlayFab
     {
         private readonly UIManager _uiManager;
         private readonly IPlayFabClientCloudScriptCaller _playFabClientCloudScriptCaller;
+        private readonly PlayerInGameManager _playerInGameManager;
         
         private int _pollCount = 0;
         private bool _isMatchmaking;  
         private const int MaxPollAttempts = 12; // 最大轮询次数
+        private RoomData _currentRoomData;
         public RoomsData RoomsData { get; private set; }
         public string CurrentRoomId { get; private set; }
         public bool IsMatchmaking {
@@ -38,14 +41,16 @@ namespace Network.Server.PlayFab
         public event Action<RoomData> OnCreateRoom;
         public event Action<RoomData> OnPlayerJoined;
         public event Action<RoomData> OnJoinRoom;
+        public event Action<RoomData> OnRefreshRoom;
         public event Action<bool> OnMatchmakingChanged;
         public event Action<InvitablePlayersData> OnRefreshPlayers;
         
         
         [Inject]
-        private PlayFabRoomManager(UIManager uiManager, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller)
+        private PlayFabRoomManager(UIManager uiManager, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller, PlayerInGameManager playerInGameManager)
         {
             _uiManager = uiManager;
+            _playerInGameManager = playerInGameManager;
             _playFabClientCloudScriptCaller = playFabClientCloudScriptCaller;
         }
 
@@ -200,6 +205,7 @@ namespace Network.Server.PlayFab
                 CurrentRoomId = roomData.RoomId;
                 _uiManager.SwitchUI<RoomScreenUI>(() =>
                 {
+                    _currentRoomData = roomData;
                     OnCreateRoom?.Invoke(roomData);
                 });
                 Debug.Log("房间创建成功");
@@ -235,6 +241,7 @@ namespace Network.Server.PlayFab
             {
                 _uiManager.SwitchUI<RoomScreenUI>();
             }
+            _currentRoomData = roomData;
             OnPlayerJoined?.Invoke(roomData);
         }
         
@@ -285,6 +292,7 @@ namespace Network.Server.PlayFab
             if (data.TryGetValue("roomData", out var value))
             {
                 var roomData = JsonUtility.FromJson<RoomData>(value.ToString());
+                _currentRoomData = roomData;
                 OnPlayerJoined?.Invoke(roomData);
                 CurrentRoomId = null;
                 _uiManager.SwitchUI<MainScreenUI>();
@@ -360,12 +368,23 @@ namespace Network.Server.PlayFab
                 FunctionParameter = new { roomId = CurrentRoomId },
                 Entity = PlayFabData.EntityKey.Value,
             };
-            _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnGetInvitablePlayersSuccess, OnError);
+            _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnRefreshRoomDataSuccess, OnError);
+        }
+
+        private void OnRefreshRoomDataSuccess(ExecuteCloudScriptResult result)
+        {
+            var data = result.FunctionResult.ParseCloudScriptResultToDic();
+            if (data.TryGetValue("roomData", out var value))
+            {
+                var roomData = JsonUtility.FromJson<RoomData>(value.ToString());
+                OnRefreshRoom?.Invoke(roomData);
+            }
         }
 
         public void StartGame()
         {
             // TODO: 根据房间性质，开启一个云服务器或者本地服务器进行游戏
+            _playerInGameManager.InitRoomPlayer(_currentRoomData);
         }
 
         public IEnumerable<RoomData> GetFilteredRooms(string inputText)

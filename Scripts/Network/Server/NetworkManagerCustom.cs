@@ -1,12 +1,15 @@
-﻿using AOTScripts.Tool.ECS;
+﻿using System.Collections.Generic;
+using AOTScripts.Tool.ECS;
 using Game.Map;
+using HotUpdate.Scripts.Network.Client.Player;
+using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
+using Network.Data;
+using Network.NetworkMes;
 using Tool.GameEvent;
 using UI.UIBase;
 using UnityEngine;
 using VContainer;
-using VContainer.Unity;
-using Random = UnityEngine.Random;
 
 namespace Network.Server
 {
@@ -17,9 +20,11 @@ namespace Network.Server
         private NetworkManagerHUD _networkManagerHUD;
         private UIManager _uiManager;
         private IObjectResolver _objectResolver;
+        private readonly Dictionary<int, string> _playerAccountIdMap = new Dictionary<int, string>();
+        private PlayerInGameManager _playerInGameManager;
 
         [Inject]
-        private void Init(GameEventManager gameEventManager, UIManager uIManager, IObjectResolver objectResolver)
+        private void Init(GameEventManager gameEventManager, UIManager uIManager, IObjectResolver objectResolver, PlayerInGameManager playerInGameManager)
         {
             _gameEventManager = gameEventManager;
             _spawnPoints = FindObjectsByType<NetworkStartPosition>(FindObjectsSortMode.None);
@@ -27,6 +32,7 @@ namespace Network.Server
             _networkManagerHUD.enabled = false;
             _gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnSceneResourcesLoaded);
             _objectResolver = objectResolver;
+            _playerInGameManager = playerInGameManager;
             //this.playerManager = playerManager;
         }
 
@@ -38,20 +44,62 @@ namespace Network.Server
             }
         }
 
-        [Server]
         public override void OnStartServer()
         {
+            base.OnStartServer();
             // 监听服务器上的连接和断开事件
             NetworkServer.OnConnectedEvent += HandleServerConnected;
             NetworkServer.OnDisconnectedEvent += HandleServerDisconnected;
+            NetworkServer.RegisterHandler<PlayerConnectMessage>(OnServerPlayerAccountIdMessage);
         }
 
-        [Server]
+        private void OnServerPlayerAccountIdMessage(NetworkConnectionToClient conn, PlayerConnectMessage message)
+        { 
+            // 获取已添加的玩家对象
+            if (conn.identity != null)
+            {
+                var player = conn.identity.gameObject;
+                var playerData = player.GetComponent<PlayerPropertyComponent>();
+                if (playerData != null)
+                {
+                    playerData.PlayerId = message.UID;
+                    _playerAccountIdMap[conn.connectionId] = message.UID;
+                    _playerInGameManager.InitPlayerProperty(playerData);
+                }
+            }
+
+            Debug.Log("Received PlayerAccountId from client: " + message.UID);
+        }
+
         public override void OnStopServer()
         {
+            base.OnStopServer();
             // 移除监听器
             NetworkServer.OnConnectedEvent -= HandleServerConnected;
             NetworkServer.OnDisconnectedEvent -= HandleServerDisconnected;
+        }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            NetworkClient.RegisterHandler<PlayerConnectMessage>(OnPlayerConnectedMessage);
+            // NetworkClient.RegisterHandler<PlayerDisconnectMessage>(OnPlayerDisconnectedMessage);
+            NetworkClient.OnConnectedEvent += OnClientConnectToServer;
+        }
+
+        private void OnClientConnectToServer()
+        {
+            // 获取当前连接
+            NetworkConnection conn = NetworkClient.connection;
+
+            // 发送 PlayerAccountId 给服务器
+            var msg = new PlayerConnectMessage(PlayFabData.PlayFabId.Value, conn.connectionId, PlayFabData.PlayerReadOnlyData.Value.Nickname);
+            conn.Send(msg);
+        }
+
+        private void OnPlayerConnectedMessage(PlayerConnectMessage message)
+        {
+            Debug.Log($"Received PlayerAccountId: {message.UID} - {message.Name} - {message.ConnectionID.ToString()}");
         }
 
         [Server]
@@ -77,19 +125,19 @@ namespace Network.Server
             }
         }
 
-        [Server]
         private void HandleServerConnected(NetworkConnection conn)
         {
             // 确保只有服务器执行注册玩家的逻辑
             //playerManager.RegisterPlayer(conn);
             Debug.Log($"Player connected: {conn.connectionId}");
+            
         }
 
-        [Server]
         private void HandleServerDisconnected(NetworkConnection conn)
         {
             // 确保只有服务器执行注销玩家的逻辑
-            //playerManager.UnregisterPlayer(conn.connectionId);
+            _playerInGameManager.RemovePlayer(conn.connectionId);
+            _playerAccountIdMap.Remove(conn.connectionId);
             Debug.Log($"Player disconnected: {conn.connectionId}");
         }
 

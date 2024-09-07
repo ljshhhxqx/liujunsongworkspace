@@ -218,8 +218,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7367b0d8025045f09894bf82205c3110, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   collectType: 3
-  collectObjectClass: 1
 --- !u!114 &-2325120657532671922
 MonoBehaviour:
   m_ObjectHideFlags: 0
