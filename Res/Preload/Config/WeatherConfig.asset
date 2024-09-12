@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 366e1d2e81c1a734297dfcc21b8d5ded, type: 3}
+  m_Name: WeatherConfig
+  m_EditorClassIdentifier: 
+  weatherData:
+  - weatherType: 1
+    cloudColor: {r: 1, g: 1, b: 1, a: 1}
+    cloudDensityRange:
+      min: 1.6
+      max: 2
+    cloudSpeedRange:
+      min: -0.2
+      max: 0.2
+    lightIntensity:
+      min: 0.9
+      max: 1
+    fogRatio: 0.25
+    fogDensity:
+      min: 0.01
+      max: 0.2
+    thunderRatio: 0
+  - weatherType: 2
+    cloudColor: {r: 0.8773585, g: 0.8773585, b: 0.8773585, a: 0.8666667}
+    cloudDensityRange:
+      min: 0.1
+      max: 1.6
+    cloudSpeedRange:
+      min: 0.2
+      max: 0.8
+    lightIntensity:
+      min: 0
+      max: 0
+    fogRatio: 0.05
+    fogDensity:
+      min: 0.01
+      max: 0.03
+    thunderRatio: 0
+  - weatherType: 3
+    cloudColor: {r: 0.7735849, g: 0.7735849, b: 0.7735849, a: 0.7176471}
+    cloudDensityRange:
+      min: 0
+      max: 0.1
+    cloudSpeedRange:
+      min: 0.8
+      max: 2
+    lightIntensity:
+      min: 0
+      max: 0
+    fogRatio: 0
+    fogDensity:
+      min: 0
+      max: 0
+    thunderRatio: 0
+  - weatherType: 4
+    cloudColor: {r: 0.8584906, g: 0.8584906, b: 0.8584906, a: 0.7176471}
+    cloudDensityRange:
+      min: 0
+      max: 0.1
+    cloudSpeedRange:
+      min: 0
+      max: 0
+    lightIntensity:
+      min: 0
+      max: 0
+    fogRatio: 0
+    fogDensity:
+      min: 0
+      max: 0
+    thunderRatio: 0

@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
-using AOTScripts.Tool;
+using AOTScripts.Tool.ECS;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using VContainer;
 using Object = UnityEngine.Object;
 
 namespace HotUpdate.Scripts.Audio
 {
-    public class AudioManager : IManager
+    public class AudioManager : NetworkMonoComponent
     {
         private AudioSource _musicAudioSource;
         private AudioSource _effectAudioSource;
@@ -17,7 +18,8 @@ namespace HotUpdate.Scripts.Audio
         private readonly Dictionary<AudioEffectType, AudioClip> _effectAudioClips = new Dictionary<AudioEffectType, AudioClip>();
         private readonly List<AudioSource> _activeAudioSources = new List<AudioSource>();
         
-        public async void Init()
+        [Inject]
+        private async void Init()
         {
             var clips = await ResourceManager.Instance.GetAudioClip();
             foreach (var clip in clips)
@@ -41,12 +43,7 @@ namespace HotUpdate.Scripts.Audio
             });
         }
 
-        public void Update()
-        {
-            
-        }
-
-        public void Dispose()
+        private void OnDestroy()
         {
             _audioClips.Clear();
             _effectAudioClips.Clear();

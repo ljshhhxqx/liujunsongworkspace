@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4000012464943430}
+  - component: {fileID: -860309574215610542}
   m_Layer: 0
   m_Name: Clouds
   m_TagString: Untagged
@@ -33,6 +34,20 @@ Transform:
   - {fileID: 4000010543339178}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-860309574215610542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000010237739742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b827eea325344194accac7ae0c0be400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lowCloud: {fileID: 2100000, guid: 4195d31cc7b144914b4ffe90c3adf382, type: 2}
+  highCloud: {fileID: 2100000, guid: 0e149e22a60d2eb47b181688cff3297d, type: 2}
 --- !u!1 &1000014227749990
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,6 +5,8 @@ using Config;
 using Data;
 using Game.Map;
 using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Game;
+using HotUpdate.Scripts.Weather;
 using Model;
 using Network.Server;
 using Network.Server.Edgegap;
@@ -26,17 +28,14 @@ namespace Game.Inject
     /// </summary>
     public class GameMainLifetimeScope : LifetimeScope
     {
-        private IContainerBuilder _builder;
-        
         protected override void Configure(IContainerBuilder builder)
         {
-            _builder = builder;
-            Dispose();
             builder.RegisterEntryPoint<GameLauncher>();
             builder.Register<ConfigManager>(Lifetime.Singleton);
             //builder.Register<PlayerManager>(Lifetime.Singleton);
             //builder.Register<GameCommonVariant>(Lifetime.Singleton);
             builder.Register<CollectItemSpawner>(Lifetime.Singleton);
+            builder.Register<WeatherManager>(Lifetime.Singleton);
             builder.Register<PlayFabAccountManager>(Lifetime.Singleton);
             builder.Register<PlayFabMessageHandler>(Lifetime.Singleton);
             builder.Register<PlayFabRoomManager>(Lifetime.Singleton);
@@ -56,11 +55,6 @@ namespace Game.Inject
             builder.RegisterComponentInHierarchy<ObjectInjectProvider>();
             builder.RegisterComponentInHierarchy<RepeatedTask>();
             Debug.Log("GameLifetimeScope Configure");
-        }
-
-        public new void OnDestroy()
-        {
-            
         }
     }
 }

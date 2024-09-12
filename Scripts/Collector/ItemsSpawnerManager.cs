@@ -1,19 +1,19 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Tool.ECS;
-using Collector;
 using Config;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Network.Server.Collect;
-using Network.Server.Collect;
 using Tool.GameEvent;
 using Tool.Message;
 using UnityEngine;
 using VContainer;
+using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Collector
 {
-    public class ItemsSpawner : NetworkMonoComponent
+    public class ItemsSpawnerManager : NetworkMonoComponent
     {
         public struct Grid
         {
@@ -71,6 +71,7 @@ namespace HotUpdate.Scripts.Collector
             _currentId = 0;
             _spawnedItems.Clear();
             _gridMap.Clear();
+            _gridMap = _mapBoundDefiner.GridMap.ToDictionary(x => x,_ => new Grid());
             if (_collectiblePrefabs.Count > 0)
             {
                 var res = ResourceManager.Instance.GetMapCollectObject(mapName);
@@ -254,7 +255,7 @@ namespace HotUpdate.Scripts.Collector
                 var item = itemsToSpawn[i];
                 var position = startPoint + _itemSpacing * i * direction + Vector3.up * _itemHeight;
 
-                if (!IsPositionValid(position, itemsToSpawn[i]))
+                if (!IsPositionValid(position, itemsToSpawn[i].component.GetComponent<Collider>()))
                 {
                     if (Physics.Raycast(new Vector3(position.x, 1000, position.z), Vector3.down, out var hit, Mathf.Infinity, _sceneLayer))
                     {
@@ -291,29 +292,21 @@ namespace HotUpdate.Scripts.Collector
     
         private Vector3 GetRandomStartPoint()
         {
-            while (true)
+            bool IsPositionValidWithoutItem(Vector3 position)
             {
-                var randomX = Random.Range(_mapBoundDefiner.MapMinBoundary.x, _mapBoundDefiner.MapMaxBoundary.x);
-                var randomZ = Random.Range(_mapBoundDefiner.MapMinBoundary.z, _mapBoundDefiner.MapMaxBoundary.z);
-                var position = new Vector3(randomX, 1000, randomZ);
-                if (Physics.Raycast(position, Vector3.down, out var hit, Mathf.Infinity, _sceneLayer))
-                {
-                    var startPoint = new Vector3(randomX, hit.point.y + _itemHeight, randomZ);
-                    if (IsWithinBoundary(startPoint) && IsPositionValid(startPoint, null))
-                    {
-                        return startPoint;
-                    }
-                }
+                return IsPositionValid(position, null);
             }
+
+            var randomPos = _mapBoundDefiner.GetRandomPoint(IsPositionValidWithoutItem);
+            return new Vector3(randomPos.x, randomPos.y + _itemHeight, randomPos.z);
         }
     
         private Vector3 GetRandomDirection()
         {
-            float angle = Random.Range(0, 360);
-            return new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)).normalized;
+            return _mapBoundDefiner.GetRandomDirection();
         }
 
-        private bool IsPositionValid(Vector3 position, CollectibleItemData itemPrefab)
+        private bool IsPositionValid(Vector3 position, Collider itemPrefab)
         {
             var gridPos = GetGridPosition(position);
             if (_gridMap.TryGetValue(gridPos, out Grid grid))
@@ -324,16 +317,28 @@ namespace HotUpdate.Scripts.Collector
                 }
                 if (itemPrefab != null)
                 {
-                    var itemCollider = itemPrefab.component.GetComponent<BoxCollider>();
-                    if (itemCollider != null)
+                    Collider[] hitColliders =null ;
+                    if (itemPrefab is BoxCollider boxCollider)
                     {
-                        var hitColliders = Physics.OverlapBox(position, itemCollider.bounds.extents, Quaternion.identity, _sceneLayer);
-                        foreach (var hitCollider in hitColliders)
+                        hitColliders = Physics.OverlapBox(position, boxCollider.bounds.extents, Quaternion.identity, _sceneLayer);
+                    }
+                    else if (itemPrefab is SphereCollider sphereCollider)
+                    {
+                        hitColliders = Physics.OverlapSphere(position, sphereCollider.radius, _sceneLayer);
+                    }
+                    else if (itemPrefab is CapsuleCollider capsuleCollider)
+                    {
+                        hitColliders = Physics.OverlapCapsule(position, capsuleCollider.transform.position, capsuleCollider.radius, _sceneLayer);
+                    }
+                    else
+                    {
+                        throw new Exception("Unsupported collider type");
+                    }
+                    foreach (var hitCollider in hitColliders)
+                    {
+                        if (hitCollider.gameObject.GetInstanceID() == itemPrefab.gameObject.GetInstanceID())
                         {
-                            if (hitCollider.gameObject.GetInstanceID() == itemPrefab.component.gameObject.GetInstanceID())
-                            {
-                                return false;
-                            }
+                            return false;
                         }
                     }
                 }

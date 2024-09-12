@@ -1,12 +1,12 @@
 ﻿using System;
-using Collector;
 using Common;
 using Config;
 using Cysharp.Threading.Tasks;
 using Data;
-using Game.Inject;
-using Game.Map;
+using Game;
 using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Weather;
 using Network.Data;
 using Network.Server.Edgegap;
 using Network.Server.PlayFab;
@@ -19,12 +19,13 @@ using UI.UIBase;
 using UI.UIs.Exception;
 using UI.UIs.SecondPanel;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using VContainer;
 using VContainer.Unity;
 using ExecuteCloudScriptResult = PlayFab.ClientModels.ExecuteCloudScriptResult;
+using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
-namespace Game
+namespace HotUpdate.Scripts.Game
 {
     public class GameLauncher : IStartable
     {
@@ -38,11 +39,13 @@ namespace Game
         [Inject] private ConfigManager _configManager;
         [Inject] private CollectItemSpawner _collectItemSpawner;
         [Inject] private GameSceneManager _gameSceneManager;
+        private WeatherManager _weatherManager;
         
         public async void Start()
         {
             await LoadResources(); 
             await ResourcesLoadedCallback();
+            _weatherManager = Object.FindObjectOfType<WeatherManager>();
         }
 
         private async UniTask ResourcesLoadedCallback()
@@ -261,6 +264,15 @@ namespace Game
         private void TestLoading()
         {
             _uiManager.SwitchUI<LoadingScreenUI>();
+        }
+
+        [Button("Test Weather")]
+        private void TestWeather()
+        {
+            var index = Random.Range((int)WeatherType.None, (int)WeatherType.Snowy);
+            var weather = (WeatherType)index;
+            Debug.Log($"WeatherType: {weather.ToString()}");
+            _weatherManager.SetWeather(weather);
         }
     }
 }
