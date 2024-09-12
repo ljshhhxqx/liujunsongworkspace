@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Config;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace HotUpdate.Scripts.Config
 {
@@ -45,7 +44,6 @@ namespace HotUpdate.Scripts.Config
     [Serializable]
     public struct DayNightCycleData
     {
-        public float dayDurationInMinutes;
         public float timeMultiplier;
     }
 

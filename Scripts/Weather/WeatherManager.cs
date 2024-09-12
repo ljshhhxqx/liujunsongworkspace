@@ -15,11 +15,16 @@ namespace HotUpdate.Scripts.Weather
 {
     public class WeatherManager : NetworkMonoComponent
     {
+        private float _currentTime;
+        private float _timeMultiplier;  
+        private bool _isDayNightCycle;
+        
         private WeatherConfig _weatherConfig;
         private readonly List<WeatherSetting> _weatherPrefabs = new List<WeatherSetting>();
         private List<GameObject> _weatherEffectPrefabs = new List<GameObject>();
         private WeatherSetting _currentWeatherSetting;
         private MapBoundDefiner _mapBoundDefiner;
+        private LightAndFogEffect _lightAndFogEffect;
         private readonly Dictionary<Type, WeatherEffects.WeatherEffects> _weatherEffectsDict = new Dictionary<Type, WeatherEffects.WeatherEffects>();
         private readonly Dictionary<WeatherType, WeatherSetting> _weatherSettingDict = new Dictionary<WeatherType, WeatherSetting>();
 
@@ -27,6 +32,9 @@ namespace HotUpdate.Scripts.Weather
         private async void Init(IConfigProvider configProvider, MapBoundDefiner mapBoundDefiner)
         {
             _weatherConfig = configProvider.GetConfig<WeatherConfig>();
+            _mapBoundDefiner = mapBoundDefiner;
+            _isDayNightCycle = false;
+            _timeMultiplier = _weatherConfig.DayNightCycleData.timeMultiplier;
             _weatherEffectPrefabs = await ResourceManager.Instance.LoadResourcesAsync<GameObject>($"Weather/WeatherEffects");
             var weatherSettings = await ResourceManager.Instance.LoadResourcesAsync<GameObject>($"Weather/WeatherSettings");
             foreach (var weather in weatherSettings)
@@ -36,10 +44,12 @@ namespace HotUpdate.Scripts.Weather
                     _weatherPrefabs.Add(setting);
                 }
             }
+            _currentTime = Random.Range(0f, 1f);
         }
 
         public void SetWeather(WeatherType weatherType)
         {
+            _isDayNightCycle = true;
             var data = _weatherConfig.GetWeatherData(weatherType);
             if (data.weatherType == WeatherType.None)
             {
@@ -47,7 +57,6 @@ namespace HotUpdate.Scripts.Weather
             }
             ChangeWeatherEffects(data);
             
-
             if (_weatherSettingDict.TryGetValue(weatherType, out var setting))
             {
                 _currentWeatherSetting = setting;
@@ -93,22 +102,35 @@ namespace HotUpdate.Scripts.Weather
                 thunderStartPos = thunderStartPos,
                 thunderEndPos = thunderEndPos,
                 enableThunder = enableThunder,
-                nowTime = Random.Range(0, 1f)
             };
             foreach (var effect in _weatherEffectPrefabs)
             {
-
                 var go = Object.Instantiate(effect);
                 var component = go.GetComponent<WeatherEffects.WeatherEffects>();
                 if (component != null)
                 {
-                    _weatherEffectsDict.Add(component.GetType(), component);
-                    if (component.TryGetComponent<IDayNightCycle>(out var daytimeCycle))
+                    if (component.GetType() == typeof(LightAndFogEffect) && _lightAndFogEffect == null)
                     {
-                        daytimeCycle.DayNightCycleData = _weatherConfig.DayNightCycleData;
+                        _lightAndFogEffect = component.GetComponent<LightAndFogEffect>();
                     }
+
+                    _weatherEffectsDict.Add(component.GetType(), component);
                     component.PlayEffect(weatherEffectData);
                 }
+            }
+        }
+
+        private void Update()
+        {
+            if (!_isDayNightCycle)
+            {
+                return;
+            }
+            _lightAndFogEffect.UpdateSun(_currentTime);
+            _currentTime += Time.deltaTime * _timeMultiplier;
+            if (_currentTime >= 1f)
+            {
+                _currentTime = 0f;
             }
         }
 
@@ -141,7 +163,6 @@ namespace HotUpdate.Scripts.Weather
         public bool enableFog;
         public bool enableThunder;
         public float fogDensity;
-        public float nowTime;
         public float lightDensity;
         public float cloudSpeed;
         public float cloudDensity;
