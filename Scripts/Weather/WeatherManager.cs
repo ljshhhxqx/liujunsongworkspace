@@ -5,26 +5,30 @@ using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Weather.WeatherEffects;
 using HotUpdate.Scripts.Weather.WeatherSettings;
+using Mirror;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using VContainer;
-using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Weather
 {
     public class WeatherManager : NetworkMonoComponent
     {
-        private float _currentTime;
+        [SyncVar]
+        private float _dayNightCycleTime;
         private float _timeMultiplier;  
+        [SyncVar]
         private bool _isDayNightCycle;
-        
+        private float _weatherCycleTimer;
+        private float _weatherCycleDuration;
         private WeatherConfig _weatherConfig;
         private readonly List<WeatherSetting> _weatherPrefabs = new List<WeatherSetting>();
         private List<GameObject> _weatherEffectPrefabs = new List<GameObject>();
         private WeatherSetting _currentWeatherSetting;
         private MapBoundDefiner _mapBoundDefiner;
         private LightAndFogEffect _lightAndFogEffect;
+        private List<Material> _weatherMaterials = new List<Material>();
         private readonly Dictionary<Type, WeatherEffects.WeatherEffects> _weatherEffectsDict = new Dictionary<Type, WeatherEffects.WeatherEffects>();
         private readonly Dictionary<WeatherType, WeatherSetting> _weatherSettingDict = new Dictionary<WeatherType, WeatherSetting>();
 
@@ -35,6 +39,8 @@ namespace HotUpdate.Scripts.Weather
             _mapBoundDefiner = mapBoundDefiner;
             _isDayNightCycle = false;
             _timeMultiplier = _weatherConfig.DayNightCycleData.timeMultiplier;
+            _weatherCycleDuration = _weatherConfig.DayNightCycleData.weatherChangeTime;
+            _weatherMaterials = await ResourceManager.Instance.LoadResourcesAsync<Material>($"Weather/Materials");
             _weatherEffectPrefabs = await ResourceManager.Instance.LoadResourcesAsync<GameObject>($"Weather/WeatherEffects");
             var weatherSettings = await ResourceManager.Instance.LoadResourcesAsync<GameObject>($"Weather/WeatherSettings");
             foreach (var weather in weatherSettings)
@@ -44,12 +50,34 @@ namespace HotUpdate.Scripts.Weather
                     _weatherPrefabs.Add(setting);
                 }
             }
-            _currentTime = Random.Range(0f, 1f);
         }
 
-        public void SetWeather(WeatherType weatherType)
+        [Server]
+        public void StartWeatherAndDayNightCycle()
         {
+            _dayNightCycleTime = Random.Range(0f, 1f);
             _isDayNightCycle = true;
+            RandomWeather();
+        }
+
+        [Server]
+        public void StopWeatherAndDayNightCycle()
+        {
+            _isDayNightCycle = false;
+        }
+
+        [Server]
+        public void RandomWeather()
+        {
+            var randomWeather = _weatherConfig.GetRandomWeatherData();
+            SetWeatherRpc(randomWeather.weatherType);
+        }
+
+        [ClientRpc]
+        public void SetWeatherRpc(WeatherType weatherType)
+        {
+            if (_currentWeatherSetting)
+                _currentWeatherSetting.ClearWeather();
             var data = _weatherConfig.GetWeatherData(weatherType);
             if (data.weatherType == WeatherType.None)
             {
@@ -70,14 +98,13 @@ namespace HotUpdate.Scripts.Weather
                     throw new Exception($"Weather Setting not found for {weatherType}");
                 }
             
-                var instance = Object.Instantiate(prefab.gameObject);
+                var instance = Instantiate(prefab.gameObject);
                 var settingComponent = instance.GetComponent<WeatherSetting>();
                 _weatherSettingDict.Add(weatherType, settingComponent);
                 _currentWeatherSetting = settingComponent;
             }
-            _currentWeatherSetting.SetWeatherData(data);
             _currentWeatherSetting.gameObject.SetActive(true);
-            _currentWeatherSetting.LoadWeather();
+            _currentWeatherSetting.LoadWeather(data);
         }
 
         private void ChangeWeatherEffects(WeatherData data)
@@ -103,9 +130,17 @@ namespace HotUpdate.Scripts.Weather
                 thunderEndPos = thunderEndPos,
                 enableThunder = enableThunder,
             };
+            if (_weatherEffectsDict.Count != 0 && _weatherEffectsDict.Count == _weatherEffectPrefabs.Count)
+            {
+                foreach (var effect in _weatherEffectsDict.Values)
+                {
+                    effect.PlayEffect(weatherEffectData);
+                }
+                return;
+            }
             foreach (var effect in _weatherEffectPrefabs)
             {
-                var go = Object.Instantiate(effect);
+                var go = Instantiate(effect);
                 var component = go.GetComponent<WeatherEffects.WeatherEffects>();
                 if (component != null)
                 {
@@ -115,6 +150,11 @@ namespace HotUpdate.Scripts.Weather
                     }
 
                     _weatherEffectsDict.Add(component.GetType(), component);
+                    if (component.TryGetComponent<IDayNightCycle>(out var dayNightCycle))
+                    {
+                        dayNightCycle.DayNightCycleData = _weatherConfig.DayNightCycleData;
+                    }
+
                     component.PlayEffect(weatherEffectData);
                 }
             }
@@ -126,11 +166,18 @@ namespace HotUpdate.Scripts.Weather
             {
                 return;
             }
-            _lightAndFogEffect.UpdateSun(_currentTime);
-            _currentTime += Time.deltaTime * _timeMultiplier;
-            if (_currentTime >= 1f)
+            _weatherCycleTimer += Time.deltaTime;
+            if (_weatherCycleTimer >= _weatherCycleDuration)
             {
-                _currentTime = 0f;
+                _weatherCycleTimer = 0f;
+                RandomWeather();
+            }
+
+            _lightAndFogEffect.UpdateSun(_dayNightCycleTime);
+            _dayNightCycleTime += Time.deltaTime * _timeMultiplier;
+            if (_dayNightCycleTime >= _timeMultiplier * 60 * 24)
+            {
+                _dayNightCycleTime = 0f;
             }
         }
 
@@ -138,12 +185,12 @@ namespace HotUpdate.Scripts.Weather
         {
             foreach (var effect in _weatherEffectsDict.Values)
             {
-                Object.Destroy(effect.gameObject);
+                Destroy(effect.gameObject);
             }
 
             foreach (var setting in _weatherSettingDict.Values)
             {
-                Object.Destroy(setting.gameObject);
+                Destroy(setting.gameObject);
             }
  
             foreach (var effect in _weatherEffectPrefabs)
@@ -154,6 +201,11 @@ namespace HotUpdate.Scripts.Weather
             foreach (var weatherSetting in _weatherPrefabs)
             {
                 Addressables.Release(weatherSetting.gameObject);
+            }
+            
+            foreach (var material in _weatherMaterials)
+            {
+                Addressables.Release(material);
             }
         }
     }

@@ -7,27 +7,34 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
     public interface IIWeather
     {
         WeatherData WeatherData { get; }
-        void SetWeatherData(WeatherData weatherData);
-        void LoadWeather();
+        void LoadWeather(WeatherData weatherData);
+        void ClearWeather();
     }
     
     public abstract class WeatherSetting : MonoBehaviour, IIWeather 
     {
-        [SerializeField]
-        private WeatherType weatherType;
         public WeatherData WeatherData { get; private set; }
 
-        public void SetWeatherData(WeatherData weatherData)
+        public virtual void LoadWeather(WeatherData weatherData)
         {
             WeatherData = weatherData;
-        }
-
-        public virtual void LoadWeather()
-        {
             if (WeatherData.weatherType == WeatherType.None)
             {
                 throw new ArgumentException("WeatherType is not set.");
             }
         }
+
+        public virtual void ClearWeather()
+        {
+            if (gameObject!= null)
+                gameObject.SetActive(false);
+        }
+    }
+    
+    public struct RainSnowSetting
+    {
+        public ParticleSystem.MinMaxCurve emissionRate; 
+        public ParticleSystem.MinMaxCurve size;
+        public ParticleSystem.MinMaxCurve speed;
     }
 }

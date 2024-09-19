@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using AOTScripts.Tool.ECS;
+using Cysharp.Threading.Tasks;
 using Game.Map;
 using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.Server.InGame;
@@ -65,10 +66,50 @@ namespace Network.Server
                     playerData.PlayerId = message.UID;
                     _playerAccountIdMap[conn.connectionId] = message.UID;
                     _playerInGameManager.InitPlayerProperty(playerData);
+                    InitClientGameControllerRpc(conn);
                 }
+                
+                // // 生成物体
+                
+                // // 服务器端添加玩家
+                // var res = DataJsonManager.Instance.GetResourceData("Player");
+                // var resInfo = ResourceManager.Instance.GetResource<GameObject>(res);
+                // if (resInfo)
+                // {
+                //     //currentPlayer = resInfo.gameObject;
+                //     var spawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Length)];
+                //     var player = Instantiate(resInfo.gameObject, spawnPoint.transform);
+                //     player.transform.localPosition = Vector3.zero;
+                //     player.transform.localRotation = Quaternion.identity;
+                //     NetworkServer.AddPlayerForConnection(conn, player);
+                // }
             }
 
+            if (_playerAccountIdMap.Count == _playerInGameManager.GetPlayers().Count)
+            {
+                
+                SendGameReadyMessageRpc();
+            }
             Debug.Log("Received PlayerAccountId from client: " + message.UID);
+        }
+
+        [ClientRpc]
+        private void SendGameReadyMessageRpc()
+        {
+            _gameEventManager.Publish(new GameReadyEvent("MainGame"));
+        }
+
+        [TargetRpc]
+        private void InitClientGameControllerRpc(NetworkConnection target)
+        {
+        }
+
+        private async UniTask InitializePlayer(NetworkConnection conn)
+        {
+            var spawnedObjectsAddress = DataJsonManager.Instance.GetResourceData("SpawnedObjects");
+            var spawnedObjects = await ResourceManager.Instance.LoadResourceAsync<GameObject>(spawnedObjectsAddress);
+            var contorller = spawnedObjects.GetComponent<NetworkMonoController>();
+            _objectResolver.Inject(contorller);
         }
 
         public override void OnStopServer()
@@ -102,27 +143,12 @@ namespace Network.Server
             Debug.Log($"Received PlayerAccountId: {message.UID} - {message.Name} - {message.ConnectionID.ToString()}");
         }
 
-        [Server]
-        public override async void OnServerAddPlayer(NetworkConnectionToClient conn)
+        public override void OnServerDisconnect(NetworkConnectionToClient conn)
         {
-            // 生成物体
-            var spawnedObjectsAddress = DataJsonManager.Instance.GetResourceData("SpawnedObjects");
-            var spawnedObjects = await ResourceManager.Instance.LoadResourceAsync<GameObject>(spawnedObjectsAddress);
-            var contorller = spawnedObjects.GetComponent<NetworkMonoController>();
-            _objectResolver.Inject(contorller);
-            _gameEventManager.Publish(new GameReadyEvent("MainGame"));
-            // 服务器端添加玩家
-            var res = DataJsonManager.Instance.GetResourceData("Player");
-            var resInfo = ResourceManager.Instance.GetResource<GameObject>(res);
-            if (resInfo)
-            {
-                //currentPlayer = resInfo.gameObject;
-                var spawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Length)];
-                var player = Instantiate(resInfo.gameObject, spawnPoint.transform);
-                player.transform.localPosition = Vector3.zero;
-                player.transform.localRotation = Quaternion.identity;
-                NetworkServer.AddPlayerForConnection(conn, player);
-            }
+            base.OnServerDisconnect(conn);
+            _playerAccountIdMap.Remove(conn.connectionId);
+            _playerInGameManager.RemovePlayer(conn.connectionId);
+            Debug.Log($"Player disconnected: {conn.connectionId}");
         }
 
         private void HandleServerConnected(NetworkConnection conn)
@@ -136,8 +162,7 @@ namespace Network.Server
         private void HandleServerDisconnected(NetworkConnection conn)
         {
             // 确保只有服务器执行注销玩家的逻辑
-            _playerInGameManager.RemovePlayer(conn.connectionId);
-            _playerAccountIdMap.Remove(conn.connectionId);
+            //_playerInGameManager.RemovePlayer(conn.connectionId);
             Debug.Log($"Player disconnected: {conn.connectionId}");
         }
 

@@ -1,52 +1,114 @@
-﻿using HotUpdate.Scripts.Config;
+﻿using System;
+using DG.Tweening;
+using HotUpdate.Scripts.Config;
+using UniRx;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Weather.WeatherEffects
 {
-    public class LightAndFogEffect : WeatherEffects
+    public class LightAndFogEffect : WeatherEffects, IDayNightCycle
     {
         [SerializeField]
         private Light mainLight;
         private float _sunInitialIntensity;
+        private Tween _lightTween;
+        private IDisposable _enableLightning;
+
+        public DayNightCycleData DayNightCycleData { get; set; }
 
         public override void PlayEffect(WeatherEffectData weatherData)
         {
-            mainLight.intensity = weatherData.lightDensity;
-            _sunInitialIntensity = weatherData.lightDensity;
+            mainLight.intensity = Mathf.Clamp01( weatherData.lightDensity);
+            _sunInitialIntensity = Mathf.Clamp01( weatherData.lightDensity);
             RenderSettings.fogDensity = weatherData.fogDensity;
             RenderSettings.fog = weatherData.enableFog;
+            UpdateLight(weatherData.enableThunder);
         }
 
-        public void UpdateSun(float currentTimeOfDay)
+        private void UpdateLight(bool enableLightning = false)
         {
-            // 旋转太阳的位置，模拟太阳从日出到日落的运动
-            mainLight.transform.localRotation = Quaternion.Euler((currentTimeOfDay * 360f) - 90, 170, 0);
-
-            // 根据太阳高度调整光强度
-            float intensityMultiplier = 1;
-            if (currentTimeOfDay is <= 0.23f or >= 0.75f)
+            if (enableLightning)
             {
-                // 夜晚光强度减到0.1倍，表示黑夜仍有微弱光线
-                intensityMultiplier = 0.1f;
-            }
-            else if (currentTimeOfDay <= 0.25f)
-            {
-                // 日出阶段，逐渐从0.1倍光强度增加到最大光强度
-                intensityMultiplier = Mathf.Lerp(0.1f, 1f, (currentTimeOfDay - 0.23f) / 0.02f);
-            }
-            else if (currentTimeOfDay >= 0.73f)
-            {
-                // 日落阶段，逐渐从最大光强度减少到0.1倍光强度
-                intensityMultiplier = Mathf.Lerp(1f, 0.1f, (currentTimeOfDay - 0.73f) / 0.02f);
-            }
-
-            // 根据光强度调整太阳光的亮度
-            mainLight.intensity = intensityMultiplier * _sunInitialIntensity;
-        }
-    }
-
-    public struct DayNightCycleData
-    {
+                _enableLightning = Observable.Defer(() => 
+                    {
+                        // 每次生成一个 5 到 10 秒之间的随机时间 
+                        var randomTime = Random.Range(5f, 10f);
         
+                        // 打印随机时间，以确认随机间隔是否正确
+                        Debug.Log($"Next action in {randomTime} seconds.");
+
+                        // 使用 Observable.Timer 来等待随机时间
+                        return Observable.Timer(TimeSpan.FromSeconds(randomTime))
+                            .Do(_ => 
+                            {
+                                _lightTween?.Kill();
+                                mainLight.intensity = _sunInitialIntensity * 0.1f;
+                                _lightTween = DOTween.To(() => mainLight.intensity, 
+                                        x => mainLight.intensity = x, 
+                                        _sunInitialIntensity, 0.5f) 
+                                    .SetLoops(Random.Range(2, 4), LoopType.Yoyo)
+                                    .OnComplete(() => 
+                                    {
+                                        // 完成后可以触发下一个随机的光照变化或其他效果
+                                        mainLight.intensity = _sunInitialIntensity;
+                                        Debug.Log("Lightning effect completed.");
+                                    });
+                            });
+                    })
+                    // 递归订阅以重复这一过程
+                    .Repeat()
+                    .Subscribe();
+            }
+            else
+            {
+                _enableLightning?.Dispose();
+            }
+        }
+
+        public void UpdateSun(float currentTime)
+        {
+            var lightIntensity = 0f;
+
+            var lightColor = Color.gray;
+
+            if (currentTime >= DayNightCycleData.sunriseTime && currentTime < DayNightCycleData.sunsetTime)
+            {
+                // 白天
+                var t = (currentTime - DayNightCycleData.sunriseTime) / (DayNightCycleData.sunsetTime - DayNightCycleData.sunriseTime); // [0,1]
+                lightIntensity = Mathf.Sin(t * Mathf.PI); // 从0到1再到0
+                lightIntensity *= _sunInitialIntensity;
+
+                // 颜色渐变从日出到正午
+                lightColor = DayNightCycleData.dayLightColor.Evaluate(t);
+            }
+            else
+            {
+                // 夜晚
+                float t;
+                if (currentTime >= DayNightCycleData.sunsetTime)
+                {
+                    t = (currentTime - DayNightCycleData.sunsetTime) / (24f - DayNightCycleData.sunsetTime);
+                }
+                else
+                {
+                    t = currentTime /  DayNightCycleData.sunriseTime;
+                }
+
+                lightIntensity = Mathf.Sin(t * Mathf.PI); // 从0到1再到0
+                lightIntensity *= _sunInitialIntensity * 0.5f; // 夜晚光照强度较低
+
+                // 颜色渐变
+                lightColor = DayNightCycleData.nightColor.Evaluate(t);
+            }
+
+            // 设置光照强度和平滑过渡颜色
+            mainLight.intensity = lightIntensity;
+            mainLight.color = lightColor;
+
+            // 调整光照角度
+            var angle = (currentTime / 24f) * 360f - 90f; // 将时间转换为角度
+            mainLight.transform.rotation = Quaternion.Euler(angle, 170f, 0f); // 调整太阳的角度
+        }
     }
 }

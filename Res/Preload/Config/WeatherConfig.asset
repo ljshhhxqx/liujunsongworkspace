@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weatherData:
   - weatherType: 1
+    weatherRatio: 0.25
     cloudColor: {r: 1, g: 1, b: 1, a: 1}
     cloudDensityRange:
       min: 1.6
@@ -29,7 +30,14 @@ MonoBehaviour:
       min: 0.01
       max: 0.2
     thunderRatio: 0
+    rainDensity:
+      min: 0
+      max: 0
+    snowDensity:
+      min: 0
+      max: 0
   - weatherType: 2
+    weatherRatio: 0.35
     cloudColor: {r: 0.8773585, g: 0.8773585, b: 0.8773585, a: 0.8666667}
     cloudDensityRange:
       min: 0.1
@@ -38,14 +46,21 @@ MonoBehaviour:
       min: 0.2
       max: 0.8
     lightIntensity:
-      min: 0
-      max: 0
+      min: 0.75
+      max: 0.9
     fogRatio: 0.05
     fogDensity:
       min: 0.01
       max: 0.03
     thunderRatio: 0
+    rainDensity:
+      min: 0
+      max: 0
+    snowDensity:
+      min: 0
+      max: 0
   - weatherType: 3
+    weatherRatio: 0.25
     cloudColor: {r: 0.7735849, g: 0.7735849, b: 0.7735849, a: 0.7176471}
     cloudDensityRange:
       min: 0
@@ -54,26 +69,104 @@ MonoBehaviour:
       min: 0.8
       max: 2
     lightIntensity:
-      min: 0
-      max: 0
+      min: 0.4
+      max: 0.75
     fogRatio: 0
     fogDensity:
       min: 0
       max: 0
-    thunderRatio: 0
+    thunderRatio: 0.25
+    rainDensity:
+      min: 0
+      max: 1
+    snowDensity:
+      min: 0
+      max: 0
   - weatherType: 4
+    weatherRatio: 0.05
     cloudColor: {r: 0.8584906, g: 0.8584906, b: 0.8584906, a: 0.7176471}
     cloudDensityRange:
       min: 0
       max: 0.1
     cloudSpeedRange:
-      min: 0
-      max: 0
+      min: 0.8
+      max: 2
     lightIntensity:
-      min: 0
-      max: 0
+      min: 0.4
+      max: 0.75
     fogRatio: 0
     fogDensity:
       min: 0
       max: 0
-    thunderRatio: 0
+    thunderRatio: 0.1
+    rainDensity:
+      min: 0
+      max: 0
+    snowDensity:
+      min: 0
+      max: 1
+  dayNightCycleData:
+    timeMultiplier: 1440
+    weatherChangeTime: 0
+    sunriseTime: 0
+    sunsetTime: 0
+    dayLightColor:
+      serializedVersion: 2
+      key0: {r: 0.97269726, g: 1, b: 0, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0.98717904, g: 1, b: 0, a: 1}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 16439
+      ctime2: 65535
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 16219
+      atime2: 65535
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_ColorSpace: 0
+      m_NumColorKeys: 3
+      m_NumAlphaKeys: 3
+    nightColor:
+      serializedVersion: 2
+      key0: {r: 1, g: 0.96526194, b: 0, a: 1}
+      key1: {r: 0.509434, g: 0.509434, b: 0.509434, a: 1}
+      key2: {r: 0, g: 0.4404416, b: 1, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 32822
+      ctime2: 65535
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_ColorSpace: 0
+      m_NumColorKeys: 3
+      m_NumAlphaKeys: 2

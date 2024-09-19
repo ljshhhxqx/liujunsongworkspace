@@ -16,5 +16,8 @@ MonoBehaviour:
     CollectType: 0
     CollectObjectClass: 0
     Weight: 0
+    PropertyType:
+      Type: 0
+      Value: 0
     OpenSpeed: 4.5
     InitEulerAngles: {x: 0, y: 90, z: 0}

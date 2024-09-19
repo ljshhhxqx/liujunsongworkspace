@@ -2,8 +2,5 @@
 {
     public class CloudyWeather : WeatherSetting
     {
-        public override void LoadWeather()
-        {
-        }
     }
 }

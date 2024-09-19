@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using DG.Tweening;
+using UnityEngine;
 
 namespace HotUpdate.Scripts.Weather.WeatherEffects
 {
@@ -11,13 +12,12 @@ namespace HotUpdate.Scripts.Weather.WeatherEffects
 
         public override void PlayEffect(WeatherEffectData weatherData)
         {
-            lowCloud.SetColor(Shader.PropertyToID("_CloudColor"), weatherData.cloudColor);
-            lowCloud.SetFloat(Shader.PropertyToID("_Density"), weatherData.cloudDensity);
-            lowCloud.SetFloat(Shader.PropertyToID("_Size"), weatherData.cloudSpeed);
-            
-            highCloud.SetColor(Shader.PropertyToID("_CloudColor"), weatherData.cloudColor);
-            highCloud.SetFloat(Shader.PropertyToID("_Density"), weatherData.cloudDensity);
-            highCloud.SetFloat(Shader.PropertyToID("_Size"), weatherData.cloudSpeed);
+            lowCloud.DOFloat(weatherData.cloudDensity, "_Density", WeatherConstData.weatherChangeTime);
+            highCloud.DOFloat(weatherData.cloudDensity, "_Density", WeatherConstData.weatherChangeTime);
+            lowCloud.DOColor(weatherData.cloudColor, "_CloudColor", WeatherConstData.weatherChangeTime);
+            highCloud.DOColor(weatherData.cloudColor, "_CloudColor", WeatherConstData.weatherChangeTime);
+            lowCloud.DOFloat(weatherData.cloudSpeed, "_Size", WeatherConstData.weatherChangeTime);
+            highCloud.DOFloat(weatherData.cloudSpeed, "_Size", WeatherConstData.weatherChangeTime);
         }
     }
 }

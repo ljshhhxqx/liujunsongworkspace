@@ -23,7 +23,7 @@ namespace HotUpdate.Scripts.Game
         private int warmupTime = 10 * 1000; // 10秒热身时间
         [SyncVar]
         private int currentRound = 1; // 当前轮数
-        private CancellationTokenSource cts;
+        private CancellationTokenSource cts = new CancellationTokenSource();
         private GameEventManager _gameEventManager;
         private GameDataConfig _gameDataConfig;
         private MessageCenter _messageCenter;
@@ -60,10 +60,11 @@ namespace HotUpdate.Scripts.Game
         private void OnGameReady(GameReadyEvent gameReadyEvent)
         {
             _gameSceneName = gameReadyEvent.SceneName;
+            _weatherManager.StartWeatherAndDayNightCycle();
             StartGameLoop().Forget();
         }
 
-        private async UniTaskVoid StartGameLoop()
+        private async UniTask StartGameLoop()
         {
             // 1. 热身阶段
             Debug.Log("Game Warmup Started");
@@ -91,13 +92,6 @@ namespace HotUpdate.Scripts.Game
                 _messageCenter.Post(new GameWarmupMessage(remainingTime));
             }
         }
-
-        // private async UniTask GenerateItemsAsync(CancellationToken token)
-        // {
-        //     // 假设物品生成需要一些时间，异步模拟
-        //     await UniTask.Delay(2000, cancellationToken: token); // 生成物品的延迟
-        //     Debug.Log("All Items Generated.");
-        // }
 
         private async UniTask StartMainGameTimerAsync(int totalTime, CancellationToken token)
         {
@@ -135,6 +129,7 @@ namespace HotUpdate.Scripts.Game
 
         private void OnDestroy()
         {
+            _weatherManager.StopWeatherAndDayNightCycle();
             cts.Cancel();
         }
         

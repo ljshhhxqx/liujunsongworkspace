@@ -22,7 +22,12 @@ namespace HotUpdate.Scripts.Network.Server.InGame
 
         public void InitPlayerProperty(PlayerPropertyComponent playerProperty)
         {
-            
+            var player = GetPlayer(playerProperty.PlayerId);
+            if (player != null)
+            {
+                player.PlayerProperty = playerProperty;
+            }
+            throw new System.Exception($"Player not found - {playerProperty.PlayerId}");
         }
 
         public List<PlayerInGameData> GetPlayers()
