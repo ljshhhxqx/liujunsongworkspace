@@ -1,5 +1,6 @@
 ﻿using System;
 using Data;
+using HotUpdate.Scripts.UI.UIs.SecondPanel;
 using Network.Server.PlayFab;
 using TMPro;
 using Tool.Coroutine;

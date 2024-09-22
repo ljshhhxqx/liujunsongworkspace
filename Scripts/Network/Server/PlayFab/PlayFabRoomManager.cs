@@ -384,7 +384,11 @@ namespace Network.Server.PlayFab
         public void StartGame()
         {
             // TODO: 根据房间性质，开启一个云服务器或者本地服务器进行游戏
-            _playerInGameManager.InitRoomPlayer(_currentRoomData);
+            var operation = ResourceManager.Instance.LoadSceneAsync(_currentRoomData.RoomCustomInfo.MapType.ToString());
+            operation.Completed += (op) =>
+            {
+                _playerInGameManager.InitRoomPlayer(_currentRoomData);
+            };
         }
 
         public IEnumerable<RoomData> GetFilteredRooms(string inputText)

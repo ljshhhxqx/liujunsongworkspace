@@ -27,85 +27,13 @@
         {
             "UID": 100001,
             "ResourceType": "UnityEditor.SceneAsset",
-            "Name": "MainGame",
+            "Name": "Town",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Scenes/MainGame.unity"
+            "Address": "/Scenes/Town.unity"
         },
         {
             "UID": 200000,
-            "ResourceType": "UnityEngine.AudioClip",
-            "Name": "Explode",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Audio/Effect/Explode.mp3"
-        },
-        {
-            "UID": 200001,
-            "ResourceType": "UnityEngine.AudioClip",
-            "Name": "FootStep",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Audio/Effect/FootStep.WAV"
-        },
-        {
-            "UID": 200002,
-            "ResourceType": "UnityEngine.AudioClip",
-            "Name": "Gem",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Audio/Effect/Gem.mp3"
-        },
-        {
-            "UID": 200003,
-            "ResourceType": "UnityEngine.AudioClip",
-            "Name": "Gold",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Audio/Effect/Gold.mp3"
-        },
-        {
-            "UID": 200004,
-            "ResourceType": "UnityEngine.AudioClip",
-            "Name": "Lighting",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Audio/Effect/Lighting.mp3"
-        },
-        {
-            "UID": 200005,
-            "ResourceType": "UnityEngine.AudioClip",
-            "Name": "Rain",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Audio/Effect/Rain.mp3"
-        },
-        {
-            "UID": 200006,
-            "ResourceType": "UnityEngine.AudioClip",
-            "Name": "Thunder2",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Audio/Effect/Thunder2.wav"
-        },
-        {
-            "UID": 200007,
-            "ResourceType": "UnityEngine.AudioClip",
-            "Name": "Thunder3",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Audio/Effect/Thunder3.wav"
-        },
-        {
-            "UID": 200008,
-            "ResourceType": "UnityEngine.AudioClip",
-            "Name": "Thunder4",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Audio/Effect/Thunder4.wav"
-        },
-        {
-            "UID": 300000,
             "ResourceType": "HotUpdate.Scripts.Config.BuffDatabase",
             "Name": "BuffDatabase",
             "IsPermanent": false,
@@ -113,7 +41,7 @@
             "Address": "/Preload/Config/BuffDatabase.asset"
         },
         {
-            "UID": 400000,
+            "UID": 300000,
             "ResourceType": "Config.ChestDataConfig",
             "Name": "ChestConfigData",
             "IsPermanent": false,
@@ -121,7 +49,7 @@
             "Address": "/Preload/Config/ChestConfigData.asset"
         },
         {
-            "UID": 500000,
+            "UID": 400000,
             "ResourceType": "Config.CollectObjectDataConfig",
             "Name": "CollectObjectDataConfig",
             "IsPermanent": false,
@@ -129,12 +57,20 @@
             "Address": "/Preload/Config/CollectObjectDataConfig.asset"
         },
         {
-            "UID": 600000,
+            "UID": 500000,
             "ResourceType": "GameDataConfig",
             "Name": "GameData",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/Config/GameData.asset"
+        },
+        {
+            "UID": 600000,
+            "ResourceType": "HotUpdate.Scripts.Config.MapConfig",
+            "Name": "MapConfig",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/Config/MapConfig.asset"
         },
         {
             "UID": 700000,
@@ -345,7 +281,79 @@
             "Address": "/Weather/WeatherSettings/Sunny.prefab"
         },
         {
-            "UID": 1100007,
+            "UID": 1200000,
+            "ResourceType": "UnityEngine.AudioClip",
+            "Name": "Explode",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Effect/Explode.mp3"
+        },
+        {
+            "UID": 1200001,
+            "ResourceType": "UnityEngine.AudioClip",
+            "Name": "FootStep",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Effect/FootStep.WAV"
+        },
+        {
+            "UID": 1200002,
+            "ResourceType": "UnityEngine.AudioClip",
+            "Name": "Gem",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Effect/Gem.mp3"
+        },
+        {
+            "UID": 1200003,
+            "ResourceType": "UnityEngine.AudioClip",
+            "Name": "Gold",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Effect/Gold.mp3"
+        },
+        {
+            "UID": 1200004,
+            "ResourceType": "UnityEngine.AudioClip",
+            "Name": "Lighting",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Effect/Lighting.mp3"
+        },
+        {
+            "UID": 1200005,
+            "ResourceType": "UnityEngine.AudioClip",
+            "Name": "Rain",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Effect/Rain.mp3"
+        },
+        {
+            "UID": 1200006,
+            "ResourceType": "UnityEngine.AudioClip",
+            "Name": "Thunder2",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Effect/Thunder2.wav"
+        },
+        {
+            "UID": 1200007,
+            "ResourceType": "UnityEngine.AudioClip",
+            "Name": "Thunder3",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Effect/Thunder3.wav"
+        },
+        {
+            "UID": 1200008,
+            "ResourceType": "UnityEngine.AudioClip",
+            "Name": "Thunder4",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Effect/Thunder4.wav"
+        },
+        {
+            "UID": 1300000,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "Chest",
             "IsPermanent": false,
@@ -353,7 +361,7 @@
             "Address": "/Map/Main/Collect/Chest.prefab"
         },
         {
-            "UID": 1100008,
+            "UID": 1300001,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "Gem",
             "IsPermanent": false,
@@ -361,7 +369,7 @@
             "Address": "/Map/Main/Collect/Gem.prefab"
         },
         {
-            "UID": 1100009,
+            "UID": 1300002,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "GoldCoin",
             "IsPermanent": false,
@@ -369,7 +377,7 @@
             "Address": "/Map/Main/Collect/GoldCoin.prefab"
         },
         {
-            "UID": 1100010,
+            "UID": 1300003,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "SliverCoin",
             "IsPermanent": false,
@@ -377,7 +385,7 @@
             "Address": "/Map/Main/Collect/SliverCoin.prefab"
         },
         {
-            "UID": 1100011,
+            "UID": 1300004,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "SpeedGem",
             "IsPermanent": false,
@@ -385,7 +393,7 @@
             "Address": "/Map/Main/Collect/SpeedGem.prefab"
         },
         {
-            "UID": 1100012,
+            "UID": 1300005,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "StrengthGem",
             "IsPermanent": false,
@@ -393,7 +401,7 @@
             "Address": "/Map/Main/Collect/StrengthGem.prefab"
         },
         {
-            "UID": 1100013,
+            "UID": 1300006,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "Player",
             "IsPermanent": false,
@@ -401,7 +409,7 @@
             "Address": "/Map/Main/Player/Player.prefab"
         },
         {
-            "UID": 1100014,
+            "UID": 1300007,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "VFX_Ceramic_Hit",
             "IsPermanent": false,
@@ -409,7 +417,7 @@
             "Address": "/Map/Main/Collect/Particle/VFX_Ceramic_Hit.prefab"
         },
         {
-            "UID": 1100015,
+            "UID": 1300008,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "VFX_Coins",
             "IsPermanent": false,
@@ -417,7 +425,7 @@
             "Address": "/Map/Main/Collect/Particle/VFX_Coins.prefab"
         },
         {
-            "UID": 1100016,
+            "UID": 1300009,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "VFX_Confetti_Hit",
             "IsPermanent": false,
@@ -425,7 +433,7 @@
             "Address": "/Map/Main/Collect/Particle/VFX_Confetti_Hit.prefab"
         },
         {
-            "UID": 1100017,
+            "UID": 1300010,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "VFX_Diamond_Hit",
             "IsPermanent": false,
@@ -433,7 +441,7 @@
             "Address": "/Map/Main/Collect/Particle/VFX_Diamond_Hit.prefab"
         },
         {
-            "UID": 1100018,
+            "UID": 1300011,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "VFX_Pumpkin_Hit",
             "IsPermanent": false,
@@ -441,7 +449,7 @@
             "Address": "/Map/Main/Collect/Particle/VFX_Pumpkin_Hit.prefab"
         },
         {
-            "UID": 1100019,
+            "UID": 1300012,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "VFX_Toxic_Hit",
             "IsPermanent": false,
@@ -449,7 +457,7 @@
             "Address": "/Map/Main/Collect/Particle/VFX_Toxic_Hit.prefab"
         },
         {
-            "UID": 1100020,
+            "UID": 1300013,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "VFX_WoodBox_Hit",
             "IsPermanent": false,

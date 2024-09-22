@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using AOTScripts.Tool.ECS;
 using Data;
 using HotUpdate.Scripts.Network.Client.Player;
+using Mirror;
 
 namespace HotUpdate.Scripts.Network.Server.InGame
 {
-    public class PlayerInGameManager
+    public class PlayerInGameManager : ServerNetworkComponent
     {
         private readonly List<PlayerInGameData> _players = new List<PlayerInGameData>();
         

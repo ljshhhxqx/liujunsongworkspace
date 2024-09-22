@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using AOTScripts.Tool.ECS;
 using Cysharp.Threading.Tasks;
 using Game.Map;
 using HotUpdate.Scripts.Network.Client.Player;
+using HotUpdate.Scripts.Network.Server;
 using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
 using Network.Data;
@@ -17,23 +19,26 @@ namespace Network.Server
     public class NetworkManagerCustom : NetworkManager, IInjectableObject
     {
         private GameEventManager _gameEventManager;
-        private NetworkStartPosition[] _spawnPoints;
+        private List<NetworkStartPosition> _spawnPoints;
         private NetworkManagerHUD _networkManagerHUD;
         private UIManager _uiManager;
         private IObjectResolver _objectResolver;
         private readonly Dictionary<int, string> _playerAccountIdMap = new Dictionary<int, string>();
         private PlayerInGameManager _playerInGameManager;
+        private NetworkManagerRpcCaller _networkManagerRpcCaller;
 
         [Inject]
         private void Init(GameEventManager gameEventManager, UIManager uIManager, IObjectResolver objectResolver, PlayerInGameManager playerInGameManager)
         {
             _gameEventManager = gameEventManager;
-            _spawnPoints = FindObjectsByType<NetworkStartPosition>(FindObjectsSortMode.None);
+            _spawnPoints = FindObjectsByType<NetworkStartPosition>(FindObjectsSortMode.None).ToList();
             _networkManagerHUD = GetComponent<NetworkManagerHUD>();
+            _networkManagerRpcCaller = GetComponent<NetworkManagerRpcCaller>();
             _networkManagerHUD.enabled = false;
             _gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnSceneResourcesLoaded);
             _objectResolver = objectResolver;
             _playerInGameManager = playerInGameManager;
+            _objectResolver.Inject(_networkManagerRpcCaller);
             //this.playerManager = playerManager;
         }
 
@@ -66,50 +71,28 @@ namespace Network.Server
                     playerData.PlayerId = message.UID;
                     _playerAccountIdMap[conn.connectionId] = message.UID;
                     _playerInGameManager.InitPlayerProperty(playerData);
-                    InitClientGameControllerRpc(conn);
                 }
                 
-                // // 生成物体
-                
-                // // 服务器端添加玩家
-                // var res = DataJsonManager.Instance.GetResourceData("Player");
-                // var resInfo = ResourceManager.Instance.GetResource<GameObject>(res);
-                // if (resInfo)
-                // {
-                //     //currentPlayer = resInfo.gameObject;
-                //     var spawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Length)];
-                //     var player = Instantiate(resInfo.gameObject, spawnPoint.transform);
-                //     player.transform.localPosition = Vector3.zero;
-                //     player.transform.localRotation = Quaternion.identity;
-                //     NetworkServer.AddPlayerForConnection(conn, player);
-                // }
+                // 服务器端添加玩家
+                var res = DataJsonManager.Instance.GetResourceData("Player");
+                var resInfo = ResourceManager.Instance.GetResource<GameObject>(res);
+                if (resInfo)
+                {
+                    //currentPlayer = resInfo.gameObject;
+                    var spawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Count)];
+                    var playerGo = Instantiate(resInfo.gameObject, spawnPoint.transform);
+                    playerGo.transform.localPosition = Vector3.zero;
+                    playerGo.transform.localRotation = Quaternion.identity;
+                    NetworkServer.AddPlayerForConnection(conn, player);
+                    _spawnPoints.Remove(spawnPoint);
+                }
             }
 
             if (_playerAccountIdMap.Count == _playerInGameManager.GetPlayers().Count)
             {
-                
-                SendGameReadyMessageRpc();
+                _networkManagerRpcCaller.SendGameReadyMessageRpc();
             }
             Debug.Log("Received PlayerAccountId from client: " + message.UID);
-        }
-
-        [ClientRpc]
-        private void SendGameReadyMessageRpc()
-        {
-            _gameEventManager.Publish(new GameReadyEvent("MainGame"));
-        }
-
-        [TargetRpc]
-        private void InitClientGameControllerRpc(NetworkConnection target)
-        {
-        }
-
-        private async UniTask InitializePlayer(NetworkConnection conn)
-        {
-            var spawnedObjectsAddress = DataJsonManager.Instance.GetResourceData("SpawnedObjects");
-            var spawnedObjects = await ResourceManager.Instance.LoadResourceAsync<GameObject>(spawnedObjectsAddress);
-            var contorller = spawnedObjects.GetComponent<NetworkMonoController>();
-            _objectResolver.Inject(contorller);
         }
 
         public override void OnStopServer()

@@ -1,6 +1,7 @@
 using Common;
 using Config;
 using Data;
+using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Game;
 using HotUpdate.Scripts.Weather;
@@ -29,7 +30,7 @@ namespace Game.Inject
             //builder.Register<PlayerManager>(Lifetime.Singleton);
             //builder.Register<GameCommonVariant>(Lifetime.Singleton);
             builder.Register<CollectItemSpawner>(Lifetime.Singleton);
-            builder.Register<WeatherManager>(Lifetime.Singleton);
+            builder.Register<UIAudioManager>(Lifetime.Singleton);
             builder.Register<PlayFabAccountManager>(Lifetime.Singleton);
             builder.Register<PlayFabMessageHandler>(Lifetime.Singleton);
             builder.Register<PlayFabRoomManager>(Lifetime.Singleton);

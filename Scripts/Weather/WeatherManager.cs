@@ -6,6 +6,8 @@ using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Weather.WeatherEffects;
 using HotUpdate.Scripts.Weather.WeatherSettings;
 using Mirror;
+using Tool.GameEvent;
+using Tool.Message;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using VContainer;
@@ -13,15 +15,16 @@ using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Weather
 {
-    public class WeatherManager : NetworkMonoComponent
+    public class WeatherManager : ServerNetworkComponent
     {
         [SyncVar]
         private float _dayNightCycleTime;
-        private float _timeMultiplier;  
         [SyncVar]
         private bool _isDayNightCycle;
+        private float _timeMultiplier;  
         private float _weatherCycleTimer;
         private float _weatherCycleDuration;
+        private GameEventManager _gameEventManager;
         private WeatherConfig _weatherConfig;
         private readonly List<WeatherSetting> _weatherPrefabs = new List<WeatherSetting>();
         private List<GameObject> _weatherEffectPrefabs = new List<GameObject>();
@@ -33,12 +36,13 @@ namespace HotUpdate.Scripts.Weather
         private readonly Dictionary<WeatherType, WeatherSetting> _weatherSettingDict = new Dictionary<WeatherType, WeatherSetting>();
 
         [Inject]
-        private async void Init(IConfigProvider configProvider, MapBoundDefiner mapBoundDefiner)
+        private async void Init(MessageCenter messageCenter, GameEventManager gameEventManager,IConfigProvider configProvider, MapBoundDefiner mapBoundDefiner)
         {
             _weatherConfig = configProvider.GetConfig<WeatherConfig>();
             _mapBoundDefiner = mapBoundDefiner;
             _isDayNightCycle = false;
             _timeMultiplier = _weatherConfig.DayNightCycleData.timeMultiplier;
+            _gameEventManager.Subscribe<GameReadyEvent>(OnGameReady);
             _weatherCycleDuration = _weatherConfig.DayNightCycleData.weatherChangeTime;
             _weatherMaterials = await ResourceManager.Instance.LoadResourcesAsync<Material>($"Weather/Materials");
             _weatherEffectPrefabs = await ResourceManager.Instance.LoadResourcesAsync<GameObject>($"Weather/WeatherEffects");
@@ -52,29 +56,35 @@ namespace HotUpdate.Scripts.Weather
             }
         }
 
-        [Server]
-        public void StartWeatherAndDayNightCycle()
+        private void OnGameReady(GameReadyEvent gameReadyEvent)
         {
-            _dayNightCycleTime = Random.Range(0f, 1f);
-            _isDayNightCycle = true;
-            RandomWeather();
+            CmdStartWeatherLoop(true);
         }
 
-        [Server]
-        public void StopWeatherAndDayNightCycle()
+        [Command]
+        private void CmdStartWeatherLoop(bool isStart)
         {
-            _isDayNightCycle = false;
-        }
-
-        [Server]
-        public void RandomWeather()
-        {
-            var randomWeather = _weatherConfig.GetRandomWeatherData();
-            SetWeatherRpc(randomWeather.weatherType);
+            _isDayNightCycle = isStart;
+            if (isStart)
+            {
+                _dayNightCycleTime = Random.Range(0f, 1f);
+                RpcSetWeather();
+            }
         }
 
         [ClientRpc]
-        public void SetWeatherRpc(WeatherType weatherType)
+        private void RpcSetWeather()
+        {
+            RandomWeather();
+        }
+
+        public void RandomWeather()
+        {
+            var randomWeather = _weatherConfig.GetRandomWeatherData();
+            SetWeather(randomWeather.weatherType);
+        }
+
+        public void SetWeather(WeatherType weatherType)
         {
             if (_currentWeatherSetting)
                 _currentWeatherSetting.ClearWeather();

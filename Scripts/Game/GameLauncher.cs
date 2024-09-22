@@ -6,6 +6,7 @@ using Data;
 using Game;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.UI.UIs.SecondPanel;
 using HotUpdate.Scripts.Weather;
 using Network.Data;
 using Network.Server.Edgegap;
@@ -272,7 +273,7 @@ namespace HotUpdate.Scripts.Game
             var index = Random.Range((int)WeatherType.None, (int)WeatherType.Snowy);
             var weather = (WeatherType)index;
             Debug.Log($"WeatherType: {weather.ToString()}");
-            _weatherManager.SetWeatherRpc(weather);
+            _weatherManager.SetWeather(weather);
         }
     }
 }

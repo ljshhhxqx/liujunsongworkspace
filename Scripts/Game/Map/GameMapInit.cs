@@ -1,12 +1,16 @@
 using System;
 using Common;
 using Cysharp.Threading.Tasks;
+using Game.Map;
 using UnityEngine;
 
-namespace Game.Map
+namespace HotUpdate.Scripts.Game.Map
 {
     public class GameMapInit : MonoBehaviour
     {
+        [SerializeField]
+        private string mapName;
+        
         private async void Start()
         {
             InjectGameObjects();
@@ -46,7 +50,7 @@ namespace Game.Map
 
         private async UniTask LoadGameResources()
         {
-            var mapResource = await ResourceManager.Instance.GetMapResource("Main");
+            var mapResource = await ResourceManager.Instance.GetMapResource(mapName);
             if (mapResource == null)
             {
                 throw new UnityException("Main map resource not found.");
@@ -56,6 +60,11 @@ namespace Game.Map
             {
                 Debug.Log($"加载资源成功: {resource.name}");
             }
+        }
+
+        private void OnDestroy()
+        {
+            ResourceManager.Instance.UnloadResourcesByAddress($"/Map/{mapName}");
         }
     }
 }

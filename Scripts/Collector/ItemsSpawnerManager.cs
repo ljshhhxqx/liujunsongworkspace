@@ -13,7 +13,7 @@ using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Collector
 {
-    public class ItemsSpawnerManager : NetworkMonoComponent
+    public class ItemsSpawnerManager : ServerNetworkComponent
     {
         public struct Grid
         {

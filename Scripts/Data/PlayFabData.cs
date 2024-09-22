@@ -78,6 +78,7 @@ namespace Data
         public int MaxPlayers;
         // 房间密码，如果为空则不需要密码(在处理邀请时需要判断是否需要密码)
         public string RoomPassword;
+        public int MapType;
     }
     
     [Serializable]

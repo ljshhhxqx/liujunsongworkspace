@@ -31,8 +31,8 @@ namespace HotUpdate.Scripts.Game
         private string _gameSceneName;
         
         private BuffManager _buffManager;
-        private AudioManager _audioManager;
-        private WeatherManager _weatherManager;
+        private NetworkAudioManager _networkAudioManager;
+        //private WeatherManager _weatherManager;
         
         [Inject]
         private void Init(MessageCenter messageCenter, GameEventManager gameEventManager, IObjectResolver objectResolver, IConfigProvider configProvider)
@@ -44,12 +44,7 @@ namespace HotUpdate.Scripts.Game
             _messageCenter.Register<CollectObjectsEmptyMessage>(OnCollectObjectsEmpty);
             _itemsSpawnerManager = GetComponent<ItemsSpawnerManager>();
             _buffManager = GetComponent<BuffManager>();
-            _audioManager = GetComponent<AudioManager>();
-            _weatherManager = GetComponent<WeatherManager>();
-            objectResolver.Inject(_buffManager);
-            objectResolver.Inject(_audioManager);
-            objectResolver.Inject(_itemsSpawnerManager);
-            objectResolver.Inject(_weatherManager);
+            _networkAudioManager = GetComponent<NetworkAudioManager>();
         }
 
         private void OnCollectObjectsEmpty(CollectObjectsEmptyMessage collectObjectsEmptyMessage)
@@ -60,7 +55,18 @@ namespace HotUpdate.Scripts.Game
         private void OnGameReady(GameReadyEvent gameReadyEvent)
         {
             _gameSceneName = gameReadyEvent.SceneName;
-            _weatherManager.StartWeatherAndDayNightCycle();
+            CmdStartGame();
+        }
+
+        [Command]
+        private void CmdStartGame()
+        {
+            RpcStartGame();
+        }
+
+        [ClientRpc]
+        private void RpcStartGame()
+        {
             StartGameLoop().Forget();
         }
 
@@ -129,7 +135,6 @@ namespace HotUpdate.Scripts.Game
 
         private void OnDestroy()
         {
-            _weatherManager.StopWeatherAndDayNightCycle();
             cts.Cancel();
         }
         

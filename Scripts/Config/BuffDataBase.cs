@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Config;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Config
 {
     [CreateAssetMenu(fileName = "BuffDatabase", menuName = "Buff System/Buff Database")]
-    public class BuffDatabase : ScriptableObject
+    public class BuffDatabase : ConfigBase
     {
         [Serializable]
         public struct BuffData
