@@ -1,20 +1,26 @@
-using System;
 using Common;
 using Cysharp.Threading.Tasks;
 using Game.Map;
+using HotUpdate.Scripts.Config;
+using System;
+using Tool.GameEvent;
 using UnityEngine;
+using VContainer;
 
 namespace HotUpdate.Scripts.Game.Map
 {
     public class GameMapInit : MonoBehaviour
     {
-        [SerializeField]
         private string mapName;
-        
-        private async void Start()
+
+        [Inject]
+        private async void Init(GameEventManager gameEventManager)
         {
+            mapName ??= gameObject.scene.name;
             InjectGameObjects();
             await LoadGameResources();
+            gameEventManager.Publish(new GameSceneResourcesLoadedEvent(mapName));
+            Debug.Log("game map init complete!!!!!!!!!!");
         }
 
         private void InjectGameObjects()

@@ -11,10 +11,10 @@
         {
             "UID": 1,
             "ResourceType": "UnityEngine.GameObject",
-            "Name": "LoadingPanel",
+            "Name": "LoadingScreenPanel",
             "IsPermanent": true,
             "IsPreload": false,
-            "Address": "/Permanent/LoadingPanel.prefab"
+            "Address": "/Permanent/LoadingScreenPanel.prefab"
         },
         {
             "UID": 100000,
@@ -315,10 +315,10 @@
         {
             "UID": 1200004,
             "ResourceType": "UnityEngine.AudioClip",
-            "Name": "Lighting",
+            "Name": "Lighten",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Audio/Game/Effect/Lighting.mp3"
+            "Address": "/Audio/Game/Effect/Lighten.mp3"
         },
         {
             "UID": 1200005,
@@ -358,7 +358,7 @@
             "Name": "Chest",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Main/Collect/Chest.prefab"
+            "Address": "/Map/Town/Collect/Chest.prefab"
         },
         {
             "UID": 1300001,
@@ -366,7 +366,7 @@
             "Name": "Gem",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Main/Collect/Gem.prefab"
+            "Address": "/Map/Town/Collect/Gem.prefab"
         },
         {
             "UID": 1300002,
@@ -374,7 +374,7 @@
             "Name": "GoldCoin",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Main/Collect/GoldCoin.prefab"
+            "Address": "/Map/Town/Collect/GoldCoin.prefab"
         },
         {
             "UID": 1300003,
@@ -382,7 +382,7 @@
             "Name": "SliverCoin",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Main/Collect/SliverCoin.prefab"
+            "Address": "/Map/Town/Collect/SliverCoin.prefab"
         },
         {
             "UID": 1300004,
@@ -390,7 +390,7 @@
             "Name": "SpeedGem",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Main/Collect/SpeedGem.prefab"
+            "Address": "/Map/Town/Collect/SpeedGem.prefab"
         },
         {
             "UID": 1300005,
@@ -398,7 +398,7 @@
             "Name": "StrengthGem",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Main/Collect/StrengthGem.prefab"
+            "Address": "/Map/Town/Collect/StrengthGem.prefab"
         },
         {
             "UID": 1300006,
@@ -406,7 +406,7 @@
             "Name": "Player",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Main/Player/Player.prefab"
+            "Address": "/Map/Town/Player/Player.prefab"
         },
         {
             "UID": 1300007,
@@ -414,7 +414,7 @@
             "Name": "VFX_Ceramic_Hit",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Main/Collect/Particle/VFX_Ceramic_Hit.prefab"
+            "Address": "/Map/Town/Collect/Particle/VFX_Ceramic_Hit.prefab"
         },
         {
             "UID": 1300008,
@@ -422,7 +422,7 @@
             "Name": "VFX_Coins",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Main/Collect/Particle/VFX_Coins.prefab"
+            "Address": "/Map/Town/Collect/Particle/VFX_Coins.prefab"
         },
         {
             "UID": 1300009,
@@ -430,7 +430,7 @@
             "Name": "VFX_Confetti_Hit",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Main/Collect/Particle/VFX_Confetti_Hit.prefab"
+            "Address": "/Map/Town/Collect/Particle/VFX_Confetti_Hit.prefab"
         },
         {
             "UID": 1300010,
@@ -438,7 +438,7 @@
             "Name": "VFX_Diamond_Hit",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Main/Collect/Particle/VFX_Diamond_Hit.prefab"
+            "Address": "/Map/Town/Collect/Particle/VFX_Diamond_Hit.prefab"
         },
         {
             "UID": 1300011,
@@ -446,7 +446,7 @@
             "Name": "VFX_Pumpkin_Hit",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Main/Collect/Particle/VFX_Pumpkin_Hit.prefab"
+            "Address": "/Map/Town/Collect/Particle/VFX_Pumpkin_Hit.prefab"
         },
         {
             "UID": 1300012,
@@ -454,7 +454,7 @@
             "Name": "VFX_Toxic_Hit",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Main/Collect/Particle/VFX_Toxic_Hit.prefab"
+            "Address": "/Map/Town/Collect/Particle/VFX_Toxic_Hit.prefab"
         },
         {
             "UID": 1300013,
@@ -462,7 +462,7 @@
             "Name": "VFX_WoodBox_Hit",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Main/Collect/Particle/VFX_WoodBox_Hit.prefab"
+            "Address": "/Map/Town/Collect/Particle/VFX_WoodBox_Hit.prefab"
         }
     ]
 }

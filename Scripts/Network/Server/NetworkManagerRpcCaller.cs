@@ -1,5 +1,6 @@
 ﻿using AOTScripts.Tool.ECS;
 using Mirror;
+using Sirenix.OdinInspector;
 using Tool.GameEvent;
 using VContainer;
 
@@ -16,9 +17,9 @@ namespace HotUpdate.Scripts.Network.Server
         }
         
         [ClientRpc]
-        public void SendGameReadyMessageRpc()
+        public void SendGameReadyMessageRpc(string gameName)
         {
-            _gameEventManager.Publish(new GameReadyEvent("MainGame"));
+            _gameEventManager.Publish(new GameReadyEvent(gameName));
         }
 
     }

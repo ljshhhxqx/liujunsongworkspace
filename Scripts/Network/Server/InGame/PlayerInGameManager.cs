@@ -6,7 +6,7 @@ using Mirror;
 
 namespace HotUpdate.Scripts.Network.Server.InGame
 {
-    public class PlayerInGameManager : ServerNetworkComponent
+    public class PlayerInGameManager 
     {
         private readonly List<PlayerInGameData> _players = new List<PlayerInGameData>();
         

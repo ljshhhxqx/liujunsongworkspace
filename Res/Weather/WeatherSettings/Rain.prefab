@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8560327636933914968}
   - component: {fileID: 142640700391457282}
   - component: {fileID: -3915190706438669943}
+  - component: {fileID: -404610239627998198}
   m_Layer: 0
   m_Name: Rain
   m_TagString: Untagged
@@ -4843,7 +4844,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15687318159447740b4b3a53bebd5e07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weatherType: 3
   rainParticles: {fileID: 8560327636933914968}
   rainMaterial: {fileID: 2100000, guid: 945dad7d6a0446e4086381292954b1fa, type: 2}
   rainCoverMaterial: {fileID: 2100000, guid: 7700358e3245b654d896d80fa0a46e30, type: 2}
+--- !u!114 &-404610239627998198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6054489412043308590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e743f15d5c5e4597ac62286553216e7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

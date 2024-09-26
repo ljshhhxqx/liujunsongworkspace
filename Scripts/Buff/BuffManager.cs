@@ -23,6 +23,7 @@ namespace HotUpdate.Scripts.Buff
         {
             _buffDatabase = configProvider.GetConfig<BuffDatabase>();
             gameEventManager.Subscribe<GameReadyEvent>(OnGameReady);
+            Debug.Log("BuffManager init");
         }
 
         private void OnGameReady(GameReadyEvent gameReadyEvent)

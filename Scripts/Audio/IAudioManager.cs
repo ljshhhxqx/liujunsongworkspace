@@ -31,6 +31,7 @@ namespace HotUpdate.Scripts.Audio
         Gem,
         Gold,
         Lighten,
+        Rain,
         Thunder2,
         Thunder3,
         Thunder4,

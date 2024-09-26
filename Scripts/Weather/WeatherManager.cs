@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using AOTScripts.Tool.ECS;
+using Cysharp.Threading.Tasks;
+using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Weather.WeatherEffects;
@@ -36,14 +38,21 @@ namespace HotUpdate.Scripts.Weather
         private readonly Dictionary<WeatherType, WeatherSetting> _weatherSettingDict = new Dictionary<WeatherType, WeatherSetting>();
 
         [Inject]
-        private async void Init(MessageCenter messageCenter, GameEventManager gameEventManager,IConfigProvider configProvider, MapBoundDefiner mapBoundDefiner)
+        private void Init(MessageCenter messageCenter, GameEventManager gameEventManager,IConfigProvider configProvider, MapBoundDefiner mapBoundDefiner)
         {
             _weatherConfig = configProvider.GetConfig<WeatherConfig>();
             _mapBoundDefiner = mapBoundDefiner;
             _isDayNightCycle = false;
+            _gameEventManager = gameEventManager;
             _timeMultiplier = _weatherConfig.DayNightCycleData.timeMultiplier;
             _gameEventManager.Subscribe<GameReadyEvent>(OnGameReady);
             _weatherCycleDuration = _weatherConfig.DayNightCycleData.weatherChangeTime;
+            Debug.Log("WeatherManager init");
+            GetWeatherResourcesAsync().Forget();
+        }
+
+        private async UniTask GetWeatherResourcesAsync()
+        {
             _weatherMaterials = await ResourceManager.Instance.LoadResourcesAsync<Material>($"Weather/Materials");
             _weatherEffectPrefabs = await ResourceManager.Instance.LoadResourcesAsync<GameObject>($"Weather/WeatherEffects");
             var weatherSettings = await ResourceManager.Instance.LoadResourcesAsync<GameObject>($"Weather/WeatherSettings");
@@ -61,7 +70,7 @@ namespace HotUpdate.Scripts.Weather
             CmdStartWeatherLoop(true);
         }
 
-        [Command]
+        //[Command]
         private void CmdStartWeatherLoop(bool isStart)
         {
             _isDayNightCycle = isStart;

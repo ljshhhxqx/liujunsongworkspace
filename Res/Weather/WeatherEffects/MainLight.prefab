@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1764530383597780990}
   - component: {fileID: 1577363732588026089}
   - component: {fileID: 6658933731593763923}
+  - component: {fileID: 2171718346763162778}
   m_Layer: 0
   m_Name: MainLight
   m_TagString: MainLight
@@ -108,3 +109,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainLight: {fileID: 1577363732588026089}
+--- !u!114 &2171718346763162778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8999189654145582011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e743f15d5c5e4597ac62286553216e7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

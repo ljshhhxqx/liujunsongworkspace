@@ -21,7 +21,7 @@ namespace HotUpdate.Scripts.Audio
         [Inject]
         private async void Init()
         {
-            var clips = await ResourceManager.Instance.GetAudioClip(AudioManagerType.ToString());
+            var clips = await ResourceManager.Instance.GetAudioGameClip(AudioManagerType.ToString());
             foreach (var clip in clips)
             {
                 if (Enum.TryParse(clip.name, out AudioMusicType audioMusicType))

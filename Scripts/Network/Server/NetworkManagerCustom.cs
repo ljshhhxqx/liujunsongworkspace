@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using AOTScripts.Tool.ECS;
-using Cysharp.Threading.Tasks;
-using Game.Map;
+﻿using Game.Map;
+using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.Server;
 using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
 using Network.Data;
 using Network.NetworkMes;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Tool.GameEvent;
 using UI.UIBase;
 using UnityEngine;
@@ -25,6 +25,8 @@ namespace Network.Server
         private IObjectResolver _objectResolver;
         private readonly Dictionary<int, string> _playerAccountIdMap = new Dictionary<int, string>();
         private PlayerInGameManager _playerInGameManager;
+        private string _mapName;
+        [SerializeField]
         private NetworkManagerRpcCaller _networkManagerRpcCaller;
 
         [Inject]
@@ -33,21 +35,26 @@ namespace Network.Server
             _gameEventManager = gameEventManager;
             _spawnPoints = FindObjectsByType<NetworkStartPosition>(FindObjectsSortMode.None).ToList();
             _networkManagerHUD = GetComponent<NetworkManagerHUD>();
-            _networkManagerRpcCaller = GetComponent<NetworkManagerRpcCaller>();
             _networkManagerHUD.enabled = false;
             _gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnSceneResourcesLoaded);
             _objectResolver = objectResolver;
             _playerInGameManager = playerInGameManager;
-            _objectResolver.Inject(_networkManagerRpcCaller);
             //this.playerManager = playerManager;
         }
 
         private void OnSceneResourcesLoaded(GameSceneResourcesLoadedEvent sceneResourcesLoadedEvent)
         {
-            if (sceneResourcesLoadedEvent.SceneName == "MainGame")
+            if (Enum.TryParse<MapType>(sceneResourcesLoadedEvent.SceneName, out var mapType))
             {
                 _networkManagerHUD.enabled = true;
+                _mapName = mapType.ToString();
+                _objectResolver.Inject(_networkManagerRpcCaller);
+                Debug.Log("map resources loaded");
+                return;
             }
+
+            Debug.Log("map resources loaded fail");
+            _networkManagerHUD.enabled = false;
         }
 
         public override void OnStartServer()
@@ -79,7 +86,7 @@ namespace Network.Server
                 if (resInfo)
                 {
                     //currentPlayer = resInfo.gameObject;
-                    var spawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Count)];
+                    var spawnPoint = _spawnPoints[UnityEngine.Random.Range(0, _spawnPoints.Count)];
                     var playerGo = Instantiate(resInfo.gameObject, spawnPoint.transform);
                     playerGo.transform.localPosition = Vector3.zero;
                     playerGo.transform.localRotation = Quaternion.identity;
@@ -90,7 +97,8 @@ namespace Network.Server
 
             if (_playerAccountIdMap.Count == _playerInGameManager.GetPlayers().Count)
             {
-                _networkManagerRpcCaller.SendGameReadyMessageRpc();
+                _networkManagerRpcCaller.SendGameReadyMessageRpc(_mapName);
+                Debug.Log("player all ready");
             }
             Debug.Log("Received PlayerAccountId from client: " + message.UID);
         }
@@ -116,9 +124,12 @@ namespace Network.Server
             // 获取当前连接
             NetworkConnection conn = NetworkClient.connection;
 
-            // 发送 PlayerAccountId 给服务器
-            var msg = new PlayerConnectMessage(PlayFabData.PlayFabId.Value, conn.connectionId, PlayFabData.PlayerReadOnlyData.Value.Nickname);
+            var msg = new PlayerConnectMessage("151", conn.connectionId, "asdw");
             conn.Send(msg);
+            // 发送 PlayerAccountId 给服务器
+            // TODO: 取消注释
+            //var msg = new PlayerConnectMessage(PlayFabData.PlayFabId.Value, conn.connectionId, PlayFabData.PlayerReadOnlyData.Value.Nickname);
+            //conn.Send(msg);
         }
 
         private void OnPlayerConnectedMessage(PlayerConnectMessage message)

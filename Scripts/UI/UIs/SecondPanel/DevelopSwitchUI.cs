@@ -13,11 +13,6 @@ namespace UI.UIs.SecondPanel
         private int _clickCount;
         private UIManager _uiManager;
 
-        private void Start()
-        {
-            ObjectInjectProvider.Instance.Inject(this);
-        }
-
         [Inject]
         private void Init(UIManager uiManager)
         {

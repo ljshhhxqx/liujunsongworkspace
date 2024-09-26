@@ -19,12 +19,17 @@ namespace HotUpdate.Scripts.Audio
         private readonly Dictionary<AudioEffectType, AudioClip> _effectAudioClips = new Dictionary<AudioEffectType, AudioClip>();
         private readonly List<AudioSource> _activeAudioSources = new List<AudioSource>();
         public AudioManagerType AudioManagerType => AudioManagerType.Game;
-        
+
         [Inject]
-        private async void Init()
+        private void Init()
         {
-            var clips = await ResourceManager.Instance.GetAudioClip(AudioManagerType.ToString());
-            foreach (var clip in clips)
+            GetAudioClipAsync().Forget();
+        }
+
+        private async UniTask GetAudioClipAsync() 
+        {
+            var operation = await ResourceManager.Instance.GetAudioGameClip(AudioManagerType.ToString());
+            foreach (var clip in operation)
             {
                 if (Enum.TryParse(clip.name, out AudioMusicType audioMusicType))
                 {
@@ -39,9 +44,9 @@ namespace HotUpdate.Scripts.Audio
                     throw new Exception("AudioManager: AudioClip name is not valid.");
                 }
             }
-            _audioSourcePrefab = ResourceManager.Instance.GetResource<GameObject>(new ResourceData()
+            _audioSourcePrefab = await ResourceManager.Instance.LoadResourceAsync<GameObject>(new ResourceData()
             {
-                Name = "AudioSourcePrefab"
+                Name = "AudioEffectPrefab"
             });
         }
 

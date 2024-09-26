@@ -38,7 +38,7 @@ namespace HotUpdate.Scripts.Game
         [Inject] private PlayFabAccountManager _playFabAccountManager;
         [Inject] private GameEventManager _gameEventManager;
         [Inject] private ConfigManager _configManager;
-        [Inject] private CollectItemSpawner _collectItemSpawner;
+        //[Inject] private CollectItemSpawner _collectItemSpawner;
         [Inject] private GameSceneManager _gameSceneManager;
         private WeatherManager _weatherManager;
         
@@ -52,7 +52,7 @@ namespace HotUpdate.Scripts.Game
         private async UniTask ResourcesLoadedCallback()
         {
             _gameEventManager.Publish(new GameResourceLoadedEvent());
-            await _gameSceneManager.LoadScene("MainGame");
+            await _gameSceneManager.LoadScene("Town");
             // async UniTask
             // var prefab = await _resourceManager.GetGameMap();
             // Instantiate(prefab);
@@ -141,10 +141,10 @@ namespace HotUpdate.Scripts.Game
         }
 
         //[Button]
-        private void TestSpawn()
-        { 
-            _collectItemSpawner.SpawnItems(_collectItemSpawner.GenerateRandomWeight(), _collectItemSpawner.GenerateRandomSpawnMethod());
-        }
+        //private void TestSpawn()
+        //{ 
+        //    _collectItemSpawner.SpawnItems(_collectItemSpawner.GenerateRandomWeight(), _collectItemSpawner.GenerateRandomSpawnMethod());
+        //}
         
         //[Button("Test Resource Load")]
         public void TestResourceLoad()

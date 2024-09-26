@@ -22,11 +22,12 @@ namespace HotUpdate.Scripts.Collector
         private IEnumerable<GameObject> Walls => _walls ??= GameObject.FindGameObjectsWithTag("Wall");
 
         [Inject]
-        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)
+        private MapBoundDefiner(IConfigProvider configProvider, GameEventManager gameEventManager)
         {
             gameEventManager.Subscribe<GameResourceLoadedEvent>(OnGameResourceLoaded);
             _configProvider = configProvider;
             _sceneLayer = LayerMask.NameToLayer("Scene");
+            Debug.Log("MapBoundDefiner init");
             CalculateAdjustedBounds();
             InitializeGrid();
         }
