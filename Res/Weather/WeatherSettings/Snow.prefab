@@ -4844,6 +4844,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8d55144e50748afa8dc9b825552e620, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weatherType: 4
   snowParticles: {fileID: 4542892653006314761}
   snowMaterial: {fileID: 2100000, guid: 7700358e3245b654d896d80fa0a46e30, type: 2}
   snowCoverMaterial: {fileID: 2100000, guid: f04a8a67a839b4c4998b5851bdfe8fc4, type: 2}

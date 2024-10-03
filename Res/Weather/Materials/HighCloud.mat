@@ -100,7 +100,7 @@ Material:
     - _Brightness: 1
     - _BumpScale: 1
     - _Cutoff: 0.5
-    - _Density: 0.91
+    - _Density: 0.08747572
     - _DetailNormalMapScale: 1
     - _DstBlend: 10
     - _Emptiness: 0.096
@@ -114,13 +114,13 @@ Material:
     - _Sharpness: 0.712
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _Speed: 0.188
+    - _Speed: 1.476632
     - _SrcBlend: 5
     - _UVSec: 0
     - _ZWrite: 0
     m_Colors:
     - _CloudColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 0.422}
+    - _Color: {r: 0.7041872, g: 0.7041872, b: 0.7041872, a: 0.7597079}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SkyColor: {r: 0, g: 0.036156174, b: 0.16911763, a: 1}
     - _SkyColor0: {r: 0.6503027, g: 0.70802695, b: 0.71323526, a: 0.5}

@@ -3,13 +3,21 @@
         {
             "UID": 0,
             "ResourceType": "UnityEngine.GameObject",
-            "Name": "AudioEffectPrefab",
+            "Name": "AudioGameEffectPrefab",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Audio/AudioEffectPrefab.prefab"
+            "Address": "/Audio/AudioGameEffectPrefab.prefab"
         },
         {
             "UID": 1,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "AudioUIEffectPrefab",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/AudioUIEffectPrefab.prefab"
+        },
+        {
+            "UID": 2,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "LoadingScreenPanel",
             "IsPermanent": true,
@@ -183,6 +191,14 @@
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/TipPopup.prefab"
+        },
+        {
+            "UID": 900012,
+            "ResourceType": "UnityEngine.GameObject",
+            "Name": "WeatherShowOverlay",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/WeatherShowOverlay.prefab"
         },
         {
             "UID": 1000000,

@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Collector
 {
-    public class MapBoundDefiner
+    public class MapBoundDefiner : MonoBehaviour
     {
         private float _safetyMargin = 5.0f;
         private GameObject[] _walls;
@@ -22,7 +22,7 @@ namespace HotUpdate.Scripts.Collector
         private IEnumerable<GameObject> Walls => _walls ??= GameObject.FindGameObjectsWithTag("Wall");
 
         [Inject]
-        private MapBoundDefiner(IConfigProvider configProvider, GameEventManager gameEventManager)
+        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)
         {
             gameEventManager.Subscribe<GameResourceLoadedEvent>(OnGameResourceLoaded);
             _configProvider = configProvider;
@@ -63,8 +63,13 @@ namespace HotUpdate.Scripts.Collector
         
         public bool IsWithinMapBounds(Vector3 position) 
         {
-            return position.x >= MapMinBoundary.x && position.x <= MapMaxBoundary.x &&
-                   position.z >= MapMinBoundary.z && position.z <= MapMaxBoundary.z;
+            var xMinInMap = position.x >= MapMinBoundary.x;
+            var xMaxInMap = position.x <= MapMaxBoundary.x;
+            var zMinInMap = position.z >= MapMinBoundary.z;
+            var zMaxInMap = position.z <= MapMaxBoundary.z;
+            Debug.Log($"IsWithinMapBounds: xMinInMap-xMaxInMap-zMinInMap-zMaxInMap: {xMinInMap} {xMaxInMap} {zMinInMap} {zMaxInMap}");
+            return xMinInMap && xMaxInMap &&
+                   zMinInMap && zMaxInMap;
         }
 
         private Vector2Int GetGridPosition(Vector3 position)
@@ -94,8 +99,10 @@ namespace HotUpdate.Scripts.Collector
         
         public Vector3 GetRandomPoint(Func<Vector3, bool> isObstacle = null)
         {
-            while (true)
+            var count = 0;
+            while (count < 20)
             {
+                Debug.Log($"GetRandomPoint count: {count}");
                 if (_gridMap.Count == 0)
                 {
                     Debug.LogError("No grid position available.");
@@ -106,15 +113,20 @@ namespace HotUpdate.Scripts.Collector
                 var randomX = Random.Range(gridPos.x * _gridSize- _gridSize/2, gridPos.x * _gridSize + _gridSize/2);
                 var randomZ = Random.Range(gridPos.y * _gridSize- _gridSize/2, gridPos.y * _gridSize + _gridSize/2);
                 var position = new Vector3(randomX, 1000, randomZ);
+                Debug.Log($"GetRandomPoint position: {position}");
                 if (Physics.Raycast(position, Vector3.down, out var hit, Mathf.Infinity, _sceneLayer))
                 {
                     var startPoint = new Vector3(randomX, hit.point.y, randomZ);
+                    Debug.Log($"GetRandomPoint startPoint: {startPoint}");
                     if (IsWithinMapBounds(startPoint) && isObstacle != null && isObstacle(startPoint))
                     {
+                        Debug.Log($"GetRandomPoint isObstacle: {isObstacle(startPoint)}");
                         return startPoint;
                     }
                 }
+                count++;
             }
+            return Vector3.zero;
         }
     }
 }

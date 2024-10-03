@@ -23,4 +23,4 @@ MonoBehaviour:
     JumpSpeed: 25
     StairsJumpSpeed: 35
     GroundCheckRadius: 0.22
-    StairsCheckDistance: 0.6
+    StairsCheckDistance: 0.5

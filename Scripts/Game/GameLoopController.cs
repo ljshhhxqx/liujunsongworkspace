@@ -5,7 +5,6 @@ using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Buff;
 using HotUpdate.Scripts.Collector;
-using HotUpdate.Scripts.Weather;
 using Mirror;
 using Tool.GameEvent;
 using Tool.Message;
@@ -147,7 +146,7 @@ namespace HotUpdate.Scripts.Game
             public SubCycle(int minTime, int maxTime, Func<bool> endCondition, Func<UniTask> randomEventHandler = null)
             {
                 // 初始化小循环的持续时间
-                subCycleTime = UnityEngine.Random.Range(minTime, maxTime);
+                subCycleTime = Random.Range(minTime, maxTime);
                 this.endCondition = endCondition;
                 this.randomEventHandler = randomEventHandler;
             }
@@ -161,7 +160,7 @@ namespace HotUpdate.Scripts.Game
                 while (elapsedTime < subCycleTime && !endCondition() && !token.IsCancellationRequested)
                 {
                     // 如果有随机事件处理函数，随机决定是否触发事件
-                    if (randomEventHandler != null && UnityEngine.Random.value < 0.1f) // 10% 概率触发
+                    if (randomEventHandler != null && Random.value < 0.1f) // 10% 概率触发
                     {
                         Debug.Log("Random event triggered.");
                         await randomEventHandler();

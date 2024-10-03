@@ -7,18 +7,23 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
     public interface IIWeather
     {
         WeatherData WeatherData { get; }
-        void LoadWeather(WeatherData weatherData);
+        void LoadWeather(WeatherLoadData weatherData);
         void ClearWeather();
     }
     
     public abstract class WeatherSetting : MonoBehaviour, IIWeather 
     {
-        public WeatherData WeatherData { get; private set; }
+        [SerializeField]
+        private WeatherType weatherType;
+        public WeatherType WeatherType => weatherType;
 
-        public virtual void LoadWeather(WeatherData weatherData)
+        private WeatherLoadData _weatherLoadData;
+        public WeatherData WeatherData { get; set; }
+
+        public virtual void LoadWeather(WeatherLoadData weatherData)
         {
-            WeatherData = weatherData;
-            if (WeatherData.weatherType == WeatherType.None)
+            _weatherLoadData = weatherData;
+            if (_weatherLoadData.weatherType == WeatherType.None)
             {
                 throw new ArgumentException("WeatherType is not set.");
             }

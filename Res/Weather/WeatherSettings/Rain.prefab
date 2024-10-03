@@ -4844,6 +4844,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15687318159447740b4b3a53bebd5e07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weatherType: 3
   rainParticles: {fileID: 8560327636933914968}
   rainMaterial: {fileID: 2100000, guid: 945dad7d6a0446e4086381292954b1fa, type: 2}
   rainCoverMaterial: {fileID: 2100000, guid: 7700358e3245b654d896d80fa0a46e30, type: 2}

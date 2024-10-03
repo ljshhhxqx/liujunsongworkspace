@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using HotUpdate.Scripts.Config;
 using UniRx;
@@ -13,7 +14,7 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
         private Material rainMaterial;
         [SerializeField]
         private Material rainCoverMaterial;
-        private float _snowDensity;
+        private float _rainDensity;
         private readonly ReactiveProperty<float> _currentRainDensity = new ReactiveProperty<float>();
         private RainSnowSetting _originalRainSnowSetting;
 
@@ -36,24 +37,24 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
             }).AddTo(this);
         }
 
-        public override void LoadWeather(WeatherData weatherData)
+        public override void LoadWeather(WeatherLoadData weatherData)
         {
-            _snowDensity = weatherData.rainDensity.GetRandomValue();
-            var duration = Mathf.Lerp(WeatherConstData.maxTransitionDuration, WeatherConstData.minTransitionDuration, _snowDensity);
-            DOTween.To(() => _currentRainDensity.Value, x => _currentRainDensity.Value = x, _snowDensity, duration);
+            _rainDensity = weatherData.rainDensity;
+            var duration = Mathf.Lerp(WeatherConstData.maxTransitionDuration, WeatherConstData.minTransitionDuration, _rainDensity);
+            DOTween.To(() => _currentRainDensity.Value, x => _currentRainDensity.Value = x, _rainDensity, duration);
             
             rainParticles.Play();
         }
 
         public override void ClearWeather()
         {
-            _snowDensity = 0;
+            _rainDensity = 0;
             var mainModule = rainParticles.main;
             var emission =  rainParticles.emission;
             _currentRainDensity.Value = 0;
             DOTween.To(() => _currentRainDensity.Value, 
                 x => _currentRainDensity.Value = x, 
-                _snowDensity, 
+                _rainDensity, 
                 WeatherConstData.minTransitionDuration).OnComplete(() =>
             {
                 base.ClearWeather();
@@ -61,6 +62,11 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
                 mainModule.startSpeed = _originalRainSnowSetting.speed;
                 emission.rateOverTime = _originalRainSnowSetting.emissionRate;
             });
+        }
+
+        private void OnDestroy()
+        {
+            rainCoverMaterial.SetFloat(Shader.PropertyToID("_Wetness"), 0);
         }
     }
 }

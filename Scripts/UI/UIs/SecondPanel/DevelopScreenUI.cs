@@ -1,4 +1,5 @@
-﻿using Data;
+﻿using AOTScripts.Tool;
+using Data;
 using TMPro;
 using UI.UIBase;
 using UnityEngine;

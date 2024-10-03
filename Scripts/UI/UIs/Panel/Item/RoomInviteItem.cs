@@ -1,3 +1,4 @@
+using AOTScripts.Tool;
 using TMPro;
 using UI.UIs.Common;
 using UnityEngine;

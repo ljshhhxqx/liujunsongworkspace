@@ -38,9 +38,9 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
             }).AddTo(this);
         }
 
-        public override void LoadWeather(WeatherData weatherData)
+        public override void LoadWeather(WeatherLoadData weatherData)
         {
-            _snowDensity = weatherData.rainDensity.GetRandomValue();
+            _snowDensity = weatherData.snowDensity;
             var duration = Mathf.Lerp(WeatherConstData.maxTransitionDuration, WeatherConstData.minTransitionDuration, _snowDensity);
             DOTween.To(() => _currentSnowDensity.Value, x => _currentSnowDensity.Value = x, _snowDensity, duration);
             
@@ -63,6 +63,11 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
                 mainModule.startSpeed = _originalRainSnowSetting.speed;
                 emission.rateOverTime = _originalRainSnowSetting.emissionRate;
             });
+        }
+
+        private void OnDestroy()
+        {
+            snowCoverMaterial.SetFloat(Shader.PropertyToID("_SnowCoverage"), 0);
         }
     }
 }

@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d83b00da26d464a9d36d791bd1fa803, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weatherType: 1
 --- !u!114 &-4337964981971601776
 MonoBehaviour:
   m_ObjectHideFlags: 0

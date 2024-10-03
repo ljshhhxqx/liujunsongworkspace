@@ -44,10 +44,9 @@ namespace HotUpdate.Scripts.Audio
                     throw new Exception("AudioManager: AudioClip name is not valid.");
                 }
             }
-            _audioSourcePrefab = await ResourceManager.Instance.LoadResourceAsync<GameObject>(new ResourceData()
-            {
-                Name = "AudioEffectPrefab"
-            });
+
+            var audioRes = DataJsonManager.Instance.GetResourceData("AudioGameEffectPrefab");
+            _audioSourcePrefab = await ResourceManager.Instance.LoadResourceAsync<GameObject>(audioRes);
         }
 
         private void OnDestroy()

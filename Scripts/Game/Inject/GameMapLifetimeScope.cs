@@ -3,6 +3,7 @@ using HotUpdate.Scripts.Buff;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Weather;
+using Network.Server;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -15,9 +16,14 @@ namespace HotUpdate.Scripts.Game.Inject
         {
             //builder.Register<NetworkAudioManager>();
             //builder.Register<WeatherManager>();
-            builder.Register<MapBoundDefiner>(Lifetime.Singleton);
+            builder.RegisterComponentInHierarchy<MapBoundDefiner>();
+            builder.RegisterComponentInHierarchy<NetworkManagerCustom>();
             //builder.Register<BuffManager>();
             //builder.Register<ItemsSpawnerManager>();
+            builder.RegisterComponentInHierarchy<NetworkAudioManager>();
+            builder.RegisterComponentInHierarchy<BuffManager>();
+            builder.RegisterComponentInHierarchy<ItemsSpawnerManager>();
+            builder.RegisterComponentInHierarchy<WeatherManager>();
             builder.RegisterComponentInHierarchy<GameMapInit>();
             Debug.Log("GameMapLifetimeScope Configured!!!");
         }

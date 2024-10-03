@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using AOTScripts.Tool;
+using TMPro;
 using UI.UIBase;
 using UnityEngine;
 using UnityEngine.UI;
