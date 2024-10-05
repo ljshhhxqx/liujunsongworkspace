@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Config;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Config
@@ -74,7 +73,6 @@ namespace HotUpdate.Scripts.Config
     {
         public WeatherType weatherType;
         public float weatherRatio;
-        public Color cloudColor;
         public Range cloudDensityRange;
         public Range cloudSpeedRange;
         public Range lightIntensity;
@@ -111,7 +109,15 @@ namespace HotUpdate.Scripts.Config
         public Gradient dayLightColor;
         public Gradient nightColor;
         public float oneDayDuration;
-        public float minLightIntensity;
+        public float minLightIntensity; 
+        public List<CloudColorData> cloudColorGradients;
+    }
+
+    [Serializable]
+    public struct CloudColorData
+    {
+        public WeatherType weatherType;
+        public Gradient cloudColor;
     }
 
     public enum WeatherType

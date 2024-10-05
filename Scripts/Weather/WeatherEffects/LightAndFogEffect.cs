@@ -3,21 +3,24 @@ using DG.Tweening;
 using HotUpdate.Scripts.Config;
 using UniRx;
 using UnityEngine;
-using Random = UnityEngine.Random;
+using VContainer;
 
 namespace HotUpdate.Scripts.Weather.WeatherEffects
 {
-    public class LightAndFogEffect : WeatherEffects, IDayNightCycle
+    public class LightAndFogEffect : WeatherEffects
     {
         [SerializeField]
         private Light mainLight;
         private float _sunInitialIntensity;
         private Tween _lightTween;
         private IDisposable _enableLightning;
-        public DayNightCycleData DayNightCycleData { get; set; }
-
-        private void Start()
+        private DayNightCycleData _dayNightCycleData;
+        
+        [Inject]
+        private void Init(IConfigProvider configProvider)
         {
+            var config = configProvider.GetConfig<WeatherConfig>();
+            _dayNightCycleData = config.DayNightCycleData;
             WeatherDataModel.time.Subscribe(UpdateSun).AddTo(this);
         }
 
@@ -32,42 +35,42 @@ namespace HotUpdate.Scripts.Weather.WeatherEffects
 
         private void UpdateLight(bool enableLightning = false)
         {
-            if (enableLightning)
-            {
-                _enableLightning = Observable.Defer(() => 
-                    {
-                        // 每次生成一个 5 到 10 秒之间的随机时间 
-                        var randomTime = Random.Range(5f, 10f);
-        
-                        // 打印随机时间，以确认随机间隔是否正确
-                        Debug.Log($"Next action in {randomTime} seconds.");
-
-                        // 使用 Observable.Timer 来等待随机时间
-                        return Observable.Timer(TimeSpan.FromSeconds(randomTime))
-                            .Do(_ => 
-                            {
-                                _lightTween?.Kill();
-                                mainLight.intensity = _sunInitialIntensity * 0.1f;
-                                _lightTween = DOTween.To(() => mainLight.intensity, 
-                                        x => mainLight.intensity = x, 
-                                        _sunInitialIntensity, 0.5f) 
-                                    .SetLoops(Random.Range(2, 4), LoopType.Yoyo)
-                                    .OnComplete(() => 
-                                    {
-                                        // 完成后可以触发下一个随机的光照变化或其他效果
-                                        mainLight.intensity = _sunInitialIntensity;
-                                        Debug.Log("Lightning effect completed.");
-                                    });
-                            });
-                    })
-                    // 递归订阅以重复这一过程
-                    .Repeat()
-                    .Subscribe();
-            }
-            else
-            {
-                _enableLightning?.Dispose();
-            }
+            // if (enableLightning)
+            // {
+            //     _enableLightning = Observable.Defer(() => 
+            //         {
+            //             // 每次生成一个 5 到 10 秒之间的随机时间 
+            //             var randomTime = Random.Range(5f, 10f);
+            //
+            //             // 打印随机时间，以确认随机间隔是否正确
+            //             Debug.Log($"Next action in {randomTime} seconds.");
+            //
+            //             // 使用 Observable.Timer 来等待随机时间
+            //             return Observable.Timer(TimeSpan.FromSeconds(randomTime))
+            //                 .Do(_ => 
+            //                 {
+            //                     _lightTween?.Kill();
+            //                     mainLight.intensity = _sunInitialIntensity * 0.1f;
+            //                     _lightTween = DOTween.To(() => mainLight.intensity, 
+            //                             x => mainLight.intensity = x, 
+            //                             _sunInitialIntensity, 0.5f) 
+            //                         .SetLoops(Random.Range(2, 4), LoopType.Yoyo)
+            //                         .OnComplete(() => 
+            //                         {
+            //                             // 完成后可以触发下一个随机的光照变化或其他效果
+            //                             mainLight.intensity = _sunInitialIntensity;
+            //                             Debug.Log("Lightning effect completed.");
+            //                         });
+            //                 });
+            //         })
+            //         // 递归订阅以重复这一过程
+            //         .Repeat()
+            //         .Subscribe();
+            // }
+            // else
+            // {
+            //     _enableLightning?.Dispose();
+            // }
         }
 
         private void UpdateSun(float currentTime)
@@ -75,44 +78,45 @@ namespace HotUpdate.Scripts.Weather.WeatherEffects
             float lightIntensity;
             Color lightColor;
 
-            if (currentTime >= DayNightCycleData.sunriseTime && currentTime < DayNightCycleData.sunsetTime)
+            if (currentTime >= _dayNightCycleData.sunriseTime && currentTime < _dayNightCycleData.sunsetTime)
             {
                 // 白天
-                var t = (currentTime - DayNightCycleData.sunriseTime) / (DayNightCycleData.sunsetTime - DayNightCycleData.sunriseTime); // [0,1]
-                var dayMinIntensity = 2f / 3f * _sunInitialIntensity;
-                lightIntensity = dayMinIntensity + (_sunInitialIntensity - dayMinIntensity) * Mathf.Sin(t * Mathf.PI / 2);
+                var t = (currentTime - _dayNightCycleData.sunriseTime) / (_dayNightCycleData.sunsetTime - _dayNightCycleData.sunriseTime); // [0,1]
 
+                lightIntensity = (2f / 3f * _sunInitialIntensity) + (1f / 3f * _sunInitialIntensity) * Mathf.Sin(t * Mathf.PI);
                 // 颜色渐变从日出到正午
-                lightColor = DayNightCycleData.dayLightColor.Evaluate(t);
+                lightColor = _dayNightCycleData.dayLightColor.Evaluate(t);
             }
             else
             {
                 // 夜晚
                 float t;
-                if (currentTime >= DayNightCycleData.sunsetTime)
+                if (currentTime >= _dayNightCycleData.sunsetTime)
                 {
-                    t = (currentTime - DayNightCycleData.sunsetTime) / (DayNightCycleData.oneDayDuration - DayNightCycleData.sunsetTime);
+                    t = (currentTime - _dayNightCycleData.sunsetTime) / (_dayNightCycleData.oneDayDuration - _dayNightCycleData.sunsetTime);
                 }
                 else
                 {
-                    t = currentTime /  DayNightCycleData.sunriseTime;
+                    t = currentTime /  _dayNightCycleData.sunriseTime;
                 }
 
 
                 // 使用三角函数在minIntensity和currentMaxIntensity之间取值
-                lightIntensity = DayNightCycleData.minLightIntensity + (_sunInitialIntensity - DayNightCycleData.minLightIntensity ) * (1 - Mathf.Cos(t * Mathf.PI)) / 2;
-
+                lightIntensity = _dayNightCycleData.minLightIntensity + (2f / 3f * _sunInitialIntensity - _dayNightCycleData.minLightIntensity) * (1 + Mathf.Cos(t * Mathf.PI)) / 2;
                 // 颜色渐变
-                lightColor = DayNightCycleData.nightColor.Evaluate(t);
+                lightColor = _dayNightCycleData.nightColor.Evaluate(t);
             }
 
             // 设置光照强度和平滑过渡颜色
-            mainLight.DOIntensity(lightIntensity, 1f);
-            mainLight.DOColor(lightColor, 1f);
+            mainLight.DOIntensity(lightIntensity, 0.99f).SetEase(Ease.Linear);
+            mainLight.DOColor(lightColor, 0.99f).SetEase(Ease.Linear);
+            // Debug.Log($"(WeatherManager)(-Target-) Light intensity: {lightIntensity} Color: {lightColor}");
+            // Debug.Log($"(WeatherManager)(-Current-) Light intensity: {mainLight.intensity} Color: {mainLight.color}");
             // 调整光照角度
-            var angle = (currentTime / DayNightCycleData.oneDayDuration) * 360f - 90f; // 将时间转换为角度
-            var targetRotation = new Vector3(angle, 170f, 0f);
-            mainLight.transform.DORotate(targetRotation, 1f); 
+            var timeRatio = currentTime / _dayNightCycleData.oneDayDuration;
+            var sunAngle = timeRatio * 360f - 90f; // 太阳角度，从-90度（东升）到270度（西落）
+            var targetRotation = Quaternion.Euler(new Vector3(sunAngle, 0f, 0f));
+            mainLight.transform.DORotateQuaternion(targetRotation, 1f); // 在1秒内平滑过渡到目标角度
         }
 
         private void OnDestroy()

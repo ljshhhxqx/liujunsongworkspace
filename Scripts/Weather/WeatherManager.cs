@@ -143,7 +143,6 @@ namespace HotUpdate.Scripts.Weather
                 weatherType = data.weatherType,
                 weatherRatio = data.weatherRatio,
                 rainDensity = data.rainDensity.GetRandomValue(),
-                cloudColor = data.cloudColor,
                 cloudDensity = data.cloudDensityRange.GetRandomValue(),
                 cloudSpeed = data.cloudSpeedRange.GetRandomValue(),
                 lightIntensity = data.lightIntensity.GetRandomValue(),
@@ -172,19 +171,18 @@ namespace HotUpdate.Scripts.Weather
             var fogDensity = data.fogDensity.GetRandomValue();
             var cloudSpeed = data.cloudSpeedRange.GetRandomValue();
             var cloudDensity = data.cloudDensityRange.GetRandomValue();
-            var cloudColor = data.cloudColor;
             var lightDensity = data.lightIntensity.GetRandomValue();
             var enableThunder = Random.Range(0, 1) <= data.thunderRatio && data.thunderRatio > 0;
             var thunderEndPos = _mapBoundDefiner.GetRandomPoint();
             var thunderStartPos = new Vector3(thunderEndPos.x, thunderEndPos.y + 100, thunderEndPos.z);
             var weatherEffectData = new WeatherEffectData
             {
+                weatherType = data.weatherType,
                 enableFog = enableFog,
                 fogDensity = fogDensity,
                 lightDensity = lightDensity,
                 cloudSpeed = cloudSpeed,
                 cloudDensity = cloudDensity,
-                cloudColor = cloudColor,
                 thunderStartPos = thunderStartPos,
                 thunderEndPos = thunderEndPos,
                 enableThunder = enableThunder,
@@ -215,8 +213,8 @@ namespace HotUpdate.Scripts.Weather
                     else if (component.GetType() == typeof(Clouds) && _clouds == null)
                     {
                         _clouds = component.GetComponent<Clouds>();
-                        _objectResolver.Inject(component);
                     }
+                    _objectResolver.Inject(component);
 
                     _weatherEffectsDict.TryAdd(component.GetType(), component);
                     if (component.TryGetComponent<IDayNightCycle>(out var dayNightCycle))
@@ -294,6 +292,7 @@ namespace HotUpdate.Scripts.Weather
 
     public class WeatherEffectData
     {
+        public WeatherType weatherType;
         public bool enableFog;
         public bool enableThunder;
         public float fogDensity;
@@ -302,6 +301,5 @@ namespace HotUpdate.Scripts.Weather
         public float cloudDensity;
         public Vector3 thunderStartPos;
         public Vector3 thunderEndPos;
-        public Color cloudColor;
     }
 }

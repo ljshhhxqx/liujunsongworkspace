@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using System.Linq;
+using DG.Tweening;
 using HotUpdate.Scripts.Config;
 using UniRx;
 using UnityEngine;
@@ -12,11 +13,11 @@ namespace HotUpdate.Scripts.Weather.WeatherEffects
         private Material lowCloud;
         [SerializeField]
         private Material highCloud;
-        [SerializeField]
-        private Gradient dawnDuskColorGradient; // 日出和日落的渐变颜色
-        private Color _fixedColor;
+        private Gradient _colorGradient;
         private DayNightCycleData _dayNightCycleData;
-        private static readonly int Color = Shader.PropertyToID("_CloudColor");
+        private static readonly int ColorProperty = Shader.PropertyToID("_CloudColor");
+        private static readonly int SpeedProperty = Shader.PropertyToID("_Speed");
+        private static readonly int DensityProperty = Shader.PropertyToID("_Density");
 
         [Inject]
         private void Init(IConfigProvider configProvider)
@@ -28,54 +29,25 @@ namespace HotUpdate.Scripts.Weather.WeatherEffects
 
         public override void PlayEffect(WeatherEffectData weatherData)
         {
-            _fixedColor = weatherData.cloudColor;
-            Debug.Log($"Play Clouds Effect {weatherData.cloudDensity} {weatherData.cloudColor} {weatherData.cloudSpeed}");
-            lowCloud.DOFloat(weatherData.cloudDensity, "_Density", WeatherConstData.weatherChangeTime);
-            highCloud.DOFloat(weatherData.cloudDensity, "_Density", WeatherConstData.weatherChangeTime);
-            lowCloud.DOColor(weatherData.cloudColor, Color, WeatherConstData.weatherChangeTime);
-            highCloud.DOColor(weatherData.cloudColor, Color, WeatherConstData.weatherChangeTime);
-            lowCloud.DOFloat(weatherData.cloudSpeed, "_Speed", WeatherConstData.weatherChangeTime);
-            highCloud.DOFloat(weatherData.cloudSpeed, "_Speed", WeatherConstData.weatherChangeTime);
+            _colorGradient = _dayNightCycleData.cloudColorGradients.FirstOrDefault(x => x.weatherType == weatherData.weatherType).cloudColor;
+            Debug.Log($"Play Clouds Effect {weatherData.cloudDensity} {weatherData.cloudSpeed}");
+            lowCloud.DOFloat(weatherData.cloudDensity, DensityProperty, WeatherConstData.weatherChangeTime);
+            highCloud.DOFloat(weatherData.cloudDensity, DensityProperty, WeatherConstData.weatherChangeTime);
+            lowCloud.SetFloat(SpeedProperty, weatherData.cloudSpeed);
+            highCloud.SetFloat(SpeedProperty, weatherData.cloudSpeed);
         }
 
         private void UpdateCloudsColor(float currentTime)
         {
-            Color cloudColor;
-
-            if (currentTime >= _dayNightCycleData.sunriseTime && currentTime < _dayNightCycleData.sunsetTime)
+            if (_colorGradient == null)
             {
-                // 夜晚
-                float t;
-                if (currentTime >= _dayNightCycleData.sunsetTime)
-                {
-                    t = (currentTime - _dayNightCycleData.sunsetTime) / (_dayNightCycleData.oneDayDuration - _dayNightCycleData.sunsetTime);
-                }
-                else
-                {
-                    t = currentTime /  _dayNightCycleData.sunriseTime;
-                }
-
-                // 颜色渐变
-                cloudColor = UnityEngine.Color.Lerp(_fixedColor, dawnDuskColorGradient.Evaluate(t), t);
+                return;
             }
-            else
-            {
-                // 夜晚
-                float t;
-                if (currentTime >= _dayNightCycleData.sunsetTime)
-                {
-                    t = (currentTime - _dayNightCycleData.sunsetTime) / (_dayNightCycleData.oneDayDuration - _dayNightCycleData.sunsetTime);
-                }
-                else
-                {
-                    t = currentTime /  _dayNightCycleData.sunriseTime;
-                }
-
-                // 颜色渐变
-                cloudColor = UnityEngine.Color.Lerp(_fixedColor, dawnDuskColorGradient.Evaluate(t), t);
-            }
-            highCloud.SetColor(Color, cloudColor);
-            lowCloud.SetColor(Color, cloudColor);
+            var t = currentTime / _dayNightCycleData.oneDayDuration;
+            // 颜色渐变
+            var cloudColor = _colorGradient.Evaluate(t);
+            highCloud.DOColor(cloudColor, ColorProperty, 0.99f);
+            lowCloud.DOColor(cloudColor, ColorProperty, 0.99f);
         }
     }
 }

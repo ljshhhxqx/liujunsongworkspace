@@ -15,7 +15,6 @@ MonoBehaviour:
   weatherData:
   - weatherType: 1
     weatherRatio: 0.25
-    cloudColor: {r: 1, g: 1, b: 1, a: 1}
     cloudDensityRange:
       min: 1.6
       max: 2
@@ -38,7 +37,6 @@ MonoBehaviour:
       max: 0
   - weatherType: 2
     weatherRatio: 0.35
-    cloudColor: {r: 0.8773585, g: 0.8773585, b: 0.8773585, a: 0.8666667}
     cloudDensityRange:
       min: 0.1
       max: 1.6
@@ -61,7 +59,6 @@ MonoBehaviour:
       max: 0
   - weatherType: 3
     weatherRatio: 0.25
-    cloudColor: {r: 0.7735849, g: 0.7735849, b: 0.7735849, a: 0.7176471}
     cloudDensityRange:
       min: 0
       max: 0.1
@@ -84,7 +81,6 @@ MonoBehaviour:
       max: 0
   - weatherType: 4
     weatherRatio: 0.05
-    cloudColor: {r: 0.8584906, g: 0.8584906, b: 0.8584906, a: 0.7176471}
     cloudDensityRange:
       min: 0
       max: 0.1
@@ -172,3 +168,128 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     oneDayDuration: 86400
     minLightIntensity: 0.2
+    cloudColorGradients:
+    - weatherType: 1
+      cloudColor:
+        serializedVersion: 2
+        key0: {r: 0.17520213, g: 0.17520213, b: 0.17520213, a: 0.68235296}
+        key1: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0.68235296}
+        key2: {r: 0.88140154, g: 0.5032247, b: 0, a: 0.60784316}
+        key3: {r: 1, g: 1, b: 1, a: 0}
+        key4: {r: 1, g: 1, b: 1, a: 0}
+        key5: {r: 0.882353, g: 0.5019608, b: 0, a: 0}
+        key6: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
+        key7: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
+        ctime0: 0
+        ctime1: 11694
+        ctime2: 15206
+        ctime3: 18376
+        ctime4: 45532
+        ctime5: 49044
+        ctime6: 52557
+        ctime7: 65535
+        atime0: 0
+        atime1: 65535
+        atime2: 65535
+        atime3: 0
+        atime4: 0
+        atime5: 0
+        atime6: 0
+        atime7: 0
+        m_Mode: 0
+        m_ColorSpace: 0
+        m_NumColorKeys: 8
+        m_NumAlphaKeys: 2
+    - weatherType: 2
+      cloudColor:
+        serializedVersion: 2
+        key0: {r: 0.17520213, g: 0.17520213, b: 0.17520213, a: 0.91764706}
+        key1: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0.92156863}
+        key2: {r: 0.88140154, g: 0.5032247, b: 0, a: 0}
+        key3: {r: 1, g: 1, b: 1, a: 0}
+        key4: {r: 1, g: 1, b: 1, a: 0}
+        key5: {r: 0.882353, g: 0.5019608, b: 0, a: 0}
+        key6: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
+        key7: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
+        ctime0: 0
+        ctime1: 11694
+        ctime2: 15206
+        ctime3: 18376
+        ctime4: 45532
+        ctime5: 49044
+        ctime6: 52557
+        ctime7: 65535
+        atime0: 0
+        atime1: 65535
+        atime2: 0
+        atime3: 0
+        atime4: 0
+        atime5: 0
+        atime6: 0
+        atime7: 0
+        m_Mode: 0
+        m_ColorSpace: 0
+        m_NumColorKeys: 8
+        m_NumAlphaKeys: 2
+    - weatherType: 3
+      cloudColor:
+        serializedVersion: 2
+        key0: {r: 0.17520213, g: 0.17520213, b: 0.17520213, a: 0.93333334}
+        key1: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0.92941177}
+        key2: {r: 0.8382749, g: 0.8382749, b: 0.8382749, a: 0}
+        key3: {r: 0.832884, g: 0.832884, b: 0.832884, a: 0}
+        key4: {r: 1, g: 1, b: 1, a: 0}
+        key5: {r: 0.79514813, g: 0.79514813, b: 0.79514813, a: 0}
+        key6: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
+        key7: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
+        ctime0: 0
+        ctime1: 11694
+        ctime2: 15206
+        ctime3: 18376
+        ctime4: 45532
+        ctime5: 49044
+        ctime6: 52557
+        ctime7: 65535
+        atime0: 0
+        atime1: 65535
+        atime2: 0
+        atime3: 0
+        atime4: 0
+        atime5: 0
+        atime6: 0
+        atime7: 0
+        m_Mode: 0
+        m_ColorSpace: 0
+        m_NumColorKeys: 8
+        m_NumAlphaKeys: 2
+    - weatherType: 4
+      cloudColor:
+        serializedVersion: 2
+        key0: {r: 0.17520213, g: 0.17520213, b: 0.17520213, a: 0.93333334}
+        key1: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0.92941177}
+        key2: {r: 0.8382749, g: 0.8382749, b: 0.8382749, a: 0}
+        key3: {r: 0.832884, g: 0.832884, b: 0.832884, a: 0}
+        key4: {r: 1, g: 1, b: 1, a: 0}
+        key5: {r: 0.79514813, g: 0.79514813, b: 0.79514813, a: 0}
+        key6: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
+        key7: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
+        ctime0: 0
+        ctime1: 11694
+        ctime2: 15206
+        ctime3: 18376
+        ctime4: 45532
+        ctime5: 49044
+        ctime6: 52557
+        ctime7: 65535
+        atime0: 0
+        atime1: 65535
+        atime2: 0
+        atime3: 0
+        atime4: 0
+        atime5: 0
+        atime6: 0
+        atime7: 0
+        m_Mode: 0
+        m_ColorSpace: -1
+        m_NumColorKeys: 8
+        m_NumAlphaKeys: 2
