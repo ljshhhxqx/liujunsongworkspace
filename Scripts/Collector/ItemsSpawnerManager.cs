@@ -289,13 +289,14 @@ namespace HotUpdate.Scripts.Collector
 
             return spawnedIDs;
         }
+        
+        private bool IsPositionValidWithoutItem(Vector3 position)
+        {
+            return IsPositionValid(position, null);
+        }
     
         private Vector3 GetRandomStartPoint()
         {
-            bool IsPositionValidWithoutItem(Vector3 position)
-            {
-                return IsPositionValid(position, null);
-            }
 
             var randomPos = _mapBoundDefiner.GetRandomPoint(IsPositionValidWithoutItem);
             return new Vector3(randomPos.x, randomPos.y + _itemHeight, randomPos.z);

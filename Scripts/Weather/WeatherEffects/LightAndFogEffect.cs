@@ -1,5 +1,4 @@
-﻿using System;
-using DG.Tweening;
+﻿using DG.Tweening;
 using HotUpdate.Scripts.Config;
 using UniRx;
 using UnityEngine;
@@ -12,8 +11,6 @@ namespace HotUpdate.Scripts.Weather.WeatherEffects
         [SerializeField]
         private Light mainLight;
         private float _sunInitialIntensity;
-        private Tween _lightTween;
-        private IDisposable _enableLightning;
         private DayNightCycleData _dayNightCycleData;
         
         [Inject]
@@ -30,47 +27,6 @@ namespace HotUpdate.Scripts.Weather.WeatherEffects
             _sunInitialIntensity = Mathf.Clamp01( weatherData.lightDensity);
             RenderSettings.fogDensity = weatherData.fogDensity;
             RenderSettings.fog = weatherData.enableFog;
-            UpdateLight(weatherData.enableThunder);
-        }
-
-        private void UpdateLight(bool enableLightning = false)
-        {
-            // if (enableLightning)
-            // {
-            //     _enableLightning = Observable.Defer(() => 
-            //         {
-            //             // 每次生成一个 5 到 10 秒之间的随机时间 
-            //             var randomTime = Random.Range(5f, 10f);
-            //
-            //             // 打印随机时间，以确认随机间隔是否正确
-            //             Debug.Log($"Next action in {randomTime} seconds.");
-            //
-            //             // 使用 Observable.Timer 来等待随机时间
-            //             return Observable.Timer(TimeSpan.FromSeconds(randomTime))
-            //                 .Do(_ => 
-            //                 {
-            //                     _lightTween?.Kill();
-            //                     mainLight.intensity = _sunInitialIntensity * 0.1f;
-            //                     _lightTween = DOTween.To(() => mainLight.intensity, 
-            //                             x => mainLight.intensity = x, 
-            //                             _sunInitialIntensity, 0.5f) 
-            //                         .SetLoops(Random.Range(2, 4), LoopType.Yoyo)
-            //                         .OnComplete(() => 
-            //                         {
-            //                             // 完成后可以触发下一个随机的光照变化或其他效果
-            //                             mainLight.intensity = _sunInitialIntensity;
-            //                             Debug.Log("Lightning effect completed.");
-            //                         });
-            //                 });
-            //         })
-            //         // 递归订阅以重复这一过程
-            //         .Repeat()
-            //         .Subscribe();
-            // }
-            // else
-            // {
-            //     _enableLightning?.Dispose();
-            // }
         }
 
         private void UpdateSun(float currentTime)
@@ -116,12 +72,7 @@ namespace HotUpdate.Scripts.Weather.WeatherEffects
             var timeRatio = currentTime / _dayNightCycleData.oneDayDuration;
             var sunAngle = timeRatio * 360f - 90f; // 太阳角度，从-90度（东升）到270度（西落）
             var targetRotation = Quaternion.Euler(new Vector3(sunAngle, 0f, 0f));
-            mainLight.transform.DORotateQuaternion(targetRotation, 1f); // 在1秒内平滑过渡到目标角度
-        }
-
-        private void OnDestroy()
-        {
-            _enableLightning?.Dispose();
+            mainLight.transform.DORotateQuaternion(targetRotation, 0.99f); // 在1秒内平滑过渡到目标角度
         }
     }
 }

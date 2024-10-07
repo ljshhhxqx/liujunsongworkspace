@@ -96,7 +96,6 @@ namespace HotUpdate.Scripts.Weather
         //[ClientRpc]
         private void RpcSetWeather()
         {
-            
             RandomWeather();
         }
 
@@ -134,6 +133,7 @@ namespace HotUpdate.Scripts.Weather
             
                 var instance = Instantiate(prefab.gameObject);
                 var settingComponent = instance.GetComponent<WeatherSetting>();
+                _objectResolver.Inject(settingComponent);
                 _weatherSettingDict.Add(weatherType, settingComponent);
                 _currentWeatherSetting = settingComponent;
             }
@@ -164,6 +164,7 @@ namespace HotUpdate.Scripts.Weather
 
             };
         }
+        private Vector3 GetRandomPos() => _mapBoundDefiner.GetRandomPoint();
 
         private void ChangeWeatherEffects(WeatherData data)
         {
@@ -173,8 +174,6 @@ namespace HotUpdate.Scripts.Weather
             var cloudDensity = data.cloudDensityRange.GetRandomValue();
             var lightDensity = data.lightIntensity.GetRandomValue();
             var enableThunder = Random.Range(0, 1) <= data.thunderRatio && data.thunderRatio > 0;
-            var thunderEndPos = _mapBoundDefiner.GetRandomPoint();
-            var thunderStartPos = new Vector3(thunderEndPos.x, thunderEndPos.y + 100, thunderEndPos.z);
             var weatherEffectData = new WeatherEffectData
             {
                 weatherType = data.weatherType,
@@ -183,14 +182,8 @@ namespace HotUpdate.Scripts.Weather
                 lightDensity = lightDensity,
                 cloudSpeed = cloudSpeed,
                 cloudDensity = cloudDensity,
-                thunderStartPos = thunderStartPos,
-                thunderEndPos = thunderEndPos,
+                thunderStartPosGetter = GetRandomPos,
                 enableThunder = enableThunder,
-            };
-            WeatherDataModel.weatherInfo.Value = new WeatherInfo()
-            {
-                weatherType = data.weatherType,
-                //density = data.rainDensity,
             };
             if (_weatherEffectsDict.Count != 0 && _weatherEffectsDict.Count == _weatherEffectPrefabs.Count)
             {
@@ -299,7 +292,6 @@ namespace HotUpdate.Scripts.Weather
         public float lightDensity;
         public float cloudSpeed;
         public float cloudDensity;
-        public Vector3 thunderStartPos;
-        public Vector3 thunderEndPos;
+        public Func<Vector3> thunderStartPosGetter;
     }
 }
