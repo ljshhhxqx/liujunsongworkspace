@@ -21,7 +21,7 @@ namespace Network.Server.PlayFab
     {
         private readonly UIManager _uiManager;
         private readonly IPlayFabClientCloudScriptCaller _playFabClientCloudScriptCaller;
-        private readonly PlayerInGameManager _playerInGameManager;
+        private readonly PlayerDataManager _playerDataManager;
         
         private int _pollCount = 0;
         private bool _isMatchmaking;  
@@ -48,10 +48,10 @@ namespace Network.Server.PlayFab
         
         
         [Inject]
-        private PlayFabRoomManager(UIManager uiManager, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller, PlayerInGameManager playerInGameManager)
+        private PlayFabRoomManager(UIManager uiManager, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller, PlayerDataManager playerDataManager)
         {
             _uiManager = uiManager;
-            _playerInGameManager = playerInGameManager;
+            _playerDataManager = playerDataManager;
             _playFabClientCloudScriptCaller = playFabClientCloudScriptCaller;
         }
 
@@ -388,7 +388,7 @@ namespace Network.Server.PlayFab
             var operation = ResourceManager.Instance.LoadSceneAsync(_currentRoomData.RoomCustomInfo.MapType.ToString());
             operation.Completed += (op) =>
             {
-                _playerInGameManager.InitRoomPlayer(_currentRoomData);
+                _playerDataManager.InitRoomPlayer(_currentRoomData);
             };
         }
 

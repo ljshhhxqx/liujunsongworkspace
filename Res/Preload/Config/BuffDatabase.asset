@@ -12,5 +12,65 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29b337a7cdff40d5aced6c3fbc51daa4, type: 3}
   m_Name: BuffDatabase
   m_EditorClassIdentifier: 
-  buffs: []
-  randomBuffs: []
+  buffs:
+  - buffType: 5
+    propertyTypeEnum: 0
+    duration: 10
+    effectStrength: 10
+  - buffType: 6
+    propertyTypeEnum: 1
+    duration: 10
+    effectStrength: 10
+  - buffType: 7
+    propertyTypeEnum: 2
+    duration: 10
+    effectStrength: 10
+  - buffType: 9
+    propertyTypeEnum: 4
+    duration: 10
+    effectStrength: 10
+  - buffType: 8
+    propertyTypeEnum: 3
+    duration: 10
+    effectStrength: 10
+  randomBuffs:
+  - buffType: 0
+    propertyTypeEnum: 0
+    durationRange:
+      min: 5
+      max: 10
+    effectStrengthRange:
+      min: 5
+      max: 10
+  - buffType: 1
+    propertyTypeEnum: 4
+    durationRange:
+      min: 5
+      max: 10
+    effectStrengthRange:
+      min: 5
+      max: 10
+  - buffType: 2
+    propertyTypeEnum: 1
+    durationRange:
+      min: 5
+      max: 10
+    effectStrengthRange:
+      min: 5
+      max: 10
+  - buffType: 3
+    propertyTypeEnum: 2
+    durationRange:
+      min: 5
+      max: 10
+    effectStrengthRange:
+      min: 5
+      max: 10
+  - buffType: 4
+    propertyTypeEnum: 3
+    durationRange:
+      min: 5
+      max: 10
+    effectStrengthRange:
+      min: 5
+      max: 10

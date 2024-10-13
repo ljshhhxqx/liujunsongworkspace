@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Data;
+using UnityEngine;
 
 namespace Tool.GameEvent
 {
@@ -31,10 +32,10 @@ namespace Tool.GameEvent
 
     public class GameReadyEvent : GameEvent
     {
-        public string SceneName { get; private set; }
-        public GameReadyEvent(string sceneName)
+        public GameInfo GameInfo { get; private set; }
+        public GameReadyEvent(GameInfo gameInfo)
         {
-            SceneName = sceneName;
+            GameInfo = gameInfo;
         }
     }
 
@@ -126,5 +127,14 @@ namespace Tool.GameEvent
             CollectObject = collectObject;
             IsEnter = isEnter;
         }
+    }
+    
+    public struct GameInfo
+    {
+        public string SceneName;
+        public GameMode GameMode;
+        public int GameScore;
+        public int GameTime;
+        public int PlayerCount;
     }
 }

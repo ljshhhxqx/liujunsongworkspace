@@ -2,6 +2,7 @@
 using System.IO;
 using Config;
 using HotUpdate.Scripts.Collector;
+using Mirror;
 using Network.Server.Collect;
 using Sirenix.OdinInspector;
 using Tool.Message;

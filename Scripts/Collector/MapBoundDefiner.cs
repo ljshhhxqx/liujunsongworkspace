@@ -28,7 +28,7 @@ namespace HotUpdate.Scripts.Collector
             var config = configProvider.GetConfig<GameDataConfig>();
             _safetyMargin = config.GameConfigData.SafetyMargin;
             _configProvider = configProvider;
-            _sceneLayer = LayerMask.NameToLayer("Scene");
+            _sceneLayer = config.GameConfigData.GroundSceneLayer;
             Debug.Log("MapBoundDefiner init");
             CalculateAdjustedBounds();
             InitializeGrid();
@@ -97,7 +97,7 @@ namespace HotUpdate.Scripts.Collector
         public Vector3 GetRandomPoint(Func<Vector3, bool> isObstacle = null)
         {
             var count = 0;
-            while (count < 20)
+            while (count < 10)
             {
                 Debug.Log($"GetRandomPoint count: {count}");
                 if (_gridMap.Count == 0)

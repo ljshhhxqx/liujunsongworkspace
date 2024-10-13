@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using AOTScripts.Tool.ECS;
 using Data;
 using HotUpdate.Scripts.Network.Client.Player;
@@ -6,68 +6,58 @@ using Mirror;
 
 namespace HotUpdate.Scripts.Network.Server.InGame
 {
-    public class PlayerInGameManager 
+    public class PlayerInGameManager : ServerNetworkComponent
     {
-        private readonly List<PlayerInGameData> _players = new List<PlayerInGameData>();
-        
-        public void InitRoomPlayer(RoomData roomData)
+        private readonly SyncDictionary<int, string> _playerIds = new SyncDictionary<int, string>();
+        private readonly SyncDictionary<int, PlayerInGameData> _playerInGameData = new SyncDictionary<int, PlayerInGameData>();
+
+        public void AddPlayer(int connectId, PlayerInGameData playerInGameData)
         {
-            _players.Clear();
-            foreach (var player in roomData.PlayersInfo)
-            {
-                _players.Add(new PlayerInGameData
-                {
-                    Player = player,
-                });
-            }
+            _playerInGameData.Add(connectId, playerInGameData);
         }
 
-        public void InitPlayerProperty(PlayerPropertyComponent playerProperty)
+        public void RemovePlayer(int connectId)
         {
-            var player = GetPlayer(playerProperty.PlayerId);
-            if (player != null)
-            {
-                player.PlayerProperty = playerProperty;
-            }
-            throw new System.Exception($"Player not found - {playerProperty.PlayerId}");
+            _playerInGameData.Remove(connectId);
         }
 
-        public List<PlayerInGameData> GetPlayers()
+        public PlayerInGameData GetPlayerData(int connectId)
         {
-            return _players;
+            _playerInGameData.TryGetValue(connectId, out var playerInGameData);
+            return playerInGameData;
         }
         
-        public void AddPlayer(PlayerInGameData player)
+        public PlayerInGameData GetPlayer(int playerId)
         {
-            _players.Add(player);
-        }
-        
-        public void RemovePlayer(int connectionId)
-        {
-            _players.RemoveAll(x => x.ConnectionId == connectionId);
-        }
-        
-        public void ClearPlayers()
-        {
-            _players.Clear();
-        }
-        
-        public PlayerInGameData GetPlayer(string playerId)
-        {
-            foreach (var player in _players)
+            foreach (var player in _playerInGameData)
             {
-                if (player.Player.PlayerId == playerId)
+                if (player.Value.PlayerProperty.ConnectionID == playerId)
                 {
-                    return player;
+                    return player.Value;
                 }
             }
             return null;
         }   
+
+        public PlayerPropertyComponent GetPlayerPropertyComponent(int connectionId)
+        {
+            return GetPlayer(connectionId)?.PlayerProperty;
+        }
+
+        public void InitPlayerProperty(PlayerPropertyComponent playerProperty)
+        {
+            var player = GetPlayer(playerProperty.ConnectionID);
+            if (player != null)
+            {
+                player.PlayerProperty = playerProperty;
+            }
+            throw new Exception($"Player not found - {playerProperty.PlayerId}");
+        }
     }
 
+    [Serializable]
     public class PlayerInGameData
     {
-        public int ConnectionId { get; set; }
         public PlayerReadOnlyData Player { get; set; }
         public PlayerPropertyComponent PlayerProperty { get; set; }
     }

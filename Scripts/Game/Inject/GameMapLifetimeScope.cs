@@ -2,6 +2,7 @@
 using HotUpdate.Scripts.Buff;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Game.Map;
+using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Weather;
 using Network.Server;
 using UnityEngine;
@@ -18,8 +19,10 @@ namespace HotUpdate.Scripts.Game.Inject
             //builder.Register<WeatherManager>();
             builder.RegisterComponentInHierarchy<MapBoundDefiner>();
             builder.RegisterComponentInHierarchy<NetworkManagerCustom>();
+            builder.RegisterComponentInHierarchy<PlayerInGameManager>();
             //builder.Register<BuffManager>();
             //builder.Register<ItemsSpawnerManager>();
+            builder.RegisterComponentInHierarchy<GameLoopController>();
             builder.RegisterComponentInHierarchy<NetworkAudioManager>();
             builder.RegisterComponentInHierarchy<BuffManager>();
             builder.RegisterComponentInHierarchy<ItemsSpawnerManager>();

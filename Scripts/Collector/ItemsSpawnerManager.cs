@@ -4,7 +4,11 @@ using System.Linq;
 using AOTScripts.Tool.ECS;
 using Config;
 using Cysharp.Threading.Tasks;
+using HotUpdate.Scripts.Buff;
 using HotUpdate.Scripts.Network.Server.Collect;
+using HotUpdate.Scripts.Network.Server.InGame;
+using Mirror;
+using Network.NetworkMes;
 using Tool.GameEvent;
 using Tool.Message;
 using UnityEngine;
@@ -23,65 +27,117 @@ namespace HotUpdate.Scripts.Collector
         private IConfigProvider _configProvider;
         private MapBoundDefiner _mapBoundDefiner;
         private MessageCenter _messageCenter;
+        private PlayerInGameManager _playerInGameManager;
+        private CollectObjectDataConfig _collectObjectDataConfig;
         private LayerMask _sceneLayer;
         private Dictionary<Vector2Int, Grid> _gridMap = new Dictionary<Vector2Int, Grid>();
-        private Dictionary<int, CollectibleItemData> _spawnedItems = new Dictionary<int, CollectibleItemData>();
+        private readonly SyncDictionary<int, CollectibleItemData> _spawnedItems = new SyncDictionary<int, CollectibleItemData>();
         private int _currentId;
         private static float _itemSpacing = 0.5f;
         private static int _maxGridItems = 10;
         private static float _itemHeight = 1f;
         private static float _gridSize = 10f; // Size of each grid cell
-        private static int _onceSpawnCount = 10;
+        private static int _onceSpawnCount = 100;
         private Transform _spawnedParent;
-    
-        public int CurrentRound { get; set; }
+        private BuffManager _buffManager;
+
+        [SyncVar] 
+        private int _currentRound;
+        public int CurrentRound => _currentRound;
+        public SyncDictionary<int, CollectibleItemData> SpawnedItems => _spawnedItems;
 
         [Inject]
-        private void Init(MapBoundDefiner mapBoundDefiner, IConfigProvider configProvider, GameEventManager gameEventManager, MessageCenter messageCenter)
+        private void Init(MapBoundDefiner mapBoundDefiner, IConfigProvider configProvider,BuffManager buffManager, PlayerInGameManager playerInGameManager,GameEventManager gameEventManager, MessageCenter messageCenter)
         {
             gameEventManager.Subscribe<GameResourceLoadedEvent>(OnGameResourceLoaded);
             _messageCenter = messageCenter;
-            _messageCenter.Register<PlayerTouchedCollectMessage>(OnPlayerTouchedCollect);
-            _sceneLayer = LayerMask.NameToLayer("Scene");
+            _collectObjectDataConfig = _configProvider.GetConfig<CollectObjectDataConfig>();
+            //_messageCenter.Register<PlayerTouchedCollectMessage>(OnPlayerTouchedCollect);
+            _playerInGameManager = playerInGameManager;
+            _buffManager = buffManager;
+            var config = _configProvider.GetConfig<GameDataConfig>();
+            _sceneLayer = config.GameConfigData.GroundSceneLayer;
             _configProvider = configProvider;
             _mapBoundDefiner = mapBoundDefiner;
+            NetworkClient.RegisterHandler<GameStartMessage>(OnGameStart);
             _spawnedParent = transform;
             InitializeGrid();
         }
 
-        private void OnPlayerTouchedCollect(PlayerTouchedCollectMessage message)
+        private void OnGameStart(GameStartMessage message)
         {
-            if (_spawnedItems.ContainsKey(message.CollectID))
+            _gridMap.Clear();
+            _gridMap = _mapBoundDefiner.GridMap.ToDictionary(x => x,_ => new Grid());
+            if (_collectiblePrefabs.Count > 0)
             {
-                _spawnedItems.Remove(message.CollectID);
-                if (_spawnedItems.Count == 0)
+                var res = ResourceManager.Instance.GetMapCollectObject(message.GameInfo.SceneName);
+                _collectiblePrefabs = res.Select(x => new CollectibleItemData
                 {
-                    _messageCenter.Post(new CollectObjectsEmptyMessage(CurrentRound));
+                    component = x.GetComponent<CollectObjectController>(),
+                }).ToList();
+            }
+        }
+
+        [Server]
+        public void HandleItemPickup(int itemId, int connectionId)
+        {
+            if (_spawnedItems.TryGetValue(itemId, out var item))
+            {
+                if (CanPickup(item.component, connectionId))
+                {
+                    _spawnedItems.Remove(itemId);
+                    RpcPickupItem(item.component, connectionId);
                 }
             }
         }
+
+        [ClientRpc]
+        private void RpcPickupItem(CollectObjectController item, int connectionId)
+        {
+            var configData = _collectObjectDataConfig.GetCollectObjectData(item.CollectData.CollectType);
+            GameObjectPoolManger.Instance.ReturnObject(item.gameObject);
+            var player = _playerInGameManager.GetPlayerPropertyComponent(connectionId);
+            switch (configData.CollectObjectClass)
+            {
+                case CollectObjectClass.Score:
+                    player.ModifyProperty(PropertyTypeEnum.Score, configData.PropertyValue);
+                    break;
+                case CollectObjectClass.Buff:
+                    var propertyType = configData.PropertyType.TypeEnum;
+                    _buffManager.AddBuffToPlayer(player, propertyType);
+                    break;
+                case CollectObjectClass.TreasureChest:
+                    // TODO: Treasure Chest
+                    break;
+                default:
+                    throw new Exception("Invalid collect object class");
+            }
+        }
+
+        private bool CanPickup(CollectObjectController item, int connectionId)
+        {
+            var player = _playerInGameManager.GetPlayerPropertyComponent(connectionId);
+            // 获取 item 的 Collider
+            var itemCollider = item.GetComponent<Collider>();
+            var playerCollider = player.GetComponent<Collider>();
+
+            // 判定 item 的 collider 是否与 player 的 collider 重叠
+            return itemCollider.bounds.Intersects(playerCollider.bounds);
+        }
+
 
         private int GenerateID()
         {
             return _currentId++;
         }
 
-        public async UniTask SpawnManyItems(string mapName)
+        [Server]
+        public void SpawnManyItems()
         {
-            _currentId = 0;
             _spawnedItems.Clear();
-            _gridMap.Clear();
-            _gridMap = _mapBoundDefiner.GridMap.ToDictionary(x => x,_ => new Grid());
-            if (_collectiblePrefabs.Count > 0)
-            {
-                var res = ResourceManager.Instance.GetMapCollectObject(mapName);
-                _collectiblePrefabs = res.Select(x => new CollectibleItemData
-                {
-                    component = x.GetComponent<CollectObjectController>(),
-                }).ToList();
-            }
+            _currentId = 0;
             var allSpawnedItems = new List<CollectibleItemData>();
-            for (int i = 0; i < _onceSpawnCount; i++)
+            for (var i = 0; i < _onceSpawnCount; i++)
             {
                 var spawnedItems = SpawnItems(Random.Range(10, 20), Random.Range(1, 4));
                 if (spawnedItems.Count == 0)
@@ -89,9 +145,13 @@ namespace HotUpdate.Scripts.Collector
                     continue;
                 }
                 allSpawnedItems.AddRange(spawnedItems);
-                await UniTask.Yield(); // Yield to spread the work over multiple frames
             }
+            SpawnManyItemsClientRpc(allSpawnedItems);
+        }
 
+        [ClientRpc]
+        private void SpawnManyItemsClientRpc(List<CollectibleItemData> allSpawnedItems)
+        {
             foreach (var data in allSpawnedItems)
             {
                 var go = GameObjectPoolManger.Instance.GetObject(data.component.gameObject, data.position, Quaternion.identity, _spawnedParent);

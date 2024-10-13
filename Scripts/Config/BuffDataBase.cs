@@ -28,6 +28,25 @@ namespace HotUpdate.Scripts.Config
 
         public List<BuffData> buffs = new List<BuffData>();
         public List<RandomBuffData> randomBuffs = new List<RandomBuffData>();
+        
+        public BuffType GetRandomBuffType(PropertyTypeEnum propertyTypeEnum)
+        {
+            var randomBuff = randomBuffs.Find(buff => buff.propertyTypeEnum == propertyTypeEnum);
+            return randomBuff.buffType;            
+        }
+        
+        public BuffData GetRandomBuff(PropertyTypeEnum propertyTypeEnum)
+        {
+            var randomBuff = randomBuffs.Find(buff => buff.propertyTypeEnum == propertyTypeEnum);
+            var buff = new BuffData
+            {
+                buffType = randomBuff.buffType,
+                propertyTypeEnum = randomBuff.propertyTypeEnum,
+                duration = randomBuff.durationRange.GetRandomValue(),
+                effectStrength = randomBuff.effectStrengthRange.GetRandomValue()
+            };
+            return buff;
+        }
 
         public BuffData? GetBuffData(BuffType buffType)
         {

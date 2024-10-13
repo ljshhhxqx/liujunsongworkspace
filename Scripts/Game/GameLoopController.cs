@@ -2,10 +2,13 @@ using System;
 using System.Threading;
 using AOTScripts.Tool.ECS;
 using Cysharp.Threading.Tasks;
+using Data;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Buff;
 using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
+using Network.NetworkMes;
 using Tool.GameEvent;
 using Tool.Message;
 using UnityEngine;
@@ -17,17 +20,17 @@ namespace HotUpdate.Scripts.Game
     public class GameLoopController : NetworkMonoController
     {
         [SyncVar]
-        private int mainGameTime = 180 * 1000; // 3分钟的倒计时
+        private int _mainGameTime = 180 * 1000; // 3分钟的倒计时
         [SyncVar]
-        private int warmupTime = 10 * 1000; // 10秒热身时间
+        private int _warmupTime = 10 * 1000; // 10秒热身时间
         [SyncVar]
-        private int currentRound = 1; // 当前轮数
-        private CancellationTokenSource cts = new CancellationTokenSource();
+        private int _currentRound = 1; // 当前轮数
+        private CancellationTokenSource _cts;
         private GameEventManager _gameEventManager;
         private GameDataConfig _gameDataConfig;
-        private MessageCenter _messageCenter;
         private ItemsSpawnerManager _itemsSpawnerManager;
-        private string _gameSceneName;
+        private PlayerInGameManager _playerInGameManager;
+        private GameInfo _gameInfo;
         
         private BuffManager _buffManager;
         private NetworkAudioManager _networkAudioManager;
@@ -36,40 +39,26 @@ namespace HotUpdate.Scripts.Game
         [Inject]
         private void Init(MessageCenter messageCenter, GameEventManager gameEventManager, IObjectResolver objectResolver, IConfigProvider configProvider)
         {
-            _messageCenter = messageCenter;
             _gameEventManager = gameEventManager;
             _gameDataConfig = configProvider.GetConfig<GameDataConfig>();
             _gameEventManager.Subscribe<GameReadyEvent>(OnGameReady);
-            _messageCenter.Register<CollectObjectsEmptyMessage>(OnCollectObjectsEmpty);
-            _itemsSpawnerManager = GetComponent<ItemsSpawnerManager>();
-            _buffManager = GetComponent<BuffManager>();
-            _networkAudioManager = GetComponent<NetworkAudioManager>();
-        }
-
-        private void OnCollectObjectsEmpty(CollectObjectsEmptyMessage collectObjectsEmptyMessage)
-        {
-        
+            _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
+            _buffManager = FindObjectOfType<BuffManager>();
+            _networkAudioManager = FindObjectOfType<NetworkAudioManager>();
+            _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
         }
 
         private void OnGameReady(GameReadyEvent gameReadyEvent)
         {
-            _gameSceneName = gameReadyEvent.SceneName;
-            CmdStartGame();
+            _gameInfo = gameReadyEvent.GameInfo;
+            if (isServer)
+            {
+                _cts = new CancellationTokenSource();
+                StartGameLoop(_cts).Forget();
+            }
         }
 
-        [Command]
-        private void CmdStartGame()
-        {
-            RpcStartGame();
-        }
-
-        [ClientRpc]
-        private void RpcStartGame()
-        {
-            StartGameLoop().Forget();
-        }
-
-        private async UniTask StartGameLoop()
+        private async UniTask StartGameLoop(CancellationTokenSource cts)
         {
             // 1. 热身阶段
             Debug.Log("Game Warmup Started");
@@ -78,8 +67,8 @@ namespace HotUpdate.Scripts.Game
 
             // 2. 开始总的倒计时
             Debug.Log("Main game timer starts now!");
-            _messageCenter.Post(new GameStartMessage(_gameSceneName));
-            await StartMainGameTimerAsync(mainGameTime, cts.Token);
+            NetworkServer.SendToAll(new GameStartMessage(_gameInfo));
+            await StartMainGameTimerAsync(_mainGameTime, cts.Token);
 
             Debug.Log("Main game over. Exiting...");
         }
@@ -87,30 +76,39 @@ namespace HotUpdate.Scripts.Game
         private async UniTask StartWarmupAsync(CancellationToken token)
         {
             Debug.Log("Warmup Started");
-            int remainingTime = warmupTime;
+            var remainingTime = _warmupTime;
 
             while (remainingTime > 0 && !token.IsCancellationRequested)
             {
                 Debug.Log($"Warmup Timer: {remainingTime} seconds remaining");
                 await UniTask.Delay(1000, cancellationToken: token);
                 remainingTime--;
-                _messageCenter.Post(new GameWarmupMessage(remainingTime));
+               
+                NetworkServer.SendToAll(new GameWarmupMessage(remainingTime)); 
             }
+        }
+        
+        private bool IsEndGame()
+        {
+            return false;
+        }
+
+        private bool IsEndRound()
+        {
+            return _itemsSpawnerManager.SpawnedItems.Count == 0;
+        }
+
+        private async UniTask RoundStartAsync()
+        {
+            Debug.Log($"Round Start -- {_currentRound.ToString()}!");
+            await UniTask.Yield(); // 模拟处理时间
+            Debug.Log("Random event handled.");
         }
 
         private async UniTask StartMainGameTimerAsync(int totalTime, CancellationToken token)
         {
-            int remainingTime = totalTime;
-            bool isSubCycleRunning = false;
-
-            // 定义结束条件和随机事件处理逻辑
-            Func<bool> endCondition = () => Random.value < 0.2f; // 示例条件：20% 概率结束小循环
-            Func<UniTask> randomEventHandler = async () =>
-            {
-                Debug.Log("Handling random event...");
-                await UniTask.Delay(500); // 模拟处理时间
-                Debug.Log("Random event handled.");
-            };
+            var remainingTime = totalTime;
+            var isSubCycleRunning = false;
 
             while (remainingTime > 0 && !token.IsCancellationRequested)
             {
@@ -120,68 +118,63 @@ namespace HotUpdate.Scripts.Game
                 if (!isSubCycleRunning)
                 {
                     isSubCycleRunning = true;
-                    var subCycle = new SubCycle(10, 30, endCondition, randomEventHandler);
+                    var subCycle = new SubCycle(30, IsEndRound, RoundStartAsync);
                     _ = subCycle.StartAsync(token).ContinueWith(result => isSubCycleRunning = false);
+                    _currentRound++;
                 }
 
                 // 每秒倒计时
                 await UniTask.Delay(1000, cancellationToken: token);
                 remainingTime--;
+                NetworkServer.SendToAll(new CountdownMessage(remainingTime));
             }
-            cts.Cancel(); 
+            _cts.Cancel(); 
         
         }
 
         private void OnDestroy()
         {
-            cts.Cancel();
+            _cts.Cancel();
         }
         
         private class SubCycle
         {
-            private int subCycleTime;
-            private Func<bool> endCondition;
-            private Func<UniTask> randomEventHandler;
+            private readonly int _subCycleTime;
+            private readonly Func<bool> _endCondition;
+            private readonly Func<UniTask> _randomEventHandler;
 
-            public SubCycle(int minTime, int maxTime, Func<bool> endCondition, Func<UniTask> randomEventHandler = null)
+            public SubCycle(int maxTime, Func<bool> endCondition, Func<UniTask> randomEventHandler = null)
             {
                 // 初始化小循环的持续时间
-                subCycleTime = Random.Range(minTime, maxTime);
-                this.endCondition = endCondition;
-                this.randomEventHandler = randomEventHandler;
+                _subCycleTime = maxTime;
+                _endCondition = endCondition;
+                _randomEventHandler = randomEventHandler;
             }
 
             public async UniTask<bool> StartAsync(CancellationToken token)
             {
-                Debug.Log($"Starting SubCycle with {subCycleTime} seconds");
+                Debug.Log($"Starting SubCycle with {_subCycleTime} seconds");
 
-                int elapsedTime = 0;
+                float elapsedTime = 0;
 
-                while (elapsedTime < subCycleTime && !endCondition() && !token.IsCancellationRequested)
+                while (elapsedTime < _subCycleTime && !_endCondition() && !token.IsCancellationRequested)
                 {
-                    // 如果有随机事件处理函数，随机决定是否触发事件
-                    if (randomEventHandler != null && Random.value < 0.1f) // 10% 概率触发
+                    // 如果有随机事件处理函数，则触发随机事件
+                    
+                    if (_randomEventHandler != null)
                     {
                         Debug.Log("Random event triggered.");
-                        await randomEventHandler();
+                        await _randomEventHandler();
                     }
 
-                    await UniTask.Delay(1000, cancellationToken: token);
-                    elapsedTime++;
+                    await UniTask.Delay(100, cancellationToken: token);
+                    elapsedTime+=0.1f;
 
-                    Debug.Log($"SubCycle Timer: {subCycleTime - elapsedTime} seconds remaining");
+                    Debug.Log($"SubCycle Timer: {_subCycleTime - elapsedTime} seconds remaining");
                 }
 
-                if (endCondition())
-                {
-                    Debug.Log("End condition met. SubCycle Ended.");
-                    return true;
-                }
-                else
-                {
-                    Debug.Log("SubCycle timer ended without meeting end condition.");
-                    return false;
-                }
+                Debug.Log("SubCycle Timer ended or end condition met. SubCycle Ended.");
+                return true;
             }
         }
 

@@ -9,10 +9,12 @@ using Network.NetworkMes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Data;
 using Tool.GameEvent;
 using UI.UIBase;
 using UnityEngine;
 using VContainer;
+using PlayerInGameData = HotUpdate.Scripts.Network.Server.InGame.PlayerInGameData;
 
 namespace Network.Server
 {
@@ -24,22 +26,26 @@ namespace Network.Server
         private UIManager _uiManager;
         private IObjectResolver _objectResolver;
         private readonly Dictionary<int, string> _playerAccountIdMap = new Dictionary<int, string>();
+        private PlayerDataManager _playerDataManager;
         private PlayerInGameManager _playerInGameManager;
         private string _mapName;
-        [SerializeField]
-        private NetworkManagerRpcCaller _networkManagerRpcCaller;
 
         [Inject]
-        private void Init(GameEventManager gameEventManager, UIManager uIManager, IObjectResolver objectResolver, PlayerInGameManager playerInGameManager)
+        private void Init(GameEventManager gameEventManager, UIManager uIManager, IObjectResolver objectResolver,PlayerInGameManager playerInGameManager ,PlayerDataManager playerDataManager)
         {
             _gameEventManager = gameEventManager;
             _spawnPoints = FindObjectsByType<NetworkStartPosition>(FindObjectsSortMode.None).ToList();
             _networkManagerHUD = GetComponent<NetworkManagerHUD>();
             _networkManagerHUD.enabled = false;
+            _playerInGameManager = playerInGameManager;
             _gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnSceneResourcesLoaded);
             _objectResolver = objectResolver;
-            _playerInGameManager = playerInGameManager;
+            _playerDataManager = playerDataManager;
             //this.playerManager = playerManager;
+        }
+
+        public override void OnServerAddPlayer(NetworkConnectionToClient conn)
+        {
         }
 
         private void OnSceneResourcesLoaded(GameSceneResourcesLoadedEvent sceneResourcesLoadedEvent)
@@ -48,7 +54,6 @@ namespace Network.Server
             {
                 _networkManagerHUD.enabled = true;
                 _mapName = mapType.ToString();
-                _objectResolver.Inject(_networkManagerRpcCaller);
                 Debug.Log("map resources loaded");
                 return;
             }
@@ -77,7 +82,13 @@ namespace Network.Server
                 {
                     playerData.PlayerId = message.UID;
                     _playerAccountIdMap[conn.connectionId] = message.UID;
-                    _playerInGameManager.InitPlayerProperty(playerData);
+                    _playerDataManager.UpdatePlayerConnectionId(message.UID, conn.connectionId);
+                    var playerInGameData = _playerDataManager.GetPlayer(conn.connectionId);
+                    _playerInGameManager.AddPlayer(conn.connectionId, new PlayerInGameData
+                    {
+                        Player = playerInGameData.player,
+                        PlayerProperty = playerData
+                    });
                 }
                 
                 // 服务器端添加玩家
@@ -95,9 +106,18 @@ namespace Network.Server
                 }
             }
 
-            if (_playerAccountIdMap.Count == _playerInGameManager.GetPlayers().Count)
+            var playerCount = _playerDataManager.GetPlayers().Count;
+            if (_playerAccountIdMap.Count == playerCount)
             {
-                _networkManagerRpcCaller.SendGameReadyMessageRpc(_mapName);
+                var gameInfo = new GameInfo()
+                {
+                    SceneName = _mapName,
+                    GameMode = (GameMode)_playerDataManager.CurrentRoomData.RoomCustomInfo.GameMode,
+                    GameTime = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameTime,
+                    GameScore = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameScore,
+                    PlayerCount = playerCount
+                };
+                _gameEventManager.Publish(new GameReadyEvent(gameInfo));
                 Debug.Log("player all ready");
             }
             Debug.Log("Received PlayerAccountId from client: " + message.UID);
@@ -136,12 +156,13 @@ namespace Network.Server
         {
             Debug.Log($"Received PlayerAccountId: {message.UID} - {message.Name} - {message.ConnectionID.ToString()}");
         }
+        
 
         public override void OnServerDisconnect(NetworkConnectionToClient conn)
         {
             base.OnServerDisconnect(conn);
             _playerAccountIdMap.Remove(conn.connectionId);
-            _playerInGameManager.RemovePlayer(conn.connectionId);
+            //_playerDataManager.RemovePlayer(conn.connectionId);
             Debug.Log($"Player disconnected: {conn.connectionId}");
         }
 

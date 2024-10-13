@@ -33,7 +33,7 @@ namespace Game.Inject
             //builder.Register<CollectItemSpawner>(Lifetime.Singleton);
             builder.Register<UIAudioManager>(Lifetime.Singleton);
             builder.Register<PlayFabAccountManager>(Lifetime.Singleton);
-            builder.Register<PlayerInGameManager>(Lifetime.Singleton);
+            builder.Register<PlayerDataManager>(Lifetime.Singleton);
             builder.Register<PlayFabMessageHandler>(Lifetime.Singleton);
             builder.Register<PlayFabRoomManager>(Lifetime.Singleton);
             builder.Register<LocationManager>(Lifetime.Singleton);

@@ -77,43 +77,4 @@ namespace Tool.Message
             CollectType = collectType;
         }
     }
-
-    public class CollectObjectsEmptyMessage : Message
-    {
-        public int Round { get; set; }
-        public CollectObjectsEmptyMessage(int round)
-        {
-            Round = round;
-        }
-    }
-
-    public class GameWarmupMessage : Message
-    {
-        public float TimeLeft { get; set; }
-
-        public GameWarmupMessage(float timeLeft)
-        {
-            TimeLeft = timeLeft;
-        }
-    }
-
-    public class GameStartMessage : Message
-    {
-        public string LevelName { get; set; }
-
-        public GameStartMessage(string levelName)
-        {
-            LevelName = levelName;
-        }
-    }
-
-    public class GameCountDownMessage : Message
-    {
-        public float TimeLeft { get; set; }
-
-        public GameCountDownMessage(float timeLeft)
-        {
-            TimeLeft = timeLeft;
-        }
-    }
 }

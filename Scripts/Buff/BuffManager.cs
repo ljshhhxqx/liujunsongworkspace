@@ -3,6 +3,7 @@ using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
+using Network.NetworkMes;
 using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
@@ -15,41 +16,36 @@ namespace HotUpdate.Scripts.Buff
         private bool _isOn;
         private readonly SyncList<BuffBase> _activeBuffs = new SyncList<BuffBase>();
         private readonly SyncList<RandomBuff> _randomBuffs = new SyncList<RandomBuff>();
-        private readonly PlayerInGameManager _playerInGameManager;
+        private PlayerInGameManager _playerDataManager;
         private BuffDatabase _buffDatabase;
 
         [Inject]
-        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager, PlayerInGameManager playerInGameManager)
+        private void Init(IConfigProvider configProvider, PlayerInGameManager playerDataManager)
         {
             _buffDatabase = configProvider.GetConfig<BuffDatabase>();
-            gameEventManager.Subscribe<GameReadyEvent>(OnGameReady);
+            _playerDataManager = playerDataManager;
+            NetworkClient.RegisterHandler<GameStartMessage>(OnGameReady);
             Debug.Log("BuffManager init");
         }
 
-        private void OnGameReady(GameReadyEvent gameReadyEvent)
+        private void OnGameReady(GameStartMessage gameReadyEvent)
         {
-            CmdSwitchBuffManager(true);
-        }
-
-        [Command]
-        private void CmdSwitchBuffManager(bool isOn)
-        {
-            _isOn = isOn;
+            _isOn = true;
         }
         
-        [Command]
-        public void CmdAddBuff(PlayerPropertyComponent targetStats, BuffType buffType)
+        public void AddBuffToPlayer(PlayerPropertyComponent targetStats, PropertyTypeEnum propertyTypeEnum)
         {
-            AddBuff(targetStats, buffType);
+            var buff = _buffDatabase.GetRandomBuffType(propertyTypeEnum);
+            AddBuff(targetStats, buff);
+            //AddBuff(targetStats, buffType);
         }
 
-        [ClientRpc]
         private void AddBuff(PlayerPropertyComponent targetStats, BuffType buffType)
         {
-            var buffData = _buffDatabase.GetBuffData(buffType);
-            if (buffData.HasValue)
+            var buffTypeData = _buffDatabase.GetBuffData(buffType);
+            if (buffTypeData.HasValue)
             {
-                var newBuff = new BuffBase(buffData.Value.buffType, buffData.Value.propertyTypeEnum, buffData.Value.duration, buffData.Value.effectStrength, targetStats.PlayerId);
+                var newBuff = new BuffBase(buffTypeData.Value.buffType, buffTypeData.Value.propertyTypeEnum, buffTypeData.Value.duration, buffTypeData.Value.effectStrength, targetStats.ConnectionID);
                 ApplyBuff(newBuff, targetStats);
                 _activeBuffs.Add(newBuff);
             }
@@ -58,7 +54,7 @@ namespace HotUpdate.Scripts.Buff
                 var randomBuffData = _buffDatabase.GetRandomBuffData(buffType);
                 if (randomBuffData.HasValue)
                 {
-                    var newRandomBuff = new RandomBuff(randomBuffData.Value.buffType, randomBuffData.Value.propertyTypeEnum, randomBuffData.Value.durationRange, randomBuffData.Value.effectStrengthRange, targetStats.PlayerId);
+                    var newRandomBuff = new RandomBuff(randomBuffData.Value.buffType, randomBuffData.Value.propertyTypeEnum, randomBuffData.Value.durationRange, randomBuffData.Value.effectStrengthRange, targetStats.ConnectionID);
                     ApplyBuff(newRandomBuff, targetStats);
                     _randomBuffs.Add(newRandomBuff);
                 }
@@ -87,7 +83,7 @@ namespace HotUpdate.Scripts.Buff
                 buff.Update(Time.deltaTime);
                 if (buff.IsExpired())
                 {
-                    var targetStats = _playerInGameManager.GetPlayer(buff.TargetPlayerId);
+                    var targetStats = _playerDataManager.GetPlayer(buff.TargetPlayerId);
                     RemoveBuff(buff, targetStats.PlayerProperty);
                     _activeBuffs.RemoveAt(i);
                 }
@@ -99,7 +95,7 @@ namespace HotUpdate.Scripts.Buff
                 randomBuff.Update(Time.deltaTime);
                 if (randomBuff.IsExpired())
                 {
-                    var targetStats = _playerInGameManager.GetPlayer(randomBuff.TargetPlayerId);
+                    var targetStats = _playerDataManager.GetPlayer(randomBuff.TargetPlayerId);
                     RemoveBuff(randomBuff, targetStats.PlayerProperty);
                     _randomBuffs.RemoveAt(i);
                 }
@@ -108,7 +104,7 @@ namespace HotUpdate.Scripts.Buff
 
         private void OnDestroy()
         {
-            CmdSwitchBuffManager(false);
+            _isOn = false;
         }
     }
 }

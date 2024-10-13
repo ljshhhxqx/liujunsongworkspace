@@ -79,6 +79,10 @@ namespace Data
         // 房间密码，如果为空则不需要密码(在处理邀请时需要判断是否需要密码)
         public string RoomPassword;
         public int MapType;
+        // 0:time, 1:score
+        public int GameMode;
+        public int GameTime;
+        public int GameScore;
     }
     
     [Serializable]
@@ -92,5 +96,18 @@ namespace Data
         // 0: waiting, 1: gaming
         public int RoomStatus;
         public List<PlayerReadOnlyData> PlayersInfo;
+    }
+    
+    public enum GameMode
+    {
+        None,
+        /// <summary>
+        /// 按时间结束
+        /// </summary>
+        Time,
+        /// <summary>
+        /// 按目标分数结束
+        /// </summary>
+        Score
     }
 }

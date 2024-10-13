@@ -16,11 +16,10 @@ namespace HotUpdate.Scripts.Network.Server
             _gameEventManager = gameEventManager;
         }
         
-        [ClientRpc]
-        public void SendGameReadyMessageRpc(string gameName)
-        {
-            _gameEventManager.Publish(new GameReadyEvent(gameName));
-        }
+        // public void SendGameReadyMessageRpc(string gameName, )
+        // {
+        //     _gameEventManager.Publish(new GameReadyEvent(gameName));
+        // }
 
     }
 }

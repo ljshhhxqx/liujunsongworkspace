@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Data;
-using UnityEngine.Serialization;
 
-namespace Network.Server.PlayFab
+namespace HotUpdate.Scripts.Network.Server.PlayFab
 {
     public enum MessageType
     {

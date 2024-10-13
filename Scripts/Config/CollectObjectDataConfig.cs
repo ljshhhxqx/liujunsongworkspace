@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Config
 {
@@ -34,6 +35,7 @@ namespace Config
         public CollectType CollectType;
         public CollectObjectClass CollectObjectClass;
         public int Weight;
+        public float PropertyValue;
         public PropertyType PropertyType;
     }
 
