@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Config;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -32,6 +33,7 @@ public class PlayerConfigData
     public float StairsJumpSpeed;
     public float GroundCheckRadius;
     public float StairsCheckDistance;
+    public List<PropertyType> MaxProperties;
     // public float SlopeLimit = 30f;
     // public float MaxPredictPositionTime = 5f;
     // public float MaxPredictDistance = 0.5f;

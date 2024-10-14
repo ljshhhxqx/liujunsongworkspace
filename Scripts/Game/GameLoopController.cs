@@ -13,16 +13,15 @@ using Tool.GameEvent;
 using Tool.Message;
 using UnityEngine;
 using VContainer;
-using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Game
 {
     public class GameLoopController : NetworkMonoController
     {
         [SyncVar]
-        private int _mainGameTime = 180 * 1000; // 3分钟的倒计时
+        private float _mainGameTime; // 3分钟的倒计时
         [SyncVar]
-        private int _warmupTime = 10 * 1000; // 10秒热身时间
+        private float _warmupTime; // 10秒热身时间
         [SyncVar]
         private int _currentRound = 1; // 当前轮数
         private CancellationTokenSource _cts;
@@ -54,6 +53,8 @@ namespace HotUpdate.Scripts.Game
             if (isServer)
             {
                 _cts = new CancellationTokenSource();
+                _warmupTime = _gameDataConfig.GameConfigData.WarmupTime;
+                _mainGameTime = _gameInfo.GameMode == GameMode.Time ? _gameInfo.GameTime : 0;
                 StartGameLoop(_cts).Forget();
             }
         }
@@ -68,7 +69,7 @@ namespace HotUpdate.Scripts.Game
             // 2. 开始总的倒计时
             Debug.Log("Main game timer starts now!");
             NetworkServer.SendToAll(new GameStartMessage(_gameInfo));
-            await StartMainGameTimerAsync(_mainGameTime, cts.Token);
+            await StartMainGameTimerAsync(cts.Token);
 
             Debug.Log("Main game over. Exiting...");
         }
@@ -88,11 +89,19 @@ namespace HotUpdate.Scripts.Game
             }
         }
         
-        private bool IsEndGame()
+        private bool IsEndGame(GameMode gameMode, float remainingTime = 0, int targetScore = 0)
         {
-            return false;
+            switch (gameMode)
+            {
+                case GameMode.Time:
+                    return remainingTime <= 0;
+                case GameMode.Score:
+                    return _playerInGameManager.IsPlayerGetTargetScore(targetScore);
+                default:
+                    throw new Exception("Invalid game mode");
+            }
         }
-
+        
         private bool IsEndRound()
         {
             return _itemsSpawnerManager.SpawnedItems.Count == 0;
@@ -105,12 +114,12 @@ namespace HotUpdate.Scripts.Game
             Debug.Log("Random event handled.");
         }
 
-        private async UniTask StartMainGameTimerAsync(int totalTime, CancellationToken token)
+        private async UniTask StartMainGameTimerAsync(CancellationToken token)
         {
-            var remainingTime = totalTime;
             var isSubCycleRunning = false;
+            var remainingTime = _mainGameTime;
 
-            while (remainingTime > 0 && !token.IsCancellationRequested)
+            while (!IsEndGame(_gameInfo.GameMode, remainingTime, _gameInfo.GameScore) && !token.IsCancellationRequested)
             {
                 Debug.Log($"Main Game Timer: {remainingTime} seconds remaining");
 
@@ -124,8 +133,15 @@ namespace HotUpdate.Scripts.Game
                 }
 
                 // 每秒倒计时
-                await UniTask.Delay(1000, cancellationToken: token);
-                remainingTime--;
+                await UniTask.Delay(100, cancellationToken: token);
+                if (_gameInfo.GameMode == GameMode.Time)
+                {
+                    remainingTime-=0.1f;
+                }
+                else if (_gameInfo.GameMode == GameMode.Score)
+                {
+                    remainingTime+=0.1f;
+                }
                 NetworkServer.SendToAll(new CountdownMessage(remainingTime));
             }
             _cts.Cancel(); 

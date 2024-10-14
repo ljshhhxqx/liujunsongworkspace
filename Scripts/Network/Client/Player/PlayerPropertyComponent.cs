@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Collections.Generic;
 using AOTScripts.Tool.ECS;
+using Mirror;
 using UniRx;
 using VContainer;
 
@@ -9,62 +8,64 @@ namespace HotUpdate.Scripts.Network.Client.Player
 {
     public class PlayerPropertyComponent : NetworkMonoComponent
     {
-        private ReactiveProperty<PropertyType> Health { get; } = new ReactiveProperty<PropertyType>(new PropertyType(PropertyTypeEnum.Health, 100));
-        private ReactiveProperty<PropertyType> Strength { get; } = new ReactiveProperty<PropertyType>(new PropertyType(PropertyTypeEnum.Strength, 50));
-        private ReactiveProperty<PropertyType> Speed { get; } = new ReactiveProperty<PropertyType>(new PropertyType(PropertyTypeEnum.Speed, 10));
-        private ReactiveProperty<PropertyType> Attack { get; } = new ReactiveProperty<PropertyType>(new PropertyType(PropertyTypeEnum.Attack, 20));
-        private ReactiveProperty<PropertyType> Score { get; } = new ReactiveProperty<PropertyType>(new PropertyType(PropertyTypeEnum.Score, 10));
         private readonly Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>> _properties = new Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>>();
-        
+        private readonly SyncDictionary<PropertyTypeEnum, PropertyType> _syncProperties = new SyncDictionary<PropertyTypeEnum, PropertyType>();
+
         [Inject]
-        private void Init()
+        private void Init(IConfigProvider configProvider)
         {
-            InitializeProperties();
+            var config = configProvider.GetConfig<PlayerDataConfig>();
+            InitializeProperties(config);
         }
 
-        private void InitializeProperties()
+        private void InitializeProperties(PlayerDataConfig config)
         {
-            var fields = GetType().GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-
-            foreach (var field in fields)
+            for (var i = (int)PropertyTypeEnum.Speed; i <= (int)PropertyTypeEnum.Score; i++)
             {
-                if (field.FieldType == typeof(ReactiveProperty<PropertyType>))
+                var propertyType = (PropertyTypeEnum)i;
+                var configProperty = config.PlayerConfigData.MaxProperties.Find(x => x.TypeEnum == propertyType);
+                if (configProperty.ValueFloat == 0)
                 {
-                    if (field.GetValue(this) is ReactiveProperty<PropertyType> property)
-                    {
-                        string fieldName = field.Name;
-                        if (Enum.TryParse(fieldName, out PropertyTypeEnum propertyTypeEnum))
-                        {
-                            _properties[propertyTypeEnum] = property;
-                        }
-                    }
+                    throw new System.Exception("Property value cannot be zero.");
+                }
+
+                var property = new PropertyType(propertyType, configProperty.ValueFloat);
+                _properties.Add(propertyType, new ReactiveProperty<PropertyType>(property));
+                if (isServer)
+                {
+                    _syncProperties.Add(propertyType, property);
                 }
             }
         }
 
         public void ModifyProperty(PropertyTypeEnum type, float amount)
         {
-            if (_properties.ContainsKey(type))
+            if (_syncProperties.TryGetValue(type, out var property))
             {
-                var property = _properties[type].Value;
                 property.IncreaseValue(amount);
-                _properties[type].SetValueAndForceNotify(property); // 强制通知
+                PropertyChanged(property);
             }
         }
 
         public void RevertProperty(PropertyTypeEnum type, float amount)
         {
-            if (_properties.ContainsKey(type))
+            if (_syncProperties.TryGetValue(type, out var property))
             {
-                var property = _properties[type].Value;
                 property.DecreaseValue(amount);
-                _properties[type].SetValueAndForceNotify(property); // 强制通知
+                PropertyChanged(property);
             }
         }
 
-        public ReactiveProperty<PropertyType> GetProperty(PropertyTypeEnum type)
+
+        private void PropertyChanged(PropertyType property)
         {
-            return _properties.TryGetValue(type, out var property) ? property : null;
+            _properties[property.TypeEnum].Value = property;
+            _properties[property.TypeEnum].SetValueAndForceNotify(property); 
+        }
+        
+        public PropertyType GetProperty(PropertyTypeEnum type)
+        {
+            return _syncProperties.TryGetValue(type, out var property) ? property : default;
         }
     }
 }

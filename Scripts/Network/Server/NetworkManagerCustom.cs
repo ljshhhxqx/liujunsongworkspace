@@ -68,6 +68,7 @@ namespace Network.Server
             // 监听服务器上的连接和断开事件
             NetworkServer.OnConnectedEvent += HandleServerConnected;
             NetworkServer.OnDisconnectedEvent += HandleServerDisconnected;
+
             NetworkServer.RegisterHandler<PlayerConnectMessage>(OnServerPlayerAccountIdMessage);
         }
 

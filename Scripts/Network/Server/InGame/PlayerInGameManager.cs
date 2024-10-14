@@ -26,7 +26,20 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             _playerInGameData.TryGetValue(connectId, out var playerInGameData);
             return playerInGameData;
         }
-        
+
+        public bool IsPlayerGetTargetScore(int targetScore)
+        {
+            foreach (var player in _playerInGameData)
+            {
+                var score = player.Value.PlayerProperty.GetProperty(PropertyTypeEnum.Score);
+                if (score.ValueFloat >= targetScore)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public PlayerInGameData GetPlayer(int playerId)
         {
             foreach (var player in _playerInGameData)

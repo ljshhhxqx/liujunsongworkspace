@@ -19,6 +19,7 @@ public class GameConfigData
     public float SyncTime = 0.016f;
     public float SafetyMargin = 5.0f;
     public float FixedSpacing = 1.0f;
+    public float WarmupTime = 10.0f;
     public readonly string DevelopKey = "DevelopKey";
     public readonly string DevelopKeyValue = "MultiplayerDemo";
     public LayerMask StairSceneLayer; 
