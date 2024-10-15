@@ -100,7 +100,7 @@ namespace HotUpdate.Scripts.Collector
             switch (configData.CollectObjectClass)
             {
                 case CollectObjectClass.Score:
-                    player.ModifyProperty(PropertyTypeEnum.Score, configData.PropertyValue);
+                    player.IncreaseProperty(PropertyTypeEnum.Score, configData.PropertyValue);
                     break;
                 case CollectObjectClass.Buff:
                     var propertyType = configData.PropertyType.TypeEnum;

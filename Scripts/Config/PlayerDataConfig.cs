@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Config;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "PlayerData", menuName = "ScriptableObjects/PlayerData")]
 public class PlayerDataConfig : ConfigBase
@@ -34,9 +33,30 @@ public class PlayerConfigData
     public float GroundCheckRadius;
     public float StairsCheckDistance;
     public List<PropertyType> MaxProperties;
+    public SerializableDictionary<AnimationState, float> AnimationStrengthCosts;
+    public float StrengthRecoveryPerSecond;
+    
     // public float SlopeLimit = 30f;
     // public float MaxPredictPositionTime = 5f;
     // public float MaxPredictDistance = 0.5f;
 
     #endregion
+}
+        
+public enum PlayerState
+{
+    InAir,
+    OnGround,
+    OnStairs
+}
+
+public enum AnimationState
+{
+    Idle,
+    Move,
+    Sprint,
+    Jump,
+    Dash,
+    Attack,
+    Dead,
 }

@@ -63,12 +63,12 @@ namespace HotUpdate.Scripts.Buff
 
         private void ApplyBuff(IBuff buff, PlayerPropertyComponent targetStats)
         {
-            targetStats.ModifyProperty(buff.PropertyTypeEnum, buff.EffectStrength);
+            targetStats.IncreaseProperty(buff.PropertyTypeEnum, buff.EffectStrength);
         }
 
         private void RemoveBuff(IBuff buff, PlayerPropertyComponent targetStats)
         { 
-            targetStats.RevertProperty(buff.PropertyTypeEnum, buff.EffectStrength);
+            targetStats.IncreaseProperty(buff.PropertyTypeEnum, -buff.EffectStrength);
         }
 
         private void Update()

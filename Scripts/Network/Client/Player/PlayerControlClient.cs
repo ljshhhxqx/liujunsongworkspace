@@ -10,6 +10,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
     public class PlayerControlClient : ClientBase
     {
         private PlayerDataComponent _playerDataComponent;
+        private PlayerPropertyComponent _playerPropertyComponent;
         
         private const float SpeedSmoothTime = 0.1f; // 速度平滑时间
         //决定摄像机的旋转中心
@@ -41,9 +42,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         protected override void InitCallback()
         {
-            var playerDataComponent = GetComponent<PlayerDataComponent>();
-            _playerDataComponent = playerDataComponent ? playerDataComponent : gameObject.AddComponent<PlayerDataComponent>();
-            
+            _playerPropertyComponent = GetComponent<PlayerPropertyComponent>();
             _rotateCenter = transform.Find("RotateCenter");
             _checkGroundTransform = transform.Find("CheckGround");
             _checkStairsTransform = transform.Find("CheckStairs");
@@ -213,13 +212,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
             //     }
             // }
             return false;
-        }
-        
-        private enum PlayerState
-        {
-            InAir,
-            OnGround,
-            OnStairs
         }
     }
 }

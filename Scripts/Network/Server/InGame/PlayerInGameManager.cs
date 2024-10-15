@@ -32,7 +32,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             foreach (var player in _playerInGameData)
             {
                 var score = player.Value.PlayerProperty.GetProperty(PropertyTypeEnum.Score);
-                if (score.ValueFloat >= targetScore)
+                if (score.Value >= targetScore)
                 {
                     return true;
                 }
