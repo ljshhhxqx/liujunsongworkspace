@@ -1,6 +1,7 @@
 using System;
 using Config;
 using Cysharp.Threading.Tasks;
+using Mirror;
 using Sirenix.OdinInspector;
 using Tool.Message;
 using UniRx;
@@ -10,7 +11,7 @@ using VContainer;
 
 namespace Collector
 {
-    public class TreasureChestComponent : CollectObject
+    public class TreasureChestComponent : NetworkBehaviour
     {
         [SerializeField] 
         private GameObject lid; // 宝箱盖子
@@ -19,18 +20,20 @@ namespace Collector
         private CollectObjectData _collectObjectData;
         private ChestDataConfig _chestDataConfig;
         private MessageCenter _messageCenter;
-        public override CollectObjectData CollectData => _chestDataConfig.ChestConfigData;
-        public override Collider Collider => collider;
-        protected override void Collect(int pickerId, PickerType pickerType)
+        private ChestCommonData _chestCommonData;
+        //public CollectObjectData CollectData => _chestDataConfig.ChestConfigData;
+        //public Collider Collider => collider;
+        private void Collect(int pickerId, PickerType pickerType)
         {
-            _messageCenter.Post(new PlayerCollectChestMessage(CollectId, CollectType.TreasureChest));
+            _messageCenter.Post(new PlayerCollectChestMessage(1, CollectType.TreasureChest));
         }
 
         [Inject]
         private void Init(IConfigProvider configProvider)
         {
             _chestDataConfig = configProvider.GetConfig<ChestDataConfig>();
-            lid.transform.eulerAngles = _chestDataConfig.ChestConfigData.InitEulerAngles;
+            _chestCommonData = _chestDataConfig.GetChestCommonData();
+            lid.transform.eulerAngles = _chestCommonData.InitEulerAngles;
             collider.OnTriggerEnterAsObservable()
                 .Subscribe(OnTriggerEnterObserver)
                 .AddTo(this);
@@ -70,7 +73,7 @@ namespace Collector
             // 当宝箱盖子没有完全打开时
             while (Quaternion.Angle(lid.transform.rotation, targetRotation) > 0.01f)
             {
-                lid.transform.rotation = Quaternion.Slerp(lid.transform.rotation, targetRotation, Time.deltaTime * _chestDataConfig.ChestConfigData.OpenSpeed);
+                lid.transform.rotation = Quaternion.Slerp(lid.transform.rotation, targetRotation, Time.deltaTime * _chestCommonData.OpenSpeed);
             }
 
             // 等待0.25秒

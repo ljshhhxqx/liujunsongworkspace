@@ -1,5 +1,6 @@
 ﻿using Game.Inject;
 using Game.Map;
+using HotUpdate.Scripts.Config;
 using Tool.GameEvent;
 using UnityEngine;
 using VContainer;

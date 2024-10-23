@@ -24,3 +24,13 @@ MonoBehaviour:
     StairsJumpSpeed: 35
     GroundCheckRadius: 0.22
     StairsCheckDistance: 0.5
+    MaxProperties:
+    - type: 0
+      value: 50
+    - type: 1
+      value: 50
+    - type: 3
+      value: 100
+    - type: 4
+      value: 100
+    StrengthRecoveryPerSecond: 5

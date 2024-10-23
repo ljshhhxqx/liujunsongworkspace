@@ -15,7 +15,6 @@ namespace HotUpdate.Scripts.Buff
         [SyncVar]
         private bool _isOn;
         private readonly SyncList<BuffBase> _activeBuffs = new SyncList<BuffBase>();
-        private readonly SyncList<RandomBuff> _randomBuffs = new SyncList<RandomBuff>();
         private PlayerInGameManager _playerDataManager;
         private BuffDatabase _buffDatabase;
 
@@ -32,43 +31,31 @@ namespace HotUpdate.Scripts.Buff
         {
             _isOn = true;
         }
-        
-        public void AddBuffToPlayer(PlayerPropertyComponent targetStats, PropertyTypeEnum propertyTypeEnum)
+
+        public void AddBuffToPlayer(PlayerPropertyComponent targetStats, BuffExtraData buffExtraData, int? casterId = null)
         {
-            var buff = _buffDatabase.GetRandomBuffType(propertyTypeEnum);
-            AddBuff(targetStats, buff);
-            //AddBuff(targetStats, buffType);
+            var buff = _buffDatabase.GetBuff(buffExtraData);
+            AddBuff(targetStats, buff, casterId);
         }
 
-        private void AddBuff(PlayerPropertyComponent targetStats, BuffType buffType)
+        private void AddBuff(PlayerPropertyComponent targetStats, BuffData buffData, int? casterId = null)
         {
-            var buffTypeData = _buffDatabase.GetBuffData(buffType);
-            if (buffTypeData.HasValue)
-            {
-                var newBuff = new BuffBase(buffTypeData.Value.buffType, buffTypeData.Value.propertyTypeEnum, buffTypeData.Value.duration, buffTypeData.Value.effectStrength, targetStats.ConnectionID);
-                ApplyBuff(newBuff, targetStats);
-                _activeBuffs.Add(newBuff);
-            }
-            else
-            {
-                var randomBuffData = _buffDatabase.GetRandomBuffData(buffType);
-                if (randomBuffData.HasValue)
-                {
-                    var newRandomBuff = new RandomBuff(randomBuffData.Value.buffType, randomBuffData.Value.propertyTypeEnum, randomBuffData.Value.durationRange, randomBuffData.Value.effectStrengthRange, targetStats.ConnectionID);
-                    ApplyBuff(newRandomBuff, targetStats);
-                    _randomBuffs.Add(newRandomBuff);
-                }
-            }
+            var newBuff = new BuffBase(buffData, targetStats.ConnectionID, casterId);
+            ApplyBuff(newBuff, targetStats);
+            _activeBuffs.Add(newBuff);
         }
 
-        private void ApplyBuff(IBuff buff, PlayerPropertyComponent targetStats)
+        private void ApplyBuff(BuffBase buff, PlayerPropertyComponent targetStats)
         {
-            targetStats.IncreaseProperty(buff.PropertyTypeEnum, buff.EffectStrength);
+            targetStats.IncreaseProperty(buff.BuffData.propertyType, buff.BuffData.increaseDataList);
         }
 
-        private void RemoveBuff(IBuff buff, PlayerPropertyComponent targetStats)
+        private void RemoveBuff(BuffBase buff, PlayerPropertyComponent targetStats)
         { 
-            targetStats.IncreaseProperty(buff.PropertyTypeEnum, -buff.EffectStrength);
+            for (var i = 0; i < buff.BuffData.increaseDataList.Count; i++)
+            {
+                targetStats.IncreaseProperty(buff.BuffData.propertyType, buff.BuffData.increaseDataList[i].increaseType,-buff.BuffData.increaseDataList[i].increaseValue);
+            }
         }
 
         private void Update()
@@ -88,18 +75,6 @@ namespace HotUpdate.Scripts.Buff
                     _activeBuffs.RemoveAt(i);
                 }
             }
-            
-            for (var i = _randomBuffs.Count - 1; i >= 0; i--)
-            {
-                var randomBuff = _randomBuffs[i];
-                randomBuff.Update(Time.deltaTime);
-                if (randomBuff.IsExpired())
-                {
-                    var targetStats = _playerDataManager.GetPlayer(randomBuff.TargetPlayerId);
-                    RemoveBuff(randomBuff, targetStats.PlayerProperty);
-                    _randomBuffs.RemoveAt(i);
-                }
-            }   
         }
 
         private void OnDestroy()

@@ -5,6 +5,7 @@ using AOTScripts.Tool.ECS;
 using Config;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Buff;
+using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Network.Server.Collect;
 using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
@@ -40,6 +41,7 @@ namespace HotUpdate.Scripts.Collector
         private static int _onceSpawnCount = 100;
         private Transform _spawnedParent;
         private BuffManager _buffManager;
+        private BuffDatabase _buffDatabase;
 
         [SyncVar] 
         private int _currentRound;
@@ -52,6 +54,7 @@ namespace HotUpdate.Scripts.Collector
             gameEventManager.Subscribe<GameResourceLoadedEvent>(OnGameResourceLoaded);
             _messageCenter = messageCenter;
             _collectObjectDataConfig = _configProvider.GetConfig<CollectObjectDataConfig>();
+            _buffDatabase = _configProvider.GetConfig<BuffDatabase>();
             //_messageCenter.Register<PlayerTouchedCollectMessage>(OnPlayerTouchedCollect);
             _playerInGameManager = playerInGameManager;
             _buffManager = buffManager;
@@ -100,11 +103,11 @@ namespace HotUpdate.Scripts.Collector
             switch (configData.CollectObjectClass)
             {
                 case CollectObjectClass.Score:
-                    player.IncreaseProperty(PropertyTypeEnum.Score, configData.PropertyValue);
+                    var buff = _buffDatabase.GetBuff(configData.BuffExtraData);
+                    player.IncreaseProperty(PropertyTypeEnum.Score, buff.increaseDataList);
                     break;
                 case CollectObjectClass.Buff:
-                    var propertyType = configData.PropertyType.TypeEnum;
-                    _buffManager.AddBuffToPlayer(player, propertyType);
+                    _buffManager.AddBuffToPlayer(player, configData.BuffExtraData);
                     break;
                 case CollectObjectClass.TreasureChest:
                     // TODO: Treasure Chest

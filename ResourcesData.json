@@ -51,10 +51,10 @@
         {
             "UID": 300000,
             "ResourceType": "Config.ChestDataConfig",
-            "Name": "ChestConfigData",
+            "Name": "ChestDataConfig",
             "IsPermanent": false,
             "IsPreload": true,
-            "Address": "/Preload/Config/ChestConfigData.asset"
+            "Address": "/Preload/Config/ChestDataConfig.asset"
         },
         {
             "UID": 400000,

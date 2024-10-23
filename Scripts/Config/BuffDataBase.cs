@@ -8,54 +8,58 @@ namespace HotUpdate.Scripts.Config
     [CreateAssetMenu(fileName = "BuffDatabase", menuName = "Buff System/Buff Database")]
     public class BuffDatabase : ConfigBase
     {
-        [Serializable]
-        public struct BuffData
-        {
-            public BuffType buffType;
-            public PropertyTypeEnum propertyTypeEnum;
-            public float duration;
-            public float effectStrength;
-        }
-
-        [Serializable]
-        public struct RandomBuffData
-        {
-            public BuffType buffType;
-            public PropertyTypeEnum propertyTypeEnum;
-            public Range durationRange;
-            public Range effectStrengthRange;
-        }
-
         public List<BuffData> buffs = new List<BuffData>();
         public List<RandomBuffData> randomBuffs = new List<RandomBuffData>();
-        
-        public BuffType GetRandomBuffType(PropertyTypeEnum propertyTypeEnum)
+
+        public BuffData GetBuff(BuffExtraData extraData)
         {
-            var randomBuff = randomBuffs.Find(buff => buff.propertyTypeEnum == propertyTypeEnum);
-            return randomBuff.buffType;            
-        }
-        
-        public BuffData GetRandomBuff(PropertyTypeEnum propertyTypeEnum)
-        {
-            var randomBuff = randomBuffs.Find(buff => buff.propertyTypeEnum == propertyTypeEnum);
-            var buff = new BuffData
+            switch (extraData.buffType)
             {
-                buffType = randomBuff.buffType,
-                propertyTypeEnum = randomBuff.propertyTypeEnum,
-                duration = randomBuff.durationRange.GetRandomValue(),
-                effectStrength = randomBuff.effectStrengthRange.GetRandomValue()
-            };
-            return buff;
+                case BuffType.Constant:
+                    return buffs.Find(buff => buff.buffId == extraData.buffId);
+                case BuffType.Random:
+                    return GetRandomBuff(extraData.buffId);
+                default:
+                    throw new Exception($"BuffType {extraData.buffType} not supported");
+            }
         }
 
-        public BuffData? GetBuffData(BuffType buffType)
+        public BuffData GetRandomBuff(int buffId)
         {
-            return buffs.Find(buff => buff.buffType == buffType);
+            var randomBuff = randomBuffs.Find(buff => buff.buffId == buffId);
+            if (randomBuff.buffId != 0)
+            {
+                var buffIncreaseData = new List<BuffIncreaseData>();
+                for (int i = 0; i < randomBuff.increaseDataList.Count; i++)
+                {
+                    var increaseData = randomBuff.increaseDataList[i];
+                    var increaseValue = increaseData.increaseValueRange.GetRandomValue();
+                    buffIncreaseData.Add(new BuffIncreaseData
+                    {
+                        increaseType = increaseData.increaseType,
+                        increaseValue = increaseValue
+                    });
+                }
+                var buff = new BuffData
+                {
+                    buffId = randomBuff.buffId,
+                    propertyType = randomBuff.propertyType,
+                    duration = randomBuff.duration.GetRandomValue(),
+                    increaseDataList = buffIncreaseData
+                };
+                return buff;
+            }
+            return default;
         }
 
-        public RandomBuffData? GetRandomBuffData(BuffType buffType)
+        public BuffData? GetBuffData(int buffId)
         {
-            return randomBuffs.Find(buff => buff.buffType == buffType);
+            return buffs.Find(buff => buff.buffId == buffId);
+        }
+
+        public RandomBuffData? GetRandomBuffData(int buffId)
+        {
+            return randomBuffs.Find(buff => buff.buffId == buffId);
         }
     }
 }

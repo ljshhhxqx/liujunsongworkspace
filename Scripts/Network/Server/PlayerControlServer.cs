@@ -1,4 +1,5 @@
-﻿using Mirror;
+﻿using HotUpdate.Scripts.Config;
+using Mirror;
 using Tool.Message;
 using UnityEngine;
 

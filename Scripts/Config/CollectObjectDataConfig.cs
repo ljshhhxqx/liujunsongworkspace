@@ -36,7 +36,7 @@ namespace Config
         public CollectObjectClass CollectObjectClass;
         public int Weight;
         public float PropertyValue;
-        public PropertyType PropertyType;
+        public BuffExtraData BuffExtraData;
     }
 
     [Serializable]

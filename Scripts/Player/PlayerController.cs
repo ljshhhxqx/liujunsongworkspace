@@ -1,4 +1,5 @@
 using Common;
+using HotUpdate.Scripts.Config;
 using Mirror;
 using Tool.GameEvent;
 using UnityEngine;

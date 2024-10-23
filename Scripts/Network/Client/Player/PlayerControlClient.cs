@@ -1,9 +1,11 @@
-﻿using Mirror;
+﻿using HotUpdate.Scripts.Config;
+using Mirror;
 using Network.Client;
 using Network.Data;
 using Tool.GameEvent;
 using Tool.Message;
 using UnityEngine;
+using AnimationState = HotUpdate.Scripts.Config.AnimationState;
 
 namespace HotUpdate.Scripts.Network.Client.Player
 {
@@ -12,7 +14,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private PlayerDataComponent _playerDataComponent;
         private PlayerPropertyComponent _playerPropertyComponent;
         
-        private const float SpeedSmoothTime = 0.1f; // 速度平滑时间
+        private float _speedSmoothTime = 0.1f; // 速度平滑时间
         //决定摄像机的旋转中心
         private Transform _rotateCenter;
         private Transform _checkGroundTransform;
@@ -73,13 +75,13 @@ namespace HotUpdate.Scripts.Network.Client.Player
         {
             _inputMovement = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
             _hasMovementInput = Mathf.Abs(_inputMovement.x) > 0 || Mathf.Abs(_inputMovement.z) > 0;
-            _isSprinting = _hasMovementInput && Input.GetButton("Running");
-            messageCenter.Post(new PlayerInputMessage(_isSprinting));
-            if (Input.GetButtonDown("Jump") && !_isJumpRequested && _playerState != PlayerState.InAir)
+            _isSprinting = _hasMovementInput && Input.GetButton("Running") && _playerPropertyComponent.StrengthCanDoAnimation(AnimationState.Sprint);
+            if (Input.GetButtonDown("Jump") && !_isJumpRequested && _playerState != PlayerState.InAir && _playerPropertyComponent.StrengthCanDoAnimation(AnimationState.Jump))
             {
                 _isJumpRequested = true;
                 _rigidbody.velocity = Vector3.zero;
             }
+
         }
         
         private void HandleRotation()   
@@ -117,6 +119,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 _targetSpeed = _isSprinting ? _playerDataConfig.PlayerConfigData.MoveSpeed : _playerDataConfig.PlayerConfigData.OnStairsSpeed;
                 if (_isJumpRequested)
                 {
+                    _playerPropertyComponent.DoAnimation(AnimationState.Jump);
                     _isJumpRequested = false;
                     //Debug.Log("Jump on stairs");
                     _rigidbody.AddForce(_stairsHitNormal.normalized * _playerDataConfig.PlayerConfigData.StairsJumpSpeed, ForceMode.Impulse);
@@ -132,6 +135,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
                 if (_isJumpRequested)
                 {
+                    _playerPropertyComponent.DoAnimation(AnimationState.Jump);
                     _isJumpRequested = false;
                     _rigidbody.AddForce(Vector3.up * _playerDataConfig.PlayerConfigData.JumpSpeed, ForceMode.Impulse);
                     
@@ -154,9 +158,10 @@ namespace HotUpdate.Scripts.Network.Client.Player
             
             var position = transform.position;
             
-            _currentSpeed = Mathf.SmoothDamp(_currentSpeed, _targetSpeed, ref _speedSmoothVelocity, SpeedSmoothTime);
+            _currentSpeed = Mathf.SmoothDamp(_currentSpeed, _targetSpeed, ref _speedSmoothVelocity, _speedSmoothTime);
             _movement = _movement.normalized * (_currentSpeed * Time.fixedDeltaTime);
             _rigidbody.MovePosition(_movement + position);
+            _playerPropertyComponent.DoAnimation(_hasMovementInput ? (_isSprinting ? AnimationState.Sprint : AnimationState.Move) :AnimationState.Idle);
         }
 
         private void SyncAnimation()
@@ -175,42 +180,12 @@ namespace HotUpdate.Scripts.Network.Client.Player
             direction = Vector3.zero;
             hitNormal = Vector3.zero;
 
-            // var forward = _checkStairsTransform.forward;
-            // Vector3[] checkDirections = {
-            //     forward,
-            //     Quaternion.Euler(0, 15, 0) * forward, // 右侧
-            //     Quaternion.Euler(0, -15, 0) * forward // 左侧
-            // };
-
             if (Physics.Raycast(_checkStairsTransform.position, _checkStairsTransform.forward, out var hit1, _playerDataConfig.PlayerConfigData.StairsCheckDistance, _gameDataConfig.GameConfigData.StairSceneLayer))
             {
                 hitNormal = hit1.normal;
                 direction = Vector3.Cross(hit1.normal, _checkStairsTransform.right).normalized;
                 return true;
             }
-            
-            // foreach (var dir in checkDirections)
-            // {
-            //     // 使用多个射线进行检测
-            //     if (Physics.Raycast(_checkStairsTransform.position, dir, out var hit, _playerDataConfig.PlayerConfigData.StairsCheckDistance, _gameDataConfig.GameConfigData.StairSceneLayer))
-            //     {
-            //         hitNormal = hit.normal;
-            //         direction = Vector3.Cross(hit.normal, _checkStairsTransform.right).normalized;
-            //         return true;
-            //     }
-            //
-            //     // 增加额外的高度检测
-            //     for (float heightOffset = 0; heightOffset <= _playerDataConfig.PlayerConfigData.StairsCheckDistance; heightOffset += 0.5f)
-            //     {
-            //         Vector3 startPos = _checkStairsTransform.position + Vector3.up * heightOffset;
-            //         if (Physics.Raycast(startPos, dir, out hit, _playerDataConfig.PlayerConfigData.StairsCheckDistance, _gameDataConfig.GameConfigData.StairSceneLayer))
-            //         {
-            //             hitNormal = hit.normal;
-            //             direction = Vector3.Cross(hit.normal, _checkStairsTransform.right).normalized;
-            //             return true;
-            //         }
-            //     }
-            // }
             return false;
         }
     }
