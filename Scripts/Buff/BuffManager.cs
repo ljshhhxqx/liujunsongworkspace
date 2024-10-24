@@ -54,6 +54,8 @@ namespace HotUpdate.Scripts.Buff
         { 
             for (var i = 0; i < buff.BuffData.increaseDataList.Count; i++)
             {
+                if (buff.BuffData.increaseDataList[i].increaseType == BuffIncreaseType.Current)
+                    continue;
                 targetStats.IncreaseProperty(buff.BuffData.propertyType, buff.BuffData.increaseDataList[i].increaseType,-buff.BuffData.increaseDataList[i].increaseValue);
             }
         }

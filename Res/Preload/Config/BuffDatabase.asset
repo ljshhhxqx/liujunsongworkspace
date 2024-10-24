@@ -12,65 +12,75 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29b337a7cdff40d5aced6c3fbc51daa4, type: 3}
   m_Name: BuffDatabase
   m_EditorClassIdentifier: 
-  buffs:
-  - buffType: 5
-    propertyTypeEnum: 0
-    duration: 10
-    effectStrength: 10
-  - buffType: 6
-    propertyTypeEnum: 1
-    duration: 10
-    effectStrength: 10
-  - buffType: 7
-    propertyTypeEnum: 2
-    duration: 10
-    effectStrength: 10
-  - buffType: 9
-    propertyTypeEnum: 4
-    duration: 10
-    effectStrength: 10
-  - buffType: 8
-    propertyTypeEnum: 3
-    duration: 10
-    effectStrength: 10
+  buffs: []
   randomBuffs:
-  - buffType: 0
-    propertyTypeEnum: 0
-    durationRange:
+  - buffId: 1
+    propertyType: 0
+    duration:
       min: 5
       max: 10
-    effectStrengthRange:
+    increaseDataList:
+    - increaseType: 2
+      increaseValueRange:
+        min: 5
+        max: 10
+  - buffId: 2
+    propertyType: 4
+    duration:
       min: 5
       max: 10
-  - buffType: 1
-    propertyTypeEnum: 4
-    durationRange:
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        min: 5
+        max: 10
+  - buffId: 3
+    propertyType: 0
+    duration:
       min: 5
       max: 10
-    effectStrengthRange:
+    increaseDataList:
+    - increaseType: 1
+      increaseValueRange:
+        min: 0.1
+        max: 0.25
+  - buffId: 4
+    propertyType: 4
+    duration:
       min: 5
       max: 10
-  - buffType: 2
-    propertyTypeEnum: 1
-    durationRange:
-      min: 5
-      max: 10
-    effectStrengthRange:
-      min: 5
-      max: 10
-  - buffType: 3
-    propertyTypeEnum: 2
-    durationRange:
-      min: 5
-      max: 10
-    effectStrengthRange:
-      min: 5
-      max: 10
-  - buffType: 4
-    propertyTypeEnum: 3
-    durationRange:
-      min: 5
-      max: 10
-    effectStrengthRange:
-      min: 5
-      max: 10
+    increaseDataList:
+    - increaseType: 1
+      increaseValueRange:
+        min: 5
+        max: 10
+  - buffId: 5
+    propertyType: 5
+    duration:
+      min: 0
+      max: 0
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        min: 1
+        max: 2
+  - buffId: 6
+    propertyType: 5
+    duration:
+      min: 0
+      max: 0
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        min: 4
+        max: 7
+  - buffId: 7
+    propertyType: 5
+    duration:
+      min: 0
+      max: 0
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        min: 9
+        max: 12

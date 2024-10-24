@@ -82,7 +82,7 @@
         },
         {
             "UID": 700000,
-            "ResourceType": "PlayerDataConfig",
+            "ResourceType": "HotUpdate.Scripts.Config.PlayerDataConfig",
             "Name": "PlayerData",
             "IsPermanent": false,
             "IsPreload": true,

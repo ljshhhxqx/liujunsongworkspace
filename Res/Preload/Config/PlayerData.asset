@@ -18,19 +18,47 @@ MonoBehaviour:
     Offset: {x: 0, y: 1, z: -3}
     MoveSpeed: 5
     RunSpeed: 10
+    SprintSpeedFactor: 1.25
     RotateSpeed: 4
     OnStairsSpeed: 3
+    OnStairsSpeedRatioFactor: 0.75
     JumpSpeed: 25
     StairsJumpSpeed: 35
     GroundCheckRadius: 0.22
     StairsCheckDistance: 0.5
     MaxProperties:
     - type: 0
-      value: 50
+      value: 30
     - type: 1
-      value: 50
+      value: 30
+    - type: 3
+      value: 300
+    - type: 4
+      value: 300
+    BaseProperties:
+    - type: 0
+      value: 5
+    - type: 1
+      value: 10
+    - type: 2
+      value: 10
     - type: 3
       value: 100
+    - type: 5
+      value: 0
     - type: 4
       value: 100
+    MinProperties:
+    - type: 0
+      value: 3
+    - type: 1
+      value: 5
+    - type: 3
+      value: 10
+    - type: 4
+      value: 50
+    - type: 0
+      value: 3
+    - type: 5
+      value: 0
     StrengthRecoveryPerSecond: 5

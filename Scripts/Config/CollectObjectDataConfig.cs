@@ -35,7 +35,6 @@ namespace Config
         public CollectType CollectType;
         public CollectObjectClass CollectObjectClass;
         public int Weight;
-        public float PropertyValue;
         public BuffExtraData BuffExtraData;
     }
 

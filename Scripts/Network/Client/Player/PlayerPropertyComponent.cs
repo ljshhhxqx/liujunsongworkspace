@@ -22,11 +22,18 @@ namespace HotUpdate.Scripts.Network.Client.Player
         public ChestType currentChestType;
         [SyncVar]
         public PlayerState playerState;
+        [SyncVar] 
+        public bool hasMovementInput;
         
         private readonly Dictionary<PropertyTypeEnum, float> _configBaseProperties = new Dictionary<PropertyTypeEnum, float>(); 
+        private readonly Dictionary<PropertyTypeEnum, float> _configMinProperties = new Dictionary<PropertyTypeEnum, float>();
+        private readonly Dictionary<PropertyTypeEnum, float> _configMaxProperties = new Dictionary<PropertyTypeEnum, float>();
+        private readonly SyncDictionary<PropertyTypeEnum, float> _syncBaseProperties = new SyncDictionary<PropertyTypeEnum, float>();
+        private readonly SyncDictionary<PropertyTypeEnum, float> _syncPropertyBuffs = new SyncDictionary<PropertyTypeEnum, float>();
+        private readonly SyncDictionary<PropertyTypeEnum, float> _syncPropertyMultipliers = new SyncDictionary<PropertyTypeEnum, float>();
+        private readonly SyncDictionary<PropertyTypeEnum, float> _syncPropertyCorrectionFactors = new SyncDictionary<PropertyTypeEnum, float>();
         private readonly SyncDictionary<PropertyTypeEnum, PropertyType> _syncCurrentProperties = new SyncDictionary<PropertyTypeEnum, PropertyType>();
-        private readonly SyncDictionary<PropertyTypeEnum, PropertyType> _syncMaxProperties = new SyncDictionary<PropertyTypeEnum, PropertyType>();
-        private readonly SyncDictionary<PropertyTypeEnum, Dictionary<BuffIncreaseType, float>> _syncBuffIncreases = new SyncDictionary<PropertyTypeEnum, Dictionary<BuffIncreaseType, float>>();
+        private readonly SyncDictionary<PropertyTypeEnum, PropertyType> _syncMaxCurrentProperties = new SyncDictionary<PropertyTypeEnum, PropertyType>();
         
         [Inject]
         private void Init(IConfigProvider configProvider)
@@ -40,6 +47,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             for (var i = (int)PropertyTypeEnum.Speed; i <= (int)PropertyTypeEnum.Score; i++)
             {
                 var propertyType = (PropertyTypeEnum)i;
+                var minProperties = _playerDataConfig.PlayerConfigData.MinProperties.Find(x => x.TypeEnum == propertyType);
                 var baseProperties = _playerDataConfig.PlayerConfigData.BaseProperties.Find(x => x.TypeEnum == propertyType);
                 var maxProperties = _playerDataConfig.PlayerConfigData.MaxProperties.Find(x => x.TypeEnum == propertyType);
                 if (maxProperties.Value == 0)
@@ -47,84 +55,81 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     throw new Exception("Property value cannot be zero.");
                 }
 
-                var property = new PropertyType(propertyType, maxProperties.Value);
+                var maxProperty = new PropertyType(propertyType, maxProperties.Value);
                 var baseProperty = new PropertyType(propertyType, baseProperties.Value);
-                _maxCurrentProperties.Add(propertyType, new ReactiveProperty<PropertyType>(property));
+                var minProperty = new PropertyType(propertyType, minProperties.Value);
+                _maxCurrentProperties.Add(propertyType, new ReactiveProperty<PropertyType>(baseProperty));
+                _configMinProperties.Add(propertyType, minProperty.Value);
                 _currentProperties.Add(propertyType, new ReactiveProperty<PropertyType>(baseProperty));
+                _configMaxProperties.Add(propertyType, maxProperty.Value);
+                _configMinProperties.Add(propertyType, 0f);
                 _configBaseProperties.Add(propertyType, baseProperties.Value);
                 if (isServer)
                 {
-                    var buffIncreases = new Dictionary<BuffIncreaseType, float>();
                     for (var j = (int)BuffIncreaseType.Base; j <= (int)BuffIncreaseType.CorrectionFactor; j++)
                     {
                         switch ((BuffIncreaseType)j)
                         {
                             case BuffIncreaseType.Base:
-                                buffIncreases.Add((BuffIncreaseType)j, baseProperty.Value);
+                                _syncBaseProperties.Add(propertyType, baseProperty.Value);
                                 break;
                             case BuffIncreaseType.Multiplier:
-                                buffIncreases.Add((BuffIncreaseType)j, 1f);
+                                _syncPropertyMultipliers.Add(propertyType, 1f);
                                 break;
                             case BuffIncreaseType.Extra:
-                                buffIncreases.Add((BuffIncreaseType)j, 0f);
+                                _syncPropertyBuffs.Add(propertyType, 0f);
                                 break;
                             case BuffIncreaseType.CorrectionFactor:
-                                buffIncreases.Add((BuffIncreaseType)j, 1f);
+                                _syncPropertyCorrectionFactors.Add(propertyType, 1f);
                                 break;
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
                     }
-                    _syncBuffIncreases.Add(propertyType, buffIncreases);
                     _syncCurrentProperties.Add(propertyType, baseProperty);
-                    _syncMaxProperties.Add(propertyType, baseProperty);
+                    _syncMaxCurrentProperties.Add(propertyType, baseProperty);
                 }
             }
         }
 
         public void IncreaseProperty(PropertyTypeEnum type, List<BuffIncreaseData> buffIncreaseData)
         {
-            if (_syncBuffIncreases.TryGetValue(type, out var increase))
+            foreach (var data in buffIncreaseData)
             {
-                foreach (var increaseData in buffIncreaseData)
-                {
-                    IncreaseProperty(type, increaseData.increaseType, increaseData.increaseValue);
-                }
-                UpdateProperty(type);
+                IncreaseProperty(type, data.increaseType, data.increaseValue);
             }
         }
 
         public void IncreaseProperty(PropertyTypeEnum type, BuffIncreaseType increaseType, float amount)
         {
-            if (_syncBuffIncreases.TryGetValue(type, out var increase))
+            switch (increaseType)
             {
-                switch (increaseType)
-                {
-                    case BuffIncreaseType.Base:
-                        increase[BuffIncreaseType.Base] += amount;
-                        break;
-                    case BuffIncreaseType.Multiplier:
-                        increase[BuffIncreaseType.Multiplier] += amount;
-                        if (increase[BuffIncreaseType.Multiplier] < 0f)
-                        {
-                            increase[BuffIncreaseType.Multiplier] = 0f;
-                        }
-                        break;
-                    case BuffIncreaseType.Extra:
-                        increase[BuffIncreaseType.Extra] += amount;
-                        break;
-                    case BuffIncreaseType.CorrectionFactor:
-                        increase[BuffIncreaseType.CorrectionFactor] += amount;
-                        if (increase[BuffIncreaseType.CorrectionFactor] < 0f)
-                        {
-                            increase[BuffIncreaseType.CorrectionFactor] = 0f;
-                        }
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(increaseType), increaseType, null);
-                }
-                UpdateProperty(type);
+                case BuffIncreaseType.Base:
+                    _syncBaseProperties[type] = Mathf.Max(_configBaseProperties[type], _syncBaseProperties[type] + amount);
+                    break;
+                case BuffIncreaseType.Multiplier:
+                    _syncPropertyMultipliers[type] = Mathf.Max(0f, _syncPropertyMultipliers[type] + amount);
+                    break;
+                case BuffIncreaseType.Extra:
+                    _syncPropertyBuffs[type] += amount;
+                    break;
+                case BuffIncreaseType.CorrectionFactor:
+                    _syncPropertyCorrectionFactors[type] = Mathf.Max(0f, _syncPropertyCorrectionFactors[type] + amount);
+                    break;
+                case BuffIncreaseType.Current:
+                    var currentValue = Mathf.Clamp(_syncCurrentProperties[type].Value + amount, _configMinProperties[type], _maxCurrentProperties[type].Value.Value);
+                    if (type == PropertyTypeEnum.Score)
+                    {
+                        currentValue = Mathf.Round(currentValue);
+                    }
+                    _syncCurrentProperties[type] = new PropertyType(type, currentValue);
+                    PropertyChanged(_syncCurrentProperties[type]);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(increaseType), increaseType, null);
             }
+            
+            UpdateProperty(type);
         }
 
         /// <summary>
@@ -133,12 +138,19 @@ namespace HotUpdate.Scripts.Network.Client.Player
         /// <param name="type"></param>
         private void UpdateProperty(PropertyTypeEnum type)
         {
-            var property = _syncBuffIncreases[type];
-            var propertyVal = (property[BuffIncreaseType.Base] * property[BuffIncreaseType.Multiplier] + property[BuffIncreaseType.Extra]) * property[BuffIncreaseType.CorrectionFactor];
-            propertyVal = Mathf.Min(_maxCurrentProperties[type].Value.Value, propertyVal);
-            propertyVal = Mathf.Max(_configBaseProperties[type], propertyVal);
-            _syncCurrentProperties[type] = new PropertyType(type, propertyVal);
+            var propertyVal = (_syncBaseProperties[type] * _syncPropertyMultipliers[type] + _syncPropertyBuffs[type]) * _syncPropertyCorrectionFactors[type];
+            _syncMaxCurrentProperties[type] = new PropertyType(type, Mathf.Clamp(propertyVal, 
+                _configMinProperties[type],
+                _configMaxProperties[type]));
+            _syncCurrentProperties[type] = new PropertyType(type, Mathf.Clamp(_syncCurrentProperties[type].Value, _configMinProperties[type], _maxCurrentProperties[type].Value.Value));
+            MaxPropertyChanged(_syncMaxCurrentProperties[type]);
             PropertyChanged(_syncCurrentProperties[type]);
+        }
+        
+        private void MaxPropertyChanged(PropertyType property)
+        {
+            _maxCurrentProperties[property.TypeEnum].Value = property;
+            _maxCurrentProperties[property.TypeEnum].SetValueAndForceNotify(property);
         }
         
         private void PropertyChanged(PropertyType property)
@@ -154,7 +166,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         
         public PropertyType GetMaxProperty(PropertyTypeEnum type)
         {
-            return _syncMaxProperties.TryGetValue(type, out var property) ? property : default;
+            return _syncMaxCurrentProperties.TryGetValue(type, out var property) ? property : default;
         }
 
         public bool StrengthCanDoAnimation(AnimationState animationState)
@@ -226,8 +238,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         private void ChangeAnimationState(AnimationState animationState)
         {
-            _syncCurrentProperties[PropertyTypeEnum.Strength].IncreaseValue(-_playerDataConfig.PlayerConfigData.AnimationStrengthCosts[animationState]);
-            PropertyChanged(_syncCurrentProperties[PropertyTypeEnum.Strength]);
+            IncreaseProperty(PropertyTypeEnum.Strength, BuffIncreaseType.Current, _playerDataConfig.PlayerConfigData.AnimationStrengthCosts[animationState]);
             if (isServer)
             {
                 currentAnimationState = animationState;
@@ -239,7 +250,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
             if (isServer)
             {
                 var recoveredStrength = _playerDataConfig.PlayerConfigData.StrengthRecoveryPerSecond;
-                if (currentAnimationState == AnimationState.Sprint)
+                var isSprinting = currentAnimationState == AnimationState.Sprint;
+                if (isSprinting)
                 {
                     recoveredStrength -= _playerDataConfig.PlayerConfigData.AnimationStrengthCosts[AnimationState.Sprint];
                 }
@@ -249,16 +261,15 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     case PlayerState.InAir:
                         break;
                     case PlayerState.OnGround:
-                        
+                        _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] *= isSprinting ? _playerDataConfig.PlayerConfigData.SprintSpeedFactor : 1f;
                         break;
                     case PlayerState.OnStairs:
+                        _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] *= isSprinting ? _playerDataConfig.PlayerConfigData.OnStairsSpeedRatioFactor * _playerDataConfig.PlayerConfigData.SprintSpeedFactor : _playerDataConfig.PlayerConfigData.OnStairsSpeedRatioFactor;
                         break;
                     default:
                         throw new Exception($"playerState:{playerState} is not valid.");
                 }
-               // incre
-                _syncCurrentProperties[PropertyTypeEnum.Strength].IncreaseValue(recoveredStrength * Time.fixedDeltaTime);
-                PropertyChanged(_syncCurrentProperties[PropertyTypeEnum.Strength]);
+                IncreaseProperty(PropertyTypeEnum.Strength, BuffIncreaseType.Current, recoveredStrength * Time.fixedDeltaTime);
             }
         }
     }

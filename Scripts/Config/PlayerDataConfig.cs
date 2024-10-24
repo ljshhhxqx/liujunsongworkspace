@@ -39,6 +39,7 @@ namespace HotUpdate.Scripts.Config
         public float StairsCheckDistance;
         public List<PropertyType> MaxProperties;
         public List<PropertyType> BaseProperties;
+        public List<PropertyType> MinProperties;
         public SerializableDictionary<AnimationState, float> AnimationStrengthCosts;
         public float StrengthRecoveryPerSecond;
     
