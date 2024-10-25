@@ -2,13 +2,13 @@
 using System.Linq;
 using AOTScripts.Tool;
 using Data;
+using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
 using Network.Data;
 using Network.Server.PlayFab;
 using TMPro;
 using Tool.Coroutine;
 using UI.UIBase;
 using UI.UIs.Common;
-using UI.UIs.Panel.ItemList;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;

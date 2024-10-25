@@ -1,5 +1,6 @@
 using System;
 using Data;
+using UniRx;
 using UnityEngine;
 
 namespace UI.UIs.Common
@@ -46,5 +47,14 @@ namespace UI.UIs.Common
         public string RoomType;
         public string HasPassword;
         public Action<string> OnJoinClick;
+    }
+
+    public class PropertyItemData : ItemBaseData
+    {
+        public string Name;
+        public float CurrentValue;
+        public float MaxValue;
+        public PropertyConsumeType ConsumeType;
+        public ReactiveProperty<PropertyType> Property;
     }
 }

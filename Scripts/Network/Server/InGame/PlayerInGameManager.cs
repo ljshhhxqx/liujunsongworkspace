@@ -32,7 +32,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             foreach (var player in _playerInGameData)
             {
                 var score = player.Value.PlayerProperty.GetProperty(PropertyTypeEnum.Score);
-                if (score.Value >= targetScore)
+                if (score.Value.Value >= targetScore)
                 {
                     return true;
                 }
@@ -55,6 +55,11 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         public PlayerPropertyComponent GetPlayerPropertyComponent(int connectionId)
         {
             return GetPlayer(connectionId)?.PlayerProperty;
+        }
+
+        public PlayerPropertyComponent GetSelfPlayerPropertyComponent()
+        {
+            return GetPlayerPropertyComponent(NetworkClient.connection.connectionId);
         }
 
         public void InitPlayerProperty(PlayerPropertyComponent playerProperty)

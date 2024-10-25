@@ -35,6 +35,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private readonly SyncDictionary<PropertyTypeEnum, PropertyType> _syncCurrentProperties = new SyncDictionary<PropertyTypeEnum, PropertyType>();
         private readonly SyncDictionary<PropertyTypeEnum, PropertyType> _syncMaxCurrentProperties = new SyncDictionary<PropertyTypeEnum, PropertyType>();
         
+        
         [Inject]
         private void Init(IConfigProvider configProvider)
         {
@@ -159,14 +160,14 @@ namespace HotUpdate.Scripts.Network.Client.Player
             _currentProperties[property.TypeEnum].SetValueAndForceNotify(property); 
         }
         
-        public PropertyType GetProperty(PropertyTypeEnum type)
+        public ReactiveProperty<PropertyType> GetProperty(PropertyTypeEnum type)
         {
-            return _syncCurrentProperties.TryGetValue(type, out var property) ? property : default;
+            return _currentProperties.TryGetValue(type, out var property) ? property : default;
         }
         
-        public PropertyType GetMaxProperty(PropertyTypeEnum type)
+        public ReactiveProperty<PropertyType> GetMaxProperty(PropertyTypeEnum type)
         {
-            return _syncMaxCurrentProperties.TryGetValue(type, out var property) ? property : default;
+            return _maxCurrentProperties.TryGetValue(type, out var property) ? property : default;
         }
 
         public bool StrengthCanDoAnimation(AnimationState animationState)
@@ -268,6 +269,10 @@ namespace HotUpdate.Scripts.Network.Client.Player
                         break;
                     default:
                         throw new Exception($"playerState:{playerState} is not valid.");
+                }
+                if (!hasMovementInput)
+                {
+                    _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] = _configMinProperties[PropertyTypeEnum.Speed];
                 }
                 IncreaseProperty(PropertyTypeEnum.Strength, BuffIncreaseType.Current, recoveredStrength * Time.fixedDeltaTime);
             }

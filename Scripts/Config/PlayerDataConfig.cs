@@ -29,10 +29,10 @@ namespace HotUpdate.Scripts.Config
 
         public float MoveSpeed;
         public float RunSpeed;
-        public float SprintSpeedFactor = 1.25f;
+        public float SprintSpeedFactor = 1.5f;
         public float RotateSpeed;
         public float OnStairsSpeed = 3f;
-        public float OnStairsSpeedRatioFactor = 0.75f;
+        public float OnStairsSpeedRatioFactor = 0.7f;
         public float JumpSpeed;
         public float StairsJumpSpeed;
         public float GroundCheckRadius;

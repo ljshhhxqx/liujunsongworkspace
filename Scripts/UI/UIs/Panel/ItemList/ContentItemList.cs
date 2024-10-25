@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UI.UIs.Common;
 using UnityEngine;
 
-namespace UI.UIs.Panel.ItemList
+namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
 {
     public sealed class ContentItemList : MonoBehaviour
     {
@@ -19,9 +19,8 @@ namespace UI.UIs.Panel.ItemList
             _itemList.Clear();
             if (itemDataList is { Length: > 0 })
             {
-                for (int i = 0; i < itemDataList.Length; i++)
+                foreach (var itemData in itemDataList)
                 {
-                    var itemData = itemDataList[i];
                     var item = Instantiate(itemPrefab.gameObject, content);
                     var itemBase = item.GetComponent<ItemBase>();
                     itemBase.SetData(itemData);

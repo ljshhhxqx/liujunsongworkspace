@@ -4,6 +4,7 @@ using Network.Client;
 using Network.Data;
 using Tool.GameEvent;
 using Tool.Message;
+using UniRx;
 using UnityEngine;
 using AnimationState = HotUpdate.Scripts.Config.AnimationState;
 
@@ -42,6 +43,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private PlayerState _playerState;
         private Vector3 _stairsHitNormal;
 
+        private ReactiveProperty<PropertyType> _speed;
+
         protected override void InitCallback()
         {
             _playerPropertyComponent = GetComponent<PlayerPropertyComponent>();
@@ -55,6 +58,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
             
             gameEventManager.Publish(new PlayerSpawnedEvent(_rotateCenter));
             repeatedTask.StartRepeatingTask(SyncAnimation, _gameDataConfig.GameConfigData.SyncTime);
+            _speed = _playerPropertyComponent.GetProperty(PropertyTypeEnum.Speed);
+            _speed.Subscribe(x => _targetSpeed = x.Value).AddTo(this);
         }
 
         private void Update()
@@ -75,6 +80,10 @@ namespace HotUpdate.Scripts.Network.Client.Player
         {
             _inputMovement = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
             _hasMovementInput = Mathf.Abs(_inputMovement.x) > 0 || Mathf.Abs(_inputMovement.z) > 0;
+            if (isServer)
+            {
+                _playerPropertyComponent.hasMovementInput = _hasMovementInput;
+            }
             _isSprinting = _hasMovementInput && Input.GetButton("Running") && _playerPropertyComponent.StrengthCanDoAnimation(AnimationState.Sprint);
             if (Input.GetButtonDown("Jump") && !_isJumpRequested && _playerState != PlayerState.InAir && _playerPropertyComponent.StrengthCanDoAnimation(AnimationState.Jump))
             {
@@ -107,6 +116,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             }
 
             _playerState = CheckGrounded() ? PlayerState.OnGround : PlayerState.InAir;
+            _playerPropertyComponent.playerState = _playerState;
         }
 
         private void HandleMovement()
@@ -116,7 +126,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 //Debug.Log("On stairs");
                 _rigidbody.useGravity = false;
                 _movement = _inputMovement.z * -_stairsNormal.normalized + transform.right * _inputMovement.x;
-                _targetSpeed = _isSprinting ? _playerDataConfig.PlayerConfigData.MoveSpeed : _playerDataConfig.PlayerConfigData.OnStairsSpeed;
                 if (_isJumpRequested)
                 {
                     _playerPropertyComponent.DoAnimation(AnimationState.Jump);
@@ -131,7 +140,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 //Debug.Log("On ground");
                 _movement = _inputMovement.magnitude <= 0.1f ? _inputMovement : _camera.transform.TransformDirection(_inputMovement);
                 _movement.y = _inputMovement.magnitude <= 0.1f ? _movement.y : 0f;
-                _targetSpeed = _isSprinting ? _playerDataConfig.PlayerConfigData.RunSpeed : _hasMovementInput ? _playerDataConfig.PlayerConfigData.MoveSpeed : 0;
 
                 if (_isJumpRequested)
                 {
@@ -157,7 +165,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
             }
             
             var position = transform.position;
-            
             _currentSpeed = Mathf.SmoothDamp(_currentSpeed, _targetSpeed, ref _speedSmoothVelocity, _speedSmoothTime);
             _movement = _movement.normalized * (_currentSpeed * Time.fixedDeltaTime);
             _rigidbody.MovePosition(_movement + position);
