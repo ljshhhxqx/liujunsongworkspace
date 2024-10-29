@@ -1,20 +1,21 @@
-﻿using Mirror;
+﻿using System;
+using Mirror;
 using Tool.GameEvent;
-using UnityEngine;
 
 namespace Network.NetworkMes
 {
-    public struct MirrorNetworkMessage : NetworkMessage
-    {
-        
-    }
+    // public struct MirrorNetworkMessage : NetworkMessage
+    // {
+    //     
+    // }
 
+    [Serializable]
     public struct PlayerConnectMessage : NetworkMessage
     {
-        public string UID { get; private set; }
-        public int ConnectionID { get; private set; }
-        public string Name { get; private set; }
-        
+        public string UID;
+        public int ConnectionID;
+        public string Name;
+
         public PlayerConnectMessage(string uid, int connectionID, string name)
         {            
             UID = uid;
@@ -33,9 +34,10 @@ namespace Network.NetworkMes
     //     }
     // }
     
+    [Serializable]
     public struct CountdownMessage : NetworkMessage
     {
-        public float RemainingTime { get; private set; }
+        public float RemainingTime;
         
         public CountdownMessage(float remainingTime)
         {
@@ -52,18 +54,20 @@ namespace Network.NetworkMes
     //     }
     // }
 
+    [Serializable]
     public struct GameStartMessage : NetworkMessage
     {
-        public GameInfo GameInfo { get; private set; }
+        public GameInfo GameInfo;
         public GameStartMessage(GameInfo gameInfo)
         {
             GameInfo = gameInfo;
         }
     }
 
+    [Serializable]
     public struct GameWarmupMessage : NetworkMessage
     {
-        public float TimeLeft { get; set; }
+        public float TimeLeft;
 
         public GameWarmupMessage(float timeLeft)
         {

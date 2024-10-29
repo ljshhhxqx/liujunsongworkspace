@@ -51,7 +51,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         protected override void InitCallback()
         {
-            _playerPropertyComponent = GetComponent<PlayerPropertyComponent>();
+            _playerPropertyComponent = GetComponentInChildren<PlayerPropertyComponent>();
             _rotateCenter = transform.Find("RotateCenter");
             _checkGroundTransform = transform.Find("CheckGround");
             _checkStairsTransform = transform.Find("CheckStairs");
@@ -84,10 +84,9 @@ namespace HotUpdate.Scripts.Network.Client.Player
         {
             _inputMovement = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
             _hasMovementInput = Mathf.Abs(_inputMovement.x) > 0 || Mathf.Abs(_inputMovement.z) > 0;
-            if (isServer)
-            {
+            
                 _playerPropertyComponent.hasMovementInput = _hasMovementInput;
-            }
+            
             _isSprinting = _hasMovementInput && Input.GetButton("Running") && _playerPropertyComponent.StrengthCanDoAnimation(AnimationState.Sprint);
             if (Input.GetButtonDown("Jump") && !_isJumpRequested && _playerState != PlayerState.InAir && _playerPropertyComponent.StrengthCanDoAnimation(AnimationState.Jump))
             {

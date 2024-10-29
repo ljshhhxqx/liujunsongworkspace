@@ -35,7 +35,6 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         [Inject]
         private void Init()
         {
-            //NetworkClient.RegisterHandler<>();
             GameLoopDataModel.WarmupRemainingTime.Subscribe(x => SetWarmupRemainingTime(x.ToHMSStr())).AddTo(this);
             GameLoopDataModel.GameLoopData.Subscribe(x =>
             {

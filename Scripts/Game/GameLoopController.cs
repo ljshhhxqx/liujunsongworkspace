@@ -51,26 +51,23 @@ namespace HotUpdate.Scripts.Game
         
         private void RegisterMessage()
         {
-            NetworkServer.RegisterHandler<GameStartMessage>(OnGameStartMessage);
-            NetworkServer.RegisterHandler<GameWarmupMessage>(OnGameWarmupMessage);
-            NetworkServer.RegisterHandler<CountdownMessage>(OnCountdownMessage);
+            NetworkClient.RegisterHandler<GameStartMessage>(OnGameStartMessage);
+            NetworkClient.RegisterHandler<GameWarmupMessage>(OnGameWarmupMessage);
+            NetworkClient.RegisterHandler<CountdownMessage>(OnCountdownMessage);
         }
 
-        private void OnCountdownMessage(NetworkConnectionToClient conn, CountdownMessage message)
+        private void OnCountdownMessage(CountdownMessage message)
         {
-            Debug.Log("Countdown Timer: " + message.RemainingTime + " seconds remaining");
             GameLoopDataModel.GameRemainingTime.Value = message.RemainingTime;
         }
 
-        private void OnGameWarmupMessage(NetworkConnectionToClient conn, GameWarmupMessage message)
+        private void OnGameWarmupMessage(GameWarmupMessage message)
         {
-            Debug.Log("Warmup Timer: " + message.TimeLeft + " seconds remaining");
             GameLoopDataModel.WarmupRemainingTime.Value = message.TimeLeft;
         }
 
-        private void OnGameStartMessage(NetworkConnectionToClient conn, GameStartMessage message)
+        private void OnGameStartMessage(GameStartMessage message)
         {
-            Debug.Log("Game Start!");
             GameLoopDataModel.GameLoopData.Value = new GameLoopData
             {
                 GameMode = _gameInfo.GameMode,
@@ -83,11 +80,14 @@ namespace HotUpdate.Scripts.Game
         private void OnGameReady(GameReadyEvent gameReadyEvent)
         {
             _gameInfo = gameReadyEvent.GameInfo;
-            
-            _cts = new CancellationTokenSource();
-            _warmupTime = _gameDataConfig.GameConfigData.WarmupTime;
-            _mainGameTime = _gameInfo.GameMode == GameMode.Time ? _gameInfo.GameTime : 0;
-            StartGameLoop(_cts).Forget();
+
+            if (isServer)
+            {
+                _cts = new CancellationTokenSource();
+                _warmupTime = _gameDataConfig.GameConfigData.WarmupTime;
+                _mainGameTime = _gameInfo.GameMode == GameMode.Time ? _gameInfo.GameTime : 0;
+                StartGameLoop(_cts).Forget();
+            }
         }
 
         private async UniTask StartGameLoop(CancellationTokenSource cts)
@@ -99,7 +99,7 @@ namespace HotUpdate.Scripts.Game
 
             // 2. 开始总的倒计时
             Debug.Log("Main game timer starts now!");
-            NetworkServer.SendToAll(new GameStartMessage(_gameInfo));
+            NetworkServer.SendToReady(new GameStartMessage(_gameInfo));
             await StartMainGameTimerAsync(cts.Token);
 
             Debug.Log("Main game over. Exiting...");
@@ -116,7 +116,7 @@ namespace HotUpdate.Scripts.Game
                 await UniTask.Delay(1000, cancellationToken: token);
                 remainingTime--;
                
-                NetworkServer.SendToAll(new GameWarmupMessage(remainingTime)); 
+                NetworkServer.SendToReady(new GameWarmupMessage(remainingTime)); 
             }
         }
         
@@ -170,7 +170,8 @@ namespace HotUpdate.Scripts.Game
                 {
                     remainingTime+=0.1f;
                 }
-                NetworkServer.SendToAll(new CountdownMessage(remainingTime));
+
+                NetworkServer.SendToReady(new CountdownMessage(remainingTime));
             }
             _cts.Cancel(); 
         

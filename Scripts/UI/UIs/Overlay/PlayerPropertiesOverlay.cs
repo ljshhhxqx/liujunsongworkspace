@@ -20,17 +20,16 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private void Init(PlayerInGameManager playerInGameManager)
         {
             _playerInGameManager = playerInGameManager;
-            _playerPropertyComponent = _playerInGameManager.GetSelfPlayerPropertyComponent();
         }
 
-        public void SetPlayerProperties()
+        public void SetPlayerProperties(PlayerPropertyComponent playerPropertyComponent)
         {
             var list = new List<PropertyItemData>();
             for (var i = (int)PropertyTypeEnum.Speed; i <= (int)PropertyTypeEnum.Score; i++)
             {
                 var propertyType = (PropertyTypeEnum)i;
-                var currentProperty = _playerPropertyComponent.GetProperty(propertyType);
-                var maxProperty = _playerPropertyComponent.GetMaxProperty(propertyType);
+                var currentProperty = playerPropertyComponent.GetProperty(propertyType);
+                var maxProperty = playerPropertyComponent.GetMaxProperty(propertyType);
                 var displayName = propertyType.ToDisplayName();
                 var consumeType = propertyType.GetConsumeType();
                 list.Add(new PropertyItemData

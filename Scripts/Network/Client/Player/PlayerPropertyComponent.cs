@@ -5,7 +5,9 @@ using AOTScripts.Tool.ECS;
 using Common;
 using Config;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.UI.UIs.Overlay;
 using Mirror;
+using UI.UIBase;
 using UniRx;
 using UnityEngine;
 using VContainer;
@@ -18,6 +20,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private readonly Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>> _maxCurrentProperties = new Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>>();
         private readonly Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>> _currentProperties = new Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>>();
         private PlayerDataConfig _playerDataConfig;
+        private UIManager _uiManager;
         [SyncVar] 
         public AnimationState currentAnimationState;
         [SyncVar] 
@@ -38,10 +41,12 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private readonly SyncDictionary<PropertyTypeEnum, PropertyType> _syncMaxCurrentProperties = new SyncDictionary<PropertyTypeEnum, PropertyType>();
         
         [Inject]
-        private void Init(IConfigProvider configProvider)
+        private void Init(IConfigProvider configProvider, UIManager uiManager)
         {
             _playerDataConfig = configProvider.GetConfig<PlayerDataConfig>();
             InitializeProperties();
+            var properties = uiManager.SwitchUI<PlayerPropertiesOverlay>();
+            properties.SetPlayerProperties(this);
         }
 
         private void Awake()
@@ -70,6 +75,10 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 _currentProperties.Add(propertyType, new ReactiveProperty<PropertyType>(baseProperty));
                 _configMaxProperties.Add(propertyType, maxProperty.Value);
                 _configBaseProperties.Add(propertyType, baseProperties.Value);
+                if (isServer)
+                {
+                    
+                }
                 Debug.Log($"Add property {propertyType} to sync dictionary.");
                 for (var j = (int)BuffIncreaseType.Base; j <= (int)BuffIncreaseType.CorrectionFactor; j++)
                 {
@@ -94,9 +103,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 }
                 _syncCurrentProperties.Add(propertyType, baseProperty);
                 _syncMaxCurrentProperties.Add(propertyType, baseProperty);
-                if (isServer)
-                {
-                }
             }
         }
 
@@ -169,12 +175,12 @@ namespace HotUpdate.Scripts.Network.Client.Player
         
         public ReactiveProperty<PropertyType> GetProperty(PropertyTypeEnum type)
         {
-            return _currentProperties.TryGetValue(type, out var property) ? property : default;
+            return _currentProperties.GetValueOrDefault(type);
         }
         
         public ReactiveProperty<PropertyType> GetMaxProperty(PropertyTypeEnum type)
         {
-            return _maxCurrentProperties.TryGetValue(type, out var property) ? property : default;
+            return _maxCurrentProperties.GetValueOrDefault(type);
         }
 
         public bool StrengthCanDoAnimation(AnimationState animationState)
@@ -249,43 +255,41 @@ namespace HotUpdate.Scripts.Network.Client.Player
         {
             var cost = _playerDataConfig.GetPlayerAnimationCost(animationState);
             IncreaseProperty(PropertyTypeEnum.Strength, BuffIncreaseType.Current, cost);
-            if (isServer)
-            {
-                currentAnimationState = animationState;
-            }
+            
+            currentAnimationState = animationState;
         }
 
         private void FixedUpdate()
         {
-            if (isServer)
+            var recoveredStrength = _playerDataConfig.PlayerConfigData.StrengthRecoveryPerSecond;
+            var isSprinting = currentAnimationState == AnimationState.Sprint;
+            if (isSprinting)
             {
-                var recoveredStrength = _playerDataConfig.PlayerConfigData.StrengthRecoveryPerSecond;
-                var isSprinting = currentAnimationState == AnimationState.Sprint;
-                if (isSprinting)
-                {
-                    var cost = _playerDataConfig.GetPlayerAnimationCost(currentAnimationState);
-                    recoveredStrength -= cost;
-                }
-
-                switch (playerState)
-                {
-                    case PlayerState.InAir:
-                        break;
-                    case PlayerState.OnGround:
-                        _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] *= isSprinting ? _playerDataConfig.PlayerConfigData.SprintSpeedFactor : 1f;
-                        break;
-                    case PlayerState.OnStairs:
-                        _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] *= isSprinting ? _playerDataConfig.PlayerConfigData.OnStairsSpeedRatioFactor * _playerDataConfig.PlayerConfigData.SprintSpeedFactor : _playerDataConfig.PlayerConfigData.OnStairsSpeedRatioFactor;
-                        break;
-                    default:
-                        throw new Exception($"playerState:{playerState} is not valid.");
-                }
-                if (!hasMovementInput)
-                {
-                    _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] = _configMinProperties[PropertyTypeEnum.Speed];
-                }
-                IncreaseProperty(PropertyTypeEnum.Strength, BuffIncreaseType.Current, recoveredStrength * Time.fixedDeltaTime);
+                var cost = _playerDataConfig.GetPlayerAnimationCost(currentAnimationState);
+                recoveredStrength -= cost;
             }
+
+            switch (playerState)
+            {
+                case PlayerState.InAir:
+                    break;
+                case PlayerState.OnGround:
+                    _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] *= isSprinting ? _playerDataConfig.PlayerConfigData.SprintSpeedFactor : 1f;
+                    break;
+                case PlayerState.OnStairs:
+                    _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] *= isSprinting ? _playerDataConfig.PlayerConfigData.OnStairsSpeedRatioFactor * _playerDataConfig.PlayerConfigData.SprintSpeedFactor : _playerDataConfig.PlayerConfigData.OnStairsSpeedRatioFactor;
+                    break;
+                default:
+                    throw new Exception($"playerState:{playerState} is not valid.");
+            }
+            if (!hasMovementInput)
+            {
+                _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] = _configMinProperties[PropertyTypeEnum.Speed];
+            }
+            IncreaseProperty(PropertyTypeEnum.Strength, BuffIncreaseType.Current, recoveredStrength * Time.fixedDeltaTime);
+            // if (isServer)
+            // {
+            // }
         }
     }
 }

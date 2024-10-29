@@ -55,6 +55,24 @@ namespace Network.Server
             // }
         }
 
+        public override void OnServerAddPlayer(NetworkConnectionToClient conn)
+        {
+            // 服务器端添加玩家
+            var res = DataJsonManager.Instance.GetResourceData("Player");
+            var resInfo = ResourceManager.Instance.GetResource<GameObject>(res);
+            if (resInfo)
+            {
+                //currentPlayer = resInfo.gameObject;
+                var spawnPoint = _spawnPoints[UnityEngine.Random.Range(0, _spawnPoints.Count)];
+                var playerGo = Instantiate(resInfo.gameObject, spawnPoint.transform);
+                playerGo.transform.localPosition = Vector3.zero;
+                playerGo.transform.localRotation = Quaternion.identity;
+                playerGo.name = playerGo.name.Replace("(Clone)", conn.connectionId.ToString());
+                _spawnPoints.Remove(spawnPoint);
+                NetworkServer.AddPlayerForConnection(conn, playerGo);
+            }
+        }
+
         private void OnSceneResourcesLoaded(GameSceneResourcesLoadedEvent sceneResourcesLoadedEvent)
         {
             if (Enum.TryParse<MapType>(sceneResourcesLoadedEvent.SceneName, out var mapType))
@@ -81,11 +99,17 @@ namespace Network.Server
 
         private void OnServerPlayerAccountIdMessage(NetworkConnectionToClient conn, PlayerConnectMessage message)
         { 
+            if (_playerAccountIdMap.TryGetValue(conn.connectionId, out var uid))
+            {
+                Debug.LogError($"Player already connected: {uid}");
+                return;
+            }
+            Debug.Log($"Received PlayerAccountId from client: {message.UID}");
             // 获取已添加的玩家对象
             if (conn.identity != null)
             {
                 var player = conn.identity.gameObject;
-                var playerData = player.GetComponent<PlayerPropertyComponent>();
+                var playerData = player.GetComponentInChildren<PlayerPropertyComponent>();
                 if (playerData != null)
                 {
                     playerData.PlayerId = message.UID;
@@ -98,32 +122,18 @@ namespace Network.Server
                         PlayerProperty = playerData
                     });
                 }
-                
-                // 服务器端添加玩家
-                var res = DataJsonManager.Instance.GetResourceData("Player");
-                var resInfo = ResourceManager.Instance.GetResource<GameObject>(res);
-                if (resInfo)
-                {
-                    //currentPlayer = resInfo.gameObject;
-                    var spawnPoint = _spawnPoints[UnityEngine.Random.Range(0, _spawnPoints.Count)];
-                    var playerGo = Instantiate(resInfo.gameObject, spawnPoint.transform);
-                    playerGo.transform.localPosition = Vector3.zero;
-                    playerGo.transform.localRotation = Quaternion.identity;
-                    NetworkServer.AddPlayerForConnection(conn, player);
-                    _spawnPoints.Remove(spawnPoint);
-                }
-            }
 
-            var playerCount = _playerDataManager.GetPlayers().Count;
-            var gameInfo = new GameInfo
-            {
-                SceneName = _mapName,
-                GameMode = (GameMode)_playerDataManager.CurrentRoomData.RoomCustomInfo.GameMode,
-                GameTime = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameTime,
-                GameScore = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameScore,
-                PlayerCount = playerCount
-            };
-            _gameEventManager.Publish(new GameReadyEvent(gameInfo));
+                var playerCount = _playerDataManager.GetPlayers().Count;
+                var gameInfo = new GameInfo
+                {
+                    SceneName = _mapName,
+                    GameMode = (GameMode)_playerDataManager.CurrentRoomData.RoomCustomInfo.GameMode,
+                    GameTime = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameTime,
+                    GameScore = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameScore,
+                    PlayerCount = playerCount
+                };
+                _gameEventManager.Publish(new GameReadyEvent(gameInfo));
+            }
             // if (_playerAccountIdMap.Count == playerCount)
             // {
             //     var gameInfo = new GameInfo
