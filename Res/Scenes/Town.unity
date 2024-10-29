@@ -7252,7 +7252,6 @@ MonoBehaviour:
   evaluationMethod: 0
   evaluationInterval: 3
   timeInterpolationGui: 0
-  _networkManagerRpcCaller: {fileID: 849958661}
 --- !u!33 &2841245582976213514
 MeshFilter:
   m_ObjectHideFlags: 0

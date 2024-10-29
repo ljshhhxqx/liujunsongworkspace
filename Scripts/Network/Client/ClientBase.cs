@@ -6,6 +6,7 @@ using Tool.Coroutine;
 using Tool.GameEvent;
 using Tool.Message;
 using Tool.ObjectPool;
+using UI.UIBase;
 using UnityEngine;
 using VContainer;
 
@@ -18,20 +19,21 @@ namespace Network.Client
         protected IConfigProvider configProvider;
         protected RepeatedTask repeatedTask;
         protected MessageCenter messageCenter;
+        protected UIManager uiManager;
         
         [Inject]
         protected virtual void Init(PlayersGameModelManager playersGameModelManager,
-         GameEventManager gameEventManager, IConfigProvider configProvider, RepeatedTask repeatedTask, MessageCenter messageCenter)
+         GameEventManager gameEventManager, IConfigProvider configProvider, RepeatedTask repeatedTask, MessageCenter messageCenter, UIManager uiManager)
         {
             this.gameEventManager = gameEventManager;
             this.configProvider = configProvider;
             this.repeatedTask = repeatedTask;
             this.messageCenter = messageCenter;
+            this.uiManager = uiManager;
             //playerGameModel = playersGameModelManager.GetPlayerModel(connectionToClient.connectionId);
             InitCallback();
         }
 
-        [Client]
         public override void OnStartClient()
         {
             ObjectInjectProvider.Instance.Inject(this);

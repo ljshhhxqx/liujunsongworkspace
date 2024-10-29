@@ -51,17 +51,17 @@ namespace HotUpdate.Scripts.Collector
         [Inject]
         private void Init(MapBoundDefiner mapBoundDefiner, IConfigProvider configProvider,BuffManager buffManager, PlayerInGameManager playerInGameManager,GameEventManager gameEventManager, MessageCenter messageCenter)
         {
-            gameEventManager.Subscribe<GameResourceLoadedEvent>(OnGameResourceLoaded);
+            _playerInGameManager = playerInGameManager;
+            _buffManager = buffManager;
+            _configProvider = configProvider;
+            _mapBoundDefiner = mapBoundDefiner;
             _messageCenter = messageCenter;
+            gameEventManager.Subscribe<GameResourceLoadedEvent>(OnGameResourceLoaded);
             _collectObjectDataConfig = _configProvider.GetConfig<CollectObjectDataConfig>();
             _buffDatabase = _configProvider.GetConfig<BuffDatabase>();
             //_messageCenter.Register<PlayerTouchedCollectMessage>(OnPlayerTouchedCollect);
-            _playerInGameManager = playerInGameManager;
-            _buffManager = buffManager;
             var config = _configProvider.GetConfig<GameDataConfig>();
             _sceneLayer = config.GameConfigData.GroundSceneLayer;
-            _configProvider = configProvider;
-            _mapBoundDefiner = mapBoundDefiner;
             NetworkClient.RegisterHandler<GameStartMessage>(OnGameStart);
             _spawnedParent = transform;
             InitializeGrid();

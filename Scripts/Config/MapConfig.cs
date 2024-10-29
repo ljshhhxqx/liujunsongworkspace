@@ -10,6 +10,10 @@ namespace HotUpdate.Scripts.Config
     {
         [SerializeField]
         private List<MapConfigData> mapConfigData = new List<MapConfigData>();
+        [SerializeField]
+        private GameModeData gameModeData;
+        
+        public GameModeData GameModeData => gameModeData;
 
         public MapConfigData GetMapConfigData(MapType mapType)
         {
@@ -50,5 +54,12 @@ namespace HotUpdate.Scripts.Config
     {
         Town,
         Forest,
+    }
+
+    [Serializable]
+    public class GameModeData
+    {
+        public List<int> times;
+        public List<int> scores;
     }
 }

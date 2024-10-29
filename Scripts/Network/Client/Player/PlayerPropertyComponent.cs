@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using AOTScripts.Tool.ECS;
+using Common;
 using Config;
 using HotUpdate.Scripts.Config;
 using Mirror;
@@ -35,12 +37,16 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private readonly SyncDictionary<PropertyTypeEnum, PropertyType> _syncCurrentProperties = new SyncDictionary<PropertyTypeEnum, PropertyType>();
         private readonly SyncDictionary<PropertyTypeEnum, PropertyType> _syncMaxCurrentProperties = new SyncDictionary<PropertyTypeEnum, PropertyType>();
         
-        
         [Inject]
         private void Init(IConfigProvider configProvider)
         {
             _playerDataConfig = configProvider.GetConfig<PlayerDataConfig>();
             InitializeProperties();
+        }
+
+        private void Awake()
+        {
+            ObjectInjectProvider.Instance.Inject(this);
         }
 
         private void InitializeProperties()
@@ -63,32 +69,33 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 _configMinProperties.Add(propertyType, minProperty.Value);
                 _currentProperties.Add(propertyType, new ReactiveProperty<PropertyType>(baseProperty));
                 _configMaxProperties.Add(propertyType, maxProperty.Value);
-                _configMinProperties.Add(propertyType, 0f);
                 _configBaseProperties.Add(propertyType, baseProperties.Value);
+                Debug.Log($"Add property {propertyType} to sync dictionary.");
+                for (var j = (int)BuffIncreaseType.Base; j <= (int)BuffIncreaseType.CorrectionFactor; j++)
+                {
+                    switch ((BuffIncreaseType)j)
+                    {
+                        case BuffIncreaseType.Base:
+                            _syncBaseProperties.Add(propertyType, baseProperty.Value);
+                            break;
+                        case BuffIncreaseType.Multiplier:
+                            _syncPropertyMultipliers.Add(propertyType, 1f);
+                            break;
+                        case BuffIncreaseType.Extra:
+                            _syncPropertyBuffs.Add(propertyType, 0f);
+                            break;
+                        case BuffIncreaseType.CorrectionFactor:
+                            _syncPropertyCorrectionFactors.Add(propertyType, 1f);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                    Debug.Log($"Add property {propertyType} to sync dictionary, increase type {j}.");
+                }
+                _syncCurrentProperties.Add(propertyType, baseProperty);
+                _syncMaxCurrentProperties.Add(propertyType, baseProperty);
                 if (isServer)
                 {
-                    for (var j = (int)BuffIncreaseType.Base; j <= (int)BuffIncreaseType.CorrectionFactor; j++)
-                    {
-                        switch ((BuffIncreaseType)j)
-                        {
-                            case BuffIncreaseType.Base:
-                                _syncBaseProperties.Add(propertyType, baseProperty.Value);
-                                break;
-                            case BuffIncreaseType.Multiplier:
-                                _syncPropertyMultipliers.Add(propertyType, 1f);
-                                break;
-                            case BuffIncreaseType.Extra:
-                                _syncPropertyBuffs.Add(propertyType, 0f);
-                                break;
-                            case BuffIncreaseType.CorrectionFactor:
-                                _syncPropertyCorrectionFactors.Add(propertyType, 1f);
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
-                    }
-                    _syncCurrentProperties.Add(propertyType, baseProperty);
-                    _syncMaxCurrentProperties.Add(propertyType, baseProperty);
                 }
             }
         }
@@ -173,14 +180,15 @@ namespace HotUpdate.Scripts.Network.Client.Player
         public bool StrengthCanDoAnimation(AnimationState animationState)
         {
             var strength = _syncCurrentProperties[PropertyTypeEnum.Strength];
-            if (_playerDataConfig.PlayerConfigData.AnimationStrengthCosts.TryGetValue(animationState, out var animationCost))
+            var cost = _playerDataConfig.GetPlayerAnimationCost(animationState);
+            if (cost != 0f)
             {
                 if (animationState == AnimationState.Sprint)
                 {
-                    return strength.Value >= animationCost * 0.1f;
+                    return strength.Value >= cost * 0.1f;
                 }
 
-                return strength.Value >= animationCost;
+                return strength.Value >= cost;
             }
             Debug.LogError($"Animation {animationState} not found in config.");
             return strength.Value > 0f;
@@ -239,7 +247,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         private void ChangeAnimationState(AnimationState animationState)
         {
-            IncreaseProperty(PropertyTypeEnum.Strength, BuffIncreaseType.Current, _playerDataConfig.PlayerConfigData.AnimationStrengthCosts[animationState]);
+            var cost = _playerDataConfig.GetPlayerAnimationCost(animationState);
+            IncreaseProperty(PropertyTypeEnum.Strength, BuffIncreaseType.Current, cost);
             if (isServer)
             {
                 currentAnimationState = animationState;
@@ -254,7 +263,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 var isSprinting = currentAnimationState == AnimationState.Sprint;
                 if (isSprinting)
                 {
-                    recoveredStrength -= _playerDataConfig.PlayerConfigData.AnimationStrengthCosts[AnimationState.Sprint];
+                    var cost = _playerDataConfig.GetPlayerAnimationCost(currentAnimationState);
+                    recoveredStrength -= cost;
                 }
 
                 switch (playerState)

@@ -35,6 +35,10 @@ MonoBehaviour:
       value: 300
     - type: 4
       value: 300
+    - type: 5
+      value: 100000000
+    - type: 2
+      value: 300
     BaseProperties:
     - type: 0
       value: 5
@@ -61,4 +65,19 @@ MonoBehaviour:
       value: 3
     - type: 5
       value: 0
+    AnimationStrengthCosts:
+    - State: 0
+      Cost: 0
+    - State: 1
+      Cost: 0
+    - State: 3
+      Cost: 10
+    - State: 4
+      Cost: 25
+    - State: 5
+      Cost: 15
+    - State: 6
+      Cost: 0
+    - State: 2
+      Cost: 10
     StrengthRecoveryPerSecond: 5

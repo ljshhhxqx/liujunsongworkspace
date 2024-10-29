@@ -19,7 +19,6 @@ namespace HotUpdate.Scripts.Game.Inject
             //builder.Register<WeatherManager>();
             builder.RegisterComponentInHierarchy<MapBoundDefiner>();
             builder.RegisterComponentInHierarchy<NetworkManagerCustom>();
-            builder.RegisterComponentInHierarchy<PlayerInGameManager>();
             //builder.Register<BuffManager>();
             //builder.Register<ItemsSpawnerManager>();
             builder.RegisterComponentInHierarchy<GameLoopController>();

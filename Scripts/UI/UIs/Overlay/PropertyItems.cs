@@ -1,6 +1,7 @@
 ﻿using System;
 using TMPro;
 using UI.UIs.Common;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,15 +15,27 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private TextMeshProUGUI valueText;
         [SerializeField]
         private Image iconImage;
+        private ReactiveProperty<PropertyType> _currentProperty;
+        private ReactiveProperty<PropertyType> _maxProperty;
         
         public override void SetData<T>(T data)
         {
             if (data is PropertyItemData propertyData)
             {
                 nameText.text = propertyData.Name;
-                var currentValue = Mathf.Round(propertyData.CurrentValue);
-                var maxValue = Mathf.Round(propertyData.MaxValue);
+                _currentProperty = propertyData.CurrentProperty;
+                _maxProperty = propertyData.MaxProperty;
+                var currentValue = Mathf.Round(_currentProperty.Value.Value);
+                var maxValue = Mathf.Round(_maxProperty.Value.Value);
                 SetValue(propertyData.ConsumeType, currentValue, maxValue);
+                _currentProperty.Subscribe(x =>
+                {
+                    SetValue(propertyData.ConsumeType, x.Value, _maxProperty.Value.Value);
+                }).AddTo(this);
+                _maxProperty.Subscribe(x =>
+                {
+                    SetValue(propertyData.ConsumeType, _currentProperty.Value.Value, x.Value);
+                }).AddTo(this);
             }
         }
 

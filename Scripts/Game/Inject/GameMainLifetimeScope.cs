@@ -48,6 +48,7 @@ namespace Game.Inject
             builder.Register<GameEventManager>(Lifetime.Singleton);
             builder.Register<GameSceneManager>(Lifetime.Singleton);
             builder.RegisterComponentInHierarchy<GameOnlineDefine>();
+            builder.RegisterComponentInHierarchy<PlayerInGameManager>();
             builder.RegisterComponentInHierarchy<ObjectInjectProvider>();
             builder.RegisterComponentInHierarchy<RepeatedTask>();
             Debug.Log("GameLifetimeScope Configure");

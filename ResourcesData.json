@@ -163,13 +163,21 @@
         {
             "UID": 900008,
             "ResourceType": "UnityEngine.GameObject",
+            "Name": "PlayerPropertyOverlay",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/PlayerPropertyOverlay.prefab"
+        },
+        {
+            "UID": 900009,
+            "ResourceType": "UnityEngine.GameObject",
             "Name": "RegistPanel",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/RegistPanel.prefab"
         },
         {
-            "UID": 900009,
+            "UID": 900010,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "RoomListUI",
             "IsPermanent": false,
@@ -177,7 +185,7 @@
             "Address": "/Preload/UI/RoomListUI.prefab"
         },
         {
-            "UID": 900010,
+            "UID": 900011,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "RoomUI",
             "IsPermanent": false,
@@ -185,7 +193,7 @@
             "Address": "/Preload/UI/RoomUI.prefab"
         },
         {
-            "UID": 900011,
+            "UID": 900012,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "TipPopup",
             "IsPermanent": false,
@@ -193,7 +201,7 @@
             "Address": "/Preload/UI/TipPopup.prefab"
         },
         {
-            "UID": 900012,
+            "UID": 900013,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "WeatherShowOverlay",
             "IsPermanent": false,

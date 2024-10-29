@@ -80,11 +80,11 @@ namespace HotUpdate.Scripts.Weather
         {
             WeatherDataModel.Init();
             _uiManager.SwitchUI<WeatherShowOverlay>();
-            CmdStartWeatherLoop(true);
+            StartWeatherLoop(true);
         }
 
         //[Command]
-        private void CmdStartWeatherLoop(bool isStart)
+        private void StartWeatherLoop(bool isStart)
         {
             _isDayNightCycle = isStart;
             if (isStart)

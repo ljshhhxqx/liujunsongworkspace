@@ -6,6 +6,7 @@ using Data;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Buff;
 using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
 using Network.NetworkMes;
@@ -45,18 +46,48 @@ namespace HotUpdate.Scripts.Game
             _buffManager = FindObjectOfType<BuffManager>();
             _networkAudioManager = FindObjectOfType<NetworkAudioManager>();
             _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
+            RegisterMessage();
         }
+        
+        private void RegisterMessage()
+        {
+            NetworkServer.RegisterHandler<GameStartMessage>(OnGameStartMessage);
+            NetworkServer.RegisterHandler<GameWarmupMessage>(OnGameWarmupMessage);
+            NetworkServer.RegisterHandler<CountdownMessage>(OnCountdownMessage);
+        }
+
+        private void OnCountdownMessage(NetworkConnectionToClient conn, CountdownMessage message)
+        {
+            Debug.Log("Countdown Timer: " + message.RemainingTime + " seconds remaining");
+            GameLoopDataModel.GameRemainingTime.Value = message.RemainingTime;
+        }
+
+        private void OnGameWarmupMessage(NetworkConnectionToClient conn, GameWarmupMessage message)
+        {
+            Debug.Log("Warmup Timer: " + message.TimeLeft + " seconds remaining");
+            GameLoopDataModel.WarmupRemainingTime.Value = message.TimeLeft;
+        }
+
+        private void OnGameStartMessage(NetworkConnectionToClient conn, GameStartMessage message)
+        {
+            Debug.Log("Game Start!");
+            GameLoopDataModel.GameLoopData.Value = new GameLoopData
+            {
+                GameMode = _gameInfo.GameMode,
+                TargetScore = _gameInfo.GameTime,
+                TimeLimit = _gameInfo.GameScore,
+            };
+        }
+
 
         private void OnGameReady(GameReadyEvent gameReadyEvent)
         {
             _gameInfo = gameReadyEvent.GameInfo;
-            if (isServer)
-            {
-                _cts = new CancellationTokenSource();
-                _warmupTime = _gameDataConfig.GameConfigData.WarmupTime;
-                _mainGameTime = _gameInfo.GameMode == GameMode.Time ? _gameInfo.GameTime : 0;
-                StartGameLoop(_cts).Forget();
-            }
+            
+            _cts = new CancellationTokenSource();
+            _warmupTime = _gameDataConfig.GameConfigData.WarmupTime;
+            _mainGameTime = _gameInfo.GameMode == GameMode.Time ? _gameInfo.GameTime : 0;
+            StartGameLoop(_cts).Forget();
         }
 
         private async UniTask StartGameLoop(CancellationTokenSource cts)
@@ -91,15 +122,12 @@ namespace HotUpdate.Scripts.Game
         
         private bool IsEndGame(GameMode gameMode, float remainingTime = 0, int targetScore = 0)
         {
-            switch (gameMode)
+            return gameMode switch
             {
-                case GameMode.Time:
-                    return remainingTime <= 0;
-                case GameMode.Score:
-                    return _playerInGameManager.IsPlayerGetTargetScore(targetScore);
-                default:
-                    throw new Exception("Invalid game mode");
-            }
+                GameMode.Time => remainingTime <= 0,
+                GameMode.Score => _playerInGameManager.IsPlayerGetTargetScore(targetScore),
+                _ => throw new Exception("Invalid game mode")
+            };
         }
         
         private bool IsEndRound()

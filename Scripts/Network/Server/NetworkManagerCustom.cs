@@ -41,11 +41,18 @@ namespace Network.Server
             _gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnSceneResourcesLoaded);
             _objectResolver = objectResolver;
             _playerDataManager = playerDataManager;
+            RegisterUnknownMessage();
             //this.playerManager = playerManager;
         }
 
-        public override void OnServerAddPlayer(NetworkConnectionToClient conn)
+        private void RegisterUnknownMessage()
         {
+            // NetworkClient.RegisterHandler<MirrorNetworkMessage>(OnUnknownMessage, false);
+            // void OnUnknownMessage(MirrorNetworkMessage msg)
+            // {
+            //     Debug.LogWarning($"Unknown message received: {msg.GetType().Name}");
+            //     // 可以在这里添加自定义逻辑,而不是断开连接
+            // }
         }
 
         private void OnSceneResourcesLoaded(GameSceneResourcesLoadedEvent sceneResourcesLoadedEvent)
@@ -108,19 +115,28 @@ namespace Network.Server
             }
 
             var playerCount = _playerDataManager.GetPlayers().Count;
-            if (_playerAccountIdMap.Count == playerCount)
+            var gameInfo = new GameInfo
             {
-                var gameInfo = new GameInfo()
-                {
-                    SceneName = _mapName,
-                    GameMode = (GameMode)_playerDataManager.CurrentRoomData.RoomCustomInfo.GameMode,
-                    GameTime = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameTime,
-                    GameScore = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameScore,
-                    PlayerCount = playerCount
-                };
-                _gameEventManager.Publish(new GameReadyEvent(gameInfo));
-                Debug.Log("player all ready");
-            }
+                SceneName = _mapName,
+                GameMode = (GameMode)_playerDataManager.CurrentRoomData.RoomCustomInfo.GameMode,
+                GameTime = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameTime,
+                GameScore = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameScore,
+                PlayerCount = playerCount
+            };
+            _gameEventManager.Publish(new GameReadyEvent(gameInfo));
+            // if (_playerAccountIdMap.Count == playerCount)
+            // {
+            //     var gameInfo = new GameInfo
+            //     {
+            //         SceneName = _mapName,
+            //         GameMode = (GameMode)_playerDataManager.CurrentRoomData.RoomCustomInfo.GameMode,
+            //         GameTime = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameTime,
+            //         GameScore = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameScore,
+            //         PlayerCount = playerCount
+            //     };
+            //     _gameEventManager.Publish(new GameReadyEvent(gameInfo));
+            //     Debug.Log("player all ready");
+            // }
             Debug.Log("Received PlayerAccountId from client: " + message.UID);
         }
 

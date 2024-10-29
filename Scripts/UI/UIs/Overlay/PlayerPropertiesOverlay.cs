@@ -1,8 +1,9 @@
-﻿using HotUpdate.Scripts.Network.Client.Player;
+﻿using System.Collections.Generic;
+using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
 using UI.UIBase;
-using UniRx;
+using UI.UIs.Common;
 using UnityEngine;
 using VContainer;
 
@@ -22,9 +23,25 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             _playerPropertyComponent = _playerInGameManager.GetSelfPlayerPropertyComponent();
         }
 
-        public void SetPlayerProperties(PlayerPropertyComponent playerPropertyComponent)
+        public void SetPlayerProperties()
         {
-            //contentItemList.SetItemList();
+            var list = new List<PropertyItemData>();
+            for (var i = (int)PropertyTypeEnum.Speed; i <= (int)PropertyTypeEnum.Score; i++)
+            {
+                var propertyType = (PropertyTypeEnum)i;
+                var currentProperty = _playerPropertyComponent.GetProperty(propertyType);
+                var maxProperty = _playerPropertyComponent.GetMaxProperty(propertyType);
+                var displayName = propertyType.ToDisplayName();
+                var consumeType = propertyType.GetConsumeType();
+                list.Add(new PropertyItemData
+                {
+                    Name = displayName,
+                    CurrentProperty = currentProperty,
+                    MaxProperty = maxProperty,
+                    ConsumeType = consumeType
+                });
+            }
+            contentItemList.SetItemList(list.ToArray());
         }
 
         public override UIType Type => UIType.PlayerPropertiesOverlay;

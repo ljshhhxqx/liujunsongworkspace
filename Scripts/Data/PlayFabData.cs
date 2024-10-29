@@ -100,7 +100,6 @@ namespace Data
     
     public enum GameMode
     {
-        None,
         /// <summary>
         /// 按时间结束
         /// </summary>

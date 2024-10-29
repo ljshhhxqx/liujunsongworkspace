@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Config;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace HotUpdate.Scripts.Config
 {
@@ -12,6 +11,19 @@ namespace HotUpdate.Scripts.Config
         [SerializeField] 
         private PlayerConfigData playerConfigData;
         public PlayerConfigData PlayerConfigData => playerConfigData;
+
+        public float GetPlayerAnimationCost(AnimationState state)
+        {
+            foreach (var cost in playerConfigData.AnimationStrengthCosts)
+            {
+                if (cost.State == state)
+                {
+                    return cost.Cost;
+                }
+            }
+            Debug.LogWarning("Animation cost not found for state: " + state);
+            return 0f;
+        }
     }
 
     [Serializable]
@@ -40,7 +52,7 @@ namespace HotUpdate.Scripts.Config
         public List<PropertyType> MaxProperties;
         public List<PropertyType> BaseProperties;
         public List<PropertyType> MinProperties;
-        public SerializableDictionary<AnimationState, float> AnimationStrengthCosts;
+        public List<AnimationCost> AnimationStrengthCosts;
         public float StrengthRecoveryPerSecond;
     
         // public float SlopeLimit = 30f;
@@ -49,7 +61,14 @@ namespace HotUpdate.Scripts.Config
 
         #endregion
     }
-        
+
+    [Serializable]
+    public struct AnimationCost
+    {
+        public AnimationState State;
+        public float Cost;
+    }
+
     public enum PlayerState
     {
         InAir,

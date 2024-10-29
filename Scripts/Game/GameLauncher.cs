@@ -7,6 +7,7 @@ using Data;
 using Game;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.UI.UIs.SecondPanel;
 using HotUpdate.Scripts.Weather;
 using Network.Data;
@@ -41,6 +42,7 @@ namespace HotUpdate.Scripts.Game
         [Inject] private ConfigManager _configManager;
         //[Inject] private CollectItemSpawner _collectItemSpawner;
         [Inject] private GameSceneManager _gameSceneManager;
+        [Inject] private PlayerDataManager _playerDataManager;
         private WeatherManager _weatherManager;
         
         public async void Start()
@@ -54,6 +56,7 @@ namespace HotUpdate.Scripts.Game
         {
             _gameEventManager.Publish(new GameResourceLoadedEvent());
             await _gameSceneManager.LoadScene("Town");
+            _playerDataManager.TestInitRoomPlayer();
             // async UniTask
             // var prefab = await _resourceManager.GetGameMap();
             // Instantiate(prefab);

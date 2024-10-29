@@ -1,9 +1,13 @@
-﻿using HotUpdate.Scripts.Config;
+﻿using System;
+using Common;
+using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.UI.UIs.Overlay;
 using Mirror;
 using Network.Client;
 using Network.Data;
 using Tool.GameEvent;
 using Tool.Message;
+using UI.UIBase;
 using UniRx;
 using UnityEngine;
 using AnimationState = HotUpdate.Scripts.Config.AnimationState;
@@ -55,7 +59,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             _rigidbody = GetComponent<Rigidbody>();
             _playerDataConfig = configProvider.GetConfig<PlayerDataConfig>();
             _gameDataConfig = configProvider.GetConfig<GameDataConfig>();
-            
+            uiManager.SwitchUI<PlayerPropertiesOverlay>();
             gameEventManager.Publish(new PlayerSpawnedEvent(_rotateCenter));
             repeatedTask.StartRepeatingTask(SyncAnimation, _gameDataConfig.GameConfigData.SyncTime);
             _speed = _playerPropertyComponent.GetProperty(PropertyTypeEnum.Speed);
@@ -187,13 +191,18 @@ namespace HotUpdate.Scripts.Network.Client.Player
             direction = Vector3.zero;
             hitNormal = Vector3.zero;
 
-            if (Physics.Raycast(_checkStairsTransform.position, _checkStairsTransform.forward, out var hit1, _playerDataConfig.PlayerConfigData.StairsCheckDistance, _gameDataConfig.GameConfigData.StairSceneLayer))
+            if (Physics.Raycast(_checkStairsTransform.position, _checkStairsTransform.forward, out var hit, _playerDataConfig.PlayerConfigData.StairsCheckDistance, _gameDataConfig.GameConfigData.StairSceneLayer))
             {
-                hitNormal = hit1.normal;
-                direction = Vector3.Cross(hit1.normal, _checkStairsTransform.right).normalized;
+                hitNormal = hit.normal;
+                direction = Vector3.Cross(hit.normal, _checkStairsTransform.right).normalized;
                 return true;
             }
             return false;
+        }
+
+        private void OnDestroy()
+        {
+            uiManager.CloseUI(UIType.PlayerPropertiesOverlay);
         }
     }
 }

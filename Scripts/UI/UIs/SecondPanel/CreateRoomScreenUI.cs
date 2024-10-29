@@ -31,6 +31,12 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         private TMP_Dropdown maxPlayersDropdown;
         [SerializeField]
         private TMP_Dropdown mapDropdown;
+        [SerializeField]
+        private TMP_Dropdown mapMode;
+        [SerializeField]
+        private TMP_Dropdown mapTime;
+        [SerializeField]
+        private TMP_Dropdown mapScore;
         
         public override UIType Type => UIType.CreateRoom;
         public override UICanvasType CanvasType => UICanvasType.SecondPanel;
@@ -45,22 +51,10 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 _uiManager.CloseUI(Type);
             });
             var config = configProvider.GetConfig<MapConfig>();
-            var configs = config.GetMapConfigDatas(_ => true).ToList();
-            createRoomButton.BindDebouncedListener(() =>
-            {
-                _playFabRoomManager.CreateRoom(new RoomCustomInfo
-                {
-                    RoomName = string.IsNullOrEmpty(roomNameInputField.text)
-                        ? roomNameInputField.placeholder.GetComponent<TextMeshProUGUI>().text
-                        : roomNameInputField.text,
-                    RoomPassword = roomPasswordInputField.text,
-                    RoomType = publicToggle.isOn ? 0 : 1,
-                    MaxPlayers = int.Parse(maxPlayersDropdown.options[maxPlayersDropdown.value].text),
-                    MapType = int.Parse(mapDropdown.options[mapDropdown.value].text),
-                });
-            });
+            var mapConfigDatas = config.GetMapConfigDatas(_ => true).ToList();
+            var gameModeData = config.GameModeData;
             var options = new List<TMP_Dropdown.OptionData>();
-            foreach (var configData in configs)
+            foreach (var configData in mapConfigDatas)
             {
                 options.Add(new TMP_Dropdown.OptionData(configData.mapType.ToString()));
             }
@@ -73,7 +67,46 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 maxPlayersDropdown.ClearOptions();
                 maxPlayersDropdown.AddOptions(GetDropdownOptions(configMap.maxPlayer, configMap.minPlayer));
             });
+            
+            mapTime.ClearOptions();
+            var optionsTime = new List<TMP_Dropdown.OptionData>();
+            for (int i = 1; i <= gameModeData.times.Count; i++)
+            {
+                optionsTime.Add(new TMP_Dropdown.OptionData(gameModeData.times[i - 1].ToString()));
+            }
+            mapTime.AddOptions(optionsTime);
+            
+            mapScore.ClearOptions();
+            var optionsScore = new List<TMP_Dropdown.OptionData>();
+            for (int i = 1; i <= gameModeData.scores.Count; i++)
+            {
+                optionsScore.Add(new TMP_Dropdown.OptionData(gameModeData.scores[i - 1].ToString()));
+            }
+            mapScore.AddOptions(optionsScore);
 
+            mapMode.onValueChanged.AddListener(value =>
+            {
+                mapScore.gameObject.SetActive(value == (int)GameMode.Score);
+                mapTime.gameObject.SetActive(value == (int)GameMode.Time);
+            });
+            createRoomButton.BindDebouncedListener(() =>
+            {
+                var time = int.Parse(mapTime.options[mapTime.value].text);
+                var score = int.Parse(mapScore.options[mapScore.value].text);
+                _playFabRoomManager.CreateRoom(new RoomCustomInfo
+                {
+                    RoomName = string.IsNullOrEmpty(roomNameInputField.text)
+                        ? roomNameInputField.placeholder.GetComponent<TextMeshProUGUI>().text
+                        : roomNameInputField.text,
+                    RoomPassword = roomPasswordInputField.text,
+                    RoomType = publicToggle.isOn ? 0 : 1,
+                    MaxPlayers = int.Parse(maxPlayersDropdown.options[maxPlayersDropdown.value].text),
+                    MapType = int.Parse(mapDropdown.options[mapDropdown.value].text),
+                    GameMode = int.Parse(mapMode.options[mapMode.value].text),
+                    GameTime = time,
+                    GameScore = score
+                });
+            });
         }
 
         private List<TMP_Dropdown.OptionData> GetDropdownOptions(int max, int min)

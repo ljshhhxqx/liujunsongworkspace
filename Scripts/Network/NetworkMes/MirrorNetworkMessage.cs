@@ -4,6 +4,11 @@ using UnityEngine;
 
 namespace Network.NetworkMes
 {
+    public struct MirrorNetworkMessage : NetworkMessage
+    {
+        
+    }
+
     public struct PlayerConnectMessage : NetworkMessage
     {
         public string UID { get; private set; }
@@ -18,15 +23,15 @@ namespace Network.NetworkMes
         }
     }
 
-    public struct PlayerDisconnectMessage : NetworkMessage
-    {
-        public int ConnectionID { get; private set; }
-        
-        public PlayerDisconnectMessage(int connectionID)
-        {
-            ConnectionID = connectionID;
-        }
-    }
+    // public struct PlayerDisconnectMessage : NetworkMessage
+    // {
+    //     public int ConnectionID { get; private set; }
+    //     
+    //     public PlayerDisconnectMessage(int connectionID)
+    //     {
+    //         ConnectionID = connectionID;
+    //     }
+    // }
     
     public struct CountdownMessage : NetworkMessage
     {
@@ -38,14 +43,14 @@ namespace Network.NetworkMes
         }
     }
     
-    public struct GameReadyMessage : NetworkMessage
-    {
-        public string MapName { get; private set; }
-        public GameReadyMessage(string mapName)
-        {
-            MapName = mapName;
-        }
-    }
+    // public struct GameReadyMessage : NetworkMessage
+    // {
+    //     public string MapName { get; private set; }
+    //     public GameReadyMessage(string mapName)
+    //     {
+    //         MapName = mapName;
+    //     }
+    // }
 
     public struct GameStartMessage : NetworkMessage
     {

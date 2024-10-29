@@ -52,9 +52,8 @@ namespace UI.UIs.Common
     public class PropertyItemData : ItemBaseData
     {
         public string Name;
-        public float CurrentValue;
-        public float MaxValue;
         public PropertyConsumeType ConsumeType;
-        public ReactiveProperty<PropertyType> Property;
+        public ReactiveProperty<PropertyType> CurrentProperty;
+        public ReactiveProperty<PropertyType> MaxProperty;
     }
 }
