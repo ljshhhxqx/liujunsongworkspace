@@ -1325,3 +1325,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weatherText: {fileID: 4870500197426624262}
   showTimeText: {fileID: 8931384268632902214}
+  countDownText: {fileID: 7109318795447954851}
+  warmupText: {fileID: 6383397604727661560}
+  scoreText: {fileID: 5446456719234211246}
+  countDownGameObject: {fileID: 1663617454210047228}
+  targetScore: {fileID: 3154701830737814455}

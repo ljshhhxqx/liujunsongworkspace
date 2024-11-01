@@ -4,19 +4,19 @@ using Tool.GameEvent;
 
 namespace Network.NetworkMes
 {
-    // public struct MirrorNetworkMessage : NetworkMessage
-    // {
-    //     
-    // }
+    public struct MirrorNetworkMessage : NetworkMessage
+    {
+        
+    }
 
     [Serializable]
-    public struct PlayerConnectMessage : NetworkMessage
+    public struct MirrorPlayerConnectMessage : NetworkMessage
     {
         public string UID;
         public int ConnectionID;
         public string Name;
 
-        public PlayerConnectMessage(string uid, int connectionID, string name)
+        public MirrorPlayerConnectMessage(string uid, int connectionID, string name)
         {            
             UID = uid;
             ConnectionID = connectionID;
@@ -35,11 +35,11 @@ namespace Network.NetworkMes
     // }
     
     [Serializable]
-    public struct CountdownMessage : NetworkMessage
+    public struct MirrorCountdownMessage : NetworkMessage
     {
         public float RemainingTime;
         
-        public CountdownMessage(float remainingTime)
+        public MirrorCountdownMessage(float remainingTime)
         {
             RemainingTime = remainingTime;
         }
@@ -55,21 +55,21 @@ namespace Network.NetworkMes
     // }
 
     [Serializable]
-    public struct GameStartMessage : NetworkMessage
+    public struct MirrorGameStartMessage : NetworkMessage
     {
         public GameInfo GameInfo;
-        public GameStartMessage(GameInfo gameInfo)
+        public MirrorGameStartMessage(GameInfo gameInfo)
         {
             GameInfo = gameInfo;
         }
     }
 
     [Serializable]
-    public struct GameWarmupMessage : NetworkMessage
+    public struct MirrorGameWarmupMessage : NetworkMessage
     {
         public float TimeLeft;
 
-        public GameWarmupMessage(float timeLeft)
+        public MirrorGameWarmupMessage(float timeLeft)
         {
             TimeLeft = timeLeft;
         }

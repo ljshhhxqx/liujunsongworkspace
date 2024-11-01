@@ -23,11 +23,11 @@ namespace HotUpdate.Scripts.Buff
         {
             _buffDatabase = configProvider.GetConfig<BuffDatabase>();
             _playerDataManager = playerDataManager;
-            NetworkClient.RegisterHandler<GameStartMessage>(OnGameReady);
+            NetworkClient.RegisterHandler<MirrorGameStartMessage>(OnGameReady);
             Debug.Log("BuffManager init");
         }
 
-        private void OnGameReady(GameStartMessage gameReadyEvent)
+        private void OnGameReady(MirrorGameStartMessage mirrorGameReadyEvent)
         {
             _isOn = true;
         }

@@ -19,7 +19,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 {
                     new PlayerReadOnlyData
                     {
-                        PlayerId = "1", 
+                        PlayerId = "Creator1", 
                         Email = "Email1",
                         Experience = 100,
                         Level = 1,

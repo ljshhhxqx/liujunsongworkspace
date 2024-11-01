@@ -84,8 +84,15 @@ namespace HotUpdate.Scripts.Network.Client.Player
         {
             _inputMovement = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
             _hasMovementInput = Mathf.Abs(_inputMovement.x) > 0 || Mathf.Abs(_inputMovement.z) > 0;
-            
+
+            if (isServer)
+            {
                 _playerPropertyComponent.hasMovementInput = _hasMovementInput;
+            }
+            else
+            {
+                _playerPropertyComponent.ChangeHasMovementInput(_hasMovementInput);
+            }
             
             _isSprinting = _hasMovementInput && Input.GetButton("Running") && _playerPropertyComponent.StrengthCanDoAnimation(AnimationState.Sprint);
             if (Input.GetButtonDown("Jump") && !_isJumpRequested && _playerState != PlayerState.InAir && _playerPropertyComponent.StrengthCanDoAnimation(AnimationState.Jump))
@@ -119,7 +126,14 @@ namespace HotUpdate.Scripts.Network.Client.Player
             }
 
             _playerState = CheckGrounded() ? PlayerState.OnGround : PlayerState.InAir;
-            _playerPropertyComponent.playerState = _playerState;
+            if (isServer)
+            {
+                _playerPropertyComponent.playerState = _playerState;
+            }
+            else
+            {
+                _playerPropertyComponent.ChangePlayerState(_playerState);
+            }
         }
 
         private void HandleMovement()

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Tool.GameEvent;
+using UnityEngine;
 
 namespace Tool.Message
 {
@@ -75,6 +76,35 @@ namespace Tool.Message
         {
             CollectID = collectID;
             CollectType = collectType;
+        }
+    }
+    
+    public class GameStartMessage : Message
+    {
+        public GameInfo GameInfo;
+        public GameStartMessage(GameInfo gameInfo)
+        {
+            GameInfo = gameInfo;
+        }
+    }
+    
+    public class GameWarmupMessage : Message
+    {
+        public float TimeLeft;
+
+        public GameWarmupMessage(float timeLeft)
+        {
+            TimeLeft = timeLeft;
+        }
+    }
+    
+    public class CountdownMessage : Message
+    {
+        public float RemainingTime;
+        
+        public CountdownMessage(float remainingTime)
+        {
+            RemainingTime = remainingTime;
         }
     }
 }

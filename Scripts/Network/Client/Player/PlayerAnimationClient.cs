@@ -36,13 +36,11 @@ namespace Network.Client
             animator.SetFloat("VerticalSpeed", playerVerticalSpeedChangeEvent.VerticalSpeed);
         }
 
-        [Client]
         private void OnPlayerSpeedChange(PlayerSpeedChangeEvent playerSpeedChangeEvent)
         {
             animator.SetFloat("Speed", playerSpeedChangeEvent.Speed);
         }
 
-        [Client]
         private void OnPlayerJump(PlayerJumpEvent playerJumpEvent)
         {
             Debug.Log($"OnPlayerSpeedChange:{playerJumpEvent}");

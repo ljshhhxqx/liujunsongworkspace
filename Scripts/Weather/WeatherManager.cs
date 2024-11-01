@@ -9,7 +9,6 @@ using HotUpdate.Scripts.UI.UIs.Overlay;
 using HotUpdate.Scripts.Weather.WeatherEffects;
 using HotUpdate.Scripts.Weather.WeatherSettings;
 using Mirror;
-using Network.NetworkMes;
 using Tool.GameEvent;
 using Tool.Message;
 using UI.UIBase;
@@ -55,7 +54,7 @@ namespace HotUpdate.Scripts.Weather
             _gameEventManager = gameEventManager;
             _objectResolver = objectResolver;
             _timeMultiplier = _weatherConfig.DayNightCycleData.timeMultiplier;
-            NetworkClient.RegisterHandler<GameStartMessage>(OnGameStart);
+            messageCenter.Register<GameStartMessage>(OnGameStart);
             _weatherCycleDuration = _weatherConfig.DayNightCycleData.weatherChangeTime;
             Debug.Log("WeatherManager init");
             await GetWeatherResourcesAsync();

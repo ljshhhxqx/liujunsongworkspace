@@ -34,7 +34,6 @@ namespace Game.Inject
             builder.Register<UIAudioManager>(Lifetime.Singleton);
             builder.Register<PlayFabAccountManager>(Lifetime.Singleton);
             builder.Register<PlayerDataManager>(Lifetime.Singleton);
-            builder.Register<PlayFabMessageHandler>(Lifetime.Singleton);
             builder.Register<PlayFabRoomManager>(Lifetime.Singleton);
             builder.Register<LocationManager>(Lifetime.Singleton);
             builder.Register<EdgegapManager>(Lifetime.Singleton);
@@ -47,10 +46,11 @@ namespace Game.Inject
             builder.Register<MessageCenter>(Lifetime.Singleton);
             builder.Register<GameEventManager>(Lifetime.Singleton);
             builder.Register<GameSceneManager>(Lifetime.Singleton);
+            builder.Register<PlayFabMessageHandler>(Lifetime.Singleton);
+            builder.Register<RepeatedTask>(Lifetime.Singleton);
             builder.RegisterComponentInHierarchy<GameOnlineDefine>();
             builder.RegisterComponentInHierarchy<PlayerInGameManager>();
             builder.RegisterComponentInHierarchy<ObjectInjectProvider>();
-            builder.RegisterComponentInHierarchy<RepeatedTask>();
             Debug.Log("GameLifetimeScope Configure");
         }
     }

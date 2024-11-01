@@ -22,6 +22,7 @@ using UI.UIBase;
 using UI.UIs.Exception;
 using UI.UIs.SecondPanel;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using VContainer;
 using VContainer.Unity;
 using ExecuteCloudScriptResult = PlayFab.ClientModels.ExecuteCloudScriptResult;

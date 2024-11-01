@@ -62,7 +62,7 @@ namespace HotUpdate.Scripts.Collector
             //_messageCenter.Register<PlayerTouchedCollectMessage>(OnPlayerTouchedCollect);
             var config = _configProvider.GetConfig<GameDataConfig>();
             _sceneLayer = config.GameConfigData.GroundSceneLayer;
-            NetworkClient.RegisterHandler<GameStartMessage>(OnGameStart);
+            _messageCenter.Register<GameStartMessage>(OnGameStart);
             _spawnedParent = transform;
             InitializeGrid();
         }

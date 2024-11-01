@@ -41,7 +41,6 @@ namespace Network.Server
             _gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnSceneResourcesLoaded);
             _objectResolver = objectResolver;
             _playerDataManager = playerDataManager;
-            RegisterUnknownMessage();
             //this.playerManager = playerManager;
         }
 
@@ -57,7 +56,6 @@ namespace Network.Server
 
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
-            // 服务器端添加玩家
             var res = DataJsonManager.Instance.GetResourceData("Player");
             var resInfo = ResourceManager.Instance.GetResource<GameObject>(res);
             if (resInfo)
@@ -68,6 +66,7 @@ namespace Network.Server
                 playerGo.transform.localPosition = Vector3.zero;
                 playerGo.transform.localRotation = Quaternion.identity;
                 playerGo.name = playerGo.name.Replace("(Clone)", conn.connectionId.ToString());
+                Debug.Log("Spawned player: " + playerGo.name);
                 _spawnPoints.Remove(spawnPoint);
                 NetworkServer.AddPlayerForConnection(conn, playerGo);
             }
@@ -82,11 +81,10 @@ namespace Network.Server
                 Debug.Log("map resources loaded");
                 return;
             }
-
             Debug.Log("map resources loaded fail");
             _networkManagerHUD.enabled = false;
         }
-
+ 
         public override void OnStartServer()
         {
             base.OnStartServer();
@@ -94,10 +92,10 @@ namespace Network.Server
             NetworkServer.OnConnectedEvent += HandleServerConnected;
             NetworkServer.OnDisconnectedEvent += HandleServerDisconnected;
 
-            NetworkServer.RegisterHandler<PlayerConnectMessage>(OnServerPlayerAccountIdMessage);
+            NetworkServer.RegisterHandler<MirrorPlayerConnectMessage>(OnServerPlayerAccountIdMessage);
         }
 
-        private void OnServerPlayerAccountIdMessage(NetworkConnectionToClient conn, PlayerConnectMessage message)
+        private void OnServerPlayerAccountIdMessage(NetworkConnectionToClient conn, MirrorPlayerConnectMessage message)
         { 
             if (_playerAccountIdMap.TryGetValue(conn.connectionId, out var uid))
             {
@@ -123,6 +121,7 @@ namespace Network.Server
                     });
                 }
 
+                
                 var playerCount = _playerDataManager.GetPlayers().Count;
                 var gameInfo = new GameInfo
                 {
@@ -133,21 +132,22 @@ namespace Network.Server
                     PlayerCount = playerCount
                 };
                 _gameEventManager.Publish(new GameReadyEvent(gameInfo));
+                // }
+                // if (_playerAccountIdMap.Count == playerCount)
+                // {
+                //     var gameInfo = new GameInfo
+                //     {
+                //         SceneName = _mapName,
+                //         GameMode = (GameMode)_playerDataManager.CurrentRoomData.RoomCustomInfo.GameMode,
+                //         GameTime = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameTime,
+                //         GameScore = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameScore,
+                //         PlayerCount = playerCount
+                //     };
+                //     _gameEventManager.Publish(new GameReadyEvent(gameInfo));
+                //     Debug.Log("player all ready");
+                // }
+                Debug.Log("Received PlayerAccountId from client: " + message.UID);
             }
-            // if (_playerAccountIdMap.Count == playerCount)
-            // {
-            //     var gameInfo = new GameInfo
-            //     {
-            //         SceneName = _mapName,
-            //         GameMode = (GameMode)_playerDataManager.CurrentRoomData.RoomCustomInfo.GameMode,
-            //         GameTime = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameTime,
-            //         GameScore = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameScore,
-            //         PlayerCount = playerCount
-            //     };
-            //     _gameEventManager.Publish(new GameReadyEvent(gameInfo));
-            //     Debug.Log("player all ready");
-            // }
-            Debug.Log("Received PlayerAccountId from client: " + message.UID);
         }
 
         public override void OnStopServer()
@@ -161,7 +161,7 @@ namespace Network.Server
         public override void OnStartClient()
         {
             base.OnStartClient();
-            NetworkClient.RegisterHandler<PlayerConnectMessage>(OnPlayerConnectedMessage);
+            NetworkClient.RegisterHandler<MirrorPlayerConnectMessage>(OnPlayerConnectedMessage);
             // NetworkClient.RegisterHandler<PlayerDisconnectMessage>(OnPlayerDisconnectedMessage);
             NetworkClient.OnConnectedEvent += OnClientConnectToServer;
         }
@@ -171,7 +171,7 @@ namespace Network.Server
             // 获取当前连接
             NetworkConnection conn = NetworkClient.connection;
 
-            var msg = new PlayerConnectMessage("151", conn.connectionId, "asdw");
+            var msg = new MirrorPlayerConnectMessage("Creator1", conn.connectionId, "asdw");
             conn.Send(msg);
             // 发送 PlayerAccountId 给服务器
             // TODO: 取消注释
@@ -179,7 +179,7 @@ namespace Network.Server
             //conn.Send(msg);
         }
 
-        private void OnPlayerConnectedMessage(PlayerConnectMessage message)
+        private void OnPlayerConnectedMessage(MirrorPlayerConnectMessage message)
         {
             Debug.Log($"Received PlayerAccountId: {message.UID} - {message.Name} - {message.ConnectionID.ToString()}");
         }

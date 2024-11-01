@@ -7,6 +7,7 @@ using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Buff;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Data;
+using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
 using Network.NetworkMes;
@@ -20,26 +21,31 @@ namespace HotUpdate.Scripts.Game
     public class GameLoopController : NetworkMonoController
     {
         [SyncVar]
-        private float _mainGameTime; // 3分钟的倒计时
+        private float _mainGameTime; // 3?????????
         [SyncVar]
-        private float _warmupTime; // 10秒热身时间
+        private float _warmupTime; // 10?????????
         [SyncVar]
-        private int _currentRound = 1; // 当前轮数
+        private int _currentRound = 1; // ???????
         private CancellationTokenSource _cts;
         private GameEventManager _gameEventManager;
         private GameDataConfig _gameDataConfig;
         private ItemsSpawnerManager _itemsSpawnerManager;
         private PlayerInGameManager _playerInGameManager;
         private GameInfo _gameInfo;
+        private MessageCenter _messageCenter;
+        private MirrorNetworkMessageHandler _messageHandler;
         
         private BuffManager _buffManager;
         private NetworkAudioManager _networkAudioManager;
         //private WeatherManager _weatherManager;
         
         [Inject]
-        private void Init(MessageCenter messageCenter, GameEventManager gameEventManager, IObjectResolver objectResolver, IConfigProvider configProvider)
+        private void Init(MessageCenter messageCenter, GameEventManager gameEventManager, IObjectResolver objectResolver, IConfigProvider configProvider,
+            MirrorNetworkMessageHandler messageHandler)
         {
             _gameEventManager = gameEventManager;
+            _messageCenter = messageCenter;
+            _messageHandler = messageHandler;
             _gameDataConfig = configProvider.GetConfig<GameDataConfig>();
             _gameEventManager.Subscribe<GameReadyEvent>(OnGameReady);
             _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
@@ -51,21 +57,21 @@ namespace HotUpdate.Scripts.Game
         
         private void RegisterMessage()
         {
-            NetworkClient.RegisterHandler<GameStartMessage>(OnGameStartMessage);
-            NetworkClient.RegisterHandler<GameWarmupMessage>(OnGameWarmupMessage);
-            NetworkClient.RegisterHandler<CountdownMessage>(OnCountdownMessage);
+            _messageCenter.Register<GameStartMessage>(OnGameStartMessage);
+            _messageCenter.Register<GameWarmupMessage>(OnGameWarmupMessage);
+            _messageCenter.Register<CountdownMessage>(OnCountdownMessage);
         }
-
+        
         private void OnCountdownMessage(CountdownMessage message)
         {
             GameLoopDataModel.GameRemainingTime.Value = message.RemainingTime;
         }
-
+        
         private void OnGameWarmupMessage(GameWarmupMessage message)
         {
             GameLoopDataModel.WarmupRemainingTime.Value = message.TimeLeft;
         }
-
+        
         private void OnGameStartMessage(GameStartMessage message)
         {
             GameLoopDataModel.GameLoopData.Value = new GameLoopData
@@ -92,14 +98,14 @@ namespace HotUpdate.Scripts.Game
 
         private async UniTask StartGameLoop(CancellationTokenSource cts)
         {
-            // 1. 热身阶段
+            // 1. ???????
             Debug.Log("Game Warmup Started");
             await StartWarmupAsync(cts.Token);
             Debug.Log("Warmup Complete. Game Start!");
 
-            // 2. 开始总的倒计时
+            // 2. ??????????
             Debug.Log("Main game timer starts now!");
-            NetworkServer.SendToReady(new GameStartMessage(_gameInfo));
+            _messageHandler.SendMessage(new MirrorGameStartMessage(_gameInfo));
             await StartMainGameTimerAsync(cts.Token);
 
             Debug.Log("Main game over. Exiting...");
@@ -116,7 +122,7 @@ namespace HotUpdate.Scripts.Game
                 await UniTask.Delay(1000, cancellationToken: token);
                 remainingTime--;
                
-                NetworkServer.SendToReady(new GameWarmupMessage(remainingTime)); 
+                _messageHandler.SendMessage(new MirrorGameWarmupMessage(remainingTime)); 
             }
         }
         
@@ -125,20 +131,20 @@ namespace HotUpdate.Scripts.Game
             return gameMode switch
             {
                 GameMode.Time => remainingTime <= 0,
-                GameMode.Score => _playerInGameManager.IsPlayerGetTargetScore(targetScore),
+                GameMode.Score => false,//_playerInGameManager.IsPlayerGetTargetScore(targetScore),
                 _ => throw new Exception("Invalid game mode")
             };
         }
         
         private bool IsEndRound()
         {
-            return _itemsSpawnerManager.SpawnedItems.Count == 0;
+            return false; //_itemsSpawnerManager.SpawnedItems.Count == 0;
         }
 
         private async UniTask RoundStartAsync()
         {
             Debug.Log($"Round Start -- {_currentRound.ToString()}!");
-            await UniTask.Yield(); // 模拟处理时间
+            await UniTask.Yield(); // ????????
             Debug.Log("Random event handled.");
         }
 
@@ -151,7 +157,7 @@ namespace HotUpdate.Scripts.Game
             {
                 Debug.Log($"Main Game Timer: {remainingTime} seconds remaining");
 
-                // 如果当前没有小循环运行，启动一个新的小循环
+                // ?????????小??????校???????????小???
                 if (!isSubCycleRunning)
                 {
                     isSubCycleRunning = true;
@@ -160,7 +166,7 @@ namespace HotUpdate.Scripts.Game
                     _currentRound++;
                 }
 
-                // 每秒倒计时
+                // ??????
                 await UniTask.Delay(100, cancellationToken: token);
                 if (_gameInfo.GameMode == GameMode.Time)
                 {
@@ -171,7 +177,7 @@ namespace HotUpdate.Scripts.Game
                     remainingTime+=0.1f;
                 }
 
-                NetworkServer.SendToReady(new CountdownMessage(remainingTime));
+                _messageHandler.SendMessage(new MirrorCountdownMessage(remainingTime));
             }
             _cts.Cancel(); 
         
@@ -190,7 +196,7 @@ namespace HotUpdate.Scripts.Game
 
             public SubCycle(int maxTime, Func<bool> endCondition, Func<UniTask> randomEventHandler = null)
             {
-                // 初始化小循环的持续时间
+                // ?????小???????????
                 _subCycleTime = maxTime;
                 _endCondition = endCondition;
                 _randomEventHandler = randomEventHandler;
@@ -204,7 +210,7 @@ namespace HotUpdate.Scripts.Game
 
                 while (elapsedTime < _subCycleTime && !_endCondition() && !token.IsCancellationRequested)
                 {
-                    // 如果有随机事件处理函数，则触发随机事件
+                    // ??????????????????????????????
                     
                     if (_randomEventHandler != null)
                     {

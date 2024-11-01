@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Tool.Coroutine
 {
-    public class RepeatedTask : MonoBehaviour
+    public class RepeatedTask
     {
         private readonly Dictionary<TaskDelegate, CancellationTokenSource> _taskCancellationTokens = new Dictionary<TaskDelegate, CancellationTokenSource>();
         private readonly Dictionary<UniTaskVoidTaskDelegate, CancellationTokenSource> _uniTaskVoidTaskCancellationTokens = new Dictionary<UniTaskVoidTaskDelegate, CancellationTokenSource>();
@@ -140,11 +140,6 @@ namespace Tool.Coroutine
             }
             _taskCancellationTokens.Clear();
             _uniTaskVoidTaskCancellationTokens.Clear();
-        }
-
-        private void OnDestroy()
-        {
-            StopAllTasks();
         }
     }
 }

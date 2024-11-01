@@ -48,6 +48,18 @@ namespace HotUpdate.Scripts.Network.Client.Player
             var properties = uiManager.SwitchUI<PlayerPropertiesOverlay>();
             properties.SetPlayerProperties(this);
         }
+        
+        [Command]
+        public void ChangeHasMovementInput(bool movementInput)
+        {
+            hasMovementInput = movementInput;
+        }
+        
+        [Command]
+        public void ChangePlayerState(PlayerState state)
+        {
+            playerState = state;
+        }
 
         private void Awake()
         {
@@ -75,11 +87,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 _currentProperties.Add(propertyType, new ReactiveProperty<PropertyType>(baseProperty));
                 _configMaxProperties.Add(propertyType, maxProperty.Value);
                 _configBaseProperties.Add(propertyType, baseProperties.Value);
-                if (isServer)
-                {
-                    
-                }
-                Debug.Log($"Add property {propertyType} to sync dictionary.");
                 for (var j = (int)BuffIncreaseType.Base; j <= (int)BuffIncreaseType.CorrectionFactor; j++)
                 {
                     switch ((BuffIncreaseType)j)
@@ -99,7 +106,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
-                    Debug.Log($"Add property {propertyType} to sync dictionary, increase type {j}.");
                 }
                 _syncCurrentProperties.Add(propertyType, baseProperty);
                 _syncMaxCurrentProperties.Add(propertyType, baseProperty);
@@ -113,8 +119,21 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 IncreaseProperty(type, data.increaseType, data.increaseValue);
             }
         }
+        
 
         public void IncreaseProperty(PropertyTypeEnum type, BuffIncreaseType increaseType, float amount)
+        {
+            if (isServer)
+            {
+                IncreasePropertyAndUpdate(type, increaseType, amount);
+            }
+            else
+            {
+                CmdIncreaseProperty(type, increaseType, amount);
+            }
+        }
+
+        private void IncreasePropertyAndUpdate(PropertyTypeEnum type, BuffIncreaseType increaseType, float amount)
         {
             switch (increaseType)
             {
@@ -144,6 +163,12 @@ namespace HotUpdate.Scripts.Network.Client.Player
             }
             
             UpdateProperty(type);
+        }
+
+        [Command]
+        private void CmdIncreaseProperty(PropertyTypeEnum type, BuffIncreaseType increaseType, float amount)
+        {
+            IncreasePropertyAndUpdate(type, increaseType, amount);
         }
 
         /// <summary>
@@ -199,6 +224,12 @@ namespace HotUpdate.Scripts.Network.Client.Player
             Debug.LogError($"Animation {animationState} not found in config.");
             return strength.Value > 0f;
         }
+        
+        [Command]
+        private void CmdChangeAnimationState(AnimationState animationState)
+        {
+            currentAnimationState = animationState;
+        }
 
         public bool DoAnimation(AnimationState animationState)
         {
@@ -211,11 +242,22 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     {
                         currentAnimationState = animationState;
                     }
+                    else
+                    {
+                        CmdChangeAnimationState(animationState);
+                    }
                     return true;
                 case AnimationState.Sprint:
                     if (isServer && StrengthCanDoAnimation(animationState))
                     {
-                        currentAnimationState = AnimationState.Sprint;
+                        if (isServer)
+                        {
+                            currentAnimationState = animationState;
+                        }
+                        else
+                        {
+                            CmdChangeAnimationState(animationState);
+                        }
                     }
                     return true;
                 case AnimationState.Jump:
@@ -256,7 +298,14 @@ namespace HotUpdate.Scripts.Network.Client.Player
             var cost = _playerDataConfig.GetPlayerAnimationCost(animationState);
             IncreaseProperty(PropertyTypeEnum.Strength, BuffIncreaseType.Current, cost);
             
-            currentAnimationState = animationState;
+            if (isServer)
+            {
+                currentAnimationState = animationState;
+            }
+            else
+            {
+                CmdChangeAnimationState(animationState);
+            }
         }
 
         private void FixedUpdate()
@@ -268,7 +317,31 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 var cost = _playerDataConfig.GetPlayerAnimationCost(currentAnimationState);
                 recoveredStrength -= cost;
             }
+            ChangeSpeed(isSprinting, recoveredStrength);
+        }
 
+        private void ChangeSpeed(bool isSprinting, float recoveredStrength)
+        {
+            if (isServer)
+            {
+                ChangeSpeedAndUpdate(isSprinting, recoveredStrength);
+            }
+            else
+            {
+                CmdChangeSpeed(isSprinting, recoveredStrength);
+            }
+        }
+
+        [Command]
+        private void CmdChangeSpeed(bool isSprinting, float recoveredStrength)
+        {
+            ChangeSpeedAndUpdate(isSprinting, recoveredStrength);
+        }
+
+        private void ChangeSpeedAndUpdate(bool isSprinting, float recoveredStrength)
+        {
+            _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] = hasMovementInput ? _configBaseProperties[PropertyTypeEnum.Speed] : _configMinProperties[PropertyTypeEnum.Speed];
+            
             switch (playerState)
             {
                 case PlayerState.InAir:
@@ -282,14 +355,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 default:
                     throw new Exception($"playerState:{playerState} is not valid.");
             }
-            if (!hasMovementInput)
-            {
-                _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] = _configMinProperties[PropertyTypeEnum.Speed];
-            }
             IncreaseProperty(PropertyTypeEnum.Strength, BuffIncreaseType.Current, recoveredStrength * Time.fixedDeltaTime);
-            // if (isServer)
-            // {
-            // }
         }
     }
 }
