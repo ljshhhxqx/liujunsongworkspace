@@ -167,8 +167,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private readonly SyncDictionary<PropertyTypeEnum, float> _syncPropertyBuffs = new SyncDictionary<PropertyTypeEnum, float>();
         private readonly SyncDictionary<PropertyTypeEnum, float> _syncPropertyMultipliers = new SyncDictionary<PropertyTypeEnum, float>();
         private readonly SyncDictionary<PropertyTypeEnum, float> _syncPropertyCorrectionFactors = new SyncDictionary<PropertyTypeEnum, float>();
-        private readonly SyncDictionary<PropertyTypeEnum, PropertyType> _syncCurrentProperties = new SyncDictionary<PropertyTypeEnum, PropertyType>();
-        private readonly SyncDictionary<PropertyTypeEnum, PropertyType> _syncMaxCurrentProperties = new SyncDictionary<PropertyTypeEnum, PropertyType>();
+        private readonly SyncDictionary<PropertyTypeEnum, float> _syncCurrentProperties = new SyncDictionary<PropertyTypeEnum, float>();
+        private readonly SyncDictionary<PropertyTypeEnum, float> _syncMaxCurrentProperties = new SyncDictionary<PropertyTypeEnum, float>();
         
         [Inject]
         private void Init(IConfigProvider configProvider, UIManager uiManager, RepeatedTask repeated)
@@ -189,36 +189,36 @@ namespace HotUpdate.Scripts.Network.Client.Player
             _syncMaxCurrentProperties.OnSet += OnMaxCurrentPropertySet;
         }
 
-        private void OnMaxCurrentPropertyRemove(PropertyTypeEnum arg1, PropertyType arg2)
+        private void OnMaxCurrentPropertyRemove(PropertyTypeEnum arg1, float arg2)
         {
             _maxCurrentProperties.Remove(arg1);
         }
 
-        private void OnMaxCurrentPropertySet(PropertyTypeEnum arg1, PropertyType arg2)
+        private void OnMaxCurrentPropertySet(PropertyTypeEnum arg1, float arg2)
         {
             //Debug.Log("OnMaxCurrentPropertySet");
-            MaxPropertyChanged(arg2);
+            MaxPropertyChanged(arg1,arg2);
         }
 
         private void OnMaxCurrentPropertyAdd(PropertyTypeEnum obj)
         {
-            _maxCurrentProperties.Add(obj, new ReactiveProperty<PropertyType>(new PropertyType(obj, _syncMaxCurrentProperties[obj].Value)));
+            _maxCurrentProperties.Add(obj, new ReactiveProperty<PropertyType>(new PropertyType(obj, _syncMaxCurrentProperties[obj])));
         }
 
-        private void OnCurrentPropertySet(PropertyTypeEnum arg1, PropertyType arg2)
+        private void OnCurrentPropertySet(PropertyTypeEnum arg1, float arg2)
         {
             //Debug.Log("OnCurrentPropertySet");
-            PropertyChanged(arg2);
+            PropertyChanged(arg1,arg2);
         }
 
-        private void OnCurrentPropertyRemove(PropertyTypeEnum arg1, PropertyType arg2)
+        private void OnCurrentPropertyRemove(PropertyTypeEnum arg1, float arg2)
         {
             _currentProperties.Remove(arg1);
         }
 
         private void OnCurrentPropertyAdd(PropertyTypeEnum obj)
         {
-            _currentProperties.Add(obj, new ReactiveProperty<PropertyType>(new PropertyType(obj, _syncCurrentProperties[obj].Value)));
+            _currentProperties.Add(obj, new ReactiveProperty<PropertyType>(new PropertyType(obj, _syncCurrentProperties[obj])));
         }
 
         private void Awake()
@@ -266,8 +266,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
                             throw new ArgumentOutOfRangeException();
                     }
                 }
-                _syncCurrentProperties.Add(propertyType, baseProperty);
-                _syncMaxCurrentProperties.Add(propertyType, baseProperty);
+                _syncCurrentProperties.Add(propertyType, baseProperty.Value);
+                _syncMaxCurrentProperties.Add(propertyType, baseProperty.Value);
             }
         }
 
@@ -309,12 +309,12 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     _syncPropertyCorrectionFactors[type] = Mathf.Max(0f, _syncPropertyCorrectionFactors[type] + amount);
                     break;
                 case BuffIncreaseType.Current:
-                    var currentValue = Mathf.Clamp(_syncCurrentProperties[type].Value + amount, _configMinProperties[type], _syncMaxCurrentProperties[type].Value);
+                    var currentValue = Mathf.Clamp(_syncCurrentProperties[type] + amount, _configMinProperties[type], _syncMaxCurrentProperties[type]);
                     if (type == PropertyTypeEnum.Score)
                     {
                         currentValue = Mathf.Round(currentValue);
                     }
-                    _syncCurrentProperties[type] = new PropertyType(type, currentValue);
+                    _syncCurrentProperties[type] = currentValue;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(increaseType), increaseType, null);
@@ -340,15 +340,15 @@ namespace HotUpdate.Scripts.Network.Client.Player
             switch (propertyConsumeType)
             {
                 case PropertyConsumeType.Consume:
-                    _syncMaxCurrentProperties[type] = new PropertyType(type, Mathf.Clamp(propertyVal, 
+                    _syncMaxCurrentProperties[type] = Mathf.Clamp(propertyVal, 
                         _configBaseProperties[type],
-                        _configMaxProperties[type]));
-                    _syncCurrentProperties[type] = new PropertyType(type, Mathf.Clamp(_syncCurrentProperties[type].Value, _configMinProperties[type], _syncMaxCurrentProperties[type].Value));
+                        _configMaxProperties[type]);
+                    _syncCurrentProperties[type] = Mathf.Clamp(_syncCurrentProperties[type], _configMinProperties[type], _syncMaxCurrentProperties[type]);
                     break;
                 case PropertyConsumeType.Number:
-                    _syncCurrentProperties[type] = new PropertyType(type, Mathf.Clamp(propertyVal, 
+                    _syncCurrentProperties[type] = Mathf.Clamp(propertyVal, 
                         _configMinProperties[type],
-                        _configMaxProperties[type]));
+                        _configMaxProperties[type]);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -357,16 +357,18 @@ namespace HotUpdate.Scripts.Network.Client.Player
             // PropertyChanged(_syncCurrentProperties[type]);
         }
         
-        private void MaxPropertyChanged(PropertyType property)
+        private void MaxPropertyChanged(PropertyTypeEnum type,float value)
         {
-            _maxCurrentProperties[property.TypeEnum].Value = property;
-            _maxCurrentProperties[property.TypeEnum].SetValueAndForceNotify(property);
+            var property = new PropertyType(type, value);
+            _maxCurrentProperties[type].Value = property;
+            _maxCurrentProperties[type].SetValueAndForceNotify(property);
         }
         
-        private void PropertyChanged(PropertyType property)
+        private void PropertyChanged(PropertyTypeEnum type,float value)
         {
-            _currentProperties[property.TypeEnum].Value = property;
-            _currentProperties[property.TypeEnum].SetValueAndForceNotify(property); 
+            var property = new PropertyType(type, value);
+            _currentProperties[type].Value = property;
+            _currentProperties[type].SetValueAndForceNotify(property); 
         }
         
         public ReactiveProperty<PropertyType> GetProperty(PropertyTypeEnum type)
@@ -387,13 +389,13 @@ namespace HotUpdate.Scripts.Network.Client.Player
             {
                 if (animationState == AnimationState.Sprint)
                 {
-                    return strength.Value >= cost * 0.1f;
+                    return strength >= cost * 0.1f;
                 }
 
-                return strength.Value >= cost;
+                return strength >= cost;
             }
             Debug.LogError($"Animation {animationState} not found in config.");
-            return strength.Value > 0f;
+            return strength > 0f;
         }
 
         public bool DoAnimation(AnimationState animationState)
@@ -449,10 +451,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
             if (animationState != AnimationState.Sprint)
             {
                 IncreaseProperty(PropertyTypeEnum.Strength, BuffIncreaseType.Current, -cost);
-            }
-            else
-            {
-                Debug.Log($"Player {gameObject.name} sprint.");
             }
         }
 
