@@ -10,8 +10,9 @@ namespace HotUpdate.Scripts.Network.NetworkMes
 {
     public class MirrorNetworkMessageHandler : NetworkBehaviour
     {
-        private Dictionary<Type, Delegate> _serverHandlers = new Dictionary<Type, Delegate>();
-        private Dictionary<Type, Delegate> _clientHandlers = new Dictionary<Type, Delegate>();
+        private MessageCenter _messageCenter;
+        private readonly Dictionary<Type, Delegate> _serverHandlers = new Dictionary<Type, Delegate>();
+        private readonly Dictionary<Type, Delegate> _clientHandlers = new Dictionary<Type, Delegate>();
         
         [Inject]
         private void Init(MessageCenter messageCenter)
@@ -19,8 +20,18 @@ namespace HotUpdate.Scripts.Network.NetworkMes
             _messageCenter = messageCenter;
         }
 
-        private MessageCenter _messageCenter;
-        
+        // public void SendMessage1<T>(T msg) where T : struct, NetworkMessage
+        // {
+        //     if (isServer)
+        //     {
+        //         NetworkServer.SendToAll(msg);
+        //     }
+        //     else
+        //     {
+        //         NetworkClient.Send(msg);
+        //     }
+        // }
+
         public void SendMessage<T>(T msg) where T : struct, NetworkMessage
         {
             if (isServer)
@@ -32,6 +43,21 @@ namespace HotUpdate.Scripts.Network.NetworkMes
                 NetworkClient.Send(msg);
             }
         }
+
+        // private void RegisterHandler<T>() where T : struct, NetworkMessage
+        // {
+        //     if (isServer)
+        //     {
+        //         RegisterServerHandler<T>();
+        //     }
+        //     else
+        //     {
+        //         RegisterClientHandler<T>();
+        //     }
+        // }
+        //
+        // [Command]
+        // private void CmdRe
 
         public override void OnStartServer()
         {
@@ -73,13 +99,13 @@ namespace HotUpdate.Scripts.Network.NetworkMes
 
         private void OnServerMessageReceived<T>(NetworkConnectionToClient conn, T msg) where T : struct, NetworkMessage
         {
-            Debug.Log($"Server received {typeof(T).Name}");
+            //Debug.Log($"Server received {typeof(T).Name}");
             ProcessMessage(msg);
         }
 
         private void OnClientMessageReceived<T>(T msg) where T : struct, NetworkMessage
         {
-            Debug.Log($"Client received {typeof(T).Name}");
+            //Debug.Log($"Client received {typeof(T).Name}");
             ProcessMessage(msg);
         }
 

@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Config;
+using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
@@ -6,6 +8,8 @@ using UI.UIBase;
 using UI.UIs.Common;
 using UnityEngine;
 using VContainer;
+using UniRx;
+using AnimationState = HotUpdate.Scripts.Config.AnimationState;
 
 namespace HotUpdate.Scripts.UI.UIs.Overlay
 {
@@ -15,6 +19,15 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private ContentItemList contentItemList;
         private PlayerInGameManager _playerInGameManager;
         private PlayerPropertyComponent _playerPropertyComponent;
+
+        [SerializeField]
+        private FieldItem animationState;
+        [SerializeField]
+        private FieldItem currentChestType;
+        [SerializeField]
+        private FieldItem playerStateProperty;
+        [SerializeField]
+        private FieldItem hasMovementInput;
         
         [Inject]
         private void Init(PlayerInGameManager playerInGameManager)
@@ -24,6 +37,24 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         public void SetPlayerProperties(PlayerPropertyComponent playerPropertyComponent)
         {
+            _playerPropertyComponent = playerPropertyComponent;
+            playerPropertyComponent.CurrentAnimationStateProperty.Subscribe(state =>
+            {
+                animationState.SetField(animationState.name, state);
+           });
+            playerPropertyComponent.PlayerStateProperty.Subscribe(state =>
+            {
+                playerStateProperty.SetField(animationState.name, state);
+            });
+            playerPropertyComponent.CurrentChestTypeProperty.Subscribe(chestType =>
+            {
+                currentChestType.SetField(currentChestType.name, chestType);
+            });
+            playerPropertyComponent.HasMovementInputProperty.Subscribe(hasInput =>
+            {
+                hasMovementInput.SetField(hasMovementInput.name, hasInput);
+            });
+            
             var list = new List<PropertyItemData>();
             for (var i = (int)PropertyTypeEnum.Speed; i <= (int)PropertyTypeEnum.Score; i++)
             {

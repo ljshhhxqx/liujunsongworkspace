@@ -18,7 +18,7 @@ MonoBehaviour:
     Offset: {x: 0, y: 1, z: -3}
     MoveSpeed: 5
     RunSpeed: 10
-    SprintSpeedFactor: 1.25
+    SprintSpeedFactor: 1.75
     RotateSpeed: 4
     OnStairsSpeed: 3
     OnStairsSpeedRatioFactor: 0.75
@@ -54,16 +54,16 @@ MonoBehaviour:
       value: 100
     MinProperties:
     - type: 0
-      value: 3
+      value: 0
     - type: 1
-      value: 5
+      value: 0
     - type: 3
-      value: 10
+      value: 0
     - type: 4
-      value: 50
-    - type: 0
-      value: 3
+      value: 0
     - type: 5
+      value: 0
+    - type: 2
       value: 0
     AnimationStrengthCosts:
     - State: 0
@@ -79,5 +79,5 @@ MonoBehaviour:
     - State: 6
       Cost: 0
     - State: 2
-      Cost: 10
+      Cost: 25
     StrengthRecoveryPerSecond: 5

@@ -45,12 +45,12 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             {
                 case PropertyConsumeType.Number:
                     valueText.text = currentValue.ToString("0");
-                    iconImage.gameObject.SetActive(false);
+                    iconImage.transform.parent.gameObject.SetActive(false);
                     break;
                 case PropertyConsumeType.Consume:
                     var ratio = currentValue / maxValue;
                     valueText.text = $"{currentValue}/{maxValue}";
-                    iconImage.gameObject.SetActive(true);
+                    iconImage.transform.parent.gameObject.SetActive(true);
                     iconImage.fillAmount = ratio;
                     break;
                 default:
