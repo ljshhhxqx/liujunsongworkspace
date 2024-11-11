@@ -66,6 +66,19 @@ namespace Tool.Message
             CollectType = collectType;
         }
     }
+    
+
+    public class PickerPickUpMessage : Message
+    {
+        public int PickerId { get; set; }
+        public int ItemId { get; set; }
+        
+        public PickerPickUpMessage(int pickerId, int itemId)
+        {
+            PickerId = pickerId;
+            ItemId = itemId;
+        }
+    }
 
     public class PlayerCollectChestMessage : Message
     {

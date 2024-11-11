@@ -73,6 +73,7 @@ namespace HotUpdate.Scripts.Network.NetworkMes
 
         private void RegisterServerHandlers()
         {
+            RegisterServerHandler<MirrorPickerPickUpMessage>();
         }
 
         private void RegisterClientHandlers()
@@ -134,6 +135,11 @@ namespace HotUpdate.Scripts.Network.NetworkMes
             if (networkMessage is MirrorGameWarmupMessage gameWarmupMessage)
             {
                 return new GameWarmupMessage(gameWarmupMessage.TimeLeft);
+            }
+            
+            if (networkMessage is MirrorPickerPickUpMessage pickerPickUpMessage)
+            {
+                return new PickerPickUpMessage(pickerPickUpMessage.PickerID, pickerPickUpMessage.ItemID);
             }
             // 添加更多消息类型的处理...
 

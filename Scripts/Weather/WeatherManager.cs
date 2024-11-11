@@ -345,6 +345,7 @@ namespace HotUpdate.Scripts.Weather
             }
             WeatherDataModel.Dispose();
             _uiManager.CloseUI(UIType.Weather);
+            WeatherReaderWriter.UnregisterReaderWriter();
         }
     }
 
@@ -370,6 +371,8 @@ namespace HotUpdate.Scripts.Weather
             Writer<WeatherLoadData>.write = WriteWeatherLoadData;
             Reader<WeatherInfo>.read = ReadWeatherInfo;
             Writer<WeatherInfo>.write = WriteWeatherInfo;
+            Reader<WeatherData>.read = ReadWeatherData;
+            Writer<WeatherData>.write = WriteWeatherData;
         }
 
         private static WeatherEffectData ReadWeatherEffectData(NetworkReader reader)
@@ -475,6 +478,18 @@ namespace HotUpdate.Scripts.Weather
             writer.WriteFloat(value.thunderRatio);
             writer.WriteFloat(value.snowDensity.min);
             writer.WriteFloat(value.snowDensity.max);
+        }
+        
+        public static void UnregisterReaderWriter()
+        {
+            Reader<WeatherEffectData>.read = null;
+            Writer<WeatherEffectData>.write = null;
+            Reader<WeatherLoadData>.read = null;
+            Writer<WeatherLoadData>.write = null;
+            Reader<WeatherInfo>.read = null;
+            Writer<WeatherInfo>.write = null;
+            Reader<WeatherData>.read = null;
+            Writer<WeatherData>.write = null;
         }
     }
 }

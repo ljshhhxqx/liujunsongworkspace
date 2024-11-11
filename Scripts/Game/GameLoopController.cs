@@ -55,7 +55,7 @@ namespace HotUpdate.Scripts.Game
                 }
                 else
                 {
-                    Debug.LogError("Client cannot set IsEndRound");
+                    Debug.LogError("Client cannot set IsEndGame");
                 }
             }
         }
@@ -67,6 +67,7 @@ namespace HotUpdate.Scripts.Game
             {
                 if (isServer)
                 {
+                    if (IsEndGame) return;
                     _isEndRound = value;
                 }
                 else
@@ -193,7 +194,7 @@ namespace HotUpdate.Scripts.Game
         
         private bool IsEndRoundFunc()
         {
-            return IsEndRound; //_itemsSpawnerManager.SpawnedItems.Count == 0;
+            return IsEndRound && !IsEndGame; //_itemsSpawnerManager.SpawnedItems.Count == 0;
         }
 
         private async UniTask RoundStartAsync()

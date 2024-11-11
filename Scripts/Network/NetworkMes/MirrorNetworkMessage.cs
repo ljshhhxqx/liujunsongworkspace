@@ -74,4 +74,19 @@ namespace Network.NetworkMes
             TimeLeft = timeLeft;
         }
     }
+
+    [Serializable]
+    public struct MirrorPickerPickUpMessage : NetworkMessage
+    {
+        public int PickerID;
+        public int ItemID;
+
+        public MirrorPickerPickUpMessage(int pickerID, int itemID)
+        {
+            PickerID = pickerID;
+            ItemID = itemID;
+        }
+    }
+
+    
 }

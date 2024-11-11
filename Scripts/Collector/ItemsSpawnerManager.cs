@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Tool.ECS;
 using Config;
-using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Buff;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Game;
 using HotUpdate.Scripts.Network.Server.Collect;
 using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
-using Network.NetworkMes;
 using Tool.GameEvent;
 using Tool.Message;
 using UnityEngine;
@@ -21,6 +19,8 @@ namespace HotUpdate.Scripts.Collector
 {
     public class ItemsSpawnerManager : ServerNetworkComponent
     {
+        [SyncVar]
+        private int _currentId;
         public struct Grid
         {
             public List<CollectibleItemData> itemIDs;
@@ -33,22 +33,16 @@ namespace HotUpdate.Scripts.Collector
         private CollectObjectDataConfig _collectObjectDataConfig;
         private LayerMask _sceneLayer;
         private Dictionary<Vector2Int, Grid> _gridMap = new Dictionary<Vector2Int, Grid>();
-        private readonly SyncDictionary<int, CollectibleItemData> _spawnedItems = new SyncDictionary<int, CollectibleItemData>();
-        [SyncVar]
-        private int _currentId;
+        private SyncDictionary<int, CollectibleItemData> _spawnedItems = new SyncDictionary<int, CollectibleItemData>();
         private static float _itemSpacing = 0.5f;
         private static int _maxGridItems = 10;
         private static float _itemHeight = 1f;
         private static float _gridSize = 10f; // Size of each grid cell
-        private static int _onceSpawnCount = 100;
+        private static int _onceSpawnCount = 50;
         private Transform _spawnedParent;
         private BuffManager _buffManager;
         private BuffDatabase _buffDatabase;
         private GameLoopController _gameLoopController;
-
-        [SyncVar] 
-        private int _currentRound;
-        public int CurrentRound => _currentRound;
 
         [Inject]
         private void Init(MapBoundDefiner mapBoundDefiner, IConfigProvider configProvider,BuffManager buffManager, PlayerInGameManager playerInGameManager,GameEventManager gameEventManager, MessageCenter messageCenter)
@@ -65,10 +59,20 @@ namespace HotUpdate.Scripts.Collector
             var config = _configProvider.GetConfig<GameDataConfig>();
             _sceneLayer = config.GameConfigData.GroundSceneLayer;
             _messageCenter.Register<GameStartMessage>(OnGameStart);
+            _messageCenter.Register<PickerPickUpMessage>(OnPickUpItem);
             _gameLoopController = FindObjectOfType<GameLoopController>();
             _spawnedParent = transform;
             _spawnedItems.OnChange += OnSpawnItemsChange;
+            CollectItemReaderWriter.RegisterReaderWriter();
             InitializeGrid();
+        }
+
+        private void OnPickUpItem(PickerPickUpMessage message)
+        {
+            if (isServer)
+            {
+                HandleItemPickup(message.ItemId, message.PickerId);
+            }
         }
 
         private void OnSpawnItemsChange(SyncIDictionary<int, CollectibleItemData>.Operation operation, int id, CollectibleItemData data)
@@ -113,39 +117,40 @@ namespace HotUpdate.Scripts.Collector
         }
 
         [Server]
-        public void HandleItemPickup(int itemId, int connectionId)
+        public void HandleItemPickup(int itemId, int pickerId)
         {
             if (_spawnedItems.TryGetValue(itemId, out var item))
             {
-                if (CanPickup(item.component, connectionId))
+                if (CanPickup(item.component, pickerId))
                 {
                     _spawnedItems.Remove(itemId);
-                    RpcPickupItem(item.component, connectionId);
+                    GameObjectPoolManger.Instance.ReturnObject(item.component.gameObject);
+                    var configData = _collectObjectDataConfig.GetCollectObjectData(item.component.CollectData.CollectType);
+                    var player = _playerInGameManager.GetPlayerPropertyComponent(pickerId);
+                    switch (configData.CollectObjectClass)
+                    {
+                        case CollectObjectClass.Score:
+                            var buff = _buffDatabase.GetBuff(configData.BuffExtraData);
+                            player.IncreaseProperty(PropertyTypeEnum.Score, buff.increaseDataList);
+                            break;
+                        case CollectObjectClass.Buff:
+                            _buffManager.AddBuffToPlayer(player, configData.BuffExtraData);
+                            break;
+                        case CollectObjectClass.TreasureChest:
+                            // TODO: Treasure Chest
+                            break;
+                        default:
+                            throw new Exception("Invalid collect object class");
+                    }
+                    RpcPickupItem(item.component);
                 }
             }
         }
 
         [ClientRpc]
-        private void RpcPickupItem(CollectObjectController item, int connectionId)
+        private void RpcPickupItem(CollectObjectController item)
         {
-            var configData = _collectObjectDataConfig.GetCollectObjectData(item.CollectData.CollectType);
             GameObjectPoolManger.Instance.ReturnObject(item.gameObject);
-            var player = _playerInGameManager.GetPlayerPropertyComponent(connectionId);
-            switch (configData.CollectObjectClass)
-            {
-                case CollectObjectClass.Score:
-                    var buff = _buffDatabase.GetBuff(configData.BuffExtraData);
-                    player.IncreaseProperty(PropertyTypeEnum.Score, buff.increaseDataList);
-                    break;
-                case CollectObjectClass.Buff:
-                    _buffManager.AddBuffToPlayer(player, configData.BuffExtraData);
-                    break;
-                case CollectObjectClass.TreasureChest:
-                    // TODO: Treasure Chest
-                    break;
-                default:
-                    throw new Exception("Invalid collect object class");
-            }
         }
 
         private bool CanPickup(CollectObjectController item, int connectionId)
@@ -171,29 +176,35 @@ namespace HotUpdate.Scripts.Collector
             _spawnedItems.Clear();
             _currentId = 0;
             var allSpawnedItems = new List<CollectibleItemData>();
-            for (var i = 0; i < _onceSpawnCount; i++)
+            var spawnedCount = 0;
+            while (spawnedCount < _onceSpawnCount)
             {
-                var spawnedItems = SpawnItems(Random.Range(10, 20), Random.Range(1, 4));
+                var spawnedItems = SpawnItems(Random.Range(20, 40), Random.Range(1, 4));
                 if (spawnedItems.Count == 0)
                 {
                     continue;
                 }
+                spawnedCount += spawnedItems.Count;
                 allSpawnedItems.AddRange(spawnedItems);
             }
+            _spawnedItems = new SyncDictionary<int, CollectibleItemData>(allSpawnedItems.ToDictionary(x => GenerateID(), x => x));
+            SpawnItems(allSpawnedItems);
             SpawnManyItemsClientRpc(allSpawnedItems);
         }
 
         [ClientRpc]
         private void SpawnManyItemsClientRpc(List<CollectibleItemData> allSpawnedItems)
         {
+            SpawnItems(allSpawnedItems);
+        }
+
+        private void SpawnItems(List<CollectibleItemData> allSpawnedItems)
+        {
             foreach (var data in allSpawnedItems)
             {
                 var go = GameObjectPoolManger.Instance.GetObject(data.component.gameObject, data.position, Quaternion.identity, _spawnedParent);
-                if (go.GetComponentInChildren<CollectParticlePlayer>() == null)
-                {
-                    // var particlePlayer = ResourceManager.Instance.GetResource<GameObject>()
-                    //await ResourceManager.Instance.LoadResourceAsync<GameObject>();
-                }
+                var component = go.GetComponent<CollectObjectController>();
+                component.CollectId = data.id;
             }
         }
 
@@ -228,7 +239,7 @@ namespace HotUpdate.Scripts.Collector
         private List<CollectibleItemData> SpawnItems(int totalWeight, int spawnMode)
         {
             var itemsToSpawn = new List<CollectibleItemData>();
-            int remainingWeight = totalWeight;
+            var remainingWeight = totalWeight;
 
             switch (spawnMode)
             {
@@ -331,7 +342,7 @@ namespace HotUpdate.Scripts.Collector
             var filteredItems = _collectiblePrefabs.FindAll(item => item.component.CollectData.CollectObjectClass == itemClass);
             if (filteredItems.Count > 0)
             {
-                int randomIndex = Random.Range(0, filteredItems.Count);
+                var randomIndex = Random.Range(0, filteredItems.Count);
                 return filteredItems[randomIndex];
             }
             return null;
@@ -454,5 +465,37 @@ namespace HotUpdate.Scripts.Collector
         public int id;
         public CollectObjectController component;
         public Vector3 position;
+    }
+
+    public static class CollectItemReaderWriter
+    {
+        public static void RegisterReaderWriter()
+        {
+            Reader<CollectibleItemData>.read = ReadCollectibleItemDataData;
+            Writer<CollectibleItemData>.write= WriteCollectibleItemDataData;
+        }
+
+        private static void WriteCollectibleItemDataData(NetworkWriter writer, CollectibleItemData data)
+        {
+            writer.WriteInt(data.id);
+            writer.WriteNetworkIdentity(data.component.GetComponent<NetworkIdentity>());
+            writer.WriteVector3(data.position);
+        }
+
+        private static CollectibleItemData ReadCollectibleItemDataData(NetworkReader reader)
+        {
+            return new CollectibleItemData
+            {
+                id = reader.ReadInt(),
+                component = reader.ReadNetworkIdentity().GetComponent<CollectObjectController>(),
+                position = reader.ReadVector3()
+            };
+        }
+        
+        public static void UnregisterReaderWriter()
+        {
+            Reader<CollectibleItemData>.read = null;
+            Writer<CollectibleItemData>.write = null;
+        }
     }
 }

@@ -2,7 +2,7 @@
 using System.IO;
 using Config;
 using HotUpdate.Scripts.Collector;
-using Mirror;
+using HotUpdate.Scripts.Network.NetworkMes;
 using Network.Server.Collect;
 using Sirenix.OdinInspector;
 using Tool.Message;
@@ -26,15 +26,17 @@ namespace HotUpdate.Scripts.Network.Server.Collect
         public override Collider Collider => _collider;
         
         private MessageCenter _messageCenter;
+        private MirrorNetworkMessageHandler _mirrorNetworkMessageHandler;
         private Collider _collider;
         private CollectObjectDataConfig _collectObjectDataConfig;
         
         [Inject]
-        private void Init(MessageCenter messageCenter, IConfigProvider configProvider)
+        private void Init(MessageCenter messageCenter, IConfigProvider configProvider, MirrorNetworkMessageHandler mirrorNetworkMessageHandler)
         {
             _messageCenter = messageCenter;
             _collectParticlePlayer = GetComponentInChildren<CollectParticlePlayer>();
             _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
+            _mirrorNetworkMessageHandler = mirrorNetworkMessageHandler;
             _collider = GetComponent<Collider>();
             _collider.OnTriggerEnterAsObservable()
                 .Subscribe(OnTriggerEnterObserver)
