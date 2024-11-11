@@ -178,7 +178,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
             CurrentChestTypeProperty.Value = ChestType.Attack;
             var properties = uiManager.SwitchUI<PlayerPropertiesOverlay>();
             properties.SetPlayerProperties(this);
-            //repeated.StartRepeatingTask(,1/60f);
             
             _syncCurrentProperties.OnAdd += OnCurrentPropertyAdd;
             _syncCurrentProperties.OnRemove += OnCurrentPropertyRemove;

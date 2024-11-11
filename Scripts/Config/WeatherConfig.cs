@@ -120,6 +120,7 @@ namespace HotUpdate.Scripts.Config
         public Gradient cloudColor;
     }
 
+    [Serializable]
     public enum WeatherType
     {
         None,
@@ -129,6 +130,7 @@ namespace HotUpdate.Scripts.Config
         Snowy,
     }
 
+    [Serializable]
     public struct WeatherInfo
     {
         public WeatherType weatherType;

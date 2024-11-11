@@ -33,6 +33,7 @@ namespace Network.Server
         [Inject]
         private void Init(GameEventManager gameEventManager, UIManager uIManager, IObjectResolver objectResolver,PlayerInGameManager playerInGameManager ,PlayerDataManager playerDataManager)
         {
+            PropertyTypeReaderWriter.RegisterReaderWriter();
             _gameEventManager = gameEventManager;
             _spawnPoints = FindObjectsByType<NetworkStartPosition>(FindObjectsSortMode.None).ToList();
             _networkManagerHUD = GetComponent<NetworkManagerHUD>();
@@ -41,6 +42,7 @@ namespace Network.Server
             _gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnSceneResourcesLoaded);
             _objectResolver = objectResolver;
             _playerDataManager = playerDataManager;
+            
             //this.playerManager = playerManager;
         }
 
@@ -53,6 +55,7 @@ namespace Network.Server
             //     // 可以在这里添加自定义逻辑,而不是断开连接
             // }
         }
+        
 
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {

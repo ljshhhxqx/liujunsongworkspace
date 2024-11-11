@@ -278,7 +278,7 @@ namespace HotUpdate.Scripts.Game
             var index = Random.Range((int)WeatherType.None, (int)WeatherType.Snowy);
             var weather = (WeatherType)index;
             Debug.Log($"WeatherType: {weather.ToString()}");
-            _weatherManager.SetWeather(weather);
+            //_weatherManager.SetWeather(weather);
         }
     }
 }

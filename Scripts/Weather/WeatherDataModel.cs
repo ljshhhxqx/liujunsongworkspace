@@ -1,5 +1,6 @@
 ﻿using HotUpdate.Scripts.Config;
 using UniRx;
+using UnityEngine;
 
 namespace HotUpdate.Scripts.Weather
 {

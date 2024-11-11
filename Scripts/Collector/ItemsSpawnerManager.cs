@@ -6,6 +6,7 @@ using Config;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Buff;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Game;
 using HotUpdate.Scripts.Network.Server.Collect;
 using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
@@ -33,6 +34,7 @@ namespace HotUpdate.Scripts.Collector
         private LayerMask _sceneLayer;
         private Dictionary<Vector2Int, Grid> _gridMap = new Dictionary<Vector2Int, Grid>();
         private readonly SyncDictionary<int, CollectibleItemData> _spawnedItems = new SyncDictionary<int, CollectibleItemData>();
+        [SyncVar]
         private int _currentId;
         private static float _itemSpacing = 0.5f;
         private static int _maxGridItems = 10;
@@ -42,11 +44,11 @@ namespace HotUpdate.Scripts.Collector
         private Transform _spawnedParent;
         private BuffManager _buffManager;
         private BuffDatabase _buffDatabase;
+        private GameLoopController _gameLoopController;
 
         [SyncVar] 
         private int _currentRound;
         public int CurrentRound => _currentRound;
-        public SyncDictionary<int, CollectibleItemData> SpawnedItems => _spawnedItems;
 
         [Inject]
         private void Init(MapBoundDefiner mapBoundDefiner, IConfigProvider configProvider,BuffManager buffManager, PlayerInGameManager playerInGameManager,GameEventManager gameEventManager, MessageCenter messageCenter)
@@ -63,8 +65,37 @@ namespace HotUpdate.Scripts.Collector
             var config = _configProvider.GetConfig<GameDataConfig>();
             _sceneLayer = config.GameConfigData.GroundSceneLayer;
             _messageCenter.Register<GameStartMessage>(OnGameStart);
+            _gameLoopController = FindObjectOfType<GameLoopController>();
             _spawnedParent = transform;
+            _spawnedItems.OnChange += OnSpawnItemsChange;
             InitializeGrid();
+        }
+
+        private void OnSpawnItemsChange(SyncIDictionary<int, CollectibleItemData>.Operation operation, int id, CollectibleItemData data)
+        {
+            switch (operation)
+            {
+                case SyncIDictionary<int, CollectibleItemData>.Operation.OP_ADD:
+                    Debug.Log($"Spawned item {id} {data.component.gameObject.name}");
+                    break;
+                case SyncIDictionary<int, CollectibleItemData>.Operation.OP_CLEAR:
+                    Debug.Log("Clear all spawned items");
+                    break;
+                case SyncIDictionary<int, CollectibleItemData>.Operation.OP_REMOVE:
+                    if (_spawnedItems.Count == 0)
+                    {
+                        if (isServer)
+                        {
+                            _gameLoopController.IsEndRound = true;
+                        }
+                    }
+                    Debug.Log($"Remove item {id} {data.component.gameObject.name}");
+                    break;
+                case SyncIDictionary<int, CollectibleItemData>.Operation.OP_SET:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(operation), operation, null);
+            }
         }
 
         private void OnGameStart(GameStartMessage message)
@@ -417,6 +448,7 @@ namespace HotUpdate.Scripts.Collector
         }
     }
 
+    [Serializable]
     public class CollectibleItemData
     {
         public int id;

@@ -9,6 +9,7 @@ using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Weather;
 using Mirror;
 using Network.NetworkMes;
 using Tool.GameEvent;
@@ -20,12 +21,14 @@ namespace HotUpdate.Scripts.Game
 {
     public class GameLoopController : NetworkMonoController
     {
+        [SyncVar(hook = nameof(OnCurrentRoundChanged))]
+        private int _currentRound = 1;
         [SyncVar]
-        private float _mainGameTime; // 3?????????
-        [SyncVar]
-        private float _warmupTime; // 10?????????
-        [SyncVar]
-        private int _currentRound = 1; // ???????
+        private bool _isEndGame;
+        [SyncVar] 
+        private bool _isEndRound;
+        private float _mainGameTime;
+        private float _warmupTime;
         private CancellationTokenSource _cts;
         private GameEventManager _gameEventManager;
         private GameDataConfig _gameDataConfig;
@@ -37,8 +40,59 @@ namespace HotUpdate.Scripts.Game
         
         private BuffManager _buffManager;
         private NetworkAudioManager _networkAudioManager;
-        //private WeatherManager _weatherManager;
+        private WeatherManager _weatherManager;
+
+        public bool IsEndGame
+        {
+            get => _isEndGame;
+            set
+            {
+                if (isServer)
+                {
+                    _isEndGame = value;
+                    _weatherManager.StartWeatherLoop(!value);
+                    _cts?.Cancel();
+                }
+                else
+                {
+                    Debug.LogError("Client cannot set IsEndRound");
+                }
+            }
+        }
         
+        public bool IsEndRound
+        {
+            get => _isEndRound;
+            set
+            {
+                if (isServer)
+                {
+                    _isEndRound = value;
+                }
+                else
+                {
+                    Debug.LogError("Client cannot set IsEndRound");
+                }
+            }
+        }
+
+        [Command]
+        private void CmdSetIsEndRound(bool value)
+        {
+            _isEndRound = value;
+        }
+
+        [Command]
+        private void CmdSetIsEndGame(bool value)
+        {
+            _isEndGame = value;
+        }
+
+        private void OnCurrentRoundChanged(int oldValue, int newValue)
+        {
+            Debug.Log($"Current Round Changed from {oldValue} to {newValue}");
+        }
+
         [Inject]
         private void Init(MessageCenter messageCenter, GameEventManager gameEventManager, IObjectResolver objectResolver, IConfigProvider configProvider,
             MirrorNetworkMessageHandler messageHandler)
@@ -52,6 +106,7 @@ namespace HotUpdate.Scripts.Game
             _buffManager = FindObjectOfType<BuffManager>();
             _networkAudioManager = FindObjectOfType<NetworkAudioManager>();
             _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
+            _weatherManager = FindObjectOfType<WeatherManager>();
             RegisterMessage();
         }
         
@@ -82,7 +137,6 @@ namespace HotUpdate.Scripts.Game
             };
         }
 
-
         private void OnGameReady(GameReadyEvent gameReadyEvent)
         {
             _gameInfo = gameReadyEvent.GameInfo;
@@ -90,6 +144,7 @@ namespace HotUpdate.Scripts.Game
             if (isServer)
             {
                 _cts = new CancellationTokenSource();
+                IsEndGame = false;
                 _warmupTime = _gameDataConfig.GameConfigData.WarmupTime;
                 _mainGameTime = _gameInfo.GameMode == GameMode.Time ? _gameInfo.GameTime : 0;
                 StartGameLoop(_cts).Forget();
@@ -98,7 +153,7 @@ namespace HotUpdate.Scripts.Game
 
         private async UniTask StartGameLoop(CancellationTokenSource cts)
         {
-            // 1. ???????
+            // 1. 开始热身
             Debug.Log("Game Warmup Started");
             await StartWarmupAsync(cts.Token);
             Debug.Log("Warmup Complete. Game Start!");
@@ -126,7 +181,7 @@ namespace HotUpdate.Scripts.Game
             }
         }
         
-        private bool IsEndGame(GameMode gameMode, float remainingTime = 0, int targetScore = 0)
+        private bool IsEndGameWithCountDown(GameMode gameMode, float remainingTime = 0, int targetScore = 0)
         {
             return gameMode switch
             {
@@ -136,15 +191,15 @@ namespace HotUpdate.Scripts.Game
             };
         }
         
-        private bool IsEndRound()
+        private bool IsEndRoundFunc()
         {
-            return false; //_itemsSpawnerManager.SpawnedItems.Count == 0;
+            return IsEndRound; //_itemsSpawnerManager.SpawnedItems.Count == 0;
         }
 
         private async UniTask RoundStartAsync()
         {
             Debug.Log($"Round Start -- {_currentRound.ToString()}!");
-            await UniTask.Yield(); // ????????
+            await UniTask.Yield(); 
             Debug.Log("Random event handled.");
         }
 
@@ -153,20 +208,19 @@ namespace HotUpdate.Scripts.Game
             var isSubCycleRunning = false;
             var remainingTime = _mainGameTime;
 
-            while (!IsEndGame(_gameInfo.GameMode, remainingTime, _gameInfo.GameScore) && !token.IsCancellationRequested)
+            while (!IsEndGameWithCountDown(_gameInfo.GameMode, remainingTime, _gameInfo.GameScore) && !token.IsCancellationRequested)
             {
                 Debug.Log($"Main Game Timer: {remainingTime} seconds remaining");
 
-                // ?????????С??????У???????????С???
                 if (!isSubCycleRunning)
                 {
+                    IsEndRound = false;
                     isSubCycleRunning = true;
-                    var subCycle = new SubCycle(30, IsEndRound, RoundStartAsync);
+                    var subCycle = new SubCycle(30, IsEndRoundFunc, RoundStartAsync);
                     _ = subCycle.StartAsync(token).ContinueWith(result => isSubCycleRunning = false);
                     _currentRound++;
                 }
 
-                // ??????
                 await UniTask.Delay(100, cancellationToken: token);
                 if (_gameInfo.GameMode == GameMode.Time)
                 {
