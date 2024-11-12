@@ -73,7 +73,8 @@ namespace HotUpdate.Scripts.Config
     {
         InAir,
         OnGround,
-        OnStairs
+        OnStairs,
+        Dead,
     }
 
     public enum AnimationState

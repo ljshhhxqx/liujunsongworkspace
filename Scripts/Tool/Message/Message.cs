@@ -120,4 +120,16 @@ namespace Tool.Message
             RemainingTime = remainingTime;
         }
     }
+    
+    public class PickerPickUpChestMessage : Message
+    {
+        public int PickerId { get; set; }
+        public int ChestId { get; set; }
+
+        public PickerPickUpChestMessage(int pickerId, int chestId)
+        {
+            PickerId = pickerId;
+            ChestId = chestId;
+        }
+    }
 }

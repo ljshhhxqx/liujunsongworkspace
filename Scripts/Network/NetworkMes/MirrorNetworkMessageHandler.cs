@@ -73,7 +73,7 @@ namespace HotUpdate.Scripts.Network.NetworkMes
 
         private void RegisterServerHandlers()
         {
-            RegisterServerHandler<MirrorPickerPickUpMessage>();
+            RegisterServerHandler<MirrorPickerPickUpCollectMessage>();
         }
 
         private void RegisterClientHandlers()
@@ -137,7 +137,7 @@ namespace HotUpdate.Scripts.Network.NetworkMes
                 return new GameWarmupMessage(gameWarmupMessage.TimeLeft);
             }
             
-            if (networkMessage is MirrorPickerPickUpMessage pickerPickUpMessage)
+            if (networkMessage is MirrorPickerPickUpCollectMessage pickerPickUpMessage)
             {
                 return new PickerPickUpMessage(pickerPickUpMessage.PickerID, pickerPickUpMessage.ItemID);
             }

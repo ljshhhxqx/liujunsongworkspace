@@ -1,8 +1,12 @@
 using System;
 using Config;
 using Cysharp.Threading.Tasks;
+using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Network.NetworkMes;
 using Mirror;
+using Network.NetworkMes;
 using Sirenix.OdinInspector;
+using Tool.GameEvent;
 using Tool.Message;
 using UniRx;
 using UniRx.Triggers;
@@ -11,51 +15,54 @@ using VContainer;
 
 namespace Collector
 {
-    public class TreasureChestComponent : NetworkBehaviour
+    public class TreasureChestComponent : NetworkBehaviour, IPickable
     {
         [SerializeField] 
         private GameObject lid; // 宝箱盖子
         [SerializeField] 
         private Collider collider;
-        private CollectObjectData _collectObjectData;
         private ChestDataConfig _chestDataConfig;
         private MessageCenter _messageCenter;
+        private MirrorNetworkMessageHandler _mirrorNetworkMessageHandler;
         private ChestCommonData _chestCommonData;
-        //public CollectObjectData CollectData => _chestDataConfig.ChestConfigData;
-        //public Collider Collider => collider;
-        private void Collect(int pickerId, PickerType pickerType)
-        {
-            _messageCenter.Post(new PlayerCollectChestMessage(1, CollectType.TreasureChest));
-        }
+        private GameEventManager _gameEventManager;
+        public ChestType ChestType { get; set; }
 
         [Inject]
-        private void Init(IConfigProvider configProvider)
+        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager, MirrorNetworkMessageHandler mirrorNetworkMessageHandler)
         {
+            _gameEventManager = gameEventManager;
+            //netId;
             _chestDataConfig = configProvider.GetConfig<ChestDataConfig>();
             _chestCommonData = _chestDataConfig.GetChestCommonData();
+            _mirrorNetworkMessageHandler = mirrorNetworkMessageHandler;
             lid.transform.eulerAngles = _chestCommonData.InitEulerAngles;
             collider.OnTriggerEnterAsObservable()
                 .Subscribe(OnTriggerEnterObserver)
                 .AddTo(this);
+            collider.OnTriggerExitAsObservable()
+                .Subscribe(OnTriggerExitObserver)
+                .AddTo(this);
         }
-    
+        
+        private void OnTriggerExitObserver(Collider other)
+        {
+            if (!other.CompareTag("Player"))
+            {
+                return;
+            }
+            
+            _gameEventManager.Publish(new GameInteractableEffect(other.gameObject, this, false));
+        }
+        
         private void OnTriggerEnterObserver(Collider other)
         {
             if (!other.CompareTag("Player"))
             {
                 return;
             }
-
-            if (Input.GetButtonDown("Collect"))
-            {
-                Debug.Log("TreasureChest OnTriggerEnterObserver Collect F！！！！！");
-        
-                if (other.TryGetComponent<Picker>(out var pickerComponent))
-                {
-                    OpenLid().Forget();
-                    Collect(pickerComponent.UID, pickerComponent.PickerType);
-                }
-            }
+            
+            _gameEventManager.Publish(new GameInteractableEffect(other.gameObject, this, true));
         }
         
         [Button("开箱")]
@@ -64,7 +71,7 @@ namespace Collector
             OpenLid().Forget();
         }
 
-        private async UniTaskVoid OpenLid()
+        private async UniTask OpenLid()
         {
             collider.enabled = false;
             // 计算开启动画的目标角度
@@ -78,14 +85,24 @@ namespace Collector
 
             // 等待0.25秒
             await UniTask.Delay(TimeSpan.FromSeconds(0.25f));
-            #if UNITY_EDITOR
             gameObject.SetActive(false);
-            Debug.Log("宝箱盖子打开！！！！！");
-            #else
-            // 宝箱消失
-            Destroy(gameObject);
-            #endif
         }
 
+        public void RequestPick(int pickerId)
+        {
+            _mirrorNetworkMessageHandler.SendMessage(new MirrorPickerPickUpChestMessage(pickerId, (int)netId));
+        }
+
+        public void PickUpSuccess()
+        {
+            OpenChest();
+        }
+    }
+
+    [Serializable]
+    public struct ChestData
+    {
+        public int Id;
+        public ChestType Type;
     }
 }

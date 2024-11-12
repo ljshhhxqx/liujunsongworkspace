@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Tool.ECS;
+using Collector;
 using Config;
 using HotUpdate.Scripts.Buff;
 using HotUpdate.Scripts.Config;
@@ -26,8 +27,11 @@ namespace HotUpdate.Scripts.Collector
             public List<CollectibleItemData> itemIDs;
         }
         private List<CollectibleItemData> _collectiblePrefabs = new List<CollectibleItemData>();
+        private TreasureChestComponent _treasureChestPrefab;
+        private TreasureChestComponent _treasureChest;
         private IConfigProvider _configProvider;
         private MapBoundDefiner _mapBoundDefiner;
+        private ChestDataConfig _chestConfig;
         private MessageCenter _messageCenter;
         private PlayerInGameManager _playerInGameManager;
         private CollectObjectDataConfig _collectObjectDataConfig;
@@ -45,18 +49,19 @@ namespace HotUpdate.Scripts.Collector
         private GameLoopController _gameLoopController;
 
         [Inject]
-        private void Init(MapBoundDefiner mapBoundDefiner, IConfigProvider configProvider,BuffManager buffManager, PlayerInGameManager playerInGameManager,GameEventManager gameEventManager, MessageCenter messageCenter)
+        private void Init(MapBoundDefiner mapBoundDefiner, IConfigProvider configProvider, BuffManager buffManager, PlayerInGameManager playerInGameManager,GameEventManager gameEventManager, MessageCenter messageCenter)
         {
             _playerInGameManager = playerInGameManager;
             _buffManager = buffManager;
             _configProvider = configProvider;
             _mapBoundDefiner = mapBoundDefiner;
             _messageCenter = messageCenter;
+            _messageCenter.Register<PickerPickUpChestMessage>(OnPickerPickUpChestMessage);
             gameEventManager.Subscribe<GameResourceLoadedEvent>(OnGameResourceLoaded);
             _collectObjectDataConfig = _configProvider.GetConfig<CollectObjectDataConfig>();
             _buffDatabase = _configProvider.GetConfig<BuffDatabase>();
-            //_messageCenter.Register<PlayerTouchedCollectMessage>(OnPlayerTouchedCollect);
             var config = _configProvider.GetConfig<GameDataConfig>();
+            _chestConfig = _configProvider.GetConfig<ChestDataConfig>();
             _sceneLayer = config.GameConfigData.GroundSceneLayer;
             _messageCenter.Register<GameStartMessage>(OnGameStart);
             _messageCenter.Register<PickerPickUpMessage>(OnPickUpItem);
@@ -65,6 +70,31 @@ namespace HotUpdate.Scripts.Collector
             _spawnedItems.OnChange += OnSpawnItemsChange;
             CollectItemReaderWriter.RegisterReaderWriter();
             InitializeGrid();
+        }
+
+        private void OnPickerPickUpChestMessage(PickerPickUpChestMessage message)
+        {
+            if (isServer)
+            {
+                var player = _playerInGameManager.GetPlayerPropertyComponent(message.PickerId);
+                if (player.PlayerState == PlayerState.Dead)
+                {
+                    return; 
+                }
+                var configData = _chestConfig.GetChestConfigData(player.CurrentChestType);
+                player.CurrentChestType = _treasureChest.ChestType;
+                _buffManager.AddBuffToPlayer(player, configData.ChestPropertyData.BuffExtraData);
+                RpcPickUpTreasureChest();
+            }
+        }
+
+        [ClientRpc]
+        private void RpcPickUpTreasureChest()
+        {
+            if (_treasureChest)
+            {
+                _treasureChest.PickUpSuccess();
+            }
         }
 
         private void OnPickUpItem(PickerPickUpMessage message)
@@ -106,13 +136,18 @@ namespace HotUpdate.Scripts.Collector
         {
             _gridMap.Clear();
             _gridMap = _mapBoundDefiner.GridMap.ToDictionary(x => x,_ => new Grid());
+            var res = ResourceManager.Instance.GetMapCollectObject(message.GameInfo.SceneName);
             if (_collectiblePrefabs.Count > 0)
             {
-                var res = ResourceManager.Instance.GetMapCollectObject(message.GameInfo.SceneName);
                 _collectiblePrefabs = res.Select(x => new CollectibleItemData
                 {
                     component = x.GetComponent<CollectObjectController>(),
                 }).ToList();
+            }
+
+            if (!_treasureChestPrefab)
+            {
+                _treasureChestPrefab = res.Find(x => x.GetComponent<TreasureChestComponent>()!= null).GetComponent<TreasureChestComponent>();
             }
         }
 
@@ -150,6 +185,7 @@ namespace HotUpdate.Scripts.Collector
         [ClientRpc]
         private void RpcPickupItem(CollectObjectController item)
         {
+            item.CollectSuccess();
             GameObjectPoolManger.Instance.ReturnObject(item.gameObject);
         }
 
@@ -159,7 +195,7 @@ namespace HotUpdate.Scripts.Collector
             // 获取 item 的 Collider
             var itemCollider = item.GetComponent<Collider>();
             var playerCollider = player.GetComponent<Collider>();
-
+            //NetworkIdentity.GetSceneIdentity(connectionId);
             // 判定 item 的 collider 是否与 player 的 collider 重叠
             return itemCollider.bounds.Intersects(playerCollider.bounds);
         }
@@ -179,7 +215,7 @@ namespace HotUpdate.Scripts.Collector
             var spawnedCount = 0;
             while (spawnedCount < _onceSpawnCount)
             {
-                var spawnedItems = SpawnItems(Random.Range(20, 40), Random.Range(1, 4));
+                var spawnedItems = SpawnItems(Mathf.RoundToInt(Random.Range(20f, 40f)), Random.Range(1, 4));
                 if (spawnedItems.Count == 0)
                 {
                     continue;
@@ -190,6 +226,30 @@ namespace HotUpdate.Scripts.Collector
             _spawnedItems = new SyncDictionary<int, CollectibleItemData>(allSpawnedItems.ToDictionary(x => GenerateID(), x => x));
             SpawnItems(allSpawnedItems);
             SpawnManyItemsClientRpc(allSpawnedItems);
+        }
+
+        [Server]
+        public void SpawnTreasureChestServer()
+        {
+            var chestType = (ChestType)Mathf.RoundToInt(Random.Range(0f, (float)ChestType.Score));
+            var position = GetRandomStartPoint();
+            SpawnTreasureChest(chestType, position);
+            RpcSpawnTreasureChest(chestType, position);
+        }
+
+        [ClientRpc]
+        public void RpcSpawnTreasureChest(ChestType chestType, Vector3 position)
+        {
+            SpawnTreasureChest(chestType, position);
+        }
+
+        private void SpawnTreasureChest(ChestType chestType, Vector3 position)
+        {
+            if (_treasureChest)
+            {
+                GameObjectPoolManger.Instance.ReturnObject(_treasureChest.gameObject);
+            }
+            _treasureChest = GameObjectPoolManger.Instance.GetObject(_treasureChestPrefab.gameObject, position, Quaternion.identity, _spawnedParent).GetComponent<TreasureChestComponent>();
         }
 
         [ClientRpc]

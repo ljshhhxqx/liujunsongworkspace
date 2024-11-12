@@ -1,3 +1,4 @@
+using HotUpdate.Scripts.Collector;
 using Tool.GameEvent;
 using UnityEngine;
 using VContainer;

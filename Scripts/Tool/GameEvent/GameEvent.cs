@@ -1,4 +1,7 @@
-﻿using Data;
+﻿using System;
+using Data;
+using HotUpdate.Scripts.Config;
+using Mirror;
 using UnityEngine;
 
 namespace Tool.GameEvent
@@ -118,10 +121,10 @@ namespace Tool.GameEvent
     public class GameInteractableEffect : GameEvent
     {
         public GameObject Picker { get; private set; }
-        public CollectObject CollectObject { get; private set; }
+        public IPickable CollectObject { get; private set; }
         public bool IsEnter { get; private set; }
         
-        public GameInteractableEffect(GameObject picker, CollectObject collectObject, bool isEnter)
+        public GameInteractableEffect(GameObject picker, IPickable collectObject, bool isEnter)
         {
             Picker = picker;
             CollectObject = collectObject;
@@ -129,6 +132,7 @@ namespace Tool.GameEvent
         }
     }
     
+    [Serializable]
     public struct GameInfo
     {
         public string SceneName;
@@ -136,5 +140,34 @@ namespace Tool.GameEvent
         public int GameScore;
         public int GameTime;
         public int PlayerCount;
+    }
+
+    public static class GameEventExtensions
+    {
+        public static void RegisterGameEventWriteRead()
+        {
+            Reader<GameInfo>.read = ReadWeatherInfo;
+            Writer<GameInfo>.write = WriteWeatherInfo;
+        }
+        private static GameInfo ReadWeatherInfo(NetworkReader reader)
+        {
+            return new GameInfo
+            {
+                SceneName = reader.ReadString(),
+                GameMode = (GameMode)reader.ReadByte(),
+                GameScore = reader.ReadInt(),
+                GameTime = reader.ReadInt(),
+                PlayerCount = reader.ReadInt()
+            };
+        }
+        
+        public static void WriteWeatherInfo(this NetworkWriter writer, GameInfo gameInfo)
+        {
+            writer.WriteString(gameInfo.SceneName);
+            writer.WriteByte((byte)gameInfo.GameMode);
+            writer.WriteInt(gameInfo.GameScore);
+            writer.WriteInt(gameInfo.GameTime);
+            writer.WriteInt(gameInfo.PlayerCount);
+        }
     }
 }

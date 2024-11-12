@@ -3,6 +3,7 @@ using System.IO;
 using Config;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Network.NetworkMes;
+using Network.NetworkMes;
 using Network.Server.Collect;
 using Sirenix.OdinInspector;
 using Tool.Message;
@@ -54,16 +55,20 @@ namespace HotUpdate.Scripts.Network.Server.Collect
             
             if (other.TryGetComponent<Picker>(out var pickerComponent))
             {
-                Collect(pickerComponent.UID, pickerComponent.PickerType);
+                SendCollectRequest(pickerComponent.ConnectionID, pickerComponent.PickerType);
             }
         }
         
-        protected override void Collect(int pickerId, PickerType pickerType)
+        protected override void SendCollectRequest(int pickerId, PickerType pickerType)
         {
-            _messageCenter.Post(new PlayerTouchedCollectMessage(CollectId, collectObjectData.CollectType));
+            _mirrorNetworkMessageHandler.SendMessage(new MirrorPickerPickUpCollectMessage(pickerId, CollectId));
+        }
+
+        public void CollectSuccess()
+        {
             _collectParticlePlayer.Play(_collectAnimationComponent.OutlineColorValue);
         }
-        
+
         [Button("设置CollectType")]
         private void SetCollectType()
         {

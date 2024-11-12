@@ -54,7 +54,7 @@ namespace Config
     public struct ChestPropertyData
     {
         public ChestType ChestType;
-        public PropertyType PropertyType;
+        public BuffExtraData BuffExtraData;
     }
 
     public enum ChestType

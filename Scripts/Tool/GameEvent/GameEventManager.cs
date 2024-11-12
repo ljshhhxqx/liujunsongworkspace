@@ -8,6 +8,12 @@ namespace Tool.GameEvent
         
         private Dictionary<Type, Action<GameEvent>> eventListeners = new Dictionary<Type, Action<GameEvent>>();
         private Dictionary<Delegate, Action<GameEvent>> listenerMapping = new Dictionary<Delegate, Action<GameEvent>>();
+        
+        public GameEventManager()
+        {
+            //Debug.Log("GameEventManager created");
+            GameEventExtensions.RegisterGameEventWriteRead();
+        }
 
         public void Subscribe<T>(Action<T> listener) where T : GameEvent
         {

@@ -1,77 +1,79 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
+using AOTScripts.Tool.ECS;
 using Cysharp.Threading.Tasks;
 using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
 
-/// <summary>
-/// 挂载在拾取者身上，与拾取者的控制逻辑解耦
-/// </summary>
-public class Picker : MonoBehaviour
+namespace HotUpdate.Scripts.Collector
 {
-    public int UID { get; set; }
+    /// <summary>
+    /// 挂载在拾取者身上，与拾取者的控制逻辑解耦
+    /// </summary>
+    public class Picker : NetworkMonoComponent
+    {
+        public PickerType PickerType { get; set; }
+        private GameEventManager _gameEventManager;
 
-    public PickerType PickerType { get; set; }
-    private GameEventManager gameEventManager;
-
-    private List<CollectObject> collects = new List<CollectObject>();
+        private readonly List<IPickable> _collects = new List<IPickable>();
     
-    [Inject]
-    private void Init(GameEventManager gameEventManager)
-    {
-        this.gameEventManager = gameEventManager;
-        this.gameEventManager.Subscribe<GameInteractableEffect>(OnInteractionStateChange);
-    }
-
-    private void OnDestroy()
-    {
-        //gameEventManager.Unsubscribe<InteractableObjectEffectEvent>(OnInteractionStateChange);
-        collects.Clear();   
-    }
-
-    private void OnInteractionStateChange(GameInteractableEffect interactableObjectEffectEventEvent)
-    {
-        if (interactableObjectEffectEventEvent.Picker.GetInstanceID() != gameObject.GetInstanceID()) return;
-        if (interactableObjectEffectEventEvent.IsEnter)
+        [Inject]
+        private void Init(GameEventManager gameEventManager)
         {
-            collects.Add(interactableObjectEffectEventEvent.CollectObject);
+            _gameEventManager = gameEventManager;
+            _gameEventManager.Subscribe<GameInteractableEffect>(OnInteractionStateChange);
         }
-        else
-        {
-            collects.Remove(interactableObjectEffectEventEvent.CollectObject);
-        }
-    }
 
-    private void Update()
-    {
-        switch (PickerType)
+        private void OnDestroy()
         {
-            case PickerType.Player:
-                if (Input.GetKeyDown(KeyCode.F))
-                {
-                    Debug.Log($"collect chest");
+            _collects.Clear();   
+        }
+
+        private void OnInteractionStateChange(GameInteractableEffect interactableObjectEffectEventEvent)
+        {
+            if (interactableObjectEffectEventEvent.Picker.GetInstanceID() != gameObject.GetInstanceID()) return;
+            if (interactableObjectEffectEventEvent.IsEnter)
+            {
+                _collects.Add(interactableObjectEffectEventEvent.CollectObject);
+            }
+            else
+            {
+                _collects.Remove(interactableObjectEffectEventEvent.CollectObject);
+            }
+        }
+
+        private void Update()
+        {
+            switch (PickerType)
+            {
+                case PickerType.Player:
+                    if (Input.GetKeyDown(KeyCode.F))
+                    {
+                        Debug.Log($"collect chest");
+                        PerformPickup();
+                    }
+                    break;
+                case PickerType.Computer:
                     PerformPickup();
-                }
-                break;
-            default:
-                PerformPickup();
-                break;
+                    break;
+                default:
+                    Debug.LogError("PickerType is not set");
+                    break;
+            }
         }
-    }
 
-    private void PerformPickup()
-    {
-        foreach (var collect in collects)
+        private void PerformPickup()
         {
-            Collect(collect).Forget();
+            foreach (var collect in _collects)
+            {
+                Collect(collect).Forget();
+            }
         }
-    }
 
-    private async UniTaskVoid Collect(CollectObject collect)
-    {
-        //collect.Collect(gameObject);
-        await UniTask.DelayFrame(1);
+        private async UniTaskVoid Collect(IPickable collect)
+        {
+            collect.RequestPick(ConnectionID);
+            await UniTask.DelayFrame(1);
+        }
     }
 }
