@@ -4,6 +4,7 @@ using System.Linq;
 using AOTScripts.Tool.ECS;
 using Collector;
 using Config;
+using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Buff;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Game;
@@ -83,17 +84,27 @@ namespace HotUpdate.Scripts.Collector
                 }
                 var configData = _chestConfig.GetChestConfigData(player.CurrentChestType);
                 player.CurrentChestType = _treasureChest.ChestType;
-                _buffManager.AddBuffToPlayer(player, configData.ChestPropertyData.BuffExtraData);
+                if(configData.ChestPropertyData.BuffExtraData.buffType != BuffType.None)
+                    _buffManager.AddBuffToPlayer(player, configData.ChestPropertyData.BuffExtraData);
+                PickUpTreasureChest();
                 RpcPickUpTreasureChest();
+                JudgeEndRound();
             }
         }
 
         [ClientRpc]
         private void RpcPickUpTreasureChest()
         {
+            PickUpTreasureChest();
+        }
+
+        private void PickUpTreasureChest()
+        {
             if (_treasureChest)
             {
                 _treasureChest.PickUpSuccess();
+                GameObjectPoolManger.Instance.ReturnObject(_treasureChest.gameObject);
+                _treasureChest = null;
             }
         }
 
@@ -102,6 +113,7 @@ namespace HotUpdate.Scripts.Collector
             if (isServer)
             {
                 HandleItemPickup(message.ItemId, message.PickerId);
+                JudgeEndRound();
             }
         }
 
@@ -207,7 +219,24 @@ namespace HotUpdate.Scripts.Collector
         }
 
         [Server]
-        public void SpawnManyItems()
+        private void JudgeEndRound()
+        {
+            var endRound = _spawnedItems.Count == 0 && _treasureChest == null;
+            if (endRound)
+            {
+                _gameLoopController.IsEndRound = true;
+            }
+        }
+
+        [Server]
+        public async UniTask SpawnItemsAndChest()
+        {
+            await SpawnManyItems();
+            SpawnTreasureChestServer();
+        }
+
+        [Server]
+        public async UniTask SpawnManyItems()
         {
             _spawnedItems.Clear();
             _currentId = 0;
@@ -222,6 +251,7 @@ namespace HotUpdate.Scripts.Collector
                 }
                 spawnedCount += spawnedItems.Count;
                 allSpawnedItems.AddRange(spawnedItems);
+                await UniTask.Yield();
             }
             _spawnedItems = new SyncDictionary<int, CollectibleItemData>(allSpawnedItems.ToDictionary(x => GenerateID(), x => x));
             SpawnItems(allSpawnedItems);
@@ -250,6 +280,7 @@ namespace HotUpdate.Scripts.Collector
                 GameObjectPoolManger.Instance.ReturnObject(_treasureChest.gameObject);
             }
             _treasureChest = GameObjectPoolManger.Instance.GetObject(_treasureChestPrefab.gameObject, position, Quaternion.identity, _spawnedParent).GetComponent<TreasureChestComponent>();
+            _treasureChest.ChestType = chestType;
         }
 
         [ClientRpc]

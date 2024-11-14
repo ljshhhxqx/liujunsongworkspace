@@ -50,7 +50,7 @@
         },
         {
             "UID": 300000,
-            "ResourceType": "Config.ChestDataConfig",
+            "ResourceType": "HotUpdate.Scripts.Config.ChestDataConfig",
             "Name": "ChestDataConfig",
             "IsPermanent": false,
             "IsPreload": true,

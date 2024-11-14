@@ -2,6 +2,7 @@ using System;
 using Config;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Network.NetworkMes;
 using Mirror;
 using Network.NetworkMes;
@@ -81,11 +82,8 @@ namespace Collector
             while (Quaternion.Angle(lid.transform.rotation, targetRotation) > 0.01f)
             {
                 lid.transform.rotation = Quaternion.Slerp(lid.transform.rotation, targetRotation, Time.deltaTime * _chestCommonData.OpenSpeed);
+                await UniTask.Yield();
             }
-
-            // 等待0.25秒
-            await UniTask.Delay(TimeSpan.FromSeconds(0.25f));
-            gameObject.SetActive(false);
         }
 
         public void RequestPick(int pickerId)

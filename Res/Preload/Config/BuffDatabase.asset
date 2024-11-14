@@ -12,7 +12,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29b337a7cdff40d5aced6c3fbc51daa4, type: 3}
   m_Name: BuffDatabase
   m_EditorClassIdentifier: 
-  buffs: []
+  buffs:
+  - buffId: 1
+    propertyType: 0
+    duration: 30
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.2
+  - buffId: 2
+    propertyType: 1
+    duration: 30
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.2
+  - buffId: 3
+    propertyType: 5
+    duration: 30
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.2
+  - buffId: 4
+    propertyType: 4
+    duration: 30
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.2
+  - buffId: 5
+    propertyType: 5
+    duration: 0
+    increaseDataList:
+    - increaseType: 4
+      increaseValue: 50
   randomBuffs:
   - buffId: 1
     propertyType: 0

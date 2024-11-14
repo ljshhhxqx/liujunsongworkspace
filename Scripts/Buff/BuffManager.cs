@@ -5,6 +5,7 @@ using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
 using Network.NetworkMes;
 using Tool.GameEvent;
+using Tool.Message;
 using UnityEngine;
 using VContainer;
 
@@ -16,20 +17,39 @@ namespace HotUpdate.Scripts.Buff
         private bool _isOn;
         private readonly SyncList<BuffBase> _activeBuffs = new SyncList<BuffBase>();
         private PlayerInGameManager _playerDataManager;
+        private MessageCenter _messageCenter;
         private BuffDatabase _buffDatabase;
 
+        public bool IsOn
+        {
+            get => _isOn;
+            set
+            {
+                if (isServer)
+                {
+                    _isOn = value;
+                }
+                else
+                {
+                    Debug.LogError("Can't set IsOn on client");
+                }
+            }
+        }
+
         [Inject]
-        private void Init(IConfigProvider configProvider, PlayerInGameManager playerDataManager)
+        private void Init(IConfigProvider configProvider, PlayerInGameManager playerDataManager, MessageCenter messageCenter)
         {
             _buffDatabase = configProvider.GetConfig<BuffDatabase>();
             _playerDataManager = playerDataManager;
-            NetworkClient.RegisterHandler<MirrorGameStartMessage>(OnGameReady);
+            _messageCenter = messageCenter;
+            _messageCenter.Register<GameStartMessage>(OnGameStart);
+            BuffDataReaderWriter.RegisterReaderWriter();
             Debug.Log("BuffManager init");
         }
 
-        private void OnGameReady(MirrorGameStartMessage mirrorGameReadyEvent)
+        private void OnGameStart(GameStartMessage message)
         {
-            _isOn = true;
+            IsOn = true;
         }
 
         public void AddBuffToPlayer(PlayerPropertyComponent targetStats, BuffExtraData buffExtraData, int? casterId = null)
@@ -62,7 +82,7 @@ namespace HotUpdate.Scripts.Buff
 
         private void Update()
         {
-            if (!_isOn)
+            if (!IsOn || !isServer || _activeBuffs.Count == 0)
             {
                 return;
             }
@@ -77,11 +97,6 @@ namespace HotUpdate.Scripts.Buff
                     _activeBuffs.RemoveAt(i);
                 }
             }
-        }
-
-        private void OnDestroy()
-        {
-            _isOn = false;
         }
     }
 }

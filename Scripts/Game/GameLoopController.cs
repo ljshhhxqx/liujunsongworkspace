@@ -200,7 +200,7 @@ namespace HotUpdate.Scripts.Game
         private async UniTask RoundStartAsync()
         {
             Debug.Log($"Round Start -- {_currentRound.ToString()}!");
-            await UniTask.Yield(); 
+            await _itemsSpawnerManager.SpawnItemsAndChest();
             Debug.Log("Random event handled.");
         }
 
@@ -246,6 +246,7 @@ namespace HotUpdate.Scripts.Game
         private class SubCycle
         {
             private readonly int _subCycleTime;
+            private bool _isEventHandled;
             private readonly Func<bool> _endCondition;
             private readonly Func<UniTask> _randomEventHandler;
 
@@ -255,6 +256,7 @@ namespace HotUpdate.Scripts.Game
                 _subCycleTime = maxTime;
                 _endCondition = endCondition;
                 _randomEventHandler = randomEventHandler;
+                _isEventHandled = false;
             }
 
             public async UniTask<bool> StartAsync(CancellationToken token)
@@ -267,10 +269,11 @@ namespace HotUpdate.Scripts.Game
                 {
                     // ??????????????????????????????
                     
-                    if (_randomEventHandler != null)
+                    if (_randomEventHandler != null && !_isEventHandled)
                     {
                         Debug.Log("Random event triggered.");
                         await _randomEventHandler();
+                        _isEventHandled = true;
                     }
 
                     await UniTask.Delay(100, cancellationToken: token);

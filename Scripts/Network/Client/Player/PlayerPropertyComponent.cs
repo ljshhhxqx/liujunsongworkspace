@@ -287,7 +287,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
             }
             else if (isClient)
             {
-                CmdIncreaseProperty(type, increaseType, amount);
+                Debug.Log("Client cannot increase property.");
+                //CmdIncreaseProperty(type, increaseType, amount);
             }
         }
 
@@ -308,10 +309,16 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     _syncPropertyCorrectionFactors[type] = Mathf.Max(0f, _syncPropertyCorrectionFactors[type] + amount);
                     break;
                 case BuffIncreaseType.Current:
-                    var currentValue = Mathf.Clamp(_syncCurrentProperties[type] + amount, _configMinProperties[type], _syncMaxCurrentProperties[type]);
+                    float currentValue;
                     if (type == PropertyTypeEnum.Score)
                     {
+                        currentValue = Mathf.Clamp(_syncCurrentProperties[type] + amount * _syncPropertyCorrectionFactors[type], _configMinProperties[type],
+                            _syncMaxCurrentProperties[type]);
                         currentValue = Mathf.Round(currentValue);
+                    }
+                    else
+                    {
+                        currentValue = Mathf.Clamp(_syncCurrentProperties[type] + amount, _configMinProperties[type], _syncMaxCurrentProperties[type]);
                     }
                     _syncCurrentProperties[type] = currentValue;
                     break;

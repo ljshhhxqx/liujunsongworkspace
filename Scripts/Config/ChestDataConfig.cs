@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Config;
 using UnityEngine;
 
-namespace Config
+namespace HotUpdate.Scripts.Config
 {
     [CreateAssetMenu(fileName = "ChestDataConfig", menuName = "ScriptableObjects/ChestDataConfig")]
     public class ChestDataConfig : ConfigBase
