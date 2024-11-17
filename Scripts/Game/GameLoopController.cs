@@ -25,7 +25,7 @@ namespace HotUpdate.Scripts.Game
         private int _currentRound = 1;
         [SyncVar]
         private bool _isEndGame;
-        [SyncVar] 
+        [SyncVar(hook = nameof(OnIsEndRoundChanged))] 
         private bool _isEndRound;
         private float _mainGameTime;
         private float _warmupTime;
@@ -77,17 +77,25 @@ namespace HotUpdate.Scripts.Game
             }
         }
 
-        [Command]
-        private void CmdSetIsEndRound(bool value)
+        private void OnIsEndRoundChanged(bool oldValue, bool newValue)
         {
-            _isEndRound = value;
+            if (newValue && isServer)
+            {
+                _itemsSpawnerManager.EndRound();
+            }
         }
 
-        [Command]
-        private void CmdSetIsEndGame(bool value)
-        {
-            _isEndGame = value;
-        }
+        // [Command]
+        // private void CmdSetIsEndRound(bool value)
+        // {
+        //     _isEndRound = value;
+        // }
+        //
+        // [Command]
+        // private void CmdSetIsEndGame(bool value)
+        // {
+        //     _isEndGame = value;
+        // }
 
         private void OnCurrentRoundChanged(int oldValue, int newValue)
         {

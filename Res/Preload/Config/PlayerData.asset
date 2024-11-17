@@ -77,6 +77,8 @@ MonoBehaviour:
     - State: 5
       Cost: 15
     - State: 6
+      Cost: 15
+    - State: 7
       Cost: 0
     - State: 2
       Cost: 25

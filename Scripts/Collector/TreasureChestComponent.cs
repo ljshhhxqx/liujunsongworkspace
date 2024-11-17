@@ -28,6 +28,8 @@ namespace Collector
         private ChestCommonData _chestCommonData;
         private GameEventManager _gameEventManager;
         public ChestType ChestType { get; set; }
+        [SyncVar]
+        public bool isPicked;
 
         [Inject]
         private void Init(IConfigProvider configProvider, GameEventManager gameEventManager, MirrorNetworkMessageHandler mirrorNetworkMessageHandler)
@@ -85,6 +87,7 @@ namespace Collector
                 await UniTask.Yield();
             }
         }
+
 
         public void RequestPick(int pickerId)
         {

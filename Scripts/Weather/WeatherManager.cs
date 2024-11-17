@@ -66,13 +66,13 @@ namespace HotUpdate.Scripts.Weather
         private void OnDayNightCycleTimeChanged(float oldTime, float newTime)
         {
             WeatherDataModel.time.Value = newTime;
-            Debug.Log($"OnDayNightCycleTimeChanged: {oldTime}, {newTime}");
+            //Debug.Log($"OnDayNightCycleTimeChanged: {oldTime}, {newTime}");
         }
         
         private void OnWeatherChanged(WeatherInfo oldWeather, WeatherInfo newWeather)
         {
             WeatherDataModel.weatherInfo.Value = newWeather;
-            Debug.Log($"OnWeatherChanged: {oldWeather}, {newWeather}");
+            //Debug.Log($"OnWeatherChanged: {oldWeather}, {newWeather}");
         }
 
         [Inject]
@@ -80,6 +80,7 @@ namespace HotUpdate.Scripts.Weather
             MapBoundDefiner mapBoundDefiner, UIManager uiManager)
         {
             WeatherReaderWriter.RegisterReaderWriter(); 
+            WeatherDataModel.Init();
             _uiManager = uiManager;
             _weatherConfig = configProvider.GetConfig<WeatherConfig>();
             _mapBoundDefiner = mapBoundDefiner;

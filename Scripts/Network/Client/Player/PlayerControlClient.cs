@@ -147,7 +147,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
                 if (_isJumpRequested)
                 {
-                    _playerPropertyComponent.DoAnimation(AnimationState.Jump);
+                    _playerPropertyComponent.DoAnimation(_isSprinting ? AnimationState.SprintJump : AnimationState.Jump);
                     _isJumpRequested = false;
                     _rigidbody.AddForce(Vector3.up * _playerDataConfig.PlayerConfigData.JumpSpeed, ForceMode.Impulse);
                     

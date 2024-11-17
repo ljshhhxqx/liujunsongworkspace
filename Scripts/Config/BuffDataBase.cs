@@ -16,7 +16,7 @@ namespace HotUpdate.Scripts.Config
             switch (extraData.buffType)
             {
                 case BuffType.Constant:
-                    return buffs.Find(buff => buff.buffId == extraData.buffId);
+                    return GetBuffData(extraData.buffId);
                 case BuffType.Random:
                     return GetRandomBuff(extraData.buffId);
                 default:
@@ -52,14 +52,9 @@ namespace HotUpdate.Scripts.Config
             return default;
         }
 
-        public BuffData? GetBuffData(int buffId)
+        public BuffData GetBuffData(int buffId)
         {
             return buffs.Find(buff => buff.buffId == buffId);
-        }
-
-        public RandomBuffData? GetRandomBuffData(int buffId)
-        {
-            return randomBuffs.Find(buff => buff.buffId == buffId);
         }
     }
 }

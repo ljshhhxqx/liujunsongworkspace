@@ -29,6 +29,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private PlayerState _playerState;
         [SyncVar(hook = nameof(OnHasMovementInputChanged))] 
         private bool _hasMovementInput;
+        [SyncVar(hook = nameof(OnIsSprintingChanged))] 
+        private bool _isSprinting;
         
         private void OnCurrentAnimationStateChanged(AnimationState oldValue, AnimationState newValue)
         {
@@ -66,6 +68,38 @@ namespace HotUpdate.Scripts.Network.Client.Player
             }
             HasMovementInputProperty.Value = newValue;
         }
+        
+        private void OnIsSprintingChanged(bool oldValue, bool newValue)
+        {
+            if (newValue != oldValue)
+            {
+                Debug.Log($"OnIsSprintingChanged oldValue: {oldValue}, newValue: {newValue}");
+            }
+            IsSprintingProperty.Value = newValue;
+        }
+
+        public bool IsSprinting
+        {
+            get => _isSprinting;
+            set
+            {
+                if (isServer)
+                {
+                    _isSprinting = value;
+                }
+                else if (isClient)
+                {
+                    CmdChangeIsSprinting(value);
+                }
+            }
+        }
+
+        [Command]
+        private void CmdChangeIsSprinting(bool isSprinting)
+        {
+            _isSprinting = isSprinting;
+        }
+        
 
         public AnimationState CurrentAnimationState
         {
@@ -159,6 +193,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         public ReactiveProperty<ChestType> CurrentChestTypeProperty { get; } = new ReactiveProperty<ChestType>();
         public ReactiveProperty<PlayerState> PlayerStateProperty { get; } = new ReactiveProperty<PlayerState>();
         public ReactiveProperty<bool> HasMovementInputProperty { get; } = new ReactiveProperty<bool>();
+        public ReactiveProperty<bool> IsSprintingProperty { get; } = new ReactiveProperty<bool>();
 
         private readonly Dictionary<PropertyTypeEnum, float> _configBaseProperties = new Dictionary<PropertyTypeEnum, float>(); 
         private readonly Dictionary<PropertyTypeEnum, float> _configMinProperties = new Dictionary<PropertyTypeEnum, float>();
@@ -403,7 +438,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
             Debug.LogError($"Animation {animationState} not found in config.");
             return strength > 0f;
         }
-
+        
+        
         public bool DoAnimation(AnimationState animationState)
         {
             switch (animationState)
@@ -415,6 +451,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     return true;
                 case AnimationState.Sprint:
                 case AnimationState.Jump:
+                case AnimationState.SprintJump:
                     if (StrengthCanDoAnimation(animationState))
                     {
                         ChangeAnimationState(animationState);
@@ -490,13 +527,14 @@ namespace HotUpdate.Scripts.Network.Client.Player
             ChangeSpeedAndUpdate(isSprinting, recoveredStrength);
         }
 
-        private void ChangeSpeedAndUpdate(bool isSprinting, float recoveredStrength)
+        private void ChangeSpeedAndUpdate(bool isSprinting, float recoveredStrength, bool isSprintingJump = false)
         {
             _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] = HasMovementInput ? 1f : 0f;
             
             switch (PlayerState)
             {
                 case PlayerState.InAir:
+                    _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] *= isSprintingJump ? _playerDataConfig.PlayerConfigData.SprintSpeedFactor : 1f;
                     break;
                 case PlayerState.OnGround:
                     _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] *= isSprinting ? _playerDataConfig.PlayerConfigData.SprintSpeedFactor : 1f;

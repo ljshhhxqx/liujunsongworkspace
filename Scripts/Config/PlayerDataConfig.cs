@@ -83,6 +83,7 @@ namespace HotUpdate.Scripts.Config
         Move,
         Sprint,
         Jump,
+        SprintJump,
         Dash,
         Attack,
         Dead,

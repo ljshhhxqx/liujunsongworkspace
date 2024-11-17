@@ -77,6 +77,7 @@ namespace HotUpdate.Scripts.Collector
         {
             if (isServer)
             {
+                _treasureChest.isPicked = true;
                 var player = _playerInGameManager.GetPlayerPropertyComponent(message.PickerId);
                 if (player.PlayerState == PlayerState.Dead)
                 {
@@ -103,8 +104,6 @@ namespace HotUpdate.Scripts.Collector
             if (_treasureChest)
             {
                 _treasureChest.PickUpSuccess();
-                GameObjectPoolManger.Instance.ReturnObject(_treasureChest.gameObject);
-                _treasureChest = null;
             }
         }
 
@@ -221,11 +220,18 @@ namespace HotUpdate.Scripts.Collector
         [Server]
         private void JudgeEndRound()
         {
-            var endRound = _spawnedItems.Count == 0 && _treasureChest == null;
+            var endRound = _spawnedItems.Count == 0 && _treasureChest.isPicked;
             if (endRound)
             {
                 _gameLoopController.IsEndRound = true;
             }
+        }
+
+        [Server]
+        public void EndRound()
+        {
+            GameObjectPoolManger.Instance.ReturnObject(_treasureChest.gameObject);
+            _treasureChest = null;
         }
 
         [Server]
