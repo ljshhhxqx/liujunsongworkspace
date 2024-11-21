@@ -92,7 +92,7 @@ namespace HotUpdate.Scripts.Collector
             float angle = Random.Range(0, 360);
             return new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)).normalized;
         }
-        
+
         [Button]
         public Vector3 GetRandomPoint(Func<Vector3, bool> isObstacle = null)
         {

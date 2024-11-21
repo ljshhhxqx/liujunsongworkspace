@@ -1,4 +1,6 @@
-﻿public static class GameDefine
+﻿using HotUpdate.Scripts.Collector;
+
+public static class GameDefine
 {
     public static string GetCollectPrefabName(CollectType type)
     {

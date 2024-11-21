@@ -26,13 +26,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2196861262877044472}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: -0.25999966, z: -0.49000025}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7738193136713887568}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!33 &2557678286299243936
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3942eadfc816711489070eb798a9e4a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collectObject: {fileID: 7075953194253495542}
+  collectObject: {fileID: 0}
 --- !u!1 &7182398954975316263
 GameObject:
   m_ObjectHideFlags: 0
@@ -275,8 +275,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 485d77afb2f2e464d93ead47e4fcfe94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   lid: {fileID: 2196861262877044472}
   collider: {fileID: 8531280050690867471}
+  isPicked: 0
 --- !u!114 &3326165464973495421
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -319,7 +323,6 @@ MonoBehaviour:
   interpolateRotation: 1
   interpolateScale: 1
   coordinateSpace: 1
-  sendIntervalMultiplier: 1
   timelineOffset: 0
   showGizmos: 0
   showOverlay: 0

@@ -46,7 +46,7 @@ MonoBehaviour:
   collectData:
     ItemSpacing: 3
     MaxGridItems: 10
-    ItemHeight: 0.3
+    ItemHeight: 0.75
     GridSize: 10
     OnceSpawnCount: 50
     OnceSpawnWeight: 50

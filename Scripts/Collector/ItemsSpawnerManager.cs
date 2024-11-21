@@ -38,6 +38,7 @@ namespace HotUpdate.Scripts.Collector
         private MapBoundDefiner _mapBoundDefiner;
         private ChestDataConfig _chestConfig;
         private MessageCenter _messageCenter;
+        private IObjectResolver _objectResolver;
         private PlayerInGameManager _playerInGameManager;
         private CollectObjectDataConfig _collectObjectDataConfig;
         private LayerMask _sceneLayer;
@@ -55,12 +56,13 @@ namespace HotUpdate.Scripts.Collector
         private GameLoopController _gameLoopController;
 
         [Inject]
-        private void Init(MapBoundDefiner mapBoundDefiner, IConfigProvider configProvider, BuffManager buffManager, PlayerInGameManager playerInGameManager,GameEventManager gameEventManager, MessageCenter messageCenter)
+        private void Init(MapBoundDefiner mapBoundDefiner, IConfigProvider configProvider, BuffManager buffManager, IObjectResolver objectResolver, PlayerInGameManager playerInGameManager,GameEventManager gameEventManager, MessageCenter messageCenter)
         {
             _playerInGameManager = playerInGameManager;
             _buffManager = buffManager;
             _configProvider = configProvider;
             _mapBoundDefiner = mapBoundDefiner;
+            _objectResolver = objectResolver;
             _messageCenter = messageCenter;
             gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnGameSceneResourcesLoadedLoaded);
             _collectObjectDataConfig = _configProvider.GetConfig<CollectObjectDataConfig>();
@@ -160,20 +162,6 @@ namespace HotUpdate.Scripts.Collector
                 return false;
 
             return true;
-        }
-
-        [ClientRpc]
-        private void RpcPickUpTreasureChest()
-        {
-            PickUpTreasureChest();
-        }
-
-        private void PickUpTreasureChest()
-        {
-            if (_treasureChest)
-            {
-                _treasureChest.PickUpSuccess();
-            }
         }
 
         private void OnPickUpItem(PickerPickUpMessage message)
@@ -338,19 +326,45 @@ namespace HotUpdate.Scripts.Collector
         [Server]
         public void EndRound()
         {
-            // 清理宝箱
-            if (_treasureChest)
+            try
             {
-                NetworkServer.UnSpawn(_treasureChest.gameObject);
-                GameObjectPoolManger.Instance.ReturnObject(_treasureChest.gameObject);
-                _treasureChest = null;
+                // 清理宝箱
+                if (_treasureChestInfo.netId != 0)
+                {
+                    var chestIdentity = NetworkIdentity.GetSceneIdentity(_treasureChestInfo.netId);
+                    if (chestIdentity)
+                    {
+                        NetworkServer.UnSpawn(chestIdentity.gameObject);
+                        GameObjectPoolManger.Instance.ReturnObject(chestIdentity.gameObject);
+                    }
+                    _treasureChestInfo = new TreasureChestInfo();
+                }
+
+                // 清理所有生成物
+                foreach (var item in _spawnedItems.Values.ToList())
+                {
+                    var identity = NetworkIdentity.GetSceneIdentity(item.netId);
+                    if (identity)
+                    {
+                        NetworkServer.UnSpawn(netIdentity.gameObject);
+                        GameObjectPoolManger.Instance.ReturnObject(netIdentity.gameObject);
+                    }
+                }
+                _spawnedItems.Clear();
+
+                // 清理网格数据
+                foreach (var grid in _gridMap.Values)
+                {
+                    grid.itemIDs?.Clear();
+                }
+
+                // 通知客户端清理
+                RpcEndRound();
             }
-
-            // 清理所有生成物
-            ClearAllSpawnedItems();
-
-            // 通知客户端清理
-            RpcEndRound();
+            catch (Exception e)
+            {
+                Debug.LogError($"Error in EndRound: {e}");
+            }
         }
 
         [ClientRpc]
@@ -358,14 +372,28 @@ namespace HotUpdate.Scripts.Collector
         {
             if (isServer) return; // 服务器已经处理过了
 
-            // 清理客户端的生成物
-            ClearAllSpawnedItems();
-
-            // 清理宝箱
-            if (_treasureChest)
+            try
             {
-                GameObjectPoolManger.Instance.ReturnObject(_treasureChest.gameObject);
-                _treasureChest = null;
+                // 清理客户端的生成物
+                foreach (var item in _spawnedItems.Values)
+                {
+                    if (NetworkClient.spawned.TryGetValue(item.netId, out var netIdentity))
+                    {
+                        GameObjectPoolManger.Instance.ReturnObject(netIdentity.gameObject);
+                    }
+                }
+                _spawnedItems.Clear();
+
+                // 清理宝箱
+                if (_treasureChestInfo.netId != 0 && 
+                    NetworkClient.spawned.TryGetValue(_treasureChestInfo.netId, out var chestIdentity))
+                {
+                    GameObjectPoolManger.Instance.ReturnObject(chestIdentity.gameObject);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error in RpcEndRound: {e}");
             }
         }
         
@@ -472,6 +500,7 @@ namespace HotUpdate.Scripts.Collector
                         Quaternion.identity, 
                         _spawnedParent
                     );
+                    _objectResolver.Inject(spawnedObject);
 
                     var networkIdentity = spawnedObject.GetComponent<NetworkIdentity>();
                     NetworkServer.Spawn(spawnedObject); // 确保网络同步
@@ -498,7 +527,7 @@ namespace HotUpdate.Scripts.Collector
         public void SpawnTreasureChestServer()
         {
             var chestType = (ChestType)Mathf.RoundToInt(Random.Range(0f, (float)ChestType.Score));
-            var position = GetRandomStartPoint();
+            var position = GetRandomStartPoint(2f);
 
             // 在服务器端生成宝箱
             var spawnedChest = GameObjectPoolManger.Instance.GetObject(
@@ -507,10 +536,10 @@ namespace HotUpdate.Scripts.Collector
                 Quaternion.identity, 
                 _spawnedParent
             );
-
             var networkIdentity = spawnedChest.GetComponent<NetworkIdentity>();
             NetworkServer.Spawn(spawnedChest);
 
+            _objectResolver.Inject(spawnedChest);
             var treasureChest = spawnedChest.GetComponent<TreasureChestComponent>();
             treasureChest.ChestType = chestType;
 
@@ -554,6 +583,7 @@ namespace HotUpdate.Scripts.Collector
         
                 // 确保位置正确设置
                 go.transform.position = info.position;
+                _objectResolver.Inject(go);
             }
         }
 
@@ -594,8 +624,6 @@ namespace HotUpdate.Scripts.Collector
                     break;
             }
             
-    
-            // 使用字典直接查找替代Join
             var itemToSpawn = collectTypes
                 .Select(type => _collectiblePrefabs[type])
                 .ToList();
@@ -706,6 +734,7 @@ namespace HotUpdate.Scripts.Collector
             }
             return -1;
         }
+        
         private bool ValidatePickup(CollectObjectController item, PlayerPropertyComponent player, Vector3 originalPosition)
         {
             // 基本碰撞检测
@@ -714,62 +743,67 @@ namespace HotUpdate.Scripts.Collector
             if (!itemCollider.bounds.Intersects(playerCollider.bounds))
                 return false;
 
-            // 可选：检查当前位置是否在原始位置的合理范围内
-            // var currentPosition = item.transform.position;
-            // var distanceFromOriginal = Vector3.Distance(currentPosition, originalPosition);
-            // if (distanceFromOriginal > 1) // 定义一个合理的最大距离
-            //     return false;
-
             return true;
         }
+        
         private List<CollectibleItemData> PlaceItems(List<CollectibleItemData> itemsToSpawn)
         {
-            var startPoint = GetRandomStartPoint();
-            var direction = GetRandomDirection();
+            var startPoint = GetRandomStartPoint(_itemHeight);
+            if (startPoint == Vector3.zero)
+            {
+                Debug.LogWarning("Failed to find valid start point");
+                return new List<CollectibleItemData>();
+            }
 
+            var direction = GetRandomDirection();
             var spawnedIDs = new List<CollectibleItemData>();
 
-            for (int i = 0; i < itemsToSpawn.Count; i++)
+            foreach (var item in itemsToSpawn)
             {
-                var item = itemsToSpawn[i];
-                var position = startPoint + _itemSpacing * i * direction + Vector3.up * _itemHeight;
+                var attempts = 0;
+                var maxAttempts = 5;
+                var validPosition = false;
+                var position = Vector3.zero;
 
-                if (!IsPositionValid(position, itemsToSpawn[i].component.GetComponent<Collider>()))
+                while (!validPosition && attempts < maxAttempts)
                 {
-                    if (Physics.Raycast(new Vector3(position.x, 1000, position.z), Vector3.down, out var hit, Mathf.Infinity, _sceneLayer))
+                    position = startPoint + _itemSpacing * spawnedIDs.Count * direction;
+            
+                    // 从高处发射射线
+                    var rayStart = position + Vector3.up * 1000f;
+                    if (Physics.Raycast(rayStart, Vector3.down, out var hit, Mathf.Infinity, _sceneLayer))
                     {
-                        position.y = hit.point.y + _itemHeight;
+                        position = hit.point + Vector3.up * _itemHeight;
+                        if (IsPositionValid(position, item.component.GetComponent<Collider>()) && 
+                            IsWithinBoundary(position))
+                        {
+                            validPosition = true;
+                        }
+                    }
+            
+                    attempts++;
+                    if (!validPosition && attempts < maxAttempts)
+                    {
+                        // 尝试新的方向
+                        direction = GetRandomDirection();
                     }
                 }
 
-                if (IsWithinBoundary(position))
+                if (validPosition)
                 {
+                    item.position = position;
                     var id = GenerateID();
                     item.id = id;
-                    item.position = position;
-                    _spawnedItems[id] = new SpawnItemInfo
-                    {
-                        id = id,
-                        netId = 0,
-                        collectType = item.component.CollectType,
-                        position = position
-                    };
-
+            
                     var gridPos = GetGridPosition(position);
                     if (_gridMap.TryGetValue(gridPos, out var grid))
                     {
                         grid.itemIDs ??= new List<CollectibleItemData>();
                         grid.itemIDs.Add(item);
-                        _gridMap[gridPos] = grid; // Update the grid with the new itemID
+                        _gridMap[gridPos] = grid;
                     }
-
+            
                     spawnedIDs.Add(item);
-                }
-                else
-                {
-                    Debug.LogWarning("Item out of boundary, retrying spawn.");
-                    SpawnItems(Random.Range(10, 20), Random.Range(1, 4));
-                    return new List<CollectibleItemData>(); // Return an empty list if the placement fails
                 }
             }
 
@@ -781,11 +815,10 @@ namespace HotUpdate.Scripts.Collector
             return IsPositionValid(position, null);
         }
     
-        private Vector3 GetRandomStartPoint()
+        private Vector3 GetRandomStartPoint(float height)
         {
-
             var randomPos = _mapBoundDefiner.GetRandomPoint(IsPositionValidWithoutItem);
-            return new Vector3(randomPos.x, randomPos.y + _itemHeight, randomPos.z);
+            return new Vector3(randomPos.x, randomPos.y + height, randomPos.z);
         }
     
         private Vector3 GetRandomDirection()
@@ -796,43 +829,53 @@ namespace HotUpdate.Scripts.Collector
         private bool IsPositionValid(Vector3 position, Collider itemPrefab)
         {
             var gridPos = GetGridPosition(position);
-            if (_gridMap.TryGetValue(gridPos, out var grid))
+            if (!_gridMap.TryGetValue(gridPos, out var grid))
+                return false;
+
+            // 检查网格内物品数量
+            if (grid.itemIDs != null && grid.itemIDs.Count >= _maxGridItems)
+                return false;
+
+            // 从高处发射射线检查地面
+            var rayStart = position + Vector3.up * 1000f;
+            if (!Physics.Raycast(rayStart, Vector3.down, out var hit, Mathf.Infinity, _sceneLayer))
+                return false;
+
+            // 调整位置到地面上方
+            position = hit.point + Vector3.up * _itemHeight;
+
+            // 检查碰撞
+            if (itemPrefab != null)
             {
-                if (itemPrefab != null)
+                Collider[] hitColliders = null;
+                Vector3 checkSize = Vector3.zero;
+                float checkRadius = 0f;
+
+                if (itemPrefab is BoxCollider boxCollider)
                 {
-                    Collider[] hitColliders =null ;
-                    if (itemPrefab is BoxCollider boxCollider)
-                    {
-                        hitColliders = Physics.OverlapBox(position, boxCollider.bounds.extents, Quaternion.identity, _sceneLayer);
-                    }
-                    else if (itemPrefab is SphereCollider sphereCollider)
-                    {
-                        hitColliders = Physics.OverlapSphere(position, sphereCollider.radius, _sceneLayer);
-                    }
-                    else if (itemPrefab is CapsuleCollider capsuleCollider)
-                    {
-                        hitColliders = Physics.OverlapCapsule(position, capsuleCollider.transform.position, capsuleCollider.radius, _sceneLayer);
-                    }
-                    else
-                    {
-                        throw new Exception("Unsupported collider type");
-                    }
-                    foreach (var hitCollider in hitColliders)
-                    {
-                        if (hitCollider.gameObject.GetInstanceID() == itemPrefab.gameObject.GetInstanceID())
-                        {
-                            return false;
-                        }
-                    }
+                    checkSize = boxCollider.bounds.extents * 1.1f; // 添加一些余量
+                    hitColliders = Physics.OverlapBox(position, checkSize, Quaternion.identity, _sceneLayer);
+                }
+                else if (itemPrefab is SphereCollider sphereCollider)
+                {
+                    checkRadius = sphereCollider.radius * 1.1f;
+                    hitColliders = Physics.OverlapSphere(position, checkRadius, _sceneLayer);
+                }
+                else if (itemPrefab is CapsuleCollider capsuleCollider)
+                {
+                    checkRadius = capsuleCollider.radius * 1.1f;
+                    var point2 = position + Vector3.up * capsuleCollider.height;
+                    hitColliders = Physics.OverlapCapsule(position, point2, checkRadius, _sceneLayer);
                 }
                 else
                 {
-                    if (grid.itemIDs != null && grid.itemIDs.Count > _maxGridItems)
-                    {
-                        return false;
-                    }
+                    Debug.LogError("Unsupported collider type");
+                    return false;
                 }
+
+                return hitColliders == null || hitColliders.Length == 0;
             }
+
             return true;
         }
 

@@ -1,4 +1,5 @@
-﻿using Tool.GameEvent;
+﻿using HotUpdate.Scripts.Collector;
+using Tool.GameEvent;
 using UnityEngine;
 
 namespace Tool.Message

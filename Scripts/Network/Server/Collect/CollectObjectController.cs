@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Common;
 using Config;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Network.NetworkMes;

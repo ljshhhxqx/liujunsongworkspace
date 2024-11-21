@@ -1,57 +1,65 @@
 using System;
 using AOTScripts.Tool.ECS;
-using Config;
+using Common;
 using UnityEngine;
 
-/// <summary>
-/// 所有可被拾取的物品都应该继承该接口
-/// </summary>
-public interface ICollect
+namespace HotUpdate.Scripts.Collector
 {
-    int CollectId { get; }
-    Collider Collider { get; }
-}
+    /// <summary>
+    /// 所有可被拾取的物品都应该继承该接口
+    /// </summary>
+    public interface ICollect
+    {
+        int CollectId { get; }
+        Collider Collider { get; }
+    }
 
-public abstract class CollectObject : NetworkMonoController, ICollect
-{
-    public int CollectId { get; set; }
-    public abstract Collider Collider { get; }
-    protected abstract void SendCollectRequest(int pickerId, PickerType pickerType);
-}
+    public abstract class CollectObject : NetworkMonoController, ICollect
+    {
+        public int CollectId { get; set; }
+        public abstract Collider Collider { get; }
+        protected abstract void SendCollectRequest(int pickerId, PickerType pickerType);
 
-/// <summary>
-/// 拾取者枚举
-/// </summary>
-[Serializable]
-public enum PickerType
-{
-    Player,
-    Computer,
-}
+        // protected virtual void Awake()
+        // {
+        //     ObjectInjectProvider.Instance.Inject(this);
+        // }
+    }
 
-/// <summary>
-/// 可拾取物枚举
-/// </summary>
-[Serializable]
-public enum CollectType
-{
-    TreasureChest,
-    SliverCoin,
-    GoldCoin,
-    Gem,
-    StrengthGem,
-    SpeedGem,
-}
+    /// <summary>
+    /// 拾取者枚举
+    /// </summary>
+    [Serializable]
+    public enum PickerType
+    {
+        Player,
+        Computer,
+    }
 
-[Serializable]
-public enum CollectObjectClass
-{
-    TreasureChest,
-    Score,
-    Buff,
-}
+    /// <summary>
+    /// 可拾取物枚举
+    /// </summary>
+    [Serializable]
+    public enum CollectType
+    {
+        TreasureChest,
+        SliverCoin,
+        GoldCoin,
+        Gem,
+        StrengthGem,
+        SpeedGem,
+    }
 
-public interface IPickable
-{
-    public void RequestPick(uint pickerNetId);
+    [Serializable]
+    public enum CollectObjectClass
+    {
+        TreasureChest,
+        Score,
+        Buff,
+    }
+
+    public interface IPickable
+    {
+        public void RequestPick(uint pickerNetId);
+    }
 }

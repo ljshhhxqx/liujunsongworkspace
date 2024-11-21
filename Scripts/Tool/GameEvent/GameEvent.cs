@@ -1,5 +1,6 @@
 ﻿using System;
 using Data;
+using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;
 using Mirror;
 using UnityEngine;
