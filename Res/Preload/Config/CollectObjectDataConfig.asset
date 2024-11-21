@@ -16,42 +16,37 @@ MonoBehaviour:
   - CollectType: 1
     CollectObjectClass: 1
     Weight: 5
-    PropertyValue: 0
     BuffExtraData:
       buffId: 5
       buffType: 2
   - CollectType: 2
     CollectObjectClass: 1
     Weight: 10
-    PropertyValue: 0
     BuffExtraData:
       buffId: 6
       buffType: 2
   - CollectType: 3
     CollectObjectClass: 1
     Weight: 20
-    PropertyValue: 0
     BuffExtraData:
       buffId: 7
       buffType: 2
   - CollectType: 4
     CollectObjectClass: 2
     Weight: 15
-    PropertyValue: 0
     BuffExtraData:
       buffId: 2
       buffType: 2
   - CollectType: 5
     CollectObjectClass: 2
     Weight: 15
-    PropertyValue: 0
     BuffExtraData:
       buffId: 3
       buffType: 2
   collectData:
-    MaxWeight: 100
-    ItemSpacing: 0.5
+    ItemSpacing: 3
     MaxGridItems: 10
-    ItemHeight: 1
+    ItemHeight: 0.3
     GridSize: 10
-    OnceSpawnCount: 10
+    OnceSpawnCount: 50
+    OnceSpawnWeight: 50

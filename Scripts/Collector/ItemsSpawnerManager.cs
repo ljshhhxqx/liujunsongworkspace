@@ -43,12 +43,12 @@ namespace HotUpdate.Scripts.Collector
         private LayerMask _sceneLayer;
         private Dictionary<Vector2Int, Grid> _gridMap = new Dictionary<Vector2Int, Grid>();
         private SyncDictionary<int, SpawnItemInfo> _spawnedItems = new SyncDictionary<int, SpawnItemInfo>();
-        private static float _itemSpacing = 0.5f;
-        private static int _maxGridItems = 10;
-        private static float _itemHeight = 1f;
-        private static float _gridSize = 10f; // Size of each grid cell
-        private static int _onceSpawnCount = 50;
-        private static int _onceSpawnWeight = 30;
+        private static float _itemSpacing;
+        private static int _maxGridItems;
+        private static float _itemHeight;
+        private static float _gridSize; // Size of each grid cell
+        private static int _onceSpawnCount;
+        private static int _onceSpawnWeight;
         private Transform _spawnedParent;
         private BuffManager _buffManager;
         private BuffDatabase _buffDatabase;
@@ -74,9 +74,21 @@ namespace HotUpdate.Scripts.Collector
             _spawnedParent = transform;
             _spawnedItems.OnChange += OnSpawnItemsChange;
             CollectItemReaderWriter.RegisterReaderWriter();
-            InitializeGrid();
         }
 
+        private void OnGameSceneResourcesLoadedLoaded(GameSceneResourcesLoadedEvent gameSceneResourcesLoadedEvent)
+        {
+            var config = _configProvider.GetConfig<CollectObjectDataConfig>();
+            _itemSpacing = config.CollectData.ItemSpacing;
+            _maxGridItems = config.CollectData.MaxGridItems;
+            _itemHeight = config.CollectData.ItemHeight;
+            _gridSize = config.CollectData.GridSize;
+            _onceSpawnCount = config.CollectData.OnceSpawnCount;
+            _onceSpawnWeight = config.CollectData.OnceSpawnWeight;
+            OnGameStart(gameSceneResourcesLoadedEvent.SceneName);
+            InitializeGrid();
+        }
+        
         private void OnPickerPickUpChestMessage(PickerPickUpChestMessage message)
         {
             if (!isServer) return;
@@ -327,7 +339,7 @@ namespace HotUpdate.Scripts.Collector
         public void EndRound()
         {
             // 清理宝箱
-            if (_treasureChest != null)
+            if (_treasureChest)
             {
                 NetworkServer.UnSpawn(_treasureChest.gameObject);
                 GameObjectPoolManger.Instance.ReturnObject(_treasureChest.gameObject);
@@ -350,7 +362,7 @@ namespace HotUpdate.Scripts.Collector
             ClearAllSpawnedItems();
 
             // 清理宝箱
-            if (_treasureChest != null)
+            if (_treasureChest)
             {
                 GameObjectPoolManger.Instance.ReturnObject(_treasureChest.gameObject);
                 _treasureChest = null;
@@ -359,7 +371,7 @@ namespace HotUpdate.Scripts.Collector
         
         private void SafeReturnToPool(GameObject go)
         {
-            if (go != null && go.scene.name != null) // 确保对象还在场景中
+            if (go && go.scene.name != null) // 确保对象还在场景中
             {
                 try
                 {
@@ -513,22 +525,6 @@ namespace HotUpdate.Scripts.Collector
         }
 
         [ClientRpc]
-        public void RpcSpawnTreasureChest(ChestType chestType, Vector3 position)
-        {
-            SpawnTreasureChest(chestType, position);
-        }
-
-        private void SpawnTreasureChest(ChestType chestType, Vector3 position)
-        {
-            if (_treasureChest)
-            {
-                GameObjectPoolManger.Instance.ReturnObject(_treasureChest.gameObject);
-            }
-            _treasureChest = GameObjectPoolManger.Instance.GetObject(_treasureChestPrefab.gameObject, position, Quaternion.identity, _spawnedParent).GetComponent<TreasureChestComponent>();
-            _treasureChest.ChestType = chestType;
-        }
-
-        [ClientRpc]
         private void SpawnManyItemsClientRpc(SpawnItemInfo[] allSpawnedItems)
         {
             SpawnItems(allSpawnedItems);
@@ -578,16 +574,6 @@ namespace HotUpdate.Scripts.Collector
             var x = Mathf.FloorToInt(position.x / _gridSize);
             var z = Mathf.FloorToInt(position.z / _gridSize);
             return new Vector2Int(x, z);
-        }
-
-        private void OnGameSceneResourcesLoadedLoaded(GameSceneResourcesLoadedEvent gameSceneResourcesLoadedEvent)
-        {
-            var config = _configProvider.GetConfig<CollectObjectDataConfig>();
-            _itemSpacing = config.CollectData.ItemSpacing;
-            _maxGridItems = config.CollectData.MaxGridItems;
-            _itemHeight = config.CollectData.ItemHeight;
-            _gridSize = config.CollectData.GridSize;
-            OnGameStart(gameSceneResourcesLoadedEvent.SceneName);
         }
 
         private List<CollectibleItemData> SpawnItems(int totalWeight, int spawnMode)

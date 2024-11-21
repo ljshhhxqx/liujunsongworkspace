@@ -51,14 +51,14 @@ namespace Config
     }
 
     [Serializable]
-    public class CollectData
+    public struct CollectData
     {
-        public int MaxWeight;
-        public float ItemSpacing = 0.5f;
-        public int MaxGridItems = 10;
-        public float ItemHeight = 1f;
-        public float GridSize = 10f;
-        public int OnceSpawnCount = 10;
+        public float ItemSpacing;
+        public int MaxGridItems;
+        public float ItemHeight;
+        public float GridSize;
+        public int OnceSpawnCount;
+        public int OnceSpawnWeight;
     }
 
 }
