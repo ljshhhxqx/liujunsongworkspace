@@ -34,10 +34,10 @@ namespace HotUpdate.Scripts.Network.Client.Player
         
         private void OnCurrentAnimationStateChanged(AnimationState oldValue, AnimationState newValue)
         {
-            if (newValue != oldValue)
-            {
-                Debug.Log($"OnCurrentAnimationStateChanged oldValue: {oldValue}, newValue: {newValue}");
-            }
+            // if (newValue != oldValue)
+            // {
+            //     //Debug.Log($"OnCurrentAnimationStateChanged oldValue: {oldValue}, newValue: {newValue}");
+            // }
 
             CurrentAnimationStateProperty.Value = newValue;
         }
@@ -46,7 +46,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         {
             if (newValue != oldValue)
             {
-                Debug.Log($"OnCurrentChestTypeChanged oldValue: {oldValue}, newValue: {newValue}");
+               // Debug.Log($"OnCurrentChestTypeChanged oldValue: {oldValue}, newValue: {newValue}");
             }
             CurrentChestTypeProperty.Value = newValue;
         }
@@ -55,7 +55,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         {
             if (newValue != oldValue)
             {
-                Debug.Log($"OnPlayerStateChanged oldValue: {oldValue}, newValue: {newValue}");
+                //Debug.Log($"OnPlayerStateChanged oldValue: {oldValue}, newValue: {newValue}");
             }
             PlayerStateProperty.Value = newValue;
         }
@@ -64,7 +64,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         {
             if (newValue != oldValue)
             {
-                Debug.Log($"OnHasMovementInputChanged oldValue: {oldValue}, newValue: {newValue}");
+                //Debug.Log($"OnHasMovementInputChanged oldValue: {oldValue}, newValue: {newValue}");
             }
             HasMovementInputProperty.Value = newValue;
         }
@@ -73,7 +73,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         {
             if (newValue != oldValue)
             {
-                Debug.Log($"OnIsSprintingChanged oldValue: {oldValue}, newValue: {newValue}");
+                //Debug.Log($"OnIsSprintingChanged oldValue: {oldValue}, newValue: {newValue}");
             }
             IsSprintingProperty.Value = newValue;
         }
@@ -501,36 +501,36 @@ namespace HotUpdate.Scripts.Network.Client.Player
         {
             var recoveredStrength = _playerDataConfig.PlayerConfigData.StrengthRecoveryPerSecond;
             var isSprinting = CurrentAnimationState == AnimationState.Sprint;
+            var isSprintingJump = CurrentAnimationState == AnimationState.SprintJump;
             if (isSprinting)
             {
                 var cost = _playerDataConfig.GetPlayerAnimationCost(CurrentAnimationState);
                 recoveredStrength -= cost;
             }
-            ChangeSpeed(isSprinting, recoveredStrength);
+            ChangeSpeed(isSprinting, recoveredStrength, isSprintingJump);
         }
 
-        private void ChangeSpeed(bool isSprinting, float recoveredStrength)
+        private void ChangeSpeed(bool isSprinting, float recoveredStrength, bool isSprintingJump)
         {
             if (isServer)
             {
-                ChangeSpeedAndUpdate(isSprinting, recoveredStrength);
+                ChangeSpeedAndUpdate(isSprinting, recoveredStrength, isSprintingJump);
             }
             else if (isClient)
             {
-                CmdChangeSpeed(isSprinting, recoveredStrength);
+                CmdChangeSpeed(isSprinting, recoveredStrength, isSprintingJump);
             }
         }
 
         [Command]
-        private void CmdChangeSpeed(bool isSprinting, float recoveredStrength)
+        private void CmdChangeSpeed(bool isSprinting, float recoveredStrength, bool isSprintingJump)
         {
-            ChangeSpeedAndUpdate(isSprinting, recoveredStrength);
+            ChangeSpeedAndUpdate(isSprinting, recoveredStrength, isSprintingJump);
         }
 
-        private void ChangeSpeedAndUpdate(bool isSprinting, float recoveredStrength, bool isSprintingJump = false)
+        private void ChangeSpeedAndUpdate(bool isSprinting, float recoveredStrength, bool isSprintingJump)
         {
             _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] = HasMovementInput ? 1f : 0f;
-            
             switch (PlayerState)
             {
                 case PlayerState.InAir:

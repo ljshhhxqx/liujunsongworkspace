@@ -25,15 +25,15 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                 nameText.text = propertyData.Name;
                 _currentProperty = propertyData.CurrentProperty;
                 _maxProperty = propertyData.MaxProperty;
-                var currentValue = Mathf.Round(_currentProperty.Value.Value);
-                var maxValue = Mathf.Round(_maxProperty.Value.Value);
-                SetValue(propertyData.ConsumeType, currentValue, maxValue);
+                SetValue(propertyData.ConsumeType, _currentProperty.Value.Value, _maxProperty.Value.Value);
                 _currentProperty.Subscribe(x =>
                 {
                     SetValue(propertyData.ConsumeType, x.Value, _maxProperty.Value.Value);
                 }).AddTo(this);
                 _maxProperty.Subscribe(x =>
                 {
+                    var currentValue = Mathf.RoundToInt(_currentProperty.Value.Value);
+                    var maxValue = Mathf.RoundToInt(_maxProperty.Value.Value);
                     SetValue(propertyData.ConsumeType, _currentProperty.Value.Value, x.Value);
                 }).AddTo(this);
             }
@@ -44,12 +44,15 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             switch (consumeType)
             {
                 case PropertyConsumeType.Number:
-                    valueText.text = currentValue.ToString("0");
+                    var currentValueInt = Mathf.RoundToInt(currentValue);
+                    valueText.text = currentValueInt.ToString("0");
                     iconImage.transform.parent.gameObject.SetActive(false);
                     break;
                 case PropertyConsumeType.Consume:
                     var ratio = currentValue / maxValue;
-                    valueText.text = $"{currentValue}/{maxValue}";
+                    currentValueInt = Mathf.RoundToInt(currentValue);
+                    var maxValueInt = Mathf.RoundToInt(maxValue);
+                    valueText.text = $"{currentValueInt}/{maxValueInt}";
                     iconImage.transform.parent.gameObject.SetActive(true);
                     iconImage.fillAmount = ratio;
                     break;

@@ -74,6 +74,7 @@ namespace HotUpdate.Scripts.Network.NetworkMes
         private void RegisterServerHandlers()
         {
             RegisterServerHandler<MirrorPickerPickUpCollectMessage>();
+            RegisterServerHandler<MirrorPickerPickUpChestMessage>();
         }
 
         private void RegisterClientHandlers()
@@ -140,6 +141,12 @@ namespace HotUpdate.Scripts.Network.NetworkMes
             if (networkMessage is MirrorPickerPickUpCollectMessage pickerPickUpMessage)
             {
                 return new PickerPickUpMessage(pickerPickUpMessage.PickerID, pickerPickUpMessage.ItemID);
+            }
+
+            if (networkMessage is MirrorPickerPickUpChestMessage pickerPickUpChestMessage)
+            {
+                return new PickerPickUpChestMessage(pickerPickUpChestMessage.PickerID,
+                    pickerPickUpChestMessage.ChestID);
             }
             // 添加更多消息类型的处理...
 

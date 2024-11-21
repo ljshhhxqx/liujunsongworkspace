@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -26,6 +27,17 @@ namespace Config
             }
             Debug.LogWarning($"Can't find collect object data for {collectType}");
             return null;
+        }
+
+        public IEnumerable<CollectObjectData> GetCollectObjectDataWithCondition(Func<CollectObjectData, bool> predicate)
+        {
+            foreach (var collectConfigData in collectConfigDatas)
+            {
+                if (predicate(collectConfigData))
+                {
+                    yield return collectConfigData;
+                }
+            }
         }
     }
 

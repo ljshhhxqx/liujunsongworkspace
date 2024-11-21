@@ -19,22 +19,25 @@ namespace HotUpdate.Scripts.Network.Server.Collect
     {
         [SerializeField] 
         private CollectType collectType;
-        private CollectObjectData collectObjectData;
+
         private CollectParticlePlayer _collectParticlePlayer;
         private CollectAnimationComponent _collectAnimationComponent;
         
-        public override CollectObjectData CollectData => collectObjectData;
         public override Collider Collider => _collider;
-        
+        public CollectType CollectType => collectType;
+        public CollectObjectData CollectObjectData { get; private set; }
+
         private MessageCenter _messageCenter;
         private MirrorNetworkMessageHandler _mirrorNetworkMessageHandler;
         private Collider _collider;
         private CollectObjectDataConfig _collectObjectDataConfig;
+        private IConfigProvider _configProvider;
         
         [Inject]
         private void Init(MessageCenter messageCenter, IConfigProvider configProvider, MirrorNetworkMessageHandler mirrorNetworkMessageHandler)
         {
             _messageCenter = messageCenter;
+            _configProvider = configProvider;
             _collectParticlePlayer = GetComponentInChildren<CollectParticlePlayer>();
             _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
             _mirrorNetworkMessageHandler = mirrorNetworkMessageHandler;
@@ -42,8 +45,15 @@ namespace HotUpdate.Scripts.Network.Server.Collect
             _collider.OnTriggerEnterAsObservable()
                 .Subscribe(OnTriggerEnterObserver)
                 .AddTo(this);
-            _collectObjectDataConfig = configProvider.GetConfig<CollectObjectDataConfig>();
-            collectObjectData = _collectObjectDataConfig.GetCollectObjectData(collectObjectData.CollectType);
+        }
+
+        public CollectObjectData GetCollectObjectData()
+        {
+            if (collectType != CollectObjectData?.CollectType)
+            {
+                CollectObjectData = _collectObjectDataConfig.GetCollectObjectData(collectType);
+            }
+            return CollectObjectData;
         }
 
         private void OnTriggerEnterObserver(Collider other)
@@ -104,7 +114,7 @@ namespace HotUpdate.Scripts.Network.Server.Collect
                 {
                     if (item.CollectType.ToString().Equals(this.name))
                     {
-                        collectObjectData = item;
+                        CollectObjectData = item;
                     }
                 }
 

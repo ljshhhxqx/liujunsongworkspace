@@ -71,10 +71,9 @@ namespace UI.UIBase
         
         public void CloseUI(UIType uIType)
         {
-            if (_uiDict.TryGetValue(uIType, out var ui))
+            if (_uiDict.Remove(uIType, out var ui))
             {
                 Object.Destroy(ui.gameObject);
-                _uiDict.Remove(uIType);
                 return;
             }
             Debug.Log($"UI名有误{uIType}");

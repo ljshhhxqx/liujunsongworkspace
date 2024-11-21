@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using AOTScripts.Tool.ECS;
+using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using Mirror;
 using UnityEngine;
@@ -53,8 +54,8 @@ namespace HotUpdate.Scripts.Audio
         {
             _audioClips.Clear();
             _effectAudioClips.Clear();
-            Object.Destroy(_musicAudioSource.gameObject);
-            Object.Destroy(_effectAudioSource.gameObject);
+            Object.Destroy(_musicAudioSource?.gameObject);
+            Object.Destroy(_effectAudioSource?.gameObject);
         }
         
         public void PlayMusic(AudioMusicType musicType)

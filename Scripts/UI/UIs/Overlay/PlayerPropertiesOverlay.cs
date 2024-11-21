@@ -1,15 +1,12 @@
 ﻿using System.Collections.Generic;
-using Config;
-using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
 using UI.UIBase;
 using UI.UIs.Common;
+using UniRx;
 using UnityEngine;
 using VContainer;
-using UniRx;
-using AnimationState = HotUpdate.Scripts.Config.AnimationState;
 
 namespace HotUpdate.Scripts.UI.UIs.Overlay
 {

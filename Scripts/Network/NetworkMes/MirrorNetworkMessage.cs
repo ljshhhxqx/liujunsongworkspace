@@ -91,10 +91,10 @@ namespace Network.NetworkMes
     [Serializable]
     public struct MirrorPickerPickUpChestMessage : NetworkMessage
     {
-        public int PickerID;
-        public int ChestID;
+        public uint PickerID;
+        public uint ChestID;
 
-        public MirrorPickerPickUpChestMessage(int pickerID, int chestID)
+        public MirrorPickerPickUpChestMessage(uint pickerID, uint chestID)
         {
             PickerID = pickerID;
             ChestID = chestID;

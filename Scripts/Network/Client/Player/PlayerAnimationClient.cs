@@ -7,6 +7,8 @@ namespace Network.Client
 {
     public class PlayerAnimationClient : ClientBase
     {
+        private static readonly int Speed = Animator.StringToHash("Speed");
+        private static readonly int VerticalSpeed = Animator.StringToHash("VerticalSpeed");
         private Rigidbody rb;
         private Animator animator;
         //玩家是否在地面上
@@ -33,17 +35,16 @@ namespace Network.Client
 
         private void OnPlayerVerticalSpeedChange(PlayerVerticalSpeedChangeEvent playerVerticalSpeedChangeEvent)
         {
-            animator.SetFloat("VerticalSpeed", playerVerticalSpeedChangeEvent.VerticalSpeed);
+            animator.SetFloat(VerticalSpeed, playerVerticalSpeedChangeEvent.VerticalSpeed);
         }
 
         private void OnPlayerSpeedChange(PlayerSpeedChangeEvent playerSpeedChangeEvent)
         {
-            animator.SetFloat("Speed", playerSpeedChangeEvent.Speed);
+            animator.SetFloat(Speed, playerSpeedChangeEvent.Speed);
         }
 
         private void OnPlayerJump(PlayerJumpEvent playerJumpEvent)
         {
-            Debug.Log($"OnPlayerSpeedChange:{playerJumpEvent}");
             networkAnimator.SetTrigger("IsJumpTriggered");
             isJumpTrigger = true;
         }

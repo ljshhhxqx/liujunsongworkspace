@@ -123,13 +123,13 @@ namespace Tool.Message
     
     public class PickerPickUpChestMessage : Message
     {
-        public int PickerId { get; set; }
-        public int ChestId { get; set; }
+        public uint PickerId { get; set; }
+        public uint ChestNetId { get; set; }
 
-        public PickerPickUpChestMessage(int pickerId, int chestId)
+        public PickerPickUpChestMessage(uint pickerId, uint chestNetId)
         {
             PickerId = pickerId;
-            ChestId = chestId;
+            ChestNetId = chestNetId;
         }
     }
 }

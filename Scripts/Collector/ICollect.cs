@@ -9,14 +9,12 @@ using UnityEngine;
 public interface ICollect
 {
     int CollectId { get; }
-    CollectObjectData CollectData { get; }
     Collider Collider { get; }
 }
 
 public abstract class CollectObject : NetworkMonoController, ICollect
 {
     public int CollectId { get; set; }
-    public abstract CollectObjectData CollectData { get; }
     public abstract Collider Collider { get; }
     protected abstract void SendCollectRequest(int pickerId, PickerType pickerType);
 }
@@ -55,5 +53,5 @@ public enum CollectObjectClass
 
 public interface IPickable
 {
-    public void RequestPick(int pickerId);
+    public void RequestPick(uint pickerNetId);
 }

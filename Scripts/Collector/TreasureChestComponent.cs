@@ -89,9 +89,9 @@ namespace Collector
         }
 
 
-        public void RequestPick(int pickerId)
+        public void RequestPick(uint pickerNetId)
         {
-            _mirrorNetworkMessageHandler.SendMessage(new MirrorPickerPickUpChestMessage(pickerId, (int)netId));
+            _mirrorNetworkMessageHandler.SendMessage(new MirrorPickerPickUpChestMessage(pickerNetId, netId));
         }
 
         public void PickUpSuccess()

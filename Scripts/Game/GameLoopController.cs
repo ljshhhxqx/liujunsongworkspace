@@ -51,7 +51,11 @@ namespace HotUpdate.Scripts.Game
                 {
                     _isEndGame = value;
                     _weatherManager.StartWeatherLoop(!value);
-                    _cts?.Cancel();
+                    if (value)
+                    {
+                        Debug.Log("Game Over!");
+                        _cts?.Cancel();
+                    }
                 }
                 else
                 {
@@ -69,6 +73,11 @@ namespace HotUpdate.Scripts.Game
                 {
                     if (IsEndGame) return;
                     _isEndRound = value;
+                    if (value)
+                    {
+                        Debug.Log("End Round!");
+                        _itemsSpawnerManager.EndRound();
+                    }
                 }
                 else
                 {
@@ -81,7 +90,6 @@ namespace HotUpdate.Scripts.Game
         {
             if (newValue && isServer)
             {
-                _itemsSpawnerManager.EndRound();
             }
         }
 
@@ -138,6 +146,7 @@ namespace HotUpdate.Scripts.Game
         
         private void OnGameStartMessage(GameStartMessage message)
         {
+            GameLoopDataModel.GameSceneName.Value = message.GameInfo.SceneName;
             GameLoopDataModel.GameLoopData.Value = new GameLoopData
             {
                 GameMode = _gameInfo.GameMode,
@@ -202,6 +211,11 @@ namespace HotUpdate.Scripts.Game
         
         private bool IsEndRoundFunc()
         {
+            var isEndRound = IsEndRound && !IsEndGame;
+            if (isEndRound)
+            {
+                Debug.Log("End Round!");
+            }
             return IsEndRound && !IsEndGame; //_itemsSpawnerManager.SpawnedItems.Count == 0;
         }
 
@@ -214,22 +228,25 @@ namespace HotUpdate.Scripts.Game
 
         private async UniTask StartMainGameTimerAsync(CancellationToken token)
         {
-            var isSubCycleRunning = false;
             var remainingTime = _mainGameTime;
 
             while (!IsEndGameWithCountDown(_gameInfo.GameMode, remainingTime, _gameInfo.GameScore) && !token.IsCancellationRequested)
             {
                 Debug.Log($"Main Game Timer: {remainingTime} seconds remaining");
 
-                if (!isSubCycleRunning)
-                {
-                    IsEndRound = false;
-                    isSubCycleRunning = true;
-                    var subCycle = new SubCycle(30, IsEndRoundFunc, RoundStartAsync);
-                    _ = subCycle.StartAsync(token).ContinueWith(result => isSubCycleRunning = false);
-                    _currentRound++;
-                }
+                // 开始新的回合
+                IsEndRound = false;
+                Debug.Log($"Starting Round {_currentRound}");
+        
+                // 执行回合循环
+                var subCycle = new SubCycle(30, IsEndRoundFunc, RoundStartAsync);
+                await subCycle.StartAsync(token);
+        
+                // 回合结束，增加回合数
+                _currentRound++;
+                Debug.Log($"Round {_currentRound - 1} completed");
 
+                // 更新游戏时间
                 await UniTask.Delay(100, cancellationToken: token);
                 if (_gameInfo.GameMode == GameMode.Time)
                 {
@@ -260,7 +277,6 @@ namespace HotUpdate.Scripts.Game
 
             public SubCycle(int maxTime, Func<bool> endCondition, Func<UniTask> randomEventHandler = null)
             {
-                // ?????С???????????
                 _subCycleTime = maxTime;
                 _endCondition = endCondition;
                 _randomEventHandler = randomEventHandler;
@@ -275,8 +291,6 @@ namespace HotUpdate.Scripts.Game
 
                 while (elapsedTime < _subCycleTime && !_endCondition() && !token.IsCancellationRequested)
                 {
-                    // ??????????????????????????????
-                    
                     if (_randomEventHandler != null && !_isEventHandled)
                     {
                         Debug.Log("Random event triggered.");
@@ -287,7 +301,7 @@ namespace HotUpdate.Scripts.Game
                     await UniTask.Delay(100, cancellationToken: token);
                     elapsedTime+=0.1f;
 
-                    Debug.Log($"SubCycle Timer: {_subCycleTime - elapsedTime} seconds remaining");
+                    //Debug.Log($"SubCycle Timer: {_subCycleTime - elapsedTime} seconds remaining");
                 }
 
                 Debug.Log("SubCycle Timer ended or end condition met. SubCycle Ended.");

@@ -132,10 +132,14 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 _movement = _inputMovement.z * -_stairsNormal.normalized + transform.right * _inputMovement.x;
                 if (_isJumpRequested)
                 {
-                    _playerPropertyComponent.DoAnimation(AnimationState.Jump);
                     _isJumpRequested = false;
+                    _playerPropertyComponent.DoAnimation(AnimationState.Jump);
                     //Debug.Log("Jump on stairs");
                     _rigidbody.AddForce(_stairsHitNormal.normalized * _playerDataConfig.PlayerConfigData.StairsJumpSpeed, ForceMode.Impulse);
+                }
+                else
+                {
+                    _playerPropertyComponent.DoAnimation(_hasMovementInput ? (_isSprinting ? AnimationState.Sprint : AnimationState.Move) :AnimationState.Idle);
                 }
             }
             else if (_playerState == PlayerState.OnGround)
@@ -147,11 +151,15 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
                 if (_isJumpRequested)
                 {
-                    _playerPropertyComponent.DoAnimation(_isSprinting ? AnimationState.SprintJump : AnimationState.Jump);
                     _isJumpRequested = false;
+                    _playerPropertyComponent.DoAnimation(_isSprinting ? AnimationState.SprintJump : AnimationState.Jump);
                     _rigidbody.AddForce(Vector3.up * _playerDataConfig.PlayerConfigData.JumpSpeed, ForceMode.Impulse);
                     
                     gameEventManager.Publish(new PlayerJumpEvent());
+                }
+                else
+                {
+                    _playerPropertyComponent.DoAnimation(_hasMovementInput ? (_isSprinting ? AnimationState.Sprint : AnimationState.Move) :AnimationState.Idle);
                 }
             }
             else
@@ -172,7 +180,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
             _currentSpeed = Mathf.SmoothDamp(_currentSpeed, _targetSpeed, ref _speedSmoothVelocity, _speedSmoothTime);
             _movement = _movement.normalized * (_currentSpeed * Time.fixedDeltaTime);
             _rigidbody.MovePosition(_movement + position);
-            _playerPropertyComponent.DoAnimation(_hasMovementInput ? (_isSprinting ? AnimationState.Sprint : AnimationState.Move) :AnimationState.Idle);
         }
 
         private void SyncAnimation()

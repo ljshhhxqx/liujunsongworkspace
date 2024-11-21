@@ -161,8 +161,10 @@ namespace HotUpdate.Scripts.Weather
                     _ => 0f
                 }
             };
+            SetWeather(weatherLoadData);
             RpcSetWeather(weatherLoadData);
             RpcSetWeatherEffect(weatherEffectData);
+            ChangeWeatherEffects(weatherEffectData);
             Debug.Log("<WeatherManager>---- Random Weather: " + randomWeather.weatherType);
             Debug.Log("<WeatherManager>---- Random time: " + DayNightCycleTime.ToHMSStr());
         }
@@ -192,6 +194,8 @@ namespace HotUpdate.Scripts.Weather
 
         private void SetWeather(WeatherLoadData loadData)
         {
+            if(!_uiManager.IsUIOpen(UIType.Weather))
+                _uiManager.SwitchUI<WeatherShowOverlay>();
             if (_currentWeatherSetting)
                 _currentWeatherSetting.ClearWeather();
             if (_weatherSettingDict.TryGetValue(loadData.weatherType, out var setting))
@@ -316,7 +320,7 @@ namespace HotUpdate.Scripts.Weather
         {
             foreach (var effect in _weatherEffectsDict.Values)
             {
-                if (effect.gameObject != null)
+                if (effect?.gameObject != null)
                 {
                     Destroy(effect.gameObject);
                 }
@@ -324,7 +328,7 @@ namespace HotUpdate.Scripts.Weather
 
             foreach (var setting in _weatherSettingDict.Values)
             {
-                if (setting.gameObject != null)
+                if (setting?.gameObject != null)
                 {
                     Destroy(setting.gameObject);
                 }
