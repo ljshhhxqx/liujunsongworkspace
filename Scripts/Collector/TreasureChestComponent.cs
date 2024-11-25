@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Network.NetworkMes;
+using HotUpdate.Scripts.Tool.Message;
 using Mirror;
 using Network.NetworkMes;
 using Sirenix.OdinInspector;
@@ -33,13 +34,13 @@ namespace Collector
         public bool isPicked;
 
         [Inject]
-        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager, MirrorNetworkMessageHandler mirrorNetworkMessageHandler)
+        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)
         {
             _gameEventManager = gameEventManager;
             //netId;
             _chestDataConfig = configProvider.GetConfig<ChestDataConfig>();
             _chestCommonData = _chestDataConfig.GetChestCommonData();
-            _mirrorNetworkMessageHandler = mirrorNetworkMessageHandler;
+            _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();;
             lid.transform.eulerAngles = _chestCommonData.InitEulerAngles;
             collider.OnTriggerEnterAsObservable()
                 .Subscribe(OnTriggerEnterObserver)
@@ -51,7 +52,7 @@ namespace Collector
         
         private void OnTriggerExitObserver(Collider other)
         {
-            if (!other.CompareTag("Player"))
+            if (!other.CompareTag("Player") || !isClient)
             {
                 return;
             }
@@ -61,7 +62,7 @@ namespace Collector
         
         private void OnTriggerEnterObserver(Collider other)
         {
-            if (!other.CompareTag("Player"))
+            if (!other.CompareTag("Player") || !isClient)
             {
                 return;
             }
@@ -92,7 +93,10 @@ namespace Collector
 
         public void RequestPick(uint pickerNetId)
         {
-            _mirrorNetworkMessageHandler.SendMessage(new MirrorPickerPickUpChestMessage(pickerNetId, netId));
+            if (isClient)
+            {
+                _mirrorNetworkMessageHandler.SendToServer(new MirrorPickerPickUpChestMessage(pickerNetId, netId));
+            }
         }
 
         public void PickUpSuccess()

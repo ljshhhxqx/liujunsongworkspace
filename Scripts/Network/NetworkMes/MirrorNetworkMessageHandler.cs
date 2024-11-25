@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HotUpdate.Scripts.Tool.Message;
 using Mirror;
 using Network.NetworkMes;
 using Tool.Message;
@@ -20,44 +21,21 @@ namespace HotUpdate.Scripts.Network.NetworkMes
             _messageCenter = messageCenter;
         }
 
-        // public void SendMessage1<T>(T msg) where T : struct, NetworkMessage
-        // {
-        //     if (isServer)
-        //     {
-        //         NetworkServer.SendToAll(msg);
-        //     }
-        //     else
-        //     {
-        //         NetworkClient.Send(msg);
-        //     }
-        // }
-
-        public void SendMessage<T>(T msg) where T : struct, NetworkMessage
+        public void SendToServer<T>(T msg) where T : struct, NetworkMessage
         {
-            if (isServer)
-            {
-                NetworkServer.SendToAll(msg);
-            }
-            else
+            if (isClient)
             {
                 NetworkClient.Send(msg);
             }
         }
 
-        // private void RegisterHandler<T>() where T : struct, NetworkMessage
-        // {
-        //     if (isServer)
-        //     {
-        //         RegisterServerHandler<T>();
-        //     }
-        //     else
-        //     {
-        //         RegisterClientHandler<T>();
-        //     }
-        // }
-        //
-        // [Command]
-        // private void CmdRe
+        public void SendToAllClients<T>(T msg) where T : struct, NetworkMessage
+        {
+            if (isServer)
+            {
+                NetworkServer.SendToAll(msg);
+            }
+        }
 
         public override void OnStartServer()
         {
@@ -89,14 +67,16 @@ namespace HotUpdate.Scripts.Network.NetworkMes
         {
             Action<NetworkConnectionToClient, T> handler = OnServerMessageReceived;
             _serverHandlers[typeof(T)] = handler;
-            NetworkServer.RegisterHandler(handler);
+            NetworkServer.RegisterHandler(handler, false);
+            Debug.Log($"Registered server handler for {typeof(T)}");
         }
 
         private void RegisterClientHandler<T>() where T : struct, NetworkMessage
         {
             Action<T> handler = OnClientMessageReceived;
             _clientHandlers[typeof(T)] = handler;
-            NetworkClient.RegisterHandler(handler);
+            NetworkClient.RegisterHandler(handler, false);
+            Debug.Log($"Registered client handler for {typeof(T)}");
         }
 
         private void OnServerMessageReceived<T>(NetworkConnectionToClient conn, T msg) where T : struct, NetworkMessage

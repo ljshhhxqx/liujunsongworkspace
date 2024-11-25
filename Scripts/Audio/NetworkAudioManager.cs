@@ -14,6 +14,7 @@ namespace HotUpdate.Scripts.Audio
     {
         private AudioSource _musicAudioSource;
         private AudioSource _effectAudioSource;
+        private IObjectResolver _objectResolver;
         private GameObject _audioSourcePrefab;
         
         private readonly Dictionary<AudioMusicType, AudioClip> _audioClips = new Dictionary<AudioMusicType, AudioClip>();
@@ -22,8 +23,9 @@ namespace HotUpdate.Scripts.Audio
         public AudioManagerType AudioManagerType => AudioManagerType.Game;
 
         [Inject]
-        private void Init()
+        private void Init(IObjectResolver objectResolver)
         {
+            _objectResolver = objectResolver;
             GetAudioClipAsync().Forget();
         }
 

@@ -9,9 +9,11 @@ using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Buff;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Game;
+using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.Server.Collect;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Tool.Message;
 using Mirror;
 using Tool.GameEvent;
 using Tool.Message;
@@ -38,7 +40,7 @@ namespace HotUpdate.Scripts.Collector
         private MapBoundDefiner _mapBoundDefiner;
         private ChestDataConfig _chestConfig;
         private MessageCenter _messageCenter;
-        private IObjectResolver _objectResolver;
+        private GameMapInjector _gameMapInjector;
         private PlayerInGameManager _playerInGameManager;
         private CollectObjectDataConfig _collectObjectDataConfig;
         private LayerMask _sceneLayer;
@@ -56,13 +58,13 @@ namespace HotUpdate.Scripts.Collector
         private GameLoopController _gameLoopController;
 
         [Inject]
-        private void Init(MapBoundDefiner mapBoundDefiner, IConfigProvider configProvider, BuffManager buffManager, IObjectResolver objectResolver, PlayerInGameManager playerInGameManager,GameEventManager gameEventManager, MessageCenter messageCenter)
+        private void Init(MapBoundDefiner mapBoundDefiner, IConfigProvider configProvider, BuffManager buffManager, GameMapInjector gameMapInjector, PlayerInGameManager playerInGameManager,GameEventManager gameEventManager, MessageCenter messageCenter)
         {
             _playerInGameManager = playerInGameManager;
             _buffManager = buffManager;
             _configProvider = configProvider;
             _mapBoundDefiner = mapBoundDefiner;
-            _objectResolver = objectResolver;
+            _gameMapInjector = gameMapInjector;
             _messageCenter = messageCenter;
             gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnGameSceneResourcesLoadedLoaded);
             _collectObjectDataConfig = _configProvider.GetConfig<CollectObjectDataConfig>();
@@ -498,9 +500,9 @@ namespace HotUpdate.Scripts.Collector
                         prefab.gameObject, 
                         info.position, 
                         Quaternion.identity, 
-                        _spawnedParent
+                        _spawnedParent,
+                        go => _gameMapInjector.InjectGameObject(go)
                     );
-                    _objectResolver.Inject(spawnedObject);
 
                     var networkIdentity = spawnedObject.GetComponent<NetworkIdentity>();
                     NetworkServer.Spawn(spawnedObject); // 确保网络同步
@@ -534,12 +536,12 @@ namespace HotUpdate.Scripts.Collector
                 _treasureChestPrefab.gameObject, 
                 position, 
                 Quaternion.identity, 
-                _spawnedParent
+                _spawnedParent,
+                go => _gameMapInjector.InjectGameObject(go)
             );
             var networkIdentity = spawnedChest.GetComponent<NetworkIdentity>();
             NetworkServer.Spawn(spawnedChest);
 
-            _objectResolver.Inject(spawnedChest);
             var treasureChest = spawnedChest.GetComponent<TreasureChestComponent>();
             treasureChest.ChestType = chestType;
 
@@ -565,14 +567,15 @@ namespace HotUpdate.Scripts.Collector
             {
                 Debug.Log($"Client spawning item at position: {info.position}"); // 添加日志
                 var prefab = GetPrefabByCollectType(info.collectType);
-                if (prefab == null)
+                if (!prefab)
                 {
                     Debug.LogError($"Failed to find prefab for CollectType: {info.collectType}");
                     continue;
                 }
 
-                var go = GameObjectPoolManger.Instance.GetObject(prefab.gameObject, info.position, Quaternion.identity, _spawnedParent);
-                if (go == null)
+                var go = GameObjectPoolManger.Instance.GetObject(prefab.gameObject, info.position, Quaternion.identity, _spawnedParent,
+                    go => _gameMapInjector.InjectGameObject(go));
+                if (!go)
                 {
                     Debug.LogError("Failed to get object from pool");
                     continue;
@@ -583,7 +586,6 @@ namespace HotUpdate.Scripts.Collector
         
                 // 确保位置正确设置
                 go.transform.position = info.position;
-                _objectResolver.Inject(go);
             }
         }
 

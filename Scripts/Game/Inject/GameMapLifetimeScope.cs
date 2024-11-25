@@ -15,10 +15,9 @@ namespace HotUpdate.Scripts.Game.Inject
 {
     public class GameMapLifetimeScope : LifetimeScope
     {
-        [SerializeField]
-        private Transform gameSingletonParent;
         protected override void Configure(IContainerBuilder builder)
         {
+            RegisterComponent<MirrorNetworkMessageHandler>(builder);
             RegisterComponent<MapBoundDefiner>(builder);
             RegisterComponent<NetworkManagerCustom>(builder);
             RegisterComponent<GameLoopController>(builder);
@@ -27,7 +26,7 @@ namespace HotUpdate.Scripts.Game.Inject
             RegisterComponent<ItemsSpawnerManager>(builder);
             RegisterComponent<WeatherManager>(builder);
             RegisterComponent<GameMapInit>(builder);
-            RegisterComponent<MirrorNetworkMessageHandler>(builder);
+            builder.Register<GameMapInjector>(Lifetime.Singleton).WithParameter(typeof(LifetimeScope), this);
             Debug.Log("GameMapLifetimeScope Configured!!!");
         }
 
@@ -47,7 +46,9 @@ namespace HotUpdate.Scripts.Game.Inject
             //         t.gameObject.AddComponent<NetworkIdentity>();
             //     }
             // }
-            builder.RegisterComponentInHierarchy<T>();
+            builder.RegisterComponentInHierarchy<T>()
+                .AsSelf()
+                .AsImplementedInterfaces();
         }
     }
 }

@@ -4,6 +4,7 @@ using Common;
 using Config;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Network.NetworkMes;
+using HotUpdate.Scripts.Tool.Message;
 using Network.NetworkMes;
 using Network.Server.Collect;
 using Sirenix.OdinInspector;
@@ -35,13 +36,13 @@ namespace HotUpdate.Scripts.Network.Server.Collect
         private IConfigProvider _configProvider;
         
         [Inject]
-        private void Init(MessageCenter messageCenter, IConfigProvider configProvider, MirrorNetworkMessageHandler mirrorNetworkMessageHandler)
+        private void Init(MessageCenter messageCenter, IConfigProvider configProvider)
         {
             _messageCenter = messageCenter;
             _configProvider = configProvider;
             _collectParticlePlayer = GetComponentInChildren<CollectParticlePlayer>();
             _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
-            _mirrorNetworkMessageHandler = mirrorNetworkMessageHandler;
+            _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
             _collider = GetComponent<Collider>();
             _collider.OnTriggerEnterAsObservable()
                 .Subscribe(OnTriggerEnterObserver)
@@ -59,7 +60,7 @@ namespace HotUpdate.Scripts.Network.Server.Collect
 
         private void OnTriggerEnterObserver(Collider other)
         {
-            if (!other.CompareTag("Player"))
+            if (!other.CompareTag("Player") || !isClient)
             {
                 return;
             }
@@ -72,7 +73,10 @@ namespace HotUpdate.Scripts.Network.Server.Collect
         
         protected override void SendCollectRequest(int pickerId, PickerType pickerType)
         {
-            _mirrorNetworkMessageHandler.SendMessage(new MirrorPickerPickUpCollectMessage(pickerId, CollectId));
+            if (isClient)
+            {
+                _mirrorNetworkMessageHandler.SendToServer(new MirrorPickerPickUpCollectMessage(pickerId, CollectId));
+            }
         }
 
         public void CollectSuccess()

@@ -9,6 +9,7 @@ using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Tool.Message;
 using HotUpdate.Scripts.Weather;
 using Mirror;
 using Network.NetworkMes;
@@ -136,16 +137,19 @@ namespace HotUpdate.Scripts.Game
         
         private void OnCountdownMessage(CountdownMessage message)
         {
+            Debug.Log($"`{message.RemainingTime}` seconds remaining");
             GameLoopDataModel.GameRemainingTime.Value = message.RemainingTime;
         }
         
         private void OnGameWarmupMessage(GameWarmupMessage message)
         {
+            Debug.Log($"Warmup Timer: {message.TimeLeft} seconds remaining");
             GameLoopDataModel.WarmupRemainingTime.Value = message.TimeLeft;
         }
         
         private void OnGameStartMessage(GameStartMessage message)
         {
+            Debug.Log($"Game Start! Scene: {message.GameInfo.SceneName} | Mode: {_gameInfo.GameMode} | Time: {_gameInfo.GameTime} | Score: {_gameInfo.GameScore}");
             GameLoopDataModel.GameSceneName.Value = message.GameInfo.SceneName;
             GameLoopDataModel.GameLoopData.Value = new GameLoopData
             {
@@ -178,7 +182,7 @@ namespace HotUpdate.Scripts.Game
 
             // 2. ??????????
             Debug.Log("Main game timer starts now!");
-            _messageHandler.SendMessage(new MirrorGameStartMessage(_gameInfo));
+            _messageHandler.SendToAllClients(new MirrorGameStartMessage(_gameInfo));
             await StartMainGameTimerAsync(cts.Token);
 
             Debug.Log("Main game over. Exiting...");
@@ -195,7 +199,7 @@ namespace HotUpdate.Scripts.Game
                 await UniTask.Delay(1000, cancellationToken: token);
                 remainingTime--;
                
-                _messageHandler.SendMessage(new MirrorGameWarmupMessage(remainingTime)); 
+                _messageHandler.SendToAllClients(new MirrorGameWarmupMessage(remainingTime)); 
             }
         }
         
@@ -257,15 +261,15 @@ namespace HotUpdate.Scripts.Game
                     remainingTime+=0.1f;
                 }
 
-                _messageHandler.SendMessage(new MirrorCountdownMessage(remainingTime));
+                _messageHandler.SendToAllClients(new MirrorCountdownMessage(remainingTime));
             }
-            _cts.Cancel(); 
+            _cts?.Cancel(); 
         
         }
 
         private void OnDestroy()
         {
-            _cts.Cancel();
+            _cts?.Cancel();
         }
         
         private class SubCycle

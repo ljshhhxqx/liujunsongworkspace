@@ -5,6 +5,7 @@ using AOTScripts.Tool.ECS;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Tool.Message;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using HotUpdate.Scripts.Weather.WeatherEffects;
 using HotUpdate.Scripts.Weather.WeatherSettings;

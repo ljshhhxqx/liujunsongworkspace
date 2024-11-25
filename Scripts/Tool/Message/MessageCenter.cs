@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
-namespace Tool.Message
+namespace HotUpdate.Scripts.Tool.Message
 {
     public interface INetworkMessageCenter
     {
-        void Register<T>(Action<T> callback) where T : Message;
-        void Unregister<T>(Action<T> callback) where T : Message;
-        void Post<T>(T message) where T : Message;
+        void Register<T>(Action<T> callback) where T : global::Tool.Message.Message;
+        void Unregister<T>(Action<T> callback) where T : global::Tool.Message.Message;
+        void Post<T>(T message) where T : global::Tool.Message.Message;
     }
     
     public class MessageCenter : INetworkMessageCenter
@@ -16,7 +17,7 @@ namespace Tool.Message
         private readonly Dictionary<Type, Queue<Delegate>> listeners = new Dictionary<Type, Queue<Delegate>>();
 
         // 注册事件
-        public void Register<T>(Action<T> callback) where T : Message
+        public void Register<T>(Action<T> callback) where T : global::Tool.Message.Message
         {
             var t = typeof(T);
             if (!listeners.ContainsKey(t))
@@ -27,7 +28,7 @@ namespace Tool.Message
         }
 
         // 注销事件
-        public void Unregister<T>(Action<T> callback) where T : Message
+        public void Unregister<T>(Action<T> callback) where T : global::Tool.Message.Message
         {
             var t = typeof(T);
             if (listeners.ContainsKey(t))
@@ -45,20 +46,30 @@ namespace Tool.Message
         }
 
         // 发送消息
-        public void Post<T>(T message) where T : Message
+        public void Post<T>(T message) where T : global::Tool.Message.Message
         {
             if (listeners.TryGetValue(message.GetType(), out var queue))
             {
-                int count = queue.Count;
-                for (int i = 0; i < count; i++)
+                var count = queue.Count;
+                for (var i = 0; i < count; i++)
                 {
                     var typedDelegate = queue.Dequeue(); // 取出队列的第一个元素
-                    if (typedDelegate is Action<T> action)
+                    var name = typedDelegate.Method.Name;
+                    try
                     {
-                        action.Invoke(message);
-                        queue.Enqueue(typedDelegate); // 处理完毕后，再将其放回队列末尾
+                        typedDelegate.DynamicInvoke(message); // 调用委托
+                        Debug.Log($"Message posted and handler invoked for type: {name}");
+                        queue.Enqueue(typedDelegate);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError($"Error invoking handler for message type {name}: {ex}");
                     }
                 }
+            }
+            else
+            {
+                Debug.LogError($"No handler registered for message type {message.GetType().Name}");
             }
         }
     }

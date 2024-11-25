@@ -1,4 +1,5 @@
 ﻿using Common;
+using HotUpdate.Scripts.Tool.Message;
 using Mirror;
 using Model;
 using Network.Server;

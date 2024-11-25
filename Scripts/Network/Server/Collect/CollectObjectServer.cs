@@ -1,4 +1,5 @@
-﻿using Mirror;
+﻿using HotUpdate.Scripts.Tool.Message;
+using Mirror;
 using Tool.Message;
 using VContainer;
 

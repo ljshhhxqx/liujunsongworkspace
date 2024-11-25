@@ -5,6 +5,7 @@ using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Game;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Tool.Message;
 using HotUpdate.Scripts.Weather;
 using Model;
 using Network.Server.Edgegap;
@@ -51,6 +52,7 @@ namespace Game.Inject
             builder.RegisterComponentInHierarchy<GameOnlineDefine>();
             builder.RegisterComponentInHierarchy<PlayerInGameManager>();
             builder.RegisterComponentInHierarchy<ObjectInjectProvider>();
+            //builder.RegisterInstance(this);
             Debug.Log("GameLifetimeScope Configure");
         }
     }
