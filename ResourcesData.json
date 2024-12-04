@@ -195,13 +195,21 @@
         {
             "UID": 900012,
             "ResourceType": "UnityEngine.GameObject",
+            "Name": "TargetShowOverlay",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/TargetShowOverlay.prefab"
+        },
+        {
+            "UID": 900013,
+            "ResourceType": "UnityEngine.GameObject",
             "Name": "TipPopup",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/TipPopup.prefab"
         },
         {
-            "UID": 900013,
+            "UID": 900014,
             "ResourceType": "UnityEngine.GameObject",
             "Name": "WeatherShowOverlay",
             "IsPermanent": false,
@@ -427,10 +435,10 @@
         {
             "UID": 1300006,
             "ResourceType": "UnityEngine.GameObject",
-            "Name": "Player",
+            "Name": "MPlayer",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/Player/Player.prefab"
+            "Address": "/Map/Town/Player/MPlayer.prefab"
         },
         {
             "UID": 1300007,

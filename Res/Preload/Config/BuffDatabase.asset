@@ -50,7 +50,7 @@ MonoBehaviour:
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 1
       increaseValueRange:
         min: 5
         max: 10
@@ -72,8 +72,8 @@ MonoBehaviour:
     increaseDataList:
     - increaseType: 1
       increaseValueRange:
-        min: 0.1
-        max: 0.25
+        min: 0.05
+        max: 0.1
   - buffId: 4
     propertyType: 4
     duration:
@@ -82,8 +82,8 @@ MonoBehaviour:
     increaseDataList:
     - increaseType: 1
       increaseValueRange:
-        min: 5
-        max: 10
+        min: 0.05
+        max: 0.1
   - buffId: 5
     propertyType: 5
     duration:

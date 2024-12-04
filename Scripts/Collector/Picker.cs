@@ -49,7 +49,6 @@ namespace HotUpdate.Scripts.Collector
                 case PickerType.Player:
                     if (Input.GetKeyDown(KeyCode.F))
                     {
-                        Debug.Log($"collect chest");
                         PerformPickup();
                     }
                     break;
@@ -72,7 +71,7 @@ namespace HotUpdate.Scripts.Collector
 
         private async UniTaskVoid Collect(IPickable collect)
         {
-            if(isServer) return;
+            if(!isClient) return;
             collect.RequestPick(netId);
             await UniTask.DelayFrame(1);
         }

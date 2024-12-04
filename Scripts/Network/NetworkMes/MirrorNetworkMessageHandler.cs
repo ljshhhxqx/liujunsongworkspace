@@ -68,7 +68,7 @@ namespace HotUpdate.Scripts.Network.NetworkMes
             Action<NetworkConnectionToClient, T> handler = OnServerMessageReceived;
             _serverHandlers[typeof(T)] = handler;
             NetworkServer.RegisterHandler(handler, false);
-            Debug.Log($"Registered server handler for {typeof(T)}");
+//            Debug.Log($"Registered server handler for {typeof(T)}");
         }
 
         private void RegisterClientHandler<T>() where T : struct, NetworkMessage
@@ -76,7 +76,7 @@ namespace HotUpdate.Scripts.Network.NetworkMes
             Action<T> handler = OnClientMessageReceived;
             _clientHandlers[typeof(T)] = handler;
             NetworkClient.RegisterHandler(handler, false);
-            Debug.Log($"Registered client handler for {typeof(T)}");
+            //Debug.Log($"Registered client handler for {typeof(T)}");
         }
 
         private void OnServerMessageReceived<T>(NetworkConnectionToClient conn, T msg) where T : struct, NetworkMessage
@@ -103,7 +103,6 @@ namespace HotUpdate.Scripts.Network.NetworkMes
         private Message ConvertToLocalMessage<T>(T networkMessage) where T : struct, NetworkMessage
         {
             // 这里实现网络消息到本地消息的转换逻辑
-            // 您需要为每种NetworkMessage类型实现相应的转换
             if (networkMessage is MirrorGameStartMessage gameStartMessage)
             {
                 return new GameStartMessage(gameStartMessage.GameInfo);

@@ -56,6 +56,18 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         {
             return GetPlayer(connectionId)?.PlayerProperty;
         }
+        
+        public PlayerPropertyComponent GetPlayerPropertyComponent(uint networkId)
+        {
+            foreach (var player in _playerInGameData)
+            {
+                if (player.Value.PlayerProperty.netId == networkId)
+                {
+                    return player.Value.PlayerProperty;
+                }
+            }
+            return null;
+        }
 
         public PlayerPropertyComponent GetSelfPlayerPropertyComponent()
         {

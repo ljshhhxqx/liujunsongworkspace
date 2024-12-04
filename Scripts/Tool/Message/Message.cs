@@ -71,10 +71,10 @@ namespace Tool.Message
 
     public class PickerPickUpMessage : Message
     {
-        public int PickerId { get; set; }
+        public uint PickerId { get; set; }
         public int ItemId { get; set; }
         
-        public PickerPickUpMessage(int pickerId, int itemId)
+        public PickerPickUpMessage(uint pickerId, int itemId)
         {
             PickerId = pickerId;
             ItemId = itemId;

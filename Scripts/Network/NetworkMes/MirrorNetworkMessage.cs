@@ -78,10 +78,10 @@ namespace Network.NetworkMes
     [Serializable]
     public struct MirrorPickerPickUpCollectMessage : NetworkMessage
     {
-        public int PickerID;
+        public uint PickerID;
         public int ItemID;
 
-        public MirrorPickerPickUpCollectMessage(int pickerID, int itemID)
+        public MirrorPickerPickUpCollectMessage(uint pickerID, int itemID)
         {
             PickerID = pickerID;
             ItemID = itemID;
@@ -100,5 +100,4 @@ namespace Network.NetworkMes
             ChestID = chestID;
         }
     }
-
 }

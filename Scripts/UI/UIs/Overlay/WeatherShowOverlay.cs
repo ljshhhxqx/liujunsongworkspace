@@ -40,20 +40,27 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             {
                 _gameLoopData = x;
                 warmupText.transform.parent.gameObject.SetActive(false);
-                targetScore.gameObject.SetActive(_gameLoopData.GameMode == GameMode.Score);
+                targetScore.SetActive(_gameLoopData.GameMode == GameMode.Score);
                 countDownGameObject.SetActive(_gameLoopData.GameMode == GameMode.Time);
                 scoreText.text = _gameLoopData.TargetScore.ToString();
             }).AddTo(this);
-            GameLoopDataModel.GameRemainingTime.Subscribe(x => SetCountDown(x.ToHMSStr())).AddTo(this);
+            GameLoopDataModel.GameRemainingTime.Subscribe(x => SetCountDown(x.ToHMSStr(true, true, false))).AddTo(this);
             WeatherDataModel.time.Subscribe(x => SetShowTime(x.ToHMSStr(false))).AddTo(this);
             WeatherDataModel.weatherInfo.Subscribe(x => SetWeather(x.ToDescription())).AddTo(this);
+            ResetGame();
+        }
+
+        private void ResetGame()
+        {
+            targetScore.SetActive(false);
+            countDownGameObject.SetActive(false);
         }
 
         private void SetWarmupRemainingTime(string warmup)
         {
+            warmupText.transform.parent.gameObject.SetActive(true);
             warmupText.text = warmup;
         }
-
 
         private void SetCountDown(string countDown)
         {

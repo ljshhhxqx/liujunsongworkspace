@@ -1,14 +1,12 @@
 ﻿using System;
 using System.IO;
-using Common;
+using System.Linq;
 using Config;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Network.NetworkMes;
-using HotUpdate.Scripts.Tool.Message;
 using Network.NetworkMes;
 using Network.Server.Collect;
 using Sirenix.OdinInspector;
-using Tool.Message;
 using UniRx;
 using UniRx.Triggers;
 using UnityEditor;
@@ -21,41 +19,52 @@ namespace HotUpdate.Scripts.Network.Server.Collect
     {
         [SerializeField] 
         private CollectType collectType;
-
+        private PooledObject _pooledObject;
         private CollectParticlePlayer _collectParticlePlayer;
         private CollectAnimationComponent _collectAnimationComponent;
+        private Collider _positionCollider;
         
         public override Collider Collider => _collider;
         public CollectType CollectType => collectType;
         public CollectObjectData CollectObjectData { get; private set; }
 
-        private MessageCenter _messageCenter;
         private MirrorNetworkMessageHandler _mirrorNetworkMessageHandler;
         private Collider _collider;
         private CollectObjectDataConfig _collectObjectDataConfig;
-        private IConfigProvider _configProvider;
+        private IDisposable _disposable;
         
         [Inject]
-        private void Init(MessageCenter messageCenter, IConfigProvider configProvider)
+        private void Init()
         {
-            _messageCenter = messageCenter;
-            _configProvider = configProvider;
+            _pooledObject = GetComponent<PooledObject>();
+            if (_pooledObject)
+            {
+                _pooledObject.OnSelfDespawn += OnReturnToPool;
+            }
             _collectParticlePlayer = GetComponentInChildren<CollectParticlePlayer>();
             _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
             _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
-            _collider = GetComponent<Collider>();
-            _collider.OnTriggerEnterAsObservable()
-                .Subscribe(OnTriggerEnterObserver)
-                .AddTo(this);
+            _collectAnimationComponent?.Play();
+            var collectCollider = GetComponentInChildren<CollectCollider>();
+            if (collectCollider == null)
+            {
+                Debug.LogError("Collider not found");
+                return;
+            }
+            _collider = collectCollider.GetComponent<Collider>();
+            _collider.enabled=true;
+            _disposable = _collider.OnTriggerEnterAsObservable()
+                .Subscribe(OnTriggerEnterObserver);
         }
 
-        public CollectObjectData GetCollectObjectData()
+        private void OnReturnToPool()
         {
-            if (collectType != CollectObjectData?.CollectType)
-            {
-                CollectObjectData = _collectObjectDataConfig.GetCollectObjectData(collectType);
-            }
-            return CollectObjectData;
+            _disposable?.Dispose();
+            _collectParticlePlayer = null;
+            _collectAnimationComponent = null;
+            _mirrorNetworkMessageHandler = null;
+            _collider = null;
+            _pooledObject.OnSelfDespawn -= OnReturnToPool;
         }
 
         private void OnTriggerEnterObserver(Collider other)
@@ -67,11 +76,11 @@ namespace HotUpdate.Scripts.Network.Server.Collect
             
             if (other.TryGetComponent<Picker>(out var pickerComponent))
             {
-                SendCollectRequest(pickerComponent.ConnectionID, pickerComponent.PickerType);
+                SendCollectRequest(pickerComponent.netId, pickerComponent.PickerType);
             }
         }
         
-        protected override void SendCollectRequest(int pickerId, PickerType pickerType)
+        protected override void SendCollectRequest(uint pickerId, PickerType pickerType)
         {
             if (isClient)
             {

@@ -58,7 +58,7 @@ namespace HotUpdate.Scripts.Tool.Message
                     try
                     {
                         typedDelegate.DynamicInvoke(message); // 调用委托
-                        Debug.Log($"Message posted and handler invoked for type: {name}");
+                        //Debug.Log($"Message posted and handler invoked for type: {name}");
                         queue.Enqueue(typedDelegate);
                     }
                     catch (Exception ex)

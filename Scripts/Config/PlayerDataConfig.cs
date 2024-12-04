@@ -39,11 +39,8 @@ namespace HotUpdate.Scripts.Config
     
         #region Player
 
-        public float MoveSpeed;
-        public float RunSpeed;
         public float SprintSpeedFactor = 1.5f;
         public float RotateSpeed;
-        public float OnStairsSpeed = 3f;
         public float OnStairsSpeedRatioFactor = 0.7f;
         public float JumpSpeed;
         public float StairsJumpSpeed;
@@ -54,6 +51,9 @@ namespace HotUpdate.Scripts.Config
         public List<PropertyType> MinProperties;
         public List<AnimationCost> AnimationStrengthCosts;
         public float StrengthRecoveryPerSecond;
+
+        public float RollDistance;
+        public float RollForce;
     
         // public float SlopeLimit = 30f;
         // public float MaxPredictPositionTime = 5f;
@@ -69,12 +69,12 @@ namespace HotUpdate.Scripts.Config
         public float Cost;
     }
 
-    public enum PlayerState
+    public enum PlayerEnvironmentState
     {
         InAir,
         OnGround,
         OnStairs,
-        Dead,
+        Swimming,
     }
 
     public enum AnimationState
@@ -84,8 +84,12 @@ namespace HotUpdate.Scripts.Config
         Sprint,
         Jump,
         SprintJump,
-        Dash,
+        Roll,
+        Falling,
+        Landed,
         Attack,
         Dead,
+        Hit,
+        Death
     }
 }

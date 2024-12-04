@@ -13,22 +13,19 @@ MonoBehaviour:
   m_Name: PlayerData
   m_EditorClassIdentifier: 
   playerConfigData:
-    TurnSpeed: 1
+    TurnSpeed: 1.2
     MouseSpeed: 1
     Offset: {x: 0, y: 1, z: -3}
-    MoveSpeed: 5
-    RunSpeed: 10
-    SprintSpeedFactor: 1.75
-    RotateSpeed: 4
-    OnStairsSpeed: 3
-    OnStairsSpeedRatioFactor: 0.75
+    SprintSpeedFactor: 2
+    RotateSpeed: 7
+    OnStairsSpeedRatioFactor: 0.5
     JumpSpeed: 25
     StairsJumpSpeed: 35
-    GroundCheckRadius: 0.22
-    StairsCheckDistance: 0.5
+    GroundCheckRadius: 0.3
+    StairsCheckDistance: 0.45
     MaxProperties:
     - type: 0
-      value: 30
+      value: 15
     - type: 1
       value: 30
     - type: 3
@@ -36,12 +33,12 @@ MonoBehaviour:
     - type: 4
       value: 300
     - type: 5
-      value: 100000000
+      value: 1000
     - type: 2
       value: 300
     BaseProperties:
     - type: 0
-      value: 5
+      value: 4
     - type: 1
       value: 10
     - type: 2
@@ -83,3 +80,5 @@ MonoBehaviour:
     - State: 2
       Cost: 25
     StrengthRecoveryPerSecond: 5
+    RollDistance: 2
+    RollForce: 30

@@ -1,6 +1,7 @@
 using System;
 using AOTScripts.Tool.ECS;
 using Common;
+using Mirror;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Collector
@@ -10,15 +11,14 @@ namespace HotUpdate.Scripts.Collector
     /// </summary>
     public interface ICollect
     {
-        int CollectId { get; }
         Collider Collider { get; }
     }
 
     public abstract class CollectObject : NetworkMonoController, ICollect
     {
-        public int CollectId { get; set; }
+        [SyncVar] public int CollectId;
         public abstract Collider Collider { get; }
-        protected abstract void SendCollectRequest(int pickerId, PickerType pickerType);
+        protected abstract void SendCollectRequest(uint pickerId, PickerType pickerType);
 
         // protected virtual void Awake()
         // {

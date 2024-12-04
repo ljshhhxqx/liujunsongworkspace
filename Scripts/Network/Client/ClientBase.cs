@@ -37,7 +37,6 @@ namespace Network.Client
 
         public override void OnStartClient()
         {
-            ObjectInjectProvider.Instance.Inject(this);
         }
 
         protected abstract void InitCallback();

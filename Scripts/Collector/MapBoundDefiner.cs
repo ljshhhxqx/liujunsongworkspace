@@ -63,7 +63,7 @@ namespace HotUpdate.Scripts.Collector
             var xMaxInMap = position.x <= MapMaxBoundary.x;
             var zMinInMap = position.z >= MapMinBoundary.z;
             var zMaxInMap = position.z <= MapMaxBoundary.z;
-            Debug.Log($"IsWithinMapBounds: xMinInMap-xMaxInMap-zMinInMap-zMaxInMap: {xMinInMap} {xMaxInMap} {zMinInMap} {zMaxInMap}");
+            //Debug.Log($"IsWithinMapBounds: xMinInMap-xMaxInMap-zMinInMap-zMaxInMap: {xMinInMap} {xMaxInMap} {zMinInMap} {zMaxInMap}");
             return xMinInMap && xMaxInMap &&
                    zMinInMap && zMaxInMap;
         }
@@ -99,7 +99,7 @@ namespace HotUpdate.Scripts.Collector
             var count = 0;
             while (count < 10)
             {
-                Debug.Log($"GetRandomPoint count: {count}");
+                //Debug.Log($"GetRandomPoint count: {count}");
                 if (_gridMap.Count == 0)
                 {
                     Debug.LogError("No grid position available.");
@@ -110,22 +110,22 @@ namespace HotUpdate.Scripts.Collector
                 var randomX = Random.Range(gridPos.x * _gridSize- _gridSize/2, gridPos.x * _gridSize + _gridSize/2);
                 var randomZ = Random.Range(gridPos.y * _gridSize- _gridSize/2, gridPos.y * _gridSize + _gridSize/2);
                 var position = new Vector3(randomX, 20, randomZ);
-                Debug.Log($"GetRandomPoint position: {position}");
+                //Debug.Log($"GetRandomPoint position: {position}");
                 if (Physics.Raycast(position, Vector3.down, out var hit, Mathf.Infinity, _sceneLayer))
                 {
                     var startPoint = new Vector3(randomX, hit.point.y, randomZ);
-                    Debug.Log($"GetRandomPoint startPoint: {startPoint}");
+                    //Debug.Log($"GetRandomPoint startPoint: {startPoint}");
                     if (isObstacle != null)
                     {
                         if (isObstacle(startPoint) && IsWithinMapBounds(startPoint))
                         {
-                            Debug.Log($"GetRandomPoint isObstacle: {isObstacle(startPoint)}");
+                            //Debug.Log($"GetRandomPoint isObstacle: {isObstacle(startPoint)}");
                             return startPoint;
                         }
                     }
                     if (IsWithinMapBounds(startPoint))
                     {
-                        Debug.Log($"GetRandomPoint IsWithinMapBounds: {IsWithinMapBounds(startPoint)}");
+                        //Debug.Log($"GetRandomPoint IsWithinMapBounds: {IsWithinMapBounds(startPoint)}");
                         return startPoint;
                     }
                 }

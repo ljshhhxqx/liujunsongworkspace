@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
@@ -25,6 +26,8 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private FieldItem playerStateProperty;
         [SerializeField]
         private FieldItem hasMovementInput;
+        [SerializeField]
+        private FieldItem frameCount;
         
         [Inject]
         private void Init(PlayerInGameManager playerInGameManager)
@@ -73,5 +76,17 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         public override UIType Type => UIType.PlayerPropertiesOverlay;
         public override UICanvasType CanvasType => UICanvasType.Overlay;
+
+        private float _seconds;
+        
+        private void Update()
+        {
+            _seconds+=Time.deltaTime;
+            if (_seconds>=0.5f)
+            {
+                _seconds = 0;
+                frameCount.SetField("帧数：", 1/Time.deltaTime);
+            }
+        }
     }
 }

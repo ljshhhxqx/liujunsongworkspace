@@ -77,7 +77,6 @@ namespace HotUpdate.Scripts.Game
                     if (value)
                     {
                         Debug.Log("End Round!");
-                        _itemsSpawnerManager.EndRound();
                     }
                 }
                 else
@@ -93,18 +92,6 @@ namespace HotUpdate.Scripts.Game
             {
             }
         }
-
-        // [Command]
-        // private void CmdSetIsEndRound(bool value)
-        // {
-        //     _isEndRound = value;
-        // }
-        //
-        // [Command]
-        // private void CmdSetIsEndGame(bool value)
-        // {
-        //     _isEndGame = value;
-        // }
 
         private void OnCurrentRoundChanged(int oldValue, int newValue)
         {
@@ -137,19 +124,19 @@ namespace HotUpdate.Scripts.Game
         
         private void OnCountdownMessage(CountdownMessage message)
         {
-            Debug.Log($"`{message.RemainingTime}` seconds remaining");
+            //Debug.Log($"`{message.RemainingTime}` seconds remaining");
             GameLoopDataModel.GameRemainingTime.Value = message.RemainingTime;
         }
         
         private void OnGameWarmupMessage(GameWarmupMessage message)
         {
-            Debug.Log($"Warmup Timer: {message.TimeLeft} seconds remaining");
+            //Debug.Log($"Warmup Timer: {message.TimeLeft} seconds remaining");
             GameLoopDataModel.WarmupRemainingTime.Value = message.TimeLeft;
         }
         
         private void OnGameStartMessage(GameStartMessage message)
         {
-            Debug.Log($"Game Start! Scene: {message.GameInfo.SceneName} | Mode: {_gameInfo.GameMode} | Time: {_gameInfo.GameTime} | Score: {_gameInfo.GameScore}");
+            //Debug.Log($"Game Start! Scene: {message.GameInfo.SceneName} | Mode: {_gameInfo.GameMode} | Time: {_gameInfo.GameTime} | Score: {_gameInfo.GameScore}");
             GameLoopDataModel.GameSceneName.Value = message.GameInfo.SceneName;
             GameLoopDataModel.GameLoopData.Value = new GameLoopData
             {
@@ -180,7 +167,6 @@ namespace HotUpdate.Scripts.Game
             await StartWarmupAsync(cts.Token);
             Debug.Log("Warmup Complete. Game Start!");
 
-            // 2. ??????????
             Debug.Log("Main game timer starts now!");
             _messageHandler.SendToAllClients(new MirrorGameStartMessage(_gameInfo));
             await StartMainGameTimerAsync(cts.Token);
@@ -203,14 +189,9 @@ namespace HotUpdate.Scripts.Game
             }
         }
         
-        private bool IsEndGameWithCountDown(GameMode gameMode, float remainingTime = 0, int targetScore = 0)
+        private bool IsEndGameWithCountDown(float remainingTime = 0)
         {
-            return gameMode switch
-            {
-                GameMode.Time => remainingTime <= 0,
-                GameMode.Score => false,//_playerInGameManager.IsPlayerGetTargetScore(targetScore),
-                _ => throw new Exception("Invalid game mode")
-            };
+            return remainingTime <= 0;
         }
         
         private bool IsEndRoundFunc()
@@ -230,41 +211,82 @@ namespace HotUpdate.Scripts.Game
             Debug.Log("Random event handled.");
         }
 
+        private async UniTask RoundEndAsync()
+        {
+            Debug.Log($"Round End -- {_currentRound.ToString()}!");
+            await _itemsSpawnerManager.EndRound();
+            Debug.Log("Round ended.");
+        }
+
         private async UniTask StartMainGameTimerAsync(CancellationToken token)
         {
             var remainingTime = _mainGameTime;
+            var endGameFlag = false;
+            var interval = Time.fixedDeltaTime;
 
-            while (!IsEndGameWithCountDown(_gameInfo.GameMode, remainingTime, _gameInfo.GameScore) && !token.IsCancellationRequested)
+            // 定义一个Action，用于更新剩余时间
+            Action updateRemainingTime = () =>
             {
-                Debug.Log($"Main Game Timer: {remainingTime} seconds remaining");
+                try
+                {
+                    if (_gameInfo.GameMode == GameMode.Time)
+                    {
+                        remainingTime -= interval;
+                    }
+                    else if (_gameInfo.GameMode == GameMode.Score)
+                    {
+                        remainingTime += interval;
+                    }
+
+                    _messageHandler.SendToAllClients(new MirrorCountdownMessage(remainingTime));
+
+                    // 检查是否满足结束游戏的条件
+                    if (IsEndGameWithCountDown(remainingTime))
+                    {
+                        IsEndGame = true;
+                        endGameFlag = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Error updating remaining time: {ex.Message}");
+                    IsEndGame = true;
+                    endGameFlag = true;
+                }
+            };
+
+            while (!endGameFlag && !token.IsCancellationRequested)
+            {
+                Debug.Log($"Main Game Timer: {remainingTime:F1} seconds remaining");
 
                 // 开始新的回合
                 IsEndRound = false;
                 Debug.Log($"Starting Round {_currentRound}");
-        
-                // 执行回合循环
-                var subCycle = new SubCycle(30, IsEndRoundFunc, RoundStartAsync);
+
+                // 执行回合循环，并传递更新倒计时的Action
+                var subCycle = new SubCycle(30, interval, IsEndRoundFunc, RoundStartAsync, updateRemainingTime, RoundEndAsync);
                 await subCycle.StartAsync(token);
-        
+
                 // 回合结束，增加回合数
                 _currentRound++;
+                IsEndRound = true;
+                await _itemsSpawnerManager.EndRound();
                 Debug.Log($"Round {_currentRound - 1} completed");
 
-                // 更新游戏时间
-                await UniTask.Delay(100, cancellationToken: token);
-                if (_gameInfo.GameMode == GameMode.Time)
+                // 检查是否在分数模式下有玩家达到目标分数
+                if (_gameInfo.GameMode == GameMode.Score)
                 {
-                    remainingTime-=0.1f;
+                    if (_playerInGameManager.IsPlayerGetTargetScore(_gameInfo.GameScore))
+                    {
+                        IsEndGame = true;
+                        endGameFlag = true;
+                        break;
+                    }
                 }
-                else if (_gameInfo.GameMode == GameMode.Score)
-                {
-                    remainingTime+=0.1f;
-                }
-
-                _messageHandler.SendToAllClients(new MirrorCountdownMessage(remainingTime));
             }
-            _cts?.Cancel(); 
-        
+
+            _cts?.Cancel();
+            Debug.Log("Main game timer ended.");
         }
 
         private void OnDestroy()
@@ -277,14 +299,21 @@ namespace HotUpdate.Scripts.Game
             private readonly int _subCycleTime;
             private bool _isEventHandled;
             private readonly Func<bool> _endCondition;
-            private readonly Func<UniTask> _randomEventHandler;
+            private readonly Func<UniTask> _roundStartHandler;
+            private readonly Func<UniTask> _roundEndAction;
+            private readonly Action _updateCountdownAction; // 新增的Action
+            private readonly float _interval;
 
-            public SubCycle(int maxTime, Func<bool> endCondition, Func<UniTask> randomEventHandler = null)
+            public SubCycle(int maxTime, float interval, Func<bool> endCondition, Func<UniTask> roundStartHandler = null, 
+                Action updateCountdownAction = null, Func<UniTask> roundEndAction = null)
             {
                 _subCycleTime = maxTime;
+                _interval = interval;
                 _endCondition = endCondition;
-                _randomEventHandler = randomEventHandler;
+                _roundStartHandler = roundStartHandler;
                 _isEventHandled = false;
+                _roundEndAction = roundEndAction;
+                _updateCountdownAction = updateCountdownAction;
             }
 
             public async UniTask<bool> StartAsync(CancellationToken token)
@@ -292,22 +321,31 @@ namespace HotUpdate.Scripts.Game
                 Debug.Log($"Starting SubCycle with {_subCycleTime} seconds");
 
                 float elapsedTime = 0;
+                var milliseconds = (int)(_interval * 1000);
 
                 while (elapsedTime < _subCycleTime && !_endCondition() && !token.IsCancellationRequested)
                 {
-                    if (_randomEventHandler != null && !_isEventHandled)
+                    if (_roundStartHandler != null && !_isEventHandled)
                     {
                         Debug.Log("Random event triggered.");
-                        await _randomEventHandler();
+                        await _roundStartHandler();
                         _isEventHandled = true;
                     }
 
-                    await UniTask.Delay(100, cancellationToken: token);
-                    elapsedTime+=0.1f;
+                    // 执行传入的倒计时Action
+                    _updateCountdownAction?.Invoke();
 
-                    //Debug.Log($"SubCycle Timer: {_subCycleTime - elapsedTime} seconds remaining");
+                    await UniTask.Delay(milliseconds, cancellationToken: token);
+                    elapsedTime += _interval;
+
+                    // 可选的日志输出
+                    // Debug.Log($"SubCycle Timer: {_subCycleTime - elapsedTime} seconds remaining");
                 }
-
+                // 回合结束，执行传入的回合结束Action
+                if (_roundEndAction != null)
+                {
+                    await _roundEndAction();
+                }
                 Debug.Log("SubCycle Timer ended or end condition met. SubCycle Ended.");
                 return true;
             }

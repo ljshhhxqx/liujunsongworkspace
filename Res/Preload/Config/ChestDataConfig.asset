@@ -13,43 +13,31 @@ MonoBehaviour:
   m_Name: ChestDataConfig
   m_EditorClassIdentifier: 
   chestConfigData:
-  - ChestCommonData:
-      OpenSpeed: 1.5
-      InitEulerAngles: {x: 0, y: -90, z: 0}
-    ChestPropertyData:
+  - ChestPropertyData:
       ChestType: 1
       BuffExtraData:
         buffId: 1
         buffType: 1
-  - ChestCommonData:
-      OpenSpeed: 1.5
-      InitEulerAngles: {x: 0, y: -90, z: 0}
-    ChestPropertyData:
+  - ChestPropertyData:
       ChestType: 2
       BuffExtraData:
         buffId: 2
         buffType: 1
-  - ChestCommonData:
-      OpenSpeed: 1.5
-      InitEulerAngles: {x: 0, y: -90, z: 0}
-    ChestPropertyData:
+  - ChestPropertyData:
       ChestType: 3
       BuffExtraData:
         buffId: 0
         buffType: 0
-  - ChestCommonData:
-      OpenSpeed: 1.5
-      InitEulerAngles: {x: 0, y: -90, z: 0}
-    ChestPropertyData:
+  - ChestPropertyData:
       ChestType: 4
       BuffExtraData:
         buffId: 4
         buffType: 1
-  - ChestCommonData:
-      OpenSpeed: 1.5
-      InitEulerAngles: {x: 0, y: -90, z: 0}
-    ChestPropertyData:
+  - ChestPropertyData:
       ChestType: 5
       BuffExtraData:
         buffId: 3
         buffType: 1
+  chestCommonData:
+    OpenSpeed: 3
+    InitEulerAngles: {x: 90, y: 0, z: 0}

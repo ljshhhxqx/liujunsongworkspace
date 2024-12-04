@@ -11,16 +11,12 @@ namespace HotUpdate.Scripts.Config
     { 
         [SerializeField]
         private List<ChestConfigData> chestConfigData;
-        public List<ChestConfigData> ChestConfigData => chestConfigData;
+        [SerializeField]
+        private ChestCommonData chestCommonData;
         
         public ChestCommonData GetChestCommonData()
         {
-            var data = chestConfigData.FirstOrDefault();
-            if (data == null)
-            {
-                return default;
-            }
-            return data.ChestCommonData;
+            return chestCommonData;
         }
         
         public ChestConfigData GetChestConfigData(ChestType chestType)
@@ -47,7 +43,6 @@ namespace HotUpdate.Scripts.Config
     [Serializable]
     public class ChestConfigData
     {
-        public ChestCommonData ChestCommonData;
         public ChestPropertyData ChestPropertyData;
     }
 

@@ -13,14 +13,17 @@ MonoBehaviour:
   m_Name: GameData
   m_EditorClassIdentifier: 
   gameConfigData:
-    MapWidth: 50
-    MapDepth: 50
     GroundSceneLayer:
       serializedVersion: 2
       m_Bits: 128
     SyncTime: 0.016
     SafetyMargin: 5
     FixedSpacing: 1
+    WarmupTime: 10
+    DevelopKey: 'DevelopKey '
+    DevelopKeyValue: MultiplayerDemo
     StairSceneLayer:
       serializedVersion: 2
       m_Bits: 256
+    SafePosition: {x: 0, y: 3, z: 0}
+    SafeHorizontalOffsetY: -15

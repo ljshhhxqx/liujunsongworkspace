@@ -1,12 +1,9 @@
-﻿using AOTScripts.Tool.ECS;
+﻿using System.Collections.Generic;
+using AOTScripts.Tool.ECS;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.Message;
-using Mirror;
-using Network.NetworkMes;
-using Tool.GameEvent;
-using Tool.Message;
 using UnityEngine;
 using VContainer;
 
@@ -14,28 +11,10 @@ namespace HotUpdate.Scripts.Buff
 {
     public class BuffManager : ServerNetworkComponent
     {
-        [SyncVar]
-        private bool _isOn;
-        private readonly SyncList<BuffBase> _activeBuffs = new SyncList<BuffBase>();
+        private readonly List<BuffBase> _activeBuffs = new List<BuffBase>();
         private PlayerInGameManager _playerDataManager;
         private MessageCenter _messageCenter;
         private BuffDatabase _buffDatabase;
-
-        public bool IsOn
-        {
-            get => _isOn;
-            set
-            {
-                if (isServer)
-                {
-                    _isOn = value;
-                }
-                else
-                {
-                    Debug.LogError("Can't set IsOn on client");
-                }
-            }
-        }
 
         [Inject]
         private void Init(IConfigProvider configProvider, PlayerInGameManager playerDataManager, MessageCenter messageCenter)
@@ -43,14 +22,8 @@ namespace HotUpdate.Scripts.Buff
             _buffDatabase = configProvider.GetConfig<BuffDatabase>();
             _playerDataManager = playerDataManager;
             _messageCenter = messageCenter;
-            _messageCenter.Register<GameStartMessage>(OnGameStart);
             BuffDataReaderWriter.RegisterReaderWriter();
             Debug.Log("BuffManager init");
-        }
-
-        private void OnGameStart(GameStartMessage message)
-        {
-            IsOn = true;
         }
 
         public void AddBuffToPlayer(PlayerPropertyComponent targetStats, BuffExtraData buffExtraData, int? casterId = null)
@@ -83,7 +56,7 @@ namespace HotUpdate.Scripts.Buff
 
         private void Update()
         {
-            if (!IsOn || !isServer || _activeBuffs.Count == 0)
+            if (!isServer || _activeBuffs.Count == 0)
             {
                 return;
             }

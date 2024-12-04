@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Tool.ECS;
 using AOTScripts.Tool.ObjectPool;
-using Collector;
 using Config;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Buff;
@@ -14,11 +13,14 @@ using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.Server.Collect;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.Message;
+using HotUpdate.Scripts.UI.UIs.Overlay;
 using Mirror;
 using Tool.GameEvent;
 using Tool.Message;
+using UI.UIBase;
 using UnityEngine;
 using VContainer;
+using AnimationState = HotUpdate.Scripts.Config.AnimationState;
 using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Collector
@@ -27,7 +29,7 @@ namespace HotUpdate.Scripts.Collector
     {
         [SyncVar]
         private int _currentId;
-        [SyncVar(hook = nameof(OnTreasureChestInfoChanged))]
+        [SyncVar]
         private TreasureChestInfo _treasureChestInfo;
         public struct Grid
         {
@@ -41,7 +43,6 @@ namespace HotUpdate.Scripts.Collector
         private ChestDataConfig _chestConfig;
         private MessageCenter _messageCenter;
         private GameMapInjector _gameMapInjector;
-        private PlayerInGameManager _playerInGameManager;
         private CollectObjectDataConfig _collectObjectDataConfig;
         private LayerMask _sceneLayer;
         private Dictionary<Vector2Int, Grid> _gridMap = new Dictionary<Vector2Int, Grid>();
@@ -54,14 +55,15 @@ namespace HotUpdate.Scripts.Collector
         private static int _onceSpawnWeight;
         private Transform _spawnedParent;
         private BuffManager _buffManager;
+        private UIManager _uiManager;
         private BuffDatabase _buffDatabase;
         private GameLoopController _gameLoopController;
 
         [Inject]
-        private void Init(MapBoundDefiner mapBoundDefiner, IConfigProvider configProvider, BuffManager buffManager, GameMapInjector gameMapInjector, PlayerInGameManager playerInGameManager,GameEventManager gameEventManager, MessageCenter messageCenter)
+        private void Init(MapBoundDefiner mapBoundDefiner, UIManager uiManager, IConfigProvider configProvider, BuffManager buffManager, GameMapInjector gameMapInjector, PlayerInGameManager playerInGameManager,GameEventManager gameEventManager, MessageCenter messageCenter)
         {
-            _playerInGameManager = playerInGameManager;
             _buffManager = buffManager;
+            _uiManager = uiManager;
             _configProvider = configProvider;
             _mapBoundDefiner = mapBoundDefiner;
             _gameMapInjector = gameMapInjector;
@@ -92,32 +94,41 @@ namespace HotUpdate.Scripts.Collector
             OnGameStart(gameSceneResourcesLoadedEvent.SceneName);
             InitializeGrid();
         }
-        
+
+        private void OnDisable()
+        {
+            Debug.Log("ItemsSpawnerManager OnDisable");
+        }
+
         private void OnPickerPickUpChestMessage(PickerPickUpChestMessage message)
         {
-            if (!isServer) return;
+            if (!isServer || _treasureChestInfo.isPicking) return;
+            _treasureChestInfo.isPicking = true;
 
             // 通过netId找到实际的宝箱物体
-            var networkIdentity = NetworkIdentity.GetSceneIdentity(_treasureChestInfo.netId);
+            var networkIdentity = NetworkServer.spawned[_treasureChestInfo.netId];
             if (networkIdentity == null)
             {
                 Debug.LogError($"Cannot find treasure chest with netId: {_treasureChestInfo.netId}");
+                _treasureChestInfo.isPicking = false;
                 return;
             }
 
             var treasureChest = networkIdentity.GetComponent<TreasureChestComponent>();
     
             // 获取玩家实例
-            var playerIdentity = NetworkIdentity.GetSceneIdentity(message.PickerId);
+            var playerIdentity = NetworkServer.spawned[message.PickerId];
             if (playerIdentity == null)
             {
                 Debug.LogError($"Cannot find player with netId: {message.PickerId}");
+                _treasureChestInfo.isPicking = false;
                 return;
             }
     
             var player = playerIdentity.GetComponent<PlayerPropertyComponent>();
-            if (player.PlayerState == PlayerState.Dead)
+            if (player.CurrentAnimationState == AnimationState.Dead)
             {
+                _treasureChestInfo.isPicking = false;
                 return;
             }
 
@@ -134,34 +145,38 @@ namespace HotUpdate.Scripts.Collector
                 };
 
                 // 处理buff和属性
-                var configData = _chestConfig.GetChestConfigData(player.CurrentChestType);
-                player.CurrentChestType = treasureChest.ChestType;
+                player.CurrentChestType = treasureChest.chestType;
+                var configData = _chestConfig.GetChestConfigData(treasureChest.chestType);
                 if (configData.ChestPropertyData.BuffExtraData.buffType != BuffType.None)
                 {
                     _buffManager.AddBuffToPlayer(player, configData.ChestPropertyData.BuffExtraData);
+                    Debug.Log($"Add buff {configData.ChestPropertyData.BuffExtraData.buffType} to player {player.name}");
                 }
 
-                // 回收物体
-                NetworkServer.UnSpawn(networkIdentity.gameObject);
-                GameObjectPoolManger.Instance.ReturnObject(networkIdentity.gameObject);
-
+                treasureChest.PickUpSuccess(() =>
+                {
+                    GameObjectPoolManger.Instance.ReturnObject(networkIdentity.gameObject);
+                    NetworkServer.UnSpawn(networkIdentity.gameObject);
+                    _treasureChestInfo.isPicking = false;
+                }).Forget();
                 JudgeEndRound();
             }
+            _treasureChestInfo.isPicking = false;
         }
         
         private bool ValidateChestPickup(TreasureChestComponent chest, PlayerPropertyComponent player, Vector3 originalPosition)
         {
             // 基本碰撞检测
-            var chestCollider = chest.GetComponent<Collider>();
+            var chestCollider = chest.ChestCollider;
             var playerCollider = player.GetComponent<Collider>();
             if (!chestCollider.bounds.Intersects(playerCollider.bounds))
                 return false;
 
             // 可选：检查当前位置是否在原始位置的合理范围内
-            var currentPosition = chest.transform.position;
-            var distanceFromOriginal = Vector3.Distance(currentPosition, originalPosition);
-            if (distanceFromOriginal > 1f) // 定义一个合理的最大距离
-                return false;
+            // var currentPosition = chest.transform.position;
+            // var distanceFromOriginal = Vector3.Distance(currentPosition, originalPosition);
+            // if (distanceFromOriginal > 1f) // 定义一个合理的最大距离
+            //     return false;
 
             return true;
         }
@@ -225,15 +240,22 @@ namespace HotUpdate.Scripts.Collector
             {
                 _treasureChestPrefab = res.Find(x => x.GetComponent<TreasureChestComponent>()!= null).GetComponent<TreasureChestComponent>();
             }
+
+            _uiManager.SwitchUI<TargetShowOverlay>();
+        }
+
+        private void OnDestroy()
+        {
+            _uiManager.CloseUI(UIType.TargetShowOverlay);
         }
 
         [Server]
-        public void HandleItemPickup(int itemId, int pickerId)
+        public void HandleItemPickup(int itemId, uint pickerId)
         {
             if (_spawnedItems.TryGetValue(itemId, out var itemInfo))
             {
                 // 通过netId找到实际物体
-                var networkIdentity = NetworkIdentity.GetSceneIdentity(itemInfo.netId);
+                var networkIdentity = NetworkServer.spawned[itemInfo.netId];
                 if (networkIdentity == null)
                 {
                     Debug.LogError($"Cannot find spawned item with netId: {itemInfo.netId}");
@@ -241,10 +263,16 @@ namespace HotUpdate.Scripts.Collector
                 }
 
                 var item = networkIdentity.GetComponent<CollectObjectController>();
-                var player = _playerInGameManager.GetPlayerPropertyComponent(pickerId);
+                var player =  NetworkServer.spawned[pickerId];
+                if (player == null)
+                {
+                    Debug.LogError($"Cannot find player with netId: {pickerId}");
+                    return;
+                }
 
+                var playerProperty = player.GetComponent<PlayerPropertyComponent>();
                 // 验证位置和碰撞
-                if (ValidatePickup(item, player, itemInfo.position))
+                if (ValidatePickup(item, playerProperty, itemInfo.position))
                 {
                     _spawnedItems.Remove(itemId);
             
@@ -254,10 +282,10 @@ namespace HotUpdate.Scripts.Collector
                     {
                         case CollectObjectClass.Score:
                             var buff = _buffDatabase.GetBuff(configData.BuffExtraData);
-                            player.IncreaseProperty(PropertyTypeEnum.Score, buff.increaseDataList);
+                            playerProperty.IncreaseProperty(PropertyTypeEnum.Score, buff.increaseDataList);
                             break;
                         case CollectObjectClass.Buff:
-                            _buffManager.AddBuffToPlayer(player, configData.BuffExtraData);
+                            _buffManager.AddBuffToPlayer(playerProperty, configData.BuffExtraData);
                             break;
                     }
 
@@ -265,28 +293,8 @@ namespace HotUpdate.Scripts.Collector
                     RpcPickupItem(item);
             
                     // 回收物体
-                    NetworkServer.UnSpawn(networkIdentity.gameObject);
                     GameObjectPoolManger.Instance.ReturnObject(networkIdentity.gameObject);
-                }
-            }
-        }
-
-        // 移除旧的RPC方法，使用SyncVar自动同步
-        private void OnTreasureChestInfoChanged(TreasureChestInfo oldInfo, TreasureChestInfo newInfo)
-        {
-            if (!isServer) // 客户端处理
-            {
-                if (_treasureChest == null)
-                {
-                    var chest = NetworkClient.spawned[newInfo.netId];
-                    _treasureChest = chest.GetComponent<TreasureChestComponent>();
-                    _treasureChest.transform.position = newInfo.position;
-                    _treasureChest.ChestType = newInfo.chestType;
-                }
-        
-                if (newInfo.isPicked && !oldInfo.isPicked)
-                {
-                    _treasureChest.PickUpSuccess();
+                    NetworkServer.UnSpawn(networkIdentity.gameObject);
                 }
             }
         }
@@ -326,33 +334,37 @@ namespace HotUpdate.Scripts.Collector
         }
 
         [Server]
-        public void EndRound()
+        public async UniTask EndRound()
         {
             try
             {
+                Debug.Log("Starting EndRound");
                 // 清理宝箱
-                if (_treasureChestInfo.netId != 0)
+                if (_treasureChestInfo.netId != 0 && !_treasureChestInfo.isPicked)
                 {
-                    var chestIdentity = NetworkIdentity.GetSceneIdentity(_treasureChestInfo.netId);
+                    var chestIdentity = NetworkServer.spawned[_treasureChestInfo.netId];
                     if (chestIdentity)
                     {
-                        NetworkServer.UnSpawn(chestIdentity.gameObject);
                         GameObjectPoolManger.Instance.ReturnObject(chestIdentity.gameObject);
+                        NetworkServer.UnSpawn(chestIdentity.gameObject);
                     }
-                    _treasureChestInfo = new TreasureChestInfo();
                 }
+                _treasureChestInfo = new TreasureChestInfo();
 
                 // 清理所有生成物
                 foreach (var item in _spawnedItems.Values.ToList())
                 {
-                    var identity = NetworkIdentity.GetSceneIdentity(item.netId);
+                    var identity = NetworkServer.spawned[item.netId];
                     if (identity)
                     {
-                        NetworkServer.UnSpawn(netIdentity.gameObject);
-                        GameObjectPoolManger.Instance.ReturnObject(netIdentity.gameObject);
+                        var pooledComponent = identity.GetComponent<CollectObjectController>();
+                        if (pooledComponent)
+                        {
+                            GameObjectPoolManger.Instance.ReturnObject(pooledComponent.gameObject);
+                        }
+                        NetworkServer.UnSpawn(identity.gameObject);
                     }
                 }
-                _spawnedItems.Clear();
 
                 // 清理网格数据
                 foreach (var grid in _gridMap.Values)
@@ -360,8 +372,12 @@ namespace HotUpdate.Scripts.Collector
                     grid.itemIDs?.Clear();
                 }
 
+                Debug.Log("EndRound finished on server");
                 // 通知客户端清理
                 RpcEndRound();
+                _spawnedItems.Clear();
+                await UniTask.Yield();
+                
             }
             catch (Exception e)
             {
@@ -372,73 +388,28 @@ namespace HotUpdate.Scripts.Collector
         [ClientRpc]
         private void RpcEndRound()
         {
-            if (isServer) return; // 服务器已经处理过了
-
-            try
-            {
-                // 清理客户端的生成物
-                foreach (var item in _spawnedItems.Values)
-                {
-                    if (NetworkClient.spawned.TryGetValue(item.netId, out var netIdentity))
-                    {
-                        GameObjectPoolManger.Instance.ReturnObject(netIdentity.gameObject);
-                    }
-                }
-                _spawnedItems.Clear();
-
-                // 清理宝箱
-                if (_treasureChestInfo.netId != 0 && 
-                    NetworkClient.spawned.TryGetValue(_treasureChestInfo.netId, out var chestIdentity))
-                {
-                    GameObjectPoolManger.Instance.ReturnObject(chestIdentity.gameObject);
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Error in RpcEndRound: {e}");
-            }
-        }
-        
-        private void SafeReturnToPool(GameObject go)
-        {
-            if (go && go.scene.name != null) // 确保对象还在场景中
+            if (isClient)
             {
                 try
                 {
-                    GameObjectPoolManger.Instance.ReturnObject(go);
+                    // 清理客户端的生成物
+                    foreach (var item in _spawnedItems.Values)
+                    {
+                        if (NetworkClient.spawned.TryGetValue(item.netId, out var networkIdentity))
+                        {
+                            var pooledComponent = networkIdentity.GetComponent<CollectObjectController>();
+                            if (pooledComponent)
+                                GameObjectPoolManger.Instance.ReturnObject(networkIdentity.gameObject);
+                        }
+                    }
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError($"Error returning object to pool: {e}");
+                    Debug.LogError($"Error in RpcEndRound: {e}");
                 }
-            }
-        }
+            } // 服务器已经处理过了
 
-        private void ClearAllSpawnedItems()
-        {
-            if (isServer)
-            {
-                foreach (var item in _spawnedItems.Values.ToList())
-                {
-                    var identity = NetworkIdentity.GetSceneIdentity(item.netId);
-                    if (identity != null)
-                    {
-                        NetworkServer.UnSpawn(netIdentity.gameObject);
-                        SafeReturnToPool(netIdentity.gameObject);
-                    }
-                }
-            }
-            else
-            {
-                foreach (var item in _spawnedItems.Values)
-                {
-                    if (NetworkClient.spawned.TryGetValue(item.netId, out var netIdentity))
-                    {
-                        SafeReturnToPool(netIdentity.gameObject);
-                    }
-                }
-            }
-            _spawnedItems.Clear();
+            Debug.Log("EndRound finished on client");
         }
 
         [Server]
@@ -488,7 +459,7 @@ namespace HotUpdate.Scripts.Collector
                             position = item.position
                         });
                     }
-                    Debug.Log($"Calculated {spawnedCount} spawn positions");
+                    //Debug.Log($"Calculated {spawnedCount} spawn positions");
                     await UniTask.Yield();
                 }
 
@@ -506,7 +477,8 @@ namespace HotUpdate.Scripts.Collector
 
                     var networkIdentity = spawnedObject.GetComponent<NetworkIdentity>();
                     NetworkServer.Spawn(spawnedObject); // 确保网络同步
-
+                    var component = spawnedObject.GetComponent<CollectObjectController>();
+                    component.CollectId = info.id;
                     _spawnedItems.Add(info.id, new SpawnItemInfo
                     {
                         id = info.id,
@@ -515,7 +487,6 @@ namespace HotUpdate.Scripts.Collector
                         position = info.position
                     });
                 }
-                // 添加这行：通知客户端生成物品
                 SpawnManyItemsClientRpc(spawnInfos.ToArray());
             }
             catch (Exception e)
@@ -528,8 +499,8 @@ namespace HotUpdate.Scripts.Collector
         [Server]
         public void SpawnTreasureChestServer()
         {
-            var chestType = (ChestType)Mathf.RoundToInt(Random.Range(0f, (float)ChestType.Score));
-            var position = GetRandomStartPoint(2f);
+            var chestType = (ChestType)Random.Range(1, (int)ChestType.Score + 1);
+            var position = GetRandomStartPoint(0.75f);
 
             // 在服务器端生成宝箱
             var spawnedChest = GameObjectPoolManger.Instance.GetObject(
@@ -543,7 +514,7 @@ namespace HotUpdate.Scripts.Collector
             NetworkServer.Spawn(spawnedChest);
 
             var treasureChest = spawnedChest.GetComponent<TreasureChestComponent>();
-            treasureChest.ChestType = chestType;
+            treasureChest.chestType = chestType;
 
             // 更新同步数据
             _treasureChestInfo = new TreasureChestInfo
@@ -583,6 +554,7 @@ namespace HotUpdate.Scripts.Collector
 
                 var component = go.GetComponent<CollectObjectController>();
                 component.CollectId = info.id;
+                Debug.Log($"Spawning item at position: {info.position} with id: {info.id}");
         
                 // 确保位置正确设置
                 go.transform.position = info.position;
@@ -740,7 +712,7 @@ namespace HotUpdate.Scripts.Collector
         private bool ValidatePickup(CollectObjectController item, PlayerPropertyComponent player, Vector3 originalPosition)
         {
             // 基本碰撞检测
-            var itemCollider = item.GetComponent<Collider>();
+            var itemCollider = item.Collider;
             var playerCollider = player.GetComponent<Collider>();
             if (!itemCollider.bounds.Intersects(playerCollider.bounds))
                 return false;
@@ -912,6 +884,7 @@ namespace HotUpdate.Scripts.Collector
         public ChestType chestType;
         public Vector3 position;
         public bool isPicked;
+        public bool isPicking;
     }
 
     public static class CollectItemReaderWriter
@@ -932,6 +905,7 @@ namespace HotUpdate.Scripts.Collector
             writer.WriteInt((int)info.chestType);
             writer.WriteVector3(info.position);
             writer.WriteBool(info.isPicked);
+            writer.WriteBool(info.isPicking);
         }
 
         private static TreasureChestInfo ReadTreasureChestInfoData(NetworkReader reader)
@@ -941,7 +915,8 @@ namespace HotUpdate.Scripts.Collector
                 netId = reader.ReadUInt(),
                 chestType = (ChestType)reader.ReadInt(),
                 position = reader.ReadVector3(),
-                isPicked = reader.ReadBool()
+                isPicked = reader.ReadBool(),
+                isPicking = reader.ReadBool()
             };
         }
         

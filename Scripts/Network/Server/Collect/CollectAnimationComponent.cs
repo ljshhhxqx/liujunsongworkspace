@@ -1,9 +1,11 @@
+using System;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using Tool.Coroutine;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
-namespace Network.Server.Collect
+namespace HotUpdate.Scripts.Network.Server.Collect
 {
     public class CollectAnimationComponent : MonoBehaviour
     {
@@ -25,6 +27,7 @@ namespace Network.Server.Collect
         [Button("播放所有动画")]
         public void Play()
         {
+            KillAll();
             PlayerColorChange(); 
             PlayAnimation();
         }
@@ -56,12 +59,12 @@ namespace Network.Server.Collect
             _animationSequence = DOTween.Sequence();
             _scaleSequence?.Kill();
             _scaleSequence = DOTween.Sequence();
-            _animationSequence.Append(transform.DORotate(new Vector3(0, 360, 90), 1.5f, RotateMode.FastBeyond360)
+            _animationSequence.Append(transform.DORotate(new Vector3(0, 360, 0), 2f, RotateMode.FastBeyond360)
                 .SetEase(Ease.Linear)
                 .SetLoops(-1, LoopType.Incremental));
-            _scaleSequence.Append(transform.DOScale(new Vector3(0.85f, 0.85f, 0.85f), 0.75f)
+            _scaleSequence.Append(transform.DOScale(new Vector3(0.65f, 0.65f, 0.65f), 1f)
                 .SetEase(Ease.Linear));
-            _scaleSequence.Append(transform.DOScale(Vector3.one, 0.75f)
+            _scaleSequence.Append(transform.DOScale(Vector3.one, 1f)
                 .SetEase(Ease.Linear));
             _animationSequence.SetEase(Ease.Linear);
             _animationSequence.SetLoops(-1);  
@@ -72,19 +75,18 @@ namespace Network.Server.Collect
         [Button("停止所有动画")]
         private void KillAll()
         {
+            _scaleSequence?.Kill();
+            _colorSequence?.Kill();
+            _animationSequence?.Kill();
             var mat = _outline.sharedMaterials[0];
-            transform.localRotation = Quaternion.Euler(0,0,90);
+            transform.rotation = Quaternion.identity;
             transform.localScale = Vector3.one;
             mat.SetColor(OutlineColor, _originalColor);
-            _colorSequence?.Kill();
-            _animationSequence?.Kill();
         }
-        
-        
+
         private void OnDestroy()
         {
-            _colorSequence?.Kill();
-            _animationSequence?.Kill();
+            KillAll();
         }
     }
 }

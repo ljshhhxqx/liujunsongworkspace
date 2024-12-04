@@ -55,23 +55,39 @@ namespace Network.Client
         {
             if (!target || !isContorlling) return;
 
+#if UNITY_ANDROID || UNITY_IOS
+            // 手机平台的输入逻辑
+            if (Input.touchCount > 0)
+            {
+                Touch touch = Input.GetTouch(0);
+                if (touch.phase == TouchPhase.Moved)
+                {
+                    float horizontal = touch.deltaPosition.x * playerDataConfig.PlayerConfigData.TurnSpeed * Time.deltaTime;
+                    float vertical = touch.deltaPosition.y * playerDataConfig.PlayerConfigData.TurnSpeed * Time.deltaTime;
+
+                    // 计算摄像机与水平面的角度
+                    float angleWithGround = Vector3.Angle(Vector3.down, offset.normalized) - 90; // 减去90是因为原点是向下的
+                    float maxVerticalAngle = 90 - Mathf.Abs(angleWithGround);
+                    vertical = Mathf.Clamp(vertical, -maxVerticalAngle, maxVerticalAngle);
+
+                    offset = Quaternion.AngleAxis(horizontal, Vector3.up) * offset;
+                    offset = Quaternion.AngleAxis(vertical, Vector3.right) * offset;
+                }
+            }
+#else
+            // PC平台的输入逻辑
             var horizontal = Mathf.Lerp(lastHorizontal, Input.GetAxis("Mouse X") * playerDataConfig.PlayerConfigData.TurnSpeed, Time.deltaTime * 10);
-            
-            // 原始的垂直输入
             var rawVertical = Mathf.Clamp(Input.GetAxis("Mouse Y") * playerDataConfig.PlayerConfigData.TurnSpeed, -10, 10);
+            lastHorizontal = horizontal;
+
             // 计算摄像机与水平面的角度
             float angleWithGround = Vector3.Angle(Vector3.down, offset.normalized) - 90; // 减去90是因为原点是向下的
-            // 根据当前角度限制垂直旋转，使总角度不超过45度
             float maxVerticalAngle = 90 - Mathf.Abs(angleWithGround);
-            // 通过Clamp确保旋转角度不会使摄像机旋转超过45度与地面的夹角
             var vertical = Mathf.Clamp(rawVertical, -maxVerticalAngle, maxVerticalAngle);
-
-            //var vertical = Mathf.Clamp(Input.GetAxis("Mouse Y") * playerDataConfig.PlayerConfigData.TurnSpeed, -10, 10);
-            lastHorizontal = horizontal;
 
             offset = Quaternion.AngleAxis(horizontal, Vector3.up) * offset;
             offset = Quaternion.AngleAxis(vertical, Vector3.right) * offset;
-
+#endif
             var desiredPosition = target.position + offset;
             Vector3 smoothedPosition;
             if (Physics.Raycast(target.position, desiredPosition - target.position, out var hit, offset.magnitude, gameDataConfig.GameConfigData.GroundSceneLayer))

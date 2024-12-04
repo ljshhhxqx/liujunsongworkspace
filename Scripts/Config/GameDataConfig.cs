@@ -11,16 +11,16 @@ public class GameDataConfig : ConfigBase
 }
 
 [Serializable]
-public class GameConfigData
+public struct GameConfigData
 {
-    public float MapWidth;
-    public float MapDepth;
     public LayerMask GroundSceneLayer;
-    public float SyncTime = 0.016f;
-    public float SafetyMargin = 5.0f;
-    public float FixedSpacing = 1.0f;
-    public float WarmupTime = 10.0f;
-    public readonly string DevelopKey = "DevelopKey";
-    public readonly string DevelopKeyValue = "MultiplayerDemo";
+    public float SyncTime;
+    public float SafetyMargin;
+    public float FixedSpacing;
+    public float WarmupTime;
+    public string DevelopKey;
+    public string DevelopKeyValue;
     public LayerMask StairSceneLayer; 
+    public Vector3 SafePosition;
+    public float SafeHorizontalOffsetY;
 }

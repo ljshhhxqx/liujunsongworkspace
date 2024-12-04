@@ -33,6 +33,16 @@ namespace Tool.GameEvent
             SceneName = sceneName;
         }
     }
+    
+    public class TargetShowEvent : GameEvent
+    {
+        public Transform Target { get; private set; }
+
+        public TargetShowEvent(Transform target)
+        {
+            Target = target;
+        }
+    }
 
     public class GameReadyEvent : GameEvent
     {
@@ -92,30 +102,6 @@ namespace Tool.GameEvent
         public PlayerSpawnedEvent(Transform target)
         {
             Target = target;
-        }
-    }
-
-    public class PlayerJumpEvent : GameEvent
-    {
-    }
-    
-    public class PlayerSpeedChangeEvent : GameEvent
-    {
-        public float Speed { get; private set; }
-
-        public PlayerSpeedChangeEvent(float speed)
-        {
-            Speed = speed;
-        }
-    }
-
-    public class PlayerVerticalSpeedChangeEvent : GameEvent
-    {
-        public float VerticalSpeed { get; private set; }
-
-        public PlayerVerticalSpeedChangeEvent(float verticalSpeed)
-        {
-            VerticalSpeed = verticalSpeed;
         }
     }
 

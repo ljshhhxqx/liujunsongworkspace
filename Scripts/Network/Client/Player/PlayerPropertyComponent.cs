@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using AOTScripts.Tool.ECS;
-using Common;
-using Config;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using Mirror;
@@ -26,7 +24,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         [SyncVar(hook = nameof(OnCurrentChestTypeChanged))] 
         private ChestType _currentChestType;
         [SyncVar(hook = nameof(OnPlayerStateChanged))]
-        private PlayerState _playerState;
+        private PlayerEnvironmentState _playerEnvironmentState;
         [SyncVar(hook = nameof(OnHasMovementInputChanged))] 
         private bool _hasMovementInput;
         [SyncVar(hook = nameof(OnIsSprintingChanged))] 
@@ -34,72 +32,28 @@ namespace HotUpdate.Scripts.Network.Client.Player
         
         private void OnCurrentAnimationStateChanged(AnimationState oldValue, AnimationState newValue)
         {
-            // if (newValue != oldValue)
-            // {
-            //     //Debug.Log($"OnCurrentAnimationStateChanged oldValue: {oldValue}, newValue: {newValue}");
-            // }
-
             CurrentAnimationStateProperty.Value = newValue;
         }
         
         private void OnCurrentChestTypeChanged(ChestType oldValue, ChestType newValue)
         {
-            if (newValue != oldValue)
-            {
-               // Debug.Log($"OnCurrentChestTypeChanged oldValue: {oldValue}, newValue: {newValue}");
-            }
             CurrentChestTypeProperty.Value = newValue;
         }
         
-        private void OnPlayerStateChanged(PlayerState oldValue, PlayerState newValue)
+        private void OnPlayerStateChanged(PlayerEnvironmentState oldValue, PlayerEnvironmentState newValue)
         {
-            if (newValue != oldValue)
-            {
-                //Debug.Log($"OnPlayerStateChanged oldValue: {oldValue}, newValue: {newValue}");
-            }
             PlayerStateProperty.Value = newValue;
         }
 
         private void OnHasMovementInputChanged(bool oldValue, bool newValue)
         {
-            if (newValue != oldValue)
-            {
-                //Debug.Log($"OnHasMovementInputChanged oldValue: {oldValue}, newValue: {newValue}");
-            }
             HasMovementInputProperty.Value = newValue;
         }
         
         private void OnIsSprintingChanged(bool oldValue, bool newValue)
         {
-            if (newValue != oldValue)
-            {
-                //Debug.Log($"OnIsSprintingChanged oldValue: {oldValue}, newValue: {newValue}");
-            }
             IsSprintingProperty.Value = newValue;
         }
-
-        public bool IsSprinting
-        {
-            get => _isSprinting;
-            set
-            {
-                if (isServer)
-                {
-                    _isSprinting = value;
-                }
-                else if (isClient)
-                {
-                    CmdChangeIsSprinting(value);
-                }
-            }
-        }
-
-        [Command]
-        private void CmdChangeIsSprinting(bool isSprinting)
-        {
-            _isSprinting = isSprinting;
-        }
-        
 
         public AnimationState CurrentAnimationState
         {
@@ -133,14 +87,14 @@ namespace HotUpdate.Scripts.Network.Client.Player
             }
         }
 
-        public PlayerState PlayerState
+        public PlayerEnvironmentState PlayerEnvironmentState
         {
-            get => _playerState;
+            get => _playerEnvironmentState;
             set
             {
                 if (isServer)
                 {
-                    _playerState = value;
+                    _playerEnvironmentState = value;
                 }
                 else if (isClient)
                 {
@@ -184,14 +138,14 @@ namespace HotUpdate.Scripts.Network.Client.Player
         }
         
         [Command]
-        public void CmdChangePlayerState(PlayerState state)
+        public void CmdChangePlayerState(PlayerEnvironmentState environmentState)
         {
-            _playerState = state;
+            _playerEnvironmentState = environmentState;
         }
 
         public ReactiveProperty<AnimationState> CurrentAnimationStateProperty { get; } = new ReactiveProperty<AnimationState>();
         public ReactiveProperty<ChestType> CurrentChestTypeProperty { get; } = new ReactiveProperty<ChestType>();
-        public ReactiveProperty<PlayerState> PlayerStateProperty { get; } = new ReactiveProperty<PlayerState>();
+        public ReactiveProperty<PlayerEnvironmentState> PlayerStateProperty { get; } = new ReactiveProperty<PlayerEnvironmentState>();
         public ReactiveProperty<bool> HasMovementInputProperty { get; } = new ReactiveProperty<bool>();
         public ReactiveProperty<bool> IsSprintingProperty { get; } = new ReactiveProperty<bool>();
 
@@ -253,11 +207,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private void OnCurrentPropertyAdd(PropertyTypeEnum obj)
         {
             _currentProperties.Add(obj, new ReactiveProperty<PropertyType>(new PropertyType(obj, _syncCurrentProperties[obj])));
-        }
-
-        private void Awake()
-        {
-            ObjectInjectProvider.Instance.Inject(this);
         }
 
         private void InitializeProperties()
@@ -348,8 +297,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     if (type == PropertyTypeEnum.Score)
                     {
                         currentValue = Mathf.Clamp(_syncCurrentProperties[type] + amount * _syncPropertyCorrectionFactors[type], _configMinProperties[type],
-                            _syncMaxCurrentProperties[type]);
-                        currentValue = Mathf.Round(currentValue);
+                            _configMaxProperties[type]);
+                        Debug.Log($"Current score:isServer{isServer}: {_syncCurrentProperties[type]} + {currentValue}");
                     }
                     else
                     {
@@ -364,18 +313,16 @@ namespace HotUpdate.Scripts.Network.Client.Player
             UpdateProperty(type);
         }
 
-        [Command]
-        private void CmdIncreaseProperty(PropertyTypeEnum type, BuffIncreaseType increaseType, float amount)
-        {
-            IncreasePropertyAndUpdate(type, increaseType, amount);
-        }
-
         /// <summary>
         /// 更新当前属性，计算方法：（基础属性 * 加成系数 + 增益属性） * 修正系数
         /// </summary>
         /// <param name="type"></param>
         private void UpdateProperty(PropertyTypeEnum type)
         {
+            if (type == PropertyTypeEnum.Score)
+            {
+                return;
+            }
             var propertyConsumeType = type.GetConsumeType();
             var propertyVal = (_syncBaseProperties[type] * _syncPropertyMultipliers[type] + _syncPropertyBuffs[type]) * _syncPropertyCorrectionFactors[type];
             switch (propertyConsumeType)
@@ -458,12 +405,12 @@ namespace HotUpdate.Scripts.Network.Client.Player
                         return true;
                     }
                     return false;
-                case AnimationState.Dash:
-                    if (_currentChestType != ChestType.Dash)
-                    {
-                        Debug.LogWarning($"Player {gameObject.name} has no chest to dash.");
-                        return false;
-                    }
+                case AnimationState.Roll:
+                    // if (_currentChestType != ChestType.Dash)
+                    // {
+                    //     Debug.LogWarning($"Player {gameObject.name} has no chest to dash.");
+                    //     return false;
+                    // }
                     if (StrengthCanDoAnimation(animationState))
                     {
                         ChangeAnimationState(animationState);
@@ -471,11 +418,11 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     }
                     return false;
                 case AnimationState.Attack:
-                    if (_currentChestType != ChestType.Attack)
-                    {
-                        Debug.LogWarning($"Player {gameObject.name} has no chest to attack.");
-                        return false;
-                    }
+                    // if (_currentChestType != ChestType.Attack)
+                    // {
+                    //     Debug.LogWarning($"Player {gameObject.name} has no chest to attack.");
+                    //     return false;
+                    // }
                     if (StrengthCanDoAnimation(animationState))
                     {
                         ChangeAnimationState(animationState);
@@ -531,19 +478,19 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private void ChangeSpeedAndUpdate(bool isSprinting, float recoveredStrength, bool isSprintingJump)
         {
             _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] = HasMovementInput ? 1f : 0f;
-            switch (PlayerState)
+            switch (PlayerEnvironmentState)
             {
-                case PlayerState.InAir:
+                case PlayerEnvironmentState.InAir:
                     _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] *= isSprintingJump ? _playerDataConfig.PlayerConfigData.SprintSpeedFactor : 1f;
                     break;
-                case PlayerState.OnGround:
+                case PlayerEnvironmentState.OnGround:
                     _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] *= isSprinting ? _playerDataConfig.PlayerConfigData.SprintSpeedFactor : 1f;
                     break;
-                case PlayerState.OnStairs:
+                case PlayerEnvironmentState.OnStairs:
                     _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] *= isSprinting ? _playerDataConfig.PlayerConfigData.OnStairsSpeedRatioFactor * _playerDataConfig.PlayerConfigData.SprintSpeedFactor : _playerDataConfig.PlayerConfigData.OnStairsSpeedRatioFactor;
                     break;
                 default:
-                    throw new Exception($"playerState:{PlayerState} is not valid.");
+                    throw new Exception($"playerState:{PlayerEnvironmentState} is not valid.");
             }
             UpdateProperty(PropertyTypeEnum.Speed);
             IncreaseProperty(PropertyTypeEnum.Strength, BuffIncreaseType.Current, recoveredStrength * Time.fixedDeltaTime);

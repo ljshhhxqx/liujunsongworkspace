@@ -1,20 +1,20 @@
-﻿using Game.Map;
-using HotUpdate.Scripts.Config;
-using HotUpdate.Scripts.Network.Client.Player;
-using HotUpdate.Scripts.Network.Server;
-using HotUpdate.Scripts.Network.Server.InGame;
-using Mirror;
-using Network.Data;
-using Network.NetworkMes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Data;
+using Game.Map;
+using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Network.Client.Player;
+using HotUpdate.Scripts.Network.Server.InGame;
+using Mirror;
+using Network.NetworkMes;
 using Tool.GameEvent;
 using UI.UIBase;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 using PlayerInGameData = HotUpdate.Scripts.Network.Server.InGame.PlayerInGameData;
+using Random = UnityEngine.Random;
 
 namespace Network.Server
 {
@@ -42,33 +42,24 @@ namespace Network.Server
             _gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnSceneResourcesLoaded);
             _objectResolver = objectResolver;
             _playerDataManager = playerDataManager;
-            
-            //this.playerManager = playerManager;
-        }
-
-        private void RegisterUnknownMessage()
-        {
-            // NetworkClient.RegisterHandler<MirrorNetworkMessage>(OnUnknownMessage, false);
-            // void OnUnknownMessage(MirrorNetworkMessage msg)
-            // {
-            //     Debug.LogWarning($"Unknown message received: {msg.GetType().Name}");
-            //     // 可以在这里添加自定义逻辑,而不是断开连接
-            // }
         }
         
 
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
-            var res = DataJsonManager.Instance.GetResourceData("Player");
+            var res = DataJsonManager.Instance.GetResourceData("MPlayer");
             var resInfo = ResourceManager.Instance.GetResource<GameObject>(res);
             if (resInfo)
             {
                 //currentPlayer = resInfo.gameObject;
-                var spawnPoint = _spawnPoints[UnityEngine.Random.Range(0, _spawnPoints.Count)];
+                var spawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Count)];
                 var playerGo = Instantiate(resInfo.gameObject, spawnPoint.transform);
                 playerGo.transform.localPosition = Vector3.zero;
                 playerGo.transform.localRotation = Quaternion.identity;
                 playerGo.name = playerGo.name.Replace("(Clone)", conn.connectionId.ToString());
+                playerGo.gameObject.SetActive(false);
+                _objectResolver.InjectGameObject(playerGo);
+                playerGo.gameObject.SetActive(true);
                 Debug.Log("Spawned player: " + playerGo.name);
                 _spawnPoints.Remove(spawnPoint);
                 NetworkServer.AddPlayerForConnection(conn, playerGo);
