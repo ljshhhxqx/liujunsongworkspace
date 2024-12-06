@@ -107,7 +107,7 @@ namespace HotUpdate.Scripts.Collector
 
             // 通过netId找到实际的宝箱物体
             var networkIdentity = NetworkServer.spawned[_treasureChestInfo.netId];
-            if (networkIdentity == null)
+            if (!networkIdentity)
             {
                 Debug.LogError($"Cannot find treasure chest with netId: {_treasureChestInfo.netId}");
                 _treasureChestInfo.isPicking = false;
@@ -118,7 +118,7 @@ namespace HotUpdate.Scripts.Collector
     
             // 获取玩家实例
             var playerIdentity = NetworkServer.spawned[message.PickerId];
-            if (playerIdentity == null)
+            if (!playerIdentity)
             {
                 Debug.LogError($"Cannot find player with netId: {message.PickerId}");
                 _treasureChestInfo.isPicking = false;

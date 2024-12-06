@@ -17,6 +17,11 @@ namespace Config
 #endif
         }
 
+        public virtual void Init()
+        {
+            
+        }
+
         private void SaveToJson()
         {
             // 将ScriptableObject转换为JSON字符串

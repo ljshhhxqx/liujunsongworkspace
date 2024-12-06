@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Config;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace HotUpdate.Scripts.Config
 {
@@ -11,18 +12,30 @@ namespace HotUpdate.Scripts.Config
         [SerializeField] 
         private PlayerConfigData playerConfigData;
         public PlayerConfigData PlayerConfigData => playerConfigData;
+        private readonly Dictionary<AnimationState, AnimationInfo> _animationInfos = new Dictionary<AnimationState, AnimationInfo>();
+
+        public override void Init()
+        {
+            if (_animationInfos.Count != 0) return;
+            foreach (var animationInfo in playerConfigData.AnimationInfos)
+            {
+                _animationInfos.Add(animationInfo.State, animationInfo);
+            }
+        }
+        
+        public AnimationInfo GetAnimationInfo(AnimationState animationState)
+        {
+            return _animationInfos.GetValueOrDefault(animationState);
+        }
 
         public float GetPlayerAnimationCost(AnimationState state)
         {
-            foreach (var cost in playerConfigData.AnimationStrengthCosts)
-            {
-                if (cost.State == state)
-                {
-                    return cost.Cost;
-                }
-            }
-            Debug.LogWarning("Animation cost not found for state: " + state);
-            return 0f;
+            return GetAnimationInfo(state).Cost;
+        }
+        
+        public float GetPlayerAnimationCooldown(AnimationState state)
+        {
+            return GetAnimationInfo(state).Cooldown;
         }
     }
 
@@ -49,24 +62,28 @@ namespace HotUpdate.Scripts.Config
         public List<PropertyType> MaxProperties;
         public List<PropertyType> BaseProperties;
         public List<PropertyType> MinProperties;
-        public List<AnimationCost> AnimationStrengthCosts;
         public float StrengthRecoveryPerSecond;
-
-        public float RollDistance;
         public float RollForce;
-    
-        // public float SlopeLimit = 30f;
-        // public float MaxPredictPositionTime = 5f;
-        // public float MaxPredictDistance = 0.5f;
-
+        public float StepHeight = 0.3f; // 玩家可跨越的最大台阶高度
+        public float StepCheckDistance = 0.5f; // 台阶检测距离
+        
+        #endregion
+        #region Animation
+        
+        public float AttackComboWindow = 1f; // 连招窗口时间
+        public int AttackComboMaxCount = 3; // 连招最大次数
+        public List<AnimationInfo> AnimationInfos;
+        
         #endregion
     }
 
     [Serializable]
-    public struct AnimationCost
+    public struct AnimationInfo
     {
         public AnimationState State;
         public float Cost;
+        public float Cooldown;
+        public int Priority;
     }
 
     public enum PlayerEnvironmentState

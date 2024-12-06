@@ -12,7 +12,7 @@ namespace Config
         private readonly string configFolderPath = Application.dataPath + "/Data/Configurations/";
         
         [Inject]
-        private void Init()
+        private ConfigManager()
         {
         }
 
@@ -26,6 +26,10 @@ namespace Config
             foreach (var configObject in configObjects)
             {
                 configs.Add(configObject.GetType(), configObject);
+                if (configObject is ConfigBase config)
+                {
+                    config.Init();
+                }
             }
 
             LoadAllSettings();

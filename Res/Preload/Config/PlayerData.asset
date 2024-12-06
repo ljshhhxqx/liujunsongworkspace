@@ -18,8 +18,8 @@ MonoBehaviour:
     Offset: {x: 0, y: 1, z: -3}
     SprintSpeedFactor: 2
     RotateSpeed: 7
-    OnStairsSpeedRatioFactor: 0.5
-    JumpSpeed: 25
+    OnStairsSpeedRatioFactor: 0.75
+    JumpSpeed: 40
     StairsJumpSpeed: 35
     GroundCheckRadius: 0.3
     StairsCheckDistance: 0.45
@@ -38,7 +38,7 @@ MonoBehaviour:
       value: 300
     BaseProperties:
     - type: 0
-      value: 4
+      value: 3.5
     - type: 1
       value: 10
     - type: 2
@@ -62,23 +62,54 @@ MonoBehaviour:
       value: 0
     - type: 2
       value: 0
-    AnimationStrengthCosts:
+    StrengthRecoveryPerSecond: 5
+    RollForce: 40
+    StepHeight: 0.3
+    StepCheckDistance: 0.5
+    AttackComboWindow: 1
+    AttackComboMaxCount: 3
+    AnimationInfos:
     - State: 0
       Cost: 0
+      Cooldown: 0
+      Priority: 0
     - State: 1
       Cost: 0
+      Cooldown: 0
+      Priority: 0
+    - State: 2
+      Cost: 20
+      Cooldown: 0
+      Priority: 0
     - State: 3
       Cost: 10
+      Cooldown: 1
+      Priority: 1
     - State: 4
-      Cost: 25
+      Cost: 12
+      Cooldown: 1
+      Priority: 1
     - State: 5
-      Cost: 15
+      Cost: 20
+      Cooldown: 2
+      Priority: 1
     - State: 6
-      Cost: 15
+      Cost: 0
+      Cooldown: 0
+      Priority: 0
     - State: 7
       Cost: 0
-    - State: 2
-      Cost: 25
-    StrengthRecoveryPerSecond: 5
-    RollDistance: 2
-    RollForce: 30
+      Cooldown: 0
+      Priority: 0
+    - State: 8
+      Cost: 10
+      Cooldown: 2
+      Priority: 1
+    - State: 9
+      Cost: 0
+      Cooldown: 0
+      Priority: 999
+    - State: 10
+      Cost: 0
+      Cooldown: 0
+      Priority: 2
