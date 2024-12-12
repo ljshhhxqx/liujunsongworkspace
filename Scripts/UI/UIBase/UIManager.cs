@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Common;
+using HotUpdate.Scripts.UI.UIs.Overlay;
 using HotUpdate.Scripts.UI.UIs.Popup;
 using Resource;
 using UI.UIs.Exception;
@@ -163,7 +164,7 @@ namespace UI.UIBase
         public static void ShowTips(this UIManager uiManager, string message, Action confirmCallback = null, Action cancelCallback = null)
         {
             var tipsUI = uiManager.SwitchUI<TipsPopup>();
-            if (tipsUI != null)
+            if (tipsUI)
             {
                 tipsUI.ShowTips(message, confirmCallback, cancelCallback);
             }
@@ -173,7 +174,7 @@ namespace UI.UIBase
         public static void ShowHelp(this UIManager uiManager, string message)
         {
             var tipsUI = uiManager.SwitchUI<HelpPopup>();
-            if (tipsUI != null)
+            if (tipsUI)
             {
                 tipsUI.ShowHelp(message);
             }
@@ -182,7 +183,7 @@ namespace UI.UIBase
         public static void ShowPasswordInput(this UIManager uiManager, string password, Action<bool> confirmCallback)
         {
             var passwordUI = uiManager.SwitchUI<PasswordUI>();
-            if (passwordUI != null)
+            if (passwordUI)
             {
                 passwordUI.ShowPasswordUI(password, confirmCallback);
             }
@@ -206,6 +207,15 @@ namespace UI.UIBase
             //     return;
             // }
             // uiManager.SwitchUI<LoadingScreenUI>(UIType.Loading);
+        }
+
+        public static void ShowTipsOverlay(this UIManager uiManager, string message)
+        {
+            var tipsUI = uiManager.SwitchUI<TipsOverlay>();
+            if (tipsUI)
+            {
+                tipsUI.ShowTips(message);
+            }
         }
     }
 }

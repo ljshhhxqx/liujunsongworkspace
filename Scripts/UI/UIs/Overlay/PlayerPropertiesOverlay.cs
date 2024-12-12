@@ -46,7 +46,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             {
                 playerStateProperty.SetField(animationState.name, state);
             });
-            playerPropertyComponent.CurrentChestTypeProperty.Subscribe(chestType =>
+            playerPropertyComponent.CurrentAnimationStateProperty.Subscribe(chestType =>
             {
                 currentChestType.SetField(currentChestType.name, chestType);
             });

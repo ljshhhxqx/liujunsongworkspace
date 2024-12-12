@@ -75,6 +75,8 @@ namespace HotUpdate.Scripts.Config
         public List<AnimationInfo> AnimationInfos;
         
         #endregion
+
+        public float RollInvincibleDuration = 0.5f;
     }
 
     [Serializable]

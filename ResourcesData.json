@@ -211,6 +211,14 @@
         {
             "UID": 900014,
             "ResourceType": "UnityEngine.GameObject",
+            "Name": "TipsOverlay",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/TipsOverlay.prefab"
+        },
+        {
+            "UID": 900015,
+            "ResourceType": "UnityEngine.GameObject",
             "Name": "WeatherShowOverlay",
             "IsPermanent": false,
             "IsPreload": true,

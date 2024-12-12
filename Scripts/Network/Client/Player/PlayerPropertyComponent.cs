@@ -29,48 +29,67 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private bool _hasMovementInput;
         [SyncVar(hook = nameof(OnIsSprintingChanged))] 
         private bool _isSprinting;
+        [SyncVar(hook = nameof(OnIsInvincibleChanged))]
+        private bool _isInvincible;
         
         private void OnCurrentAnimationStateChanged(AnimationState oldValue, AnimationState newValue)
         {
-            CurrentAnimationStateProperty.Value = newValue;
+            _currentAnimationStateProperty.Value = newValue;
         }
         
         private void OnCurrentChestTypeChanged(ChestType oldValue, ChestType newValue)
         {
-            CurrentChestTypeProperty.Value = newValue;
+            _currentChestTypeProperty.Value = newValue;
         }
         
         private void OnPlayerStateChanged(PlayerEnvironmentState oldValue, PlayerEnvironmentState newValue)
         {
-            PlayerStateProperty.Value = newValue;
+            _playerStateProperty.Value = newValue;
         }
 
         private void OnHasMovementInputChanged(bool oldValue, bool newValue)
         {
-            HasMovementInputProperty.Value = newValue;
+            _hasMovementInputProperty.Value = newValue;
         }
         
         private void OnIsSprintingChanged(bool oldValue, bool newValue)
         {
-            IsSprintingProperty.Value = newValue;
+            _isSprintingProperty.Value = newValue;
+        }
+        
+        private void OnIsInvincibleChanged(bool oldValue, bool newValue)
+        {
+            _isInvisibleProperty.Value = newValue;
+        }
+
+        public bool IsInvincible
+        {
+            get => _isInvincible;
+            set
+            {
+                if (isServer)
+                {
+                    _isInvincible = value;
+                }
+                else if (isClient)
+                {
+                    CmdChangeIsInvisible(value);
+                }
+            }   
+        }
+
+        [Command]
+        private void CmdChangeIsInvisible(bool value)
+        {
+            _isInvincible = value;
         }
 
         public AnimationState CurrentAnimationState
         {
             get => _currentAnimationState;
-            set
-            {
-                if (isServer)
-                {
-                    _currentAnimationState = value;
-                }
-                else if (isClient)
-                {
-                    CmdChangeAnimationState(value);
-                }
-            }
+            set => _currentAnimationState = value;
         }
-        
+
         public ChestType CurrentChestType
         {
             get => _currentChestType;
@@ -143,11 +162,18 @@ namespace HotUpdate.Scripts.Network.Client.Player
             _playerEnvironmentState = environmentState;
         }
 
-        public ReactiveProperty<AnimationState> CurrentAnimationStateProperty { get; } = new ReactiveProperty<AnimationState>();
-        public ReactiveProperty<ChestType> CurrentChestTypeProperty { get; } = new ReactiveProperty<ChestType>();
-        public ReactiveProperty<PlayerEnvironmentState> PlayerStateProperty { get; } = new ReactiveProperty<PlayerEnvironmentState>();
-        public ReactiveProperty<bool> HasMovementInputProperty { get; } = new ReactiveProperty<bool>();
-        public ReactiveProperty<bool> IsSprintingProperty { get; } = new ReactiveProperty<bool>();
+        private ReactiveProperty<AnimationState> _currentAnimationStateProperty { get; } = new ReactiveProperty<AnimationState>();
+        public IReadOnlyReactiveProperty<AnimationState> CurrentAnimationStateProperty => _currentAnimationStateProperty;
+        private ReactiveProperty<ChestType> _currentChestTypeProperty { get; } = new ReactiveProperty<ChestType>();
+        public IReadOnlyReactiveProperty<ChestType> CurrentChestTypeProperty => _currentChestTypeProperty;
+        private ReactiveProperty<PlayerEnvironmentState> _playerStateProperty { get; } = new ReactiveProperty<PlayerEnvironmentState>();
+        public IReadOnlyReactiveProperty<PlayerEnvironmentState> PlayerStateProperty => _playerStateProperty;
+        private ReactiveProperty<bool> _hasMovementInputProperty { get; } = new ReactiveProperty<bool>();
+        public IReadOnlyReactiveProperty<bool> HasMovementInputProperty => _hasMovementInputProperty;
+        private ReactiveProperty<bool> _isSprintingProperty { get; } = new ReactiveProperty<bool>();
+        public IReadOnlyReactiveProperty<bool> IsSprintingProperty => _isSprintingProperty;
+        private ReactiveProperty<bool> _isInvisibleProperty { get; } = new ReactiveProperty<bool>();
+        public IReadOnlyReactiveProperty<bool> IsInvisibleProperty => _isInvisibleProperty;
 
         private readonly Dictionary<PropertyTypeEnum, float> _configBaseProperties = new Dictionary<PropertyTypeEnum, float>(); 
         private readonly Dictionary<PropertyTypeEnum, float> _configMinProperties = new Dictionary<PropertyTypeEnum, float>();
@@ -164,7 +190,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         {
             _playerDataConfig = configProvider.GetConfig<PlayerDataConfig>();
             InitializeProperties();
-            CurrentChestTypeProperty.Value = ChestType.Attack;
+            _currentChestTypeProperty.Value = ChestType.Attack;
             var properties = uiManager.SwitchUI<PlayerPropertiesOverlay>();
             properties.SetPlayerProperties(this);
             
@@ -184,7 +210,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         private void OnMaxCurrentPropertySet(PropertyTypeEnum arg1, float arg2)
         {
-            //Debug.Log("OnMaxCurrentPropertySet");
             MaxPropertyChanged(arg1,arg2);
         }
 
@@ -195,7 +220,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         private void OnCurrentPropertySet(PropertyTypeEnum arg1, float arg2)
         {
-            //Debug.Log("OnCurrentPropertySet");
             PropertyChanged(arg1,arg2);
         }
 
@@ -341,8 +365,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            // MaxPropertyChanged(_syncMaxCurrentProperties[type]);
-            // PropertyChanged(_syncCurrentProperties[type]);
         }
         
         private void MaxPropertyChanged(PropertyTypeEnum type,float value)
@@ -377,7 +399,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             {
                 if (animationState == AnimationState.Sprint)
                 {
-                    return strength >= cost * 0.1f;
+                    return strength >= cost * Time.fixedDeltaTime * 1.1f;
                 }
 
                 return strength >= cost;
@@ -387,24 +409,17 @@ namespace HotUpdate.Scripts.Network.Client.Player
         }
         
         
-        public bool DoAnimation(AnimationState animationState)
+        public void DoAnimation(AnimationState animationState)
         {
             switch (animationState)
             {
-                case AnimationState.Idle:
-                case AnimationState.Move:
-                case AnimationState.Dead:
-                    CurrentAnimationState = animationState;
-                    return true;
-                case AnimationState.Sprint:
                 case AnimationState.Jump:
                 case AnimationState.SprintJump:
                     if (StrengthCanDoAnimation(animationState))
                     {
                         ChangeAnimationState(animationState);
-                        return true;
                     }
-                    return false;
+                    break;
                 case AnimationState.Roll:
                     // if (_currentChestType != ChestType.Dash)
                     // {
@@ -414,9 +429,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     if (StrengthCanDoAnimation(animationState))
                     {
                         ChangeAnimationState(animationState);
-                        return true;
                     }
-                    return false;
+                    break;
                 case AnimationState.Attack:
                     // if (_currentChestType != ChestType.Attack)
                     // {
@@ -426,18 +440,14 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     if (StrengthCanDoAnimation(animationState))
                     {
                         ChangeAnimationState(animationState);
-                        return true;
                     }
-                    return false;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(animationState), animationState, null);
+                    break;
             }
         }
 
         private void ChangeAnimationState(AnimationState animationState)
         {
             var cost = _playerDataConfig.GetPlayerAnimationCost(animationState);
-            CurrentAnimationState = animationState;
             if (animationState != AnimationState.Sprint)
             {
                 IncreaseProperty(PropertyTypeEnum.Strength, BuffIncreaseType.Current, -cost);

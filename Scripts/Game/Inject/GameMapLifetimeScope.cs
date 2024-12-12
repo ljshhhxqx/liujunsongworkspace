@@ -4,6 +4,7 @@ using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Network.Server.Sync;
 using HotUpdate.Scripts.Weather;
 using Mirror;
 using Network.Server;
@@ -26,6 +27,7 @@ namespace HotUpdate.Scripts.Game.Inject
             RegisterComponent<ItemsSpawnerManager>(builder);
             RegisterComponent<WeatherManager>(builder);
             RegisterComponent<GameMapInit>(builder);
+            RegisterComponent<FrameSyncManager>(builder);
             builder.Register<GameMapInjector>(Lifetime.Singleton).WithParameter(typeof(LifetimeScope), this);
             Debug.Log("GameMapLifetimeScope Configured!!!");
         }

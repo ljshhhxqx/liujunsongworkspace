@@ -1,4 +1,5 @@
 ﻿using Common;
+using HotUpdate.Scripts.Network.Server.Sync;
 using HotUpdate.Scripts.Tool.Message;
 using Mirror;
 using Model;
@@ -20,17 +21,20 @@ namespace Network.Client
         protected IConfigProvider configProvider;
         protected RepeatedTask repeatedTask;
         protected MessageCenter messageCenter;
+        protected FrameSyncManager frameSyncManager;
         protected UIManager uiManager;
         
         [Inject]
         protected virtual void Init(PlayersGameModelManager playersGameModelManager,
-         GameEventManager gameEventManager, IConfigProvider configProvider, RepeatedTask repeatedTask, MessageCenter messageCenter, UIManager uiManager)
+         GameEventManager gameEventManager, IConfigProvider configProvider, RepeatedTask repeatedTask, MessageCenter messageCenter, UIManager uiManager,
+         FrameSyncManager frameSyncManager)
         {
             this.gameEventManager = gameEventManager;
             this.configProvider = configProvider;
             this.repeatedTask = repeatedTask;
             this.messageCenter = messageCenter;
             this.uiManager = uiManager;
+            this.frameSyncManager = frameSyncManager;
             //playerGameModel = playersGameModelManager.GetPlayerModel(connectionToClient.connectionId);
             InitCallback();
         }
