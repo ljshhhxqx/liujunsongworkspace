@@ -1,111 +1,132 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using HotUpdate.Scripts.Network.Client.Player;
+using HotUpdate.Scripts.Network.NetworkMes;
 using Mirror;
+using Network.NetworkMes;
+using Tool.Message;
 using UnityEngine;
+using VContainer;
 
 namespace HotUpdate.Scripts.Network.Server.Sync
 {
     public class FrameSyncManager : NetworkBehaviour
     {
         private const int BUFFER_FRAMES = 2; // 缓冲帧数
-        private uint _currentFrame;
-        private Dictionary<uint, List<PlayerInput>> _frameInputs = new Dictionary<uint, List<PlayerInput>>();
-    
-        private float _fixedDeltaTime;
+        [SyncVar]
+        private uint _currentFrame;  // 使用SyncVar确保服务器和客户端帧号同步
+        private readonly Dictionary<uint, List<PlayerInputInfo>> _frameInputs = new Dictionary<uint, List<PlayerInputInfo>>();
+        private readonly Dictionary<uint, PlayerControlClient> _players = new Dictionary<uint, PlayerControlClient>();
+        private MirrorNetworkMessageHandler _messageCenter;
+        private float _accumulator;  // 用于累积固定更新的时间
+        private const float FIXED_TIME_STEP = 0.01f;  // 100fps的固定更新间隔
 
-        private void Start()
+        [Inject]
+        private void Init(MirrorNetworkMessageHandler messageCenter)
         {
-            _fixedDeltaTime = Time.fixedDeltaTime;
-            Reader<PlayerInput>.read += ReadInput;
-            Writer<PlayerInput>.write += WriteInput;
-        }
-        
-        private void OnDestroy()
-        {
-            Reader<PlayerInput>.read -= ReadInput;
-            Writer<PlayerInput>.write -= WriteInput;
+            _messageCenter = messageCenter;
+            _messageCenter.RegisterLocalMessageHandler<PlayerInputMessage>(OnPlayerInputMessage);
+            _messageCenter.RegisterLocalMessageHandler<PlayerFrameUpdateMessage>(OnPlayerFrameUpdateMessage);
         }
 
-        private PlayerInput ReadInput(NetworkReader reader)
+        public override void OnStartServer()
         {
-            var input = new PlayerInput
-            {
-                frame = reader.ReadUInt(),
-                playerId = reader.ReadUInt(),
-                movement = reader.ReadVector3(),
-                isJumpRequested = reader.ReadBool(),
-                isRollRequested = reader.ReadBool(),
-                isAttackRequested = reader.ReadBool(),
-                isSprinting = reader.ReadBool()
-            };
-            return input;
+            base.OnStartServer();
+            _currentFrame = 0;  // 服务器启动时初始化帧号
         }
 
-        private void WriteInput(NetworkWriter writer,PlayerInput input)
+        private void Update()
         {
-            writer.Write(input.frame);
-            writer.Write(input.playerId);
-            writer.Write(input.movement);
-            writer.Write(input.isJumpRequested);
-            writer.Write(input.isRollRequested);
-            writer.Write(input.isAttackRequested);
-            writer.Write(input.isSprinting);
-        }
+            if (!isServer) return;
 
-        private void FixedUpdate()
-        {
-            if (isServer)
+            // 使用时间累加器来确保固定帧率
+            _accumulator += Time.deltaTime;
+            while (_accumulator >= FIXED_TIME_STEP)
             {
                 ProcessFrame();
+                _accumulator -= FIXED_TIME_STEP;
             }
         }
 
-        // 服务器处理帧
         private void ProcessFrame()
         {
             if (_frameInputs.TryGetValue(_currentFrame, out var inputs))
             {
-                // 广播确认帧
-                RpcExecuteFrame(_currentFrame, inputs.ToArray());
+                // 广播帧更新
+                _messageCenter.SendToAllClients(new MirrorFrameUpdateMessage
+                {
+                    frame = _currentFrame,
+                    playerInputs = inputs
+                });
+
+                // 清理已处理的帧数据
+                _frameInputs.Remove(_currentFrame);
+
+                // 增加帧号
+                _currentFrame++;
+            }
+            else
+            {
+                // 如果当前帧没有输入，也需要推进帧号
+                // 可以选择发送空帧或者使用上一帧的输入
                 _currentFrame++;
             }
         }
 
-        // 客户端发送输入
-        [Command]
-        public void CmdSendInput(PlayerInput input)
+        private void OnPlayerInputMessage(PlayerInputMessage message)
         {
-            if (!_frameInputs.ContainsKey(input.frame))
+            if (!_frameInputs.ContainsKey(message.PlayerInputInfo.frame))
             {
-                _frameInputs[input.frame] = new List<PlayerInput>();
+                _frameInputs[message.PlayerInputInfo.frame] = new List<PlayerInputInfo>();
             }
-            _frameInputs[input.frame].Add(input);
+            _frameInputs[message.PlayerInputInfo.frame].Add(message.PlayerInputInfo);
         }
 
-        // 在所有客户端执行帧
-        [ClientRpc]
-        private void RpcExecuteFrame(uint frame, PlayerInput[] inputs)
+        private void OnPlayerFrameUpdateMessage(PlayerFrameUpdateMessage message)
         {
-            foreach (var input in inputs)
+            foreach (var input in message.PlayerInputInfos)
             {
-                var player = NetworkClient.spawned[input.playerId];
-                player.GetComponent<PlayerControlClient>().ExecuteInput(input);
+                if (!_players.TryGetValue(input.playerId, out var player))
+                {
+                    if (NetworkClient.spawned.TryGetValue(input.playerId, out var identity))
+                    {
+                        player = identity.GetComponent<PlayerControlClient>();
+                        _players[input.playerId] = player;
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Player {input.playerId} not found");
+                        continue;
+                    }
+                }
+                player?.ExecuteInput(input);
             }
         }
-    }
-    
-    [Serializable]
-    // 玩家输入结构
-    public struct PlayerInput : NetworkMessage
-    {
-        public uint frame;
-        public uint playerId;
-        public Vector3 movement;
-        public bool isJumpRequested;
-        public bool isRollRequested;
-        public bool isAttackRequested;
-        public bool isSprinting;
+
+        // 获取当前帧号（客户端可用）
+        public uint GetCurrentFrame()
+        {
+            return _currentFrame;
+        }
+
+        // 清理旧的帧数据
+        private void CleanupOldFrames()
+        {
+            var oldFrames = _frameInputs.Keys.Where(frame => frame < _currentFrame - BUFFER_FRAMES);
+            foreach (var frame in oldFrames)
+            {
+                _frameInputs.Remove(frame);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (_messageCenter)
+            {
+                _messageCenter.UnregisterLocalMessageHandler<PlayerInputMessage>(OnPlayerInputMessage);
+                _messageCenter.UnregisterLocalMessageHandler<PlayerFrameUpdateMessage>(OnPlayerFrameUpdateMessage);
+            }
+        }
     }
 
 }

@@ -53,6 +53,8 @@ namespace HotUpdate.Scripts.Network.NetworkMes
         {
             RegisterServerHandler<MirrorPickerPickUpCollectMessage>();
             RegisterServerHandler<MirrorPickerPickUpChestMessage>();
+            RegisterServerHandler<MirrorPlayerInputMessage>();
+            // 注册更多服务器消息处理程序...
         }
 
         private void RegisterClientHandlers()
@@ -60,6 +62,7 @@ namespace HotUpdate.Scripts.Network.NetworkMes
             RegisterClientHandler<MirrorCountdownMessage>();
             RegisterClientHandler<MirrorGameStartMessage>();
             RegisterClientHandler<MirrorGameWarmupMessage>();
+            RegisterClientHandler<MirrorFrameUpdateMessage>();
             // 注册更多客户端消息处理程序...
         }
 
@@ -126,6 +129,16 @@ namespace HotUpdate.Scripts.Network.NetworkMes
             {
                 return new PickerPickUpChestMessage(pickerPickUpChestMessage.PickerID,
                     pickerPickUpChestMessage.ChestID);
+            }
+            
+            if (networkMessage is MirrorPlayerInputMessage playerInputMessage)
+            {
+                return new PlayerInputMessage(playerInputMessage.playerInputInfo);
+            }
+            
+            if (networkMessage is MirrorFrameUpdateMessage frameUpdateMessage)
+            {
+                return new PlayerFrameUpdateMessage(frameUpdateMessage.frame, frameUpdateMessage.playerInputs);
             }
             // 添加更多消息类型的处理...
 

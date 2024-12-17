@@ -1,22 +1,27 @@
 ﻿using System;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.Server.Sync;
+using Mirror;
 using Network.Client;
+using Network.NetworkMes;
 using Tool.GameEvent;
 using UI.UIBase;
 using UniRx;
 using UnityEngine;
-using UnityEngine.Serialization;
+using VContainer;
 using AnimationState = HotUpdate.Scripts.Config.AnimationState;
 
 namespace HotUpdate.Scripts.Network.Client.Player
 {
-    public class PlayerControlClient : ClientBase
+    public class PlayerControlClient : NetworkBehaviour
     {
         private PlayerPropertyComponent _playerPropertyComponent;
         private PlayerAnimationComponent _playerAnimationComponent;
-
-        private PlayerInput _playerInput;
+        private MirrorNetworkMessageHandler _messageHandler;
+        private FrameSyncManager _frameSyncManager;
+        private UIManager _uiManager;
+        private PlayerInputInfo _playerInput;
         
         private float _speedSmoothTime = 0.1f; // 速度平滑时间
         //决定摄像机的旋转中心
@@ -53,10 +58,15 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private float _slopeAngle;
         private readonly float _maxSlopeAngle = 45f; // 可行走的最大斜坡角度
 
-        protected override void InitCallback()
+        [Inject]
+        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager, MirrorNetworkMessageHandler networkMessageHandler,
+            FrameSyncManager frameSyncManager, UIManager uiManager)
         {
             _playerAnimationComponent = GetComponent<PlayerAnimationComponent>();
             _playerPropertyComponent = GetComponentInChildren<PlayerPropertyComponent>();
+            _frameSyncManager = frameSyncManager;
+            _messageHandler = networkMessageHandler;
+            _uiManager = uiManager;
             _rotateCenter = transform.Find("RotateCenter");
             _checkStairsTransform = transform.Find("CheckStairs");
             _camera = Camera.main;
@@ -77,13 +87,14 @@ namespace HotUpdate.Scripts.Network.Client.Player
         {
             if (!isLocalPlayer) return;
             SendInput();
+            HandleRotation();
         }
 
         private void SendInput()
         {
-            _playerInput = new PlayerInput
+            _playerInput = new PlayerInputInfo
             {
-                frame = (uint)Time.frameCount,
+                frame = _frameSyncManager.GetCurrentFrame(),
                 playerId = netId,
                 movement = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical")),
                 isJumpRequested = Input.GetButtonDown("Jump") && !_isJumpRequested,
@@ -91,10 +102,10 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 isAttackRequested = Input.GetButtonDown("Fire1") && !_isAttackRequested,
                 isSprinting = Input.GetButton("Running")
             };
-            frameSyncManager.CmdSendInput(_playerInput);
+            _messageHandler.SendToServer(new MirrorPlayerInputMessage(_playerInput));
         }
 
-        public void ExecuteInput(PlayerInput input)
+        public void ExecuteInput(PlayerInputInfo input)
         {
             _inputMovement = input.movement;
             _hasMovementInput = input.movement.magnitude > 0;
@@ -102,34 +113,42 @@ namespace HotUpdate.Scripts.Network.Client.Player
             _isJumpRequested = input.isJumpRequested;
             _isRollRequested = input.isRollRequested;
             _isAttackRequested = input.isAttackRequested;
-            HandleRotation();
-            HandleMovement();
-            HandleRoll();
-            HandleAttack();
-            SyncAnimation();
+            HandleAllInput();
         }
 
+        private void HandleAllInput()
+        {
+            CheckPlayerState();
+            HandleAnimation(_playerAnimationComponent.ExecuteAnimationState(_playerInput, _playerEnvironmentState));
+            HandleMovementAndJump();
+            SyncAnimation();
+        }
+        
+        private AnimationState _currentPlayAnimationState;
+
+        private void HandleAnimation(AnimationState animationState)
+        {
+            if (_playerAnimationComponent.CanPlayAnimation(animationState))
+            {
+                _currentPlayAnimationState = animationState;
+            }
+        }
+
+        #region 暂时废弃
         private void HandleAttack()
         {
-            if (_isAttackRequested && _playerEnvironmentState != PlayerEnvironmentState.InAir)
+            if (_isAttackRequested && _playerEnvironmentState == PlayerEnvironmentState.OnGround)
             {
                 _rigidbody.velocity = Vector3.zero;
-                _playerAnimationComponent.RequestAttack();
             }
         }
 
         private void HandleRoll()
         {
-            if (_isRollRequested && _playerEnvironmentState != PlayerEnvironmentState.InAir)
+            if (_isRollRequested && _playerEnvironmentState == PlayerEnvironmentState.OnGround)
             {
-                if (_playerAnimationComponent.isPlayingSpecialAction)
-                {
-                    return;
-                }
-                _isRollRequested = true;
             }
         }
-        private Vector3 _inputSmoothMovement;
 
         private void HandleMoveInput()
         {
@@ -153,10 +172,11 @@ namespace HotUpdate.Scripts.Network.Client.Player
             
 #endif
         }
+        #endregion
         
         private void HandleRotation()   
         {
-            var canRotate = _playerEnvironmentState is PlayerEnvironmentState.OnGround or PlayerEnvironmentState.OnStairs;
+            var canRotate = _playerEnvironmentState is not PlayerEnvironmentState.InAir;
             var isMoving = _playerAnimationComponent.IsMovingState();
             if (_inputMovement.magnitude > 0.1f && _groundDistance <= groundMinDistance && canRotate && isMoving)
             {
@@ -210,7 +230,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             _playerAnimationComponent.SetEnvironmentState(_playerEnvironmentState);
         }
         
-        private void HandleMovement()
+        private void HandleMovementAndJump()
         {
             CheckGroundDistance();
             _currentSpeed = Mathf.SmoothDamp(_currentSpeed, _targetSpeed, ref _speedSmoothVelocity, _speedSmoothTime);
@@ -218,8 +238,15 @@ namespace HotUpdate.Scripts.Network.Client.Player
             if (_playerEnvironmentState == PlayerEnvironmentState.OnStairs)
             {
                 _rigidbody.useGravity = false;
-                if (_playerAnimationComponent.isPlayingSpecialAction)
+                if (_playerAnimationComponent.IsPlayingSpecialAction)
                 {
+                    if (_currentPlayAnimationState is AnimationState.Jump or AnimationState.SprintJump)
+                    {
+                        _rigidbody.velocity = Vector3.zero;
+                        _rigidbody.MovePosition(transform.position + _stairsHitNormal.normalized);
+                        _rigidbody.AddForce(_stairsHitNormal.normalized * _playerDataConfig.PlayerConfigData.JumpSpeed / 5f, ForceMode.Impulse);
+                        return;
+                    }
                     return;
                 }
                 _movement = _inputMovement.z * -_stairsNormal.normalized + transform.right * _inputMovement.x;
@@ -231,13 +258,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     _rigidbody.velocity = targetVelocity;
                     _playerAnimationComponent.SetMoveSpeed(_currentSpeed);
                 }
-                else if (_isJumpRequested)
-                {
-                    _isJumpRequested = false;
-                    _rigidbody.velocity = Vector3.zero;
-                    _rigidbody.MovePosition(transform.position + _stairsHitNormal.normalized);
-                    _rigidbody.AddForce(_stairsHitNormal.normalized * _playerDataConfig.PlayerConfigData.JumpSpeed / 5f, ForceMode.Impulse);
-                }
                 else
                 {
                     _rigidbody.velocity = _stairsHitNormal.normalized * -2f;
@@ -246,26 +266,39 @@ namespace HotUpdate.Scripts.Network.Client.Player
             }
             else if (_playerEnvironmentState == PlayerEnvironmentState.OnGround)
             {
-                if (_isRollRequested)
-                {
-                    _isRollRequested = false;
-                    _rigidbody.velocity = Vector3.zero;
-                    _playerAnimationComponent.isPlayingSpecialAction = true;
-                    _playerAnimationComponent.SetRoll();
-                    _rigidbody.AddForce(transform.forward.normalized * _playerDataConfig.PlayerConfigData.RollForce, ForceMode.Impulse);
-                }
-
-                if (_playerAnimationComponent.isPlayingSpecialAction)
-                {
-                    return;
-                }
-                _movement = _inputMovement.magnitude <= 0.1f ? _inputMovement : 
-                    _camera.transform.TransformDirection(_inputMovement);
-                _movement.y = 0f;
-
                 // 计算目标位置和速度
                 var targetPosition = transform.position + _movement.normalized * (_currentSpeed * Time.fixedDeltaTime);
                 var targetVelocity = (targetPosition - transform.position) / Time.fixedDeltaTime;
+
+                if (_playerAnimationComponent.IsPlayingSpecialAction)
+                {
+                    // 处理跳跃
+                    if (_currentPlayAnimationState is AnimationState.Jump or AnimationState.SprintJump)
+                    {
+                        // 清除当前垂直速度
+                        var vel = _rigidbody.velocity;
+                        vel.y = 0f;
+                        _rigidbody.velocity = vel;
+            
+                        // 应用跳跃力
+                        var jumpDirection = _isOnSlope ? Vector3.Lerp(Vector3.up, _slopeNormal, 0.5f) : Vector3.up;
+                        _rigidbody.AddForce(jumpDirection * _playerDataConfig.PlayerConfigData.JumpSpeed, ForceMode.Impulse);
+                    }
+                    else if (_currentPlayAnimationState is AnimationState.Roll)
+                    {
+                        _rigidbody.velocity = Vector3.zero;
+                        _rigidbody.AddForce(transform.forward.normalized * _playerDataConfig.PlayerConfigData.RollForce, ForceMode.Impulse);
+                    }
+                    else if (_currentPlayAnimationState is AnimationState.Attack)
+                    {
+                        _rigidbody.velocity = Vector3.zero;
+                    }
+                    return;
+                }
+                
+                _movement = _inputMovement.magnitude <= 0.1f ? _inputMovement : 
+                    _camera.transform.TransformDirection(_inputMovement);
+                _movement.y = 0f;
 
                 // 保持垂直速度
                 targetVelocity.y = _rigidbody.velocity.y;
@@ -282,22 +315,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     {
                         _rigidbody.AddForce(-_slopeNormal * 20f, ForceMode.Force);
                     }
-                }
-
-                // 处理跳跃
-                if (_isJumpRequested)
-                {
-                    _isJumpRequested = false;
-                    // 清除当前垂直速度
-                    var vel = _rigidbody.velocity;
-                    vel.y = 0f;
-                    _rigidbody.velocity = vel;
-            
-                    // 应用跳跃力
-                    var jumpDirection = _isOnSlope ? Vector3.Lerp(Vector3.up, _slopeNormal, 0.5f) : Vector3.up;
-                    _rigidbody.AddForce(jumpDirection * _playerDataConfig.PlayerConfigData.JumpSpeed, ForceMode.Impulse);
-            
-                    _playerAnimationComponent.RequestJump(_isSprinting);
                 }
                 // 应用速度
                 _rigidbody.velocity = targetVelocity;
@@ -320,18 +337,14 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 _playerAnimationComponent.SetMoveSpeed(0);
             }
             _verticalSpeed = _rigidbody.velocity.y;
-
-            if (_playerAnimationComponent.IsMovingState() || _playerAnimationComponent.IsJumpingState())
-            {
-            }
         }
 
         private void SyncAnimation()
         {
-            _playerAnimationComponent.SetFallSpeed(_verticalSpeed);
-            _playerAnimationComponent.SetInputMagnitude(_inputMovement.magnitude)
             _playerAnimationComponent.SetMoveSpeed(_currentSpeed);
+            _playerAnimationComponent.SetInputMagnitude(_inputMovement.magnitude);
             _playerAnimationComponent.SetIsSprinting(_isSprinting);
+            _playerAnimationComponent.SetFallSpeed(_verticalSpeed);
         }
         
         private float _groundDistance;
@@ -405,7 +418,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         private void OnDestroy()
         {
-            uiManager.CloseUI(UIType.PlayerPropertiesOverlay);
+            _uiManager.CloseUI(UIType.PlayerPropertiesOverlay);
         }
     }
 }

@@ -404,8 +404,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
                 return strength >= cost;
             }
-            Debug.LogError($"Animation {animationState} not found in config.");
-            return strength > 0f;
+            return strength > 0.01f;
         }
         
         

@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using Mirror;
 using Tool.GameEvent;
+using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Network.NetworkMes
 {
@@ -98,6 +101,41 @@ namespace Network.NetworkMes
         {
             PickerID = pickerID;
             ChestID = chestID;
+        }
+    }
+
+    [Serializable]
+    public struct PlayerInputInfo : NetworkMessage
+    {
+        public uint frame;
+        public uint playerId;
+        public Vector3 movement;
+        public bool isJumpRequested;
+        public bool isRollRequested;
+        public bool isAttackRequested;
+        public bool isSprinting;
+    }
+
+    [Serializable]
+    public struct MirrorPlayerInputMessage : NetworkMessage
+    {
+        public PlayerInputInfo playerInputInfo;
+        
+        public MirrorPlayerInputMessage(PlayerInputInfo playerInputInfo)
+        {
+            this.playerInputInfo = playerInputInfo;
+        }
+    }
+    
+    [Serializable]
+    public struct MirrorFrameUpdateMessage : NetworkMessage
+    {
+        public uint frame;
+        public List<PlayerInputInfo> playerInputs;
+        public MirrorFrameUpdateMessage(uint frame, List<PlayerInputInfo> playerInputs)
+        {
+            this.frame = frame;
+            this.playerInputs = playerInputs;
         }
     }
 }

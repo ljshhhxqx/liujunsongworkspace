@@ -1,4 +1,6 @@
-﻿using HotUpdate.Scripts.Collector;
+﻿using System.Collections.Generic;
+using HotUpdate.Scripts.Collector;
+using Network.NetworkMes;
 using Tool.GameEvent;
 using UnityEngine;
 
@@ -46,13 +48,23 @@ namespace Tool.Message
     
     public class PlayerInputMessage : Message
     {
-        public bool IsRunning { get;set; }
-        public bool IsJumping { get;set; }
-        public bool IsRushing { get;set; }
+        public PlayerInputInfo PlayerInputInfo;
 
-        public PlayerInputMessage(bool isRunning)
+        public PlayerInputMessage(PlayerInputInfo playerInputInfo)
         {
-            IsRunning = isRunning;
+            PlayerInputInfo = playerInputInfo;
+        }
+    }
+
+    public class PlayerFrameUpdateMessage : Message
+    {
+        public uint Frame;
+        public List<PlayerInputInfo> PlayerInputInfos;
+        
+        public PlayerFrameUpdateMessage(uint frame, List<PlayerInputInfo> playerInputInfos)
+        {
+            Frame = frame;
+            PlayerInputInfos = playerInputInfos;
         }
     }
 

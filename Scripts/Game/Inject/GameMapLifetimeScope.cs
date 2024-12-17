@@ -28,6 +28,7 @@ namespace HotUpdate.Scripts.Game.Inject
             RegisterComponent<WeatherManager>(builder);
             RegisterComponent<GameMapInit>(builder);
             RegisterComponent<FrameSyncManager>(builder);
+            RegisterComponent<PlayerNotifyManager>(builder);
             builder.Register<GameMapInjector>(Lifetime.Singleton).WithParameter(typeof(LifetimeScope), this);
             Debug.Log("GameMapLifetimeScope Configured!!!");
         }
