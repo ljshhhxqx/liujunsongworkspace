@@ -73,43 +73,66 @@ MonoBehaviour:
       Cost: 0
       Cooldown: 0
       Priority: 0
+      AnimationType: 0
+      CanBeInterrupted: 1
     - State: 1
       Cost: 0
       Cooldown: 0
       Priority: 0
+      AnimationType: 0
+      CanBeInterrupted: 1
     - State: 2
       Cost: 20
       Cooldown: 0
       Priority: 0
+      AnimationType: 0
+      CanBeInterrupted: 1
     - State: 3
       Cost: 10
       Cooldown: 1
       Priority: 1
+      AnimationType: 1
+      CanBeInterrupted: 1
     - State: 4
       Cost: 12
       Cooldown: 1
       Priority: 1
+      AnimationType: 1
+      CanBeInterrupted: 1
     - State: 5
       Cost: 20
       Cooldown: 2
       Priority: 1
+      AnimationType: 1
+      CanBeInterrupted: 0
     - State: 6
       Cost: 0
       Cooldown: 0
       Priority: 0
+      AnimationType: 0
+      CanBeInterrupted: 0
     - State: 7
       Cost: 0
       Cooldown: 0
       Priority: 0
+      AnimationType: 1
+      CanBeInterrupted: 1
     - State: 8
       Cost: 10
       Cooldown: 2
       Priority: 1
+      AnimationType: 2
+      CanBeInterrupted: 1
     - State: 9
       Cost: 0
       Cooldown: 0
       Priority: 999
+      AnimationType: 1
+      CanBeInterrupted: 0
     - State: 10
       Cost: 0
       Cooldown: 0
       Priority: 2
+      AnimationType: 1
+      CanBeInterrupted: 0
+    RollInvincibleDuration: 0.5

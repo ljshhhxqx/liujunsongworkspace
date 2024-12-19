@@ -86,6 +86,15 @@ namespace HotUpdate.Scripts.Config
         public float Cost;
         public float Cooldown;
         public int Priority;
+        public AnimationType AnimationType;
+        public bool CanBeInterrupted;
+    }
+    
+    public enum AnimationType
+    {
+        Continuous,  // 持续性动画（待机、移动、奔跑）
+        Single,      // 一次性动画（跳跃、翻滚、受击、死亡）
+        Combo        // 连击动画（攻击）
     }
 
     public enum PlayerEnvironmentState
