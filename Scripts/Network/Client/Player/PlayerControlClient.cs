@@ -96,9 +96,9 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 frame = _frameSyncManager.GetCurrentFrame(),
                 playerId = netId,
                 movement = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical")),
-                isJumpRequested = Input.GetButtonDown("Jump") && !_isJumpRequested,
-                isRollRequested = Input.GetButtonDown("Roll") && !_isRollRequested,
-                isAttackRequested = Input.GetButtonDown("Fire1") && !_isAttackRequested,
+                isJumpRequested = Input.GetButtonDown("Jump"),
+                isRollRequested = Input.GetButtonDown("Roll"),
+                isAttackRequested = Input.GetButtonDown("Fire1"),
                 isSprinting = Input.GetButton("Running")
             }));
         }
@@ -117,61 +117,24 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         private void HandleAllInput()
         {
+            CheckGroundDistance();
             CheckPlayerState();
-            HandleAnimation(_playerAnimationComponent.ExecuteAnimationState(_playerInput, _playerEnvironmentState));
+            HandleAnimation();
             HandleMovementAndJump();
             SyncAnimation();
         }
         
-        private AnimationState _currentPlayAnimationState;
+        private AnimationState _currentRequestAnimationState;
 
-        private void HandleAnimation(AnimationState animationState)
+        private void HandleAnimation()
         {
-            if (_playerAnimationComponent.CanPlayAnimation(animationState))
-            {
-                _currentPlayAnimationState = animationState;
-            }
-        }
-
-        #region 暂时废弃
-        private void HandleAttack()
-        {
-            if (_isAttackRequested && _playerEnvironmentState == PlayerEnvironmentState.OnGround)
-            {
-                _rigidbody.velocity = Vector3.zero;
-            }
-        }
-
-        private void HandleRoll()
-        {
-            if (_isRollRequested && _playerEnvironmentState == PlayerEnvironmentState.OnGround)
-            {
-            }
-        }
-
-        private void HandleMoveInput()
-        {
-#if UNITY_ANDROID || UNITY_IOS
-#else
-            // _inputMovement = new Vector3(VirtualJoystick.Horizontal, 0f, VirtualJoystick.Vertical);
-            // _hasMovementInput = Mathf.Abs(_inputMovement.x) > 0 || Mathf.Abs(_inputMovement.z) > 0;
-            //
-            // _playerPropertyComponent.HasMovementInput = _hasMovementInput;
-            //
-            // _isSprinting = _hasMovementInput && VirtualButton.IsPressed("Running") && _playerPropertyComponent.StrengthCanDoAnimation(AnimationState.Sprint);
-            // if (VirtualButton.IsPressed("Jump") && !_isJumpRequested && _playerState != PlayerState.InAir && _playerPropertyComponent.StrengthCanDoAnimation(AnimationState.Jump))
+            _currentRequestAnimationState = _playerAnimationComponent.ExecuteAnimationState(_playerInput, _playerEnvironmentState, _groundDistance);
+            // if (_currentPlayAnimationState is AnimationState.Attack or AnimationState.Roll or AnimationState.Jump
+            //     or AnimationState.SprintJump)
             // {
-            //     _isJumpRequested = true;
-            //     _rigidbody.velocity = Vector3.zero;
+            //     Debug.Log($"Specail AnimationState: {_currentPlayAnimationState}");
             // }
-            //&& _playerEnvironmentState != PlayerEnvironmentState.InAir && !_isJumpRequested && _playerPropertyComponent.StrengthCanDoAnimation(AnimationState.Jump))
-            
-            
-            _isSprinting = _hasMovementInput && Input.GetButton("Running") && _playerPropertyComponent.StrengthCanDoAnimation(AnimationState.Sprint);
-            
-#endif
         }
-        #endregion
         
         private void HandleRotation()   
         {
@@ -231,7 +194,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
         
         private void HandleMovementAndJump()
         {
-            CheckGroundDistance();
             _currentSpeed = Mathf.SmoothDamp(_currentSpeed, _targetSpeed, ref _speedSmoothVelocity, _speedSmoothTime);
             _playerAnimationComponent.SetGroundDistance(_groundDistance);
             _playerPropertyComponent.HasMovementInput = _hasMovementInput;
@@ -242,9 +204,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 {
                     return;
                 }
-                if (_currentPlayAnimationState is AnimationState.Jump or AnimationState.SprintJump)
+                if (_currentRequestAnimationState is AnimationState.Jump or AnimationState.SprintJump)
                 {
-                    _isJumpRequested = false;
                     _rigidbody.velocity = Vector3.zero;
                     _rigidbody.MovePosition(transform.position + _stairsHitNormal.normalized);
                     _rigidbody.AddForce(_stairsHitNormal.normalized * _playerDataConfig.PlayerConfigData.JumpSpeed / 5f, ForceMode.Impulse);
@@ -269,19 +230,19 @@ namespace HotUpdate.Scripts.Network.Client.Player
             {
                 if (_playerAnimationComponent.IsPlayingSpecialAction)
                 {
-                    if (_currentPlayAnimationState is AnimationState.Roll)
+                    if (_currentRequestAnimationState is AnimationState.Roll)
                     {
-                        _isRollRequested = false;
+                        _rigidbody.velocity = Vector3.zero;
                         _rigidbody.AddForce(transform.forward.normalized * _playerDataConfig.PlayerConfigData.RollForce, ForceMode.Impulse);
                     }
-                    else if (_currentPlayAnimationState is AnimationState.Attack)
+                    else if (_currentRequestAnimationState is AnimationState.Attack)
                     {
-                        _isAttackRequested = false;
                         _rigidbody.velocity = Vector3.zero;
                     }
                     return;
                 }
-                _movement = _camera.transform.TransformDirection(_inputMovement);
+                _movement = _inputMovement.magnitude <= 0.1f ? _inputMovement : 
+                    _camera.transform.TransformDirection(_inputMovement);
                 _movement.y = 0f;
                 // 计算目标位置和速度
                 var targetPosition = transform.position + _movement.normalized * (_currentSpeed * Time.fixedDeltaTime);
@@ -289,9 +250,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 // 保持垂直速度
                 targetVelocity.y = _rigidbody.velocity.y;
                 // 处理跳跃
-                if (_currentPlayAnimationState is AnimationState.Jump or AnimationState.SprintJump)
+                if (_currentRequestAnimationState is AnimationState.Jump or AnimationState.SprintJump)
                 {
-                    _isJumpRequested = false;
                     // 清除当前垂直速度
                     var vel = _rigidbody.velocity;
                     vel.y = 0f;

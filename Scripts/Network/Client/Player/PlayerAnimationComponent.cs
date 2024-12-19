@@ -82,19 +82,22 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     _animator.CrossFadeInFixedTime(JumpMove, 0.1f);
                     break;
                 case AnimationState.Roll:
+                    IsPlayingSpecialAction = true;
                     _animator.CrossFadeInFixedTime(Roll, 0.1f);
                     break;
                 case Attack:
+                    IsPlayingSpecialAction = true;
                     RequestAttack();
                     break;
                 case AnimationState.Hit:
+                    IsPlayingSpecialAction = true;
                     _animator.CrossFade(Hit, 0.01f);
                     break;
                 case Dead:
+                    IsPlayingSpecialAction = true;
                     _animator.CrossFade(Death, 0.01f);
                     break;
             }
-            _playerPropertyComponent.DoAnimation(newState);
             return true;
         }
 
@@ -132,10 +135,10 @@ namespace HotUpdate.Scripts.Network.Client.Player
         }
 
         // 帧同步相关方法
-        public AnimationState ExecuteAnimationState(PlayerInputInfo input, PlayerEnvironmentState environmentState)
+        public AnimationState ExecuteAnimationState(PlayerInputInfo input, PlayerEnvironmentState environmentState, float groundDistance)
         {
             // 根据输入和环境状态确定应该播放的动画
-            var requestedState = DetermineAnimationState(input, environmentState);
+            var requestedState = DetermineAnimationState(input, environmentState, groundDistance);
             
             if (isServer)
             {
@@ -159,7 +162,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         
         private PlayerEnvironmentState _lastEnvironmentState;
 
-        private AnimationState DetermineAnimationState(PlayerInputInfo input, PlayerEnvironmentState environmentState)
+        private AnimationState DetermineAnimationState(PlayerInputInfo input, PlayerEnvironmentState environmentState, float groundDistance)
         {
             _lastEnvironmentState = environmentState;
             // 优先处理特殊状态
@@ -168,7 +171,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 return Dead;
             }
 
-            if (environmentState == PlayerEnvironmentState.InAir)
+            if (environmentState == PlayerEnvironmentState.InAir && groundDistance >= 0.25f)
             {
                 return AnimationState.Falling;
             }
@@ -183,7 +186,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
                 if (input.isJumpRequested)
                 {
-                    var jumpState = input.isSprinting ? SprintJump : AnimationState.Jump;
+                    var jumpState = _currentState.Value == Sprint ? SprintJump : AnimationState.Jump;
                     if (CanPlayAnimation(jumpState))
                         return jumpState;
                 }
@@ -195,7 +198,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             {
                 if (input.isJumpRequested)
                 {
-                    var jumpState = input.isSprinting ? SprintJump : AnimationState.Jump;
+                    var jumpState = _currentState.Value == Sprint ? SprintJump : AnimationState.Jump;
                     if (CanPlayAnimation(jumpState))
                         return jumpState;
                 }

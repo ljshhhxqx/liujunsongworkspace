@@ -89,13 +89,13 @@ MonoBehaviour:
       CanBeInterrupted: 1
     - State: 3
       Cost: 10
-      Cooldown: 1
+      Cooldown: 0.5
       Priority: 1
       AnimationType: 1
       CanBeInterrupted: 1
     - State: 4
       Cost: 12
-      Cooldown: 1
+      Cooldown: 0.5
       Priority: 1
       AnimationType: 1
       CanBeInterrupted: 1
@@ -134,5 +134,5 @@ MonoBehaviour:
       Cooldown: 0
       Priority: 2
       AnimationType: 1
-      CanBeInterrupted: 0
+      CanBeInterrupted: 1
     RollInvincibleDuration: 0.5
