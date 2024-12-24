@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.NetworkMes;
 using Mirror;
@@ -13,20 +14,35 @@ namespace HotUpdate.Scripts.Network.Server.Sync
     public class FrameSyncManager : NetworkBehaviour
     {
         private const int BUFFER_FRAMES = 2; // 缓冲帧数
-        [SyncVar]
-        private uint _currentFrame;  // 使用SyncVar确保服务器和客户端帧号同步
         private readonly Dictionary<uint, List<PlayerInputInfo>> _frameInputs = new Dictionary<uint, List<PlayerInputInfo>>();
         private readonly Dictionary<uint, PlayerControlClient> _players = new Dictionary<uint, PlayerControlClient>();
+        private readonly Dictionary<uint, List<AttackData>> _attackDatas = new Dictionary<uint, List<AttackData>>();
         private MirrorNetworkMessageHandler _messageCenter;
         private float _accumulator;  // 用于累积固定更新的时间
         private const float FIXED_TIME_STEP = 0.01f;  // 100fps的固定更新间隔
+        [SyncVar]
+        private uint _currentFrame;  // 使用SyncVar确保服务器和客户端帧号同步
 
         [Inject]
         private void Init(MirrorNetworkMessageHandler messageCenter)
         {
+            Reader<AttackData>.read = AttackDataExtensions.ReadAttackData;
+            Writer<AttackData>.write = AttackDataExtensions.WritePlayerAttackData;
+            Reader<PlayerAttackData>.read = AttackDataExtensions.ReadPlayerAttackData;
+            Writer<PlayerAttackData>.write = AttackDataExtensions.WriteAttackData;
             _messageCenter = messageCenter;
             _messageCenter.RegisterLocalMessageHandler<PlayerInputMessage>(OnPlayerInputMessage);
             _messageCenter.RegisterLocalMessageHandler<PlayerFrameUpdateMessage>(OnPlayerFrameUpdateMessage);
+            _messageCenter.RegisterLocalMessageHandler<PlayerAttackMessage>(OnPlayerAttackMessage);
+        }
+
+        private void OnPlayerAttackMessage(PlayerAttackMessage message)
+        {
+            if (!_attackDatas.ContainsKey(message.Frame))
+            {
+                _attackDatas[message.Frame] = new List<AttackData>();
+            }
+            _attackDatas[message.Frame].Add(message.PlayerAttackData);
         }
 
         public override void OnStartServer()
@@ -44,7 +60,19 @@ namespace HotUpdate.Scripts.Network.Server.Sync
             while (_accumulator >= FIXED_TIME_STEP)
             {
                 ProcessFrame();
+                ProcessAttack();
                 _accumulator -= FIXED_TIME_STEP;
+            }
+        }
+
+        private void ProcessAttack()
+        {
+            if (_attackDatas.TryGetValue(_currentFrame, out var attackList))
+            {
+                _messageCenter.SendToAllClients(new MirrorFrameAttackResultMessage
+                {
+                    
+                });
             }
         }
 
@@ -61,16 +89,8 @@ namespace HotUpdate.Scripts.Network.Server.Sync
 
                 // 清理已处理的帧数据
                 _frameInputs.Remove(_currentFrame);
-
-                // 增加帧号
-                _currentFrame++;
             }
-            else
-            {
-                // 如果当前帧没有输入，也需要推进帧号
-                // 可以选择发送空帧或者使用上一帧的输入
-                _currentFrame++;
-            }
+            _currentFrame++;
         }
 
         private void OnPlayerInputMessage(PlayerInputMessage message)
@@ -129,4 +149,58 @@ namespace HotUpdate.Scripts.Network.Server.Sync
         }
     }
 
+    public static class AttackDataExtensions
+    {
+        public static void WriteAttackData(NetworkWriter writer, PlayerAttackData value)
+        {
+            writer.WriteFloat(value.attackAngle);
+            writer.WriteFloat(value.attackRadius);
+            writer.WriteFloat(value.minAttackHeight);
+        }
+
+        public static PlayerAttackData ReadPlayerAttackData(NetworkReader reader)
+        {
+            var angle = reader.ReadFloat();
+            var radius = reader.ReadFloat();
+            var minHeight = reader.ReadFloat();
+            return new PlayerAttackData
+            {
+                attackAngle = angle,
+                attackRadius = radius,
+                minAttackHeight = minHeight,
+            };
+        }
+
+        public static AttackData ReadAttackData(NetworkReader reader)
+        {
+            var angle = reader.ReadFloat();
+            var radius = reader.ReadFloat();
+            var minHeight = reader.ReadFloat();
+            var attack = reader.ReadFloat();    
+            var attackerId = reader.ReadUInt();
+            var attackDirection = reader.ReadVector3();
+            var attackOrigin = reader.ReadVector3();
+            return new AttackData
+            {
+                angle = angle,
+                radius = radius,
+                minHeight = minHeight,
+                attack = attack,
+                attackerId = attackerId,
+                attackDirection = attackDirection,
+                attackOrigin = attackOrigin,
+            };
+        }
+
+        public static void WritePlayerAttackData(NetworkWriter writer, AttackData value)
+        {
+            writer.WriteFloat(value.angle);
+            writer.WriteFloat(value.radius);
+            writer.WriteFloat(value.minHeight);
+            writer.WriteFloat(value.attack);
+            writer.WriteUInt(value.attackerId);
+            writer.WriteVector3(value.attackDirection);
+            writer.WriteVector3(value.attackOrigin);
+        }
+    }
 }

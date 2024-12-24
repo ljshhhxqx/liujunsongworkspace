@@ -351,7 +351,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 return;
             //Debug.Log($"Animation State Changed from {_currentState} to {newState}");
             _currentState.Value = newState;
-            _playerPropertyComponent.CurrentAnimationState = newState;
             IsPlayingSpecialAction = IsSpecialActionState(newState);
             _animator.SetBool(SpecialAction, IsPlayingSpecialAction);
             if (_currentState.Value != Attack)
@@ -466,12 +465,12 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         private void OnAttack()
         {
+            OnAttackHit?.Invoke();
             ComboWindow().Forget();
         }
 
         private async UniTask ComboWindow()
         {
-            OnAttackHit?.Invoke();
             try
             {
                 _canComboSync = true;

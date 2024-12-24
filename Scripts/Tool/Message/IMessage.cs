@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Config;
 using Network.NetworkMes;
 using Tool.GameEvent;
 using UnityEngine;
@@ -7,12 +8,12 @@ using UnityEngine;
 namespace Tool.Message
 {
     //网络协议基类
-    public abstract class Message
+    public interface IMessage
     {
-        public int UID { get; set; }
+        
     }
     
-    public class PlayerMovedMessage : Message
+    public struct PlayerMovedMessage : IMessage
     {
         public Vector3 PreviousPosition { get;  set; }
         public Vector3 Movement { get;  set; }
@@ -26,7 +27,7 @@ namespace Tool.Message
         }
     }
     
-    public class PlayerGravityEffectMessage : Message
+    public struct PlayerGravityEffectMessage : IMessage
     {
         public float VerticalSpeed { get; set; }
 
@@ -36,7 +37,7 @@ namespace Tool.Message
         }
     }
     
-    public class PlayerRotatedMessage : Message
+    public struct PlayerRotatedMessage : IMessage
     {
         public Quaternion Quaternion { get;set; }
 
@@ -46,7 +47,7 @@ namespace Tool.Message
         }
     }
     
-    public class PlayerInputMessage : Message
+    public struct PlayerInputMessage : IMessage
     {
         public PlayerInputInfo PlayerInputInfo;
 
@@ -56,10 +57,10 @@ namespace Tool.Message
         }
     }
 
-    public class PlayerFrameUpdateMessage : Message
+    public struct PlayerFrameUpdateMessage : IMessage
     {
-        public uint Frame;
         public List<PlayerInputInfo> PlayerInputInfos;
+        public uint Frame;
         
         public PlayerFrameUpdateMessage(uint frame, List<PlayerInputInfo> playerInputInfos)
         {
@@ -68,7 +69,19 @@ namespace Tool.Message
         }
     }
 
-    public class PlayerTouchedCollectMessage : Message
+    public struct PlayerAttackMessage : IMessage
+    {
+        public AttackData PlayerAttackData;
+        public uint Frame;
+
+        public PlayerAttackMessage(AttackData playerAttackData, uint frame)
+        {
+            PlayerAttackData = playerAttackData;
+            Frame = frame;
+        }
+    }
+
+    public struct PlayerTouchedCollectMessage : IMessage
     {
         public int CollectID { get; set; }
         public CollectType CollectType { get; set; }
@@ -81,7 +94,7 @@ namespace Tool.Message
     }
     
 
-    public class PickerPickUpMessage : Message
+    public struct PickerPickUpMessage : IMessage
     {
         public uint PickerId { get; set; }
         public int ItemId { get; set; }
@@ -93,7 +106,7 @@ namespace Tool.Message
         }
     }
 
-    public class PlayerCollectChestMessage : Message
+    public struct PlayerCollectChestMessage : IMessage
     {
         public int CollectID { get; set; }
         public CollectType CollectType { get; set; }
@@ -105,7 +118,7 @@ namespace Tool.Message
         }
     }
     
-    public class GameStartMessage : Message
+    public struct GameStartMessage : IMessage
     {
         public GameInfo GameInfo;
         public GameStartMessage(GameInfo gameInfo)
@@ -114,7 +127,7 @@ namespace Tool.Message
         }
     }
     
-    public class GameWarmupMessage : Message
+    public struct GameWarmupMessage : IMessage
     {
         public float TimeLeft;
 
@@ -124,7 +137,7 @@ namespace Tool.Message
         }
     }
     
-    public class CountdownMessage : Message
+    public struct CountdownMessage : IMessage
     {
         public float RemainingTime;
         
@@ -134,7 +147,7 @@ namespace Tool.Message
         }
     }
     
-    public class PickerPickUpChestMessage : Message
+    public struct PickerPickUpChestMessage : IMessage
     {
         public uint PickerId { get; set; }
         public uint ChestNetId { get; set; }

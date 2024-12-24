@@ -105,7 +105,7 @@ namespace Network.NetworkMes
     }
 
     [Serializable]
-    public struct PlayerInputInfo : NetworkMessage
+    public struct PlayerInputInfo
     {
         public uint frame;
         public uint playerId;
@@ -136,6 +136,56 @@ namespace Network.NetworkMes
         {
             this.frame = frame;
             this.playerInputs = playerInputs;
+        }
+    }
+
+    [Serializable]
+    public struct MirrorFrameAttackResultMessage : NetworkMessage
+    {
+        public uint frame;
+    }
+
+    [Serializable]
+    public struct AttackData
+    {
+        public uint attackerId;
+        public Vector3 attackOrigin;
+        public Vector3 attackDirection;
+        public float angle;
+        public float radius;
+        public float minHeight;
+        public float attack;
+    }
+
+    [Serializable]
+    public struct DamageResult
+    {
+        public int targetId;
+        public float damageAmount;
+        public bool isDead;
+    }
+
+    [Serializable]
+    public struct MirrorPlayerAttackHitMessage : NetworkMessage
+    {
+        public uint frame;
+        public AttackData attackData;
+        
+        public MirrorPlayerAttackHitMessage(AttackData attackData, uint frame)
+        {
+            this.frame = frame;
+            this.attackData = attackData;
+        }
+    }
+
+    [Serializable]
+    public struct MirrorAttackResultMessage : NetworkMessage
+    {
+        public DamageResult damageResult;
+        
+        public MirrorAttackResultMessage(DamageResult damageResult)
+        {
+            this.damageResult = damageResult;
         }
     }
 }

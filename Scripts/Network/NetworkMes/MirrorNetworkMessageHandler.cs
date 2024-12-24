@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Tool.Message;
 using Mirror;
 using Network.NetworkMes;
@@ -54,6 +55,7 @@ namespace HotUpdate.Scripts.Network.NetworkMes
             RegisterServerHandler<MirrorPickerPickUpCollectMessage>();
             RegisterServerHandler<MirrorPickerPickUpChestMessage>();
             RegisterServerHandler<MirrorPlayerInputMessage>();
+            RegisterServerHandler<MirrorPlayerAttackHitMessage>();
             // 注册更多服务器消息处理程序...
         }
 
@@ -103,7 +105,7 @@ namespace HotUpdate.Scripts.Network.NetworkMes
             }
         }
 
-        private Message ConvertToLocalMessage<T>(T networkMessage) where T : struct, NetworkMessage
+        private IMessage ConvertToLocalMessage<T>(T networkMessage) where T : struct, NetworkMessage
         {
             // 这里实现网络消息到本地消息的转换逻辑
             if (networkMessage is MirrorGameStartMessage gameStartMessage)
@@ -127,8 +129,7 @@ namespace HotUpdate.Scripts.Network.NetworkMes
 
             if (networkMessage is MirrorPickerPickUpChestMessage pickerPickUpChestMessage)
             {
-                return new PickerPickUpChestMessage(pickerPickUpChestMessage.PickerID,
-                    pickerPickUpChestMessage.ChestID);
+                return new PickerPickUpChestMessage(pickerPickUpChestMessage.PickerID, pickerPickUpChestMessage.ChestID);
             }
             
             if (networkMessage is MirrorPlayerInputMessage playerInputMessage)
@@ -140,6 +141,11 @@ namespace HotUpdate.Scripts.Network.NetworkMes
             {
                 return new PlayerFrameUpdateMessage(frameUpdateMessage.frame, frameUpdateMessage.playerInputs);
             }
+            
+            if (networkMessage is MirrorPlayerAttackHitMessage playerAttackHitMessage)
+            {
+                return new PlayerAttackMessage(playerAttackHitMessage.attackData, playerAttackHitMessage.frame);
+            }
             // 添加更多消息类型的处理...
 
             Debug.LogWarning($"Unhandled network message type: {typeof(T)}");
@@ -147,12 +153,12 @@ namespace HotUpdate.Scripts.Network.NetworkMes
         }
 
         // 提供给其他脚本注册本地消息处理的方法
-        public void RegisterLocalMessageHandler<T>(Action<T> callback) where T : Message
+        public void RegisterLocalMessageHandler<T>(Action<T> callback) where T : IMessage
         {
             _messageCenter.Register(callback);
         }
 
-        public void UnregisterLocalMessageHandler<T>(Action<T> callback) where T : Message
+        public void UnregisterLocalMessageHandler<T>(Action<T> callback) where T : IMessage
         {
             _messageCenter.Unregister(callback);
         }

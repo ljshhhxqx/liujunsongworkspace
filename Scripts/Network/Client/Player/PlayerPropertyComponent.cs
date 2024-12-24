@@ -19,24 +19,45 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private readonly Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>> _currentProperties = new Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>>();
         private PlayerDataConfig _playerDataConfig;
         private UIManager _uiManager;
-        [SyncVar(hook = nameof(OnCurrentAnimationStateChanged))] 
         private AnimationState _currentAnimationState;
+        
         [SyncVar(hook = nameof(OnCurrentChestTypeChanged))] 
         private ChestType _currentChestType;
         [SyncVar(hook = nameof(OnPlayerStateChanged))]
         private PlayerEnvironmentState _playerEnvironmentState;
         [SyncVar(hook = nameof(OnHasMovementInputChanged))] 
         private bool _hasMovementInput;
-        [SyncVar(hook = nameof(OnIsSprintingChanged))] 
-        private bool _isSprinting;
         [SyncVar(hook = nameof(OnIsInvincibleChanged))]
         private bool _isInvincible;
+        [SyncVar(hook = nameof(OnPlayerAttackDataChanged))]
+        private PlayerAttackData _playerAttackData;
         
-        private void OnCurrentAnimationStateChanged(AnimationState oldValue, AnimationState newValue)
+        private PlayerAttackData _configPlayerAttackData;
+
+        public PlayerAttackData PlayerAttackData
         {
-            _currentAnimationStateProperty.Value = newValue;
+            get => _playerAttackData;
+            set
+            {
+                if (isServer)
+                {
+                    _playerAttackData = value;
+                }
+                else if (isClient)
+                {
+                    Debug.Log("Client cannot change PlayerAttackData.");
+                }
+            }   
         }
-        
+
+        private ReactiveProperty<PlayerAttackData> _playerAttackDataProperty { get; } = new ReactiveProperty<PlayerAttackData>();
+        public IReadOnlyReactiveProperty<PlayerAttackData> PlayerAttackDataProperty => _playerAttackDataProperty;
+
+        private void OnPlayerAttackDataChanged(PlayerAttackData oldValue, PlayerAttackData newValue)
+        {
+            
+        }
+
         private void OnCurrentChestTypeChanged(ChestType oldValue, ChestType newValue)
         {
             _currentChestTypeProperty.Value = newValue;
@@ -50,11 +71,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private void OnHasMovementInputChanged(bool oldValue, bool newValue)
         {
             _hasMovementInputProperty.Value = newValue;
-        }
-        
-        private void OnIsSprintingChanged(bool oldValue, bool newValue)
-        {
-            _isSprintingProperty.Value = newValue;
         }
         
         private void OnIsInvincibleChanged(bool oldValue, bool newValue)
@@ -73,21 +89,9 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 }
                 else if (isClient)
                 {
-                    CmdChangeIsInvisible(value);
+                    Debug.Log("Client cannot change invincibility.");
                 }
             }   
-        }
-
-        [Command]
-        private void CmdChangeIsInvisible(bool value)
-        {
-            _isInvincible = value;
-        }
-
-        public AnimationState CurrentAnimationState
-        {
-            get => _currentAnimationState;
-            set => _currentAnimationState = value;
         }
 
         public ChestType CurrentChestType
@@ -101,7 +105,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 }
                 else if (isClient)
                 {
-                    CmdChangeChestType(value);
+                    Debug.Log("Client cannot change CurrentChestType.");
                 }
             }
         }
@@ -137,18 +141,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 }
             }
         }
-        
-        [Command]
-        private void CmdChangeAnimationState(AnimationState animationState)
-        {
-            _currentAnimationState = animationState;
-        }
-
-        [Command]
-        private void CmdChangeChestType(ChestType value)
-        {
-            _currentChestType = value;
-        }
 
         [Command]
         public void CmdChangeHasMovementInput(bool movementInput)
@@ -161,9 +153,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
         {
             _playerEnvironmentState = environmentState;
         }
-
-        private ReactiveProperty<AnimationState> _currentAnimationStateProperty { get; } = new ReactiveProperty<AnimationState>();
-        public IReadOnlyReactiveProperty<AnimationState> CurrentAnimationStateProperty => _currentAnimationStateProperty;
         private ReactiveProperty<ChestType> _currentChestTypeProperty { get; } = new ReactiveProperty<ChestType>();
         public IReadOnlyReactiveProperty<ChestType> CurrentChestTypeProperty => _currentChestTypeProperty;
         private ReactiveProperty<PlayerEnvironmentState> _playerStateProperty { get; } = new ReactiveProperty<PlayerEnvironmentState>();
@@ -178,6 +167,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private readonly Dictionary<PropertyTypeEnum, float> _configBaseProperties = new Dictionary<PropertyTypeEnum, float>(); 
         private readonly Dictionary<PropertyTypeEnum, float> _configMinProperties = new Dictionary<PropertyTypeEnum, float>();
         private readonly Dictionary<PropertyTypeEnum, float> _configMaxProperties = new Dictionary<PropertyTypeEnum, float>();
+        
         private readonly SyncDictionary<PropertyTypeEnum, float> _syncBaseProperties = new SyncDictionary<PropertyTypeEnum, float>();
         private readonly SyncDictionary<PropertyTypeEnum, float> _syncPropertyBuffs = new SyncDictionary<PropertyTypeEnum, float>();
         private readonly SyncDictionary<PropertyTypeEnum, float> _syncPropertyMultipliers = new SyncDictionary<PropertyTypeEnum, float>();
@@ -189,6 +179,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private void Init(IConfigProvider configProvider, UIManager uiManager, RepeatedTask repeated)
         {
             _playerDataConfig = configProvider.GetConfig<PlayerDataConfig>();
+            _configPlayerAttackData = _playerDataConfig.PlayerConfigData.BaseAttackData;
             InitializeProperties();
             _currentChestTypeProperty.Value = ChestType.Attack;
             var properties = uiManager.SwitchUI<PlayerPropertiesOverlay>();
@@ -201,6 +192,14 @@ namespace HotUpdate.Scripts.Network.Client.Player
             _syncMaxCurrentProperties.OnAdd += OnMaxCurrentPropertyAdd;
             _syncMaxCurrentProperties.OnRemove += OnMaxCurrentPropertyRemove;
             _syncMaxCurrentProperties.OnSet += OnMaxCurrentPropertySet;
+            var playerAnimationComponent = GetComponent<PlayerAnimationComponent>();
+            if (playerAnimationComponent)
+            {
+                playerAnimationComponent.CurrentState.Subscribe(state =>
+                {
+                    _currentAnimationState = state;
+                });
+            }
         }
 
         private void OnMaxCurrentPropertyRemove(PropertyTypeEnum arg1, float arg2)
@@ -386,6 +385,11 @@ namespace HotUpdate.Scripts.Network.Client.Player
             return _currentProperties.GetValueOrDefault(type);
         }
         
+        public float GetPropertyValue(PropertyTypeEnum type)
+        {
+            return GetProperty(type).Value.Value;
+        }
+        
         public ReactiveProperty<PropertyType> GetMaxProperty(PropertyTypeEnum type)
         {
             return _maxCurrentProperties.GetValueOrDefault(type);
@@ -456,11 +460,11 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private void FixedUpdate()
         {
             var recoveredStrength = _playerDataConfig.PlayerConfigData.StrengthRecoveryPerSecond;
-            var isSprinting = CurrentAnimationState == AnimationState.Sprint;
-            var isSprintingJump = CurrentAnimationState == AnimationState.SprintJump;
+            var isSprinting = _currentAnimationState == AnimationState.Sprint;
+            var isSprintingJump = _currentAnimationState == AnimationState.SprintJump;
             if (isSprinting)
             {
-                var cost = _playerDataConfig.GetPlayerAnimationCost(CurrentAnimationState);
+                var cost = _playerDataConfig.GetPlayerAnimationCost(_currentAnimationState);
                 recoveredStrength -= cost;
             }
             ChangeSpeed(isSprinting, recoveredStrength, isSprintingJump);

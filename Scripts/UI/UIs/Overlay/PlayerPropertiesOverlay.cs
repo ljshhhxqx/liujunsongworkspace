@@ -38,18 +38,18 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         public void SetPlayerProperties(PlayerPropertyComponent playerPropertyComponent)
         {
             _playerPropertyComponent = playerPropertyComponent;
-            playerPropertyComponent.CurrentAnimationStateProperty.Subscribe(state =>
-            {
-                animationState.SetField(animationState.name, state);
-           });
+           //  playerPropertyComponent.CurrentAnimationStateProperty.Subscribe(state =>
+           //  {
+           //      animationState.SetField(animationState.name, state);
+           // });
             playerPropertyComponent.PlayerStateProperty.Subscribe(state =>
             {
                 playerStateProperty.SetField(animationState.name, state);
             });
-            playerPropertyComponent.CurrentAnimationStateProperty.Subscribe(chestType =>
-            {
-                currentChestType.SetField(currentChestType.name, chestType);
-            });
+            // playerPropertyComponent.CurrentAnimationStateProperty.Subscribe(chestType =>
+            // {
+            //     currentChestType.SetField(currentChestType.name, chestType);
+            // });
             playerPropertyComponent.HasMovementInputProperty.Subscribe(hasInput =>
             {
                 hasMovementInput.SetField(hasMovementInput.name, hasInput);

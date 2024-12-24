@@ -125,15 +125,16 @@ namespace HotUpdate.Scripts.Collector
                 return;
             }
     
-            var player = playerIdentity.GetComponent<PlayerPropertyComponent>();
-            if (player.CurrentAnimationState == AnimationState.Dead)
+            var player = playerIdentity.GetComponent<PlayerAnimationComponent>();
+            var playerProperty = player.GetComponent<PlayerPropertyComponent>();
+            if (player.CurrentState.Value == AnimationState.Dead)
             {
                 _treasureChestInfo.isPicking = false;
                 return;
             }
 
             // 验证位置和碰撞
-            if (ValidateChestPickup(treasureChest, player, _treasureChestInfo.position))
+            if (ValidateChestPickup(treasureChest, playerProperty, _treasureChestInfo.position))
             {
                 // 更新宝箱状态
                 _treasureChestInfo = new TreasureChestInfo
@@ -145,11 +146,11 @@ namespace HotUpdate.Scripts.Collector
                 };
 
                 // 处理buff和属性
-                player.CurrentChestType = treasureChest.chestType;
+                playerProperty.CurrentChestType = treasureChest.chestType;
                 var configData = _chestConfig.GetChestConfigData(treasureChest.chestType);
                 if (configData.ChestPropertyData.BuffExtraData.buffType != BuffType.None)
                 {
-                    _buffManager.AddBuffToPlayer(player, configData.ChestPropertyData.BuffExtraData);
+                    _buffManager.AddBuffToPlayer(playerProperty, configData.ChestPropertyData.BuffExtraData);
                     Debug.Log($"Add buff {configData.ChestPropertyData.BuffExtraData.buffType} to player {player.name}");
                 }
 

@@ -66,6 +66,7 @@ namespace HotUpdate.Scripts.Config
         public float RollForce;
         public float StepHeight = 0.3f; // 玩家可跨越的最大台阶高度
         public float StepCheckDistance = 0.5f; // 台阶检测距离
+        public PlayerAttackData BaseAttackData;
         
         #endregion
         #region Animation
@@ -75,8 +76,6 @@ namespace HotUpdate.Scripts.Config
         public List<AnimationInfo> AnimationInfos;
         
         #endregion
-
-        public float RollInvincibleDuration = 0.5f;
     }
 
     [Serializable]
@@ -119,5 +118,13 @@ namespace HotUpdate.Scripts.Config
         Dead,
         Hit,
         Death
+    }
+
+    [Serializable]
+    public struct PlayerAttackData
+    {
+        public float attackAngle;
+        public float attackRadius;
+        public float minAttackHeight;
     }
 }
