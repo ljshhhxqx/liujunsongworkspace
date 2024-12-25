@@ -143,6 +143,12 @@ namespace Network.NetworkMes
     public struct MirrorFrameAttackResultMessage : NetworkMessage
     {
         public uint frame;
+        public List<DamageResult> damageResults;
+        public MirrorFrameAttackResultMessage(uint frame, List<DamageResult> damageResults)
+        {
+            this.frame = frame;
+            this.damageResults = damageResults;
+        }
     }
 
     [Serializable]
@@ -155,12 +161,14 @@ namespace Network.NetworkMes
         public float radius;
         public float minHeight;
         public float attack;
+        public float criticalRate;
+        public float criticalDamageRatio;
     }
 
     [Serializable]
     public struct DamageResult
     {
-        public int targetId;
+        public uint targetId;
         public float damageAmount;
         public bool isDead;
     }
@@ -175,17 +183,6 @@ namespace Network.NetworkMes
         {
             this.frame = frame;
             this.attackData = attackData;
-        }
-    }
-
-    [Serializable]
-    public struct MirrorAttackResultMessage : NetworkMessage
-    {
-        public DamageResult damageResult;
-        
-        public MirrorAttackResultMessage(DamageResult damageResult)
-        {
-            this.damageResult = damageResult;
         }
     }
 }

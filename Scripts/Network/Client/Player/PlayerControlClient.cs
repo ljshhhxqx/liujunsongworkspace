@@ -129,11 +129,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private void HandleAnimation()
         {
             _currentRequestAnimationState = _playerAnimationComponent.ExecuteAnimationState(_playerInput, _playerEnvironmentState, _groundDistance);
-            // if (_currentPlayAnimationState is AnimationState.Attack or AnimationState.Roll or AnimationState.Jump
-            //     or AnimationState.SprintJump)
-            // {
-            //     Debug.Log($"Specail AnimationState: {_currentPlayAnimationState}");
-            // }
         }
         
         private void HandleRotation()   

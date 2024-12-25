@@ -18,22 +18,49 @@ namespace HotUpdate.Scripts.Network.Server.Sync
         private readonly Dictionary<uint, PlayerControlClient> _players = new Dictionary<uint, PlayerControlClient>();
         private readonly Dictionary<uint, List<AttackData>> _attackDatas = new Dictionary<uint, List<AttackData>>();
         private MirrorNetworkMessageHandler _messageCenter;
+        private DamageConfig _damageConfig;
         private float _accumulator;  // 用于累积固定更新的时间
         private const float FIXED_TIME_STEP = 0.01f;  // 100fps的固定更新间隔
         [SyncVar]
         private uint _currentFrame;  // 使用SyncVar确保服务器和客户端帧号同步
 
         [Inject]
-        private void Init(MirrorNetworkMessageHandler messageCenter)
+        private void Init(MirrorNetworkMessageHandler messageCenter, IConfigProvider configProvider)
         {
             Reader<AttackData>.read = AttackDataExtensions.ReadAttackData;
             Writer<AttackData>.write = AttackDataExtensions.WritePlayerAttackData;
             Reader<PlayerAttackData>.read = AttackDataExtensions.ReadPlayerAttackData;
             Writer<PlayerAttackData>.write = AttackDataExtensions.WriteAttackData;
             _messageCenter = messageCenter;
+            _damageConfig = configProvider.GetConfig<DamageConfig>();
             _messageCenter.RegisterLocalMessageHandler<PlayerInputMessage>(OnPlayerInputMessage);
             _messageCenter.RegisterLocalMessageHandler<PlayerFrameUpdateMessage>(OnPlayerFrameUpdateMessage);
             _messageCenter.RegisterLocalMessageHandler<PlayerAttackMessage>(OnPlayerAttackMessage);
+            _messageCenter.RegisterLocalMessageHandler<PlayerDamageResultMessage>(OnPlayerDamageResultMessage);
+        }
+
+        private GameObject GetPlayer(uint playerId)
+        {
+            if (NetworkClient.spawned.TryGetValue(playerId, out var identity))
+            {
+                return identity.gameObject;
+            }
+            Debug.LogWarning($"Player {playerId} not found");
+            return null;
+        }
+
+        private void OnPlayerDamageResultMessage(PlayerDamageResultMessage message)
+        {
+            foreach (var result in message.DamageResults)
+            {
+                var spawnedPlayer = GetPlayer(result.targetId);
+                if (spawnedPlayer)
+                {
+                    var damageJudgement = spawnedPlayer.GetComponent<PlayerDamageJudgement>();
+                    damageJudgement?.TakeDamage(result);
+                }
+            }
+            Debug.Log($"Damage results in frame {message.Frame} : {message.DamageResults.Count}");
         }
 
         private void OnPlayerAttackMessage(PlayerAttackMessage message)
@@ -62,6 +89,7 @@ namespace HotUpdate.Scripts.Network.Server.Sync
                 ProcessFrame();
                 ProcessAttack();
                 _accumulator -= FIXED_TIME_STEP;
+                _currentFrame++;
             }
         }
 
@@ -69,11 +97,61 @@ namespace HotUpdate.Scripts.Network.Server.Sync
         {
             if (_attackDatas.TryGetValue(_currentFrame, out var attackList))
             {
+                var damageResults = new List<DamageResult>();
+                foreach (var attackData in attackList)
+                {
+                    damageResults.Add(GetDamageResult(attackData));
+                }
                 _messageCenter.SendToAllClients(new MirrorFrameAttackResultMessage
                 {
-                    
+                    frame = _currentFrame,
+                    damageResults = damageResults
                 });
             }
+            Debug.Log($"Attacks in frame {_currentFrame} : {attackList?.Count ?? 0}");
+        }
+
+        private DamageResult GetDamageResult(AttackData attackData)
+        {
+            foreach (var player in _players.Values)
+            {
+                if (player.netId == attackData.attackerId) continue;
+
+                var targetPos = player.transform.position;
+                if (!IsInAttackRange(targetPos, attackData)) continue;
+                var playerDamage = player.GetComponent<PlayerDamageJudgement>();
+                if (playerDamage)
+                {
+                    var propertyComponent = player.GetComponent<PlayerPropertyComponent>();
+                    var remainingHp = propertyComponent.GetPropertyValue(PropertyTypeEnum.Health);
+                    var defense = propertyComponent.GetPropertyValue(PropertyTypeEnum.Defense);
+                    var damage = _damageConfig.GetDamage(attackData.attack, defense, attackData.criticalRate, attackData.criticalDamageRatio);
+                    return new DamageResult
+                    {
+                        targetId = player.netId,
+                        damageAmount = damage,
+                        isDead = remainingHp <= 0
+                    };
+                }
+            }
+            return default;
+        }
+
+        private bool IsInAttackRange(Vector3 targetPos, AttackData attackData)
+        {
+            // 计算目标是否在攻击范围内
+            var toTarget = targetPos - attackData.attackOrigin;
+            var distance = new Vector2(toTarget.x, toTarget.z).magnitude;
+        
+            // 检查距离
+            if (distance > attackData.radius) return false;
+        
+            // 检查高度
+            if (targetPos.y < attackData.minHeight) return false;
+        
+            // 检查角度
+            var angle = Vector3.Angle(attackData.attackDirection, toTarget);
+            return angle <= attackData.angle * 0.5f;
         }
 
         private void ProcessFrame()
@@ -90,7 +168,6 @@ namespace HotUpdate.Scripts.Network.Server.Sync
                 // 清理已处理的帧数据
                 _frameInputs.Remove(_currentFrame);
             }
-            _currentFrame++;
         }
 
         private void OnPlayerInputMessage(PlayerInputMessage message)
@@ -108,15 +185,11 @@ namespace HotUpdate.Scripts.Network.Server.Sync
             {
                 if (!_players.TryGetValue(input.playerId, out var player))
                 {
-                    if (NetworkClient.spawned.TryGetValue(input.playerId, out var identity))
+                    var spawnedPlayer = GetPlayer(input.playerId);
+                    if (spawnedPlayer)
                     {
-                        player = identity.GetComponent<PlayerControlClient>();
+                        player = spawnedPlayer.GetComponent<PlayerControlClient>();
                         _players[input.playerId] = player;
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"Player {input.playerId} not found");
-                        continue;
                     }
                 }
                 player?.ExecuteInput(input);
@@ -145,6 +218,8 @@ namespace HotUpdate.Scripts.Network.Server.Sync
             {
                 _messageCenter.UnregisterLocalMessageHandler<PlayerInputMessage>(OnPlayerInputMessage);
                 _messageCenter.UnregisterLocalMessageHandler<PlayerFrameUpdateMessage>(OnPlayerFrameUpdateMessage);
+                _messageCenter.UnregisterLocalMessageHandler<PlayerAttackMessage>(OnPlayerAttackMessage);
+                _messageCenter.UnregisterLocalMessageHandler<PlayerDamageResultMessage>(OnPlayerDamageResultMessage);
             }
         }
     }
@@ -180,6 +255,8 @@ namespace HotUpdate.Scripts.Network.Server.Sync
             var attackerId = reader.ReadUInt();
             var attackDirection = reader.ReadVector3();
             var attackOrigin = reader.ReadVector3();
+            var criticalRate = reader.ReadFloat();
+            var criticalDamageRatio = reader.ReadFloat();
             return new AttackData
             {
                 angle = angle,
@@ -189,6 +266,8 @@ namespace HotUpdate.Scripts.Network.Server.Sync
                 attackerId = attackerId,
                 attackDirection = attackDirection,
                 attackOrigin = attackOrigin,
+                criticalRate = criticalRate,
+                criticalDamageRatio = criticalDamageRatio
             };
         }
 
@@ -201,6 +280,8 @@ namespace HotUpdate.Scripts.Network.Server.Sync
             writer.WriteUInt(value.attackerId);
             writer.WriteVector3(value.attackDirection);
             writer.WriteVector3(value.attackOrigin);
+            writer.WriteFloat(value.criticalRate);
+            writer.WriteFloat(value.criticalDamageRatio);
         }
     }
 }

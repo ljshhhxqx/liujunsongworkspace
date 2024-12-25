@@ -65,6 +65,7 @@ namespace HotUpdate.Scripts.Network.NetworkMes
             RegisterClientHandler<MirrorGameStartMessage>();
             RegisterClientHandler<MirrorGameWarmupMessage>();
             RegisterClientHandler<MirrorFrameUpdateMessage>();
+            RegisterClientHandler<MirrorFrameAttackResultMessage>();
             // 注册更多客户端消息处理程序...
         }
 
@@ -146,6 +147,12 @@ namespace HotUpdate.Scripts.Network.NetworkMes
             {
                 return new PlayerAttackMessage(playerAttackHitMessage.attackData, playerAttackHitMessage.frame);
             }
+            
+            if (networkMessage is MirrorFrameAttackResultMessage frameAttackResultMessage)
+            {
+                return new PlayerDamageResultMessage(frameAttackResultMessage.frame, frameAttackResultMessage.damageResults);
+            }
+            
             // 添加更多消息类型的处理...
 
             Debug.LogWarning($"Unhandled network message type: {typeof(T)}");

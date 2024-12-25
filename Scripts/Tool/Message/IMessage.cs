@@ -81,6 +81,18 @@ namespace Tool.Message
         }
     }
 
+    public struct PlayerDamageResultMessage : IMessage
+    {
+        public List<DamageResult> DamageResults;
+        public uint Frame;
+
+        public PlayerDamageResultMessage(uint frame, List<DamageResult> damageResults)
+        {
+            Frame = frame;
+            DamageResults = damageResults;
+        }
+    }
+
     public struct PlayerTouchedCollectMessage : IMessage
     {
         public int CollectID { get; set; }
