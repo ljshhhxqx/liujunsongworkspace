@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Config;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Config
@@ -10,7 +9,7 @@ namespace HotUpdate.Scripts.Config
     public class ChestDataConfig : ConfigBase
     { 
         [SerializeField]
-        private List<ChestConfigData> chestConfigData;
+        private List<ChestPropertyData> chestConfigData;
         [SerializeField]
         private ChestCommonData chestCommonData;
         
@@ -19,18 +18,26 @@ namespace HotUpdate.Scripts.Config
             return chestCommonData;
         }
         
-        public ChestConfigData GetChestConfigData(ChestType chestType)
+        public ChestPropertyData GetChestConfigData(ChestType chestType)
         {
             foreach (var data in chestConfigData)
             {
-                if (data.ChestPropertyData.ChestType == chestType)
+                if (data.ChestType == chestType)
                 {
                     return data;
                 }
             }
-            return null;    
+            Debug.LogError("Can not find chest data by chest type: " + chestType);
+            return new ChestPropertyData();    
         }
-        
+
+        protected override void ReadFromExcel(string filePath)
+        {
+        }
+
+        protected override void ReadFromCsv(string filePath)
+        {
+        }
     }
     
     [Serializable]
@@ -38,12 +45,6 @@ namespace HotUpdate.Scripts.Config
     {
         public float OpenSpeed;
         public Vector3 InitEulerAngles;
-    }
-
-    [Serializable]
-    public class ChestConfigData
-    {
-        public ChestPropertyData ChestPropertyData;
     }
 
     [Serializable]

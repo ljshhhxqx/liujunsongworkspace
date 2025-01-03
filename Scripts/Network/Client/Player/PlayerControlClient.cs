@@ -318,7 +318,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 // 向下的射线检测
                 var ray2 = new Ray(transform.position + new Vector3(0, _capsuleCollider.height / 2, 0), Vector3.down);
                 if (Physics.Raycast(ray2, out var groundHit, _capsuleCollider.height / 2 + dist,
-                        _gameDataConfig.GameConfigData.GroundSceneLayer) && !groundHit.collider.isTrigger)
+                        _gameDataConfig.GameConfigData.groundSceneLayer) && !groundHit.collider.isTrigger)
                 {
                     dist = transform.position.y - groundHit.point.y;
 
@@ -336,10 +336,10 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     var ray = new Ray(pos, -Vector3.up);
 
                     if (Physics.SphereCast(ray, radius, out groundHit, _capsuleCollider.radius + groundMaxDistance,
-                            _gameDataConfig.GameConfigData.GroundSceneLayer) && !groundHit.collider.isTrigger)
+                            _gameDataConfig.GameConfigData.groundSceneLayer) && !groundHit.collider.isTrigger)
                     {
                         Physics.Linecast(groundHit.point + (Vector3.up * 0.1f), groundHit.point + Vector3.down * 0.15f,
-                            out groundHit, _gameDataConfig.GameConfigData.GroundSceneLayer);
+                            out groundHit, _gameDataConfig.GameConfigData.groundSceneLayer);
                         var newDist = transform.position.y - groundHit.point.y;
                         if (dist > newDist)
                         {
@@ -361,7 +361,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             direction = Vector3.zero;
             hitNormal = Vector3.zero;
 
-            if (Physics.Raycast(_checkStairsTransform.position, _checkStairsTransform.forward, out var hit, _playerDataConfig.PlayerConfigData.StairsCheckDistance, _gameDataConfig.GameConfigData.StairSceneLayer))
+            if (Physics.Raycast(_checkStairsTransform.position, _checkStairsTransform.forward, out var hit, _playerDataConfig.PlayerConfigData.StairsCheckDistance, _gameDataConfig.GameConfigData.stairSceneLayer))
             {
                 hitNormal = hit.normal;
                 direction = Vector3.Cross(hit.normal, _checkStairsTransform.right).normalized;

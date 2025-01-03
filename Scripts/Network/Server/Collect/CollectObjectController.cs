@@ -1,15 +1,11 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
-using Config;
 using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Network.NetworkMes;
 using Network.NetworkMes;
-using Network.Server.Collect;
 using Sirenix.OdinInspector;
 using UniRx;
 using UniRx.Triggers;
-using UnityEditor;
 using UnityEngine;
 using VContainer;
 
@@ -17,22 +13,46 @@ namespace HotUpdate.Scripts.Network.Server.Collect
 {
     public class CollectObjectController : CollectObject
     {
-        [SerializeField] 
-        private CollectType collectType;
         private PooledObject _pooledObject;
         private CollectParticlePlayer _collectParticlePlayer;
         private CollectAnimationComponent _collectAnimationComponent;
         private Collider _positionCollider;
+        private BuffExtraData _buffData;
+        [SerializeField]
+        private int collectConfigId;
+        [SerializeField]
+        private Renderer _renderer;
         
+        public int CollectConfigId => collectConfigId;
         public override Collider Collider => _collider;
-        public CollectType CollectType => collectType;
         public CollectObjectData CollectObjectData { get; private set; }
 
         private MirrorNetworkMessageHandler _mirrorNetworkMessageHandler;
         private Collider _collider;
         private CollectObjectDataConfig _collectObjectDataConfig;
         private IDisposable _disposable;
-        
+
+        public void SetMaterial(Material material)
+        {
+            if (CollectObjectData.collectObjectClass == CollectObjectClass.Buff)
+            {
+                _renderer.material = material;
+                _collectAnimationComponent.SetOutlineColor(material.color);
+                return;
+            }
+            Debug.Log($"SetMaterial failed, CollectObject config id-{CollectObjectData.id} is not a buff collect object");
+        }
+
+        public void SetBuffData(BuffExtraData buffExtraData)
+        {
+            if (CollectObjectData.collectObjectClass == CollectObjectClass.Buff)
+            {
+                _buffData = buffExtraData;
+                return;
+            }
+            Debug.Log($"SetBuffData failed, CollectObject config id-{CollectObjectData.id} is not a buff collect object");
+        }
+
         [Inject]
         private void Init()
         {
@@ -46,7 +66,7 @@ namespace HotUpdate.Scripts.Network.Server.Collect
             _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
             _collectAnimationComponent?.Play();
             var collectCollider = GetComponentInChildren<CollectCollider>();
-            if (collectCollider == null)
+            if (!collectCollider)
             {
                 Debug.LogError("Collider not found");
                 return;
@@ -93,51 +113,40 @@ namespace HotUpdate.Scripts.Network.Server.Collect
             _collectParticlePlayer.Play(_collectAnimationComponent.OutlineColorValue);
         }
 
-        [Button("设置CollectType")]
-        private void SetCollectType()
-        {
-            if (Enum.TryParse(gameObject.name, out CollectType type))
-            {
-                collectType = type;
-                return;
-            }
-            throw new ArgumentException("GameObject name is not a valid CollectType");
-        }
-
         [Button("重置配置数据")]
         private void SetConfigData()
         {
 #if UNITY_EDITOR
-            string path = Path.Combine(Application.streamingAssetsPath, "Config");
-            string filePath = Path.Combine(path, $"CollectObjectDataConfig.json");
-            // 检查文件是否存在
-            if (File.Exists(filePath))
-            {
-                // 读取 JSON 文件内容
-                string json = File.ReadAllText(filePath);
-
-                CollectObjectDataConfig newInstance = ScriptableObject.CreateInstance<CollectObjectDataConfig>();
-
-                // 将 JSON 数据应用到新的实例中
-                JsonUtility.FromJsonOverwrite(json, newInstance);
-
-                // 输出日志确认加载成功
-                Debug.Log($"ScriptableObject instance created from {filePath}");
-
-                foreach (var item in newInstance.CollectConfigDatas)
-                {
-                    if (item.CollectType.ToString().Equals(this.name))
-                    {
-                        CollectObjectData = item;
-                    }
-                }
-
-                AssetDatabase.Refresh();
-            }
-            else
-            {
-                Debug.LogWarning($"File not found at {filePath}");
-            }
+            // string path = Path.Combine(Application.streamingAssetsPath, "Config");
+            // string filePath = Path.Combine(path, $"CollectObjectDataConfig.json");
+            // // 检查文件是否存在
+            // if (File.Exists(filePath))
+            // {
+            //     // 读取 JSON 文件内容
+            //     string json = File.ReadAllText(filePath);
+            //
+            //     CollectObjectDataConfig newInstance = ScriptableObject.CreateInstance<CollectObjectDataConfig>();
+            //
+            //     // 将 JSON 数据应用到新的实例中
+            //     JsonUtility.FromJsonOverwrite(json, newInstance);
+            //
+            //     // 输出日志确认加载成功
+            //     Debug.Log($"ScriptableObject instance created from {filePath}");
+            //
+            //     foreach (var item in newInstance.CollectConfigDatas)
+            //     {
+            //         if (item.CollectType.ToString().Equals(this.name))
+            //         {
+            //             CollectObjectData = item;
+            //         }
+            //     }
+            //
+            //     AssetDatabase.Refresh();
+            // }
+            // else
+            // {
+            //     Debug.LogWarning($"File not found at {filePath}");
+            // }
 #endif
         }
     }

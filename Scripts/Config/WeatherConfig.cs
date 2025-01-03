@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Config;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -65,6 +64,14 @@ namespace HotUpdate.Scripts.Config
 
             // 由于浮点数精度问题，返回最后一个天气类型
             return weatherData[^1];
+        }
+
+        protected override void ReadFromExcel(string filePath)
+        {
+        }
+
+        protected override void ReadFromCsv(string filePath)
+        {
         }
     }
 

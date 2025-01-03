@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using HotUpdate.Scripts.Collector;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Config
+namespace HotUpdate.Scripts.Config
 {
     [CreateAssetMenu(fileName = "CollectObjectDataConfig", menuName = "ScriptableObjects/CollectObjectDataConfig")]
     public class CollectObjectDataConfig : ConfigBase
@@ -17,17 +14,17 @@ namespace Config
         public CollectData CollectData => collectData;
         public List<CollectObjectData> CollectConfigDatas => collectConfigDatas;
         
-        public CollectObjectData GetCollectObjectData(CollectType collectType)
+        public CollectObjectData GetCollectObjectData(int configId)
         {
             foreach (var collectConfigData in collectConfigDatas)
             {
-                if (collectConfigData.CollectType == collectType)
+                if (collectConfigData.id == configId)
                 {
                     return collectConfigData;
                 }
             }
-            Debug.LogWarning($"Can't find collect object data for {collectType}");
-            return null;
+            Debug.LogWarning($"Can't find collect object data for {configId}");
+            return new CollectObjectData();
         }
 
         public IEnumerable<CollectObjectData> GetCollectObjectDataWithCondition(Func<CollectObjectData, bool> predicate)
@@ -40,26 +37,59 @@ namespace Config
                 }
             }
         }
+
+        protected override void ReadFromExcel(string filePath)
+        {
+        }
+
+        protected override void ReadFromCsv(string filePath)
+        {
+        }
     }
 
     [Serializable]
-    public class CollectObjectData
+    public struct CollectObjectData
     {
-        public CollectType CollectType;
-        public CollectObjectClass CollectObjectClass;
-        public int Weight;
-        public BuffExtraData BuffExtraData;
+        public int id;
+        public int weight;
+        public BuffExtraData buffExtraData;
+        public CollectObjectBuffSize buffSize;
+        public CollectObjectClass collectObjectClass;
+        public bool isRandomBuff;
     }
 
     [Serializable]
     public struct CollectData
     {
-        public float ItemSpacing;
-        public int MaxGridItems;
-        public float ItemHeight;
-        public float GridSize;
-        public int OnceSpawnCount;
-        public int OnceSpawnWeight;
+        public float itemSpacing;
+        public int maxGridItems;
+        public float itemHeight;
+        public float gridSize;
+        public int onceSpawnCount;
+        public int onceSpawnWeight;
+    }
+    
+    public enum CollectObjectBuffSize
+    {
+        None,
+        Small,
+        Medium,
+        Large,
     }
 
+    /// <summary>
+    /// 拾取者枚举
+    /// </summary>
+    public enum PickerType
+    {
+        Player,
+        Computer,
+    }
+
+    public enum CollectObjectClass
+    {
+        TreasureChest,
+        Score,
+        Buff,
+    }
 }

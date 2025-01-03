@@ -96,12 +96,12 @@ namespace Tool.Message
     public struct PlayerTouchedCollectMessage : IMessage
     {
         public int CollectID { get; set; }
-        public CollectType CollectType { get; set; }
+        public int CollectConfigId { get; set; }
 
-        public PlayerTouchedCollectMessage(int collectID, CollectType collectType)
+        public PlayerTouchedCollectMessage(int collectID, int collectConfigId)
         {
             CollectID = collectID;
-            CollectType = collectType;
+            CollectConfigId = collectConfigId;
         }
     }
     
@@ -121,12 +121,12 @@ namespace Tool.Message
     public struct PlayerCollectChestMessage : IMessage
     {
         public int CollectID { get; set; }
-        public CollectType CollectType { get; set; }
+        public int CollectConfigId { get; set; }
 
-        public PlayerCollectChestMessage(int collectID, CollectType collectType)
+        public PlayerCollectChestMessage(int collectID, int collectConfigId)
         {
             CollectID = collectID;
-            CollectType = collectType;
+            CollectConfigId = collectConfigId;
         }
     }
     

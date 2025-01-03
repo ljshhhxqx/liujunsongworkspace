@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4197d5549727410dbfa6d36cefb5b890, type: 3}
   m_Name: GameData
   m_EditorClassIdentifier: 
+  configFileName: 
+  excelFolder: Excel
+  csvFolder: HotUpdate/Res/Preload/Csv
   gameConfigData:
     GroundSceneLayer:
       serializedVersion: 2

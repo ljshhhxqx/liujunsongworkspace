@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HotUpdate.Scripts.Config;
 using Sirenix.OdinInspector;
 using Tool.GameEvent;
 using UnityEngine;
@@ -26,9 +27,9 @@ namespace HotUpdate.Scripts.Collector
         private void Init(IConfigProvider configProvider)
         {
             var config = configProvider.GetConfig<GameDataConfig>();
-            _safetyMargin = config.GameConfigData.SafetyMargin;
+            _safetyMargin = config.GameConfigData.safetyMargin;
             _configProvider = configProvider;
-            _sceneLayer = config.GameConfigData.GroundSceneLayer;
+            _sceneLayer = config.GameConfigData.groundSceneLayer;
             Debug.Log("MapBoundDefiner init");
             CalculateAdjustedBounds();
             InitializeGrid();

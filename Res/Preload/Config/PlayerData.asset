@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff8576dbdf5e7ea41a206b363c7d841f, type: 3}
   m_Name: PlayerData
   m_EditorClassIdentifier: 
+  configFileName: 
+  excelFolder: Excel
+  csvFolder: HotUpdate/Res/Preload/Csv
   playerConfigData:
     TurnSpeed: 1.2
     MouseSpeed: 1
@@ -66,6 +69,10 @@ MonoBehaviour:
     RollForce: 40
     StepHeight: 0.3
     StepCheckDistance: 0.5
+    BaseAttackData:
+      attackAngle: 0
+      attackRadius: 0
+      minAttackHeight: 0
     AttackComboWindow: 1
     AttackComboMaxCount: 3
     AnimationInfos:
@@ -135,4 +142,3 @@ MonoBehaviour:
       Priority: 2
       AnimationType: 1
       CanBeInterrupted: 1
-    RollInvincibleDuration: 0.5

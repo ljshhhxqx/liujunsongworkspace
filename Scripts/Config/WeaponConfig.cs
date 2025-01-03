@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Config;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Config
@@ -45,6 +44,14 @@ namespace HotUpdate.Scripts.Config
             }
 
             return weapons[UnityEngine.Random.Range(0, weapons.Count)];
+        }
+
+        protected override void ReadFromExcel(string filePath)
+        {
+        }
+
+        protected override void ReadFromCsv(string filePath)
+        {
         }
     }
 

@@ -1,5 +1,6 @@
 using System;
 using AOTScripts.Tool;
+using HotUpdate.Scripts.Config;
 using Network.Data;
 using Network.Server.PlayFab;
 using PlayFab;
@@ -40,7 +41,7 @@ namespace Data
         private void OnGameResourceLoaded(GameResourceLoadedEvent gameResourceLoadedEvent)
         {
             _gameDataConfig = _configProvider.GetConfig<GameDataConfig>();
-            PlayFabData.IsDevelopMode.Value = PlayerPrefs.GetInt(_gameDataConfig.GameConfigData.DevelopKey, 0) == 1;
+            PlayFabData.IsDevelopMode.Value = PlayerPrefs.GetInt(_gameDataConfig.GameConfigData.developKey, 0) == 1;
         }
 
         public void Register(RegisterData data)
@@ -89,7 +90,7 @@ namespace Data
         public void Login(AccountData data)
         {
             PlayFabData.IsLoggedIn.Value = false;
-            var isDevelop = PlayerPrefs.GetInt(_gameDataConfig.GameConfigData.DevelopKey, 0) == 1;
+            var isDevelop = PlayerPrefs.GetInt(_gameDataConfig.GameConfigData.developKey, 0) == 1;
             _uiManager.SwitchLoadingPanel(true);
             if (!isDevelop)
             {
@@ -223,8 +224,8 @@ namespace Data
                 return;
             }
 
-            var developValue = code.Equals(_gameDataConfig.GameConfigData.DevelopKeyValue) ? 1 : 0;
-            PlayerPrefs.SetInt(_gameDataConfig.GameConfigData.DevelopKey, developValue);
+            var developValue = code.Equals(_gameDataConfig.GameConfigData.developKeyValue) ? 1 : 0;
+            PlayerPrefs.SetInt(_gameDataConfig.GameConfigData.developKey, developValue);
             var mode = developValue == 1 ? "开发模式" : "正式模式";
             _uiManager.ShowTips($"密钥设置成功，当前模式为：{mode}");
         }

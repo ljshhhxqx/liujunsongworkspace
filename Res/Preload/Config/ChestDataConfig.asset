@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a79e4808ec13d3246b9f10019d09b714, type: 3}
   m_Name: ChestDataConfig
   m_EditorClassIdentifier: 
+  configFileName: 
+  excelFolder: Excel
+  csvFolder: HotUpdate/Res/Preload/Csv
   chestConfigData:
   - ChestPropertyData:
       ChestType: 1

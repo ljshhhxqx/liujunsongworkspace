@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Config;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -16,13 +15,22 @@ namespace HotUpdate.Scripts.Config
 
         public override void Init()
         {
+            base.Init();
             if (_animationInfos.Count != 0) return;
             foreach (var animationInfo in playerConfigData.AnimationInfos)
             {
                 _animationInfos.Add(animationInfo.State, animationInfo);
             }
         }
-        
+
+        protected override void ReadFromExcel(string filePath)
+        {
+        }
+
+        protected override void ReadFromCsv(string filePath)
+        {
+        }
+
         public AnimationInfo GetAnimationInfo(AnimationState animationState)
         {
             return _animationInfos.GetValueOrDefault(animationState);

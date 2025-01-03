@@ -1,5 +1,4 @@
 ﻿using System;
-using Config;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -18,6 +17,16 @@ namespace HotUpdate.Scripts.Config
             var isCritical = Random.Range(0f, 1f) < criticalRate;
             var damage = attackPower * (1f - damageReduction) * (isCritical? criticalDamageRatio : 1f);
             return damage;
+        }
+
+        protected override void ReadFromExcel(string filePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void ReadFromCsv(string filePath)
+        {
+            throw new NotImplementedException();
         }
     }
 

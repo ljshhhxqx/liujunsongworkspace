@@ -5,10 +5,6 @@ namespace HotUpdate.Scripts.Collector
 {
     public class CollectParticlePlayer : MonoBehaviour
     {
-        [SerializeField] 
-        private CollectType collectType;
-
-        public CollectType CollectType => collectType;
         
         public void Play(Color targetColor, float lerpFactor = 0.5f)
         {

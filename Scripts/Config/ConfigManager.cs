@@ -4,12 +4,12 @@ using System.IO;
 using UnityEngine;
 using VContainer;
 
-namespace Config
+namespace HotUpdate.Scripts.Config
 {
     public class ConfigManager
     {
         private Dictionary<Type, ScriptableObject> configs = new Dictionary<Type, ScriptableObject>();
-        private readonly string configFolderPath = Application.dataPath + "/Data/Configurations/";
+        private readonly string configFolderPath = $"{Application.streamingAssetsPath}/Config";
         
         [Inject]
         private ConfigManager()
@@ -43,10 +43,6 @@ namespace Config
                 {
                     return config as T;
                 }
-                // var serialized = JsonUtility.ToJson(foundConfig);
-                // var t = ScriptableObject.CreateInstance<T>();
-                // JsonUtility.FromJsonOverwrite(serialized, t);
-                // return t;
             }
             return null;
         }

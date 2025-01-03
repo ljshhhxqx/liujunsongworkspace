@@ -1,4 +1,4 @@
-﻿using Config;
+﻿using HotUpdate.Scripts.Config;
 using UnityEngine;
 
 public interface IConfigProvider

@@ -1,8 +1,8 @@
 using Common;
-using Config;
 using Data;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Game;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.Message;

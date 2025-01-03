@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Config;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Config
@@ -37,6 +36,14 @@ namespace HotUpdate.Scripts.Config
                     yield return data;
                 }
             }
+        }
+
+        protected override void ReadFromExcel(string filePath)
+        {
+        }
+
+        protected override void ReadFromCsv(string filePath)
+        {
         }
     }
 

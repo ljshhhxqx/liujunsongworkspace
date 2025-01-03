@@ -1,4 +1,3 @@
-using System;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using Tool.Coroutine;
@@ -22,6 +21,11 @@ namespace HotUpdate.Scripts.Network.Server.Collect
         {
             _outline = transform.Find("Outline").GetComponent<Renderer>();
             _originalColor = _outline.sharedMaterials[0].GetColor(OutlineColor);
+        }
+
+        public void SetOutlineColor(Color color)
+        {
+            _outline.sharedMaterials[0].SetColor(OutlineColor, color);
         }
 
         [Button("播放所有动画")]

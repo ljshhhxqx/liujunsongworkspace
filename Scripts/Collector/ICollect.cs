@@ -1,6 +1,5 @@
-using System;
 using AOTScripts.Tool.ECS;
-using Common;
+using HotUpdate.Scripts.Config;
 using Mirror;
 using UnityEngine;
 
@@ -24,38 +23,6 @@ namespace HotUpdate.Scripts.Collector
         // {
         //     ObjectInjectProvider.Instance.Inject(this);
         // }
-    }
-
-    /// <summary>
-    /// 拾取者枚举
-    /// </summary>
-    [Serializable]
-    public enum PickerType
-    {
-        Player,
-        Computer,
-    }
-
-    /// <summary>
-    /// 可拾取物枚举
-    /// </summary>
-    [Serializable]
-    public enum CollectType
-    {
-        TreasureChest,
-        SliverCoin,
-        GoldCoin,
-        Gem,
-        StrengthGem,
-        SpeedGem,
-    }
-
-    [Serializable]
-    public enum CollectObjectClass
-    {
-        TreasureChest,
-        Score,
-        Buff,
     }
 
     public interface IPickable

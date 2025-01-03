@@ -90,7 +90,7 @@ namespace Network.Client
 #endif
             var desiredPosition = target.position + offset;
             Vector3 smoothedPosition;
-            if (Physics.Raycast(target.position, desiredPosition - target.position, out var hit, offset.magnitude, gameDataConfig.GameConfigData.GroundSceneLayer))
+            if (Physics.Raycast(target.position, desiredPosition - target.position, out var hit, offset.magnitude, gameDataConfig.GameConfigData.groundSceneLayer))
             {
                 smoothedPosition = Vector3.Lerp(transform.position, hit.point, playerDataConfig.PlayerConfigData.MouseSpeed);
             }

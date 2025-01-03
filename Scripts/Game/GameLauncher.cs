@@ -1,7 +1,6 @@
 ﻿using System;
 using AOTScripts.Tool;
 using Common;
-using Config;
 using Cysharp.Threading.Tasks;
 using Data;
 using Game;
