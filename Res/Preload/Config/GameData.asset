@@ -12,21 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4197d5549727410dbfa6d36cefb5b890, type: 3}
   m_Name: GameData
   m_EditorClassIdentifier: 
-  configFileName: 
-  excelFolder: Excel
-  csvFolder: HotUpdate/Res/Preload/Csv
+  excelAssetReference:
+    guid: afcb27a37860bed489c689f04b28b549
+  csvAssetReference:
+    guid: f79490033f1ba7d4c817acd9581f3173
+  jsonAssetReference:
+    guid: 36a25296697c2fe44a5305e443be106f
+  configName: 
+  isArray: 0
   gameConfigData:
-    GroundSceneLayer:
-      serializedVersion: 2
-      m_Bits: 128
-    SyncTime: 0.016
-    SafetyMargin: 5
-    FixedSpacing: 1
-    WarmupTime: 10
-    DevelopKey: 'DevelopKey '
-    DevelopKeyValue: MultiplayerDemo
-    StairSceneLayer:
-      serializedVersion: 2
-      m_Bits: 256
-    SafePosition: {x: 0, y: 3, z: 0}
-    SafeHorizontalOffsetY: -15
+    groundSceneLayer: 0
+    syncTime: 0.016
+    safetyMargin: 5
+    fixedSpacing: 1
+    warmupTime: 10
+    developKey: 'DevelopKey '
+    developKeyValue: MultiplayerDemo
+    stairSceneLayer: 0
+    safePosition: {x: 0, y: 3, z: 0}
+    safeHorizontalOffsetY: -15

@@ -8,8 +8,7 @@ namespace HotUpdate.Scripts.Config
 {
     public class ConfigManager
     {
-        private Dictionary<Type, ScriptableObject> configs = new Dictionary<Type, ScriptableObject>();
-        private readonly string configFolderPath = $"{Application.streamingAssetsPath}/Config";
+        private readonly Dictionary<Type, ScriptableObject> _configs = new Dictionary<Type, ScriptableObject>();
         
         [Inject]
         private ConfigManager()
@@ -18,26 +17,30 @@ namespace HotUpdate.Scripts.Config
 
         public void InitConfigs(params ScriptableObject[] configObjects)
         {
-            if (!Directory.Exists(configFolderPath))
-            {
-                Directory.CreateDirectory(configFolderPath);
-            }
-
             foreach (var configObject in configObjects)
             {
-                configs.Add(configObject.GetType(), configObject);
+                _configs.Add(configObject.GetType(), configObject);
                 if (configObject is ConfigBase config)
                 {
+                    #if UNITY_EDITOR
                     config.Init();
+                    #else
+                    var resource = ResourceManager.Instance.GetResource<TextAsset>(config.ConfigName);
+                    if (!resource)
+                    {
+                        Debug.LogError($"ConfigManager: {config.ConfigName} not found");
+                        continue;
+                    }
+                    config.Init(resource);
+                    ResourceManager.Instance.UnloadResource(resource.name);
+                    #endif
                 }
             }
-
-            LoadAllSettings();
         }
 
         public T GetConfig<T>() where T : ConfigBase, new()
         {
-            if (configs.TryGetValue(typeof(T), out var foundConfig))
+            if (_configs.TryGetValue(typeof(T), out var foundConfig))
             {
                 if (foundConfig is ConfigBase config)
                 {
@@ -45,38 +48,6 @@ namespace HotUpdate.Scripts.Config
                 }
             }
             return null;
-        }
-
-        public void SaveSettings<T>(T settings) where T : ConfigBase
-        {
-            if (configs.ContainsKey(typeof(T)))
-            {
-                var file = configFolderPath + typeof(T).Name + ".json";
-                var json = JsonUtility.ToJson(settings);
-                File.WriteAllText(file, json);
-            }
-        }
-
-        public void SaveAllSettings()
-        {
-            foreach (var configPair in configs)
-            {
-                var file = configFolderPath + configPair.Key.Name + ".json";
-                var json = JsonUtility.ToJson(configPair.Value);
-                File.WriteAllText(file, json);
-                Debug.Log($"SaveAllSettings:setting-{file} save succeed");
-            }
-        }
-
-        public void LoadAllSettings()
-        {
-            foreach (var configPair in configs)
-            {
-                var file = configFolderPath + configPair.Key.Name + ".json";
-                var json = JsonUtility.ToJson(configPair.Value);
-                File.WriteAllText(file, json);
-                Debug.Log($"LoadAllSettings:setting-{file} load succeed");
-            }
         }
     }
 }

@@ -9,9 +9,6 @@ namespace HotUpdate.Scripts.Config
     { 
         [SerializeField]
         private List<CollectObjectData> collectConfigDatas;
-        [SerializeField]
-        private CollectData collectData;
-        public CollectData CollectData => collectData;
         public List<CollectObjectData> CollectConfigDatas => collectConfigDatas;
         
         public CollectObjectData GetCollectObjectData(int configId)
@@ -38,11 +35,7 @@ namespace HotUpdate.Scripts.Config
             }
         }
 
-        protected override void ReadFromExcel(string filePath)
-        {
-        }
-
-        protected override void ReadFromCsv(string filePath)
+        protected override void ReadFromCsv(List<string[]> textAsset)
         {
         }
     }

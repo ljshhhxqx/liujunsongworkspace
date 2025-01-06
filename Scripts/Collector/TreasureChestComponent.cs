@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Tool.Message;
 using Mirror;
@@ -21,6 +22,7 @@ namespace HotUpdate.Scripts.Collector
         private GameObject lid; // 宝箱盖子
         private Collider _chestCollider;
         private ChestDataConfig _chestDataConfig;
+        private JsonDataConfig _jsonDataConfig;
         private MessageCenter _messageCenter;
         private MirrorNetworkMessageHandler _mirrorNetworkMessageHandler;
         private ChestCommonData _chestCommonData;
@@ -39,6 +41,7 @@ namespace HotUpdate.Scripts.Collector
         [Inject]
         private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)
         {
+            _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _pooledObject = GetComponent<PooledObject>();
             if (_pooledObject)
             {
@@ -55,7 +58,7 @@ namespace HotUpdate.Scripts.Collector
             _chestCollider = collectCollider.GetComponent<Collider>();
             _chestCollider.enabled = true;
             _chestDataConfig = configProvider.GetConfig<ChestDataConfig>();
-            _chestCommonData = _chestDataConfig.GetChestCommonData();
+            _chestCommonData = _jsonDataConfig.ChestCommonData;
             _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
             _gameEventManager.Publish(new TargetShowEvent(transform));
             lid.transform.eulerAngles = _chestCommonData.InitEulerAngles;

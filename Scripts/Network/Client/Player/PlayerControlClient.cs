@@ -1,5 +1,6 @@
 ﻿using System;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.Server.Sync;
 using Mirror;
@@ -9,7 +10,7 @@ using UI.UIBase;
 using UniRx;
 using UnityEngine;
 using VContainer;
-using AnimationState = HotUpdate.Scripts.Config.AnimationState;
+using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.Client.Player
 {
@@ -26,8 +27,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
         //决定摄像机的旋转中心
         private Transform _rotateCenter;
         private Transform _checkStairsTransform;
-        private PlayerDataConfig _playerDataConfig;
         private Rigidbody _rigidbody;
+        private JsonDataConfig _jsonDataConfig;
         //用来决定玩家移动方向
         private Vector3 _movement;
         //玩家的摄像机
@@ -46,7 +47,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private bool _isAttackRequested;
         private Vector3 _stairsNormal;
         private Vector3 _inputMovement;
-        private GameDataConfig _gameDataConfig;
         private PlayerEnvironmentState _playerEnvironmentState;
         private Vector3 _stairsHitNormal;
         private CapsuleCollider _capsuleCollider;
@@ -70,8 +70,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             _checkStairsTransform = transform.Find("CheckStairs");
             _camera = Camera.main;
             _rigidbody = GetComponent<Rigidbody>();
-            _playerDataConfig = configProvider.GetConfig<PlayerDataConfig>();
-            _gameDataConfig = configProvider.GetConfig<GameDataConfig>();
+            _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _capsuleCollider = GetComponent<CapsuleCollider>();
             if (!isServer)
             {
@@ -141,7 +140,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 var movementDirection = _movement.normalized;
                 var targetRotation = Quaternion.LookRotation(movementDirection);
                 targetRotation = Quaternion.Euler(0f, targetRotation.eulerAngles.y, 0f);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * _playerDataConfig.PlayerConfigData.RotateSpeed);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * _jsonDataConfig.PlayerConfig.RotateSpeed);
             }
         }
 
@@ -203,7 +202,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 {
                     _rigidbody.velocity = Vector3.zero;
                     _rigidbody.MovePosition(transform.position + _stairsHitNormal.normalized);
-                    _rigidbody.AddForce(_stairsHitNormal.normalized * _playerDataConfig.PlayerConfigData.JumpSpeed / 5f, ForceMode.Impulse);
+                    _rigidbody.AddForce(_stairsHitNormal.normalized * _jsonDataConfig.PlayerConfig.JumpSpeed / 5f, ForceMode.Impulse);
                     return;
                 }
                 _movement = _inputMovement.z * -_stairsNormal.normalized + transform.right * _inputMovement.x;
@@ -228,7 +227,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     if (_currentRequestAnimationState is AnimationState.Roll)
                     {
                         _rigidbody.velocity = Vector3.zero;
-                        _rigidbody.AddForce(transform.forward.normalized * _playerDataConfig.PlayerConfigData.RollForce, ForceMode.Impulse);
+                        _rigidbody.AddForce(transform.forward.normalized * _jsonDataConfig.PlayerConfig.RollForce, ForceMode.Impulse);
                     }
                     else if (_currentRequestAnimationState is AnimationState.Attack)
                     {
@@ -254,7 +253,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             
                     // 应用跳跃力
                     var jumpDirection = _isOnSlope ? Vector3.Lerp(Vector3.up, _slopeNormal, 0.5f) : Vector3.up;
-                    _rigidbody.AddForce(jumpDirection * _playerDataConfig.PlayerConfigData.JumpSpeed, ForceMode.Impulse);
+                    _rigidbody.AddForce(jumpDirection * _jsonDataConfig.PlayerConfig.JumpSpeed, ForceMode.Impulse);
                 }
 
                 if (_isOnSlope)
@@ -318,7 +317,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 // 向下的射线检测
                 var ray2 = new Ray(transform.position + new Vector3(0, _capsuleCollider.height / 2, 0), Vector3.down);
                 if (Physics.Raycast(ray2, out var groundHit, _capsuleCollider.height / 2 + dist,
-                        _gameDataConfig.GameConfigData.groundSceneLayer) && !groundHit.collider.isTrigger)
+                        _jsonDataConfig.GameConfig.groundSceneLayer) && !groundHit.collider.isTrigger)
                 {
                     dist = transform.position.y - groundHit.point.y;
 
@@ -336,10 +335,10 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     var ray = new Ray(pos, -Vector3.up);
 
                     if (Physics.SphereCast(ray, radius, out groundHit, _capsuleCollider.radius + groundMaxDistance,
-                            _gameDataConfig.GameConfigData.groundSceneLayer) && !groundHit.collider.isTrigger)
+                            _jsonDataConfig.GameConfig.groundSceneLayer) && !groundHit.collider.isTrigger)
                     {
                         Physics.Linecast(groundHit.point + (Vector3.up * 0.1f), groundHit.point + Vector3.down * 0.15f,
-                            out groundHit, _gameDataConfig.GameConfigData.groundSceneLayer);
+                            out groundHit, _jsonDataConfig.GameConfig.groundSceneLayer);
                         var newDist = transform.position.y - groundHit.point.y;
                         if (dist > newDist)
                         {
@@ -361,7 +360,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             direction = Vector3.zero;
             hitNormal = Vector3.zero;
 
-            if (Physics.Raycast(_checkStairsTransform.position, _checkStairsTransform.forward, out var hit, _playerDataConfig.PlayerConfigData.StairsCheckDistance, _gameDataConfig.GameConfigData.stairSceneLayer))
+            if (Physics.Raycast(_checkStairsTransform.position, _checkStairsTransform.forward, out var hit, _jsonDataConfig.PlayerConfig.StairsCheckDistance, _jsonDataConfig.GameConfig.stairSceneLayer))
             {
                 hitNormal = hit.normal;
                 direction = Vector3.Cross(hit.normal, _checkStairsTransform.right).normalized;

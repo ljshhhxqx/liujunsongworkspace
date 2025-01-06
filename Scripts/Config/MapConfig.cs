@@ -38,12 +38,9 @@ namespace HotUpdate.Scripts.Config
             }
         }
 
-        protected override void ReadFromExcel(string filePath)
+        protected override void ReadFromCsv(List<string[]> textAsset)
         {
-        }
-
-        protected override void ReadFromCsv(string filePath)
-        {
+            
         }
     }
 

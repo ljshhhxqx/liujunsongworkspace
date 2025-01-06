@@ -12,9 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 366e1d2e81c1a734297dfcc21b8d5ded, type: 3}
   m_Name: WeatherConfig
   m_EditorClassIdentifier: 
-  configFileName: 
-  excelFolder: Excel
-  csvFolder: HotUpdate/Res/Preload/Csv
+  excelAssetReference:
+    guid: 
+  csvAssetReference:
+    guid: 
+  jsonAssetReference:
+    guid: 
+  configName: 
+  isArray: 0
   weatherData:
   - weatherType: 1
     weatherRatio: 0.25

@@ -1,6 +1,7 @@
 using System;
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.JsonConfig;
 using Network.Data;
 using Network.Server.PlayFab;
 using PlayFab;
@@ -24,6 +25,7 @@ namespace Data
         private const string PlayerKey = "PlayerId";
         private RegisterData _latestAccount;
         private GameDataConfig _gameDataConfig;
+        private JsonDataConfig _jsonDataConfig;
         private readonly IConfigProvider _configProvider;
         private readonly IPlayFabClientCloudScriptCaller _playFabClientCloudScriptCaller;
         private readonly GameEventManager _gameEventManager;
@@ -34,6 +36,7 @@ namespace Data
             _uiManager = uiManager;
             _configProvider = configProvider;
             _gameEventManager = gameEventManager;
+            _jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
             _playFabClientCloudScriptCaller = playFabClientCloudScriptCaller;
             gameEventManager.Subscribe<GameResourceLoadedEvent>(OnGameResourceLoaded);
         }
@@ -41,7 +44,7 @@ namespace Data
         private void OnGameResourceLoaded(GameResourceLoadedEvent gameResourceLoadedEvent)
         {
             _gameDataConfig = _configProvider.GetConfig<GameDataConfig>();
-            PlayFabData.IsDevelopMode.Value = PlayerPrefs.GetInt(_gameDataConfig.GameConfigData.developKey, 0) == 1;
+            PlayFabData.IsDevelopMode.Value = PlayerPrefs.GetInt(_jsonDataConfig.GameConfig.developKey, 0) == 1;
         }
 
         public void Register(RegisterData data)
@@ -90,7 +93,7 @@ namespace Data
         public void Login(AccountData data)
         {
             PlayFabData.IsLoggedIn.Value = false;
-            var isDevelop = PlayerPrefs.GetInt(_gameDataConfig.GameConfigData.developKey, 0) == 1;
+            var isDevelop = PlayerPrefs.GetInt(_jsonDataConfig.GameConfig.developKey, 0) == 1;
             _uiManager.SwitchLoadingPanel(true);
             if (!isDevelop)
             {
@@ -224,8 +227,8 @@ namespace Data
                 return;
             }
 
-            var developValue = code.Equals(_gameDataConfig.GameConfigData.developKeyValue) ? 1 : 0;
-            PlayerPrefs.SetInt(_gameDataConfig.GameConfigData.developKey, developValue);
+            var developValue = code.Equals(_jsonDataConfig.GameConfig.developKeyValue) ? 1 : 0;
+            PlayerPrefs.SetInt(_jsonDataConfig.GameConfig.developKey, developValue);
             var mode = developValue == 1 ? "开发模式" : "正式模式";
             _uiManager.ShowTips($"密钥设置成功，当前模式为：{mode}");
         }

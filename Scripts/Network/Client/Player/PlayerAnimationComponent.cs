@@ -2,6 +2,7 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Server.Sync;
 using Mirror;
 using Network.NetworkMes;
@@ -9,9 +10,9 @@ using UI.UIBase;
 using UniRx;
 using UnityEngine;
 using VContainer;
-using static HotUpdate.Scripts.Config.AnimationState;
-using AnimationInfo = HotUpdate.Scripts.Config.AnimationInfo;
-using AnimationState = HotUpdate.Scripts.Config.AnimationState;
+using static HotUpdate.Scripts.Config.JsonConfig.AnimationState;
+using AnimationInfo = HotUpdate.Scripts.Config.JsonConfig.AnimationInfo;
+using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.Client.Player
 {
@@ -43,8 +44,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         private Animator _animator;
         private NetworkAnimator _networkAnimator;
-        private PlayerDataConfig _playerDataConfig;
         private UIManager _uiManager;
+        private JsonDataConfig _jsonDataConfig;
         private PlayerNotifyManager _playerNotifyManager;
         private PlayerPropertyComponent _playerPropertyComponent;
 
@@ -107,8 +108,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
             if (_currentState.Value == Dead)
                 return false;
             
-            var currentInfo = _playerDataConfig.GetAnimationInfo(_currentState.Value);
-            var newInfo = _playerDataConfig.GetAnimationInfo(newState);
+            var currentInfo = _jsonDataConfig.GetAnimationInfo(_currentState.Value);
+            var newInfo = _jsonDataConfig.GetAnimationInfo(newState);
 
             // 检查冷却和体力
             if (!_playerPropertyComponent.StrengthCanDoAnimation(newState) || !IsAnimationCoolDown(newState))
@@ -250,11 +251,11 @@ namespace HotUpdate.Scripts.Network.Client.Player
         [Inject]
         private void Init(IConfigProvider configProvider, UIManager uiManager, PlayerNotifyManager playerNotifyManager)
         {
-            _playerDataConfig = configProvider.GetConfig<PlayerDataConfig>();
+            _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _playerNotifyManager = playerNotifyManager;
             _networkAnimator = GetComponent<NetworkAnimator>();
             _uiManager = uiManager;
-            _attackInfo = _playerDataConfig.GetAnimationInfo(Attack);
+            _attackInfo = _jsonDataConfig.GetAnimationInfo(Attack);
             _playerPropertyComponent = GetComponent<PlayerPropertyComponent>();
             _animator = GetComponent<Animator>();
         }
@@ -455,7 +456,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             }
 
             // 如果是最后一击，直接进入冷却
-            if (_currentComboSync >= _playerDataConfig.PlayerConfigData.AttackComboMaxCount)
+            if (_currentComboSync >= _jsonDataConfig.PlayerConfig.AttackComboMaxCount)
             {
                 // 重置所有状态
                 _comboWindowCts?.Cancel();
@@ -517,7 +518,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private bool DoAnimation(AnimationState animationState)
         {
             if (!IsAnimationCoolDown(animationState)) return false;
-            var cooldown = _playerDataConfig.GetPlayerAnimationCooldown(animationState);
+            var cooldown = _jsonDataConfig.GetPlayerAnimationCooldown(animationState);
             if (cooldown > 0f)
             {
                 _animationCooldown.Add(animationState, cooldown);

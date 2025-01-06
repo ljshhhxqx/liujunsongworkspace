@@ -1,6 +1,6 @@
 ﻿using UniRx;
 using UnityEngine;
-using AnimationState = HotUpdate.Scripts.Config.AnimationState;
+using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.Client.Player
 {

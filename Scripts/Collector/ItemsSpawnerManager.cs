@@ -6,6 +6,8 @@ using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Buff;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Client.Player;
@@ -19,7 +21,7 @@ using Tool.Message;
 using UI.UIBase;
 using UnityEngine;
 using VContainer;
-using AnimationState = HotUpdate.Scripts.Config.AnimationState;
+using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Collector
@@ -40,6 +42,7 @@ namespace HotUpdate.Scripts.Collector
         private TreasureChestComponent _treasureChest;
         private IConfigProvider _configProvider;
         private MapBoundDefiner _mapBoundDefiner;
+        private JsonDataConfig _jsonDataConfig;
         private ChestDataConfig _chestConfig;
         private MessageCenter _messageCenter;
         private GameMapInjector _gameMapInjector;
@@ -56,7 +59,8 @@ namespace HotUpdate.Scripts.Collector
         private Transform _spawnedParent;
         private BuffManager _buffManager;
         private UIManager _uiManager;
-        private BuffDatabase _buffDatabase;
+        private ConstantBuffConfig _constantBuffConfig;
+        private RandomBuffConfig _randomBuffConfig;
         private GameLoopController _gameLoopController;
 
         [Inject]
@@ -65,15 +69,16 @@ namespace HotUpdate.Scripts.Collector
             _buffManager = buffManager;
             _uiManager = uiManager;
             _configProvider = configProvider;
+            _jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
             _mapBoundDefiner = mapBoundDefiner;
             _gameMapInjector = gameMapInjector;
             _messageCenter = messageCenter;
             gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnGameSceneResourcesLoadedLoaded);
             _collectObjectDataConfig = _configProvider.GetConfig<CollectObjectDataConfig>();
-            _buffDatabase = _configProvider.GetConfig<BuffDatabase>();
-            var config = _configProvider.GetConfig<GameDataConfig>();
+            _constantBuffConfig = _configProvider.GetConfig<ConstantBuffConfig>();
+            _randomBuffConfig = _configProvider.GetConfig<RandomBuffConfig>();
             _chestConfig = _configProvider.GetConfig<ChestDataConfig>();
-            _sceneLayer = config.GameConfigData.groundSceneLayer;
+            _sceneLayer = _jsonDataConfig.GameConfig.groundSceneLayer;
             _messageCenter.Register<PickerPickUpChestMessage>(OnPickerPickUpChestMessage);
             _messageCenter.Register<PickerPickUpMessage>(OnPickUpItem);
             _gameLoopController = FindObjectOfType<GameLoopController>();
@@ -85,12 +90,13 @@ namespace HotUpdate.Scripts.Collector
         private void OnGameSceneResourcesLoadedLoaded(GameSceneResourcesLoadedEvent gameSceneResourcesLoadedEvent)
         {
             var config = _configProvider.GetConfig<CollectObjectDataConfig>();
-            _itemSpacing = config.CollectData.itemSpacing;
-            _maxGridItems = config.CollectData.maxGridItems;
-            _itemHeight = config.CollectData.itemHeight;
-            _gridSize = config.CollectData.gridSize;
-            _onceSpawnCount = config.CollectData.onceSpawnCount;
-            _onceSpawnWeight = config.CollectData.onceSpawnWeight;
+            var collectData = _jsonDataConfig.CollectData;
+            _itemSpacing = collectData.itemSpacing;
+            _maxGridItems = collectData.maxGridItems;
+            _itemHeight = collectData.itemHeight;
+            _gridSize = collectData.gridSize;
+            _onceSpawnCount = collectData.onceSpawnCount;
+            _onceSpawnWeight = collectData.onceSpawnWeight;
             OnGameStart(gameSceneResourcesLoadedEvent.SceneName);
             InitializeGrid();
         }
@@ -297,7 +303,7 @@ namespace HotUpdate.Scripts.Collector
                     switch (configData.collectObjectClass)
                     {
                         case CollectObjectClass.Score:
-                            var buff = _buffDatabase.GetBuff(configData.buffExtraData);
+                            var buff = configData.buffExtraData.buffType == BuffType.Constant ? _constantBuffConfig.GetBuff(configData.buffExtraData) : _randomBuffConfig.GetBuff(configData.buffExtraData);
                             playerProperty.IncreaseProperty(PropertyTypeEnum.Score, buff.increaseDataList);
                             break;
                         case CollectObjectClass.Buff:
@@ -528,7 +534,7 @@ namespace HotUpdate.Scripts.Collector
                 {
                     propertyTypeEnum = (PropertyTypeEnum)Random.Range((int)PropertyTypeEnum.Speed, (int)PropertyTypeEnum.CriticalDamageRatio + 1);
                 }
-                var buff = _buffDatabase.GetCollectBuff(propertyTypeEnum);
+                var buff = _randomBuffConfig.GetCollectBuff(propertyTypeEnum);
                 return new BuffExtraData
                 {
                     buffType = buff.buffType,
@@ -595,7 +601,7 @@ namespace HotUpdate.Scripts.Collector
                     continue;
                 }
                 var configData = _collectObjectDataConfig.GetCollectObjectData(info.collectConfigId);
-                var buff = _buffDatabase.GetRandomBuffData(info.buffExtraData.buffId);
+                var buff = _randomBuffConfig.GetRandomBuffData(info.buffExtraData.buffId);
                 var component = go.GetComponent<CollectObjectController>();
                 var material = _collectibleMaterials[configData.buffSize][buff.propertyType];
                 component.CollectId = info.id;

@@ -7,6 +7,7 @@ using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Buff;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.Server.InGame;
@@ -33,7 +34,7 @@ namespace HotUpdate.Scripts.Game
         private float _warmupTime;
         private CancellationTokenSource _cts;
         private GameEventManager _gameEventManager;
-        private GameDataConfig _gameDataConfig;
+        private JsonDataConfig _jsonDataConfig;
         private ItemsSpawnerManager _itemsSpawnerManager;
         private PlayerInGameManager _playerInGameManager;
         private GameInfo _gameInfo;
@@ -106,7 +107,7 @@ namespace HotUpdate.Scripts.Game
             _gameEventManager = gameEventManager;
             _messageCenter = messageCenter;
             _messageHandler = messageHandler;
-            _gameDataConfig = configProvider.GetConfig<GameDataConfig>();
+            _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _gameEventManager.Subscribe<GameReadyEvent>(OnGameReady);
             _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
             _buffManager = FindObjectOfType<BuffManager>();
@@ -155,7 +156,7 @@ namespace HotUpdate.Scripts.Game
             {
                 _cts = new CancellationTokenSource();
                 IsEndGame = false;
-                _warmupTime = _gameDataConfig.GameConfigData.warmupTime;
+                _warmupTime = _jsonDataConfig.GameConfig.warmupTime;
                 _mainGameTime = _gameInfo.GameMode == GameMode.Time ? _gameInfo.GameTime : 0;
                 StartGameLoop(_cts).Forget();
             }

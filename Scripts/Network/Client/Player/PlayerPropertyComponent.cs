@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AOTScripts.Tool.ECS;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using Mirror;
 using Tool.Coroutine;
@@ -9,7 +10,7 @@ using UI.UIBase;
 using UniRx;
 using UnityEngine;
 using VContainer;
-using AnimationState = HotUpdate.Scripts.Config.AnimationState;
+using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.Client.Player
 {
@@ -17,7 +18,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
     {
         private readonly Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>> _maxCurrentProperties = new Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>>();
         private readonly Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>> _currentProperties = new Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>>();
-        private PlayerDataConfig _playerDataConfig;
+        private JsonDataConfig _jsonDataConfig;
         private UIManager _uiManager;
         private AnimationState _currentAnimationState;
         
@@ -178,8 +179,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
         [Inject]
         private void Init(IConfigProvider configProvider, UIManager uiManager, RepeatedTask repeated)
         {
-            _playerDataConfig = configProvider.GetConfig<PlayerDataConfig>();
-            _configPlayerAttackData = _playerDataConfig.PlayerConfigData.BaseAttackData;
+            _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
+            _configPlayerAttackData = _jsonDataConfig.PlayerConfig.BaseAttackData;
             InitializeProperties();
             _currentChestTypeProperty.Value = ChestType.Attack;
             var properties = uiManager.SwitchUI<PlayerPropertiesOverlay>();
@@ -237,9 +238,9 @@ namespace HotUpdate.Scripts.Network.Client.Player
             for (var i = (int)PropertyTypeEnum.Speed; i <= (int)PropertyTypeEnum.Score; i++)
             {
                 var propertyType = (PropertyTypeEnum)i;
-                var minProperties = _playerDataConfig.PlayerConfigData.MinProperties.Find(x => x.TypeEnum == propertyType);
-                var baseProperties = _playerDataConfig.PlayerConfigData.BaseProperties.Find(x => x.TypeEnum == propertyType);
-                var maxProperties = _playerDataConfig.PlayerConfigData.MaxProperties.Find(x => x.TypeEnum == propertyType);
+                var minProperties = _jsonDataConfig.PlayerConfig.MinProperties.Find(x => x.TypeEnum == propertyType);
+                var baseProperties = _jsonDataConfig.PlayerConfig.BaseProperties.Find(x => x.TypeEnum == propertyType);
+                var maxProperties = _jsonDataConfig.PlayerConfig.MaxProperties.Find(x => x.TypeEnum == propertyType);
                 if (maxProperties.Value == 0)
                 {
                     throw new Exception("Property value cannot be zero.");
@@ -398,7 +399,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         public bool StrengthCanDoAnimation(AnimationState animationState)
         {
             var strength = _syncCurrentProperties[PropertyTypeEnum.Strength];
-            var cost = _playerDataConfig.GetPlayerAnimationCost(animationState);
+            var cost = _jsonDataConfig.GetPlayerAnimationCost(animationState);
             if (cost != 0f)
             {
                 if (animationState == AnimationState.Sprint)
@@ -450,7 +451,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         private void ChangeAnimationState(AnimationState animationState)
         {
-            var cost = _playerDataConfig.GetPlayerAnimationCost(animationState);
+            var cost = _jsonDataConfig.GetPlayerAnimationCost(animationState);
             if (animationState != AnimationState.Sprint)
             {
                 IncreaseProperty(PropertyTypeEnum.Strength, BuffIncreaseType.Current, -cost);
@@ -459,12 +460,12 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         private void FixedUpdate()
         {
-            var recoveredStrength = _playerDataConfig.PlayerConfigData.StrengthRecoveryPerSecond;
+            var recoveredStrength = _jsonDataConfig.PlayerConfig.StrengthRecoveryPerSecond;
             var isSprinting = _currentAnimationState == AnimationState.Sprint;
             var isSprintingJump = _currentAnimationState == AnimationState.SprintJump;
             if (isSprinting)
             {
-                var cost = _playerDataConfig.GetPlayerAnimationCost(_currentAnimationState);
+                var cost = _jsonDataConfig.GetPlayerAnimationCost(_currentAnimationState);
                 recoveredStrength -= cost;
             }
             ChangeSpeed(isSprinting, recoveredStrength, isSprintingJump);
@@ -494,13 +495,13 @@ namespace HotUpdate.Scripts.Network.Client.Player
             switch (PlayerEnvironmentState)
             {
                 case PlayerEnvironmentState.InAir:
-                    _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] *= isSprintingJump ? _playerDataConfig.PlayerConfigData.SprintSpeedFactor : 1f;
+                    _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] *= isSprintingJump ? _jsonDataConfig.PlayerConfig.SprintSpeedFactor : 1f;
                     break;
                 case PlayerEnvironmentState.OnGround:
-                    _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] *= isSprinting ? _playerDataConfig.PlayerConfigData.SprintSpeedFactor : 1f;
+                    _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] *= isSprinting ? _jsonDataConfig.PlayerConfig.SprintSpeedFactor : 1f;
                     break;
                 case PlayerEnvironmentState.OnStairs:
-                    _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] *= isSprinting ? _playerDataConfig.PlayerConfigData.OnStairsSpeedRatioFactor * _playerDataConfig.PlayerConfigData.SprintSpeedFactor : _playerDataConfig.PlayerConfigData.OnStairsSpeedRatioFactor;
+                    _syncPropertyCorrectionFactors[PropertyTypeEnum.Speed] *= isSprinting ? _jsonDataConfig.PlayerConfig.OnStairsSpeedRatioFactor * _jsonDataConfig.PlayerConfig.SprintSpeedFactor : _jsonDataConfig.PlayerConfig.OnStairsSpeedRatioFactor;
                     break;
                 default:
                     throw new Exception($"playerState:{PlayerEnvironmentState} is not valid.");

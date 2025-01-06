@@ -46,12 +46,26 @@ namespace HotUpdate.Scripts.Config
             return weapons[UnityEngine.Random.Range(0, weapons.Count)];
         }
 
-        protected override void ReadFromExcel(string filePath)
-        {
-        }
 
-        protected override void ReadFromCsv(string filePath)
+        protected override void ReadFromCsv(List<string[]> textAsset)
         {
+            weaponConfigData.Clear();
+            for (var i = 2; i < textAsset.Count; i++)
+            {
+                var data = textAsset[i];
+                var weaponConfig = new WeaponConfigData
+                {
+                    weaponID = int.Parse(data[0]),
+                    weaponType = Enum.Parse<WeaponType>(data[1]),
+                    attack = float.Parse(data[2]),
+                    defense = float.Parse(data[3]),
+                    speed = float.Parse(data[4]),
+                    range = float.Parse(data[5]),
+                    angle = float.Parse(data[6]),
+                    skillID = int.Parse(data[7])
+                };
+                weaponConfigData.Add(weaponConfig);
+            }
         }
     }
 

@@ -66,12 +66,27 @@ namespace HotUpdate.Scripts.Config
             return weatherData[^1];
         }
 
-        protected override void ReadFromExcel(string filePath)
+        protected override void ReadFromCsv(List<string[]> textAsset)
         {
-        }
-
-        protected override void ReadFromCsv(string filePath)
-        {
+            weatherData.Clear();
+            for (int i = 2; i < textAsset.Count; i++)
+            {
+                var row = textAsset[i];
+                var weatherData = new WeatherData
+                {
+                    weatherType = (WeatherType) Enum.Parse(typeof(WeatherType), row[0]),
+                    weatherRatio = float.Parse(row[1]),
+                    cloudDensityRange = JsonUtility.FromJson<Range>(row[2]),
+                    cloudSpeedRange = JsonUtility.FromJson<Range>(row[3]),
+                    lightIntensity = JsonUtility.FromJson<Range>(row[4]),
+                    fogRatio = float.Parse(row[5]),
+                    fogDensity = JsonUtility.FromJson<Range>(row[6]),
+                    thunderRatio = float.Parse(row[7]),
+                    rainDensity = JsonUtility.FromJson<Range>(row[8]),
+                    snowDensity = JsonUtility.FromJson<Range>(row[9])
+                };
+                this.weatherData.Add(weatherData);
+            }
         }
     }
 

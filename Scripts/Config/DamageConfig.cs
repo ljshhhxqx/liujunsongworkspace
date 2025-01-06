@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -19,14 +20,10 @@ namespace HotUpdate.Scripts.Config
             return damage;
         }
 
-        protected override void ReadFromExcel(string filePath)
-        {
-            throw new NotImplementedException();
-        }
 
-        protected override void ReadFromCsv(string filePath)
+        protected override void ReadFromCsv(List<string[]> textAsset)
         {
-            throw new NotImplementedException();
+            
         }
     }
 

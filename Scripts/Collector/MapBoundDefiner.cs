@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.JsonConfig;
 using Sirenix.OdinInspector;
 using Tool.GameEvent;
 using UnityEngine;
@@ -14,8 +15,9 @@ namespace HotUpdate.Scripts.Collector
         private float _safetyMargin = 5.0f;
         private GameObject[] _walls;
         private IConfigProvider _configProvider;
+        private JsonDataConfig _jsonDataConfig;
         private LayerMask _sceneLayer;
-        private List<Vector2Int> _gridMap = new List<Vector2Int>();
+        private readonly List<Vector2Int> _gridMap = new List<Vector2Int>();
         private static float _gridSize = 2f;
         public Vector3 MapMinBoundary { get; private set; }
         public Vector3 MapMaxBoundary { get; private set; }
@@ -26,10 +28,11 @@ namespace HotUpdate.Scripts.Collector
         [Inject]
         private void Init(IConfigProvider configProvider)
         {
-            var config = configProvider.GetConfig<GameDataConfig>();
-            _safetyMargin = config.GameConfigData.safetyMargin;
+            //var config = configProvider.GetConfig<GameDataConfig>();
+            _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
+            _safetyMargin = _jsonDataConfig.GameConfig.safetyMargin;
             _configProvider = configProvider;
-            _sceneLayer = config.GameConfigData.groundSceneLayer;
+            _sceneLayer = _jsonDataConfig.GameConfig.groundSceneLayer;
             Debug.Log("MapBoundDefiner init");
             CalculateAdjustedBounds();
             InitializeGrid();

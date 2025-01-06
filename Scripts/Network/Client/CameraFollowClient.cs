@@ -1,6 +1,7 @@
 ﻿using Game.Inject;
 using Game.Map;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.JsonConfig;
 using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
@@ -9,21 +10,19 @@ namespace Network.Client
 {
     public class CameraFollowClient : MonoBehaviour, IInjectableObject
     {
-        private PlayerDataConfig playerDataConfig;
-        private GameDataConfig gameDataConfig;
-        private GameEventManager gameEventManager;
-        private Transform target; // 角色的 Transform
-        private Vector3 offset; // 初始偏移量
-        private float lastHorizontal;
-        private bool isContorlling = true;
+        private GameEventManager _gameEventManager;
+        private JsonDataConfig _jsonDataConfig;
+        private Transform _target; // 角色的 Transform
+        private Vector3 _offset; // 初始偏移量
+        private float _lastHorizontal;
+        private bool _isControlling = true;
 
         [Inject]
         private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)
         {
-            this.gameEventManager = gameEventManager;
-            this.gameEventManager.Subscribe<PlayerSpawnedEvent>(OnPlayerSpawned);
-            playerDataConfig = configProvider.GetConfig<PlayerDataConfig>();
-            gameDataConfig = configProvider.GetConfig<GameDataConfig>();
+            _gameEventManager = gameEventManager;
+            _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
+            _gameEventManager.Subscribe<PlayerSpawnedEvent>(OnPlayerSpawned);
             Debug.Log("CameraFollowClient init");
         }
         
@@ -35,8 +34,8 @@ namespace Network.Client
                 return;
             }
 
-            target = playerSpawnedEvent.Target;
-            offset = playerDataConfig.PlayerConfigData.Offset;
+            _target = playerSpawnedEvent.Target;
+            _offset = _jsonDataConfig.PlayerConfig.Offset;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
@@ -45,15 +44,15 @@ namespace Network.Client
         {
             if (Input.GetButtonDown("Exit"))
             {
-                isContorlling = !isContorlling;
-                Cursor.lockState = isContorlling ? CursorLockMode.Locked : CursorLockMode.None;
-                Cursor.visible = !isContorlling;
+                _isControlling = !_isControlling;
+                Cursor.lockState = _isControlling ? CursorLockMode.Locked : CursorLockMode.None;
+                Cursor.visible = !_isControlling;
             }
         }
 
         private void LateUpdate()
         {
-            if (!target || !isContorlling) return;
+            if (!_target || !_isControlling) return;
 
 #if UNITY_ANDROID || UNITY_IOS
             // 手机平台的输入逻辑
@@ -76,31 +75,31 @@ namespace Network.Client
             }
 #else
             // PC平台的输入逻辑
-            var horizontal = Mathf.Lerp(lastHorizontal, Input.GetAxis("Mouse X") * playerDataConfig.PlayerConfigData.TurnSpeed, Time.deltaTime * 10);
-            var rawVertical = Mathf.Clamp(Input.GetAxis("Mouse Y") * playerDataConfig.PlayerConfigData.TurnSpeed, -10, 10);
-            lastHorizontal = horizontal;
+            var horizontal = Mathf.Lerp(_lastHorizontal, Input.GetAxis("Mouse X") * _jsonDataConfig.PlayerConfig.TurnSpeed, Time.deltaTime * 10);
+            var rawVertical = Mathf.Clamp(Input.GetAxis("Mouse Y") * _jsonDataConfig.PlayerConfig.TurnSpeed, -10, 10);
+            _lastHorizontal = horizontal;
 
             // 计算摄像机与水平面的角度
-            float angleWithGround = Vector3.Angle(Vector3.down, offset.normalized) - 90; // 减去90是因为原点是向下的
+            float angleWithGround = Vector3.Angle(Vector3.down, _offset.normalized) - 90; // 减去90是因为原点是向下的
             float maxVerticalAngle = 90 - Mathf.Abs(angleWithGround);
             var vertical = Mathf.Clamp(rawVertical, -maxVerticalAngle, maxVerticalAngle);
 
-            offset = Quaternion.AngleAxis(horizontal, Vector3.up) * offset;
-            offset = Quaternion.AngleAxis(vertical, Vector3.right) * offset;
+            _offset = Quaternion.AngleAxis(horizontal, Vector3.up) * _offset;
+            _offset = Quaternion.AngleAxis(vertical, Vector3.right) * _offset;
 #endif
-            var desiredPosition = target.position + offset;
+            var desiredPosition = _target.position + _offset;
             Vector3 smoothedPosition;
-            if (Physics.Raycast(target.position, desiredPosition - target.position, out var hit, offset.magnitude, gameDataConfig.GameConfigData.groundSceneLayer))
+            if (Physics.Raycast(_target.position, desiredPosition - _target.position, out var hit, _offset.magnitude, _jsonDataConfig.GameConfig.groundSceneLayer))
             {
-                smoothedPosition = Vector3.Lerp(transform.position, hit.point, playerDataConfig.PlayerConfigData.MouseSpeed);
+                smoothedPosition = Vector3.Lerp(transform.position, hit.point, _jsonDataConfig.PlayerConfig.MouseSpeed);
             }
             else
             {
-                smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, playerDataConfig.PlayerConfigData.MouseSpeed);
+                smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, _jsonDataConfig.PlayerConfig.MouseSpeed);
             }
 
             transform.position = smoothedPosition;
-            transform.LookAt(target);
+            transform.LookAt(_target);
         }
 
     }

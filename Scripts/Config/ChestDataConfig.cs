@@ -10,13 +10,6 @@ namespace HotUpdate.Scripts.Config
     { 
         [SerializeField]
         private List<ChestPropertyData> chestConfigData;
-        [SerializeField]
-        private ChestCommonData chestCommonData;
-        
-        public ChestCommonData GetChestCommonData()
-        {
-            return chestCommonData;
-        }
         
         public ChestPropertyData GetChestConfigData(ChestType chestType)
         {
@@ -31,20 +24,20 @@ namespace HotUpdate.Scripts.Config
             return new ChestPropertyData();    
         }
 
-        protected override void ReadFromExcel(string filePath)
+        protected override void ReadFromCsv(List<string[]> textAsset)
         {
+            chestConfigData.Clear();
+            for (int i = 1; i < textAsset.Count; i++)
+            {
+                var row = textAsset[i];
+                var chestData = new ChestPropertyData
+                {
+                    ChestType = (ChestType)Enum.Parse(typeof(ChestType), row[0]),
+                    BuffExtraData = JsonUtility.FromJson<BuffExtraData>(row[1])
+                };
+                chestConfigData.Add(chestData);
+            }
         }
-
-        protected override void ReadFromCsv(string filePath)
-        {
-        }
-    }
-    
-    [Serializable]
-    public struct ChestCommonData
-    {
-        public float OpenSpeed;
-        public Vector3 InitEulerAngles;
     }
 
     [Serializable]

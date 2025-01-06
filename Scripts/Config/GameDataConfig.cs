@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -8,13 +9,10 @@ namespace HotUpdate.Scripts.Config
     public class GameDataConfig : ConfigBase
     {
         [SerializeField] private GameConfigData gameConfigData;
-        public GameConfigData GameConfigData => gameConfigData;
-        protected override void ReadFromExcel(string filePath)
-        {
-        }
 
-        protected override void ReadFromCsv(string filePath)
+        protected override void ReadFromCsv(List<string[]> textAsset)
         {
+            
         }
     }
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using AOTScripts.Tool.ECS;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.Message;
@@ -14,12 +15,14 @@ namespace HotUpdate.Scripts.Buff
         private readonly List<BuffManagerData> _activeBuffs = new List<BuffManagerData>();
         private PlayerInGameManager _playerDataManager;
         private MessageCenter _messageCenter;
-        private BuffDatabase _buffDatabase;
+        private ConstantBuffConfig _constantBuffConfig;
+        private RandomBuffConfig _randomBuffConfig;
 
         [Inject]
         private void Init(IConfigProvider configProvider, PlayerInGameManager playerDataManager, MessageCenter messageCenter)
         {
-            _buffDatabase = configProvider.GetConfig<BuffDatabase>();
+            _constantBuffConfig = configProvider.GetConfig<ConstantBuffConfig>();
+            _randomBuffConfig = configProvider.GetConfig<RandomBuffConfig>();
             _playerDataManager = playerDataManager;
             _messageCenter = messageCenter;
             BuffDataReaderWriter.RegisterReaderWriter();
@@ -28,7 +31,7 @@ namespace HotUpdate.Scripts.Buff
 
         public void AddBuffToPlayer(PlayerPropertyComponent targetStats, BuffExtraData buffExtraData, CollectObjectBuffSize size, int? casterId = null)
         {
-            var buff = _buffDatabase.GetBuff(buffExtraData);
+            var buff = buffExtraData.buffType == BuffType.Constant ? _constantBuffConfig.GetBuff(buffExtraData) : _randomBuffConfig.GetBuff(buffExtraData);
             AddBuff(targetStats, buff, size, casterId);
         }
 
