@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Serialization;
-using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Config
 {
     [CreateAssetMenu(fileName = "ConstantBuffConfig", menuName = "ScriptableObjects/ConstantBuffConfig")]
     public class ConstantBuffConfig : ConfigBase
     {
+        [ReadOnly]
         [SerializeField]
         private List<BuffData> buffs = new List<BuffData>();
         private readonly Dictionary<PropertyTypeEnum, List<RandomBuffData>> _randomCollectBuffs = new Dictionary<PropertyTypeEnum, List<RandomBuffData>>();
@@ -29,13 +30,11 @@ namespace HotUpdate.Scripts.Config
             for (var i = 2; i < textAsset.Count; i++)
             {
                 var data = textAsset[i];
-                var buff = new BuffData
-                {
-                    buffId = int.Parse(data[0]),
-                    propertyType = Enum.Parse<PropertyTypeEnum>(data[1]),
-                    duration = float.Parse(data[2])
-                };
-                var json = JsonUtility.FromJson<List<BuffIncreaseData>>(data[3]);
+                var buff = new BuffData();
+                buff.buffId = int.Parse(data[0]);
+                buff.propertyType = Enum.Parse<PropertyTypeEnum>(data[1]);
+                buff.duration = float.Parse(data[2]);
+                var json = JsonConvert.DeserializeObject<List<BuffIncreaseData>>(data[3]);
                 buff.increaseDataList = json;
                 buffs.Add(buff);
             }

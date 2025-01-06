@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
+using Newtonsoft.Json;
 
 namespace HotUpdate.Scripts.Config
 {
     [CreateAssetMenu(fileName = "CollectObjectDataConfig", menuName = "ScriptableObjects/CollectObjectDataConfig")]
     public class CollectObjectDataConfig : ConfigBase
     { 
+        [ReadOnly]
         [SerializeField]
         private List<CollectObjectData> collectConfigDatas;
         public List<CollectObjectData> CollectConfigDatas => collectConfigDatas;
@@ -37,6 +40,19 @@ namespace HotUpdate.Scripts.Config
 
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
+            collectConfigDatas.Clear();
+            for (int i = 2; i < textAsset.Count; i++)
+            {
+                var row = textAsset[i];
+                var collectConfigData = new CollectObjectData();
+                collectConfigData.id = int.Parse(row[0]);
+                collectConfigData.weight = int.Parse(row[1]);                
+                collectConfigData.buffExtraData = JsonConvert.DeserializeObject<BuffExtraData>(row[2]);
+                collectConfigData.buffSize = Enum.Parse<CollectObjectBuffSize>(row[3]);
+                collectConfigData.collectObjectClass = Enum.Parse<CollectObjectClass>(row[4]);
+                collectConfigData.isRandomBuff = bool.Parse(row[5]);
+                collectConfigDatas.Add(collectConfigData);
+            }
         }
     }
 

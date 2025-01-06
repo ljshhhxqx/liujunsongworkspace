@@ -341,7 +341,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             }
             else if (stateInfo.IsName(Death))
             {
-                newState = AnimationState.Death;
+                newState = AnimationState.Dead;
             }
             else if (stateInfo.IsName(Hit))
             {

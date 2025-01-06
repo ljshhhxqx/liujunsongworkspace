@@ -1,0 +1,8 @@
+id,weight,buffExtraData,buffSize,collectObjectClass,isRandomBuff
+int,int,BuffExtraData,CollectObjectBuffSize,CollectObjectClass,bool
+1,5,"{"buffId":1,"buffType":2}",Small,Score,False
+2,10,"{"buffId":2,"buffType":2}",Medium,Score,False
+3,20,"{"buffId":3,"buffType":2}",Large,Score,False
+4,10,{},Small,Buff,True
+5,20,{},Medium,Buff,True
+6,30,{},Large,Buff,True

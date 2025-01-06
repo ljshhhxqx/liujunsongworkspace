@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -8,11 +9,10 @@ namespace HotUpdate.Scripts.Config
     [CreateAssetMenu(fileName = "WeatherConfig", menuName = "ScriptableObjects/WeatherConfig")]
     public class WeatherConfig : ConfigBase
     {
+        [ReadOnly]
         [SerializeField] private List<WeatherData> weatherData = new List<WeatherData>();
-        [SerializeField] private DayNightCycleData dayNightCycleData = new DayNightCycleData();
 
         public List<WeatherData> WeatherData => weatherData;
-        public DayNightCycleData DayNightCycleData => dayNightCycleData;
 
         public WeatherData GetWeatherData(WeatherType weatherType)
         {

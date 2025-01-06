@@ -11,7 +11,7 @@ namespace HotUpdate.Scripts.Config
         [SerializeField]
         private DamageData damageData;
 
-        public float GetDamage(float attackPower, float defense, float criticalRate, float criticalDamageRatio = 2f)
+        public float GetDamage(float attackPower, float defense, float criticalRate, float criticalDamageRatio)
         {
             var damageReduction = defense / (defense + damageData.defenseRatio);
             criticalRate = Mathf.Max(0f, Mathf.Min(1f, criticalRate));

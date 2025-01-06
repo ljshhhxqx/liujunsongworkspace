@@ -13,16 +13,16 @@ MonoBehaviour:
   m_Name: WeatherConfig
   m_EditorClassIdentifier: 
   excelAssetReference:
-    guid: 
+    guid: afcb27a37860bed489c689f04b28b549
   csvAssetReference:
-    guid: 
+    guid: f79490033f1ba7d4c817acd9581f3173
   jsonAssetReference:
-    guid: 
-  configName: 
-  isArray: 0
+    guid: 36a25296697c2fe44a5305e443be106f
+  configName: WeatherConfig
+  isArray: 1
   weatherData:
   - weatherType: 1
-    weatherRatio: 0.25
+    weatherRatio: 0.35
     cloudDensityRange:
       min: 1.6
       max: 2
@@ -102,202 +102,10 @@ MonoBehaviour:
     fogDensity:
       min: 0
       max: 0
-    thunderRatio: 0.1
+    thunderRatio: 0.25
     rainDensity:
       min: 0
       max: 0
     snowDensity:
       min: 0
       max: 1
-  dayNightCycleData:
-    timeMultiplier: 60
-    weatherChangeTime: 150
-    sunriseTime: 21600
-    sunsetTime: 64800
-    dayLightColor:
-      serializedVersion: 2
-      key0: {r: 0.9768677, g: 1, b: 0.22506726, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 1, g: 1, b: 1, a: 1}
-      key3: {r: 0.99431807, g: 1, b: 0.28975737, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 6125
-      ctime2: 59410
-      ctime3: 65535
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 65535
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_ColorSpace: 0
-      m_NumColorKeys: 4
-      m_NumAlphaKeys: 2
-    nightColor:
-      serializedVersion: 2
-      key0: {r: 1, g: 0.8941177, b: 0.1764706, a: 1}
-      key1: {r: 0.08235294, g: 0, b: 0.6431373, a: 1}
-      key2: {r: 0.23989207, g: 0.23989207, b: 0.23989207, a: 0}
-      key3: {r: 0.2392157, g: 0.23529413, b: 0.24313727, a: 0}
-      key4: {r: 0.09411766, g: 0.007843138, b: 0.6156863, a: 0}
-      key5: {r: 1, g: 0.8932177, b: 0.17654979, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 11865
-      ctime2: 16148
-      ctime3: 47245
-      ctime4: 54013
-      ctime5: 65535
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_ColorSpace: 0
-      m_NumColorKeys: 6
-      m_NumAlphaKeys: 2
-    oneDayDuration: 86400
-    minLightIntensity: 0.2
-    cloudColorGradients:
-    - weatherType: 1
-      cloudColor:
-        serializedVersion: 2
-        key0: {r: 0.17520213, g: 0.17520213, b: 0.17520213, a: 0.68235296}
-        key1: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0.68235296}
-        key2: {r: 0.88140154, g: 0.5032247, b: 0, a: 0.60784316}
-        key3: {r: 1, g: 1, b: 1, a: 0}
-        key4: {r: 1, g: 1, b: 1, a: 0}
-        key5: {r: 0.882353, g: 0.5019608, b: 0, a: 0}
-        key6: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
-        key7: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
-        ctime0: 0
-        ctime1: 11694
-        ctime2: 15206
-        ctime3: 18376
-        ctime4: 45532
-        ctime5: 49044
-        ctime6: 52557
-        ctime7: 65535
-        atime0: 0
-        atime1: 65535
-        atime2: 65535
-        atime3: 0
-        atime4: 0
-        atime5: 0
-        atime6: 0
-        atime7: 0
-        m_Mode: 0
-        m_ColorSpace: 0
-        m_NumColorKeys: 8
-        m_NumAlphaKeys: 2
-    - weatherType: 2
-      cloudColor:
-        serializedVersion: 2
-        key0: {r: 0.17520213, g: 0.17520213, b: 0.17520213, a: 0.91764706}
-        key1: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0.92156863}
-        key2: {r: 0.88140154, g: 0.5032247, b: 0, a: 0}
-        key3: {r: 1, g: 1, b: 1, a: 0}
-        key4: {r: 1, g: 1, b: 1, a: 0}
-        key5: {r: 0.882353, g: 0.5019608, b: 0, a: 0}
-        key6: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
-        key7: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
-        ctime0: 0
-        ctime1: 11694
-        ctime2: 15206
-        ctime3: 18376
-        ctime4: 45532
-        ctime5: 49044
-        ctime6: 52557
-        ctime7: 65535
-        atime0: 0
-        atime1: 65535
-        atime2: 0
-        atime3: 0
-        atime4: 0
-        atime5: 0
-        atime6: 0
-        atime7: 0
-        m_Mode: 0
-        m_ColorSpace: 0
-        m_NumColorKeys: 8
-        m_NumAlphaKeys: 2
-    - weatherType: 3
-      cloudColor:
-        serializedVersion: 2
-        key0: {r: 0.17520213, g: 0.17520213, b: 0.17520213, a: 0.93333334}
-        key1: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0.92941177}
-        key2: {r: 0.8382749, g: 0.8382749, b: 0.8382749, a: 0}
-        key3: {r: 0.832884, g: 0.832884, b: 0.832884, a: 0}
-        key4: {r: 1, g: 1, b: 1, a: 0}
-        key5: {r: 0.79514813, g: 0.79514813, b: 0.79514813, a: 0}
-        key6: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
-        key7: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
-        ctime0: 0
-        ctime1: 11694
-        ctime2: 15206
-        ctime3: 18376
-        ctime4: 45532
-        ctime5: 49044
-        ctime6: 52557
-        ctime7: 65535
-        atime0: 0
-        atime1: 65535
-        atime2: 0
-        atime3: 0
-        atime4: 0
-        atime5: 0
-        atime6: 0
-        atime7: 0
-        m_Mode: 0
-        m_ColorSpace: 0
-        m_NumColorKeys: 8
-        m_NumAlphaKeys: 2
-    - weatherType: 4
-      cloudColor:
-        serializedVersion: 2
-        key0: {r: 0.17520213, g: 0.17520213, b: 0.17520213, a: 0.93333334}
-        key1: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0.92941177}
-        key2: {r: 0.8382749, g: 0.8382749, b: 0.8382749, a: 0}
-        key3: {r: 0.832884, g: 0.832884, b: 0.832884, a: 0}
-        key4: {r: 1, g: 1, b: 1, a: 0}
-        key5: {r: 0.79514813, g: 0.79514813, b: 0.79514813, a: 0}
-        key6: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
-        key7: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
-        ctime0: 0
-        ctime1: 11694
-        ctime2: 15206
-        ctime3: 18376
-        ctime4: 45532
-        ctime5: 49044
-        ctime6: 52557
-        ctime7: 65535
-        atime0: 0
-        atime1: 65535
-        atime2: 0
-        atime3: 0
-        atime4: 0
-        atime5: 0
-        atime6: 0
-        atime7: 0
-        m_Mode: 0
-        m_ColorSpace: -1
-        m_NumColorKeys: 8
-        m_NumAlphaKeys: 2

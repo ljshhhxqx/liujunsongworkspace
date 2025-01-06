@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
@@ -6,6 +8,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     [CreateAssetMenu(fileName = "RandomBuffConfig", menuName = "ScriptableObjects/RandomBuffConfig")]
     public class RandomBuffConfig : ConfigBase
     {
+        [ReadOnly]
         [SerializeField]
         private List<RandomBuffData> randomBuffs = new List<RandomBuffData>();
         private readonly Dictionary<PropertyTypeEnum, List<RandomBuffData>> _randomCollectBuffs = new Dictionary<PropertyTypeEnum, List<RandomBuffData>>();
@@ -81,14 +84,12 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             for (int i = 2; i < textAsset.Count; i++)
             {
                 var row = textAsset[i];
-                var randomBuff = new RandomBuffData
-                {
-                    buffId = int.Parse(row[0]),
-                    propertyType = (PropertyTypeEnum)System.Enum.Parse(typeof(PropertyTypeEnum), row[1]),
-                    duration = JsonUtility.FromJson<Range>(row[2]),
-                    increaseDataList = JsonUtility.FromJson<List<RandomBuffIncreaseData>>(row[3]),
-                    isCollectBuff = bool.Parse(row[4])
-                };
+                var randomBuff = new RandomBuffData();
+                randomBuff.buffId = int.Parse(row[0]);
+                randomBuff.propertyType = (PropertyTypeEnum)System.Enum.Parse(typeof(PropertyTypeEnum), row[1]);
+                randomBuff.duration = JsonConvert.DeserializeObject<Range>(row[2]);
+                randomBuff.increaseDataList = JsonConvert.DeserializeObject<List<RandomBuffIncreaseData>>(row[3]);
+                randomBuff.isCollectBuff = bool.Parse(row[4]);
                 randomBuffs.Add(randomBuff);
             }
 

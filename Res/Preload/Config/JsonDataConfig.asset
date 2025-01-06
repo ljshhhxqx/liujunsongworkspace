@@ -1,0 +1,385 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cee7abad65b4cdb854125ec519e7a75, type: 3}
+  m_Name: JsonDataConfig
+  m_EditorClassIdentifier: 
+  excelAssetReference:
+    guid: afcb27a37860bed489c689f04b28b549
+  csvAssetReference:
+    guid: f79490033f1ba7d4c817acd9581f3173
+  jsonAssetReference:
+    guid: 36a25296697c2fe44a5305e443be106f
+  configName: JsonDataConfig
+  isArray: 0
+  jsonConfigData:
+    playerConfig:
+      TurnSpeed: 1.2
+      MouseSpeed: 1
+      Offset: {x: 0, y: 1, z: -3}
+      SprintSpeedFactor: 2
+      RotateSpeed: 7
+      OnStairsSpeedRatioFactor: 0.75
+      JumpSpeed: 40
+      StairsJumpSpeed: 35
+      GroundCheckRadius: 0.3
+      StairsCheckDistance: 0.45
+      MaxProperties:
+      - type: 0
+        value: 15
+      - type: 1
+        value: 30
+      - type: 2
+        value: 30
+      - type: 3
+        value: 300
+      - type: 4
+        value: 300
+      - type: 5
+        value: 100000000
+      - type: 6
+        value: 1
+      - type: 7
+        value: 3
+      BaseProperties:
+      - type: 0
+        value: 3.5
+      - type: 1
+        value: 10
+      - type: 2
+        value: 10
+      - type: 3
+        value: 100
+      - type: 4
+        value: 100
+      - type: 5
+        value: 0
+      - type: 6
+        value: 0.05
+      - type: 7
+        value: 1.5
+      MinProperties:
+      - type: 0
+        value: 0
+      - type: 1
+        value: 0
+      - type: 2
+        value: 0
+      - type: 3
+        value: 0
+      - type: 4
+        value: 0
+      - type: 5
+        value: 0
+      - type: 6
+        value: 0
+      - type: 7
+        value: 1
+      StrengthRecoveryPerSecond: 5
+      RollForce: 40
+      StepHeight: 0.3
+      StepCheckDistance: 0.5
+      BaseAttackData:
+        attackAngle: 45
+        attackRadius: 0.5
+        minAttackHeight: 1
+      AttackComboWindow: 1
+      AttackComboMaxCount: 3
+      AnimationInfos:
+      - State: 0
+        Cost: 0
+        Cooldown: 0
+        Priority: 0
+        AnimationType: 0
+        CanBeInterrupted: 1
+      - State: 1
+        Cost: 0
+        Cooldown: 0
+        Priority: 0
+        AnimationType: 0
+        CanBeInterrupted: 1
+      - State: 2
+        Cost: 0
+        Cooldown: 0
+        Priority: 0
+        AnimationType: 0
+        CanBeInterrupted: 0
+      - State: 3
+        Cost: 10
+        Cooldown: 0.5
+        Priority: 1
+        AnimationType: 1
+        CanBeInterrupted: 1
+      - State: 4
+        Cost: 12
+        Cooldown: 0.5
+        Priority: 1
+        AnimationType: 1
+        CanBeInterrupted: 1
+      - State: 5
+        Cost: 20
+        Cooldown: 2
+        Priority: 1
+        AnimationType: 1
+        CanBeInterrupted: 0
+      - State: 6
+        Cost: 0
+        Cooldown: 0
+        Priority: 0
+        AnimationType: 0
+        CanBeInterrupted: 0
+      - State: 7
+        Cost: 0
+        Cooldown: 0
+        Priority: 0
+        AnimationType: 1
+        CanBeInterrupted: 1
+      - State: 8
+        Cost: 10
+        Cooldown: 2
+        Priority: 1
+        AnimationType: 1
+        CanBeInterrupted: 1
+      - State: 9
+        Cost: 0
+        Cooldown: 0
+        Priority: 999
+        AnimationType: 1
+        CanBeInterrupted: 0
+      - State: 10
+        Cost: 0
+        Cooldown: 0
+        Priority: 2
+        AnimationType: 1
+        CanBeInterrupted: 1
+    collectData:
+      itemSpacing: 3
+      maxGridItems: 10
+      itemHeight: 0.75
+      gridSize: 10
+      onceSpawnCount: 50
+      onceSpawnWeight: 50
+    damageData:
+      defenseRatio: 15
+    buffConstantData:
+      buffSizeDataList:
+      - collectObjectBuffSize: 1
+        ratio: 1
+      - collectObjectBuffSize: 2
+        ratio: 1.5
+      - collectObjectBuffSize: 3
+        ratio: 2
+    gameConfig:
+      groundSceneLayer: 7
+      syncTime: 0.016
+      safetyMargin: 5
+      fixedSpacing: 1
+      warmupTime: 10
+      developKey: DevelopKey
+      developKeyValue: MultiplayerDemo
+      stairSceneLayer: 8
+      safePosition: {x: 0, y: 3, z: 0}
+      safeHorizontalOffsetY: -10
+    dayNightCycleData:
+      timeMultiplier: 60
+      weatherChangeTime: 150
+      sunriseTime: 21600
+      sunsetTime: 64800
+      dayLightColor:
+        serializedVersion: 2
+        key0: {r: 0.9768677, g: 1, b: 0.22506726, a: 1}
+        key1: {r: 1, g: 1, b: 1, a: 1}
+        key2: {r: 1, g: 1, b: 1, a: 0}
+        key3: {r: 0.99431807, g: 1, b: 0.28975737, a: 0}
+        key4: {r: 0, g: 0, b: 0, a: 0}
+        key5: {r: 0, g: 0, b: 0, a: 0}
+        key6: {r: 0, g: 0, b: 0, a: 0}
+        key7: {r: 0, g: 0, b: 0, a: 0}
+        ctime0: 0
+        ctime1: 6125
+        ctime2: 59410
+        ctime3: 65535
+        ctime4: 0
+        ctime5: 0
+        ctime6: 0
+        ctime7: 0
+        atime0: 0
+        atime1: 65535
+        atime2: 0
+        atime3: 0
+        atime4: 0
+        atime5: 0
+        atime6: 0
+        atime7: 0
+        m_Mode: 0
+        m_ColorSpace: -1
+        m_NumColorKeys: 4
+        m_NumAlphaKeys: 2
+      nightColor:
+        serializedVersion: 2
+        key0: {r: 1, g: 0.8941177, b: 0.1764706, a: 1}
+        key1: {r: 0.08235294, g: 0, b: 0.6431373, a: 1}
+        key2: {r: 0.23989207, g: 0.23989207, b: 0.23989207, a: 0}
+        key3: {r: 0.2392157, g: 0.23529413, b: 0.24313727, a: 0}
+        key4: {r: 0.09411766, g: 0.007843138, b: 0.6156863, a: 0}
+        key5: {r: 1, g: 0.8932177, b: 0.17654979, a: 0}
+        key6: {r: 0, g: 0, b: 0, a: 0}
+        key7: {r: 0, g: 0, b: 0, a: 0}
+        ctime0: 0
+        ctime1: 11865
+        ctime2: 16148
+        ctime3: 47245
+        ctime4: 54013
+        ctime5: 65535
+        ctime6: 0
+        ctime7: 0
+        atime0: 0
+        atime1: 65535
+        atime2: 0
+        atime3: 0
+        atime4: 0
+        atime5: 0
+        atime6: 0
+        atime7: 0
+        m_Mode: 0
+        m_ColorSpace: -1
+        m_NumColorKeys: 6
+        m_NumAlphaKeys: 2
+      oneDayDuration: 86400
+      minLightIntensity: 0.2
+      cloudColorGradients:
+      - weatherType: 1
+        cloudColor:
+          serializedVersion: 2
+          key0: {r: 0.17520213, g: 0.17520213, b: 0.17520213, a: 0.68235296}
+          key1: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0.68235296}
+          key2: {r: 0.88140154, g: 0.5032247, b: 0, a: 0}
+          key3: {r: 1, g: 1, b: 1, a: 0}
+          key4: {r: 1, g: 1, b: 1, a: 0}
+          key5: {r: 0.882353, g: 0.5019608, b: 0, a: 0}
+          key6: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
+          key7: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
+          ctime0: 0
+          ctime1: 11694
+          ctime2: 15206
+          ctime3: 18376
+          ctime4: 45532
+          ctime5: 49044
+          ctime6: 52557
+          ctime7: 65535
+          atime0: 0
+          atime1: 65535
+          atime2: 0
+          atime3: 0
+          atime4: 0
+          atime5: 0
+          atime6: 0
+          atime7: 0
+          m_Mode: 0
+          m_ColorSpace: -1
+          m_NumColorKeys: 8
+          m_NumAlphaKeys: 2
+      - weatherType: 2
+        cloudColor:
+          serializedVersion: 2
+          key0: {r: 0.17520213, g: 0.17520213, b: 0.17520213, a: 0.91764706}
+          key1: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0.92156863}
+          key2: {r: 0.88140154, g: 0.5032247, b: 0, a: 0}
+          key3: {r: 1, g: 1, b: 1, a: 0}
+          key4: {r: 1, g: 1, b: 1, a: 0}
+          key5: {r: 0.882353, g: 0.5019608, b: 0, a: 0}
+          key6: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
+          key7: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
+          ctime0: 0
+          ctime1: 11694
+          ctime2: 15206
+          ctime3: 18376
+          ctime4: 45532
+          ctime5: 49044
+          ctime6: 52557
+          ctime7: 65535
+          atime0: 0
+          atime1: 65535
+          atime2: 0
+          atime3: 0
+          atime4: 0
+          atime5: 0
+          atime6: 0
+          atime7: 0
+          m_Mode: 0
+          m_ColorSpace: -1
+          m_NumColorKeys: 8
+          m_NumAlphaKeys: 2
+      - weatherType: 3
+        cloudColor:
+          serializedVersion: 2
+          key0: {r: 0.17520213, g: 0.17520213, b: 0.17520213, a: 0.93333334}
+          key1: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0.92941177}
+          key2: {r: 0.8382749, g: 0.8382749, b: 0.8382749, a: 0}
+          key3: {r: 0.832884, g: 0.832884, b: 0.832884, a: 0}
+          key4: {r: 1, g: 1, b: 1, a: 0}
+          key5: {r: 0.79514813, g: 0.79514813, b: 0.79514813, a: 0}
+          key6: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
+          key7: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
+          ctime0: 0
+          ctime1: 11694
+          ctime2: 15206
+          ctime3: 18376
+          ctime4: 45532
+          ctime5: 49044
+          ctime6: 52557
+          ctime7: 65535
+          atime0: 0
+          atime1: 65535
+          atime2: 0
+          atime3: 0
+          atime4: 0
+          atime5: 0
+          atime6: 0
+          atime7: 0
+          m_Mode: 0
+          m_ColorSpace: -1
+          m_NumColorKeys: 8
+          m_NumAlphaKeys: 2
+      - weatherType: 4
+        cloudColor:
+          serializedVersion: 2
+          key0: {r: 0.17520213, g: 0.17520213, b: 0.17520213, a: 0.93333334}
+          key1: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0.92941177}
+          key2: {r: 0.8382749, g: 0.8382749, b: 0.8382749, a: 0}
+          key3: {r: 0.832884, g: 0.832884, b: 0.832884, a: 0}
+          key4: {r: 1, g: 1, b: 1, a: 0}
+          key5: {r: 0.79514813, g: 0.79514813, b: 0.79514813, a: 0}
+          key6: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
+          key7: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 0}
+          ctime0: 0
+          ctime1: 11694
+          ctime2: 15206
+          ctime3: 18376
+          ctime4: 45532
+          ctime5: 49044
+          ctime6: 52557
+          ctime7: 65535
+          atime0: 0
+          atime1: 65535
+          atime2: 0
+          atime3: 0
+          atime4: 0
+          atime5: 0
+          atime6: 0
+          atime7: 0
+          m_Mode: 0
+          m_ColorSpace: -1
+          m_NumColorKeys: 8
+          m_NumAlphaKeys: 2
+    chestCommonData:
+      OpenSpeed: 1.5
+      InitEulerAngles: {x: 0, y: 90, z: 0}

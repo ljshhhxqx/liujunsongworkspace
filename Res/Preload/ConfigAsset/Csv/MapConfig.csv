@@ -1,0 +1,4 @@
+mapType,maxPlayer,minPlayer,availableWeather
+MapType,int,int,WeatherType[]
+Town,4,1,"[1,2,3,4]"
+Forest,8,1,"[1,2,3,4]"

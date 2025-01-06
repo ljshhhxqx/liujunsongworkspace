@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using DG.Tweening;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.JsonConfig;
 using UniRx;
 using UnityEngine;
 using VContainer;
@@ -22,7 +23,7 @@ namespace HotUpdate.Scripts.Weather.WeatherEffects
         [Inject]
         private void Init(IConfigProvider configProvider)
         {
-            var config = configProvider.GetConfig<WeatherConfig>();
+            var config = configProvider.GetConfig<JsonDataConfig>();
             _dayNightCycleData = config.DayNightCycleData;
             WeatherDataModel.time.Subscribe(UpdateCloudsColor).AddTo(this);
         }

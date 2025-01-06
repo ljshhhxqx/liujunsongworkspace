@@ -53,17 +53,15 @@ namespace HotUpdate.Scripts.Config
             for (var i = 2; i < textAsset.Count; i++)
             {
                 var data = textAsset[i];
-                var weaponConfig = new WeaponConfigData
-                {
-                    weaponID = int.Parse(data[0]),
-                    weaponType = Enum.Parse<WeaponType>(data[1]),
-                    attack = float.Parse(data[2]),
-                    defense = float.Parse(data[3]),
-                    speed = float.Parse(data[4]),
-                    range = float.Parse(data[5]),
-                    angle = float.Parse(data[6]),
-                    skillID = int.Parse(data[7])
-                };
+                var weaponConfig = new WeaponConfigData();
+                weaponConfig.weaponID = int.Parse(data[0]);
+                weaponConfig.weaponType = Enum.Parse<WeaponType>(data[1]);
+                weaponConfig.attack = float.Parse(data[2]);
+                weaponConfig.defense = float.Parse(data[3]);
+                weaponConfig.speed = float.Parse(data[4]);
+                weaponConfig.range = float.Parse(data[5]);
+                weaponConfig.angle = float.Parse(data[6]);
+                weaponConfig.skillID = int.Parse(data[7]);
                 weaponConfigData.Add(weaponConfig);
             }
         }

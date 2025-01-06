@@ -5,6 +5,7 @@ using AOTScripts.Tool.ECS;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Tool.Message;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using HotUpdate.Scripts.Weather.WeatherEffects;
@@ -34,6 +35,7 @@ namespace HotUpdate.Scripts.Weather
         private float _weatherCycleTimer;
         private float _weatherCycleDuration;
         private GameEventManager _gameEventManager;
+        private JsonDataConfig _jsonDataConfig;
         private WeatherConfig _weatherConfig;
         private readonly List<WeatherSetting> _weatherPrefabs = new List<WeatherSetting>();
         private List<GameObject> _weatherEffectPrefabs = new List<GameObject>();
@@ -83,13 +85,14 @@ namespace HotUpdate.Scripts.Weather
             WeatherReaderWriter.RegisterReaderWriter(); 
             WeatherDataModel.Init();
             _uiManager = uiManager;
+            _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _weatherConfig = configProvider.GetConfig<WeatherConfig>();
             _mapBoundDefiner = mapBoundDefiner;
             _isDayNightCycle = false;
             _gameEventManager = gameEventManager;
             _objectResolver = objectResolver;
-            _timeMultiplier = _weatherConfig.DayNightCycleData.timeMultiplier;
-            _weatherCycleDuration = _weatherConfig.DayNightCycleData.weatherChangeTime;
+            _timeMultiplier = _jsonDataConfig.DayNightCycleData.timeMultiplier;
+            _weatherCycleDuration = _jsonDataConfig.DayNightCycleData.weatherChangeTime;
             Debug.Log("WeatherManager init");
             await GetWeatherResourcesAsync();
         }
@@ -115,7 +118,7 @@ namespace HotUpdate.Scripts.Weather
             _isDayNightCycle = isStart;
             if (isStart)
             {
-                DayNightCycleTime = Random.Range(0f, _weatherConfig.DayNightCycleData.oneDayDuration);
+                DayNightCycleTime = Random.Range(0f, _jsonDataConfig.DayNightCycleData.oneDayDuration);
                 RandomWeather();
             }
         }
@@ -284,7 +287,7 @@ namespace HotUpdate.Scripts.Weather
                     _weatherEffectsDict.TryAdd(component.GetType(), component);
                     if (component.TryGetComponent<IDayNightCycle>(out var dayNightCycle))
                     {
-                        dayNightCycle.DayNightCycleData = _weatherConfig.DayNightCycleData;
+                        dayNightCycle.DayNightCycleData = _jsonDataConfig.DayNightCycleData;
                     }
 
                     component.PlayEffect(data);
@@ -311,7 +314,7 @@ namespace HotUpdate.Scripts.Weather
                 _updateTimer = 0f;
             }
             DayNightCycleTime += Time.deltaTime * _timeMultiplier;
-            if (DayNightCycleTime >= _weatherConfig.DayNightCycleData.oneDayDuration)
+            if (DayNightCycleTime >= _jsonDataConfig.DayNightCycleData.oneDayDuration)
             {
                 DayNightCycleTime = 0f;
             }

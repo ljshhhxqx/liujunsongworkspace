@@ -12,11 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b1a8093c86f42a6bb8b636f1aa2308c, type: 3}
   m_Name: MapConfig
   m_EditorClassIdentifier: 
+  excelAssetReference:
+    guid: afcb27a37860bed489c689f04b28b549
+  csvAssetReference:
+    guid: f79490033f1ba7d4c817acd9581f3173
+  jsonAssetReference:
+    guid: 36a25296697c2fe44a5305e443be106f
+  configName: MapConfig
+  isArray: 1
   mapConfigData:
   - mapType: 0
     maxPlayer: 4
-    minPlayer: 0
-    availableWeather: 01000000030000000200000004000000
+    minPlayer: 1
+    availableWeather: 01000000020000000300000004000000
+  - mapType: 1
+    maxPlayer: 8
+    minPlayer: 1
+    availableWeather: 01000000020000000300000004000000
   gameModeData:
     times: 
     scores: 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using Newtonsoft.Json;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Config
@@ -8,6 +9,7 @@ namespace HotUpdate.Scripts.Config
     [CreateAssetMenu(fileName = "ChestDataConfig", menuName = "ScriptableObjects/ChestDataConfig")]
     public class ChestDataConfig : ConfigBase
     { 
+        [ReadOnly]
         [SerializeField]
         private List<ChestPropertyData> chestConfigData;
         
@@ -27,14 +29,12 @@ namespace HotUpdate.Scripts.Config
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
             chestConfigData.Clear();
-            for (int i = 1; i < textAsset.Count; i++)
+            for (int i = 2; i < textAsset.Count; i++)
             {
                 var row = textAsset[i];
-                var chestData = new ChestPropertyData
-                {
-                    ChestType = (ChestType)Enum.Parse(typeof(ChestType), row[0]),
-                    BuffExtraData = JsonUtility.FromJson<BuffExtraData>(row[1])
-                };
+                var chestData = new ChestPropertyData();
+                chestData.ChestType = (ChestType)Enum.Parse(typeof(ChestType), row[0]);
+                chestData.BuffExtraData = JsonConvert.DeserializeObject<BuffExtraData>(row[1]);
                 chestConfigData.Add(chestData);
             }
         }

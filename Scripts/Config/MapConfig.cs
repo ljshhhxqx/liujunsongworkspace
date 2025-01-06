@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Config
@@ -7,6 +9,7 @@ namespace HotUpdate.Scripts.Config
     [CreateAssetMenu(fileName = "MapConfig", menuName = "ScriptableObjects/MapConfig")]
     public class MapConfig : ConfigBase
     {
+        [ReadOnly]
         [SerializeField]
         private List<MapConfigData> mapConfigData = new List<MapConfigData>();
         [SerializeField]
@@ -24,7 +27,8 @@ namespace HotUpdate.Scripts.Config
                 }
             }
 
-            return null;
+            Debug.LogError("MapConfigData not found for " + mapType);
+            return new MapConfigData();
         }
 
         public IEnumerable<MapConfigData> GetMapConfigDatas(Func<MapConfigData, bool> predicate)
@@ -40,12 +44,22 @@ namespace HotUpdate.Scripts.Config
 
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
-            
+            mapConfigData.Clear();
+            for (int i = 2; i < textAsset.Count; i++)
+            {
+                var row = textAsset[i];
+                var data = new MapConfigData();
+                data.mapType = (MapType) Enum.Parse(typeof(MapType), row[0]);
+                data.maxPlayer = int.Parse(row[1]);
+                data.minPlayer = int.Parse(row[2]);
+                data.availableWeather = JsonConvert.DeserializeObject<List<WeatherType>>(row[3]);
+                mapConfigData.Add(data);
+            }
         }
     }
 
     [Serializable]
-    public class MapConfigData
+    public struct MapConfigData
     {
         public MapType mapType;
         public int maxPlayer;
@@ -61,7 +75,7 @@ namespace HotUpdate.Scripts.Config
     }
 
     [Serializable]
-    public class GameModeData
+    public struct GameModeData
     {
         public List<int> times;
         public List<int> scores;

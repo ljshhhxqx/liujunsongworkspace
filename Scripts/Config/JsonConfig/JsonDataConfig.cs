@@ -161,7 +161,6 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         Attack,
         Dead,
         Hit,
-        Death
     }
 
     [Serializable]
