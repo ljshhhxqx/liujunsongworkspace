@@ -1,0 +1,135 @@
+{
+    "excelAssetReference": {
+        "guid": "afcb27a37860bed489c689f04b28b549"
+    },
+    "csvAssetReference": {
+        "guid": "f79490033f1ba7d4c817acd9581f3173"
+    },
+    "jsonAssetReference": {
+        "guid": "36a25296697c2fe44a5305e443be106f"
+    },
+    "configName": "WeatherConfig",
+    "isArray": true,
+    "weatherData": [
+        {
+            "weatherType": 1,
+            "weatherRatio": 0.3499999940395355,
+            "cloudDensityRange": {
+                "min": 1.600000023841858,
+                "max": 2.0
+            },
+            "cloudSpeedRange": {
+                "min": -0.20000000298023225,
+                "max": 0.20000000298023225
+            },
+            "lightIntensity": {
+                "min": 0.8999999761581421,
+                "max": 1.0
+            },
+            "fogRatio": 0.25,
+            "fogDensity": {
+                "min": 0.009999999776482582,
+                "max": 0.20000000298023225
+            },
+            "thunderRatio": 0.0,
+            "rainDensity": {
+                "min": 0.0,
+                "max": 0.0
+            },
+            "snowDensity": {
+                "min": 0.0,
+                "max": 0.0
+            }
+        },
+        {
+            "weatherType": 2,
+            "weatherRatio": 0.3499999940395355,
+            "cloudDensityRange": {
+                "min": 0.10000000149011612,
+                "max": 1.600000023841858
+            },
+            "cloudSpeedRange": {
+                "min": 0.20000000298023225,
+                "max": 0.800000011920929
+            },
+            "lightIntensity": {
+                "min": 0.75,
+                "max": 0.8999999761581421
+            },
+            "fogRatio": 0.05000000074505806,
+            "fogDensity": {
+                "min": 0.009999999776482582,
+                "max": 0.029999999329447748
+            },
+            "thunderRatio": 0.0,
+            "rainDensity": {
+                "min": 0.0,
+                "max": 0.0
+            },
+            "snowDensity": {
+                "min": 0.0,
+                "max": 0.0
+            }
+        },
+        {
+            "weatherType": 3,
+            "weatherRatio": 0.25,
+            "cloudDensityRange": {
+                "min": 0.0,
+                "max": 0.10000000149011612
+            },
+            "cloudSpeedRange": {
+                "min": 0.800000011920929,
+                "max": 2.0
+            },
+            "lightIntensity": {
+                "min": 0.4000000059604645,
+                "max": 0.75
+            },
+            "fogRatio": 0.0,
+            "fogDensity": {
+                "min": 0.0,
+                "max": 0.0
+            },
+            "thunderRatio": 0.25,
+            "rainDensity": {
+                "min": 0.0,
+                "max": 1.0
+            },
+            "snowDensity": {
+                "min": 0.0,
+                "max": 0.0
+            }
+        },
+        {
+            "weatherType": 4,
+            "weatherRatio": 0.05000000074505806,
+            "cloudDensityRange": {
+                "min": 0.0,
+                "max": 0.10000000149011612
+            },
+            "cloudSpeedRange": {
+                "min": 0.800000011920929,
+                "max": 2.0
+            },
+            "lightIntensity": {
+                "min": 0.4000000059604645,
+                "max": 0.75
+            },
+            "fogRatio": 0.0,
+            "fogDensity": {
+                "min": 0.0,
+                "max": 0.0
+            },
+            "thunderRatio": 0.25,
+            "rainDensity": {
+                "min": 0.0,
+                "max": 0.0
+            },
+            "snowDensity": {
+                "min": 0.0,
+                "max": 1.0
+            }
+        }
+    ]
+}

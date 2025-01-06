@@ -1,0 +1,81 @@
+{
+    "excelAssetReference": {
+        "guid": "afcb27a37860bed489c689f04b28b549"
+    },
+    "csvAssetReference": {
+        "guid": "f79490033f1ba7d4c817acd9581f3173"
+    },
+    "jsonAssetReference": {
+        "guid": "36a25296697c2fe44a5305e443be106f"
+    },
+    "configName": "CollectObjectDataConfig",
+    "isArray": true,
+    "collectConfigDatas": [
+        {
+            "id": 1,
+            "weight": 5,
+            "buffExtraData": {
+                "buffId": 1,
+                "buffType": 2
+            },
+            "buffSize": 1,
+            "collectObjectClass": 1,
+            "isRandomBuff": false
+        },
+        {
+            "id": 2,
+            "weight": 10,
+            "buffExtraData": {
+                "buffId": 2,
+                "buffType": 2
+            },
+            "buffSize": 2,
+            "collectObjectClass": 1,
+            "isRandomBuff": false
+        },
+        {
+            "id": 3,
+            "weight": 20,
+            "buffExtraData": {
+                "buffId": 3,
+                "buffType": 2
+            },
+            "buffSize": 3,
+            "collectObjectClass": 1,
+            "isRandomBuff": false
+        },
+        {
+            "id": 4,
+            "weight": 10,
+            "buffExtraData": {
+                "buffId": 0,
+                "buffType": 0
+            },
+            "buffSize": 1,
+            "collectObjectClass": 2,
+            "isRandomBuff": true
+        },
+        {
+            "id": 5,
+            "weight": 20,
+            "buffExtraData": {
+                "buffId": 0,
+                "buffType": 0
+            },
+            "buffSize": 2,
+            "collectObjectClass": 2,
+            "isRandomBuff": true
+        },
+        {
+            "id": 6,
+            "weight": 30,
+            "buffExtraData": {
+                "buffId": 0,
+                "buffType": 0
+            },
+            "buffSize": 3,
+            "collectObjectClass": 2,
+            "isRandomBuff": true
+        }
+    ]
+}

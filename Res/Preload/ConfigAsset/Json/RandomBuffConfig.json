@@ -1,0 +1,627 @@
+{
+    "excelAssetReference": {
+        "guid": "afcb27a37860bed489c689f04b28b549"
+    },
+    "csvAssetReference": {
+        "guid": "f79490033f1ba7d4c817acd9581f3173"
+    },
+    "jsonAssetReference": {
+        "guid": "36a25296697c2fe44a5305e443be106f"
+    },
+    "configName": "RandomBuffConfig",
+    "isArray": true,
+    "randomBuffs": [
+        {
+            "buffId": 1,
+            "propertyType": 5,
+            "duration": {
+                "min": 0.0,
+                "max": 0.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 4,
+                    "increaseValueRange": {
+                        "min": 1.0,
+                        "max": 2.0
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 2,
+            "propertyType": 5,
+            "duration": {
+                "min": 0.0,
+                "max": 0.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 4,
+                    "increaseValueRange": {
+                        "min": 4.0,
+                        "max": 7.0
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 3,
+            "propertyType": 5,
+            "duration": {
+                "min": 0.0,
+                "max": 0.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 4,
+                    "increaseValueRange": {
+                        "min": 9.0,
+                        "max": 12.0
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 4,
+            "propertyType": 5,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValueRange": {
+                        "min": 0.10000000149011612,
+                        "max": 0.15000000596046449
+                    }
+                }
+            ],
+            "isCollectBuff": false
+        },
+        {
+            "buffId": 5,
+            "propertyType": 5,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValueRange": {
+                        "min": 0.20000000298023225,
+                        "max": 0.30000001192092898
+                    }
+                }
+            ],
+            "isCollectBuff": false
+        },
+        {
+            "buffId": 6,
+            "propertyType": 5,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValueRange": {
+                        "min": 0.4000000059604645,
+                        "max": 0.5
+                    }
+                }
+            ],
+            "isCollectBuff": false
+        },
+        {
+            "buffId": 7,
+            "propertyType": 0,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 0,
+                    "increaseValueRange": {
+                        "min": 0.5,
+                        "max": 0.75
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 8,
+            "propertyType": 1,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 0,
+                    "increaseValueRange": {
+                        "min": 2.0,
+                        "max": 2.5
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 9,
+            "propertyType": 2,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 0,
+                    "increaseValueRange": {
+                        "min": 2.0,
+                        "max": 2.5
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 10,
+            "propertyType": 4,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 0,
+                    "increaseValueRange": {
+                        "min": 7.5,
+                        "max": 0.0
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 11,
+            "propertyType": 3,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 0,
+                    "increaseValueRange": {
+                        "min": 7.5,
+                        "max": 0.0
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 12,
+            "propertyType": 0,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValueRange": {
+                        "min": 0.20000000298023225,
+                        "max": 0.25
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 13,
+            "propertyType": 1,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValueRange": {
+                        "min": 0.20000000298023225,
+                        "max": 0.25
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 14,
+            "propertyType": 2,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValueRange": {
+                        "min": 0.20000000298023225,
+                        "max": 0.25
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 15,
+            "propertyType": 6,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValueRange": {
+                        "min": 0.20000000298023225,
+                        "max": 0.25
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 16,
+            "propertyType": 7,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValueRange": {
+                        "min": 0.20000000298023225,
+                        "max": 0.25
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 17,
+            "propertyType": 4,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValueRange": {
+                        "min": 0.20000000298023225,
+                        "max": 0.25
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 18,
+            "propertyType": 3,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValueRange": {
+                        "min": 0.20000000298023225,
+                        "max": 0.25
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 19,
+            "propertyType": 0,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 2,
+                    "increaseValueRange": {
+                        "min": 0.5,
+                        "max": 0.6499999761581421
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 20,
+            "propertyType": 1,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 2,
+                    "increaseValueRange": {
+                        "min": 2.0,
+                        "max": 2.5
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 21,
+            "propertyType": 2,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 2,
+                    "increaseValueRange": {
+                        "min": 2.0,
+                        "max": 2.5
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 22,
+            "propertyType": 4,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 2,
+                    "increaseValueRange": {
+                        "min": 7.5,
+                        "max": 20.0
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 23,
+            "propertyType": 3,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 2,
+                    "increaseValueRange": {
+                        "min": 7.5,
+                        "max": 20.0
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 24,
+            "propertyType": 6,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 2,
+                    "increaseValueRange": {
+                        "min": 0.10000000149011612,
+                        "max": 0.15000000596046449
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 25,
+            "propertyType": 7,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 2,
+                    "increaseValueRange": {
+                        "min": 0.20000000298023225,
+                        "max": 0.30000001192092898
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 26,
+            "propertyType": 0,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValueRange": {
+                        "min": 0.10000000149011612,
+                        "max": 0.15000000596046449
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 27,
+            "propertyType": 1,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValueRange": {
+                        "min": 0.10000000149011612,
+                        "max": 0.15000000596046449
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 28,
+            "propertyType": 2,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValueRange": {
+                        "min": 0.10000000149011612,
+                        "max": 0.15000000596046449
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 29,
+            "propertyType": 6,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValueRange": {
+                        "min": 0.10000000149011612,
+                        "max": 0.15000000596046449
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 30,
+            "propertyType": 7,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValueRange": {
+                        "min": 0.10000000149011612,
+                        "max": 0.15000000596046449
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 31,
+            "propertyType": 4,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValueRange": {
+                        "min": 0.10000000149011612,
+                        "max": 0.15000000596046449
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 32,
+            "propertyType": 3,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValueRange": {
+                        "min": 0.10000000149011612,
+                        "max": 0.15000000596046449
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 33,
+            "propertyType": 4,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 4,
+                    "increaseValueRange": {
+                        "min": 10.0,
+                        "max": 12.5
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        },
+        {
+            "buffId": 34,
+            "propertyType": 3,
+            "duration": {
+                "min": 5.0,
+                "max": 10.0
+            },
+            "increaseDataList": [
+                {
+                    "increaseType": 4,
+                    "increaseValueRange": {
+                        "min": 10.0,
+                        "max": 12.5
+                    }
+                }
+            ],
+            "isCollectBuff": true
+        }
+    ]
+}

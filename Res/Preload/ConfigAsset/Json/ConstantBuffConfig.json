@@ -1,0 +1,75 @@
+{
+    "excelAssetReference": {
+        "guid": "afcb27a37860bed489c689f04b28b549"
+    },
+    "csvAssetReference": {
+        "guid": "f79490033f1ba7d4c817acd9581f3173"
+    },
+    "jsonAssetReference": {
+        "guid": "36a25296697c2fe44a5305e443be106f"
+    },
+    "configName": "ConstantBuffConfig",
+    "isArray": true,
+    "buffs": [
+        {
+            "buffId": 1,
+            "propertyType": 0,
+            "duration": 30.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.20000000298023225
+                }
+            ],
+            "isCollectBuff": false
+        },
+        {
+            "buffId": 2,
+            "propertyType": 1,
+            "duration": 30.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.20000000298023225
+                }
+            ],
+            "isCollectBuff": false
+        },
+        {
+            "buffId": 3,
+            "propertyType": 5,
+            "duration": 30.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.20000000298023225
+                }
+            ],
+            "isCollectBuff": false
+        },
+        {
+            "buffId": 4,
+            "propertyType": 4,
+            "duration": 30.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.20000000298023225
+                }
+            ],
+            "isCollectBuff": false
+        },
+        {
+            "buffId": 5,
+            "propertyType": 5,
+            "duration": 0.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.20000000298023225
+                }
+            ],
+            "isCollectBuff": false
+        }
+    ]
+}
