@@ -3,3 +3,5 @@
 ~$*.xls
 ~$*.doc
 ~$*.docx
+# Unity Excel meta files
+~$*.xlsx.meta

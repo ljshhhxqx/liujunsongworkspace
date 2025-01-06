@@ -561,6 +561,70 @@
             "Address": "/Preload/ConfigAsset/Excel/WeatherConfig.xlsx"
         },
         {
+            "UID": 1700008,
+            "ResourceType": "UnityEditor.DefaultAsset",
+            "Name": "~$ChestDataConfig",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/ConfigAsset/Excel/~$ChestDataConfig.xlsx"
+        },
+        {
+            "UID": 1700009,
+            "ResourceType": "UnityEditor.DefaultAsset",
+            "Name": "~$CollectObjectDataConfig",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/ConfigAsset/Excel/~$CollectObjectDataConfig.xlsx"
+        },
+        {
+            "UID": 1700010,
+            "ResourceType": "UnityEditor.DefaultAsset",
+            "Name": "~$ConstantBuffConfig",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/ConfigAsset/Excel/~$ConstantBuffConfig.xlsx"
+        },
+        {
+            "UID": 1700011,
+            "ResourceType": "UnityEditor.DefaultAsset",
+            "Name": "~$GameData",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/ConfigAsset/Excel/~$GameData.xlsx"
+        },
+        {
+            "UID": 1700012,
+            "ResourceType": "UnityEditor.DefaultAsset",
+            "Name": "~$MapConfig",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/ConfigAsset/Excel/~$MapConfig.xlsx"
+        },
+        {
+            "UID": 1700013,
+            "ResourceType": "UnityEditor.DefaultAsset",
+            "Name": "~$PlayerData",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/ConfigAsset/Excel/~$PlayerData.xlsx"
+        },
+        {
+            "UID": 1700014,
+            "ResourceType": "UnityEditor.DefaultAsset",
+            "Name": "~$RandomBuffConfig",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/ConfigAsset/Excel/~$RandomBuffConfig.xlsx"
+        },
+        {
+            "UID": 1700015,
+            "ResourceType": "UnityEditor.DefaultAsset",
+            "Name": "~$WeatherConfig",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/ConfigAsset/Excel/~$WeatherConfig.xlsx"
+        },
+        {
             "UID": 1800000,
             "ResourceType": "UnityEngine.TextAsset",
             "Name": "ChestDataConfig",
