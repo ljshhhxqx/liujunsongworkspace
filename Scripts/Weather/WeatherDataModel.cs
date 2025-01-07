@@ -1,4 +1,5 @@
 ﻿using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using UniRx;
 using UnityEngine;
 

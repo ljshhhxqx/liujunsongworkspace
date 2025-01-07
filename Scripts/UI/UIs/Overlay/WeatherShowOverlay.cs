@@ -1,6 +1,7 @@
 using AOTScripts.Tool;
 using Data;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Weather;
 using TMPro;

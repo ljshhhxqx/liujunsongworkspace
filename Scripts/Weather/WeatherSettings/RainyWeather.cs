@@ -1,6 +1,8 @@
 using System;
 using DG.Tweening;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Config.JsonConfig;
 using UniRx;
 using UnityEngine;
 
@@ -40,7 +42,7 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
         public override void LoadWeather(WeatherLoadData weatherData)
         {
             _rainDensity = weatherData.rainDensity;
-            var duration = Mathf.Lerp(WeatherConstData.maxTransitionDuration, WeatherConstData.minTransitionDuration, _rainDensity);
+            var duration = Mathf.Lerp(WeatherConstantData.maxTransitionDuration, WeatherConstantData.minTransitionDuration, _rainDensity);
             DOTween.To(() => _currentRainDensity.Value, x => _currentRainDensity.Value = x, _rainDensity, duration);
             
             rainParticles.Play();
@@ -55,7 +57,7 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
             DOTween.To(() => _currentRainDensity.Value, 
                 x => _currentRainDensity.Value = x, 
                 _rainDensity, 
-                WeatherConstData.minTransitionDuration).OnComplete(() =>
+                WeatherConstantData.minTransitionDuration).OnComplete(() =>
             {
                 base.ClearWeather();
                 mainModule.startSize = _originalRainSnowSetting.size;

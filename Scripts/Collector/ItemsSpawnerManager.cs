@@ -101,10 +101,10 @@ namespace HotUpdate.Scripts.Collector
             InitializeGrid();
         }
 
-        private void OnDisable()
-        {
-            Debug.Log("ItemsSpawnerManager OnDisable");
-        }
+//         private void OnDisable()
+//         {
+// //            Debug.Log("ItemsSpawnerManager OnDisable");
+//         }
 
         private void OnPickerPickUpChestMessage(PickerPickUpChestMessage message)
         {

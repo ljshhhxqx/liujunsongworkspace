@@ -3,6 +3,8 @@
         {
             "UID": 0,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "AudioGameEffectPrefab",
             "IsPermanent": false,
             "IsPreload": false,
@@ -11,6 +13,8 @@
         {
             "UID": 1,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "AudioUIEffectPrefab",
             "IsPermanent": false,
             "IsPreload": false,
@@ -19,6 +23,8 @@
         {
             "UID": 2,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "LoadingScreenPanel",
             "IsPermanent": true,
             "IsPreload": false,
@@ -27,6 +33,8 @@
         {
             "UID": 100000,
             "ResourceType": "UnityEditor.SceneAsset",
+            "AssetType": 15,
+            "Extension": ".unity",
             "Name": "Login",
             "IsPermanent": false,
             "IsPreload": false,
@@ -35,6 +43,8 @@
         {
             "UID": 100001,
             "ResourceType": "UnityEditor.SceneAsset",
+            "AssetType": 15,
+            "Extension": ".unity",
             "Name": "Town",
             "IsPermanent": false,
             "IsPreload": false,
@@ -42,1143 +52,1249 @@
         },
         {
             "UID": 200000,
-            "ResourceType": "HotUpdate.Scripts.Config.ChestDataConfig",
+            "ResourceType": "UnityEngine.AnimationClip",
+            "AssetType": 14,
+            "Extension": ".anim",
+            "Name": "Attack1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Animation/Attack1.anim"
+        },
+        {
+            "UID": 200001,
+            "ResourceType": "UnityEngine.AnimationClip",
+            "AssetType": 14,
+            "Extension": ".anim",
+            "Name": "Attack2",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Animation/Attack2.anim"
+        },
+        {
+            "UID": 200002,
+            "ResourceType": "UnityEngine.AnimationClip",
+            "AssetType": 14,
+            "Extension": ".anim",
+            "Name": "Attack3",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Animation/Attack3.anim"
+        },
+        {
+            "UID": 200003,
+            "ResourceType": "UnityEngine.AnimationClip",
+            "AssetType": 14,
+            "Extension": ".anim",
+            "Name": "Death",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Animation/Death.anim"
+        },
+        {
+            "UID": 200004,
+            "ResourceType": "UnityEngine.AnimationClip",
+            "AssetType": 14,
+            "Extension": ".anim",
+            "Name": "Falling",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Animation/Falling.anim"
+        },
+        {
+            "UID": 200005,
+            "ResourceType": "UnityEngine.AnimationClip",
+            "AssetType": 14,
+            "Extension": ".anim",
+            "Name": "GetHit",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Animation/GetHit.anim"
+        },
+        {
+            "UID": 200006,
+            "ResourceType": "UnityEngine.AnimationClip",
+            "AssetType": 14,
+            "Extension": ".anim",
+            "Name": "Idle",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Animation/Idle.anim"
+        },
+        {
+            "UID": 200007,
+            "ResourceType": "UnityEngine.AnimationClip",
+            "AssetType": 14,
+            "Extension": ".anim",
+            "Name": "Jump",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Animation/Jump.anim"
+        },
+        {
+            "UID": 200008,
+            "ResourceType": "UnityEngine.AnimationClip",
+            "AssetType": 14,
+            "Extension": ".anim",
+            "Name": "JumpMove",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Animation/JumpMove.anim"
+        },
+        {
+            "UID": 200009,
+            "ResourceType": "UnityEngine.AnimationClip",
+            "AssetType": 14,
+            "Extension": ".anim",
+            "Name": "JumpWhileRunning",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Animation/JumpWhileRunning.anim"
+        },
+        {
+            "UID": 200010,
+            "ResourceType": "UnityEngine.AnimationClip",
+            "AssetType": 14,
+            "Extension": ".anim",
+            "Name": "Landed",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Animation/Landed.anim"
+        },
+        {
+            "UID": 200011,
+            "ResourceType": "UnityEngine.AnimationClip",
+            "AssetType": 14,
+            "Extension": ".anim",
+            "Name": "Move",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Animation/Move.anim"
+        },
+        {
+            "UID": 300000,
+            "ResourceType": "UnityEditor.Animations.AnimatorController",
+            "AssetType": 8,
+            "Extension": ".controller",
+            "Name": "PlayerAnimator",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Animation/PlayerAnimator.controller"
+        },
+        {
+            "UID": 400000,
+            "ResourceType": "UnityEngine.AnimationClip",
+            "AssetType": 14,
+            "Extension": ".anim",
+            "Name": "Roll",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Animation/Roll.anim"
+        },
+        {
+            "UID": 400001,
+            "ResourceType": "UnityEngine.AnimationClip",
+            "AssetType": 14,
+            "Extension": ".anim",
+            "Name": "Run",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Animation/Run.anim"
+        },
+        {
+            "UID": 500000,
+            "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
+            "Name": "Corks",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Mat/Corks.mat"
+        },
+        {
+            "UID": 600000,
+            "ResourceType": "UnityEngine.Shader",
+            "AssetType": 11,
+            "Extension": ".shader",
+            "Name": "Outline",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Mat/Outline.shader"
+        },
+        {
+            "UID": 700000,
+            "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
+            "Name": "OutlineGem",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Mat/OutlineGem.mat"
+        },
+        {
+            "UID": 700001,
+            "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
+            "Name": "OutlineGold",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Mat/OutlineGold.mat"
+        },
+        {
+            "UID": 700002,
+            "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
+            "Name": "OutlineLarge",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Mat/OutlineLarge.mat"
+        },
+        {
+            "UID": 700003,
+            "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
+            "Name": "OutlineMedium",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Mat/OutlineMedium.mat"
+        },
+        {
+            "UID": 700004,
+            "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
+            "Name": "OutlineSliver",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Mat/OutlineSliver.mat"
+        },
+        {
+            "UID": 700005,
+            "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
+            "Name": "OutlineSmall",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Mat/OutlineSmall.mat"
+        },
+        {
+            "UID": 700006,
+            "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
+            "Name": "Potion Glass",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Mat/Potion Glass.mat"
+        },
+        {
+            "UID": 700007,
+            "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
+            "Name": "Wood_1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Mat/Wood_1.mat"
+        },
+        {
+            "UID": 700008,
+            "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
+            "Name": "Wood_2",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Mat/Wood_2.mat"
+        },
+        {
+            "UID": 800000,
+            "ResourceType": "UnityEngine.Mesh",
+            "AssetType": 15,
+            "Extension": ".mesh",
+            "Name": "Chest_Open",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Mesh/Chest_Open.mesh"
+        },
+        {
+            "UID": 800001,
+            "ResourceType": "UnityEngine.Mesh",
+            "AssetType": 15,
+            "Extension": ".mesh",
+            "Name": "Chest_Open_Cap",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Mesh/Chest_Open_Cap.mesh"
+        },
+        {
+            "UID": 900000,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 1,
+            "Extension": ".obj",
+            "Name": "Cork",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Mesh/Cork.obj"
+        },
+        {
+            "UID": 900001,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 1,
+            "Extension": ".obj",
+            "Name": "Large",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Mesh/Large.obj"
+        },
+        {
+            "UID": 900002,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 1,
+            "Extension": ".obj",
+            "Name": "Medium",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Mesh/Medium.obj"
+        },
+        {
+            "UID": 900003,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 1,
+            "Extension": ".obj",
+            "Name": "Small",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Mesh/Small.obj"
+        },
+        {
+            "UID": 1000000,
+            "ResourceType": "HotUpdate.Scripts.Config.ArrayConfig.ChestDataConfig",
+            "AssetType": 15,
+            "Extension": ".asset",
             "Name": "ChestDataConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/Config/ChestDataConfig.asset"
         },
         {
-            "UID": 300000,
-            "ResourceType": "HotUpdate.Scripts.Config.CollectObjectDataConfig",
+            "UID": 1100000,
+            "ResourceType": "HotUpdate.Scripts.Config.ArrayConfig.CollectObjectDataConfig",
+            "AssetType": 15,
+            "Extension": ".asset",
             "Name": "CollectObjectDataConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/Config/CollectObjectDataConfig.asset"
         },
         {
-            "UID": 400000,
+            "UID": 1200000,
             "ResourceType": "HotUpdate.Scripts.Config.ConstantBuffConfig",
+            "AssetType": 15,
+            "Extension": ".asset",
             "Name": "ConstantBuffConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/Config/ConstantBuffConfig.asset"
         },
         {
-            "UID": 500000,
+            "UID": 1300000,
             "ResourceType": "HotUpdate.Scripts.Config.JsonConfig.JsonDataConfig",
+            "AssetType": 15,
+            "Extension": ".asset",
             "Name": "JsonDataConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/Config/JsonDataConfig.asset"
         },
         {
-            "UID": 600000,
+            "UID": 1400000,
             "ResourceType": "HotUpdate.Scripts.Config.MapConfig",
+            "AssetType": 15,
+            "Extension": ".asset",
             "Name": "MapConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/Config/MapConfig.asset"
         },
         {
-            "UID": 700000,
+            "UID": 1500000,
             "ResourceType": "HotUpdate.Scripts.Config.ArrayConfig.RandomBuffConfig",
+            "AssetType": 15,
+            "Extension": ".asset",
             "Name": "RandomBuffConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/Config/RandomBuffConfig.asset"
         },
         {
-            "UID": 800000,
-            "ResourceType": "HotUpdate.Scripts.Config.WeatherConfig",
+            "UID": 1600000,
+            "ResourceType": "HotUpdate.Scripts.Config.ArrayConfig.WeatherConfig",
+            "AssetType": 15,
+            "Extension": ".asset",
             "Name": "WeatherConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/Config/WeatherConfig.asset"
         },
         {
-            "UID": 900000,
+            "UID": 1700000,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "CreateRoomUI",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/CreateRoomUI.prefab"
         },
         {
-            "UID": 900001,
+            "UID": 1700001,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "DevelopUI",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/DevelopUI.prefab"
         },
         {
-            "UID": 900002,
+            "UID": 1700002,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "HelpPopup",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/HelpPopup.prefab"
         },
         {
-            "UID": 900003,
+            "UID": 1700003,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "InfoPanel",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/InfoPanel.prefab"
         },
         {
-            "UID": 900004,
+            "UID": 1700004,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "LoginPanel",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/LoginPanel.prefab"
         },
         {
-            "UID": 900005,
+            "UID": 1700005,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "MainUI",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/MainUI.prefab"
         },
         {
-            "UID": 900006,
+            "UID": 1700006,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "ModifyNameUI",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/ModifyNameUI.prefab"
         },
         {
-            "UID": 900007,
+            "UID": 1700007,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "PasswordUI",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/PasswordUI.prefab"
         },
         {
-            "UID": 900008,
+            "UID": 1700008,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "PlayerPropertyOverlay",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/PlayerPropertyOverlay.prefab"
         },
         {
-            "UID": 900009,
+            "UID": 1700009,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "RegistPanel",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/RegistPanel.prefab"
         },
         {
-            "UID": 900010,
+            "UID": 1700010,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "RoomListUI",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/RoomListUI.prefab"
         },
         {
-            "UID": 900011,
+            "UID": 1700011,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "RoomUI",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/RoomUI.prefab"
         },
         {
-            "UID": 900012,
+            "UID": 1700012,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "TargetShowOverlay",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/TargetShowOverlay.prefab"
         },
         {
-            "UID": 900013,
+            "UID": 1700013,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "TipPopup",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/TipPopup.prefab"
         },
         {
-            "UID": 900014,
+            "UID": 1700014,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "TipsOverlay",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/TipsOverlay.prefab"
         },
         {
-            "UID": 900015,
+            "UID": 1700015,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "WeatherShowOverlay",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/WeatherShowOverlay.prefab"
         },
         {
-            "UID": 1000000,
+            "UID": 1800000,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "HighCloud",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Weather/Materials/HighCloud.mat"
         },
         {
-            "UID": 1000001,
+            "UID": 1800001,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "LowCloud",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Weather/Materials/LowCloud.mat"
         },
         {
-            "UID": 1000002,
+            "UID": 1800002,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "RainMaterial",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Weather/Materials/RainMaterial.mat"
         },
         {
-            "UID": 1000003,
+            "UID": 1800003,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "SnowAndRainCoverMaterial",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Weather/Materials/SnowAndRainCoverMaterial.mat"
         },
         {
-            "UID": 1000004,
+            "UID": 1800004,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "SnowMaterial",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Weather/Materials/SnowMaterial.mat"
         },
         {
-            "UID": 1100000,
+            "UID": 1900000,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "Clouds",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Weather/WeatherEffects/Clouds.prefab"
         },
         {
-            "UID": 1100001,
+            "UID": 1900001,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "Lightning",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Weather/WeatherEffects/Lightning.prefab"
         },
         {
-            "UID": 1100002,
+            "UID": 1900002,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "MainLight",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Weather/WeatherEffects/MainLight.prefab"
         },
         {
-            "UID": 1100003,
+            "UID": 1900003,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "Cloudy",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Weather/WeatherSettings/Cloudy.prefab"
         },
         {
-            "UID": 1100004,
+            "UID": 1900004,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "Rain",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Weather/WeatherSettings/Rain.prefab"
         },
         {
-            "UID": 1100005,
+            "UID": 1900005,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "Snow",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Weather/WeatherSettings/Snow.prefab"
         },
         {
-            "UID": 1100006,
+            "UID": 1900006,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "Sunny",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Weather/WeatherSettings/Sunny.prefab"
         },
         {
-            "UID": 1200000,
+            "UID": 2000000,
             "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".mp3",
             "Name": "Explode",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Audio/Game/Effect/Explode.mp3"
         },
         {
-            "UID": 1200001,
+            "UID": 2000001,
             "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".wav",
             "Name": "FootStep",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Audio/Game/Effect/FootStep.WAV"
         },
         {
-            "UID": 1200002,
+            "UID": 2000002,
             "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".mp3",
             "Name": "Gem",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Audio/Game/Effect/Gem.mp3"
         },
         {
-            "UID": 1200003,
+            "UID": 2000003,
             "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".mp3",
             "Name": "Gold",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Audio/Game/Effect/Gold.mp3"
         },
         {
-            "UID": 1200004,
+            "UID": 2000004,
             "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".mp3",
             "Name": "Lighten",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Audio/Game/Effect/Lighten.mp3"
         },
         {
-            "UID": 1200005,
+            "UID": 2000005,
             "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".mp3",
             "Name": "Rain",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Audio/Game/Effect/Rain.mp3"
         },
         {
-            "UID": 1200006,
+            "UID": 2000006,
             "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".wav",
             "Name": "Thunder2",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Audio/Game/Effect/Thunder2.wav"
         },
         {
-            "UID": 1200007,
+            "UID": 2000007,
             "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".wav",
             "Name": "Thunder3",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Audio/Game/Effect/Thunder3.wav"
         },
         {
-            "UID": 1200008,
+            "UID": 2000008,
             "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".wav",
             "Name": "Thunder4",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Audio/Game/Effect/Thunder4.wav"
         },
         {
-            "UID": 1300000,
-            "ResourceType": "UnityEngine.Mesh",
-            "Name": "Chest_Open",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Mesh/Chest_Open.mesh"
-        },
-        {
-            "UID": 1300001,
-            "ResourceType": "UnityEngine.Mesh",
-            "Name": "Chest_Open_Cap",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Mesh/Chest_Open_Cap.mesh"
-        },
-        {
-            "UID": 1400000,
-            "ResourceType": "UnityEngine.GameObject",
-            "Name": "Cork",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Mesh/Cork.obj"
-        },
-        {
-            "UID": 1400001,
-            "ResourceType": "UnityEngine.GameObject",
-            "Name": "Large",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Mesh/Large.obj"
-        },
-        {
-            "UID": 1400002,
-            "ResourceType": "UnityEngine.GameObject",
-            "Name": "Medium",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Mesh/Medium.obj"
-        },
-        {
-            "UID": 1400003,
-            "ResourceType": "UnityEngine.GameObject",
-            "Name": "Small",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Mesh/Small.obj"
-        },
-        {
-            "UID": 1500000,
-            "ResourceType": "UnityEditor.Animations.AnimatorController",
-            "Name": "PlayerAnimator",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Player/PlayerAnimator.controller"
-        },
-        {
-            "UID": 1600000,
+            "UID": 2100000,
             "ResourceType": "UnityEngine.TextAsset",
+            "AssetType": 7,
+            "Extension": ".csv",
             "Name": "ChestDataConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/ConfigAsset/Csv/ChestDataConfig.csv"
         },
         {
-            "UID": 1600001,
+            "UID": 2100001,
             "ResourceType": "UnityEngine.TextAsset",
+            "AssetType": 7,
+            "Extension": ".csv",
             "Name": "CollectObjectDataConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/ConfigAsset/Csv/CollectObjectDataConfig.csv"
         },
         {
-            "UID": 1600002,
+            "UID": 2100002,
             "ResourceType": "UnityEngine.TextAsset",
+            "AssetType": 7,
+            "Extension": ".csv",
             "Name": "ConstantBuffConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/ConfigAsset/Csv/ConstantBuffConfig.csv"
         },
         {
-            "UID": 1600003,
+            "UID": 2100003,
             "ResourceType": "UnityEngine.TextAsset",
+            "AssetType": 7,
+            "Extension": ".csv",
             "Name": "MapConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/ConfigAsset/Csv/MapConfig.csv"
         },
         {
-            "UID": 1600004,
+            "UID": 2100004,
             "ResourceType": "UnityEngine.TextAsset",
+            "AssetType": 7,
+            "Extension": ".csv",
             "Name": "RandomBuffConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/ConfigAsset/Csv/RandomBuffConfig.csv"
         },
         {
-            "UID": 1600005,
+            "UID": 2100005,
             "ResourceType": "UnityEngine.TextAsset",
+            "AssetType": 7,
+            "Extension": ".csv",
             "Name": "WeatherConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/ConfigAsset/Csv/WeatherConfig.csv"
         },
         {
-            "UID": 1700000,
-            "ResourceType": "UnityEditor.DefaultAsset",
-            "Name": "ChestDataConfig",
-            "IsPermanent": false,
-            "IsPreload": true,
-            "Address": "/Preload/ConfigAsset/Excel/ChestDataConfig.xlsx"
-        },
-        {
-            "UID": 1700001,
-            "ResourceType": "UnityEditor.DefaultAsset",
-            "Name": "CollectObjectDataConfig",
-            "IsPermanent": false,
-            "IsPreload": true,
-            "Address": "/Preload/ConfigAsset/Excel/CollectObjectDataConfig.xlsx"
-        },
-        {
-            "UID": 1700002,
-            "ResourceType": "UnityEditor.DefaultAsset",
-            "Name": "ConstantBuffConfig",
-            "IsPermanent": false,
-            "IsPreload": true,
-            "Address": "/Preload/ConfigAsset/Excel/ConstantBuffConfig.xlsx"
-        },
-        {
-            "UID": 1700003,
-            "ResourceType": "UnityEditor.DefaultAsset",
-            "Name": "GameData",
-            "IsPermanent": false,
-            "IsPreload": true,
-            "Address": "/Preload/ConfigAsset/Excel/GameData.xlsx"
-        },
-        {
-            "UID": 1700004,
-            "ResourceType": "UnityEditor.DefaultAsset",
-            "Name": "MapConfig",
-            "IsPermanent": false,
-            "IsPreload": true,
-            "Address": "/Preload/ConfigAsset/Excel/MapConfig.xlsx"
-        },
-        {
-            "UID": 1700005,
-            "ResourceType": "UnityEditor.DefaultAsset",
-            "Name": "PlayerData",
-            "IsPermanent": false,
-            "IsPreload": true,
-            "Address": "/Preload/ConfigAsset/Excel/PlayerData.xlsx"
-        },
-        {
-            "UID": 1700006,
-            "ResourceType": "UnityEditor.DefaultAsset",
-            "Name": "RandomBuffConfig",
-            "IsPermanent": false,
-            "IsPreload": true,
-            "Address": "/Preload/ConfigAsset/Excel/RandomBuffConfig.xlsx"
-        },
-        {
-            "UID": 1700007,
-            "ResourceType": "UnityEditor.DefaultAsset",
-            "Name": "WeatherConfig",
-            "IsPermanent": false,
-            "IsPreload": true,
-            "Address": "/Preload/ConfigAsset/Excel/WeatherConfig.xlsx"
-        },
-        {
-            "UID": 1700008,
-            "ResourceType": "UnityEditor.DefaultAsset",
-            "Name": "~$ChestDataConfig",
-            "IsPermanent": false,
-            "IsPreload": true,
-            "Address": "/Preload/ConfigAsset/Excel/~$ChestDataConfig.xlsx"
-        },
-        {
-            "UID": 1700009,
-            "ResourceType": "UnityEditor.DefaultAsset",
-            "Name": "~$CollectObjectDataConfig",
-            "IsPermanent": false,
-            "IsPreload": true,
-            "Address": "/Preload/ConfigAsset/Excel/~$CollectObjectDataConfig.xlsx"
-        },
-        {
-            "UID": 1700010,
-            "ResourceType": "UnityEditor.DefaultAsset",
-            "Name": "~$ConstantBuffConfig",
-            "IsPermanent": false,
-            "IsPreload": true,
-            "Address": "/Preload/ConfigAsset/Excel/~$ConstantBuffConfig.xlsx"
-        },
-        {
-            "UID": 1700011,
-            "ResourceType": "UnityEditor.DefaultAsset",
-            "Name": "~$GameData",
-            "IsPermanent": false,
-            "IsPreload": true,
-            "Address": "/Preload/ConfigAsset/Excel/~$GameData.xlsx"
-        },
-        {
-            "UID": 1700012,
-            "ResourceType": "UnityEditor.DefaultAsset",
-            "Name": "~$MapConfig",
-            "IsPermanent": false,
-            "IsPreload": true,
-            "Address": "/Preload/ConfigAsset/Excel/~$MapConfig.xlsx"
-        },
-        {
-            "UID": 1700013,
-            "ResourceType": "UnityEditor.DefaultAsset",
-            "Name": "~$PlayerData",
-            "IsPermanent": false,
-            "IsPreload": true,
-            "Address": "/Preload/ConfigAsset/Excel/~$PlayerData.xlsx"
-        },
-        {
-            "UID": 1700014,
-            "ResourceType": "UnityEditor.DefaultAsset",
-            "Name": "~$RandomBuffConfig",
-            "IsPermanent": false,
-            "IsPreload": true,
-            "Address": "/Preload/ConfigAsset/Excel/~$RandomBuffConfig.xlsx"
-        },
-        {
-            "UID": 1700015,
-            "ResourceType": "UnityEditor.DefaultAsset",
-            "Name": "~$WeatherConfig",
-            "IsPermanent": false,
-            "IsPreload": true,
-            "Address": "/Preload/ConfigAsset/Excel/~$WeatherConfig.xlsx"
-        },
-        {
-            "UID": 1800000,
+            "UID": 2100006,
             "ResourceType": "UnityEngine.TextAsset",
+            "AssetType": 5,
+            "Extension": ".json",
             "Name": "ChestDataConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/ConfigAsset/Json/ChestDataConfig.json"
         },
         {
-            "UID": 1800001,
+            "UID": 2100007,
             "ResourceType": "UnityEngine.TextAsset",
+            "AssetType": 5,
+            "Extension": ".json",
             "Name": "CollectObjectDataConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/ConfigAsset/Json/CollectObjectDataConfig.json"
         },
         {
-            "UID": 1800002,
+            "UID": 2100008,
             "ResourceType": "UnityEngine.TextAsset",
+            "AssetType": 5,
+            "Extension": ".json",
             "Name": "ConstantBuffConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/ConfigAsset/Json/ConstantBuffConfig.json"
         },
         {
-            "UID": 1800003,
+            "UID": 2100009,
             "ResourceType": "UnityEngine.TextAsset",
-            "Name": "GameData",
-            "IsPermanent": false,
-            "IsPreload": true,
-            "Address": "/Preload/ConfigAsset/Json/GameData.json"
-        },
-        {
-            "UID": 1800004,
-            "ResourceType": "UnityEngine.TextAsset",
+            "AssetType": 5,
+            "Extension": ".json",
             "Name": "JsonDataConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/ConfigAsset/Json/JsonDataConfig.json"
         },
         {
-            "UID": 1800005,
+            "UID": 2100010,
             "ResourceType": "UnityEngine.TextAsset",
+            "AssetType": 5,
+            "Extension": ".json",
             "Name": "MapConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/ConfigAsset/Json/MapConfig.json"
         },
         {
-            "UID": 1800006,
+            "UID": 2100011,
             "ResourceType": "UnityEngine.TextAsset",
-            "Name": "PlayerData",
-            "IsPermanent": false,
-            "IsPreload": true,
-            "Address": "/Preload/ConfigAsset/Json/PlayerData.json"
-        },
-        {
-            "UID": 1800007,
-            "ResourceType": "UnityEngine.TextAsset",
+            "AssetType": 5,
+            "Extension": ".json",
             "Name": "RandomBuffConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/ConfigAsset/Json/RandomBuffConfig.json"
         },
         {
-            "UID": 1800008,
+            "UID": 2100012,
             "ResourceType": "UnityEngine.TextAsset",
+            "AssetType": 5,
+            "Extension": ".json",
             "Name": "WeatherConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/ConfigAsset/Json/WeatherConfig.json"
         },
         {
-            "UID": 1800009,
-            "ResourceType": "UnityEngine.TextAsset",
-            "Name": "WeatherDataConfig",
-            "IsPermanent": false,
-            "IsPreload": true,
-            "Address": "/Preload/ConfigAsset/Json/WeatherDataConfig.json"
-        },
-        {
-            "UID": 1900000,
-            "ResourceType": "UnityEngine.Material",
-            "Name": "Corks",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Collect/Mat/Corks.mat"
-        },
-        {
-            "UID": 1900001,
-            "ResourceType": "UnityEngine.Material",
-            "Name": "OutlineGem",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Collect/Mat/OutlineGem.mat"
-        },
-        {
-            "UID": 1900002,
-            "ResourceType": "UnityEngine.Material",
-            "Name": "OutlineGold",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Collect/Mat/OutlineGold.mat"
-        },
-        {
-            "UID": 1900003,
-            "ResourceType": "UnityEngine.Material",
-            "Name": "OutlineLarge",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Collect/Mat/OutlineLarge.mat"
-        },
-        {
-            "UID": 1900004,
-            "ResourceType": "UnityEngine.Material",
-            "Name": "OutlineMedium",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Collect/Mat/OutlineMedium.mat"
-        },
-        {
-            "UID": 1900005,
-            "ResourceType": "UnityEngine.Material",
-            "Name": "OutlineSliver",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Collect/Mat/OutlineSliver.mat"
-        },
-        {
-            "UID": 1900006,
-            "ResourceType": "UnityEngine.Material",
-            "Name": "OutlineSmall",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Collect/Mat/OutlineSmall.mat"
-        },
-        {
-            "UID": 1900007,
-            "ResourceType": "UnityEngine.Material",
-            "Name": "Potion Glass",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Collect/Mat/Potion Glass.mat"
-        },
-        {
-            "UID": 1900008,
-            "ResourceType": "UnityEngine.Material",
-            "Name": "Wood_1",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Collect/Mat/Wood_1.mat"
-        },
-        {
-            "UID": 1900009,
-            "ResourceType": "UnityEngine.Material",
-            "Name": "Wood_2",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Collect/Mat/Wood_2.mat"
-        },
-        {
-            "UID": 2000000,
+            "UID": 2200000,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "VFX_Ceramic_Hit",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/Collect/Particle/VFX_Ceramic_Hit.prefab"
         },
         {
-            "UID": 2000001,
+            "UID": 2200001,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "VFX_Coins",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/Collect/Particle/VFX_Coins.prefab"
         },
         {
-            "UID": 2000002,
+            "UID": 2200002,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "VFX_Confetti_Hit",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/Collect/Particle/VFX_Confetti_Hit.prefab"
         },
         {
-            "UID": 2000003,
+            "UID": 2200003,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "VFX_Diamond_Hit",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/Collect/Particle/VFX_Diamond_Hit.prefab"
         },
         {
-            "UID": 2000004,
+            "UID": 2200004,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "VFX_Pumpkin_Hit",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/Collect/Particle/VFX_Pumpkin_Hit.prefab"
         },
         {
-            "UID": 2000005,
+            "UID": 2200005,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "VFX_Toxic_Hit",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/Collect/Particle/VFX_Toxic_Hit.prefab"
         },
         {
-            "UID": 2000006,
+            "UID": 2200006,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "VFX_WoodBox_Hit",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/Collect/Particle/VFX_WoodBox_Hit.prefab"
         },
         {
-            "UID": 2000007,
+            "UID": 2200007,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "Chest",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/Collect/Prefab/Chest.prefab"
         },
         {
-            "UID": 2000008,
+            "UID": 2200008,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "Gem",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/Collect/Prefab/Gem.prefab"
         },
         {
-            "UID": 2000009,
+            "UID": 2200009,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "GoldCoin",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/Collect/Prefab/GoldCoin.prefab"
         },
         {
-            "UID": 2000010,
+            "UID": 2200010,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "Large",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/Collect/Prefab/Large.prefab"
         },
         {
-            "UID": 2000011,
+            "UID": 2200011,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "Medium",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/Collect/Prefab/Medium.prefab"
         },
         {
-            "UID": 2000012,
+            "UID": 2200012,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "SliverCoin",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/Collect/Prefab/SliverCoin.prefab"
         },
         {
-            "UID": 2000013,
+            "UID": 2200013,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "Small",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/Collect/Prefab/Small.prefab"
         },
         {
-            "UID": 2100000,
+            "UID": 2300000,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "Attack",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/CollectFill/Large/Attack.mat"
         },
         {
-            "UID": 2100001,
+            "UID": 2300001,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "CriticalDamageRatio",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/CollectFill/Large/CriticalDamageRatio.mat"
         },
         {
-            "UID": 2100002,
+            "UID": 2300002,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "CriticalRate",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/CollectFill/Large/CriticalRate.mat"
         },
         {
-            "UID": 2100003,
+            "UID": 2300003,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "Defense",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/CollectFill/Large/Defense.mat"
         },
         {
-            "UID": 2100004,
+            "UID": 2300004,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "Health",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/CollectFill/Large/Health.mat"
         },
         {
-            "UID": 2100005,
+            "UID": 2300005,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "Speed",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/CollectFill/Large/Speed.mat"
         },
         {
-            "UID": 2100006,
+            "UID": 2300006,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "Strength",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/CollectFill/Large/Strength.mat"
         },
         {
-            "UID": 2100007,
+            "UID": 2300007,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "Attack",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/CollectFill/Medium/Attack.mat"
         },
         {
-            "UID": 2100008,
+            "UID": 2300008,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "CriticalDamageRatio",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/CollectFill/Medium/CriticalDamageRatio.mat"
         },
         {
-            "UID": 2100009,
+            "UID": 2300009,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "CriticalRate",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/CollectFill/Medium/CriticalRate.mat"
         },
         {
-            "UID": 2100010,
+            "UID": 2300010,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "Defense",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/CollectFill/Medium/Defense.mat"
         },
         {
-            "UID": 2100011,
+            "UID": 2300011,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "Health",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/CollectFill/Medium/Health.mat"
         },
         {
-            "UID": 2100012,
+            "UID": 2300012,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "Speed",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/CollectFill/Medium/Speed.mat"
         },
         {
-            "UID": 2100013,
+            "UID": 2300013,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "Strength",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/CollectFill/Medium/Strength.mat"
         },
         {
-            "UID": 2100014,
+            "UID": 2300014,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "Attack",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/CollectFill/Small/Attack.mat"
         },
         {
-            "UID": 2100015,
+            "UID": 2300015,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "CriticalDamageRatio",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/CollectFill/Small/CriticalDamageRatio.mat"
         },
         {
-            "UID": 2100016,
+            "UID": 2300016,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "CriticalRate",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/CollectFill/Small/CriticalRate.mat"
         },
         {
-            "UID": 2100017,
+            "UID": 2300017,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "Defense",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/CollectFill/Small/Defense.mat"
         },
         {
-            "UID": 2100018,
+            "UID": 2300018,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "Health",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/CollectFill/Small/Health.mat"
         },
         {
-            "UID": 2100019,
+            "UID": 2300019,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "Speed",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/CollectFill/Small/Speed.mat"
         },
         {
-            "UID": 2100020,
+            "UID": 2300020,
             "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "Strength",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/CollectFill/Small/Strength.mat"
         },
         {
-            "UID": 2200000,
-            "ResourceType": "UnityEngine.AnimationClip",
-            "Name": "Attack1",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Player/Animation/Attack1.anim"
-        },
-        {
-            "UID": 2200001,
-            "ResourceType": "UnityEngine.AnimationClip",
-            "Name": "Attack2",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Player/Animation/Attack2.anim"
-        },
-        {
-            "UID": 2200002,
-            "ResourceType": "UnityEngine.AnimationClip",
-            "Name": "Attack3",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Player/Animation/Attack3.anim"
-        },
-        {
-            "UID": 2200003,
-            "ResourceType": "UnityEngine.AnimationClip",
-            "Name": "Death",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Player/Animation/Death.anim"
-        },
-        {
-            "UID": 2200004,
-            "ResourceType": "UnityEngine.AnimationClip",
-            "Name": "Falling",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Player/Animation/Falling.anim"
-        },
-        {
-            "UID": 2200005,
-            "ResourceType": "UnityEngine.AnimationClip",
-            "Name": "GetHit",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Player/Animation/GetHit.anim"
-        },
-        {
-            "UID": 2200006,
-            "ResourceType": "UnityEngine.AnimationClip",
-            "Name": "Idle",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Player/Animation/Idle.anim"
-        },
-        {
-            "UID": 2200007,
-            "ResourceType": "UnityEngine.AnimationClip",
-            "Name": "Jump",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Player/Animation/Jump.anim"
-        },
-        {
-            "UID": 2200008,
-            "ResourceType": "UnityEngine.AnimationClip",
-            "Name": "JumpMove",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Player/Animation/JumpMove.anim"
-        },
-        {
-            "UID": 2200009,
-            "ResourceType": "UnityEngine.AnimationClip",
-            "Name": "JumpWhileRunning",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Player/Animation/JumpWhileRunning.anim"
-        },
-        {
-            "UID": 2200010,
-            "ResourceType": "UnityEngine.AnimationClip",
-            "Name": "Landed",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Player/Animation/Landed.anim"
-        },
-        {
-            "UID": 2200011,
-            "ResourceType": "UnityEngine.AnimationClip",
-            "Name": "Move",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Player/Animation/Move.anim"
-        },
-        {
-            "UID": 2200012,
-            "ResourceType": "UnityEngine.AnimationClip",
-            "Name": "Roll",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Player/Animation/Roll.anim"
-        },
-        {
-            "UID": 2200013,
-            "ResourceType": "UnityEngine.AnimationClip",
-            "Name": "Run",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Player/Animation/Run.anim"
-        },
-        {
-            "UID": 2300000,
+            "UID": 2400000,
             "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "MPlayer",
             "IsPermanent": false,
             "IsPreload": false,

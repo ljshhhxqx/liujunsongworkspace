@@ -1,5 +1,6 @@
 ﻿using System;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using Mirror;
 using Sirenix.Utilities;
 using UnityEngine;

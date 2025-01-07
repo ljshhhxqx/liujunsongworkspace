@@ -1,5 +1,7 @@
 using System;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Config.JsonConfig;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Weather.WeatherSettings
@@ -19,6 +21,7 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
 
         private WeatherLoadData _weatherLoadData;
         public WeatherData WeatherData { get; set; }
+        public WeatherConstantData WeatherConstantData { get; set; }
 
         public virtual void LoadWeather(WeatherLoadData weatherData)
         {
@@ -31,7 +34,7 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
 
         public virtual void ClearWeather()
         {
-            if (gameObject!= null)
+            if (gameObject)
                 gameObject.SetActive(false);
         }
     }

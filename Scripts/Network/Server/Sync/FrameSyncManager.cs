@@ -19,7 +19,7 @@ namespace HotUpdate.Scripts.Network.Server.Sync
         private readonly Dictionary<uint, PlayerControlClient> _players = new Dictionary<uint, PlayerControlClient>();
         private readonly Dictionary<uint, List<AttackData>> _attackDatas = new Dictionary<uint, List<AttackData>>();
         private MirrorNetworkMessageHandler _messageCenter;
-        private DamageConfig _damageConfig;
+        private JsonDataConfig _jsonConfig;
         private float _accumulator;  // 用于累积固定更新的时间
         private const float FIXED_TIME_STEP = 0.01f;  // 100fps的固定更新间隔
         [SyncVar]
@@ -33,7 +33,7 @@ namespace HotUpdate.Scripts.Network.Server.Sync
             Reader<PlayerAttackData>.read = AttackDataExtensions.ReadPlayerAttackData;
             Writer<PlayerAttackData>.write = AttackDataExtensions.WriteAttackData;
             _messageCenter = messageCenter;
-            _damageConfig = configProvider.GetConfig<DamageConfig>();
+            _jsonConfig = configProvider.GetConfig<JsonDataConfig>();
             _messageCenter.RegisterLocalMessageHandler<PlayerInputMessage>(OnPlayerInputMessage);
             _messageCenter.RegisterLocalMessageHandler<PlayerFrameUpdateMessage>(OnPlayerFrameUpdateMessage);
             _messageCenter.RegisterLocalMessageHandler<PlayerAttackMessage>(OnPlayerAttackMessage);
@@ -108,8 +108,8 @@ namespace HotUpdate.Scripts.Network.Server.Sync
                     frame = _currentFrame,
                     damageResults = damageResults
                 });
+                Debug.Log($"Attacks in frame {_currentFrame} : {attackList?.Count ?? 0}");
             }
-            Debug.Log($"Attacks in frame {_currentFrame} : {attackList?.Count ?? 0}");
         }
 
         private DamageResult GetDamageResult(AttackData attackData)
@@ -126,7 +126,7 @@ namespace HotUpdate.Scripts.Network.Server.Sync
                     var propertyComponent = player.GetComponent<PlayerPropertyComponent>();
                     var remainingHp = propertyComponent.GetPropertyValue(PropertyTypeEnum.Health);
                     var defense = propertyComponent.GetPropertyValue(PropertyTypeEnum.Defense);
-                    var damage = _damageConfig.GetDamage(attackData.attack, defense, attackData.criticalRate, attackData.criticalDamageRatio);
+                    var damage = _jsonConfig.GetDamage(attackData.attack, defense, attackData.criticalRate, attackData.criticalDamageRatio);
                     return new DamageResult
                     {
                         targetId = player.netId,

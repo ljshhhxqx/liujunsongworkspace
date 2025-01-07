@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;

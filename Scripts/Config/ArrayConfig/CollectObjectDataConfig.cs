@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using Newtonsoft.Json;
 
-namespace HotUpdate.Scripts.Config
+namespace HotUpdate.Scripts.Config.ArrayConfig
 {
     [CreateAssetMenu(fileName = "CollectObjectDataConfig", menuName = "ScriptableObjects/CollectObjectDataConfig")]
     public class CollectObjectDataConfig : ConfigBase

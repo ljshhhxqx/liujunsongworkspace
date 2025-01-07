@@ -16,6 +16,7 @@ namespace Network.Client
         private Vector3 _offset; // 初始偏移量
         private float _lastHorizontal;
         private bool _isControlling = true;
+        private LayerMask _groundSceneLayer;
 
         [Inject]
         private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)

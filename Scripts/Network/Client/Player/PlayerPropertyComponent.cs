@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AOTScripts.Tool.ECS;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using Mirror;

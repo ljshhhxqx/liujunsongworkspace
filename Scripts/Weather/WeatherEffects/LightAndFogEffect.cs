@@ -1,5 +1,6 @@
 ﻿using DG.Tweening;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using UniRx;
 using UnityEngine;

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Linq;
-using HotUpdate.Scripts.Config;
+﻿using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.Server.Sync;
-using HotUpdate.Scripts.Tool.Message;
 using Mirror;
 using Network.NetworkMes;
-using Tool.Message;
 using VContainer;
 
 namespace HotUpdate.Scripts.Network.Client.Player
@@ -15,16 +11,16 @@ namespace HotUpdate.Scripts.Network.Client.Player
     {
         private PlayerAnimationComponent _animationComponent;
         private PlayerPropertyComponent _playerPropertyComponent;
-        private PlayerDataConfig _playerDataConfig;
         private MirrorNetworkMessageHandler _messageHandler;
         private FrameSyncManager _frameSyncManager;
+        private JsonDataConfig _jsonDataConfig;
 
         [Inject]
         private void Init(IConfigProvider configProvider, MirrorNetworkMessageHandler handler, FrameSyncManager frameSyncManager)
         {
             _animationComponent = GetComponent<PlayerAnimationComponent>();
             _playerPropertyComponent = GetComponent<PlayerPropertyComponent>();
-            _playerDataConfig = configProvider.GetConfig<PlayerDataConfig>();
+            _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _animationComponent.OnAttackHit += OnAttackHit;
             _frameSyncManager = frameSyncManager;
             _messageHandler = handler;

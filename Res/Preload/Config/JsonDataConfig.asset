@@ -178,14 +178,18 @@ MonoBehaviour:
       - collectObjectBuffSize: 3
         ratio: 2
     gameConfig:
-      groundSceneLayer: 7
+      groundSceneLayer:
+        serializedVersion: 2
+        m_Bits: 128
       syncTime: 0.016
       safetyMargin: 5
       fixedSpacing: 1
       warmupTime: 10
       developKey: DevelopKey
       developKeyValue: MultiplayerDemo
-      stairSceneLayer: 8
+      stairSceneLayer:
+        serializedVersion: 2
+        m_Bits: 256
       safePosition: {x: 0, y: 3, z: 0}
       safeHorizontalOffsetY: -10
     dayNightCycleData:
@@ -383,3 +387,8 @@ MonoBehaviour:
     chestCommonData:
       OpenSpeed: 1.5
       InitEulerAngles: {x: 0, y: 90, z: 0}
+    weatherData:
+      weatherChangeTime: 10
+      maxTransitionDuration: 25
+      minTransitionDuration: 10
+  canEdit: 0

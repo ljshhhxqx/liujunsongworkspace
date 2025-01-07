@@ -47,7 +47,7 @@ namespace UI.UIBase
                 foreach (var t in uiObjects)
                 {
                     var ui = t.GetComponent<ScreenUIBase>();
-                    if (ui != null && _uIPrefabs.All(t1 => t1.Type != ui.Type))
+                    if (ui && _uIPrefabs.All(t1 => t1.Type != ui.Type))
                     {
                         _uIPrefabs.Add(ui);
                     }

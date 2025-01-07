@@ -5,6 +5,7 @@ using AOTScripts.Tool.ECS;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Tool.Message;
 using HotUpdate.Scripts.UI.UIs.Overlay;
@@ -107,6 +108,7 @@ namespace HotUpdate.Scripts.Weather
                 if (weather.TryGetComponent<WeatherSetting>(out var setting))
                 {
                     setting.WeatherData = _weatherConfig.GetWeatherData(setting.WeatherType);
+                    setting.WeatherConstantData = _jsonDataConfig.WeatherConstantData;
                     _weatherPrefabs.Add(setting);
                 }
             }

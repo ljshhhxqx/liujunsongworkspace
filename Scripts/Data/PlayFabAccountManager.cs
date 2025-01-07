@@ -24,7 +24,6 @@ namespace Data
         private const string AccountKey = "LatestAccount";
         private const string PlayerKey = "PlayerId";
         private RegisterData _latestAccount;
-        private GameDataConfig _gameDataConfig;
         private JsonDataConfig _jsonDataConfig;
         private readonly IConfigProvider _configProvider;
         private readonly IPlayFabClientCloudScriptCaller _playFabClientCloudScriptCaller;
@@ -36,14 +35,13 @@ namespace Data
             _uiManager = uiManager;
             _configProvider = configProvider;
             _gameEventManager = gameEventManager;
-            _jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
             _playFabClientCloudScriptCaller = playFabClientCloudScriptCaller;
             gameEventManager.Subscribe<GameResourceLoadedEvent>(OnGameResourceLoaded);
         }
 
         private void OnGameResourceLoaded(GameResourceLoadedEvent gameResourceLoadedEvent)
         {
-            _gameDataConfig = _configProvider.GetConfig<GameDataConfig>();
+            _jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
             PlayFabData.IsDevelopMode.Value = PlayerPrefs.GetInt(_jsonDataConfig.GameConfig.developKey, 0) == 1;
         }
 

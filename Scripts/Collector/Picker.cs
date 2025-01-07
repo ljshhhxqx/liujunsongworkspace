@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using AOTScripts.Tool.ECS;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using Tool.GameEvent;
 using UnityEngine;
 using VContainer;

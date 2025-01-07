@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace HotUpdate.Scripts.Config
+namespace HotUpdate.Scripts.Config.ArrayConfig
 {
     [CreateAssetMenu(fileName = "ChestDataConfig", menuName = "ScriptableObjects/ChestDataConfig")]
     public class ChestDataConfig : ConfigBase

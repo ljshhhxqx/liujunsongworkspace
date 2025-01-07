@@ -4,7 +4,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace HotUpdate.Scripts.Config
+namespace HotUpdate.Scripts.Config.ArrayConfig
 {
     [CreateAssetMenu(fileName = "WeatherConfig", menuName = "ScriptableObjects/WeatherConfig")]
     public class WeatherConfig : ConfigBase
@@ -210,12 +210,5 @@ namespace HotUpdate.Scripts.Config
                     return "未知";
             }
         }
-    }
-    
-    public static class WeatherConstData
-    {
-        public static float weatherChangeTime = 10f;
-        public static float maxTransitionDuration = 25f;
-        public static float minTransitionDuration = 10f;
     }
 }

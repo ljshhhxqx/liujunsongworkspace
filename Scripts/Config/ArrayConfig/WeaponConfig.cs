@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace HotUpdate.Scripts.Config
+namespace HotUpdate.Scripts.Config.ArrayConfig
 {
     [CreateAssetMenu(fileName = "WeaponConfig", menuName = "ScriptableObjects/WeaponConfig")]
     public class WeaponConfig : ConfigBase
     {
+        [ReadOnly]
         [SerializeField]
         private List<WeaponConfigData> weaponConfigData;
         

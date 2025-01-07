@@ -1,6 +1,7 @@
 ﻿using System;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.NetworkMes;
 using Network.NetworkMes;
 using Sirenix.OdinInspector;
@@ -72,7 +73,7 @@ namespace HotUpdate.Scripts.Network.Server.Collect
                 return;
             }
             _collider = collectCollider.GetComponent<Collider>();
-            _collider.enabled=true;
+            _collider.enabled = true;
             _disposable = _collider.OnTriggerEnterAsObservable()
                 .Subscribe(OnTriggerEnterObserver);
         }

@@ -1,5 +1,6 @@
 using AOTScripts.Tool.ECS;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using Mirror;
 using UnityEngine;
 

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Config.JsonConfig
 {
@@ -10,8 +12,21 @@ namespace HotUpdate.Scripts.Config.JsonConfig
     {
         [SerializeField] 
         private JsonConfigData jsonConfigData;
+        [SerializeField]
+        private bool canEdit;
         private readonly Dictionary<AnimationState, AnimationInfo> _animationInfos = new Dictionary<AnimationState, AnimationInfo>();
-        
+
+        public JsonConfigData JsonConfigData
+        {
+            set
+            {
+                if (canEdit)
+                {
+                    jsonConfigData = value;
+                }
+            }
+        }
+
         public PlayerConfigData PlayerConfig => jsonConfigData.playerConfig;
         public CollectData CollectData => jsonConfigData.collectData;
         public DamageData DamageData => jsonConfigData.damageData;
@@ -19,7 +34,8 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public ChestCommonData ChestCommonData => jsonConfigData.chestCommonData;
         public GameConfigData GameConfig => jsonConfigData.gameConfig;
         public DayNightCycleData DayNightCycleData => jsonConfigData.dayNightCycleData;
-        
+        public WeatherConstantData WeatherConstantData => jsonConfigData.weatherData;
+
         public override void Init(TextAsset asset = null)
         {
             base.Init(asset);
@@ -61,20 +77,68 @@ namespace HotUpdate.Scripts.Config.JsonConfig
             }
             return 1f;
         }
+        
+        public float GetDamage(float attackPower, float defense, float criticalRate, float criticalDamageRatio)
+        {
+            var damageReduction = defense / (defense + DamageData.defenseRatio);
+            criticalRate = Mathf.Max(0f, Mathf.Min(1f, criticalRate));
+            var isCritical = Random.Range(0f, 1f) < criticalRate;
+            var damage = attackPower * (1f - damageReduction) * (isCritical? criticalDamageRatio : 1f);
+            return damage;
+        }
     }
 
     [Serializable]
     public struct JsonConfigData
     {
+        [Header("玩家通用数据")]
         public PlayerConfigData playerConfig;
+        [Header("收集品通用数据")]
         public CollectData collectData;
+        [Header("伤害通用数据")]
         public DamageData damageData;
+        [Header("增益通用数据")]
         public BuffConstantData buffConstantData;
+        [Header("游戏通用数据")]
         public GameConfigData gameConfig;
+        [Header("昼夜通用数据")]
         public DayNightCycleData dayNightCycleData;
+        [Header("宝箱通用数据")]
         public ChestCommonData chestCommonData;
+        [Header("天气通用数据")]
+        public WeatherConstantData weatherData;
     }
 
+    [Serializable]
+    public struct WeatherConstantData
+    {
+        public float weatherChangeTime;
+        public float maxTransitionDuration;
+        public float minTransitionDuration;
+    }
+
+    [Serializable]
+    public struct GameConfigData
+    {
+        [FormerlySerializedAs("GroundSceneLayer")] public LayerMask groundSceneLayer;
+        [FormerlySerializedAs("SyncTime")] public float syncTime;
+        [FormerlySerializedAs("SafetyMargin")] public float safetyMargin;
+        [FormerlySerializedAs("FixedSpacing")] public float fixedSpacing;
+        [FormerlySerializedAs("WarmupTime")] public float warmupTime;
+        [FormerlySerializedAs("DevelopKey")] public string developKey;
+        [FormerlySerializedAs("DevelopKeyValue")] public string developKeyValue;
+        [FormerlySerializedAs("StairSceneLayer")] public LayerMask stairSceneLayer; 
+        [FormerlySerializedAs("SafePosition")] public Vector3 safePosition;
+        [FormerlySerializedAs("SafeHorizontalOffsetY")] public float safeHorizontalOffsetY;
+    }
+    
+
+    [Serializable]
+    public struct DamageData
+    {
+        //防御减伤比率
+        public float defenseRatio;
+    }
     
     [Serializable]
     public struct ChestCommonData
