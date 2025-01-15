@@ -56,9 +56,10 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             });
             
             var list = new List<PropertyItemData>();
-            for (var i = (int)PropertyTypeEnum.Speed; i <= (int)PropertyTypeEnum.Score; i++)
+            var enumValues = Enum.GetValues(typeof(PropertyTypeEnum));
+            for (var i = 0; i < enumValues.Length; i++)
             {
-                var propertyType = (PropertyTypeEnum)i;
+                var propertyType = (PropertyTypeEnum)enumValues.GetValue(i);
                 var currentProperty = playerPropertyComponent.GetProperty(propertyType);
                 var maxProperty = playerPropertyComponent.GetMaxProperty(propertyType);
                 var displayName = propertyType.ToDisplayName();
@@ -81,7 +82,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         
         private void Update()
         {
-            _seconds+=Time.deltaTime;
+            _seconds += Time.deltaTime;
             if (_seconds>=0.5f)
             {
                 _seconds = 0;

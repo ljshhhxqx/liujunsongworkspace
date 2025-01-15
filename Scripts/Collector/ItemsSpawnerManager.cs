@@ -270,13 +270,21 @@ namespace HotUpdate.Scripts.Collector
         {
             _uiManager.CloseUI(UIType.TargetShowOverlay);
         }
+        
+        private readonly HashSet<int> _processedItems = new HashSet<int>();
 
         [Server]
         public void HandleItemPickup(int itemId, uint pickerId)
         {
             if (_spawnedItems.TryGetValue(itemId, out var itemInfo))
             {
+                if (_processedItems.Contains(itemId))
+                {
+                    return;
+                }
+                _processedItems.Add(itemId);
                 // 通过netId找到实际物体
+                Debug.Log($"HandleItemPickup: itemId - {itemId} pickerId - {pickerId} - netId- {itemInfo.netId}");
                 var networkIdentity = NetworkServer.spawned[itemInfo.netId];
                 if (!networkIdentity)
                 {
@@ -296,8 +304,6 @@ namespace HotUpdate.Scripts.Collector
                 // 验证位置和碰撞
                 if (ValidatePickup(item, playerProperty, itemInfo.position))
                 {
-                    _spawnedItems.Remove(itemId);
-            
                     // 处理拾取逻辑
                     var configData = _collectObjectDataConfig.GetCollectObjectData(itemInfo.collectConfigId);
                     switch (configData.collectObjectClass)
@@ -307,7 +313,14 @@ namespace HotUpdate.Scripts.Collector
                             playerProperty.IncreaseProperty(PropertyTypeEnum.Score, buff.increaseDataList);
                             break;
                         case CollectObjectClass.Buff:
-                            _buffManager.AddBuffToPlayer(playerProperty, configData.buffExtraData, itemInfo.buffSize);
+                            if (configData.isRandomBuff)
+                            {
+                                _buffManager.AddBuffToPlayer(playerProperty, item.BuffData, itemInfo.buffSize);
+                            }
+                            else
+                            {
+                                _buffManager.AddBuffToPlayer(playerProperty, configData.buffExtraData, itemInfo.buffSize);
+                            }
                             break;
                     }
 
@@ -317,6 +330,9 @@ namespace HotUpdate.Scripts.Collector
                     // 回收物体
                     GameObjectPoolManger.Instance.ReturnObject(networkIdentity.gameObject);
                     NetworkServer.UnSpawn(networkIdentity.gameObject);
+                    _processedItems.Remove(itemId);
+                    _spawnedItems.Remove(itemId);
+                    
                 }
             }
         }
@@ -342,7 +358,7 @@ namespace HotUpdate.Scripts.Collector
         public int GenerateRandomSpawnMethod()
         {
             // 随机选择生成方式，0-3分别对应四种生成方式
-            return Random.Range(0, 4);
+            return Random.Range(1, 4);
         }
 
         [Server]
@@ -474,13 +490,15 @@ namespace HotUpdate.Scripts.Collector
                     foreach (var item in newSpawnInfos)
                     {
                         var buffData = GetBuffExtraData(item.component.CollectConfigId);
+                        var configData = _collectObjectDataConfig.GetCollectObjectData(item.component.CollectConfigId);
                         spawnInfos.Add(new SpawnItemInfo
                         {
                             id = GenerateID(),
                             netId = 0,
                             collectConfigId = item.component.CollectConfigId,
                             position = item.position,
-                            buffExtraData = buffData
+                            buffExtraData = buffData,
+                            buffSize = configData.buffSize,
                         });
                     }
                     //Debug.Log($"Calculated {spawnedCount} spawn positions");
@@ -492,6 +510,7 @@ namespace HotUpdate.Scripts.Collector
                 {
                     var prefab = GetPrefabByCollectType(info.collectConfigId);
                     var configData = _collectObjectDataConfig.GetCollectObjectData(info.collectConfigId);
+                    var buff = _randomBuffConfig.GetRandomBuffData(info.buffExtraData.buffId);
                     var spawnedObject = GameObjectPoolManger.Instance.GetObject(
                         prefab.gameObject, 
                         info.position, 
@@ -505,6 +524,12 @@ namespace HotUpdate.Scripts.Collector
                     NetworkServer.Spawn(spawnedObject); // 确保网络同步
                     var component = spawnedObject.GetComponent<CollectObjectController>();
                     component.CollectId = info.id;
+                    if (component.CollectObjectData.collectObjectClass == CollectObjectClass.Buff)
+                    {
+                        Debug.Log($"Spawning buff item at position: {info.position} with id: id-{info.id} netId-{networkIdentity.netId} configId-{info.collectConfigId} buff.propertyType-{buff.propertyType} buffId-{buff.buffId} buffSize-{info.buffSize} buffPropertyType-{buff.propertyType}");
+                        component.SetBuffData(info.buffExtraData);
+                        component.SetMaterial(_collectibleMaterials[configData.buffSize][buff.propertyType]);
+                    }
                     _spawnedItems.Add(info.id, new SpawnItemInfo
                     {
                         id = info.id,
@@ -512,7 +537,7 @@ namespace HotUpdate.Scripts.Collector
                         collectConfigId = info.collectConfigId,
                         position = info.position,
                         buffExtraData = info.buffExtraData,
-                        buffSize = configData.buffSize,
+                        buffSize = info.buffSize,
                     });
                 }
                 SpawnManyItemsClientRpc(spawnInfos.ToArray());
@@ -535,11 +560,7 @@ namespace HotUpdate.Scripts.Collector
                     propertyTypeEnum = (PropertyTypeEnum)Random.Range((int)PropertyTypeEnum.Speed, (int)PropertyTypeEnum.CriticalDamageRatio + 1);
                 }
                 var buff = _randomBuffConfig.GetCollectBuff(propertyTypeEnum);
-                return new BuffExtraData
-                {
-                    buffType = buff.buffType,
-                    buffId = buff.buffId
-                };
+                return buff;
             }
 
             return configData.buffExtraData;
@@ -595,6 +616,7 @@ namespace HotUpdate.Scripts.Collector
 
                 var go = GameObjectPoolManger.Instance.GetObject(prefab.gameObject, info.position, Quaternion.identity, _spawnedParent,
                     go => _gameMapInjector.InjectGameObject(go));
+                //var networkIdentity = go.GetComponent<NetworkIdentity>();
                 if (!go)
                 {
                     Debug.LogError("Failed to get object from pool");
@@ -605,9 +627,12 @@ namespace HotUpdate.Scripts.Collector
                 var component = go.GetComponent<CollectObjectController>();
                 var material = _collectibleMaterials[configData.buffSize][buff.propertyType];
                 component.CollectId = info.id;
-                component.SetBuffData(info.buffExtraData);
-                component.SetMaterial(_collectibleMaterials[configData.buffSize][buff.propertyType]);
-                Debug.Log($"Spawning item at position: {info.position} with id: {info.id}-{info.netId}-{info.collectConfigId}-{buff.propertyType}-{buff.buffId}-{material.name}");
+                if (component.CollectObjectData.collectObjectClass == CollectObjectClass.Buff)
+                {
+                    component.SetBuffData(info.buffExtraData);
+                    component.SetMaterial(material);
+                }
+                Debug.Log($"Spawning item at position: {info.position} with id: {info.id}-{info.netId}-{info.collectConfigId}-{buff.propertyType}-{buff.buffId}-{info.buffSize}-{material.name}");
         
                 // 确保位置正确设置
                 go.transform.position = info.position;
@@ -657,12 +682,17 @@ namespace HotUpdate.Scripts.Collector
             return PlaceItems(itemToSpawn);
         }
 
+        /// <summary>
+        /// 一直生成score类型item，直到remainingWeight小于等于0，再生成buff类型item
+        /// </summary>
+        /// <param name="itemsToSpawn"></param>
+        /// <param name="remainingWeight"></param>
         private void SpawnMode1(List<int> itemsToSpawn, ref int remainingWeight)
         {
             var scoreCount = 0;
+            var count = 0;
             while (remainingWeight > 0)
             {
-                // Generate Score item
                 var scoreItem = GetRandomItem(CollectObjectClass.Score);
                 if (scoreItem != -1)
                 {
@@ -671,26 +701,26 @@ namespace HotUpdate.Scripts.Collector
                     itemsToSpawn.Add(type);
                     remainingWeight -= configData.weight;
                     scoreCount++;
+                    count++;
                 }
 
-                // Check if we should add a Buff item
-                if (remainingWeight <= 0) break;
-
-                var buffItem = GetRandomItem(CollectObjectClass.Buff);
-                if (buffItem != -1)
+                if (count == 2 && remainingWeight > 0)
                 {
-                    var type = buffItem;
-                    var configData = _collectObjectDataConfig.GetCollectObjectData(type);
-                    itemsToSpawn.Add(type);
-                    remainingWeight -= configData.weight;
-                    break; // Buff item added last
+                    count = 0;
+                    var buffItem = GetRandomItem(CollectObjectClass.Buff);
+                    if (buffItem != -1)
+                    {
+                        var configData = _collectObjectDataConfig.GetCollectObjectData(buffItem);
+                        itemsToSpawn.Add(buffItem);
+                        remainingWeight -= configData.weight;
+                        break; 
+                    }
                 }
             }
 
-            // If no Buff item was added, ensure one is added at the end
             if (scoreCount > 0 && remainingWeight > 0)
             {
-                var buffItem = GetRandomItem(CollectObjectClass.Buff);
+                var buffItem = GetRandomItem(CollectObjectClass.Score);
                 if (buffItem != -1)
                 {
                     itemsToSpawn.Add(buffItem);
@@ -705,28 +735,31 @@ namespace HotUpdate.Scripts.Collector
 
             while (remainingWeight > 0)
             {
-                var scoreItem = GetRandomItem(CollectObjectClass.Score);
-                if (scoreItem != -1)
+                var scoreItem1 = GetRandomItem(CollectObjectClass.Score);
+                if (scoreItem1 != -1)
                 {
-                    var type = scoreItem;
-                    var configData = _collectObjectDataConfig.GetCollectObjectData(type);
-                    scoreItems.Add(type);
+                    var configData = _collectObjectDataConfig.GetCollectObjectData(scoreItem1);
+                    scoreItems.Add(scoreItem1);
                     remainingWeight -= configData.weight;
                 }
 
                 var buffItem = GetRandomItem(CollectObjectClass.Buff);
                 if (buffItem != -1)
                 {
-                    var type = buffItem;
-                    var configData = _collectObjectDataConfig.GetCollectObjectData(type);
-                    buffItems.Add(type);
+                    var configData = _collectObjectDataConfig.GetCollectObjectData(buffItem);
+                    buffItems.Add(buffItem);
                     remainingWeight -= configData.weight;
                 }
-
-                if (scoreItems.Count + buffItems.Count >= 100) break;
+                
+                var scoreItem2 = GetRandomItem(CollectObjectClass.Score);
+                if (scoreItem2 != -1)
+                {
+                    var configData = _collectObjectDataConfig.GetCollectObjectData(scoreItem2);
+                    scoreItems.Add(scoreItem2);
+                    remainingWeight -= configData.weight;
+                }
             }
 
-            // Combine and order items based on weights
             itemsToSpawn.AddRange(scoreItems);
             itemsToSpawn.AddRange(buffItems);
         }
@@ -735,7 +768,7 @@ namespace HotUpdate.Scripts.Collector
         {
             while (remainingWeight > 0)
             {
-                var randomType = (Random.Range(0, 1) > 0.5f) ? CollectObjectClass.Score : CollectObjectClass.Buff;
+                var randomType = Random.Range(0, 1) > 0.66f ? CollectObjectClass.Score : CollectObjectClass.Buff;
                 var item = GetRandomItem(randomType);
                 if (item != -1)
                 {

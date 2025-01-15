@@ -3,6 +3,8 @@ using System.Linq;
 using AOTScripts.Tool;
 using Data;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Config.JsonConfig;
 using Network.Server.PlayFab;
 using TMPro;
 using UI.UIBase;
@@ -50,9 +52,10 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             {
                 _uiManager.CloseUI(Type);
             });
+            var jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             var config = configProvider.GetConfig<MapConfig>();
             var mapConfigDatas = config.GetMapConfigDatas(_ => true).ToList();
-            var gameModeData = config.GameModeData;
+            var gameModeData = jsonDataConfig.GameModeData;
             var options = new List<TMP_Dropdown.OptionData>();
             foreach (var configData in mapConfigDatas)
             {

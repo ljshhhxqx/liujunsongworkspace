@@ -200,8 +200,6 @@ namespace HotUpdate.Scripts.Weather
 
         private void SetWeather(WeatherLoadData loadData)
         {
-            if(!_uiManager.IsUIOpen(UIType.Weather))
-                _uiManager.SwitchUI<WeatherShowOverlay>();
             if (_currentWeatherSetting)
                 _currentWeatherSetting.ClearWeather();
             if (_weatherSettingDict.TryGetValue(loadData.weatherType, out var setting))
@@ -225,6 +223,11 @@ namespace HotUpdate.Scripts.Weather
             }
             _currentWeatherSetting.gameObject.SetActive(true);
             _currentWeatherSetting.LoadWeather(loadData);
+            
+            if (!_uiManager.IsUIOpen(UIType.Weather))
+            {
+                _uiManager.SwitchUI<WeatherShowOverlay>();
+            }
         }
         
         private Vector3 GetRandomPos() => _mapBoundDefiner.GetRandomPoint();

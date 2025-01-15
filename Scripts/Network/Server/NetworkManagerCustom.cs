@@ -4,6 +4,7 @@ using System.Linq;
 using Data;
 using Game.Map;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
@@ -31,7 +32,7 @@ namespace Network.Server
         private string _mapName;
 
         [Inject]
-        private void Init(GameEventManager gameEventManager, UIManager uIManager, IObjectResolver objectResolver,PlayerInGameManager playerInGameManager ,PlayerDataManager playerDataManager)
+        private void Init(GameEventManager gameEventManager, UIManager uIManager, IObjectResolver objectResolver, PlayerInGameManager playerInGameManager, PlayerDataManager playerDataManager)
         {
             PropertyTypeReaderWriter.RegisterReaderWriter();
             _gameEventManager = gameEventManager;

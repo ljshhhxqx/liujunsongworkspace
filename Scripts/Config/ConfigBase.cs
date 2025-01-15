@@ -7,8 +7,6 @@ using AOTScripts.Tool.Resource;
 using ExcelDataReader;
 using Sirenix.OdinInspector;
 using UnityEngine;
-#if UNITY_EDITOR
-#endif
 
 namespace HotUpdate.Scripts.Config
 {
@@ -44,6 +42,10 @@ namespace HotUpdate.Scripts.Config
         public void SaveToCsv()
         {
 #if UNITY_EDITOR
+            if (!isArray)
+            {
+                return;
+            }
             var csvContent = ConvertExcelToCsv(Path.Combine(excelAssetReference.Path, $"{configName}.xlsx"));
             if (csvContent == null)
             {

@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2253982602659306866}
   - component: {fileID: 8853484928858861703}
   - component: {fileID: 2957251316284216480}
+  - component: {fileID: 5052062710273408334}
   m_Layer: 0
   m_Name: Large
   m_TagString: Untagged
@@ -58,7 +59,7 @@ MonoBehaviour:
   syncInterval: 0
   CollectId: 0
   collectConfigId: 6
-  _renderer: {fileID: 23753439705546060}
+  fillRenderer: {fileID: 23753439705546060}
 --- !u!114 &7727184122250189628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -121,6 +122,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e743f15d5c5e4597ac62286553216e7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!205 &5052062710273408334
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1021588353636906}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0.00000023841858, y: -0.004255146, z: 0}
+  m_Size: 0.9873153
+  m_FadeMode: 1
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.6
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 23753439705546060}
+    - renderer: {fileID: 23785029539071662}
+    - renderer: {fileID: 23458260680199722}
+    - renderer: {fileID: 2935067415484386650}
+  - screenRelativeHeight: 0.3
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 23785029539071662}
+    - renderer: {fileID: 23458260680199722}
+    - renderer: {fileID: 2935067415484386650}
+    - renderer: {fileID: 23753439705546060}
+  - screenRelativeHeight: 0.1
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 23785029539071662}
+    - renderer: {fileID: 23458260680199722}
+    - renderer: {fileID: 2935067415484386650}
+    - renderer: {fileID: 23753439705546060}
+  m_Enabled: 1
 --- !u!1 &1050389100684470
 GameObject:
   m_ObjectHideFlags: 0

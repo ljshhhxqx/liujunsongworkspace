@@ -29,6 +29,3 @@ MonoBehaviour:
     maxPlayer: 8
     minPlayer: 1
     availableWeather: 01000000020000000300000004000000
-  gameModeData:
-    times: 
-    scores: 

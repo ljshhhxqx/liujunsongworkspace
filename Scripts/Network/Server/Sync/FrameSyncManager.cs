@@ -9,6 +9,7 @@ using Network.NetworkMes;
 using Tool.Message;
 using UnityEngine;
 using VContainer;
+using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.Server.Sync
 {
@@ -20,8 +21,9 @@ namespace HotUpdate.Scripts.Network.Server.Sync
         private readonly Dictionary<uint, List<AttackData>> _attackDatas = new Dictionary<uint, List<AttackData>>();
         private MirrorNetworkMessageHandler _messageCenter;
         private JsonDataConfig _jsonConfig;
-        private float _accumulator;  // 用于累积固定更新的时间
-        private const float FIXED_TIME_STEP = 0.01f;  // 100fps的固定更新间隔
+        private double _accumulator;  // 用于累积固定更新的时间
+        private const double SyncFps = 30;  // 最大更新间隔
+        private double _fixedTimeStep;  // 10fps的固定更新间隔
         [SyncVar]
         private uint _currentFrame;  // 使用SyncVar确保服务器和客户端帧号同步
 
@@ -76,6 +78,7 @@ namespace HotUpdate.Scripts.Network.Server.Sync
         public override void OnStartServer()
         {
             base.OnStartServer();
+            _fixedTimeStep = 1 / SyncFps;
             _currentFrame = 0;  // 服务器启动时初始化帧号
         }
 
@@ -85,12 +88,32 @@ namespace HotUpdate.Scripts.Network.Server.Sync
 
             // 使用时间累加器来确保固定帧率
             _accumulator += Time.deltaTime;
-            while (_accumulator >= FIXED_TIME_STEP)
+            while (_accumulator >= _fixedTimeStep)
             {
                 ProcessFrame();
                 ProcessAttack();
-                _accumulator -= FIXED_TIME_STEP;
+                ProcessPlayerRecovery();
+                _accumulator -= _fixedTimeStep;
                 _currentFrame++;
+            }
+        }
+
+        private void ProcessPlayerRecovery()
+        {
+            foreach (var player in _players.Values)
+            {
+                var playerComponent = player.GetComponent<PlayerPropertyComponent>();
+                var animationComponent = player.GetComponent<PlayerAnimationComponent>();
+                if (playerComponent && animationComponent)
+                {
+                    var isSprinting = animationComponent.NowAnimationState == AnimationState.Sprint;
+                    var healthRecovery = playerComponent.GetPropertyValue(PropertyTypeEnum.HealthRecovery);
+                    var strengthRecovery = playerComponent.GetPropertyValue(PropertyTypeEnum.StrengthRecovery);
+                    var sprintCost = _jsonConfig.GetPlayerAnimationCost(AnimationState.Sprint);
+                    strengthRecovery -= (isSprinting ? sprintCost : 0);
+                    playerComponent.IncreaseProperty(PropertyTypeEnum.Health, BuffIncreaseType.Current, healthRecovery);
+                    playerComponent.IncreaseProperty(PropertyTypeEnum.Strength, BuffIncreaseType.Current, strengthRecovery);
+                }
             }
         }
 
@@ -225,7 +248,7 @@ namespace HotUpdate.Scripts.Network.Server.Sync
         }
     }
 
-    public static class AttackDataExtensions
+    internal static class AttackDataExtensions
     {
         public static void WriteAttackData(NetworkWriter writer, PlayerAttackData value)
         {

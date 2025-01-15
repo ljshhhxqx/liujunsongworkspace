@@ -44,7 +44,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             var randomId = Random.Range(0, randomBuffDatas.Count);
             return new BuffExtraData
             {
-                buffId = randomId,
+                buffId = _randomCollectBuffs[propertyType][randomId].buffId,
                 buffType = BuffType.Random,
             };
         }

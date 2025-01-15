@@ -51,11 +51,15 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private Vector3 _stairsHitNormal;
         private CapsuleCollider _capsuleCollider;
 
-        private ReactiveProperty<PropertyType> _speed;// 添加物理材质字段
+        private ReactiveProperty<PropertyType> _speed;
         private bool _isOnSlope;
         private Vector3 _slopeNormal;
         private float _slopeAngle;
         private readonly float _maxSlopeAngle = 45f; // 可行走的最大斜坡角度
+        
+        public bool IsGrounded => _playerEnvironmentState == PlayerEnvironmentState.OnGround;
+        public PlayerEnvironmentState PlayerEnvironmentState => _playerEnvironmentState;
+        public float GroundDistance => _groundDistance;
 
         [Inject]
         private void Init(IConfigProvider configProvider, GameEventManager gameEventManager, MirrorNetworkMessageHandler networkMessageHandler,
@@ -72,12 +76,10 @@ namespace HotUpdate.Scripts.Network.Client.Player
             _rigidbody = GetComponent<Rigidbody>();
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _capsuleCollider = GetComponent<CapsuleCollider>();
-            if (!isServer)
-            {
-                gameEventManager.Publish(new PlayerSpawnedEvent(_rotateCenter));
-            }
             _speed = _playerPropertyComponent.GetProperty(PropertyTypeEnum.Speed);
             _speed.Subscribe(x => _targetSpeed = x.Value).AddTo(this);
+            if (!isLocalPlayer)
+                gameEventManager.Publish(new PlayerSpawnedEvent(_rotateCenter));
         }
 
 
@@ -127,14 +129,35 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         private void HandleAnimation()
         {
-            _currentRequestAnimationState = _playerAnimationComponent.ExecuteAnimationState(_playerInput, _playerEnvironmentState, _groundDistance);
+            _currentRequestAnimationState = _playerAnimationComponent.ExecuteAnimationState(new PlayerInputCommand
+            {
+                isJumpRequested = _isJumpRequested,
+                isRollRequested = _isRollRequested,
+                isAttackRequested = _isAttackRequested,
+                isSprinting = _isSprinting,
+                movement = _inputMovement,
+            }, _playerEnvironmentState, _groundDistance);
         }
-        
+
+        public void RotatePlayer(InputData inputData)
+        {
+            var canRotate = _playerEnvironmentState is not PlayerEnvironmentState.InAir;
+            var isMoving = _playerAnimationComponent.IsMovingState();
+            if (inputData.moveDirection.magnitude > 0.1f && _groundDistance <= groundMinDistance && canRotate && isMoving)
+            {
+                //前进方向转化为摄像机面对的方向
+                var movementDirection = _movement.normalized;
+                var targetRotation = Quaternion.LookRotation(movementDirection);
+                targetRotation = Quaternion.Euler(0f, targetRotation.eulerAngles.y, 0f);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * _jsonDataConfig.PlayerConfig.RotateSpeed);
+            }
+        }
+
         private void HandleRotation()   
         {
             var canRotate = _playerEnvironmentState is not PlayerEnvironmentState.InAir;
             var isMoving = _playerAnimationComponent.IsMovingState();
-            if (_inputMovement.magnitude > 0.1f && _groundDistance <= groundMinDistance && canRotate && isMoving)
+            if (_inputMovement.magnitude > 0.1f  && canRotate && isMoving)
             {
                 //前进方向转化为摄像机面对的方向
                 var movementDirection = _movement.normalized;

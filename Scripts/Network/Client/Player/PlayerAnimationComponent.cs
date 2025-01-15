@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Server.Sync;
 using Mirror;
@@ -51,15 +50,61 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         // 动画状态
         [SyncVar(hook = nameof(OnRequestedAnimationStateChanged))]
-        private AnimationState _requestedAnimationState = Idle;
+        private AnimationState _requestAnimationState = Idle;
+        [SyncVar(hook = nameof(OnNowAnimationStateChanged))]
+        private AnimationState _nowAnimationState;
+
+        public AnimationState NowAnimationState
+        {
+            get => _nowAnimationState;
+            set
+            {
+                if (isServer)
+                {
+                    _nowAnimationState = value;
+                }
+                else
+                {
+                    CmdRequestAnimationState(value);
+                }
+            }
+        }
+
+        private void OnNowAnimationStateChanged(AnimationState oldState, AnimationState newState)
+        {
+            
+        }
+
+        [Command]
+        public void CmdRequestAnimationState(AnimationState animationState)
+        {
+            NowAnimationState = animationState;
+        }
+
+        // public AnimationState NowAnimationState
+        // {
+        //     get => _nowAnimationState;
+        //     set
+        //     {
+        //         if (isServer)
+        //         {
+        //             _nowAnimationState = value;
+        //         }
+        //         else
+        //         {
+        //             CmdUpdateRequestedAnimationState(value);
+        //         }
+        //     }
+        // }
 
         private void OnRequestedAnimationStateChanged(AnimationState oldState, AnimationState newState)
         {
             if (isClient)
             {
+                
                 if (!TryPlayAnimation(newState))
                 {
-                    Debug.LogWarning($"播放动画失败：{newState}");
+                    //Debug.LogWarning($"播放动画失败：{newState}");
                 }
             }
         }
@@ -136,14 +181,14 @@ namespace HotUpdate.Scripts.Network.Client.Player
         }
 
         // 帧同步相关方法
-        public AnimationState ExecuteAnimationState(PlayerInputInfo input, PlayerEnvironmentState environmentState, float groundDistance)
+        public AnimationState ExecuteAnimationState(PlayerInputCommand input, PlayerEnvironmentState environmentState, float groundDistance)
         {
             // 根据输入和环境状态确定应该播放的动画
             var requestedState = DetermineAnimationState(input, environmentState, groundDistance);
             
             if (isServer)
             {
-                _requestedAnimationState = requestedState;
+                _requestAnimationState = requestedState;
             }
             else
             {
@@ -158,12 +203,12 @@ namespace HotUpdate.Scripts.Network.Client.Player
         [Command]
         private void CmdUpdateRequestedAnimationState(AnimationState newState)
         {
-            _requestedAnimationState = newState;
+            _requestAnimationState = newState;
         }
         
         private PlayerEnvironmentState _lastEnvironmentState;
 
-        private AnimationState DetermineAnimationState(PlayerInputInfo input, PlayerEnvironmentState environmentState, float groundDistance)
+        public AnimationState DetermineAnimationState(PlayerInputCommand input, PlayerEnvironmentState environmentState, float groundDistance)
         {
             _lastEnvironmentState = environmentState;
             // 优先处理特殊状态
@@ -209,7 +254,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             return DetermineAnimationStateByInput(input);
         }
 
-        private AnimationState DetermineAnimationStateByInput(PlayerInputInfo input)
+        private AnimationState DetermineAnimationStateByInput(PlayerInputCommand input)
         {
             // 处理移动状态
             if (input.movement.magnitude > 0)
@@ -220,7 +265,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             return Idle;
         }
 
-        private void UpdateAnimationParameters(PlayerInputInfo input, PlayerEnvironmentState environmentState)
+        private void UpdateAnimationParameters(PlayerInputCommand input, PlayerEnvironmentState environmentState)
         {
             _animator.SetFloat(InputMagnitude, input.movement.magnitude);
             _animator.SetBool(IsSprinting, input.isSprinting);
@@ -280,7 +325,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     }
                 }
             }
-            if (!isLocalPlayer) return;
+            if (!isLocalPlayer || !_animator) return;
 
             if (Input.GetKeyDown(KeyCode.P))
             {
@@ -341,7 +386,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             }
             else if (stateInfo.IsName(Death))
             {
-                newState = AnimationState.Dead;
+                newState = Dead;
             }
             else if (stateInfo.IsName(Hit))
             {
@@ -353,6 +398,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             //Debug.Log($"Animation State Changed from {_currentState} to {newState}");
             _currentState.Value = newState;
             IsPlayingSpecialAction = IsSpecialActionState(newState);
+            NowAnimationState = newState;
             _animator.SetBool(SpecialAction, IsPlayingSpecialAction);
             if (_currentState.Value != Attack)
             {

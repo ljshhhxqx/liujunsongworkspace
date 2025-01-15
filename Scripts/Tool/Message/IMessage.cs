@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;
 using Network.NetworkMes;
@@ -11,6 +12,29 @@ namespace Tool.Message
     public interface IMessage
     {
         
+    }
+    
+    public struct UniqueMessage
+    {
+        public IMessage Message;
+        public long messageId;
+        private int _globalMessageCounter;
+
+        public UniqueMessage(IMessage message)
+        {
+            _globalMessageCounter = 0;
+            Message = message;
+            messageId = 0;
+            messageId = GenerateUniqueMessageId();
+        }
+
+        private long GenerateUniqueMessageId()
+        {
+            // 结合消息类型和自增ID
+            var typeHash = (long)Message.GetHashCode() << 32;
+            return typeHash | (long)Interlocked.Increment(ref _globalMessageCounter);
+        }
+
     }
     
     public struct PlayerMovedMessage : IMessage
@@ -168,6 +192,24 @@ namespace Tool.Message
         {
             PickerId = pickerId;
             ChestNetId = chestNetId;
+        }
+    }
+    
+    public struct MirrorPlayerInputInfoMessage : IMessage
+    {
+        public InputData Input;
+        public MirrorPlayerInputInfoMessage(InputData input)
+        {
+            this.Input = input;
+        }
+    }   
+    
+    public struct MirrorPlayerStateMessage : IMessage
+    {
+        public ServerState State;
+        public MirrorPlayerStateMessage(ServerState state)
+        {
+            this.State = state;
         }
     }
 }

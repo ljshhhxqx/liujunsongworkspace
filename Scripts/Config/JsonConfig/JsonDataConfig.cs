@@ -12,8 +12,11 @@ namespace HotUpdate.Scripts.Config.JsonConfig
     {
         [SerializeField] 
         private JsonConfigData jsonConfigData;
+
+#if UNITY_EDITOR
         [SerializeField]
         private bool canEdit;
+#endif
         private readonly Dictionary<AnimationState, AnimationInfo> _animationInfos = new Dictionary<AnimationState, AnimationInfo>();
 
         public JsonConfigData JsonConfigData
@@ -35,6 +38,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public GameConfigData GameConfig => jsonConfigData.gameConfig;
         public DayNightCycleData DayNightCycleData => jsonConfigData.dayNightCycleData;
         public WeatherConstantData WeatherConstantData => jsonConfigData.weatherData;
+        public GameModeData GameModeData => jsonConfigData.gameModeData;
 
         public override void Init(TextAsset asset = null)
         {
@@ -86,6 +90,18 @@ namespace HotUpdate.Scripts.Config.JsonConfig
             var damage = attackPower * (1f - damageReduction) * (isCritical? criticalDamageRatio : 1f);
             return damage;
         }
+        
+        public ActionType GetActionType(AnimationState animationState)
+        {
+            foreach (var animationActionData in jsonConfigData.otherData.animationActionData)
+            {
+                if (animationActionData.animationState == animationState)
+                {
+                    return animationActionData.actionType;
+                }
+            }
+            return ActionType.None;
+        }
     }
 
     [Serializable]
@@ -107,6 +123,16 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public ChestCommonData chestCommonData;
         [Header("天气通用数据")]
         public WeatherConstantData weatherData;
+        [Header("游戏模式通用数据")]
+        public GameModeData gameModeData;
+        [Header("其他数据")]
+        public OtherData otherData;
+    }
+
+    [Serializable]
+    public struct OtherData
+    {
+        public List<AnimationActionData> animationActionData;
     }
 
     [Serializable]
@@ -116,7 +142,14 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public float maxTransitionDuration;
         public float minTransitionDuration;
     }
-
+    
+    [Serializable]
+    public struct GameModeData
+    {
+        public List<int> times;
+        public List<int> scores;
+    }
+    
     [Serializable]
     public struct GameConfigData
     {
@@ -146,6 +179,22 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public float OpenSpeed;
         public Vector3 InitEulerAngles;
     }
+    
+    public enum ActionType
+    {
+        None,
+        Movement,       // 移动类动作：立即响应 + 状态和解
+        Interaction,    // 交互类动作：需要服务器验证
+        Animation,      // 动画过渡：由状态机自动触发
+        ServerState,     // 服务器状态：由服务器/其他玩家触发
+    }
+
+    [Serializable]
+    public struct AnimationActionData
+    {
+        public ActionType actionType;
+        public AnimationState animationState;
+    }
 
     [Serializable]
     public struct PlayerConfigData
@@ -164,16 +213,11 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public float RotateSpeed;
         public float OnStairsSpeedRatioFactor;
         public float JumpSpeed;
-        public float StairsJumpSpeed;
-        public float GroundCheckRadius;
         public float StairsCheckDistance;
         public List<PropertyType> MaxProperties;
         public List<PropertyType> BaseProperties;
         public List<PropertyType> MinProperties;
-        public float StrengthRecoveryPerSecond;
         public float RollForce;
-        public float StepHeight; // 玩家可跨越的最大台阶高度
-        public float StepCheckDistance; // 台阶检测距离
         public PlayerAttackData BaseAttackData;
         
         #endregion
@@ -225,6 +269,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         Attack,
         Dead,
         Hit,
+        None
     }
 
     [Serializable]

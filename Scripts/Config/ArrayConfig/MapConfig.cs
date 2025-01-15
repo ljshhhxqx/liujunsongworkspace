@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using HotUpdate.Scripts.Config.ArrayConfig;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace HotUpdate.Scripts.Config
+namespace HotUpdate.Scripts.Config.ArrayConfig
 {
     [CreateAssetMenu(fileName = "MapConfig", menuName = "ScriptableObjects/MapConfig")]
     public class MapConfig : ConfigBase
@@ -13,10 +12,10 @@ namespace HotUpdate.Scripts.Config
         [ReadOnly]
         [SerializeField]
         private List<MapConfigData> mapConfigData = new List<MapConfigData>();
-        [SerializeField]
-        private GameModeData gameModeData;
-        
-        public GameModeData GameModeData => gameModeData;
+        // [SerializeField]
+        // private GameModeData gameModeData;
+        //
+        // public GameModeData GameModeData => gameModeData;
 
         public MapConfigData GetMapConfigData(MapType mapType)
         {
@@ -73,12 +72,5 @@ namespace HotUpdate.Scripts.Config
     {
         Town,
         Forest,
-    }
-
-    [Serializable]
-    public struct GameModeData
-    {
-        public List<int> times;
-        public List<int> scores;
     }
 }

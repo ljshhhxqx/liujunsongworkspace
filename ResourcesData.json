@@ -412,7 +412,7 @@
         },
         {
             "UID": 1400000,
-            "ResourceType": "HotUpdate.Scripts.Config.MapConfig",
+            "ResourceType": "HotUpdate.Scripts.Config.ArrayConfig.MapConfig",
             "AssetType": 15,
             "Extension": ".asset",
             "Name": "MapConfig",

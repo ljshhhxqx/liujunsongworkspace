@@ -8,6 +8,7 @@ using Sirenix.OdinInspector;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VContainer;
 
 namespace HotUpdate.Scripts.Network.Server.Collect
@@ -22,11 +23,12 @@ namespace HotUpdate.Scripts.Network.Server.Collect
         [SerializeField]
         private int collectConfigId;
         [SerializeField]
-        private Renderer _renderer;
+        private Renderer fillRenderer;
         
         public int CollectConfigId => collectConfigId;
         public override Collider Collider => _collider;
         public CollectObjectData CollectObjectData { get; private set; }
+        public BuffExtraData BuffData => _buffData;
 
         private MirrorNetworkMessageHandler _mirrorNetworkMessageHandler;
         private Collider _collider;
@@ -37,11 +39,11 @@ namespace HotUpdate.Scripts.Network.Server.Collect
         {
             if (CollectObjectData.collectObjectClass == CollectObjectClass.Buff)
             {
-                _renderer.material = material;
+                fillRenderer.material = material;
                 _collectAnimationComponent.SetOutlineColor(material.color);
                 return;
             }
-            Debug.Log($"SetMaterial failed, CollectObject config id-{CollectObjectData.id} is not a buff collect object");
+            //Debug.Log($"SetMaterial failed, CollectObject config id-{CollectObjectData.id} is not a buff collect object");
         }
 
         public void SetBuffData(BuffExtraData buffExtraData)
@@ -51,12 +53,13 @@ namespace HotUpdate.Scripts.Network.Server.Collect
                 _buffData = buffExtraData;
                 return;
             }
-            Debug.Log($"SetBuffData failed, CollectObject config id-{CollectObjectData.id} is not a buff collect object");
+            //Debug.Log($"SetBuffData failed, CollectObject config id-{CollectObjectData.id} is not a buff collect object");
         }
 
         [Inject]
-        private void Init()
+        private void Init(IConfigProvider configProvider)
         {
+            var collectObjectDataConfig = configProvider.GetConfig<CollectObjectDataConfig>();
             _pooledObject = GetComponent<PooledObject>();
             if (_pooledObject)
             {
@@ -72,6 +75,7 @@ namespace HotUpdate.Scripts.Network.Server.Collect
                 Debug.LogError("Collider not found");
                 return;
             }
+            CollectObjectData = collectObjectDataConfig.GetCollectObjectData(collectConfigId);
             _collider = collectCollider.GetComponent<Collider>();
             _collider.enabled = true;
             _disposable = _collider.OnTriggerEnterAsObservable()
@@ -87,7 +91,7 @@ namespace HotUpdate.Scripts.Network.Server.Collect
             _collider = null;
             _pooledObject.OnSelfDespawn -= OnReturnToPool;
         }
-
+        
         private void OnTriggerEnterObserver(Collider other)
         {
             if (!other.CompareTag("Player") || !isClient)

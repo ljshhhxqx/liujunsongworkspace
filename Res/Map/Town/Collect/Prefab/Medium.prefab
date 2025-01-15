@@ -294,6 +294,8 @@ GameObject:
   - component: {fileID: -3798303735679814263}
   - component: {fileID: -2824128185656848974}
   - component: {fileID: 357046212946333830}
+  - component: {fileID: 3873665541507150878}
+  - component: {fileID: 4046287204994893023}
   m_Layer: 0
   m_Name: Medium
   m_TagString: Untagged
@@ -338,7 +340,7 @@ MonoBehaviour:
   syncInterval: 0
   CollectId: 0
   collectConfigId: 5
-  _renderer: {fileID: 23528012572970906}
+  fillRenderer: {fileID: 23528012572970906}
 --- !u!114 &-3798303735679814263
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -389,6 +391,54 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.9113945, y: 0.9952455, z: 0.901303}
   m_Center: {x: -0.013101518, y: 0.00786072, z: 0.0033583343}
+--- !u!114 &3873665541507150878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1999239547283070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b58d3fbe62117a40a549cddd4570e9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!205 &4046287204994893023
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1999239547283070}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0.00000023841858, y: -0.004255146, z: 0}
+  m_Size: 0.9873153
+  m_FadeMode: 1
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.6
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 23979378781870662}
+    - renderer: {fileID: 23528012572970906}
+    - renderer: {fileID: 23417888277854334}
+    - renderer: {fileID: 2788658076906875626}
+  - screenRelativeHeight: 0.3
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 23979378781870662}
+    - renderer: {fileID: 23528012572970906}
+    - renderer: {fileID: 23417888277854334}
+    - renderer: {fileID: 2788658076906875626}
+  - screenRelativeHeight: 0.1
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 23979378781870662}
+    - renderer: {fileID: 23528012572970906}
+    - renderer: {fileID: 23417888277854334}
+    - renderer: {fileID: 2788658076906875626}
+  m_Enabled: 1
 --- !u!1 &7279650384161456802
 GameObject:
   m_ObjectHideFlags: 0

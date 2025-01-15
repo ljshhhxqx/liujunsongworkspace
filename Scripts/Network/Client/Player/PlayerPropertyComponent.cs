@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using AOTScripts.Tool.ECS;
-using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.UI.UIs.Overlay;
@@ -33,6 +32,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private bool _isInvincible;
         [SyncVar(hook = nameof(OnPlayerAttackDataChanged))]
         private PlayerAttackData _playerAttackData;
+        
         
         private PlayerAttackData _configPlayerAttackData;
 
@@ -111,6 +111,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 }
             }
         }
+        
+        
 
         public PlayerEnvironmentState PlayerEnvironmentState
         {
@@ -184,8 +186,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
             _configPlayerAttackData = _jsonDataConfig.PlayerConfig.BaseAttackData;
             InitializeProperties();
             _currentChestTypeProperty.Value = ChestType.Attack;
-            var properties = uiManager.SwitchUI<PlayerPropertiesOverlay>();
-            properties.SetPlayerProperties(this);
             
             _syncCurrentProperties.OnAdd += OnCurrentPropertyAdd;
             _syncCurrentProperties.OnRemove += OnCurrentPropertyRemove;
@@ -200,8 +200,12 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 playerAnimationComponent.CurrentState.Subscribe(state =>
                 {
                     _currentAnimationState = state;
+                    _isSprintingProperty.Value = state == AnimationState.Sprint;
                 });
             }
+            if (!isLocalPlayer) return;
+            var properties = uiManager.SwitchUI<PlayerPropertiesOverlay>();
+            properties.SetPlayerProperties(this);
         }
 
         private void OnMaxCurrentPropertyRemove(PropertyTypeEnum arg1, float arg2)
@@ -236,9 +240,10 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         private void InitializeProperties()
         {
-            for (var i = (int)PropertyTypeEnum.Speed; i <= (int)PropertyTypeEnum.Score; i++)
+            var enumValues = Enum.GetValues(typeof(PropertyTypeEnum));
+            for (var i = 0; i < enumValues.Length; i++)
             {
-                var propertyType = (PropertyTypeEnum)i;
+                var propertyType = (PropertyTypeEnum)enumValues.GetValue(i);
                 var minProperties = _jsonDataConfig.PlayerConfig.MinProperties.Find(x => x.TypeEnum == propertyType);
                 var baseProperties = _jsonDataConfig.PlayerConfig.BaseProperties.Find(x => x.TypeEnum == propertyType);
                 var maxProperties = _jsonDataConfig.PlayerConfig.MaxProperties.Find(x => x.TypeEnum == propertyType);
@@ -461,7 +466,9 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         private void FixedUpdate()
         {
-            var recoveredStrength = _jsonDataConfig.PlayerConfig.StrengthRecoveryPerSecond;
+            if (!isLocalPlayer)
+                return;
+            var recoveredStrength = 5f;
             var isSprinting = _currentAnimationState == AnimationState.Sprint;
             var isSprintingJump = _currentAnimationState == AnimationState.SprintJump;
             if (isSprinting)

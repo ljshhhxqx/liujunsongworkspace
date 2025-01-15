@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Tool.Message;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Tool.Message
 {
     public interface INetworkMessageCenter
     {
-        void Register<T>(Action<T> callback) where T : global::Tool.Message.IMessage;
-        void Unregister<T>(Action<T> callback) where T : global::Tool.Message.IMessage;
-        void Post<T>(T message) where T : global::Tool.Message.IMessage;
+        void Register<T>(Action<T> callback) where T : IMessage;
+        void Unregister<T>(Action<T> callback) where T : IMessage;
+        void Post<T>(T message) where T : IMessage;
     }
     
     public class MessageCenter : INetworkMessageCenter
@@ -17,7 +18,7 @@ namespace HotUpdate.Scripts.Tool.Message
         private readonly Dictionary<Type, Queue<Delegate>> listeners = new Dictionary<Type, Queue<Delegate>>();
 
         // 注册事件
-        public void Register<T>(Action<T> callback) where T : global::Tool.Message.IMessage
+        public void Register<T>(Action<T> callback) where T : IMessage
         {
             var t = typeof(T);
             if (!listeners.ContainsKey(t))
@@ -28,7 +29,7 @@ namespace HotUpdate.Scripts.Tool.Message
         }
 
         // 注销事件
-        public void Unregister<T>(Action<T> callback) where T : global::Tool.Message.IMessage
+        public void Unregister<T>(Action<T> callback) where T : IMessage
         {
             var t = typeof(T);
             if (listeners.ContainsKey(t))
@@ -46,7 +47,7 @@ namespace HotUpdate.Scripts.Tool.Message
         }
 
         // 发送消息
-        public void Post<T>(T message) where T : global::Tool.Message.IMessage
+        public void Post<T>(T message) where T : IMessage
         {
             if (listeners.TryGetValue(message.GetType(), out var queue))
             {

@@ -23,8 +23,6 @@
             "RotateSpeed": 7.0,
             "OnStairsSpeedRatioFactor": 0.75,
             "JumpSpeed": 40.0,
-            "StairsJumpSpeed": 35.0,
-            "GroundCheckRadius": 0.30000001192092898,
             "StairsCheckDistance": 0.44999998807907107,
             "MaxProperties": [
                 {
@@ -58,6 +56,14 @@
                 {
                     "type": 7,
                     "value": 3.0
+                },
+                {
+                    "type": 8,
+                    "value": 25.0
+                },
+                {
+                    "type": 9,
+                    "value": 25.0
                 }
             ],
             "BaseProperties": [
@@ -92,6 +98,14 @@
                 {
                     "type": 7,
                     "value": 1.5
+                },
+                {
+                    "type": 8,
+                    "value": 5.0
+                },
+                {
+                    "type": 9,
+                    "value": 1.0
                 }
             ],
             "MinProperties": [
@@ -126,12 +140,17 @@
                 {
                     "type": 7,
                     "value": 1.0
+                },
+                {
+                    "type": 8,
+                    "value": 0.0
+                },
+                {
+                    "type": 9,
+                    "value": 0.0
                 }
             ],
-            "StrengthRecoveryPerSecond": 5.0,
             "RollForce": 40.0,
-            "StepHeight": 0.30000001192092898,
-            "StepCheckDistance": 0.5,
             "BaseAttackData": {
                 "attackAngle": 45.0,
                 "attackRadius": 0.5,
@@ -158,11 +177,11 @@
                 },
                 {
                     "State": 2,
-                    "Cost": 0.0,
+                    "Cost": 15.0,
                     "Cooldown": 0.0,
                     "Priority": 0,
                     "AnimationType": 0,
-                    "CanBeInterrupted": false
+                    "CanBeInterrupted": true
                 },
                 {
                     "State": 3,
@@ -730,8 +749,8 @@
         "chestCommonData": {
             "OpenSpeed": 1.5,
             "InitEulerAngles": {
-                "x": 0.0,
-                "y": 90.0,
+                "x": 90.0,
+                "y": 0.0,
                 "z": 0.0
             }
         },
@@ -739,6 +758,58 @@
             "weatherChangeTime": 10.0,
             "maxTransitionDuration": 25.0,
             "minTransitionDuration": 10.0
+        },
+        "gameModeData": {
+            "times": [],
+            "scores": []
+        },
+        "otherData": {
+            "animationActionData": [
+                {
+                    "actionType": 3,
+                    "animationState": 0
+                },
+                {
+                    "actionType": 1,
+                    "animationState": 1
+                },
+                {
+                    "actionType": 1,
+                    "animationState": 2
+                },
+                {
+                    "actionType": 1,
+                    "animationState": 3
+                },
+                {
+                    "actionType": 1,
+                    "animationState": 4
+                },
+                {
+                    "actionType": 4,
+                    "animationState": 5
+                },
+                {
+                    "actionType": 4,
+                    "animationState": 8
+                },
+                {
+                    "actionType": 3,
+                    "animationState": 7
+                },
+                {
+                    "actionType": 4,
+                    "animationState": 9
+                },
+                {
+                    "actionType": 3,
+                    "animationState": 6
+                },
+                {
+                    "actionType": 4,
+                    "animationState": 10
+                }
+            ]
         }
     },
     "canEdit": false

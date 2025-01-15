@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Tool.Message;
 using Mirror;
@@ -15,12 +17,16 @@ namespace HotUpdate.Scripts.Network.NetworkMes
         private MessageCenter _messageCenter;
         private readonly Dictionary<Type, Delegate> _serverHandlers = new Dictionary<Type, Delegate>();
         private readonly Dictionary<Type, Delegate> _clientHandlers = new Dictionary<Type, Delegate>();
+        private readonly ConcurrentDictionary<(string type, long id), DateTime> _lastMessageSent = new ConcurrentDictionary<(string type, long id), DateTime>();
+        
+        private readonly TimeSpan MESSAGE_EXPIRATION = TimeSpan.FromSeconds(2);
         
         [Inject]
         private void Init(MessageCenter messageCenter)
         {
             _messageCenter = messageCenter;
         }
+
 
         public void SendToServer<T>(T msg) where T : struct, NetworkMessage
         {
@@ -106,6 +112,19 @@ namespace HotUpdate.Scripts.Network.NetworkMes
             }
         }
 
+        private void CleanupExpiredMessages(DateTime now)
+        {
+            var expiredMessages = _lastMessageSent
+                .Where(m => now - m.Value > MESSAGE_EXPIRATION)
+                .Select(m => m.Key)
+                .ToList();
+
+            foreach (var messageKey in expiredMessages)
+            {
+                _lastMessageSent.TryRemove(messageKey, out _);
+            }
+        }
+
         private IMessage ConvertToLocalMessage<T>(T networkMessage) where T : struct, NetworkMessage
         {
             // 这里实现网络消息到本地消息的转换逻辑
@@ -113,6 +132,7 @@ namespace HotUpdate.Scripts.Network.NetworkMes
             {
                 return new GameStartMessage(gameStartMessage.GameInfo);
             }
+            
             if (networkMessage is MirrorCountdownMessage countdownMessage)
             {
                 return new CountdownMessage(countdownMessage.RemainingTime);
