@@ -57,7 +57,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
         [SerializeField] private float interpolationTime = 0.1f;
 
         [Inject]
-        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager, MirrorNetworkMessageHandler networkMessageHandler,
+        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager,
+            MirrorNetworkMessageHandler networkMessageHandler,
             FrameSyncManager frameSyncManager, UIManager uiManager)
         {
             _playerAnimationComponent = GetComponent<PlayerAnimationComponent>();
@@ -71,10 +72,13 @@ namespace HotUpdate.Scripts.Network.Client.Player
             _rigidbody = GetComponent<Rigidbody>();
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _capsuleCollider = GetComponent<CapsuleCollider>();
+            gameEventManager.Publish(new PlayerSpawnedEvent(_rotateCenter));
             _speed = _playerPropertyComponent.GetProperty(PropertyTypeEnum.Speed);
-            _speed.Subscribe(x => _targetSpeed = x.Value).AddTo(this);
-            if (!isLocalPlayer)
-                gameEventManager.Publish(new PlayerSpawnedEvent(_rotateCenter));
+            _speed.Subscribe(x =>
+            {
+                _targetSpeed = x.Value;
+            }).AddTo(this);
+            if (!isLocalPlayer) return;
         }
 
         private void FixedUpdate()
@@ -84,20 +88,14 @@ namespace HotUpdate.Scripts.Network.Client.Player
             _currentSpeed = Mathf.SmoothDamp(_currentSpeed, _targetSpeed, ref _speedSmoothVelocity, _speedSmoothTime);
             CheckGroundDistance();
             CheckPlayerState();
-        }
-
-        public void ExecuteInput(PlayerInputInfo input)
-        {
-            //_playerInput = input;
-            //HandleAllInput();
+            SetAnimationParams();
         }
         
         private Vector3 _inputMovement;
 
         public void ExecutePlayerLocalInput(InputData input)
         {
-            _playerPropertyComponent.HasMovementInput = input.playerInput.movement.magnitude > 0;
-            _inputMovement = input.playerInput.movement;
+            _inputMovement = input.playerInput.playerInputMovement;
             switch (input.command)
             {
                 case AnimationState.Move:
@@ -109,16 +107,14 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     HandleJump();
                     break;
             }
-            HandlePlayerRotation(input);
-            HandleAnimation(input);
-            SetAnimationParams(input);
+            ExecuteAnimationInput(input);
             _pendingInputs.Enqueue(input);
         }
 
         public void ExecuteAnimationInput(InputData input)
         {
             HandleAnimation(input);
-            SetAnimationParams(input);
+            _playerPropertyComponent.HasMovementInput = input.playerInput.playerInputMovement.magnitude > 0;
         }
 
         public void ExecuteServerAction(InputData input)
@@ -151,18 +147,19 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 isRollRequested = inputData.playerInput.isRollRequested,
                 isAttackRequested = inputData.playerInput.isAttackRequested,
                 isSprinting = inputData.playerInput.isSprinting,
-                movement = inputData.playerInput.movement,
+                playerInputMovement = inputData.playerInput.playerInputMovement,
             }, _playerEnvironmentState, _groundDistance);
+            _playerAnimationComponent.SetIsSprinting(inputData.playerInput.isSprinting);
         }
 
-        public void HandlePlayerRotation(InputData inputData)
+        public void HandlePlayerRotation(Vector3 inputMovement, Vector3 movement)
         {
-            var canRotate = _playerEnvironmentState is not PlayerEnvironmentState.InAir;
+            var canRotate = _playerEnvironmentState is PlayerEnvironmentState.OnGround;
             var isMoving = _playerAnimationComponent.IsMovingState();
-            if (inputData.playerInput.movement.magnitude > 0.1f && canRotate && isMoving)
+            if (inputMovement.magnitude > 0.1f && canRotate && isMoving)
             {
                 //前进方向转化为摄像机面对的方向
-                var movementDirection = inputData.playerInput.movement.normalized;
+                var movementDirection = movement.normalized;
                 var targetRotation = Quaternion.LookRotation(movementDirection);
                 targetRotation = Quaternion.Euler(0f, targetRotation.eulerAngles.y, 0f);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * _jsonDataConfig.PlayerConfig.RotateSpeed);
@@ -232,21 +229,23 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 // 重新应用未确认的输入
                 foreach (var input in _pendingInputs)
                 {
-                    HandleMovementAndJump(input);
+                    ExecutePlayerLocalInput(input);
                 }
             }
         }
 
-        public void HandleMove(Vector3 movement)
+        public void HandleMove(Vector3 inputMovement)
         {
             if (_playerAnimationComponent.IsPlayingSpecialAction)
             {
                 return;
             }
-            var hasMovementInput = movement.magnitude > 0f;
+            var hasMovementInput = inputMovement.magnitude > 0f;
+            Vector3 movement;
             if (_playerEnvironmentState == PlayerEnvironmentState.OnStairs)
             {
                 _rigidbody.useGravity = false;
+                movement = inputMovement.z * -_stairsNormal.normalized + transform.right * inputMovement.x;
                 if (hasMovementInput)
                 {
                     var moveDirection = movement.normalized;
@@ -262,12 +261,12 @@ namespace HotUpdate.Scripts.Network.Client.Player
             else if (_playerEnvironmentState == PlayerEnvironmentState.OnGround)
             {
                 _rigidbody.useGravity = true;
-                movement = movement.magnitude <= 0.1f ? movement : 
-                    _camera.transform.TransformDirection(movement);
+                movement = inputMovement.magnitude <= 0.1f ? inputMovement : 
+                    _camera.transform.TransformDirection(inputMovement);
                 movement.y = 0f;
                 // 计算目标位置和速度
-                var targetPosition = transform.position + movement.normalized * (_currentSpeed * Time.fixedDeltaTime);
-                var targetVelocity = (targetPosition - transform.position) / Time.fixedDeltaTime;
+                var targetPosition = transform.position + movement.normalized * (_currentSpeed * Time.deltaTime);
+                var targetVelocity = (targetPosition - transform.position) / Time.deltaTime;
                 // 保持垂直速度
                 targetVelocity.y = _rigidbody.velocity.y;
                 if (_isOnSlope)
@@ -283,7 +282,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     }
                 }
                 // 应用速度
-                _rigidbody.velocity = targetVelocity;
+                _rigidbody.velocity = hasMovementInput ? targetVelocity : Vector3.zero;
+                HandlePlayerRotation(inputMovement, movement);
             }
         }
 
@@ -313,96 +313,96 @@ namespace HotUpdate.Scripts.Network.Client.Player
             }
         }
 
-        private void HandleMovementAndJump(InputData inputData)
+        // private void HandleMovementAndJump(InputData inputData)
+        // {
+        //     var inputMovement = inputData.playerInput.playerInputMovement;
+        //     var hasMovementInput = inputMovement.magnitude > 0.1f;
+        //     if (_playerEnvironmentState == PlayerEnvironmentState.OnStairs)
+        //     {
+        //         _rigidbody.useGravity = false;
+        //         if (_playerAnimationComponent.IsPlayingSpecialAction)
+        //         {
+        //             return;
+        //         }
+        //         if (_currentRequestAnimationState is AnimationState.Jump or AnimationState.SprintJump)
+        //         {
+        //             _rigidbody.velocity = Vector3.zero;
+        //             _rigidbody.MovePosition(transform.position + _stairsHitNormal.normalized);
+        //             _rigidbody.AddForce(_stairsHitNormal.normalized * _jsonDataConfig.PlayerConfig.JumpSpeed / 5f, ForceMode.Impulse);
+        //             return;
+        //         }
+        //         var movement = inputMovement.z * -_stairsNormal.normalized + transform.right * inputMovement.x;
+        //         if (hasMovementInput)
+        //         {
+        //             var moveDirection = movement.normalized;
+        //             var targetVelocity = moveDirection * _currentSpeed;
+        //             targetVelocity += _stairsHitNormal.normalized * -2f;
+        //             _rigidbody.velocity = targetVelocity;
+        //         }
+        //         else
+        //         {
+        //             _rigidbody.velocity = _stairsHitNormal.normalized * -2f;
+        //         }
+        //     }
+        //     else if (_playerEnvironmentState == PlayerEnvironmentState.OnGround)
+        //     {
+        //         if (_playerAnimationComponent.IsPlayingSpecialAction)
+        //         {
+        //             if (_currentRequestAnimationState is AnimationState.Roll)
+        //             {
+        //                 _rigidbody.velocity = Vector3.zero;
+        //                 _rigidbody.AddForce(transform.forward.normalized * _jsonDataConfig.PlayerConfig.RollForce, ForceMode.Impulse);
+        //             }
+        //             else if (_currentRequestAnimationState is AnimationState.Attack)
+        //             {
+        //                 _rigidbody.velocity = Vector3.zero;
+        //             }
+        //             return;
+        //         }
+        //         // 处理跳跃
+        //         if (_currentRequestAnimationState is AnimationState.Jump or AnimationState.SprintJump)
+        //         {
+        //             // 清除当前垂直速度
+        //             var vel = _rigidbody.velocity;
+        //             vel.y = 0f;
+        //             _rigidbody.velocity = vel;
+        //     
+        //             // 应用跳跃力
+        //             var jumpDirection = _isOnSlope ? Vector3.Lerp(Vector3.up, _slopeNormal, 0.5f) : Vector3.up;
+        //             _rigidbody.AddForce(jumpDirection * _jsonDataConfig.PlayerConfig.JumpSpeed, ForceMode.Impulse);
+        //         }
+        //
+        //         inputMovement = inputMovement.magnitude <= 0.1f ? inputMovement : 
+        //             _camera.transform.TransformDirection(inputMovement);
+        //         inputMovement.y = 0f;
+        //         // 计算目标位置和速度
+        //         var targetPosition = transform.position + inputMovement.normalized * (_currentSpeed * Time.fixedDeltaTime);
+        //         var targetVelocity = (targetPosition - transform.position) / Time.fixedDeltaTime;
+        //         // 保持垂直速度
+        //         targetVelocity.y = _rigidbody.velocity.y;
+        //         if (_isOnSlope)
+        //         {
+        //             // 在斜坡上时，调整移动方向
+        //             var slopeMovementDirection = Vector3.ProjectOnPlane(inputMovement, _slopeNormal).normalized;
+        //             targetVelocity = slopeMovementDirection * _currentSpeed;
+        //             targetVelocity.y = _rigidbody.velocity.y;
+        //
+        //             // 添加额外的向下力以保持贴合斜面
+        //             if (hasMovementInput)
+        //             {
+        //                 _rigidbody.AddForce(-_slopeNormal * 20f, ForceMode.Force);
+        //             }
+        //         }
+        //         // 应用速度
+        //         _rigidbody.velocity = targetVelocity;
+        //     }
+        // }
+
+        private void SetAnimationParams()
         {
-            var inputMovement = inputData.playerInput.movement;
-            var hasMovementInput = inputMovement.magnitude > 0.1f;
-            if (_playerEnvironmentState == PlayerEnvironmentState.OnStairs)
-            {
-                _rigidbody.useGravity = false;
-                if (_playerAnimationComponent.IsPlayingSpecialAction)
-                {
-                    return;
-                }
-                if (_currentRequestAnimationState is AnimationState.Jump or AnimationState.SprintJump)
-                {
-                    _rigidbody.velocity = Vector3.zero;
-                    _rigidbody.MovePosition(transform.position + _stairsHitNormal.normalized);
-                    _rigidbody.AddForce(_stairsHitNormal.normalized * _jsonDataConfig.PlayerConfig.JumpSpeed / 5f, ForceMode.Impulse);
-                    return;
-                }
-                var movement = inputMovement.z * -_stairsNormal.normalized + transform.right * inputMovement.x;
-                if (hasMovementInput)
-                {
-                    var moveDirection = movement.normalized;
-                    var targetVelocity = moveDirection * _currentSpeed;
-                    targetVelocity += _stairsHitNormal.normalized * -2f;
-                    _rigidbody.velocity = targetVelocity;
-                }
-                else
-                {
-                    _rigidbody.velocity = _stairsHitNormal.normalized * -2f;
-                }
-            }
-            else if (_playerEnvironmentState == PlayerEnvironmentState.OnGround)
-            {
-                if (_playerAnimationComponent.IsPlayingSpecialAction)
-                {
-                    if (_currentRequestAnimationState is AnimationState.Roll)
-                    {
-                        _rigidbody.velocity = Vector3.zero;
-                        _rigidbody.AddForce(transform.forward.normalized * _jsonDataConfig.PlayerConfig.RollForce, ForceMode.Impulse);
-                    }
-                    else if (_currentRequestAnimationState is AnimationState.Attack)
-                    {
-                        _rigidbody.velocity = Vector3.zero;
-                    }
-                    return;
-                }
-                // 处理跳跃
-                if (_currentRequestAnimationState is AnimationState.Jump or AnimationState.SprintJump)
-                {
-                    // 清除当前垂直速度
-                    var vel = _rigidbody.velocity;
-                    vel.y = 0f;
-                    _rigidbody.velocity = vel;
-            
-                    // 应用跳跃力
-                    var jumpDirection = _isOnSlope ? Vector3.Lerp(Vector3.up, _slopeNormal, 0.5f) : Vector3.up;
-                    _rigidbody.AddForce(jumpDirection * _jsonDataConfig.PlayerConfig.JumpSpeed, ForceMode.Impulse);
-                }
-
-                inputMovement = inputMovement.magnitude <= 0.1f ? inputMovement : 
-                    _camera.transform.TransformDirection(inputMovement);
-                inputMovement.y = 0f;
-                // 计算目标位置和速度
-                var targetPosition = transform.position + inputMovement.normalized * (_currentSpeed * Time.fixedDeltaTime);
-                var targetVelocity = (targetPosition - transform.position) / Time.fixedDeltaTime;
-                // 保持垂直速度
-                targetVelocity.y = _rigidbody.velocity.y;
-                if (_isOnSlope)
-                {
-                    // 在斜坡上时，调整移动方向
-                    var slopeMovementDirection = Vector3.ProjectOnPlane(inputMovement, _slopeNormal).normalized;
-                    targetVelocity = slopeMovementDirection * _currentSpeed;
-                    targetVelocity.y = _rigidbody.velocity.y;
-
-                    // 添加额外的向下力以保持贴合斜面
-                    if (hasMovementInput)
-                    {
-                        _rigidbody.AddForce(-_slopeNormal * 20f, ForceMode.Force);
-                    }
-                }
-                // 应用速度
-                _rigidbody.velocity = targetVelocity;
-            }
-        }
-
-        private void SetAnimationParams(InputData inputData)
-        {
+            //Debug.Log($"SetAnimationParams called {_currentSpeed}");
             _playerAnimationComponent.SetMoveSpeed(_currentSpeed);
-            _playerAnimationComponent.SetInputMagnitude(inputData.playerInput.movement.magnitude);
-            _playerAnimationComponent.SetIsSprinting(inputData.playerInput.isSprinting);
+            _playerAnimationComponent.SetInputMagnitude(_inputMovement.magnitude);
             _playerAnimationComponent.SetFallSpeed(_verticalSpeed);
         }
         

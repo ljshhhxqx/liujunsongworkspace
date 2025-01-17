@@ -60,10 +60,7 @@ namespace HotUpdate.Scripts.Network.Server.Sync
                 _playerInputs[message.ConnectionId] = new Queue<InputData>();
             }
             _playerInputs[message.ConnectionId].Enqueue(message.Input);
-            if (!_lastProcessedInputs.ContainsKey(message.ConnectionId))
-            {
-                _lastProcessedInputs[message.ConnectionId] = 0;
-            }
+            _lastProcessedInputs.TryAdd(message.ConnectionId, 0);
             _lastProcessedInputs[message.ConnectionId] = message.Input.sequence;
         }
 
@@ -112,10 +109,10 @@ namespace HotUpdate.Scripts.Network.Server.Sync
 
             while (Time.time - _lastStateUpdateTime >= _stateUpdateInterval)
             {
+                _lastStateUpdateTime = Time.time;
                 ProcessInputs();
                 BroadcastGameState();
                 ProcessPlayerRecovery();
-                _lastStateUpdateTime = Time.time;
             }
         }
         
@@ -193,11 +190,8 @@ namespace HotUpdate.Scripts.Network.Server.Sync
         private void BroadcastGameState()
         {
             // 为每个玩家创建并发送状态
-            foreach (var kvp in _players)
+            foreach (var (connectionId, controller) in _players)
             {
-                int connectionId = kvp.Key;
-                var controller = kvp.Value;
-
                 var state = new ServerState
                 {
                     lastProcessedInput = _lastProcessedInputs.GetValueOrDefault(connectionId, 0),
@@ -231,7 +225,7 @@ namespace HotUpdate.Scripts.Network.Server.Sync
             {
                 var rb = controller.GetComponent<Rigidbody>();
                 controller.transform.DOMove(state.position, (float)_stateUpdateInterval).SetEase(Ease.Linear);
-                //controller.transform.DORotateQuaternion(state.rotation, (float)_stateUpdateInterval).SetEase(Ease.Linear);
+                controller.transform.DORotateQuaternion(state.rotation, (float)_stateUpdateInterval).SetEase(Ease.Linear);
                 DOTween.To(() => rb.velocity, x => rb.velocity = x, state.velocity, (float)_stateUpdateInterval).SetEase(Ease.Linear);
             }
         }
@@ -307,29 +301,11 @@ namespace HotUpdate.Scripts.Network.Server.Sync
             _frameInputs[message.PlayerInputInfo.frame].Add(message.PlayerInputInfo);
         }
 
-        private void OnPlayerFrameUpdateMessage(PlayerFrameUpdateMessage message)
-        {
-            foreach (var input in message.PlayerInputInfos)
-            {
-                if (!_players.TryGetValue(input.playerId, out var player))
-                {
-                    var spawnedPlayer = GetPlayer(input.playerId);
-                    if (spawnedPlayer)
-                    {
-                        player = spawnedPlayer.GetComponent<PlayerControlClient>();
-                        _players[input.playerId] = player;
-                    }
-                }
-                player?.ExecuteInput(input);
-            }
-        }
-
         private void OnDestroy()
         {
             if (_messageCenter)
             {
                 _messageCenter.UnregisterLocalMessageHandler<PlayerInputMessage>(OnPlayerInputMessage);
-                _messageCenter.UnregisterLocalMessageHandler<PlayerFrameUpdateMessage>(OnPlayerFrameUpdateMessage);
                 _messageCenter.UnregisterLocalMessageHandler<PlayerAttackMessage>(OnPlayerAttackMessage);
                 _messageCenter.UnregisterLocalMessageHandler<PlayerDamageResultMessage>(OnPlayerDamageResultMessage);
             }

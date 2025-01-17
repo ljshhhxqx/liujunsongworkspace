@@ -5329,7 +5329,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  reconcileThreshold: 1
+  reconcileThreshold: 2
   interpolationTime: 0.1
   groundMinDistance: 0.25
   groundMaxDistance: 0.5

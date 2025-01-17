@@ -48,6 +48,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             var input = CaptureInput();
             if (input.command != AnimationState.None)
             {
+                //Debug.Log("Received command: " + input.command);
                 ProcessInput(input);
             }
         }
@@ -56,7 +57,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         {
             var playerInputInfo = new PlayerInputCommand
             {
-                movement = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical")),
+                playerInputMovement = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical")),
                 isJumpRequested = Input.GetButtonDown("Jump"),
                 isRollRequested = Input.GetButtonDown("Roll"),
                 isAttackRequested = Input.GetButtonDown("Fire1"),
@@ -102,6 +103,10 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     input = input,
                     connectionID = connectionToClient.connectionId
                 });
+            }
+            else
+            {
+                _playerControlClient.ExecuteAnimationInput(input);
             }
         }
         

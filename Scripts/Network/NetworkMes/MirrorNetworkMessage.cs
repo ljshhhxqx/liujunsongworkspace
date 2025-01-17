@@ -117,7 +117,7 @@ namespace Network.NetworkMes
     [Serializable]
     public struct PlayerInputCommand
     {
-        public Vector3 movement;
+        [FormerlySerializedAs("movement")] public Vector3 playerInputMovement;
         public bool isJumpRequested;
         public bool isRollRequested;
         public bool isAttackRequested;

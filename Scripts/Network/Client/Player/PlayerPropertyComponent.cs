@@ -423,6 +423,10 @@ namespace HotUpdate.Scripts.Network.Client.Player
         {
             switch (animationState)
             {
+                case AnimationState.Move:
+                case AnimationState.Idle:
+                    ChangeAnimationState(animationState);
+                    break;
                 case AnimationState.Jump:
                 case AnimationState.SprintJump:
                     if (StrengthCanDoAnimation(animationState))

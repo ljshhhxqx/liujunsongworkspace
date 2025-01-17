@@ -257,7 +257,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private AnimationState DetermineAnimationStateByInput(PlayerInputCommand input)
         {
             // 处理移动状态
-            if (input.movement.magnitude > 0)
+            if (input.playerInputMovement.magnitude > 0)
             {
                 return input.isSprinting ? Sprint : Move;
             }
@@ -267,7 +267,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         private void UpdateAnimationParameters(PlayerInputCommand input, PlayerEnvironmentState environmentState)
         {
-            _animator.SetFloat(InputMagnitude, input.movement.magnitude);
+            _animator.SetFloat(InputMagnitude, input.playerInputMovement.magnitude);
             _animator.SetBool(IsSprinting, input.isSprinting);
             _animator.SetInteger(EnvironmentState, (int)environmentState);
         }
@@ -325,7 +325,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     }
                 }
             }
-            if (!isLocalPlayer || !_animator) return;
+            if (!isLocalPlayer) return;
+            if (!_animator) return;
 
             if (Input.GetKeyDown(KeyCode.P))
             {
