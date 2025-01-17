@@ -10,11 +10,6 @@ using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace Network.NetworkMes
 {
-    public struct MirrorNetworkMessage : NetworkMessage
-    {
-        
-    }
-
     [Serializable]
     public struct MirrorPlayerConnectMessage : NetworkMessage
     {
@@ -111,7 +106,7 @@ namespace Network.NetworkMes
     public struct PlayerInputInfo
     {
         public uint frame;
-        public uint playerId;
+        public int playerId;
         public Vector3 movement;
         public bool isJumpRequested;
         public bool isRollRequested;
@@ -136,8 +131,7 @@ namespace Network.NetworkMes
         public int sequence;             // 输入序号，用于状态和解时确定输入顺序
         public float timestamp;          // 输入发生的时间戳，用于输入插值和延迟检测
         public AnimationState command;    // 具体的动作命令（移动、跳跃等）
-        public Vector2 moveDirection;    // 移动方向（用于移动和翻滚等）
-        public Vector3 targetPosition;   // 目标位置（用于攻击等定向动作）
+        public PlayerInputCommand playerInput;
         public Quaternion rotation;      // 角色朝向
     }
 
@@ -159,9 +153,11 @@ namespace Network.NetworkMes
     public struct MirrorPlayerInputInfoMessage : NetworkMessage
     {
         public InputData input;
-        public MirrorPlayerInputInfoMessage(InputData input)
+        public int connectionID;
+        public MirrorPlayerInputInfoMessage(InputData input, int connectionID)
         {
             this.input = input;
+            this.connectionID = connectionID;
         }
     }   
     
@@ -228,7 +224,7 @@ namespace Network.NetworkMes
     [Serializable]
     public struct AttackData
     {
-        public uint attackerId;
+        public int attackerId;
         public Vector3 attackOrigin;
         public Vector3 attackDirection;
         public float angle;
@@ -242,7 +238,7 @@ namespace Network.NetworkMes
     [Serializable]
     public struct DamageResult
     {
-        public uint targetId;
+        public int targetId;
         public float damageAmount;
         public bool isDead;
     }

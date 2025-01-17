@@ -195,19 +195,21 @@ namespace Tool.Message
         }
     }
     
-    public struct MirrorPlayerInputInfoMessage : IMessage
+    public struct PlayerInputInfoMessage : IMessage
     {
         public InputData Input;
-        public MirrorPlayerInputInfoMessage(InputData input)
+        public int ConnectionId;
+        public PlayerInputInfoMessage( int connectionId, InputData input)
         {
             this.Input = input;
+            this.ConnectionId = connectionId;
         }
     }   
     
-    public struct MirrorPlayerStateMessage : IMessage
+    public struct PlayerStateMessage : IMessage
     {
         public ServerState State;
-        public MirrorPlayerStateMessage(ServerState state)
+        public PlayerStateMessage(ServerState state)
         {
             this.State = state;
         }

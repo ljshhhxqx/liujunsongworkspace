@@ -28,7 +28,7 @@ MonoBehaviour:
       SprintSpeedFactor: 2
       RotateSpeed: 7
       OnStairsSpeedRatioFactor: 0.75
-      JumpSpeed: 40
+      JumpSpeed: 45
       StairsCheckDistance: 0.45
       MaxProperties:
       - type: 0

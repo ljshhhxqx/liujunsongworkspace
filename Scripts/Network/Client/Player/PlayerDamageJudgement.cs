@@ -42,19 +42,19 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         private void OnAttackHit()
         {
-            var attackData = new AttackData
-            {
-                attackerId = netId,
-                attackDirection = transform.forward,
-                attackOrigin = transform.position,
-                attack = _playerPropertyComponent.GetPropertyValue(PropertyTypeEnum.Attack),
-                angle = _playerPropertyComponent.PlayerAttackData.attackAngle,
-                radius = _playerPropertyComponent.PlayerAttackData.attackRadius,
-                minHeight = _playerPropertyComponent.PlayerAttackData.minAttackHeight,
-                criticalRate = _playerPropertyComponent.GetPropertyValue(PropertyTypeEnum.CriticalRate),
-                criticalDamageRatio = _playerPropertyComponent.GetPropertyValue(PropertyTypeEnum.CriticalDamageRatio),
-            };
-            _messageHandler.SendToServer(new MirrorPlayerAttackHitMessage(attackData, _frameSyncManager.GetCurrentFrame()));
+            // var attackData = new AttackData
+            // {
+            //     attackerId = connectionToClient.connectionId,
+            //     attackDirection = transform.forward,
+            //     attackOrigin = transform.position,
+            //     attack = _playerPropertyComponent.GetPropertyValue(PropertyTypeEnum.Attack),
+            //     angle = _playerPropertyComponent.PlayerAttackData.attackAngle,
+            //     radius = _playerPropertyComponent.PlayerAttackData.attackRadius,
+            //     minHeight = _playerPropertyComponent.PlayerAttackData.minAttackHeight,
+            //     criticalRate = _playerPropertyComponent.GetPropertyValue(PropertyTypeEnum.CriticalRate),
+            //     criticalDamageRatio = _playerPropertyComponent.GetPropertyValue(PropertyTypeEnum.CriticalDamageRatio),
+            // };
+            // _messageHandler.SendToServer(new MirrorPlayerAttackHitMessage(attackData, _frameSyncManager.GetCurrentFrame()));
         }
     }
 }

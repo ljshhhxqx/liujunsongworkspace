@@ -62,6 +62,7 @@ namespace HotUpdate.Scripts.Network.NetworkMes
             RegisterServerHandler<MirrorPickerPickUpChestMessage>();
             RegisterServerHandler<MirrorPlayerInputMessage>();
             RegisterServerHandler<MirrorPlayerAttackHitMessage>();
+            RegisterServerHandler<MirrorPlayerInputInfoMessage>();
             // 注册更多服务器消息处理程序...
         }
 
@@ -171,6 +172,11 @@ namespace HotUpdate.Scripts.Network.NetworkMes
             if (networkMessage is MirrorFrameAttackResultMessage frameAttackResultMessage)
             {
                 return new PlayerDamageResultMessage(frameAttackResultMessage.frame, frameAttackResultMessage.damageResults);
+            }
+
+            if (networkMessage is MirrorPlayerInputInfoMessage playerInputInfoMessage)
+            {
+                return new PlayerInputInfoMessage(playerInputInfoMessage.connectionID, playerInputInfoMessage.input);
             }
             
             // 添加更多消息类型的处理...

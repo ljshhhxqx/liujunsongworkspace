@@ -5058,6 +5058,7 @@ GameObject:
   - component: {fileID: 3284136811344419576}
   - component: {fileID: 7023319456120417876}
   - component: {fileID: 6292807028564305972}
+  - component: {fileID: 5419965821849870838}
   m_Layer: 6
   m_Name: MPlayer
   m_TagString: Player
@@ -5328,6 +5329,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  reconcileThreshold: 1
+  interpolationTime: 0.1
   groundMinDistance: 0.25
   groundMaxDistance: 0.5
 --- !u!114 &6292807028564305972
@@ -5344,9 +5347,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 7780707582190085363}
   rightHandIKTarget: {fileID: 80366730537133186}
-  weapon: {fileID: 0}
   positionWeight: 0.207
   rotationWeight: 0.22
+--- !u!114 &5419965821849870838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8351228888613827031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0a51aea75654a748b8cca0e7fbca296, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  inputBufferTime: 0.1
+  moveThreshold: 0.1
 --- !u!1 &8357527339398811249
 GameObject:
   m_ObjectHideFlags: 0

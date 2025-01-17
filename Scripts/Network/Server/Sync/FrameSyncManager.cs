@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Client.Player;
@@ -16,16 +18,20 @@ namespace HotUpdate.Scripts.Network.Server.Sync
     public class FrameSyncManager : NetworkBehaviour
     {
         private const int BUFFER_FRAMES = 2; // 缓冲帧数
+        private double _stateUpdateInterval;  // 状态更新间隔
+        private readonly float _inputLagTolerance = 0.5f;    // 输入延迟容忍度
+        private readonly Dictionary<int, Queue<InputData>> _playerInputs = new Dictionary<int, Queue<InputData>>();
+        private readonly Dictionary<int, float> _lastInputTimes = new Dictionary<int, float>();
         private readonly Dictionary<uint, List<PlayerInputInfo>> _frameInputs = new Dictionary<uint, List<PlayerInputInfo>>();
-        private readonly Dictionary<uint, PlayerControlClient> _players = new Dictionary<uint, PlayerControlClient>();
+        private readonly Dictionary<int, PlayerControlClient> _players = new Dictionary<int, PlayerControlClient>();
         private readonly Dictionary<uint, List<AttackData>> _attackDatas = new Dictionary<uint, List<AttackData>>();
+        private readonly Dictionary<int, int> _lastProcessedInputs = new Dictionary<int, int>();  // 记录每个玩家最后处理的输入序号
         private MirrorNetworkMessageHandler _messageCenter;
         private JsonDataConfig _jsonConfig;
         private double _accumulator;  // 用于累积固定更新的时间
         private const double SyncFps = 30;  // 最大更新间隔
-        private double _fixedTimeStep;  // 10fps的固定更新间隔
-        [SyncVar]
-        private uint _currentFrame;  // 使用SyncVar确保服务器和客户端帧号同步
+        private float _lastStateUpdateTime;
+        private int _stateSequence;
 
         [Inject]
         private void Init(MirrorNetworkMessageHandler messageCenter, IConfigProvider configProvider)
@@ -34,19 +40,38 @@ namespace HotUpdate.Scripts.Network.Server.Sync
             Writer<AttackData>.write = AttackDataExtensions.WritePlayerAttackData;
             Reader<PlayerAttackData>.read = AttackDataExtensions.ReadPlayerAttackData;
             Writer<PlayerAttackData>.write = AttackDataExtensions.WriteAttackData;
+            _stateUpdateInterval = 1 / SyncFps;
             _messageCenter = messageCenter;
             _jsonConfig = configProvider.GetConfig<JsonDataConfig>();
+            _messageCenter.RegisterLocalMessageHandler<PlayerInputInfoMessage>(OnPlayerInputInfoMessage);
             _messageCenter.RegisterLocalMessageHandler<PlayerInputMessage>(OnPlayerInputMessage);
-            _messageCenter.RegisterLocalMessageHandler<PlayerFrameUpdateMessage>(OnPlayerFrameUpdateMessage);
             _messageCenter.RegisterLocalMessageHandler<PlayerAttackMessage>(OnPlayerAttackMessage);
             _messageCenter.RegisterLocalMessageHandler<PlayerDamageResultMessage>(OnPlayerDamageResultMessage);
         }
 
-        private GameObject GetPlayer(uint playerId)
+        private void OnPlayerInputInfoMessage(PlayerInputInfoMessage message)
         {
-            if (NetworkClient.spawned.TryGetValue(playerId, out var identity))
+            // 更新最后输入时间
+            _lastInputTimes[message.ConnectionId] = Time.time;
+
+            // 将输入加入队列
+            if (!_playerInputs.ContainsKey(message.ConnectionId))
             {
-                return identity.gameObject;
+                _playerInputs[message.ConnectionId] = new Queue<InputData>();
+            }
+            _playerInputs[message.ConnectionId].Enqueue(message.Input);
+            if (!_lastProcessedInputs.ContainsKey(message.ConnectionId))
+            {
+                _lastProcessedInputs[message.ConnectionId] = 0;
+            }
+            _lastProcessedInputs[message.ConnectionId] = message.Input.sequence;
+        }
+
+        private GameObject GetPlayer(int playerId)
+        {
+            if (NetworkServer.connections.TryGetValue(playerId, out var identity))
+            {
+                return identity.identity.gameObject;
             }
             Debug.LogWarning($"Player {playerId} not found");
             return null;
@@ -78,23 +103,136 @@ namespace HotUpdate.Scripts.Network.Server.Sync
         public override void OnStartServer()
         {
             base.OnStartServer();
-            _fixedTimeStep = 1 / SyncFps;
-            _currentFrame = 0;  // 服务器启动时初始化帧号
+            _stateUpdateInterval = 1 / SyncFps;
         }
 
         private void Update()
         {
             if (!isServer) return;
 
-            // 使用时间累加器来确保固定帧率
-            _accumulator += Time.deltaTime;
-            while (_accumulator >= _fixedTimeStep)
+            while (Time.time - _lastStateUpdateTime >= _stateUpdateInterval)
             {
-                ProcessFrame();
-                ProcessAttack();
+                ProcessInputs();
+                BroadcastGameState();
                 ProcessPlayerRecovery();
-                _accumulator -= _fixedTimeStep;
-                _currentFrame++;
+                _lastStateUpdateTime = Time.time;
+            }
+        }
+        
+        private void ProcessInputs()
+        {
+            var currentTime = Time.time;
+            var frameInputs = new Dictionary<int, InputData>();
+            // 处理所有玩家的输入队列
+            foreach (var (connectionId, inputQueue) in _playerInputs)
+            {
+                // 检查玩家是否超时
+                if (currentTime - _lastInputTimes[connectionId] > _inputLagTolerance)
+                {
+                    continue;
+                }
+
+                // 处理该玩家的所有待处理输入
+                while (inputQueue.Count > 0)
+                {
+                    var input = inputQueue.Dequeue();
+                    frameInputs.TryAdd(connectionId, input);
+                    if (_players.TryGetValue(connectionId, out var controller))
+                    {
+                        ActionType actionType = _jsonConfig.GetActionType(input.command);
+
+                        // 服务器端处理逻辑
+                        switch (actionType)
+                        {
+                            case ActionType.Movement:
+                                // 服务器也执行移动，作为权威状态
+                                controller.ExecutePlayerLocalInput(input);
+                                break;
+
+                            case ActionType.Interaction:
+                                // 服务器验证并执行交互动作
+                                controller.ExecuteServerAction(input);
+                                break;
+                        }
+                    }
+                }
+            }
+
+            if (frameInputs.Count > 0)
+            {
+                foreach (var kvp in frameInputs)
+                {
+                    RpcReceiveFrameInputs(kvp.Key, kvp.Value);
+                }
+            }
+        } 
+        
+        [ClientRpc]
+        private void RpcReceiveFrameInputs(int connectionId, InputData input)
+        {
+            if (_players.TryGetValue(connectionId, out var controller))
+            {
+                var actionType = _jsonConfig.GetActionType(input.command);
+                switch (actionType)
+                {
+                    case ActionType.Movement:
+                        if (connectionId == NetworkClient.connection.connectionId)
+                            break;
+                        controller.ExecutePlayerLocalInput(input);
+                        break;
+                    case ActionType.Animation:
+                        controller.ExecuteAnimationInput(input);
+                        break;
+                    case ActionType.Interaction:
+                        controller.ExecuteServerAction(input);
+                        break;
+                }
+            }
+        }
+        
+        private void BroadcastGameState()
+        {
+            // 为每个玩家创建并发送状态
+            foreach (var kvp in _players)
+            {
+                int connectionId = kvp.Key;
+                var controller = kvp.Value;
+
+                var state = new ServerState
+                {
+                    lastProcessedInput = _lastProcessedInputs.GetValueOrDefault(connectionId, 0),
+                    timestamp = Time.time,
+                    position = controller.transform.position,
+                    velocity = controller.GetComponent<Rigidbody>().velocity,
+                    rotation = controller.transform.rotation,
+                    actionType = _jsonConfig.GetActionType(controller.CurrentRequestAnimationState),
+                    command = controller.CurrentRequestAnimationState
+                };
+
+                RpcUpdateState(connectionId, state);
+            }
+
+            _stateSequence++;
+        }
+        
+        [ClientRpc]
+        private void RpcUpdateState(int connectionId, ServerState state)
+        {
+            if (!_players.TryGetValue(connectionId, out var controller))
+                return;
+
+            // 本地玩家进行状态和解
+            if (controller.isLocalPlayer)
+            {
+                controller.ReconcileState(state);
+            }
+            // 其他玩家直接更新状态
+            else
+            {
+                var rb = controller.GetComponent<Rigidbody>();
+                controller.transform.DOMove(state.position, (float)_stateUpdateInterval).SetEase(Ease.Linear);
+                //controller.transform.DORotateQuaternion(state.rotation, (float)_stateUpdateInterval).SetEase(Ease.Linear);
+                DOTween.To(() => rb.velocity, x => rb.velocity = x, state.velocity, (float)_stateUpdateInterval).SetEase(Ease.Linear);
             }
         }
 
@@ -110,28 +248,10 @@ namespace HotUpdate.Scripts.Network.Server.Sync
                     var healthRecovery = playerComponent.GetPropertyValue(PropertyTypeEnum.HealthRecovery);
                     var strengthRecovery = playerComponent.GetPropertyValue(PropertyTypeEnum.StrengthRecovery);
                     var sprintCost = _jsonConfig.GetPlayerAnimationCost(AnimationState.Sprint);
-                    strengthRecovery -= (isSprinting ? sprintCost : 0);
-                    playerComponent.IncreaseProperty(PropertyTypeEnum.Health, BuffIncreaseType.Current, healthRecovery);
-                    playerComponent.IncreaseProperty(PropertyTypeEnum.Strength, BuffIncreaseType.Current, strengthRecovery);
+                    strengthRecovery -= isSprinting ? sprintCost : 0;
+                    playerComponent.IncreaseProperty(PropertyTypeEnum.Health, BuffIncreaseType.Current, healthRecovery * (float)_stateUpdateInterval);
+                    playerComponent.IncreaseProperty(PropertyTypeEnum.Strength, BuffIncreaseType.Current, strengthRecovery * (float)_stateUpdateInterval);
                 }
-            }
-        }
-
-        private void ProcessAttack()
-        {
-            if (_attackDatas.TryGetValue(_currentFrame, out var attackList))
-            {
-                var damageResults = new List<DamageResult>();
-                foreach (var attackData in attackList)
-                {
-                    damageResults.Add(GetDamageResult(attackData));
-                }
-                _messageCenter.SendToAllClients(new MirrorFrameAttackResultMessage
-                {
-                    frame = _currentFrame,
-                    damageResults = damageResults
-                });
-                Debug.Log($"Attacks in frame {_currentFrame} : {attackList?.Count ?? 0}");
             }
         }
 
@@ -152,7 +272,7 @@ namespace HotUpdate.Scripts.Network.Server.Sync
                     var damage = _jsonConfig.GetDamage(attackData.attack, defense, attackData.criticalRate, attackData.criticalDamageRatio);
                     return new DamageResult
                     {
-                        targetId = player.netId,
+                        targetId = player.connectionToClient.connectionId,
                         damageAmount = damage,
                         isDead = remainingHp <= 0
                     };
@@ -178,22 +298,6 @@ namespace HotUpdate.Scripts.Network.Server.Sync
             return angle <= attackData.angle * 0.5f;
         }
 
-        private void ProcessFrame()
-        {
-            if (_frameInputs.TryGetValue(_currentFrame, out var inputs))
-            {
-                // 广播帧更新
-                _messageCenter.SendToAllClients(new MirrorFrameUpdateMessage
-                {
-                    frame = _currentFrame,
-                    playerInputs = inputs
-                });
-
-                // 清理已处理的帧数据
-                _frameInputs.Remove(_currentFrame);
-            }
-        }
-
         private void OnPlayerInputMessage(PlayerInputMessage message)
         {
             if (!_frameInputs.ContainsKey(message.PlayerInputInfo.frame))
@@ -217,22 +321,6 @@ namespace HotUpdate.Scripts.Network.Server.Sync
                     }
                 }
                 player?.ExecuteInput(input);
-            }
-        }
-
-        // 获取当前帧号（客户端可用）
-        public uint GetCurrentFrame()
-        {
-            return _currentFrame;
-        }
-
-        // 清理旧的帧数据
-        private void CleanupOldFrames()
-        {
-            var oldFrames = _frameInputs.Keys.Where(frame => frame < _currentFrame - BUFFER_FRAMES);
-            foreach (var frame in oldFrames)
-            {
-                _frameInputs.Remove(frame);
             }
         }
 
@@ -276,7 +364,7 @@ namespace HotUpdate.Scripts.Network.Server.Sync
             var radius = reader.ReadFloat();
             var minHeight = reader.ReadFloat();
             var attack = reader.ReadFloat();    
-            var attackerId = reader.ReadUInt();
+            var attackerId = reader.ReadInt();
             var attackDirection = reader.ReadVector3();
             var attackOrigin = reader.ReadVector3();
             var criticalRate = reader.ReadFloat();
@@ -301,7 +389,7 @@ namespace HotUpdate.Scripts.Network.Server.Sync
             writer.WriteFloat(value.radius);
             writer.WriteFloat(value.minHeight);
             writer.WriteFloat(value.attack);
-            writer.WriteUInt(value.attackerId);
+            writer.WriteInt(value.attackerId);
             writer.WriteVector3(value.attackDirection);
             writer.WriteVector3(value.attackOrigin);
             writer.WriteFloat(value.criticalRate);
@@ -309,3 +397,21 @@ namespace HotUpdate.Scripts.Network.Server.Sync
         }
     }
 }
+
+// private void ProcessAttack()
+// {
+//     if (_attackDatas.TryGetValue(_currentFrame, out var attackList))
+//     {
+//         var damageResults = new List<DamageResult>();
+//         foreach (var attackData in attackList)
+//         {
+//             damageResults.Add(GetDamageResult(attackData));
+//         }
+//         _messageCenter.SendToAllClients(new MirrorFrameAttackResultMessage
+//         {
+//             frame = _currentFrame,
+//             damageResults = damageResults
+//         });
+//         Debug.Log($"Attacks in frame {_currentFrame} : {attackList?.Count ?? 0}");
+//     }
+// }

@@ -2,6 +2,7 @@
 using Mirror;
 using System.Collections.Generic;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.Server.Sync;
 using Network.NetworkMes;
 using VContainer;
@@ -17,6 +18,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private JsonDataConfig _jsonDataConfig;
         private int _inputSequence = 0;
         private readonly Queue<InputData> _inputBuffer = new Queue<InputData>();
+        private MirrorNetworkMessageHandler _mirrorNetworkMessageHandler;
         private PlayerInputInfo _playerInputInfo;
         
         [Header("Input Settings")]
@@ -27,14 +29,15 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private bool _wasGrounded;
         
         [Inject]
-        private void Init(FrameSyncManager frameSyncManager, JsonDataConfig jsonDataConfig)
+        private void Init(FrameSyncManager frameSyncManager, IConfigProvider configProvider, MirrorNetworkMessageHandler mirrorNetworkMessageHandler)
         {
             _playerControlClient = GetComponent<PlayerControlClient>();
+            _mirrorNetworkMessageHandler = mirrorNetworkMessageHandler;
             _playerAnimationComponent = GetComponent<PlayerAnimationComponent>();
-            _jsonDataConfig = jsonDataConfig;
+            _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _frameSyncManager = frameSyncManager;
             
-            if (!isLocalPlayer) enabled = false;
+            //if (!isLocalPlayer) enabled = false;
         }
         
         private void Update()
@@ -65,7 +68,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             {
                 sequence = _inputSequence++,
                 timestamp = Time.time,
-                moveDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized,
+                playerInput = playerInputInfo,
                 rotation = transform.rotation,
                 command = requestAnimation
             };
@@ -76,45 +79,30 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private void ProcessInput(InputData input)
         {
             var actionType = _jsonDataConfig.GetActionType(input.command);
-            
-            switch (actionType)
+
+            if (actionType == ActionType.Movement)
             {
-                case ActionType.Movement:
-                    // 立即在本地执行
-                    //_playerControlClient.ProcessLocalInput(input);
-                    // 缓存输入
-                    _inputBuffer.Enqueue(input);
-                    // 清理过期输入
-                    while (_inputBuffer.Count > 0 && 
-                           Time.time - _inputBuffer.Peek().timestamp > inputBufferTime)
-                    {
-                        _inputBuffer.Dequeue();
-                    }
-                    break;
-        
-                case ActionType.Interaction:
-                    // 可以播放准备动画
-                    //_playerControlClient.PlayPrepareAnimation(input);
-                    break;
-        
-                case ActionType.Animation:
-                    // 直接更新动画状态
-                    //_playerControlClient.UpdateAnimatorParameters(input);
-                    break;
+                // 立即在本地执行
+                _playerControlClient.ExecutePlayerLocalInput(input);
+                // 缓存输入
+                _inputBuffer.Enqueue(input);
+                // 清理过期输入
+                while (_inputBuffer.Count > 0 && 
+                       Time.time - _inputBuffer.Peek().timestamp > inputBufferTime)
+                {
+                    _inputBuffer.Dequeue();
+                }
             }
         
             // 发送到服务器（除了纯动画状态）
             if (actionType != ActionType.Animation)
             {
-                CmdSendInput(input);
+                _mirrorNetworkMessageHandler.SendToServer(new MirrorPlayerInputInfoMessage
+                {
+                    input = input,
+                    connectionID = connectionToClient.connectionId
+                });
             }
-        }
-        
-        [Command]
-        private void CmdSendInput(InputData input)
-        {
-            // todo:
-            //_frameSyncManager.BroadcastInput(connectionToClient.connectionId, input);
         }
         
         public Queue<InputData> GetInputBuffer()
