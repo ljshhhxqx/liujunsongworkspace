@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using AOTScripts.Tool.ECS;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Network.Inject;
+using HotUpdate.Scripts.Network.Data.PredictableObject;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using Mirror;
 using Tool.Coroutine;
@@ -15,7 +14,7 @@ using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.Client.Player
 {
-    public class PlayerPropertyComponent : NetworkAutoInjectComponent
+    public class PlayerPropertyComponent : PredictableNetworkAutoInjectBehaviour
     {
         private readonly Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>> _maxCurrentProperties = new Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>>();
         private readonly Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>> _currentProperties = new Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>>();
@@ -46,7 +45,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 {
                     _playerAttackData = value;
                 }
-                else if (isClient)
+                else if (isLocalPlayer)
                 {
                     Debug.Log("Client cannot change PlayerAttackData.");
                 }
@@ -90,7 +89,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 {
                     _isInvincible = value;
                 }
-                else if (isClient)
+                else if (isLocalPlayer)
                 {
                     Debug.Log("Client cannot change invincibility.");
                 }
@@ -106,15 +105,13 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 {
                     _currentChestType = value;
                 }
-                else if (isClient)
+                else if (isLocalPlayer)
                 {
                     Debug.Log("Client cannot change CurrentChestType.");
                 }
             }
         }
         
-        
-
         public PlayerEnvironmentState PlayerEnvironmentState
         {
             get => _playerEnvironmentState;
@@ -124,7 +121,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 {
                     _playerEnvironmentState = value;
                 }
-                else if (isClient)
+                else if (isLocalPlayer)
                 {
                     CmdChangePlayerState(value);
                 }
@@ -140,7 +137,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 {
                     _hasMovementInput = value;
                 }
-                else if (isClient)
+                else if (isLocalPlayer)
                 {
                     CmdChangeHasMovementInput(value);
                 }
@@ -173,12 +170,12 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private readonly Dictionary<PropertyTypeEnum, float> _configMinProperties = new Dictionary<PropertyTypeEnum, float>();
         private readonly Dictionary<PropertyTypeEnum, float> _configMaxProperties = new Dictionary<PropertyTypeEnum, float>();
         
-        private readonly SyncDictionary<PropertyTypeEnum, float> _syncBaseProperties = new SyncDictionary<PropertyTypeEnum, float>();
-        private readonly SyncDictionary<PropertyTypeEnum, float> _syncPropertyBuffs = new SyncDictionary<PropertyTypeEnum, float>();
-        private readonly SyncDictionary<PropertyTypeEnum, float> _syncPropertyMultipliers = new SyncDictionary<PropertyTypeEnum, float>();
-        private readonly SyncDictionary<PropertyTypeEnum, float> _syncPropertyCorrectionFactors = new SyncDictionary<PropertyTypeEnum, float>();
-        private readonly SyncDictionary<PropertyTypeEnum, float> _syncCurrentProperties = new SyncDictionary<PropertyTypeEnum, float>();
-        private readonly SyncDictionary<PropertyTypeEnum, float> _syncMaxCurrentProperties = new SyncDictionary<PropertyTypeEnum, float>();
+        private readonly Dictionary<PropertyTypeEnum, float> _syncBaseProperties = new Dictionary<PropertyTypeEnum, float>();
+        private readonly Dictionary<PropertyTypeEnum, float> _syncPropertyBuffs = new Dictionary<PropertyTypeEnum, float>();
+        private readonly Dictionary<PropertyTypeEnum, float> _syncPropertyMultipliers = new Dictionary<PropertyTypeEnum, float>();
+        private readonly Dictionary<PropertyTypeEnum, float> _syncPropertyCorrectionFactors = new Dictionary<PropertyTypeEnum, float>();
+        private readonly Dictionary<PropertyTypeEnum, float> _syncCurrentProperties = new Dictionary<PropertyTypeEnum, float>();
+        private readonly Dictionary<PropertyTypeEnum, float> _syncMaxCurrentProperties = new Dictionary<PropertyTypeEnum, float>();
         
         [Inject]
         private void Init(IConfigProvider configProvider, UIManager uiManager, RepeatedTask repeated)
@@ -187,14 +184,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
             _configPlayerAttackData = _jsonDataConfig.PlayerConfig.BaseAttackData;
             InitializeProperties();
             _currentChestTypeProperty.Value = ChestType.Attack;
-            
-            _syncCurrentProperties.OnAdd += OnCurrentPropertyAdd;
-            _syncCurrentProperties.OnRemove += OnCurrentPropertyRemove;
-            _syncCurrentProperties.OnSet += OnCurrentPropertySet;
-                
-            _syncMaxCurrentProperties.OnAdd += OnMaxCurrentPropertyAdd;
-            _syncMaxCurrentProperties.OnRemove += OnMaxCurrentPropertyRemove;
-            _syncMaxCurrentProperties.OnSet += OnMaxCurrentPropertySet;
 
             if (isLocalPlayer)
             {
@@ -210,37 +199,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     });
                 }
             }
-
-        }
-
-        private void OnMaxCurrentPropertyRemove(PropertyTypeEnum arg1, float arg2)
-        {
-            _maxCurrentProperties.Remove(arg1);
-        }
-
-        private void OnMaxCurrentPropertySet(PropertyTypeEnum arg1, float arg2)
-        {
-            MaxPropertyChanged(arg1, arg2);
-        }
-
-        private void OnMaxCurrentPropertyAdd(PropertyTypeEnum obj)
-        {
-            _maxCurrentProperties.Add(obj, new ReactiveProperty<PropertyType>(new PropertyType(obj, _syncMaxCurrentProperties[obj])));
-        }
-
-        private void OnCurrentPropertySet(PropertyTypeEnum arg1, float arg2)
-        {
-            PropertyChanged(arg1,arg2);
-        }
-
-        private void OnCurrentPropertyRemove(PropertyTypeEnum arg1, float arg2)
-        {
-            _currentProperties.Remove(arg1);
-        }
-
-        private void OnCurrentPropertyAdd(PropertyTypeEnum obj)
-        {
-            _currentProperties.Add(obj, new ReactiveProperty<PropertyType>(new PropertyType(obj, _syncCurrentProperties[obj])));
         }
 
         private void InitializeProperties()
@@ -304,7 +262,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             {
                 IncreasePropertyAndUpdate(type, increaseType, amount);
             }
-            else if (isClient)
+            else if (isLocalPlayer)
             {
                 Debug.Log("Client cannot increase property.");
                 //CmdIncreaseProperty(type, increaseType, amount);
@@ -440,22 +398,12 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     }
                     break;
                 case AnimationState.Roll:
-                    // if (_currentChestType != ChestType.Dash)
-                    // {
-                    //     Debug.LogWarning($"Player {gameObject.name} has no chest to dash.");
-                    //     return false;
-                    // }
                     if (StrengthCanDoAnimation(animationState))
                     {
                         ChangeAnimationState(animationState);
                     }
                     break;
                 case AnimationState.Attack:
-                    // if (_currentChestType != ChestType.Attack)
-                    // {
-                    //     Debug.LogWarning($"Player {gameObject.name} has no chest to attack.");
-                    //     return false;
-                    // }
                     if (StrengthCanDoAnimation(animationState))
                     {
                         ChangeAnimationState(animationState);

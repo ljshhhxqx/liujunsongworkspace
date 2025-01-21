@@ -281,11 +281,11 @@ namespace HotUpdate.Scripts.Collector
         {
             if (_spawnedItems.TryGetValue(itemId, out var itemInfo))
             {
-                if (_processedItems.Contains(itemId))
+                if (!_processedItems.Add(itemId))
                 {
                     return;
                 }
-                _processedItems.Add(itemId);
+
                 // 通过netId找到实际物体
                 Debug.Log($"HandleItemPickup: itemId - {itemId} pickerId - {pickerId} - netId- {itemInfo.netId}");
                 var networkIdentity = NetworkServer.spawned[itemInfo.netId];

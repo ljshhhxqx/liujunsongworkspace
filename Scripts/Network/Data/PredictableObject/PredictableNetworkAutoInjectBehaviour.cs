@@ -2,9 +2,9 @@
 using Mirror;
 using UnityEngine;
 
-namespace HotUpdate.Scripts.Network.Inject
+namespace HotUpdate.Scripts.Network.Data.PredictableObject
 {
-    public abstract class NetworkAutoInjectComponent : NetworkBehaviour
+    public class PredictableNetworkAutoInjectBehaviour : PredictableNetworkBehaviour
     {
         [SerializeField]
         private bool autoInject = true;
