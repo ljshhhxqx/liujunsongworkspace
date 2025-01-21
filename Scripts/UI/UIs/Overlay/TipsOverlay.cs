@@ -21,7 +21,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         public void ShowTips(string tips)
         {
             DelayInvoker.CancelInvoke(DelayDisable);
-            if (tips.IsNullOrWhitespace() || _tips.Equals(tips))
+            if (tips.IsNullOrWhitespace() || tips.Equals(_tips))
                 return;
             _tips = tips;
             var currentColor = tipsText.color;

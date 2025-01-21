@@ -1,17 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
+using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Data;
 using Tool.Coroutine;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 using Object = UnityEngine.Object;
 
-namespace Common
+namespace HotUpdate.Scripts.Game.Inject
 {
     public class DependencyInjectionManager : IObjectInjector
     {
         [Inject] private IObjectResolver _objectResolver;
+        private readonly Dictionary<MapType, LifetimeScope> _injectors = new Dictionary<MapType, LifetimeScope>();
 
         public void Inject(Object target)
+        {
+            // VContainer依赖注入逻辑
+            _objectResolver.Inject(target);
+        }
+        
+        public void Inject<T>(T target)
         {
             // VContainer依赖注入逻辑
             _objectResolver.Inject(target);
@@ -66,11 +76,59 @@ namespace Common
             instance = default;
             return false;
         }
+
+        private LifetimeScope GetLifetimeScope(MapType mapType)
+        {
+            if (GameLoopDataModel.GameSceneName.Value != mapType)
+            {
+                Debug.LogError($"Current scene is not {mapType}, injection failed.");
+                return null;
+            }
+
+            if (_injectors.TryGetValue(mapType, out var lifetimeScope))
+            {
+                return lifetimeScope;
+            }
+
+            var lifeScopes = Object.FindObjectsByType<LifetimeScope>(FindObjectsSortMode.None);
+            foreach (var scope in lifeScopes)
+            {
+                if (scope is IMapLifeScope mapLifeScope && mapLifeScope.MapType == mapType)
+                {
+                    _injectors.Add(mapType, scope);
+                    return scope;
+                }
+            }
+
+            return null;
+        }
+
+        public void InjectMapElement<T>(MapType mapType, T target)
+        {
+            var lifeScope = GetLifetimeScope(mapType);
+            if (lifeScope)
+            {
+                lifeScope.Container.Inject(target);
+                return;
+            }
+            Debug.LogError("LifetimeScope not found for mapType: " + mapType);
+        }
+
+        public void InjectMapElementWithChildren(MapType mapType, GameObject target)
+        {
+            var lifeScope = GetLifetimeScope(mapType);
+            if (lifeScope)
+            {
+                lifeScope.Container.InjectGameObject(target);
+                return; 
+            }
+            Debug.LogError("LifetimeScope not found for mapType: " + mapType);
+        }
     }
 
     interface IObjectInjector
     {
-        void Inject(Object target);
+        void Inject<T>(T target);
         void InjectWithChildren(GameObject root);
         void DelayInject(Object target, float delay = 0.1f);
         void DelayInjectWithChildren(GameObject root, float delay = 0.1f);
@@ -78,5 +136,7 @@ namespace Common
         object Resolve(Type type);
         bool TryResolve<T>(out T instance);
         bool TryResolve(Type type, out object instance);
+        void InjectMapElement<T>(MapType mapType, T target);
+        void InjectMapElementWithChildren(MapType mapType, GameObject target);
     }
 }

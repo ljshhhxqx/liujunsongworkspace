@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using HotUpdate.Scripts.Config.ArrayConfig;
+using UnityEngine;
 using VContainer;
 
-namespace Common
+namespace HotUpdate.Scripts.Game.Inject
 {
     public class ObjectInjectProvider : SingletonAutoMono<ObjectInjectProvider>
     {
@@ -13,14 +15,26 @@ namespace Common
             _injector = injector;
         }
 
-        public void Inject(Object target)
+        public void Inject<T>(T target)
         {
             _injector.Inject(target);
         }
 
-        public void InjectWithChildren(GameObject target)
+        public void InjectWithChildrenWithNoMap(GameObject target)
         {
             _injector.InjectWithChildren(target);
         }
+        
+        public T Resolve<T>()
+        {
+            return _injector.Resolve<T>();
+        }
+        
+        public object Resolve(System.Type type)
+        {
+            return _injector.Resolve(type);
+        }
+        
+        
     }
 }

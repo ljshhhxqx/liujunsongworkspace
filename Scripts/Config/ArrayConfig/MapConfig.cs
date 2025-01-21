@@ -12,10 +12,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [ReadOnly]
         [SerializeField]
         private List<MapConfigData> mapConfigData = new List<MapConfigData>();
-        // [SerializeField]
-        // private GameModeData gameModeData;
-        //
-        // public GameModeData GameModeData => gameModeData;
 
         public MapConfigData GetMapConfigData(MapType mapType)
         {

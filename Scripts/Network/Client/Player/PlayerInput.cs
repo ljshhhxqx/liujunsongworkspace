@@ -2,6 +2,7 @@
 using Mirror;
 using System.Collections.Generic;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.Server.Sync;
 using Network.NetworkMes;
@@ -10,7 +11,7 @@ using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.Client.Player
 {
-    public class PlayerInput : NetworkBehaviour
+    public class PlayerInput : NetworkAutoInjectComponent
     {
         private PlayerControlClient _playerControlClient;
         private PlayerAnimationComponent _playerAnimationComponent;
@@ -29,13 +30,13 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private bool _wasGrounded;
         
         [Inject]
-        private void Init(FrameSyncManager frameSyncManager, IConfigProvider configProvider, MirrorNetworkMessageHandler mirrorNetworkMessageHandler)
+        private void Init(IConfigProvider configProvider)
         {
             _playerControlClient = GetComponent<PlayerControlClient>();
-            _mirrorNetworkMessageHandler = mirrorNetworkMessageHandler;
+            _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
             _playerAnimationComponent = GetComponent<PlayerAnimationComponent>();
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
-            _frameSyncManager = frameSyncManager;
+            _frameSyncManager = FindObjectOfType<FrameSyncManager>();
             
             //if (!isLocalPlayer) enabled = false;
         }

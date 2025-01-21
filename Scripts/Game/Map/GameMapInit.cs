@@ -1,8 +1,8 @@
-using Common;
 using Cysharp.Threading.Tasks;
 using Game.Map;
 using HotUpdate.Scripts.Config;
 using System;
+using HotUpdate.Scripts.Game.Inject;
 using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
@@ -26,7 +26,7 @@ namespace HotUpdate.Scripts.Game.Map
         private void InjectGameObjects()
         {
             var injectObject = GameObject.FindGameObjectWithTag("InjectObjects");
-            if (injectObject == null)
+            if (!injectObject)
             {
                 throw new UnityException("InjectObjects GameObject not found.");
             }

@@ -6,7 +6,6 @@ using Data;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Buff;
 using HotUpdate.Scripts.Collector;
-using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.NetworkMes;

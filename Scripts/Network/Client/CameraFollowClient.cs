@@ -1,6 +1,4 @@
-﻿using Game.Inject;
-using Game.Map;
-using HotUpdate.Scripts.Config;
+﻿using Game.Map;
 using HotUpdate.Scripts.Config.JsonConfig;
 using Tool.GameEvent;
 using UnityEngine;

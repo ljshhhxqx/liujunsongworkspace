@@ -1,4 +1,5 @@
 ﻿using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.Server.Sync;
 using Mirror;
@@ -7,7 +8,7 @@ using VContainer;
 
 namespace HotUpdate.Scripts.Network.Client.Player
 {
-    public class PlayerDamageJudgement : NetworkBehaviour
+    public class PlayerDamageJudgement : NetworkAutoInjectComponent
     {
         private PlayerAnimationComponent _animationComponent;
         private PlayerPropertyComponent _playerPropertyComponent;

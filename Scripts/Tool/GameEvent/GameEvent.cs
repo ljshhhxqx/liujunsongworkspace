@@ -2,6 +2,7 @@
 using Data;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using Mirror;
 using UnityEngine;
 
@@ -122,7 +123,7 @@ namespace Tool.GameEvent
     [Serializable]
     public struct GameInfo
     {
-        public string SceneName;
+        public MapType SceneName;
         public GameMode GameMode;
         public int GameScore;
         public int GameTime;
@@ -140,7 +141,7 @@ namespace Tool.GameEvent
         {
             return new GameInfo
             {
-                SceneName = reader.ReadString(),
+                SceneName = (MapType)reader.ReadInt(),
                 GameMode = (GameMode)reader.ReadByte(),
                 GameScore = reader.ReadInt(),
                 GameTime = reader.ReadInt(),
@@ -150,7 +151,7 @@ namespace Tool.GameEvent
         
         public static void WriteWeatherInfo(this NetworkWriter writer, GameInfo gameInfo)
         {
-            writer.WriteString(gameInfo.SceneName);
+            writer.WriteInt((int)gameInfo.SceneName);
             writer.WriteByte((byte)gameInfo.GameMode);
             writer.WriteInt(gameInfo.GameScore);
             writer.WriteInt(gameInfo.GameTime);

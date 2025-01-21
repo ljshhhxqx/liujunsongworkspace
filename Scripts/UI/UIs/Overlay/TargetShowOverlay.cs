@@ -32,7 +32,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             _target = targetShowEvent.Target ? targetShowEvent.Target.transform : null;
             indicatorUI.gameObject.SetActive(_target);
             _player ??= GameObject.FindGameObjectWithTag("Player").transform;
-            if (_player == null)
+            if (!_player)
             {
                 Debug.LogError("Player not found!");
             }

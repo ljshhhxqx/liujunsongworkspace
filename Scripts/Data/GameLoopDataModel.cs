@@ -1,4 +1,5 @@
 ﻿using Data;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using UniRx;
 
 namespace HotUpdate.Scripts.Data
@@ -8,7 +9,7 @@ namespace HotUpdate.Scripts.Data
         public static readonly ReactiveProperty<float> WarmupRemainingTime = new ReactiveProperty<float>();
         public static readonly ReactiveProperty<float> GameRemainingTime = new ReactiveProperty<float>();
         public static readonly ReactiveProperty<GameLoopData> GameLoopData = new ReactiveProperty<GameLoopData>();
-        public static readonly ReactiveProperty<string> GameSceneName = new ReactiveProperty<string>();
+        public static readonly ReactiveProperty<MapType> GameSceneName = new ReactiveProperty<MapType>();
     }
 
     public struct GameLoopData

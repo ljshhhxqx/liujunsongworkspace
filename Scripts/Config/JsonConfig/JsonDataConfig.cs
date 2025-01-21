@@ -186,7 +186,6 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         Movement,       // 移动类动作：立即响应 + 状态和解
         Interaction,    // 交互类动作：需要服务器验证
         Animation,      // 动画过渡：由状态机自动触发
-        ServerState,     // 服务器状态：由服务器/其他玩家触发
     }
 
     [Serializable]

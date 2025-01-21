@@ -2,6 +2,7 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.Server.Sync;
 using Mirror;
 using Network.NetworkMes;
@@ -15,7 +16,7 @@ using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.Client.Player
 {
-    public class PlayerAnimationComponent : NetworkBehaviour
+    public class PlayerAnimationComponent : NetworkAutoInjectComponent
     {
         private static readonly int Speed = Animator.StringToHash("Speed");
         private static readonly int VerticalSpeed = Animator.StringToHash("VerticalSpeed");
@@ -129,10 +130,12 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     break;
                 case AnimationState.Roll:
                     IsPlayingSpecialAction = true;
+                    Debug.Log("Roll");
                     _animator.CrossFadeInFixedTime(Roll, 0.1f);
                     break;
                 case Attack:
                     IsPlayingSpecialAction = true;
+                    Debug.Log("Attack");
                     RequestAttack();
                     break;
                 case AnimationState.Hit:
@@ -294,10 +297,10 @@ namespace HotUpdate.Scripts.Network.Client.Player
         public event Action OnAttackHit;
 
         [Inject]
-        private void Init(IConfigProvider configProvider, UIManager uiManager, PlayerNotifyManager playerNotifyManager)
+        private void Init(IConfigProvider configProvider, UIManager uiManager)
         {
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
-            _playerNotifyManager = playerNotifyManager;
+            _playerNotifyManager = FindObjectOfType<PlayerNotifyManager>();
             _networkAnimator = GetComponent<NetworkAnimator>();
             _uiManager = uiManager;
             _attackInfo = _jsonDataConfig.GetAnimationInfo(Attack);
@@ -552,7 +555,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         [Command]
         private void CmdDoAnimation(AnimationState animationState)
         {
-            if (isClient)
+            if (isLocalPlayer)
             {
                 if (!DoAnimation(animationState))
                 {

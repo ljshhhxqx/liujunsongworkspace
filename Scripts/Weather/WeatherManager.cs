@@ -358,8 +358,11 @@ namespace HotUpdate.Scripts.Weather
                 Addressables.Release(material);
             }
             WeatherDataModel.Dispose();
-            _uiManager.CloseUI(UIType.Weather);
             WeatherReaderWriter.UnregisterReaderWriter();
+            if (isLocalPlayer)
+            {
+                _uiManager.CloseUI(UIType.Weather);
+            }
         }
     }
 

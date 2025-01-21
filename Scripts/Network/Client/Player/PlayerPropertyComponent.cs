@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using AOTScripts.Tool.ECS;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using Mirror;
 using Tool.Coroutine;
@@ -14,7 +15,7 @@ using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.Client.Player
 {
-    public class PlayerPropertyComponent : NetworkMonoComponent
+    public class PlayerPropertyComponent : NetworkAutoInjectComponent
     {
         private readonly Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>> _maxCurrentProperties = new Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>>();
         private readonly Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>> _currentProperties = new Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>>();
@@ -194,18 +195,22 @@ namespace HotUpdate.Scripts.Network.Client.Player
             _syncMaxCurrentProperties.OnAdd += OnMaxCurrentPropertyAdd;
             _syncMaxCurrentProperties.OnRemove += OnMaxCurrentPropertyRemove;
             _syncMaxCurrentProperties.OnSet += OnMaxCurrentPropertySet;
-            var playerAnimationComponent = GetComponent<PlayerAnimationComponent>();
-            if (playerAnimationComponent)
+
+            if (isLocalPlayer)
             {
-                playerAnimationComponent.CurrentState.Subscribe(state =>
+                var properties = uiManager.SwitchUI<PlayerPropertiesOverlay>();
+                properties.SetPlayerProperties(this);
+                var playerAnimationComponent = GetComponent<PlayerAnimationComponent>();
+                if (playerAnimationComponent)
                 {
-                    _currentAnimationState = state;
-                    _isSprintingProperty.Value = state == AnimationState.Sprint;
-                });
+                    playerAnimationComponent.CurrentState.Subscribe(state =>
+                    {
+                        _currentAnimationState = state;
+                        _isSprintingProperty.Value = state == AnimationState.Sprint;
+                    });
+                }
             }
-            if (!isLocalPlayer) return;
-            var properties = uiManager.SwitchUI<PlayerPropertiesOverlay>();
-            properties.SetPlayerProperties(this);
+
         }
 
         private void OnMaxCurrentPropertyRemove(PropertyTypeEnum arg1, float arg2)
@@ -215,7 +220,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         private void OnMaxCurrentPropertySet(PropertyTypeEnum arg1, float arg2)
         {
-            MaxPropertyChanged(arg1,arg2);
+            MaxPropertyChanged(arg1, arg2);
         }
 
         private void OnMaxCurrentPropertyAdd(PropertyTypeEnum obj)
@@ -254,33 +259,33 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 var maxProperty = new PropertyType(propertyType, maxProperties.Value);
                 var baseProperty = new PropertyType(propertyType, baseProperties.Value);
                 var minProperty = new PropertyType(propertyType, minProperties.Value);
-                _configMinProperties.Add(propertyType, minProperty.Value);
-                _configMaxProperties.Add(propertyType, maxProperty.Value);
-                _configBaseProperties.Add(propertyType, baseProperties.Value);
-                _currentProperties.Add(propertyType, new ReactiveProperty<PropertyType>(baseProperty));
-                _maxCurrentProperties.Add(propertyType, new ReactiveProperty<PropertyType>(baseProperty));
+                _configMinProperties.TryAdd(propertyType, minProperty.Value);
+                _configMaxProperties.TryAdd(propertyType, maxProperty.Value);
+                _configBaseProperties.TryAdd(propertyType, baseProperties.Value);
+                _currentProperties.TryAdd(propertyType, new ReactiveProperty<PropertyType>(baseProperty));
+                _maxCurrentProperties.TryAdd(propertyType, new ReactiveProperty<PropertyType>(baseProperty));
                 for (var j = (int)BuffIncreaseType.Base; j <= (int)BuffIncreaseType.CorrectionFactor; j++)
                 {
                     switch ((BuffIncreaseType)j)
                     {
                         case BuffIncreaseType.Base:
-                            _syncBaseProperties.Add(propertyType, baseProperty.Value);
+                            _syncBaseProperties.TryAdd(propertyType, baseProperty.Value);
                             break;
                         case BuffIncreaseType.Multiplier:
-                            _syncPropertyMultipliers.Add(propertyType, 1f);
+                            _syncPropertyMultipliers.TryAdd(propertyType, 1f);
                             break;
                         case BuffIncreaseType.Extra:
-                            _syncPropertyBuffs.Add(propertyType, 0f);
+                            _syncPropertyBuffs.TryAdd(propertyType, 0f);
                             break;
                         case BuffIncreaseType.CorrectionFactor:
-                            _syncPropertyCorrectionFactors.Add(propertyType, 1f);
+                            _syncPropertyCorrectionFactors.TryAdd(propertyType, 1f);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
                 }
-                _syncCurrentProperties.Add(propertyType, baseProperty.Value);
-                _syncMaxCurrentProperties.Add(propertyType, baseProperty.Value);
+                _syncCurrentProperties.TryAdd(propertyType, baseProperty.Value);
+                _syncMaxCurrentProperties.TryAdd(propertyType, baseProperty.Value);
             }
         }
 

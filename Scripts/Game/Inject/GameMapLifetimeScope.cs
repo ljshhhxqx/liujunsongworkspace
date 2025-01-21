@@ -1,12 +1,11 @@
 ﻿using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Buff;
 using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.NetworkMes;
-using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.Server.Sync;
 using HotUpdate.Scripts.Weather;
-using Mirror;
 using Network.Server;
 using UnityEngine;
 using VContainer;
@@ -35,23 +34,14 @@ namespace HotUpdate.Scripts.Game.Inject
 
         private void RegisterComponent<T>(IContainerBuilder builder) where T : Component
         {
-            // var t = gameSingletonParent.GetComponentInChildren<T>(true);
-            // if (t == null)
-            // {
-            //     var go = Instantiate(new GameObject(typeof(T).Name), gameSingletonParent.transform);
-            //     t = go.AddComponent<T>();
-            // }
-            //
-            // if (t is NetworkBehaviour)
-            // {
-            //     if (!t.gameObject.TryGetComponent<NetworkIdentity>(out _))
-            //     {
-            //         t.gameObject.AddComponent<NetworkIdentity>();
-            //     }
-            // }
             builder.RegisterComponentInHierarchy<T>()
                 .AsSelf()
                 .AsImplementedInterfaces();
         }
+    }
+
+    public interface IMapLifeScope
+    {
+        public MapType MapType { get; }
     }
 }

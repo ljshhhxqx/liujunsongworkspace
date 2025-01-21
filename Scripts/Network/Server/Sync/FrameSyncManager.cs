@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using DG.Tweening;
-using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.NetworkMes;
@@ -62,23 +59,20 @@ namespace HotUpdate.Scripts.Network.Server.Sync
             _playerInputs[message.ConnectionId].Enqueue(message.Input);
             _lastProcessedInputs.TryAdd(message.ConnectionId, 0);
             _lastProcessedInputs[message.ConnectionId] = message.Input.sequence;
-        }
-
-        private GameObject GetPlayer(int playerId)
-        {
-            if (NetworkServer.connections.TryGetValue(playerId, out var identity))
+            if (_players.Count == 0)
             {
-                return identity.identity.gameObject;
+                foreach (var valuePair in NetworkServer.connections)
+                {
+                    _players.TryAdd(valuePair.Key, valuePair.Value.identity.gameObject.GetComponent<PlayerControlClient>());
+                }
             }
-            Debug.LogWarning($"Player {playerId} not found");
-            return null;
         }
 
         private void OnPlayerDamageResultMessage(PlayerDamageResultMessage message)
         {
             foreach (var result in message.DamageResults)
             {
-                var spawnedPlayer = GetPlayer(result.targetId);
+                var spawnedPlayer = _players.GetValueOrDefault(result.targetId, null);
                 if (spawnedPlayer)
                 {
                     var damageJudgement = spawnedPlayer.GetComponent<PlayerDamageJudgement>();
@@ -105,7 +99,7 @@ namespace HotUpdate.Scripts.Network.Server.Sync
 
         private void Update()
         {
-            if (!isServer) return;
+            if (!isServer || _players.Count == 0) return;
 
             while (Time.time - _lastStateUpdateTime >= _stateUpdateInterval)
             {
@@ -126,6 +120,7 @@ namespace HotUpdate.Scripts.Network.Server.Sync
                 // 检查玩家是否超时
                 if (currentTime - _lastInputTimes[connectionId] > _inputLagTolerance)
                 {
+                    //Debug.Log($"Player {connectionId} input lag");
                     continue;
                 }
 
@@ -134,10 +129,12 @@ namespace HotUpdate.Scripts.Network.Server.Sync
                 {
                     var input = inputQueue.Dequeue();
                     frameInputs.TryAdd(connectionId, input);
-                    if (_players.TryGetValue(connectionId, out var controller))
+                    var player = _players.GetValueOrDefault(connectionId, null);
+                    if (player)
                     {
+                        var controller = player.GetComponent<PlayerControlClient>();
                         ActionType actionType = _jsonConfig.GetActionType(input.command);
-
+                        
                         // 服务器端处理逻辑
                         switch (actionType)
                         {
@@ -162,14 +159,18 @@ namespace HotUpdate.Scripts.Network.Server.Sync
                     RpcReceiveFrameInputs(kvp.Key, kvp.Value);
                 }
             }
-        } 
-        
+        }
+
         [ClientRpc]
         private void RpcReceiveFrameInputs(int connectionId, InputData input)
         {
-            if (_players.TryGetValue(connectionId, out var controller))
+            var player = _players.GetValueOrDefault(connectionId, null);
+            //Debug.Log($"Received input {input} from {connectionId}");
+            if (player)
             {
+                var controller = player.GetComponent<PlayerControlClient>();
                 var actionType = _jsonConfig.GetActionType(input.command);
+                Debug.Log($"Received input {input} from {connectionId} action type {actionType}");
                 switch (actionType)
                 {
                     case ActionType.Movement:
@@ -189,6 +190,13 @@ namespace HotUpdate.Scripts.Network.Server.Sync
         
         private void BroadcastGameState()
         {
+            if (_players.Count == 0)
+            {
+                foreach (var valuePair in NetworkServer.connections)
+                {
+                    _players.TryAdd(valuePair.Key, valuePair.Value.identity.gameObject.GetComponent<PlayerControlClient>());
+                }
+            }
             // 为每个玩家创建并发送状态
             foreach (var (connectionId, controller) in _players)
             {
@@ -212,8 +220,10 @@ namespace HotUpdate.Scripts.Network.Server.Sync
         [ClientRpc]
         private void RpcUpdateState(int connectionId, ServerState state)
         {
-            if (!_players.TryGetValue(connectionId, out var controller))
-                return;
+            var player = _players.GetValueOrDefault(connectionId, null);
+            if (!player) return;
+
+            var controller = player.GetComponent<PlayerControlClient>();
 
             // 本地玩家进行状态和解
             if (controller.isLocalPlayer)

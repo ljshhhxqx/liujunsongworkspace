@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.Server.Sync;
-using Mirror;
 using Network.NetworkMes;
 using Tool.GameEvent;
 using UI.UIBase;
@@ -15,10 +14,11 @@ using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.Client.Player
 {
-    public class PlayerControlClient : NetworkBehaviour
+    public class PlayerControlClient : NetworkAutoInjectComponent
     {
         private PlayerPropertyComponent _playerPropertyComponent;
         private PlayerAnimationComponent _playerAnimationComponent;
+        private GameEventManager _gameEventManager;
         private MirrorNetworkMessageHandler _messageHandler;
         private FrameSyncManager _frameSyncManager;
         private UIManager _uiManager;
@@ -57,14 +57,13 @@ namespace HotUpdate.Scripts.Network.Client.Player
         [SerializeField] private float interpolationTime = 0.1f;
 
         [Inject]
-        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager,
-            MirrorNetworkMessageHandler networkMessageHandler,
-            FrameSyncManager frameSyncManager, UIManager uiManager)
+        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager,UIManager uiManager)
         {
             _playerAnimationComponent = GetComponent<PlayerAnimationComponent>();
             _playerPropertyComponent = GetComponentInChildren<PlayerPropertyComponent>();
-            _frameSyncManager = frameSyncManager;
-            _messageHandler = networkMessageHandler;
+            _gameEventManager = gameEventManager;
+            _frameSyncManager = FindObjectOfType<FrameSyncManager>();
+            _messageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
             _uiManager = uiManager;
             _rotateCenter = transform.Find("RotateCenter");
             _checkStairsTransform = transform.Find("CheckStairs");
@@ -72,13 +71,17 @@ namespace HotUpdate.Scripts.Network.Client.Player
             _rigidbody = GetComponent<Rigidbody>();
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _capsuleCollider = GetComponent<CapsuleCollider>();
-            gameEventManager.Publish(new PlayerSpawnedEvent(_rotateCenter));
+        }
+
+        protected override void OnInject()
+        {
+            base.OnInject();
+            _gameEventManager.Publish(new PlayerSpawnedEvent(_rotateCenter));
             _speed = _playerPropertyComponent.GetProperty(PropertyTypeEnum.Speed);
             _speed.Subscribe(x =>
             {
                 _targetSpeed = x.Value;
             }).AddTo(this);
-            if (!isLocalPlayer) return;
         }
 
         private void FixedUpdate()
@@ -95,6 +98,10 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         public void ExecutePlayerLocalInput(InputData input)
         {
+            if (_playerAnimationComponent.IsPlayingSpecialAction)
+            {
+                return;
+            }
             _inputMovement = input.playerInput.playerInputMovement;
             switch (input.command)
             {
@@ -113,6 +120,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         public void ExecuteAnimationInput(InputData input)
         {
+            if(_playerAnimationComponent.IsPlayingSpecialAction) return;
             HandleAnimation(input);
             _playerPropertyComponent.HasMovementInput = input.playerInput.playerInputMovement.magnitude > 0;
         }
@@ -124,6 +132,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 return;
             }
             _rigidbody.velocity = Vector3.zero;
+            Debug.Log($"ExecuteServerAction {input.playerInput.playerInputMovement} input.command {input.command}");
             switch (input.command)
             {
                 case AnimationState.Attack:
@@ -236,10 +245,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         public void HandleMove(Vector3 inputMovement)
         {
-            if (_playerAnimationComponent.IsPlayingSpecialAction)
-            {
-                return;
-            }
             var hasMovementInput = inputMovement.magnitude > 0f;
             Vector3 movement;
             if (_playerEnvironmentState == PlayerEnvironmentState.OnStairs)
@@ -266,7 +271,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 movement.y = 0f;
                 // 计算目标位置和速度
                 var targetPosition = transform.position + movement.normalized * (_currentSpeed * Time.deltaTime);
-                var targetVelocity = (targetPosition - transform.position) / Time.deltaTime;
+                var targetVelocity = movement.normalized * _currentSpeed;
                 // 保持垂直速度
                 targetVelocity.y = _rigidbody.velocity.y;
                 if (_isOnSlope)
@@ -289,11 +294,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         private void HandleJump()
         {
-            if (_playerAnimationComponent.IsPlayingSpecialAction)
-            {
-                return;
-            }
-
             if (_playerEnvironmentState == PlayerEnvironmentState.OnGround)
             {
                 // 清除当前垂直速度
@@ -313,94 +313,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
             }
         }
 
-        // private void HandleMovementAndJump(InputData inputData)
-        // {
-        //     var inputMovement = inputData.playerInput.playerInputMovement;
-        //     var hasMovementInput = inputMovement.magnitude > 0.1f;
-        //     if (_playerEnvironmentState == PlayerEnvironmentState.OnStairs)
-        //     {
-        //         _rigidbody.useGravity = false;
-        //         if (_playerAnimationComponent.IsPlayingSpecialAction)
-        //         {
-        //             return;
-        //         }
-        //         if (_currentRequestAnimationState is AnimationState.Jump or AnimationState.SprintJump)
-        //         {
-        //             _rigidbody.velocity = Vector3.zero;
-        //             _rigidbody.MovePosition(transform.position + _stairsHitNormal.normalized);
-        //             _rigidbody.AddForce(_stairsHitNormal.normalized * _jsonDataConfig.PlayerConfig.JumpSpeed / 5f, ForceMode.Impulse);
-        //             return;
-        //         }
-        //         var movement = inputMovement.z * -_stairsNormal.normalized + transform.right * inputMovement.x;
-        //         if (hasMovementInput)
-        //         {
-        //             var moveDirection = movement.normalized;
-        //             var targetVelocity = moveDirection * _currentSpeed;
-        //             targetVelocity += _stairsHitNormal.normalized * -2f;
-        //             _rigidbody.velocity = targetVelocity;
-        //         }
-        //         else
-        //         {
-        //             _rigidbody.velocity = _stairsHitNormal.normalized * -2f;
-        //         }
-        //     }
-        //     else if (_playerEnvironmentState == PlayerEnvironmentState.OnGround)
-        //     {
-        //         if (_playerAnimationComponent.IsPlayingSpecialAction)
-        //         {
-        //             if (_currentRequestAnimationState is AnimationState.Roll)
-        //             {
-        //                 _rigidbody.velocity = Vector3.zero;
-        //                 _rigidbody.AddForce(transform.forward.normalized * _jsonDataConfig.PlayerConfig.RollForce, ForceMode.Impulse);
-        //             }
-        //             else if (_currentRequestAnimationState is AnimationState.Attack)
-        //             {
-        //                 _rigidbody.velocity = Vector3.zero;
-        //             }
-        //             return;
-        //         }
-        //         // 处理跳跃
-        //         if (_currentRequestAnimationState is AnimationState.Jump or AnimationState.SprintJump)
-        //         {
-        //             // 清除当前垂直速度
-        //             var vel = _rigidbody.velocity;
-        //             vel.y = 0f;
-        //             _rigidbody.velocity = vel;
-        //     
-        //             // 应用跳跃力
-        //             var jumpDirection = _isOnSlope ? Vector3.Lerp(Vector3.up, _slopeNormal, 0.5f) : Vector3.up;
-        //             _rigidbody.AddForce(jumpDirection * _jsonDataConfig.PlayerConfig.JumpSpeed, ForceMode.Impulse);
-        //         }
-        //
-        //         inputMovement = inputMovement.magnitude <= 0.1f ? inputMovement : 
-        //             _camera.transform.TransformDirection(inputMovement);
-        //         inputMovement.y = 0f;
-        //         // 计算目标位置和速度
-        //         var targetPosition = transform.position + inputMovement.normalized * (_currentSpeed * Time.fixedDeltaTime);
-        //         var targetVelocity = (targetPosition - transform.position) / Time.fixedDeltaTime;
-        //         // 保持垂直速度
-        //         targetVelocity.y = _rigidbody.velocity.y;
-        //         if (_isOnSlope)
-        //         {
-        //             // 在斜坡上时，调整移动方向
-        //             var slopeMovementDirection = Vector3.ProjectOnPlane(inputMovement, _slopeNormal).normalized;
-        //             targetVelocity = slopeMovementDirection * _currentSpeed;
-        //             targetVelocity.y = _rigidbody.velocity.y;
-        //
-        //             // 添加额外的向下力以保持贴合斜面
-        //             if (hasMovementInput)
-        //             {
-        //                 _rigidbody.AddForce(-_slopeNormal * 20f, ForceMode.Force);
-        //             }
-        //         }
-        //         // 应用速度
-        //         _rigidbody.velocity = targetVelocity;
-        //     }
-        // }
-
         private void SetAnimationParams()
         {
-            //Debug.Log($"SetAnimationParams called {_currentSpeed}");
             _playerAnimationComponent.SetMoveSpeed(_currentSpeed);
             _playerAnimationComponent.SetInputMagnitude(_inputMovement.magnitude);
             _playerAnimationComponent.SetFallSpeed(_verticalSpeed);
@@ -408,9 +322,9 @@ namespace HotUpdate.Scripts.Network.Client.Player
         
         private float _groundDistance;
         [SerializeField]
-        private float groundMinDistance = 0.25f;
+        private float groundMinDistance = 0.1f;
         [SerializeField]
-        private float groundMaxDistance = 0.5f;
+        private float groundMaxDistance = 0.25f;
 
         private void CheckGroundDistance()
         {
@@ -479,6 +393,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 }
                 else
                 {
+                    _rigidbody.velocity = _playerPropertyComponent.HasMovementInput ? _rigidbody.velocity : Vector3.zero;
                     _verticalSpeed = 0f;
                 }
             }
@@ -500,7 +415,10 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         private void OnDestroy()
         {
-            _uiManager.CloseUI(UIType.PlayerPropertiesOverlay);
+            if (isLocalPlayer)
+            {
+                _uiManager.CloseUI(UIType.PlayerPropertiesOverlay);
+            }
         }
     }
 }

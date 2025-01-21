@@ -5331,8 +5331,8 @@ MonoBehaviour:
   syncInterval: 0
   reconcileThreshold: 2
   interpolationTime: 0.1
-  groundMinDistance: 0.25
-  groundMaxDistance: 0.5
+  groundMinDistance: 0.1
+  groundMaxDistance: 0.25
 --- !u!114 &6292807028564305972
 MonoBehaviour:
   m_ObjectHideFlags: 0

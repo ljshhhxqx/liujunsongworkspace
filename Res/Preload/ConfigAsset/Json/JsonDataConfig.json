@@ -22,7 +22,7 @@
             "SprintSpeedFactor": 2.0,
             "RotateSpeed": 7.0,
             "OnStairsSpeedRatioFactor": 0.75,
-            "JumpSpeed": 40.0,
+            "JumpSpeed": 45.0,
             "StairsCheckDistance": 0.44999998807907107,
             "MaxProperties": [
                 {
@@ -786,11 +786,11 @@
                     "animationState": 4
                 },
                 {
-                    "actionType": 4,
+                    "actionType": 2,
                     "animationState": 5
                 },
                 {
-                    "actionType": 4,
+                    "actionType": 2,
                     "animationState": 8
                 },
                 {
@@ -798,7 +798,7 @@
                     "animationState": 7
                 },
                 {
-                    "actionType": 4,
+                    "actionType": 2,
                     "animationState": 9
                 },
                 {
@@ -806,7 +806,7 @@
                     "animationState": 6
                 },
                 {
-                    "actionType": 4,
+                    "actionType": 2,
                     "animationState": 10
                 }
             ]

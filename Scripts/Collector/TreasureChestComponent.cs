@@ -61,7 +61,10 @@ namespace HotUpdate.Scripts.Collector
             _chestDataConfig = configProvider.GetConfig<ChestDataConfig>();
             _chestCommonData = _jsonDataConfig.ChestCommonData;
             _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
-            _gameEventManager.Publish(new TargetShowEvent(transform));
+            if (isLocalPlayer)
+            {
+                _gameEventManager?.Publish(new TargetShowEvent(null));
+            }
             lid.transform.eulerAngles = _chestCommonData.InitEulerAngles;
             _triggerEnterObserver = _chestCollider.OnTriggerEnterAsObservable()
                 .Subscribe(OnTriggerEnterObserver);
@@ -71,7 +74,10 @@ namespace HotUpdate.Scripts.Collector
 
         private void OnReturnToPool()
         {
-            _gameEventManager?.Publish(new TargetShowEvent(null));
+            if (isLocalPlayer)
+            {
+                _gameEventManager?.Publish(new TargetShowEvent(null));
+            }
             _gameEventManager = null;
             _chestDataConfig = null;
             _chestCommonData = default;

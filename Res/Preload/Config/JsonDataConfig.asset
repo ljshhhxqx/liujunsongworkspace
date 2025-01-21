@@ -413,16 +413,16 @@ MonoBehaviour:
         animationState: 3
       - actionType: 1
         animationState: 4
-      - actionType: 4
+      - actionType: 2
         animationState: 5
-      - actionType: 4
+      - actionType: 2
         animationState: 8
       - actionType: 3
         animationState: 7
-      - actionType: 4
+      - actionType: 2
         animationState: 9
       - actionType: 3
         animationState: 6
-      - actionType: 4
+      - actionType: 2
         animationState: 10
   canEdit: 0

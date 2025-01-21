@@ -268,7 +268,10 @@ namespace HotUpdate.Scripts.Collector
 
         private void OnDestroy()
         {
-            _uiManager.CloseUI(UIType.TargetShowOverlay);
+            if (isLocalPlayer)
+            {
+                _uiManager.CloseUI(UIType.TargetShowOverlay);
+            }
         }
         
         private readonly HashSet<int> _processedItems = new HashSet<int>();
@@ -526,7 +529,7 @@ namespace HotUpdate.Scripts.Collector
                     component.CollectId = info.id;
                     if (component.CollectObjectData.collectObjectClass == CollectObjectClass.Buff)
                     {
-                        Debug.Log($"Spawning buff item at position: {info.position} with id: id-{info.id} netId-{networkIdentity.netId} configId-{info.collectConfigId} buff.propertyType-{buff.propertyType} buffId-{buff.buffId} buffSize-{info.buffSize} buffPropertyType-{buff.propertyType}");
+                        //Debug.Log($"Spawning buff item at position: {info.position} with id: id-{info.id} netId-{networkIdentity.netId} configId-{info.collectConfigId} buff.propertyType-{buff.propertyType} buffId-{buff.buffId} buffSize-{info.buffSize} buffPropertyType-{buff.propertyType}");
                         component.SetBuffData(info.buffExtraData);
                         component.SetMaterial(_collectibleMaterials[configData.buffSize][buff.propertyType]);
                     }

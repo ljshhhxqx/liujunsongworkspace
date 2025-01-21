@@ -1,5 +1,4 @@
 using AOTScripts.Tool;
-using Common;
 using UI.UIBase;
 using UnityEngine;
 using UnityEngine.UI;

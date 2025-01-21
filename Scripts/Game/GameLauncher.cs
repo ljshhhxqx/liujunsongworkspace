@@ -1,12 +1,12 @@
 ﻿using System;
 using AOTScripts.Tool;
-using Common;
 using Cysharp.Threading.Tasks;
 using Data;
 using Game;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.UI.UIs.SecondPanel;
 using HotUpdate.Scripts.Weather;

@@ -29,7 +29,7 @@ namespace Network.Server
         private readonly Dictionary<int, string> _playerAccountIdMap = new Dictionary<int, string>();
         private PlayerDataManager _playerDataManager;
         private PlayerInGameManager _playerInGameManager;
-        private string _mapName;
+        private MapType _mapName;
 
         [Inject]
         private void Init(GameEventManager gameEventManager, UIManager uIManager, IObjectResolver objectResolver, PlayerInGameManager playerInGameManager, PlayerDataManager playerDataManager)
@@ -72,7 +72,7 @@ namespace Network.Server
             if (Enum.TryParse<MapType>(sceneResourcesLoadedEvent.SceneName, out var mapType))
             {
                 _networkManagerHUD.enabled = true;
-                _mapName = mapType.ToString();
+                _mapName = mapType;
                 Debug.Log("map resources loaded");
                 return;
             }
@@ -99,11 +99,11 @@ namespace Network.Server
             }
             Debug.Log($"Received PlayerAccountId from client: {message.UID}");
             // 获取已添加的玩家对象
-            if (conn.identity != null)
+            if (conn.identity)
             {
                 var player = conn.identity.gameObject;
                 var playerData = player.GetComponentInChildren<PlayerPropertyComponent>();
-                if (playerData != null)
+                if (playerData)
                 {
                     playerData.PlayerId = message.UID;
                     _playerAccountIdMap[conn.connectionId] = message.UID;
