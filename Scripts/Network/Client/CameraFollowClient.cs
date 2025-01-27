@@ -1,5 +1,6 @@
 ﻿using Game.Map;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Tool.GameEvent;
 using Tool.GameEvent;
 using UnityEngine;
 using VContainer;

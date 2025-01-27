@@ -7,6 +7,7 @@ using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
 using Network.NetworkMes;
 using Tool.GameEvent;

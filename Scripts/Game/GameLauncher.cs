@@ -8,6 +8,7 @@ using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIs.SecondPanel;
 using HotUpdate.Scripts.Weather;
 using Network.Data;

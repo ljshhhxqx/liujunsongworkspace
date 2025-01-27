@@ -5,6 +5,7 @@ using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Game;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
 using HotUpdate.Scripts.Weather;
 using Model;

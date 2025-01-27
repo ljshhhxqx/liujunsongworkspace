@@ -2,6 +2,7 @@ using System;
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Tool.GameEvent;
 using Network.Data;
 using Network.Server.PlayFab;
 using PlayFab;

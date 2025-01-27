@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using UnityEngine;
 using UnityEngine.Serialization;
+using AnimationInfo = HotUpdate.Scripts.Config.ArrayConfig.AnimationInfo;
 using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Config.JsonConfig
@@ -46,7 +47,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
             if (_animationInfos.Count != 0) return;
             foreach (var animationInfo in jsonConfigData.playerConfig.AnimationInfos)
             {
-                _animationInfos.Add(animationInfo.State, animationInfo);
+                _animationInfos.Add(animationInfo.state, animationInfo);
             }
         }
 
@@ -117,16 +118,6 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         {
             return GetPlayerMinProperties().GetValueOrDefault(propertyType);
         }
-
-        public float GetPlayerAnimationCost(AnimationState state)
-        {
-            return GetAnimationInfo(state).Cost;
-        }
-        
-        public float GetPlayerAnimationCooldown(AnimationState state)
-        {
-            return GetAnimationInfo(state).Cooldown;
-        }
         
         public float GetBuffSize(CollectObjectBuffSize collectObjectBuffSize)
         {
@@ -147,18 +138,6 @@ namespace HotUpdate.Scripts.Config.JsonConfig
             var isCritical = Random.Range(0f, 1f) < criticalRate;
             var damage = attackPower * (1f - damageReduction) * (isCritical? criticalDamageRatio : 1f);
             return damage;
-        }
-        
-        public ActionType GetActionType(AnimationState animationState)
-        {
-            foreach (var animationActionData in jsonConfigData.otherData.animationActionData)
-            {
-                if (animationActionData.animationState == animationState)
-                {
-                    return animationActionData.actionType;
-                }
-            }
-            return ActionType.None;
         }
     }
 
@@ -285,24 +264,6 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public List<AnimationInfo> AnimationInfos;
         
         #endregion
-    }
-
-    [Serializable]
-    public struct AnimationInfo
-    {
-        public AnimationState State;
-        public float Cost;
-        public float Cooldown;
-        public int Priority;
-        public AnimationType AnimationType;
-        public bool CanBeInterrupted;
-    }
-    
-    public enum AnimationType
-    {
-        Continuous,  // 持续性动画（待机、移动、奔跑）
-        Single,      // 一次性动画（跳跃、翻滚、受击、死亡）
-        Combo        // 连击动画（攻击）
     }
 
     public enum PlayerEnvironmentState

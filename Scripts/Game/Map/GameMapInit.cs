@@ -3,6 +3,7 @@ using Game.Map;
 using HotUpdate.Scripts.Config;
 using System;
 using HotUpdate.Scripts.Game.Inject;
+using HotUpdate.Scripts.Tool.GameEvent;
 using Tool.GameEvent;
 using UnityEngine;
 using VContainer;

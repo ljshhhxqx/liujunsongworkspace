@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
+using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
 using Tool.GameEvent;
 using UnityEngine;
@@ -15,7 +16,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         private readonly List<int> _playerConnectionIds = new List<int>();
         private readonly Queue<INetworkCommand> _currentTickCommands = new Queue<INetworkCommand>();
         private readonly Dictionary<CommandType, BaseSyncSystem> _syncSystems = new Dictionary<CommandType, BaseSyncSystem>();
-        private readonly Dictionary<Type, IServerSystem> _serverSystems = new Dictionary<Type, IServerSystem>();
+        // 服务器命令，直接在当前tick处理
+        private readonly Queue<INetworkCommand> _serverCommands = new Queue<INetworkCommand>();
         [Header("Sync Settings")]
         [SerializeField] private float tickRate = 1/30f; // 服务器每秒发送30个tick
         [SerializeField] private float maxCommandAge = 1f; // 最大命令存活时间
@@ -35,7 +37,6 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             if (!isServer)
             {
                 _syncSystems.Clear();
-                _serverSystems.Clear();
                 _pendingCommands.Clear();
                 _currentTickCommands.Clear();
             }
@@ -45,13 +46,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             foreach (CommandType commandType in commandTypes)
             {
                 _syncSystems[commandType] = commandType.GetSyncSystem();
-                RegisterServerInterfaces(_syncSystems[commandType]);
+                _syncSystems[commandType].Initialize(this);
                 ObjectInjectProvider.Instance.Inject(_syncSystems[commandType]);
-            }
-
-            foreach (var syncSystem in _syncSystems.Values)
-            {
-                syncSystem.Initialize(this);
             }
         }
 
@@ -69,22 +65,6 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         
         public event Action<int, NetworkIdentity> OnPlayerConnected;
         public event Action<int> OnPlayerDisconnected;
-
-        private void RegisterServerInterfaces(BaseSyncSystem system)
-        {
-            var systemType = system.GetType();
-            var interfaces = systemType.GetInterfaces();
-        
-            foreach (var interfaceType in interfaces)
-            {
-                // 检查是否是 IServerSystem 的子接口
-                if (interfaceType != typeof(IServerSystem) && 
-                    typeof(IServerSystem).IsAssignableFrom(interfaceType))
-                {
-                    _serverSystems[interfaceType] = system as IServerSystem;
-                }
-            }
-        }
         
         public T GetSyncSystem<T>(CommandType commandType) where T : BaseSyncSystem
         {
@@ -97,17 +77,6 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             return null;
         }
 
-        public T GetServerSystem<T>() where T : class, IServerSystem
-        {
-            if (_serverSystems.TryGetValue(typeof(T), out var system))
-            {
-                return (T)system;
-            }
-            
-            Debug.LogError($"No server system found for {typeof(T)}");
-            return null;
-        }
-
         private void Update()
         {
             if (!isServer || _isProcessing) return;
@@ -115,9 +84,9 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             _tickTimer += Time.deltaTime;
         
             // 检查是否需要处理新的tick
-            while (_tickTimer >= tickRate)
+            if (_tickTimer >= tickRate)
             {
-                _tickTimer -= tickRate;
+                _tickTimer = 0;
                 ProcessTick();
                 CurrentTick++;
             }
@@ -126,10 +95,13 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         [Server]
         public void EnqueueCommand<T>(T command) where T : INetworkCommand
         {
-            if (command.IsValid())
+            var header = command.GetHeader();
+            if (header.isClientCommand || !command.IsValid())
             {
-                _pendingCommands.Enqueue(command);
+                Debug.LogError($"Invalid command: {header.commandType}");
+                return;
             }
+            _pendingCommands.Enqueue(command);
         }
 
         [Server]
@@ -143,8 +115,6 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 MoveCommandsToCurrentTick();
                 // 处理当前tick的所有命令
                 ProcessCurrentTickCommands();
-                // 广播状态更新
-                BroadcastStateUpdates();
             }
             finally
             {
@@ -186,15 +156,15 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             {
                 var command = _currentTickCommands.Dequeue();
                 var header = command.GetHeader();
-                var syncSystem = GetSyncSystem<BaseSyncSystem>(header.commandType);
-                if (syncSystem == null)
-                {
-                    Debug.LogError($"No sync system found for {header.commandType}");
-                    continue;
-                }
                 OnServerProcessCurrentTickCommand?.Invoke(command, _networkIdentity);
-                var allStates = syncSystem.GetAllState();
-                RpcProcessCurrentTickCommand(allStates);
+                var syncSystem = GetSyncSystem(header.commandType);
+                if (syncSystem != null)
+                {
+                    var allStates = syncSystem.GetAllState();
+                    RpcProcessCurrentTickCommand(allStates);
+                }
+                // 广播状态更新
+                BroadcastStateUpdates();
             }
         }
 
@@ -202,12 +172,26 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         /// 处理服务器端命令(安全地使用，客户端无法使用)
         /// </summary>
         /// <param name="command"></param>
-        /// <typeparam name="T"></typeparam>
-        public void ProcessServerCommand<T>(INetworkCommand command) where T : class, IServerSystem
+        public void EnqueueServerCommand<T>(T command) where T : INetworkCommand
         {
-            if (!isServer) return;
-            var system = GetServerSystem<T>();
-            system.ProcessServerCommand(command, _networkIdentity);
+            var header = command.GetHeader();
+            if (!isServer || header.isClientCommand)
+            {
+                Debug.LogError($"Invalid command: {header.commandType}");
+                return;
+            }
+            _serverCommands.Enqueue(command);
+        }
+        
+        private BaseSyncSystem GetSyncSystem(CommandType commandType)
+        {
+            if (_syncSystems.TryGetValue(commandType, out var system))
+            {
+                return system;
+            }
+            
+            Debug.LogError($"No sync system found for {commandType}");
+            return null;
         }
 
         public event Action<string> OnClientProcessStateUpdate;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using HotUpdate.Scripts.Buff;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
 using HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState;
@@ -9,16 +10,18 @@ using Mirror;
 using Newtonsoft.Json;
 using UnityEngine;
 using VContainer;
+using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
 {
-    public class PlayerPropertySyncSystem : BaseSyncSystem, IPropertySyncSystem
+    public class PlayerPropertySyncSystem : BaseSyncSystem
     {
         public Dictionary<PropertyTypeEnum, float> ConfigPlayerMinProperties { get; private set; }
         public Dictionary<PropertyTypeEnum, float> ConfigPlayerMaxProperties { get; private set; }
         public Dictionary<PropertyTypeEnum, float> ConfigPlayerBaseProperties { get; private set; }
         public Dictionary<int, PropertyPredictionState> ConfigPlayerPredictionState { get; private set; }
         private IConfigProvider _configProvider;
+        private AnimationConfig _animationConfig;
         private BuffManager _buffManager;
 
         [Inject]
@@ -26,10 +29,17 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         {
             _configProvider = configProvider;
             _buffManager = buffManager;
+            _buffManager.OnServerBuffRemoved += HandleServerBuffRemoved;
             var jsonConfig = _configProvider.GetConfig<JsonDataConfig>();
+            _animationConfig = _configProvider.GetConfig<AnimationConfig>();
             ConfigPlayerMinProperties = jsonConfig.GetPlayerMaxProperties();
             ConfigPlayerMaxProperties = jsonConfig.GetPlayerMaxProperties();
             ConfigPlayerBaseProperties = jsonConfig.GetPlayerBaseProperties();
+        }
+
+        private void HandleServerBuffRemoved(int connectionId, List<BuffIncreaseData> arg2)
+        {
+            
         }
 
         protected override void OnClientProcessStateUpdate(string stateJson)
@@ -94,7 +104,14 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                         {
                             return null;
                         }
-                        HandleEnvironmentChange(header.connectionId, environmentChange.environmentType);
+                        HandleEnvironmentChange(header.connectionId, environmentChange.hasInputMovement, environmentChange.environmentType, environmentChange.isSprinting);
+                        break;
+                    case PropertyAnimationCommand animationCommand:
+                        if (!identity.isServer)
+                        {
+                            return null;
+                        }
+                        HandleAnimationCommand(header.connectionId, animationCommand.animationState);
                         break;
                     case PropertyCommandBuff buff:
                         if (!identity.isServer)
@@ -134,16 +151,17 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             var strengthRecover = playerState.Properties[PropertyTypeEnum.StrengthRecovery];
             var health = playerState.Properties[PropertyTypeEnum.Health];
             var strength = playerState.Properties[PropertyTypeEnum.Strength];
-            health.UpdateCalculator(new BuffIncreaseData
+            playerState.Properties[PropertyTypeEnum.Health] = health.UpdateCalculator(health, new BuffIncreaseData
             {
                 increaseType = BuffIncreaseType.Current,
                 increaseValue = healthRecover.CurrentValue * GameSyncManager.TickRate,
             });
-            strength.UpdateCalculator(new BuffIncreaseData
+            playerState.Properties[PropertyTypeEnum.Strength] = strength.UpdateCalculator(strength, new BuffIncreaseData
             {
                 increaseType = BuffIncreaseType.Current,
                 increaseValue = strengthRecover.CurrentValue * GameSyncManager.TickRate,
             });
+            PropertyStates[connectionId] = playerState;
         }
 
         private void HandleBuff(int connectionId, int buffId, BuffType buffType)
@@ -161,9 +179,74 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             
         }
 
-        private void HandleEnvironmentChange(int connectionId, PlayerEnvironmentState environmentType)
+        private void HandleAnimationCommand(int connectionId, AnimationState command)
         {
-            
+            var cost = _animationConfig.GetPlayerAnimationCost(command);
+            if (cost <= 0)
+            {
+                return;
+            }
+            var playerState = GetState<PlayerPropertyState>(connectionId);
+            cost *= command == AnimationState.Sprint ? GameSyncManager.TickRate : 1f;
+            var strength = playerState.Properties[PropertyTypeEnum.Strength];
+            if (cost > strength.CurrentValue)
+            {
+                Debug.LogError($"PlayerPropertySyncSystem: {connectionId} does not have enough strength to perform {command} animation.");
+                return;
+            }
+            playerState.Properties[PropertyTypeEnum.Strength] = strength.UpdateCalculator(strength, new BuffIncreaseData
+            {
+                increaseType = BuffIncreaseType.Current,
+                increaseValue = cost,
+                operationType = BuffOperationType.Subtract,
+            });
+            PropertyStates[connectionId] = playerState;
+        }
+
+        private void HandleEnvironmentChange(int connectionId, bool hasInputMovement, PlayerEnvironmentState environmentType, bool isSprinting)
+        {
+            var playerState = GetState<PlayerPropertyState>(connectionId);
+            var speed = playerState.Properties[PropertyTypeEnum.Speed];
+            var sprintRatio = playerState.Properties[PropertyTypeEnum.SprintSpeedRatio];
+            var stairsRatio = playerState.Properties[PropertyTypeEnum.StairsSpeedRatio];
+            if (!hasInputMovement)
+            {
+                speed = speed.UpdateCalculator(speed, new BuffIncreaseData
+                {
+                    increaseType = BuffIncreaseType.CorrectionFactor,
+                    increaseValue = 0,
+                });
+            }
+            else
+            {
+                switch (environmentType)
+                {
+                    case PlayerEnvironmentState.InAir:
+                        break;
+                    case PlayerEnvironmentState.OnGround:
+                        speed = speed.UpdateCalculator(speed, new BuffIncreaseData
+                        {
+                            increaseType = BuffIncreaseType.CorrectionFactor,
+                            increaseValue = isSprinting ? sprintRatio.CurrentValue : 1,
+                            operationType = BuffOperationType.Multiply,
+                        });
+                        break;
+                    case PlayerEnvironmentState.OnStairs:
+                        speed = speed.UpdateCalculator(speed, new BuffIncreaseData
+                        {
+                            increaseType = BuffIncreaseType.CorrectionFactor,
+                            increaseValue = isSprinting ? sprintRatio.CurrentValue * stairsRatio.CurrentValue : stairsRatio.CurrentValue,
+                            operationType = BuffOperationType.Multiply,
+                        });
+                        break;
+                    case PlayerEnvironmentState.Swimming:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(environmentType), environmentType, null);
+                }
+            }
+            playerState.Properties[PropertyTypeEnum.Speed] = speed;
+            PropertyStates[connectionId] = playerState;
         }
 
         public override void SetState<T>(int connectionId, T state)
@@ -180,22 +263,6 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 return false;
             }
             return false;
-        }
-
-        public void ModifyProperty(PropertyCommand command, NetworkIdentity identity)
-        {
-            if (!identity || !identity.isServer)
-            {
-                return;
-            }
-        }
-
-        public void ProcessServerCommand(INetworkCommand command, NetworkIdentity identity)
-        {
-            if (command is PropertyCommand propertyCommand)
-            {
-                ModifyProperty(propertyCommand, identity);
-            }
         }
     }
 }

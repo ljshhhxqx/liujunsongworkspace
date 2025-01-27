@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using Game.Inject;
+using HotUpdate.Scripts.Tool.GameEvent;
 using Tool.GameEvent;
 using UI.UIBase;
 using UI.UIs;

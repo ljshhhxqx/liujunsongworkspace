@@ -13,6 +13,7 @@ using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.Server.Collect;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using Mirror;
@@ -158,7 +159,7 @@ namespace HotUpdate.Scripts.Collector
                 var configData = _chestConfig.GetChestConfigData(treasureChest.chestType);
                 if (configData.BuffExtraData.buffType != BuffType.None)
                 {
-                    _buffManager.AddBuffToPlayer(playerProperty, configData.BuffExtraData, CollectObjectBuffSize.Small);
+                    //_buffManager.AddBuffToPlayer(playerProperty, configData.BuffExtraData, CollectObjectBuffSize.Small);
                     Debug.Log($"Add buff {configData.BuffExtraData.buffType} to player {player.name}");
                 }
 
@@ -318,14 +319,14 @@ namespace HotUpdate.Scripts.Collector
                             playerProperty.IncreaseProperty(PropertyTypeEnum.Score, buff.increaseDataList);
                             break;
                         case CollectObjectClass.Buff:
-                            if (configData.isRandomBuff)
-                            {
-                                _buffManager.AddBuffToPlayer(playerProperty, item.BuffData, itemInfo.buffSize);
-                            }
-                            else
-                            {
-                                _buffManager.AddBuffToPlayer(playerProperty, configData.buffExtraData, itemInfo.buffSize);
-                            }
+                            // if (configData.isRandomBuff)
+                            // {
+                            //     _buffManager.AddBuffToPlayer(playerProperty, item.BuffData, itemInfo.buffSize);
+                            // }
+                            // else
+                            // {
+                            //     _buffManager.AddBuffToPlayer(playerProperty, configData.buffExtraData, itemInfo.buffSize);
+                            // }
                             break;
                     }
 

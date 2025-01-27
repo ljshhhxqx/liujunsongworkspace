@@ -26,7 +26,26 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
         
         public float CurrentValue => _propertyData.currentValue;
         public float MaxCurrentValue => _propertyData.maxCurrentValue;
-        
+
+        public float GetPropertyValue(BuffIncreaseType increaseType)
+        {
+            switch (increaseType)
+            {
+                case BuffIncreaseType.Base:
+                    return _propertyData.baseValue;
+                case BuffIncreaseType.Multiplier:
+                    return _propertyData.multiplier;
+                case BuffIncreaseType.Extra:
+                    return _propertyData.additive;
+                case BuffIncreaseType.CorrectionFactor:
+                    return _propertyData.correction;
+                case BuffIncreaseType.Current:
+                    return _propertyData.currentValue;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(increaseType), increaseType, null);
+            }
+        }
+
         private readonly PropertyTypeEnum _propertyType;
         private PropertyData _propertyData;
         private float _maxValue;
@@ -44,59 +63,130 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
             return type.GetConsumeType() == PropertyConsumeType.Consume;
         }
 
-        public PropertyCalculator UpdateCalculator(BuffIncreaseData data)
+        public PropertyCalculator UpdateCurrentValue(float value)
         {
-            var propertyData = _propertyData;
+            return new PropertyCalculator(_propertyType, new PropertyData
+            {
+                baseValue = _propertyData.baseValue,
+                additive = _propertyData.additive,
+                multiplier = _propertyData.multiplier,
+                correction = _propertyData.correction,
+                currentValue = Mathf.Clamp(value + _propertyData.currentValue, _minValue, 
+                    IsResourceProperty(_propertyType) ? _propertyData.maxCurrentValue : _maxValue),
+                maxCurrentValue = _propertyData.maxCurrentValue
+            }, _maxValue, _minValue);
+        }
+
+        public PropertyCalculator UpdateCalculator(List<BuffIncreaseData> data)
+        {
+            if (data == null || data.Count == 0)
+                return this;
+
+            var propertyCalculator = this;
+            foreach (var buff in data)
+            {
+                propertyCalculator = UpdateCalculator(propertyCalculator, buff);
+            }
+
+            return propertyCalculator;
+        }
+
+        public PropertyCalculator UpdateCalculator(PropertyCalculator calculator, BuffIncreaseData data)
+        {
+            if (_propertyType == PropertyTypeEnum.Score)
+            {
+                return HandleScoreUpdate(calculator, data);
+            }
+
+            var propertyData = calculator._propertyData;
+            
+            // 根据增益类型更新相应的值
             switch (data.increaseType)
             {
                 case BuffIncreaseType.Base:
-                    propertyData.baseValue = Mathf.Max(0, data.increaseValue + propertyData.baseValue);
+                    propertyData.baseValue = Mathf.Max(0, ApplyOperation(
+                        propertyData.baseValue, 
+                        data.increaseValue, 
+                        data.operationType));
                     break;
+                    
                 case BuffIncreaseType.Multiplier:
-                    propertyData.multiplier = Mathf.Max(0, data.increaseValue + propertyData.multiplier);
+                    propertyData.multiplier = Mathf.Max(0, ApplyOperation(
+                        propertyData.multiplier, 
+                        data.increaseValue, 
+                        data.operationType));
                     break;
+                    
                 case BuffIncreaseType.Extra:
-                    propertyData.additive += data.increaseValue;
+                    propertyData.additive = ApplyOperation(
+                        propertyData.additive, 
+                        data.increaseValue, 
+                        data.operationType);
                     break;
+                    
                 case BuffIncreaseType.CorrectionFactor:
-                    propertyData.correction = Mathf.Max(0, data.increaseValue + propertyData.correction);
+                    propertyData.correction = Mathf.Max(0, ApplyOperation(
+                        propertyData.correction, 
+                        data.increaseValue, 
+                        data.operationType));
                     break;
+                    
                 case BuffIncreaseType.Current:
-                    if (_propertyType == PropertyTypeEnum.Score)
-                    {
-                        propertyData.currentValue = Mathf.Clamp(propertyData.currentValue + propertyData.correction * data.increaseValue, 
-                            _minValue, _maxValue);
-                        break;
-                    }
                     if (IsResourceProperty(_propertyType))
-                        propertyData.currentValue += data.increaseValue;
+                    {
+                        propertyData.currentValue = ApplyOperation(
+                            propertyData.currentValue, 
+                            data.increaseValue, 
+                            data.operationType);
+                    }
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
 
-            if (_propertyType != PropertyTypeEnum.Score)
+            // 计算最终值
+            var newValue = (propertyData.baseValue * propertyData.multiplier + 
+                propertyData.additive) * propertyData.correction;
+
+            if (IsResourceProperty(_propertyType))
             {
-                var newValue = (_propertyData.baseValue * _propertyData.multiplier + _propertyData.additive) * _propertyData.correction;
-                if (IsResourceProperty(_propertyType))
-                {
-                    propertyData.maxCurrentValue = Mathf.Clamp(newValue, _minValue, _maxValue);
-                }
-                else
-                {
-                    propertyData.currentValue = Mathf.Clamp(newValue, _minValue, _maxValue);
-                } 
+                propertyData.maxCurrentValue = Mathf.Clamp(newValue, _minValue, _maxValue);
+                propertyData.currentValue = Mathf.Clamp(propertyData.currentValue, 
+                    _minValue, Mathf.Min(newValue, _maxValue));
             }
-            
-            return new PropertyCalculator(_propertyType, new PropertyData
+            else
             {
-                baseValue = propertyData.baseValue,
-                additive = propertyData.additive,
-                multiplier = propertyData.multiplier,
-                correction = propertyData.correction,
-                currentValue = propertyData.currentValue,
-                maxCurrentValue = propertyData.maxCurrentValue
-            }, _maxValue, _minValue);
+                propertyData.currentValue = Mathf.Clamp(newValue, _minValue, _maxValue);
+            }
+
+            return new PropertyCalculator(_propertyType, propertyData, _maxValue, _minValue);
+        }
+        
+        private float ApplyOperation(float original, float value, BuffOperationType operation)
+        {
+            return operation switch
+            {
+                BuffOperationType.Add => original + value,
+                BuffOperationType.Subtract => original - value,
+                BuffOperationType.Multiply => original * value,
+                BuffOperationType.Divide => value != 0 ? original / value : original,
+                _ => original + value // 默认加法
+            };
+        }
+
+        private PropertyCalculator HandleScoreUpdate(PropertyCalculator calculator, 
+            BuffIncreaseData data)
+        {
+            if (data.increaseType != BuffIncreaseType.Current)
+                return calculator;
+
+            var propertyData = calculator._propertyData;
+            var newValue = ApplyOperation(
+                propertyData.currentValue,
+                propertyData.correction * data.increaseValue,
+                data.operationType);
+
+            propertyData.currentValue = Mathf.Clamp(newValue, _minValue, _maxValue);
+
+            return new PropertyCalculator(_propertyType, propertyData, _maxValue, _minValue);
         }
     }
 }

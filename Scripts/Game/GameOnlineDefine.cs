@@ -1,5 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
+using HotUpdate.Scripts.Tool.GameEvent;
 using Network.Data;
 using PlayFab;
 using PlayFab.ClientModels;

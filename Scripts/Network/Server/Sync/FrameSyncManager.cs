@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using DG.Tweening;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.NetworkMes;
@@ -25,6 +26,7 @@ namespace HotUpdate.Scripts.Network.Server.Sync
         private readonly Dictionary<int, int> _lastProcessedInputs = new Dictionary<int, int>();  // 记录每个玩家最后处理的输入序号
         private MirrorNetworkMessageHandler _messageCenter;
         private JsonDataConfig _jsonConfig;
+        private AnimationConfig _animationConfig;
         private double _accumulator;  // 用于累积固定更新的时间
         private const double SyncFps = 30;  // 最大更新间隔
         private float _lastStateUpdateTime;
@@ -40,6 +42,7 @@ namespace HotUpdate.Scripts.Network.Server.Sync
             _stateUpdateInterval = 1 / SyncFps;
             _messageCenter = messageCenter;
             _jsonConfig = configProvider.GetConfig<JsonDataConfig>();
+            _animationConfig = configProvider.GetConfig<AnimationConfig>();
             _messageCenter.RegisterLocalMessageHandler<PlayerInputInfoMessage>(OnPlayerInputInfoMessage);
             _messageCenter.RegisterLocalMessageHandler<PlayerInputMessage>(OnPlayerInputMessage);
             _messageCenter.RegisterLocalMessageHandler<PlayerAttackMessage>(OnPlayerAttackMessage);
@@ -133,7 +136,7 @@ namespace HotUpdate.Scripts.Network.Server.Sync
                     if (player)
                     {
                         var controller = player.GetComponent<PlayerControlClient>();
-                        ActionType actionType = _jsonConfig.GetActionType(input.command);
+                        ActionType actionType = _animationConfig.GetActionType(input.command);
                         
                         // 服务器端处理逻辑
                         switch (actionType)
@@ -169,7 +172,7 @@ namespace HotUpdate.Scripts.Network.Server.Sync
             if (player)
             {
                 var controller = player.GetComponent<PlayerControlClient>();
-                var actionType = _jsonConfig.GetActionType(input.command);
+                var actionType = _animationConfig.GetActionType(input.command);
                 Debug.Log($"Received input {input} from {connectionId} action type {actionType}");
                 switch (actionType)
                 {
@@ -207,7 +210,7 @@ namespace HotUpdate.Scripts.Network.Server.Sync
                     position = controller.transform.position,
                     velocity = controller.GetComponent<Rigidbody>().velocity,
                     rotation = controller.transform.rotation,
-                    actionType = _jsonConfig.GetActionType(controller.CurrentRequestAnimationState),
+                    actionType = _animationConfig.GetActionType(controller.CurrentRequestAnimationState),
                     command = controller.CurrentRequestAnimationState
                 };
 
@@ -251,7 +254,7 @@ namespace HotUpdate.Scripts.Network.Server.Sync
                     var isSprinting = animationComponent.NowAnimationState == AnimationState.Sprint;
                     var healthRecovery = playerComponent.GetPropertyValue(PropertyTypeEnum.HealthRecovery);
                     var strengthRecovery = playerComponent.GetPropertyValue(PropertyTypeEnum.StrengthRecovery);
-                    var sprintCost = _jsonConfig.GetPlayerAnimationCost(AnimationState.Sprint);
+                    var sprintCost = _animationConfig.GetPlayerAnimationCost(AnimationState.Sprint);
                     strengthRecovery -= isSprinting ? sprintCost : 0;
                     playerComponent.IncreaseProperty(PropertyTypeEnum.Health, BuffIncreaseType.Current, healthRecovery * (float)_stateUpdateInterval);
                     playerComponent.IncreaseProperty(PropertyTypeEnum.Strength, BuffIncreaseType.Current, strengthRecovery * (float)_stateUpdateInterval);

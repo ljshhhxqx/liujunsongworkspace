@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
 using Mirror;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
 {
@@ -82,21 +79,9 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         public virtual string GetAllState()
         {
             return JsonConvert.SerializeObject(PropertyStates);
-            //return PropertyStates.Select(x => new PlayerState {connectionId = x.Key, State = x.Value} as IPlayerState).ToArray() as T[];
         }
 
         public abstract void SetState<T>(int connectionId, T state) where T : IPropertyState;
         public abstract bool HasStateChanged(IPropertyState oldState, IPropertyState newState);
-    }
-
-    public interface IServerSystem
-    {
-        void Initialize(GameSyncManager gameSyncManager);
-        void ProcessServerCommand(INetworkCommand command, NetworkIdentity identity);
-    }
-
-    public interface IPropertySyncSystem : IServerSystem
-    {
-        void ModifyProperty(PropertyCommand command, NetworkIdentity identity);
     }
 }

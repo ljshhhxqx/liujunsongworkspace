@@ -1,0 +1,13 @@
+State,Cost,Cooldown,Priority,AnimationType,CanBeInterrupted
+AnimationState,float,float,int,AnimationType,bool
+Idle,0,0,0,Continuous,True
+Move,0,0,0,Continuous,True
+Sprint,15,0,0,Continuous,True
+Jump,10,1,1,Single,True
+SprintJump,12,1,1,Single,True
+Roll,20,2,1,Single,False
+Falling,0,0,0,Continuous,False
+Landed,0,0,0,Single,True
+Attack,10,2,1,Combo,True
+Dead,0,0,999,Single,False
+Hit,0,0,2,Single,True

@@ -4,6 +4,7 @@ using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.Server.Sync;
+using HotUpdate.Scripts.Tool.GameEvent;
 using Network.NetworkMes;
 using Tool.GameEvent;
 using UI.UIBase;

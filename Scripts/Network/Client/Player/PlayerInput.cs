@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Mirror;
 using System.Collections.Generic;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.NetworkMes;
@@ -21,6 +22,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private readonly Queue<InputData> _inputBuffer = new Queue<InputData>();
         private MirrorNetworkMessageHandler _mirrorNetworkMessageHandler;
         private PlayerInputInfo _playerInputInfo;
+        private AnimationConfig _animationConfig;
         
         [Header("Input Settings")]
         [SerializeField] private float inputBufferTime = 0.1f;
@@ -37,6 +39,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             _playerAnimationComponent = GetComponent<PlayerAnimationComponent>();
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _frameSyncManager = FindObjectOfType<FrameSyncManager>();
+            _animationConfig = configProvider.GetConfig<AnimationConfig>();
             
             //if (!isLocalPlayer) enabled = false;
         }
@@ -80,7 +83,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         
         private void ProcessInput(InputData input)
         {
-            var actionType = _jsonDataConfig.GetActionType(input.command);
+            var actionType = _animationConfig.GetActionType(input.command);
 
             if (actionType == ActionType.Movement)
             {

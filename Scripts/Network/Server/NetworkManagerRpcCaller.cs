@@ -1,4 +1,5 @@
 ﻿using AOTScripts.Tool.ECS;
+using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
 using Sirenix.OdinInspector;
 using Tool.GameEvent;

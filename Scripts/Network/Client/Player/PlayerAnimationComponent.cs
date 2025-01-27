@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.Server.Sync;
@@ -11,7 +12,7 @@ using UniRx;
 using UnityEngine;
 using VContainer;
 using static HotUpdate.Scripts.Config.JsonConfig.AnimationState;
-using AnimationInfo = HotUpdate.Scripts.Config.JsonConfig.AnimationInfo;
+using AnimationInfo = HotUpdate.Scripts.Config.ArrayConfig.AnimationInfo;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.Client.Player
@@ -48,6 +49,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private JsonDataConfig _jsonDataConfig;
         private PlayerNotifyManager _playerNotifyManager;
         private PlayerPropertyComponent _playerPropertyComponent;
+        private AnimationConfig _animationConfig;
 
         // 动画状态
         [SyncVar(hook = nameof(OnRequestedAnimationStateChanged))]
@@ -163,21 +165,21 @@ namespace HotUpdate.Scripts.Network.Client.Player
             if (!_playerPropertyComponent.StrengthCanDoAnimation(newState) || !IsAnimationCoolDown(newState))
                 return false;
 
-            switch (currentInfo.AnimationType)
+            switch (currentInfo.animationType)
             {
                 case AnimationType.Continuous:
                     //Debug.Log($"CanPlayAnimation - Continuous: {currentInfo.State.ToString()}-{currentInfo.CanBeInterrupted}, {newInfo.State.ToString()}-{newInfo.CanBeInterrupted}");
-                    return currentInfo.CanBeInterrupted;
+                    return currentInfo.canBeInterrupted;
                 case AnimationType.Single:
                     // 一次性动画只有在可被打断时才能切换到优先级更高的动画
-                    return currentInfo.CanBeInterrupted && newInfo.Priority > currentInfo.Priority;
+                    return currentInfo.canBeInterrupted && newInfo.priority > currentInfo.priority;
                 case AnimationType.Combo:
                     // 连击中的动画只能继续连击或被高优先级动画打断（如受击）
                     if (newState == Attack)
                     {
                         return _canComboSync;
                     }
-                    return currentInfo.CanBeInterrupted && newInfo.Priority > currentInfo.Priority;
+                    return currentInfo.canBeInterrupted && newInfo.priority > currentInfo.priority;
                 default:
                     return false;
             }
@@ -305,6 +307,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             _uiManager = uiManager;
             _attackInfo = _jsonDataConfig.GetAnimationInfo(Attack);
             _playerPropertyComponent = GetComponent<PlayerPropertyComponent>();
+            _animationConfig = configProvider.GetConfig<AnimationConfig>();
             _animator = GetComponent<Animator>();
         }
         
@@ -527,7 +530,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 _canComboSync = true;
 
                 // 等待连招窗口时间，使用可取消的token
-                await UniTask.Delay((int)(_attackInfo.Cooldown * 1000), 
+                await UniTask.Delay((int)(_attackInfo.cooldown * 1000), 
                     cancellationToken: _comboWindowCts.Token);
 
                 // 如果没有接上下一段，进入冷却
@@ -568,7 +571,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private bool DoAnimation(AnimationState animationState)
         {
             if (!IsAnimationCoolDown(animationState)) return false;
-            var cooldown = _jsonDataConfig.GetPlayerAnimationCooldown(animationState);
+            var cooldown = _animationConfig.GetPlayerAnimationCooldown(animationState);
             if (cooldown > 0f)
             {
                 _animationCooldown.Add(animationState, cooldown);

@@ -29,6 +29,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
         public int connectionId;
         public int tick;
         public CommandType commandType;
+        public bool isClientCommand;
     }
 
     #region PropertyCommand
@@ -70,11 +71,24 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
     public struct PropertyCommandEnvironmentChange : IPropertyCommandOperation
     {
         public bool IsClientCommand => true;
+        public bool hasInputMovement;
         public PlayerEnvironmentState environmentType;
-        
+        public bool isSprinting;
+
         public bool IsValid()
         {
             return Enum.IsDefined(typeof(PlayerEnvironmentState), environmentType);
+        }
+    }
+    
+    [Serializable]
+    public struct PropertyAnimationCommand : IPropertyCommandOperation
+    {
+        public bool IsClientCommand => true;
+        public AnimationState animationState;
+        public bool IsValid()
+        {
+            return Enum.IsDefined(typeof(AnimationState), animationState);
         }
     }
     

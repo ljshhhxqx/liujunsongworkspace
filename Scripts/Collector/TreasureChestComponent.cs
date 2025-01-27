@@ -5,6 +5,7 @@ using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.NetworkMes;
+using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
 using Mirror;
 using Network.NetworkMes;

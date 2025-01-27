@@ -1,3 +1,4 @@
+using HotUpdate.Scripts.Tool.GameEvent;
 using TMPro;
 using Tool.GameEvent;
 using UI.UIBase;

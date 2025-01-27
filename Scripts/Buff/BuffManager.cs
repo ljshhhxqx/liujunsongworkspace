@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using AOTScripts.Tool.ECS;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Client.Player;
+using HotUpdate.Scripts.Network.Data.PredictSystem.State;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
+using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
 
@@ -17,49 +21,42 @@ namespace HotUpdate.Scripts.Buff
         private MessageCenter _messageCenter;
         private ConstantBuffConfig _constantBuffConfig;
         private RandomBuffConfig _randomBuffConfig;
+        private GameEventManager _gameEventManager;
 
         [Inject]
-        private void Init(IConfigProvider configProvider, PlayerInGameManager playerDataManager, MessageCenter messageCenter)
+        private void Init(IConfigProvider configProvider, PlayerInGameManager playerDataManager, MessageCenter messageCenter, GameEventManager gameEventManager)
         {
             _constantBuffConfig = configProvider.GetConfig<ConstantBuffConfig>();
             _randomBuffConfig = configProvider.GetConfig<RandomBuffConfig>();
+            _gameEventManager = gameEventManager;
             _playerDataManager = playerDataManager;
             _messageCenter = messageCenter;
             BuffDataReaderWriter.RegisterReaderWriter();
             Debug.Log("BuffManager init");
         }
 
-        public void AddBuffToPlayer(PlayerPropertyComponent targetStats, BuffExtraData buffExtraData, CollectObjectBuffSize size, int? casterId = null)
+        public PropertyCalculator AddBuffToPlayer(PropertyCalculator target, int connectionId, BuffExtraData buffExtraData, CollectObjectBuffSize size,
+            int? casterId = null)
         {
             var buff = buffExtraData.buffType == BuffType.Constant ? _constantBuffConfig.GetBuff(buffExtraData) : _randomBuffConfig.GetBuff(buffExtraData);
-            AddBuff(targetStats, buff, size, casterId);
+            return AddBuff(target, connectionId, buff, size, casterId);
         }
-
-        private void AddBuff(PlayerPropertyComponent targetStats, BuffData buffData, CollectObjectBuffSize size, int? casterId = null)
+        
+        private PropertyCalculator AddBuff(PropertyCalculator target, int connectionId, BuffData buffData, CollectObjectBuffSize size, int? casterId = null)
         {
-            var newBuff = new BuffBase(buffData, targetStats.ConnectionID, casterId);
-            ApplyBuff(newBuff, targetStats);
+            var newBuff = new BuffBase(buffData, connectionId, casterId);
             var buffManagerData = new BuffManagerData
             {
                 BuffData = newBuff,
                 Size = size
             };
             _activeBuffs.Add(buffManagerData);
+            return ApplyBuff(newBuff, target);
         }
 
-        private void ApplyBuff(BuffBase buff, PlayerPropertyComponent targetStats)
+        private PropertyCalculator ApplyBuff(BuffBase buff, PropertyCalculator target)
         {
-            targetStats.IncreaseProperty(buff.BuffData.propertyType, buff.BuffData.increaseDataList);
-        }
-
-        private void RemoveBuff(BuffBase buff, PlayerPropertyComponent targetStats)
-        { 
-            for (var i = 0; i < buff.BuffData.increaseDataList.Count; i++)
-            {
-                if (buff.BuffData.increaseDataList[i].increaseType == BuffIncreaseType.Current)
-                    continue;
-                targetStats.IncreaseProperty(buff.BuffData.propertyType, buff.BuffData.increaseDataList[i].increaseType,-buff.BuffData.increaseDataList[i].increaseValue);
-            }
+            return target.UpdateCalculator(buff.BuffData.increaseDataList);
         }
 
         private void Update()
@@ -73,12 +70,13 @@ namespace HotUpdate.Scripts.Buff
                 _activeBuffs[i] = _activeBuffs[i].Update(Time.deltaTime);
                 if (_activeBuffs[i].BuffData.IsExpired())
                 {
-                    var targetStats = _playerDataManager.GetPlayer(_activeBuffs[i].BuffData.TargetPlayerId);
-                    //RemoveBuff(_activeBuffs[i].BuffData, targetStats.PlayerProperty);
+                    OnServerBuffRemoved?.Invoke(_activeBuffs[i].BuffData.TargetPlayerId, _activeBuffs[i].BuffData.BuffData.increaseDataList);
                     _activeBuffs.RemoveAt(i);
                 }
             }
         }
+        
+        public event Action<int, List<BuffIncreaseData>> OnServerBuffRemoved;
         
         private struct BuffManagerData
         {

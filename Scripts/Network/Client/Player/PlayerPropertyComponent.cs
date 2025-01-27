@@ -20,6 +20,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private readonly Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>> _currentProperties = new Dictionary<PropertyTypeEnum, ReactiveProperty<PropertyType>>();
         private JsonDataConfig _jsonDataConfig;
         private UIManager _uiManager;
+        private AnimationConfig _animationConfig;
         private AnimationState _currentAnimationState;
         
         [SyncVar(hook = nameof(OnCurrentChestTypeChanged))] 
@@ -184,7 +185,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             _configPlayerAttackData = _jsonDataConfig.PlayerConfig.BaseAttackData;
             InitializeProperties();
             _currentChestTypeProperty.Value = ChestType.Attack;
-
+            _animationConfig = configProvider.GetConfig<AnimationConfig>();
             if (isLocalPlayer)
             {
                 var properties = uiManager.SwitchUI<PlayerPropertiesOverlay>();
@@ -368,7 +369,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         public bool StrengthCanDoAnimation(AnimationState animationState)
         {
             var strength = _syncCurrentProperties[PropertyTypeEnum.Strength];
-            var cost = _jsonDataConfig.GetPlayerAnimationCost(animationState);
+            var cost = _animationConfig.GetPlayerAnimationCost(animationState);
             if (cost != 0f)
             {
                 if (animationState == AnimationState.Sprint)
@@ -414,7 +415,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         private void ChangeAnimationState(AnimationState animationState)
         {
-            var cost = _jsonDataConfig.GetPlayerAnimationCost(animationState);
+            var cost = _animationConfig.GetPlayerAnimationCost(animationState);
             if (animationState != AnimationState.Sprint)
             {
                 IncreaseProperty(PropertyTypeEnum.Strength, BuffIncreaseType.Current, -cost);
@@ -430,7 +431,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             var isSprintingJump = _currentAnimationState == AnimationState.SprintJump;
             if (isSprinting)
             {
-                var cost = _jsonDataConfig.GetPlayerAnimationCost(_currentAnimationState);
+                var cost = _animationConfig.GetPlayerAnimationCost(_currentAnimationState);
                 recoveredStrength -= cost;
             }
             ChangeSpeed(isSprinting, recoveredStrength, isSprintingJump);
