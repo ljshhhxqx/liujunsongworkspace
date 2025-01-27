@@ -34,11 +34,11 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
 
         protected abstract void OnClientProcessStateUpdate(string stateJson);
 
-        protected virtual void OnBroadcastStateUpdate(int connectionId)
+        protected virtual void OnBroadcastStateUpdate()
         {
-            if (PropertyStates.TryGetValue(connectionId, out var state))
+            foreach (var kvp in PropertyStates)
             {
-                SetState(connectionId, state);
+                SetState(kvp.Key, kvp.Value);
             }
         }
 

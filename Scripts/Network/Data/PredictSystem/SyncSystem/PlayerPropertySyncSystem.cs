@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using HotUpdate.Scripts.Buff;
+using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
@@ -20,26 +21,26 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         public Dictionary<PropertyTypeEnum, float> ConfigPlayerMaxProperties { get; private set; }
         public Dictionary<PropertyTypeEnum, float> ConfigPlayerBaseProperties { get; private set; }
         public Dictionary<int, PropertyPredictionState> ConfigPlayerPredictionState { get; private set; }
+        private readonly List<BuffManagerData> _activeBuffs = new List<BuffManagerData>();
         private IConfigProvider _configProvider;
         private AnimationConfig _animationConfig;
         private BuffManager _buffManager;
+        private ConstantBuffConfig _constantBuffConfig;
+        private RandomBuffConfig _randomBuffConfig;
 
         [Inject]
         private void InitContainers(IConfigProvider configProvider, BuffManager buffManager)
         {
             _configProvider = configProvider;
             _buffManager = buffManager;
-            _buffManager.OnServerBuffRemoved += HandleServerBuffRemoved;
             var jsonConfig = _configProvider.GetConfig<JsonDataConfig>();
             _animationConfig = _configProvider.GetConfig<AnimationConfig>();
+            _constantBuffConfig = configProvider.GetConfig<ConstantBuffConfig>();
+            _randomBuffConfig = configProvider.GetConfig<RandomBuffConfig>();
             ConfigPlayerMinProperties = jsonConfig.GetPlayerMaxProperties();
             ConfigPlayerMaxProperties = jsonConfig.GetPlayerMaxProperties();
             ConfigPlayerBaseProperties = jsonConfig.GetPlayerBaseProperties();
-        }
-
-        private void HandleServerBuffRemoved(int connectionId, List<BuffIncreaseData> arg2)
-        {
-            
+            BuffDataReaderWriter.RegisterReaderWriter();
         }
 
         protected override void OnClientProcessStateUpdate(string stateJson)
@@ -84,6 +85,27 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             return dictionary;
         }
 
+        private void UpdateBuffs(float deltaTime)
+        {
+            if (_activeBuffs.Count <= 0)
+                return;
+            for (var i = _activeBuffs.Count - 1; i >= 0; i--)
+            {
+                _activeBuffs[i] = _activeBuffs[i].Update(deltaTime);
+                if (_activeBuffs[i].BuffData.IsExpired())
+                {
+                    var buffData = _activeBuffs[i].BuffData;
+                    for (int j = 0; j < buffData.BuffData.increaseDataList.Count; j++)
+                    {
+                        var buff = buffData.BuffData.increaseDataList[j];
+                        buff.operationType = BuffOperationType.Subtract;
+                        buffData.BuffData.increaseDataList[j] = buff;
+                    }
+                    HandleBuffRemove(_activeBuffs[i].BuffData, i);
+                }
+            }
+        }
+
         public override CommandType HandledCommandType => CommandType.Property;
         public override IPropertyState ProcessCommand(INetworkCommand command, NetworkIdentity identity)
         {
@@ -118,7 +140,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                         {
                             return null;
                         }
-                        HandleBuff(header.connectionId, buff.buffId, buff.buffType);
+                        //HandleBuff()
                         break;
                     case PropertyCommandAttack attack:
                         if (!identity.isServer)
@@ -164,11 +186,42 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             PropertyStates[connectionId] = playerState;
         }
 
-        private void HandleBuff(int connectionId, int buffId, BuffType buffType)
+        private void HandleBuff(int connectionId, BuffExtraData buffExtraData, CollectObjectBuffSize size = CollectObjectBuffSize.Small, int? casterId = null)
         {
-            
+            var playerState = GetState<PlayerPropertyState>(connectionId);
+            var buff = buffExtraData.buffType == BuffType.Constant ? _constantBuffConfig.GetBuff(buffExtraData) : _randomBuffConfig.GetBuff(buffExtraData);
+            var newBuff = new BuffBase(buff, connectionId, casterId);
+            var buffManagerData = new BuffManagerData
+            {
+                BuffData = newBuff,
+                Size = size
+            };
+            var propertyCalculator = playerState.Properties[newBuff.BuffData.propertyType];
+            playerState.Properties[newBuff.BuffData.propertyType] = HandleBuffInfo(propertyCalculator, newBuff);
+            _activeBuffs.Add(buffManagerData);
+            PropertyStates[connectionId] = playerState;
         }
-        
+
+        private void HandleBuffRemove(BuffBase buff, int index)
+        {
+            var playerState = GetState<PlayerPropertyState>(buff.TargetPlayerId);
+            var propertyCalculator = playerState.Properties[buff.BuffData.propertyType];
+            for (var i = 0; i < buff.BuffData.increaseDataList.Count; i++)
+            {
+                var buffIncreaseData = buff.BuffData.increaseDataList[i];
+                buffIncreaseData.operationType = BuffOperationType.Subtract;
+                buff.BuffData.increaseDataList[i] = buffIncreaseData;
+            }
+            playerState.Properties[buff.BuffData.propertyType] = HandleBuffInfo(propertyCalculator, buff);
+            _activeBuffs.RemoveAt(index);
+        }
+
+
+        private PropertyCalculator HandleBuffInfo(PropertyCalculator propertyCalculator, BuffBase buffData)
+        {
+            return propertyCalculator.UpdateCalculator(buffData.BuffData.increaseDataList);
+        }
+
         private void HandleAttack(int connectionId, int[] attackIds)
         {
             
@@ -177,6 +230,12 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         private void HandleSkill(int connectionId, int skillId)
         {
             
+        }
+
+        protected override void OnBroadcastStateUpdate()
+        {
+            UpdateBuffs(GameSyncManager.TickRate);
+            base.OnBroadcastStateUpdate();
         }
 
         private void HandleAnimationCommand(int connectionId, AnimationState command)
@@ -263,6 +322,21 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 return false;
             }
             return false;
+        }
+        
+        private struct BuffManagerData
+        {
+            public BuffBase BuffData;
+            public CollectObjectBuffSize Size;
+
+            public BuffManagerData Update(float deltaTime)
+            {
+                return new BuffManagerData
+                {
+                    BuffData = BuffData.Update(deltaTime),
+                    Size = Size
+                };
+            }
         }
     }
 }

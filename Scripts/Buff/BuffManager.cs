@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using AOTScripts.Tool.ECS;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
-using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
-using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
 
 namespace HotUpdate.Scripts.Buff
 {
-    public class BuffManager : ServerNetworkComponent
+    public class BuffManager
     {
         private readonly List<BuffManagerData> _activeBuffs = new List<BuffManagerData>();
         private PlayerInGameManager _playerDataManager;
@@ -30,8 +27,7 @@ namespace HotUpdate.Scripts.Buff
             _randomBuffConfig = configProvider.GetConfig<RandomBuffConfig>();
             _gameEventManager = gameEventManager;
             _playerDataManager = playerDataManager;
-            _messageCenter = messageCenter;
-            BuffDataReaderWriter.RegisterReaderWriter();
+            _messageCenter = messageCenter;//
             Debug.Log("BuffManager init");
         }
 
@@ -61,22 +57,16 @@ namespace HotUpdate.Scripts.Buff
 
         private void Update()
         {
-            if (!isServer || _activeBuffs.Count == 0)
-            {
-                return;
-            }
             for (var i = _activeBuffs.Count - 1; i >= 0; i--)
             {
                 _activeBuffs[i] = _activeBuffs[i].Update(Time.deltaTime);
                 if (_activeBuffs[i].BuffData.IsExpired())
                 {
-                    OnServerBuffRemoved?.Invoke(_activeBuffs[i].BuffData.TargetPlayerId, _activeBuffs[i].BuffData.BuffData.increaseDataList);
+                    //OnServerBuffRemoved?.Invoke(_activeBuffs[i].BuffData.TargetPlayerId, _activeBuffs[i].BuffData.BuffData.increaseDataList);
                     _activeBuffs.RemoveAt(i);
                 }
             }
         }
-        
-        public event Action<int, List<BuffIncreaseData>> OnServerBuffRemoved;
         
         private struct BuffManagerData
         {

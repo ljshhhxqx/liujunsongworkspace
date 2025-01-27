@@ -110,7 +110,6 @@ namespace HotUpdate.Scripts.Game
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _gameEventManager.Subscribe<GameReadyEvent>(OnGameReady);
             _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
-            _buffManager = FindObjectOfType<BuffManager>();
             _networkAudioManager = FindObjectOfType<NetworkAudioManager>();
             _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
             _weatherManager = FindObjectOfType<WeatherManager>();

@@ -16,8 +16,6 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         private readonly List<int> _playerConnectionIds = new List<int>();
         private readonly Queue<INetworkCommand> _currentTickCommands = new Queue<INetworkCommand>();
         private readonly Dictionary<CommandType, BaseSyncSystem> _syncSystems = new Dictionary<CommandType, BaseSyncSystem>();
-        // 服务器命令，直接在当前tick处理
-        private readonly Queue<INetworkCommand> _serverCommands = new Queue<INetworkCommand>();
         [Header("Sync Settings")]
         [SerializeField] private float tickRate = 1/30f; // 服务器每秒发送30个tick
         [SerializeField] private float maxCommandAge = 1f; // 最大命令存活时间
@@ -115,6 +113,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 MoveCommandsToCurrentTick();
                 // 处理当前tick的所有命令
                 ProcessCurrentTickCommands();
+                // 广播状态更新
+                BroadcastStateUpdates();
             }
             finally
             {
@@ -163,8 +163,6 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                     var allStates = syncSystem.GetAllState();
                     RpcProcessCurrentTickCommand(allStates);
                 }
-                // 广播状态更新
-                BroadcastStateUpdates();
             }
         }
 
@@ -180,7 +178,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 Debug.LogError($"Invalid command: {header.commandType}");
                 return;
             }
-            _serverCommands.Enqueue(command);
+            _currentTickCommands.Enqueue(command);
         }
         
         private BaseSyncSystem GetSyncSystem(CommandType commandType)
@@ -201,19 +199,16 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             OnClientProcessStateUpdate?.Invoke(state);
         }
 
-        public event Action<int> OnBroadcastStateUpdate;
+        public event Action OnBroadcastStateUpdate;
         private void BroadcastStateUpdates()
         {
-            foreach (var playerConnectionId in _playerConnectionIds)
-            {
-                RpcUpdateState(playerConnectionId);
-            }
+            RpcUpdateState();
         }
 
         [ClientRpc]
-        private void RpcUpdateState(int playerConnectionId)
+        private void RpcUpdateState()
         {
-            OnBroadcastStateUpdate?.Invoke(playerConnectionId);
+            OnBroadcastStateUpdate?.Invoke();
         }
 
         #region Debug

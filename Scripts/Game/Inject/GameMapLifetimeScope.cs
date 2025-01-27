@@ -24,7 +24,6 @@ namespace HotUpdate.Scripts.Game.Inject
             RegisterComponent<NetworkManagerCustom>(builder);
             RegisterComponent<GameLoopController>(builder);
             RegisterComponent<NetworkAudioManager>(builder);
-            RegisterComponent<BuffManager>(builder);
             RegisterComponent<ItemsSpawnerManager>(builder);
             RegisterComponent<WeatherManager>(builder);
             RegisterComponent<GameMapInit>(builder);
