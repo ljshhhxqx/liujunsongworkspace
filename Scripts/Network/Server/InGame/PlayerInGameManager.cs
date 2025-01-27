@@ -1,16 +1,20 @@
 ﻿using System;
-using AOTScripts.Tool.ECS;
+using System.Collections.Generic;
 using Data;
 using HotUpdate.Scripts.Network.Client.Player;
 using Mirror;
+using Network.Data;
+using Network.NetworkMes;
+using UnityEngine;
+using VContainer;
 
 namespace HotUpdate.Scripts.Network.Server.InGame
 {
-    public class PlayerInGameManager : ServerNetworkComponent
+    public class PlayerInGameManager : NetworkBehaviour
     {
         private readonly SyncDictionary<int, string> _playerIds = new SyncDictionary<int, string>();
         private readonly SyncDictionary<int, PlayerInGameData> _playerInGameData = new SyncDictionary<int, PlayerInGameData>();
-
+        
         public void AddPlayer(int connectId, PlayerInGameData playerInGameData)
         {
             _playerInGameData.Add(connectId, playerInGameData);
@@ -21,74 +25,56 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             _playerInGameData.Remove(connectId);
         }
 
-        public PlayerInGameData GetPlayerData(int connectId)
-        {
-            _playerInGameData.TryGetValue(connectId, out var playerInGameData);
-            return playerInGameData;
-        }
-
         public bool IsPlayerGetTargetScore(int targetScore)
         {
-            foreach (var player in _playerInGameData)
-            {
-                var score = player.Value.PlayerProperty.GetProperty(PropertyTypeEnum.Score);
-                if (score.Value.Value >= targetScore)
-                {
-                    return true;
-                }
-            }
+            // foreach (var player in _playerInGameData)
+            // {
+            //     var score = player.Value.PlayerProperty.GetProperty(PropertyTypeEnum.Score);
+            //     if (score.Value.Value >= targetScore)
+            //     {
+            //         return true;
+            //     }
+            // }
             return false;
         }
 
         public PlayerInGameData GetPlayer(int playerId)
         {
-            foreach (var player in _playerInGameData)
-            {
-                if (player.Value.PlayerProperty.ConnectionID == playerId)
-                {
-                    return player.Value;
-                }
-            }
-            return null;
+            return _playerInGameData.GetValueOrDefault(playerId);
         }   
-
-        public PlayerPropertyComponent GetPlayerPropertyComponent(int connectionId)
-        {
-            return GetPlayer(connectionId)?.PlayerProperty;
-        }
         
-        public PlayerPropertyComponent GetPlayerPropertyComponent(uint networkId)
+        public T GetPlayerComponent<T>(int playerId) where T : Component
         {
-            foreach (var player in _playerInGameData)
-            {
-                if (player.Value.PlayerProperty.netId == networkId)
-                {
-                    return player.Value.PlayerProperty;
-                }
-            }
-            return null;
+            return GetPlayer(playerId)?.networkIdentity.GetComponent<T>();
         }
 
-        public PlayerPropertyComponent GetSelfPlayerPropertyComponent()
-        {
-            return GetPlayerPropertyComponent(NetworkClient.connection.connectionId);
-        }
+        // public PlayerPropertyComponent GetPlayerPropertyComponent(int connectionId)
+        // {
+        //     return GetPlayer(connectionId)?.PlayerProperty;
+        // }
+        
+        // public PlayerPropertyComponent GetPlayerPropertyComponent(uint networkId)
+        // {
+        //     foreach (var player in _playerInGameData)
+        //     {
+        //         if (player.Value.PlayerProperty.netId == networkId)
+        //         {
+        //             return player.Value.PlayerProperty;
+        //         }
+        //     }
+        //     return null;
+        // }
 
-        public void InitPlayerProperty(PlayerPropertyComponent playerProperty)
-        {
-            var player = GetPlayer(playerProperty.ConnectionID);
-            if (player != null)
-            {
-                player.PlayerProperty = playerProperty;
-            }
-            throw new Exception($"Player not found - {playerProperty.PlayerId}");
-        }
+        // public PlayerPropertyComponent GetSelfPlayerPropertyComponent()
+        // {
+        //     return GetPlayerPropertyComponent(NetworkClient.connection.connectionId);
+        // }
     }
 
     [Serializable]
     public class PlayerInGameData
     {
-        public PlayerReadOnlyData Player { get; set; }
-        public PlayerPropertyComponent PlayerProperty { get; set; }
+        public PlayerReadOnlyData player;
+        public NetworkIdentity networkIdentity;
     }
 }

@@ -45,6 +45,35 @@ namespace Network.Server
             _playerDataManager = playerDataManager;
         }
         
+        // 服务器端有玩家连接时调用
+        public override void OnServerConnect(NetworkConnectionToClient conn)
+        {
+            base.OnServerConnect(conn);
+            Debug.Log($"玩家 [{conn.connectionId}] 已连接到服务器。");
+            
+        }
+        
+        // 服务器端有玩家断开时调用
+        public override void OnServerDisconnect(NetworkConnectionToClient conn)
+        {
+            base.OnServerDisconnect(conn);
+            _playerInGameManager.RemovePlayer(conn.connectionId);
+            Debug.Log($"Player disconnected: {conn.connectionId}");
+        }
+        
+        // 客户端成功连接到服务器时调用
+        public override void OnClientConnect()
+        {
+            base.OnClientConnect();
+            Debug.Log("成功连接到服务器！");
+        }
+        
+        // 客户端断开连接时调用
+        public override void OnClientDisconnect()
+        {
+            Debug.Log("与服务器断开连接。");
+            base.OnClientDisconnect();
+        }
 
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
@@ -101,21 +130,14 @@ namespace Network.Server
             // 获取已添加的玩家对象
             if (conn.identity)
             {
-                var player = conn.identity.gameObject;
-                var playerData = player.GetComponentInChildren<PlayerPropertyComponent>();
-                if (playerData)
+                _playerAccountIdMap[conn.connectionId] = message.UID;
+                _playerDataManager.UpdatePlayerConnectionId(message.UID, conn.connectionId);
+                var playerInGameData = _playerDataManager.GetPlayer(conn.connectionId);
+                _playerInGameManager.AddPlayer(conn.connectionId, new PlayerInGameData
                 {
-                    playerData.PlayerId = message.UID;
-                    _playerAccountIdMap[conn.connectionId] = message.UID;
-                    _playerDataManager.UpdatePlayerConnectionId(message.UID, conn.connectionId);
-                    var playerInGameData = _playerDataManager.GetPlayer(conn.connectionId);
-                    _playerInGameManager.AddPlayer(conn.connectionId, new PlayerInGameData
-                    {
-                        Player = playerInGameData.player,
-                        PlayerProperty = playerData
-                    });
-                }
-
+                    player = playerInGameData.player,
+                    networkIdentity = conn.identity,
+                });
                 
                 var playerCount = _playerDataManager.GetPlayers().Count;
                 var gameInfo = new GameInfo
@@ -126,6 +148,7 @@ namespace Network.Server
                     GameScore = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameScore,
                     PlayerCount = playerCount
                 };
+                _gameEventManager.Publish(new PlayerConnectEvent(conn.connectionId, conn.identity));
                 _gameEventManager.Publish(new GameReadyEvent(gameInfo));
                 // }
                 // if (_playerAccountIdMap.Count == playerCount)
@@ -179,14 +202,6 @@ namespace Network.Server
             Debug.Log($"Received PlayerAccountId: {message.UID} - {message.Name} - {message.ConnectionID.ToString()}");
         }
         
-
-        public override void OnServerDisconnect(NetworkConnectionToClient conn)
-        {
-            base.OnServerDisconnect(conn);
-            _playerAccountIdMap.Remove(conn.connectionId);
-            //_playerDataManager.RemovePlayer(conn.connectionId);
-            Debug.Log($"Player disconnected: {conn.connectionId}");
-        }
 
         private void HandleServerConnected(NetworkConnection conn)
         {

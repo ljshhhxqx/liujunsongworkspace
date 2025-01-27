@@ -74,7 +74,7 @@ namespace HotUpdate.Scripts.Collector
         private async UniTaskVoid Collect(IPickable collect)
         {
             if(!isClient) return;
-            collect.RequestPick(netId);
+            collect.RequestPick(ConnectionID);
             await UniTask.DelayFrame(1);
         }
     }

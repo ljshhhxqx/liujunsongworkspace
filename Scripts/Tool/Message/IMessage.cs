@@ -185,12 +185,12 @@ namespace Tool.Message
     
     public struct PickerPickUpChestMessage : IMessage
     {
-        public uint PickerId { get; set; }
-        public uint ChestNetId { get; set; }
+        public int ConnectionId { get; private set; }
+        public uint ChestNetId { get; private set; }
 
-        public PickerPickUpChestMessage(uint pickerId, uint chestNetId)
+        public PickerPickUpChestMessage(int connectionId, uint chestNetId)
         {
-            PickerId = pickerId;
+            ConnectionId = connectionId;
             ChestNetId = chestNetId;
         }
     }

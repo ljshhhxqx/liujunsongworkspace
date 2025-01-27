@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf697dbc187946d1b1c2fa3ce3658e86, type: 3}
+  m_Name: PropertyConfig
+  m_EditorClassIdentifier: 
+  excelAssetReference:
+    guid: afcb27a37860bed489c689f04b28b549
+  csvAssetReference:
+    guid: f79490033f1ba7d4c817acd9581f3173
+  jsonAssetReference:
+    guid: 36a25296697c2fe44a5305e443be106f
+  configName: PropertyConfig
+  isArray: 1
+  propertyData:
+  - propertyType: 0
+    baseValue: 3.5
+    minValue: 0
+    maxValue: 15
+  - propertyType: 1
+    baseValue: 10
+    minValue: 0
+    maxValue: 30
+  - propertyType: 2
+    baseValue: 10
+    minValue: 0
+    maxValue: 30
+  - propertyType: 3
+    baseValue: 100
+    minValue: 0
+    maxValue: 300
+  - propertyType: 4
+    baseValue: 100
+    minValue: 0
+    maxValue: 300
+  - propertyType: 5
+    baseValue: 0
+    minValue: 0
+    maxValue: 100000000
+  - propertyType: 6
+    baseValue: 0.05
+    minValue: 0
+    maxValue: 1
+  - propertyType: 7
+    baseValue: 1.5
+    minValue: 1
+    maxValue: 3
+  - propertyType: 8
+    baseValue: 5
+    minValue: 0
+    maxValue: 25
+  - propertyType: 9
+    baseValue: 1
+    minValue: 0
+    maxValue: 25
+  - propertyType: 10
+    baseValue: 2
+    minValue: 1
+    maxValue: 3
+  - propertyType: 11
+    baseValue: 0.75
+    minValue: 0.5
+    maxValue: 1

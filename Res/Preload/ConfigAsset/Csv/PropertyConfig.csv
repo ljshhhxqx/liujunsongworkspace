@@ -1,0 +1,14 @@
+propertyType,baseValue,minValue,maxValue
+PropertyTypeEnum,float,float,float
+Speed,3.5,0,15
+Attack,10,0,30
+Defense,10,0,30
+Health,100,0,300
+Strength,100,0,300
+Score,0,0,100000000
+CriticalRate,0.05,0,1
+CriticalDamageRatio,1.5,1,3
+StrengthRecovery,5,0,25
+HealthRecovery,1,0,25
+SprintSpeedRatio,2,1,3
+StairsSpeedRatio,0.75,0.5,1

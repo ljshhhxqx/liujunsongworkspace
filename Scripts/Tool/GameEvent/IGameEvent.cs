@@ -11,21 +11,21 @@ namespace Tool.GameEvent
     /// <summary>
     /// GameEvent适合处理单端通信(比如客户端-客户端)
     /// </summary>
-    public abstract class GameEvent
+    public interface IGameEvent
     {
     }
 
-    public class GameResourceLoadedEvent : GameEvent
+    public struct GameResourceLoadedEvent : IGameEvent
     {
         
     }
     
-    public class GameMessageListeningEvent : GameEvent
+    public struct GameMessageListeningEvent : IGameEvent
     {
         
     }
 
-    public class GameSceneLoadedEvent : GameEvent
+    public struct GameSceneLoadedEvent : IGameEvent
     {
         public string SceneName { get; private set; }
 
@@ -35,7 +35,7 @@ namespace Tool.GameEvent
         }
     }
     
-    public class TargetShowEvent : GameEvent
+    public struct TargetShowEvent : IGameEvent
     {
         public Transform Target { get; private set; }
 
@@ -45,7 +45,7 @@ namespace Tool.GameEvent
         }
     }
 
-    public class GameReadyEvent : GameEvent
+    public struct GameReadyEvent : IGameEvent
     {
         public GameInfo GameInfo { get; private set; }
         public GameReadyEvent(GameInfo gameInfo)
@@ -54,7 +54,7 @@ namespace Tool.GameEvent
         }
     }
 
-    public class GameSceneLoadingEvent : GameEvent
+    public struct GameSceneLoadingEvent : IGameEvent
     {
         public string SceneName { get; private set; }
         public string Progress { get; private set; }
@@ -66,7 +66,29 @@ namespace Tool.GameEvent
         }
     }
 
-    public class GameSceneResourcesLoadedEvent : GameEvent
+    public struct PlayerConnectEvent : IGameEvent
+    {
+        public int ConnectionId { get; private set; }
+        public NetworkIdentity Identity { get; private set; }
+
+        public PlayerConnectEvent(int connectionId, NetworkIdentity identity)
+        {
+            ConnectionId = connectionId;
+            Identity = identity;
+        }
+    }
+    
+    public struct PlayerDisconnectEvent : IGameEvent
+    {
+        public int ConnectionId { get; private set; }
+
+        public PlayerDisconnectEvent(int connectionId)
+        {
+            ConnectionId = connectionId;
+        }
+    }
+
+    public struct GameSceneResourcesLoadedEvent : IGameEvent
     {
         public string SceneName { get; private set; }
 
@@ -76,7 +98,7 @@ namespace Tool.GameEvent
         }
     }
 
-    public class PlayerLoginEvent : GameEvent
+    public struct PlayerLoginEvent : IGameEvent
     {
         public string PlayerId { get; private set; }
 
@@ -86,7 +108,7 @@ namespace Tool.GameEvent
         }
     }
     
-    public class PlayerLogoutEvent : GameEvent
+    public struct PlayerLogoutEvent : IGameEvent
     {
         public string PlayerId { get; private set; }
 
@@ -96,7 +118,7 @@ namespace Tool.GameEvent
         }
     }
 
-    public class PlayerSpawnedEvent : GameEvent
+    public struct PlayerSpawnedEvent : IGameEvent
     {
         public Transform Target { get; private set; }
 
@@ -106,7 +128,7 @@ namespace Tool.GameEvent
         }
     }
 
-    public class GameInteractableEffect : GameEvent
+    public struct GameInteractableEffect : IGameEvent
     {
         public GameObject Picker { get; private set; }
         public IPickable CollectObject { get; private set; }

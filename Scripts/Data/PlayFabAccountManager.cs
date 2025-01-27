@@ -28,6 +28,8 @@ namespace Data
         private readonly IConfigProvider _configProvider;
         private readonly IPlayFabClientCloudScriptCaller _playFabClientCloudScriptCaller;
         private readonly GameEventManager _gameEventManager;
+        
+        public string PlayerId => PlayerPrefs.GetString(PlayerKey);
 
         [Inject]
         private PlayFabAccountManager(UIManager uiManager, IConfigProvider configProvider, GameEventManager gameEventManager, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller)

@@ -74,7 +74,7 @@ namespace HotUpdate.Scripts.Buff
                 if (_activeBuffs[i].BuffData.IsExpired())
                 {
                     var targetStats = _playerDataManager.GetPlayer(_activeBuffs[i].BuffData.TargetPlayerId);
-                    RemoveBuff(_activeBuffs[i].BuffData, targetStats.PlayerProperty);
+                    //RemoveBuff(_activeBuffs[i].BuffData, targetStats.PlayerProperty);
                     _activeBuffs.RemoveAt(i);
                 }
             }

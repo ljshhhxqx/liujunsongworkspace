@@ -104,7 +104,7 @@ namespace HotUpdate.Scripts.Network.Server.Sync
             while (Time.time - _lastStateUpdateTime >= _stateUpdateInterval)
             {
                 _lastStateUpdateTime = Time.time;
-                ProcessInputs();
+                ProcessInputs();  
                 BroadcastGameState();
                 ProcessPlayerRecovery();
             }

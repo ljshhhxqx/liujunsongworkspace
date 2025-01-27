@@ -62,15 +62,17 @@ namespace HotUpdate.Scripts.Collector
         private ConstantBuffConfig _constantBuffConfig;
         private RandomBuffConfig _randomBuffConfig;
         private GameLoopController _gameLoopController;
+        private PlayerInGameManager _playerInGameManager;
 
         [Inject]
-        private void Init(MapBoundDefiner mapBoundDefiner, UIManager uiManager, IConfigProvider configProvider, BuffManager buffManager, GameMapInjector gameMapInjector, PlayerInGameManager playerInGameManager,GameEventManager gameEventManager, MessageCenter messageCenter)
+        private void Init(MapBoundDefiner mapBoundDefiner, UIManager uiManager, IConfigProvider configProvider , BuffManager buffManager, GameMapInjector gameMapInjector, PlayerInGameManager playerInGameManager,GameEventManager gameEventManager, MessageCenter messageCenter)
         {
             _buffManager = buffManager;
             _uiManager = uiManager;
             _configProvider = configProvider;
             _jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
             _mapBoundDefiner = mapBoundDefiner;
+            _playerInGameManager = playerInGameManager;
             _gameMapInjector = gameMapInjector;
             _messageCenter = messageCenter;
             gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnGameSceneResourcesLoadedLoaded);
@@ -123,15 +125,15 @@ namespace HotUpdate.Scripts.Collector
             var treasureChest = networkIdentity.GetComponent<TreasureChestComponent>();
     
             // 获取玩家实例
-            var playerIdentity = NetworkServer.spawned[message.PickerId];
-            if (!playerIdentity)
+            var playerIdentity = _playerInGameManager.GetPlayer(message.ConnectionId);
+            if (playerIdentity == null)
             {
-                Debug.LogError($"Cannot find player with netId: {message.PickerId}");
+                Debug.LogError($"Cannot find player with netId: {message.ConnectionId}");
                 _treasureChestInfo.isPicking = false;
                 return;
             }
     
-            var player = playerIdentity.GetComponent<PlayerAnimationComponent>();
+            var player = playerIdentity.networkIdentity.GetComponent<PlayerAnimationComponent>();
             var playerProperty = player.GetComponent<PlayerPropertyComponent>();
             if (player.CurrentState.Value == AnimationState.Dead)
             {

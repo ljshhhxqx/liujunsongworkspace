@@ -28,6 +28,6 @@ namespace HotUpdate.Scripts.Collector
 
     public interface IPickable
     {
-        public void RequestPick(uint pickerNetId);
+        public void RequestPick(int connectionId);
     }
 }

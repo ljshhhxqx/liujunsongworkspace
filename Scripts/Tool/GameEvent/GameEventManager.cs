@@ -6,8 +6,8 @@ namespace Tool.GameEvent
     public class GameEventManager
     {
         
-        private Dictionary<Type, Action<GameEvent>> eventListeners = new Dictionary<Type, Action<GameEvent>>();
-        private Dictionary<Delegate, Action<GameEvent>> listenerMapping = new Dictionary<Delegate, Action<GameEvent>>();
+        private Dictionary<Type, Action<IGameEvent>> eventListeners = new Dictionary<Type, Action<IGameEvent>>();
+        private Dictionary<Delegate, Action<IGameEvent>> listenerMapping = new Dictionary<Delegate, Action<IGameEvent>>();
         
         public GameEventManager()
         {
@@ -15,10 +15,10 @@ namespace Tool.GameEvent
             GameEventExtensions.RegisterGameEventWriteRead();
         }
 
-        public void Subscribe<T>(Action<T> listener) where T : GameEvent
+        public void Subscribe<T>(Action<T> listener) where T : IGameEvent
         {
             var eventType = typeof(T);
-            Action<GameEvent> internalListener = e => listener((T)e);
+            Action<IGameEvent> internalListener = e => listener((T)e);
 
             if (!eventListeners.ContainsKey(eventType))
             {
@@ -35,10 +35,10 @@ namespace Tool.GameEvent
             //Debug.Log($"Listener count for event {eventType.Name}: {eventListeners[eventType].GetInvocationList().Length}");
         }
 
-        public void Unsubscribe<T>(Action<T> listener) where T : GameEvent
+        public void Unsubscribe<T>(Action<T> listener) where T : IGameEvent
         {
             Type eventType = typeof(T);
-            if (listenerMapping.TryGetValue(listener, out Action<GameEvent> internalListener))
+            if (listenerMapping.TryGetValue(listener, out Action<IGameEvent> internalListener))
             {
                 if (eventListeners.ContainsKey(eventType))
                 {
@@ -59,7 +59,7 @@ namespace Tool.GameEvent
             }
         }
 
-        public void Publish<T>(T gameEvent) where T : GameEvent
+        public void Publish<T>(T gameEvent) where T : IGameEvent
         {
             Type eventType = typeof(T);
             if (eventListeners.ContainsKey(eventType))

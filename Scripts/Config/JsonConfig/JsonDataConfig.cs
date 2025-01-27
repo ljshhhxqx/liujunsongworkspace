@@ -59,6 +59,64 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         {
             return _animationInfos.GetValueOrDefault(animationState);
         }
+        
+        private Dictionary<PropertyTypeEnum, float> _maxProperties;
+        private Dictionary<PropertyTypeEnum, float> _minProperties;
+        private Dictionary<PropertyTypeEnum, float> _baseProperties;
+        
+        public Dictionary<PropertyTypeEnum, float> GetPlayerMaxProperties()
+        {
+            if (_maxProperties == null)
+            {
+                _maxProperties = new Dictionary<PropertyTypeEnum, float>();
+                foreach (var propertyType in jsonConfigData.playerConfig.MaxProperties)
+                {
+                    _maxProperties.Add(propertyType.TypeEnum, propertyType.Value);
+                }
+            }
+            return _maxProperties;
+        }
+
+        public Dictionary<PropertyTypeEnum, float> GetPlayerMinProperties()
+        {
+            if (_minProperties == null)
+            {
+                _minProperties = new Dictionary<PropertyTypeEnum, float>();
+                foreach (var propertyType in jsonConfigData.playerConfig.MinProperties)
+                {
+                    _minProperties.Add(propertyType.TypeEnum, propertyType.Value);
+                }
+            }
+            return _minProperties;
+        }
+
+        public Dictionary<PropertyTypeEnum, float> GetPlayerBaseProperties()
+        {
+            if (_baseProperties == null)
+            {
+                _baseProperties = new Dictionary<PropertyTypeEnum, float>();
+                foreach (var propertyType in jsonConfigData.playerConfig.BaseProperties)
+                {
+                    _baseProperties.Add(propertyType.TypeEnum, propertyType.Value);
+                }
+            }
+            return _baseProperties;
+        }
+        
+        public float GetPlayerBaseProperty(PropertyTypeEnum propertyType)
+        {
+            return GetPlayerBaseProperties().GetValueOrDefault(propertyType);
+        }
+        
+        public float GetPlayerMaxProperty(PropertyTypeEnum propertyType)
+        {
+            return GetPlayerMaxProperties().GetValueOrDefault(propertyType);
+        }
+        
+        public float GetPlayerMinProperty(PropertyTypeEnum propertyType)
+        {
+            return GetPlayerMinProperties().GetValueOrDefault(propertyType);
+        }
 
         public float GetPlayerAnimationCost(AnimationState state)
         {

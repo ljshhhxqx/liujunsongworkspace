@@ -336,19 +336,19 @@ namespace HotUpdate.Scripts.Network.Client.Player
             }
         }
         
-        private void MaxPropertyChanged(PropertyTypeEnum type,float value)
-        {
-            var property = new PropertyType(type, value);
-            _maxCurrentProperties[type].Value = property;
-            _maxCurrentProperties[type].SetValueAndForceNotify(property);
-        }
-        
-        private void PropertyChanged(PropertyTypeEnum type,float value)
-        {
-            var property = new PropertyType(type, value);
-            _currentProperties[type].Value = property;
-            _currentProperties[type].SetValueAndForceNotify(property); 
-        }
+        // private void MaxPropertyChanged(PropertyTypeEnum type,float value)
+        // {
+        //     var property = new PropertyType(type, value);
+        //     _maxCurrentProperties[type].Value = property;
+        //     _maxCurrentProperties[type].SetValueAndForceNotify(property);
+        // }
+        //
+        // private void PropertyChanged(PropertyTypeEnum type,float value)
+        // {
+        //     var property = new PropertyType(type, value);
+        //     _currentProperties[type].Value = property;
+        //     _currentProperties[type].SetValueAndForceNotify(property); 
+        // }
         
         public ReactiveProperty<PropertyType> GetProperty(PropertyTypeEnum type)
         {

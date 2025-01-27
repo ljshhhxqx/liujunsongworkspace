@@ -24,6 +24,14 @@ namespace Network.NetworkMes
             Name = name;
         }
     }
+    
+    [Serializable]
+    public struct PlayerAuthMessage : NetworkMessage
+    {
+        public string playerId;
+        public NetworkIdentity identity;
+        public bool isAuthenticated; // 服务器回应时使用
+    }
 
     // public struct PlayerDisconnectMessage : NetworkMessage
     // {
@@ -92,12 +100,12 @@ namespace Network.NetworkMes
     [Serializable]
     public struct MirrorPickerPickUpChestMessage : NetworkMessage
     {
-        public uint PickerID;
+        public int connectionID;
         public uint ChestID;
 
-        public MirrorPickerPickUpChestMessage(uint pickerID, uint chestID)
+        public MirrorPickerPickUpChestMessage(int connectionID, uint chestID)
         {
-            PickerID = pickerID;
+            this.connectionID = connectionID;
             ChestID = chestID;
         }
     }

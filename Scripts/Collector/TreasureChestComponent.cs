@@ -124,11 +124,11 @@ namespace HotUpdate.Scripts.Collector
         }
 
 
-        public void RequestPick(uint pickerNetId)
+        public void RequestPick(int connectionId)
         {
-            if (isClient)
+            if (isLocalPlayer)
             {
-                _mirrorNetworkMessageHandler.SendToServer(new MirrorPickerPickUpChestMessage(pickerNetId, netId));
+                _mirrorNetworkMessageHandler.SendToServer(new MirrorPickerPickUpChestMessage(connectionId, netId));
             }
         }
 

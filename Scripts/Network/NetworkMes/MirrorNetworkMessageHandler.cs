@@ -151,7 +151,7 @@ namespace HotUpdate.Scripts.Network.NetworkMes
 
             if (networkMessage is MirrorPickerPickUpChestMessage pickerPickUpChestMessage)
             {
-                return new PickerPickUpChestMessage(pickerPickUpChestMessage.PickerID, pickerPickUpChestMessage.ChestID);
+                return new PickerPickUpChestMessage(pickerPickUpChestMessage.connectionID, pickerPickUpChestMessage.ChestID);
             }
             
             if (networkMessage is MirrorPlayerInputMessage playerInputMessage)
