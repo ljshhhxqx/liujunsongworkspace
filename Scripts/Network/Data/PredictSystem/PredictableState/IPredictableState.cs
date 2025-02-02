@@ -1,31 +1,68 @@
 ﻿using System.Collections.Generic;
+using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
+using HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.Inject;
 using Mirror;
+using Newtonsoft.Json;
+using VContainer;
 
 namespace HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState
 {
-    public abstract class PredictableStateBase : NetworkBehaviour
+    public abstract class PredictableStateBase : NetworkAutoInjectComponent
     {
-        protected abstract IPropertyState ServerState { get; set; }
+        // 服务器权威状态
+        protected abstract IPropertyState CurrentState { get; set; }
         protected NetworkIdentity NetworkIdentity;
-        protected Queue<INetworkCommand> CommandQueue = new Queue<INetworkCommand>();
-        
-        public IPropertyState PropertyState => ServerState;
-    
-        protected virtual void Awake()
+        // 预测命令队列
+        protected readonly Queue<INetworkCommand> CommandQueue = new Queue<INetworkCommand>();
+        protected GameSyncManager GameSyncManager;
+        protected JsonDataConfig JsonDataConfig;
+        protected int LastConfirmedTick { get; private set; }
+        protected abstract CommandType CommandType { get; }
+
+        public IPropertyState PropertyState => CurrentState;
+
+        [Inject]
+        protected virtual void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider)
         {
+            GameSyncManager = gameSyncManager;
+            JsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             NetworkIdentity = GetComponent<NetworkIdentity>();
         }
-        
-        public virtual void AddPredictedCommand(INetworkCommand command)
+    
+        // 添加预测命令
+        public void AddPredictedCommand(INetworkCommand command)
         {
             var header = command.GetHeader();
-            if (header.connectionId != NetworkIdentity.connectionToClient.connectionId || header.commandType != HandledCommandType) return;
-            
-            Simulate(command);
-        }
+            if (header.commandType != HandledCommandType) 
+                return;
+            command.SetHeader(netIdentity.connectionToClient.connectionId, CommandType, GameSyncManager.CurrentTick, netIdentity);
         
+            CommandQueue.Enqueue(command);
+            while (CommandQueue.Count > 0 && GameSyncManager.CurrentTick - command.GetHeader().tick > JsonDataConfig.PlayerConfig.InputBufferTick)
+            {
+                CommandQueue.Dequeue();
+            }
+            // 模拟命令效果
+            Simulate(command);
+            var json = JsonConvert.SerializeObject(command, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All,
+                Formatting = Formatting.Indented
+            });
+            // 发送命令
+            CmdSendCommand(json);
+        }
+
+        [Command]
+        private void CmdSendCommand(string commandJson)
+        {
+            GameSyncManager.EnqueueCommand(commandJson);
+        }
+
+        // 清理已确认的命令
         protected virtual void CleanupConfirmedCommands(int confirmedTick)
         {
             while (CommandQueue.Count > 0 && 
@@ -34,17 +71,30 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState
                 CommandQueue.Dequeue();
             }
         }
-
-        public abstract void SetServerState<T>(T state) where T : IPropertyState;
         public abstract CommandType HandledCommandType { get; }
-        public abstract void ApplyServerState<T>(T state)where T : IPropertyState;
-        public abstract bool NeedsReconciliation<T>(T state)where T : IPropertyState;
 
-        public virtual void SetClientStateFromClient<T>(T state) where T : IPropertyState
+        public virtual void ApplyServerState<T>(T state) where T : IPropertyState
         {
-            ServerState = state;
+            var serverTick = GameSyncManager.CurrentTick;
+            CleanupConfirmedCommands(serverTick);
+            LastConfirmedTick = serverTick;
+            if (isLocalPlayer)
+            {
+                if (NeedsReconciliation(state))
+                {
+                    CurrentState = state;
+            
+                    // 重新应用未确认的命令
+                    foreach (var command in CommandQueue)
+                    {
+                        Simulate(command);
+                    }
+                }
+            }
+            CurrentState = state;
         }
 
+        public abstract bool NeedsReconciliation<T>(T state) where T : IPropertyState;
         public abstract void Simulate(INetworkCommand command);
     }
 }

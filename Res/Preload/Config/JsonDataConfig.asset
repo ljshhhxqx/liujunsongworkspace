@@ -110,75 +110,87 @@ MonoBehaviour:
         attackAngle: 45
         attackRadius: 0.5
         minAttackHeight: 1
+      InputBufferTick: 0
       AttackComboWindow: 1
       AttackComboMaxCount: 3
       AnimationInfos:
-      - State: 0
-        Cost: 0
-        Cooldown: 0
-        Priority: 0
-        AnimationType: 0
-        CanBeInterrupted: 1
-      - State: 1
-        Cost: 0
-        Cooldown: 0
-        Priority: 0
-        AnimationType: 0
-        CanBeInterrupted: 1
-      - State: 2
-        Cost: 15
-        Cooldown: 0
-        Priority: 0
-        AnimationType: 0
-        CanBeInterrupted: 1
-      - State: 3
-        Cost: 10
-        Cooldown: 0.5
-        Priority: 1
-        AnimationType: 1
-        CanBeInterrupted: 1
-      - State: 4
-        Cost: 12
-        Cooldown: 0.5
-        Priority: 1
-        AnimationType: 1
-        CanBeInterrupted: 1
-      - State: 5
-        Cost: 20
-        Cooldown: 2
-        Priority: 1
-        AnimationType: 1
-        CanBeInterrupted: 0
-      - State: 6
-        Cost: 0
-        Cooldown: 0
-        Priority: 0
-        AnimationType: 0
-        CanBeInterrupted: 0
-      - State: 7
-        Cost: 0
-        Cooldown: 0
-        Priority: 0
-        AnimationType: 1
-        CanBeInterrupted: 1
-      - State: 8
-        Cost: 10
-        Cooldown: 2
-        Priority: 1
-        AnimationType: 1
-        CanBeInterrupted: 1
-      - State: 9
-        Cost: 0
-        Cooldown: 0
-        Priority: 999
-        AnimationType: 1
-        CanBeInterrupted: 0
-      - State: 10
-        Cost: 0
-        Cooldown: 0
-        Priority: 2
-        AnimationType: 1
-        CanBeInterrupted: 1
+      - state: 0
+        cost: 0
+        cooldown: 0
+        priority: 0
+        animationType: 0
+        canBeInterrupted: 0
+        actionType: 0
+      - state: 0
+        cost: 0
+        cooldown: 0
+        priority: 0
+        animationType: 0
+        canBeInterrupted: 0
+        actionType: 0
+      - state: 0
+        cost: 0
+        cooldown: 0
+        priority: 0
+        animationType: 0
+        canBeInterrupted: 0
+        actionType: 0
+      - state: 0
+        cost: 0
+        cooldown: 0
+        priority: 0
+        animationType: 0
+        canBeInterrupted: 0
+        actionType: 0
+      - state: 0
+        cost: 0
+        cooldown: 0
+        priority: 0
+        animationType: 0
+        canBeInterrupted: 0
+        actionType: 0
+      - state: 0
+        cost: 0
+        cooldown: 0
+        priority: 0
+        animationType: 0
+        canBeInterrupted: 0
+        actionType: 0
+      - state: 0
+        cost: 0
+        cooldown: 0
+        priority: 0
+        animationType: 0
+        canBeInterrupted: 0
+        actionType: 0
+      - state: 0
+        cost: 0
+        cooldown: 0
+        priority: 0
+        animationType: 0
+        canBeInterrupted: 0
+        actionType: 0
+      - state: 0
+        cost: 0
+        cooldown: 0
+        priority: 0
+        animationType: 0
+        canBeInterrupted: 0
+        actionType: 0
+      - state: 0
+        cost: 0
+        cooldown: 0
+        priority: 0
+        animationType: 0
+        canBeInterrupted: 0
+        actionType: 0
+      - state: 0
+        cost: 0
+        cooldown: 0
+        priority: 0
+        animationType: 0
+        canBeInterrupted: 0
+        actionType: 0
     collectData:
       itemSpacing: 3
       maxGridItems: 10
@@ -211,6 +223,10 @@ MonoBehaviour:
         m_Bits: 256
       safePosition: {x: 0, y: 3, z: 0}
       safeHorizontalOffsetY: -10
+      groundMinDistance: 0.1
+      groundMaxDistance: 0.25
+      maxSlopeAngle: 45
+      stairsCheckDistance: 0.45
     dayNightCycleData:
       timeMultiplier: 60
       weatherChangeTime: 150

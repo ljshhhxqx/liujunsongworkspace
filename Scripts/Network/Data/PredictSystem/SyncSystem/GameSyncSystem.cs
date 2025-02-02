@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
+using HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput;
+using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
+using Newtonsoft.Json;
 using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
@@ -13,7 +16,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
     public class GameSyncManager : NetworkBehaviour
     {
         private readonly Queue<INetworkCommand> _pendingCommands = new Queue<INetworkCommand>();
-        private readonly List<int> _playerConnectionIds = new List<int>();
+        private readonly Dictionary<int, PlayerComponentController> _playerConnections = new Dictionary<int, PlayerComponentController>();
+        private readonly Dictionary<int, Dictionary<CommandType, int>> _lastProcessedInputs = new Dictionary<int, Dictionary<CommandType, int>>();  // 记录每个玩家最后处理的输入序号
         private readonly Queue<INetworkCommand> _currentTickCommands = new Queue<INetworkCommand>();
         private readonly Dictionary<CommandType, BaseSyncSystem> _syncSystems = new Dictionary<CommandType, BaseSyncSystem>();
         [Header("Sync Settings")]
@@ -22,16 +26,16 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         private NetworkIdentity _networkIdentity;
         public float TickRate => tickRate;
         private float _tickTimer;
-        private IConfigProvider _configProvider;
+        private PlayerInGameManager _playerInGameManager;
         private bool _isProcessing; // 防止重入
         
         public int CurrentTick { get; private set; }
 
         [Inject]
-        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)
+        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager, PlayerInGameManager playerInGameManager)
         {
-            _configProvider = configProvider;
             _networkIdentity = GetComponent<NetworkIdentity>();
+            _playerInGameManager = playerInGameManager;
             if (!isServer)
             {
                 _syncSystems.Clear();
@@ -51,13 +55,13 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
 
         private void OnPlayerDisconnect(PlayerDisconnectEvent disconnectEvent)
         {
-            _playerConnectionIds.Remove(disconnectEvent.ConnectionId);
+            _playerConnections.Remove(disconnectEvent.ConnectionId);
             OnPlayerDisconnected?.Invoke(disconnectEvent.ConnectionId);
         }
 
         private void OnPlayerConnect(PlayerConnectEvent connectEvent)
         {
-            _playerConnectionIds.Add(connectEvent.ConnectionId);
+            _playerConnections.Add(connectEvent.ConnectionId, connectEvent.Identity.gameObject.GetComponent<PlayerComponentController>());
             OnPlayerConnected?.Invoke(connectEvent.ConnectionId, _networkIdentity);
         }
         
@@ -91,8 +95,9 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         }
 
         [Server]
-        public void EnqueueCommand<T>(T command) where T : INetworkCommand
+        public void EnqueueCommand(string commandJson)
         {
+            var command = JsonConvert.DeserializeObject<INetworkCommand>(commandJson);
             var header = command.GetHeader();
             if (header.isClientCommand || !command.IsValid())
             {
@@ -149,14 +154,14 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             }
         }
 
-        public event Action<INetworkCommand, NetworkIdentity> OnServerProcessCurrentTickCommand;
+        public event Action<INetworkCommand> OnServerProcessCurrentTickCommand;
         private void ProcessCurrentTickCommands()
         {
             while (_currentTickCommands.Count > 0)
             {
                 var command = _currentTickCommands.Dequeue();
                 var header = command.GetHeader();
-                OnServerProcessCurrentTickCommand?.Invoke(command, _networkIdentity);
+                OnServerProcessCurrentTickCommand?.Invoke(command);
                 var syncSystem = GetSyncSystem(header.commandType);
                 if (syncSystem != null)
                 {
@@ -192,6 +197,9 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             return null;
         }
 
+        /// <summary>
+        /// 强制更新每个BaseSyncSystem的客户端状态
+        /// </summary>
         public event Action<string> OnClientProcessStateUpdate;
         [ClientRpc]
         private void RpcProcessCurrentTickCommand(string state)
@@ -199,6 +207,9 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             OnClientProcessStateUpdate?.Invoke(state);
         }
 
+        /// <summary>
+        /// 广播状态更新
+        /// </summary>
         public event Action OnBroadcastStateUpdate;
         private void BroadcastStateUpdates()
         {

@@ -77,14 +77,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public int onceSpawnCount;
         public int onceSpawnWeight;
     }
-    
-    public enum CollectObjectBuffSize
-    {
-        None,
-        Small,
-        Medium,
-        Large,
-    }
 
     /// <summary>
     /// 拾取者枚举

@@ -20,26 +20,25 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         public Dictionary<PropertyTypeEnum, float> ConfigPlayerMinProperties { get; private set; }
         public Dictionary<PropertyTypeEnum, float> ConfigPlayerMaxProperties { get; private set; }
         public Dictionary<PropertyTypeEnum, float> ConfigPlayerBaseProperties { get; private set; }
-        public Dictionary<int, PropertyPredictionState> ConfigPlayerPredictionState { get; private set; }
+        public Dictionary<int, PropertyPredictionState> PlayerPredictionState { get; private set; }
         private readonly List<BuffManagerData> _activeBuffs = new List<BuffManagerData>();
         private IConfigProvider _configProvider;
         private AnimationConfig _animationConfig;
-        private BuffManager _buffManager;
         private ConstantBuffConfig _constantBuffConfig;
+        private JsonDataConfig _jsonDataConfig;
         private RandomBuffConfig _randomBuffConfig;
 
         [Inject]
-        private void InitContainers(IConfigProvider configProvider, BuffManager buffManager)
+        private void InitContainers(IConfigProvider configProvider)
         {
             _configProvider = configProvider;
-            _buffManager = buffManager;
-            var jsonConfig = _configProvider.GetConfig<JsonDataConfig>();
+            _jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
             _animationConfig = _configProvider.GetConfig<AnimationConfig>();
             _constantBuffConfig = configProvider.GetConfig<ConstantBuffConfig>();
             _randomBuffConfig = configProvider.GetConfig<RandomBuffConfig>();
-            ConfigPlayerMinProperties = jsonConfig.GetPlayerMaxProperties();
-            ConfigPlayerMaxProperties = jsonConfig.GetPlayerMaxProperties();
-            ConfigPlayerBaseProperties = jsonConfig.GetPlayerBaseProperties();
+            ConfigPlayerMinProperties = _jsonDataConfig.GetPlayerMaxProperties();
+            ConfigPlayerMaxProperties = _jsonDataConfig.GetPlayerMaxProperties();
+            ConfigPlayerBaseProperties = _jsonDataConfig.GetPlayerBaseProperties();
             BuffDataReaderWriter.RegisterReaderWriter();
         }
 
@@ -53,7 +52,6 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                     continue;
                 }
                 PropertyStates[playerState.Key] = playerState.Value;
-                SetState(playerState.Key, PropertyStates[playerState.Key]);
             }
         }
 
@@ -63,10 +61,10 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             var playerPropertyState = new PlayerPropertyState();
             playerPropertyState.Properties = GetPropertyCalculators();
             PropertyStates.Add(connectionId, playerPropertyState);
-            ConfigPlayerPredictionState.Add(connectionId, playerPredictableState);
+            PlayerPredictionState.Add(connectionId, playerPredictableState);
         }
 
-        private Dictionary<PropertyTypeEnum, PropertyCalculator> GetPropertyCalculators()
+        public Dictionary<PropertyTypeEnum, PropertyCalculator> GetPropertyCalculators()
         {
             var dictionary = new Dictionary<PropertyTypeEnum, PropertyCalculator>();
             var enumValues = (PropertyTypeEnum[])Enum.GetValues(typeof(PropertyTypeEnum));
@@ -107,53 +105,34 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         }
 
         public override CommandType HandledCommandType => CommandType.Property;
-        public override IPropertyState ProcessCommand(INetworkCommand command, NetworkIdentity identity)
+        public override IPropertyState ProcessCommand(INetworkCommand command)
         {
             if (command is PropertyCommand propertyCommand)
             {
                 var header = propertyCommand.GetHeader();
                 switch (propertyCommand.Operation)
                 {
+                    //for client only
                     case PropertyCommandAutoRecover:
-                        if (identity.isServer)
-                        {
-                            return null;
-                        }
                         HandlePropertyRecover(header.connectionId);
                         break;
                     case PropertyCommandEnvironmentChange environmentChange:
-                        if (identity.isServer)
-                        {
-                            return null;
-                        }
                         HandleEnvironmentChange(header.connectionId, environmentChange.hasInputMovement, environmentChange.environmentType, environmentChange.isSprinting);
                         break;
                     case PropertyAnimationCommand animationCommand:
-                        if (!identity.isServer)
-                        {
-                            return null;
-                        }
                         HandleAnimationCommand(header.connectionId, animationCommand.animationState);
                         break;
+                    //for server only
+                    case PropertyServerChangeAnimationCommand serverChangeAnimationCommand:
+                        HandleAnimationCommand(header.connectionId, serverChangeAnimationCommand.animationState);
+                        break;
                     case PropertyCommandBuff buff:
-                        if (!identity.isServer)
-                        {
-                            return null;
-                        }
-                        //HandleBuff()
+                        HandleBuff(buff.targetId, buff.buffExtraData, header.connectionId);
                         break;
                     case PropertyCommandAttack attack:
-                        if (!identity.isServer)
-                        {
-                            return null;
-                        }
                         HandleAttack(header.connectionId, attack.targetIds);
                         break;
                     case PropertyCommandSkill skill:
-                        if (!identity.isServer)
-                        {
-                            return null;
-                        }
                         HandleSkill(header.connectionId, skill.skillId);
                         break;
                     default:
@@ -186,20 +165,20 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             PropertyStates[connectionId] = playerState;
         }
 
-        private void HandleBuff(int connectionId, BuffExtraData buffExtraData, CollectObjectBuffSize size = CollectObjectBuffSize.Small, int? casterId = null)
+        private void HandleBuff(int targetId, BuffExtraData buffExtraData, int? casterId = null)
         {
-            var playerState = GetState<PlayerPropertyState>(connectionId);
+            var playerState = GetState<PlayerPropertyState>(targetId);
             var buff = buffExtraData.buffType == BuffType.Constant ? _constantBuffConfig.GetBuff(buffExtraData) : _randomBuffConfig.GetBuff(buffExtraData);
-            var newBuff = new BuffBase(buff, connectionId, casterId);
+            var newBuff = new BuffBase(buff, targetId, casterId);
             var buffManagerData = new BuffManagerData
             {
                 BuffData = newBuff,
-                Size = size
+                Size = buffExtraData.collectObjectBuffSize,
             };
             var propertyCalculator = playerState.Properties[newBuff.BuffData.propertyType];
             playerState.Properties[newBuff.BuffData.propertyType] = HandleBuffInfo(propertyCalculator, newBuff);
             _activeBuffs.Add(buffManagerData);
-            PropertyStates[connectionId] = playerState;
+            PropertyStates[targetId] = playerState;
         }
 
         private void HandleBuffRemove(BuffBase buff, int index)
@@ -222,11 +201,42 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             return propertyCalculator.UpdateCalculator(buffData.BuffData.increaseDataList);
         }
 
-        private void HandleAttack(int connectionId, int[] attackIds)
+        private void HandleAttack(int attacker, int[] attackIds)
         {
-            
+            var propertyState = GetState<PlayerPropertyState>(attacker);
+            var attack = propertyState.Properties[PropertyTypeEnum.Attack].CurrentValue;
+            var critical = propertyState.Properties[PropertyTypeEnum.CriticalRate].CurrentValue;
+            var criticalDamage = propertyState.Properties[PropertyTypeEnum.CriticalDamageRatio].CurrentValue;
+            foreach (var attackId in attackIds)
+            {
+                var targetState = GetState<PlayerPropertyState>(attackId);
+                var defense = targetState.Properties[PropertyTypeEnum.Defense].CurrentValue;
+                var damage = _jsonDataConfig.GetDamage(attack, defense, critical, criticalDamage);
+                if (damage <= 0)
+                {
+                    continue;
+                }
+                var remainHealth = GetRemainHealth(targetState.Properties[PropertyTypeEnum.Health], damage);
+                targetState.Properties[PropertyTypeEnum.Health] = remainHealth;
+                PropertyStates[attackId] = targetState;
+                if (remainHealth.CurrentValue <= 0)
+                {
+                    //todo: handle dead player logic
+                }
+            }
+            PropertyStates[attacker] = propertyState;   
         }
-        
+
+        private PropertyCalculator GetRemainHealth(PropertyCalculator health, float damage)
+        {
+            return health.UpdateCalculator(health, new BuffIncreaseData
+            {
+                increaseType = BuffIncreaseType.Current,
+                increaseValue = damage,
+                operationType = BuffOperationType.Subtract,
+            });
+        }
+
         private void HandleSkill(int connectionId, int skillId)
         {
             
@@ -310,8 +320,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
 
         public override void SetState<T>(int connectionId, T state)
         {
-            var playerPredictableState = ConfigPlayerPredictionState[connectionId];
-            playerPredictableState.SetServerState(state);
+            var playerPredictableState = PlayerPredictionState[connectionId];
+            playerPredictableState.ApplyServerState(state);
         }
 
         public override bool HasStateChanged(IPropertyState oldState, IPropertyState newState)

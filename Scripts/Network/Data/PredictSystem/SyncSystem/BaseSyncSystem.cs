@@ -32,8 +32,15 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             RegisterState(connectionId, identity);
         }
 
+        /// <summary>
+        /// 把服务器PropertyStates转存到客户端内
+        /// </summary>
+        /// <param name="stateJson"></param>
         protected abstract void OnClientProcessStateUpdate(string stateJson);
 
+        /// <summary>
+        /// For Client(更新每个客户端PredictableStateBase的CurrentState)
+        /// </summary>
         protected virtual void OnBroadcastStateUpdate()
         {
             foreach (var kvp in PropertyStates)
@@ -49,13 +56,13 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             PropertyStates.Remove(connectionId);
         }
 
-        protected virtual void OnServerProcessCommand(INetworkCommand command, NetworkIdentity identity)
+        protected virtual void OnServerProcessCommand(INetworkCommand command)
         {
             if (!ValidateCommand(command))
             {
                 return;
             }
-            ProcessCommand(command, identity);
+            ProcessCommand(command);
         }
         
         protected virtual bool ValidateCommand(INetworkCommand command)
@@ -65,7 +72,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         }
 
         public abstract CommandType HandledCommandType { get; }
-        public abstract IPropertyState ProcessCommand(INetworkCommand command, NetworkIdentity identity);
+        public abstract IPropertyState ProcessCommand(INetworkCommand command);
 
         public virtual T GetState<T>(int connectionId) where T : IPropertyState
         {

@@ -190,16 +190,20 @@ namespace HotUpdate.Scripts.Config.JsonConfig
     [Serializable]
     public struct GameConfigData
     {
-        [FormerlySerializedAs("GroundSceneLayer")] public LayerMask groundSceneLayer;
-        [FormerlySerializedAs("SyncTime")] public float syncTime;
-        [FormerlySerializedAs("SafetyMargin")] public float safetyMargin;
-        [FormerlySerializedAs("FixedSpacing")] public float fixedSpacing;
-        [FormerlySerializedAs("WarmupTime")] public float warmupTime;
-        [FormerlySerializedAs("DevelopKey")] public string developKey;
-        [FormerlySerializedAs("DevelopKeyValue")] public string developKeyValue;
-        [FormerlySerializedAs("StairSceneLayer")] public LayerMask stairSceneLayer; 
-        [FormerlySerializedAs("SafePosition")] public Vector3 safePosition;
-        [FormerlySerializedAs("SafeHorizontalOffsetY")] public float safeHorizontalOffsetY;
+        public LayerMask groundSceneLayer;
+        public float syncTime;
+        public float safetyMargin;
+        public float fixedSpacing;
+        public float warmupTime;
+        public string developKey;
+        public string developKeyValue;
+        public LayerMask stairSceneLayer; 
+        public Vector3 safePosition;
+        public float safeHorizontalOffsetY;
+        public float groundMinDistance;
+        public float groundMaxDistance;
+        public float maxSlopeAngle;
+        public float stairsCheckDistance;
     }
     
 
@@ -215,14 +219,6 @@ namespace HotUpdate.Scripts.Config.JsonConfig
     {
         public float OpenSpeed;
         public Vector3 InitEulerAngles;
-    }
-    
-    public enum ActionType
-    {
-        None,
-        Movement,       // 移动类动作：立即响应 + 状态和解
-        Interaction,    // 交互类动作：需要服务器验证
-        Animation,      // 动画过渡：由状态机自动触发
     }
 
     [Serializable]
@@ -249,12 +245,12 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public float RotateSpeed;
         public float OnStairsSpeedRatioFactor;
         public float JumpSpeed;
-        public float StairsCheckDistance;
         public List<PropertyType> MaxProperties;
         public List<PropertyType> BaseProperties;
         public List<PropertyType> MinProperties;
         public float RollForce;
         public PlayerAttackData BaseAttackData;
+        public int InputBufferTick;
         
         #endregion
         #region Animation
@@ -287,6 +283,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         Attack,
         Dead,
         Hit,
+        Collect,
         None
     }
 

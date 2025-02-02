@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.NetworkMes;
@@ -405,7 +406,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             direction = Vector3.zero;
             hitNormal = Vector3.zero;
 
-            if (Physics.Raycast(_checkStairsTransform.position, _checkStairsTransform.forward, out var hit, _jsonDataConfig.PlayerConfig.StairsCheckDistance, _jsonDataConfig.GameConfig.stairSceneLayer))
+            if (Physics.Raycast(_checkStairsTransform.position, _checkStairsTransform.forward, out var hit, 0.25f, _jsonDataConfig.GameConfig.stairSceneLayer))
             {
                 hitNormal = hit.normal;
                 direction = Vector3.Cross(hit.normal, _checkStairsTransform.right).normalized;

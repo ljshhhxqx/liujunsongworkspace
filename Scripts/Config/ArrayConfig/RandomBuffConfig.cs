@@ -48,7 +48,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 buffType = BuffType.Random,
             };
         }
-        public BuffData GetRandomBuff(int buffId)
+        public BuffData GetRandomBuff(int buffId, CollectObjectBuffSize collectObjectBuffSize = CollectObjectBuffSize.Small)
         {
             var randomBuff = randomBuffs.Find(buff => buff.buffId == buffId);
             if (randomBuff.buffId != 0)
@@ -61,7 +61,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                     buffIncreaseData.Add(new BuffIncreaseData
                     {
                         increaseType = increaseData.increaseType,
-                        increaseValue = increaseValue
+                        increaseValue = increaseValue * BuffDataReaderWriter.GetBuffRatioBySize(collectObjectBuffSize),
                     });
                 }
                 var buff = new BuffData

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using Mirror;
 using Tool.GameEvent;
@@ -125,7 +126,7 @@ namespace Network.NetworkMes
     [Serializable]
     public struct PlayerInputCommand
     {
-        [FormerlySerializedAs("movement")] public Vector3 playerInputMovement;
+        public Vector3 playerInputMovement;
         public bool isJumpRequested;
         public bool isRollRequested;
         public bool isAttackRequested;

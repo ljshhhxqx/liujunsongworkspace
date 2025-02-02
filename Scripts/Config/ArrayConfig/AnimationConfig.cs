@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using HotUpdate.Scripts.Config.JsonConfig;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
@@ -13,6 +14,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [ReadOnly]
         [SerializeField]
         private List<AnimationInfo> animationInfos = new List<AnimationInfo>();
+        
+        public List<AnimationInfo> AnimationInfos => animationInfos;
 
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
@@ -59,6 +62,17 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         {
             return GetAnimationInfo(state).actionType;
         }
+        
+        public string GetAnimationName(AnimationState state, int index = 0)
+        {
+            var animationInfo = GetAnimationInfo(state);
+            if (animationInfo.animationNames == null || animationInfo.animationNames.Length <= index)
+            {
+                Debug.LogError("AnimationNames not found for state: " + state + " index: " + index);
+                return null;
+            }
+            return animationInfo.animationType == AnimationType.Combo ? animationInfo.animationNames[0] : animationInfo.animationNames[index];
+        }
     }
 
     [Serializable]
@@ -71,6 +85,15 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public AnimationType animationType;
         public bool canBeInterrupted;
         public ActionType actionType;
+        public string[] animationNames;
+    }
+
+    public enum ActionType
+    {
+        None,
+        Movement,       // 移动类动作：立即响应 + 状态和解
+        Interaction,    // 交互类动作：需要服务器验证
+        Animation,      // 动画过渡：由状态机自动触发
     }
     
     public enum AnimationType

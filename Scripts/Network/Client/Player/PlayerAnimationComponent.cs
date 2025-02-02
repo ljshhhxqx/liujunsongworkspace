@@ -26,8 +26,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private static readonly int InputMagnitude = Animator.StringToHash("InputMagnitude");
         private static readonly int EnvironmentState = Animator.StringToHash("EnvironmentState");
         private static readonly int SpecialAction = Animator.StringToHash("IsSpecialAction");
-        private static readonly int CurrentCombo = Animator.StringToHash("CurrentCombo");
-        private static readonly int CanCombo = Animator.StringToHash("CanCombo");
         private static readonly int IsSprinting = Animator.StringToHash("IsSprinting");
         private readonly SyncDictionary<AnimationState, float> _animationCooldown = new SyncDictionary<AnimationState, float>();
         private readonly SyncList<AnimationState> _animationState = new SyncList<AnimationState>();
@@ -289,8 +287,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private bool _canComboSync;
         [SyncVar]
         private int _currentComboSync;
-        private AnimationInfo _attackInfo;
         private CancellationTokenSource _comboWindowCts;
+        private AnimationInfo _attackInfo;
         
         public bool IsPlayingSpecialAction { get; private set; }
 
@@ -558,12 +556,9 @@ namespace HotUpdate.Scripts.Network.Client.Player
         [Command]
         private void CmdDoAnimation(AnimationState animationState)
         {
-            if (isLocalPlayer)
+            if (!DoAnimation(animationState))
             {
-                if (!DoAnimation(animationState))
-                {
-                    _playerNotifyManager.TargetNotifyInsufficientStamina(connectionToClient, "动画冷却中！");
-                }
+                _playerNotifyManager.TargetNotifyInsufficientStamina(connectionToClient, "动画冷却中！");
             }
         }
         

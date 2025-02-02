@@ -19,8 +19,16 @@ namespace HotUpdate.Scripts.Config
             return GetBuffData(extraData.buffId);
         }
 
-        public BuffData GetBuffData(int buffId)
+        public BuffData GetBuffData(int buffId, CollectObjectBuffSize collectObjectBuffSize = CollectObjectBuffSize.Small)
         {
+            var buff = buffs.Find(b => b.buffId == buffId);
+            for (var i = 0; i < buff.increaseDataList.Count; i++)
+            {
+                var buffData = buff.increaseDataList[i];
+                buffData.increaseValue *= BuffDataReaderWriter.GetBuffRatioBySize(collectObjectBuffSize);
+                buff.increaseDataList[i] = buffData;
+            }
+
             return buffs.Find(buff => buff.buffId == buffId);
         }
 

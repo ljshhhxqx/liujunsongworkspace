@@ -504,7 +504,6 @@ namespace HotUpdate.Scripts.Collector
                             collectConfigId = item.component.CollectConfigId,
                             position = item.position,
                             buffExtraData = buffData,
-                            buffSize = configData.buffSize,
                         });
                     }
                     //Debug.Log($"Calculated {spawnedCount} spawn positions");
@@ -543,7 +542,6 @@ namespace HotUpdate.Scripts.Collector
                         collectConfigId = info.collectConfigId,
                         position = info.position,
                         buffExtraData = info.buffExtraData,
-                        buffSize = info.buffSize,
                     });
                 }
                 SpawnManyItemsClientRpc(spawnInfos.ToArray());
@@ -638,7 +636,7 @@ namespace HotUpdate.Scripts.Collector
                     component.SetBuffData(info.buffExtraData);
                     component.SetMaterial(material);
                 }
-                Debug.Log($"Spawning item at position: {info.position} with id: {info.id}-{info.netId}-{info.collectConfigId}-{buff.propertyType}-{buff.buffId}-{info.buffSize}-{material.name}");
+                Debug.Log($"Spawning item at position: {info.position} with id: {info.id}-{info.netId}-{info.collectConfigId}-{buff.propertyType}-{buff.buffId}-{info.buffExtraData.collectObjectBuffSize}-{material.name}");
         
                 // 确保位置正确设置
                 go.transform.position = info.position;
@@ -967,7 +965,6 @@ namespace HotUpdate.Scripts.Collector
         public int collectConfigId;
         public Vector3 position;
         public BuffExtraData buffExtraData;
-        public CollectObjectBuffSize buffSize;
     }
 
     [Serializable]

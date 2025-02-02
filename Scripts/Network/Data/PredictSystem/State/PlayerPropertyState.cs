@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
@@ -8,6 +10,30 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
     public struct PlayerPropertyState : IPropertyState
     {
         public Dictionary<PropertyTypeEnum, PropertyCalculator> Properties;
+        //public ChestType chestType;
+        public bool IsEqual(IPropertyState other, float tolerance = 0.01f)
+        {
+            if (other is not PlayerPropertyState otherState)
+                return false;
+            foreach (var kvp in Properties)
+            {
+                if (!otherState.Properties.TryGetValue(kvp.Key, out var otherCalculator))
+                    return false;
+
+                // 只比较最终计算值
+                float currentDiff = Mathf.Abs(kvp.Value.CurrentValue - otherCalculator.CurrentValue);
+                float maxDiff = Mathf.Abs(kvp.Value.MaxCurrentValue - otherCalculator.MaxCurrentValue);
+
+                if (currentDiff > tolerance || maxDiff > tolerance)
+                {
+                    Debug.Log($"Property {kvp.Key} difference detected: " +
+                              $"Current={currentDiff}, Max={maxDiff}, Tolerance={tolerance}");
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
     
     [Serializable]
@@ -50,6 +76,9 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
         private PropertyData _propertyData;
         private float _maxValue;
         private float _minValue;
+        public PropertyData PropertyDataValue => _propertyData;
+        public float MaxValue => _maxValue;
+        public float MinValue => _minValue;
         public PropertyCalculator(PropertyTypeEnum propertyType, PropertyData propertyData, float maxValue, float minValue)
         {
             _propertyType = propertyType;
@@ -58,9 +87,9 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
             _minValue = minValue;
         }
         
-        private bool IsResourceProperty(PropertyTypeEnum type)
+        public bool IsResourceProperty()
         {
-            return type.GetConsumeType() == PropertyConsumeType.Consume;
+            return _propertyType.GetConsumeType() == PropertyConsumeType.Consume;
         }
 
         public PropertyCalculator UpdateCurrentValue(float value)
@@ -72,7 +101,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
                 multiplier = _propertyData.multiplier,
                 correction = _propertyData.correction,
                 currentValue = Mathf.Clamp(value + _propertyData.currentValue, _minValue, 
-                    IsResourceProperty(_propertyType) ? _propertyData.maxCurrentValue : _maxValue),
+                    IsResourceProperty() ? _propertyData.maxCurrentValue : _maxValue),
                 maxCurrentValue = _propertyData.maxCurrentValue
             }, _maxValue, _minValue);
         }
@@ -132,7 +161,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
                     break;
                     
                 case BuffIncreaseType.Current:
-                    if (IsResourceProperty(_propertyType))
+                    if (IsResourceProperty())
                     {
                         propertyData.currentValue = ApplyOperation(
                             propertyData.currentValue, 
@@ -146,7 +175,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
             var newValue = (propertyData.baseValue * propertyData.multiplier + 
                 propertyData.additive) * propertyData.correction;
 
-            if (IsResourceProperty(_propertyType))
+            if (IsResourceProperty())
             {
                 propertyData.maxCurrentValue = Mathf.Clamp(newValue, _minValue, _maxValue);
                 propertyData.currentValue = Mathf.Clamp(propertyData.currentValue, 
