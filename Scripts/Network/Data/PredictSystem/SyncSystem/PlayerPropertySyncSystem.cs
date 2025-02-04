@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using HotUpdate.Scripts.Buff;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
+using HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
 using Mirror;
@@ -60,6 +60,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             var playerPredictableState = player.GetComponent<PropertyPredictionState>();
             var playerPropertyState = new PlayerPropertyState();
             playerPropertyState.Properties = GetPropertyCalculators();
+            playerPredictableState.RegisterProperties(playerPropertyState);
             PropertyStates.Add(connectionId, playerPropertyState);
             PlayerPredictionState.Add(connectionId, playerPredictableState);
         }

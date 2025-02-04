@@ -13,7 +13,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
         public event Action<PropertyTypeEnum, float> OnPropertyChanged;
         public Dictionary<PropertyTypeEnum, PropertyCalculator> Properties { get; private set; }
 
-        public PlayerPropertyCalculator(Dictionary<PropertyTypeEnum, PropertyCalculator> properties, bool isClient)
+        public PlayerPropertyCalculator(Dictionary<PropertyTypeEnum, PropertyCalculator> properties, bool isClient = true)
         {
             Properties = properties;
             IsClient = isClient;
@@ -175,6 +175,16 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
                 increaseValue = damage,
                 operationType = BuffOperationType.Subtract,
             });
+        }
+
+        public void UpdateProperty(PropertyTypeEnum propertyType, PropertyCalculator property)
+        {
+            if (!Properties.ContainsKey(propertyType))
+            {
+                Properties.Add(propertyType, property);
+            }
+            Properties[propertyType] = property;
+            OnPropertyChanged?.Invoke(propertyType, property.CurrentValue);
         }
     }
 

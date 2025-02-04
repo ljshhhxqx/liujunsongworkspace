@@ -21,6 +21,12 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
         private float _currentSpeed;
         private float _verticalSpeed;
         public float GroundDistance { get; private set; }
+        
+        public float CurrentSpeed
+        {
+            get => _currentSpeed;
+            set => _currentSpeed = value;
+        }
 
         public PlayerPhysicsCalculator(PhysicsComponent component, bool isClient = true)
         {

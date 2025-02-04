@@ -178,8 +178,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
                     // 连击中的动画只能继续连击或被高优先级动画打断（如受击）
                     if (newState == AnimationState.Attack)
                     {
-                        return true;
-                        //return _canComboSync;
+                        return _canComboSync;
                     }
                     return currentInfo.canBeInterrupted && newInfo.priority > currentInfo.priority;
                 default:

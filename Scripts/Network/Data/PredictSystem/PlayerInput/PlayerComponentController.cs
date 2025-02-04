@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Data.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
@@ -6,6 +7,7 @@ using HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
 using UnityEngine;
 using VContainer;
+using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
 {
@@ -39,8 +41,9 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
         private float _speedSmoothVelocity;
         public bool IsLocalPlayer { get; private set; }
         public bool IsServer { get; private set; }
+        public bool IsClient { get; private set; }
 
-        private void Start()
+        private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody>();
             _inputState = GetComponent<PlayerInputPredictionState>();
@@ -55,12 +58,19 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
         private void Init(IConfigProvider configProvider)
         {
             GetAllCalculators(configProvider);
+            _propertyPredictionState.OnPropertyChanged += HandlePropertyChange;
         }
 
+        private void HandlePropertyChange(PropertyTypeEnum propertyType, PropertyCalculator value)
+        {
+            _playerPropertyCalculator.UpdateProperty(propertyType, value);
+        }
+
+        //IConfigProvider可能会有用
         private void GetAllCalculators(IConfigProvider configProvider)
         {
             _playerPhysicsCalculator = new PlayerPhysicsCalculator(new PhysicsComponent(_rigidbody, transform, _checkStairTransform, _capsuleCollider, _camera));
-            //_playerPropertyCalculator = new PlayerPropertyCalculator(new );
+            _playerPropertyCalculator = new PlayerPropertyCalculator(new Dictionary<PropertyTypeEnum, PropertyCalculator>());
             _playerAnimationCalculator = new PlayerAnimationCalculator(new AnimationComponent{ Animator = _animator});
         }
 
@@ -68,6 +78,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
         {
             if (IsLocalPlayer)
             {
+                //发送输入数据，只与本地玩家有关
                 HandleInput();
                 HandleNetworkCommand();
             }
@@ -87,8 +98,9 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
 
         private void FixedUpdate()
         {
-            if (!IsLocalPlayer) return;
+            //对速度进行平滑处理，让所有客户端和服务器的位置改变更平滑
             _currentSpeed = Mathf.SmoothDamp(_currentSpeed, _targetSpeed, ref _speedSmoothVelocity, _speedSmoothTime);
+            _playerPhysicsCalculator.CurrentSpeed = _currentSpeed;
             _playerPhysicsCalculator.CheckPlayerState(new CheckGroundDistanceParam(_currentInputState.inputMovement, Time.fixedDeltaTime));
         }
 
@@ -110,9 +122,20 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
             }
         }
 
+        //这一行开始，写对外接口
         public void HandleMovement(MoveParam moveParam)
         {
             _playerPhysicsCalculator.HandleMove(moveParam);
+        }
+
+        public AnimationState GetCurrentAnimationState(DetermineAnimationStateParams parameters, Func<AnimationState, bool> canPlayAnimationByStrengthAndCd)
+        {
+            return _playerAnimationCalculator.DetermineAnimationState(parameters, canPlayAnimationByStrengthAndCd);
+        }
+
+        public void HandleAnimation(AnimationState newState, Func<AnimationState, bool> canPlayAnimationByStrengthAndCd)
+        {
+            _playerAnimationCalculator.HandleAnimation(newState, canPlayAnimationByStrengthAndCd);
         }
     }
 }

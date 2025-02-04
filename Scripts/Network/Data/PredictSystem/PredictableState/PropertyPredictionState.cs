@@ -38,7 +38,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState
             return PlayerPropertyState.Properties[propertyType].CurrentValue;
         }
 
-        public event Action<PropertyTypeEnum, float> OnPropertyChanged;
+        public event Action<PropertyTypeEnum, PropertyCalculator> OnPropertyChanged;
         
         public override CommandType HandledCommandType => CommandType.Property;
         
@@ -152,15 +152,20 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState
             }
         }
 
+        public void RegisterProperties(PlayerPropertyState propertyState)
+        {
+            PropertyChanged(propertyState);
+        }
+
         private void PropertyChanged(PlayerPropertyState propertyState)
         {
             foreach (var property in propertyState.Properties)
             {
                 if (property.Value.IsResourceProperty())
                 {
-                    OnPropertyChanged?.Invoke(property.Key, property.Value.MaxCurrentValue);
+                    OnPropertyChanged?.Invoke(property.Key, property.Value);
                 }
-                OnPropertyChanged?.Invoke(property.Key, property.Value.CurrentValue);
+                OnPropertyChanged?.Invoke(property.Key, property.Value);
             }
         }
     }

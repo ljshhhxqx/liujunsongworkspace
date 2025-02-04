@@ -10,7 +10,7 @@ using VContainer;
 
 namespace HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState
 {
-    public abstract class PredictableStateBase : NetworkAutoInjectComponent
+    public abstract class PredictableStateBase : NetworkAutoInjectComponent //NetworkAutoInjectComponent用于自动给NetworkBehaviour注入依赖
     {
         // 服务器权威状态
         protected abstract IPropertyState CurrentState { get; set; }
@@ -21,8 +21,6 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState
         protected JsonDataConfig JsonDataConfig;
         protected int LastConfirmedTick { get; private set; }
         protected abstract CommandType CommandType { get; }
-
-        public IPropertyState PropertyState => CurrentState;
 
         [Inject]
         protected virtual void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider)

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
+using HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
 using Mirror;
 using Newtonsoft.Json;
@@ -22,6 +23,11 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             GameSyncManager.OnPlayerDisconnected += OnPlayerDisconnected;
         }
 
+        public PlayerComponentController GetPlayerComponentController(int connectionId)
+        {
+            return GameSyncManager.GetPlayerConnection(connectionId);
+        }
+
         private void OnPlayerDisconnected(int connectionId)
         {
             UnregisterState(connectionId);
@@ -30,6 +36,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         private void OnPlayerConnected(int connectionId, NetworkIdentity identity)
         {
             RegisterState(connectionId, identity);
+            //todo: 获取PlayerComponentController，注册
         }
 
         /// <summary>

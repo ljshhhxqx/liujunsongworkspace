@@ -78,6 +78,17 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             Debug.LogError($"No sync system found for {commandType}");
             return null;
         }
+        
+        public PlayerComponentController GetPlayerConnection(int connectionId)
+        {
+            if (_playerConnections.TryGetValue(connectionId, out var playerConnection))
+            {
+                return playerConnection;
+            }
+
+            Debug.LogError($"No player connection found for {connectionId}");
+            return null;
+        }
 
         private void Update()
         {
@@ -221,21 +232,5 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         {
             OnBroadcastStateUpdate?.Invoke();
         }
-
-        #region Debug
-
-        // private void OnGUI()
-        // {
-        //     if (!isServer) return;
-        //
-        //     GUILayout.BeginArea(new Rect(10, 10, 200, 200));
-        //     GUILayout.Label($"Current Tick: {_currentTick}");
-        //     GUILayout.Label($"Pending Commands: {_pendingCommands.Count}");
-        //     GUILayout.Label($"Current Tick Commands: {_currentTickCommands.Count}");
-        //     GUILayout.Label($"Tick Timer: {_tickTimer:F3}");
-        //     GUILayout.EndArea();
-        // }
-
-        #endregion
     }
 }

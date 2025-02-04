@@ -10,7 +10,6 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
     public struct PlayerPropertyState : IPropertyState
     {
         public Dictionary<PropertyTypeEnum, PropertyCalculator> Properties;
-        //public ChestType chestType;
         public bool IsEqual(IPropertyState other, float tolerance = 0.01f)
         {
             if (other is not PlayerPropertyState otherState)
