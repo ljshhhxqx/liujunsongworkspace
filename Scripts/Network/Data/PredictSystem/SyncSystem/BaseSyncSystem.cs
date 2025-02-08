@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
 using HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
+using MemoryPack;
 using Mirror;
 using Newtonsoft.Json;
 
@@ -42,8 +44,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         /// <summary>
         /// 把服务器PropertyStates转存到客户端内
         /// </summary>
-        /// <param name="stateJson"></param>
-        protected abstract void OnClientProcessStateUpdate(string stateJson);
+        /// <param name="state"></param>
+        protected abstract void OnClientProcessStateUpdate(byte[] state);
 
         /// <summary>
         /// For Client(更新每个客户端PredictableStateBase的CurrentState)
@@ -75,7 +77,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         protected virtual bool ValidateCommand(INetworkCommand command)
         {
             var header = command.GetHeader();
-            return PropertyStates.ContainsKey(header.connectionId) && command.IsValid();
+            return PropertyStates.ContainsKey(header.ConnectionId) && command.IsValid();
         }
 
         public abstract CommandType HandledCommandType { get; }
@@ -90,9 +92,9 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             return default;
         }
 
-        public virtual string GetAllState()
+        public virtual byte[] GetAllState()
         {
-            return JsonConvert.SerializeObject(PropertyStates);
+            return MemoryPackSerializer.Serialize(PropertyStates);
         }
 
         public abstract void SetState<T>(int connectionId, T state) where T : IPropertyState;

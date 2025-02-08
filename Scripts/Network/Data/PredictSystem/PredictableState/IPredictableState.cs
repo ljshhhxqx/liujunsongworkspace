@@ -4,6 +4,7 @@ using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
 using HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Inject;
+using MemoryPack;
 using Mirror;
 using Newtonsoft.Json;
 using VContainer;
@@ -34,37 +35,33 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState
         public void AddPredictedCommand(INetworkCommand command)
         {
             var header = command.GetHeader();
-            if (header.commandType != HandledCommandType) 
+            if (header.CommandType != HandledCommandType) 
                 return;
-            command.SetHeader(netIdentity.connectionToClient.connectionId, CommandType, GameSyncManager.CurrentTick, netIdentity);
+            command.SetHeader(netIdentity.connectionToClient.connectionId, CommandType, GameSyncManager.CurrentTick);
         
             CommandQueue.Enqueue(command);
-            while (CommandQueue.Count > 0 && GameSyncManager.CurrentTick - command.GetHeader().tick > JsonDataConfig.PlayerConfig.InputBufferTick)
+            while (CommandQueue.Count > 0 && GameSyncManager.CurrentTick - command.GetHeader().Tick > JsonDataConfig.PlayerConfig.InputBufferTick)
             {
                 CommandQueue.Dequeue();
             }
             // 模拟命令效果
             Simulate(command);
-            var json = JsonConvert.SerializeObject(command, new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.All,
-                Formatting = Formatting.Indented
-            });
+            var json = MemoryPackSerializer.Serialize(command);
             // 发送命令
             CmdSendCommand(json);
         }
 
         [Command]
-        private void CmdSendCommand(string commandJson)
+        private void CmdSendCommand(byte[] commandJson)
         {
-            GameSyncManager.EnqueueCommand(commandJson, true);
+            GameSyncManager.EnqueueCommand(commandJson);
         }
 
         // 清理已确认的命令
         protected virtual void CleanupConfirmedCommands(int confirmedTick)
         {
             while (CommandQueue.Count > 0 && 
-                   CommandQueue.Peek().GetHeader().tick <= confirmedTick)
+                   CommandQueue.Peek().GetHeader().Tick <= confirmedTick)
             {
                 CommandQueue.Dequeue();
             }

@@ -113,13 +113,15 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
             }
             return CurrentAnimationState;
         }
+
+        private bool _currentAnimationCanPlay;
         
-        public bool HandleAnimation(AnimationState newState)
+        public void HandleAnimation(AnimationState newState)
         {
             // 验证是否可以播放
-            if (!CanPlayAnimation(newState))
+            if (!_currentAnimationCanPlay)
             {
-                return false;
+                return;
             }
 
             // 根据动画状态执行相应的动画
@@ -150,14 +152,14 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
                     _animationComponent.Animator.CrossFade(GetAnimationName(AnimationState.Dead), 0.01f);
                     break;
             }
-            return true;
         }
 
-        private bool CanPlayAnimation(AnimationState newState)
+        public bool CanPlayAnimation(AnimationState newState)
         {
+            _currentAnimationCanPlay = false;
             // 已死亡状态不能播放任何动画
             if (CurrentAnimationState == AnimationState.Dead)
-                return false;
+                return _currentAnimationCanPlay;
             
             var currentInfo = _animationConstant.AnimationConfig.GetAnimationInfo(CurrentAnimationState);
             var newInfo = _animationConstant.AnimationConfig.GetAnimationInfo(newState);
@@ -165,21 +167,14 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
             switch (currentInfo.animationType)
             {
                 case AnimationType.Continuous:
-                    //Debug.Log($"CanPlayAnimation - Continuous: {currentInfo.State.ToString()}-{currentInfo.CanBeInterrupted}, {newInfo.State.ToString()}-{newInfo.CanBeInterrupted}");
-                    return currentInfo.canBeInterrupted;
+                    _currentAnimationCanPlay = currentInfo.canBeInterrupted;
+                    break;
                 case AnimationType.Single:
-                    // 一次性动画只有在可被打断时才能切换到优先级更高的动画
-                    return currentInfo.canBeInterrupted && newInfo.priority > currentInfo.priority;
                 case AnimationType.Combo:
-                    // 连击中的动画只能继续连击或被高优先级动画打断（如受击）
-                    if (newState == AnimationState.Attack)
-                    {
-                        return _canComboSync;
-                    }
-                    return currentInfo.canBeInterrupted && newInfo.priority > currentInfo.priority;
-                default:
-                    return false;
+                    _currentAnimationCanPlay = currentInfo.canBeInterrupted && newInfo.priority > currentInfo.priority;
+                    break;
             }
+            return _currentAnimationCanPlay;
         }
         public AnimationState DetermineAnimationState(DetermineAnimationStateParams parameters)
         {

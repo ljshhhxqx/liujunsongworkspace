@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
@@ -95,8 +96,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
                     _playerAnimationCalculator.UpdateAnimationState();
                     _inputStream.OnNext(new PlayerInputStateData
                     {
-                        inputMovement = movement,
-                        inputAnimations = animationStates,
+                        InputMovement = movement,
+                        InputAnimations = animationStates.ToArray(),
                     });
                 })
                 .AddTo(_disposables);
@@ -108,7 +109,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
                 })
                 .AddTo(_disposables);
             //发送网络命令
-            _inputStream.Where(x=> isLocalPlayer && x.inputMovement.magnitude > 0.1f && x.inputAnimations.Count > 0)
+            _inputStream.Where(x=> isLocalPlayer && x.InputMovement.magnitude > 0.1f && x.InputAnimations.Length > 0)
                 .Subscribe(HandleSendNetworkCommand)
                 .AddTo(_disposables);
             //处理物理信息
@@ -121,8 +122,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
         {
             _inputState.AddPredictedCommand(new InputCommand
             {
-                inputMovement = inputData.inputMovement,
-                inputAnimationStates = inputData.inputAnimations.ToArray(),
+                InputMovement = inputData.InputMovement,
+                InputAnimationStates = inputData.InputAnimations,
             });
         }
 
@@ -130,11 +131,11 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
         {
             _currentSpeed = Mathf.SmoothDamp(_currentSpeed, _targetSpeed, ref _speedSmoothVelocity, _speedSmoothTime);
             _playerPhysicsCalculator.CurrentSpeed = _currentSpeed;
-            _gameStateStream.Value = _playerPhysicsCalculator.CheckPlayerState(new CheckGroundDistanceParam(inputData.inputMovement, FixedDeltaTime));
+            _gameStateStream.Value = _playerPhysicsCalculator.CheckPlayerState(new CheckGroundDistanceParam(inputData.InputMovement, FixedDeltaTime));
             _groundDistanceStream.Value = _playerPhysicsCalculator.GroundDistance;
             _playerAnimationCalculator.SetEnvironmentState(_gameStateStream.Value);
             _playerAnimationCalculator.SetGroundDistance(_groundDistanceStream.Value);
-            _playerAnimationCalculator.SetAnimatorParams(inputData.inputMovement.magnitude, _groundDistanceStream.Value, _currentSpeed);
+            _playerAnimationCalculator.SetAnimatorParams(inputData.InputMovement.magnitude, _groundDistanceStream.Value, _currentSpeed);
         }
 
         private void HandlePropertyChange(PropertyTypeEnum propertyType, PropertyCalculator value)
@@ -194,13 +195,18 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
         {
             return _playerAnimationCalculator.DetermineAnimationState(CreateDetermineAnimationStateParams(inputData));
         }
-        
+
+        public bool CanPlayAttackAnimation(AnimationState command)
+        {
+            return _playerAnimationCalculator.CanPlayAnimation(command);
+        }
+
         private DetermineAnimationStateParams CreateDetermineAnimationStateParams(PlayerInputStateData inputData)
         {
             return new DetermineAnimationStateParams
             {
-                InputMovement = inputData.inputMovement,
-                InputAnimationStates = inputData.inputAnimations,                
+                InputMovement = inputData.InputMovement,
+                InputAnimationStates = inputData.InputAnimations.ToList(),                
                 GroundDistance = _groundDistanceStream.Value,
                 EnvironmentState = _gameStateStream.Value,
             };            
@@ -215,7 +221,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
             //移动
             _playerPhysicsCalculator.HandleMove(new MoveParam
             {
-                InputMovement = inputData.inputMovement,
+                InputMovement = inputData.InputMovement,
                 DeltaTime = DeltaTime,
                 IsMovingState = _playerAnimationCalculator.IsMovingState(),
             });

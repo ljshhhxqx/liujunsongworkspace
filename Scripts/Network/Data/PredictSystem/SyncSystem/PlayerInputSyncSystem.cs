@@ -6,8 +6,8 @@ using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
 using HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
+using MemoryPack;
 using Mirror;
-using Newtonsoft.Json;
 using UniRx;
 using UnityEngine;
 using VContainer;
@@ -56,9 +56,9 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             }
         }
 
-        protected override void OnClientProcessStateUpdate(string stateJson)
+        protected override void OnClientProcessStateUpdate(byte[] state)
         {
-            var playerStates = JsonConvert.DeserializeObject<Dictionary<int, PlayerInputState>>(stateJson);
+            var playerStates = MemoryPackSerializer.Deserialize<Dictionary<int, PlayerInputState>>(state);
             foreach (var playerState in playerStates)
             {
                 if (!PropertyStates.ContainsKey(playerState.Key))
@@ -118,8 +118,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             {
                 var header = inputCommand.GetHeader();
                 var playerSyncSystem = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
-                var playerController = GameSyncManager.GetPlayerConnection(header.connectionId);
-                var playerProperty = playerSyncSystem.GetPlayerProperty(header.connectionId);
+                var playerController = GameSyncManager.GetPlayerConnection(header.ConnectionId);
+                var playerProperty = playerSyncSystem.GetPlayerProperty(header.ConnectionId);
                 //验证玩家是否存在或者是否已死亡
                 if (playerProperty == null || playerProperty[PropertyTypeEnum.Health].CurrentValue <= 0)
                 {
@@ -128,13 +128,19 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
 
                 var inputStateData = new PlayerInputStateData
                 {
-                    inputMovement = inputCommand.inputMovement,
-                    inputAnimations = inputCommand.inputAnimationStates.ToList()
+                    InputMovement = inputCommand.InputMovement,
+                    InputAnimations = inputCommand.InputAnimationStates
                 };
                 
                 //获取可以执行的动画
                 var commandAnimation = playerController.GetCurrentAnimationState(inputStateData);
-                if (!_animationCooldowns.TryGetValue(header.connectionId, out var animationCooldowns))
+
+                if (!playerController.CanPlayAttackAnimation(commandAnimation))
+                {
+                    return null;
+                }
+
+                if (!_animationCooldowns.TryGetValue(header.ConnectionId, out var animationCooldowns))
                 {
                     return null;
                 }
@@ -146,7 +152,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 {
                     if (cooldownInfo == null || !cooldownInfo.IsReady())
                     {
-                        Debug.LogWarning($"Player {header.connectionId} input animation {commandAnimation} is not ready.");
+                        Debug.LogWarning($"Player {header.ConnectionId} input animation {commandAnimation} is not ready.");
                         return null;
                     }
                 }
@@ -154,13 +160,25 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 //验证是否耐力值足够
                 if (playerProperty[PropertyTypeEnum.Strength].CurrentValue < info.cost)
                 {
-                    Debug.LogWarning($"Player {header.connectionId} input animation {commandAnimation} cost {info.cost} strength, but strength is {playerProperty[PropertyTypeEnum.Strength].CurrentValue}.");
+                    Debug.LogWarning($"Player {header.ConnectionId} input animation {commandAnimation} cost {info.cost} strength, but strength is {playerProperty[PropertyTypeEnum.Strength].CurrentValue}.");
                     return null;
                 }
                 
+                // 扣除耐力值
+                GameSyncManager.EnqueueServerCommand(new PropertyServerAnimationCommand
+                {
+                    Header = new NetworkCommandHeader
+                    {
+                        ConnectionId = 0,
+                        CommandType = CommandType.Property,
+                        Tick = GameSyncManager.CurrentTick,
+                        Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                        Authority = CommandAuthority.Server,
+                    },
+                    AnimationState = commandAnimation,
+                });
 
                 cooldownInfo.Use();
-
                 playerController.HandleMoveAndAnimation(inputStateData);
             }
 

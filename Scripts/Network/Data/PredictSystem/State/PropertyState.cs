@@ -1,8 +1,11 @@
-﻿using System;
+﻿using MemoryPack;
 
 namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
 {
-    public interface IPropertyState
+    [MemoryPackable(GenerateType.NoGenerate)]
+    [MemoryPackUnion(0, typeof(PlayerInputState))]
+    [MemoryPackUnion(1, typeof(PlayerPropertyState))]
+    public partial interface IPropertyState
     {
         bool IsEqual(IPropertyState other, float tolerance = 0.01f);
     }

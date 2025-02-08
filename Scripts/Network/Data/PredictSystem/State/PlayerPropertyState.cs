@@ -1,16 +1,90 @@
 ﻿using System;
 using System.Collections.Generic;
-using HotUpdate.Scripts.Config.ArrayConfig;
-using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
+using System.Linq;
 using MemoryPack;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
 {
-    [Serializable]
-    public struct PlayerPropertyState : IPropertyState
+    [MemoryPackable]
+    public partial struct PlayerPropertyState : IPropertyState
     {
-        public Dictionary<PropertyTypeEnum, PropertyCalculator> Properties;
+        // 使用显式字段存储键集合
+        [MemoryPackOrder(1)] 
+        private PropertyTypeEnum[] _propertyTypes;
+
+        // 使用并行数组提升访问效率
+        [MemoryPackOrder(0)]
+        private PropertyCalculator[] _calculators;
+
+        // 添加字典缓存字段
+        [MemoryPackIgnore]
+        private Dictionary<PropertyTypeEnum, PropertyCalculator> _propertiesCache;
+
+        public Dictionary<PropertyTypeEnum, PropertyCalculator> Properties
+        {
+            get
+            {
+                if (_propertiesCache == null)
+                {
+                    RebuildCache();
+                }
+                return _propertiesCache;
+            }
+            set => _propertiesCache = value;
+        }
+
+        [MemoryPackOnSerializing]
+        void OnSerializing()
+        {
+            // 同步更新缓存
+            if (_propertiesCache != null)
+            {
+                _propertyTypes = _propertiesCache.Keys.ToArray();
+                _calculators = _propertiesCache.Values.ToArray();
+            }
+        }
+
+        [MemoryPackOnDeserialized]
+        void OnDeserialized()
+        {
+            RebuildCache();
+        }
+
+        private void RebuildCache()
+        {
+            _propertiesCache = new Dictionary<PropertyTypeEnum, PropertyCalculator>(
+                _calculators?.Length ?? 0);
+
+            if (_calculators != null && _propertyTypes != null)
+            {
+                for (int i = 0; i < _calculators.Length; i++)
+                {
+                    // 添加重复键检测
+                    if (_propertiesCache.ContainsKey(_propertyTypes[i]))
+                    {
+                        throw new InvalidOperationException(
+                            $"Duplicate property type: {_propertyTypes[i]}");
+                    }
+                    _propertiesCache[_propertyTypes[i]] = _calculators[i];
+                }
+            }
+        }
+
+        // 修改属性访问方式
+        public PropertyCalculator GetCalculator(PropertyTypeEnum type)
+        {
+            return Properties.GetValueOrDefault(type);
+        }
+
+        public void SetCalculator(PropertyTypeEnum type, PropertyCalculator calculator)
+        {
+            Properties[type] = calculator;
+            // 标记数据已修改
+            _propertyTypes = null;
+            _calculators = null;
+        }
+        
         public bool IsEqual(IPropertyState other, float tolerance = 0.01f)
         {
             if (other is not PlayerPropertyState otherState)
@@ -36,49 +110,60 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
         }
     }
     
-    [Serializable]
-    public struct PropertyCalculator
+    [MemoryPackable]
+    public partial struct PropertyCalculator
     {
-        [Serializable]
-        public struct PropertyData
+        [MemoryPackable]
+        public partial struct PropertyData
         {
-            public float baseValue;
-            public float additive;
-            public float multiplier;
-            public float correction;
-            public float currentValue;
-            public float maxCurrentValue;
+            [MemoryPackOrder(0)] 
+            public float BaseValue;
+            [MemoryPackOrder(1)] 
+            public float Additive;
+            [MemoryPackOrder(2)] 
+            public float Multiplier;
+            [MemoryPackOrder(3)] 
+            public float Correction;
+            [MemoryPackOrder(4)] 
+            public float CurrentValue;
+            [MemoryPackOrder(5)] 
+            public float MaxCurrentValue;
         }
         
-        public float CurrentValue => _propertyData.currentValue;
-        public float MaxCurrentValue => _propertyData.maxCurrentValue;
+        public float CurrentValue => _propertyData.CurrentValue;
+        public float MaxCurrentValue => _propertyData.MaxCurrentValue;
 
         public float GetPropertyValue(BuffIncreaseType increaseType)
         {
             switch (increaseType)
             {
                 case BuffIncreaseType.Base:
-                    return _propertyData.baseValue;
+                    return _propertyData.BaseValue;
                 case BuffIncreaseType.Multiplier:
-                    return _propertyData.multiplier;
+                    return _propertyData.Multiplier;
                 case BuffIncreaseType.Extra:
-                    return _propertyData.additive;
+                    return _propertyData.Additive;
                 case BuffIncreaseType.CorrectionFactor:
-                    return _propertyData.correction;
+                    return _propertyData.Correction;
                 case BuffIncreaseType.Current:
-                    return _propertyData.currentValue;
+                    return _propertyData.CurrentValue;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(increaseType), increaseType, null);
             }
         }
 
+        [MemoryPackOrder(0)] 
         private readonly PropertyTypeEnum _propertyType;
+        [MemoryPackOrder(1)] 
         private PropertyData _propertyData;
+        [MemoryPackOrder(2)] 
         private float _maxValue;
+        [MemoryPackOrder(3)] 
         private float _minValue;
         public PropertyData PropertyDataValue => _propertyData;
         public float MaxValue => _maxValue;
         public float MinValue => _minValue;
+        public PropertyTypeEnum PropertyType => _propertyType;
         public PropertyCalculator(PropertyTypeEnum propertyType, PropertyData propertyData, float maxValue, float minValue)
         {
             _propertyType = propertyType;
@@ -96,13 +181,13 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
         {
             return new PropertyCalculator(_propertyType, new PropertyData
             {
-                baseValue = _propertyData.baseValue,
-                additive = _propertyData.additive,
-                multiplier = _propertyData.multiplier,
-                correction = _propertyData.correction,
-                currentValue = Mathf.Clamp(value + _propertyData.currentValue, _minValue, 
-                    IsResourceProperty() ? _propertyData.maxCurrentValue : _maxValue),
-                maxCurrentValue = _propertyData.maxCurrentValue
+                BaseValue = _propertyData.BaseValue,
+                Additive = _propertyData.Additive,
+                Multiplier = _propertyData.Multiplier,
+                Correction = _propertyData.Correction,
+                CurrentValue = Mathf.Clamp(value + _propertyData.CurrentValue, _minValue, 
+                    IsResourceProperty() ? _propertyData.MaxCurrentValue : _maxValue),
+                MaxCurrentValue = _propertyData.MaxCurrentValue
             }, _maxValue, _minValue);
         }
 
@@ -133,29 +218,29 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
             switch (data.increaseType)
             {
                 case BuffIncreaseType.Base:
-                    propertyData.baseValue = Mathf.Max(0, ApplyOperation(
-                        propertyData.baseValue, 
+                    propertyData.BaseValue = Mathf.Max(0, ApplyOperation(
+                        propertyData.BaseValue, 
                         data.increaseValue, 
                         data.operationType));
                     break;
                     
                 case BuffIncreaseType.Multiplier:
-                    propertyData.multiplier = Mathf.Max(0, ApplyOperation(
-                        propertyData.multiplier, 
+                    propertyData.Multiplier = Mathf.Max(0, ApplyOperation(
+                        propertyData.Multiplier, 
                         data.increaseValue, 
                         data.operationType));
                     break;
                     
                 case BuffIncreaseType.Extra:
-                    propertyData.additive = ApplyOperation(
-                        propertyData.additive, 
+                    propertyData.Additive = ApplyOperation(
+                        propertyData.Additive, 
                         data.increaseValue, 
                         data.operationType);
                     break;
                     
                 case BuffIncreaseType.CorrectionFactor:
-                    propertyData.correction = Mathf.Max(0, ApplyOperation(
-                        propertyData.correction, 
+                    propertyData.Correction = Mathf.Max(0, ApplyOperation(
+                        propertyData.Correction, 
                         data.increaseValue, 
                         data.operationType));
                     break;
@@ -163,8 +248,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
                 case BuffIncreaseType.Current:
                     if (IsResourceProperty())
                     {
-                        propertyData.currentValue = ApplyOperation(
-                            propertyData.currentValue, 
+                        propertyData.CurrentValue = ApplyOperation(
+                            propertyData.CurrentValue, 
                             data.increaseValue, 
                             data.operationType);
                     }
@@ -172,18 +257,18 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
             }
 
             // 计算最终值
-            var newValue = (propertyData.baseValue * propertyData.multiplier + 
-                propertyData.additive) * propertyData.correction;
+            var newValue = (propertyData.BaseValue * propertyData.Multiplier + 
+                propertyData.Additive) * propertyData.Correction;
 
             if (IsResourceProperty())
             {
-                propertyData.maxCurrentValue = Mathf.Clamp(newValue, _minValue, _maxValue);
-                propertyData.currentValue = Mathf.Clamp(propertyData.currentValue, 
+                propertyData.MaxCurrentValue = Mathf.Clamp(newValue, _minValue, _maxValue);
+                propertyData.CurrentValue = Mathf.Clamp(propertyData.CurrentValue, 
                     _minValue, Mathf.Min(newValue, _maxValue));
             }
             else
             {
-                propertyData.currentValue = Mathf.Clamp(newValue, _minValue, _maxValue);
+                propertyData.CurrentValue = Mathf.Clamp(newValue, _minValue, _maxValue);
             }
 
             return new PropertyCalculator(_propertyType, propertyData, _maxValue, _minValue);
@@ -209,11 +294,11 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
 
             var propertyData = calculator._propertyData;
             var newValue = ApplyOperation(
-                propertyData.currentValue,
-                propertyData.correction * data.increaseValue,
+                propertyData.CurrentValue,
+                propertyData.Correction * data.increaseValue,
                 data.operationType);
 
-            propertyData.currentValue = Mathf.Clamp(newValue, _minValue, _maxValue);
+            propertyData.CurrentValue = Mathf.Clamp(newValue, _minValue, _maxValue);
 
             return new PropertyCalculator(_propertyType, propertyData, _maxValue, _minValue);
         }

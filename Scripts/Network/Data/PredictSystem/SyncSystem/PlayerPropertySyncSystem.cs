@@ -8,6 +8,7 @@ using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
 using HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
+using MemoryPack;
 using Mirror;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -43,9 +44,9 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             BuffDataReaderWriter.RegisterReaderWriter();
         }
 
-        protected override void OnClientProcessStateUpdate(string stateJson)
+        protected override void OnClientProcessStateUpdate(byte[] state)
         {
-            var playerStates = JsonConvert.DeserializeObject<Dictionary<int, PlayerPropertyState>>(stateJson);
+            var playerStates = MemoryPackSerializer.Deserialize<Dictionary<int, PlayerPropertyState>>(state);
             foreach (var playerState in playerStates)
             {
                 if (!PropertyStates.ContainsKey(playerState.Key))
@@ -73,12 +74,12 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             foreach (var propertyType in enumValues)
             {
                 var propertyData = new PropertyCalculator.PropertyData();
-                propertyData.baseValue = ConfigPlayerBaseProperties[propertyType];
-                propertyData.additive = 0;
-                propertyData.multiplier = 1;
-                propertyData.correction = 1;
-                propertyData.currentValue = propertyData.baseValue;
-                propertyData.maxCurrentValue = propertyData.baseValue;
+                propertyData.BaseValue = ConfigPlayerBaseProperties[propertyType];
+                propertyData.Additive = 0;
+                propertyData.Multiplier = 1;
+                propertyData.Correction = 1;
+                propertyData.CurrentValue = propertyData.BaseValue;
+                propertyData.MaxCurrentValue = propertyData.BaseValue;
                 var calculator = new PropertyCalculator(propertyType, propertyData,ConfigPlayerMinProperties[propertyType], ConfigPlayerMaxProperties[propertyType]);
                 dictionary.Add(propertyType, calculator);
             }
@@ -109,41 +110,39 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         public override CommandType HandledCommandType => CommandType.Property;
         public override IPropertyState ProcessCommand(INetworkCommand command)
         {
-            if (command is PropertyCommand propertyCommand)
+            var header = command.GetHeader();
+            if (command is PropertyAutoRecoverCommand)
             {
-                var header = propertyCommand.GetHeader();
-                switch (propertyCommand.Operation)
-                {
-                    //for client only
-                    case PropertyCommandAutoRecover:
-                        HandlePropertyRecover(header.connectionId);
-                        break;
-                    case PropertyCommandEnvironmentChange environmentChange:
-                        HandleEnvironmentChange(header.connectionId, environmentChange.hasInputMovement, environmentChange.environmentType, environmentChange.isSprinting);
-                        break;
-                    case PropertyAnimationCommand animationCommand:
-                        HandleAnimationCommand(header.connectionId, animationCommand.animationState);
-                        break;
-                    //for server only
-                    case PropertyServerChangeAnimationCommand serverChangeAnimationCommand:
-                        HandleAnimationCommand(header.connectionId, serverChangeAnimationCommand.animationState);
-                        break;
-                    case PropertyCommandBuff buff:
-                        HandleBuff(buff.targetId, buff.buffExtraData, header.connectionId);
-                        break;
-                    case PropertyCommandAttack attack:
-                        HandleAttack(header.connectionId, attack.targetIds);
-                        break;
-                    case PropertyCommandSkill skill:
-                        HandleSkill(header.connectionId, skill.skillId);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-                return null;
+                HandlePropertyRecover(header.ConnectionId);
             }
-            Debug.LogError($"PlayerPropertySyncSystem: Unknown command type {command.GetType().Name}");
-
+            else if (command is PropertyClientAnimationCommand clientAnimationCommand)
+            {
+                HandleAnimationCommand(header.ConnectionId, clientAnimationCommand.AnimationState);
+            }
+            else if (command is PropertyServerAnimationCommand serverAnimationCommand)
+            {
+                HandleAnimationCommand(header.ConnectionId, serverAnimationCommand.AnimationState);
+            }
+            else if (command is PropertyBuffCommand buffCommand)
+            {
+                HandleBuff(header.ConnectionId, buffCommand.BuffExtraData, buffCommand.CasterId);
+            }
+            else if (command is PropertyAttackCommand attackCommand)
+            {
+                HandleAttack(header.ConnectionId, attackCommand.TargetIds);
+            }
+            else if (command is PropertySkillCommand skillCommand)
+            {
+                HandleSkill(header.ConnectionId, skillCommand.SkillId);
+            }
+            else if (command is PropertyEnvironmentChangeCommand environmentChangeCommand)
+            {
+                HandleEnvironmentChange(header.ConnectionId, environmentChangeCommand.HasInputMovement, environmentChangeCommand.PlayerEnvironmentState, environmentChangeCommand.IsSprinting);
+            }
+            else
+            {
+                Debug.LogError($"PlayerPropertySyncSystem: Unknown command type {command.GetType().Name}");
+            }
             return null;
         }
 

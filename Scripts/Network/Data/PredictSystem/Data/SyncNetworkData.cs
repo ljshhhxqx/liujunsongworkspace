@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem;
 using MemoryPack;
@@ -12,15 +15,22 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
     #region 网络命令相关
     // 命令接口
     [MemoryPackable(GenerateType.NoGenerate)]
-    [MemoryPackUnion(0, typeof(PropertyCommand))]
-    [MemoryPackUnion(1, typeof(InputCommand))]
-    [MemoryPackUnion(2, typeof(AnimationCommand))]
-    [MemoryPackUnion(3, typeof(InteractionCommand))]
+    [MemoryPackUnion(0, typeof(PropertyAutoRecoverCommand))]
+    [MemoryPackUnion(1, typeof(PropertyClientAnimationCommand))]
+    [MemoryPackUnion(2, typeof(PropertyServerAnimationCommand))]
+    [MemoryPackUnion(3, typeof(PropertyBuffCommand))]
+    [MemoryPackUnion(4, typeof(PropertyAttackCommand))]
+    [MemoryPackUnion(5, typeof(PropertySkillCommand))]
+    [MemoryPackUnion(6, typeof(PropertyEnvironmentChangeCommand))]
+    [MemoryPackUnion(7, typeof(InputCommand))]
+    [MemoryPackUnion(8, typeof(AnimationCommand))]
+    [MemoryPackUnion(9, typeof(InteractionCommand))]
+    
     public partial interface INetworkCommand
     {
         NetworkCommandHeader GetHeader();
         bool IsValid();
-        void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, NetworkIdentity executingIdentity = null);
+        void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client);
     }
     
     // 命令头
@@ -28,15 +38,25 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
     public partial struct NetworkCommandHeader
     {
         [MemoryPackOrder(0)]
-        public int connectionId;
+        public int ConnectionId;
         [MemoryPackOrder(1)]
-        public int tick;
+        public int Tick;
         [MemoryPackOrder(2)]
-        public CommandType commandType;
-        [MemoryPackOrder(3)]
-        public bool isClientCommand;
-        [MemoryPackIgnore] // NetworkIdentity 需要特殊处理
-        public NetworkIdentity executingIdentity;
+        public CommandType CommandType;
+    
+        // 安全验证信息
+        [MemoryPackOrder(3)] public long Timestamp;
+        [MemoryPackOrder(4)] public byte[] SecurityHash;
+    
+        // 执行上下文
+        [MemoryPackOrder(5)] public CommandAuthority Authority;
+    }
+
+    public enum CommandAuthority
+    {
+        Client,     // 客户端发起
+        Server,     // 服务器发起
+        System      // 系统自动生成
     }
     
     // 命令类型枚举
@@ -53,155 +73,173 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
 
     #region PropertyCommand
     [MemoryPackable]
-    public partial struct PropertyCommand : INetworkCommand
+    public partial struct PropertyAutoRecoverCommand : INetworkCommand
     {
         [MemoryPackOrder(0)]
-        public NetworkCommandHeader header;
+        public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public PropertyChangeType operationType;
-        [MemoryPackIgnore]
-        public IPropertyCommandOperation Operation;
-        
-        [MemoryPackInclude]
-        [MemoryPackOrder(2)]
-        private object _operationBoxed;
+        public PropertyChangeType OperationType;
 
-        public NetworkCommandHeader GetHeader() => header;
+        public NetworkCommandHeader GetHeader() => Header;
     
-        public bool IsValid()
-        {
-            return this.IsCommandValid() && // 基础验证
-                   Operation.IsValid() && // 操作验证
-                   Enum.IsDefined(typeof(PropertyChangeType), Operation);
-        }
-        [MemoryPackOnSerializing]
-        void OnSerializing()
-        {
-            _operationBoxed = Operation;
-        }
-        
-        [MemoryPackOnDeserialized]
-        void OnDeserialized()
-        {
-            Operation = (IPropertyCommandOperation)_operationBoxed;
-        }
-
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, NetworkIdentity executingIdentity = null)
-        {
-            header.connectionId = headerConnectionId;
-            header.tick = currentTick;
-            header.commandType = headerCommandType;
-            header.isClientCommand = !executingIdentity;
-            header.executingIdentity = NetworkClient.localPlayer;
-        }
-    }
-    
-    [MemoryPackable]
-    [MemoryPackUnion(0, typeof(PropertyCommandAutoRecover))]
-    [MemoryPackUnion(1, typeof(PropertyCommandEnvironmentChange))]
-    [MemoryPackUnion(2, typeof(PropertyAnimationCommand))]
-    [MemoryPackUnion(3, typeof(PropertyServerChangeAnimationCommand))]
-    [MemoryPackUnion(4, typeof(PropertyCommandBuff))]
-    [MemoryPackUnion(5, typeof(PropertyCommandAttack))]
-    [MemoryPackUnion(6, typeof(PropertyCommandSkill))]
-    public interface IPropertyCommandOperation
-    {
-        bool IsClientCommand { get; }
-        bool IsValid();
-    }
-        
-    [MemoryPackable]
-    public partial struct PropertyCommandAutoRecover : IPropertyCommandOperation
-    {
-        public bool IsClientCommand => true;
         public bool IsValid()
         {
             return true;
         }
+
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
     }
+    
+    
 
     [MemoryPackable]
-    public partial struct PropertyCommandEnvironmentChange : IPropertyCommandOperation
+    public partial struct PropertyEnvironmentChangeCommand : INetworkCommand
     {
-        public bool IsClientCommand => true;
-        [MemoryPackOrder(0)]
-        public bool hasInputMovement;
+        [MemoryPackOrder(0)] 
+        public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public PlayerEnvironmentState environmentType;
+        public bool HasInputMovement;
         [MemoryPackOrder(2)]
-        public bool isSprinting;
+        public PlayerEnvironmentState PlayerEnvironmentState;
+        [MemoryPackOrder(3)]
+        public bool IsSprinting;
+        public NetworkCommandHeader GetHeader() => Header;
 
         public bool IsValid()
         {
-            return Enum.IsDefined(typeof(PlayerEnvironmentState), environmentType);
+            return Enum.IsDefined(typeof(PlayerEnvironmentState), PlayerEnvironmentState);
+        }
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
         }
     }
     
     [MemoryPackable]
-    public partial struct PropertyAnimationCommand : IPropertyCommandOperation
+    public partial struct PropertyClientAnimationCommand : INetworkCommand
     {
-        public bool IsClientCommand => true;
         [MemoryPackOrder(0)]
-        public AnimationState animationState;
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public AnimationState AnimationState;
+        
+        public NetworkCommandHeader GetHeader() => Header;
         public bool IsValid()
         {
-            return Enum.IsDefined(typeof(AnimationState), animationState);
+            return Enum.IsDefined(typeof(AnimationState), AnimationState);
+        }
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
         }
     }
     
     [MemoryPackable]
-    public struct PropertyServerChangeAnimationCommand : IPropertyCommandOperation
+    public partial struct PropertyServerAnimationCommand : INetworkCommand
     {
-        public bool IsClientCommand => false;
         [MemoryPackOrder(0)]
-        public AnimationState animationState;
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public AnimationState AnimationState;
+        
+        public NetworkCommandHeader GetHeader() => Header;
         public bool IsValid()
         {
-            return Enum.IsDefined(typeof(AnimationState), animationState);
+            return Enum.IsDefined(typeof(AnimationState), AnimationState);
+        }
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
         }
     }
     
     [MemoryPackable]
-    public struct PropertyCommandBuff : IPropertyCommandOperation
+    public partial struct PropertyBuffCommand : INetworkCommand
     {
-        [MemoryPackOrder(0)]
+        [MemoryPackOrder(0)] 
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
         public int? CasterId;
-        [MemoryPackOrder(1)]
-        public int targetId;
         [MemoryPackOrder(2)]
-        public BuffExtraData buffExtraData;
-        public bool IsClientCommand => false;
+        public int TargetId;
+        [MemoryPackOrder(3)]
+        public BuffExtraData BuffExtraData;
+
+        public NetworkCommandHeader GetHeader() => Header;
 
         public bool IsValid()
         {
-            return Enum.IsDefined(typeof(BuffType), buffExtraData.buffType) && buffExtraData.buffId > 0 && targetId > 0 && Enum.IsDefined(typeof(CollectObjectBuffSize), buffExtraData.collectObjectBuffSize);
+            return Enum.IsDefined(typeof(BuffType), BuffExtraData.buffType) && BuffExtraData.buffId > 0 && TargetId > 0 && Enum.IsDefined(typeof(CollectObjectBuffSize), BuffExtraData.collectObjectBuffSize);
+        }
+        
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
         }
     }
     
     [MemoryPackable]
-    public struct PropertyCommandAttack : IPropertyCommandOperation
+    public partial struct PropertyAttackCommand : INetworkCommand
     {
-        [MemoryPackOrder(0)]
-        public int attackerId;
+        [MemoryPackOrder(0)] 
+        public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public int[] targetIds;
-        public bool IsClientCommand => false;
+        public int AttackerId;
+        [MemoryPackOrder(2)]
+        public int[] TargetIds;
 
+        public NetworkCommandHeader GetHeader() => Header;
         public bool IsValid()
         {
-            return targetIds.Length > 0 && attackerId > 0 && targetIds.All(t => t > 0);
+            return TargetIds.Length > 0 && AttackerId > 0 && TargetIds.All(t => t > 0);
+        }
+        
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
         }
     }
 
     [MemoryPackable]
-    public struct PropertyCommandSkill : IPropertyCommandOperation
+    public partial struct PropertySkillCommand : INetworkCommand
     {
-        public bool IsClientCommand => false;
+        [MemoryPackOrder(0)] 
+        public NetworkCommandHeader Header;
         [MemoryPackOrder(0)]
-        public int skillId;
+        public int SkillId;
+        public NetworkCommandHeader GetHeader() => Header;
         public bool IsValid()
         {
-            return skillId > 0;
+            return SkillId > 0;
+        }
+        
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
         }
     }
 
@@ -231,28 +269,27 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
     #region InputCommand
 
     [MemoryPackable]
-    public struct InputCommand : INetworkCommand
+    public partial struct InputCommand : INetworkCommand
     {
         [MemoryPackOrder(0)]
-        public NetworkCommandHeader header;
+        public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public Vector3 inputMovement;
+        public Vector3 InputMovement;
         [MemoryPackOrder(2)]
-        public AnimationState[] inputAnimationStates;
-        public NetworkCommandHeader GetHeader() => header;
+        public AnimationState[] InputAnimationStates;
+        public NetworkCommandHeader GetHeader() => Header;
 
         public bool IsValid()
         {
-            return this.IsCommandValid() && inputMovement.magnitude > 0 && inputAnimationStates.Length > 0 && inputAnimationStates.All(a => Enum.IsDefined(typeof(AnimationState), a));
+            return InputMovement.magnitude > 0 && InputAnimationStates.Length > 0 && InputAnimationStates.All(a => Enum.IsDefined(typeof(AnimationState), a));
         }
 
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, NetworkIdentity executingIdentity = null)
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
         {
-            header.connectionId = headerConnectionId;
-            header.tick = currentTick;
-            header.commandType = headerCommandType;
-            header.isClientCommand = !executingIdentity;
-            header.executingIdentity = NetworkClient.localPlayer;
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
         }
     }
 
@@ -261,63 +298,56 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
     #region AnimationCommand
 
     [MemoryPackable]
-    public struct AnimationCommand : INetworkCommand
+    public partial struct AnimationCommand : INetworkCommand
     {
         [MemoryPackOrder(0)]
-        public NetworkCommandHeader header;
+        public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public AnimationState actionCommand;
+        public AnimationState AnimationState;
 
-        public NetworkCommandHeader GetHeader() => header;
+        public NetworkCommandHeader GetHeader() => Header;
 
         public bool IsValid()
         {
-            return this.IsCommandValid() &&
-                   Enum.IsDefined(typeof(AnimationState), actionCommand);
+            return Enum.IsDefined(typeof(AnimationState), AnimationState);
         }
 
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, NetworkIdentity executingIdentity = null)
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
         {
-            header.connectionId = headerConnectionId;
-            header.tick = currentTick;
-            header.commandType = headerCommandType;
-            header.isClientCommand = !executingIdentity;
-            header.executingIdentity = NetworkClient.localPlayer;
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
         }
     }
-
     #endregion
     
     #region InteractionCommand
     [MemoryPackable]
-    public struct InteractionCommand : INetworkCommand
+    public partial struct InteractionCommand : INetworkCommand
     {
         [MemoryPackOrder(0)]
-        public NetworkCommandHeader header;
+        public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public uint[] targetIds;
+        public uint[] TargetIds;
         
-        public NetworkCommandHeader GetHeader() => header;
+        public NetworkCommandHeader GetHeader() => Header;
 
         public bool IsValid()
         {
-            return this.IsCommandValid() && targetIds.Length > 0 && targetIds.All(t => t > 0);
+            return TargetIds.Length > 0 && TargetIds.All(t => t > 0);
         }
 
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, NetworkIdentity executingIdentity = null)
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
         {
-            header.connectionId = headerConnectionId;
-            header.tick = currentTick;
-            header.commandType = headerCommandType;
-            header.isClientCommand = !executingIdentity;
-            header.executingIdentity = NetworkClient.localPlayer;
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
         }
     }
-
     #endregion
 
-
-    
     #region Enum
     
     public enum PropertyChangeType
@@ -330,25 +360,56 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
     }
     
     #endregion
+    public class CommandValidationResult
+    {
+        public bool IsValid => Errors.Count == 0;
+        public List<string> Errors { get; } = new List<string>();
 
+        public void AddError(string message)
+        {
+            Errors.Add($"[{DateTime.UtcNow:HH:mm:ss.fff}] {message}");
+        }
+    }
+    
     public static class SyncNetworkDataExtensions
     {
-        public static bool IsCommandValid(this INetworkCommand syncNetworkData)
+        // 基础验证参数配置
+        public const int MAX_TICK_DELTA = 30;      // 允许的最大tick偏差
+        public const long TIMESTAMP_TOLERANCE = 5000; // 5秒时间容差（毫秒）
+        
+        public static CommandValidationResult ValidateCommand(this INetworkCommand command)
         {
-            var header = syncNetworkData.GetHeader();
-            var identity = header.executingIdentity;
-            if (!identity)
+            var result = new CommandValidationResult();
+            var header = command.GetHeader();
+
+            // 1. Tick验证
+            if (header.Tick <= 0)
             {
-                return false;
-            }
-            if (header.isClientCommand)
-            {
-                return NetworkServer.connections.ContainsKey(header.connectionId) && identity.connectionToClient.connectionId == header.connectionId && header.tick >= 0;
+                result.AddError("Invalid tick value");
             }
 
-            return identity.isServer && header.tick >= 0;
+            // 2. 时间戳验证
+            var currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            if (Math.Abs(currentTime - header.Timestamp) > TIMESTAMP_TOLERANCE)
+            {
+                result.AddError($"Timestamp out of sync: {currentTime - header.Timestamp}ms");
+            }
+
+            // 3. 命令类型验证
+            if (!Enum.IsDefined(typeof(CommandType), header.CommandType))
+            {
+                result.AddError($"Unknown command type: {header.CommandType}");
+            }
+
+            // 4. 基础有效性验证
+            if (!command.IsValid())
+            {
+                result.AddError("Command specific validation failed");
+            }
+
+            return result;
         }
-
+        
         public static BaseSyncSystem GetSyncSystem(this CommandType syncNetworkData)
         {
             switch (syncNetworkData)
@@ -359,6 +420,51 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
                     return new PlayerInputSyncSystem();
             }   
             return null;
+        }
+    }
+    
+    public static class NetworkCommandValidator
+    {
+        // 基础结构验证 (50%性能提升)
+        public static bool ValidateBasic(this INetworkCommand command)
+        {
+            var header = command.GetHeader();
+            return header.Tick >= 0 
+                   && header.Timestamp > DateTime.UtcNow.AddMinutes(-5).Ticks
+                   && header.Timestamp <= DateTime.UtcNow.Ticks;
+        }
+
+        // 权限验证
+        public static bool ValidateAuthority(this INetworkCommand command)
+        {
+            var header = command.GetHeader();
+            return header.Authority switch
+            {
+                CommandAuthority.Client => NetworkServer.connections.ContainsKey(header.ConnectionId),
+                CommandAuthority.Server => NetworkServer.active,
+                CommandAuthority.System => true,
+                _ => false
+            };
+        }
+
+        // 安全签名验证 (防篡改)
+        public static bool ValidateSecurity(this INetworkCommand command, byte[] secretKey)
+        {
+            var header = command.GetHeader();
+            using var hmac = new HMACSHA256(secretKey);
+            var computedHash = hmac.ComputeHash(GetSignData(header));
+            return computedHash.SequenceEqual(header.SecurityHash);
+        }
+
+        private static byte[] GetSignData(NetworkCommandHeader header)
+        {
+            using var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream);
+            writer.Write(header.ConnectionId);
+            writer.Write(header.Tick);
+            writer.Write((int)header.CommandType);
+            writer.Write(header.Timestamp);
+            return stream.ToArray();
         }
     }
 }

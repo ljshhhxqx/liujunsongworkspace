@@ -5,6 +5,7 @@ using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
 using HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
+using MemoryPack;
 using Mirror;
 using Newtonsoft.Json;
 using Tool.GameEvent;
@@ -106,24 +107,22 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             }
         }
 
+        /// <summary>
+        /// 客户端发送命令(不能给服务器使用)
+        /// </summary>
+        /// <param name="commandJson"></param>
         [Server]
-        public void EnqueueCommand(string commandJson, bool isClientCommand)
+        public void EnqueueCommand(byte[] commandJson)
         {
-            var command = JsonConvert.DeserializeObject<INetworkCommand>(commandJson);
+            var command = MemoryPackSerializer.Deserialize<INetworkCommand>(commandJson);
             var header = command.GetHeader();
-            if (header.isClientCommand || !command.IsValid())
+            var validCommand = command.ValidateCommand();
+            if (!validCommand.IsValid)
             {
-                Debug.LogError($"Invalid command: {header.commandType}");
+                Debug.LogError($"Invalid command: {header.CommandType}");
                 return;
             }
-            if (isClientCommand)
-            {
-                _clientCommands.Enqueue(command);
-            }
-            else
-            {
-                _serverCommands.Enqueue(command);
-            }
+            _clientCommands.Enqueue(command);
         }
 
         [Server]
@@ -155,7 +154,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 var header = command.GetHeader();
 
                 // 检查命令是否过期
-                var commandAge = (CurrentTick - header.tick) * tickRate;
+                var commandAge = (CurrentTick - header.Tick) * tickRate;
                 if (commandAge > maxCommandAge)
                 {
                     _clientCommands.Dequeue(); // 丢弃过期命令
@@ -164,7 +163,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 }
 
                 // 如果命令属于未来的tick，停止处理
-                if (header.tick > CurrentTick)
+                if (header.Tick > CurrentTick)
                 {
                     break;
                 }
@@ -177,7 +176,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 var header = command.GetHeader();
 
                 // 检查命令是否过期
-                var commandAge = (CurrentTick - header.tick) * tickRate;
+                var commandAge = (CurrentTick - header.Tick) * tickRate;
                 if (commandAge > maxCommandAge)
                 {
                     _serverCommands.Dequeue(); // 丢弃过期命令
@@ -186,7 +185,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 }
 
                 // 如果命令属于未来的tick，停止处理
-                if (header.tick > CurrentTick)
+                if (header.Tick > CurrentTick)
                 {
                     break;
                 }
@@ -203,7 +202,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 var command = _currentTickCommands.Dequeue();
                 var header = command.GetHeader();
                 OnServerProcessCurrentTickCommand?.Invoke(command);
-                var syncSystem = GetSyncSystem(header.commandType);
+                var syncSystem = GetSyncSystem(header.CommandType);
                 if (syncSystem != null)
                 {
                     var allStates = syncSystem.GetAllState();
@@ -219,12 +218,13 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         public void EnqueueServerCommand<T>(T command) where T : INetworkCommand
         {
             var header = command.GetHeader();
-            if (!isServer || header.isClientCommand)
+            var validCommand = command.ValidateCommand();
+            if (!validCommand.IsValid)
             {
-                Debug.LogError($"Invalid command: {header.commandType}");
+                Debug.LogError($"Invalid command: {header.CommandType}");
                 return;
             }
-            _currentTickCommands.Enqueue(command);
+            _serverCommands.Enqueue(command);
         }
         
         private BaseSyncSystem GetSyncSystem(CommandType commandType)
@@ -241,9 +241,9 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         /// <summary>
         /// 强制更新每个BaseSyncSystem的客户端状态
         /// </summary>
-        public event Action<string> OnClientProcessStateUpdate;
+        public event Action<byte[]> OnClientProcessStateUpdate;
         [ClientRpc]
-        private void RpcProcessCurrentTickCommand(string state)
+        private void RpcProcessCurrentTickCommand(byte[] state)
         {
             OnClientProcessStateUpdate?.Invoke(state);
         }
