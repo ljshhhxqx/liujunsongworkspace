@@ -513,6 +513,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 _comboWindowCts?.Cancel();
                 StartCooldown();
             }
+
+            OnAttackHit += OnAttack;
         }
 
         private void OnAttack()

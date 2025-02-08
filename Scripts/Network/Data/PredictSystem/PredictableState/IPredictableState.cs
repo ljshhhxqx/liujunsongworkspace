@@ -57,7 +57,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState
         [Command]
         private void CmdSendCommand(string commandJson)
         {
-            GameSyncManager.EnqueueCommand(commandJson);
+            GameSyncManager.EnqueueCommand(commandJson, true);
         }
 
         // 清理已确认的命令

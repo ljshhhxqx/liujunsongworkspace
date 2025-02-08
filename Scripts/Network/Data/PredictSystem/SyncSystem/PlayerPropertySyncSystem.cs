@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
@@ -146,23 +147,12 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             return null;
         }
 
+        //todo: 下面有关ProcessCommand的代码都需要由PlayerComponentController来处理实际的计算
         private void HandlePropertyRecover(int connectionId)
         {
+            var playerController = GameSyncManager.GetPlayerConnection(connectionId);
             var playerState = GetState<PlayerPropertyState>(connectionId);
-            var healthRecover = playerState.Properties[PropertyTypeEnum.HealthRecovery];
-            var strengthRecover = playerState.Properties[PropertyTypeEnum.StrengthRecovery];
-            var health = playerState.Properties[PropertyTypeEnum.Health];
-            var strength = playerState.Properties[PropertyTypeEnum.Strength];
-            playerState.Properties[PropertyTypeEnum.Health] = health.UpdateCalculator(health, new BuffIncreaseData
-            {
-                increaseType = BuffIncreaseType.Current,
-                increaseValue = healthRecover.CurrentValue * GameSyncManager.TickRate,
-            });
-            playerState.Properties[PropertyTypeEnum.Strength] = strength.UpdateCalculator(strength, new BuffIncreaseData
-            {
-                increaseType = BuffIncreaseType.Current,
-                increaseValue = strengthRecover.CurrentValue * GameSyncManager.TickRate,
-            });
+            playerController.HandlePropertyRecover(ref playerState);
             PropertyStates[connectionId] = playerState;
         }
 
@@ -205,37 +195,21 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         private void HandleAttack(int attacker, int[] attackIds)
         {
             var propertyState = GetState<PlayerPropertyState>(attacker);
-            var attack = propertyState.Properties[PropertyTypeEnum.Attack].CurrentValue;
-            var critical = propertyState.Properties[PropertyTypeEnum.CriticalRate].CurrentValue;
-            var criticalDamage = propertyState.Properties[PropertyTypeEnum.CriticalDamageRatio].CurrentValue;
-            foreach (var attackId in attackIds)
+            var defendersState = PropertyStates
+                .Where(x => attackIds.Contains(x.Key))
+                .ToDictionary(x => x.Key, x => (PlayerPropertyState)x.Value);
+            var playerController = GameSyncManager.GetPlayerConnection(attacker);
+            playerController.HandleAttackProperty(ref propertyState, ref defendersState, _jsonDataConfig.GetDamage);
+            for (int i = 0; i < attackIds.Length; i++)
             {
-                var targetState = GetState<PlayerPropertyState>(attackId);
-                var defense = targetState.Properties[PropertyTypeEnum.Defense].CurrentValue;
-                var damage = _jsonDataConfig.GetDamage(attack, defense, critical, criticalDamage);
-                if (damage <= 0)
-                {
-                    continue;
-                }
-                var remainHealth = GetRemainHealth(targetState.Properties[PropertyTypeEnum.Health], damage);
-                targetState.Properties[PropertyTypeEnum.Health] = remainHealth;
-                PropertyStates[attackId] = targetState;
-                if (remainHealth.CurrentValue <= 0)
+                PropertyStates[attackIds[i]] = defendersState[attackIds[i]];
+                if (PropertyStates[attackIds[i]] is PlayerPropertyState playerPropertyState &&
+                    playerPropertyState.Properties[PropertyTypeEnum.Health].CurrentValue <= 0)
                 {
                     //todo: handle dead player logic
                 }
             }
             PropertyStates[attacker] = propertyState;   
-        }
-
-        private PropertyCalculator GetRemainHealth(PropertyCalculator health, float damage)
-        {
-            return health.UpdateCalculator(health, new BuffIncreaseData
-            {
-                increaseType = BuffIncreaseType.Current,
-                increaseValue = damage,
-                operationType = BuffOperationType.Subtract,
-            });
         }
 
         private void HandleSkill(int connectionId, int skillId)
@@ -257,6 +231,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 return;
             }
             var playerState = GetState<PlayerPropertyState>(connectionId);
+            var playerController = GameSyncManager.GetPlayerConnection(connectionId);
+            //playerController.HandleAnimation(command, _animationConfig.GetPlayerAnimationCost);
             cost *= command == AnimationState.Sprint ? GameSyncManager.TickRate : 1f;
             var strength = playerState.Properties[PropertyTypeEnum.Strength];
             if (cost > strength.CurrentValue)
@@ -319,6 +295,11 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             PropertyStates[connectionId] = playerState;
         }
 
+        public Dictionary<PropertyTypeEnum, PropertyCalculator> GetPlayerProperty(int connectionId)
+        {
+            return GetState<PlayerPropertyState>(connectionId).Properties;
+        }
+
         public override void SetState<T>(int connectionId, T state)
         {
             var playerPredictableState = PlayerPredictionState[connectionId];
@@ -334,7 +315,13 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             }
             return false;
         }
-        
+
+        public override void Clear()
+        {
+            
+        }
+
+        [Serializable]
         private struct BuffManagerData
         {
             public BuffBase BuffData;

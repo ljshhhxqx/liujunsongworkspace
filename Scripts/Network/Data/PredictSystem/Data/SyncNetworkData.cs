@@ -2,16 +2,21 @@
 using System.Linq;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem;
+using MemoryPack;
 using Mirror;
 using UnityEngine;
-using UnityEngine.Serialization;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
 {
     #region 网络命令相关
     // 命令接口
-    public interface INetworkCommand
+    [MemoryPackable(GenerateType.NoGenerate)]
+    [MemoryPackUnion(0, typeof(PropertyCommand))]
+    [MemoryPackUnion(1, typeof(InputCommand))]
+    [MemoryPackUnion(2, typeof(AnimationCommand))]
+    [MemoryPackUnion(3, typeof(InteractionCommand))]
+    public partial interface INetworkCommand
     {
         NetworkCommandHeader GetHeader();
         bool IsValid();
@@ -19,13 +24,18 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
     }
     
     // 命令头
-    [Serializable]
-    public struct NetworkCommandHeader
+    [MemoryPackable]
+    public partial struct NetworkCommandHeader
     {
+        [MemoryPackOrder(0)]
         public int connectionId;
+        [MemoryPackOrder(1)]
         public int tick;
+        [MemoryPackOrder(2)]
         public CommandType commandType;
+        [MemoryPackOrder(3)]
         public bool isClientCommand;
+        [MemoryPackIgnore] // NetworkIdentity 需要特殊处理
         public NetworkIdentity executingIdentity;
     }
     
@@ -42,13 +52,19 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
     #endregion
 
     #region PropertyCommand
-    
-    [Serializable]
-    public struct PropertyCommand : INetworkCommand
+    [MemoryPackable]
+    public partial struct PropertyCommand : INetworkCommand
     {
+        [MemoryPackOrder(0)]
         public NetworkCommandHeader header;
+        [MemoryPackOrder(1)]
         public PropertyChangeType operationType;
+        [MemoryPackIgnore]
         public IPropertyCommandOperation Operation;
+        
+        [MemoryPackInclude]
+        [MemoryPackOrder(2)]
+        private object _operationBoxed;
 
         public NetworkCommandHeader GetHeader() => header;
     
@@ -57,6 +73,17 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
             return this.IsCommandValid() && // 基础验证
                    Operation.IsValid() && // 操作验证
                    Enum.IsDefined(typeof(PropertyChangeType), Operation);
+        }
+        [MemoryPackOnSerializing]
+        void OnSerializing()
+        {
+            _operationBoxed = Operation;
+        }
+        
+        [MemoryPackOnDeserialized]
+        void OnDeserialized()
+        {
+            Operation = (IPropertyCommandOperation)_operationBoxed;
         }
 
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, NetworkIdentity executingIdentity = null)
@@ -68,15 +95,23 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
             header.executingIdentity = NetworkClient.localPlayer;
         }
     }
-
+    
+    [MemoryPackable]
+    [MemoryPackUnion(0, typeof(PropertyCommandAutoRecover))]
+    [MemoryPackUnion(1, typeof(PropertyCommandEnvironmentChange))]
+    [MemoryPackUnion(2, typeof(PropertyAnimationCommand))]
+    [MemoryPackUnion(3, typeof(PropertyServerChangeAnimationCommand))]
+    [MemoryPackUnion(4, typeof(PropertyCommandBuff))]
+    [MemoryPackUnion(5, typeof(PropertyCommandAttack))]
+    [MemoryPackUnion(6, typeof(PropertyCommandSkill))]
     public interface IPropertyCommandOperation
     {
         bool IsClientCommand { get; }
         bool IsValid();
     }
         
-    [Serializable]
-    public struct PropertyCommandAutoRecover : IPropertyCommandOperation
+    [MemoryPackable]
+    public partial struct PropertyCommandAutoRecover : IPropertyCommandOperation
     {
         public bool IsClientCommand => true;
         public bool IsValid()
@@ -85,12 +120,15 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
         }
     }
 
-    [Serializable]
-    public struct PropertyCommandEnvironmentChange : IPropertyCommandOperation
+    [MemoryPackable]
+    public partial struct PropertyCommandEnvironmentChange : IPropertyCommandOperation
     {
         public bool IsClientCommand => true;
+        [MemoryPackOrder(0)]
         public bool hasInputMovement;
+        [MemoryPackOrder(1)]
         public PlayerEnvironmentState environmentType;
+        [MemoryPackOrder(2)]
         public bool isSprinting;
 
         public bool IsValid()
@@ -99,10 +137,11 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
         }
     }
     
-    [Serializable]
-    public struct PropertyAnimationCommand : IPropertyCommandOperation
+    [MemoryPackable]
+    public partial struct PropertyAnimationCommand : IPropertyCommandOperation
     {
         public bool IsClientCommand => true;
+        [MemoryPackOrder(0)]
         public AnimationState animationState;
         public bool IsValid()
         {
@@ -110,10 +149,11 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
         }
     }
     
-    [Serializable]
+    [MemoryPackable]
     public struct PropertyServerChangeAnimationCommand : IPropertyCommandOperation
     {
         public bool IsClientCommand => false;
+        [MemoryPackOrder(0)]
         public AnimationState animationState;
         public bool IsValid()
         {
@@ -121,12 +161,15 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
         }
     }
     
-    [Serializable]
+    [MemoryPackable]
     public struct PropertyCommandBuff : IPropertyCommandOperation
     {
-        public BuffExtraData buffExtraData;
+        [MemoryPackOrder(0)]
         public int? CasterId;
+        [MemoryPackOrder(1)]
         public int targetId;
+        [MemoryPackOrder(2)]
+        public BuffExtraData buffExtraData;
         public bool IsClientCommand => false;
 
         public bool IsValid()
@@ -135,10 +178,12 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
         }
     }
     
-    [Serializable]
+    [MemoryPackable]
     public struct PropertyCommandAttack : IPropertyCommandOperation
     {
+        [MemoryPackOrder(0)]
         public int attackerId;
+        [MemoryPackOrder(1)]
         public int[] targetIds;
         public bool IsClientCommand => false;
 
@@ -148,10 +193,11 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
         }
     }
 
-    [Serializable]
+    [MemoryPackable]
     public struct PropertyCommandSkill : IPropertyCommandOperation
     {
         public bool IsClientCommand => false;
+        [MemoryPackOrder(0)]
         public int skillId;
         public bool IsValid()
         {
@@ -184,11 +230,14 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
     
     #region InputCommand
 
-    [Serializable]
+    [MemoryPackable]
     public struct InputCommand : INetworkCommand
     {
+        [MemoryPackOrder(0)]
         public NetworkCommandHeader header;
+        [MemoryPackOrder(1)]
         public Vector3 inputMovement;
+        [MemoryPackOrder(2)]
         public AnimationState[] inputAnimationStates;
         public NetworkCommandHeader GetHeader() => header;
 
@@ -211,10 +260,12 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
     
     #region AnimationCommand
 
-    [Serializable]
+    [MemoryPackable]
     public struct AnimationCommand : INetworkCommand
     {
+        [MemoryPackOrder(0)]
         public NetworkCommandHeader header;
+        [MemoryPackOrder(1)]
         public AnimationState actionCommand;
 
         public NetworkCommandHeader GetHeader() => header;
@@ -238,11 +289,13 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
     #endregion
     
     #region InteractionCommand
-    [Serializable]
+    [MemoryPackable]
     public struct InteractionCommand : INetworkCommand
     {
+        [MemoryPackOrder(0)]
         public NetworkCommandHeader header;
-        public int[] targetIds;
+        [MemoryPackOrder(1)]
+        public uint[] targetIds;
         
         public NetworkCommandHeader GetHeader() => header;
 
@@ -302,6 +355,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
             {
                 case CommandType.Property:
                     return new PlayerPropertySyncSystem();
+                case CommandType.Input:
+                    return new PlayerInputSyncSystem();
             }   
             return null;
         }

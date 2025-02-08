@@ -204,6 +204,9 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public float groundMaxDistance;
         public float maxSlopeAngle;
         public float stairsCheckDistance;
+        public float rotateSpeed;
+        public float tickRate;
+        public float inputThreshold;
     }
     
 

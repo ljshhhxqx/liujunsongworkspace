@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using MemoryPack;
 using UnityEngine;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
@@ -37,7 +37,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
     }
 
     [Serializable]
-    public struct PlayerGameStateData
+    [MemoryPackable]
+    public partial struct PlayerGameStateData
     {
         public Vector3 position;         // 位置
         public Vector3 velocity;         // rigidbody的速度

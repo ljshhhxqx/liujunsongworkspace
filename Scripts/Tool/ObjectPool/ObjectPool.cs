@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Tool.ObjectPool
+namespace HotUpdate.Scripts.Tool.ObjectPool
 {
     // 通用对象池，支持不同类型的对象池管理
     public static class ObjectPool<T> where T : new()

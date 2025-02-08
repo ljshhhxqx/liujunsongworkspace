@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
+using MemoryPack;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Network.Data.PredictSystem.State

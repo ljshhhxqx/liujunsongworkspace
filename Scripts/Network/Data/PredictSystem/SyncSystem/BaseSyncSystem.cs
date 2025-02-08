@@ -97,5 +97,6 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
 
         public abstract void SetState<T>(int connectionId, T state) where T : IPropertyState;
         public abstract bool HasStateChanged(IPropertyState oldState, IPropertyState newState);
+        public abstract void Clear();
     }
 }

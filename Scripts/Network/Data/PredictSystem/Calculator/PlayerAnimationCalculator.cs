@@ -58,7 +58,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
             return animationInfo.animationType == AnimationType.Combo ? animationInfo.animationNames[0] : animationInfo.animationNames[index];
         }
         
-        private bool IsMovingState()
+        public bool IsMovingState()
         {
             return CurrentAnimationState is AnimationState.Move or AnimationState.Sprint or AnimationState.Idle;
         }
@@ -114,10 +114,10 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
             return CurrentAnimationState;
         }
         
-        public bool HandleAnimation(AnimationState newState, Func<AnimationState, bool> canPlayAnimationByStrengthAndCd)
+        public bool HandleAnimation(AnimationState newState)
         {
             // 验证是否可以播放
-            if (!CanPlayAnimation(newState, canPlayAnimationByStrengthAndCd))
+            if (!CanPlayAnimation(newState))
             {
                 return false;
             }
@@ -153,7 +153,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
             return true;
         }
 
-        private bool CanPlayAnimation(AnimationState newState, Func<AnimationState, bool> canPlayAnimationByStrengthAndCd)
+        private bool CanPlayAnimation(AnimationState newState)
         {
             // 已死亡状态不能播放任何动画
             if (CurrentAnimationState == AnimationState.Dead)
@@ -161,10 +161,6 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
             
             var currentInfo = _animationConstant.AnimationConfig.GetAnimationInfo(CurrentAnimationState);
             var newInfo = _animationConstant.AnimationConfig.GetAnimationInfo(newState);
-
-            // 检查冷却和体力
-            if (!canPlayAnimationByStrengthAndCd(newState))
-                return false;
 
             switch (currentInfo.animationType)
             {
@@ -185,7 +181,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
                     return false;
             }
         }
-        public AnimationState DetermineAnimationState(DetermineAnimationStateParams parameters, Func<AnimationState, bool> canPlayAnimationByStrengthAndCd)
+        public AnimationState DetermineAnimationState(DetermineAnimationStateParams parameters)
         {
             _currentEnvironmentState = parameters.EnvironmentState;
             // 优先处理特殊状态
@@ -201,16 +197,16 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
 
             if (_currentEnvironmentState == PlayerEnvironmentState.OnGround)
             {
-                if (HasAnimation(parameters.InputAnimationStates, AnimationState.Attack) && canPlayAnimationByStrengthAndCd(AnimationState.Attack))
+                if (HasAnimation(parameters.InputAnimationStates, AnimationState.Attack))
                     return AnimationState.Attack;
 
-                if (HasAnimation(parameters.InputAnimationStates, AnimationState.Roll) && canPlayAnimationByStrengthAndCd(AnimationState.Roll))
+                if (HasAnimation(parameters.InputAnimationStates, AnimationState.Roll))
                     return AnimationState.Roll;
 
-                if (HasAnimation(parameters.InputAnimationStates, AnimationState.SprintJump) && canPlayAnimationByStrengthAndCd(AnimationState.SprintJump))
+                if (HasAnimation(parameters.InputAnimationStates, AnimationState.SprintJump))
                     return AnimationState.SprintJump;
                 
-                if (HasAnimation(parameters.InputAnimationStates, AnimationState.Jump) && canPlayAnimationByStrengthAndCd(AnimationState.Jump))
+                if (HasAnimation(parameters.InputAnimationStates, AnimationState.Jump))
                     return AnimationState.Jump;
 
                 return DetermineAnimationStateByInput(parameters.InputMovement, parameters.InputAnimationStates);
@@ -218,10 +214,10 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
 
             if (_currentEnvironmentState == PlayerEnvironmentState.OnStairs)
             {
-                if (HasAnimation(parameters.InputAnimationStates, AnimationState.SprintJump) && canPlayAnimationByStrengthAndCd(AnimationState.SprintJump))
+                if (HasAnimation(parameters.InputAnimationStates, AnimationState.SprintJump))
                     return AnimationState.SprintJump;
                 
-                if (HasAnimation(parameters.InputAnimationStates, AnimationState.Jump) && canPlayAnimationByStrengthAndCd(AnimationState.Jump))
+                if (HasAnimation(parameters.InputAnimationStates, AnimationState.Jump))
                     return AnimationState.Jump;
                 return DetermineAnimationStateByInput(parameters.InputMovement, parameters.InputAnimationStates);
             }
@@ -259,7 +255,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
         {
             _animationComponent.Animator.SetFloat(InputMagnitude, magnitude);
             _animationComponent.Animator.SetFloat(Speed, speed);
-            _animationComponent.Animator.SetFloat(VerticalSpeed, speed);
+            _animationComponent.Animator.SetFloat(VerticalSpeed, verticalSpeed);
         }
 
         public void SetEnvironmentState(PlayerEnvironmentState state)

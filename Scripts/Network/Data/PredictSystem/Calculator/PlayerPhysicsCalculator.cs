@@ -81,7 +81,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
             return _playerEnvironmentState;
         }
 
-        private void CheckGroundDistance(CheckGroundDistanceParam param)
+        public float CheckGroundDistance(CheckGroundDistanceParam param)
         {
             if (_physicsComponent.CapsuleCollider)
             {
@@ -109,10 +109,10 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
                     var pos = _physicsComponent.Transform.position + Vector3.up * (_physicsComponent.CapsuleCollider.radius) + forwardOffset;
                     var ray = new Ray(pos, -Vector3.up);
 
-                    if (UnityEngine.Physics.SphereCast(ray, radius, out groundHit, _physicsComponent.CapsuleCollider.radius + _physicsDetermineConstant.GroundMaxDistance,
+                    if (Physics.SphereCast(ray, radius, out groundHit, _physicsComponent.CapsuleCollider.radius + _physicsDetermineConstant.GroundMaxDistance,
                             _physicsDetermineConstant.GroundSceneLayer) && !groundHit.collider.isTrigger)
                     {
-                        UnityEngine.Physics.Linecast(groundHit.point + (Vector3.up * 0.1f), groundHit.point + Vector3.down * 0.15f,
+                        Physics.Linecast(groundHit.point + (Vector3.up * 0.1f), groundHit.point + Vector3.down * 0.15f,
                             out groundHit, _physicsDetermineConstant.GroundSceneLayer);
                         var newDist = _physicsComponent.Transform.position.y - groundHit.point.y;
                         if (dist > newDist)
@@ -144,7 +144,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
                     }
 
                     // 应用额外重力
-                    _physicsComponent.Rigidbody.AddForce(UnityEngine.Physics.gravity * param.FixedDeltaTime, ForceMode.VelocityChange);
+                    _physicsComponent.Rigidbody.AddForce(Physics.gravity * param.FixedDeltaTime, ForceMode.VelocityChange);
                     //_verticalSpeed = _rigidbody.velocity.y;
                 }
                 else
@@ -153,6 +153,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
                     //_verticalSpeed = 0f;
                 }
             }
+            return GroundDistance;
         }
         
         private bool CheckStairs(out Vector3 direction, out Vector3 hitNormal)
@@ -160,7 +161,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
             direction = Vector3.zero;
             hitNormal = Vector3.zero;
 
-            if (UnityEngine.Physics.Raycast(_physicsComponent.CheckStairsTransform.position, _physicsComponent.CheckStairsTransform.forward, out var hit, _physicsDetermineConstant.StairsCheckDistance, _physicsDetermineConstant.StairsSceneLayer))
+            if (Physics.Raycast(_physicsComponent.CheckStairsTransform.position, _physicsComponent.CheckStairsTransform.forward, out var hit, _physicsDetermineConstant.StairsCheckDistance, _physicsDetermineConstant.StairsSceneLayer))
             {
                 hitNormal = hit.normal;
                 direction = Vector3.Cross(hit.normal, _physicsComponent.CheckStairsTransform.right).normalized;
@@ -251,18 +252,6 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
             Camera = camera;
         }
     }
-    
-    public struct CheckGroundDistanceParam
-    {
-        public Vector3 InputMovement;
-        public float FixedDeltaTime;
-        
-        public CheckGroundDistanceParam(Vector3 inputMovement, float fixedDeltaTime)
-        {
-            InputMovement = inputMovement;
-            FixedDeltaTime = fixedDeltaTime;
-        }
-    }
 
     public struct PhysicsDetermineConstant
     {
@@ -297,6 +286,18 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
             InputMovement = inputMovement;
             DeltaTime = deltaTime;
             IsMovingState = isMovingState;
+        }
+    }
+    
+    public struct CheckGroundDistanceParam
+    {
+        public Vector3 InputMovement;
+        public float FixedDeltaTime;
+        
+        public CheckGroundDistanceParam(Vector3 inputMovement, float fixedDeltaTime)
+        {
+            InputMovement = inputMovement;
+            FixedDeltaTime = fixedDeltaTime;
         }
     }
 }

@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
+using Unity.Jobs;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
 {
-    public class PlayerPropertyCalculator : IPlayerStateCalculator
+    public class PlayerPropertyCalculator : IPlayerStateCalculator, IJobParallelFor
     {
         private static PropertyCalculatorConstant _calculatorConstant;
         public bool IsClient { get; private set; }
@@ -23,17 +24,6 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
         {
             _calculatorConstant = constant;
         }
-
-        public Dictionary<PropertyTypeEnum, PropertyCalculator> Clone()
-        {
-            var properties = new Dictionary<PropertyTypeEnum, PropertyCalculator>();
-            foreach (var property in Properties)
-            {
-                properties.Add(property.Key, new PropertyCalculator(property.Key, property.Value.PropertyDataValue, property.Value.MaxValue, property.Value.MinValue));
-            }
-
-            return properties;
-        }
         
         public float GetProperty(PropertyTypeEnum propertyType)
         {
@@ -49,17 +39,16 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
             return Properties[propertyType].CurrentValue;
         }
 
-        public void HandleAttack(PlayerPropertyState[] defenders, Func<float, float, float, float, float> getDamageFunction, out List<int> deadIndexes)
+        public void HandleAttack(ref PlayerPropertyState playerPropertyState, ref Dictionary<int, PlayerPropertyState> defenders, Func<float, float, float, float, float> getDamageFunction)
         {
-            var propertyState = Properties;
+            var playerState = playerPropertyState;
+            var propertyState = playerState.Properties;
             var attack = propertyState[PropertyTypeEnum.Attack].CurrentValue;
             var critical = propertyState[PropertyTypeEnum.CriticalRate].CurrentValue;
             var criticalDamage = propertyState[PropertyTypeEnum.CriticalDamageRatio].CurrentValue;
             var defenderPropertyStates = defenders;
-            deadIndexes = new List<int>();
-            for (int i = 0; i < defenderPropertyStates.Length; i++)
+            foreach (var (key, defenderPropertyState) in defenders)
             {
-                var defenderPropertyState = defenderPropertyStates[i];
                 var defense = defenderPropertyState.Properties[PropertyTypeEnum.Defense].CurrentValue;
                 var damage = getDamageFunction(attack, defense, critical, criticalDamage);
                 if (damage <= 0)
@@ -68,18 +57,16 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
                 }
                 var remainHealth = GetRemainHealth(defenderPropertyState.Properties[PropertyTypeEnum.Health], damage);
                 defenderPropertyState.Properties[PropertyTypeEnum.Health] = remainHealth;
-                defenders[i] = defenderPropertyState;
-                if (remainHealth.CurrentValue <= 0)
-                {
-                    deadIndexes.Add(i);
-                }
+                defenderPropertyStates[key] = defenderPropertyState;
             }
-            Properties = propertyState;   
+            defenders = defenderPropertyStates;
+            playerPropertyState = playerState;   
         }
         
-        public void HandlePropertyRecover()
+        public void HandlePropertyRecover(ref PlayerPropertyState playerPropertyState)
         {
-            var state = Properties;
+            var propertyState = playerPropertyState;
+            var state = propertyState.Properties;
             var healthRecover = state[PropertyTypeEnum.HealthRecovery];
             var strengthRecover = state[PropertyTypeEnum.StrengthRecovery];
             var health = state[PropertyTypeEnum.Health];
@@ -94,17 +81,18 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
                 increaseType = BuffIncreaseType.Current,
                 increaseValue = strengthRecover.CurrentValue * _calculatorConstant.TickRate,
             });
-            Properties = state;
+            playerPropertyState = propertyState;
         }
 
-        public void HandleAnimationCommand(AnimationState command, float animationCost)
+        public void HandleAnimationCommand(ref PlayerPropertyState playerPropertyState, AnimationState command, float animationCost)
         {
             var cost = animationCost;
             if (cost <= 0)
             {
                 return;
             }
-            var state = Properties;
+            var propertyState = playerPropertyState;
+            var state = propertyState.Properties;
             cost *= command == AnimationState.Sprint ? _calculatorConstant.TickRate : 1f;
             var strength = state[PropertyTypeEnum.Strength];
             if (cost > strength.CurrentValue)
@@ -118,12 +106,12 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
                 increaseValue = cost,
                 operationType = BuffOperationType.Subtract,
             });
-            Properties = state;
+            playerPropertyState = propertyState;
         }
 
-        public void HandleEnvironmentChange(bool hasInputMovement, PlayerEnvironmentState environmentType, bool isSprinting)
+        public void HandleEnvironmentChange(ref Dictionary<PropertyTypeEnum, PropertyCalculator> properties, bool hasInputMovement, PlayerEnvironmentState environmentType, bool isSprinting)
         {
-            var playerState = Properties;
+            var playerState = properties;
             var speed = playerState[PropertyTypeEnum.Speed];
             var sprintRatio = playerState[PropertyTypeEnum.SprintSpeedRatio];
             var stairsRatio = playerState[PropertyTypeEnum.StairsSpeedRatio];
@@ -164,7 +152,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
                 }
             }
             playerState[PropertyTypeEnum.Speed] = speed;
-            Properties = playerState;
+            properties = playerState;
         }
 
         private PropertyCalculator GetRemainHealth(PropertyCalculator health, float damage)
@@ -185,6 +173,11 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
             }
             Properties[propertyType] = property;
             OnPropertyChanged?.Invoke(propertyType, property.CurrentValue);
+        }
+
+        public void Execute(int index)
+        {
+            
         }
     }
 

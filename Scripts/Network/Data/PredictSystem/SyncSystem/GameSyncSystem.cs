@@ -15,7 +15,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
 {
     public class GameSyncManager : NetworkBehaviour
     {
-        private readonly Queue<INetworkCommand> _pendingCommands = new Queue<INetworkCommand>();
+        private readonly Queue<INetworkCommand> _clientCommands = new Queue<INetworkCommand>();
+        private readonly Queue<INetworkCommand> _serverCommands = new Queue<INetworkCommand>();
         private readonly Dictionary<int, PlayerComponentController> _playerConnections = new Dictionary<int, PlayerComponentController>();
         private readonly Dictionary<int, Dictionary<CommandType, int>> _lastProcessedInputs = new Dictionary<int, Dictionary<CommandType, int>>();  // 记录每个玩家最后处理的输入序号
         private readonly Queue<INetworkCommand> _currentTickCommands = new Queue<INetworkCommand>();
@@ -39,7 +40,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             if (!isServer)
             {
                 _syncSystems.Clear();
-                _pendingCommands.Clear();
+                _clientCommands.Clear();
                 _currentTickCommands.Clear();
             }
             gameEventManager.Subscribe<PlayerConnectEvent>(OnPlayerConnect);
@@ -106,7 +107,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         }
 
         [Server]
-        public void EnqueueCommand(string commandJson)
+        public void EnqueueCommand(string commandJson, bool isClientCommand)
         {
             var command = JsonConvert.DeserializeObject<INetworkCommand>(commandJson);
             var header = command.GetHeader();
@@ -115,7 +116,14 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 Debug.LogError($"Invalid command: {header.commandType}");
                 return;
             }
-            _pendingCommands.Enqueue(command);
+            if (isClientCommand)
+            {
+                _clientCommands.Enqueue(command);
+            }
+            else
+            {
+                _serverCommands.Enqueue(command);
+            }
         }
 
         [Server]
@@ -141,16 +149,16 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         private void MoveCommandsToCurrentTick()
         {
             // 将待处理命令移到当前tick的命令队列
-            while (_pendingCommands.Count > 0)
+            while (_clientCommands.Count > 0)
             {
-                var command = _pendingCommands.Peek();
+                var command = _clientCommands.Peek();
                 var header = command.GetHeader();
 
                 // 检查命令是否过期
                 var commandAge = (CurrentTick - header.tick) * tickRate;
                 if (commandAge > maxCommandAge)
                 {
-                    _pendingCommands.Dequeue(); // 丢弃过期命令
+                    _clientCommands.Dequeue(); // 丢弃过期命令
                     Debug.LogWarning($"Command discarded due to age: {commandAge}s");
                     continue;
                 }
@@ -161,7 +169,29 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                     break;
                 }
 
-                _currentTickCommands.Enqueue(_pendingCommands.Dequeue());
+                _currentTickCommands.Enqueue(_clientCommands.Dequeue());
+            }
+            while (_serverCommands.Count > 0)
+            {
+                var command = _serverCommands.Peek();
+                var header = command.GetHeader();
+
+                // 检查命令是否过期
+                var commandAge = (CurrentTick - header.tick) * tickRate;
+                if (commandAge > maxCommandAge)
+                {
+                    _serverCommands.Dequeue(); // 丢弃过期命令
+                    Debug.LogWarning($"Command discarded due to age: {commandAge}s");
+                    continue;
+                }
+
+                // 如果命令属于未来的tick，停止处理
+                if (header.tick > CurrentTick)
+                {
+                    break;
+                }
+
+                _currentTickCommands.Enqueue(_serverCommands.Dequeue());
             }
         }
 
