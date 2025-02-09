@@ -36,6 +36,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
         public Vector3 InputMovement;   // 输入的移动
         [MemoryPackOrder(1)] 
         public AnimationState[] InputAnimations; // 输入指令的动画
+        [MemoryPackOrder(2)]
+        public AnimationState Command; // 指令
     }
 
     [MemoryPackable]

@@ -134,10 +134,25 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 
                 //获取可以执行的动画
                 var commandAnimation = playerController.GetCurrentAnimationState(inputStateData);
+                inputCommand.CommandAnimationState = commandAnimation;
+                var actionType = _animationConfig.GetActionType(inputCommand.CommandAnimationState);
 
-                if (!playerController.CanPlayAttackAnimation(commandAnimation))
+                switch (actionType)
                 {
-                    return null;
+                    case ActionType.Movement:
+                        //验证是否可以执行该动画
+                        if (!playerController.CanPlayAttackAnimation(commandAnimation))
+                        {
+                            return null;
+                        }
+                        break;
+                    case ActionType.Interaction:
+                        //验证是否可以执行该动画
+                        if (!playerController.CanPlayAttackAnimation(commandAnimation))
+                        {
+                            return null;
+                        }
+                        break;
                 }
 
                 if (!_animationCooldowns.TryGetValue(header.ConnectionId, out var animationCooldowns))
@@ -167,19 +182,14 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 // 扣除耐力值
                 GameSyncManager.EnqueueServerCommand(new PropertyServerAnimationCommand
                 {
-                    Header = new NetworkCommandHeader
-                    {
-                        ConnectionId = 0,
-                        CommandType = CommandType.Property,
-                        Tick = GameSyncManager.CurrentTick,
-                        Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                        Authority = CommandAuthority.Server,
-                    },
+                    Header = NetworkCommandHeader.Create(0, CommandType.Property, GameSyncManager.CurrentTick, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), CommandAuthority.Server),
                     AnimationState = commandAnimation,
                 });
 
                 cooldownInfo.Use();
-                playerController.HandleMoveAndAnimation(inputStateData);
+                var playerGameStateData = playerController.HandleMoveAndAnimation(inputStateData);
+                PropertyStates[header.ConnectionId] = new PlayerInputState(playerGameStateData, inputStateData);
+                return PropertyStates[header.ConnectionId];
             }
 
             return null;

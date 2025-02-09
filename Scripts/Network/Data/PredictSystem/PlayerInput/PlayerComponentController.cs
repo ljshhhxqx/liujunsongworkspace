@@ -62,6 +62,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
         private float FixedDeltaTime => Time.fixedDeltaTime;
         private float DeltaTime => Time.deltaTime;
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
+        private GameSyncManager _gameSyncManager;
         
         public int CurrentComboStage { get; private set; }
         public IObservable<PlayerInputStateData> InputStream => _inputStream;
@@ -77,6 +78,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
         [Inject]
         private void Init(IConfigProvider configProvider, GameSyncManager gameSyncManager)
         {
+            _gameSyncManager = gameSyncManager;
             _rigidbody = GetComponent<Rigidbody>();
             _inputState = GetComponent<PlayerInputPredictionState>();
             _propertyPredictionState = GetComponent<PropertyPredictionState>();
@@ -91,14 +93,17 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
                 .Subscribe(_ => {
                     var movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
                     var animationStates = _inputState.GetAnimationStates();
-                    _targetSpeed = _playerPropertyCalculator.GetProperty(PropertyTypeEnum.Speed);
-                    _health = _playerPropertyCalculator.GetProperty(PropertyTypeEnum.Health);
-                    _playerAnimationCalculator.UpdateAnimationState();
-                    _inputStream.OnNext(new PlayerInputStateData
+                    var playerInputStateData = new PlayerInputStateData
                     {
                         InputMovement = movement,
                         InputAnimations = animationStates.ToArray(),
-                    });
+                    };
+                    var command = GetCurrentAnimationState(playerInputStateData);
+                    playerInputStateData.Command = command;
+                    _targetSpeed = _playerPropertyCalculator.GetProperty(PropertyTypeEnum.Speed);
+                    _health = _playerPropertyCalculator.GetProperty(PropertyTypeEnum.Health);
+                    _playerAnimationCalculator.UpdateAnimationState();
+                    _inputStream.OnNext(playerInputStateData);
                 })
                 .AddTo(_disposables);
             
@@ -109,7 +114,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
                 })
                 .AddTo(_disposables);
             //发送网络命令
-            _inputStream.Where(x=> isLocalPlayer && x.InputMovement.magnitude > 0.1f && x.InputAnimations.Length > 0)
+            _inputStream.Where(x=> isLocalPlayer && x.InputMovement.magnitude > 0.1f && x.InputAnimations.Length > 0 && x.Command != AnimationState.None)
                 .Subscribe(HandleSendNetworkCommand)
                 .AddTo(_disposables);
             //处理物理信息
@@ -118,12 +123,26 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
                 .AddTo(_disposables);
         }
 
+        [Client]
         private void HandleSendNetworkCommand(PlayerInputStateData inputData)
         {
             _inputState.AddPredictedCommand(new InputCommand
             {
+                Header = NetworkCommandHeader.Create(connectionToClient.connectionId, CommandType.Input, _gameSyncManager.CurrentTick, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()),
                 InputMovement = inputData.InputMovement,
                 InputAnimationStates = inputData.InputAnimations,
+                CommandAnimationState = inputData.Command,
+            });
+            _propertyPredictionState.AddPredictedCommand(new PropertyAutoRecoverCommand
+            {
+                Header = NetworkCommandHeader.Create(connectionToClient.connectionId, CommandType.Property, _gameSyncManager.CurrentTick, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()),
+            });
+            _propertyPredictionState.AddPredictedCommand(new PropertyEnvironmentChangeCommand
+            {
+                Header = NetworkCommandHeader.Create(connectionToClient.connectionId, CommandType.Property, _gameSyncManager.CurrentTick, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()),
+                HasInputMovement = inputData.InputMovement.magnitude > 0.1f,
+                PlayerEnvironmentState = _gameStateStream.Value,
+                IsSprinting = inputData.InputAnimations.Any(x => x == AnimationState.Sprint),
             });
         }
 
@@ -143,7 +162,6 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
             _playerPropertyCalculator.UpdateProperty(propertyType, value);
         }
 
-        //IConfigProvider可能会有用
         private void GetAllCalculators(IConfigProvider configProvider, GameSyncManager gameSyncManager)
         {
             _playerPhysicsCalculator = new PlayerPhysicsCalculator(new PhysicsComponent(_rigidbody, transform, _checkStairTransform, _capsuleCollider, _camera));
@@ -216,8 +234,10 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
         [Server]
         public PlayerGameStateData HandleMoveAndAnimation(PlayerInputStateData inputData)
         {
-            _inputStream.OnNext(inputData);
             var currentAnimationState = GetCurrentAnimationState(inputData);
+            inputData.Command = currentAnimationState;
+            _inputStream.OnNext(inputData);
+
             //移动
             _playerPhysicsCalculator.HandleMove(new MoveParam
             {
@@ -253,6 +273,12 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
         public void HandleAnimationCost(ref PlayerPropertyState playerPropertyState, AnimationState animationState, float cost)
         {
             _playerPropertyCalculator.HandleAnimationCommand(ref playerPropertyState, animationState, cost);
+        }
+
+        [Server]
+        public void HandleEnvironmentChange(ref PlayerPropertyState playerPropertyState, bool hasInputMovement, PlayerEnvironmentState environmentType, bool isSprinting)
+        {
+            _playerPropertyCalculator.HandleEnvironmentChange(ref playerPropertyState, hasInputMovement, environmentType, isSprinting);
         }
     }
 }

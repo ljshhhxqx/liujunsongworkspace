@@ -49,7 +49,21 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
         [MemoryPackOrder(4)] public byte[] SecurityHash;
     
         // 执行上下文
-        [MemoryPackOrder(5)] public CommandAuthority Authority;
+        [MemoryPackOrder(5)] 
+        public CommandAuthority Authority;
+        
+        public static NetworkCommandHeader Create(int connectionId, CommandType commandType, int currentTick, long timestamp, CommandAuthority authority = CommandAuthority.Client)
+        {
+            var header = new NetworkCommandHeader
+            {
+                CommandType = commandType,
+                ConnectionId = connectionId,
+                Tick = currentTick,
+                Authority = authority,
+                Timestamp = timestamp
+            };
+            return header;
+        }
     }
 
     public enum CommandAuthority
@@ -96,8 +110,6 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
         }
     }
     
-    
-
     [MemoryPackable]
     public partial struct PropertyEnvironmentChangeCommand : INetworkCommand
     {
@@ -277,6 +289,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
         public Vector3 InputMovement;
         [MemoryPackOrder(2)]
         public AnimationState[] InputAnimationStates;
+        [MemoryPackOrder(3)]
+        public AnimationState CommandAnimationState;
         public NetworkCommandHeader GetHeader() => Header;
 
         public bool IsValid()
@@ -376,7 +390,20 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
         // 基础验证参数配置
         public const int MAX_TICK_DELTA = 30;      // 允许的最大tick偏差
         public const long TIMESTAMP_TOLERANCE = 5000; // 5秒时间容差（毫秒）
-        
+
+        public static NetworkCommandHeader CreateCommand(CommandType commandType, int tick,
+            long timeStamp, CommandAuthority authority = CommandAuthority.Client)
+        {
+            return new NetworkCommandHeader
+            {
+                ConnectionId = NetworkServer.localConnection.connectionId,
+                Tick = tick,
+                CommandType = commandType,
+                Timestamp = timeStamp,
+                Authority = authority
+            };
+        }
+
         public static CommandValidationResult ValidateCommand(this INetworkCommand command)
         {
             var result = new CommandValidationResult();

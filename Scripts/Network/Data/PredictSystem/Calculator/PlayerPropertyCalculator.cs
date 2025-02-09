@@ -109,12 +109,12 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
             playerPropertyState = propertyState;
         }
 
-        public void HandleEnvironmentChange(ref Dictionary<PropertyTypeEnum, PropertyCalculator> properties, bool hasInputMovement, PlayerEnvironmentState environmentType, bool isSprinting)
+        public void HandleEnvironmentChange(ref PlayerPropertyState playerPropertyState, bool hasInputMovement, PlayerEnvironmentState environmentType, bool isSprinting)
         {
-            var playerState = properties;
-            var speed = playerState[PropertyTypeEnum.Speed];
-            var sprintRatio = playerState[PropertyTypeEnum.SprintSpeedRatio];
-            var stairsRatio = playerState[PropertyTypeEnum.StairsSpeedRatio];
+            var propertyState = playerPropertyState;
+            var speed = propertyState.Properties[PropertyTypeEnum.Speed];
+            var sprintRatio = propertyState.Properties[PropertyTypeEnum.SprintSpeedRatio];
+            var stairsRatio = propertyState.Properties[PropertyTypeEnum.StairsSpeedRatio];
             if (!hasInputMovement)
             {
                 speed = speed.UpdateCalculator(speed, new BuffIncreaseData
@@ -151,8 +151,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
                         throw new ArgumentOutOfRangeException(nameof(environmentType), environmentType, null);
                 }
             }
-            playerState[PropertyTypeEnum.Speed] = speed;
-            properties = playerState;
+            propertyState.Properties[PropertyTypeEnum.Speed] = speed;
+            playerPropertyState = propertyState;
         }
 
         private PropertyCalculator GetRemainHealth(PropertyCalculator health, float damage)

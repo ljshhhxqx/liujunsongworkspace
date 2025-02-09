@@ -231,72 +231,31 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             }
             var playerState = GetState<PlayerPropertyState>(connectionId);
             var playerController = GameSyncManager.GetPlayerConnection(connectionId);
-            //playerController.HandleAnimation(command, _animationConfig.GetPlayerAnimationCost);
-            cost *= command == AnimationState.Sprint ? GameSyncManager.TickRate : 1f;
-            var strength = playerState.Properties[PropertyTypeEnum.Strength];
-            if (cost > strength.CurrentValue)
-            {
-                Debug.LogError($"PlayerPropertySyncSystem: {connectionId} does not have enough strength to perform {command} animation.");
-                return;
-            }
-            playerState.Properties[PropertyTypeEnum.Strength] = strength.UpdateCalculator(strength, new BuffIncreaseData
-            {
-                increaseType = BuffIncreaseType.Current,
-                increaseValue = cost,
-                operationType = BuffOperationType.Subtract,
-            });
+            playerController.HandleAnimationCost(ref playerState, command, cost);
             PropertyStates[connectionId] = playerState;
         }
 
         private void HandleEnvironmentChange(int connectionId, bool hasInputMovement, PlayerEnvironmentState environmentType, bool isSprinting)
         {
             var playerState = GetState<PlayerPropertyState>(connectionId);
-            var speed = playerState.Properties[PropertyTypeEnum.Speed];
-            var sprintRatio = playerState.Properties[PropertyTypeEnum.SprintSpeedRatio];
-            var stairsRatio = playerState.Properties[PropertyTypeEnum.StairsSpeedRatio];
-            if (!hasInputMovement)
-            {
-                speed = speed.UpdateCalculator(speed, new BuffIncreaseData
-                {
-                    increaseType = BuffIncreaseType.CorrectionFactor,
-                    increaseValue = 0,
-                });
-            }
-            else
-            {
-                switch (environmentType)
-                {
-                    case PlayerEnvironmentState.InAir:
-                        break;
-                    case PlayerEnvironmentState.OnGround:
-                        speed = speed.UpdateCalculator(speed, new BuffIncreaseData
-                        {
-                            increaseType = BuffIncreaseType.CorrectionFactor,
-                            increaseValue = isSprinting ? sprintRatio.CurrentValue : 1,
-                            operationType = BuffOperationType.Multiply,
-                        });
-                        break;
-                    case PlayerEnvironmentState.OnStairs:
-                        speed = speed.UpdateCalculator(speed, new BuffIncreaseData
-                        {
-                            increaseType = BuffIncreaseType.CorrectionFactor,
-                            increaseValue = isSprinting ? sprintRatio.CurrentValue * stairsRatio.CurrentValue : stairsRatio.CurrentValue,
-                            operationType = BuffOperationType.Multiply,
-                        });
-                        break;
-                    case PlayerEnvironmentState.Swimming:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(environmentType), environmentType, null);
-                }
-            }
-            playerState.Properties[PropertyTypeEnum.Speed] = speed;
+            var playerController = GameSyncManager.GetPlayerConnection(connectionId);
+            playerController.HandleEnvironmentChange(ref playerState, hasInputMovement, environmentType, isSprinting);
             PropertyStates[connectionId] = playerState;
         }
 
         public Dictionary<PropertyTypeEnum, PropertyCalculator> GetPlayerProperty(int connectionId)
         {
             return GetState<PlayerPropertyState>(connectionId).Properties;
+        }
+        
+        public float GetPlayerProperty(int connectionId, PropertyTypeEnum propertyType)
+        {
+            return GetState<PlayerPropertyState>(connectionId).Properties[propertyType].CurrentValue;
+        }
+        
+        public float GetPlayerMaxProperty(int connectionId, PropertyTypeEnum propertyType)
+        {
+            return GetState<PlayerPropertyState>(connectionId).Properties[propertyType].MaxCurrentValue;
         }
 
         public override void SetState<T>(int connectionId, T state)

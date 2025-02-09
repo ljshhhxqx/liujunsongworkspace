@@ -30,7 +30,17 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState
             JsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             NetworkIdentity = GetComponent<NetworkIdentity>();
         }
-    
+
+        //本地客户端用于模拟命令，立即执行
+        public void AddCommandByOtherPredictableState(INetworkCommand command)
+        {
+            var header = command.GetHeader();
+            if (header.CommandType != HandledCommandType) 
+                return;
+            command.SetHeader(netIdentity.connectionToClient.connectionId, CommandType, GameSyncManager.CurrentTick);
+            Simulate(command);
+        }
+
         // 添加预测命令
         public void AddPredictedCommand(INetworkCommand command)
         {
