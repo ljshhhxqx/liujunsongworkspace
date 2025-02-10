@@ -116,14 +116,14 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
 
         private bool _currentAnimationCanPlay;
         
-        public void HandleAnimation(AnimationState newState)
+        public void HandleAnimation(AnimationState newState, int index = 0)
         {
             // 验证是否可以播放
             if (!_currentAnimationCanPlay)
             {
                 return;
             }
-
+            
             // 根据动画状态执行相应的动画
             switch (newState)
             {
@@ -140,8 +140,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
                     break;
                 case AnimationState.Attack:
                     IsPlayingSpecialAction = true;
-                    Debug.Log("Attack");
-                    RequestAttack();
+                    Debug.Log("Attack");            
+                    _animationComponent.Animator.CrossFadeInFixedTime(GetAnimationName(AnimationState.Attack, index), 0.15f);
                     break;
                 case AnimationState.Hit:
                     IsPlayingSpecialAction = true;
@@ -304,7 +304,6 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
             OnAnimationStateChanged?.Invoke(AnimationState.Attack);
 
             // 触发对应段数的攻击动画
-            _animationComponent.Animator.CrossFadeInFixedTime(GetAnimationName(AnimationState.Attack, _currentComboSync), 0.15f);
 
             // 如果是最后一击，直接进入冷却
             if (_currentComboSync >= _animationConstant.AttackComboMaxCount)

@@ -95,13 +95,13 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState
                 var info = _animationConfig.GetAnimationInfo(animationState);
                 if (info.state == AnimationState.Attack)
                 {
-                    list.Add(new AttackCooldown(info.cooldown, _jsonDataConfig.PlayerConfig.AttackComboMaxCount, _jsonDataConfig.PlayerConfig.AttackComboWindow));
+                    list.Add(new AttackCooldown(animationState, info.cooldown, _jsonDataConfig.PlayerConfig.AttackComboMaxCount, _jsonDataConfig.PlayerConfig.AttackComboWindow));
                     continue;
                 }
 
                 if (info.cooldown > 0)
                 {
-                    list.Add(new AnimationCooldown(animationState, info.cooldown));
+                    list.Add(new AnimationCooldown(animationState, info.cooldown, 0));
                 }
             }
             return list;

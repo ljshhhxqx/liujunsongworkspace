@@ -46,6 +46,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
         
         private readonly ReactiveProperty<PlayerEnvironmentState> _gameStateStream = new ReactiveProperty<PlayerEnvironmentState>();
         private readonly ReactiveProperty<float> _groundDistanceStream = new ReactiveProperty<float>();
+        private readonly ReactiveProperty<bool> _isSpecialActionStream = new ReactiveProperty<bool>();
         
         [Header("Calculators")]
         private PlayerPhysicsCalculator _playerPhysicsCalculator;
@@ -67,6 +68,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
         public int CurrentComboStage { get; private set; }
         public IObservable<PlayerInputStateData> InputStream => _inputStream;
         public IReadOnlyReactiveProperty<PlayerEnvironmentState> GameStateStream => _gameStateStream;
+        public IReadOnlyReactiveProperty<float> GroundDistanceStream => _groundDistanceStream;
+        public IObservable<bool> IsSpecialAction => _isSpecialActionStream;
         public IObservable<int> AttackPointReached => _onAttackPoint;
         public IObservable<int> AttackEnded => _onAttackEnd;
 
@@ -152,6 +155,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
             _playerPhysicsCalculator.CurrentSpeed = _currentSpeed;
             _gameStateStream.Value = _playerPhysicsCalculator.CheckPlayerState(new CheckGroundDistanceParam(inputData.InputMovement, FixedDeltaTime));
             _groundDistanceStream.Value = _playerPhysicsCalculator.GroundDistance;
+            _isSpecialActionStream.Value = _playerAnimationCalculator.IsSpecialAction;
             _playerAnimationCalculator.SetEnvironmentState(_gameStateStream.Value);
             _playerAnimationCalculator.SetGroundDistance(_groundDistanceStream.Value);
             _playerAnimationCalculator.SetAnimatorParams(inputData.InputMovement.magnitude, _groundDistanceStream.Value, _currentSpeed);
@@ -178,7 +182,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
                 StairsCheckDistance = gameData.stairsCheckDistance,
                 GroundSceneLayer = gameData.groundSceneLayer,
                 StairsSceneLayer = gameData.stairSceneLayer,
-                RotateSpeed = gameData.rotateSpeed,
+                RotateSpeed = playerData.RotateSpeed,
             });
             PlayerPropertyCalculator.SetCalculatorConstant(new PropertyCalculatorConstant
             {
@@ -228,16 +232,11 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
                 GroundDistance = _groundDistanceStream.Value,
                 EnvironmentState = _gameStateStream.Value,
             };            
+            
         }
-        
-        //这一行开始，写对外接口
-        [Server]
-        public PlayerGameStateData HandleMoveAndAnimation(PlayerInputStateData inputData)
-        {
-            var currentAnimationState = GetCurrentAnimationState(inputData);
-            inputData.Command = currentAnimationState;
-            _inputStream.OnNext(inputData);
 
+        private PlayerGameStateData HandleMoveAndAnimation(PlayerInputStateData inputData)
+        {
             //移动
             _playerPhysicsCalculator.HandleMove(new MoveParam
             {
@@ -246,15 +245,32 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
                 IsMovingState = _playerAnimationCalculator.IsMovingState(),
             });
             //执行动画
-            _playerAnimationCalculator.HandleAnimation(currentAnimationState);
+            _playerAnimationCalculator.HandleAnimation(inputData.Command);
             return new PlayerGameStateData
             {
-                position = transform.position,
-                rotation = transform.rotation,
-                velocity = _rigidbody.velocity,
-                environmentState = _gameStateStream.Value,
-                command = currentAnimationState,
+                Position = transform.position,
+                Quaternion = transform.rotation,
+                Velocity = _rigidbody.velocity,
+                PlayerEnvironmentState = _gameStateStream.Value,
+                AnimationState = inputData.Command,
             };
+        }
+
+        [Client]
+        public PlayerGameStateData HandleClientMoveAndAnimation(PlayerInputStateData inputData)
+        {
+            return HandleMoveAndAnimation(inputData);
+        }
+
+
+        //这一行开始，写对外接口
+        [Server]
+        public PlayerGameStateData HandleServerMoveAndAnimation(PlayerInputStateData inputData)
+        {
+            var currentAnimationState = GetCurrentAnimationState(inputData);
+            inputData.Command = currentAnimationState;
+            _inputStream.OnNext(inputData);
+            return HandleMoveAndAnimation(inputData);
         }
 
         [Server]

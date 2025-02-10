@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
 using HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput;
@@ -22,13 +23,13 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         private readonly Dictionary<int, Dictionary<CommandType, int>> _lastProcessedInputs = new Dictionary<int, Dictionary<CommandType, int>>();  // 记录每个玩家最后处理的输入序号
         private readonly Queue<INetworkCommand> _currentTickCommands = new Queue<INetworkCommand>();
         private readonly Dictionary<CommandType, BaseSyncSystem> _syncSystems = new Dictionary<CommandType, BaseSyncSystem>();
-        [Header("Sync Settings")]
-        [SerializeField] private float tickRate = 1/30f; // 服务器每秒发送30个tick
-        [SerializeField] private float maxCommandAge = 1f; // 最大命令存活时间
+        private float _tickRate; // 服务器每秒发送20个tick
+        private float _maxCommandAge; // 最大命令存活时间
         private NetworkIdentity _networkIdentity;
-        public float TickRate => tickRate;
+        public float TickRate => _tickRate;
         private float _tickTimer;
         private PlayerInGameManager _playerInGameManager;
+        private JsonDataConfig _jsonDataConfig;
         private bool _isProcessing; // 防止重入
         
         public int CurrentTick { get; private set; }
@@ -37,6 +38,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         private void Init(IConfigProvider configProvider, GameEventManager gameEventManager, PlayerInGameManager playerInGameManager)
         {
             _networkIdentity = GetComponent<NetworkIdentity>();
+            _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _playerInGameManager = playerInGameManager;
             if (!isServer)
             {
@@ -44,6 +46,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 _clientCommands.Clear();
                 _currentTickCommands.Clear();
             }
+            _tickRate = _jsonDataConfig.GameConfig.tickRate;
+            _maxCommandAge = _jsonDataConfig.GameConfig.maxCommandAge;
             gameEventManager.Subscribe<PlayerConnectEvent>(OnPlayerConnect);
             gameEventManager.Subscribe<PlayerDisconnectEvent>(OnPlayerDisconnect);
             var commandTypes = Enum.GetValues(typeof(CommandType));
@@ -99,7 +103,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             _tickTimer += Time.deltaTime;
         
             // 检查是否需要处理新的tick
-            if (_tickTimer >= tickRate)
+            if (_tickTimer >= _tickRate)
             {
                 _tickTimer = 0;
                 ProcessTick();
@@ -154,8 +158,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 var header = command.GetHeader();
 
                 // 检查命令是否过期
-                var commandAge = (CurrentTick - header.Tick) * tickRate;
-                if (commandAge > maxCommandAge)
+                var commandAge = (CurrentTick - header.Tick) * _tickRate;
+                if (commandAge > _maxCommandAge)
                 {
                     _clientCommands.Dequeue(); // 丢弃过期命令
                     Debug.LogWarning($"Command discarded due to age: {commandAge}s");
@@ -176,8 +180,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 var header = command.GetHeader();
 
                 // 检查命令是否过期
-                var commandAge = (CurrentTick - header.Tick) * tickRate;
-                if (commandAge > maxCommandAge)
+                var commandAge = (CurrentTick - header.Tick) * _tickRate;
+                if (commandAge > _maxCommandAge)
                 {
                     _serverCommands.Dequeue(); // 丢弃过期命令
                     Debug.LogWarning($"Command discarded due to age: {commandAge}s");

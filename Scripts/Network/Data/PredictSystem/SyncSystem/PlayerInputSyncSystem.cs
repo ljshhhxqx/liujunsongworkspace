@@ -72,7 +72,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         protected override void RegisterState(int connectionId, NetworkIdentity player)
         {
             var playerPredictableState = player.GetComponent<PlayerInputPredictionState>();
-            var playerInputState = new PlayerInputState(new PlayerGameStateData(), new PlayerInputStateData());
+            var playerInputState = new PlayerInputState(new PlayerGameStateData(), new PlayerInputStateData(), new PlayerAnimationCooldownState());
             PropertyStates.Add(connectionId, playerInputState);
             _inputPredictionStates.Add(connectionId, playerPredictableState);
             _animationCooldowns.Add(connectionId, GetAnimationCooldowns());
@@ -99,13 +99,13 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 var info = _animationConfig.GetAnimationInfo(animationState);
                 if (info.state == AnimationState.Attack)
                 {
-                    list.Add(new AttackCooldown(info.cooldown, _jsonDataConfig.PlayerConfig.AttackComboMaxCount, _jsonDataConfig.PlayerConfig.AttackComboWindow));
+                    list.Add(new AttackCooldown(animationState, info.cooldown, _jsonDataConfig.PlayerConfig.AttackComboMaxCount, _jsonDataConfig.PlayerConfig.AttackComboWindow));
                     continue;
                 }
 
                 if (info.cooldown > 0)
                 {
-                    list.Add(new AnimationCooldown(animationState, info.cooldown));
+                    list.Add(new AnimationCooldown(animationState, info.cooldown, 0));
                 }
             }
             return list;
@@ -136,25 +136,12 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 var commandAnimation = playerController.GetCurrentAnimationState(inputStateData);
                 inputCommand.CommandAnimationState = commandAnimation;
                 var actionType = _animationConfig.GetActionType(inputCommand.CommandAnimationState);
-
-                switch (actionType)
+                if (actionType is not ActionType.Movement and ActionType.Interaction)
                 {
-                    case ActionType.Movement:
-                        //验证是否可以执行该动画
-                        if (!playerController.CanPlayAttackAnimation(commandAnimation))
-                        {
-                            return null;
-                        }
-                        break;
-                    case ActionType.Interaction:
-                        //验证是否可以执行该动画
-                        if (!playerController.CanPlayAttackAnimation(commandAnimation))
-                        {
-                            return null;
-                        }
-                        break;
+                    Debug.LogWarning($"Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} is not supported.");
+                    return null;
                 }
-
+                
                 if (!_animationCooldowns.TryGetValue(header.ConnectionId, out var animationCooldowns))
                 {
                     return null;
@@ -163,32 +150,37 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 
                 //验证冷却时间是否已到
                 var cooldownInfo = animationCooldowns.Find(x => x.AnimationState == commandAnimation);
-                if (info.cooldown != 0)
+                if (info.cooldown != 0 || info.cost > 0)
                 {
                     if (cooldownInfo == null || !cooldownInfo.IsReady())
                     {
                         Debug.LogWarning($"Player {header.ConnectionId} input animation {commandAnimation} is not ready.");
                         return null;
                     }
-                }
                 
-                //验证是否耐力值足够
-                if (playerProperty[PropertyTypeEnum.Strength].CurrentValue < info.cost)
-                {
-                    Debug.LogWarning($"Player {header.ConnectionId} input animation {commandAnimation} cost {info.cost} strength, but strength is {playerProperty[PropertyTypeEnum.Strength].CurrentValue}.");
-                    return null;
-                }
-                
-                // 扣除耐力值
-                GameSyncManager.EnqueueServerCommand(new PropertyServerAnimationCommand
-                {
-                    Header = NetworkCommandHeader.Create(0, CommandType.Property, GameSyncManager.CurrentTick, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), CommandAuthority.Server),
-                    AnimationState = commandAnimation,
-                });
+                    //验证是否耐力值足够
+                    if (playerProperty[PropertyTypeEnum.Strength].CurrentValue < info.cost)
+                    {
+                        Debug.LogWarning($"Player {header.ConnectionId} input animation {commandAnimation} cost {info.cost} strength, but strength is {playerProperty[PropertyTypeEnum.Strength].CurrentValue}.");
+                        return null;
+                    }
+                    
+                    // 扣除耐力值
+                    GameSyncManager.EnqueueServerCommand(new PropertyServerAnimationCommand
+                    {
+                        Header = NetworkCommandHeader.Create(0, CommandType.Property, GameSyncManager.CurrentTick, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), CommandAuthority.Server),
+                        AnimationState = commandAnimation,
+                    });
+                    if (cooldownInfo is AttackCooldown cooldown)
+                    {
+                        inputStateData.AttackCount = cooldown.CurrentAttackStage;
+                    }
 
-                cooldownInfo.Use();
-                var playerGameStateData = playerController.HandleMoveAndAnimation(inputStateData);
-                PropertyStates[header.ConnectionId] = new PlayerInputState(playerGameStateData, inputStateData);
+                    cooldownInfo.Use();
+                }
+                
+                var playerGameStateData = playerController.HandleServerMoveAndAnimation(inputStateData);
+                PropertyStates[header.ConnectionId] = new PlayerInputState(playerGameStateData, inputStateData, new PlayerAnimationCooldownState(animationCooldowns));
                 return PropertyStates[header.ConnectionId];
             }
 
@@ -209,212 +201,6 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         public override void Clear()
         {
             _disposables.Dispose();
-        }
-    }
-    
-    public interface IAttackAnimationEvent
-    {
-        // 当动画到达判定点时触发
-        IObservable<int> AttackPointReached { get; } 
-        // 当动画判定结束时触发
-        IObservable<int> AttackEnded { get; }
-    }
-    
-    public interface IAnimationCooldown
-    {
-        AnimationState AnimationState { get; }
-        float CurrentCountdown { get; }
-        float Cooldown { get; }
-        bool IsReady();
-        void Update(float deltaTime);
-        void Use();
-    }
-
-    public class AttackCooldown : IAnimationCooldown
-    {
-        // 基础属性
-        public AnimationState AnimationState => AnimationState.Attack;
-        public float CurrentCountdown { get; private set; }
-        public float Cooldown { get; }
-        public int MaxAttackCount { get; }
-        public float AttackWindow { get; }
-
-        // 连击状态
-        private int _currentAttackStage;
-        private float _windowCountdown;
-        private bool _isInComboWindow;
-        
-        // 动画事件监听
-        private IDisposable _attackPointListener;
-        private IDisposable _attackEndListener;
-        private IDisposable _comboResetListener;
-
-        public AttackCooldown(float cooldown, int maxAttackCount, float attackWindow)
-        {
-            ValidateParameters(maxAttackCount, attackWindow);
-            
-            Cooldown = cooldown;
-            MaxAttackCount = maxAttackCount;
-            AttackWindow = attackWindow;
-            ResetState();
-        }
-
-        private void ValidateParameters(int maxAttackCount, float attackWindow)
-        {
-            if (maxAttackCount < 1)
-                throw new ArgumentException("MaxAttackCount must be at least 1");
-            
-            if (attackWindow <= 0.3f)
-                throw new ArgumentException("AttackWindow must be greater than 0.3");
-        }
-
-        public void BindAnimationEvents(IAttackAnimationEvent animationEvent)
-        {
-            UnbindEvents();
-            
-            _attackPointListener = animationEvent.AttackPointReached
-                .Where(stage => stage == _currentAttackStage)
-                .Subscribe(OnAttackPointReached);
-
-            _attackEndListener = animationEvent.AttackEnded
-                .Subscribe(OnAttackEnded);
-
-            _comboResetListener = animationEvent.AttackPointReached
-                .Where(stage => stage == 0)
-                .Subscribe(_ => ResetState());
-        }
-
-        private void OnAttackPointReached(int stage)
-        {
-            if (_currentAttackStage == 0) return;
-
-            // 获取当前阶段的有效窗口时间
-            _windowCountdown = AttackWindow;
-            _isInComboWindow = true;
-        }
-
-        private void OnAttackEnded(int stage)
-        {
-            if (stage == _currentAttackStage)
-            {
-                // 结束当前阶段时未触发连击则重置
-                if (!_isInComboWindow)
-                {
-                    ResetState();
-                }
-            }
-        }
-
-        public bool IsReady()
-        {
-            return CurrentCountdown <= 0 && 
-                   (_currentAttackStage == 0 || _isInComboWindow);
-        }
-
-        public void Update(float deltaTime)
-        {
-            CurrentCountdown = Mathf.Max(0, CurrentCountdown - deltaTime);
-            
-            if (_isInComboWindow)
-            {
-                _windowCountdown = Mathf.Max(0, _windowCountdown - deltaTime);
-                if (_windowCountdown <= 0)
-                {
-                    _isInComboWindow = false;
-                    if (_currentAttackStage > 0)
-                    {
-                        CurrentCountdown = Cooldown;
-                        ResetState();
-                    }
-                }
-            }
-        }
-
-        public void Use()
-        {
-            if (!IsReady()) return;
-
-            if (_currentAttackStage == 0)
-            {
-                // 开始新连击
-                _currentAttackStage = 1;
-                CurrentCountdown = 0;
-                return;
-            }
-
-            if (_isInComboWindow)
-            {
-                _currentAttackStage++;
-                if (_currentAttackStage > MaxAttackCount)
-                {
-                    CurrentCountdown = Cooldown;
-                    ResetState();
-                }
-                else
-                {
-                    // 重置窗口状态等待动画事件
-                    _isInComboWindow = false;
-                    _windowCountdown = 0;
-                }
-            }
-        }
-
-        private void ResetState()
-        {
-            _currentAttackStage = 0;
-            _windowCountdown = 0;
-            _isInComboWindow = false;
-        }
-
-        public void UnbindEvents()
-        {
-            _attackPointListener?.Dispose();
-            _attackEndListener?.Dispose();
-            _comboResetListener?.Dispose();
-        }
-
-        // 调试信息
-        public string GetDebugInfo()
-        {
-            return $"Stage: {_currentAttackStage} | Window: {_windowCountdown:F2} | Cooldown: {CurrentCountdown:F2}";
-        }
-    }
-
-    public class AnimationCooldown : IAnimationCooldown
-    {
-        public AnimationState AnimationState { get; private set; }
-        public float CurrentCountdown { get; private set; }
-        public float Cooldown { get; private set; }
-
-        public AnimationCooldown(AnimationState animationState, float cooldown)
-        {
-            AnimationState = animationState;
-            CurrentCountdown = 0;
-            Cooldown = cooldown;
-        }
-        
-        public bool IsReady()
-        {
-            if (Cooldown == 0)
-            {
-                return true;
-            }
-
-            return CurrentCountdown <= 0;
-        }
-        
-        public void Update(float deltaTime)
-        {
-            CurrentCountdown = Math.Max(0, CurrentCountdown - deltaTime);
-        }
-        
-        public void Use()
-        {
-            if (!IsReady())
-            {
-                return;
-            }
-            CurrentCountdown = Cooldown;
         }
     }
 }
