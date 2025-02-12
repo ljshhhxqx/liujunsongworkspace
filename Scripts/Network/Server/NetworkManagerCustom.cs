@@ -149,7 +149,7 @@ namespace Network.Server
                     GameScore = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameScore,
                     PlayerCount = playerCount
                 };
-                _gameEventManager.Publish(new PlayerConnectEvent(conn.connectionId, conn.identity));
+                _gameEventManager.Publish(new PlayerConnectEvent(conn.connectionId, conn.identity, playerInGameData.player));
                 _gameEventManager.Publish(new GameReadyEvent(gameInfo));
                 // }
                 // if (_playerAccountIdMap.Count == playerCount)

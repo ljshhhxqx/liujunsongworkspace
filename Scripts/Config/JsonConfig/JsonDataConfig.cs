@@ -192,6 +192,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
     {
         public LayerMask groundSceneLayer;
         public float syncTime;
+        public float gridSize;
         public float safetyMargin;
         public float fixedSpacing;
         public float warmupTime;

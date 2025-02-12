@@ -39,6 +39,7 @@ namespace HotUpdate.Scripts.Game
         private PlayerInGameManager _playerInGameManager;
         private GameInfo _gameInfo;
         private MessageCenter _messageCenter;
+        private MapBoundDefiner _mapBoundDefiner;
         private MirrorNetworkMessageHandler _messageHandler;
         
         private BuffManager _buffManager;
@@ -102,11 +103,12 @@ namespace HotUpdate.Scripts.Game
 
         [Inject]
         private void Init(MessageCenter messageCenter, GameEventManager gameEventManager, IObjectResolver objectResolver, IConfigProvider configProvider,
-            MirrorNetworkMessageHandler messageHandler)
+            MirrorNetworkMessageHandler messageHandler, MapBoundDefiner mapBoundDefiner)
         {
             _gameEventManager = gameEventManager;
             _messageCenter = messageCenter;
             _messageHandler = messageHandler;
+            _mapBoundDefiner = mapBoundDefiner;
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _gameEventManager.Subscribe<GameReadyEvent>(OnGameReady);
             _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
@@ -221,6 +223,7 @@ namespace HotUpdate.Scripts.Game
 
         private async UniTask StartMainGameTimerAsync(CancellationToken token)
         {
+            _playerInGameManager.isGameStarted = true;
             var remainingTime = _mainGameTime;
             var endGameFlag = false;
             var interval = Time.fixedDeltaTime;

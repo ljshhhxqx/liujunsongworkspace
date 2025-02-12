@@ -6,12 +6,18 @@ using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
 using HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
+using HotUpdate.Scripts.Network.PredictSystem.Data;
+using HotUpdate.Scripts.Network.PredictSystem.State;
 using MemoryPack;
 using Mirror;
 using UniRx;
 using UnityEngine;
 using VContainer;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
+using CooldownSnapshotData = HotUpdate.Scripts.Network.PredictSystem.Data.CooldownSnapshotData;
+using PlayerAnimationCooldownState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerAnimationCooldownState;
+using PlayerGameStateData = HotUpdate.Scripts.Network.PredictSystem.State.PlayerGameStateData;
+using PlayerInputState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerInputState;
 
 namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
 {
@@ -44,7 +50,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             foreach (var playerId in _animationCooldowns.Keys)
             {
                 var animationCooldowns = _animationCooldowns[playerId];
-                for (int i = animationCooldowns.Count - 1; i >= 0; i--)
+                for (var i = animationCooldowns.Count - 1; i >= 0; i--)
                 {
                     var animationCooldown = animationCooldowns[i];
                     animationCooldown.Update(deltaTime);
@@ -72,13 +78,14 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         protected override void RegisterState(int connectionId, NetworkIdentity player)
         {
             var playerPredictableState = player.GetComponent<PlayerInputPredictionState>();
-            var playerInputState = new PlayerInputState(new PlayerGameStateData(), new PlayerInputStateData(), new PlayerAnimationCooldownState());
+            var playerInputState = new PlayerInputState(new PlayerGameStateData(), new PlayerAnimationCooldownState());
             PropertyStates.Add(connectionId, playerInputState);
             _inputPredictionStates.Add(connectionId, playerPredictableState);
             _animationCooldowns.Add(connectionId, GetAnimationCooldowns());
             BindAniEvents(connectionId, player.GetComponent<IAttackAnimationEvent>());
         }
 
+        [Server]
         private void BindAniEvents(int connectionId, IAttackAnimationEvent animationEvent)
         {
             var animationCooldowns = _animationCooldowns[connectionId];
@@ -88,6 +95,14 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 return;
             }
             attackCooldown.BindAnimationEvents(animationEvent);
+            attackCooldown.AttackPointReached
+                .Subscribe(_ => HandlePlayerAttack(connectionId))
+                .AddTo(_disposables);
+        }
+
+        private void HandlePlayerAttack(int connectionId)
+        {
+            
         }
 
         private List<IAnimationCooldown> GetAnimationCooldowns()
@@ -129,7 +144,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 var inputStateData = new PlayerInputStateData
                 {
                     InputMovement = inputCommand.InputMovement,
-                    InputAnimations = inputCommand.InputAnimationStates
+                    InputAnimations = inputCommand.InputAnimationStates.ToList(),
                 };
                 
                 //获取可以执行的动画
@@ -171,20 +186,27 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                         Header = NetworkCommandHeader.Create(0, CommandType.Property, GameSyncManager.CurrentTick, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), CommandAuthority.Server),
                         AnimationState = commandAnimation,
                     });
-                    if (cooldownInfo is AttackCooldown cooldown)
-                    {
-                        inputStateData.AttackCount = cooldown.CurrentAttackStage;
-                    }
 
                     cooldownInfo.Use();
                 }
                 
                 var playerGameStateData = playerController.HandleServerMoveAndAnimation(inputStateData);
-                PropertyStates[header.ConnectionId] = new PlayerInputState(playerGameStateData, inputStateData, new PlayerAnimationCooldownState(animationCooldowns));
+                PropertyStates[header.ConnectionId] = new PlayerInputState(playerGameStateData, new PlayerAnimationCooldownState(GetCooldownSnapshotData(header.ConnectionId)));
                 return PropertyStates[header.ConnectionId];
             }
 
             return null;
+        }
+        
+        private List<CooldownSnapshotData> GetCooldownSnapshotData(int connectionId)
+        {
+            var animationCooldowns = _animationCooldowns[connectionId];
+            var snapshotData = new List<CooldownSnapshotData>();
+            foreach (var animationCooldown in animationCooldowns)
+            {
+                snapshotData.Add(CooldownSnapshotData.Create(animationCooldown));
+            }
+            return snapshotData;
         }
 
         public override void SetState<T>(int connectionId, T state)

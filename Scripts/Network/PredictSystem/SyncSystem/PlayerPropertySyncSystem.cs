@@ -5,7 +5,6 @@ using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
-using HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
 using MemoryPack;

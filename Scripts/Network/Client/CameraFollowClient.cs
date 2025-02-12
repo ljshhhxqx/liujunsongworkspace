@@ -5,7 +5,7 @@ using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
 
-namespace Network.Client
+namespace HotUpdate.Scripts.Network.Client
 {
     public class CameraFollowClient : MonoBehaviour, IInjectableObject
     {

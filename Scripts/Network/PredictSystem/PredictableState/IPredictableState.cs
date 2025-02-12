@@ -4,6 +4,7 @@ using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
 using HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Inject;
+using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using MemoryPack;
 using Mirror;
 using Newtonsoft.Json;
@@ -75,14 +76,14 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState
             {
                 CommandQueue.Dequeue();
             }
+            LastConfirmedTick = confirmedTick;
         }
+        
         public abstract CommandType HandledCommandType { get; }
 
         public virtual void ApplyServerState<T>(T state) where T : IPropertyState
         {
-            var serverTick = GameSyncManager.CurrentTick;
-            CleanupConfirmedCommands(serverTick);
-            LastConfirmedTick = serverTick;
+            CleanupConfirmedCommands(GameSyncManager.CurrentTick);
             if (isLocalPlayer)
             {
                 if (NeedsReconciliation(state))
@@ -95,6 +96,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState
                         Simulate(command);
                     }
                 }
+                return;
             }
             CurrentState = state;
         }

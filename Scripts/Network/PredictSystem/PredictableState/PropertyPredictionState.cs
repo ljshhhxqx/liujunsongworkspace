@@ -3,6 +3,7 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
 using HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 
 namespace HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState
 {

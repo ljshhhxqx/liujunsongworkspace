@@ -84,6 +84,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
     public enum WeaponType
     {
+        None,
         Sword1,
         Sword2,
         Sword3,

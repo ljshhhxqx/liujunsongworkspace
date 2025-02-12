@@ -21,11 +21,10 @@ namespace Data
         public string Email;
         public int Level;
         public int Score;
-        public int Experience;
-        public int Coins;
-        public int Gems;
+        // public int Experience;
+        // public int Coins;
+        // public int Gems;
         public int ModifyNameCount;
-        public List<string> Achievements;
         public string Status; // 玩家状态
     }
 

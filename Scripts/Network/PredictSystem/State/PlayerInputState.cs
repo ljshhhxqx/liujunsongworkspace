@@ -1,24 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
+using HotUpdate.Scripts.Network.Data.PredictSystem.State;
 using MemoryPack;
 using UnityEngine;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
+using CooldownSnapshotData = HotUpdate.Scripts.Network.PredictSystem.Data.CooldownSnapshotData;
 
-namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
+namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
     [MemoryPackable]
     public partial struct PlayerInputState : IPropertyState
     {
         [MemoryPackOrder(0)] public PlayerGameStateData PlayerGameStateData;
-        [MemoryPackOrder(1)] public PlayerInputStateData PlayerInputStateData;
-        [MemoryPackOrder(2)] public PlayerAnimationCooldownState PlayerAnimationCooldownState;
+        [MemoryPackOrder(1)] public PlayerAnimationCooldownState PlayerAnimationCooldownState;
         
-        public PlayerInputState(PlayerGameStateData playerGameStateData, PlayerInputStateData playerInputStateData, PlayerAnimationCooldownState playerAnimationCooldownState)
+        public PlayerInputState(PlayerGameStateData playerGameStateData, PlayerAnimationCooldownState playerAnimationCooldownState)
         {
             PlayerGameStateData = playerGameStateData;
-            PlayerInputStateData = playerInputStateData;
             PlayerAnimationCooldownState = playerAnimationCooldownState;
         }
         
@@ -26,49 +25,46 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
         {
             if (other is PlayerInputState playerInputState)    
             {
-                return PlayerGameStateData.IsEqual(playerInputState.PlayerGameStateData);
+                return PlayerGameStateData.IsEqual(playerInputState.PlayerGameStateData) &&
+                       PlayerAnimationCooldownState.IsEqual(playerInputState.PlayerAnimationCooldownState);
             }
             return false;
         }
     }
 
-    [MemoryPackable]
-    public partial struct PlayerInputStateData
+    public struct PlayerInputStateData
     {
-        [MemoryPackOrder(0)] 
         public Vector3 InputMovement;   // 输入的移动
-        [MemoryPackOrder(1)] 
-        public AnimationState[] InputAnimations; // 输入指令的动画
-        [MemoryPackOrder(2)]
+        public List<AnimationState> InputAnimations; // 输入指令的动画
         public AnimationState Command; // 指令
-        [MemoryPackOrder(3)] 
-        public int AttackCount; // 攻击次数
     }
 
     [MemoryPackable]
     public partial struct PlayerAnimationCooldownState
     {
         [MemoryPackOrder(0)]
-        public List<IAnimationCooldown> AnimationCooldowns;
+        public List<CooldownSnapshotData> AnimationCooldowns;
         
-        public PlayerAnimationCooldownState(List<IAnimationCooldown> animationCooldowns)
+        public PlayerAnimationCooldownState(List<CooldownSnapshotData> animationCooldowns)
         {
             AnimationCooldowns = animationCooldowns;
-        }   
-        
+        }
+
         public bool IsEqual(PlayerAnimationCooldownState other)
         {
             if (AnimationCooldowns.Count != other.AnimationCooldowns.Count)
             {
                 return false;
             }
+
             for (int i = 0; i < AnimationCooldowns.Count; i++)
             {
-                if (!AnimationCooldowns[i].IsEqual(other.AnimationCooldowns[i]))
+                if (!AnimationCooldowns[i].Equals(other.AnimationCooldowns[i]))
                 {
                     return false;
                 }
             }
+
             return true;
         }
     }

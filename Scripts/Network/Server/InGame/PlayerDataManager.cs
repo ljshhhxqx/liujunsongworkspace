@@ -21,7 +21,6 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                     {
                         PlayerId = "Creator1", 
                         Email = "Email1",
-                        Experience = 100,
                         Level = 1,
                         Score = 0,
                         Status = PlayerStatus.InGame.ToString(),

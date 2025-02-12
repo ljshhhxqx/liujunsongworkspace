@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
-using HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput;
+using HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
 using MemoryPack;
 using Mirror;
-using Newtonsoft.Json;
 using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
 
-namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
+namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
     public class GameSyncManager : NetworkBehaviour
     {
@@ -62,13 +62,34 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         private void OnPlayerDisconnect(PlayerDisconnectEvent disconnectEvent)
         {
             _playerConnections.Remove(disconnectEvent.ConnectionId);
+            _playerInGameManager.RemovePlayer(disconnectEvent.ConnectionId);
             OnPlayerDisconnected?.Invoke(disconnectEvent.ConnectionId);
         }
 
         private void OnPlayerConnect(PlayerConnectEvent connectEvent)
         {
             _playerConnections.Add(connectEvent.ConnectionId, connectEvent.Identity.gameObject.GetComponent<PlayerComponentController>());
-            OnPlayerConnected?.Invoke(connectEvent.ConnectionId, _networkIdentity);
+            _playerInGameManager.AddPlayer(connectEvent.ConnectionId, new PlayerInGameData
+            {
+                player = connectEvent.ReadOnlyData,
+                networkIdentity = connectEvent.Identity
+            });
+            OnPlayerConnected?.Invoke(connectEvent.ConnectionId, connectEvent.Identity);
+        }
+        
+        [ClientRpc]
+        private void RpcPlayerConnect(PlayerConnectEvent connectEvent)
+        {
+            _playerConnections.Add(connectEvent.ConnectionId, connectEvent.Identity.gameObject.GetComponent<PlayerComponentController>());
+            OnPlayerConnected?.Invoke(connectEvent.ConnectionId, connectEvent.Identity);
+        }
+        
+        [ClientRpc]
+        private void RpcPlayerDisconnect(int connectionId)
+        {
+            _playerConnections.Remove(connectionId);
+            _playerInGameManager.RemovePlayer(connectionId);
+            OnPlayerDisconnected?.Invoke(connectionId);
         }
         
         public event Action<int, NetworkIdentity> OnPlayerConnected;

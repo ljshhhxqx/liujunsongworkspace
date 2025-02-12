@@ -170,7 +170,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
             return false;
         }
 
-        public void HandleMove(MoveParam moveParam)
+        public void HandleMove(MoveParam moveParam, bool isLocalPlayer = true)
         {
             var hasMovementInput = moveParam.InputMovement.magnitude > 0f;
             Vector3 movement;
@@ -193,8 +193,21 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
             else if (_playerEnvironmentState == PlayerEnvironmentState.OnGround)
             {
                 _physicsComponent.Rigidbody.useGravity = true;
-                movement = moveParam.InputMovement.magnitude <= 0.1f ? moveParam.InputMovement : 
-                    _physicsComponent.Camera.transform.TransformDirection(moveParam.InputMovement);
+                if (isLocalPlayer)
+                {
+                    var camForward = Vector3.Scale(_physicsComponent.Camera.transform.forward, new Vector3(1, 0, 1))
+                        .normalized;
+                    var moveDir = (moveParam.InputMovement.z * camForward + moveParam.InputMovement.x * _physicsComponent.Camera.transform.right);
+                    movement = moveDir.normalized * moveParam.InputMovement.magnitude;
+                }
+                else
+                {
+                    var yaw = DecompressYaw(moveParam.CameraForward);
+                    var rotation = Quaternion.Euler(0, yaw, 0);
+                    movement = rotation * Vector3.forward * moveParam.InputMovement.z
+                               + rotation * Vector3.right * moveParam.InputMovement.x;
+                }
+
                 movement.y = 0f;
                 // 计算目标位置和速度
                 var targetVelocity = movement.normalized * _currentSpeed;
@@ -231,7 +244,17 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
                 _physicsComponent.Transform.rotation = Quaternion.Slerp( _physicsComponent.Transform.rotation, targetRotation, param.DeltaTime * _physicsDetermineConstant.RotateSpeed);
             }
         }
-
+        
+        public float DecompressYaw(ushort compressed)
+        {
+            return compressed * 360f / 65535f;
+        }
+        
+        public ushort CompressYaw(float yaw)
+        {
+            return (ushort)(yaw % 360f * 65535f / 360f);
+        }
+        
         public bool IsClient { get; private set; }
     }
     
@@ -280,12 +303,14 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
         public Vector3 InputMovement;
         public float DeltaTime;
         public bool IsMovingState;
+        public ushort CameraForward;
         
-        public MoveParam(Vector3 inputMovement, float deltaTime, bool isMovingState)
+        public MoveParam(Vector3 inputMovement, float deltaTime, bool isMovingState, ushort cameraForward)
         {
             InputMovement = inputMovement;
             DeltaTime = deltaTime;
             IsMovingState = isMovingState;
+            CameraForward = cameraForward;
         }
     }
     

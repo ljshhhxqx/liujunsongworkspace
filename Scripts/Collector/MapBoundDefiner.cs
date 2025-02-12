@@ -2,15 +2,20 @@
 using System.Collections.Generic;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Tool.GameEvent;
+using Mirror;
 using Sirenix.OdinInspector;
 using Tool.GameEvent;
+using UniRx;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VContainer;
 using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Collector
 {
-    public class MapBoundDefiner : MonoBehaviour
+    [RequireComponent(typeof(NetworkIdentity))]
+    public class MapBoundDefiner : NetworkBehaviour
     {
         private float _safetyMargin = 5.0f;
         private GameObject[] _walls;
@@ -18,7 +23,8 @@ namespace HotUpdate.Scripts.Collector
         private JsonDataConfig _jsonDataConfig;
         private LayerMask _sceneLayer;
         private readonly List<Vector2Int> _gridMap = new List<Vector2Int>();
-        private static float _gridSize = 2f;
+        private float _gridSize = 2f;
+        public float GridSize => _gridSize;
         public Vector3 MapMinBoundary { get; private set; }
         public Vector3 MapMaxBoundary { get; private set; }
         public List<Vector2Int> GridMap => _gridMap;
@@ -26,16 +32,26 @@ namespace HotUpdate.Scripts.Collector
         private IEnumerable<GameObject> Walls => _walls ??= GameObject.FindGameObjectsWithTag("Wall");
 
         [Inject]
-        private void Init(IConfigProvider configProvider)
+        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)
         {
-            //var config = configProvider.GetConfig<GameDataConfig>();
+            _configProvider = configProvider;
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _safetyMargin = _jsonDataConfig.GameConfig.safetyMargin;
-            _configProvider = configProvider;
+            _gridSize = _jsonDataConfig.GameConfig.gridSize;
             _sceneLayer = _jsonDataConfig.GameConfig.groundSceneLayer;
             Debug.Log("MapBoundDefiner init");
             CalculateAdjustedBounds();
             InitializeGrid();
+        }
+        
+        
+
+        public Vector2Int GetGridPosition(Vector3 worldPos)
+        {
+            return new Vector2Int(
+                Mathf.FloorToInt(worldPos.x / GridSize),
+                Mathf.FloorToInt(worldPos.z / GridSize) // 假设使用XZ平面
+            );
         }
 
         private void CalculateAdjustedBounds() 
@@ -68,15 +84,7 @@ namespace HotUpdate.Scripts.Collector
             var zMinInMap = position.z >= MapMinBoundary.z;
             var zMaxInMap = position.z <= MapMaxBoundary.z;
             //Debug.Log($"IsWithinMapBounds: xMinInMap-xMaxInMap-zMinInMap-zMaxInMap: {xMinInMap} {xMaxInMap} {zMinInMap} {zMaxInMap}");
-            return xMinInMap && xMaxInMap &&
-                   zMinInMap && zMaxInMap;
-        }
-
-        private Vector2Int GetGridPosition(Vector3 position)
-        {
-            var x = Mathf.FloorToInt(position.x / _gridSize);
-            var z = Mathf.FloorToInt(position.z / _gridSize);
-            return new Vector2Int(x, z);
+            return xMinInMap && xMaxInMap && zMinInMap && zMaxInMap;
         }
         
         private void InitializeGrid()
@@ -89,6 +97,24 @@ namespace HotUpdate.Scripts.Collector
                     _gridMap.Add(gridPos);
                 }
             }
+        }
+        
+        // 获取周围Grid坐标（带边界检查）
+        public HashSet<Vector2Int> GetSurroundingGrids(Vector2Int center, int radius)
+        {
+            var grids = new HashSet<Vector2Int>();
+            for (var x = -radius; x <= radius; x++)
+            {
+                for (var y = -radius; y <= radius; y++)
+                {
+                    var grid = new Vector2Int(
+                        Mathf.Clamp(center.x + x, 0, _gridMap.Count - 1),
+                        Mathf.Clamp(center.y + y, 0, _gridMap.Count - 1)
+                    );
+                    grids.Add(grid);
+                }
+            }
+            return grids;
         }
     
         public Vector3 GetRandomDirection()

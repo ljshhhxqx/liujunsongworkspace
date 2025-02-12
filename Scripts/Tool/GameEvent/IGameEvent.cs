@@ -70,11 +70,13 @@ namespace Tool.GameEvent
     {
         public int ConnectionId { get; private set; }
         public NetworkIdentity Identity { get; private set; }
+        public PlayerReadOnlyData ReadOnlyData { get; private set; }
 
-        public PlayerConnectEvent(int connectionId, NetworkIdentity identity)
+        public PlayerConnectEvent(int connectionId, NetworkIdentity identity, PlayerReadOnlyData readOnlyData)
         {
             ConnectionId = connectionId;
             Identity = identity;
+            ReadOnlyData = readOnlyData;
         }
     }
     

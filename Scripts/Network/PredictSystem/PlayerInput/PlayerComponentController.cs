@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
@@ -9,13 +10,20 @@ using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
 using HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
 using HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.PredictSystem.Calculator;
+using HotUpdate.Scripts.Network.PredictSystem.Data;
+using HotUpdate.Scripts.Network.PredictSystem.State;
+using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
 using UniRx;
 using UnityEngine;
 using VContainer;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
+using PlayerAnimationCooldownState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerAnimationCooldownState;
+using PlayerGameStateData = HotUpdate.Scripts.Network.PredictSystem.State.PlayerGameStateData;
 
-namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
+namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 {
     public class PlayerComponentController : NetworkBehaviour,IAttackAnimationEvent
     {
@@ -30,10 +38,6 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
         private Transform _checkStairTransform;
         [SerializeField]
         private Camera _camera;
-        
-        [Header("Input")]
-        private Vector3 _movement;
-        private Vector3 _rotation;
         
         [Header("States-NetworkBehaviour")]
         private PlayerInputPredictionState _inputState;
@@ -52,6 +56,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
         private PlayerPhysicsCalculator _playerPhysicsCalculator;
         private PlayerPropertyCalculator _playerPropertyCalculator;
         private PlayerAnimationCalculator _playerAnimationCalculator;
+        private PlayerBattleCalculator _playerBattleCalculator;
         
         [Header("Parameters")]
         private float _currentSpeed;
@@ -64,6 +69,8 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
         private float DeltaTime => Time.deltaTime;
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private GameSyncManager _gameSyncManager;
+        private MapBoundDefiner _mapBoundDefiner;
+        private PlayerInGameManager _playerInGameManager;
         
         public int CurrentComboStage { get; private set; }
         public IObservable<PlayerInputStateData> InputStream => _inputStream;
@@ -79,9 +86,11 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
         }
 
         [Inject]
-        private void Init(IConfigProvider configProvider, GameSyncManager gameSyncManager)
+        private void Init(IConfigProvider configProvider, GameSyncManager gameSyncManager, MapBoundDefiner mapBoundDefiner, PlayerInGameManager playerInGameManager)
         {
             _gameSyncManager = gameSyncManager;
+            _mapBoundDefiner = mapBoundDefiner;
+            _playerInGameManager = playerInGameManager;
             _rigidbody = GetComponent<Rigidbody>();
             _inputState = GetComponent<PlayerInputPredictionState>();
             _propertyPredictionState = GetComponent<PropertyPredictionState>();
@@ -90,6 +99,10 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
             _camera = Camera.main;
             GetAllCalculators(configProvider, gameSyncManager);
             _propertyPredictionState.OnPropertyChanged += HandlePropertyChange;
+            _inputState.OnPlayerStateChanged += HandlePlayerStateChanged;
+            _inputState.OnPlayerAnimationCooldownChanged += HandlePlayerAnimationCooldownChanged;
+            _inputState.OnPlayerInputStateChanged += HandlePlayerInputStateChanged;
+            _inputState.IsInSpecialState += HandleSpecialState;
             
             Observable.EveryUpdate()
                 .Where(_ => isLocalPlayer && _health > 0)
@@ -99,7 +112,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
                     var playerInputStateData = new PlayerInputStateData
                     {
                         InputMovement = movement,
-                        InputAnimations = animationStates.ToArray(),
+                        InputAnimations = animationStates,
                     };
                     var command = GetCurrentAnimationState(playerInputStateData);
                     playerInputStateData.Command = command;
@@ -117,13 +130,40 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
                 })
                 .AddTo(_disposables);
             //发送网络命令
-            _inputStream.Where(x=> isLocalPlayer && x.InputMovement.magnitude > 0.1f && x.InputAnimations.Length > 0 && x.Command != AnimationState.None)
+            _inputStream.Where(x=> isLocalPlayer && x.InputMovement.magnitude > 0.1f && x.InputAnimations.Count > 0 && x.Command != AnimationState.None)
                 .Subscribe(HandleSendNetworkCommand)
                 .AddTo(_disposables);
             //处理物理信息
             _inputStream.ThrottleFirst(TimeSpan.FromMilliseconds(FixedDeltaTime * 1000))
                 .Subscribe(HandleInputPhysics)
                 .AddTo(_disposables);
+        }
+
+        private bool HandleSpecialState()
+        {
+            return _playerAnimationCalculator.IsSpecialAction;
+        }
+
+        [ClientCallback]
+        private void HandlePlayerInputStateChanged(PlayerInputStateData playerInputStateData)
+        {
+            HandleClientMoveAndAnimation(playerInputStateData);
+        }
+
+        [ClientCallback]
+        private void HandlePlayerAnimationCooldownChanged(PlayerAnimationCooldownState newCooldownState)
+        {
+            
+        }
+
+        [ClientCallback]
+        private void HandlePlayerStateChanged(PlayerGameStateData newState)
+        {
+            transform.position = newState.Position;
+            transform.rotation = newState.Quaternion;
+            _rigidbody.velocity = newState.Velocity;
+            _gameStateStream.Value = newState.PlayerEnvironmentState;
+            _playerAnimationCalculator.SetEnvironmentState(newState.PlayerEnvironmentState);
         }
 
         [Client]
@@ -133,7 +173,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
             {
                 Header = NetworkCommandHeader.Create(connectionToClient.connectionId, CommandType.Input, _gameSyncManager.CurrentTick, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()),
                 InputMovement = inputData.InputMovement,
-                InputAnimationStates = inputData.InputAnimations,
+                InputAnimationStates = inputData.InputAnimations.ToArray(),
                 CommandAnimationState = inputData.Command,
             });
             _propertyPredictionState.AddPredictedCommand(new PropertyAutoRecoverCommand
@@ -171,6 +211,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
             _playerPhysicsCalculator = new PlayerPhysicsCalculator(new PhysicsComponent(_rigidbody, transform, _checkStairTransform, _capsuleCollider, _camera));
             _playerPropertyCalculator = new PlayerPropertyCalculator(new Dictionary<PropertyTypeEnum, PropertyCalculator>());
             _playerAnimationCalculator = new PlayerAnimationCalculator(new AnimationComponent{ Animator = _animator});
+            _playerBattleCalculator = new PlayerBattleCalculator(new PlayerBattleComponent(transform,_mapBoundDefiner, _playerInGameManager));
             var jsonData = configProvider.GetConfig<JsonDataConfig>();
             var gameData = jsonData.GameConfig;
             var playerData = jsonData.PlayerConfig;
@@ -199,18 +240,25 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
 
         private void OnAttack(int stage)
         {
+            _isSpecialActionStream.Value = false;
             CurrentComboStage = stage;
             _onAttackPoint.OnNext(stage);
         }
         
         private void OnAttackEnd(int stage)
         {
+            _isSpecialActionStream.Value = false;
             _onAttackEnd.OnNext(stage);
         }
 
         private void OnDestroy()
         {
             _disposables?.Dispose();
+            _propertyPredictionState.OnPropertyChanged -= HandlePropertyChange;
+            _inputState.OnPlayerStateChanged -= HandlePlayerStateChanged;
+            _inputState.OnPlayerAnimationCooldownChanged -= HandlePlayerAnimationCooldownChanged;
+            _inputState.OnPlayerInputStateChanged -= HandlePlayerInputStateChanged;
+            _inputState.IsInSpecialState -= HandleSpecialState;
         }
 
         public AnimationState GetCurrentAnimationState(PlayerInputStateData inputData)
@@ -237,13 +285,15 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
 
         private PlayerGameStateData HandleMoveAndAnimation(PlayerInputStateData inputData)
         {
+            var cameraForward = Vector3.Scale(_camera.transform.forward, new Vector3(1, 0, 1)).normalized;
             //移动
             _playerPhysicsCalculator.HandleMove(new MoveParam
             {
                 InputMovement = inputData.InputMovement,
                 DeltaTime = DeltaTime,
                 IsMovingState = _playerAnimationCalculator.IsMovingState(),
-            });
+                CameraForward = _playerPhysicsCalculator.CompressYaw(cameraForward.y),
+            }, isLocalPlayer);
             //执行动画
             _playerAnimationCalculator.HandleAnimation(inputData.Command);
             return new PlayerGameStateData
@@ -261,7 +311,6 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.PlayerInput
         {
             return HandleMoveAndAnimation(inputData);
         }
-
 
         //这一行开始，写对外接口
         [Server]
