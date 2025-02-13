@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
@@ -17,6 +18,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private ContentItemList contentItemList;
         private PlayerInGameManager _playerInGameManager;
         private PlayerPropertyComponent _playerPropertyComponent;
+        private PropertyConfig _propertyConfig;
 
         [SerializeField]
         private FieldItem animationState;
@@ -30,9 +32,10 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private FieldItem frameCount;
         
         [Inject]
-        private void Init(PlayerInGameManager playerInGameManager)
+        private void Init(PlayerInGameManager playerInGameManager, IConfigProvider configProvider)
         {
             _playerInGameManager = playerInGameManager;
+            _propertyConfig = configProvider.GetConfig<PropertyConfig>();
         }
 
         public void SetPlayerProperties(PlayerPropertyComponent playerPropertyComponent)
@@ -62,8 +65,9 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                 var propertyType = (PropertyTypeEnum)enumValues.GetValue(i);
                 var currentProperty = playerPropertyComponent.GetProperty(propertyType);
                 var maxProperty = playerPropertyComponent.GetMaxProperty(propertyType);
-                var displayName = propertyType.ToDisplayName();
-                var consumeType = propertyType.GetConsumeType();
+                var propertyConfig = _propertyConfig.GetPropertyConfigData(propertyType);
+                var displayName = propertyConfig.description;
+                var consumeType = propertyConfig.consumeType;
                 list.Add(new PropertyItemData
                 {
                     Name = displayName,

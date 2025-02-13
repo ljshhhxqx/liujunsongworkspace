@@ -22,6 +22,8 @@ using VContainer;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 using PlayerAnimationCooldownState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerAnimationCooldownState;
 using PlayerGameStateData = HotUpdate.Scripts.Network.PredictSystem.State.PlayerGameStateData;
+using PlayerPropertyState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerPropertyState;
+using PropertyCalculator = HotUpdate.Scripts.Network.PredictSystem.State.PropertyCalculator;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 {
@@ -215,6 +217,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             var jsonData = configProvider.GetConfig<JsonDataConfig>();
             var gameData = jsonData.GameConfig;
             var playerData = jsonData.PlayerConfig;
+            var weaponConfig = configProvider.GetConfig<WeaponConfig>();
+            var noneWeapon = weaponConfig.GetNoneWeaponConfigData();
             PlayerPhysicsCalculator.SetPhysicsDetermineConstant(new PhysicsDetermineConstant
             {
                 GroundMinDistance = gameData.groundMinDistance,
@@ -236,6 +240,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 AttackComboMaxCount = playerData.AttackComboMaxCount,
                 AnimationConfig = configProvider.GetConfig<AnimationConfig>(),
             });
+            PlayerBattleCalculator.SetAttackConfigData(new AttackConfigData(noneWeapon.radius, noneWeapon.range, noneWeapon.height));
         }
 
         private void OnAttack(int stage)

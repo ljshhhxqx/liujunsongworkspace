@@ -48,7 +48,12 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             return weapons[UnityEngine.Random.Range(0, weapons.Count)];
         }
 
-
+        public WeaponConfigData GetNoneWeaponConfigData()
+        {
+            return weaponConfigData.Find(data => data.weaponType == WeaponType.None);
+        }
+        
+        
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
             weaponConfigData.Clear();
@@ -77,8 +82,10 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public float attack;
         public float defense;
         public float speed;
+        public float radius;
         public float range;
         public float angle;
+        public float height;
         public int skillID;
     }
 

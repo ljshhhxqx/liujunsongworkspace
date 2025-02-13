@@ -23,16 +23,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             PlayerBattleComponent = playerBattleComponent;
         }
         
-        //todo: 攻击判定
         public int[] IsInAttackRange(AttackParams attackParams, bool isServer = true)
         {
             var hitPlayers = new HashSet<uint>();
         
             // 获取攻击者所在Grid
-            Vector2Int attackerGrid = PlayerBattleComponent.MapBoundDefiner.GetGridPosition(attackParams.AttackPos);
+            var attackerGrid = PlayerBattleComponent.MapBoundDefiner.GetGridPosition(attackParams.AttackPos);
         
             // 计算检测半径对应的Grid范围
-            int gridRadius = Mathf.CeilToInt(AttackConfigData.AttackRadius / PlayerBattleComponent.MapBoundDefiner.GridSize);
+            var gridRadius = Mathf.CeilToInt(AttackConfigData.AttackRadius / PlayerBattleComponent.MapBoundDefiner.GridSize);
         
             // 获取周围Grid中的玩家
             var nearbyGrids = PlayerBattleComponent.MapBoundDefiner.GetSurroundingGrids(attackerGrid, gridRadius);
@@ -53,8 +52,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                         attackParams.AttackPos,
                         attackParams.AttackDir,
                         identity.transform.position,
-                        AttackConfigData.AttackRadius,
-                        AttackConfigData.AttackRange))
+                        attackParams.AttackConfigData.AttackRadius,
+                        attackParams.AttackConfigData.AttackRange,
+                        attackParams.AttackConfigData.AttackHeight))
                 {
                     hitPlayers.Add(candidate);
                 }
@@ -66,13 +66,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         #region 辅助方法
 
         // 扇形区域检测（优化版）
-        private bool IsInAttackSector(Vector3 origin, Vector3 direction, Vector3 targetPos, float radius, float angle)
+        private bool IsInAttackSector(Vector3 origin, Vector3 direction, Vector3 targetPos, float radius, float angle, float height)
         {
             Vector3 toTarget = targetPos - origin;
             float sqrDistance = toTarget.sqrMagnitude;
             
             // 快速距离检查
             if (sqrDistance > radius * radius) return false;
+            // 高度检查
+            if (Mathf.Abs(toTarget.y - origin.y) > height) return false;
             
             // 精确角度检查
             float cosAngle = Mathf.Cos(angle * 0.5f * Mathf.Deg2Rad);
@@ -103,10 +105,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public float AttackRadius;
         //攻击角度
         public float AttackRange;
-        //攻击速度
-        public float AttackSpeed;
-        //攻击力
-        public float AttackPower;
+        //攻击高度
+        public float AttackHeight;
+        
+        public AttackConfigData(float attackRadius, float attackRange, float attackHeight)
+        {
+            AttackRadius = attackRadius;
+            AttackRange = attackRange;
+            AttackHeight = attackHeight;
+        }
     }
 
     public struct AttackParams
@@ -115,6 +122,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public Vector3 AttackDir;
         public int AttackerId;
         public uint AttackerNetId;
-        public WeaponType WeaponType;
+        public AttackConfigData AttackConfigData;
+        
+        public AttackParams(Vector3 attackPos, Vector3 attackDir, int attackerId, uint attackerNetId, AttackConfigData attackConfigData)
+        {
+            AttackPos = attackPos;
+            AttackDir = attackDir;
+            AttackerId = attackerId;
+            AttackerNetId = attackerNetId;
+            AttackConfigData = attackConfigData;
+        }
     }
 }

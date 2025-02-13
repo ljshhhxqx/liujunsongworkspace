@@ -21,6 +21,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private JsonDataConfig _jsonDataConfig;
         private UIManager _uiManager;
         private AnimationConfig _animationConfig;
+        private PropertyConfig _propertyConfig;
         private AnimationState _currentAnimationState;
         
         [SyncVar(hook = nameof(OnCurrentChestTypeChanged))] 
@@ -31,35 +32,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private bool _hasMovementInput;
         [SyncVar(hook = nameof(OnIsInvincibleChanged))]
         private bool _isInvincible;
-        [SyncVar(hook = nameof(OnPlayerAttackDataChanged))]
-        private PlayerAttackData _playerAttackData;
-        
-        
-        private PlayerAttackData _configPlayerAttackData;
-
-        public PlayerAttackData PlayerAttackData
-        {
-            get => _playerAttackData;
-            set
-            {
-                if (isServer)
-                {
-                    _playerAttackData = value;
-                }
-                else if (isLocalPlayer)
-                {
-                    Debug.Log("Client cannot change PlayerAttackData.");
-                }
-            }   
-        }
-
-        private ReactiveProperty<PlayerAttackData> _playerAttackDataProperty { get; } = new ReactiveProperty<PlayerAttackData>();
-        public IReadOnlyReactiveProperty<PlayerAttackData> PlayerAttackDataProperty => _playerAttackDataProperty;
-
-        private void OnPlayerAttackDataChanged(PlayerAttackData oldValue, PlayerAttackData newValue)
-        {
-            
-        }
 
         private void OnCurrentChestTypeChanged(ChestType oldValue, ChestType newValue)
         {
@@ -182,10 +154,10 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private void Init(IConfigProvider configProvider, UIManager uiManager, RepeatedTask repeated)
         {
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
-            _configPlayerAttackData = _jsonDataConfig.PlayerConfig.BaseAttackData;
             InitializeProperties();
             _currentChestTypeProperty.Value = ChestType.Attack;
             _animationConfig = configProvider.GetConfig<AnimationConfig>();
+            _propertyConfig = configProvider.GetConfig<PropertyConfig>();
             if (isLocalPlayer)
             {
                 var properties = uiManager.SwitchUI<PlayerPropertiesOverlay>();
@@ -208,43 +180,43 @@ namespace HotUpdate.Scripts.Network.Client.Player
             for (var i = 0; i < enumValues.Length; i++)
             {
                 var propertyType = (PropertyTypeEnum)enumValues.GetValue(i);
-                var minProperties = _jsonDataConfig.PlayerConfig.MinProperties.Find(x => x.TypeEnum == propertyType);
-                var baseProperties = _jsonDataConfig.PlayerConfig.BaseProperties.Find(x => x.TypeEnum == propertyType);
-                var maxProperties = _jsonDataConfig.PlayerConfig.MaxProperties.Find(x => x.TypeEnum == propertyType);
-                if (maxProperties.Value == 0)
-                {
-                    throw new Exception("Property value cannot be zero.");
-                }
-                var maxProperty = new PropertyType(propertyType, maxProperties.Value);
-                var baseProperty = new PropertyType(propertyType, baseProperties.Value);
-                var minProperty = new PropertyType(propertyType, minProperties.Value);
-                _configMinProperties.TryAdd(propertyType, minProperty.Value);
-                _configMaxProperties.TryAdd(propertyType, maxProperty.Value);
-                _configBaseProperties.TryAdd(propertyType, baseProperties.Value);
-                _currentProperties.TryAdd(propertyType, new ReactiveProperty<PropertyType>(baseProperty));
-                _maxCurrentProperties.TryAdd(propertyType, new ReactiveProperty<PropertyType>(baseProperty));
-                for (var j = (int)BuffIncreaseType.Base; j <= (int)BuffIncreaseType.CorrectionFactor; j++)
-                {
-                    switch ((BuffIncreaseType)j)
-                    {
-                        case BuffIncreaseType.Base:
-                            _syncBaseProperties.TryAdd(propertyType, baseProperty.Value);
-                            break;
-                        case BuffIncreaseType.Multiplier:
-                            _syncPropertyMultipliers.TryAdd(propertyType, 1f);
-                            break;
-                        case BuffIncreaseType.Extra:
-                            _syncPropertyBuffs.TryAdd(propertyType, 0f);
-                            break;
-                        case BuffIncreaseType.CorrectionFactor:
-                            _syncPropertyCorrectionFactors.TryAdd(propertyType, 1f);
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
-                _syncCurrentProperties.TryAdd(propertyType, baseProperty.Value);
-                _syncMaxCurrentProperties.TryAdd(propertyType, baseProperty.Value);
+                // var minProperties = _jsonDataConfig.PlayerConfig.MinProperties.Find(x => x.TypeEnum == propertyType);
+                // var baseProperties = _jsonDataConfig.PlayerConfig.BaseProperties.Find(x => x.TypeEnum == propertyType);
+                // var maxProperties = _jsonDataConfig.PlayerConfig.MaxProperties.Find(x => x.TypeEnum == propertyType);
+                // if (maxProperties.Value == 0)
+                // {
+                //     throw new Exception("Property value cannot be zero.");
+                // }
+                // var maxProperty = new PropertyType(propertyType, maxProperties.Value);
+                // var baseProperty = new PropertyType(propertyType, baseProperties.Value);
+                // var minProperty = new PropertyType(propertyType, minProperties.Value);
+                // _configMinProperties.TryAdd(propertyType, minProperty.Value);
+                // _configMaxProperties.TryAdd(propertyType, maxProperty.Value);
+                // _configBaseProperties.TryAdd(propertyType, baseProperties.Value);
+                // _currentProperties.TryAdd(propertyType, new ReactiveProperty<PropertyType>(baseProperty));
+                // _maxCurrentProperties.TryAdd(propertyType, new ReactiveProperty<PropertyType>(baseProperty));
+                // for (var j = (int)BuffIncreaseType.Base; j <= (int)BuffIncreaseType.CorrectionFactor; j++)
+                // {
+                //     switch ((BuffIncreaseType)j)
+                //     {
+                //         case BuffIncreaseType.Base:
+                //             _syncBaseProperties.TryAdd(propertyType, baseProperty.Value);
+                //             break;
+                //         case BuffIncreaseType.Multiplier:
+                //             _syncPropertyMultipliers.TryAdd(propertyType, 1f);
+                //             break;
+                //         case BuffIncreaseType.Extra:
+                //             _syncPropertyBuffs.TryAdd(propertyType, 0f);
+                //             break;
+                //         case BuffIncreaseType.CorrectionFactor:
+                //             _syncPropertyCorrectionFactors.TryAdd(propertyType, 1f);
+                //             break;
+                //         default:
+                //             throw new ArgumentOutOfRangeException();
+                //     }
+                // }
+                // _syncCurrentProperties.TryAdd(propertyType, baseProperty.Value);
+                // _syncMaxCurrentProperties.TryAdd(propertyType, baseProperty.Value);
             }
         }
 
@@ -317,7 +289,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             {
                 return;
             }
-            var propertyConsumeType = type.GetConsumeType();
+            var propertyConsumeType = _propertyConfig.GetPropertyConsumeType(type);
             var propertyVal = (_syncBaseProperties[type] * _syncPropertyMultipliers[type] + _syncPropertyBuffs[type]) * _syncPropertyCorrectionFactors[type];
             switch (propertyConsumeType)
             {

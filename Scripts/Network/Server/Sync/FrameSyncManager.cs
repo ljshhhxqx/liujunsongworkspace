@@ -37,8 +37,6 @@ namespace HotUpdate.Scripts.Network.Server.Sync
         {
             Reader<AttackData>.read = AttackDataExtensions.ReadAttackData;
             Writer<AttackData>.write = AttackDataExtensions.WritePlayerAttackData;
-            Reader<PlayerAttackData>.read = AttackDataExtensions.ReadPlayerAttackData;
-            Writer<PlayerAttackData>.write = AttackDataExtensions.WriteAttackData;
             _stateUpdateInterval = 1 / SyncFps;
             _messageCenter = messageCenter;
             _jsonConfig = configProvider.GetConfig<JsonDataConfig>();
@@ -327,25 +325,6 @@ namespace HotUpdate.Scripts.Network.Server.Sync
 
     internal static class AttackDataExtensions
     {
-        public static void WriteAttackData(NetworkWriter writer, PlayerAttackData value)
-        {
-            writer.WriteFloat(value.attackAngle);
-            writer.WriteFloat(value.attackRadius);
-            writer.WriteFloat(value.minAttackHeight);
-        }
-
-        public static PlayerAttackData ReadPlayerAttackData(NetworkReader reader)
-        {
-            var angle = reader.ReadFloat();
-            var radius = reader.ReadFloat();
-            var minHeight = reader.ReadFloat();
-            return new PlayerAttackData
-            {
-                attackAngle = angle,
-                attackRadius = radius,
-                minAttackHeight = minHeight,
-            };
-        }
 
         public static AttackData ReadAttackData(NetworkReader reader)
         {

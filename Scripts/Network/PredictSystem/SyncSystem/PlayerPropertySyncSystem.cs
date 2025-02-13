@@ -13,6 +13,8 @@ using Newtonsoft.Json;
 using UnityEngine;
 using VContainer;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
+using PlayerPropertyState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerPropertyState;
+using PropertyCalculator = HotUpdate.Scripts.Network.PredictSystem.State.PropertyCalculator;
 
 namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
 {
@@ -28,6 +30,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
         private ConstantBuffConfig _constantBuffConfig;
         private JsonDataConfig _jsonDataConfig;
         private RandomBuffConfig _randomBuffConfig;
+        private PropertyConfig _propertyConfig;
 
         [Inject]
         private void InitContainers(IConfigProvider configProvider)
@@ -37,9 +40,10 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             _animationConfig = _configProvider.GetConfig<AnimationConfig>();
             _constantBuffConfig = configProvider.GetConfig<ConstantBuffConfig>();
             _randomBuffConfig = configProvider.GetConfig<RandomBuffConfig>();
-            ConfigPlayerMinProperties = _jsonDataConfig.GetPlayerMaxProperties();
-            ConfigPlayerMaxProperties = _jsonDataConfig.GetPlayerMaxProperties();
-            ConfigPlayerBaseProperties = _jsonDataConfig.GetPlayerBaseProperties();
+            _propertyConfig = configProvider.GetConfig<PropertyConfig>();
+            ConfigPlayerMinProperties = _propertyConfig.GetPlayerMinProperties();
+            ConfigPlayerMaxProperties = _propertyConfig.GetPlayerMaxProperties();
+            ConfigPlayerBaseProperties = _propertyConfig.GetPlayerBaseProperties();
             BuffDataReaderWriter.RegisterReaderWriter();
         }
 
@@ -73,13 +77,14 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             foreach (var propertyType in enumValues)
             {
                 var propertyData = new PropertyCalculator.PropertyData();
+                var propertyConfig = _propertyConfig.GetPropertyConfigData(propertyType);
                 propertyData.BaseValue = ConfigPlayerBaseProperties[propertyType];
                 propertyData.Additive = 0;
                 propertyData.Multiplier = 1;
                 propertyData.Correction = 1;
                 propertyData.CurrentValue = propertyData.BaseValue;
                 propertyData.MaxCurrentValue = propertyData.BaseValue;
-                var calculator = new PropertyCalculator(propertyType, propertyData,ConfigPlayerMinProperties[propertyType], ConfigPlayerMaxProperties[propertyType]);
+                var calculator = new PropertyCalculator(propertyType, propertyData,ConfigPlayerMinProperties[propertyType], ConfigPlayerMaxProperties[propertyType], propertyConfig.consumeType == PropertyConsumeType.Consume);
                 dictionary.Add(propertyType, calculator);
             }
             return dictionary;

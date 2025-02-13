@@ -4,6 +4,8 @@ using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
 using Unity.Jobs;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
+using PlayerPropertyState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerPropertyState;
+using PropertyCalculator = HotUpdate.Scripts.Network.PredictSystem.State.PropertyCalculator;
 
 namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
 {
@@ -43,7 +45,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
         {
             var playerState = playerPropertyState;
             var propertyState = playerState.Properties;
-            var attack = propertyState[PropertyTypeEnum.Attack].CurrentValue;
+            var attack = propertyState[PropertyTypeEnum.AttackPower].CurrentValue;
             var critical = propertyState[PropertyTypeEnum.CriticalRate].CurrentValue;
             var criticalDamage = propertyState[PropertyTypeEnum.CriticalDamageRatio].CurrentValue;
             var defenderPropertyStates = defenders;

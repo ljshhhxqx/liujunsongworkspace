@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using UnityEngine;
-using UnityEngine.Serialization;
 using AnimationInfo = HotUpdate.Scripts.Config.ArrayConfig.AnimationInfo;
 using Random = UnityEngine.Random;
 
@@ -41,15 +40,11 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public WeatherConstantData WeatherConstantData => jsonConfigData.weatherData;
         public GameModeData GameModeData => jsonConfigData.gameModeData;
 
-        public override void Init(TextAsset asset = null)
-        {
-            base.Init(asset);
-            if (_animationInfos.Count != 0) return;
-            foreach (var animationInfo in jsonConfigData.playerConfig.AnimationInfos)
-            {
-                _animationInfos.Add(animationInfo.state, animationInfo);
-            }
-        }
+        // public override void Init(TextAsset asset = null)
+        // {
+        //     base.Init(asset);
+        //     if (_animationInfos.Count != 0) return;
+        // }
 
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
@@ -59,64 +54,6 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public AnimationInfo GetAnimationInfo(AnimationState animationState)
         {
             return _animationInfos.GetValueOrDefault(animationState);
-        }
-        
-        private Dictionary<PropertyTypeEnum, float> _maxProperties;
-        private Dictionary<PropertyTypeEnum, float> _minProperties;
-        private Dictionary<PropertyTypeEnum, float> _baseProperties;
-        
-        public Dictionary<PropertyTypeEnum, float> GetPlayerMaxProperties()
-        {
-            if (_maxProperties == null)
-            {
-                _maxProperties = new Dictionary<PropertyTypeEnum, float>();
-                foreach (var propertyType in jsonConfigData.playerConfig.MaxProperties)
-                {
-                    _maxProperties.Add(propertyType.TypeEnum, propertyType.Value);
-                }
-            }
-            return _maxProperties;
-        }
-
-        public Dictionary<PropertyTypeEnum, float> GetPlayerMinProperties()
-        {
-            if (_minProperties == null)
-            {
-                _minProperties = new Dictionary<PropertyTypeEnum, float>();
-                foreach (var propertyType in jsonConfigData.playerConfig.MinProperties)
-                {
-                    _minProperties.Add(propertyType.TypeEnum, propertyType.Value);
-                }
-            }
-            return _minProperties;
-        }
-
-        public Dictionary<PropertyTypeEnum, float> GetPlayerBaseProperties()
-        {
-            if (_baseProperties == null)
-            {
-                _baseProperties = new Dictionary<PropertyTypeEnum, float>();
-                foreach (var propertyType in jsonConfigData.playerConfig.BaseProperties)
-                {
-                    _baseProperties.Add(propertyType.TypeEnum, propertyType.Value);
-                }
-            }
-            return _baseProperties;
-        }
-        
-        public float GetPlayerBaseProperty(PropertyTypeEnum propertyType)
-        {
-            return GetPlayerBaseProperties().GetValueOrDefault(propertyType);
-        }
-        
-        public float GetPlayerMaxProperty(PropertyTypeEnum propertyType)
-        {
-            return GetPlayerMaxProperties().GetValueOrDefault(propertyType);
-        }
-        
-        public float GetPlayerMinProperty(PropertyTypeEnum propertyType)
-        {
-            return GetPlayerMinProperties().GetValueOrDefault(propertyType);
         }
         
         public float GetBuffSize(CollectObjectBuffSize collectObjectBuffSize)
@@ -248,11 +185,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public float RotateSpeed;
         public float OnStairsSpeedRatioFactor;
         public float JumpSpeed;
-        public List<PropertyType> MaxProperties;
-        public List<PropertyType> BaseProperties;
-        public List<PropertyType> MinProperties;
         public float RollForce;
-        public PlayerAttackData BaseAttackData;
         public int InputBufferTick;
         
         #endregion
@@ -260,7 +193,6 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         
         public float AttackComboWindow; // 连招窗口时间
         public int AttackComboMaxCount; // 连招最大次数
-        public List<AnimationInfo> AnimationInfos;
         
         #endregion
     }
@@ -288,14 +220,6 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         Hit,
         Collect,
         None
-    }
-
-    [Serializable]
-    public struct PlayerAttackData
-    {
-        public float attackAngle;
-        public float attackRadius;
-        public float minAttackHeight;
     }
     
     [Serializable]

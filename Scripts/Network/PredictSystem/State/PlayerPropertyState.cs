@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using HotUpdate.Scripts.Network.Data.PredictSystem.State;
 using MemoryPack;
 using UnityEngine;
 
-namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
+namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
     [MemoryPackable]
     public partial struct PlayerPropertyState : IPropertyState
@@ -160,21 +161,24 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
         private float _maxValue;
         [MemoryPackOrder(3)] 
         private float _minValue;
+        [MemoryPackOrder(4)]
+        private bool _isResourceProperty;
         public PropertyData PropertyDataValue => _propertyData;
         public float MaxValue => _maxValue;
         public float MinValue => _minValue;
         public PropertyTypeEnum PropertyType => _propertyType;
-        public PropertyCalculator(PropertyTypeEnum propertyType, PropertyData propertyData, float maxValue, float minValue)
+        public PropertyCalculator(PropertyTypeEnum propertyType, PropertyData propertyData, float maxValue, float minValue, bool isResourceProperty)
         {
             _propertyType = propertyType;
             _propertyData = propertyData;
             _maxValue = maxValue;
             _minValue = minValue;
+            _isResourceProperty = isResourceProperty;
         }
         
         public bool IsResourceProperty()
         {
-            return _propertyType.GetConsumeType() == PropertyConsumeType.Consume;
+            return _isResourceProperty;
         }
 
         public PropertyCalculator UpdateCurrentValue(float value)
@@ -188,7 +192,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
                 CurrentValue = Mathf.Clamp(value + _propertyData.CurrentValue, _minValue, 
                     IsResourceProperty() ? _propertyData.MaxCurrentValue : _maxValue),
                 MaxCurrentValue = _propertyData.MaxCurrentValue
-            }, _maxValue, _minValue);
+            }, _maxValue, _minValue, _isResourceProperty);
         }
 
         public PropertyCalculator UpdateCalculator(List<BuffIncreaseData> data)
@@ -271,7 +275,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
                 propertyData.CurrentValue = Mathf.Clamp(newValue, _minValue, _maxValue);
             }
 
-            return new PropertyCalculator(_propertyType, propertyData, _maxValue, _minValue);
+            return new PropertyCalculator(_propertyType, propertyData, _maxValue, _minValue, _isResourceProperty);
         }
         
         private float ApplyOperation(float original, float value, BuffOperationType operation)
@@ -300,7 +304,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.State
 
             propertyData.CurrentValue = Mathf.Clamp(newValue, _minValue, _maxValue);
 
-            return new PropertyCalculator(_propertyType, propertyData, _maxValue, _minValue);
+            return new PropertyCalculator(_propertyType, propertyData, _maxValue, _minValue, _isResourceProperty);
         }
     }
 }

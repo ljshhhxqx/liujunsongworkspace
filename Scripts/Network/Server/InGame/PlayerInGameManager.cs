@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Data;
 using HotUpdate.Scripts.Collector;
 using Mirror;
@@ -15,7 +16,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         private readonly SyncDictionary<int, uint> _playerNetIds = new SyncDictionary<int, uint>();
         private readonly SyncDictionary<int, PlayerInGameData> _playerInGameData = new SyncDictionary<int, PlayerInGameData>();
         private readonly SyncDictionary<uint, Vector2Int> _playerGrids = new SyncDictionary<uint, Vector2Int>();
-        private readonly SyncDictionary<Vector2Int, HashSet<uint>> _gridPlayers = new SyncDictionary<Vector2Int, HashSet<uint>>();
+        private readonly SyncGridDictionary _gridPlayers = new SyncGridDictionary();
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         
         private MapBoundDefiner _mapBoundDefiner;
@@ -41,44 +42,39 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 if (!identity) continue;
             
                 var position = identity.transform.position;
-                UpdatePlayerGridInternal(uid, position);
+                UpdatePlayerGrid(uid, position);
             }
         }
-        private void UpdatePlayerGridInternal(uint id, Vector3 position)
+        private void UpdatePlayerGrid(uint id, Vector3 playerPosition)
         {
-            var newGrid = _mapBoundDefiner.GetGridPosition(position);
+            var newGrid = _mapBoundDefiner.GetGridPosition(playerPosition);
         
-            if (!_playerGrids.TryGetValue(id, out var currentGrid))
+            if (!_playerGrids.TryGetValue(id, out var oldGrid))
             {
-                AddToGrid(newGrid, id);
-                return;
+                if (oldGrid == newGrid) return;
+            
+                if (_gridPlayers.TryGetValue(oldGrid, out var oldData))
+                {
+                    var list = new List<uint>(oldData.playerNetIds);
+                    list.Remove(netId);
+                    _gridPlayers[oldGrid] = new GridData(list);
+                }
             }
 
-            if (currentGrid != newGrid)
+            // 添加新Grid记录
+            if (!_gridPlayers.ContainsKey(newGrid))
             {
-                RemoveFromGrid(currentGrid, id);
-                AddToGrid(newGrid, id);
+                _gridPlayers[newGrid] = new GridData(Array.Empty<uint>());
             }
-        }
         
-        private void AddToGrid(Vector2Int grid, uint id)
-        {
-            if (!_gridPlayers.ContainsKey(grid))
-                _gridPlayers[grid] = new HashSet<uint>();
-        
-            _gridPlayers[grid].Add(id);
-            _playerGrids[id] = grid;
-        }
-
-        private void RemoveFromGrid(Vector2Int grid, uint id)
-        {
-            if (_gridPlayers.TryGetValue(grid, out var players))
+            var newData = new List<uint>(_gridPlayers[newGrid].playerNetIds);
+            if (!newData.Contains(netId))
             {
-                players.Remove(id);
-                if (players.Count == 0)
-                    _gridPlayers.Remove(grid);
+                newData.Add(netId);
+                _gridPlayers[newGrid] = new GridData(newData);
             }
-            _playerGrids.Remove(id);
+        
+            _playerGrids[netId] = newGrid;
         }
 
         // 获取周围Grid中的玩家
@@ -89,7 +85,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             {
                 if (_gridPlayers.TryGetValue(grid, out var players))
                 {
-                    result.UnionWith(players);
+                    result.UnionWith(players.playerNetIds);
                 }
             }
             return result;
@@ -97,7 +93,8 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         
         private void OnIsGameStartedChanged(bool oldIsGameStarted, bool newIsGameStarted)
         {
-            _mapBoundDefiner ??= FindObjectOfType<MapBoundDefiner>();
+            if (newIsGameStarted)
+                _mapBoundDefiner = FindObjectOfType<MapBoundDefiner>();
         }
 
         public void AddPlayer(int connectId, PlayerInGameData playerInGameData)
@@ -207,4 +204,17 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         public PlayerReadOnlyData player;
         public NetworkIdentity networkIdentity;
     }
+    
+    [Serializable]
+    public struct GridData
+    {
+        public uint[] playerNetIds;
+    
+        public GridData(IEnumerable<uint> ids)
+        {
+            playerNetIds = ids.ToArray();
+        }
+    }
+
+    public class SyncGridDictionary : SyncDictionary<Vector2Int, GridData> {}
 }

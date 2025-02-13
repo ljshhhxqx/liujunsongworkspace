@@ -21,6 +21,7 @@ using Tool.GameEvent;
 using Tool.Message;
 using UI.UIBase;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VContainer;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 using Random = UnityEngine.Random;
@@ -29,10 +30,6 @@ namespace HotUpdate.Scripts.Collector
 {
     public class ItemsSpawnerManager : ServerNetworkComponent
     {
-        private struct Grid
-        {
-            public List<CollectibleItemData> ItemIDs;
-        }
         [SyncVar]
         private int _currentId;
         [SyncVar]
@@ -411,9 +408,9 @@ namespace HotUpdate.Scripts.Collector
                 }
 
                 // 清理网格数据
-                foreach (var grid in _gridMap.Values)
+                foreach (var grid in _gridMap)
                 {
-                    grid.ItemIDs?.Clear();
+                    _gridMap[grid.Key] = new Grid(new List<int>());
                 }
 
                 Debug.Log("EndRound finished on server");
@@ -650,7 +647,7 @@ namespace HotUpdate.Scripts.Collector
                 for (var z = _mapBoundDefiner.MapMinBoundary.z; z <= _mapBoundDefiner.MapMaxBoundary.z; z += _gridSize)
                 {
                     var gridPos = GetGridPosition(new Vector3(x, 0, z));
-                    _gridMap[gridPos] = new Grid();
+                    _gridMap[gridPos] = new Grid(new List<int>());
                 }
             }
         }
@@ -862,9 +859,9 @@ namespace HotUpdate.Scripts.Collector
                     var gridPos = GetGridPosition(position);
                     if (_gridMap.TryGetValue(gridPos, out var grid))
                     {
-                        grid.ItemIDs ??= new List<CollectibleItemData>();
-                        grid.ItemIDs.Add(item);
-                        _gridMap[gridPos] = grid;
+                        var list = new List<int>(grid.itemIDs);
+                        list.Add(id);
+                        _gridMap[gridPos] = new Grid(list);
                     }
             
                     spawnedIDs.Add(item);
@@ -897,7 +894,7 @@ namespace HotUpdate.Scripts.Collector
                 return false;
 
             // 检查网格内物品数量
-            if (grid.ItemIDs != null && grid.ItemIDs.Count >= _maxGridItems)
+            if (grid.itemIDs != null && grid.itemIDs.Length >= _maxGridItems)
                 return false;
 
             // 从高处发射射线检查地面
@@ -946,6 +943,16 @@ namespace HotUpdate.Scripts.Collector
         {
             return _mapBoundDefiner.IsWithinMapBounds(position);
         
+        }
+        
+        [Serializable]
+        private struct Grid
+        {
+            public int[] itemIDs;
+            public Grid(IEnumerable<int> ids)
+            {
+                itemIDs = ids.ToArray();
+            }
         }
     }
 
