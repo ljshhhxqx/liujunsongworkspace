@@ -8,6 +8,7 @@ using HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.State;
+using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using MemoryPack;
 using Mirror;
 using UniRx;

@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using MemoryPack;
 using UniRx;
 using UnityEngine;
@@ -16,126 +19,55 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     
     public interface IAnimationCooldown
     {
+        //动画类型
         AnimationState AnimationState { get; }
+        //是否在冷却中
         bool IsReady();
+        //更新冷却时间
         void Update(float deltaTime);
+        //使用，进入冷却状态
         void Use();
+        //使用快照数据来刷新冷却状态(快照是服务器传过来的，用于同步客户端)
         bool Refresh(CooldownSnapshotData snapshotData);
+        //重置冷却状态
         void Reset();
     }
-
-    public class AttackCooldown : IAnimationCooldown
+    
+    public class ComboCooldown : IAnimationCooldown
     {
         private float _currentCountdown;
-        private int _currentAttackStage;
-        private int _maxAttackCount;
-        private float _attackMaxWindow;
-        private float _configCooldown;
+        private int _currentStage;
+        private int _maxStage;
+        private List<float> _comboWindows;
+        private List<float> _configCooldowns;
         private float _windowCountdown;
-        private bool _isInComboWindow;
-        private AnimationState _animationState;
-        public int CurrentAttackStage => _currentAttackStage;
-        public float CurrentCountdown => _currentCountdown;
-        public float ConfigCooldown => _configCooldown;
-        public int MaxAttackCount => _maxAttackCount; 
-        public float AttackMaxWindow => _attackMaxWindow;
-        public AnimationState AnimationState => _animationState;
-        public bool IsInComboWindow => _isInComboWindow;
-        public float WindowCountdown => _windowCountdown;
-        private IDisposable _attackPointListener;
-        private IDisposable _attackEndListener; 
-        private IDisposable _comboResetListener;
-        public Subject<int> AttackPointReached { get; }
-        
-        public AttackCooldown(
-            AnimationState animationState,
-            float configCooldown,
-            int maxAttackCount,
-            float attackMaxWindow,
-            int currentAttackStage = 0,
-            float windowCountdown = 0,
-            bool isInComboWindow = false)
+        private bool _inComboWindow;
+        private AnimationState _state;
+
+        public ComboCooldown(AnimationState state, List<float> comboWindows, List<float> cooldowns)
         {
-            if (maxAttackCount < 1)
-                throw new ArgumentException("MaxAttackCount must be at least 1");
-            
-            if (attackMaxWindow <= 0.3f)
-                throw new ArgumentException("AttackWindow must be greater than 0.3");
-            _configCooldown = configCooldown;
-            _animationState = animationState;
-            _maxAttackCount = maxAttackCount;
-            _attackMaxWindow = attackMaxWindow;
-            _currentAttackStage = currentAttackStage;
-            _windowCountdown = windowCountdown;
-            _isInComboWindow = isInComboWindow;
-            _currentCountdown = 0;
-            AttackPointReached = new Subject<int>();
+            _state = state;
+            _maxStage = cooldowns.Count;
+            _comboWindows = comboWindows;
+            _configCooldowns = cooldowns;
+            Reset();
         }
 
-        public void BindAnimationEvents(IAttackAnimationEvent animationEvent)
-        {
-            UnbindEvents();
-            
-            _attackPointListener = animationEvent.AttackPointReached
-                .Where(stage => stage == _currentAttackStage)
-                .Subscribe(OnAttackPointReached);
+        public AnimationState AnimationState => _state;
+        public int CurrentStage => _currentStage;
+        public float WindowRemaining => _windowCountdown;
 
-            _attackEndListener = animationEvent.AttackEnded
-                .Subscribe(OnAttackEnded);
-
-            _comboResetListener = animationEvent.AttackPointReached
-                .Where(stage => stage == 0)
-                .Subscribe(OnResetState);
-        }
-        
-        private void OnResetState(int stage)
-        {
-            ResetState();
-        }
-
-        private void OnAttackPointReached(int stage)
-        {
-            if (_currentAttackStage == 0 || _currentAttackStage != stage) return;
-            AttackPointReached.OnNext(stage);
-            // 获取当前阶段的有效窗口时间
-            _windowCountdown = _attackMaxWindow;
-            _isInComboWindow = true;
-        }
-
-        private void OnAttackEnded(int stage)
-        {
-            if (stage == CurrentAttackStage)
-            {
-                // 结束当前阶段时未触发连击则重置
-                if (!_isInComboWindow)
-                {
-                    ResetState();
-                }
-            }
-        }
-
-        public bool IsReady()
-        {
-            return _currentCountdown <= 0 && 
-                   (_currentAttackStage == 0 || _isInComboWindow);
-        }
+        public bool IsReady() => _currentCountdown <= 0 && 
+            (_currentStage == 0 || _inComboWindow);
 
         public void Update(float deltaTime)
         {
             _currentCountdown = Mathf.Max(0, _currentCountdown - deltaTime);
             
-            if (_isInComboWindow)
+            if (_inComboWindow)
             {
                 _windowCountdown = Mathf.Max(0, _windowCountdown - deltaTime);
-                if (_windowCountdown <= 0)
-                {
-                    _isInComboWindow = false;
-                    if (CurrentAttackStage > 0)
-                    {
-                        _currentCountdown = ConfigCooldown;
-                        ResetState();
-                    }
-                }
+                if (_windowCountdown <= 0) EndComboWindow();
             }
         }
 
@@ -143,67 +75,198 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         {
             if (!IsReady()) return;
 
-            if (_currentAttackStage == 0)
+            if (_currentStage == 0)
             {
-                // 开始新连击
-                _currentAttackStage = 1;
-                _currentCountdown = 0;
-                return;
+                StartNewCombo();
             }
-
-            if (_isInComboWindow)
+            else if (_inComboWindow)
             {
-                _currentAttackStage++;
-                if (_currentCountdown > _maxAttackCount)
-                {
-                    _currentCountdown = _configCooldown;
-                    ResetState();
-                }
-                else
-                {
-                    // 重置窗口状态等待动画事件
-                    _isInComboWindow = false;
-                    _windowCountdown = 0;
-                }
+                AdvanceCombo();
             }
         }
 
-        public bool Refresh(CooldownSnapshotData snapshotData)
+        private void StartNewCombo()
         {
-            if (!snapshotData.Equals(this))
+            _currentStage = 1;
+            _windowCountdown = _comboWindows[_currentStage - 1];
+            _inComboWindow = true;
+            _currentCountdown = 0;
+        }
+
+        private void AdvanceCombo()
+        {
+            _currentStage = Mathf.Min(_currentStage + 1, _maxStage);
+            _windowCountdown = _comboWindows[_currentStage - 1];
+            _inComboWindow = true;
+        }
+
+        private void EndComboWindow()
+        {
+            _inComboWindow = false;
+            if (_currentStage > 0)
+            {
+                _currentCountdown = _configCooldowns[_currentStage - 1];
+                Reset();
+            }
+        }
+
+        public bool Refresh(CooldownSnapshotData snapshot)
+        {
+            if (!snapshot.AnimationState.Equals(_state))
             {
                 return false;
             }
-            _currentCountdown = snapshotData.CurrentCountdown;
-            _currentAttackStage = snapshotData.CurrentAttackStage;
-            _windowCountdown = snapshotData.WindowCountdown;
-            _isInComboWindow = snapshotData.IsInComboWindow;
+            _currentStage = snapshot.CurrentAttackStage;
+            _windowCountdown = snapshot.WindowCountdown;
+            _inComboWindow = snapshot.IsInComboWindow;
+            _currentCountdown = snapshot.Cooldown;
             return true;
         }
 
         public void Reset()
         {
-            ResetState();
-        }
-
-        private void ResetState()
-        {
-            _currentAttackStage = 0;
+            _currentStage = 0;
             _windowCountdown = 0;
-            _isInComboWindow = false;
+            _inComboWindow = false;
+        }
+    }
+    
+    // 纯关键帧系统
+    public class KeyframeCooldown : IAnimationCooldown
+    {
+        private float _currentTime;
+        private float _currentCountdown;
+        private AnimationState _state;
+        private List<KeyframeData> _timeline;
+        private float _configCooldown;
+        private HashSet<string> _triggeredEvents = new HashSet<string>();
+        private Subject<string> _eventStream = new Subject<string>();
+
+        public KeyframeCooldown(AnimationState state, float configCooldown, IEnumerable<KeyframeData> keyframes)
+        {
+            _state = state;
+            _currentCountdown = 0;
+            _configCooldown = configCooldown;
+            _timeline = keyframes
+                .OrderBy(k => k.triggerTime)
+                .ToList();
         }
 
-        public void UnbindEvents()
+        public AnimationState AnimationState => _state;
+        public IObservable<string> EventStream => _eventStream;
+
+        public bool IsReady()
         {
-            _attackPointListener?.Dispose();
-            _attackEndListener?.Dispose();
-            _comboResetListener?.Dispose();
+            if (_timeline.Count == 0 || _configCooldown == 0)
+            {
+                return true;
+            }
+            return _currentCountdown <= 0;
         }
 
-        // 调试信息
-        public string GetDebugInfo()
+        public void Update(float deltaTime)
         {
-            return $"Stage: {CurrentAttackStage} | Window: {_windowCountdown:F2} | Cooldown: {CurrentCountdown:F2}";
+            if (_currentCountdown > 0)
+            {
+                _currentCountdown = Mathf.Max(0, _currentCountdown - deltaTime);
+                return;
+            }
+
+            _currentTime += deltaTime;
+
+            foreach (var kf in _timeline)
+            {
+                if (_currentTime >= kf.triggerTime && 
+                    !_triggeredEvents.Contains(kf.eventType))
+                {
+                    _triggeredEvents.Add(kf.eventType);
+                    _eventStream.OnNext(kf.eventType);
+                
+                    if (kf.resetCooldown)
+                    {
+                        _currentCountdown = kf.customCooldown;
+                    }
+                }
+            }
+        }
+
+        public void Use()
+        {
+            _currentCountdown = _configCooldown;
+        }
+
+        public bool Refresh(CooldownSnapshotData snapshotData)
+        {
+            if (!snapshotData.AnimationState.Equals(_state))
+            {
+                return false;
+            }
+            _currentCountdown = snapshotData.CurrentCountdown;
+            return true;
+        }
+
+        public void Reset()
+        {
+            _currentCountdown = 0;
+            _currentTime = 0;
+        }
+    }
+    
+    public class KeyframeComboCooldown : IAnimationCooldown
+    {
+        private ComboCooldown _combo;
+        private KeyframeCooldown _keyframes;
+        private IDisposable _eventListener;
+
+        public KeyframeComboCooldown(
+            AnimationState state,
+            float configCooldown,
+            IEnumerable<KeyframeData> keyframes,
+            List<float> comboWindows, 
+            List<float> cooldowns)
+        {
+            _combo = new ComboCooldown(
+                state,
+                comboWindows,
+                cooldowns);
+
+            _keyframes = new KeyframeCooldown(state, configCooldown, keyframes);
+
+            _eventListener = _keyframes.EventStream
+                .Subscribe(OnKeyframeEvent);
+        }
+
+        private void OnKeyframeEvent(string eventType)
+        {
+            if (eventType == "ComboAdvance" && _combo.IsReady())
+            {
+                _combo.Use();
+            }
+        }
+
+        public AnimationState AnimationState => _combo.AnimationState;
+
+        public bool IsReady() => _combo.IsReady();
+
+        public void Update(float deltaTime)
+        {
+            _combo.Update(deltaTime);
+            _keyframes.Update(deltaTime);
+        }
+
+        public void Use()
+        {
+            
+        }
+
+        public bool Refresh(CooldownSnapshotData snapshotData)
+        {
+            return _combo.Refresh(snapshotData) && _keyframes.Refresh(snapshotData);
+        }
+
+        public void Reset()
+        {
+            
         }
     }
 
@@ -288,16 +351,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         
         public bool Equals(IAnimationCooldown other)
         {
-            if (other is AttackCooldown attackCooldown)
+            //todo: 补全keyframeComboCooldown、comboCooldown、keyframeCooldown的snapshot数据
+            if (other is KeyframeComboCooldown keyframeComboCooldown)
             {
-                return AnimationState == attackCooldown.AnimationState &&
-                       Mathf.Approximately(Cooldown, attackCooldown.ConfigCooldown) &&
-                       Mathf.Approximately(CurrentCountdown, attackCooldown.CurrentCountdown) &&
-                       Mathf.Approximately(AttackWindow, attackCooldown.AttackMaxWindow) &&
-                       MaxAttackCount == attackCooldown.MaxAttackCount &&                   
-                       IsInComboWindow == attackCooldown.IsInComboWindow &&
-                       Mathf.Approximately(WindowCountdown, attackCooldown.WindowCountdown) &&
-                       CurrentAttackStage == attackCooldown.CurrentAttackStage;
+                return AnimationState == keyframeComboCooldown.AnimationState;
+            }
+            if (other is ComboCooldown comboCooldown)
+            {
+                return AnimationState == comboCooldown.AnimationState;
+            }
+            if (other is KeyframeCooldown keyframeCooldown)
+            {
+                return AnimationState == keyframeCooldown.AnimationState;
             }
             if (other is AnimationCooldown animationCooldown)
             {
@@ -324,17 +389,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         {
             switch (cooldown)
             {
-                case AttackCooldown attackCooldown:
+                //todo: 补全keyframeComboCooldown、comboCooldown、keyframeCooldown的snapshot数据
+                case KeyframeComboCooldown keyframeComboCooldown:
                     return new CooldownSnapshotData
                     {
-                        AnimationState = attackCooldown.AnimationState,
-                        Cooldown = attackCooldown.ConfigCooldown,
-                        CurrentCountdown = attackCooldown.CurrentCountdown,
-                        AttackWindow = attackCooldown.AttackMaxWindow,
-                        MaxAttackCount = attackCooldown.MaxAttackCount,
-                        IsInComboWindow = attackCooldown.IsInComboWindow,
-                        WindowCountdown = attackCooldown.WindowCountdown,
-                        CurrentAttackStage = attackCooldown.CurrentAttackStage
+                        AnimationState = keyframeComboCooldown.AnimationState,
+                    };
+                case ComboCooldown comboCooldown:
+                    return new CooldownSnapshotData
+                    {
+                        AnimationState = comboCooldown.AnimationState,
+                    };
+                case KeyframeCooldown keyframeCooldown:
+                    return new CooldownSnapshotData
+                    {
+                        AnimationState = keyframeCooldown.AnimationState,
                     };
                 case AnimationCooldown animationCooldown:
                     return new CooldownSnapshotData

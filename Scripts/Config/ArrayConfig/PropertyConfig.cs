@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -60,6 +61,14 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public Dictionary<PropertyTypeEnum, float> GetPlayerMinProperties()
         {
             return propertyData.ToDictionary(x => x.propertyType, x => x.minValue);
+        }
+
+        public AttackConfigData GetAttackBaseParams()
+        {
+            var attackRange = propertyData.Find(x => x.propertyType == PropertyTypeEnum.AttackAngle).baseValue;
+            var attackRadius = propertyData.Find(x => x.propertyType == PropertyTypeEnum.AttackRadius).baseValue;
+            var attackHeight = propertyData.Find(x => x.propertyType == PropertyTypeEnum.AttackHeight).baseValue;
+            return new AttackConfigData(attackRadius, attackRange, attackHeight);
         }
     }
     

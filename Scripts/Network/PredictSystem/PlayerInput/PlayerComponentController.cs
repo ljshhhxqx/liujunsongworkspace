@@ -215,10 +215,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerAnimationCalculator = new PlayerAnimationCalculator(new AnimationComponent{ Animator = _animator});
             _playerBattleCalculator = new PlayerBattleCalculator(new PlayerBattleComponent(transform,_mapBoundDefiner, _playerInGameManager));
             var jsonData = configProvider.GetConfig<JsonDataConfig>();
+            var propertyConfig = configProvider.GetConfig<PropertyConfig>();
             var gameData = jsonData.GameConfig;
             var playerData = jsonData.PlayerConfig;
-            var weaponConfig = configProvider.GetConfig<WeaponConfig>();
-            var noneWeapon = weaponConfig.GetNoneWeaponConfigData();
+            var noneWeapon = propertyConfig.GetAttackBaseParams();
             PlayerPhysicsCalculator.SetPhysicsDetermineConstant(new PhysicsDetermineConstant
             {
                 GroundMinDistance = gameData.groundMinDistance,
@@ -240,7 +240,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 AttackComboMaxCount = playerData.AttackComboMaxCount,
                 AnimationConfig = configProvider.GetConfig<AnimationConfig>(),
             });
-            PlayerBattleCalculator.SetAttackConfigData(new AttackConfigData(noneWeapon.radius, noneWeapon.range, noneWeapon.height));
+            PlayerBattleCalculator.SetAttackConfigData(noneWeapon);
         }
 
         private void OnAttack(int stage)

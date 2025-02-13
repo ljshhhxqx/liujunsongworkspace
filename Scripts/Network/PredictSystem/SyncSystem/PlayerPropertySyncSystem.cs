@@ -7,16 +7,16 @@ using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
 using HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
+using HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem;
 using MemoryPack;
 using Mirror;
-using Newtonsoft.Json;
 using UnityEngine;
 using VContainer;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 using PlayerPropertyState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerPropertyState;
 using PropertyCalculator = HotUpdate.Scripts.Network.PredictSystem.State.PropertyCalculator;
 
-namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
+namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
     public class PlayerPropertySyncSystem : BaseSyncSystem
     {

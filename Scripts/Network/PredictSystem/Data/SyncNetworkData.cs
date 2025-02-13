@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using MemoryPack;
 using Mirror;
 using UnityEngine;

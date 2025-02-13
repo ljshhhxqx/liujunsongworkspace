@@ -47,12 +47,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
             return weapons[UnityEngine.Random.Range(0, weapons.Count)];
         }
-
-        public WeaponConfigData GetNoneWeaponConfigData()
-        {
-            return weaponConfigData.Find(data => data.weaponType == WeaponType.None);
-        }
-        
         
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
@@ -89,9 +83,26 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public int skillID;
     }
 
+    //默认值
+    public struct AttackConfigData
+    {
+        //攻击半径
+        public float AttackRadius;
+        //攻击角度
+        public float AttackRange;
+        //攻击高度
+        public float AttackHeight;
+        
+        public AttackConfigData(float attackRadius, float attackRange, float attackHeight)
+        {
+            AttackRadius = attackRadius;
+            AttackRange = attackRange;
+            AttackHeight = attackHeight;
+        }
+    }
+
     public enum WeaponType
     {
-        None,
         Sword1,
         Sword2,
         Sword3,

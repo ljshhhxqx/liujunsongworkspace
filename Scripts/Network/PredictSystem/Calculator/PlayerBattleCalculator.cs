@@ -98,24 +98,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         }
     }
 
-    //默认值
-    public struct AttackConfigData
-    {
-        //攻击半径
-        public float AttackRadius;
-        //攻击角度
-        public float AttackRange;
-        //攻击高度
-        public float AttackHeight;
-        
-        public AttackConfigData(float attackRadius, float attackRange, float attackHeight)
-        {
-            AttackRadius = attackRadius;
-            AttackRange = attackRange;
-            AttackHeight = attackHeight;
-        }
-    }
-
     public struct AttackParams
     {
         public Vector3 AttackPos;

@@ -102,4 +102,27 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         Single,      // 一次性动画（跳跃、翻滚、受击、死亡）
         Combo        // 连击动画（攻击）
     }
+    // 关键帧数据结构
+    [Serializable]
+    public struct KeyframeData
+    {
+        [Tooltip("事件触发时间（秒）")]
+        public float triggerTime;
+
+        [Tooltip("事件类型标识符")]
+        public string eventType;
+
+        [Tooltip("触发后是否重置冷却")]
+        public bool resetCooldown;
+
+        [Tooltip("自定义冷却时间（覆盖全局冷却）")]
+        public float customCooldown;
+
+        [Tooltip("允许触发的时间误差")]
+        [Range(0f, 0.3f)]
+        public float tolerance;
+
+        [Tooltip("是否在服务器验证")]
+        public bool serverValidate;
+    }
 }
