@@ -14,6 +14,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
     {
         private readonly SyncDictionary<int, string> _playerIds = new SyncDictionary<int, string>();
         private readonly SyncDictionary<int, uint> _playerNetIds = new SyncDictionary<int, uint>();
+        private readonly SyncDictionary<uint, int> _playerIdsByNetId = new SyncDictionary<uint, int>();
         private readonly SyncDictionary<int, PlayerInGameData> _playerInGameData = new SyncDictionary<int, PlayerInGameData>();
         private readonly SyncDictionary<uint, Vector2Int> _playerGrids = new SyncDictionary<uint, Vector2Int>();
         private readonly SyncGridDictionary _gridPlayers = new SyncGridDictionary();
@@ -90,6 +91,20 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             }
             return result;
         }
+
+        public int[] GetPlayersWithNetIds(uint[] netIds)
+        {
+            var players = new HashSet<int>();
+            foreach (var id in netIds)
+            {
+                if (_playerIdsByNetId.TryGetValue(id, out var playerId))
+                {
+                    players.Add(playerId);
+                }
+            }
+
+            return players.ToArray();
+        }
         
         private void OnIsGameStartedChanged(bool oldIsGameStarted, bool newIsGameStarted)
         {
@@ -102,12 +117,14 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             _playerIds.Add(connectId, playerInGameData.player.PlayerId);
             _playerNetIds.Add(connectId, playerInGameData.networkIdentity.netId);
             _playerInGameData.Add(connectId, playerInGameData);
+            _playerIdsByNetId.Add(playerInGameData.networkIdentity.netId, connectId);
         }
 
         public void RemovePlayer(int connectId)
         {
             _playerIds.Remove(connectId);
             _playerNetIds.Remove(connectId);
+            _playerIdsByNetId.Remove(_playerNetIds.GetValueOrDefault(connectId));
             _playerInGameData.Remove(connectId);
         }
         

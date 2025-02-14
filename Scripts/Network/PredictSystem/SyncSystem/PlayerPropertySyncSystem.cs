@@ -8,6 +8,7 @@ using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
 using HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
 using HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.Server.InGame;
 using MemoryPack;
 using Mirror;
 using UnityEngine;
@@ -31,9 +32,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private JsonDataConfig _jsonDataConfig;
         private RandomBuffConfig _randomBuffConfig;
         private PropertyConfig _propertyConfig;
+        private PlayerInGameManager _playerInGameManager;
 
         [Inject]
-        private void InitContainers(IConfigProvider configProvider)
+        private void InitContainers(IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
         {
             _configProvider = configProvider;
             _jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
@@ -41,6 +43,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _constantBuffConfig = configProvider.GetConfig<ConstantBuffConfig>();
             _randomBuffConfig = configProvider.GetConfig<RandomBuffConfig>();
             _propertyConfig = configProvider.GetConfig<PropertyConfig>();
+            _playerInGameManager = playerInGameManager;
             ConfigPlayerMinProperties = _propertyConfig.GetPlayerMinProperties();
             ConfigPlayerMaxProperties = _propertyConfig.GetPlayerMaxProperties();
             ConfigPlayerBaseProperties = _propertyConfig.GetPlayerBaseProperties();
@@ -133,7 +136,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
             else if (command is PropertyAttackCommand attackCommand)
             {
-                HandleAttack(header.ConnectionId, attackCommand.TargetIds);
+                var targetPlayerIds = _playerInGameManager.GetPlayersWithNetIds(attackCommand.TargetIds);
+                HandlePlayerAttack(header.ConnectionId, targetPlayerIds);
             }
             else if (command is PropertySkillCommand skillCommand)
             {
@@ -195,18 +199,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             return propertyCalculator.UpdateCalculator(buffData.BuffData.increaseDataList);
         }
 
-        private void HandleAttack(int attacker, int[] attackIds)
+        private void HandlePlayerAttack(int attacker, int[] defenderPlayerIds)
         {
             var propertyState = GetState<PlayerPropertyState>(attacker);
             var defendersState = PropertyStates
-                .Where(x => attackIds.Contains(x.Key))
+                .Where(x => defenderPlayerIds.Contains(x.Key))
                 .ToDictionary(x => x.Key, x => (PlayerPropertyState)x.Value);
             var playerController = GameSyncManager.GetPlayerConnection(attacker);
             playerController.HandleAttackProperty(ref propertyState, ref defendersState, _jsonDataConfig.GetDamage);
-            for (int i = 0; i < attackIds.Length; i++)
+            for (int i = 0; i < defenderPlayerIds.Length; i++)
             {
-                PropertyStates[attackIds[i]] = defendersState[attackIds[i]];
-                if (PropertyStates[attackIds[i]] is PlayerPropertyState playerPropertyState &&
+                PropertyStates[defenderPlayerIds[i]] = defendersState[defenderPlayerIds[i]];
+                if (PropertyStates[defenderPlayerIds[i]] is PlayerPropertyState playerPropertyState &&
                     playerPropertyState.Properties[PropertyTypeEnum.Health].CurrentValue <= 0)
                 {
                     //todo: handle dead player logic

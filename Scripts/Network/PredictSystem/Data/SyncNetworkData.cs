@@ -217,7 +217,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
         [MemoryPackOrder(1)]
         public int AttackerId;
         [MemoryPackOrder(2)]
-        public int[] TargetIds;
+        public uint[] TargetIds;
 
         public NetworkCommandHeader GetHeader() => Header;
         public bool IsValid()

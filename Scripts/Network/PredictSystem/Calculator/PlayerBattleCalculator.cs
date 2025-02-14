@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {
@@ -22,13 +24,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         {
             PlayerBattleComponent = playerBattleComponent;
         }
-        
-        public int[] IsInAttackRange(AttackParams attackParams, bool isServer = true)
+
+        public uint[] IsInAttackRange(AttackParams attackParams, bool isServer = true)
         {
             var hitPlayers = new HashSet<uint>();
         
             // 获取攻击者所在Grid
-            var attackerGrid = PlayerBattleComponent.MapBoundDefiner.GetGridPosition(attackParams.AttackPos);
+            var attackerGrid = PlayerBattleComponent.MapBoundDefiner.GetGridPosition(attackParams.attackPos);
         
             // 计算检测半径对应的Grid范围
             var gridRadius = Mathf.CeilToInt(AttackConfigData.AttackRadius / PlayerBattleComponent.MapBoundDefiner.GridSize);
@@ -39,7 +41,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
             foreach (var candidate in candidates)
             {
-                if (candidate == attackParams.AttackerNetId) continue;
+                if (candidate == attackParams.attackerNetId) continue;
 
                 var identity = isServer ? 
                     NetworkServer.spawned[candidate] : 
@@ -49,8 +51,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
                 // 精确检测
                 if (IsInAttackSector(
-                        attackParams.AttackPos,
-                        attackParams.AttackDir,
+                        attackParams.attackPos,
+                        attackParams.attackDir,
                         identity.transform.position,
                         attackParams.AttackConfigData.AttackRadius,
                         attackParams.AttackConfigData.AttackRange,
@@ -60,7 +62,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 }
             }
 
-            return hitPlayers.Select(x => (int)x).ToArray();
+            return hitPlayers.ToArray();
         }
         
         #region 辅助方法
@@ -98,20 +100,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         }
     }
 
+    [Serializable]
     public struct AttackParams
     {
-        public Vector3 AttackPos;
-        public Vector3 AttackDir;
-        public int AttackerId;
-        public uint AttackerNetId;
+        public Vector3 attackPos;
+        public Vector3 attackDir;
+        public int attackerId;
+        public uint attackerNetId;
         public AttackConfigData AttackConfigData;
         
         public AttackParams(Vector3 attackPos, Vector3 attackDir, int attackerId, uint attackerNetId, AttackConfigData attackConfigData)
         {
-            AttackPos = attackPos;
-            AttackDir = attackDir;
-            AttackerId = attackerId;
-            AttackerNetId = attackerNetId;
+            this.attackPos = attackPos;
+            this.attackDir = attackDir;
+            this.attackerId = attackerId;
+            this.attackerNetId = attackerNetId;
             AttackConfigData = attackConfigData;
         }
     }

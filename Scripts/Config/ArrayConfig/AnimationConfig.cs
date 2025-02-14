@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using HotUpdate.Scripts.Config.JsonConfig;
+using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -73,6 +74,26 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             }
             return animationInfo.animationType == AnimationType.Combo ? animationInfo.animationNames[0] : animationInfo.animationNames[index];
         }
+
+        [Button]
+        private KeyframeData[] GetKeyframes()
+        {
+            var keyframes = new List<KeyframeData>();
+            keyframes.Add(new KeyframeData(0.5f, "OnAttack", true, 1.5f, 0.1f, true));
+            keyframes.Add(new KeyframeData(1.5f, "OnAttack", true, 0.5f, 0.1f, true));
+            keyframes.Add(new KeyframeData(2.5f, "OnAttack", true, 1.5f, 0.1f, true));
+            
+            Debug.Log(JsonConvert.SerializeObject(keyframes));
+            return keyframes.ToArray();
+            // foreach (var animationInfo in animationInfos)
+            // {
+            //     if (animationInfo.keyframeData!= null)
+            //     {
+            //         keyframes.AddRange(animationInfo.keyframeData);
+            //     }
+            // }
+            // return keyframes.ToArray();
+        }
     }
 
     [Serializable]
@@ -86,6 +107,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public bool canBeInterrupted;
         public ActionType actionType;
         public string[] animationNames;
+        public KeyframeData[] keyframeData;
     }
 
     public enum ActionType
@@ -102,27 +124,33 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         Single,      // 一次性动画（跳跃、翻滚、受击、死亡）
         Combo        // 连击动画（攻击）
     }
+    
     // 关键帧数据结构
     [Serializable]
     public struct KeyframeData
     {
         [Tooltip("事件触发时间（秒）")]
         public float triggerTime;
-
         [Tooltip("事件类型标识符")]
         public string eventType;
-
         [Tooltip("触发后是否重置冷却")]
         public bool resetCooldown;
-
-        [Tooltip("自定义冷却时间（覆盖全局冷却）")]
-        public float customCooldown;
-
+        [Tooltip("触发后重置冷却的窗口时间(如果为0，那么将无法产生连招效果)")]
+        public float resetCooldownWindowTime;
         [Tooltip("允许触发的时间误差")]
         [Range(0f, 0.3f)]
         public float tolerance;
-
         [Tooltip("是否在服务器验证")]
         public bool serverValidate;
+        
+        public KeyframeData(float triggerTime, string eventType, bool resetCooldown, float resetCooldownWindowTime, float tolerance, bool serverValidate)
+        {
+            this.triggerTime = triggerTime;
+            this.eventType = eventType;
+            this.resetCooldownWindowTime = resetCooldownWindowTime;
+            this.tolerance = tolerance;
+            this.resetCooldown = resetCooldown;
+            this.serverValidate = serverValidate;
+        }
     }
 }

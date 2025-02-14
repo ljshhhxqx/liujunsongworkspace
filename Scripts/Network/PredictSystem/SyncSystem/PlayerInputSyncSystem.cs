@@ -4,11 +4,12 @@ using System.Linq;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
-using HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
+using HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
+using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.PredictSystem.State;
-using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using MemoryPack;
 using Mirror;
 using UniRx;
@@ -20,7 +21,7 @@ using PlayerAnimationCooldownState = HotUpdate.Scripts.Network.PredictSystem.Sta
 using PlayerGameStateData = HotUpdate.Scripts.Network.PredictSystem.State.PlayerGameStateData;
 using PlayerInputState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerInputState;
 
-namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
+namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
     public class PlayerInputSyncSystem : BaseSyncSystem
     {
@@ -83,27 +84,38 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
             PropertyStates.Add(connectionId, playerInputState);
             _inputPredictionStates.Add(connectionId, playerPredictableState);
             _animationCooldowns.Add(connectionId, GetAnimationCooldowns());
-            BindAniEvents(connectionId, player.GetComponent<IAttackAnimationEvent>());
+            BindAniEvents(connectionId);
         }
 
         [Server]
-        private void BindAniEvents(int connectionId, IAttackAnimationEvent animationEvent)
+        private void BindAniEvents(int connectionId)
         {
             var animationCooldowns = _animationCooldowns[connectionId];
-            if (animationCooldowns.Find(x => x.AnimationState == AnimationState.Attack) is not AttackCooldown attackCooldown)
+            if (animationCooldowns.Find(x => x.AnimationState == AnimationState.Attack) is not KeyframeComboCooldown attackCooldown)
             {
                 Debug.LogError("AttackCooldown not found in animation cooldowns.");
                 return;
             }
-            attackCooldown.BindAnimationEvents(animationEvent);
-            attackCooldown.AttackPointReached
-                .Subscribe(_ => HandlePlayerAttack(connectionId))
+            attackCooldown.EventStream
+                .Where(x => x == "OnAttackHit")
+                .Subscribe(x => HandlePlayerAttack(connectionId))
                 .AddTo(_disposables);
         }
 
         private void HandlePlayerAttack(int connectionId)
         {
-            
+            var playerController = GameSyncManager.GetPlayerConnection(connectionId);
+            var playerProperty = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property).GetPlayerProperty(connectionId);
+            var attackConfigData = new AttackConfigData(playerProperty[PropertyTypeEnum.AttackRadius].CurrentValue, playerProperty[PropertyTypeEnum.AttackAngle].CurrentValue, playerProperty[PropertyTypeEnum.AttackHeight].CurrentValue);
+            var defenders = playerController.HandleAttack(new AttackParams(playerController.transform.position,
+                playerController.transform.forward, connectionId, playerController.netId, attackConfigData));
+            // 扣除耐力值
+            GameSyncManager.EnqueueServerCommand(new PropertyAttackCommand
+            {
+                Header = NetworkCommandHeader.Create(0, CommandType.Property, GameSyncManager.CurrentTick, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), CommandAuthority.Server),
+                AttackerId = connectionId,
+                TargetIds = defenders,
+            });
         }
 
         private List<IAnimationCooldown> GetAnimationCooldowns()
@@ -115,7 +127,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 var info = _animationConfig.GetAnimationInfo(animationState);
                 if (info.state == AnimationState.Attack)
                 {
-                    list.Add(new AttackCooldown(animationState, info.cooldown, _jsonDataConfig.PlayerConfig.AttackComboMaxCount, _jsonDataConfig.PlayerConfig.AttackComboWindow));
+                    list.Add(new KeyframeComboCooldown(animationState, info.cooldown, info.keyframeData.ToList()));
                     continue;
                 }
 
@@ -135,6 +147,10 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 var header = inputCommand.GetHeader();
                 var playerSyncSystem = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
                 var playerController = GameSyncManager.GetPlayerConnection(header.ConnectionId);
+                if (playerController.IsInSpecialState())
+                {
+                    return null;
+                }
                 var playerProperty = playerSyncSystem.GetPlayerProperty(header.ConnectionId);
                 //验证玩家是否存在或者是否已死亡
                 if (playerProperty == null || playerProperty[PropertyTypeEnum.Health].CurrentValue <= 0)
@@ -150,6 +166,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
                 
                 //获取可以执行的动画
                 var commandAnimation = playerController.GetCurrentAnimationState(inputStateData);
+
                 inputCommand.CommandAnimationState = commandAnimation;
                 var actionType = _animationConfig.GetActionType(inputCommand.CommandAnimationState);
                 if (actionType is not ActionType.Movement and ActionType.Interaction)

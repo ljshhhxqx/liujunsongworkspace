@@ -12,6 +12,7 @@ using HotUpdate.Scripts.Network.Data.PredictSystem.State;
 using HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
+using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
@@ -270,6 +271,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             return _playerAnimationCalculator.DetermineAnimationState(CreateDetermineAnimationStateParams(inputData));
         }
+        
+        public bool IsInSpecialState()
+        {
+            return _playerAnimationCalculator.IsSpecialAction;
+        }
 
         public bool CanPlayAttackAnimation(AnimationState command)
         {
@@ -349,6 +355,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public void HandleEnvironmentChange(ref PlayerPropertyState playerPropertyState, bool hasInputMovement, PlayerEnvironmentState environmentType, bool isSprinting)
         {
             _playerPropertyCalculator.HandleEnvironmentChange(ref playerPropertyState, hasInputMovement, environmentType, isSprinting);
+        }
+
+        [Server]
+        public uint[] HandleAttack(AttackParams attackParams)
+        {
+            return _playerBattleCalculator.IsInAttackRange(attackParams);
         }
     }
 }
