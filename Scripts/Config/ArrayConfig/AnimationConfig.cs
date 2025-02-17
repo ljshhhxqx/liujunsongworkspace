@@ -32,10 +32,24 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 data.animationType = (AnimationType) Enum.Parse(typeof(AnimationType), row[4]);
                 data.canBeInterrupted = bool.Parse(row[5]);
                 data.actionType = (ActionType) Enum.Parse(typeof(ActionType), row[6]);
+                data.animationNames = JsonConvert.DeserializeObject<string[]>(row[7]);
+                data.keyframeData = JsonConvert.DeserializeObject<KeyframeData[]>(row[8]);
+                data.isClearVelocity = bool.Parse(row[9]);
+                data.cooldownType = (CooldownType) Enum.Parse(typeof(CooldownType), row[10]);
                 animationInfos.Add(data);
             }
         }
-        
+
+        public bool IsStrengthEnough(AnimationState state, float strength, float duration = 0f)
+        {
+            var animationInfo = GetAnimationInfo(state);
+            if (animationInfo.animationType == AnimationType.Continuous)
+            {
+                return strength * duration >= duration * animationInfo.cost;
+            }
+            return strength >= duration;
+        }
+
         public AnimationInfo GetAnimationInfo(AnimationState state)
         {
             foreach (var animationInfo in animationInfos)
@@ -75,25 +89,24 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             return animationInfo.animationType == AnimationType.Combo ? animationInfo.animationNames[0] : animationInfo.animationNames[index];
         }
 
-        [Button]
-        private KeyframeData[] GetKeyframes()
-        {
-            var keyframes = new List<KeyframeData>();
-            keyframes.Add(new KeyframeData(0.5f, "OnAttack", true, 1.5f, 0.1f, true));
-            keyframes.Add(new KeyframeData(1.5f, "OnAttack", true, 0.5f, 0.1f, true));
-            keyframes.Add(new KeyframeData(2.5f, "OnAttack", true, 1.5f, 0.1f, true));
-            
-            Debug.Log(JsonConvert.SerializeObject(keyframes));
-            return keyframes.ToArray();
-            // foreach (var animationInfo in animationInfos)
-            // {
-            //     if (animationInfo.keyframeData!= null)
-            //     {
-            //         keyframes.AddRange(animationInfo.keyframeData);
-            //     }
-            // }
-            // return keyframes.ToArray();
-        }
+        // [Button]
+        // private KeyframeData[] GetKeyframes()
+        // {
+        //     var keyframes = new List<KeyframeData>();
+        //     keyframes.Add(new KeyframeData(0.05f, "OnRollStart", false, 0f, 0.1f, true));
+        //     keyframes.Add(new KeyframeData(0.5f, "OnRollEnd", false, 0f, 0.1f, true));
+        //     
+        //     Debug.Log(JsonConvert.SerializeObject(keyframes));
+        //     return keyframes.ToArray();
+        //     // foreach (var animationInfo in animationInfos)
+        //     // {
+        //     //     if (animationInfo.keyframeData!= null)
+        //     //     {
+        //     //         keyframes.AddRange(animationInfo.keyframeData);
+        //     //     }
+        //     // }
+        //     // return keyframes.ToArray();
+        // }
     }
 
     [Serializable]
@@ -108,6 +121,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public ActionType actionType;
         public string[] animationNames;
         public KeyframeData[] keyframeData;
+        public bool isClearVelocity;
+        public CooldownType cooldownType;
     }
 
     public enum ActionType
@@ -124,7 +139,16 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         Single,      // 一次性动画（跳跃、翻滚、受击、死亡）
         Combo        // 连击动画（攻击）
     }
-    
+
+    public enum CooldownType
+    {
+        Normal,
+        KeyFrame,
+        Combo,
+        KeyFrameAndCombo,
+        None
+    }
+
     // 关键帧数据结构
     [Serializable]
     public struct KeyframeData

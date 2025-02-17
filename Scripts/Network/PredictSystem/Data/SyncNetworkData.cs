@@ -4,14 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using MemoryPack;
 using Mirror;
 using UnityEngine;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
-namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
+namespace HotUpdate.Scripts.Network.PredictSystem.Data
 {
     #region 网络命令相关
     // 命令接口
@@ -127,6 +126,29 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Data
         public bool IsValid()
         {
             return Enum.IsDefined(typeof(PlayerEnvironmentState), PlayerEnvironmentState);
+        }
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
+    }
+    
+    
+    [MemoryPackable]
+    public partial struct PropertyInvincibleChangedCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)] 
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)] 
+        public bool IsInvincible;
+        public NetworkCommandHeader GetHeader() => Header;
+
+        public bool IsValid()
+        {
+            return true;
         }
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
         {

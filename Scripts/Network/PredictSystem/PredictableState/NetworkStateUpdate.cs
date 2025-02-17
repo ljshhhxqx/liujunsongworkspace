@@ -1,7 +1,4 @@
-﻿using System;
-using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
-
-namespace HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState
+﻿namespace HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState
 {
     // [Serializable]
     // public struct NetworkStateUpdate

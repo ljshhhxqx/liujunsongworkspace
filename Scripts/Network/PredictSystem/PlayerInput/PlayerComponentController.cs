@@ -6,10 +6,7 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Data.PredictSystem.Calculator;
-using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
 using HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState;
-using HotUpdate.Scripts.Network.Data.PredictSystem.State;
-using HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
@@ -21,10 +18,14 @@ using UniRx;
 using UnityEngine;
 using VContainer;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
+using InputCommand = HotUpdate.Scripts.Network.PredictSystem.Data.InputCommand;
+using NetworkCommandHeader = HotUpdate.Scripts.Network.PredictSystem.Data.NetworkCommandHeader;
 using PlayerAnimationCooldownState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerAnimationCooldownState;
 using PlayerGameStateData = HotUpdate.Scripts.Network.PredictSystem.State.PlayerGameStateData;
 using PlayerPropertyState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerPropertyState;
+using PropertyAutoRecoverCommand = HotUpdate.Scripts.Network.PredictSystem.Data.PropertyAutoRecoverCommand;
 using PropertyCalculator = HotUpdate.Scripts.Network.PredictSystem.State.PropertyCalculator;
+using PropertyEnvironmentChangeCommand = HotUpdate.Scripts.Network.PredictSystem.Data.PropertyEnvironmentChangeCommand;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 {
@@ -127,6 +128,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .AddTo(_disposables);
             
             Observable.EveryUpdate()
+                .Where(_ => !_isSpecialActionStream.Value)
                 .Subscribe(_ => {
                     _targetSpeed = _playerPropertyCalculator.GetProperty(PropertyTypeEnum.Speed);
                     _playerAnimationCalculator.UpdateAnimationState();
@@ -304,6 +306,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 DeltaTime = DeltaTime,
                 IsMovingState = _playerAnimationCalculator.IsMovingState(),
                 CameraForward = _playerPhysicsCalculator.CompressYaw(cameraForward.y),
+                IsClearVelocity = PlayerAnimationCalculator.IsClearVelocity(inputData.Command),
             }, isLocalPlayer);
             //执行动画
             _playerAnimationCalculator.HandleAnimation(inputData.Command);
@@ -327,8 +330,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [Server]
         public PlayerGameStateData HandleServerMoveAndAnimation(PlayerInputStateData inputData)
         {
-            var currentAnimationState = GetCurrentAnimationState(inputData);
-            inputData.Command = currentAnimationState;
             _inputStream.OnNext(inputData);
             return HandleMoveAndAnimation(inputData);
         }

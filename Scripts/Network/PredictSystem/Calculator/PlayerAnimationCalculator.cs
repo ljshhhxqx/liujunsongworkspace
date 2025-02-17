@@ -116,6 +116,12 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
 
         private bool _currentAnimationCanPlay;
         
+        public static bool IsClearVelocity(AnimationState state)
+        {
+            var animationInfo = _animationConstant.AnimationConfig.GetAnimationInfo(state);
+            return animationInfo.isClearVelocity;
+        }
+        
         public void HandleAnimation(AnimationState newState, int index = 0)
         {
             // 验证是否可以播放

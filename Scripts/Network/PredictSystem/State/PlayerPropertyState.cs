@@ -11,12 +11,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     public partial struct PlayerPropertyState : IPropertyState
     {
         // 使用显式字段存储键集合
-        [MemoryPackOrder(1)] 
+        [MemoryPackOrder(0)] 
         private PropertyTypeEnum[] _propertyTypes;
 
         // 使用并行数组提升访问效率
-        [MemoryPackOrder(0)]
+        [MemoryPackOrder(1)]
         private PropertyCalculator[] _calculators;
+        
+        [MemoryPackOrder(2)]
+        public bool IsInvisible;
 
         // 添加字典缓存字段
         [MemoryPackIgnore]

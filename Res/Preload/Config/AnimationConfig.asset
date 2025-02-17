@@ -27,63 +27,118 @@ MonoBehaviour:
     priority: 0
     animationType: 0
     canBeInterrupted: 1
+    actionType: 0
+    animationNames: []
+    keyframeData: []
+    isClearVelocity: 0
+    cooldownType: 0
   - state: 1
     cost: 0
     cooldown: 0
     priority: 0
     animationType: 0
     canBeInterrupted: 1
+    actionType: 0
+    animationNames: []
+    keyframeData: []
+    isClearVelocity: 0
+    cooldownType: 0
   - state: 2
     cost: 15
     cooldown: 0
     priority: 0
     animationType: 0
     canBeInterrupted: 1
+    actionType: 0
+    animationNames: []
+    keyframeData: []
+    isClearVelocity: 0
+    cooldownType: 0
   - state: 3
     cost: 10
     cooldown: 1
     priority: 1
     animationType: 1
     canBeInterrupted: 1
+    actionType: 0
+    animationNames: []
+    keyframeData: []
+    isClearVelocity: 0
+    cooldownType: 0
   - state: 4
     cost: 12
     cooldown: 1
     priority: 1
     animationType: 1
     canBeInterrupted: 1
+    actionType: 0
+    animationNames: []
+    keyframeData: []
+    isClearVelocity: 0
+    cooldownType: 0
   - state: 5
     cost: 20
     cooldown: 2
     priority: 1
     animationType: 1
     canBeInterrupted: 0
+    actionType: 0
+    animationNames: []
+    keyframeData: []
+    isClearVelocity: 0
+    cooldownType: 0
   - state: 6
     cost: 0
     cooldown: 0
     priority: 0
     animationType: 0
     canBeInterrupted: 0
+    actionType: 0
+    animationNames: []
+    keyframeData: []
+    isClearVelocity: 0
+    cooldownType: 0
   - state: 7
     cost: 0
     cooldown: 0
     priority: 0
     animationType: 1
     canBeInterrupted: 1
+    actionType: 0
+    animationNames: []
+    keyframeData: []
+    isClearVelocity: 0
+    cooldownType: 0
   - state: 8
     cost: 10
     cooldown: 2
     priority: 1
     animationType: 2
     canBeInterrupted: 1
+    actionType: 0
+    animationNames: []
+    keyframeData: []
+    isClearVelocity: 0
+    cooldownType: 0
   - state: 9
     cost: 0
     cooldown: 0
     priority: 999
     animationType: 1
     canBeInterrupted: 0
+    actionType: 0
+    animationNames: []
+    keyframeData: []
+    isClearVelocity: 0
+    cooldownType: 0
   - state: 10
     cost: 0
     cooldown: 0
     priority: 2
     animationType: 1
     canBeInterrupted: 1
+    actionType: 0
+    animationNames: []
+    keyframeData: []
+    isClearVelocity: 0
+    cooldownType: 0

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
 using Unity.Jobs;
+using UnityEngine;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 using PlayerPropertyState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerPropertyState;
 using PropertyCalculator = HotUpdate.Scripts.Network.PredictSystem.State.PropertyCalculator;
@@ -51,6 +52,11 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
             var defenderPropertyStates = defenders;
             foreach (var (key, defenderPropertyState) in defenders)
             {
+                if (defenderPropertyState.IsInvisible)
+                {
+                    Debug.Log($"PlayerConnectionId: {key} is invisible, cannot attack.");
+                    continue;
+                }
                 var defense = defenderPropertyState.Properties[PropertyTypeEnum.Defense].CurrentValue;
                 var damage = getDamageFunction(attack, defense, critical, criticalDamage);
                 if (damage <= 0)

@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
-using HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
@@ -17,9 +15,14 @@ using UnityEngine;
 using VContainer;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 using CooldownSnapshotData = HotUpdate.Scripts.Network.PredictSystem.Data.CooldownSnapshotData;
+using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
+using InputCommand = HotUpdate.Scripts.Network.PredictSystem.Data.InputCommand;
+using NetworkCommandHeader = HotUpdate.Scripts.Network.PredictSystem.Data.NetworkCommandHeader;
 using PlayerAnimationCooldownState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerAnimationCooldownState;
 using PlayerGameStateData = HotUpdate.Scripts.Network.PredictSystem.State.PlayerGameStateData;
 using PlayerInputState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerInputState;
+using PropertyAttackCommand = HotUpdate.Scripts.Network.PredictSystem.Data.PropertyAttackCommand;
+using PropertyServerAnimationCommand = HotUpdate.Scripts.Network.PredictSystem.Data.PropertyServerAnimationCommand;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
@@ -56,10 +59,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 {
                     var animationCooldown = animationCooldowns[i];
                     animationCooldown.Update(deltaTime);
-                    if (animationCooldown.IsReady())
-                    {
-                        animationCooldowns.Remove(animationCooldown);
-                    }
                 }
             }
         }
@@ -91,28 +90,48 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void BindAniEvents(int connectionId)
         {
             var animationCooldowns = _animationCooldowns[connectionId];
-            if (animationCooldowns.Find(x => x.AnimationState == AnimationState.Attack) is not KeyframeComboCooldown attackCooldown)
+            var attackCooldown = animationCooldowns.Find(x => x.AnimationState == AnimationState.Attack);
+            if (attackCooldown is KeyframeComboCooldown attackComboCooldown)
             {
-                Debug.LogError("AttackCooldown not found in animation cooldowns.");
-                return;
+                attackComboCooldown.EventStream
+                    .Where(x => x == "OnAttackHit")
+                    .Subscribe(x => HandlePlayerAttack(connectionId))
+                    .AddTo(_disposables);
             }
-            attackCooldown.EventStream
-                .Where(x => x == "OnAttackHit")
-                .Subscribe(x => HandlePlayerAttack(connectionId))
-                .AddTo(_disposables);
+            var rollCooldown = animationCooldowns.Find(x => x.AnimationState == AnimationState.Roll);
+            if (rollCooldown is KeyframeComboCooldown rollComboCooldown)
+            {
+                rollComboCooldown.EventStream
+                    .Where(x => x == "OnRollStart")
+                    .Subscribe(x => HandlePlayerRoll(connectionId, true))
+                    .AddTo(_disposables);
+                rollComboCooldown.EventStream
+                    .Where(x => x == "OnRollEnd")
+                    .Subscribe(x => HandlePlayerRoll(connectionId, false))
+                    .AddTo(_disposables);
+            }
+        }
+
+        private void HandlePlayerRoll(int connectionId, bool isRollStart)
+        {
+            GameSyncManager.EnqueueServerCommand(new PropertyInvincibleChangedCommand()
+            {
+                Header = NetworkCommandHeader.Create(connectionId, CommandType.Property, GameSyncManager.CurrentTick, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), CommandAuthority.Server),
+                IsInvincible = isRollStart,
+            });
         }
 
         private void HandlePlayerAttack(int connectionId)
         {
             var playerController = GameSyncManager.GetPlayerConnection(connectionId);
-            var playerProperty = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property).GetPlayerProperty(connectionId);
+            var propertySyncSystem = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
+            var playerProperty = propertySyncSystem.GetPlayerProperty(connectionId);
             var attackConfigData = new AttackConfigData(playerProperty[PropertyTypeEnum.AttackRadius].CurrentValue, playerProperty[PropertyTypeEnum.AttackAngle].CurrentValue, playerProperty[PropertyTypeEnum.AttackHeight].CurrentValue);
             var defenders = playerController.HandleAttack(new AttackParams(playerController.transform.position,
                 playerController.transform.forward, connectionId, playerController.netId, attackConfigData));
-            // 扣除耐力值
             GameSyncManager.EnqueueServerCommand(new PropertyAttackCommand
             {
-                Header = NetworkCommandHeader.Create(0, CommandType.Property, GameSyncManager.CurrentTick, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), CommandAuthority.Server),
+                Header = NetworkCommandHeader.Create(connectionId, CommandType.Property, GameSyncManager.CurrentTick, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), CommandAuthority.Server),
                 AttackerId = connectionId,
                 TargetIds = defenders,
             });
@@ -125,15 +144,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             foreach (var animationState in animationStates)
             {
                 var info = _animationConfig.GetAnimationInfo(animationState);
-                if (info.state == AnimationState.Attack)
+                switch (info.cooldownType)
                 {
-                    list.Add(new KeyframeComboCooldown(animationState, info.cooldown, info.keyframeData.ToList()));
-                    continue;
-                }
-
-                if (info.cooldown > 0)
-                {
-                    list.Add(new AnimationCooldown(animationState, info.cooldown, 0));
+                    case CooldownType.Normal:
+                        list.Add(new AnimationCooldown(animationState, info.cooldown));
+                        break;
+                    case CooldownType.KeyFrame:
+                        list.Add(new KeyframeCooldown(animationState, info.cooldown, info.keyframeData.ToList()));
+                        break;
+                    case CooldownType.Combo:
+                        list.Add(new ComboCooldown(animationState, info.keyframeData.Select(x => x.resetCooldownWindowTime).ToList(), info.cooldown));
+                        break;
+                    case CooldownType.KeyFrameAndCombo:
+                        list.Add(new KeyframeComboCooldown(animationState, info.cooldown, info.keyframeData.ToList()));
+                        break;
                 }
             }
             return list;
@@ -166,6 +190,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 
                 //获取可以执行的动画
                 var commandAnimation = playerController.GetCurrentAnimationState(inputStateData);
+                inputStateData.Command = commandAnimation;
 
                 inputCommand.CommandAnimationState = commandAnimation;
                 var actionType = _animationConfig.GetActionType(inputCommand.CommandAnimationState);
@@ -183,16 +208,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 
                 //验证冷却时间是否已到
                 var cooldownInfo = animationCooldowns.Find(x => x.AnimationState == commandAnimation);
-                if (info.cooldown != 0 || info.cost > 0)
+
+                if (info.cooldown != 0)
                 {
                     if (cooldownInfo == null || !cooldownInfo.IsReady())
                     {
                         Debug.LogWarning($"Player {header.ConnectionId} input animation {commandAnimation} is not ready.");
                         return null;
                     }
-                
+                }
+
+                if (info.cost > 0)
+                {
                     //验证是否耐力值足够
-                    if (playerProperty[PropertyTypeEnum.Strength].CurrentValue < info.cost)
+                    if (!_animationConfig.IsStrengthEnough(inputCommand.CommandAnimationState, playerProperty[PropertyTypeEnum.Strength].CurrentValue, GameSyncManager.TickRate))
                     {
                         Debug.LogWarning($"Player {header.ConnectionId} input animation {commandAnimation} cost {info.cost} strength, but strength is {playerProperty[PropertyTypeEnum.Strength].CurrentValue}.");
                         return null;
@@ -205,8 +234,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         AnimationState = commandAnimation,
                     });
 
-                    cooldownInfo.Use();
                 }
+                cooldownInfo?.Use();
                 
                 var playerGameStateData = playerController.HandleServerMoveAndAnimation(inputStateData);
                 PropertyStates[header.ConnectionId] = new PlayerInputState(playerGameStateData, new PlayerAnimationCooldownState(GetCooldownSnapshotData(header.ConnectionId)));

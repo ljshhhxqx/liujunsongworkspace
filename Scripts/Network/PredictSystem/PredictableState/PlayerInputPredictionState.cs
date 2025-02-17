@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
 using HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
@@ -13,9 +12,12 @@ using Mirror;
 using UniRx;
 using UnityEngine;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
+using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
+using InputCommand = HotUpdate.Scripts.Network.PredictSystem.Data.InputCommand;
 using PlayerAnimationCooldownState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerAnimationCooldownState;
 using PlayerGameStateData = HotUpdate.Scripts.Network.PredictSystem.State.PlayerGameStateData;
 using PlayerInputState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerInputState;
+using PropertyClientAnimationCommand = HotUpdate.Scripts.Network.PredictSystem.Data.PropertyClientAnimationCommand;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {
@@ -74,7 +76,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 if (i == snapshot.Count - 1)
                 {
                     _animationCooldowns[i].Reset();
-                    _animationCooldowns.Remove(_animationCooldowns[i]);
                     break;
                 }
                 var animationCooldown = _animationCooldowns[i];
@@ -103,23 +104,28 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             {
                 var info = _animationConfig.GetAnimationInfo(inputCommand.CommandAnimationState);
                 var actionType = _animationConfig.GetActionType(inputCommand.CommandAnimationState);
-                if (actionType is not ActionType.Movement and ActionType.Interaction)
+                var health = _propertyPredictionState.GetProperty(PropertyTypeEnum.Health);
+                if (health == 0 || actionType is not ActionType.Movement and ActionType.Interaction)
                 {
                     return;
                 }
-                
-                if (info.cost > 0)
+
+                var cooldownInfo = _animationCooldowns.Find(x => x.AnimationState == inputCommand.CommandAnimationState);
+                if (info.cooldown > 0)
                 {
-                    var currentStrength = _propertyPredictionState.GetProperty(PropertyTypeEnum.Strength);
-                    if (currentStrength < info.cost)
-                    {
-                        Debug.LogWarning($"Not enough strength to perform {inputCommand.CommandAnimationState}.");
-                        return;
-                    }
-                    var cooldownInfo = _animationCooldowns.Find(x => x.AnimationState == inputCommand.CommandAnimationState);
                     if (cooldownInfo == null || !cooldownInfo.IsReady())
                     {
                         Debug.LogWarning($"Animation {inputCommand.CommandAnimationState} is on cooldown.");
+                        return;
+                    }
+                }
+
+                if (info.cost > 0)
+                {
+                    var currentStrength = _propertyPredictionState.GetProperty(PropertyTypeEnum.Strength);
+                    if (!_animationConfig.IsStrengthEnough(inputCommand.CommandAnimationState, currentStrength, GameSyncManager.TickRate))
+                    {
+                        Debug.LogWarning($"Not enough strength to perform {inputCommand.CommandAnimationState}.");
                         return;
                     }
                     _propertyPredictionState.AddPredictedCommand(new PropertyClientAnimationCommand
@@ -127,8 +133,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                         AnimationState = inputCommand.CommandAnimationState,
                         Header = header,
                     });
-                    cooldownInfo.Use(); 
                 }
+                cooldownInfo?.Use(); 
 
                 OnPlayerInputStateChanged?.Invoke(new PlayerInputStateData
                 {
@@ -146,15 +152,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             foreach (var animationState in animationStates)
             {
                 var info = _animationConfig.GetAnimationInfo(animationState);
-                if (info.state == AnimationState.Attack)
+                
+                switch (info.cooldownType)
                 {
-                    list.Add(new KeyframeComboCooldown(animationState, info.cooldown, info.keyframeData.ToList()));
-                    continue;
-                }
-
-                if (info.cooldown > 0)
-                {
-                    list.Add(new AnimationCooldown(animationState, info.cooldown, 0));
+                    case CooldownType.Normal:
+                        list.Add(new AnimationCooldown(animationState, info.cooldown));
+                        break;
+                    case CooldownType.KeyFrame:
+                        list.Add(new KeyframeCooldown(animationState, info.cooldown, info.keyframeData.ToList()));
+                        break;
+                    case CooldownType.Combo:
+                        list.Add(new ComboCooldown(animationState, info.keyframeData.Select(x => x.resetCooldownWindowTime).ToList(), info.cooldown));
+                        break;
+                    case CooldownType.KeyFrameAndCombo:
+                        list.Add(new KeyframeComboCooldown(animationState, info.cooldown, info.keyframeData.ToList()));
+                        break;
                 }
             }
             return list;
@@ -166,10 +178,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             {
                 var animationCooldown = _animationCooldowns[i];
                 animationCooldown.Update(deltaTime);
-                if (animationCooldown.IsReady())
-                {
-                    _animationCooldowns.Remove(animationCooldown);
-                }
             }
         }
 

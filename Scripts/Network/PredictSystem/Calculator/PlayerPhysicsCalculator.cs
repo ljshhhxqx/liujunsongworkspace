@@ -1,6 +1,7 @@
 ﻿using System;
 using HotUpdate.Scripts.Config.JsonConfig;
 using UnityEngine;
+using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
 {
@@ -183,11 +184,11 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
                     var moveDirection = movement.normalized;
                     var targetVelocity = moveDirection * _currentSpeed;
                     targetVelocity += _stairsHitNormal.normalized * -2f;
-                    _physicsComponent.Rigidbody.velocity = targetVelocity;
+                    _physicsComponent.Rigidbody.velocity = moveParam.IsClearVelocity ? Vector3.zero : targetVelocity;
                 }
                 else
                 {
-                    _physicsComponent.Rigidbody.velocity = _stairsHitNormal.normalized * -2f;
+                    _physicsComponent.Rigidbody.velocity = moveParam.IsClearVelocity ? Vector3.zero : _stairsHitNormal.normalized * -2f;
                 }
             }
             else if (_playerEnvironmentState == PlayerEnvironmentState.OnGround)
@@ -210,7 +211,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
 
                 movement.y = 0f;
                 // 计算目标位置和速度
-                var targetVelocity = movement.normalized * _currentSpeed;
+                var targetVelocity = moveParam.IsClearVelocity ? Vector3.zero : movement.normalized * _currentSpeed;
                 // 保持垂直速度
                 targetVelocity.y = _physicsComponent.Rigidbody.velocity.y;
                 if (_isOnSlope)
@@ -304,13 +305,15 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
         public float DeltaTime;
         public bool IsMovingState;
         public ushort CameraForward;
+        public bool IsClearVelocity;
         
-        public MoveParam(Vector3 inputMovement, float deltaTime, bool isMovingState, ushort cameraForward)
+        public MoveParam(Vector3 inputMovement, float deltaTime, bool isMovingState, ushort cameraForward, bool isClearVelocity)
         {
             InputMovement = inputMovement;
             DeltaTime = deltaTime;
             IsMovingState = isMovingState;
             CameraForward = cameraForward;
+            IsClearVelocity = isClearVelocity;
         }
     }
     

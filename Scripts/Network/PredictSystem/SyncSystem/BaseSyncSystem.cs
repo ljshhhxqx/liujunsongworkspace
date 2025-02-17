@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using HotUpdate.Scripts.Network.Data.PredictSystem.Data;
+﻿using System.Collections.Generic;
 using HotUpdate.Scripts.Network.Data.PredictSystem.State;
+using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
-using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using MemoryPack;
 using Mirror;
-using Newtonsoft.Json;
+using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
 
-namespace HotUpdate.Scripts.Network.Data.PredictSystem.SyncSystem
+namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
     public abstract class BaseSyncSystem
     {

@@ -382,11 +382,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public float CurrentCountdown => _currentCountdown;
         public float Cooldown => _cooldown;
         
-        public AnimationCooldown(AnimationState animationState, float cooldown, float currentCountdown = 0)
+        public AnimationCooldown(AnimationState animationState, float cooldown)
         {
             _animationState = animationState;
             _cooldown = cooldown;
-            _currentCountdown = currentCountdown;
         }
         
         public bool IsReady()
@@ -540,5 +539,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 KeyframeCurrentTime = comboKeyframe.CurrentTime,
             };
         }
+    }
+
+    public static class AnimationCooldownExtensions
+    {
+        
     }
 }
