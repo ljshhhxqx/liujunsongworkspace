@@ -4,7 +4,7 @@ using Tool.Coroutine;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace HotUpdate.Scripts.Network.Server.Collect
+namespace HotUpdate.Scripts.Collector
 {
     public class CollectAnimationComponent : MonoBehaviour
     {

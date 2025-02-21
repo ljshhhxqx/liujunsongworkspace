@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 9035084519652124758}
   - component: {fileID: 7922363766310901032}
   - component: {fileID: 4844622639245672926}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Chest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55,6 +55,9 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   lid: {fileID: 4390446185339052924}
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 64
   chestType: 0
   isPicked: 0
 --- !u!114 &5134369547626896564
@@ -151,7 +154,7 @@ GameObject:
   - component: {fileID: 6390759839071028115}
   - component: {fileID: 8664506271702699788}
   - component: {fileID: 4537461461952401978}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -217,7 +220,7 @@ GameObject:
   - component: {fileID: 2702853751964232935}
   - component: {fileID: 1672635066684686952}
   - component: {fileID: 1916101281153958807}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Chest
   m_TagString: Chest
   m_Icon: {fileID: 0}
@@ -301,7 +304,7 @@ GameObject:
   - component: {fileID: 7093952482971150608}
   - component: {fileID: 8880054083380856763}
   - component: {fileID: 2191900158617386272}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Chest_Open_Cap
   m_TagString: Untagged
   m_Icon: {fileID: 0}

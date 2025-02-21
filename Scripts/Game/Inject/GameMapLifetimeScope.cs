@@ -13,7 +13,7 @@ using VContainer.Unity;
 
 namespace HotUpdate.Scripts.Game.Inject
 {
-    public class GameMapLifetimeScope : LifetimeScope
+    public class GameMapLifetimeScope : LifetimeScope, IMapLifeScope
     {
         protected override void Configure(IContainerBuilder builder)
         {
@@ -38,6 +38,8 @@ namespace HotUpdate.Scripts.Game.Inject
                 .AsSelf()
                 .AsImplementedInterfaces();
         }
+
+        public MapType MapType => MapType.Town;
     }
 
     public interface IMapLifeScope

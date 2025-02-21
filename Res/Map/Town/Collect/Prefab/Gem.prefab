@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8354782866395337321}
   - component: {fileID: 4174581650220843971}
   - component: {fileID: 4793765346845987578}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -77,7 +77,7 @@ GameObject:
   - component: {fileID: 4112608947231611503}
   - component: {fileID: 8152717439628805784}
   - component: {fileID: 5866475068749699486}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Outline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -164,7 +164,7 @@ GameObject:
   - component: {fileID: -4291292701821885333}
   - component: {fileID: -2325120657532671922}
   - component: {fileID: 6043853017344936993}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Gem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -268,7 +268,10 @@ MonoBehaviour:
   syncInterval: 0
   CollectId: 0
   collectConfigId: 3
-  _renderer: {fileID: 0}
+  fillRenderer: {fileID: 0}
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!114 &-2325120657532671922
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -313,7 +316,7 @@ GameObject:
   - component: {fileID: 1389704862396438758}
   - component: {fileID: 4060736031652761860}
   - component: {fileID: 3391454652207018469}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Stone4
   m_TagString: Untagged
   m_Icon: {fileID: 0}

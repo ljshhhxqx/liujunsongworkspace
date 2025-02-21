@@ -1,6 +1,4 @@
 ﻿using System;
-using HotUpdate.Scripts.Collector;
-using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.NetworkMes;
 using Network.NetworkMes;
@@ -8,10 +6,9 @@ using Sirenix.OdinInspector;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
-using UnityEngine.Serialization;
 using VContainer;
 
-namespace HotUpdate.Scripts.Network.Server.Collect
+namespace HotUpdate.Scripts.Collector
 {
     public class CollectObjectController : CollectObject
     {
@@ -24,6 +21,9 @@ namespace HotUpdate.Scripts.Network.Server.Collect
         private int collectConfigId;
         [SerializeField]
         private Renderer fillRenderer;
+        [SerializeField]
+        private LayerMask playerLayer;  
+        
         
         public int CollectConfigId => collectConfigId;
         public override Collider Collider => _collider;
@@ -94,7 +94,7 @@ namespace HotUpdate.Scripts.Network.Server.Collect
         
         private void OnTriggerEnterObserver(Collider other)
         {
-            if (!other.CompareTag("Player") || !isClient)
+            if ((playerLayer.value & (1 << other.gameObject.layer)) == 0 || !isClient)
             {
                 return;
             }

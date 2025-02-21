@@ -22,6 +22,8 @@ namespace HotUpdate.Scripts.Collector
     {
         [SerializeField] 
         private GameObject lid; // 宝箱盖子
+        [SerializeField]
+        private LayerMask playerLayer;
         private Collider _chestCollider;
         private ChestDataConfig _chestDataConfig;
         private JsonDataConfig _jsonDataConfig;
@@ -37,8 +39,7 @@ namespace HotUpdate.Scripts.Collector
         public ChestType chestType;
         [SyncVar]
         public bool isPicked;
-        private IDisposable _triggerEnterObserver;
-        private IDisposable _triggerExitObserver;
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         [Inject]
         private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)
@@ -67,10 +68,12 @@ namespace HotUpdate.Scripts.Collector
                 _gameEventManager?.Publish(new TargetShowEvent(null));
             }
             lid.transform.eulerAngles = _chestCommonData.InitEulerAngles;
-            _triggerEnterObserver = _chestCollider.OnTriggerEnterAsObservable()
-                .Subscribe(OnTriggerEnterObserver);
-            _triggerExitObserver = _chestCollider.OnTriggerExitAsObservable()
-                .Subscribe(OnTriggerExitObserver);
+            _chestCollider.OnTriggerEnterAsObservable()
+                .Subscribe(OnTriggerEnterObserver)
+                .AddTo(_disposables);
+            _chestCollider.OnTriggerExitAsObservable()
+                .Subscribe(OnTriggerExitObserver)
+                .AddTo(_disposables);
         }
 
         private void OnReturnToPool()
@@ -83,14 +86,13 @@ namespace HotUpdate.Scripts.Collector
             _chestDataConfig = null;
             _chestCommonData = default;
             _mirrorNetworkMessageHandler = null;
-            _triggerEnterObserver?.Dispose();
-            _triggerExitObserver?.Dispose(); 
+            _disposables?.Clear();
             _pooledObject.OnSelfDespawn -= OnReturnToPool;
         }
 
         private void OnTriggerExitObserver(Collider other)
         {
-            if (other.CompareTag("Player") && isClient)
+            if ((playerLayer.value & (1 << other.gameObject.layer)) != 0 && isClient)
             {
                 _gameEventManager.Publish(new GameInteractableEffect(other.gameObject, this, false));
             }
@@ -98,7 +100,7 @@ namespace HotUpdate.Scripts.Collector
         
         private void OnTriggerEnterObserver(Collider other)
         {
-            if (other.CompareTag("Player") && isClient)
+            if ((playerLayer.value & (1 << other.gameObject.layer)) != 0 && isClient)
             {
                 _gameEventManager.Publish(new GameInteractableEffect(other.gameObject, this, true));
             }

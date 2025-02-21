@@ -16,7 +16,7 @@ namespace HotUpdate.Scripts.Collector
 
     public abstract class CollectObject : NetworkMonoController, ICollect
     {
-        [SyncVar] public int CollectId;
+        [SyncVar] public uint CollectId;
         public abstract Collider Collider { get; }
         protected abstract void SendCollectRequest(uint pickerId, PickerType pickerType);
 

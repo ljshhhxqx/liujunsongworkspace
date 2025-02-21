@@ -261,7 +261,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void OnDestroy()
         {
-            _disposables?.Dispose();
+            _disposables?.Clear();
             _propertyPredictionState.OnPropertyChanged -= HandlePropertyChange;
             _inputState.OnPlayerStateChanged -= HandlePlayerStateChanged;
             _inputState.OnPlayerAnimationCooldownChanged -= HandlePlayerAnimationCooldownChanged;

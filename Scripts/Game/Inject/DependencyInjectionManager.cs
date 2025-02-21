@@ -79,12 +79,11 @@ namespace HotUpdate.Scripts.Game.Inject
 
         private LifetimeScope GetLifetimeScope(MapType mapType)
         {
-            if (GameLoopDataModel.GameSceneName.Value != mapType)
+            if (!Enum.IsDefined(mapType.GetType(), typeof(MapType)))
             {
-                Debug.LogError($"Current scene is not {mapType}, injection failed.");
                 return null;
             }
-
+            
             if (_injectors.TryGetValue(mapType, out var lifetimeScope))
             {
                 return lifetimeScope;

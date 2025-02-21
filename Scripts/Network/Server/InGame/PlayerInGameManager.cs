@@ -17,6 +17,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         private readonly SyncDictionary<uint, int> _playerIdsByNetId = new SyncDictionary<uint, int>();
         private readonly SyncDictionary<int, PlayerInGameData> _playerInGameData = new SyncDictionary<int, PlayerInGameData>();
         private readonly SyncDictionary<uint, Vector2Int> _playerGrids = new SyncDictionary<uint, Vector2Int>();
+        private readonly SyncDictionary<int, IColliderConfig> _playerPhysicsData = new SyncDictionary<int, IColliderConfig>();
         private readonly SyncGridDictionary _gridPlayers = new SyncGridDictionary();
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         
@@ -114,10 +115,45 @@ namespace HotUpdate.Scripts.Network.Server.InGame
 
         public void AddPlayer(int connectId, PlayerInGameData playerInGameData)
         {
+            var playerIdentity = playerInGameData.networkIdentity;
+            var playerCollider = playerIdentity.GetComponent<Collider>();
+            _playerPhysicsData.Add(connectId, AddPlayerPhysicsData(playerCollider));
             _playerIds.Add(connectId, playerInGameData.player.PlayerId);
             _playerNetIds.Add(connectId, playerInGameData.networkIdentity.netId);
             _playerInGameData.Add(connectId, playerInGameData);
             _playerIdsByNetId.Add(playerInGameData.networkIdentity.netId, connectId);
+        }
+
+        private IColliderConfig AddPlayerPhysicsData(Collider physicsCollider)
+        {
+            switch (physicsCollider)
+            {
+                case BoxCollider box:
+                    return new BoxColliderConfig
+                    {
+                        Size = box.size,
+                        Center = box.center
+                    };
+            
+                case SphereCollider sphere:
+                    return new SphereColliderConfig
+                    {
+                        Radius = sphere.radius,
+                        Center = sphere.center
+                    };
+            
+                case CapsuleCollider capsule:
+                    return new CapsuleColliderConfig
+                    {
+                        Height = capsule.height,
+                        Radius = capsule.radius,
+                        Direction = capsule.direction,
+                        Center = capsule.center
+                    };
+            
+                default:
+                    throw new ArgumentException("Collider type not supported: " + physicsCollider.GetType());
+            }
         }
 
         public void RemovePlayer(int connectId)

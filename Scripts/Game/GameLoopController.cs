@@ -22,7 +22,7 @@ using VContainer;
 
 namespace HotUpdate.Scripts.Game
 {
-    public class GameLoopController : NetworkMonoController
+    public class GameLoopController : NetworkBehaviour
     {
         [SyncVar(hook = nameof(OnCurrentRoundChanged))]
         private int _currentRound = 1;

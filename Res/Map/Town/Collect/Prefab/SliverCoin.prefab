@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4336748824580364}
   - component: {fileID: 33800315709682508}
   - component: {fileID: 23427727207255438}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: SilverCoin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -98,7 +98,7 @@ GameObject:
   - component: {fileID: -2970214308389679516}
   - component: {fileID: 3476315079879504576}
   - component: {fileID: 1253529244832275971}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: SliverCoin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -202,7 +202,10 @@ MonoBehaviour:
   syncInterval: 0
   CollectId: 0
   collectConfigId: 1
-  _renderer: {fileID: 0}
+  fillRenderer: {fileID: 0}
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!114 &3476315079879504576
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -247,7 +250,7 @@ GameObject:
   - component: {fileID: 956841555816008065}
   - component: {fileID: 5933254788712000740}
   - component: {fileID: 6769981368201373393}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Outline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -330,7 +333,7 @@ GameObject:
   - component: {fileID: 8924066298189803426}
   - component: {fileID: 5309663049632740256}
   - component: {fileID: 5882382037598875331}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}

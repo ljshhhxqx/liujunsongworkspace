@@ -133,9 +133,9 @@ namespace Tool.Message
     public struct PickerPickUpMessage : IMessage
     {
         public uint PickerId { get; set; }
-        public int ItemId { get; set; }
+        public uint ItemId { get; set; }
         
-        public PickerPickUpMessage(uint pickerId, int itemId)
+        public PickerPickUpMessage(uint pickerId, uint itemId)
         {
             PickerId = pickerId;
             ItemId = itemId;

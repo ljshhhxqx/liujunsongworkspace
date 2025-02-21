@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8853484928858861703}
   - component: {fileID: 2957251316284216480}
   - component: {fileID: 5052062710273408334}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Large
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60,6 +60,9 @@ MonoBehaviour:
   CollectId: 0
   collectConfigId: 6
   fillRenderer: {fileID: 23753439705546060}
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!114 &7727184122250189628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,7 +172,7 @@ GameObject:
   - component: {fileID: 4802741706567478}
   - component: {fileID: 33618896826128822}
   - component: {fileID: 23785029539071662}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Bottle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -252,7 +255,7 @@ GameObject:
   - component: {fileID: 4874378374668272}
   - component: {fileID: 33763714083642794}
   - component: {fileID: 23458260680199722}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -335,7 +338,7 @@ GameObject:
   - component: {fileID: 4829758525157440}
   - component: {fileID: 33304492332863124}
   - component: {fileID: 23753439705546060}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -416,7 +419,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4641261677876492}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cork
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -450,7 +453,7 @@ GameObject:
   - component: {fileID: 2244170102246801343}
   - component: {fileID: 1419560269340583068}
   - component: {fileID: 7378990411467128113}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -516,7 +519,7 @@ GameObject:
   - component: {fileID: 2975617779482149239}
   - component: {fileID: 1772748596955927609}
   - component: {fileID: 2935067415484386650}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Outline
   m_TagString: Untagged
   m_Icon: {fileID: 0}

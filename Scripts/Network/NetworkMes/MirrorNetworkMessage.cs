@@ -89,9 +89,9 @@ namespace Network.NetworkMes
     public struct MirrorPickerPickUpCollectMessage : NetworkMessage
     {
         public uint PickerID;
-        public int ItemID;
+        public uint ItemID;
 
-        public MirrorPickerPickUpCollectMessage(uint pickerID, int itemID)
+        public MirrorPickerPickUpCollectMessage(uint pickerID, uint itemID)
         {
             PickerID = pickerID;
             ItemID = itemID;

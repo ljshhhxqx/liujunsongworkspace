@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -1626358166044301826}
   - component: {fileID: 9215843777453308375}
   - component: {fileID: 6503866967192016724}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: GoldCoin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -119,7 +119,10 @@ MonoBehaviour:
   syncInterval: 0
   CollectId: 0
   collectConfigId: 2
-  _renderer: {fileID: 0}
+  fillRenderer: {fileID: 0}
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!114 &9215843777453308375
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,7 +167,7 @@ GameObject:
   - component: {fileID: 4271735776560842}
   - component: {fileID: 33160559832521050}
   - component: {fileID: 23941041030839374}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Play
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -247,7 +250,7 @@ GameObject:
   - component: {fileID: 8501547304824918239}
   - component: {fileID: 3346514112615096124}
   - component: {fileID: 9192470843727270530}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Outline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -330,7 +333,7 @@ GameObject:
   - component: {fileID: 7243078256456135241}
   - component: {fileID: 6264378266441113756}
   - component: {fileID: 2128127405110949723}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
