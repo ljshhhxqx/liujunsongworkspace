@@ -1,5 +1,4 @@
 ﻿using System;
-using HotUpdate.Scripts.Network.Server.InGame;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Collector
@@ -48,8 +47,8 @@ namespace HotUpdate.Scripts.Collector
     {
         // 快速检测物品是否被拾取
         public static bool FastCheckItemPickUp(
-            Transform a,
-            Transform b,
+            Vector3 a,
+            Vector3 b,
             IColliderConfig aConfig,
             IColliderConfig bConfig)
         {
@@ -61,8 +60,8 @@ namespace HotUpdate.Scripts.Collector
 
         // 带安全距离的检测
         public static bool CheckPickupWithMargin(
-            Transform a,
-            Transform b,
+            Vector3 a,
+            Vector3 b,
             IColliderConfig aConfig,
             IColliderConfig bConfig,
             float margin = 0.5f)
@@ -73,9 +72,8 @@ namespace HotUpdate.Scripts.Collector
             aBounds.Expand(margin);
             return aBounds.Intersects(bBounds);
         }
-        private static Bounds GetWorldBounds(Transform transform, IColliderConfig config)
+        private static Bounds GetWorldBounds(Vector3 position, IColliderConfig config)
         {
-            var position = transform.position;
             return config.ColliderType switch
             {
                 ColliderType.Box => new Bounds(position, config.Size),
@@ -109,6 +107,38 @@ namespace HotUpdate.Scripts.Collector
                     config.Radius * 2 + (axis == Vector3.forward ? config.Height : 0)
                 )
             };
+        }
+        
+        public static IColliderConfig CreateColliderConfig(Collider collider)
+        {
+            switch (collider)
+            {
+                case BoxCollider box:
+                    return new BoxColliderConfig
+                    {
+                        Size = box.size,
+                        Center = box.center
+                    };
+            
+                case SphereCollider sphere:
+                    return new SphereColliderConfig
+                    {
+                        Radius = sphere.radius,
+                        Center = sphere.center
+                    };
+            
+                case CapsuleCollider capsule:
+                    return new CapsuleColliderConfig
+                    {
+                        Height = capsule.height,
+                        Radius = capsule.radius,
+                        Direction = capsule.direction,
+                        Center = capsule.center
+                    };
+            
+                default:
+                    throw new ArgumentException("Collider type not supported: " + collider.GetType());
+            }
         }
 
         //     private static bool PreciseCheck(

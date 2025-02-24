@@ -4,7 +4,7 @@ using System.Linq;
 using AOTScripts.Tool.ECS;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
-using HotUpdate.Scripts.Buff;
+using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
@@ -16,14 +16,13 @@ using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
 using HotUpdate.Scripts.UI.UIs.Overlay;
+using MemoryPack;
 using Mirror;
 using Tool.GameEvent;
 using Tool.Message;
 using UI.UIBase;
 using UnityEngine;
-using UnityEngine.Serialization;
 using VContainer;
-using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Collector
@@ -32,12 +31,9 @@ namespace HotUpdate.Scripts.Collector
     {
         [SyncVar]
         private int _currentId;
-        [SyncVar]
-        private TreasureChestInfo _treasureChestInfo;
         private Dictionary<int, CollectibleItemData> _collectiblePrefabs = new Dictionary<int, CollectibleItemData>();
         private readonly Dictionary<CollectObjectBuffSize, Dictionary<PropertyTypeEnum, Material>> _collectibleMaterials = new Dictionary<CollectObjectBuffSize, Dictionary<PropertyTypeEnum, Material>>();
         private TreasureChestComponent _treasureChestPrefab;
-        private TreasureChestComponent _treasureChest;
         private IConfigProvider _configProvider;
         private MapBoundDefiner _mapBoundDefiner;
         private JsonDataConfig _jsonDataConfig;
@@ -65,9 +61,15 @@ namespace HotUpdate.Scripts.Collector
         private PlayerInGameManager _playerInGameManager;
         
         // 服务器维护的核心数据
-        private readonly SyncDictionary<uint, CollectItemMetaData> _serverItemMap = new SyncDictionary<uint, CollectItemMetaData>();
+        private readonly SyncDictionary<uint, byte[]> _serverItemMap = new SyncDictionary<uint, byte[]>();
+        private readonly Dictionary<int, IColliderConfig> _colliderConfigs = new Dictionary<int, IColliderConfig>();
         
+        private readonly Dictionary<uint, CollectObjectController> _clientCollectObjectControllers = new Dictionary<uint, CollectObjectController>();
         
+        [SyncVar]
+        private byte[] _serverTreasureChestMetaData;
+        private IColliderConfig _chestColliderConfig;
+        private TreasureChestComponent _clientTreasureChest;
 
         [Inject]
         private void Init(MapBoundDefiner mapBoundDefiner, UIManager uiManager, IConfigProvider configProvider ,  GameSyncManager gameSyncManager, GameMapInjector gameMapInjector, PlayerInGameManager playerInGameManager,GameEventManager gameEventManager, MessageCenter messageCenter)
@@ -90,8 +92,6 @@ namespace HotUpdate.Scripts.Collector
             _messageCenter.Register<PickerPickUpMessage>(OnPickUpItem);
             _gameLoopController = FindObjectOfType<GameLoopController>();
             _spawnedParent = transform;
-            //_spawnedItems.OnChange += OnSpawnItemsChange;
-            CollectItemReaderWriter.RegisterReaderWriter();
         }
 
         private void OnGameSceneResourcesLoadedLoaded(GameSceneResourcesLoadedEvent gameSceneResourcesLoadedEvent)
@@ -109,84 +109,33 @@ namespace HotUpdate.Scripts.Collector
 
         private void OnPickerPickUpChestMessage(PickerPickUpChestMessage message)
         {
-            if (!isServer || _treasureChestInfo.isPicking) return;
-            _treasureChestInfo.isPicking = true;
-
-            // 通过netId找到实际的宝箱物体
-            var networkIdentity = NetworkServer.spawned[_treasureChestInfo.netId];
-            if (!networkIdentity)
+            var data = MemoryPackSerializer.Deserialize<CollectItemMetaData>(_serverTreasureChestMetaData);
+            var state = (ItemState)data.StateFlags;
+            var chestData = data.GetCustomData<ChestItemCustomData>();
+            if (!isServer || state.HasAnyState(ItemState.IsInteracting) || state.HasAnyState(ItemState.IsProcessed)) return;
+            state.AddState(ItemState.IsInteracting);
+            var chestPos = data.Position.ToVector3();
+            var player = NetworkServer.spawned[message.PickerId];
+            if (!player)
             {
-                Debug.LogError($"Cannot find treasure chest with netId: {_treasureChestInfo.netId}");
-                _treasureChestInfo.isPicking = false;
+                Debug.LogError($"Player {message.PickerId} could not be found");
                 return;
             }
+            var playerConnection = player.connectionToClient.connectionId;
+            var playerCollider = _playerInGameManager.GetPlayerPhysicsData(playerConnection);
 
-            var treasureChest = networkIdentity.GetComponent<TreasureChestComponent>();
-    
-            // 获取玩家实例
-            var playerIdentity = _playerInGameManager.GetPlayer(message.ConnectionId);
-            if (playerIdentity == null)
+            if (ValidatePickup(chestPos, player.transform.position, _chestColliderConfig, playerCollider))
             {
-                Debug.LogError($"Cannot find player with netId: {message.ConnectionId}");
-                _treasureChestInfo.isPicking = false;
-                return;
-            }
-    
-            var player = playerIdentity.networkIdentity.GetComponent<PlayerAnimationComponent>();
-            var playerProperty = player.GetComponent<PlayerPropertyComponent>();
-            if (player.CurrentState.Value == AnimationState.Dead)
-            {
-                _treasureChestInfo.isPicking = false;
-                return;
-            }
-
-            // 验证位置和碰撞
-            if (ValidateChestPickup(treasureChest, playerProperty, _treasureChestInfo.position))
-            {
-                // 更新宝箱状态
-                _treasureChestInfo = new TreasureChestInfo
-                {
-                    netId = _treasureChestInfo.netId,
-                    chestType = _treasureChestInfo.chestType,
-                    position = _treasureChestInfo.position,
-                    isPicked = true
-                };
-
-                // 处理buff和属性
-                playerProperty.CurrentChestType = treasureChest.chestType;
-                var configData = _chestConfig.GetChestConfigData(treasureChest.chestType);
+                //playerProperty.CurrentChestType = treasureChest.chestType;
+                var configData = _chestConfig.GetChestConfigData(chestData.ChestType);
                 if (configData.BuffExtraData.buffType != BuffType.None)
                 {
                     //_buffManager.AddBuffToPlayer(playerProperty, configData.BuffExtraData, CollectObjectBuffSize.Small);
                     Debug.Log($"Add buff {configData.BuffExtraData.buffType} to player {player.name}");
                 }
-
-                treasureChest.PickUpSuccess(() =>
-                {
-                    GameObjectPoolManger.Instance.ReturnObject(networkIdentity.gameObject);
-                    NetworkServer.UnSpawn(networkIdentity.gameObject);
-                    _treasureChestInfo.isPicking = false;
-                }).Forget();
                 JudgeEndRound();
             }
-            _treasureChestInfo.isPicking = false;
-        }
-        
-        private bool ValidateChestPickup(TreasureChestComponent chest, PlayerPropertyComponent player, Vector3 originalPosition)
-        {
-            // 基本碰撞检测
-            var chestCollider = chest.ChestCollider;
-            var playerCollider = player.GetComponent<Collider>();
-            if (!chestCollider.bounds.Intersects(playerCollider.bounds))
-                return false;
-
-            // 可选：检查当前位置是否在原始位置的合理范围内
-            var currentPosition = chest.transform.position;
-            var distanceFromOriginal = Vector3.Distance(currentPosition, originalPosition);
-            if (distanceFromOriginal > 1f) // 定义一个合理的最大距离
-                return false;
-
-            return true;
+            state.RemoveState(ItemState.IsInteracting);
         }
 
         private void OnPickUpItem(PickerPickUpMessage message)
@@ -242,6 +191,19 @@ namespace HotUpdate.Scripts.Collector
                     );
             }
 
+            if (_colliderConfigs.Count == 0)
+            {
+                foreach (var data in _collectiblePrefabs.Values)
+                {
+                    var gameObjectCollider = data.component.GetComponent<Collider>();
+                    var config = GamePhysicsSystem.CreateColliderConfig(gameObjectCollider);
+                    if (config != null)
+                    {
+                        _colliderConfigs.Add(data.component.CollectConfigId, config);
+                    }
+                }
+            }
+
             if (_collectibleMaterials.Count == 0)
             {
                 for (var i = (int)CollectObjectBuffSize.Small; i <= (int)CollectObjectBuffSize.Large; i++)
@@ -293,35 +255,28 @@ namespace HotUpdate.Scripts.Collector
                 {
                     return;
                 }
-
-                // 通过netId找到实际物体
-                Debug.Log($"HandleItemPickup: itemId - {itemId} pickerId - {pickerId} - netId- {itemInfo.netId}");
-                var networkIdentity = NetworkServer.spawned[itemInfo.netId];
-                if (!networkIdentity)
-                {
-                    Debug.LogError($"Cannot find spawned item with netId: {itemInfo.netId}");
-                    return;
-                }
-
-                var item = networkIdentity.GetComponent<CollectObjectController>();
+                var itemData = MemoryPackSerializer.Deserialize<CollectItemMetaData>(itemInfo);
+                var itemColliderData = _colliderConfigs.GetValueOrDefault(itemData.ItemConfigId);
+                var itemPos = itemData.Position;
                 var player =  NetworkServer.spawned[pickerId];
+                var playerConnectionId = _playerInGameManager.GetPlayerId(pickerId);
+                var playerColliderConfig = _playerInGameManager.GetPlayerPhysicsData(playerConnectionId);
                 if (!player)
                 {
                     Debug.LogError($"Cannot find player with netId: {pickerId}");
                     return;
                 }
-
-                var playerProperty = player.GetComponent<PlayerPropertyComponent>();
+                
                 // 验证位置和碰撞
-                if (ValidatePickup(item, playerProperty, itemInfo.position))
+                if (ValidatePickup(itemPos.ToVector3(), player.transform.position, itemColliderData, playerColliderConfig))
                 {
                     // 处理拾取逻辑
-                    var configData = _collectObjectDataConfig.GetCollectObjectData(itemInfo.collectConfigId);
+                    var configData = _collectObjectDataConfig.GetCollectObjectData(itemData.ItemConfigId);
                     switch (configData.collectObjectClass)
                     {
                         case CollectObjectClass.Score:
-                            var buff = configData.buffExtraData.buffType == BuffType.Constant ? _constantBuffConfig.GetBuff(configData.buffExtraData) : _randomBuffConfig.GetBuff(configData.buffExtraData);
-                            playerProperty.IncreaseProperty(PropertyTypeEnum.Score, buff.increaseDataList);
+                            // var buff = configData.buffExtraData.buffType == BuffType.Constant ? _constantBuffConfig.GetBuff(configData.buffExtraData) : _randomBuffConfig.GetBuff(configData.buffExtraData);
+                            // playerProperty.IncreaseProperty(PropertyTypeEnum.Score, buff.increaseDataList);
                             break;
                         case CollectObjectClass.Buff:
                             // if (configData.isRandomBuff)
@@ -336,28 +291,21 @@ namespace HotUpdate.Scripts.Collector
                     }
 
                     // 通知客户端
-                    RpcPickupItem(item);
+                    RpcPickupItem(itemId);
             
-                    // 回收物体
-                    GameObjectPoolManger.Instance.ReturnObject(networkIdentity.gameObject);
-                    NetworkServer.UnSpawn(networkIdentity.gameObject);
                     _processedItems.Remove(itemId);
-                    _spawnedItems.Remove(itemId);
+                    _serverItemMap.Remove(itemId);
                     
                 }
             }
         }
         
         [ClientRpc]
-        private void RpcPickupItem(CollectObjectController item)
+        private void RpcPickupItem(uint itemId)
         {
+            var item = _clientCollectObjectControllers[itemId];
             item.CollectSuccess();
             GameObjectPoolManger.Instance.ReturnObject(item.gameObject);
-        }
-
-        private int GenerateID()
-        {
-            return _currentId++;
         }
         
         [Server]
@@ -377,7 +325,9 @@ namespace HotUpdate.Scripts.Collector
         [Server]
         private void JudgeEndRound()
         {
-            var endRound = _serverItemMap.Count == 0 && _treasureChest.isPicked;
+            var data = MemoryPackSerializer.Deserialize<CollectItemMetaData>(_serverTreasureChestMetaData);
+            var state = (ItemState)data.StateFlags;
+            var endRound = _serverItemMap.Count == 0 && state.HasAnyState(ItemState.IsProcessed);
             if (endRound)
             {
                 _gameLoopController.IsEndRound = true;
@@ -390,17 +340,20 @@ namespace HotUpdate.Scripts.Collector
             try
             {
                 Debug.Log("Starting EndRound");
+                var chestData = MemoryPackSerializer.Deserialize<CollectItemMetaData>(_serverTreasureChestMetaData);
+                var state = (ItemState)chestData.StateFlags;
+                state = state.AddState(ItemState.IsProcessed);
                 // 清理宝箱
-                if (_treasureChestInfo.netId != 0 && !_treasureChestInfo.isPicked)
-                {
-                    var chestIdentity = NetworkServer.spawned[_treasureChestInfo.netId];
-                    if (chestIdentity)
-                    {
-                        GameObjectPoolManger.Instance.ReturnObject(chestIdentity.gameObject);
-                        NetworkServer.UnSpawn(chestIdentity.gameObject);
-                    }
-                }
-                _treasureChestInfo = new TreasureChestInfo();
+                // if (_treasureChestInfo.netId != 0 && !_treasureChestInfo.isPicked)
+                // {
+                //     var chestIdentity = NetworkServer.spawned[_treasureChestInfo.netId];
+                //     if (chestIdentity)
+                //     {
+                //         GameObjectPoolManger.Instance.ReturnObject(chestIdentity.gameObject);
+                //         NetworkServer.UnSpawn(chestIdentity.gameObject);
+                //     }
+                // }
+                // _treasureChestInfo = new TreasureChestInfo();
 
                 // 清理所有生成物
                 foreach (var item in _serverItemMap.Values.ToList())
@@ -446,12 +399,13 @@ namespace HotUpdate.Scripts.Collector
                     // 清理客户端的生成物
                     foreach (var item in _serverItemMap.Values)
                     {
-                        // if (NetworkClient.spawned.TryGetValue(item.netId, out var networkIdentity))
-                        // {
-                        //     var pooledComponent = networkIdentity.GetComponent<CollectObjectController>();
-                        //     if (pooledComponent)
-                        //         GameObjectPoolManger.Instance.ReturnObject(networkIdentity.gameObject);
-                        // }
+                        var data = MemoryPackSerializer.Deserialize<CollectItemMetaData>(item);
+                        var component = _clientCollectObjectControllers[data.ItemId];
+                        var identity = component.GetComponent<NetworkIdentity>();
+                        if (NetworkClient.spawned.TryGetValue(identity.netId, out var networkIdentity))
+                        {
+                            GameObjectPoolManger.Instance.ReturnObject(networkIdentity.gameObject);
+                        }
                     }
                 }
                 catch (Exception e)
@@ -506,59 +460,31 @@ namespace HotUpdate.Scripts.Collector
                             continue;
                         }
 
-                        var prefab = GetPrefabByCollectType(item.Item1);
                         var buffData = GetBuffExtraData(item.Item1);
-                        var configData = _collectObjectDataConfig.GetCollectObjectData(item.Item1);
                         var buff = _randomBuffConfig.GetRandomBuffData(buffData.buffId);
-                        itemInfo = new CollectItemMetaData(id, 
+                        var extraData = new CollectItemCustomData
+                        {
+                            RandomBuffId = buff.buffId,
+                            BuffSize = buffData.collectObjectBuffSize,
+                        };
+                        var itemMetaData = new CollectItemMetaData(id, 
                             item.Item2,
                             0, 
                             item.Item1,
                             (uint)Mathf.Abs(_gameSyncManager.CurrentTick),
                             30, 
                             (ushort)Random.Range(0, 65535),
-                            -1,
-                            buffData.collectObjectBuffSize,
-                            buff.buffId,
-                            0);
-                        itemInfo = itemInfo.AddState(ItemState.IsActive);
+                            -1);
+                        itemMetaData.SetCustomData(extraData);
+                        var state = (ItemState)itemMetaData.StateFlags;
+                        state = state.AddState(ItemState.IsActive);
+                        itemMetaData.StateFlags = (byte)state;
+                        itemInfo = MemoryPackSerializer.Serialize(itemMetaData);
                         _serverItemMap.Add(id, itemInfo);
                     }
                     //Debug.Log($"Calculated {spawnedCount} spawn positions");
                     await UniTask.Yield();
                 }
-
-                // 在服务器端生成物品
-                // foreach (var info in _serverItemMap.Values)
-                // {
-                //     // var spawnedObject = GameObjectPoolManger.Instance.GetObject(
-                //     //     prefab.gameObject, 
-                //     //     info.Position.ToVector3(), 
-                //     //     Quaternion.identity, 
-                //     //     _spawnedParent,
-                //     //     go => _gameMapInjector.InjectGameObject(go)
-                //     // );
-                //     // NetworkServer.Spawn(spawnedObject); // 确保网络同步
-                //     // var component = spawnedObject.GetComponent<CollectObjectController>();
-                //     //
-                //     // var networkIdentity = spawnedObject.GetComponent<NetworkIdentity>();
-                //     
-                //     // component.CollectId = info.id;
-                //     // if (component.CollectObjectData.collectObjectClass == CollectObjectClass.Buff)
-                //     // {
-                //     //     //Debug.Log($"Spawning buff item at position: {info.position} with id: id-{info.id} netId-{networkIdentity.netId} configId-{info.collectConfigId} buff.propertyType-{buff.propertyType} buffId-{buff.buffId} buffSize-{info.buffSize} buffPropertyType-{buff.propertyType}");
-                //     //     component.SetBuffData(buffData);
-                //     //     component.SetMaterial(_collectibleMaterials[configData.buffSize][buff.propertyType]);
-                //     // }
-                //     // _spawnedItems.Add(info.id, new SpawnItemInfo
-                //     // {
-                //     //     id = info.id,
-                //     //     netId = networkIdentity.netId,
-                //     //     collectConfigId = info.collectConfigId,
-                //     //     position = info.position,
-                //     //     buffExtraData = info.buffExtraData,
-                //     // });
-                // }
                 SpawnManyItemsClientRpc(_serverItemMap.Values.ToArray());
             }
             catch (Exception e)
@@ -606,59 +532,60 @@ namespace HotUpdate.Scripts.Collector
             treasureChest.chestType = chestType;
 
             // 更新同步数据
-            _treasureChestInfo = new TreasureChestInfo
-            {
-                netId = networkIdentity.netId,
-                chestType = chestType,
-                position = position,
-                isPicked = false
-            };
+            // _treasureChestInfo = new TreasureChestInfo
+            // {
+            //     netId = networkIdentity.netId,
+            //     chestType = chestType,
+            //     position = position,
+            //     isPicked = false
+            // };
         }
 
         [ClientRpc]
-        private void SpawnManyItemsClientRpc(CollectItemMetaData[] allSpawnedItems)
+        private void SpawnManyItemsClientRpc(byte[][] allSpawnedItems)
         {
-            SpawnItems(allSpawnedItems);
+            var allItems = MemoryPackSerializer.Deserialize<CollectItemMetaData[]>(allSpawnedItems[0]);
+            SpawnItems(allItems);
         }
 
         private void SpawnItems(CollectItemMetaData[] allSpawnedItems)
         {
-            foreach (var info in allSpawnedItems)
+            foreach (var data in allSpawnedItems)
             {
-                var position = info.Position;
+                var position = data.Position;
                 var pos = position.ToVector3();
                 Debug.Log($"Client spawning item at position: {pos}"); // 添加日志
-                var prefab = GetPrefabByCollectType(info.ItemConfigId);
+                var prefab = GetPrefabByCollectType(data.ItemConfigId);
                 if (!prefab)
                 {
-                    Debug.LogError($"Failed to find prefab for CollectType: {info.ItemConfigId}");
+                    Debug.LogError($"Failed to find prefab for CollectType: {data.ItemConfigId}");
                     continue;
                 }
 
                 var go = GameObjectPoolManger.Instance.GetObject(prefab.gameObject, pos, Quaternion.identity, _spawnedParent,
                     go => _gameMapInjector.InjectGameObject(go));
-                //var networkIdentity = go.GetComponent<NetworkIdentity>();
                 if (!go)
                 {
                     Debug.LogError("Failed to get object from pool");
                     continue;
                 }
-                var configData = _collectObjectDataConfig.GetCollectObjectData(info.ItemConfigId);
-                var buff = _randomBuffConfig.GetRandomBuffData(info.RandomBuffId);
+                var configData = _collectObjectDataConfig.GetCollectObjectData(data.ItemConfigId);
+                var collectItemCustomData = data.GetCustomData<CollectItemCustomData>();
+                var buff = _randomBuffConfig.GetRandomBuffData(collectItemCustomData.RandomBuffId);
                 var component = go.GetComponent<CollectObjectController>();
                 var material = _collectibleMaterials[configData.buffSize][buff.propertyType];
-                component.CollectId = (int)info.ItemId;
+                component.CollectId = data.ItemId;
                 if (component.CollectObjectData.collectObjectClass == CollectObjectClass.Buff)
                 {
                     component.SetBuffData(new BuffExtraData
                     {
                         buffId = buff.buffId,
                         buffType = BuffType.Random,
-                        collectObjectBuffSize = info.BuffSize,
+                        collectObjectBuffSize = collectItemCustomData.BuffSize,
                     });
                     component.SetMaterial(material);
                 }
-                Debug.Log($"Spawning item at position: {pos} with id: {info.ItemId}-{info.OwnerId}-{info.ItemConfigId}-{buff.propertyType}-{buff.buffId}-{info.BuffSize}-{material.name}");
+                Debug.Log($"Spawning item at position: {pos} with id: {data.ItemId}-{data.OwnerId}-{data.ItemConfigId}-{buff.propertyType}-{buff.buffId}-{collectItemCustomData.BuffSize}-{material.name}");
         
                 // 确保位置正确设置
                 go.transform.position = pos;
@@ -817,15 +744,9 @@ namespace HotUpdate.Scripts.Collector
             return -1;
         }
         
-        private bool ValidatePickup(CollectObjectController item, PlayerPropertyComponent player)
+        private bool ValidatePickup(Vector3 item, Vector3 player, IColliderConfig itemColliderConfig, IColliderConfig playerColliderConfig)
         {
-            // 基本碰撞检测
-            var itemCollider = item.Collider;
-            var playerCollider = player.GetComponent<Collider>();
-            if (!itemCollider.bounds.Intersects(playerCollider.bounds))
-                return false;
-
-            return true;
+            return GamePhysicsSystem.CheckPickupWithMargin(player, item, playerColliderConfig, itemColliderConfig);
         }
         
         private List<(int, Vector3)> PlaceItems(List<int> itemsToSpawn)
@@ -1009,9 +930,7 @@ namespace HotUpdate.Scripts.Collector
     [Serializable]
     public class CollectibleItemData
     {
-        public int id;
         public CollectObjectController component;
-        public Vector3 position;
     }
 
     // [Serializable]
@@ -1036,77 +955,77 @@ namespace HotUpdate.Scripts.Collector
 
     public static class CollectItemReaderWriter
     {
-        public static void RegisterReaderWriter()
-        {
-            // Reader<CollectibleItemData>.read = ReadCollectibleItemDataData;
-            // Writer<CollectibleItemData>.write= WriteCollectibleItemDataData;
-            // Reader<SpawnItemInfo>.read = ReadSpawnedItemDataData;
-            // Writer<SpawnItemInfo>.write = WriteSpawnedItemDataData;
-            Reader<TreasureChestInfo>.read = ReadTreasureChestInfoData;
-            Writer<TreasureChestInfo>.write = WriteTreasureChestInfoData;
-        }
-        
-        private static void WriteTreasureChestInfoData(NetworkWriter writer, TreasureChestInfo info)
-        {
-            writer.WriteUInt(info.netId);
-            writer.WriteInt((int)info.chestType);
-            writer.WriteVector3(info.position);
-            writer.WriteBool(info.isPicked);
-            writer.WriteBool(info.isPicking);
-        }
-
-        private static TreasureChestInfo ReadTreasureChestInfoData(NetworkReader reader)
-        {
-            return new TreasureChestInfo
-            {
-                netId = reader.ReadUInt(),
-                chestType = (ChestType)reader.ReadInt(),
-                position = reader.ReadVector3(),
-                isPicked = reader.ReadBool(),
-                isPicking = reader.ReadBool()
-            };
-        }
-        
-        // private static void WriteSpawnedItemDataData(NetworkWriter writer, SpawnItemInfo info)
+        // public static void RegisterReaderWriter()
         // {
-        //     writer.WriteInt(info.id);
-        //     writer.WriteInt((int)info.collectConfigId);
-        //     writer.WriteUInt(info.netId);
-        //     writer.WriteVector3(info.position);
+        //     // Reader<CollectibleItemData>.read = ReadCollectibleItemDataData;
+        //     // Writer<CollectibleItemData>.write= WriteCollectibleItemDataData;
+        //     // Reader<SpawnItemInfo>.read = ReadSpawnedItemDataData;
+        //     // Writer<SpawnItemInfo>.write = WriteSpawnedItemDataData;
+        //     Reader<TreasureChestInfo>.read = ReadTreasureChestInfoData;
+        //     Writer<TreasureChestInfo>.write = WriteTreasureChestInfoData;
         // }
         //
-        // private static SpawnItemInfo ReadSpawnedItemDataData(NetworkReader reader)
+        // private static void WriteTreasureChestInfoData(NetworkWriter writer, TreasureChestInfo info)
         // {
-        //     return new SpawnItemInfo
+        //     writer.WriteUInt(info.netId);
+        //     writer.WriteInt((int)info.chestType);
+        //     writer.WriteVector3(info.position);
+        //     writer.WriteBool(info.isPicked);
+        //     writer.WriteBool(info.isPicking);
+        // }
+        //
+        // private static TreasureChestInfo ReadTreasureChestInfoData(NetworkReader reader)
+        // {
+        //     return new TreasureChestInfo
         //     {
-        //         id = reader.ReadInt(),
-        //         collectConfigId = reader.ReadInt(),
+        //         netId = reader.ReadUInt(),
+        //         chestType = (ChestType)reader.ReadInt(),
         //         position = reader.ReadVector3(),
-        //         netId = reader.ReadUInt()
+        //         isPicked = reader.ReadBool(),
+        //         isPicking = reader.ReadBool()
         //     };
         // }
-
-        private static void WriteCollectibleItemDataData(NetworkWriter writer, CollectibleItemData data)
-        {
-            writer.WriteInt(data.id);
-            writer.WriteNetworkIdentity(data.component.GetComponent<NetworkIdentity>());
-            writer.WriteVector3(data.position);
-        }
-
-        private static CollectibleItemData ReadCollectibleItemDataData(NetworkReader reader)
-        {
-            return new CollectibleItemData
-            {
-                id = reader.ReadInt(),
-                component = reader.ReadNetworkIdentity().GetComponent<CollectObjectController>(),
-                position = reader.ReadVector3()
-            };
-        }
-        
-        public static void UnregisterReaderWriter()
-        {
-            Reader<CollectibleItemData>.read = null;
-            Writer<CollectibleItemData>.write = null;
-        }
+        //
+        // // private static void WriteSpawnedItemDataData(NetworkWriter writer, SpawnItemInfo info)
+        // // {
+        // //     writer.WriteInt(info.id);
+        // //     writer.WriteInt((int)info.collectConfigId);
+        // //     writer.WriteUInt(info.netId);
+        // //     writer.WriteVector3(info.position);
+        // // }
+        // //
+        // // private static SpawnItemInfo ReadSpawnedItemDataData(NetworkReader reader)
+        // // {
+        // //     return new SpawnItemInfo
+        // //     {
+        // //         id = reader.ReadInt(),
+        // //         collectConfigId = reader.ReadInt(),
+        // //         position = reader.ReadVector3(),
+        // //         netId = reader.ReadUInt()
+        // //     };
+        // // }
+        //
+        // private static void WriteCollectibleItemDataData(NetworkWriter writer, CollectibleItemData data)
+        // {
+        //     writer.WriteInt(data.id);
+        //     writer.WriteNetworkIdentity(data.component.GetComponent<NetworkIdentity>());
+        //     writer.WriteVector3(data.position);
+        // }
+        //
+        // private static CollectibleItemData ReadCollectibleItemDataData(NetworkReader reader)
+        // {
+        //     return new CollectibleItemData
+        //     {
+        //         id = reader.ReadInt(),
+        //         component = reader.ReadNetworkIdentity().GetComponent<CollectObjectController>(),
+        //         position = reader.ReadVector3()
+        //     };
+        // }
+        //
+        // public static void UnregisterReaderWriter()
+        // {
+        //     Reader<CollectibleItemData>.read = null;
+        //     Writer<CollectibleItemData>.write = null;
+        // }
     }
 }

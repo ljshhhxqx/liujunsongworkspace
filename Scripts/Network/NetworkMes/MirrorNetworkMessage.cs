@@ -101,12 +101,12 @@ namespace Network.NetworkMes
     [Serializable]
     public struct MirrorPickerPickUpChestMessage : NetworkMessage
     {
-        public int connectionID;
+        public uint PickerId;
         public uint ChestID;
 
-        public MirrorPickerPickUpChestMessage(int connectionID, uint chestID)
+        public MirrorPickerPickUpChestMessage(uint pickerID, uint chestID)
         {
-            this.connectionID = connectionID;
+            PickerId = pickerID;
             ChestID = chestID;
         }
     }
