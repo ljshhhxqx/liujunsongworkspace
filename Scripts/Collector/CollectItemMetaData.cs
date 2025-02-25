@@ -87,6 +87,9 @@ namespace HotUpdate.Scripts.Collector
             y = (short)(v.y * 100),
             z = (short)(v.z * 100)
         };
+        
+        public static implicit operator Vector3(CompressedVector3 v) => v.ToVector3();
+        public static implicit operator CompressedVector3(Vector3 v) => FromVector3(v);
     }
     
     [MemoryPackable]

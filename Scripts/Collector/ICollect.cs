@@ -14,7 +14,12 @@ namespace HotUpdate.Scripts.Collector
         Collider Collider { get; }
     }
 
-    public abstract class CollectObject : NetworkMonoController, ICollect
+    public interface IItem
+    {
+        public uint ItemId { get; }
+    }
+
+    public abstract class CollectObject : NetworkMonoController, ICollect, IItem
     {
         [SyncVar] public uint CollectId;
         public abstract Collider Collider { get; }
@@ -24,6 +29,7 @@ namespace HotUpdate.Scripts.Collector
         // {
         //     ObjectInjectProvider.Instance.Inject(this);
         // }
+        public uint ItemId { get; set; }
     }
 
     public interface IPickable

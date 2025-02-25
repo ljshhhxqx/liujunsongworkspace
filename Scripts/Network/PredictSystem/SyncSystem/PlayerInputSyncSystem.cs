@@ -116,7 +116,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             GameSyncManager.EnqueueServerCommand(new PropertyInvincibleChangedCommand()
             {
-                Header = NetworkCommandHeader.Create(connectionId, CommandType.Property, GameSyncManager.CurrentTick, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), CommandAuthority.Server),
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property),
                 IsInvincible = isRollStart,
             });
         }
@@ -131,7 +131,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 playerController.transform.forward, connectionId, playerController.netId, attackConfigData));
             GameSyncManager.EnqueueServerCommand(new PropertyAttackCommand
             {
-                Header = NetworkCommandHeader.Create(connectionId, CommandType.Property, GameSyncManager.CurrentTick, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), CommandAuthority.Server),
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property),
                 AttackerId = connectionId,
                 TargetIds = defenders,
             });
@@ -230,7 +230,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     // 扣除耐力值
                     GameSyncManager.EnqueueServerCommand(new PropertyServerAnimationCommand
                     {
-                        Header = NetworkCommandHeader.Create(0, CommandType.Property, GameSyncManager.CurrentTick, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), CommandAuthority.Server),
+                        Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property),
                         AnimationState = commandAnimation,
                     });
 

@@ -3,6 +3,7 @@ using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.NetworkMes;
+using HotUpdate.Scripts.Network.PredictSystem.InteractSystem;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.Sync;
 using HotUpdate.Scripts.Weather;
@@ -28,6 +29,7 @@ namespace HotUpdate.Scripts.Game.Inject
             RegisterComponent<FrameSyncManager>(builder);
             RegisterComponent<PlayerNotifyManager>(builder);
             RegisterComponent<GameSyncManager>(builder);
+            RegisterComponent<InteractSystem>(builder);
             builder.Register<GameMapInjector>(Lifetime.Singleton).WithParameter(typeof(LifetimeScope), this);
             Debug.Log("GameMapLifetimeScope Configured!!!");
         }

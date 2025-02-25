@@ -155,6 +155,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 HandleEnvironmentChange(header.ConnectionId, environmentChangeCommand.HasInputMovement, environmentChangeCommand.PlayerEnvironmentState, environmentChangeCommand.IsSprinting);
             }
+            else if (command is PropertyInvincibleChangedCommand invincibleChangedCommand)
+            {
+                HandleInvincibleChanged(header.ConnectionId, invincibleChangedCommand.IsInvincible);
+            }
             else
             {
                 Debug.LogError($"PlayerPropertySyncSystem: Unknown command type {command.GetType().Name}");
@@ -163,6 +167,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         }
 
         //todo: 下面有关ProcessCommand的代码都需要由PlayerComponentController来处理实际的计算
+        private void HandleInvincibleChanged(int headerConnectionId, bool isInvincible)
+        {
+            var playerState = GetState<PlayerPropertyState>(headerConnectionId);
+            playerState.IsInvisible = isInvincible;
+            PropertyStates[headerConnectionId] = playerState;
+        }
+        
         private void HandlePropertyRecover(int connectionId)
         {
             var playerController = GameSyncManager.GetPlayerConnection(connectionId);

@@ -5,6 +5,9 @@ using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.NetworkMes;
+using HotUpdate.Scripts.Network.PredictSystem.Data;
+using HotUpdate.Scripts.Network.PredictSystem.InteractSystem;
+using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
 using Mirror;
@@ -18,7 +21,7 @@ using VContainer;
 
 namespace HotUpdate.Scripts.Collector
 {
-    public class TreasureChestComponent : NetworkBehaviour, IPickable
+    public class TreasureChestComponent : NetworkBehaviour, IPickable, IItem
     {
         [SerializeField] 
         private GameObject lid; // 宝箱盖子
@@ -32,6 +35,7 @@ namespace HotUpdate.Scripts.Collector
         private ChestCommonData _chestCommonData;
         private GameEventManager _gameEventManager;
         private Collider _positionCollider;
+        private InteractSystem _interactSystem;
         private PooledObject _pooledObject;
         public Collider ChestCollider => _chestCollider;
         
@@ -131,7 +135,12 @@ namespace HotUpdate.Scripts.Collector
         {
             if (isLocalPlayer)
             {
-                _mirrorNetworkMessageHandler.SendToServer(new MirrorPickerPickUpChestMessage(pickerId, netId));
+                _interactSystem.EnqueueCommand(new SceneInteractRequest
+                {
+                    Header = GameSyncManager.CreateInteractHeader(connectionToClient.connectionId, InteractCategory.PlayerToScene, transform.position, CommandAuthority.Client),
+                    InteractionType = InteractionType.PickupChest,
+                    SceneItemId = ItemId,
+                });
             }
         }
 
@@ -140,6 +149,8 @@ namespace HotUpdate.Scripts.Collector
             await OpenLid();
             onFinish?.Invoke();
         }
+
+        public uint ItemId { get; set; }
     }
 
     [Serializable]

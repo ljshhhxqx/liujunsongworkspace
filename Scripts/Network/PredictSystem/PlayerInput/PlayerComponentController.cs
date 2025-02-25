@@ -176,18 +176,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             _inputState.AddPredictedCommand(new InputCommand
             {
-                Header = NetworkCommandHeader.Create(connectionToClient.connectionId, CommandType.Input, _gameSyncManager.CurrentTick, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()),
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Input, CommandAuthority.Client),
                 InputMovement = inputData.InputMovement,
                 InputAnimationStates = inputData.InputAnimations.ToArray(),
                 CommandAnimationState = inputData.Command,
             });
             _propertyPredictionState.AddPredictedCommand(new PropertyAutoRecoverCommand
             {
-                Header = NetworkCommandHeader.Create(connectionToClient.connectionId, CommandType.Property, _gameSyncManager.CurrentTick, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()),
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Property, CommandAuthority.Client),
             });
             _propertyPredictionState.AddPredictedCommand(new PropertyEnvironmentChangeCommand
             {
-                Header = NetworkCommandHeader.Create(connectionToClient.connectionId, CommandType.Property, _gameSyncManager.CurrentTick, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()),
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Property, CommandAuthority.Client),
                 HasInputMovement = inputData.InputMovement.magnitude > 0.1f,
                 PlayerEnvironmentState = _gameStateStream.Value,
                 IsSprinting = inputData.InputAnimations.Any(x => x == AnimationState.Sprint),

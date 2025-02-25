@@ -10,7 +10,7 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game;
 using HotUpdate.Scripts.Game.Inject;
-using HotUpdate.Scripts.Network.Client.Player;
+using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
@@ -29,8 +29,6 @@ namespace HotUpdate.Scripts.Collector
 {
     public class ItemsSpawnerManager : ServerNetworkComponent
     {
-        [SyncVar]
-        private int _currentId;
         private Dictionary<int, CollectibleItemData> _collectiblePrefabs = new Dictionary<int, CollectibleItemData>();
         private readonly Dictionary<CollectObjectBuffSize, Dictionary<PropertyTypeEnum, Material>> _collectibleMaterials = new Dictionary<CollectObjectBuffSize, Dictionary<PropertyTypeEnum, Material>>();
         private TreasureChestComponent _treasureChestPrefab;
@@ -44,7 +42,6 @@ namespace HotUpdate.Scripts.Collector
         private LayerMask _sceneLayer;
         private LayerMask _spawnedLayer;
         private Dictionary<Vector2Int, Grid> _gridMap = new Dictionary<Vector2Int, Grid>();
-        //private readonly SyncDictionary<int, SpawnItemInfo> _spawnedItems = new SyncDictionary<int, SpawnItemInfo>();
         private static float _itemSpacing;
         private static int _maxGridItems;
         private static float _itemHeight;
@@ -63,16 +60,16 @@ namespace HotUpdate.Scripts.Collector
         // 服务器维护的核心数据
         private readonly SyncDictionary<uint, byte[]> _serverItemMap = new SyncDictionary<uint, byte[]>();
         private readonly Dictionary<int, IColliderConfig> _colliderConfigs = new Dictionary<int, IColliderConfig>();
-        
+        private readonly HashSet<uint> _processedItems = new HashSet<uint>();
         private readonly Dictionary<uint, CollectObjectController> _clientCollectObjectControllers = new Dictionary<uint, CollectObjectController>();
         
         [SyncVar]
-        private byte[] _serverTreasureChestMetaData;
+        private byte[] _serverTreasureChestMetaDataBytes;
         private IColliderConfig _chestColliderConfig;
         private TreasureChestComponent _clientTreasureChest;
 
         [Inject]
-        private void Init(MapBoundDefiner mapBoundDefiner, UIManager uiManager, IConfigProvider configProvider ,  GameSyncManager gameSyncManager, GameMapInjector gameMapInjector, PlayerInGameManager playerInGameManager,GameEventManager gameEventManager, MessageCenter messageCenter)
+        private void Init(MapBoundDefiner mapBoundDefiner, UIManager uiManager, IConfigProvider configProvider, GameSyncManager gameSyncManager, GameMapInjector gameMapInjector, PlayerInGameManager playerInGameManager,GameEventManager gameEventManager, MessageCenter messageCenter)
         {
             _uiManager = uiManager;
             _configProvider = configProvider;
@@ -88,8 +85,8 @@ namespace HotUpdate.Scripts.Collector
             _randomBuffConfig = _configProvider.GetConfig<RandomBuffConfig>();
             _chestConfig = _configProvider.GetConfig<ChestDataConfig>();
             _sceneLayer = _jsonDataConfig.GameConfig.groundSceneLayer;
-            _messageCenter.Register<PickerPickUpChestMessage>(OnPickerPickUpChestMessage);
-            _messageCenter.Register<PickerPickUpMessage>(OnPickUpItem);
+            // _messageCenter.Register<PickerPickUpChestMessage>(OnPickerPickUpChestMessage);
+            // _messageCenter.Register<PickerPickUpMessage>(OnPickUpItem);
             _gameLoopController = FindObjectOfType<GameLoopController>();
             _spawnedParent = transform;
         }
@@ -107,18 +104,25 @@ namespace HotUpdate.Scripts.Collector
             InitializeGrid();
         }
 
-        private void OnPickerPickUpChestMessage(PickerPickUpChestMessage message)
+        [Server]
+        public void PickerPickUpChest(uint pickerId, uint itemId)
         {
-            var data = MemoryPackSerializer.Deserialize<CollectItemMetaData>(_serverTreasureChestMetaData);
+            var data = MemoryPackSerializer.Deserialize<CollectItemMetaData>(_serverTreasureChestMetaDataBytes);
+            if (itemId != data.ItemId)
+            {
+                Debug.LogError($"Item id {itemId} is not match with treasure chest id {data.ItemId}");
+                return;
+            }
             var state = (ItemState)data.StateFlags;
             var chestData = data.GetCustomData<ChestItemCustomData>();
-            if (!isServer || state.HasAnyState(ItemState.IsInteracting) || state.HasAnyState(ItemState.IsProcessed)) return;
+            if (state.HasAnyState(ItemState.IsInteracting) || state.HasAnyState(ItemState.IsProcessed)) return;
             state.AddState(ItemState.IsInteracting);
             var chestPos = data.Position.ToVector3();
-            var player = NetworkServer.spawned[message.PickerId];
+            var player = NetworkServer.spawned[pickerId];
+            var connectionId = player.connectionToClient.connectionId;
             if (!player)
             {
-                Debug.LogError($"Player {message.PickerId} could not be found");
+                Debug.LogError($"Player {pickerId} could not be found");
                 return;
             }
             var playerConnection = player.connectionToClient.connectionId;
@@ -126,11 +130,15 @@ namespace HotUpdate.Scripts.Collector
 
             if (ValidatePickup(chestPos, player.transform.position, _chestColliderConfig, playerCollider))
             {
-                //playerProperty.CurrentChestType = treasureChest.chestType;
                 var configData = _chestConfig.GetChestConfigData(chestData.ChestType);
                 if (configData.BuffExtraData.buffType != BuffType.None)
                 {
-                    //_buffManager.AddBuffToPlayer(playerProperty, configData.BuffExtraData, CollectObjectBuffSize.Small);
+                    _gameSyncManager.EnqueueServerCommand(new PropertyBuffCommand
+                    {
+                        Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property),
+                        TargetId = connectionId,
+                        BuffExtraData = configData.BuffExtraData
+                    });
                     Debug.Log($"Add buff {configData.BuffExtraData.buffType} to player {player.name}");
                 }
                 JudgeEndRound();
@@ -138,39 +146,12 @@ namespace HotUpdate.Scripts.Collector
             state.RemoveState(ItemState.IsInteracting);
         }
 
-        private void OnPickUpItem(PickerPickUpMessage message)
+        [Server]
+        public void PickerPickupItem(uint pickerId, uint itemId)
         {
-            if (isServer)
-            {
-                HandleItemPickup(message.ItemId, message.PickerId);
-                JudgeEndRound();
-            }
+            HandleItemPickup(pickerId, itemId);
+            JudgeEndRound();
         }
-
-        // private void OnSpawnItemsChange(SyncIDictionary<int, SpawnItemInfo>.Operation operation, int id, SpawnItemInfo data)
-        // {
-        //     switch (operation)
-        //     {
-        //         case SyncIDictionary<int, SpawnItemInfo>.Operation.OP_ADD:
-        //             break;
-        //         case SyncIDictionary<int, SpawnItemInfo>.Operation.OP_CLEAR:
-        //             break;
-        //         case SyncIDictionary<int, SpawnItemInfo>.Operation.OP_REMOVE:
-        //             if (_spawnedItems.Count == 0)
-        //             {
-        //                 if (isServer)
-        //                 {
-        //                     _gameLoopController.IsEndRound = true;
-        //                 }
-        //             }
-        //             Debug.Log($"Remove item {id} {data.id}");
-        //             break;
-        //         case SyncIDictionary<int, SpawnItemInfo>.Operation.OP_SET:
-        //             break;
-        //         default:
-        //             throw new ArgumentOutOfRangeException(nameof(operation), operation, null);
-        //     }
-        // }
 
         private void OnGameStart(string sceneName)
         {
@@ -233,6 +214,11 @@ namespace HotUpdate.Scripts.Collector
                 }
             }
 
+            if (_chestColliderConfig == null)
+            {
+                _chestColliderConfig = GamePhysicsSystem.CreateColliderConfig(_treasureChestPrefab.GetComponent<Collider>());
+            }
+
             _uiManager.SwitchUI<TargetShowOverlay>();
         }
 
@@ -243,11 +229,9 @@ namespace HotUpdate.Scripts.Collector
                 _uiManager.CloseUI(UIType.TargetShowOverlay);
             }
         }
-        
-        private readonly HashSet<uint> _processedItems = new HashSet<uint>();
 
         [Server]
-        public void HandleItemPickup(uint itemId, uint pickerId)
+        private void HandleItemPickup(uint itemId, uint pickerId)
         {
             if (_serverItemMap.TryGetValue(itemId, out var itemInfo))
             {
@@ -272,30 +256,36 @@ namespace HotUpdate.Scripts.Collector
                 {
                     // 处理拾取逻辑
                     var configData = _collectObjectDataConfig.GetCollectObjectData(itemData.ItemConfigId);
-                    switch (configData.collectObjectClass)
+                    
+                    _gameSyncManager.EnqueueServerCommand(new PropertyBuffCommand
                     {
-                        case CollectObjectClass.Score:
-                            // var buff = configData.buffExtraData.buffType == BuffType.Constant ? _constantBuffConfig.GetBuff(configData.buffExtraData) : _randomBuffConfig.GetBuff(configData.buffExtraData);
-                            // playerProperty.IncreaseProperty(PropertyTypeEnum.Score, buff.increaseDataList);
-                            break;
-                        case CollectObjectClass.Buff:
-                            // if (configData.isRandomBuff)
-                            // {
-                            //     _buffManager.AddBuffToPlayer(playerProperty, item.BuffData, itemInfo.buffSize);
-                            // }
-                            // else
-                            // {
-                            //     _buffManager.AddBuffToPlayer(playerProperty, configData.buffExtraData, itemInfo.buffSize);
-                            // }
-                            break;
-                    }
+                        Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Property),
+                        TargetId = playerConnectionId,
+                        BuffExtraData = configData.buffExtraData
+                    });
+                    // switch (configData.collectObjectClass)
+                    // {
+                    //     case CollectObjectClass.Score:
+                    //         // var buff = configData.buffExtraData.buffType == BuffType.Constant ? _constantBuffConfig.GetBuff(configData.buffExtraData) : _randomBuffConfig.GetBuff(configData.buffExtraData);
+                    //         // playerProperty.IncreaseProperty(PropertyTypeEnum.Score, buff.increaseDataList);
+                    //         break;
+                    //     case CollectObjectClass.Buff:
+                    //         // if (configData.isRandomBuff)
+                    //         // {
+                    //         //     _buffManager.AddBuffToPlayer(playerProperty, item.BuffData, itemInfo.buffSize);
+                    //         // }
+                    //         // else
+                    //         // {
+                    //         //     _buffManager.AddBuffToPlayer(playerProperty, configData.buffExtraData, itemInfo.buffSize);
+                    //         // }
+                    //         break;
+                    // }
 
                     // 通知客户端
                     RpcPickupItem(itemId);
             
                     _processedItems.Remove(itemId);
                     _serverItemMap.Remove(itemId);
-                    
                 }
             }
         }
@@ -325,7 +315,7 @@ namespace HotUpdate.Scripts.Collector
         [Server]
         private void JudgeEndRound()
         {
-            var data = MemoryPackSerializer.Deserialize<CollectItemMetaData>(_serverTreasureChestMetaData);
+            var data = MemoryPackSerializer.Deserialize<CollectItemMetaData>(_serverTreasureChestMetaDataBytes);
             var state = (ItemState)data.StateFlags;
             var endRound = _serverItemMap.Count == 0 && state.HasAnyState(ItemState.IsProcessed);
             if (endRound)
@@ -340,37 +330,8 @@ namespace HotUpdate.Scripts.Collector
             try
             {
                 Debug.Log("Starting EndRound");
-                var chestData = MemoryPackSerializer.Deserialize<CollectItemMetaData>(_serverTreasureChestMetaData);
-                var state = (ItemState)chestData.StateFlags;
-                state = state.AddState(ItemState.IsProcessed);
-                // 清理宝箱
-                // if (_treasureChestInfo.netId != 0 && !_treasureChestInfo.isPicked)
-                // {
-                //     var chestIdentity = NetworkServer.spawned[_treasureChestInfo.netId];
-                //     if (chestIdentity)
-                //     {
-                //         GameObjectPoolManger.Instance.ReturnObject(chestIdentity.gameObject);
-                //         NetworkServer.UnSpawn(chestIdentity.gameObject);
-                //     }
-                // }
-                // _treasureChestInfo = new TreasureChestInfo();
-
-                // 清理所有生成物
-                foreach (var item in _serverItemMap.Values.ToList())
-                {
-                    // var identity = NetworkServer.spawned[item.netId];
-                    // if (identity)
-                    // {
-                    //     var pooledComponent = identity.GetComponent<CollectObjectController>();
-                    //     if (pooledComponent)
-                    //     {
-                    //         GameObjectPoolManger.Instance.ReturnObject(pooledComponent.gameObject);
-                    //     }
-                    //     NetworkServer.UnSpawn(identity.gameObject);
-                    // }
-                }
-
                 // 清理网格数据
+                _serverTreasureChestMetaDataBytes = null;
                 foreach (var grid in _gridMap)
                 {
                     _gridMap[grid.Key] = new Grid(new List<int>());
@@ -394,25 +355,13 @@ namespace HotUpdate.Scripts.Collector
         {
             if (isClient)
             {
-                try
+                // 清理客户端的生成物
+                foreach (var item in _clientCollectObjectControllers.Values)
                 {
-                    // 清理客户端的生成物
-                    foreach (var item in _serverItemMap.Values)
-                    {
-                        var data = MemoryPackSerializer.Deserialize<CollectItemMetaData>(item);
-                        var component = _clientCollectObjectControllers[data.ItemId];
-                        var identity = component.GetComponent<NetworkIdentity>();
-                        if (NetworkClient.spawned.TryGetValue(identity.netId, out var networkIdentity))
-                        {
-                            GameObjectPoolManger.Instance.ReturnObject(networkIdentity.gameObject);
-                        }
-                    }
+                    GameObjectPoolManger.Instance.ReturnObject(item.gameObject);
                 }
-                catch (Exception e)
-                {
-                    Debug.LogError($"Error in RpcEndRound: {e}");
-                }
-            } // 服务器已经处理过了
+                GameObjectPoolManger.Instance.ReturnObject(_clientTreasureChest.gameObject);
+            } 
 
             Debug.Log("EndRound finished on client");
         }
@@ -440,7 +389,6 @@ namespace HotUpdate.Scripts.Collector
             try
             {
                 _serverItemMap.Clear();
-                _currentId = 0;
                 var spawnedCount = 0;
                 Debug.Log("Starting SpawnManyItems");
                 while (spawnedCount < _onceSpawnCount)
@@ -471,7 +419,7 @@ namespace HotUpdate.Scripts.Collector
                             item.Item2,
                             0, 
                             item.Item1,
-                            (uint)Mathf.Abs(_gameSyncManager.CurrentTick),
+                            (uint)Mathf.Abs(GameSyncManager.CurrentTick),
                             30, 
                             (ushort)Random.Range(0, 65535),
                             -1);
@@ -482,7 +430,7 @@ namespace HotUpdate.Scripts.Collector
                         itemInfo = MemoryPackSerializer.Serialize(itemMetaData);
                         _serverItemMap.Add(id, itemInfo);
                     }
-                    //Debug.Log($"Calculated {spawnedCount} spawn positions");
+                    Debug.Log($"Calculated {spawnedCount} spawn positions");
                     await UniTask.Yield();
                 }
                 SpawnManyItemsClientRpc(_serverItemMap.Values.ToArray());
@@ -516,29 +464,40 @@ namespace HotUpdate.Scripts.Collector
         {
             var chestType = (ChestType)Random.Range(1, (int)ChestType.Score + 1);
             var position = GetRandomStartPoint(0.75f);
+            var id = CollectItemMetaData.GenerateItemId(position);
+            var metaData = new CollectItemMetaData(id,
+                position,
+                0,
+                (int)chestType,
+                (uint)Mathf.Abs(GameSyncManager.CurrentTick),
+                30,
+                (ushort)Random.Range(0, 65535),
+                -1);
+            metaData.SetCustomData(new ChestItemCustomData
+            {
+                ChestType = chestType
+            });
+            _serverTreasureChestMetaDataBytes = MemoryPackSerializer.Serialize(metaData);
+            RpcSpawnTreasureChest(_serverTreasureChestMetaDataBytes);
+        }
 
-            // 在服务器端生成宝箱
+        [ClientRpc]
+        private void RpcSpawnTreasureChest(byte[] serverTreasureChestMetaData)
+        {
+            var metaData = MemoryPackSerializer.Deserialize<CollectItemMetaData>(serverTreasureChestMetaData);
+            var position = metaData.Position.ToVector3();
+            var chestType = (ChestType)metaData.GetCustomData<ChestItemCustomData>().ChestType;
             var spawnedChest = GameObjectPoolManger.Instance.GetObject(
-                _treasureChestPrefab.gameObject, 
-                position, 
-                Quaternion.identity, 
+                _treasureChestPrefab.gameObject,
+                position,
+                Quaternion.identity,
                 _spawnedParent,
                 go => _gameMapInjector.InjectGameObject(go)
             );
-            var networkIdentity = spawnedChest.GetComponent<NetworkIdentity>();
-            NetworkServer.Spawn(spawnedChest);
-
-            var treasureChest = spawnedChest.GetComponent<TreasureChestComponent>();
-            treasureChest.chestType = chestType;
-
-            // 更新同步数据
-            // _treasureChestInfo = new TreasureChestInfo
-            // {
-            //     netId = networkIdentity.netId,
-            //     chestType = chestType,
-            //     position = position,
-            //     isPicked = false
-            // };
+            _clientTreasureChest = spawnedChest.GetComponent<TreasureChestComponent>();
+            _clientTreasureChest.ItemId = metaData.ItemId;
+            _clientTreasureChest.chestType = chestType;
+            Debug.Log($"Client spawning treasure chest at position: {position} with id: {metaData.ItemId}");
         }
 
         [ClientRpc]
@@ -589,6 +548,8 @@ namespace HotUpdate.Scripts.Collector
         
                 // 确保位置正确设置
                 go.transform.position = pos;
+                component.ItemId = data.ItemId;
+                _clientCollectObjectControllers.Add(data.ItemId, component);
             }
         }
 

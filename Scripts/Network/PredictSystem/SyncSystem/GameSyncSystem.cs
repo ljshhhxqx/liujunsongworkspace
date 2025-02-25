@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
+using HotUpdate.Scripts.Network.PredictSystem.InteractSystem;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
@@ -23,21 +25,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private readonly Dictionary<int, Dictionary<CommandType, int>> _lastProcessedInputs = new Dictionary<int, Dictionary<CommandType, int>>();  // 记录每个玩家最后处理的输入序号
         private readonly Queue<INetworkCommand> _currentTickCommands = new Queue<INetworkCommand>();
         private readonly Dictionary<CommandType, BaseSyncSystem> _syncSystems = new Dictionary<CommandType, BaseSyncSystem>();
-        private float _tickRate; // 服务器每秒发送20个tick
-        private float _maxCommandAge; // 最大命令存活时间
-        private NetworkIdentity _networkIdentity;
+        private float _tickRate; 
+        private float _maxCommandAge; 
         public float TickRate => _tickRate;
         private float _tickTimer;
         private PlayerInGameManager _playerInGameManager;
         private JsonDataConfig _jsonDataConfig;
         private bool _isProcessing; // 防止重入
         
-        public int CurrentTick { get; private set; }
+        
+        private InteractSystem.InteractSystem _interactSystem;
+        
+        public static int CurrentTick { get; private set; }
 
         [Inject]
         private void Init(IConfigProvider configProvider, GameEventManager gameEventManager, PlayerInGameManager playerInGameManager)
         {
-            _networkIdentity = GetComponent<NetworkIdentity>();
+            CurrentTick = 0;
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _playerInGameManager = playerInGameManager;
             if (!isServer)
@@ -77,20 +81,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             OnPlayerConnected?.Invoke(connectEvent.ConnectionId, connectEvent.Identity);
         }
         
-        [ClientRpc]
-        private void RpcPlayerConnect(PlayerConnectEvent connectEvent)
-        {
-            _playerConnections.Add(connectEvent.ConnectionId, connectEvent.Identity.gameObject.GetComponent<PlayerComponentController>());
-            OnPlayerConnected?.Invoke(connectEvent.ConnectionId, connectEvent.Identity);
-        }
-        
-        [ClientRpc]
-        private void RpcPlayerDisconnect(int connectionId)
-        {
-            _playerConnections.Remove(connectionId);
-            _playerInGameManager.RemovePlayer(connectionId);
-            OnPlayerDisconnected?.Invoke(connectionId);
-        }
+        // [ClientRpc]
+        // private void RpcPlayerConnect(PlayerConnectEvent connectEvent)
+        // {
+        //     _playerConnections.Add(connectEvent.ConnectionId, connectEvent.Identity.gameObject.GetComponent<PlayerComponentController>());
+        //     OnPlayerConnected?.Invoke(connectEvent.ConnectionId, connectEvent.Identity);
+        // }
+        //
+        // [ClientRpc]
+        // private void RpcPlayerDisconnect(int connectionId)
+        // {
+        //     _playerConnections.Remove(connectionId);
+        //     _playerInGameManager.RemovePlayer(connectionId);
+        //     OnPlayerDisconnected?.Invoke(connectionId);
+        // }
         
         public event Action<int, NetworkIdentity> OnPlayerConnected;
         public event Action<int> OnPlayerDisconnected;
@@ -157,10 +161,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
             try
             {
-                // 将待处理命令移到当前tick的命令队列
+                // 将客户端待处理命令移到当前tick的命令队列
                 MoveCommandsToCurrentTick();
                 // 处理当前tick的所有命令
                 ProcessCurrentTickCommands();
+                // 处理其他系统的命令
+                ProcessOtherSystemCommands();
                 // 广播状态更新
                 BroadcastStateUpdates();
             }
@@ -168,6 +174,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 _isProcessing = false;
             }
+        }
+
+        private void ProcessOtherSystemCommands()
+        {
+            _interactSystem.ProcessCommands();
         }
 
         private void MoveCommandsToCurrentTick()
@@ -240,6 +251,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         /// 处理服务器端命令(安全地使用，客户端无法使用)
         /// </summary>
         /// <param name="command"></param>
+        [Server]
         public void EnqueueServerCommand<T>(T command) where T : INetworkCommand
         {
             var header = command.GetHeader();
@@ -286,6 +298,37 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void RpcUpdateState()
         {
             OnBroadcastStateUpdate?.Invoke();
+        }
+
+        public static InteractHeader CreateInteractHeader(int? connectionId, InteractCategory category, CompressedVector3 position, CommandAuthority authority = CommandAuthority.Server)
+        {
+            var tick = CurrentTick;
+            var connectionIdValue = connectionId.GetValueOrDefault();
+            return new InteractHeader
+            {
+                CommandId = HybridCommandId.Generate(authority == CommandAuthority.Server, ref tick),
+                RequestConnectionId = connectionIdValue,
+                Tick = tick,
+                Category = category,
+                Position = position,
+                Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                Authority = authority
+            };
+        }
+
+        public static NetworkCommandHeader CreateNetworkCommandHeader(int? connectionId, CommandType commandType, CommandAuthority authority = CommandAuthority.Server)
+        {
+            var tick = CurrentTick;
+            var connectionIdValue = connectionId.GetValueOrDefault();
+            return new NetworkCommandHeader
+            {
+                CommandId = HybridCommandId.Generate(authority == CommandAuthority.Server, ref tick),
+                ConnectionId = connectionIdValue,
+                CommandType = commandType,
+                Tick = tick,
+                Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                Authority = authority
+            };
         }
     }
 }

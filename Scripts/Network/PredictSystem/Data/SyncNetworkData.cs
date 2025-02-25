@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
+using System.Threading;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using MemoryPack;
@@ -25,7 +24,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     [MemoryPackUnion(7, typeof(InputCommand))]
     [MemoryPackUnion(8, typeof(AnimationCommand))]
     [MemoryPackUnion(9, typeof(InteractionCommand))]
-    
     public partial interface INetworkCommand
     {
         NetworkCommandHeader GetHeader();
@@ -43,27 +41,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public int Tick;
         [MemoryPackOrder(2)]
         public CommandType CommandType;
-    
-        // 安全验证信息
-        [MemoryPackOrder(3)] public long Timestamp;
-        [MemoryPackOrder(4)] public byte[] SecurityHash;
-    
+        // 命令唯一ID（时间戳+序列号）
+        [MemoryPackOrder(3)] 
+        public uint CommandId;     
+        [MemoryPackOrder(4)] 
+        public long Timestamp;
         // 执行上下文
         [MemoryPackOrder(5)] 
         public CommandAuthority Authority;
-        
-        public static NetworkCommandHeader Create(int connectionId, CommandType commandType, int currentTick, long timestamp, CommandAuthority authority = CommandAuthority.Client)
-        {
-            var header = new NetworkCommandHeader
-            {
-                CommandType = commandType,
-                ConnectionId = connectionId,
-                Tick = currentTick,
-                Authority = authority,
-                Timestamp = timestamp
-            };
-            return header;
-        }
     }
 
     public enum CommandAuthority
@@ -472,6 +457,33 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             return null;
         }
     }
+    public struct HybridCommandId
+    {
+        public static uint Generate(bool isServer, ref int sequence)
+        {
+            // 时间部分：0-3599（60分钟内的秒数）
+            var time = (DateTime.UtcNow.Minute % 60) * 60 + DateTime.UtcNow.Second;
+        
+            // 来源标记：最高位
+            uint serverFlag = isServer ? 1u << 31 : 0u;
+        
+            // 时间部分：15位（覆盖0-32767）
+            uint timePart = (uint)(time & 0x7FFF) << 16;
+        
+            // 序列号：16位（每个来源独立）
+            uint seqPart = (uint)(Interlocked.Increment(ref sequence) & 0xFFFF);
+
+            return serverFlag | timePart | seqPart;
+        }
+
+        // 解析方法
+        public static void Deconstruct(uint commandId, out bool isServer, out int timestamp, out ushort sequence)
+        {
+            isServer = (commandId & 0x80000000) != 0;
+            timestamp = (int)((commandId >> 16) & 0x7FFF);
+            sequence = (ushort)(commandId & 0xFFFF);
+        }
+    }
     
     public static class NetworkCommandValidator
     {
@@ -498,23 +510,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         }
 
         // 安全签名验证 (防篡改)
-        public static bool ValidateSecurity(this INetworkCommand command, byte[] secretKey)
-        {
-            var header = command.GetHeader();
-            using var hmac = new HMACSHA256(secretKey);
-            var computedHash = hmac.ComputeHash(GetSignData(header));
-            return computedHash.SequenceEqual(header.SecurityHash);
-        }
-
-        private static byte[] GetSignData(NetworkCommandHeader header)
-        {
-            using var stream = new MemoryStream();
-            using var writer = new BinaryWriter(stream);
-            writer.Write(header.ConnectionId);
-            writer.Write(header.Tick);
-            writer.Write((int)header.CommandType);
-            writer.Write(header.Timestamp);
-            return stream.ToArray();
-        }
+        // public static bool ValidateSecurity(this INetworkCommand command, byte[] secretKey)
+        // {
+        //     var header = command.GetHeader();
+        //     using var hmac = new HMACSHA256(secretKey);
+        //     var computedHash = hmac.ComputeHash(GetSignData(header));
+        //     return computedHash.SequenceEqual(header.SecurityHash);
+        // }
+        //
+        // private static byte[] GetSignData(NetworkCommandHeader header)
+        // {
+        //     using var stream = new MemoryStream();
+        //     using var writer = new BinaryWriter(stream);
+        //     writer.Write(header.ConnectionId);
+        //     writer.Write(header.Tick);
+        //     writer.Write((int)header.CommandType);
+        //     writer.Write(header.Timestamp);
+        //     return stream.ToArray();
+        // }
     }
 }
