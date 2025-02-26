@@ -90,6 +90,8 @@ namespace HotUpdate.Scripts.Collector
         
         public static implicit operator Vector3(CompressedVector3 v) => v.ToVector3();
         public static implicit operator CompressedVector3(Vector3 v) => FromVector3(v);
+        
+        //public static explicit operator CompressedVector3(Vector3 v) => FromVector3(v);
     }
     
     [MemoryPackable]

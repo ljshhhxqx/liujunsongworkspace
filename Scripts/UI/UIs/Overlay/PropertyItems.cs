@@ -1,4 +1,5 @@
 ﻿using System;
+using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using TMPro;
 using UI.UIs.Common;
 using UniRx;

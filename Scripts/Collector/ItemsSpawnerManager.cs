@@ -29,7 +29,7 @@ namespace HotUpdate.Scripts.Collector
 {
     public class ItemsSpawnerManager : ServerNetworkComponent
     {
-        private Dictionary<int, CollectibleItemData> _collectiblePrefabs = new Dictionary<int, CollectibleItemData>();
+        private Dictionary<int, CollectObjectController> _collectiblePrefabs = new Dictionary<int, CollectObjectController>();
         private readonly Dictionary<CollectObjectBuffSize, Dictionary<PropertyTypeEnum, Material>> _collectibleMaterials = new Dictionary<CollectObjectBuffSize, Dictionary<PropertyTypeEnum, Material>>();
         private TreasureChestComponent _treasureChestPrefab;
         private IConfigProvider _configProvider;
@@ -142,8 +142,17 @@ namespace HotUpdate.Scripts.Collector
                     Debug.Log($"Add buff {configData.BuffExtraData.buffType} to player {player.name}");
                 }
                 JudgeEndRound();
+                RpcPickupChest(pickerId, itemId);
             }
             state.RemoveState(ItemState.IsInteracting);
+        }
+
+        [ClientRpc]
+        private void RpcPickupChest(uint pickerId, uint itemId)
+        {
+            var item = _clientCollectObjectControllers[itemId];
+            item.CollectSuccess();
+            GameObjectPoolManger.Instance.ReturnObject(item.gameObject);
         }
 
         [Server]
@@ -160,27 +169,25 @@ namespace HotUpdate.Scripts.Collector
             var res = ResourceManager.Instance.GetMapCollectObject(sceneName);
             if (_collectiblePrefabs.Count == 0)
             {
-                // 使用字典初始化
-                _collectiblePrefabs = res
-                    .Where(x => x.GetComponent<CollectObjectController>())
-                    .ToDictionary(
-                        x => x.GetComponent<CollectObjectController>().CollectConfigId,
-                        x => new CollectibleItemData
-                        {
-                            component = x.GetComponent<CollectObjectController>()
-                        }
-                    );
+                foreach (var data in res)
+                {
+                    if (data.TryGetComponent(out CollectObjectController controller))
+                    {
+                        var component = data.GetComponent<CollectObjectController>();
+                        _collectiblePrefabs.Add(component.CollectConfigId, component);
+                    }
+                }
             }
 
             if (_colliderConfigs.Count == 0)
             {
                 foreach (var data in _collectiblePrefabs.Values)
                 {
-                    var gameObjectCollider = data.component.GetComponent<Collider>();
+                    var gameObjectCollider = data.GetComponent<Collider>();
                     var config = GamePhysicsSystem.CreateColliderConfig(gameObjectCollider);
                     if (config != null)
                     {
-                        _colliderConfigs.Add(data.component.CollectConfigId, config);
+                        _colliderConfigs.Add(data.CollectConfigId, config);
                     }
                 }
             }
@@ -377,7 +384,7 @@ namespace HotUpdate.Scripts.Collector
         {
             if (_collectiblePrefabs.TryGetValue(configId, out var itemData))
             {
-                return itemData.component;
+                return itemData;
             }
             Debug.LogError($"No prefab found for CollectType: {configId}");
             return null;
@@ -512,8 +519,7 @@ namespace HotUpdate.Scripts.Collector
             foreach (var data in allSpawnedItems)
             {
                 var position = data.Position;
-                var pos = position.ToVector3();
-                Debug.Log($"Client spawning item at position: {pos}"); // 添加日志
+                Debug.Log($"Client spawning item at position: {position}"); // 添加日志
                 var prefab = GetPrefabByCollectType(data.ItemConfigId);
                 if (!prefab)
                 {
@@ -521,7 +527,7 @@ namespace HotUpdate.Scripts.Collector
                     continue;
                 }
 
-                var go = GameObjectPoolManger.Instance.GetObject(prefab.gameObject, pos, Quaternion.identity, _spawnedParent,
+                var go = GameObjectPoolManger.Instance.GetObject(prefab.gameObject, position, Quaternion.identity, _spawnedParent,
                     go => _gameMapInjector.InjectGameObject(go));
                 if (!go)
                 {
@@ -544,10 +550,10 @@ namespace HotUpdate.Scripts.Collector
                     });
                     component.SetMaterial(material);
                 }
-                Debug.Log($"Spawning item at position: {pos} with id: {data.ItemId}-{data.OwnerId}-{data.ItemConfigId}-{buff.propertyType}-{buff.buffId}-{collectItemCustomData.BuffSize}-{material.name}");
+                Debug.Log($"Spawning item at position: {position} with id: {data.ItemId}-{data.OwnerId}-{data.ItemConfigId}-{buff.propertyType}-{buff.buffId}-{collectItemCustomData.BuffSize}-{material.name}");
         
                 // 确保位置正确设置
-                go.transform.position = pos;
+                go.transform.position = position;
                 component.ItemId = data.ItemId;
                 _clientCollectObjectControllers.Add(data.ItemId, component);
             }
@@ -726,7 +732,7 @@ namespace HotUpdate.Scripts.Collector
             foreach (var configId in itemsToSpawn)
             {
                 var attempts = 0;
-                var itemPrefab = _collectiblePrefabs[configId].component;
+                var itemPrefab = _collectiblePrefabs[configId];
                 const int maxAttempts = 5;
                 var validPosition = false;
                 var position = Vector3.zero;
@@ -886,107 +892,5 @@ namespace HotUpdate.Scripts.Collector
                 itemIDs = ids.ToArray();
             }
         }
-    }
-
-    [Serializable]
-    public class CollectibleItemData
-    {
-        public CollectObjectController component;
-    }
-
-    // [Serializable]
-    // public struct SpawnItemInfo
-    // {
-    //     public int id;
-    //     public uint netId;
-    //     public int collectConfigId;
-    //     public Vector3 position;
-    //     public BuffExtraData buffExtraData;
-    // }
-
-    [Serializable]
-    public struct TreasureChestInfo
-    {
-        public uint netId;
-        public ChestType chestType;
-        public Vector3 position;
-        public bool isPicked;
-        public bool isPicking;
-    }
-
-    public static class CollectItemReaderWriter
-    {
-        // public static void RegisterReaderWriter()
-        // {
-        //     // Reader<CollectibleItemData>.read = ReadCollectibleItemDataData;
-        //     // Writer<CollectibleItemData>.write= WriteCollectibleItemDataData;
-        //     // Reader<SpawnItemInfo>.read = ReadSpawnedItemDataData;
-        //     // Writer<SpawnItemInfo>.write = WriteSpawnedItemDataData;
-        //     Reader<TreasureChestInfo>.read = ReadTreasureChestInfoData;
-        //     Writer<TreasureChestInfo>.write = WriteTreasureChestInfoData;
-        // }
-        //
-        // private static void WriteTreasureChestInfoData(NetworkWriter writer, TreasureChestInfo info)
-        // {
-        //     writer.WriteUInt(info.netId);
-        //     writer.WriteInt((int)info.chestType);
-        //     writer.WriteVector3(info.position);
-        //     writer.WriteBool(info.isPicked);
-        //     writer.WriteBool(info.isPicking);
-        // }
-        //
-        // private static TreasureChestInfo ReadTreasureChestInfoData(NetworkReader reader)
-        // {
-        //     return new TreasureChestInfo
-        //     {
-        //         netId = reader.ReadUInt(),
-        //         chestType = (ChestType)reader.ReadInt(),
-        //         position = reader.ReadVector3(),
-        //         isPicked = reader.ReadBool(),
-        //         isPicking = reader.ReadBool()
-        //     };
-        // }
-        //
-        // // private static void WriteSpawnedItemDataData(NetworkWriter writer, SpawnItemInfo info)
-        // // {
-        // //     writer.WriteInt(info.id);
-        // //     writer.WriteInt((int)info.collectConfigId);
-        // //     writer.WriteUInt(info.netId);
-        // //     writer.WriteVector3(info.position);
-        // // }
-        // //
-        // // private static SpawnItemInfo ReadSpawnedItemDataData(NetworkReader reader)
-        // // {
-        // //     return new SpawnItemInfo
-        // //     {
-        // //         id = reader.ReadInt(),
-        // //         collectConfigId = reader.ReadInt(),
-        // //         position = reader.ReadVector3(),
-        // //         netId = reader.ReadUInt()
-        // //     };
-        // // }
-        //
-        // private static void WriteCollectibleItemDataData(NetworkWriter writer, CollectibleItemData data)
-        // {
-        //     writer.WriteInt(data.id);
-        //     writer.WriteNetworkIdentity(data.component.GetComponent<NetworkIdentity>());
-        //     writer.WriteVector3(data.position);
-        // }
-        //
-        // private static CollectibleItemData ReadCollectibleItemDataData(NetworkReader reader)
-        // {
-        //     return new CollectibleItemData
-        //     {
-        //         id = reader.ReadInt(),
-        //         component = reader.ReadNetworkIdentity().GetComponent<CollectObjectController>(),
-        //         position = reader.ReadVector3()
-        //     };
-        // }
-        //
-        // public static void UnregisterReaderWriter()
-        // {
-        //     Reader<CollectibleItemData>.read = null;
-        //     Writer<CollectibleItemData>.write = null;
-        // }
     }
 }

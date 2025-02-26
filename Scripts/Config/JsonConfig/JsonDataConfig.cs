@@ -39,6 +39,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public DayNightCycleData DayNightCycleData => jsonConfigData.dayNightCycleData;
         public WeatherConstantData WeatherConstantData => jsonConfigData.weatherData;
         public GameModeData GameModeData => jsonConfigData.gameModeData;
+        public BagCommonData BagCommonData => jsonConfigData.bagCommonData;
 
         // public override void Init(TextAsset asset = null)
         // {
@@ -99,6 +100,8 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public WeatherConstantData weatherData;
         [Header("游戏模式通用数据")]
         public GameModeData gameModeData;
+        [Header("背包数据")]
+        public BagCommonData bagCommonData;
         [Header("其他数据")]
         public OtherData otherData;
     }
@@ -226,6 +229,13 @@ namespace HotUpdate.Scripts.Config.JsonConfig
     public struct BuffConstantData
     {
         public List<BuffSizeData> buffSizeDataList;
+    }
+
+    [Serializable]
+    public struct BagCommonData
+    {
+        public int maxBagCount;
+        public int maxStack;
     }
 
     [Serializable]

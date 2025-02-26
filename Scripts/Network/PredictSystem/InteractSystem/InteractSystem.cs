@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
+using MemoryPack;
 using Mirror;
 using UnityEngine;
 using VContainer;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.InteractSystem
 {
-    public class InteractSystem : MonoBehaviour
+    public class InteractSystem : NetworkBehaviour
     {
-        private GameSyncManager _gameSyncManager;
         private ItemsSpawnerManager _itemsSpawnerManager;
         private PlayerInGameManager _playerInGameManager;
         private readonly Queue<IInteractRequest> _commandQueue = new Queue<IInteractRequest>();
@@ -20,13 +20,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.InteractSystem
         private void Init(PlayerInGameManager playerInGameManager)
         {
             _playerInGameManager = playerInGameManager;
-            _gameSyncManager = FindObjectOfType<GameSyncManager>();
+            //_gameSyncManager = FindObjectOfType<GameSyncManager>();
             _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
         }
 
         [Command]
-        public void EnqueueCommand(IInteractRequest command)
+        public void EnqueueCommand(byte[] commandBytes)
         {
+            var command = MemoryPackSerializer.Deserialize<IInteractRequest>(commandBytes);
+            var header = command.GetHeader();
+            var validCommand = command.CommandValidResult();
+            if (!validCommand.IsValid)
+            {
+                Debug.LogError($"Invalid command: {header}");
+                return;
+            }
             _commandQueue.Enqueue(command);
         }
 
@@ -36,10 +44,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.InteractSystem
             while (_commandQueue.Count > 0)
             {
                 var command = _commandQueue.Dequeue();
-                if (!command.IsValid())
-                {
-                    continue;
-                }
                 switch (command)
                 {
                     case SceneInteractRequest sceneInteractRequest:

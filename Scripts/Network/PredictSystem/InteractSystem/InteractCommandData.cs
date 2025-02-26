@@ -1,4 +1,5 @@
-﻿using HotUpdate.Scripts.Collector;
+﻿using System;
+using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using MemoryPack;
 
@@ -67,7 +68,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.InteractSystem
         public InteractHeader GetHeader() => Header;
         public bool IsValid()
         {
-            throw new System.NotImplementedException();
+            return Enum.IsDefined(typeof(InteractionType), Header) && SceneItemId > 0;
         }
     }
 
@@ -82,7 +83,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.InteractSystem
         public InteractHeader GetHeader() => Header;
         public bool IsValid()
         {
-            throw new System.NotImplementedException();
+            return TargetPlayerId > 0 && InteractionId > 0;
         }
     }
 
@@ -97,7 +98,46 @@ namespace HotUpdate.Scripts.Network.PredictSystem.InteractSystem
         public InteractHeader GetHeader() => Header;
         public bool IsValid()
         {
-            throw new System.NotImplementedException();
+            return HazardId > 0 && Intensity > 0;
+        }
+    }
+
+    public static class InteractNetworkDataExtensions
+    {
+        // 基础验证参数配置
+        public const int MAX_TICK_DELTA = 30;      // 允许的最大tick偏差
+        public const long TIMESTAMP_TOLERANCE = 5000; // 5秒时间容差（毫秒）
+        public static CommandValidationResult CommandValidResult(this IInteractRequest command)
+        {
+            var result = new CommandValidationResult();
+            var header = command.GetHeader();
+
+            // 1. Tick验证
+            if (header.Tick <= 0)
+            {
+                result.AddError("Invalid tick value");
+            }
+
+            // 2. 时间戳验证
+            var currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            if (Math.Abs(currentTime - header.Timestamp) > TIMESTAMP_TOLERANCE)
+            {
+                result.AddError($"Timestamp out of sync: {currentTime - header.Timestamp}ms");
+            }
+
+            // 3. 命令类型验证
+            if (!Enum.IsDefined(typeof(InteractCategory), header.Category))
+            {
+                result.AddError($"Unknown command type: {header.Category}");
+            }
+
+            // 4. 基础有效性验证
+            if (!command.IsValid())
+            {
+                result.AddError("Command specific validation failed");
+            }
+
+            return result;
         }
     }
 }

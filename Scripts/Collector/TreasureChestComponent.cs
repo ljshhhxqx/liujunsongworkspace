@@ -10,6 +10,7 @@ using HotUpdate.Scripts.Network.PredictSystem.InteractSystem;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
+using MemoryPack;
 using Mirror;
 using Network.NetworkMes;
 using Sirenix.OdinInspector;
@@ -130,17 +131,19 @@ namespace HotUpdate.Scripts.Collector
             }
         }
 
-
-        public void RequestPick(uint pickerId)
+        public void RequestPick(int pickerConnectionId)
         {
             if (isLocalPlayer)
             {
-                _interactSystem.EnqueueCommand(new SceneInteractRequest
+                var request = new SceneInteractRequest
                 {
-                    Header = GameSyncManager.CreateInteractHeader(connectionToClient.connectionId, InteractCategory.PlayerToScene, transform.position, CommandAuthority.Client),
+                    Header = GameSyncManager.CreateInteractHeader(pickerConnectionId, InteractCategory.PlayerToScene,
+                        transform.position, CommandAuthority.Client),
                     InteractionType = InteractionType.PickupChest,
                     SceneItemId = ItemId,
-                });
+                };
+                var json = MemoryPackSerializer.Serialize(request);
+                _interactSystem.EnqueueCommand(json);
             }
         }
 

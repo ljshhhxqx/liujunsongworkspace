@@ -1,10 +1,9 @@
 using AOTScripts.Tool;
 using TMPro;
-using UI.UIs.Common;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.UIs.Panel.Item
+namespace HotUpdate.Scripts.UI.UIs.Panel.Item
 {
     public class RoomInviteItem : ItemBase
     {

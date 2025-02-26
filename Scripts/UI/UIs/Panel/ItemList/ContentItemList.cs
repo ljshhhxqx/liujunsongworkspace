@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using UI.UIs.Common;
 using UnityEngine;
 
@@ -10,13 +11,15 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
         private ItemBase itemPrefab;
         [SerializeField]
         private Transform content;
-        private readonly List<ItemBase> _itemList = new List<ItemBase>();
+        public List<ItemBase> ItemBases { get; } = new List<ItemBase>();
+        public List<IItemBaseData> ItemBaseDatas { get; } = new List<IItemBaseData>();
 
-        public void SetItemList<T>(T[] itemDataList) where T : ItemBaseData, new()
+        public void SetItemList<T>(T[] itemDataList) where T : IItemBaseData, new()
         {
             itemPrefab.gameObject.SetActive(true);
-            _itemList.ForEach(x => Destroy(x.gameObject));
-            _itemList.Clear();
+            ItemBases.ForEach(x => Destroy(x.gameObject));
+            ItemBases.Clear();
+            ItemBaseDatas.Clear();
             if (itemDataList is { Length: > 0 })
             {
                 foreach (var itemData in itemDataList)
@@ -24,7 +27,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
                     var item = Instantiate(itemPrefab.gameObject, content);
                     var itemBase = item.GetComponent<ItemBase>();
                     itemBase.SetData(itemData);
-                    _itemList.Add(itemBase);
+                    ItemBases.Add(itemBase);
+                    ItemBaseDatas.Add(itemData);
                 }
                 itemPrefab.gameObject.SetActive(false);
                 return;
