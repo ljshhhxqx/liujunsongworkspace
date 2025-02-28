@@ -48,13 +48,13 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             {
                 var slot = item as BagSlotItem;
                 if (!slot) continue;
-                slot.OnBeginDragObservable
+                slot.OnPointerEnterObserver
                     .Subscribe(x => OnSlotBeginDrag(slot, x))
                     .AddTo(this);
-                slot.OnEndDragObservable
+                slot.OnEndDragObserver
                     .Subscribe(x => OnSlotEndDrag(slot, x))
                     .AddTo(this);
-                slot.OnPointerEnterObservable
+                slot.OnPointerEnterObserver
                     .Subscribe(x => OnSlotPointerEnter(slot, x))
                     .AddTo(this);
                 _bagSlotItems.Add(slot);
@@ -64,7 +64,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
         }
         
         // 处理拖拽开始
-        void OnSlotBeginDrag(BagSlotItem slot, PointerEventData eventData)
+        private void OnSlotBeginDrag(BagSlotItem slot, PointerEventData eventData)
         {
             if (!slot.HasItem()) return;
 
@@ -79,7 +79,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
         }
 
         // 处理拖拽结束
-        void OnSlotEndDrag(BagSlotItem sourceSlot, PointerEventData eventData)
+        private void OnSlotEndDrag(BagSlotItem sourceSlot, PointerEventData eventData)
         {
             Destroy(_dragIcon);
 
@@ -93,7 +93,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
         }
 
         // 统一管理物品交换逻辑
-        void SwapItemsBetweenSlots(BagSlotItem source, BagSlotItem target)
+        private void SwapItemsBetweenSlots(BagSlotItem source, BagSlotItem target)
         {
             // 交换数据
             var tempItem = target.Item;
@@ -106,12 +106,12 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             }
             else
             {
-                //source.ClearSlot();
+                source.SetItem(null, 0);
             }
         }
 
         // 处理悬停提示
-        void OnSlotPointerEnter(BagSlotItem slot, PointerEventData eventData)
+        private void OnSlotPointerEnter(BagSlotItem slot, PointerEventData eventData)
         {
             if (slot.HasItem())
             {

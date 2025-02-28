@@ -1,4 +1,5 @@
-﻿using UniRx;
+﻿using System;
+using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -16,20 +17,18 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         private int stackCount = 0;     // 物品堆叠数量
         private int slotIndex;         // 格子索引
         public int MaxStack => item.MaxStack;
-        public Subject<PointerEventData> OnPointerEnterObservable { get; } = new Subject<PointerEventData>();
-        public Subject<PointerEventData> OnPointerExitObservable { get; } = new Subject<PointerEventData>();
-        public Subject<PointerEventData> OnBeginDragObservable { get; } = new Subject<PointerEventData>();
-        public Subject<PointerEventData> OnDragObservable { get; } = new Subject<PointerEventData>();
-        public Subject<PointerEventData> OnEndDragObservable { get; } = new Subject<PointerEventData>();
-        public BagItemData Item => item;
+        private Subject<PointerEventData> OnPointerEnterObservable = new Subject<PointerEventData>();
+        private Subject<PointerEventData> OnPointerExitObservable = new Subject<PointerEventData>();
+        private Subject<PointerEventData> OnBeginDragObservable = new Subject<PointerEventData>();
+        private Subject<PointerEventData> OnDragObservable = new Subject<PointerEventData>();
+        private Subject<PointerEventData> OnEndDragObservable = new Subject<PointerEventData>();
         
-        private void Awake()
-        {
-            this.OnMouseDragAsObservable().Subscribe(e =>
-            {
-
-            }).AddTo(this);
-        }
+        public IObservable<PointerEventData> OnPointerEnterObserver => OnPointerEnterObservable;
+        public IObservable<PointerEventData> OnPointerExitObserver => OnPointerExitObservable;
+        public IObservable<PointerEventData> OnBeginDragObserver => OnBeginDragObservable;
+        public IObservable<PointerEventData> OnDragObserver => OnDragObservable;
+        public IObservable<PointerEventData> OnEndDragObserver => OnEndDragObservable;
+        public BagItemData Item => item;
         
         public override void SetData<T>(T data)
         {
@@ -39,6 +38,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                 slotIndex = item.Index;
                 UpdateSlotUI();
             }
+            
         }
 
         public void SetSlotIndex(int index)

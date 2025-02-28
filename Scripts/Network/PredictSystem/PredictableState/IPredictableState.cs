@@ -9,7 +9,7 @@ using Mirror;
 using VContainer;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
 
-namespace HotUpdate.Scripts.Network.Data.PredictSystem.PredictableState
+namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {
     public abstract class PredictableStateBase : NetworkAutoInjectComponent //NetworkAutoInjectComponent用于自动给NetworkBehaviour注入依赖
     {
