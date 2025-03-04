@@ -21,7 +21,6 @@ using InputCommand = HotUpdate.Scripts.Network.PredictSystem.Data.InputCommand;
 using NetworkCommandHeader = HotUpdate.Scripts.Network.PredictSystem.Data.NetworkCommandHeader;
 using PlayerAnimationCooldownState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerAnimationCooldownState;
 using PlayerGameStateData = HotUpdate.Scripts.Network.PredictSystem.State.PlayerGameStateData;
-using PlayerPropertyState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerPropertyState;
 using PropertyAutoRecoverCommand = HotUpdate.Scripts.Network.PredictSystem.Data.PropertyAutoRecoverCommand;
 using PropertyCalculator = HotUpdate.Scripts.Network.PredictSystem.State.PropertyCalculator;
 using PropertyEnvironmentChangeCommand = HotUpdate.Scripts.Network.PredictSystem.Data.PropertyEnvironmentChangeCommand;
@@ -334,27 +333,27 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         }
 
         [Server]
-        public void HandlePropertyRecover(ref PlayerPropertyState playerPropertyState)
+        public void HandlePropertyRecover(ref PlayerPredictablePropertyState playerPredictablePropertyState)
         {
-            _playerPropertyCalculator.HandlePropertyRecover(ref playerPropertyState);
+            _playerPropertyCalculator.HandlePropertyRecover(ref playerPredictablePropertyState);
         }
 
         [Server]
-        public void HandleAttackProperty(ref PlayerPropertyState playerPropertyState, ref Dictionary<int, PlayerPropertyState> defenders, Func<float, float, float, float, float> getDamageFunction)
+        public void HandleAttackProperty(ref PlayerPredictablePropertyState playerPredictablePropertyState, ref Dictionary<int, PlayerPredictablePropertyState> defenders, Func<float, float, float, float, float> getDamageFunction)
         {
-            _playerPropertyCalculator.HandleAttack(ref playerPropertyState, ref defenders, getDamageFunction);
+            _playerPropertyCalculator.HandleAttack(ref playerPredictablePropertyState, ref defenders, getDamageFunction);
         }
 
         [Server]
-        public void HandleAnimationCost(ref PlayerPropertyState playerPropertyState, AnimationState animationState, float cost)
+        public void HandleAnimationCost(ref PlayerPredictablePropertyState playerPredictablePropertyState, AnimationState animationState, float cost)
         {
-            _playerPropertyCalculator.HandleAnimationCommand(ref playerPropertyState, animationState, cost);
+            _playerPropertyCalculator.HandleAnimationCommand(ref playerPredictablePropertyState, animationState, cost);
         }
 
         [Server]
-        public void HandleEnvironmentChange(ref PlayerPropertyState playerPropertyState, bool hasInputMovement, PlayerEnvironmentState environmentType, bool isSprinting)
+        public void HandleEnvironmentChange(ref PlayerPredictablePropertyState playerPredictablePropertyState, bool hasInputMovement, PlayerEnvironmentState environmentType, bool isSprinting)
         {
-            _playerPropertyCalculator.HandleEnvironmentChange(ref playerPropertyState, hasInputMovement, environmentType, isSprinting);
+            _playerPropertyCalculator.HandleEnvironmentChange(ref playerPredictablePropertyState, hasInputMovement, environmentType, isSprinting);
         }
 
         [Server]

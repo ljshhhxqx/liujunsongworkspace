@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Network.Data.PredictSystem.State;
+using HotUpdate.Scripts.Network.Data.PredictSystem;
 using MemoryPack;
 using UnityEngine;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
@@ -9,7 +9,7 @@ using CooldownSnapshotData = HotUpdate.Scripts.Network.PredictSystem.Data.Cooldo
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
     [MemoryPackable]
-    public partial struct PlayerInputState : IPropertyState
+    public partial struct PlayerInputState : IPredictablePropertyState
     {
         [MemoryPackOrder(0)] public PlayerGameStateData PlayerGameStateData;
         [MemoryPackOrder(1)] public PlayerAnimationCooldownState PlayerAnimationCooldownState;
@@ -20,7 +20,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             PlayerAnimationCooldownState = playerAnimationCooldownState;
         }
         
-        public bool IsEqual(IPropertyState other, float tolerance = 0.01f)
+        public bool IsEqual(IPredictablePropertyState other, float tolerance = 0.01f)
         {
             if (other is PlayerInputState playerInputState)    
             {

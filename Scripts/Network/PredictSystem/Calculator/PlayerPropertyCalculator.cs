@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Network.Data.PredictSystem.State;
+using HotUpdate.Scripts.Network.Data.PredictSystem.Calculator;
+using HotUpdate.Scripts.Network.PredictSystem.State;
 using Unity.Jobs;
 using UnityEngine;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
-using PlayerPropertyState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerPropertyState;
 using PropertyCalculator = HotUpdate.Scripts.Network.PredictSystem.State.PropertyCalculator;
 
-namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
+namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {
     public class PlayerPropertyCalculator : IPlayerStateCalculator, IJobParallelFor
     {
@@ -42,9 +42,9 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
             return Properties[propertyType].CurrentValue;
         }
 
-        public void HandleAttack(ref PlayerPropertyState playerPropertyState, ref Dictionary<int, PlayerPropertyState> defenders, Func<float, float, float, float, float> getDamageFunction)
+        public void HandleAttack(ref PlayerPredictablePropertyState playerPredictablePropertyState, ref Dictionary<int, PlayerPredictablePropertyState> defenders, Func<float, float, float, float, float> getDamageFunction)
         {
-            var playerState = playerPropertyState;
+            var playerState = playerPredictablePropertyState;
             var propertyState = playerState.Properties;
             var attack = propertyState[PropertyTypeEnum.AttackPower].CurrentValue;
             var critical = propertyState[PropertyTypeEnum.CriticalRate].CurrentValue;
@@ -68,12 +68,12 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
                 defenderPropertyStates[key] = defenderPropertyState;
             }
             defenders = defenderPropertyStates;
-            playerPropertyState = playerState;   
+            playerPredictablePropertyState = playerState;   
         }
         
-        public void HandlePropertyRecover(ref PlayerPropertyState playerPropertyState)
+        public void HandlePropertyRecover(ref PlayerPredictablePropertyState playerPredictablePropertyState)
         {
-            var propertyState = playerPropertyState;
+            var propertyState = playerPredictablePropertyState;
             var state = propertyState.Properties;
             var healthRecover = state[PropertyTypeEnum.HealthRecovery];
             var strengthRecover = state[PropertyTypeEnum.StrengthRecovery];
@@ -89,17 +89,17 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
                 increaseType = BuffIncreaseType.Current,
                 increaseValue = strengthRecover.CurrentValue * _calculatorConstant.TickRate,
             });
-            playerPropertyState = propertyState;
+            playerPredictablePropertyState = propertyState;
         }
 
-        public void HandleAnimationCommand(ref PlayerPropertyState playerPropertyState, AnimationState command, float animationCost)
+        public void HandleAnimationCommand(ref PlayerPredictablePropertyState playerPredictablePropertyState, AnimationState command, float animationCost)
         {
             var cost = animationCost;
             if (cost <= 0)
             {
                 return;
             }
-            var propertyState = playerPropertyState;
+            var propertyState = playerPredictablePropertyState;
             var state = propertyState.Properties;
             cost *= command == AnimationState.Sprint ? _calculatorConstant.TickRate : 1f;
             var strength = state[PropertyTypeEnum.Strength];
@@ -114,12 +114,12 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
                 increaseValue = cost,
                 operationType = BuffOperationType.Subtract,
             });
-            playerPropertyState = propertyState;
+            playerPredictablePropertyState = propertyState;
         }
 
-        public void HandleEnvironmentChange(ref PlayerPropertyState playerPropertyState, bool hasInputMovement, PlayerEnvironmentState environmentType, bool isSprinting)
+        public void HandleEnvironmentChange(ref PlayerPredictablePropertyState playerPredictablePropertyState, bool hasInputMovement, PlayerEnvironmentState environmentType, bool isSprinting)
         {
-            var propertyState = playerPropertyState;
+            var propertyState = playerPredictablePropertyState;
             var speed = propertyState.Properties[PropertyTypeEnum.Speed];
             var sprintRatio = propertyState.Properties[PropertyTypeEnum.SprintSpeedRatio];
             var stairsRatio = propertyState.Properties[PropertyTypeEnum.StairsSpeedRatio];
@@ -160,7 +160,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
                 }
             }
             propertyState.Properties[PropertyTypeEnum.Speed] = speed;
-            playerPropertyState = propertyState;
+            playerPredictablePropertyState = propertyState;
         }
 
         private PropertyCalculator GetRemainHealth(PropertyCalculator health, float damage)

@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Network.Data.PredictSystem.State;
 using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
+using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using MemoryPack;
 using Mirror;
@@ -14,10 +15,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
     public abstract class PredictableStateBase : NetworkAutoInjectComponent //NetworkAutoInjectComponent用于自动给NetworkBehaviour注入依赖
     {
         // 服务器权威状态
-        protected abstract IPropertyState CurrentState { get; set; }
-        protected NetworkIdentity NetworkIdentity;
+        protected abstract IPredictablePropertyState CurrentState { get; set; }
         // 预测命令队列
-        protected readonly Queue<INetworkCommand> CommandQueue = new Queue<INetworkCommand>();
+        protected readonly ConcurrentQueue<INetworkCommand> CommandQueue = new ConcurrentQueue<INetworkCommand>();
         protected GameSyncManager GameSyncManager;
         protected JsonDataConfig JsonDataConfig;
         protected int LastConfirmedTick { get; private set; }
@@ -28,7 +28,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             GameSyncManager = gameSyncManager;
             JsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
-            NetworkIdentity = GetComponent<NetworkIdentity>();
         }
 
         //本地客户端用于模拟命令，立即执行
@@ -52,13 +51,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             CommandQueue.Enqueue(command);
             while (CommandQueue.Count > 0 && GameSyncManager.CurrentTick - command.GetHeader().Tick > JsonDataConfig.PlayerConfig.InputBufferTick)
             {
-                CommandQueue.Dequeue();
+                if (CommandQueue.TryDequeue(out command))
+                {
+                    // 模拟命令效果
+                    Simulate(command);
+                    var json = MemoryPackSerializer.Serialize(command);
+                    // 发送命令
+                    CmdSendCommand(json);
+                }
             }
-            // 模拟命令效果
-            Simulate(command);
-            var json = MemoryPackSerializer.Serialize(command);
-            // 发送命令
-            CmdSendCommand(json);
         }
 
         [Command]
@@ -80,7 +81,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         
         public abstract CommandType HandledCommandType { get; }
 
-        public virtual void ApplyServerState<T>(T state) where T : IPropertyState
+        public virtual void ApplyServerState<T>(T state) where T : IPredictablePropertyState
         {
             CleanupConfirmedCommands(GameSyncManager.CurrentTick);
             if (isLocalPlayer)
@@ -100,7 +101,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             CurrentState = state;
         }
 
-        public abstract bool NeedsReconciliation<T>(T state) where T : IPropertyState;
+        public abstract bool NeedsReconciliation<T>(T state) where T : IPredictablePropertyState;
         public abstract void Simulate(INetworkCommand command);
     }
 }

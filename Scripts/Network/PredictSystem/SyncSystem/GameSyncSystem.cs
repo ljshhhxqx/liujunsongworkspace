@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.JsonConfig;
@@ -8,6 +9,7 @@ using HotUpdate.Scripts.Network.PredictSystem.InteractSystem;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using MemoryPack;
 using Mirror;
 using Tool.GameEvent;
@@ -19,11 +21,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
     public class GameSyncManager : NetworkBehaviour
     {
-        private readonly Queue<INetworkCommand> _clientCommands = new Queue<INetworkCommand>();
-        private readonly Queue<INetworkCommand> _serverCommands = new Queue<INetworkCommand>();
+        private readonly ConcurrentQueue<INetworkCommand> _clientCommands = new ConcurrentQueue<INetworkCommand>();
+        private readonly ConcurrentQueue<INetworkCommand> _serverCommands = new ConcurrentQueue<INetworkCommand>();
         private readonly Dictionary<int, PlayerComponentController> _playerConnections = new Dictionary<int, PlayerComponentController>();
         private readonly Dictionary<int, Dictionary<CommandType, int>> _lastProcessedInputs = new Dictionary<int, Dictionary<CommandType, int>>();  // 记录每个玩家最后处理的输入序号
-        private readonly Queue<INetworkCommand> _currentTickCommands = new Queue<INetworkCommand>();
+        private readonly ConcurrentQueue<INetworkCommand> _currentTickCommands = new ConcurrentQueue<INetworkCommand>();
         private readonly Dictionary<CommandType, BaseSyncSystem> _syncSystems = new Dictionary<CommandType, BaseSyncSystem>();
         private float _tickRate; 
         private float _maxCommandAge; 
@@ -68,6 +70,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _playerConnections.Remove(disconnectEvent.ConnectionId);
             _playerInGameManager.RemovePlayer(disconnectEvent.ConnectionId);
             OnPlayerDisconnected?.Invoke(disconnectEvent.ConnectionId);
+            RpcPlayerDisconnect(disconnectEvent.ConnectionId);
         }
 
         private void OnPlayerConnect(PlayerConnectEvent connectEvent)
@@ -79,22 +82,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 networkIdentity = connectEvent.Identity
             });
             OnPlayerConnected?.Invoke(connectEvent.ConnectionId, connectEvent.Identity);
+            RpcPlayerConnect(connectEvent);
         }
         
-        // [ClientRpc]
-        // private void RpcPlayerConnect(PlayerConnectEvent connectEvent)
-        // {
-        //     _playerConnections.Add(connectEvent.ConnectionId, connectEvent.Identity.gameObject.GetComponent<PlayerComponentController>());
-        //     OnPlayerConnected?.Invoke(connectEvent.ConnectionId, connectEvent.Identity);
-        // }
-        //
-        // [ClientRpc]
-        // private void RpcPlayerDisconnect(int connectionId)
-        // {
-        //     _playerConnections.Remove(connectionId);
-        //     _playerInGameManager.RemovePlayer(connectionId);
-        //     OnPlayerDisconnected?.Invoke(connectionId);
-        // }
+        [ClientRpc]
+        private void RpcPlayerConnect(PlayerConnectEvent connectEvent)
+        {
+            _playerConnections.Add(connectEvent.ConnectionId, connectEvent.Identity.gameObject.GetComponent<PlayerComponentController>());
+            OnPlayerConnected?.Invoke(connectEvent.ConnectionId, connectEvent.Identity);
+        }
+        
+        [ClientRpc]
+        private void RpcPlayerDisconnect(int connectionId)
+        {
+            _playerConnections.Remove(connectionId);
+            _playerInGameManager.RemovePlayer(connectionId);
+            OnPlayerDisconnected?.Invoke(connectionId);
+        }
         
         public event Action<int, NetworkIdentity> OnPlayerConnected;
         public event Action<int> OnPlayerDisconnected;
@@ -186,16 +190,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             // 将待处理命令移到当前tick的命令队列
             while (_clientCommands.Count > 0)
             {
-                var command = _clientCommands.Peek();
+                if (!_clientCommands.TryPeek(out var command))
+                {
+                    continue;
+                }
+
                 var header = command.GetHeader();
 
                 // 检查命令是否过期
                 var commandAge = (CurrentTick - header.Tick) * _tickRate;
                 if (commandAge > _maxCommandAge)
                 {
-                    _clientCommands.Dequeue(); // 丢弃过期命令
-                    Debug.LogWarning($"Command discarded due to age: {commandAge}s");
-                    continue;
+                    if (_clientCommands.TryDequeue(out command))
+                    {
+                        Debug.LogWarning($"Command discarded due to age: {commandAge}s");
+                        continue;
+                    }
                 }
 
                 // 如果命令属于未来的tick，停止处理
@@ -204,18 +214,24 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     break;
                 }
 
-                _currentTickCommands.Enqueue(_clientCommands.Dequeue());
+                if (_clientCommands.TryDequeue(out command))
+                {
+                    _currentTickCommands.Enqueue(command);
+                }
             }
             while (_serverCommands.Count > 0)
             {
-                var command = _serverCommands.Peek();
+                if (!_serverCommands.TryPeek(out var command))
+                {
+                    continue;
+                }
                 var header = command.GetHeader();
 
                 // 检查命令是否过期
                 var commandAge = (CurrentTick - header.Tick) * _tickRate;
-                if (commandAge > _maxCommandAge)
+                
+                if (_serverCommands.TryDequeue(out command))
                 {
-                    _serverCommands.Dequeue(); // 丢弃过期命令
                     Debug.LogWarning($"Command discarded due to age: {commandAge}s");
                     continue;
                 }
@@ -226,7 +242,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     break;
                 }
 
-                _currentTickCommands.Enqueue(_serverCommands.Dequeue());
+                if (_serverCommands.TryDequeue(out command))
+                {
+                    _currentTickCommands.Enqueue(command);
+                }
             }
         }
 
@@ -235,7 +254,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             while (_currentTickCommands.Count > 0)
             {
-                var command = _currentTickCommands.Dequeue();
+                if (!_currentTickCommands.TryDequeue(out var command))
+                {
+                    continue;
+                }
                 var header = command.GetHeader();
                 OnServerProcessCurrentTickCommand?.Invoke(command);
                 var syncSystem = GetSyncSystem(header.CommandType);
@@ -304,31 +326,29 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var tick = CurrentTick;
             var connectionIdValue = connectionId.GetValueOrDefault();
-            return new InteractHeader
-            {
-                CommandId = HybridCommandId.Generate(authority == CommandAuthority.Server, ref tick),
-                RequestConnectionId = connectionIdValue,
-                Tick = tick,
-                Category = category,
-                Position = position,
-                Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Authority = authority
-            };
+            var header = ObjectPool<InteractHeader>.Get();
+            header.CommandId = HybridCommandId.Generate(authority == CommandAuthority.Server, ref tick);
+            header.RequestConnectionId = connectionIdValue;
+            header.Tick = tick;
+            header.Category = category;
+            header.Position = position;
+            header.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            header.Authority = authority;
+            return header;
         }
 
         public static NetworkCommandHeader CreateNetworkCommandHeader(int? connectionId, CommandType commandType, CommandAuthority authority = CommandAuthority.Server)
         {
             var tick = CurrentTick;
             var connectionIdValue = connectionId.GetValueOrDefault();
-            return new NetworkCommandHeader
-            {
-                CommandId = HybridCommandId.Generate(authority == CommandAuthority.Server, ref tick),
-                ConnectionId = connectionIdValue,
-                CommandType = commandType,
-                Tick = tick,
-                Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Authority = authority
-            };
+            var header = ObjectPool<NetworkCommandHeader>.Get();
+            header.CommandId = HybridCommandId.Generate(authority == CommandAuthority.Server, ref tick);
+            header.ConnectionId = connectionIdValue;
+            header.CommandType = commandType;
+            header.Tick = tick;
+            header.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            header.Authority = authority;
+            return header;
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Network.Data.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
@@ -17,7 +16,6 @@ using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 using CooldownSnapshotData = HotUpdate.Scripts.Network.PredictSystem.Data.CooldownSnapshotData;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
 using InputCommand = HotUpdate.Scripts.Network.PredictSystem.Data.InputCommand;
-using NetworkCommandHeader = HotUpdate.Scripts.Network.PredictSystem.Data.NetworkCommandHeader;
 using PlayerAnimationCooldownState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerAnimationCooldownState;
 using PlayerGameStateData = HotUpdate.Scripts.Network.PredictSystem.State.PlayerGameStateData;
 using PlayerInputState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerInputState;
@@ -164,7 +162,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         }
 
         public override CommandType HandledCommandType => CommandType.Input;
-        public override IPropertyState ProcessCommand(INetworkCommand command)
+        public override IPredictablePropertyState ProcessCommand(INetworkCommand command)
         {
             if (command is InputCommand inputCommand)
             {
@@ -262,7 +260,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             playerPredictableState.ApplyServerState(state);
         }
 
-        public override bool HasStateChanged(IPropertyState oldState, IPropertyState newState)
+        public override bool HasStateChanged(IPredictablePropertyState oldState, IPredictablePropertyState newState)
         {
             return false;
         }

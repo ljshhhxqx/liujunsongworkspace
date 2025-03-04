@@ -1,20 +1,20 @@
 ﻿using System;
 using HotUpdate.Scripts.Config.ArrayConfig;
-using HotUpdate.Scripts.Network.Data.PredictSystem.State;
+using HotUpdate.Scripts.Network.Data.PredictSystem;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
+using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
-using PlayerPropertyState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerPropertyState;
 using PropertyCalculator = HotUpdate.Scripts.Network.PredictSystem.State.PropertyCalculator;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {
     public class PropertyPredictionState: PredictableStateBase
     {
-        protected override IPropertyState CurrentState { get; set; }
+        protected override IPredictablePropertyState CurrentState { get; set; }
         private AnimationConfig _animationConfig;
 
-        public PlayerPropertyState PlayerPropertyState => (PlayerPropertyState)CurrentState;
+        public PlayerPredictablePropertyState PlayerPredictablePropertyState => (PlayerPredictablePropertyState)CurrentState;
 
         protected override CommandType CommandType => CommandType.Property;
 
@@ -26,16 +26,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         
         public float GetProperty(PropertyTypeEnum propertyType)
         {
-            return PlayerPropertyState.Properties[propertyType].CurrentValue;
+            return PlayerPredictablePropertyState.Properties[propertyType].CurrentValue;
         }
         
         public float GetMaxProperty(PropertyTypeEnum propertyType)
         {
-            if (PlayerPropertyState.Properties[propertyType].IsResourceProperty())
+            if (PlayerPredictablePropertyState.Properties[propertyType].IsResourceProperty())
             {
-                return PlayerPropertyState.Properties[propertyType].MaxCurrentValue;
+                return PlayerPredictablePropertyState.Properties[propertyType].MaxCurrentValue;
             }
-            return PlayerPropertyState.Properties[propertyType].CurrentValue;
+            return PlayerPredictablePropertyState.Properties[propertyType].CurrentValue;
         }
 
         public event Action<PropertyTypeEnum, PropertyCalculator> OnPropertyChanged;
@@ -44,7 +44,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         
         public override void ApplyServerState<T>(T state)
         {
-            if (state is PlayerPropertyState propertyState)
+            if (state is PlayerPredictablePropertyState propertyState)
             {
                 base.ApplyServerState(propertyState);
                 PropertyChanged(propertyState);
@@ -53,9 +53,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         public override bool NeedsReconciliation<T>(T state)
         {
-            if (state is null || state is not PlayerPropertyState propertyState)
+            if (state is null || state is not PlayerPredictablePropertyState propertyState)
                 return false;
-            return !PlayerPropertyState.IsEqual(propertyState);
+            return !PlayerPredictablePropertyState.IsEqual(propertyState);
         }
 
         public override void Simulate(INetworkCommand command)
@@ -149,19 +149,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             //             break;
             //     }
             //todo:上述代码需要更换为直接调用PlayerComponentController,不再使用
-            var propertyState = PlayerPropertyState;
+            var propertyState = PlayerPredictablePropertyState;
             PropertyChanged(propertyState);
             
         }
 
-        public void RegisterProperties(PlayerPropertyState propertyState)
+        public void RegisterProperties(PlayerPredictablePropertyState predictablePropertyState)
         {
-            PropertyChanged(propertyState);
+            PropertyChanged(predictablePropertyState);
         }
 
-        private void PropertyChanged(PlayerPropertyState propertyState)
+        private void PropertyChanged(PlayerPredictablePropertyState predictablePropertyState)
         {
-            foreach (var property in propertyState.Properties)
+            foreach (var property in predictablePropertyState.Properties)
             {
                 if (property.Value.IsResourceProperty())
                 {

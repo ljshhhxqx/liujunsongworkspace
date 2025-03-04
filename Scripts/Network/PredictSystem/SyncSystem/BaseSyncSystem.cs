@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
-using HotUpdate.Scripts.Network.Data.PredictSystem.State;
+using HotUpdate.Scripts.Network.Data.PredictSystem;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
+using HotUpdate.Scripts.Network.PredictSystem.State;
 using MemoryPack;
 using Mirror;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
@@ -10,7 +11,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
     public abstract class BaseSyncSystem
     {
-        protected readonly Dictionary<int, IPropertyState> PropertyStates = new Dictionary<int, IPropertyState>();
+        protected readonly Dictionary<int, IPredictablePropertyState> PropertyStates = new Dictionary<int, IPredictablePropertyState>();
         //存储若干个字典，字典的key为客户端的connectionId，value为客户端具体重写的IPredictableState
         protected GameSyncManager GameSyncManager { get; private set; }
 
@@ -80,9 +81,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         }
 
         public abstract CommandType HandledCommandType { get; }
-        public abstract IPropertyState ProcessCommand(INetworkCommand command);
+        public abstract IPredictablePropertyState ProcessCommand(INetworkCommand command);
 
-        public virtual T GetState<T>(int connectionId) where T : IPropertyState
+        public virtual T GetState<T>(int connectionId) where T : IPredictablePropertyState
         {
             if (PropertyStates.TryGetValue(connectionId, out var state))
             {
@@ -96,8 +97,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             return MemoryPackSerializer.Serialize(PropertyStates);
         }
 
-        public abstract void SetState<T>(int connectionId, T state) where T : IPropertyState;
-        public abstract bool HasStateChanged(IPropertyState oldState, IPropertyState newState);
+        public abstract void SetState<T>(int connectionId, T state) where T : IPredictablePropertyState;
+        public abstract bool HasStateChanged(IPredictablePropertyState oldState, IPredictablePropertyState newState);
         public abstract void Clear();
     }
 }

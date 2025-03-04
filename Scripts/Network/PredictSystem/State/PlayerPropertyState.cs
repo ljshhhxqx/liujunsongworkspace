@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using HotUpdate.Scripts.Network.Data.PredictSystem.State;
 using MemoryPack;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
     [MemoryPackable]
-    public partial struct PlayerPropertyState : IPropertyState
+    public partial struct PlayerPredictablePropertyState : IPredictablePropertyState
     {
         // 使用显式字段存储键集合
         [MemoryPackOrder(0)] 
@@ -89,9 +88,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             _calculators = null;
         }
         
-        public bool IsEqual(IPropertyState other, float tolerance = 0.01f)
+        public bool IsEqual(IPredictablePropertyState other, float tolerance = 0.01f)
         {
-            if (other is not PlayerPropertyState otherState)
+            if (other is not PlayerPredictablePropertyState otherState)
                 return false;
             foreach (var kvp in Properties)
             {

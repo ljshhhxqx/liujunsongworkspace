@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using MemoryPack;
 using UniRx;
 
@@ -16,6 +17,38 @@ namespace HotUpdate.Scripts.Network.UISync
         // 数据存储
         private readonly Dictionary<UISyncDataType, byte[]> _serverData = new Dictionary<UISyncDataType, byte[]>();
         private readonly Dictionary<UISyncDataType, IUIData> _localData = new Dictionary<UISyncDataType, IUIData>();
+        // 在UIDataBroker中记录待验证操作
+        private readonly Dictionary<uint, UISyncCommand> _pendingOperations = new Dictionary<uint, UISyncCommand>();
+
+        public void SetLocalData(UISyncDataHeader header, byte[] data, UISyncDataType type)
+        {
+            var uiSyncCommand = ObjectPool<UISyncCommand>.Get();
+            uiSyncCommand.Header = header;
+            uiSyncCommand.CommandData = data;
+            uiSyncCommand.SyncDataType = type;
+            var uiData = MemoryPackSerializer.Deserialize<IUIData>(data);
+            _localData[type] = uiData;
+            _pendingOperations[header.CommandHeader.CommandId] = uiSyncCommand;
+            PublishData(type, uiData);
+        }
+        
+        // 服务器拒绝时回滚
+        public void Rollback(UISyncCommand syncCommand) 
+        {
+            if (_pendingOperations.TryGetValue(syncCommand.Header.CommandHeader.CommandId, out var op)) 
+            {
+                var data = MemoryPackSerializer.Deserialize<IUIData>(op.ReadOnlyData);
+                _localData[syncCommand.SyncDataType] = data;
+                PublishData<IUIData>(syncCommand.SyncDataType, syncCommand.CommandData);
+            }
+        }
+
+
+        // 服务器验证通过后清除对应操作
+        public void ConfirmOperation(uint operationId) 
+        {
+            _pendingOperations.Remove(operationId);
+        }
 
         // 响应式事件中心
         private readonly Dictionary<UISyncDataType, ISubject<IUIData>> _streams = new Dictionary<UISyncDataType, ISubject<IUIData>>();
@@ -33,17 +66,10 @@ namespace HotUpdate.Scripts.Network.UISync
         }
 
         // 更新数据入口
-        public void UpdateData(UISyncData newData)
+        public void UpdateData(UISyncCommand newCommand)
         {
-            _serverData[newData.SyncDataType] = newData.PayloadData;
-            PublishData<IUIData>(newData.SyncDataType, newData.PayloadData);
-        }
-
-        // 客户端预测数据
-        public void SetLocalData<T>(UISyncDataType key, T value) where T : IUIData
-        {
-            _localData[key] = value;
-            PublishData<T>(key, value);
+            _serverData[newCommand.SyncDataType] = newCommand.CommandData;
+            PublishData<IUIData>(newCommand.SyncDataType, newCommand.CommandData);
         }
 
         // 获取当前数据（本地优先）
@@ -58,28 +84,30 @@ namespace HotUpdate.Scripts.Network.UISync
 
         private void PublishData<T>(UISyncDataType dataType, byte[] data) where T : IUIData
         {
-            if (_streams.TryGetValue(dataType, out var subject))
+            var uiData = MemoryPackSerializer.Deserialize<T>(data);
+            if (!_streams.TryGetValue(dataType, out var subject))
             {
-                var uiData = MemoryPackSerializer.Deserialize<T>(data);
-                subject.OnNext(uiData);
+                subject = new BehaviorSubject<IUIData>(uiData);
             }
+            subject.OnNext(uiData);
         }
         
-        private void PublishData<T>(UISyncDataType dataType, IUIData data) where T : IUIData
+        private void PublishData(UISyncDataType dataType, IUIData data)
         {
-            if (_streams.TryGetValue(dataType, out var subject))
+            if (!_streams.TryGetValue(dataType, out var subject))
             {
-                subject.OnNext(data);
+                subject = new BehaviorSubject<IUIData>(data);
             }
+            subject.OnNext(data);
         }
 
         public static T CreateUIDefaultData<T>() where T : IUIData
         {
             var type = typeof(IUIData);
             T data;
-            if (type == typeof(PropertyData))
+            if (type == typeof(InventoryData))
             {
-                var propertyData = new PropertyData();
+                var propertyData = new InventoryData(new List<SlotData>());
                 data = (T)(IUIData)propertyData;
             }
             // TODO: 其他UI数据类型
@@ -88,11 +116,6 @@ namespace HotUpdate.Scripts.Network.UISync
                 return default;
             }
             return data;
-        }
-
-        public static UISyncDataHeader CreateHeader<T>(UISyncDataType dataType, T value)
-        {
-            return default;
         }
     }
 }

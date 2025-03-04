@@ -65,7 +65,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         Combat,     // 战斗相关
         Input,      // 移动相关
         Animation,  // 动画相关
-        Interaction // 交互相关
+        Item,       // 道具相关
+        Interaction, // 交互相关
+        UI,         // UI相关
     }
     
     #endregion

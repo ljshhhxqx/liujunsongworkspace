@@ -78,11 +78,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         // 鼠标悬停显示信息（可选）
         public void OnPointerEnter(PointerEventData eventData)
         {
-            // if (HasItem())
-            // {
-            //     Debug.Log($"悬停物品: {item.ItemName}, 数量: {stackCount}");
-            //     // 这里可以显示物品详情面板
-            // }
             OnPointerEnterObservable.OnNext(eventData);
         }
 
@@ -95,41 +90,18 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         // 拖拽开始
         public void OnBeginDrag(PointerEventData eventData)
         {
-            // if (!HasItem()) return;
-            //
-            // // 创建拖拽图标
-            // var dragObj = new GameObject("DragIcon");
-            // var dragImage = dragObj.AddComponent<Image>();
-            // dragImage.sprite = itemImage.sprite;
-            // dragImage.raycastTarget = false;
-            // dragObj.transform.SetParent(transform.root, false);
-            // dragObj.transform.position = eventData.position;
             OnBeginDragObservable.OnNext(eventData);
         }
 
         // 拖拽中
         public void OnDrag(PointerEventData eventData)
         {
-            // var dragObj = GameObject.Find("DragIcon");
-            // if (dragObj)
-            // {
-            //     dragObj.transform.position = eventData.position;
-            // }
             OnDragObservable.OnNext(eventData);
         }
 
         // 拖拽结束
         public void OnEndDrag(PointerEventData eventData)
         {
-            // var dragObj = GameObject.Find("DragIcon");
-            // if (dragObj) Destroy(dragObj);
-            //
-            // // 检查是否拖到另一个格子上
-            // var targetSlot = eventData.pointerEnter?.GetComponent<BagSlotItem>();
-            // if (targetSlot && targetSlot != this)
-            // {
-            //     SwapItems(targetSlot);
-            // }
             OnEndDragObservable.OnNext(eventData);
         }
 

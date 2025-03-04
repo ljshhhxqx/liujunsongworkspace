@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Network.Data.PredictSystem.State;
+using HotUpdate.Scripts.Network.Data.PredictSystem;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
@@ -22,7 +22,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {
     public class PlayerInputPredictionState : PredictableStateBase
     {
-        protected override IPropertyState CurrentState { get; set; }
+        protected override IPredictablePropertyState CurrentState { get; set; }
         public PlayerInputState InputState => (PlayerInputState) CurrentState;
         private PropertyPredictionState _propertyPredictionState;
         private KeyAnimationConfig _keyAnimationConfig;
