@@ -38,7 +38,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         }
 
         [MemoryPackOnSerializing]
-        void OnSerializing()
+        private void OnSerializing()
         {
             // 同步更新缓存
             if (_propertiesCache != null)
@@ -49,7 +49,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         }
 
         [MemoryPackOnDeserialized]
-        void OnDeserialized()
+        private void OnDeserialized()
         {
             RebuildCache();
         }

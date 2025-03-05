@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Network.Data.PredictSystem;
 using MemoryPack;
 using UnityEngine;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
@@ -14,6 +13,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         [MemoryPackOrder(0)] public PlayerGameStateData PlayerGameStateData;
         [MemoryPackOrder(1)] public PlayerAnimationCooldownState PlayerAnimationCooldownState;
         
+        [MemoryPackConstructor]
         public PlayerInputState(PlayerGameStateData playerGameStateData, PlayerAnimationCooldownState playerAnimationCooldownState)
         {
             PlayerGameStateData = playerGameStateData;

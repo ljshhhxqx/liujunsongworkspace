@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
@@ -34,7 +36,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private PlayerInGameManager _playerInGameManager;
         private JsonDataConfig _jsonDataConfig;
         private bool _isProcessing; // 防止重入
-        
+        private CancellationTokenSource _cts;
         
         private InteractSystem.InteractSystem _interactSystem;
         
@@ -52,8 +54,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 _clientCommands.Clear();
                 _currentTickCommands.Clear();
             }
+            _cts = new CancellationTokenSource();
             _tickRate = _jsonDataConfig.GameConfig.tickRate;
             _maxCommandAge = _jsonDataConfig.GameConfig.maxCommandAge;
+            ProcessImmediateChannel(_cts.Token).Forget();
             gameEventManager.Subscribe<PlayerConnectEvent>(OnPlayerConnect);
             gameEventManager.Subscribe<PlayerDisconnectEvent>(OnPlayerDisconnect);
             var commandTypes = Enum.GetValues(typeof(CommandType));
@@ -83,6 +87,28 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             });
             OnPlayerConnected?.Invoke(connectEvent.ConnectionId, connectEvent.Identity);
             RpcPlayerConnect(connectEvent);
+        }
+        
+        [Server]
+        private async UniTaskVoid ProcessImmediateChannel(CancellationToken ct)
+        {
+            while (!ct.IsCancellationRequested)
+            {
+                await UniTask.WaitUntil(() => !_serverCommands.IsEmpty, 
+                    cancellationToken: ct);
+
+                while (_serverCommands.TryDequeue(out var command))
+                {
+                    var header = command.GetHeader();
+                    OnServerProcessCurrentTickCommand?.Invoke(command);
+                    var syncSystem = GetSyncSystem(header.CommandType);
+                    if (syncSystem != null)
+                    {
+                        var allStates = syncSystem.GetAllState();
+                        RpcProcessCurrentTickCommand(allStates);
+                    }
+                }
+            }
         }
         
         [ClientRpc]
@@ -169,8 +195,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 MoveCommandsToCurrentTick();
                 // 处理当前tick的所有命令
                 ProcessCurrentTickCommands();
-                // 处理其他系统的命令
-                ProcessOtherSystemCommands();
                 // 广播状态更新
                 BroadcastStateUpdates();
             }
@@ -178,11 +202,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 _isProcessing = false;
             }
-        }
-
-        private void ProcessOtherSystemCommands()
-        {
-            _interactSystem.ProcessCommands();
         }
 
         private void MoveCommandsToCurrentTick()
@@ -219,34 +238,34 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     _currentTickCommands.Enqueue(command);
                 }
             }
-            while (_serverCommands.Count > 0)
-            {
-                if (!_serverCommands.TryPeek(out var command))
-                {
-                    continue;
-                }
-                var header = command.GetHeader();
-
-                // 检查命令是否过期
-                var commandAge = (CurrentTick - header.Tick) * _tickRate;
-                
-                if (_serverCommands.TryDequeue(out command))
-                {
-                    Debug.LogWarning($"Command discarded due to age: {commandAge}s");
-                    continue;
-                }
-
-                // 如果命令属于未来的tick，停止处理
-                if (header.Tick > CurrentTick)
-                {
-                    break;
-                }
-
-                if (_serverCommands.TryDequeue(out command))
-                {
-                    _currentTickCommands.Enqueue(command);
-                }
-            }
+            // while (_serverCommands.Count > 0)
+            // {
+            //     if (!_serverCommands.TryPeek(out var command))
+            //     {
+            //         continue;
+            //     }
+            //     var header = command.GetHeader();
+            //
+            //     // 检查命令是否过期
+            //     var commandAge = (CurrentTick - header.Tick) * _tickRate;
+            //     
+            //     if (_serverCommands.TryDequeue(out command))
+            //     {
+            //         Debug.LogWarning($"Command discarded due to age: {commandAge}s");
+            //         continue;
+            //     }
+            //
+            //     // 如果命令属于未来的tick，停止处理
+            //     if (header.Tick > CurrentTick)
+            //     {
+            //         break;
+            //     }
+            //
+            //     if (_serverCommands.TryDequeue(out command))
+            //     {
+            //         _currentTickCommands.Enqueue(command);
+            //     }
+            // }
         }
 
         public event Action<INetworkCommand> OnServerProcessCurrentTickCommand;

@@ -148,7 +148,6 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public float tickRate;
         public float inputThreshold;
         public float maxCommandAge;
-        
         public float uiUpdateInterval;
     }
 

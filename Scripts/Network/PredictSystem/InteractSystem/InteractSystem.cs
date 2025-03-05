@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Collector;
-using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
 using MemoryPack;
 using Mirror;
@@ -14,7 +15,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.InteractSystem
     {
         private ItemsSpawnerManager _itemsSpawnerManager;
         private PlayerInGameManager _playerInGameManager;
-        private readonly Queue<IInteractRequest> _commandQueue = new Queue<IInteractRequest>();
+        private readonly ConcurrentQueue<IInteractRequest> _commandQueue = new ConcurrentQueue<IInteractRequest>();
+        private CancellationTokenSource _cts;
 
         [Inject]
         private void Init(PlayerInGameManager playerInGameManager)
@@ -22,6 +24,35 @@ namespace HotUpdate.Scripts.Network.PredictSystem.InteractSystem
             _playerInGameManager = playerInGameManager;
             //_gameSyncManager = FindObjectOfType<GameSyncManager>();
             _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
+            if (isServer)
+            {
+                _cts = new CancellationTokenSource();
+                UpdateInteractRequests(_cts.Token).Forget();
+            }
+        }
+
+        private async UniTaskVoid UpdateInteractRequests(CancellationToken cts)
+        {
+            while (!_cts.IsCancellationRequested)
+            {
+                await UniTask.WaitUntil(() => !_commandQueue.IsEmpty, 
+                    cancellationToken: cts);
+                while (_commandQueue.TryDequeue(out var command))
+                {
+                    switch (command)
+                    {
+                        case SceneInteractRequest sceneInteractRequest:
+                            HandleSceneInteractRequest(sceneInteractRequest);
+                            break;
+                        case PlayerInteractRequest playerInteractRequest:
+                            HandlePlayerInteractRequest(playerInteractRequest);
+                            break;
+                        case EnvironmentInteractRequest environmentInteractRequest:
+                            HandleEnvironmentInteractRequest(environmentInteractRequest);
+                            break;
+                    }
+                }
+            }
         }
 
         [Command]
@@ -36,27 +67,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.InteractSystem
                 return;
             }
             _commandQueue.Enqueue(command);
-        }
-
-        [Server]
-        public void ProcessCommands()
-        {
-            while (_commandQueue.Count > 0)
-            {
-                var command = _commandQueue.Dequeue();
-                switch (command)
-                {
-                    case SceneInteractRequest sceneInteractRequest:
-                        HandleSceneInteractRequest(sceneInteractRequest);
-                        break;
-                    case PlayerInteractRequest playerInteractRequest:
-                        HandlePlayerInteractRequest(playerInteractRequest);
-                        break;
-                    case EnvironmentInteractRequest environmentInteractRequest:
-                        HandleEnvironmentInteractRequest(environmentInteractRequest);
-                        break;
-                }
-            }
         }
 
         private void HandleSceneInteractRequest(SceneInteractRequest request)

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
@@ -30,15 +29,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             JsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
         }
 
-        //本地客户端用于模拟命令，立即执行
-        public void AddCommandByOtherPredictableState(INetworkCommand command)
-        {
-            var header = command.GetHeader();
-            if (header.CommandType != HandledCommandType) 
-                return;
-            command.SetHeader(netIdentity.connectionToClient.connectionId, CommandType, GameSyncManager.CurrentTick);
-            Simulate(command);
-        }
+        // //本地客户端用于模拟命令，立即执行
+        // public void AddCommandByOtherPredictableState(INetworkCommand command)
+        // {
+        //     var header = command.GetHeader();
+        //     if (header.CommandType != HandledCommandType) 
+        //         return;
+        //     command.SetHeader(netIdentity.connectionToClient.connectionId, CommandType, GameSyncManager.CurrentTick);
+        //     Simulate(command);
+        // }
 
         // 添加预测命令
         public void AddPredictedCommand(INetworkCommand command)
@@ -71,10 +70,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         // 清理已确认的命令
         protected virtual void CleanupConfirmedCommands(int confirmedTick)
         {
-            while (CommandQueue.Count > 0 && 
-                   CommandQueue.Peek().GetHeader().Tick <= confirmedTick)
+            while (CommandQueue.Count > 0)
             {
-                CommandQueue.Dequeue();
+                if (CommandQueue.TryPeek(out var command) && command.GetHeader().Tick == confirmedTick)
+                {
+                    CommandQueue.TryDequeue(out command);
+                }
             }
             LastConfirmedTick = confirmedTick;
         }
