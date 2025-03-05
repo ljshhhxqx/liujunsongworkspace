@@ -9,7 +9,7 @@ using UnityEngine;
 using AnimationInfo = HotUpdate.Scripts.Config.ArrayConfig.AnimationInfo;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
-namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
+namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {
     public class PlayerAnimationCalculator : IPlayerStateCalculator
     {

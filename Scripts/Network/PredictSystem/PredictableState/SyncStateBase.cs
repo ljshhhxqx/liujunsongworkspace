@@ -10,6 +10,7 @@ using VContainer;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {
+    //客户端
     public abstract class SyncStateBase : NetworkAutoInjectComponent
     {
         protected abstract ISyncPropertyState CurrentState { get; set; }
@@ -35,7 +36,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             var header = command.GetHeader();
             if (header.CommandType != CommandType) 
                 return;
-            command.SetHeader(netIdentity.connectionToClient.connectionId, CommandType, GameSyncManager.CurrentTick);
+            //command.SetHeader(netIdentity.connectionToClient.connectionId, CommandType, GameSyncManager.CurrentTick);
         
             CommandQueue.Enqueue(command);
             while (CommandQueue.Count > 0 && GameSyncManager.CurrentTick - command.GetHeader().Tick > JsonDataConfig.PlayerConfig.InputBufferTick)

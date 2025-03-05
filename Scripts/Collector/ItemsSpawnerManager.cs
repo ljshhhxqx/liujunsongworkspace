@@ -19,7 +19,6 @@ using HotUpdate.Scripts.UI.UIs.Overlay;
 using MemoryPack;
 using Mirror;
 using Tool.GameEvent;
-using Tool.Message;
 using UI.UIBase;
 using UnityEngine;
 using VContainer;
@@ -29,7 +28,7 @@ namespace HotUpdate.Scripts.Collector
 {
     public class ItemsSpawnerManager : ServerNetworkComponent
     {
-        private Dictionary<int, CollectObjectController> _collectiblePrefabs = new Dictionary<int, CollectObjectController>();
+        private readonly Dictionary<int, CollectObjectController> _collectiblePrefabs = new Dictionary<int, CollectObjectController>();
         private readonly Dictionary<CollectObjectBuffSize, Dictionary<PropertyTypeEnum, Material>> _collectibleMaterials = new Dictionary<CollectObjectBuffSize, Dictionary<PropertyTypeEnum, Material>>();
         private TreasureChestComponent _treasureChestPrefab;
         private IConfigProvider _configProvider;

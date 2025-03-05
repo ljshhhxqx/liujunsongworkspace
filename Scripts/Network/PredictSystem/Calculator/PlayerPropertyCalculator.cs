@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Network.Data.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using Unity.Jobs;
 using UnityEngine;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
@@ -24,6 +25,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     [MemoryPackUnion(7, typeof(InputCommand))]
     [MemoryPackUnion(8, typeof(AnimationCommand))]
     [MemoryPackUnion(9, typeof(InteractionCommand))]
+    [MemoryPackUnion(10, typeof(ItemUseCommand))]
+    [MemoryPackUnion(11, typeof(ItemLockCommand))]
+    [MemoryPackUnion(12, typeof(ItemEquipCommand))]
+    [MemoryPackUnion(13, typeof(ItemDropCommand))]
     public partial interface INetworkCommand
     {
         NetworkCommandHeader GetHeader();
@@ -49,9 +54,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         // 执行上下文
         [MemoryPackOrder(5)] 
         public CommandAuthority Authority;
+        [MemoryPackOrder(6)] 
+        public CommandExecuteType ExecuteType;
     }
 
-    public enum CommandAuthority
+    public enum CommandExecuteType
+    {
+        //服务器立即同步(可以由客户端发起，也可以由服务器发起)
+        Immediate,
+        //在客户端预测后再同步(客户端本地需要能回滚)
+        Predicate,
+        //服务器发起的命令(由客户端的预测命令引起的，因而和客户端预测后的时机一起同步)
+        ServerSync,
+    }
+
+    public enum CommandAuthority : byte
     {
         Client,     // 客户端发起
         Server,     // 服务器发起
@@ -62,12 +79,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     public enum CommandType
     {
         Property,   // 属性相关
-        Combat,     // 战斗相关
         Input,      // 移动相关
-        Animation,  // 动画相关
         Item,       // 道具相关
-        Interaction, // 交互相关
         UI,         // UI相关
+        Interact
     }
     
     #endregion
@@ -371,6 +386,107 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         }
     }
     #endregion
+    
+    #region InteractionCommand
+    [MemoryPackable]
+    public partial struct ItemUseCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)]
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public uint ItemId;
+        [MemoryPackOrder(2)] 
+        public int Count;
+        public NetworkCommandHeader GetHeader() => Header;
+
+        public bool IsValid()
+        {
+            return ItemId > 0 && Count > 0;
+        }
+        
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
+    }
+    
+    [MemoryPackable]
+    public partial struct ItemLockCommand  : INetworkCommand
+    {
+        [MemoryPackOrder(0)]
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public uint ItemId;
+
+        public NetworkCommandHeader GetHeader() => Header;
+
+        public bool IsValid()
+        {
+            return ItemId > 0;
+        }
+        
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
+    }
+    
+    [MemoryPackable]
+    public partial struct ItemEquipCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)]
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public uint ItemId;
+        public NetworkCommandHeader GetHeader() => Header;
+        
+        public bool IsValid()
+        {
+            return ItemId > 0;
+        }
+        
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
+    }
+    
+    
+    [MemoryPackable]
+    public partial struct ItemDropCommand  : INetworkCommand
+    {
+        [MemoryPackOrder(0)]
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public uint ItemId;
+        [MemoryPackOrder(2)] 
+        public int Count;
+        public NetworkCommandHeader GetHeader() => Header;
+
+        public bool IsValid()
+        {
+            return ItemId > 0 && Count > 0;
+        }
+        
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
+    }
+    
+    #endregion
 
     #region Enum
     
@@ -455,34 +571,48 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                     return new PlayerPropertySyncSystem();
                 case CommandType.Input:
                     return new PlayerInputSyncSystem();
+                case CommandType.Item:
+                    return new PlayerItemSyncSystem();
+                // case CommandType.UI:
+                //     return new PlayerCombatSyncSystem();
             }   
             return null;
         }
     }
     public struct HybridCommandId
     {
-        public static uint Generate(bool isServer, ref int sequence)
+        private static readonly int[] Sequences = new int[Enum.GetValues(typeof(CommandType)).Length];
+        
+        public static uint Generate(bool isServer, CommandType commandType, ref int? sequence)
         {
-            // 时间部分：0-3599（60分钟内的秒数）
+            // 时间部分：0-3599（60分钟内的秒数），12位 (0-4095)
             var time = (DateTime.UtcNow.Minute % 60) * 60 + DateTime.UtcNow.Second;
         
             // 来源标记：最高位
-            uint serverFlag = isServer ? 1u << 31 : 0u;
+            var serverFlag = isServer ? 1u << 31 : 0u;
         
-            // 时间部分：15位（覆盖0-32767）
-            uint timePart = (uint)(time & 0x7FFF) << 16;
+            // 时间部分：12位
+            var timePart = (uint)(time & 0xFFF) << 19;
         
-            // 序列号：16位（每个来源独立）
-            uint seqPart = (uint)(Interlocked.Increment(ref sequence) & 0xFFFF);
+            // CommandType部分：3位
+            var cmdTypePart = (uint)commandType << 16;
+        
+            // 序列号：16位
+            var seq = sequence.GetValueOrDefault(0);
+            var seqPart = sequence.HasValue 
+                ? (uint)(Interlocked.Increment(ref seq) & 0xFFFF)
+                : (uint)(Interlocked.Increment(ref Sequences[(int)commandType]) & 0xFFFF);
 
-            return serverFlag | timePart | seqPart;
+            return serverFlag | timePart | cmdTypePart | seqPart;
         }
 
         // 解析方法
-        public static void Deconstruct(uint commandId, out bool isServer, out int timestamp, out ushort sequence)
+        public static void Deconstruct(uint commandId, out bool isServer, out int timestamp, 
+            out CommandType commandType, out ushort sequence)
         {
             isServer = (commandId & 0x80000000) != 0;
-            timestamp = (int)((commandId >> 16) & 0x7FFF);
+            timestamp = (int)((commandId >> 19) & 0xFFF);
+            commandType = (CommandType)((commandId >> 16) & 0x7);
             sequence = (ushort)(commandId & 0xFFFF);
         }
     }

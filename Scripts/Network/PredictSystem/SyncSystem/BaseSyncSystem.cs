@@ -11,7 +11,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
     public abstract class BaseSyncSystem
     {
-        protected readonly Dictionary<int, IPredictablePropertyState> PropertyStates = new Dictionary<int, IPredictablePropertyState>();
+        protected readonly Dictionary<int, ISyncPropertyState> PropertyStates = new Dictionary<int, ISyncPropertyState>();
         //存储若干个字典，字典的key为客户端的connectionId，value为客户端具体重写的IPredictableState
         protected GameSyncManager GameSyncManager { get; private set; }
 
@@ -81,9 +81,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         }
 
         public abstract CommandType HandledCommandType { get; }
-        public abstract IPredictablePropertyState ProcessCommand(INetworkCommand command);
+        public abstract ISyncPropertyState ProcessCommand(INetworkCommand command);
 
-        public virtual T GetState<T>(int connectionId) where T : IPredictablePropertyState
+        public virtual T GetState<T>(int connectionId) where T : ISyncPropertyState
         {
             if (PropertyStates.TryGetValue(connectionId, out var state))
             {
@@ -97,8 +97,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             return MemoryPackSerializer.Serialize(PropertyStates);
         }
 
-        public abstract void SetState<T>(int connectionId, T state) where T : IPredictablePropertyState;
-        public abstract bool HasStateChanged(IPredictablePropertyState oldState, IPredictablePropertyState newState);
-        public abstract void Clear();
+        public abstract void SetState<T>(int connectionId, T state) where T : ISyncPropertyState;
+        public abstract bool HasStateChanged(ISyncPropertyState oldState, ISyncPropertyState newState);
+
+        public virtual void Clear()
+        {
+            PropertyStates.Clear();
+        }
     }
 }

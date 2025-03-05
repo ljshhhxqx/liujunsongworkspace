@@ -121,7 +121,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         }
 
         public override CommandType HandledCommandType => CommandType.Property;
-        public override IPredictablePropertyState ProcessCommand(INetworkCommand command)
+        public override ISyncPropertyState ProcessCommand(INetworkCommand command)
         {
             var header = command.GetHeader();
             if (command is PropertyAutoRecoverCommand)
@@ -289,7 +289,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             playerPredictableState.ApplyServerState(state);
         }
 
-        public override bool HasStateChanged(IPredictablePropertyState oldState, IPredictablePropertyState newState)
+        public override bool HasStateChanged(ISyncPropertyState oldState, ISyncPropertyState newState)
         {
             if (oldState == null || newState == null)
             {
@@ -301,7 +301,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         public override void Clear()
         {
-            
+            base.Clear();
+            _activeBuffs.Clear();
+            PlayerPredictionState.Clear();
         }
 
         [Serializable]

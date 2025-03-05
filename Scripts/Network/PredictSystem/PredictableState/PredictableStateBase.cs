@@ -14,7 +14,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
     public abstract class PredictableStateBase : NetworkAutoInjectComponent //NetworkAutoInjectComponent用于自动给NetworkBehaviour注入依赖
     {
         // 服务器权威状态
-        protected abstract IPredictablePropertyState CurrentState { get; set; }
+        protected abstract ISyncPropertyState CurrentState { get; set; }
         // 预测命令队列
         protected readonly ConcurrentQueue<INetworkCommand> CommandQueue = new ConcurrentQueue<INetworkCommand>();
         protected GameSyncManager GameSyncManager;
@@ -29,21 +29,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             JsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
         }
 
-        // //本地客户端用于模拟命令，立即执行
-        // public void AddCommandByOtherPredictableState(INetworkCommand command)
-        // {
-        //     var header = command.GetHeader();
-        //     if (header.CommandType != HandledCommandType) 
-        //         return;
-        //     command.SetHeader(netIdentity.connectionToClient.connectionId, CommandType, GameSyncManager.CurrentTick);
-        //     Simulate(command);
-        // }
-
         // 添加预测命令
         public void AddPredictedCommand(INetworkCommand command)
         {
             var header = command.GetHeader();
-            if (header.CommandType != HandledCommandType) 
+            if (header.CommandType != CommandType && header.ExecuteType != CommandExecuteType.Predicate) 
                 return;
             command.SetHeader(netIdentity.connectionToClient.connectionId, CommandType, GameSyncManager.CurrentTick);
         
@@ -79,10 +69,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             }
             LastConfirmedTick = confirmedTick;
         }
-        
-        public abstract CommandType HandledCommandType { get; }
 
-        public virtual void ApplyServerState<T>(T state) where T : IPredictablePropertyState
+        public virtual void ApplyServerState<T>(T state) where T : ISyncPropertyState
         {
             CleanupConfirmedCommands(GameSyncManager.CurrentTick);
             if (isLocalPlayer)
@@ -102,7 +90,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             CurrentState = state;
         }
 
-        public abstract bool NeedsReconciliation<T>(T state) where T : IPredictablePropertyState;
+        public abstract bool NeedsReconciliation<T>(T state) where T : ISyncPropertyState;
         public abstract void Simulate(INetworkCommand command);
     }
 }

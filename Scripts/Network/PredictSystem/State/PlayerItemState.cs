@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Codice.Client.BaseCommands.Merge.Xml;
+using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.UI.UIs.Common;
 using MemoryPack;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.State
@@ -77,6 +78,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         [MemoryPackOrder(2)]
         public int ConfigId;
         [MemoryPackOrder(3)]
-        public ItemType ItemType;
+        public PlayerItemType PlayerItemType;
+        [MemoryPackOrder(4)]
+        public PlayerItemState State;
     }
 }

@@ -5,7 +5,7 @@ using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
-using HotUpdate.Scripts.Network.Data.PredictSystem.Calculator;
+using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
@@ -18,7 +18,6 @@ using UnityEngine;
 using VContainer;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 using InputCommand = HotUpdate.Scripts.Network.PredictSystem.Data.InputCommand;
-using NetworkCommandHeader = HotUpdate.Scripts.Network.PredictSystem.Data.NetworkCommandHeader;
 using PlayerAnimationCooldownState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerAnimationCooldownState;
 using PlayerGameStateData = HotUpdate.Scripts.Network.PredictSystem.State.PlayerGameStateData;
 using PropertyAutoRecoverCommand = HotUpdate.Scripts.Network.PredictSystem.Data.PropertyAutoRecoverCommand;
@@ -27,7 +26,7 @@ using PropertyEnvironmentChangeCommand = HotUpdate.Scripts.Network.PredictSystem
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 {
-    public class PlayerComponentController : NetworkBehaviour,IAttackAnimationEvent
+    public class PlayerComponentController : NetworkAutoInjectComponent,IAttackAnimationEvent
     {
         [Header("Components")]
         [SerializeField]
@@ -59,6 +58,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private PlayerPropertyCalculator _playerPropertyCalculator;
         private PlayerAnimationCalculator _playerAnimationCalculator;
         private PlayerBattleCalculator _playerBattleCalculator;
+        private PlayerItemCalculator _playerItemCalculator;
         
         [Header("Parameters")]
         private float _currentSpeed;
@@ -81,11 +81,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public IObservable<bool> IsSpecialAction => _isSpecialActionStream;
         public IObservable<int> AttackPointReached => _onAttackPoint;
         public IObservable<int> AttackEnded => _onAttackEnd;
-
-        private void Awake()
-        {
-            ObjectInjectProvider.Instance.Inject(this);
-        }
+        
 
         [Inject]
         private void Init(IConfigProvider configProvider, GameSyncManager gameSyncManager, MapBoundDefiner mapBoundDefiner, PlayerInGameManager playerInGameManager)
@@ -127,7 +123,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             
             Observable.EveryUpdate()
                 .Where(_ => !_isSpecialActionStream.Value)
-                .Subscribe(_ => {
+                .Subscribe(_ => 
+                {
                     _targetSpeed = _playerPropertyCalculator.GetProperty(PropertyTypeEnum.Speed);
                     _playerAnimationCalculator.UpdateAnimationState();
                 })
@@ -137,7 +134,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .Subscribe(HandleSendNetworkCommand)
                 .AddTo(_disposables);
             //处理物理信息
-            _inputStream.ThrottleFirst(TimeSpan.FromMilliseconds(FixedDeltaTime * 1000))
+            _inputStream.Throttle(TimeSpan.FromMilliseconds(FixedDeltaTime * 1000))
                 .Subscribe(HandleInputPhysics)
                 .AddTo(_disposables);
         }
@@ -215,6 +212,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerPropertyCalculator = new PlayerPropertyCalculator(new Dictionary<PropertyTypeEnum, PropertyCalculator>());
             _playerAnimationCalculator = new PlayerAnimationCalculator(new AnimationComponent{ Animator = _animator});
             _playerBattleCalculator = new PlayerBattleCalculator(new PlayerBattleComponent(transform,_mapBoundDefiner, _playerInGameManager));
+            _playerItemCalculator = new PlayerItemCalculator();
             var jsonData = configProvider.GetConfig<JsonDataConfig>();
             var propertyConfig = configProvider.GetConfig<PropertyConfig>();
             var gameData = jsonData.GameConfig;

@@ -7,7 +7,7 @@ using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
-using HotUpdate.Scripts.Network.PredictSystem.InteractSystem;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
@@ -15,9 +15,11 @@ using HotUpdate.Scripts.Tool.ObjectPool;
 using MemoryPack;
 using Mirror;
 using Tool.GameEvent;
+using UniRx;
 using UnityEngine;
 using VContainer;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
+using InteractHeader = HotUpdate.Scripts.Network.PredictSystem.Interact.InteractHeader;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
@@ -25,6 +27,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
     {
         private readonly ConcurrentQueue<INetworkCommand> _clientCommands = new ConcurrentQueue<INetworkCommand>();
         private readonly ConcurrentQueue<INetworkCommand> _serverCommands = new ConcurrentQueue<INetworkCommand>();
+        private readonly ConcurrentQueue<INetworkCommand> _immediateCommands = new ConcurrentQueue<INetworkCommand>();
         private readonly Dictionary<int, PlayerComponentController> _playerConnections = new Dictionary<int, PlayerComponentController>();
         private readonly Dictionary<int, Dictionary<CommandType, int>> _lastProcessedInputs = new Dictionary<int, Dictionary<CommandType, int>>();  // 记录每个玩家最后处理的输入序号
         private readonly ConcurrentQueue<INetworkCommand> _currentTickCommands = new ConcurrentQueue<INetworkCommand>();
@@ -38,7 +41,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private bool _isProcessing; // 防止重入
         private CancellationTokenSource _cts;
         
-        private InteractSystem.InteractSystem _interactSystem;
+        private InteractSystem _interactSystem;
         
         public static int CurrentTick { get; private set; }
 
@@ -57,7 +60,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _cts = new CancellationTokenSource();
             _tickRate = _jsonDataConfig.GameConfig.tickRate;
             _maxCommandAge = _jsonDataConfig.GameConfig.maxCommandAge;
-            ProcessImmediateChannel(_cts.Token).Forget();
             gameEventManager.Subscribe<PlayerConnectEvent>(OnPlayerConnect);
             gameEventManager.Subscribe<PlayerDisconnectEvent>(OnPlayerDisconnect);
             var commandTypes = Enum.GetValues(typeof(CommandType));
@@ -67,6 +69,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 _syncSystems[commandType].Initialize(this);
                 ObjectInjectProvider.Instance.Inject(_syncSystems[commandType]);
             }
+            Observable.EveryUpdate()
+                .Throttle(TimeSpan.FromSeconds(1 / _tickRate))
+                .Where(_ => isServer && !_isProcessing)
+                .Subscribe(_ =>
+                {
+                    _tickTimer = 0;
+                    ProcessTick();
+                    CurrentTick++;
+                })
+                .AddTo(this);
+                
+            ProcessImmediateCommands(_cts.Token);
         }
 
         private void OnPlayerDisconnect(PlayerDisconnectEvent disconnectEvent)
@@ -87,28 +101,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             });
             OnPlayerConnected?.Invoke(connectEvent.ConnectionId, connectEvent.Identity);
             RpcPlayerConnect(connectEvent);
-        }
-        
-        [Server]
-        private async UniTaskVoid ProcessImmediateChannel(CancellationToken ct)
-        {
-            while (!ct.IsCancellationRequested)
-            {
-                await UniTask.WaitUntil(() => !_serverCommands.IsEmpty, 
-                    cancellationToken: ct);
-
-                while (_serverCommands.TryDequeue(out var command))
-                {
-                    var header = command.GetHeader();
-                    OnServerProcessCurrentTickCommand?.Invoke(command);
-                    var syncSystem = GetSyncSystem(header.CommandType);
-                    if (syncSystem != null)
-                    {
-                        var allStates = syncSystem.GetAllState();
-                        RpcProcessCurrentTickCommand(allStates);
-                    }
-                }
-            }
         }
         
         [ClientRpc]
@@ -151,18 +143,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             return null;
         }
 
-        private void Update()
+        private async void ProcessImmediateCommands(CancellationToken token)
         {
-            if (!isServer || _isProcessing) return;
-
-            _tickTimer += Time.deltaTime;
-        
-            // 检查是否需要处理新的tick
-            if (_tickTimer >= _tickRate)
+            while (!token.IsCancellationRequested)
             {
-                _tickTimer = 0;
-                ProcessTick();
-                CurrentTick++;
+                await UniTask.WaitUntil(() => !_immediateCommands.IsEmpty, 
+                    cancellationToken: token);
+                if (_immediateCommands.TryDequeue(out var command))
+                {
+                    var header = command.GetHeader();
+                    var syncSystem = GetSyncSystem(header.CommandType);
+                    if (syncSystem != null)
+                    {
+                        var allStates = syncSystem.GetAllState();
+                        RpcProcessCurrentTickCommand(allStates);
+                    }
+                }
             }
         }
 
@@ -238,34 +234,34 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     _currentTickCommands.Enqueue(command);
                 }
             }
-            // while (_serverCommands.Count > 0)
-            // {
-            //     if (!_serverCommands.TryPeek(out var command))
-            //     {
-            //         continue;
-            //     }
-            //     var header = command.GetHeader();
-            //
-            //     // 检查命令是否过期
-            //     var commandAge = (CurrentTick - header.Tick) * _tickRate;
-            //     
-            //     if (_serverCommands.TryDequeue(out command))
-            //     {
-            //         Debug.LogWarning($"Command discarded due to age: {commandAge}s");
-            //         continue;
-            //     }
-            //
-            //     // 如果命令属于未来的tick，停止处理
-            //     if (header.Tick > CurrentTick)
-            //     {
-            //         break;
-            //     }
-            //
-            //     if (_serverCommands.TryDequeue(out command))
-            //     {
-            //         _currentTickCommands.Enqueue(command);
-            //     }
-            // }
+            while (_serverCommands.Count > 0)
+            {
+                if (!_serverCommands.TryPeek(out var command))
+                {
+                    continue;
+                }
+                var header = command.GetHeader();
+
+                // 检查命令是否过期
+                var commandAge = (CurrentTick - header.Tick) * _tickRate;
+                
+                if (_serverCommands.TryDequeue(out command))
+                {
+                    Debug.LogWarning($"Command discarded due to age: {commandAge}s");
+                    continue;
+                }
+
+                // 如果命令属于未来的tick，停止处理
+                if (header.Tick > CurrentTick)
+                {
+                    break;
+                }
+
+                if (_serverCommands.TryDequeue(out command))
+                {
+                    _currentTickCommands.Enqueue(command);
+                }
+            }
         }
 
         public event Action<INetworkCommand> OnServerProcessCurrentTickCommand;
@@ -343,12 +339,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         public static InteractHeader CreateInteractHeader(int? connectionId, InteractCategory category, CompressedVector3 position, CommandAuthority authority = CommandAuthority.Server)
         {
-            var tick = CurrentTick;
+            int? noSequence = null;
             var connectionIdValue = connectionId.GetValueOrDefault();
             var header = ObjectPool<InteractHeader>.Get();
-            header.CommandId = HybridCommandId.Generate(authority == CommandAuthority.Server, ref tick);
+            header.CommandId = HybridCommandId.Generate(authority == CommandAuthority.Server, CommandType.Interact, ref noSequence);
             header.RequestConnectionId = connectionIdValue;
-            header.Tick = tick;
+            header.Tick = CurrentTick;
             header.Category = category;
             header.Position = position;
             header.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
@@ -356,18 +352,27 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             return header;
         }
 
-        public static NetworkCommandHeader CreateNetworkCommandHeader(int? connectionId, CommandType commandType, CommandAuthority authority = CommandAuthority.Server)
+        public static NetworkCommandHeader CreateNetworkCommandHeader(int? connectionId, CommandType commandType, CommandAuthority authority = CommandAuthority.Server, CommandExecuteType commandExecuteType = CommandExecuteType.Predicate)
         {
-            var tick = CurrentTick;
+            var tick = (int?)CurrentTick;
             var connectionIdValue = connectionId.GetValueOrDefault();
             var header = ObjectPool<NetworkCommandHeader>.Get();
-            header.CommandId = HybridCommandId.Generate(authority == CommandAuthority.Server, ref tick);
+            header.CommandId = HybridCommandId.Generate(authority == CommandAuthority.Server, commandType, ref tick);
             header.ConnectionId = connectionIdValue;
             header.CommandType = commandType;
-            header.Tick = tick;
+            header.Tick = tick.GetValueOrDefault();
             header.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             header.Authority = authority;
+            header.ExecuteType = commandExecuteType;
             return header;
+        }
+
+        private void OnDestroy()
+        {
+            foreach (var syncSystem in _syncSystems)
+            {
+                syncSystem.Value.Clear();
+            }
         }
     }
 }

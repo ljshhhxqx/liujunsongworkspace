@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
@@ -32,20 +34,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private AnimationConfig _animationConfig;
         private JsonDataConfig _jsonDataConfig;
         private List<IAnimationCooldown> _animationCooldownConfig;
+        private CancellationTokenSource _cts;
 
         [Inject]
         private void InitContainers(IConfigProvider configProvider)
         {
             _animationConfig = configProvider.GetConfig<AnimationConfig>();
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
-            Observable.EveryUpdate().ThrottleFirst(TimeSpan.FromMilliseconds(GameSyncManager.TickRate))
-                .Subscribe(_ => Update(GameSyncManager.TickRate))
-                .AddTo(_disposables);
+            UpdatePlayerAnimationAsync(_cts.Token, GameSyncManager.TickRate).Forget();
         }
         
-        private void Update(float deltaTime)
+        private async UniTaskVoid UpdatePlayerAnimationAsync(CancellationToken token, float deltaTime)
         {
-            UpdatePlayerAnimationCooldowns(deltaTime);
+            while (!token.IsCancellationRequested)
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(deltaTime), cancellationToken: token);
+                UpdatePlayerAnimationCooldowns(deltaTime);
+            }
         }
 
         private void UpdatePlayerAnimationCooldowns(float deltaTime)
@@ -162,7 +167,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         }
 
         public override CommandType HandledCommandType => CommandType.Input;
-        public override IPredictablePropertyState ProcessCommand(INetworkCommand command)
+        public override ISyncPropertyState ProcessCommand(INetworkCommand command)
         {
             if (command is InputCommand inputCommand)
             {
@@ -260,14 +265,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             playerPredictableState.ApplyServerState(state);
         }
 
-        public override bool HasStateChanged(IPredictablePropertyState oldState, IPredictablePropertyState newState)
+        public override bool HasStateChanged(ISyncPropertyState oldState, ISyncPropertyState newState)
         {
             return false;
         }
 
         public override void Clear()
         {
+            base.Clear();
             _disposables.Dispose();
+            _disposables.Clear();
+            _cts?.Cancel();
+            _cts?.Dispose();
+            _inputPredictionStates.Clear();
         }
     }
 }

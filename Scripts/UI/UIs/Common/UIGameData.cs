@@ -5,12 +5,11 @@
         
     }
 
-    public enum ItemType
+    public enum PlayerItemState : byte
     {
-        None,
-        Equipment,
-        Consume,
-        Item,
+        None = 0,
+        IsLocked = 1 << 0,     
+        IsEquipped = 1 << 1,
     }
 
     public enum UISyncType

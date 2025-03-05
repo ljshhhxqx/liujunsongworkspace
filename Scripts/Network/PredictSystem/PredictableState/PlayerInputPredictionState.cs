@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Data.PredictSystem;
@@ -22,16 +24,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {
     public class PlayerInputPredictionState : PredictableStateBase
     {
-        protected override IPredictablePropertyState CurrentState { get; set; }
+        protected override ISyncPropertyState CurrentState { get; set; }
         public PlayerInputState InputState => (PlayerInputState) CurrentState;
         private PropertyPredictionState _propertyPredictionState;
         private KeyAnimationConfig _keyAnimationConfig;
         private AnimationConfig _animationConfig;
         private JsonDataConfig _jsonDataConfig;
         private List<IAnimationCooldown> _animationCooldowns = new List<IAnimationCooldown>();
-        private readonly CompositeDisposable _disposables = new CompositeDisposable();
-        protected override CommandType CommandType => CommandType.Input;
         
+        protected override CommandType CommandType => CommandType.Input;
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private bool _isApplyingState;
         
         public event Action<PlayerGameStateData> OnPlayerStateChanged; 
@@ -47,15 +49,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _keyAnimationConfig = configProvider.GetConfig<KeyAnimationConfig>();
             _animationCooldowns = GetAnimationCooldowns();
-            
-            Observable.EveryUpdate()
-                .Throttle(TimeSpan.FromMilliseconds(gameSyncManager.TickRate))
-                .Where(_ => !_isApplyingState)
-                .Subscribe(_ => UpdateAnimationCooldowns(gameSyncManager.TickRate))
-                .AddTo(_disposables);
+
+            UpdateAnimationCooldowns(_cancellationTokenSource.Token, gameSyncManager.TickRate).Forget();
         }
         
-        public override CommandType HandledCommandType => CommandType.Input;
         public override bool NeedsReconciliation<T>(T state)
         {
             if (state is null || state is not PlayerInputState propertyState)
@@ -63,7 +60,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             return !InputState.IsEqual(propertyState);
         }
 
-        public override void ApplyServerState<T>(T state)
+        public override void ApplyServerState<T>(T state) 
         {
             if (state is not PlayerInputState propertyState)
                 return;
@@ -99,7 +96,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         public override void Simulate(INetworkCommand command)
         {
             var header = command.GetHeader();
-            if (header.CommandType == HandledCommandType && command is InputCommand inputCommand && IsInSpecialState?.Invoke() == false)
+            if (header.CommandType == CommandType && command is InputCommand inputCommand && IsInSpecialState?.Invoke() == false)
             {
                 var info = _animationConfig.GetAnimationInfo(inputCommand.CommandAnimationState);
                 var actionType = _animationConfig.GetActionType(inputCommand.CommandAnimationState);
@@ -171,18 +168,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             return list;
         }
 
-        private void UpdateAnimationCooldowns(float deltaTime)
+        private async UniTaskVoid UpdateAnimationCooldowns(CancellationToken token, float deltaTime)
         {
-            for (int i = _animationCooldowns.Count - 1; i >= 0; i--)
+            while (token.IsCancellationRequested == false && !_isApplyingState)
             {
-                var animationCooldown = _animationCooldowns[i];
-                animationCooldown.Update(deltaTime);
+                await UniTask.Delay(TimeSpan.FromSeconds(deltaTime), cancellationToken: token);
+                for (int i = _animationCooldowns.Count - 1; i >= 0; i--)
+                {
+                    var animationCooldown = _animationCooldowns[i];
+                    animationCooldown.Update(deltaTime);
+                }
             }
-        }
-
-        private void OnDestroy()
-        {
-            _disposables.Dispose();
         }
     }
 }

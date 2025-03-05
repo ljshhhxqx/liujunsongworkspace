@@ -8,7 +8,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     [MemoryPackable(GenerateType.NoGenerate)]
     [MemoryPackUnion(0, typeof(PlayerInputState))]
     [MemoryPackUnion(1, typeof(PlayerPredictablePropertyState))]
-    public partial interface IPredictablePropertyState
+    public partial interface IPredictablePropertyState : ISyncPropertyState
     {
         bool IsEqual(IPredictablePropertyState other, float tolerance = 0.01f);
     }
@@ -18,6 +18,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     /// </summary>
     [MemoryPackable(GenerateType.NoGenerate)]
     [MemoryPackUnion(0, typeof(PlayerItemState))]
+    [MemoryPackUnion(1, typeof(PlayerInputState))]
+    [MemoryPackUnion(2, typeof(PlayerPredictablePropertyState))]
     public partial interface ISyncPropertyState
     {
         

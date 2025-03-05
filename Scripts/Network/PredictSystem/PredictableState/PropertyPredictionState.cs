@@ -11,7 +11,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {
     public class PropertyPredictionState: PredictableStateBase
     {
-        protected override IPredictablePropertyState CurrentState { get; set; }
+        protected override ISyncPropertyState CurrentState { get; set; }
         private AnimationConfig _animationConfig;
 
         public PlayerPredictablePropertyState PlayerPredictablePropertyState => (PlayerPredictablePropertyState)CurrentState;
@@ -39,8 +39,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         }
 
         public event Action<PropertyTypeEnum, PropertyCalculator> OnPropertyChanged;
-        
-        public override CommandType HandledCommandType => CommandType.Property;
         
         public override void ApplyServerState<T>(T state)
         {

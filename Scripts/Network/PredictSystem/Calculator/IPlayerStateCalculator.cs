@@ -1,4 +1,4 @@
-﻿namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
+﻿namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {
     public interface IPlayerStateCalculator
     {

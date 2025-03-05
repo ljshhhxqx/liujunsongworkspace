@@ -6,11 +6,10 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {
-    public class PlayerBattleCalculator
+    public class PlayerBattleCalculator : IPlayerStateCalculator
     {
         public PlayerBattleComponent PlayerBattleComponent;
         public static AttackConfigData AttackConfigData;
@@ -84,6 +83,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return dot >= cosAngle;
         }
         #endregion
+
+        public bool IsClient { get; }
     }
 
     public class PlayerBattleComponent

@@ -6,7 +6,7 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
-using HotUpdate.Scripts.Network.PredictSystem.InteractSystem;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
@@ -19,6 +19,7 @@ using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
 using VContainer;
+using SceneInteractRequest = HotUpdate.Scripts.Network.PredictSystem.Interact.SceneInteractRequest;
 
 namespace HotUpdate.Scripts.Collector
 {

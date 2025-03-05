@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using Data;
 using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using Mirror;
 using UniRx;
 using UnityEngine;
@@ -19,21 +22,20 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         private readonly SyncDictionary<uint, Vector2Int> _playerGrids = new SyncDictionary<uint, Vector2Int>();
         private readonly Dictionary<int, IColliderConfig> _playerPhysicsData = new Dictionary<int, IColliderConfig>();
         private readonly SyncGridDictionary _gridPlayers = new SyncGridDictionary();
-        private readonly CompositeDisposable _disposables = new CompositeDisposable();
-        
+        private CancellationTokenSource _updateGridsTokenSource;
+        private GameSyncManager _gameSyncManager;
         private MapBoundDefiner _mapBoundDefiner;
         
         [SyncVar(hook = nameof(OnIsGameStartedChanged))]
         public bool isGameStarted;
 
         [Inject]
-        private void Init()
+        private void Init(GameSyncManager gameSyncManager)
         {
             RegisterReaderWriter();
-            Observable.EveryUpdate()
-                .Where(_ => isGameStarted && isServer)
-                .Subscribe(_ => UpdateAllPlayerGrids())
-                .AddTo(_disposables);
+            _gameSyncManager = gameSyncManager;
+            _updateGridsTokenSource = new CancellationTokenSource();
+            UpdateAllPlayerGrids(_updateGridsTokenSource.Token).Forget();
         }
         
         public IColliderConfig GetPlayerPhysicsData(int playerId)
@@ -41,15 +43,19 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             return _playerPhysicsData.GetValueOrDefault(playerId);
         }
         
-        private void UpdateAllPlayerGrids()
+        private async UniTaskVoid UpdateAllPlayerGrids(CancellationToken token)
         {
-            foreach (var uid in _playerNetIds.Values)
+            while (!token.IsCancellationRequested && isGameStarted && isServer)
             {
-                var identity = NetworkServer.spawned[uid];
-                if (!identity) continue;
+                await UniTask.Delay(TimeSpan.FromSeconds(_gameSyncManager.TickRate), cancellationToken: token);
+                foreach (var uid in _playerNetIds.Values)
+                {
+                    var identity = NetworkServer.spawned[uid];
+                    if (!identity) continue;
             
-                var position = identity.transform.position;
-                UpdatePlayerGrid(uid, position);
+                    var position = identity.transform.position;
+                    UpdatePlayerGrid(uid, position);
+                }
             }
         }
         private void UpdatePlayerGrid(uint id, Vector3 playerPosition)
@@ -170,11 +176,6 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         public T GetPlayerComponent<T>(int playerId) where T : Component
         {
             return GetPlayer(playerId)?.networkIdentity.GetComponent<T>();
-        }
-
-        private void OnDestroy()
-        {
-            _disposables.Dispose();
         }
 
         private void RegisterReaderWriter()

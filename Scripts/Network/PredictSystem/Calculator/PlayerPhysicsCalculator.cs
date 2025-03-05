@@ -1,9 +1,8 @@
 ﻿using System;
 using HotUpdate.Scripts.Config.JsonConfig;
 using UnityEngine;
-using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
-namespace HotUpdate.Scripts.Network.Data.PredictSystem.Calculator
+namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {
     public class PlayerPhysicsCalculator : IPlayerStateCalculator
     {

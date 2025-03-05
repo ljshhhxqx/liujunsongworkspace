@@ -3,7 +3,7 @@ using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using MemoryPack;
 
-namespace HotUpdate.Scripts.Network.PredictSystem.InteractSystem
+namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 {
     public enum InteractCategory : byte
     {

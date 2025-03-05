@@ -1,22 +1,36 @@
-﻿using System.Collections.Concurrent;
-using HotUpdate.Scripts.Network.PredictSystem.Data;
+﻿using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {
-    public class PlayerItemSyncState : SyncStateBase
+    public class PlayerItemSyncState : PredictableStateBase
     {
         protected override ISyncPropertyState CurrentState { get; set; }
-        protected override CommandType CommandType { get; }
-
-        protected override void SetState<T>(T state)
+        protected override CommandType CommandType => CommandType.Item;
+        
+        public override bool NeedsReconciliation<T>(T state)
         {
-            CurrentState = state;
+            return state is not null && state is PlayerItemState;
         }
 
-        protected override void ProcessCommand(INetworkCommand networkCommand)
+        public override void Simulate(INetworkCommand command)
         {
-            throw new System.NotImplementedException();
+            var header = command.GetHeader();
+            if (header.CommandType != CommandType.Item)
+            {
+                return;
+            }
+            switch (command)
+            {
+                case ItemUseCommand itemUseCommand:
+                    break;
+                case ItemEquipCommand itemEquipCommand:
+                    break;
+                case ItemLockCommand itemLockCommand:
+                    break;
+                case ItemDropCommand itemDropCommand:
+                    break;
+            }
         }
     }
 }
