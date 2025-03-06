@@ -537,7 +537,7 @@ namespace HotUpdate.Scripts.Collector
                 var collectItemCustomData = data.GetCustomData<CollectItemCustomData>();
                 var buff = _randomBuffConfig.GetRandomBuffData(collectItemCustomData.RandomBuffId);
                 var component = go.GetComponent<CollectObjectController>();
-                var material = _collectibleMaterials[configData.buffSize][buff.propertyType];
+                var material = _collectibleMaterials[configData.buffExtraData.collectObjectBuffSize][buff.propertyType];
                 component.CollectId = data.ItemId;
                 if (component.CollectObjectData.collectObjectClass == CollectObjectClass.Buff)
                 {

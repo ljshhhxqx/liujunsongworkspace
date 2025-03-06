@@ -13,6 +13,19 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [SerializeField]
         private List<GameItemData> gameItemDatas;
         
+        public GameItemData GetGameItemData(int configId)
+        {
+            foreach (var itemData in gameItemDatas)
+            {
+                if (itemData.id == configId)
+                {
+                    return itemData;
+                }
+            }
+
+            return new GameItemData();
+        }
+        
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
             gameItemDatas.Clear();
@@ -26,8 +39,13 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 chestData.price = int.Parse(row[3]);
                 chestData.itemType = (PlayerItemType) Enum.Parse(typeof(PlayerItemType), row[4]);
                 chestData.maxStack = int.Parse(row[5]);
-                chestData.iconLocation = row[6];
-                chestData.buffExtraData = JsonConvert.DeserializeObject<BuffExtraData>(row[7]);
+                chestData.weight = int.Parse(row[6]);
+                chestData.iconLocation = row[7];
+                chestData.prefabLocation = row[8];
+                chestData.quality = (QualityType) Enum.Parse(typeof(QualityType), row[9]);
+                chestData.elementId = int.Parse(row[10]);
+                chestData.sellPriceRatio = float.Parse(row[11]);
+                chestData.buffExtraData = JsonConvert.DeserializeObject<BuffExtraData>(row[12]);
                 gameItemDatas.Add(chestData);
             }
         }
@@ -39,19 +57,35 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public int id;
         public string name;
         public string desc;
-        public int price;
+        public float price;
+        //玩家卖给商店时，获取的价格为原来的价格的sellPriceRatio倍
+        public float sellPriceRatio;
         public PlayerItemType itemType;
         public int maxStack;
+        public int weight;
         public string iconLocation;
+        public string prefabLocation;
+        public QualityType quality;
+        public int elementId;
         public BuffExtraData buffExtraData;
     }
-    
 
+    public enum QualityType : byte
+    {
+        Normal,
+        Rare,
+        Legendary,
+    }
+
+    /// <summary>
+    /// 玩家道具类型
+    /// </summary>
     public enum PlayerItemType : byte
     {
         None,
-        Equipment = 1 << 0,
-        Consume = 1 << 1,
-        Item = 1 << 2,
+        Weapon,
+        Armor,
+        Consume,
+        Item,
     }
 }

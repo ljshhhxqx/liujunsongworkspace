@@ -236,7 +236,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             PropertyStates[attacker] = propertyState;   
         }
 
-        private void HandleSkill(int connectionId, int skillId)
+        private void HandleSkill(int attacker, int skillId)
         {
             
         }

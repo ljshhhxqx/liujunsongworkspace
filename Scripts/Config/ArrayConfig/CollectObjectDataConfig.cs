@@ -48,9 +48,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 collectConfigData.id = int.Parse(row[0]);
                 collectConfigData.weight = int.Parse(row[1]);                
                 collectConfigData.buffExtraData = JsonConvert.DeserializeObject<BuffExtraData>(row[2]);
-                collectConfigData.buffSize = Enum.Parse<CollectObjectBuffSize>(row[3]);
-                collectConfigData.collectObjectClass = Enum.Parse<CollectObjectClass>(row[4]);
-                collectConfigData.isRandomBuff = bool.Parse(row[5]);
+                collectConfigData.collectObjectClass = Enum.Parse<CollectObjectClass>(row[3]);
+                collectConfigData.isRandomBuff = bool.Parse(row[4]);
                 collectConfigDatas.Add(collectConfigData);
             }
         }
@@ -62,7 +61,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public int id;
         public int weight;
         public BuffExtraData buffExtraData;
-        public CollectObjectBuffSize buffSize;
+        //public CollectObjectBuffSize buffSize;
         public CollectObjectClass collectObjectClass;
         public bool isRandomBuff;
     }

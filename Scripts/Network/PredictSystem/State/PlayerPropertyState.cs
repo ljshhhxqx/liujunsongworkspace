@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using MemoryPack;
 using UnityEngine;
 
@@ -19,6 +20,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         
         [MemoryPackOrder(2)]
         public bool IsInvisible;
+
+        [MemoryPackOrder(3)] 
+        public ElementType ElementAdhere;
 
         // 添加字典缓存字段
         [MemoryPackIgnore]

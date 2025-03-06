@@ -57,12 +57,9 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 var weaponConfig = new WeaponConfigData();
                 weaponConfig.weaponID = int.Parse(data[0]);
                 weaponConfig.weaponType = Enum.Parse<WeaponType>(data[1]);
-                weaponConfig.attack = float.Parse(data[2]);
-                weaponConfig.defense = float.Parse(data[3]);
-                weaponConfig.speed = float.Parse(data[4]);
-                weaponConfig.range = float.Parse(data[5]);
-                weaponConfig.angle = float.Parse(data[6]);
-                weaponConfig.skillID = int.Parse(data[7]);
+                weaponConfig.skillID = int.Parse(data[2]);
+                weaponConfig.itemID = int.Parse(data[3]);
+                weaponConfig.quality = Enum.Parse<QualityType>(data[4]);
                 weaponConfigData.Add(weaponConfig);
             }
         }
@@ -72,14 +69,9 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     public struct WeaponConfigData
     {
         public int weaponID;
+        public int itemID;
+        public QualityType quality;
         public WeaponType weaponType;
-        public float attack;
-        public float defense;
-        public float speed;
-        public float radius;
-        public float range;
-        public float angle;
-        public float height;
         public int skillID;
     }
 
@@ -103,6 +95,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
     public enum WeaponType
     {
+        None,
         Sword1,
         Sword2,
         Sword3,
@@ -111,12 +104,12 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         Sword6,
         Sword7,
         Sword8,
-        Sword9,
-        Sword10,
-        Sword11,
-        Sword12,
-        Sword13,
-        Sword14,
-        Sword15,
+        Katana1,
+        Katana2,
+        Katana3,
+        Katana4,
+        Katana5,
+        Katana6,
+        Katana7,
     }
 }
