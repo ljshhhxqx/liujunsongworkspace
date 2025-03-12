@@ -29,7 +29,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
             gameItemDatas.Clear();
-            for (int i = 2; i < textAsset.Count; i++)
+            for (var i = 2; i < textAsset.Count; i++)
             {
                 var row = textAsset[i];
                 var chestData = new GameItemData();

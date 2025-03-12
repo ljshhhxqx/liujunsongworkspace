@@ -2,6 +2,6 @@
 {
     public interface IPlayerStateCalculator
     {
-        bool IsClient { get; }
+        
     }
 }

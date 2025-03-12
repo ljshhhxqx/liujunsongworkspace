@@ -59,6 +59,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private PlayerAnimationCalculator _playerAnimationCalculator;
         private PlayerBattleCalculator _playerBattleCalculator;
         private PlayerItemCalculator _playerItemCalculator;
+        private PlayerElementCalculator _playerElementCalculator;
         
         [Header("Parameters")]
         private float _currentSpeed;
@@ -72,6 +73,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private GameSyncManager _gameSyncManager;
         private MapBoundDefiner _mapBoundDefiner;
+        private IConfigProvider _configProvider;
         private PlayerInGameManager _playerInGameManager;
         
         public int CurrentComboStage { get; private set; }
@@ -86,6 +88,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [Inject]
         private void Init(IConfigProvider configProvider, GameSyncManager gameSyncManager, MapBoundDefiner mapBoundDefiner, PlayerInGameManager playerInGameManager)
         {
+            _configProvider = configProvider;
             _gameSyncManager = gameSyncManager;
             _mapBoundDefiner = mapBoundDefiner;
             _playerInGameManager = playerInGameManager;
@@ -213,11 +216,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerAnimationCalculator = new PlayerAnimationCalculator(new AnimationComponent{ Animator = _animator});
             _playerBattleCalculator = new PlayerBattleCalculator(new PlayerBattleComponent(transform,_mapBoundDefiner, _playerInGameManager));
             _playerItemCalculator = new PlayerItemCalculator();
+            _playerElementCalculator = new PlayerElementCalculator();
             var jsonData = configProvider.GetConfig<JsonDataConfig>();
             var propertyConfig = configProvider.GetConfig<PropertyConfig>();
             var gameData = jsonData.GameConfig;
             var playerData = jsonData.PlayerConfig;
             var noneWeapon = propertyConfig.GetAttackBaseParams();
+            PlayerElementCalculator.SetPlayerElementComponent(_configProvider.GetConfig<ElementAffinityConfig>(), _configProvider.GetConfig<TransitionLevelBaseDamageConfig>(), _configProvider.GetConfig<ElementConfig>());
             PlayerPhysicsCalculator.SetPhysicsDetermineConstant(new PhysicsDetermineConstant
             {
                 GroundMinDistance = gameData.groundMinDistance,

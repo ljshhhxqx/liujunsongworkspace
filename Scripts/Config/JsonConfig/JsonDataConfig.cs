@@ -156,6 +156,14 @@ namespace HotUpdate.Scripts.Config.JsonConfig
     {
         //防御减伤比率
         public float defenseRatio;
+        // 增幅反应 = 其他伤害 * ((amplificationRatio × 元素精通) / (元素精通 + elementalMasteryBuff) + 1)
+        public float amplificationRatio;
+        public float elementalMasteryBuff;
+        // 剧变反应 = 反应基础伤害 * 等级系数 * (1 + (16*元素精通/(元素精通+2000)))
+
+        public float playerGaugeUnitRatio;
+        public float enemyGaugeUnitRatio;
+        public float environmentGaugeUnitRatio;
     }
     
     [Serializable]

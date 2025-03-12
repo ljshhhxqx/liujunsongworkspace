@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AOTScripts.CustomAttribute;
 using Mirror;
 using UnityEngine;
 
@@ -41,6 +42,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         }
     }
 
+    [JsonSerializable]
     [Serializable]
     public struct ElementConfigData
     {
@@ -51,16 +53,32 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     }
 
     /// <summary>
-    /// 元素类型 ：火、水、冰、雷、土、风
+    /// 元素类型 ：火、水、冰、雷、土、风、草；特殊：冰冻、感电、激化
     /// </summary>
+    [Flags]
     public enum ElementType : byte
     {
         None,
-        Fire,
-        Water,
-        Ice,
-        Thunder,
-        Roil,
-        Wind,
+        Fire = 1 << 0,
+        Water = 1 << 1,
+        Ice = 1 << 2,
+        Thunder = 1 << 3,
+        Roil = 1 << 4,
+        Wind = 1 << 5,
+        Grass = 1 << 6,
+        //冻元素(水+冰)
+        Frozen = 1 << 1 | 1 << 2,
+        //感电元素(水+雷)
+        Electrified = 1 << 1 | 1 << 3,
+        //激元素(草+雷)
+        OriginalEvaporate = 1 << 3 | 1 << 6,
+    }
+
+    public enum ElementStrength : byte
+    {
+        None,
+        Weak,
+        Strong,
+        SuperStrong
     }
 }

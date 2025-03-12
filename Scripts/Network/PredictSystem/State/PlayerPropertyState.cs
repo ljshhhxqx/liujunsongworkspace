@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using JetBrains.Annotations;
 using MemoryPack;
 using UnityEngine;
 
@@ -22,7 +24,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         public bool IsInvisible;
 
         [MemoryPackOrder(3)] 
-        public ElementType ElementAdhere;
+        public ElementState ElementState;
 
         // 添加字典缓存字段
         [MemoryPackIgnore]
@@ -312,5 +314,141 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
 
             return new PropertyCalculator(_propertyType, propertyData, _maxValue, _minValue, _isResourceProperty);
         }
+    }
+    
+    /// <summary>
+    /// 挂载在玩家身上或者敌人身上的元素状态
+    /// </summary>
+    [MemoryPackable]
+    public partial struct ElementState
+    {
+        [MemoryPackOrder(0)]
+        public ElementGaugeData MainGaugeData;
+        
+        [MemoryPackOrder(1)]
+        public ElementGaugeData SubGaugeData;
+
+        [MemoryPackOrder(2)] 
+        //是否是元素生物
+        public ElementType MainElementType;
+        
+        [MemoryPackOrder(3)]
+        //元素生物的MainElementType对应的元素减伤比例(非元素生物为0)
+        public float ElementDamageReduction;
+        
+        [MemoryPackOrder(4)]
+        public float ElementShieldHealth;
+
+        [MemoryPackOrder(5)]
+        //如果为共存元素，当前的元素状态
+        public ElementType DoubleType; 
+        
+        [MemoryPackIgnore]
+        public bool HasMainElement => MainGaugeData.ElementType != ElementType.None;
+
+        [MemoryPackIgnore]
+        public bool HasSubElement => MainGaugeData.ElementType != ElementType.None;
+    }
+
+    /// <summary>
+    /// 元素反应的最小数据结构
+    /// </summary>
+    [MemoryPackable]
+    public partial struct ElementGaugeData : IEquatable<ElementGaugeData>
+    {
+        [MemoryPackOrder(0)]
+        public int Id;
+        [MemoryPackOrder(1)]
+        public ElementType ElementType;
+        [MemoryPackOrder(2)]
+        public float GaugeUnits;
+        [MemoryPackOrder(3)]
+        public ElementStrength Strength;
+        [MemoryPackOrder(4)] 
+        public float DecayRate;
+
+        public bool Equals(ElementGaugeData other)
+        {
+            return Id == other.Id && ElementType == other.ElementType && GaugeUnits.Equals(other.GaugeUnits) && Strength == other.Strength && DecayRate.Equals(other.DecayRate);
+        }
+
+        public override bool Equals([CanBeNull] object obj)
+        {
+            return obj is ElementGaugeData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, (int)ElementType, GaugeUnits, (int)Strength, DecayRate);
+        }
+    }
+    
+    [MemoryPackable]
+    public partial struct PlayerSubjectedState
+    {
+        [MemoryPackOrder(0)]
+        public ImmutableList<SubjectedState> SubjectedStates;
+        
+        public bool HasState(SubjectedStateType stateType)
+        {
+            return SubjectedStates.Any(s => s.SubjectedStateType == stateType);
+        }
+
+        public PlayerSubjectedState AddState(SubjectedState state)
+        {
+            SubjectedStates = SubjectedStates.Add(state);
+            var playerState = new PlayerSubjectedState();
+            playerState.SubjectedStates = SubjectedStates;
+            return playerState;
+        }
+        public PlayerSubjectedState RemoveState(SubjectedStateType stateType)
+        {
+            SubjectedStates = SubjectedStates.RemoveAll(s => s.SubjectedStateType == stateType);
+            var playerState = new PlayerSubjectedState();
+            playerState.SubjectedStates = SubjectedStates;
+            return playerState;
+        }
+
+        public PlayerSubjectedState UpdateState(float deltaTime)
+        {
+            for (var i = SubjectedStates.Count - 1; i <= 0; i--)
+            {
+                var state = SubjectedStates[i];
+                state.RemainingDuration -= deltaTime;
+                if (state.RemainingDuration <= 0)
+                {
+                    SubjectedStates = SubjectedStates.RemoveAt(i);
+                }
+                else
+                {
+                    SubjectedStates = SubjectedStates.SetItem(i, state); 
+                }
+            }
+            var playerState = new PlayerSubjectedState();
+            playerState.SubjectedStates = SubjectedStates;
+            return playerState;
+        }
+
+    }
+
+    [MemoryPackable]
+    public partial struct SubjectedState
+    {
+        [MemoryPackOrder(0)]
+        public SubjectedStateType SubjectedStateType;
+        [MemoryPackOrder(1)]
+        public float Duration;
+        [MemoryPackOrder(2)]
+        public float RemainingDuration;
+    }
+
+    public enum SubjectedStateType : byte
+    {
+        None = 0,
+        IsInvisible,
+        IsFrozen,
+        IsElectrified,
+        IsBlowup,
+        IsStunned,
     }
 }

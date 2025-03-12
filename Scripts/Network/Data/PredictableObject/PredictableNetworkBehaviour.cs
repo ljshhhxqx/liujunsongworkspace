@@ -16,7 +16,7 @@ namespace HotUpdate.Scripts.Network.Data.PredictableObject
 
         // 用于标记需要同步的字段
         [AttributeUsage(AttributeTargets.Field)]
-        public class PredictableSyncVarAttribute : Attribute { }
+        public class PredictableSyncVarAttribute : System.Attribute { }
 
         protected virtual void Awake()
         {
