@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cb1091cf1c3401791bba02172630d17, type: 3}
   m_Name: JsonGenerator
   m_EditorClassIdentifier: 
-  selectedTypeName: ConditionHeader
+  selectedTypeName: TakeDamageConditionParam
   jsonTemplate: {fileID: 0}
   useCamelCase: 1
   enumAsString: 1

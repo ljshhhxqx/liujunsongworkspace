@@ -11,22 +11,22 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     {
         [ReadOnly]
         [SerializeField]
-        private List<EffectConfigData> effectConfigDatas = new List<EffectConfigData>();
+        private List<EffectConfigData> effectConfigData = new List<EffectConfigData>();
         
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
-            effectConfigDatas.Clear();
+            effectConfigData.Clear();
             for (var i = 2; i < textAsset.Count; i++)
             {
                 var data = textAsset[i];
-                var effectConfigData = new EffectConfigData();
-                effectConfigData.effectId = int.Parse(data[0]);
-                effectConfigData.effectType = (EffectType) Enum.Parse(typeof(EffectType), data[1]);
-                effectConfigData.effectName = data[2];
-                effectConfigData.description = data[3];
-                effectConfigData.iconPath = data[4];
-                effectConfigData.prefabPath = data[5];
-                effectConfigDatas.Add(effectConfigData);
+                var configData = new EffectConfigData();
+                configData.effectId = int.Parse(data[0]);
+                configData.effectType = (EffectType) Enum.Parse(typeof(EffectType), data[1]);
+                configData.effectName = data[2];
+                configData.description = data[3];
+                configData.iconPath = data[4];
+                configData.prefabPath = data[5];
+                effectConfigData.Add(configData);
             }
         }
     }

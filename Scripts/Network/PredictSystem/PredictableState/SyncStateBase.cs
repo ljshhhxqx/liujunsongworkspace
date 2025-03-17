@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
@@ -34,7 +35,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         public void AddPredictedCommand(INetworkCommand command)
         {
             var header = command.GetHeader();
-            if (header.CommandType != CommandType) 
+            if (!header.CommandType.HasAnyState(CommandType)) 
                 return;
             //command.SetHeader(netIdentity.connectionToClient.connectionId, CommandType, GameSyncManager.CurrentTick);
         

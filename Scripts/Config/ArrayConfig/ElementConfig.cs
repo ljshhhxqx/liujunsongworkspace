@@ -32,12 +32,12 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             for (var i = 2; i < textAsset.Count; i++)
             {
                 var data = textAsset[i];
-                var weaponConfig = new ElementConfigData();
-                weaponConfig.id = int.Parse(data[0]);
-                weaponConfig.elementType = (ElementType) Enum.Parse(typeof(ElementType), data[1]);
-                weaponConfig.duration = float.Parse(data[2]);
-                weaponConfig.count = float.Parse(data[3]);
-                elementConfigData.Add(weaponConfig);
+                var configData = new ElementConfigData();
+                configData.id = int.Parse(data[0]);
+                configData.elementType = (ElementType) Enum.Parse(typeof(ElementType), data[1]);
+                configData.duration = float.Parse(data[2]);
+                configData.count = float.Parse(data[3]);
+                elementConfigData.Add(configData);
             }
         }
     }

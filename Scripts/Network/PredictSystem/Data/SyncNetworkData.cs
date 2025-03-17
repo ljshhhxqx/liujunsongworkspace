@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using MemoryPack;
@@ -76,13 +77,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     }
     
     // 命令类型枚举
-    public enum CommandType
+    [Flags]
+    public enum CommandType : byte
     {
         Property,   // 属性相关
         Input,      // 移动相关
         Item,       // 道具相关
         UI,         // UI相关
-        Interact
+        Skill,      // 技能相关
+        Equipment,  // 装备相关
+        Interact    // 交互相关
     }
     
     #endregion
@@ -487,6 +491,67 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     }
     
     #endregion
+    
+    #region EqupimentCommand
+
+    [MemoryPackable]
+    public partial struct EquipmentCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)]
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public uint EquipmentId;
+        [MemoryPackOrder(2)]
+        public EquipmentPart EquipmentPart;
+        public NetworkCommandHeader GetHeader() => Header;
+
+        public bool IsValid()
+        {
+            return EquipmentId > 0 && Enum.IsDefined(typeof(EquipmentPart), EquipmentPart);
+        }
+
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
+            CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
+    }
+
+    #endregion
+    
+    #region Command
+
+    [MemoryPackable]
+    public partial struct TriggerCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)]
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public TriggerType TriggerType;
+
+        [MemoryPackOrder(2)] 
+        public byte[] TriggerData;
+        public NetworkCommandHeader GetHeader() => Header;
+
+        public bool IsValid()
+        {
+            return Enum.IsDefined(typeof(TriggerType), TriggerType);
+        }
+
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
+            CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
+    }
+
+    #endregion
 
     #region Enum
     
@@ -573,6 +638,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                     return new PlayerInputSyncSystem();
                 case CommandType.Item:
                     return new PlayerItemSyncSystem();
+                case CommandType.Equipment:
+                    return new PlayerEquipmentSystem();
                 // case CommandType.UI:
                 //     return new PlayerCombatSyncSystem();
             }   

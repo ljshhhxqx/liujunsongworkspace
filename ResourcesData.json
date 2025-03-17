@@ -402,7 +402,7 @@
         },
         {
             "UID": 1300000,
-            "ResourceType": "HotUpdate.Scripts.Config.ConstantBuffConfig",
+            "ResourceType": "HotUpdate.Scripts.Config.ArrayConfig.ConstantBuffConfig",
             "AssetType": 15,
             "Extension": ".asset",
             "Name": "ConstantBuffConfig",

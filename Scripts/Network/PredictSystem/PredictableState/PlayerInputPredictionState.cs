@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Data.PredictSystem;
@@ -96,7 +97,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         public override void Simulate(INetworkCommand command)
         {
             var header = command.GetHeader();
-            if (header.CommandType == CommandType && command is InputCommand inputCommand && IsInSpecialState?.Invoke() == false)
+            if (header.CommandType.HasAnyState(CommandType) && command is InputCommand inputCommand && IsInSpecialState?.Invoke() == false)
             {
                 var info = _animationConfig.GetAnimationInfo(inputCommand.CommandAnimationState);
                 var actionType = _animationConfig.GetActionType(inputCommand.CommandAnimationState);

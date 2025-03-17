@@ -70,6 +70,16 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public BuffExtraData buffExtraData;
     }
 
+    public enum EquipmentPart : byte
+    {
+        Head,
+        Body,
+        Arm,
+        Leg,
+        Feet,
+        Weapon,
+    }
+
     public enum QualityType : byte
     {
         Normal,

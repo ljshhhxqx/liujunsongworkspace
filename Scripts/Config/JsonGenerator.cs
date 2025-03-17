@@ -10,19 +10,17 @@ using UnityEditor;
 #endif
 namespace HotUpdate.Scripts.Config
 {
-
     [CreateAssetMenu(fileName = "JsonGenerator", menuName = "Tools/Json Generator")]
     public class JsonGenerator : ScriptableObject
     {
-        [SerializeField] private string selectedTypeName; // 存储选择的类型名
-        [SerializeField] private TextAsset jsonTemplate;  // 可选：用于加载已有 JSON 数据
+        [SerializeField] private string selectedTypeName; 
+        [SerializeField] private TextAsset jsonTemplate;  
         [SerializeField] private bool useCamelCase = true;
         [SerializeField] private bool enumAsString = true;
 
-        [SerializeField]
         private object dataInstance; // 核心数据实例
         private Type selectedType;
-
+        
         public void GenerateJson()
         {
             if (dataInstance == null || selectedType == null)
@@ -141,13 +139,13 @@ namespace HotUpdate.Scripts.Config
             {
                 foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.Instance))
                 {
-                    object value = field.GetValue(instance);
+                    object fieldValue = field.GetValue(instance);
                     string fieldLabel = string.IsNullOrEmpty(prefix) ? field.Name : $"{prefix}.{field.Name}";
 
                     if (field.FieldType.IsPrimitive || field.FieldType == typeof(string) || field.FieldType.IsEnum)
                     {
-                        object newValue = DrawField(fieldLabel, field.FieldType, value);
-                        if (newValue != null && !Equals(newValue, value))
+                        object newValue = DrawField(fieldLabel, field.FieldType, fieldValue);
+                        if (newValue != null && !Equals(newValue, fieldValue))
                         {
                             field.SetValue(instance, newValue);
                         }
@@ -155,16 +153,28 @@ namespace HotUpdate.Scripts.Config
                     else if (field.FieldType.IsClass || (field.FieldType.IsValueType && !field.FieldType.IsPrimitive))
                     {
                         // 处理嵌套对象
-                        if (value == null)
+                        if (fieldValue == null && field.FieldType.IsClass)
                         {
-                            value = Activator.CreateInstance(field.FieldType);
-                            field.SetValue(instance, value); // 初始化并保存到实例
+                            fieldValue = Activator.CreateInstance(field.FieldType);
+                            field.SetValue(instance, fieldValue);
                         }
 
                         EditorGUILayout.BeginVertical(GUI.skin.box);
                         EditorGUILayout.LabelField(field.Name, EditorStyles.boldLabel);
-                        DrawNestedFields(value, field.FieldType, fieldLabel); // 递归编辑嵌套字段
+                        object processedValue = fieldValue;
+                        if (fieldValue != null)
+                        {
+                            // 递归处理嵌套字段并获取处理后的实例
+                            DrawNestedFields(fieldValue, field.FieldType, fieldLabel);
+                            processedValue = fieldValue; // 对于引用类型，已直接修改；对于值类型，需要重新赋值
+                        }
                         EditorGUILayout.EndVertical();
+
+                        // 对于值类型，将处理后的实例设置回父字段
+                        if (field.FieldType.IsValueType)
+                        {
+                            field.SetValue(instance, processedValue);
+                        }
                     }
                 }
             }
@@ -173,17 +183,15 @@ namespace HotUpdate.Scripts.Config
             {
                 if (fieldType == typeof(string))
                     return EditorGUILayout.TextField(label, (string)value);
-                else if (fieldType == typeof(int))
+                if (fieldType == typeof(int))
                     return EditorGUILayout.IntField(label, (int)(value ?? 0));
-                else if (fieldType == typeof(float))
+                if (fieldType == typeof(float))
                     return EditorGUILayout.FloatField(label, (float)(value ?? 0f));
-                else if (fieldType.IsEnum)
+                if (fieldType.IsEnum)
                     return EditorGUILayout.EnumPopup(label, (Enum)(value ?? Enum.GetValues(fieldType).GetValue(0)));
-                else
-                {
-                    EditorGUILayout.LabelField($"{label}: Unsupported type {fieldType.Name}");
-                    return null;
-                }
+                
+                EditorGUILayout.LabelField($"{label}: Unsupported type {fieldType.Name}");
+                return value;
             }
         }
     #endif

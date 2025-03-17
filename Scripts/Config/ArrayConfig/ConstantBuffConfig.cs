@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace HotUpdate.Scripts.Config
+namespace HotUpdate.Scripts.Config.ArrayConfig
 {
     [CreateAssetMenu(fileName = "ConstantBuffConfig", menuName = "ScriptableObjects/ConstantBuffConfig")]
     public class ConstantBuffConfig : ConfigBase
@@ -12,7 +12,6 @@ namespace HotUpdate.Scripts.Config
         [ReadOnly]
         [SerializeField]
         private List<BuffData> buffs = new List<BuffData>();
-        private readonly Dictionary<PropertyTypeEnum, List<RandomBuffData>> _randomCollectBuffs = new Dictionary<PropertyTypeEnum, List<RandomBuffData>>();
         
         public BuffData GetBuff(BuffExtraData extraData)
         {

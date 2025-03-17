@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using HotUpdate.Scripts.Network.Data.PredictSystem;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.State;

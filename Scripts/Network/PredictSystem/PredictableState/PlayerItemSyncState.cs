@@ -1,4 +1,5 @@
-﻿using HotUpdate.Scripts.Network.PredictSystem.Data;
+﻿using HotUpdate.Scripts.Common;
+using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
@@ -16,7 +17,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         public override void Simulate(INetworkCommand command)
         {
             var header = command.GetHeader();
-            if (header.CommandType != CommandType.Item)
+            if (header.CommandType.HasAnyState(CommandType))
             {
                 return;
             }
