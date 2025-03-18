@@ -1,0 +1,1196 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 504bf3e4ac4940e3aee72f52eaa3d7c9, type: 3}
+  m_Name: ItemConfig
+  m_EditorClassIdentifier: 
+  excelAssetReference:
+    guid: afcb27a37860bed489c689f04b28b549
+  csvAssetReference:
+    guid: f79490033f1ba7d4c817acd9581f3173
+  jsonAssetReference:
+    guid: 36a25296697c2fe44a5305e443be106f
+  configName: ItemConfig
+  isArray: 1
+  gameItemDatas:
+  - id: 3001
+    name: "\u5355\u624B\u52511"
+    desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60011"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 50
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 0
+    elementId: 0
+    buffExtraData:
+    - buffId: 10
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 13
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 19
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+5%"
+  - id: 3002
+    name: "\u5355\u624B\u52511"
+    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60011"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 75
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 1
+    elementId: 0
+    buffExtraData:
+    - buffId: 11
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 13
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 18
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+7%"
+  - id: 3003
+    name: "\u5355\u624B\u52511"
+    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60011"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 100
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 2
+    elementId: 0
+    buffExtraData:
+    - buffId: 12
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 13
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 18
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+10,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+10%"
+  - id: 3004
+    name: "\u5355\u624B\u52512"
+    desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60012"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 50
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 0
+    elementId: 0
+    buffExtraData:
+    - buffId: 8
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 14
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 19
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u7387+5%"
+  - id: 3005
+    name: "\u5355\u624B\u52512"
+    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60012"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 75
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 1
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 19
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+25%,\u66B4\u51FB\u7387+5%"
+  - id: 3006
+    name: "\u5355\u624B\u52512"
+    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60012"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 100
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 2
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 20
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+30%,\u66B4\u51FB\u7387+5%"
+  - id: 3007
+    name: "\u5355\u624B\u52513"
+    desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60013"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 50
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 0
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 21
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+5%"
+  - id: 3008
+    name: "\u5355\u624B\u52513"
+    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60013"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 75
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 1
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 22
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+7%"
+  - id: 3009
+    name: "\u5355\u624B\u52513"
+    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60013"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 100
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 2
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 23
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+10%"
+  - id: 3010
+    name: "\u5355\u624B\u52514"
+    desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60014"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 50
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 0
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 24
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+10%"
+  - id: 3011
+    name: "\u5355\u624B\u52514"
+    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60014"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 75
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 1
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 25
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+15%"
+  - id: 3012
+    name: "\u5355\u624B\u52514"
+    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60014"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 100
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 2
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 26
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+20%"
+  - id: 3013
+    name: "\u5355\u624B\u52515"
+    desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60015"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 50
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 0
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 27
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+1,\u653B\u51FB\u901F\u5EA6+30%,\u66B4\u51FB\u7387+5%"
+  - id: 3014
+    name: "\u5355\u624B\u52515"
+    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60015"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 75
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 1
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 28
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+2,\u653B\u51FB\u901F\u5EA6+45%,\u66B4\u51FB\u7387+5%"
+  - id: 3015
+    name: "\u5355\u624B\u52515"
+    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60015"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 100
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 2
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 29
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+5,\u653B\u51FB\u901F\u5EA6+60%,\u66B4\u51FB\u7387+5%"
+  - id: 3016
+    name: "\u5355\u624B\u52515"
+    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60015"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 100
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 2
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 30
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+5,\u653B\u51FB\u901F\u5EA6+30%,\u66B4\u51FB\u7387+10%"
+  - id: 3017
+    name: "\u5355\u624B\u52516"
+    desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60016"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 50
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 0
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 31
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+10%"
+  - id: 3018
+    name: "\u5355\u624B\u52516"
+    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60016"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 75
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 1
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 32
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+15%"
+  - id: 3019
+    name: "\u5355\u624B\u52516"
+    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60016"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 100
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 2
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 33
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+20%"
+  - id: 3020
+    name: "\u5355\u624B\u52517"
+    desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60017"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 50
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 0
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 34
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+10%"
+  - id: 3021
+    name: "\u5355\u624B\u52517"
+    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60017"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 75
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 1
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 35
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+15%"
+  - id: 3022
+    name: "\u5355\u624B\u52517"
+    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60017"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 100
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 2
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 36
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+10,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+20%"
+  - id: 3023
+    name: "\u5355\u624B\u52518"
+    desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60018"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 50
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 0
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 37
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+10%"
+  - id: 3024
+    name: "\u5355\u624B\u52518"
+    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60018"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 75
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 1
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 38
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+25%,\u66B4\u51FB\u4F24\u5BB3+10%"
+  - id: 3025
+    name: "\u5355\u624B\u52518"
+    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60018"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 100
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 2
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 39
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+30%,\u66B4\u51FB\u4F24\u5BB3+10%"
+  - id: 3026
+    name: "\u5355\u624B\u52519"
+    desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60019"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 50
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 0
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 40
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+10%"
+  - id: 3027
+    name: "\u5355\u624B\u52519"
+    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60019"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 75
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 1
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 41
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+15%"
+  - id: 3028
+    name: "\u5355\u624B\u52519"
+    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60019"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 75
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 1
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 42
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+15%"
+  - id: 3029
+    name: "\u5355\u624B\u52519"
+    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60019"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 100
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 2
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 43
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+20%"
+  - id: 3030
+    name: "\u5355\u624B\u52519"
+    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60019"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 100
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 2
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 44
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+15%"
+  - id: 3031
+    name: "\u5355\u624B\u525110"
+    desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u600110"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 50
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 0
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 45
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+10%"
+  - id: 3032
+    name: "\u5355\u624B\u525110"
+    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u600110"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 75
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 1
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 46
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+15%"
+  - id: 3033
+    name: "\u5355\u624B\u525110"
+    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600110"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 100
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 2
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 47
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+10,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+20%"
+  - id: 3034
+    name: "\u5355\u624B\u525111"
+    desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u600111"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 50
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 0
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 48
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u7387+5%"
+  - id: 3035
+    name: "\u5355\u624B\u525111"
+    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u600111"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 75
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 1
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 49
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+25%,\u66B4\u51FB\u7387+5%"
+  - id: 3036
+    name: "\u5355\u624B\u525111"
+    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600111"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 100
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 2
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 50
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+30%,\u66B4\u51FB\u7387+5%"
+  - id: 3037
+    name: "\u5355\u624B\u525112"
+    desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u600112"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 50
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 0
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 51
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u7387+5%"
+  - id: 3038
+    name: "\u5355\u624B\u525112"
+    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u600112"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 75
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 1
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 52
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u7387+7%"
+  - id: 3039
+    name: "\u5355\u624B\u525112"
+    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600112"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 100
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 2
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 53
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u7387+10%"
+  - id: 3040
+    name: "\u5355\u624B\u525113"
+    desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u600113"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 50
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 0
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 54
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+10%"
+  - id: 3041
+    name: "\u5355\u624B\u525113"
+    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u600113"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 75
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 1
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 55
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+10%"
+  - id: 3042
+    name: "\u5355\u624B\u525113"
+    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u600113"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 75
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 1
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 56
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+20%"
+  - id: 3043
+    name: "\u5355\u624B\u525113"
+    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600113"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 100
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 2
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 57
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+10,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+10%"
+  - id: 3044
+    name: "\u5355\u624B\u525113"
+    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600113"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 100
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 2
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 58
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+10,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+20%"
+  - id: 3045
+    name: "\u5355\u624B\u525114"
+    desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u600114"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 50
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 0
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 59
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+10%"
+  - id: 3046
+    name: "\u5355\u624B\u525114"
+    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u600114"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 75
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 1
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 60
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+4,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+20%"
+  - id: 3047
+    name: "\u5355\u624B\u525114"
+    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600114"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 100
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 2
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 61
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+5.5,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+30%"
+  - id: 3048
+    name: "\u5355\u624B\u525115"
+    desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u600115"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 50
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 0
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 62
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+10%"
+  - id: 3049
+    name: "\u5355\u624B\u525115"
+    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u600115"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 75
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 1
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 63
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+4,\u653B\u51FB\u901F\u5EA6+25%,\u66B4\u51FB\u4F24\u5BB3+15%"
+  - id: 3050
+    name: "\u5355\u624B\u525115"
+    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600115"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 100
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 2
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 64
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+5,\u653B\u51FB\u901F\u5EA6+30%,\u66B4\u51FB\u4F24\u5BB3+20%"
+  - id: 3051
+    name: "\u5355\u624B\u525115"
+    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600115"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 1
+    maxStack: 1
+    weight: 100
+    iconLocation: 1
+    prefabLocation: 1
+    quality: 2
+    elementId: 0
+    buffExtraData:
+    - buffId: 9
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 15
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 65
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "\u653B\u51FB\u529B+5,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+30%"

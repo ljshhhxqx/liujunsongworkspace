@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using HotUpdate.Scripts.Common;
-using Mirror;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Serialization;
 

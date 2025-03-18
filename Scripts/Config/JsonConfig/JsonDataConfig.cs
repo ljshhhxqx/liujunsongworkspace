@@ -217,21 +217,24 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         Swimming,
     }
 
-    public enum AnimationState
+    [Flags]
+    public enum AnimationState : short
     {
-        Idle,
-        Move,
-        Sprint,
-        Jump,
-        SprintJump,
-        Roll,
-        Falling,
-        Landed,
-        Attack,
-        Dead,
-        Hit,
-        Collect,
-        None
+        Idle = 1 << 0,
+        Move = 1 << 1,
+        Sprint = 1 << 2,
+        Jump = 1 << 3,
+        SprintJump = 1 << 4,
+        Roll = 1 << 5,
+        Falling = 1 << 6,
+        Landed = 1 << 7,
+        Attack = 1 << 8,
+        Dead = 1 << 9,
+        Hit = 1 << 10,
+        Collect = 1 << 11,
+        MoveBlend = Idle | Move | Sprint,
+        JumpBlend = Jump | Sprint,
+        None = 0,
     }
     
     [Serializable]

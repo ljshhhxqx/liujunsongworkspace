@@ -56,7 +56,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 var checker = checkers[i];
                 var checkerParameterHeader = checker.GetConditionCheckerHeader();
                 var conditionConfigData = checkerParameter.GetCommonParameters();
-                if (checkerParameterHeader.ConditionConfigData.triggerType == conditionConfigData.TriggerType)
+                if (checkerParameterHeader.TriggerType == conditionConfigData.TriggerType)
                 {
                     var checkOver = checkers[i].Check(ref checker, checkerParameter);
                     IConditionChecker.TakeEffect(ref checker);

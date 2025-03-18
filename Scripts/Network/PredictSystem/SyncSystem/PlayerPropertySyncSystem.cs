@@ -39,6 +39,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private RandomBuffConfig _randomBuffConfig;
         private PropertyConfig _propertyConfig;
         private PlayerInGameManager _playerInGameManager;
+        
+        public event Action<int, PropertyTypeEnum, float> OnPropertyChange;
 
         [Inject]
         private void InitContainers(IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
@@ -66,6 +68,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     continue;
                 }
                 PropertyStates[playerState.Key] = playerState.Value;
+                PropertyChange(playerState.Key);
+            }
+            
+        }
+        
+        private void PropertyChange(int connectionId)
+        {
+            var playerState = PropertyStates[connectionId];
+            var playerController = GameSyncManager.GetPlayerConnection(connectionId);
+            if (playerState is PlayerPredictablePropertyState playerPredictablePropertyState)
+            {
+                foreach (var property in playerPredictablePropertyState.Properties.Keys)
+                {
+                    var propertyValue = playerPredictablePropertyState.Properties[property];
+                    OnPropertyChange?.Invoke(connectionId, propertyValue.PropertyType, propertyValue.CurrentValue);
+                    if (property == PropertyTypeEnum.AttackSpeed)
+                    {
+                        playerController.SetAnimatorSpeed(AnimationState.Attack, propertyValue.CurrentValue);
+                    }
+                }
             }
         }
 
@@ -170,6 +192,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerState = GetState<PlayerPredictablePropertyState>(headerConnectionId);
             playerState.IsInvisible = isInvincible;
             PropertyStates[headerConnectionId] = playerState;
+            PropertyChange(headerConnectionId);
         }
         
         private void HandlePropertyRecover(int connectionId)
@@ -178,6 +201,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerState = GetState<PlayerPredictablePropertyState>(connectionId);
             playerController.HandlePropertyRecover(ref playerState);
             PropertyStates[connectionId] = playerState;
+            PropertyChange(connectionId);
         }
 
         private void HandleBuff(int targetId, BuffExtraData buffExtraData, int? casterId = null)
@@ -194,6 +218,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             playerState.Properties[newBuff.BuffData.propertyType] = HandleBuffInfo(propertyCalculator, newBuff);
             _activeBuffs.Add(buffManagerData);
             PropertyStates[targetId] = playerState;
+            PropertyChange(targetId);
         }
 
         private void HandleBuffRemove(BuffBase buff, int index)
@@ -227,6 +252,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             for (int i = 0; i < defenderPlayerIds.Length; i++)
             {
                 PropertyStates[defenderPlayerIds[i]] = defendersState[defenderPlayerIds[i]];
+                PropertyChange(defenderPlayerIds[i]);
                 if (PropertyStates[defenderPlayerIds[i]] is PlayerPredictablePropertyState playerPropertyState &&
                     playerPropertyState.Properties[PropertyTypeEnum.Health].CurrentValue <= 0)
                 {
@@ -234,6 +260,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 }
             }
             PropertyStates[attacker] = propertyState;   
+            PropertyChange(attacker);
         }
 
         private void HandleSkill(int attacker, int skillId)
@@ -258,6 +285,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerController = GameSyncManager.GetPlayerConnection(connectionId);
             playerController.HandleAnimationCost(ref playerState, command, cost);
             PropertyStates[connectionId] = playerState;
+            PropertyChange(connectionId);
         }
 
         private void HandleEnvironmentChange(int connectionId, bool hasInputMovement, PlayerEnvironmentState environmentType, bool isSprinting)
@@ -266,6 +294,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerController = GameSyncManager.GetPlayerConnection(connectionId);
             playerController.HandleEnvironmentChange(ref playerState, hasInputMovement, environmentType, isSprinting);
             PropertyStates[connectionId] = playerState;
+            PropertyChange(connectionId);
         }
 
         public Dictionary<PropertyTypeEnum, PropertyCalculator> GetPlayerProperty(int connectionId)

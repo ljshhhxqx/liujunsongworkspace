@@ -45,7 +45,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         {
             var playerState = playerPredictablePropertyState;
             var propertyState = playerState.Properties;
-            var attack = propertyState[PropertyTypeEnum.AttackPower].CurrentValue;
+            var attack = propertyState[PropertyTypeEnum.Attack].CurrentValue;
             var critical = propertyState[PropertyTypeEnum.CriticalRate].CurrentValue;
             var criticalDamage = propertyState[PropertyTypeEnum.CriticalDamageRatio].CurrentValue;
             var defenderPropertyStates = defenders;

@@ -107,7 +107,7 @@ namespace HotUpdate.Scripts.Collector
         
         protected override void SendCollectRequest(uint pickerId, PickerType pickerType)
         {
-            if (isClient)
+            if (isLocalPlayer)
             {
                 _mirrorNetworkMessageHandler.SendToServer(new MirrorPickerPickUpCollectMessage(pickerId, CollectId));
             }

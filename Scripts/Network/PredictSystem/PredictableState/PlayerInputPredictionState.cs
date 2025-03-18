@@ -6,12 +6,10 @@ using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Network.Data.PredictSystem;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using Mirror;
-using UniRx;
 using UnityEngine;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
@@ -31,7 +29,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private KeyAnimationConfig _keyAnimationConfig;
         private AnimationConfig _animationConfig;
         private JsonDataConfig _jsonDataConfig;
-        private List<IAnimationCooldown> _animationCooldowns = new List<IAnimationCooldown>();
         
         protected override CommandType CommandType => CommandType.Input;
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
@@ -49,7 +46,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _animationConfig = configProvider.GetConfig<AnimationConfig>();
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _keyAnimationConfig = configProvider.GetConfig<KeyAnimationConfig>();
-            _animationCooldowns = GetAnimationCooldowns();
 
             UpdateAnimationCooldowns(_cancellationTokenSource.Token, gameSyncManager.TickRate).Forget();
         }
@@ -68,17 +64,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _isApplyingState = true;
             base.ApplyServerState(propertyState);
             var snapshot = propertyState.PlayerAnimationCooldownState.AnimationCooldowns;
-            for (var i = _animationCooldowns.Count - 1; i >= 0; i--)
-            {
-                if (i == snapshot.Count - 1)
-                {
-                    _animationCooldowns[i].Reset();
-                    break;
-                }
-                var animationCooldown = _animationCooldowns[i];
-                var snapshotCoolDown = snapshot[i];
-                animationCooldown.Refresh(snapshotCoolDown);
-            }
+            PlayerComponentController.RefreshSnapData(snapshot);
             OnPlayerStateChanged?.Invoke(propertyState.PlayerGameStateData);
             OnPlayerAnimationCooldownChanged?.Invoke(propertyState.PlayerAnimationCooldownState);
             _isApplyingState = false;
@@ -107,7 +93,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     return;
                 }
 
-                var cooldownInfo = _animationCooldowns.Find(x => x.AnimationState == inputCommand.CommandAnimationState);
+                var animationCooldowns = PlayerComponentController.GetNowAnimationCooldowns();
+                var cooldownInfo = animationCooldowns.Find(x => x.AnimationState == inputCommand.CommandAnimationState);
                 if (info.cooldown > 0)
                 {
                     if (cooldownInfo == null || !cooldownInfo.IsReady())
@@ -142,43 +129,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             }
         }
 
-        private List<IAnimationCooldown> GetAnimationCooldowns()
-        {
-            var list = new List<IAnimationCooldown>();
-            var animationStates = Enum.GetValues(typeof(AnimationState)).Cast<AnimationState>();
-            foreach (var animationState in animationStates)
-            {
-                var info = _animationConfig.GetAnimationInfo(animationState);
-                
-                switch (info.cooldownType)
-                {
-                    case CooldownType.Normal:
-                        list.Add(new AnimationCooldown(animationState, info.cooldown));
-                        break;
-                    case CooldownType.KeyFrame:
-                        list.Add(new KeyframeCooldown(animationState, info.cooldown, info.keyframeData.ToList()));
-                        break;
-                    case CooldownType.Combo:
-                        list.Add(new ComboCooldown(animationState, info.keyframeData.Select(x => x.resetCooldownWindowTime).ToList(), info.cooldown));
-                        break;
-                    case CooldownType.KeyFrameAndCombo:
-                        list.Add(new KeyframeComboCooldown(animationState, info.cooldown, info.keyframeData.ToList()));
-                        break;
-                }
-            }
-            return list;
-        }
-
         private async UniTaskVoid UpdateAnimationCooldowns(CancellationToken token, float deltaTime)
         {
             while (token.IsCancellationRequested == false && !_isApplyingState)
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(deltaTime), cancellationToken: token);
-                for (int i = _animationCooldowns.Count - 1; i >= 0; i--)
-                {
-                    var animationCooldown = _animationCooldowns[i];
-                    animationCooldown.Update(deltaTime);
-                }
+                PlayerComponentController.UpdateAnimation(deltaTime);
             }
         }
     }

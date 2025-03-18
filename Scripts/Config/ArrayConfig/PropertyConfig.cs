@@ -4,6 +4,7 @@ using System.Linq;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
 {
@@ -70,6 +71,17 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             var attackHeight = propertyData.Find(x => x.propertyType == PropertyTypeEnum.AttackHeight).baseValue;
             return new AttackConfigData(attackRadius, attackRange, attackHeight);
         }
+        
+        public (float, float) GetMinMaxProperty(PropertyTypeEnum type)
+        {
+            var property = propertyData.Find(x => x.propertyType == type);
+            return (property.minValue, property.maxValue);  
+        }
+
+        public PropertyTypeEnum GetPropertyType(AnimationState animationState)
+        {
+            return propertyData.Find(x => x.animationState == animationState).propertyType;
+        }
     }
     
     [Serializable]
@@ -82,5 +94,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public PropertyConsumeType consumeType;
         public bool isHandleWithCorrectFactor;
         public string description;
+        //关联的动画状态
+        public AnimationState animationState;
     }
 }

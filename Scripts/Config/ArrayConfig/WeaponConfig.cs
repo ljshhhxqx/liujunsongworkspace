@@ -104,12 +104,12 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         Sword6,
         Sword7,
         Sword8,
+        Sword9,
         Katana1,
         Katana2,
         Katana3,
         Katana4,
         Katana5,
         Katana6,
-        Katana7,
     }
 }

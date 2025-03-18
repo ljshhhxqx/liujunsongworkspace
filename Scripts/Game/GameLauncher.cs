@@ -26,6 +26,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer;
 using VContainer.Unity;
+using ConfigManager = HotUpdate.Scripts.Config.ConfigManager;
 using ExecuteCloudScriptResult = PlayFab.ClientModels.ExecuteCloudScriptResult;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;

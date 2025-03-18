@@ -5,6 +5,7 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using MemoryPack;
 using UniRx;
 using UnityEngine;
+using AnimationEvent = HotUpdate.Scripts.Config.ArrayConfig.AnimationEvent;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Data
@@ -19,10 +20,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     
     public interface IAnimationCooldown
     {
+        float AnimationSpeed { get; }
         //动画类型
         AnimationState AnimationState { get; }
         //是否在冷却中
         bool IsReady();
+        float SetAnimationSpeed(float speed);
         //更新冷却时间
         void Update(float deltaTime);
         //使用，进入冷却状态
@@ -46,15 +49,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public int MaxAttackCount => _maxStage;
         public float AttackWindow => _currentStage < _comboWindows.Count ? _comboWindows[_currentStage] : 0;
 
-        public ComboCooldown(AnimationState state, List<float> comboWindow, float cooldown)
+        public ComboCooldown(AnimationState state, List<float> comboWindow, float cooldown, float animationSpeed)
         {
             _state = state;
             _maxStage = comboWindow.Count;
             _comboWindows = comboWindow;
+            AnimationSpeed = animationSpeed;
             _configCooldown = cooldown;
             Reset();
         }
-
         public AnimationState AnimationState => _state;
         public int CurrentStage => _currentStage;
         public float WindowRemaining => _windowCountdown;
@@ -63,6 +66,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsReady() => _currentCountdown <= 0 && 
                                  (_currentStage == 0 || _inComboWindow);
+
+
+        public float AnimationSpeed { get; private set; }
+        public float SetAnimationSpeed(float speed)
+        {
+            AnimationSpeed = Mathf.Max(0, speed);
+            return AnimationSpeed;
+        }
 
         public void Update(float deltaTime)
         {
@@ -150,23 +161,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         private List<KeyframeData> _timeline;
         private float _configCooldown;
         private float _windowCountdown;
-        private HashSet<string> _triggeredEvents = new HashSet<string>();
-        private Subject<string> _eventStream = new Subject<string>();
+        private HashSet<AnimationEvent> _triggeredEvents = new HashSet<AnimationEvent>();
+        private Subject<AnimationEvent> _eventStream = new Subject<AnimationEvent>();
 
         public float CurrentTime => _currentTime;
         public float ResetWindow => _windowCountdown;
-        public KeyframeCooldown(AnimationState state, float configCooldown, IEnumerable<KeyframeData> keyframes)
+        public KeyframeCooldown(AnimationState state, float configCooldown, IEnumerable<KeyframeData> keyframes, float animationSpeed)
         {
             _state = state;
             _currentCountdown = 0;
             _configCooldown = configCooldown;
+            AnimationSpeed = animationSpeed;
             _timeline = keyframes
                 .OrderBy(k => k.triggerTime)
                 .ToList();
         }
-
         public AnimationState AnimationState => _state;
-        public IObservable<string> EventStream => _eventStream;
+        public IObservable<AnimationEvent> EventStream => _eventStream;
         public float CurrentCountdown => _currentCountdown;
         public float WindowRemaining => _windowCountdown;
 
@@ -177,6 +188,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 return true;
             }
             return _currentCountdown <= 0;
+        }
+        public float AnimationSpeed { get; private set; }
+        public float SetAnimationSpeed(float speed)
+        {
+            AnimationSpeed = Mathf.Max(0, speed);
+            return AnimationSpeed;
         }
 
         public void Update(float deltaTime)
@@ -241,9 +258,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         private float _windowCountdown;
         private bool _inComboWindow;
         private AnimationState _state;
-        private Subject<string> _eventStream = new Subject<string>();
+        private Subject<AnimationEvent> _eventStream = new Subject<AnimationEvent>();
         private List<KeyframeData> _keyframe;
-        public IObservable<string> EventStream => _eventStream;
+        public IObservable<AnimationEvent> EventStream => _eventStream;
         public int MaxAttackCount => _maxStage;
 
         public AnimationState AnimationState => _state;
@@ -254,13 +271,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public float CurrentTime => _currentTime;
         public float AttackWindow => _keyframe[_currentStage-1].resetCooldownWindowTime;
 
-        public KeyframeComboCooldown(AnimationState state, float cooldown, List<KeyframeData> keyframe)
+        public KeyframeComboCooldown(AnimationState state, float cooldown, List<KeyframeData> keyframe, float animationSpeed)
         {
             _state = state;
             _maxStage = keyframe.Count;
             _configCooldown = cooldown;
             _keyframe = keyframe;
             Reset();
+            AnimationSpeed = animationSpeed;
+        }
+        public float AnimationSpeed { get; private set; }
+        public float SetAnimationSpeed(float speed)
+        {
+            AnimationSpeed = Mathf.Max(0, speed);
+            return AnimationSpeed;
         }
 
         public bool IsReady()
@@ -382,10 +406,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public float CurrentCountdown => _currentCountdown;
         public float Cooldown => _cooldown;
         
-        public AnimationCooldown(AnimationState animationState, float cooldown)
+        public AnimationCooldown(AnimationState animationState, float cooldown, float animationSpeed)
         {
             _animationState = animationState;
             _cooldown = cooldown;
+            AnimationSpeed = animationSpeed;
         }
         
         public bool IsReady()
@@ -396,6 +421,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             }
 
             return _currentCountdown <= 0;
+        }
+        public float AnimationSpeed { get; private set; }
+        public float SetAnimationSpeed(float speed)
+        {
+            AnimationSpeed = Mathf.Max(0, speed);
+            return AnimationSpeed;
         }
         
         public void Update(float deltaTime)
@@ -448,6 +479,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         // 关键帧相关字段
         [MemoryPackOrder(8)] public float KeyframeCurrentTime;
         [MemoryPackOrder(9)] public float ResetCooldownWindow;
+        [MemoryPackOrder(10)] public float AnimationSpeed;
 
         private const float EPSILON = 0.001f;
 
@@ -465,28 +497,31 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         private bool CompareCombo(ComboCooldown combo)
         {
             return AnimationState == combo.AnimationState &&
-                   Math.Abs(CurrentCountdown - combo.CurrentCountdown) < EPSILON &&
+                   Mathf.Abs(CurrentCountdown - combo.CurrentCountdown) < EPSILON &&
                    CurrentAttackStage == combo.CurrentStage &&
-                   Math.Abs(WindowCountdown - combo.WindowRemaining) < EPSILON &&
-                   IsInComboWindow == combo.IsInComboWindow;
+                   Mathf.Abs(WindowCountdown - combo.WindowRemaining) < EPSILON &&
+                   IsInComboWindow == combo.IsInComboWindow &&
+                   Mathf.Approximately(AnimationSpeed, combo.AnimationSpeed);
         }
 
         private bool CompareKeyframe(KeyframeCooldown keyframe)
         {
             return AnimationState == keyframe.AnimationState &&
-                   Math.Abs(CurrentCountdown - keyframe.CurrentCountdown) < EPSILON &&
-                   Math.Abs(KeyframeCurrentTime - keyframe.CurrentTime) < EPSILON &&
-                   Math.Abs(ResetCooldownWindow - keyframe.WindowRemaining) < EPSILON;
+                   Mathf.Abs(CurrentCountdown - keyframe.CurrentCountdown) < EPSILON &&
+                   Mathf.Abs(KeyframeCurrentTime - keyframe.CurrentTime) < EPSILON &&
+                   Mathf.Abs(ResetCooldownWindow - keyframe.WindowRemaining) < EPSILON  &&
+                   Mathf.Approximately(AnimationSpeed, keyframe.AnimationSpeed);
         }
 
         private bool CompareComboKeyframe(KeyframeComboCooldown comboKeyframe)
         {
             return AnimationState == comboKeyframe.AnimationState &&
-                   Math.Abs(CurrentCountdown - comboKeyframe.CurrentCountdown) < EPSILON &&
+                   Mathf.Abs(CurrentCountdown - comboKeyframe.CurrentCountdown) < EPSILON &&
                    CurrentAttackStage == comboKeyframe.CurrentStage &&
-                   Math.Abs(WindowCountdown - comboKeyframe.WindowRemaining) < EPSILON &&
+                   Mathf.Abs(WindowCountdown - comboKeyframe.WindowRemaining) < EPSILON &&
                    IsInComboWindow == comboKeyframe.IsInComboWindow &&
-                   Math.Abs(KeyframeCurrentTime - comboKeyframe.CurrentTime) < EPSILON;
+                   Mathf.Abs(KeyframeCurrentTime - comboKeyframe.CurrentTime) < EPSILON &&
+                   Mathf.Approximately(AnimationSpeed, comboKeyframe.AnimationSpeed);
         }
 
         public static CooldownSnapshotData Create(IAnimationCooldown cooldown)
@@ -510,7 +545,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 CurrentAttackStage = combo.CurrentStage,
                 AttackWindow = combo.AttackWindow,
                 IsInComboWindow = combo.IsInComboWindow,
-                WindowCountdown = combo.WindowRemaining
+                WindowCountdown = combo.WindowRemaining,
+                AnimationSpeed = combo.AnimationSpeed,
             };
         }
 
@@ -521,7 +557,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 AnimationState = keyframe.AnimationState,
                 CurrentCountdown = keyframe.CurrentCountdown,
                 KeyframeCurrentTime = keyframe.CurrentTime,
-                ResetCooldownWindow = keyframe.ResetWindow
+                ResetCooldownWindow = keyframe.ResetWindow,
+                AnimationSpeed = keyframe.AnimationSpeed,
             };
         }
 
@@ -537,6 +574,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 IsInComboWindow = comboKeyframe.IsInComboWindow,
                 WindowCountdown = comboKeyframe.WindowRemaining,
                 KeyframeCurrentTime = comboKeyframe.CurrentTime,
+                AnimationSpeed = comboKeyframe.AnimationSpeed,
             };
         }
     }

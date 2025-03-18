@@ -67,6 +67,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private float _health = 1f;
         private float _speedSmoothTime = 0.1f;
         private float _speedSmoothVelocity;
+        private List<IAnimationCooldown> _animationCooldowns = new List<IAnimationCooldown>();
         
         private float FixedDeltaTime => Time.fixedDeltaTime;
         private float DeltaTime => Time.deltaTime;
@@ -84,6 +85,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public IObservable<int> AttackPointReached => _onAttackPoint;
         public IObservable<int> AttackEnded => _onAttackEnd;
         
+        public List<IAnimationCooldown> GetNowAnimationCooldowns()
+        {
+            return _animationCooldowns;
+        }
 
         [Inject]
         private void Init(IConfigProvider configProvider, GameSyncManager gameSyncManager, MapBoundDefiner mapBoundDefiner, PlayerInGameManager playerInGameManager)
@@ -104,6 +109,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _inputState.OnPlayerAnimationCooldownChanged += HandlePlayerAnimationCooldownChanged;
             _inputState.OnPlayerInputStateChanged += HandlePlayerInputStateChanged;
             _inputState.IsInSpecialState += HandleSpecialState;
+            _animationCooldowns = GetAnimationCooldowns();
             
             Observable.EveryUpdate()
                 .Where(_ => isLocalPlayer && _health > 0)
@@ -363,6 +369,73 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public uint[] HandleAttack(AttackParams attackParams)
         {
             return _playerBattleCalculator.IsInAttackRange(attackParams);
+        }
+
+        public void SetAnimatorSpeed(AnimationState animationState, float speed)
+        {
+            var propertyConfig = _configProvider.GetConfig<PropertyConfig>();
+            var property = propertyConfig.GetPropertyType(animationState);
+            var minMaxAttackSpeed = propertyConfig.GetMinMaxProperty(property);
+            var cooldown = _animationCooldowns.Find(x => x.AnimationState == animationState);
+            if (cooldown == null)
+            {
+                return;
+            }
+            speed = Mathf.Clamp(speed, minMaxAttackSpeed.Item1, minMaxAttackSpeed.Item2);
+
+            cooldown.SetAnimationSpeed(speed);
+            _playerAnimationCalculator.SetClipSpeed(animationState, speed);
+        }
+        
+        private List<IAnimationCooldown> GetAnimationCooldowns()
+        {
+            var list = new List<IAnimationCooldown>();
+            var animationStates = Enum.GetValues(typeof(AnimationState)).Cast<AnimationState>();
+            var config = _configProvider.GetConfig<AnimationConfig>();
+            foreach (var animationState in animationStates)
+            {
+                var info = config.GetAnimationInfo(animationState);
+                switch (info.cooldownType)
+                {
+                    case CooldownType.Normal:
+                        list.Add(new AnimationCooldown(animationState, info.cooldown, 1));
+                        break;
+                    case CooldownType.KeyFrame:
+                        list.Add(new KeyframeCooldown(animationState, info.cooldown, info.keyframeData.ToList(), 1));
+                        break;
+                    case CooldownType.Combo:
+                        list.Add(new ComboCooldown(animationState, info.keyframeData.Select(x => x.resetCooldownWindowTime).ToList(), info.cooldown, 1));
+                        break;
+                    case CooldownType.KeyFrameAndCombo:
+                        list.Add(new KeyframeComboCooldown(animationState, info.cooldown, info.keyframeData.ToList(), 1));
+                        break;
+                }
+            }
+            return list;
+        }
+
+        public void UpdateAnimation(float deltaTime)
+        {
+            for (int i = _animationCooldowns.Count - 1; i >= 0; i--)
+            {
+                var cooldown = _animationCooldowns[i];
+                cooldown.Update(deltaTime);
+            }
+        }
+
+        public void RefreshSnapData(List<CooldownSnapshotData> snapshotData)
+        {
+            for (var i = _animationCooldowns.Count - 1; i >= 0; i--)
+            {
+                if (i == snapshotData.Count - 1)
+                {
+                    _animationCooldowns[i].Reset();
+                    break;
+                }
+                var animationCooldown = _animationCooldowns[i];
+                var snapshotCoolDown = snapshotData[i];
+                animationCooldown.Refresh(snapshotCoolDown);
+            }
         }
     }
 }

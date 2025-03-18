@@ -24,6 +24,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         private static readonly int EnvironmentState = Animator.StringToHash("EnvironmentState");
         private static readonly int SpecialAction = Animator.StringToHash("IsSpecialAction");
         private static readonly int IsSprinting = Animator.StringToHash("IsSprinting");
+        private Dictionary<string, float> _originalSpeeds = new Dictionary<string, float>();
         public AnimationState CurrentAnimationState { get; private set; }
         private List<AnimationInfo> _animationInfos;
         public bool IsSpecialAction { get; private set; }
@@ -41,8 +42,38 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             CurrentAnimationState = AnimationState.Idle;
             _animationInfos = _animationConstant.AnimationConfig.AnimationInfos;
             IsClient = isClient;
+            foreach(var clip in _animationComponent.Animator.runtimeAnimatorController.animationClips) 
+            {
+                _originalSpeeds[clip.name] = clip.length;
+            }
         }
         
+        public void SetClipSpeed(AnimationState state, float speedFactor) 
+        {
+            if (state == AnimationState.Attack)
+            {
+                var clipNames = _animationConstant.AnimationConfig.GetAnimationNames(state);
+
+                foreach (var clipName in clipNames)
+                {
+                    SetAnimationSpeed(clipName, speedFactor);
+                }
+            }
+            else
+            {
+                var clipName = GetAnimationName(state);
+                SetAnimationSpeed(clipName, speedFactor);
+            }
+        }
+
+        private void SetAnimationSpeed(string clipName, float speedFactor)
+        {
+            var clip = _animationComponent.Animator.runtimeAnimatorController.animationClips
+                .FirstOrDefault(c => c.name == clipName);
+        
+            clip?.SampleAnimation(_animationComponent.Animator.gameObject, Mathf.Clamp01(Time.time % clip.length) * speedFactor);
+        }
+
         public static void SetAnimationConstant(AnimationConstant animationConstant)
         {
             _animationConstant = animationConstant;
@@ -63,7 +94,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return CurrentAnimationState is AnimationState.Move or AnimationState.Sprint or AnimationState.Idle;
         }
         
-        private string GetAnimationName(AnimationState state, int index = 0) => _animationConstant.AnimationConfig.GetAnimationName(state, index);
+        public string GetAnimationName(AnimationState state, int index = 0) => _animationConstant.AnimationConfig.GetAnimationName(state, index);
 
         public AnimationState UpdateAnimationState()
         {

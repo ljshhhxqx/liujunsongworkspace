@@ -3,6 +3,7 @@ using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
+using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using MemoryPack;
@@ -20,6 +21,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         protected readonly ConcurrentQueue<INetworkCommand> CommandQueue = new ConcurrentQueue<INetworkCommand>();
         protected GameSyncManager GameSyncManager;
         protected JsonDataConfig JsonDataConfig;
+        protected PlayerComponentController PlayerComponentController;
         protected int LastConfirmedTick { get; private set; }
         protected abstract CommandType CommandType { get; }
 
@@ -28,6 +30,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             GameSyncManager = gameSyncManager;
             JsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
+            PlayerComponentController = GetComponent<PlayerComponentController>();
         }
 
         // 添加预测命令

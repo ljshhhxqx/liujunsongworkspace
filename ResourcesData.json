@@ -412,6 +412,16 @@
         },
         {
             "UID": 1400000,
+            "ResourceType": "HotUpdate.Scripts.Config.ArrayConfig.ItemConfig",
+            "AssetType": 15,
+            "Extension": ".asset",
+            "Name": "ItemConfig",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/Config/ItemConfig.asset"
+        },
+        {
+            "UID": 1500000,
             "ResourceType": "HotUpdate.Scripts.Config.JsonConfig.JsonDataConfig",
             "AssetType": 15,
             "Extension": ".asset",
@@ -419,16 +429,6 @@
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/Config/JsonDataConfig.asset"
-        },
-        {
-            "UID": 1500000,
-            "ResourceType": "HotUpdate.Scripts.Config.JsonGenerator",
-            "AssetType": 15,
-            "Extension": ".asset",
-            "Name": "JsonGenerator",
-            "IsPermanent": false,
-            "IsPreload": true,
-            "Address": "/Preload/Config/JsonGenerator.asset"
         },
         {
             "UID": 1600000,
@@ -885,13 +885,23 @@
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
+            "Name": "ItemConfig",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/ConfigAsset/Csv/ItemConfig.csv"
+        },
+        {
+            "UID": 2400005,
+            "ResourceType": "UnityEngine.TextAsset",
+            "AssetType": 7,
+            "Extension": ".csv",
             "Name": "MapConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/ConfigAsset/Csv/MapConfig.csv"
         },
         {
-            "UID": 2400005,
+            "UID": 2400006,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -901,7 +911,7 @@
             "Address": "/Preload/ConfigAsset/Csv/PropertyConfig.csv"
         },
         {
-            "UID": 2400006,
+            "UID": 2400007,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -911,7 +921,7 @@
             "Address": "/Preload/ConfigAsset/Csv/RandomBuffConfig.csv"
         },
         {
-            "UID": 2400007,
+            "UID": 2400008,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -921,7 +931,7 @@
             "Address": "/Preload/ConfigAsset/Csv/WeatherConfig.csv"
         },
         {
-            "UID": 2400008,
+            "UID": 2400009,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -931,7 +941,7 @@
             "Address": "/Preload/ConfigAsset/Json/AnimationConfig.json"
         },
         {
-            "UID": 2400009,
+            "UID": 2400010,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -941,7 +951,7 @@
             "Address": "/Preload/ConfigAsset/Json/ChestDataConfig.json"
         },
         {
-            "UID": 2400010,
+            "UID": 2400011,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -951,7 +961,7 @@
             "Address": "/Preload/ConfigAsset/Json/CollectObjectDataConfig.json"
         },
         {
-            "UID": 2400011,
+            "UID": 2400012,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -961,7 +971,17 @@
             "Address": "/Preload/ConfigAsset/Json/ConstantBuffConfig.json"
         },
         {
-            "UID": 2400012,
+            "UID": 2400013,
+            "ResourceType": "UnityEngine.TextAsset",
+            "AssetType": 5,
+            "Extension": ".json",
+            "Name": "ItemConfig",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/ConfigAsset/Json/ItemConfig.json"
+        },
+        {
+            "UID": 2400014,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -971,7 +991,7 @@
             "Address": "/Preload/ConfigAsset/Json/JsonDataConfig.json"
         },
         {
-            "UID": 2400013,
+            "UID": 2400015,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -981,7 +1001,7 @@
             "Address": "/Preload/ConfigAsset/Json/MapConfig.json"
         },
         {
-            "UID": 2400014,
+            "UID": 2400016,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -991,7 +1011,7 @@
             "Address": "/Preload/ConfigAsset/Json/PropertyConfig.json"
         },
         {
-            "UID": 2400015,
+            "UID": 2400017,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -1001,7 +1021,7 @@
             "Address": "/Preload/ConfigAsset/Json/RandomBuffConfig.json"
         },
         {
-            "UID": 2400016,
+            "UID": 2400018,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",

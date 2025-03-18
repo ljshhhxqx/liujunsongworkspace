@@ -88,6 +88,11 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             }
             return animationInfo.animationType == AnimationType.Combo ? animationInfo.animationNames[0] : animationInfo.animationNames[index];
         }
+        
+        public string[] GetAnimationNames(AnimationState state)
+        {
+            return GetAnimationInfo(state).animationNames;
+        }
 
         // [Button]
         // private KeyframeData[] GetKeyframes()
@@ -149,6 +154,13 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         None
     }
 
+    public enum AnimationEvent
+    {
+        OnRollStart,
+        OnRollEnd,
+        OnAttack,
+    }
+
     // 关键帧数据结构
     [Serializable]
     public struct KeyframeData
@@ -156,7 +168,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [Tooltip("事件触发时间（秒）")]
         public float triggerTime;
         [Tooltip("事件类型标识符")]
-        public string eventType;
+        public AnimationEvent eventType;
         [Tooltip("触发后是否重置冷却")]
         public bool resetCooldown;
         [Tooltip("触发后重置冷却的窗口时间(如果为0，那么将无法产生连招效果)")]
@@ -167,7 +179,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [Tooltip("是否在服务器验证")]
         public bool serverValidate;
         
-        public KeyframeData(float triggerTime, string eventType, bool resetCooldown, float resetCooldownWindowTime, float tolerance, bool serverValidate)
+        public KeyframeData(float triggerTime, AnimationEvent eventType, bool resetCooldown, float resetCooldownWindowTime, float tolerance, bool serverValidate)
         {
             this.triggerTime = triggerTime;
             this.eventType = eventType;

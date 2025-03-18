@@ -27,7 +27,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private async UniTaskVoid UpdateEquipmentCd(CancellationToken token)
         {
-            while (token.IsCancellationRequested == false)
+            while (!token.IsCancellationRequested)
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(1 / GameSyncManager.TickRate), cancellationToken: token);
                 foreach (var playerId in PropertyStates.Keys)

@@ -1,7 +1,10 @@
 ﻿using System;
+using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Data.PredictSystem;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
+using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
@@ -59,97 +62,41 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         public override void Simulate(INetworkCommand command)
         {
             var header = command.GetHeader();
-            // if (header is { isClientCommand: true, commandType: CommandType.Property } && command is PropertyCommand propertyCommand)
-            // {
-            //     var propertyState = PlayerPropertyState;
-            //     switch (propertyCommand.Operation)
-            //     {
-            //         case PropertyCommandAutoRecover:
-            //             var healthRecover = propertyState.Properties[PropertyTypeEnum.HealthRecovery];
-            //             var strengthRecover = propertyState.Properties[PropertyTypeEnum.StrengthRecovery];
-            //             var health = propertyState.Properties[PropertyTypeEnum.Health];
-            //             var strength = propertyState.Properties[PropertyTypeEnum.Strength];
-            //             propertyState.Properties[PropertyTypeEnum.Health] = health.UpdateCalculator(health, new BuffIncreaseData
-            //             {
-            //                 increaseType = BuffIncreaseType.Current,
-            //                 increaseValue = healthRecover.CurrentValue * Time.deltaTime,
-            //             });
-            //             propertyState.Properties[PropertyTypeEnum.Strength] = strength.UpdateCalculator(strength, new BuffIncreaseData
-            //             {
-            //                 increaseType = BuffIncreaseType.Current,
-            //                 increaseValue = strengthRecover.CurrentValue * Time.deltaTime,
-            //             });
-            //             break;
-            //         case PropertyCommandEnvironmentChange environmentChange:
-            //             var speed = propertyState.Properties[PropertyTypeEnum.Speed];
-            //             var sprintRatio = propertyState.Properties[PropertyTypeEnum.SprintSpeedRatio];
-            //             var stairsRatio = propertyState.Properties[PropertyTypeEnum.StairsSpeedRatio];
-            //             if (!environmentChange.hasInputMovement)
-            //             {
-            //                 speed = speed.UpdateCalculator(speed, new BuffIncreaseData
-            //                 {
-            //                     increaseType = BuffIncreaseType.CorrectionFactor,
-            //                     increaseValue = 0,
-            //                 });
-            //             }
-            //             else
-            //             {
-            //                 switch (environmentChange.environmentType)
-            //                 {
-            //                     case PlayerEnvironmentState.InAir:
-            //                         break;
-            //                     case PlayerEnvironmentState.OnGround:
-            //                         speed = speed.UpdateCalculator(speed, new BuffIncreaseData
-            //                         {
-            //                             increaseType = BuffIncreaseType.CorrectionFactor,
-            //                             increaseValue = environmentChange.isSprinting ? sprintRatio.CurrentValue : 1,
-            //                             operationType = BuffOperationType.Multiply,
-            //                         });
-            //                         break;
-            //                     case PlayerEnvironmentState.OnStairs:
-            //                         speed = speed.UpdateCalculator(speed, new BuffIncreaseData
-            //                         {
-            //                             increaseType = BuffIncreaseType.CorrectionFactor,
-            //                             increaseValue = environmentChange.isSprinting ? sprintRatio.CurrentValue * stairsRatio.CurrentValue : stairsRatio.CurrentValue,
-            //                             operationType = BuffOperationType.Multiply,
-            //                         });
-            //                         break;
-            //                     case PlayerEnvironmentState.Swimming:
-            //                         break;
-            //                     default:
-            //                         throw new ArgumentOutOfRangeException(nameof(environmentChange.environmentType), environmentChange.environmentType, null);
-            //                 }
-            //             }
-            //             propertyState.Properties[PropertyTypeEnum.Speed] = speed;
-            //             break;
-            //         case PropertyAnimationCommand animationCommand:
-            //             var animationType = _animationConfig.GetActionType(animationCommand.animationState);
-            //             if (animationType is ActionType.Interaction or ActionType.None)
-            //             {
-            //                 break;
-            //             }
-            //             var cost = _animationConfig.GetPlayerAnimationCost(animationCommand.animationState);
-            //             cost *= animationCommand.animationState == AnimationState.Sprint ? Time.deltaTime : 1f;
-            //             strength = propertyState.Properties[PropertyTypeEnum.Strength];
-            //             if (cost <= 0 || cost > strength.CurrentValue)
-            //             {
-            //                 return;
-            //             }
-            //             propertyState.Properties[PropertyTypeEnum.Strength] = strength.UpdateCalculator(strength, new BuffIncreaseData
-            //             {
-            //                 increaseType = BuffIncreaseType.Current,
-            //                 increaseValue = cost,
-            //                 operationType = BuffOperationType.Subtract,
-            //             });
-            //             break;
-            //         default:
-            //             Debug.LogError($"PlayerPropertySyncSystem: server command {propertyCommand.Operation.GetType().Name} cannot be handled by client.");
-            //             break;
-            //     }
+            if (CurrentState is not PlayerPredictablePropertyState playerState || header.CommandType.HasAnyState(CommandType.Property))
+                return;
+            if (command is PropertyAutoRecoverCommand)
+            {
+                HandlePropertyRecover(ref playerState);
+            }
+            else if (command is PropertyClientAnimationCommand clientAnimationCommand)
+            {
+                HandleAnimationCommand(ref playerState, clientAnimationCommand.AnimationState);
+            }
+            else
+            {
+                return;
+            }
             //todo:上述代码需要更换为直接调用PlayerComponentController,不再使用
             var propertyState = PlayerPredictablePropertyState;
             PropertyChanged(propertyState);
             
+        }
+        
+        private void HandlePropertyRecover(ref PlayerPredictablePropertyState propertyState)
+        {
+            PlayerComponentController.HandlePropertyRecover(ref propertyState);
+            PropertyChanged(propertyState);
+        }
+
+        private void HandleAnimationCommand(ref PlayerPredictablePropertyState propertyState, AnimationState command)
+        {
+            var cost = _animationConfig.GetPlayerAnimationCost(command);
+            if (cost <= 0)
+            {
+                return;
+            }
+            PlayerComponentController.HandleAnimationCost(ref propertyState, command, cost);
+            PropertyChanged(propertyState);
         }
 
         public void RegisterProperties(PlayerPredictablePropertyState predictablePropertyState)
@@ -164,8 +111,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 if (property.Value.IsResourceProperty())
                 {
                     OnPropertyChanged?.Invoke(property.Key, property.Value);
+                    continue;
                 }
                 OnPropertyChanged?.Invoke(property.Key, property.Value);
+                if (property.Key == PropertyTypeEnum.AttackSpeed)
+                {
+                    PlayerComponentController.SetAnimatorSpeed(AnimationState.Attack, property.Value.CurrentValue);
+                }
             }
         }
     }
