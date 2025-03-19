@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AOTScripts.CustomAttribute;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -48,25 +49,28 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 collectConfigData.id = int.Parse(row[0]);
                 collectConfigData.weight = int.Parse(row[1]);                
                 collectConfigData.buffExtraData = JsonConvert.DeserializeObject<BuffExtraData>(row[2]);
-                collectConfigData.collectObjectClass = Enum.Parse<CollectObjectClass>(row[3]);
-                collectConfigData.isRandomBuff = bool.Parse(row[4]);
+                collectConfigData.buffSize = Enum.Parse<CollectObjectBuffSize>(row[3]);
+                collectConfigData.collectObjectClass = Enum.Parse<CollectObjectClass>(row[4]);
+                collectConfigData.isRandomBuff = bool.Parse(row[5]);
                 collectConfigDatas.Add(collectConfigData);
             }
         }
     }
 
     [Serializable]
+    [JsonSerializable]
     public struct CollectObjectData
     {
         public int id;
         public int weight;
         public BuffExtraData buffExtraData;
-        //public CollectObjectBuffSize buffSize;
+        public CollectObjectBuffSize buffSize;
         public CollectObjectClass collectObjectClass;
         public bool isRandomBuff;
     }
 
     [Serializable]
+    [JsonSerializable]
     public struct CollectData
     {
         public float itemSpacing;

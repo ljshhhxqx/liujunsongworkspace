@@ -7,7 +7,7 @@ using UnityEngine;
 namespace HotUpdate.Scripts.Config.ArrayConfig
 {
     #if UNITY_EDITOR
-    [CreateAssetMenu(fileName = "ConfigManagerEditor", menuName = "ConfigManager/ConfigManagerEditor")]
+    [CreateAssetMenu(fileName = "ConfigManager", menuName = "ConfigManager/ConfigManager")]
     public class ConfigManager : ScriptableObject, IConfigProvider
     {
         [SerializeField] 
@@ -38,6 +38,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                     configs.Add(configBase);
                 }
             }
+            EditorUtility.SetDirty(this);
         }
 
         [Button]
@@ -46,9 +47,40 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             foreach (var config in configs)
             {
                 config.LoadFromResources();
+                if (config is ItemConfig itemConfig)
+                {
+                    itemConfig.CoverBuffExtraData();
+                }
             }
         }
         
+        private static ConfigManager instance;
+        public static ConfigManager Instance
+        {
+            get
+            {
+                instance ??= AssetDatabase.LoadAssetAtPath<ConfigManager>("Assets/Editor/Config/ConfigManager.asset");
+                return instance;
+            }
+        }
+        
+        [MenuItem("Tools/Load Config")]
+        public static void LoadConfigMenu()
+        {
+            Instance.LoadConfig();
+            Instance.LoadResources();
+        }
+
+        [MenuItem("Tools/Load Equip Config and Buff ExtraData Menu")]
+        public static void LoadEquipConfigAndBuffExtraDataValidation()
+        {
+            var itemConfig = Instance.GetConfig<ItemConfig>();
+            var constantBuffConfig = Instance.GetConfig<ConstantBuffConfig>();
+            itemConfig.CoverBuffExtraData();
+            itemConfig.WriteBuffExtraDataToExcel();
+            constantBuffConfig.WriteBuffExtraDataToExcel();
+        }
+
         public T GetConfig<T>() where T : ConfigBase, new()
         {
             return (T)configs.Find(obj => obj.GetType() == typeof(T));

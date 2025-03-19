@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
+using OfficeOpenXml;
 using Sirenix.OdinInspector;
+using UnityEditor;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
@@ -28,7 +32,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 buff.increaseDataList[i] = buffData;
             }
 
-            return buffs.Find(buff => buff.buffId == buffId);
+            return buffs.Find(x => x.buffId == buffId);
         }
 
         protected override void ReadFromCsv(List<string[]> textAsset)
@@ -46,5 +50,94 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 buffs.Add(buff);
             }
         }
+
+        public BuffData GetBuffDataByProperty((PropertyTypeEnum, float) property, BuffIncreaseType increaseType)
+        {
+            //Debug.Log($"GetBuffDataByProperty: {property.Item1} {property.Item2}, {increaseType}");
+            for (var i = 0; i < buffs.Count; i++)
+            {
+                var buff = buffs[i];
+                // Debug.Log($"buff: {buff.buffId} {buff.propertyType} {buff.duration}");
+                // for (var j = 0; j < buff.increaseDataList.Count; j++)
+                // {
+                //     var data = buff.increaseDataList[j];
+                //     Debug.Log($"data: {data.increaseType} {data.increaseValue}");
+                // }
+                if (buff.propertyType == property.Item1 && buff.increaseDataList.Exists(data => data.increaseType == increaseType && Mathf.Approximately(data.increaseValue, property.Item2)))
+                {
+                    return buff;
+                }
+            }
+            return default;
+        }
+        
+        public int GetMaxBuffId()
+        {
+            return buffs.Count > 0? buffs.Max(b => b.buffId) : 0;
+        }
+        
+#if UNITY_EDITOR
+        public void AddItemBuff(BuffData newBuff)
+        {
+            buffs.Add(newBuff);
+            
+            EditorUtility.SetDirty(this);
+        }
+
+        [Button]
+        public void WriteBuffExtraDataToExcel()
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented,
+                NullValueHandling = NullValueHandling.Ignore
+            };
+            jsonSerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+            var excel = Path.Combine(excelAssetReference.Path, $"{configName}.xlsx");
+            using (var package = new ExcelPackage(new FileInfo(excel)))
+            {
+                var worksheet = package.Workbook.Worksheets[0];
+                var rowCount = worksheet.Dimension?.Rows ?? 1;
+                const int idCol = 1; // buffId 列
+                const int propTypeCol = 2;
+                const int durationCol = 3;
+                const int increaseDataCol = 4;
+
+                // 现有 buff 的 ID 集合
+                var existingIds = new HashSet<int>();
+                for (int row = 3; row <= rowCount; row++)
+                {
+                    //var value = worksheet.Cells[row, idCol].GetValue<double>();
+                    int buffId = (int)worksheet.Cells[row, idCol].GetValue<double>();
+                    existingIds.Add(buffId);
+                }
+
+                // 追加新 buff 数据
+                var newRow = rowCount + 1;
+                foreach (var buff in buffs)
+                {
+                    if (!existingIds.Contains(buff.buffId))
+                    {
+                        worksheet.Cells[newRow, idCol].Value = buff.buffId;
+                        worksheet.Cells[newRow, propTypeCol].Value = buff.propertyType.ToString();
+                        worksheet.Cells[newRow, durationCol].Value = buff.duration;
+
+                        var json = JsonConvert.SerializeObject(buff.increaseDataList, jsonSerializerSettings);
+                        json = json.Replace("\\n", "");
+                        json = json.Replace(" ", "");
+                        // 序列化 increaseDataList
+                        worksheet.Cells[newRow, increaseDataCol].Value = json;
+
+                        newRow++;
+                    }
+                }
+
+                // 保存文件
+                package.Save();
+                Debug.Log("Buff table updated successfully!");
+            }
+        }
+#endif
     }
 }

@@ -46,8 +46,12 @@ namespace HotUpdate.Scripts.Config
             }
 
             string json = JsonConvert.SerializeObject(dataInstance, settings);
+            json = json.Replace("\\n", ""); // 处理换行符
+            json = json.Replace("\\t", ""); // 处理制表符
+            json = json.Replace(" ", ""); // 空格
             GUIUtility.systemCopyBuffer = json;
             Debug.Log($"JSON generated and copied to clipboard:\n{json}");
+            
         }
 
         public void SetSelectedType(Type type)

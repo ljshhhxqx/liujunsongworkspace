@@ -25,6 +25,10 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 data.baseValue = float.Parse(row[1]);
                 data.minValue = float.Parse(row[2]);
                 data.maxValue = float.Parse(row[3]);
+                data.consumeType = (PropertyConsumeType) Enum.Parse(typeof(PropertyConsumeType), row[4]);
+                data.isHandleWithCorrectFactor = bool.Parse(row[5]);
+                data.description = row[6];
+                data.animationState = (AnimationState) Enum.Parse(typeof(AnimationState), row[7]);
                 propertyData.Add(data);
             }
         }
@@ -81,6 +85,30 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public PropertyTypeEnum GetPropertyType(AnimationState animationState)
         {
             return propertyData.Find(x => x.animationState == animationState).propertyType;
+        }
+
+        public IEnumerable<(PropertyTypeEnum, float)> GetItemDescriptionProperties(string itemPropertyDescription)
+        {
+            var strs = itemPropertyDescription.Split(',');
+            foreach (var str in strs)
+            {
+                var property = propertyData.Find(x => str.Contains(x.description));
+                if (property.description != null)
+                {
+                    var value = str.Split('+')[1];
+                    if (value.Contains("%"))
+                    {
+                        value = value.Replace("%", "");
+                        yield return (property.propertyType, float.Parse(value) / 100f);
+                        continue;
+                    }
+                    yield return (property.propertyType, float.Parse(value));
+                }
+                else
+                {
+                    throw new Exception($"提供的“{itemPropertyDescription}”中没有找到属性描述“{str}”");
+                }
+            }
         }
     }
     
