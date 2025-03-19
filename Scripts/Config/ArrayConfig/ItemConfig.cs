@@ -35,7 +35,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             gameItemDatas.Clear();
             var jsonSerializerSettings = new JsonSerializerSettings
             {
-                Formatting = Formatting.Indented,
                 NullValueHandling = NullValueHandling.Ignore
             };
             jsonSerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
@@ -95,7 +94,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             var jsonSerializerSettings = new JsonSerializerSettings
             {
-                Formatting = Formatting.Indented,
                 NullValueHandling = NullValueHandling.Ignore
             };
             jsonSerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
@@ -122,19 +120,17 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                         if (item.buffExtraData != null && item.buffExtraData.Length > 0)
                         {
                             // 将 buffExtraData 序列化为字符串
-                            var json1 = JsonConvert.SerializeObject(item.buffExtraData, jsonSerializerSettings);
-                            json1 = json1.Replace("\\n", "");
-                            json1 = json1.Replace(" ", "");
-                            worksheet.Cells[row, buffExtraCol].Value = json1;
+                            var json = JsonConvert.SerializeObject(item.buffExtraData, jsonSerializerSettings);
+                            worksheet.Cells[row, buffExtraCol].Value = json;
                         }
 
-                        if (item.buffIncreaseType != null && item.buffIncreaseType.Length > 0)
-                        {
-                            var json2 = JsonConvert.SerializeObject(item.buffIncreaseType, jsonSerializerSettings);
-                            json2 = json2.Replace("\\n", "");
-                            json2 = json2.Replace(" ", "");
-                            worksheet.Cells[row, buffIncreaseTypeCol].Value = json2;
-                        }
+                        // if (item.buffIncreaseType != null && item.buffIncreaseType.Length > 0)
+                        // {
+                        //     var json2 = JsonConvert.SerializeObject(item.buffIncreaseType, jsonSerializerSettings);
+                        //     json2 = json2.Replace("\\n", "");
+                        //     json2 = json2.Replace(" ", "");
+                        //     worksheet.Cells[row, buffIncreaseTypeCol].Value = json2;
+                        // }
                     }
                 }
                 catch (Exception e)

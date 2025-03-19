@@ -38,6 +38,11 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
             buffs.Clear();
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            };
+            jsonSerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
             for (var i = 2; i < textAsset.Count; i++)
             {
                 var data = textAsset[i];
@@ -45,8 +50,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 buff.buffId = int.Parse(data[0]);
                 buff.propertyType = Enum.Parse<PropertyTypeEnum>(data[1]);
                 buff.duration = float.Parse(data[2]);
-                var json = JsonConvert.DeserializeObject<List<BuffIncreaseData>>(data[3]);
-                buff.increaseDataList = json;
+                var json = JsonConvert.DeserializeObject<BuffIncreaseData[]>(data[3],jsonSerializerSettings);
+                buff.increaseDataList = json.ToList();
                 buffs.Add(buff);
             }
         }
@@ -90,7 +95,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             var jsonSerializerSettings = new JsonSerializerSettings
             {
-                Formatting = Formatting.Indented,
                 NullValueHandling = NullValueHandling.Ignore
             };
             jsonSerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
@@ -124,9 +128,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                         worksheet.Cells[newRow, durationCol].Value = buff.duration;
 
                         var json = JsonConvert.SerializeObject(buff.increaseDataList, jsonSerializerSettings);
-                        json = json.Replace("\\n", "");
-                        json = json.Replace(" ", "");
-                        // 序列化 increaseDataList
                         worksheet.Cells[newRow, increaseDataCol].Value = json;
 
                         newRow++;

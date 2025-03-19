@@ -73,6 +73,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public QualityType quality;
         public WeaponType weaponType;
         public int skillID;
+        public int[] battleEffectConditionIds;
+        public string battleEffectConditionDescription;
     }
 
     //默认值

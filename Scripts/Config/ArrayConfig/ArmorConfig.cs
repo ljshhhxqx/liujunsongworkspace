@@ -73,6 +73,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public int itemID;
         public QualityType quality;
         public int skillID;
+        public int[] battleEffectConditionIds;
+        public string battleEffectConditionDescription;
     }
 
     public enum ArmorType

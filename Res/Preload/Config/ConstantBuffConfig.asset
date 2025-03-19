@@ -53,8 +53,8 @@ MonoBehaviour:
     propertyType: 5
     duration: 0
     increaseDataList:
-    - increaseType: 3
-      increaseValue: 0.2
+    - increaseType: 4
+      increaseValue: 50
       operationType: 0
   - buffId: 6
     propertyType: 1
