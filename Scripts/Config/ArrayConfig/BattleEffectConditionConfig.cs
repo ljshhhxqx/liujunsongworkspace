@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using AOTScripts.CustomAttribute;
+using AOTScripts.Data;
 using Mirror;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Serialization;
+using TriggerType = PlayFab.CloudScriptModels.TriggerType;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
 {
@@ -53,26 +55,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public IConditionParam ConditionParam;
     }
 
-    public interface IConditionParam
-    {
-        ConditionHeader GetConditionHeader();
-        bool CheckConditionValid();
-    }
-
-    [Serializable]
-    [JsonSerializable]
-    public struct ConditionHeader
-    {
-        public TriggerType TriggerType; 
-    }
-
-    public enum AttackRangeType : byte
-    {
-        None,
-        Melee,
-        Ranged,
-    }
-
     [Serializable]
     [JsonSerializable]
     public struct AttackHitConditionParam : IConditionParam
@@ -113,13 +95,14 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     {
         public Range hpRange;
         public DamageType damageType;
+        public DamageCastType damageCastType;
         public Range damageRange;
         public ConditionHeader ConditionHeader;
         public ConditionHeader GetConditionHeader() => ConditionHeader;
 
         public bool CheckConditionValid()
         {
-            return this.CheckConditionHeader() && hpRange.min >= 0 && hpRange.max >= hpRange.min && hpRange.max <= 1f && Enum.IsDefined(typeof(DamageType), damageType);
+            return this.CheckConditionHeader() && Enum.IsDefined(typeof(DamageCastType), damageCastType) && damageRange.min >= 0 && damageRange.max >= damageRange.min && damageRange.max <= 1f && hpRange.min >= 0 && hpRange.max >= hpRange.min && hpRange.max <= 1f && Enum.IsDefined(typeof(DamageType), damageType);
         }
     }
 
@@ -175,6 +158,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public Range hpRange;
         public Range damageRange;
         public DamageType damageType;
+        public DamageCastType damageCastType;
         public ConditionHeader ConditionHeader;
         public ConditionHeader GetConditionHeader() => ConditionHeader;
 
@@ -236,35 +220,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public static bool CheckConditionHeader(this IConditionParam conditionParam)
         {
             var header = conditionParam.GetConditionHeader();
-            return Enum.IsDefined(typeof(TriggerType), header.TriggerType);
+            return Enum.IsDefined(typeof(TriggerType), header.triggerType);
         }
-    }
-
-    public enum TriggerType : byte
-    {
-        None,                //只有基础条件
-        OnAttackHit,         // 攻击命中时
-        OnAttack,            // 攻击时
-        OnSkillHit,          // 技能命中时
-        OnSkillCast,         // 技能释放时
-        OnTakeDamage,        // 受到伤害时
-        OnKill,              // 击杀敌人时
-        OnHPChange,          // 血量低于阈值时
-        OnMpChange,          // 魔法值低于阈值时
-        OnCriticalHit,       // 暴击时
-        OnDodge              // 闪避成功时
-    }
-
-    [Flags]
-    public enum ConditionTargetType : byte
-    {
-        None,
-        Self = 1 << 0,
-        Enemy = 1 << 1,
-        Ally = 1 << 2,
-        Player = 1 << 3,
-        Boss = Enemy | 1 << 4,
-        EnemyPlayer = Enemy | Player,
-        AllyPlayer = Ally | Player,
     }
 }

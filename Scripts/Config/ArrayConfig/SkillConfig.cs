@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AOTScripts.CustomAttribute;
+using AOTScripts.Data;
 using Mirror;
 using UnityEngine;
 
@@ -39,28 +40,5 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public SkillType type;
         public float damage;
         public DamageType damageType;
-    }
-
-    public enum SkillType : byte
-    {
-        Skill1,
-        Skill2,
-        Skill3,
-        Skill4,
-        Skill5,
-        Skill6,
-        Skill7,
-        Skill8,
-        Skill9,
-        Skill10,
-    }
-    
-    [Flags]
-    public enum DamageType : byte
-    {
-        None,
-        Physical = 1 << 0,
-        Elemental  = 1 << 1,
-        All = Physical | Elemental
     }
 }

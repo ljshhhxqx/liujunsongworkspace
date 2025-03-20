@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using AOTScripts.Data;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
@@ -8,6 +9,7 @@ using MemoryPack;
 using Newtonsoft.Json;
 using Tool.Coroutine;
 using UnityEngine;
+using TriggerType = PlayFab.CloudScriptModels.TriggerType;
 
 namespace HotUpdate.Scripts.Network.Battle
 {

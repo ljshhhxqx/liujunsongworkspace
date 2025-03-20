@@ -1,5 +1,5 @@
-﻿using HotUpdate.Scripts.Config;
-using UnityEngine;
+﻿using Editor.Scripts;
+using HotUpdate.Scripts.Config;
 
 public interface IConfigProvider
 {

@@ -1,4 +1,5 @@
 using Data;
+using Editor.Scripts;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;

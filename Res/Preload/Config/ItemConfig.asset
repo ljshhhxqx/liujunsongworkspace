@@ -46,7 +46,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+5%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3002
     name: "\u5355\u624B\u52511"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60011"
@@ -72,7 +72,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+7%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3003
     name: "\u5355\u624B\u52511"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60011"
@@ -98,7 +98,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+10,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+10%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3004
     name: "\u5355\u624B\u52512"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60012"
@@ -124,7 +124,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u7387+5%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3005
     name: "\u5355\u624B\u52512"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60012"
@@ -150,7 +150,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+25%,\u66B4\u51FB\u7387+5%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3006
     name: "\u5355\u624B\u52512"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60012"
@@ -176,7 +176,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+30%,\u66B4\u51FB\u7387+5%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3007
     name: "\u5355\u624B\u52513"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60013"
@@ -202,7 +202,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+5%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3008
     name: "\u5355\u624B\u52513"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60013"
@@ -228,7 +228,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+7%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3009
     name: "\u5355\u624B\u52513"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60013"
@@ -254,7 +254,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+10%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3010
     name: "\u5355\u624B\u52514"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60014"
@@ -280,7 +280,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+10%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3011
     name: "\u5355\u624B\u52514"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60014"
@@ -306,7 +306,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+15%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3012
     name: "\u5355\u624B\u52514"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60014"
@@ -332,7 +332,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+20%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3013
     name: "\u5355\u624B\u52515"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60015"
@@ -358,7 +358,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+1,\u653B\u51FB\u901F\u5EA6+30%,\u66B4\u51FB\u7387+5%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3014
     name: "\u5355\u624B\u52515"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60015"
@@ -384,7 +384,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+2,\u653B\u51FB\u901F\u5EA6+45%,\u66B4\u51FB\u7387+5%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3015
     name: "\u5355\u624B\u52515"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60015"
@@ -410,7 +410,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+5,\u653B\u51FB\u901F\u5EA6+60%,\u66B4\u51FB\u7387+5%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3016
     name: "\u5355\u624B\u52515"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60015"
@@ -436,7 +436,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+5,\u653B\u51FB\u901F\u5EA6+30%,\u66B4\u51FB\u7387+10%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3017
     name: "\u5355\u624B\u52516"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60016"
@@ -462,7 +462,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+10%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3018
     name: "\u5355\u624B\u52516"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60016"
@@ -488,7 +488,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+15%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3019
     name: "\u5355\u624B\u52516"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60016"
@@ -514,7 +514,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+20%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3020
     name: "\u5355\u624B\u52517"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60017"
@@ -540,7 +540,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+10%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3021
     name: "\u5355\u624B\u52517"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60017"
@@ -566,7 +566,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+15%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3022
     name: "\u5355\u624B\u52517"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60017"
@@ -592,7 +592,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+10,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+20%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3023
     name: "\u5355\u624B\u52518"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60018"
@@ -618,7 +618,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+10%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3024
     name: "\u5355\u624B\u52518"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60018"
@@ -644,7 +644,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+25%,\u66B4\u51FB\u4F24\u5BB3+10%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3025
     name: "\u5355\u624B\u52518"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60018"
@@ -670,7 +670,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+30%,\u66B4\u51FB\u4F24\u5BB3+10%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3026
     name: "\u5355\u624B\u52519"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60019"
@@ -696,7 +696,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+10%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3027
     name: "\u5355\u624B\u52519"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60019"
@@ -722,7 +722,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+15%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3028
     name: "\u5355\u624B\u52519"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60019"
@@ -748,7 +748,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+15%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3029
     name: "\u5355\u624B\u52519"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60019"
@@ -774,7 +774,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+20%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3030
     name: "\u5355\u624B\u52519"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60019"
@@ -800,7 +800,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+15%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3031
     name: "\u5355\u624B\u525110"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u600110"
@@ -826,7 +826,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+10%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3032
     name: "\u5355\u624B\u525110"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u600110"
@@ -852,7 +852,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+15%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3033
     name: "\u5355\u624B\u525110"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600110"
@@ -878,7 +878,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+10,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+20%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3034
     name: "\u5355\u624B\u525111"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u600111"
@@ -904,7 +904,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u7387+5%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3035
     name: "\u5355\u624B\u525111"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u600111"
@@ -930,7 +930,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+25%,\u66B4\u51FB\u7387+5%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3036
     name: "\u5355\u624B\u525111"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600111"
@@ -956,7 +956,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+30%,\u66B4\u51FB\u7387+5%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3037
     name: "\u5355\u624B\u525112"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u600112"
@@ -982,7 +982,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u7387+5%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3038
     name: "\u5355\u624B\u525112"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u600112"
@@ -1008,7 +1008,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u7387+7%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3039
     name: "\u5355\u624B\u525112"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600112"
@@ -1034,7 +1034,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u7387+10%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3040
     name: "\u5355\u624B\u525113"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u600113"
@@ -1060,7 +1060,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+10%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3041
     name: "\u5355\u624B\u525113"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u600113"
@@ -1086,7 +1086,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+10%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3042
     name: "\u5355\u624B\u525113"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u600113"
@@ -1112,7 +1112,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+20%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3043
     name: "\u5355\u624B\u525113"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600113"
@@ -1138,7 +1138,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+10,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+10%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3044
     name: "\u5355\u624B\u525113"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600113"
@@ -1164,7 +1164,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+10,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+20%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3045
     name: "\u5355\u624B\u525114"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u600114"
@@ -1190,7 +1190,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+10%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3046
     name: "\u5355\u624B\u525114"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u600114"
@@ -1216,7 +1216,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+4,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+20%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3047
     name: "\u5355\u624B\u525114"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600114"
@@ -1242,7 +1242,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+5.5,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+30%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3048
     name: "\u5355\u624B\u525115"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u600115"
@@ -1268,7 +1268,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+10%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3049
     name: "\u5355\u624B\u525115"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u600115"
@@ -1294,7 +1294,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+4,\u653B\u51FB\u901F\u5EA6+25%,\u66B4\u51FB\u4F24\u5BB3+15%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3050
     name: "\u5355\u624B\u525115"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600115"
@@ -1320,7 +1320,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+5,\u653B\u51FB\u901F\u5EA6+30%,\u66B4\u51FB\u4F24\u5BB3+20%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3051
     name: "\u5355\u624B\u525115"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600115"
@@ -1346,7 +1346,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+5,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+30%"
     buffIncreaseType: 000000000200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3052
     name: "\u4E0A\u88631"
     desc: "\u666E\u901A\u4E0A\u88631"
@@ -1369,7 +1369,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u751F\u547D\u503C+20,\u9632\u5FA1\u529B+5"
     buffIncreaseType: 0000000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3053
     name: "\u4E0A\u88632"
     desc: "\u666E\u901A\u4E0A\u88632"
@@ -1392,7 +1392,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u751F\u547D\u503C+10,\u9632\u5FA1\u529B+10"
     buffIncreaseType: 0000000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3054
     name: "\u4E0A\u88633"
     desc: "\u666E\u901A\u4E0A\u88633"
@@ -1415,7 +1415,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u751F\u547D\u503C+25,\u9632\u5FA1\u529B+2.5"
     buffIncreaseType: 0000000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3055
     name: "\u4E0A\u88634"
     desc: "\u666E\u901A\u4E0A\u88634"
@@ -1435,7 +1435,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u751F\u547D\u503C+50"
     buffIncreaseType: 00000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3056
     name: "\u4E0A\u88635"
     desc: "\u666E\u901A\u4E0A\u88635"
@@ -1455,7 +1455,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u9632\u5FA1\u529B+15"
     buffIncreaseType: 00000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3057
     name: "\u4E0A\u88631"
     desc: "\u7A00\u6709\u4E0A\u88631"
@@ -1478,7 +1478,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u751F\u547D\u503C+30,\u9632\u5FA1\u529B+7.5"
     buffIncreaseType: 0000000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3058
     name: "\u4E0A\u88632"
     desc: "\u7A00\u6709\u4E0A\u88632"
@@ -1501,7 +1501,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u751F\u547D\u503C+15,\u9632\u5FA1\u529B+15"
     buffIncreaseType: 0000000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3059
     name: "\u4E0A\u88633"
     desc: "\u7A00\u6709\u4E0A\u88633"
@@ -1524,7 +1524,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u751F\u547D\u503C+37.5,\u9632\u5FA1\u529B+4.5"
     buffIncreaseType: 0000000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3060
     name: "\u4E0A\u88634"
     desc: "\u7A00\u6709\u4E0A\u88634"
@@ -1544,7 +1544,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u751F\u547D\u503C+75"
     buffIncreaseType: 00000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3061
     name: "\u4E0A\u88635"
     desc: "\u7A00\u6709\u4E0A\u88635"
@@ -1564,7 +1564,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u9632\u5FA1\u529B+22.5"
     buffIncreaseType: 00000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3062
     name: "\u4E0A\u88631"
     desc: "\u4F20\u5947\u4E0A\u88631"
@@ -1587,7 +1587,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u751F\u547D\u503C+45,\u9632\u5FA1\u529B+7.5"
     buffIncreaseType: 0000000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3063
     name: "\u4E0A\u88632"
     desc: "\u4F20\u5947\u4E0A\u88632"
@@ -1610,7 +1610,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u751F\u547D\u503C+25,\u9632\u5FA1\u529B+15"
     buffIncreaseType: 0000000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3064
     name: "\u4E0A\u88633"
     desc: "\u4F20\u5947\u4E0A\u88633"
@@ -1633,7 +1633,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u751F\u547D\u503C+50,\u9632\u5FA1\u529B+7.5"
     buffIncreaseType: 0000000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3065
     name: "\u4E0A\u88634"
     desc: "\u4F20\u5947\u4E0A\u88634"
@@ -1653,7 +1653,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u751F\u547D\u503C+100"
     buffIncreaseType: 00000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3066
     name: "\u4E0A\u88635"
     desc: "\u4F20\u5947\u4E0A\u88635"
@@ -1673,7 +1673,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u9632\u5FA1\u529B+25"
     buffIncreaseType: 00000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3067
     name: "\u978B\u5B501"
     desc: "\u666E\u901A\u978B\u5B501"
@@ -1696,7 +1696,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u79FB\u52A8\u901F\u5EA6+5%,\u653B\u51FB\u901F\u5EA6+5%"
     buffIncreaseType: 0000000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3068
     name: "\u978B\u5B502"
     desc: "\u666E\u901A\u978B\u5B502"
@@ -1719,7 +1719,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u79FB\u52A8\u901F\u5EA6+7.5%,\u653B\u51FB\u901F\u5EA6+2.5%"
     buffIncreaseType: 0000000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3069
     name: "\u978B\u5B503"
     desc: "\u666E\u901A\u978B\u5B503"
@@ -1742,7 +1742,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u79FB\u52A8\u901F\u5EA6+1%,\u653B\u51FB\u901F\u5EA6+9%"
     buffIncreaseType: 0000000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3070
     name: "\u978B\u5B504"
     desc: "\u666E\u901A\u978B\u5B504"
@@ -1762,7 +1762,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u79FB\u52A8\u901F\u5EA6+10%"
     buffIncreaseType: 00000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3071
     name: "\u978B\u5B505"
     desc: "\u666E\u901A\u978B\u5B505"
@@ -1785,7 +1785,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u79FB\u52A8\u901F\u5EA6+2.5%,\u653B\u51FB\u901F\u5EA6+7.5%"
     buffIncreaseType: 0000000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3072
     name: "\u978B\u5B501"
     desc: "\u7A00\u6709\u978B\u5B501"
@@ -1808,7 +1808,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u79FB\u52A8\u901F\u5EA6+7.5%,\u653B\u51FB\u901F\u5EA6+7.5%"
     buffIncreaseType: 0000000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3073
     name: "\u978B\u5B502"
     desc: "\u7A00\u6709\u978B\u5B502"
@@ -1831,7 +1831,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u79FB\u52A8\u901F\u5EA6+10.5%,\u653B\u51FB\u901F\u5EA6+4.5%"
     buffIncreaseType: 0000000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3074
     name: "\u978B\u5B503"
     desc: "\u7A00\u6709\u978B\u5B503"
@@ -1854,7 +1854,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u79FB\u52A8\u901F\u5EA6+2.5%,\u653B\u51FB\u901F\u5EA6+12.5%"
     buffIncreaseType: 0000000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3075
     name: "\u978B\u5B504"
     desc: "\u7A00\u6709\u978B\u5B504"
@@ -1874,7 +1874,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u79FB\u52A8\u901F\u5EA6+15%"
     buffIncreaseType: 00000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3076
     name: "\u978B\u5B505"
     desc: "\u7A00\u6709\u978B\u5B505"
@@ -1897,7 +1897,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u79FB\u52A8\u901F\u5EA6+5%,\u653B\u51FB\u901F\u5EA6+10%"
     buffIncreaseType: 0000000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3077
     name: "\u978B\u5B501"
     desc: "\u4F20\u5947\u978B\u5B501"
@@ -1920,7 +1920,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u79FB\u52A8\u901F\u5EA6+10%,\u653B\u51FB\u901F\u5EA6+10%"
     buffIncreaseType: 0000000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3078
     name: "\u978B\u5B502"
     desc: "\u4F20\u5947\u978B\u5B502"
@@ -1943,7 +1943,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u79FB\u52A8\u901F\u5EA6+14%,\u653B\u51FB\u901F\u5EA6+6%"
     buffIncreaseType: 0000000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3079
     name: "\u978B\u5B503"
     desc: "\u4F20\u5947\u978B\u5B503"
@@ -1966,7 +1966,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u79FB\u52A8\u901F\u5EA6+5%,\u653B\u51FB\u901F\u5EA6+15%"
     buffIncreaseType: 0000000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3080
     name: "\u978B\u5B504"
     desc: "\u4F20\u5947\u978B\u5B504"
@@ -1986,7 +1986,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u79FB\u52A8\u901F\u5EA6+22.5%"
     buffIncreaseType: 00000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3081
     name: "\u978B\u5B505"
     desc: "\u4F20\u5947\u978B\u5B505"
@@ -2009,7 +2009,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u79FB\u52A8\u901F\u5EA6+7.5%,\u653B\u51FB\u901F\u5EA6+15%"
     buffIncreaseType: 0000000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3082
     name: "\u88E4\u5B501"
     desc: "\u666E\u901A\u88E4\u5B501"
@@ -2032,7 +2032,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u4F53\u529B\u503C+20,\u4F53\u529B\u6062\u590D+1"
     buffIncreaseType: 0000000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3083
     name: "\u88E4\u5B502"
     desc: "\u666E\u901A\u88E4\u5B502"
@@ -2055,7 +2055,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u4F53\u529B\u503C+30,\u4F53\u529B\u6062\u590D+0.5"
     buffIncreaseType: 0000000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3084
     name: "\u88E4\u5B503"
     desc: "\u666E\u901A\u88E4\u5B503"
@@ -2078,7 +2078,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u4F53\u529B\u503C+15,\u4F53\u529B\u6062\u590D+2"
     buffIncreaseType: 0000000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3085
     name: "\u88E4\u5B504"
     desc: "\u666E\u901A\u88E4\u5B504"
@@ -2098,7 +2098,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u4F53\u529B\u503C+50"
     buffIncreaseType: 00000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3086
     name: "\u88E4\u5B505"
     desc: "\u666E\u901A\u88E4\u5B505"
@@ -2118,7 +2118,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u4F53\u529B\u6062\u590D+5"
     buffIncreaseType: 00000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3087
     name: "\u88E4\u5B501"
     desc: "\u7A00\u6709\u88E4\u5B501"
@@ -2141,7 +2141,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u4F53\u529B\u503C+30,\u4F53\u529B\u6062\u590D+1.5"
     buffIncreaseType: 0000000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3088
     name: "\u88E4\u5B502"
     desc: "\u7A00\u6709\u88E4\u5B502"
@@ -2164,7 +2164,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u4F53\u529B\u503C+45,\u4F53\u529B\u6062\u590D+0.75"
     buffIncreaseType: 0000000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3089
     name: "\u88E4\u5B503"
     desc: "\u7A00\u6709\u88E4\u5B503"
@@ -2187,7 +2187,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u4F53\u529B\u503C+22.5,\u4F53\u529B\u6062\u590D+3"
     buffIncreaseType: 0000000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3090
     name: "\u88E4\u5B504"
     desc: "\u7A00\u6709\u88E4\u5B504"
@@ -2207,7 +2207,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u4F53\u529B\u503C+75"
     buffIncreaseType: 00000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3091
     name: "\u88E4\u5B505"
     desc: "\u7A00\u6709\u88E4\u5B505"
@@ -2227,7 +2227,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u4F53\u529B\u6062\u590D+7.5"
     buffIncreaseType: 00000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3092
     name: "\u88E4\u5B501"
     desc: "\u4F20\u5947\u88E4\u5B501"
@@ -2250,7 +2250,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u4F53\u529B\u503C+45,\u4F53\u529B\u6062\u590D+2.25"
     buffIncreaseType: 0000000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3093
     name: "\u88E4\u5B502"
     desc: "\u4F20\u5947\u88E4\u5B502"
@@ -2273,7 +2273,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u4F53\u529B\u503C+60,\u4F53\u529B\u6062\u590D+1.25"
     buffIncreaseType: 0000000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3094
     name: "\u88E4\u5B503"
     desc: "\u4F20\u5947\u88E4\u5B503"
@@ -2296,7 +2296,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u4F53\u529B\u503C+35,\u4F53\u529B\u6062\u590D+4.5"
     buffIncreaseType: 0000000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3095
     name: "\u88E4\u5B504"
     desc: "\u4F20\u5947\u88E4\u5B504"
@@ -2316,7 +2316,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u4F53\u529B\u503C+120"
     buffIncreaseType: 00000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3096
     name: "\u88E4\u5B505"
     desc: "\u4F20\u5947\u88E4\u5B505"
@@ -2336,7 +2336,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u4F53\u529B\u6062\u590D+10"
     buffIncreaseType: 00000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3097
     name: "\u5934\u76D41"
     desc: "\u666E\u901A\u5934\u76D41"
@@ -2359,7 +2359,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u66B4\u51FB\u7387+3%,\u66B4\u51FB\u4F24\u5BB3+8%"
     buffIncreaseType: 0200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3098
     name: "\u5934\u76D42"
     desc: "\u666E\u901A\u5934\u76D42"
@@ -2382,7 +2382,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u66B4\u51FB\u7387+5%,\u66B4\u51FB\u4F24\u5BB3+5%"
     buffIncreaseType: 0200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3099
     name: "\u5934\u76D43"
     desc: "\u666E\u901A\u5934\u76D43"
@@ -2405,7 +2405,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u66B4\u51FB\u7387+2%,\u66B4\u51FB\u4F24\u5BB3+7.5%"
     buffIncreaseType: 0200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3100
     name: "\u5934\u76D44"
     desc: "\u666E\u901A\u5934\u76D44"
@@ -2425,7 +2425,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u66B4\u51FB\u7387+8%"
     buffIncreaseType: 02000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3101
     name: "\u5934\u76D45"
     desc: "\u666E\u901A\u5934\u76D45"
@@ -2445,7 +2445,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u66B4\u51FB\u4F24\u5BB3+15%"
     buffIncreaseType: 02000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3102
     name: "\u5934\u76D41"
     desc: "\u7A00\u6709\u5934\u76D41"
@@ -2468,7 +2468,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u66B4\u51FB\u7387+4.5%,\u66B4\u51FB\u4F24\u5BB3+12%"
     buffIncreaseType: 0200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3103
     name: "\u5934\u76D42"
     desc: "\u7A00\u6709\u5934\u76D42"
@@ -2491,7 +2491,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u66B4\u51FB\u7387+7.5%,\u66B4\u51FB\u4F24\u5BB3+7.5%"
     buffIncreaseType: 0200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3104
     name: "\u5934\u76D43"
     desc: "\u7A00\u6709\u5934\u76D43"
@@ -2514,7 +2514,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u66B4\u51FB\u7387+3%,\u66B4\u51FB\u4F24\u5BB3+10%"
     buffIncreaseType: 0200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3105
     name: "\u5934\u76D44"
     desc: "\u7A00\u6709\u5934\u76D44"
@@ -2534,7 +2534,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u66B4\u51FB\u7387+12%"
     buffIncreaseType: 02000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3106
     name: "\u5934\u76D45"
     desc: "\u7A00\u6709\u5934\u76D45"
@@ -2554,7 +2554,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u66B4\u51FB\u4F24\u5BB3+24%"
     buffIncreaseType: 02000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3107
     name: "\u5934\u76D41"
     desc: "\u4F20\u5947\u5934\u76D41"
@@ -2577,7 +2577,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u66B4\u51FB\u7387+7.5%,\u66B4\u51FB\u4F24\u5BB3+15%"
     buffIncreaseType: 0200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3108
     name: "\u5934\u76D42"
     desc: "\u4F20\u5947\u5934\u76D42"
@@ -2600,7 +2600,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u66B4\u51FB\u7387+10%,\u66B4\u51FB\u4F24\u5BB3+10%"
     buffIncreaseType: 0200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3109
     name: "\u5934\u76D43"
     desc: "\u4F20\u5947\u5934\u76D43"
@@ -2623,7 +2623,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u66B4\u51FB\u7387+5%,\u66B4\u51FB\u4F24\u5BB3+25%"
     buffIncreaseType: 0200000002000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3110
     name: "\u5934\u76D44"
     desc: "\u4F20\u5947\u5934\u76D44"
@@ -2643,7 +2643,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u66B4\u51FB\u7387+18%"
     buffIncreaseType: 02000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3111
     name: "\u5934\u76D45"
     desc: "\u4F20\u5947\u5934\u76D45"
@@ -2663,7 +2663,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u66B4\u51FB\u4F24\u5BB3+36%"
     buffIncreaseType: 02000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3112
     name: "\u8170\u5E261"
     desc: "\u666E\u901A\u8170\u5E261"
@@ -2686,7 +2686,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+1.5,\u751F\u547D\u6062\u590D+0.5"
     buffIncreaseType: 0200000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3113
     name: "\u8170\u5E262"
     desc: "\u666E\u901A\u8170\u5E262"
@@ -2709,7 +2709,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+2,\u751F\u547D\u6062\u590D+0.25"
     buffIncreaseType: 0200000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3114
     name: "\u8170\u5E263"
     desc: "\u666E\u901A\u8170\u5E263"
@@ -2732,7 +2732,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+1,\u751F\u547D\u6062\u590D+1"
     buffIncreaseType: 0200000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3115
     name: "\u8170\u5E264"
     desc: "\u666E\u901A\u8170\u5E264"
@@ -2752,7 +2752,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+5"
     buffIncreaseType: 02000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3116
     name: "\u8170\u5E265"
     desc: "\u666E\u901A\u8170\u5E265"
@@ -2772,7 +2772,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u751F\u547D\u6062\u590D+2"
     buffIncreaseType: 00000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3117
     name: "\u8170\u5E261"
     desc: "\u7A00\u6709\u8170\u5E261"
@@ -2795,7 +2795,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+2.5,\u751F\u547D\u6062\u590D+0.75"
     buffIncreaseType: 0200000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3118
     name: "\u8170\u5E262"
     desc: "\u7A00\u6709\u8170\u5E262"
@@ -2818,7 +2818,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+3,\u751F\u547D\u6062\u590D+0.5"
     buffIncreaseType: 0200000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3119
     name: "\u8170\u5E263"
     desc: "\u7A00\u6709\u8170\u5E263"
@@ -2841,7 +2841,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+1.5,\u751F\u547D\u6062\u590D+1.5"
     buffIncreaseType: 0200000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3120
     name: "\u8170\u5E264"
     desc: "\u7A00\u6709\u8170\u5E264"
@@ -2861,7 +2861,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+7.5"
     buffIncreaseType: 02000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3121
     name: "\u8170\u5E265"
     desc: "\u7A00\u6709\u8170\u5E265"
@@ -2881,7 +2881,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u751F\u547D\u6062\u590D+3"
     buffIncreaseType: 00000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3122
     name: "\u8170\u5E261"
     desc: "\u4F20\u5947\u8170\u5E261"
@@ -2904,7 +2904,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+4,\u751F\u547D\u6062\u590D+1"
     buffIncreaseType: 0200000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3123
     name: "\u8170\u5E262"
     desc: "\u4F20\u5947\u8170\u5E262"
@@ -2927,7 +2927,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+5,\u751F\u547D\u6062\u590D+0.75"
     buffIncreaseType: 0200000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3124
     name: "\u8170\u5E263"
     desc: "\u4F20\u5947\u8170\u5E263"
@@ -2950,7 +2950,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+2,\u751F\u547D\u6062\u590D+2.5"
     buffIncreaseType: 0200000000000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3125
     name: "\u8170\u5E264"
     desc: "\u4F20\u5947\u8170\u5E264"
@@ -2970,7 +2970,7 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u653B\u51FB\u529B+10"
     buffIncreaseType: 02000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   - id: 3126
     name: "\u8170\u5E265"
     desc: "\u4F20\u5947\u8170\u5E265"
@@ -2990,5 +2990,5 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "\u751F\u547D\u6062\u590D+5"
     buffIncreaseType: 00000000
-    isDealWithBuffExtraData: 0
+    isDealWithBuffExtraData: 1
   configManager: {fileID: 11400000, guid: 56662f2e2c781224386c67bee26f4b6c, type: 2}

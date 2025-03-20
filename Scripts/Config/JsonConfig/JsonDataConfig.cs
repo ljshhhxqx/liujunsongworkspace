@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using AOTScripts.Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using UnityEngine;
 using AnimationInfo = HotUpdate.Scripts.Config.ArrayConfig.AnimationInfo;
 using Random = UnityEngine.Random;
+using TriggerType = PlayFab.CloudScriptModels.TriggerType;
 
 namespace HotUpdate.Scripts.Config.JsonConfig
 {
@@ -104,6 +106,39 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public BagCommonData bagCommonData;
         [Header("其他数据")]
         public OtherData otherData;
+        [Header("配置字符串")]
+        public ConfigString configString;
+    }
+
+    [Serializable]
+    public struct ConfigString
+    {
+        public List<PropertyKeyValue> properties;
+        public List<BattleTriggerKeyValue> battleTriggerList;
+        public List<ConditionTargetTypeKeyValue> conditionTargetTypeList;
+        
+        
+    }
+
+    [Serializable]
+    public struct PropertyKeyValue
+    {
+        public PropertyTypeEnum propertyType;
+        public string desc;
+    }
+
+    [Serializable]
+    public struct BattleTriggerKeyValue
+    {
+        public TriggerType triggerType;
+        public string desc;
+    }
+
+    [Serializable]
+    public struct ConditionTargetTypeKeyValue
+    {
+        public ConditionTargetType triggerType;
+        public string desc;
     }
 
     [Serializable]
