@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AOTScripts.CustomAttribute;
+using AOTScripts.Data;
 using Mirror;
 using UnityEngine;
 

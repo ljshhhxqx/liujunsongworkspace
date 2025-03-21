@@ -106,40 +106,40 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public BagCommonData bagCommonData;
         [Header("其他数据")]
         public OtherData otherData;
-        [Header("配置字符串")]
-        public ConfigString configString;
+        // [Header("配置字符串")]
+        // public ConfigString configString;
     }
 
-    [Serializable]
-    public struct ConfigString
-    {
-        public List<PropertyKeyValue> properties;
-        public List<BattleTriggerKeyValue> battleTriggerList;
-        public List<ConditionTargetTypeKeyValue> conditionTargetTypeList;
-        
-        
-    }
+    // [Serializable]
+    // public struct ConfigString
+    // {
+    //     public List<PropertyKeyValue> properties;
+    //     public List<BattleTriggerKeyValue> battleTriggerList;
+    //     public List<ConditionTargetTypeKeyValue> conditionTargetTypeList;
+    //     
+    //     
+    // }
 
-    [Serializable]
-    public struct PropertyKeyValue
-    {
-        public PropertyTypeEnum propertyType;
-        public string desc;
-    }
-
-    [Serializable]
-    public struct BattleTriggerKeyValue
-    {
-        public TriggerType triggerType;
-        public string desc;
-    }
-
-    [Serializable]
-    public struct ConditionTargetTypeKeyValue
-    {
-        public ConditionTargetType triggerType;
-        public string desc;
-    }
+    // [Serializable]
+    // public struct PropertyKeyValue
+    // {
+    //     public PropertyTypeEnum propertyType;
+    //     public string desc;
+    // }
+    //
+    // [Serializable]
+    // public struct BattleTriggerKeyValue
+    // {
+    //     public TriggerType triggerType;
+    //     public string desc;
+    // }
+    //
+    // [Serializable]
+    // public struct ConditionTargetTypeKeyValue
+    // {
+    //     public ConditionTargetType triggerType;
+    //     public string desc;
+    // }
 
     [Serializable]
     public struct OtherData

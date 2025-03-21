@@ -1,5 +1,4 @@
-﻿using Editor.Scripts;
-using HotUpdate.Scripts.Config;
+﻿using HotUpdate.Scripts.Config;
 
 public interface IConfigProvider
 {

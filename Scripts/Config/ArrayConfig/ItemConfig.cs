@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Editor.Scripts;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
 using OfficeOpenXml;
+using UnityEngine.Serialization;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
 {
@@ -69,8 +69,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         }
         
 #if UNITY_EDITOR
-        [SerializeField]
-        private ConfigManager configManager;
+        [FormerlySerializedAs("configManager")] [SerializeField]
+        private EditorConfigManager editorConfigManager;
         private PropertyConfig _propertyConfig;
         private ConstantBuffConfig _constantBuffConfig;
         private WeaponConfig _equipmentConfig;
@@ -78,10 +78,10 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
         private void OnValidate()
         {
-            _propertyConfig ??= configManager.GetConfig<PropertyConfig>();
-            _constantBuffConfig ??= configManager.GetConfig<ConstantBuffConfig>();
-            _equipmentConfig ??= configManager.GetConfig<WeaponConfig>();
-            _armorConfig ??= configManager.GetConfig<ArmorConfig>();
+            _propertyConfig ??= editorConfigManager.GetConfig<PropertyConfig>();
+            _constantBuffConfig ??= editorConfigManager.GetConfig<ConstantBuffConfig>();
+            _equipmentConfig ??= editorConfigManager.GetConfig<WeaponConfig>();
+            _armorConfig ??= editorConfigManager.GetConfig<ArmorConfig>();
         }
 
         /// <summary>

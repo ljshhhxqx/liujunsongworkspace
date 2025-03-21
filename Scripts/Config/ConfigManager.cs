@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using HotUpdate.Scripts.Config;
 using UnityEngine;
 using VContainer;
 
-namespace Editor.Scripts
+namespace HotUpdate.Scripts.Config
 {
     public class ConfigManager
     {

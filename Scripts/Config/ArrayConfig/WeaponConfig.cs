@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
+using UnityEditor;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
@@ -63,6 +64,20 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 weaponConfigData.Add(weaponConfig);
             }
         }
+        
+        #if UNITY_EDITOR
+        private EditorConfigManager _configManager;
+        private ConstantBuffConfig _constantBuffConfig;
+        private BattleEffectConditionConfig _battleEffectConditionConfig;
+
+        private void OnValidate()
+        {
+            _configManager ??= EditorConfigManager.Instance;
+            _constantBuffConfig ??= _configManager.GetConfig<ConstantBuffConfig>();
+            _battleEffectConditionConfig ??= _configManager.GetConfig<BattleEffectConditionConfig>();
+            EditorUtility.SetDirty(this);
+        }
+        #endif
     }
 
     [Serializable]

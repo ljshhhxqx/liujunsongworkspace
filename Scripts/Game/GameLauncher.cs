@@ -2,7 +2,6 @@
 using AOTScripts.Tool;
 using Cysharp.Threading.Tasks;
 using Data;
-using Editor.Scripts;
 using Game;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;

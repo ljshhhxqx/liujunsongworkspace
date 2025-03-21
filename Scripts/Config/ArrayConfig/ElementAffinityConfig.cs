@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AOTScripts.Data;
 using HotUpdate.Scripts.Common;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -128,28 +129,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         //共存态时实际消耗的元素
         public ElementType reactionConsumeElement;
         public EffectType effectType;
-    }
-
-    /// <summary>
-    /// 技能或攻击的额外效果类型
-    /// </summary>
-    [Flags]
-    public enum EffectType
-    {
-        // 不属于任何效果
-        None = 0,
-        // 冰冻
-        Frozen = 1 << 0,
-        // 麻痹
-        Paralysis = 1 << 1,
-        // 眩晕
-        Stun = 1 << 2,
-        // 击飞
-        KnockBack = 1 << 3,
-        // 减速
-        Slow = 1 << 4,
-        // 击退
-        Retreat = 1 << 5,
     }
 
     public enum ElementReactionType : byte
