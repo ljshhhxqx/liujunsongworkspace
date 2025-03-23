@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81d1c3a8cad54adea69a94e5fc2968d7, type: 3}
+  m_Name: BattleEffectConditionConfig
+  m_EditorClassIdentifier: 
+  excelAssetReference:
+    guid: 
+  csvAssetReference:
+    guid: 
+  jsonAssetReference:
+    guid: 
+  configName: 
+  isArray: 0
+  conditionList: []
+  selectedTypeName: 
+  jsonTemplate: {fileID: 0}
+  effectData:
+    id: 0
+    triggerType: 1
+    probability: 100
+    effectType: 0
+    controlTime: 0
+    interval: 30
+    extraData:
+      buffId: 0
+      buffType: 0
+      collectObjectBuffSize: 0
+    targetType: 24
+    targetCount: 2
+    conditionParam:
+      rid: 5224356400721821696
+  references:
+    version: 2
+    RefIds:
+    - rid: 5224356400721821696
+      type: {class: AttackHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        hpRange:
+          isPercent: 1
+          min: 30
+          max: 30
+        damageRange:
+          isPercent: 0
+          min: 50
+          max: 100
+        attackRangeType: 3
+        ConditionHeader:
+          triggerType: 1

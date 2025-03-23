@@ -185,7 +185,7 @@ public class DynamicFontLoader : MonoBehaviour
         }
     }
 
-    [CustomEditor(typeof(DynamicFontLoader))]
+    [UnityEditor.CustomEditor(typeof(DynamicFontLoader))]
     public class DynamicFontLoaderEditor : Editor
     {
         private DynamicFontLoader loader;

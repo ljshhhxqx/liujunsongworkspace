@@ -129,7 +129,7 @@ namespace HotUpdate.Scripts.Config
         {
             var triggerName = EnumHeaderParser.GetEnumHeaders(typeof(TriggerType))[data.triggerType];
             var targetName = EnumHeaderParser.GetEnumHeaders(typeof(ConditionTargetType))[data.targetType];
-            var paramString = data.ConditionParam?.GetConditionDesc() ?? "";
+            var paramString = data.conditionParam?.GetConditionDesc() ?? "";
 
             string effectString = $"[PassiveEffect]{triggerName},概率{data.probability}%,目标{data.targetCount}个{targetName},冷却{data.interval}秒";
             if (!string.IsNullOrEmpty(paramString))

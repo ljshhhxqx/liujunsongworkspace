@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using AOTScripts.CustomAttribute;
 using AOTScripts.Data;
 using CustomEditor.Scripts;
-using Mirror;
 using Newtonsoft.Json;
+using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
 
@@ -33,14 +32,12 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 conditionData.extraData = JsonConvert.DeserializeObject<BuffExtraData>(text[6]);
                 conditionData.targetType = (ConditionTargetType)Enum.Parse(typeof(ConditionTargetType), text[7]);
                 conditionData.targetCount = int.Parse(text[8]);
-                conditionData.ConditionParam = JsonConvert.DeserializeObject<IConditionParam>(text[9]);
+                conditionData.conditionParam = JsonConvert.DeserializeObject<IConditionParam>(text[9]);
                 conditionList.Add(conditionData);
             }
         }
 
 #if UNITY_EDITOR
-        [SerializeField] private string selectedTypeName;
-        [SerializeField] private TextAsset jsonTemplate;
         [SerializeField] private BattleEffectConditionConfigData effectData;
         public BattleEffectConditionConfigData EffectData => effectData;
 
@@ -59,28 +56,22 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
             private void OnEnable()
             {
+                _serializedProperty = serializedObject.FindProperty("effectData");
                 _conditionParams.Clear();
                 var triggerTypes = Enum.GetValues(typeof(TriggerType));
                 for (int i = 0; i < triggerTypes.Length; i++)
                 {
                     var triggerType = (TriggerType)triggerTypes.GetValue(i);
-                    _conditionParams.Add(triggerType, triggerType.GetConditionParameter<IConditionParam>().GetType());
+                    if (triggerType == TriggerType.None) continue;
+                    var conditionParamType = triggerType.GetConditionParameter<IConditionParam>();
+                    _conditionParams.Add(triggerType, conditionParamType.GetType());
                 }
-
-                // var generator = (BattleEffectConditionConfig)target;
-                // if (!string.IsNullOrEmpty(generator.selectedTypeName))
-                // {
-                //     _selectedIndex = Enum.Parse<TriggerType>(generator.selectedTypeName);
-                //     if (generator.GetDataInstance() == null)
-                //     {
-                //         generator.SetSelectedType(_conditionParams[_selectedIndex]);
-                //     }
-                // }
             }
             public override void OnInspectorGUI()
             {
+                serializedObject.Update();
                 EditorGUI.BeginChangeCheck();
-
+                
                 // 触发类型
                 var triggerTypeProp = _serializedProperty.FindPropertyRelative("triggerType");
                 EditorGUILayout.PropertyField(triggerTypeProp, new GUIContent("触发类型"));
@@ -102,7 +93,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 intervalProp.floatValue = EditorGUILayout.FloatField("冷却时间 (秒)", Mathf.Max(0f, intervalProp.floatValue));
 
                 // 动态参数编辑
-                var triggerParamsProp = _serializedProperty.FindPropertyRelative("triggerParams");
+                var triggerParamsProp = _serializedProperty.FindPropertyRelative("conditionParam");
                 TriggerType selectedTrigger = (TriggerType)triggerTypeProp.enumValueIndex;
 
                 if (_conditionParams.TryGetValue(selectedTrigger, out var paramType))
@@ -144,7 +135,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 var data = asset.EffectData;
                 string triggerName = EnumHeaderParser.GetEnumHeaders(typeof(TriggerType))[data.triggerType];
                 string targetName = EnumHeaderParser.GetEnumHeaders(typeof(ConditionTargetType))[data.targetType];
-                string paramString = data.ConditionParam?.GetConditionDesc() ?? "";
+                string paramString = data.conditionParam?.GetConditionDesc() ?? "";
 
                 string effectString = $"[PassiveEffect]{triggerName},概率{data.probability}%,目标{data.targetCount}个{targetName},冷却{data.interval}秒";
                 if (!string.IsNullOrEmpty(paramString))
@@ -172,15 +163,19 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [Header("Buff")] public BuffExtraData extraData;
         [Header("目标类型")] public ConditionTargetType targetType;
         [Header("目标数量")] public int targetCount;
-        [Header("条件参数")] public IConditionParam ConditionParam;
+        [SerializeReference]
+        [Header("条件参数")] public IConditionParam conditionParam;
     }
 
     [Serializable]
     [JsonSerializable]
     public struct AttackHitConditionParam : IConditionParam
     {
+        [Header("造成伤害占生命值百分比范围")]
         public Range hpRange;
+        [Header("造成伤害的范围")]
         public Range damageRange;
+        [Header("攻击距离类型")]
         public AttackRangeType attackRangeType;
 
         public ConditionHeader ConditionHeader;
@@ -195,7 +190,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
         public string GetConditionDesc()
         {
-            return $"造成伤害百分比:[{hpRange.min},{hpRange.max}]%,造成伤害:[{damageRange.min},{damageRange.max}]%,攻击范围:{attackRangeType}";
+            var attackRangeStr = EnumHeaderParser.GetHeader(attackRangeType);
+            return $"造成伤害百分比:[{hpRange.min},{hpRange.max}]%,造成伤害:[{damageRange.min},{damageRange.max}]%,攻击范围:{attackRangeStr}";
         }
     }
 
@@ -203,7 +199,9 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     [JsonSerializable]
     public struct SkillCastConditionParam : IConditionParam
     {
+        [Header("消耗MP百分比范围")]
         public Range mpRange;
+        [Header("技能类型")]
         public SkillType skillType;
 
         public ConditionHeader ConditionHeader;
@@ -226,9 +224,13 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     [JsonSerializable]
     public struct TakeDamageConditionParam : IConditionParam
     {
+        [Header("造成伤害占生命值百分比范围")]
         public Range hpRange;
+        [Header("伤害类型(物理或元素伤害)")]
         public DamageType damageType;
+        [Header("伤害来源")]
         public DamageCastType damageCastType;
+        [Header("伤害范围")]
         public Range damageRange;
         public ConditionHeader ConditionHeader;
         public ConditionHeader GetConditionHeader() => ConditionHeader;
@@ -253,7 +255,9 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     [JsonSerializable]
     public struct KillConditionParam : IConditionParam
     {
+        [Header("击杀目标数量")]
         public int targetCount;
+        [Header("时间窗口")]
         public float timeWindow;
         public ConditionHeader ConditionHeader;
         public ConditionHeader GetConditionHeader() => ConditionHeader;
@@ -273,6 +277,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     [JsonSerializable]
     public struct HpChangeConditionParam : IConditionParam
     {
+        [Header("生命值占最大生命值百分比范围")]
         public Range hpRange;
 
         public ConditionHeader ConditionHeader;
@@ -294,6 +299,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     [JsonSerializable]
     public struct MpChangeConditionParam : IConditionParam
     {
+        [Header("魔法值占最大魔法值百分比范围")]
         public Range mpRange;
 
         public ConditionHeader ConditionHeader;
@@ -314,9 +320,13 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     [JsonSerializable]
     public struct CriticalHitConditionParam : IConditionParam
     {
+        [Header("造成伤害占生命值百分比范围")]
         public Range hpRange;
+        [Header("伤害值范围")]
         public Range damageRange;
+        [Header("伤害类型(物理或元素伤害)")]
         public DamageType damageType;
+        [Header("伤害来源")]
         public DamageCastType damageCastType;
         public ConditionHeader ConditionHeader;
         public ConditionHeader GetConditionHeader() => ConditionHeader;
@@ -340,7 +350,9 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     [JsonSerializable]
     public struct DodgeConditionParam : IConditionParam
     {
+        [Header("闪避次数")]
         public int dodgeCount;
+        [Header("闪避频率")] 
         public float dodgeRate;
         public ConditionHeader ConditionHeader;
         public ConditionHeader GetConditionHeader() => ConditionHeader;
@@ -358,7 +370,9 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     [Serializable]
     public struct AttackConditionParam : IConditionParam
     {
+        [Header("攻击范围类型")]
         public AttackRangeType attackRangeType;
+        [Header("攻击力")]
         public float attack;
         public ConditionHeader ConditionHeader;
         public ConditionHeader GetConditionHeader() => ConditionHeader;
@@ -379,9 +393,13 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     public struct SkillHitConditionParam : IConditionParam
     {
         public ConditionHeader ConditionHeader;
+        [Header("伤害值范围")]
         public Range damageRange;
+        [Header("技能类型")]
         public SkillType skillType;
+        [Header("消耗MP百分比范围")]
         public Range mpRange;
+        [Header("造成伤害占生命值最大值百分比范围")]
         public Range hpRange;
         public ConditionHeader GetConditionHeader() => ConditionHeader;
 
