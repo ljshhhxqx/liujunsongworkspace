@@ -57,8 +57,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 gameItemData.equipmentPart = (EquipmentPart) Enum.Parse(typeof(EquipmentPart), row[11]);
                 gameItemData.duration = float.Parse(row[12]);
                 gameItemData.propertyDesc = row[13];
-                gameItemData.buffIncreaseType = JsonConvert.DeserializeObject<BuffIncreaseType[]>(row[14],jsonSerializerSettings);
-                var buffExtra = JsonConvert.DeserializeObject<BuffExtraData[]>(row[15],jsonSerializerSettings);
+                var buffExtra = JsonConvert.DeserializeObject<BuffExtraData[]>(row[14],jsonSerializerSettings);
                 if (buffExtra.Length != 0)
                 {
                     gameItemData.isDealWithBuffExtraData = true;
@@ -69,7 +68,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         }
         
 #if UNITY_EDITOR
-        [FormerlySerializedAs("configManager")] [SerializeField]
+        [SerializeField]
         private EditorConfigManager editorConfigManager;
         private PropertyConfig _propertyConfig;
         private ConstantBuffConfig _constantBuffConfig;
@@ -91,7 +90,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [Button]
         public void WriteBuffExtraDataToExcel()
         {
-            // 设置 EPPlus 许可证
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             var jsonSerializerSettings = new JsonSerializerSettings
             {
@@ -124,14 +122,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                             var json = JsonConvert.SerializeObject(item.buffExtraData, jsonSerializerSettings);
                             worksheet.Cells[row, buffExtraCol].Value = json;
                         }
-
-                        // if (item.buffIncreaseType != null && item.buffIncreaseType.Length > 0)
-                        // {
-                        //     var json2 = JsonConvert.SerializeObject(item.buffIncreaseType, jsonSerializerSettings);
-                        //     json2 = json2.Replace("\\n", "");
-                        //     json2 = json2.Replace(" ", "");
-                        //     worksheet.Cells[row, buffIncreaseTypeCol].Value = json2;
-                        // }
                     }
                 }
                 catch (Exception e)
@@ -155,7 +145,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [Button]
         public void CoverBuffExtraData()
         {
-            // 设置 EPPlus 许可证
             for (int i = 0; i < gameItemDatas.Count; i++)
             {
                 var gameItemData = gameItemDatas[i];
@@ -168,7 +157,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 for (int j = 0; j < itemDescriptionProperties.Length; j++)
                 {
                     var tuple = itemDescriptionProperties[j];
-                    var buffExtraData = _constantBuffConfig.GetBuffDataByProperty(tuple, gameItemData.buffIncreaseType[j]);
+                    var buffExtraData = _constantBuffConfig.GetBuffDataByProperty(tuple);
                     if (buffExtraData.buffId == 0)
                     {
                         //说明没有找到对应的buff数据，需要手动添加到constantBuffConfig中
@@ -182,8 +171,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                             {
                                 new BuffIncreaseData
                                 {
-                                    increaseType = gameItemData.buffIncreaseType[j],
-                                    increaseValue = tuple.Item2,
+                                    increaseType = tuple.Item2,
+                                    increaseValue = tuple.Item3,
                                     operationType = BuffOperationType.Add,
                                 }
                             },
@@ -240,7 +229,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public EquipmentPart equipmentPart;
         public BuffExtraData[] buffExtraData;
         public string propertyDesc;
-        public BuffIncreaseType[] buffIncreaseType;
 #if UNITY_EDITOR
         public bool isDealWithBuffExtraData;
 #endif
@@ -248,13 +236,17 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
     public enum EquipmentPart : byte
     {
+        None,
+        //暴击率、暴击伤害
         Head,
+        //生命值、防御力
         Body,
-        Arm,
+        //体力值、体力恢复速度
         Leg,
+        //移动速度、攻击速度
         Feet,
+        //额外攻击力、生命恢复
         Waist,
-
         Weapon,
     }
 

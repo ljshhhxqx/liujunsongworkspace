@@ -56,7 +56,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             }
         }
 
-        public BuffData GetBuffDataByProperty((PropertyTypeEnum, float) property, BuffIncreaseType increaseType)
+        public BuffData GetBuffDataByProperty((PropertyTypeEnum, BuffIncreaseType, float) property)
         {
             //Debug.Log($"GetBuffDataByProperty: {property.Item1} {property.Item2}, {increaseType}");
             for (var i = 0; i < buffs.Count; i++)
@@ -68,7 +68,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 //     var data = buff.increaseDataList[j];
                 //     Debug.Log($"data: {data.increaseType} {data.increaseValue}");
                 // }
-                if (buff.propertyType == property.Item1 && buff.increaseDataList.Exists(data => data.increaseType == increaseType && Mathf.Approximately(data.increaseValue, property.Item2)))
+                if (buff.propertyType == property.Item1 && buff.increaseDataList.Exists(data => data.increaseType == property.Item2 && Mathf.Approximately(data.increaseValue, property.Item3)))
                 {
                     return buff;
                 }

@@ -70,6 +70,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     {
         public int armorID;
         public ArmorType armorType;
+        public EquipmentPart equipmentPart;
         public int itemID;
         public QualityType quality;
         public int skillID;

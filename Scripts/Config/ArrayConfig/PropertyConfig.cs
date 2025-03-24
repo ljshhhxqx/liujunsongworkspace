@@ -29,6 +29,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 data.isHandleWithCorrectFactor = bool.Parse(row[5]);
                 data.description = row[6];
                 data.animationState = (AnimationState) Enum.Parse(typeof(AnimationState), row[7]);
+                data.isHundredPercent = bool.Parse(row[8]);
                 propertyData.Add(data);
             }
         }
@@ -87,22 +88,26 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             return propertyData.Find(x => x.animationState == animationState).propertyType;
         }
 
-        public IEnumerable<(PropertyTypeEnum, float)> GetItemDescriptionProperties(string itemPropertyDescription)
+        public IEnumerable<(PropertyTypeEnum, BuffIncreaseType, float)> GetItemDescriptionProperties(string itemPropertyDescription)
         {
             var strs = itemPropertyDescription.Split(',');
             foreach (var str in strs)
             {
+                var strs1 = str.Split('|');
+                var increaseTypeStr = strs1[0].Trim().Replace("[", "").Replace("]", "");
+                var increaseType = (BuffIncreaseType) Enum.Parse(typeof(BuffIncreaseType), increaseTypeStr);
+                var propertyStr = strs1[1].Trim();
                 var property = propertyData.Find(x => str.Contains(x.description));
                 if (property.description != null)
                 {
-                    var value = str.Split('+')[1];
+                    var value = propertyStr.Split('+')[1];
                     if (value.Contains("%"))
                     {
                         value = value.Replace("%", "");
-                        yield return (property.propertyType, float.Parse(value) / 100f);
+                        yield return (property.propertyType, increaseType, float.Parse(value) / 100f);
                         continue;
                     }
-                    yield return (property.propertyType, float.Parse(value));
+                    yield return (property.propertyType, increaseType, float.Parse(value));
                 }
                 else
                 {
@@ -124,5 +129,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public string description;
         //关联的动画状态
         public AnimationState animationState;
+        public bool isHundredPercent;
     }
 }

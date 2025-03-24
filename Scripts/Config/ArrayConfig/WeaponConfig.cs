@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
 {
@@ -66,15 +67,16 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         }
         
         #if UNITY_EDITOR
-        private EditorConfigManager _configManager;
+        [SerializeField]
+        private EditorConfigManager configManager;
         private ConstantBuffConfig _constantBuffConfig;
         private BattleEffectConditionConfig _battleEffectConditionConfig;
 
         private void OnValidate()
         {
-            _configManager ??= EditorConfigManager.Instance;
-            _constantBuffConfig ??= _configManager.GetConfig<ConstantBuffConfig>();
-            _battleEffectConditionConfig ??= _configManager.GetConfig<BattleEffectConditionConfig>();
+            configManager ??= EditorConfigManager.Instance;
+            _constantBuffConfig ??= configManager?.GetConfig<ConstantBuffConfig>();
+            _battleEffectConditionConfig ??= configManager?.GetConfig<BattleEffectConditionConfig>();
             EditorUtility.SetDirty(this);
         }
         #endif
@@ -84,6 +86,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     public struct WeaponConfigData
     {
         public int weaponID;
+        public string weaponName;
         public int itemID;
         public QualityType quality;
         public WeaponType weaponType;

@@ -26,7 +26,7 @@ MonoBehaviour:
   effectData:
     id: 0
     triggerType: 1
-    probability: 100
+    probability: 74
     effectType: 0
     controlTime: 0
     interval: 30
@@ -34,7 +34,7 @@ MonoBehaviour:
       buffId: 0
       buffType: 0
       collectObjectBuffSize: 0
-    targetType: 24
+    targetType: 8
     targetCount: 2
     conditionParam:
       rid: 5224356400721821696
@@ -52,6 +52,6 @@ MonoBehaviour:
           isPercent: 0
           min: 50
           max: 100
-        attackRangeType: 3
+        attackRangeType: 1
         ConditionHeader:
           triggerType: 1

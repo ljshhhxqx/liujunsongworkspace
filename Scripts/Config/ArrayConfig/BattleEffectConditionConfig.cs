@@ -1,20 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using AOTScripts.CustomAttribute;
 using AOTScripts.Data;
 using CustomEditor.Scripts;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
-using UnityEditor;
 using UnityEngine;
+using Random = System.Random;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
 {
-    [CreateAssetMenu(fileName = "BattleEffectConditionConfig", menuName = "ScriptableObjects/BattleEffectConditionConfig")]
+    [CreateAssetMenu(fileName = "BattleEffectConditionConfig",
+        menuName = "ScriptableObjects/BattleEffectConditionConfig")]
     public class BattleEffectConditionConfig : ConfigBase
     {
         [ReadOnly] [SerializeField]
         private List<BattleEffectConditionConfigData> conditionList = new List<BattleEffectConditionConfigData>();
+#if UNITY_EDITOR
+        public BattleEffectConditionConfigData effectData;
+#endif
 
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
@@ -26,130 +31,129 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 conditionData.id = int.Parse(text[0]);
                 conditionData.triggerType = (TriggerType)Enum.Parse(typeof(TriggerType), text[1]);
                 conditionData.probability = float.Parse(text[2]);
-                conditionData.effectType = (EffectType)Enum.Parse(typeof(EffectType), text[3]);
-                conditionData.controlTime = float.Parse(text[4]);
-                conditionData.interval = float.Parse(text[5]);
-                conditionData.extraData = JsonConvert.DeserializeObject<BuffExtraData>(text[6]);
-                conditionData.targetType = (ConditionTargetType)Enum.Parse(typeof(ConditionTargetType), text[7]);
-                conditionData.targetCount = int.Parse(text[8]);
-                conditionData.conditionParam = JsonConvert.DeserializeObject<IConditionParam>(text[9]);
+                conditionData.interval = float.Parse(text[3]);
+                conditionData.targetType = (ConditionTargetType)Enum.Parse(typeof(ConditionTargetType), text[4]);
+                conditionData.targetCount = int.Parse(text[5]);
+                conditionData.conditionParam = JsonConvert.DeserializeObject<IConditionParam>(text[6]);
                 conditionList.Add(conditionData);
             }
         }
-
-#if UNITY_EDITOR
-        [SerializeField] private BattleEffectConditionConfigData effectData;
-        public BattleEffectConditionConfigData EffectData => effectData;
-
-        // 用于在 Inspector 中编辑数据
-        public void SetEffectData(BattleEffectConditionConfigData data)
+        public BattleEffectConditionConfigData GenerateConfig(int id, Rarity rarity, Random random)
         {
-            effectData = data;
+            var config = new BattleEffectConditionConfigData();
+
+            // 稀有度决定权重
+            float weightMultiplier = rarity == Rarity.Rare ? 0.5f : 0.75f;
+
+            // 随机选择 TriggerType
+            TriggerType[] triggerTypes = Enum.GetValues(typeof(TriggerType)).Cast<TriggerType>().ToArray();
+            config.triggerType = triggerTypes[random.Next(1, triggerTypes.Length)]; // 跳过 None
+
+            // 根据触发频率调整其他参数
+            float fType = GetTriggerTypeFrequency(config.triggerType);
+            if (fType >= 0.8f) // 高频率
+            {
+                config.probability = (float)(random.Next(50, 91)) / 100f; // 0.5 ~ 0.9
+                config.interval = random.Next(0, 3); // 0 ~ 2 秒
+            }
+            else if (fType >= 0.3f) // 中等频率
+            {
+                config.probability = (float)(random.Next(60, 100)) / 100f; // 0.6 ~ 1.0
+                config.interval = random.Next(1, 4); // 1 ~ 3 秒
+            }
+            else // 低频率
+            {
+                config.probability = (float)(random.Next(70, 100)) / 100f; // 0.7 ~ 1.0
+                config.interval = random.Next(2, 6); // 2 ~ 5 秒
+            }
+
+            // 随机 conditionParam
+            config.conditionParam = random.Next(0, 2) == 0 ? null : new GenericConditionParam();
+
+            // 目标类型和数量
+            config.targetType = random.Next(0, 2) == 0 ? ConditionTargetType.Single : ConditionTargetType.All;
+            config.targetCount = config.targetType == ConditionTargetType.Single ? 1 : random.Next(2, 6);
+
+            config.id = id;
+            return config;
         }
 
-        [UnityEditor.CustomEditor(typeof(BattleEffectConditionConfig))]
-        public class BattleEffectConditionConfigEditor : Editor
+        public enum Rarity { Rare, Legendary }
+
+        
+        public static float CalculatePassiveMultiplier(BattleEffectConditionConfigData config, float baseValue, float passiveWeight, float baseFrequency = 1.0f)
         {
-            private SerializedProperty _serializedProperty;
-            private readonly Dictionary<TriggerType, Type> _conditionParams = new Dictionary<TriggerType, Type>();
-            //private TriggerType _selectedIndex = 0;
+            // 步骤 1：计算最大值和最小值
+            float mMax = passiveWeight / baseValue;
+            float mMin = mMax * 0.6f;
 
-            private void OnEnable()
-            {
-                _serializedProperty = serializedObject.FindProperty("effectData");
-                _conditionParams.Clear();
-                var triggerTypes = Enum.GetValues(typeof(TriggerType));
-                for (int i = 0; i < triggerTypes.Length; i++)
-                {
-                    var triggerType = (TriggerType)triggerTypes.GetValue(i);
-                    if (triggerType == TriggerType.None) continue;
-                    var conditionParamType = triggerType.GetConditionParameter<IConditionParam>();
-                    _conditionParams.Add(triggerType, conditionParamType.GetType());
-                }
-            }
-            public override void OnInspectorGUI()
-            {
-                serializedObject.Update();
-                EditorGUI.BeginChangeCheck();
-                
-                // 触发类型
-                var triggerTypeProp = _serializedProperty.FindPropertyRelative("triggerType");
-                EditorGUILayout.PropertyField(triggerTypeProp, new GUIContent("触发类型"));
+            // 步骤 2：计算触发系数
+            float fType = GetTriggerTypeFrequency(config.triggerType);
+            float fTrigger = (config.interval == 0) ? 1.0f : Math.Min(1.0f, baseFrequency / (fType * config.interval));
+            float pTrigger = config.probability;
+            float cParam = (config.conditionParam == null || !HasValuableParam(config.conditionParam)) ? 1.0f : 1.25f;
+            float eTrigger = fTrigger * pTrigger * cParam;
 
-                // 概率
-                var probabilityProp = _serializedProperty.FindPropertyRelative("probability");
-                probabilityProp.floatValue = EditorGUILayout.Slider("概率 (%)", probabilityProp.floatValue, 0f, 100f);
+            // 步骤 3：插值计算实际乘数
+            float mActual = mMax - (mMax - mMin) * eTrigger;
 
-                // 目标数量
-                var targetCountProp = _serializedProperty.FindPropertyRelative("targetCount");
-                targetCountProp.intValue = EditorGUILayout.IntField("目标数量", Mathf.Max(1, targetCountProp.intValue));
-
-                // 目标类型
-                var targetTypeProp = _serializedProperty.FindPropertyRelative("targetType");
-                EditorGUILayout.PropertyField(targetTypeProp, new GUIContent("目标类型"));
-
-                // 冷却时间
-                var intervalProp = _serializedProperty.FindPropertyRelative("interval");
-                intervalProp.floatValue = EditorGUILayout.FloatField("冷却时间 (秒)", Mathf.Max(0f, intervalProp.floatValue));
-
-                // 动态参数编辑
-                var triggerParamsProp = _serializedProperty.FindPropertyRelative("conditionParam");
-                TriggerType selectedTrigger = (TriggerType)triggerTypeProp.enumValueIndex;
-
-                if (_conditionParams.TryGetValue(selectedTrigger, out var paramType))
-                {
-                    if (triggerParamsProp.managedReferenceValue == null || 
-                        triggerParamsProp.managedReferenceValue.GetType() != paramType)
-                    {
-                        triggerParamsProp.managedReferenceValue = Activator.CreateInstance(paramType);
-                    }
-                    EditorGUILayout.PropertyField(triggerParamsProp, new GUIContent("额外参数"), true);
-                }
-                else
-                {
-                    triggerParamsProp.managedReferenceValue = null;
-                    EditorGUILayout.LabelField("该触发类型无额外参数");
-                }
-
-                if (EditorGUI.EndChangeCheck())
-                {
-                    serializedObject.ApplyModifiedProperties();
-                }
-
-                // 生成字符串按钮
-                if (GUILayout.Button("生成效果字符串"))
-                {
-                    string effectString = GenerateEffectString((BattleEffectConditionConfig)target);
-                    EditorGUIUtility.systemCopyBuffer = effectString; // 复制到剪贴板
-                    Debug.Log($"生成的效果字符串: {effectString} (已复制到剪贴板)");
-                }
-                // 标记为脏，确保修改被保存
-                if (GUI.changed)
-                {
-                    EditorUtility.SetDirty(target);
-                }
-            }
-
-            private string GenerateEffectString(BattleEffectConditionConfig asset)
-            {
-                var data = asset.EffectData;
-                string triggerName = EnumHeaderParser.GetEnumHeaders(typeof(TriggerType))[data.triggerType];
-                string targetName = EnumHeaderParser.GetEnumHeaders(typeof(ConditionTargetType))[data.targetType];
-                string paramString = data.conditionParam?.GetConditionDesc() ?? "";
-
-                string effectString = $"[PassiveEffect]{triggerName},概率{data.probability}%,目标{data.targetCount}个{targetName},冷却{data.interval}秒";
-                if (!string.IsNullOrEmpty(paramString))
-                {
-                    effectString += $",{paramString}";
-                }
-
-                return effectString;
-            }
-#endif
+            return mActual;
         }
+
+        private static float GetTriggerTypeFrequency(TriggerType type)
+        {
+            switch (type)
+            {
+                case TriggerType.None: return 0.0f;
+                case TriggerType.OnAttackHit: return 1.0f;
+                case TriggerType.OnAttack: return 1.0f;
+                case TriggerType.OnSkillHit: return 0.5f;
+                case TriggerType.OnSkillCast: return 0.5f;
+                case TriggerType.OnTakeDamage: return 0.5f;
+                case TriggerType.OnKill: return 0.1f;
+                case TriggerType.OnHpChange: return 0.8f;
+                case TriggerType.OnManaChange: return 0.6f;
+                case TriggerType.OnCriticalHit: return 0.2f;
+                case TriggerType.OnDodge: return 0.3f;
+                case TriggerType.OnDeath: return 0.05f;
+                default: return 1.0f;
+            }
+        }
+
+        private static bool HasValuableParam(IConditionParam param)
+        {
+            // 实现逻辑：检查 param 是否有“有价值数值”
+            switch (param)
+            {
+                case AttackHitConditionParam conditionParam:
+                    return conditionParam.hpRange.min > 0  && conditionParam.hpRange.max > 0 && conditionParam.hpRange.max > conditionParam.hpRange.min 
+                        && conditionParam.damageRange.min > 0 && conditionParam.damageRange.max > 0 && conditionParam.damageRange.max > conditionParam.damageRange.min;
+                case SkillCastConditionParam conditionParam:
+                    return conditionParam.mpRange.min > 0 && conditionParam.mpRange.max > 0 && conditionParam.mpRange.max > conditionParam.mpRange.min;
+                case TakeDamageConditionParam conditionParam:
+                    return conditionParam.hpRange.min > 0 && conditionParam.hpRange.max > 0 && conditionParam.hpRange.max > conditionParam.hpRange.min &&
+                           conditionParam.damageRange.min > 0 && conditionParam.damageRange.max > 0 && conditionParam.damageRange.max > conditionParam.damageRange.min;
+                case KillConditionParam conditionParam:
+                    return conditionParam.targetCount >= 0 && conditionParam.timeWindow >= 0;
+                case HpChangeConditionParam conditionParam:
+                    return conditionParam.hpRange.min > 0 && conditionParam.hpRange.max > 0 && conditionParam.hpRange.max > conditionParam.hpRange.min;
+                case MpChangeConditionParam conditionParam:
+                    return conditionParam.mpRange.min > 0 && conditionParam.mpRange.max > 0 && conditionParam.mpRange.max > conditionParam.mpRange.min;
+                case CriticalHitConditionParam conditionParam:
+                    return conditionParam.hpRange.min > 0 && conditionParam.hpRange.max > 0 && conditionParam.hpRange.max > conditionParam.hpRange.min &&
+                           conditionParam.damageRange.min > 0 && conditionParam.damageRange.max > 0 && conditionParam.damageRange.max > conditionParam.damageRange.min;
+                case DodgeConditionParam conditionParam:
+                    return conditionParam.dodgeCount >= 0 && conditionParam.dodgeRate >= 0;
+                case AttackConditionParam conditionParam:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
     }
-    
-    
+
+
     [Serializable]
     [JsonSerializable]
     public struct BattleEffectConditionConfigData
@@ -157,10 +161,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [Header("Id")] public int id;
         [Header("触发类型")] public TriggerType triggerType;
         [Header("触发概率")] public float probability;
-        [Header("控制效果类型")] public EffectType effectType;
-        [Header("控制时间")] public float controlTime;
         [Header("触发间隔")] public float interval;
-        [Header("Buff")] public BuffExtraData extraData;
         [Header("目标类型")] public ConditionTargetType targetType;
         [Header("目标数量")] public int targetCount;
         [SerializeReference]

@@ -199,6 +199,9 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public float playerGaugeUnitRatio;
         public float enemyGaugeUnitRatio;
         public float environmentGaugeUnitRatio;
+        
+        public Range rareBuffWeightRange;
+        public Range legendaryBuffWeightRange;
     }
     
     [Serializable]

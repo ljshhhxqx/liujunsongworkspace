@@ -122,6 +122,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     [MemoryPackable]
     public partial struct PropertyCalculator
     {
+        /// <summary>
+        /// 属性 = math.clamp(（基础值 * 乘数 + 附加值 ）* 修正系数,  最小值, 最大值)
+        /// </summary>
         [MemoryPackable]
         public partial struct PropertyData
         {
