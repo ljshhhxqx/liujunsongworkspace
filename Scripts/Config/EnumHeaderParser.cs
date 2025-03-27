@@ -10,6 +10,18 @@ namespace CustomEditor.Scripts
     {
         // 缓存枚举类型到 Header 的映射（仅基础值）
         private static Dictionary<Type, Dictionary<Enum, string>> _headerCache = new Dictionary<Type, Dictionary<Enum, string>>();
+        public static T GetEnumValue<T>(string header) where T : Enum
+        {
+            foreach (var field in typeof(T).GetFields())
+            {
+                if (Attribute.GetCustomAttribute(field, typeof(HeaderAttribute)) is HeaderAttribute attr 
+                    && attr.header == header)
+                {
+                    return (T)field.GetValue(null);
+                }
+            }
+            return (T)Enum.Parse(typeof(T), header);
+        }
 
         // 获取枚举的基础 Header 值
         public static Dictionary<Enum, string> GetEnumHeaders(Type enumType)

@@ -25,27 +25,38 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             Debug.LogError("WeaponConfigData not found for weaponID: " + armorID);
             return new ArmorConfigData();
         }
-
-        public List<ArmorConfigData> GetRandomWeapons(ArmorType type)
+        
+        public ArmorConfigData GetArmorConfigData(int armorID)
         {
-            var weapons = armorConfigs.FindAll(data => data.armorType == type);
-            if (weapons.Count != 0)
+            foreach (var data in armorConfigs)
             {
-                return weapons;
+                if (data.armorID == armorID)
+                {
+                    return data;
+                }
             }
-            Debug.LogError("WeaponConfigData not found for WeaponType: " + type);
-            return new List<ArmorConfigData>();
+
+            Debug.LogError("ArmorConfigData not found for armorID: " + armorID);
+            return new ArmorConfigData();
+        }
+        
+        public ArmorConfigData GetArmorConfigByItemID(int itemID)
+        {
+            foreach (var data in armorConfigs)
+            {
+                if (data.itemID == itemID)
+                {
+                    return data;
+                }
+            }
+
+            Debug.LogError("ArmorConfigData not found for itemID: " + itemID);
+            return new ArmorConfigData();
         }
 
-        public ArmorConfigData GetRandomWeapon(ArmorType type)
+        public int GetArmorBattleConditionID(int itemID)
         {
-            var weapons = GetRandomWeapons(type);
-            if (weapons.Count == 0)
-            {
-                return new ArmorConfigData();
-            }
-
-            return weapons[UnityEngine.Random.Range(0, weapons.Count)];
+            return GetArmorConfigByItemID(itemID).battleEffectConditionId;
         }
         
         protected override void ReadFromCsv(List<string[]> textAsset)
@@ -56,7 +67,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 var data = textAsset[i];
                 var weaponConfig = new ArmorConfigData();
                 weaponConfig.armorID = int.Parse(data[0]);
-                weaponConfig.armorType = (ArmorType) Enum.Parse(typeof(ArmorType), data[1]);
+                weaponConfig.itemID = int.Parse(data[1]);
+                weaponConfig.equipmentPart = (EquipmentPart) Enum.Parse(typeof(EquipmentPart), data[1]);
                 weaponConfig.itemID = int.Parse(data[2]);
                 weaponConfig.skillID = int.Parse(data[3]);
                 weaponConfig.quality = (QualityType) Enum.Parse(typeof(QualityType), data[4]);
@@ -69,30 +81,11 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     public struct ArmorConfigData
     {
         public int armorID;
-        public ArmorType armorType;
         public EquipmentPart equipmentPart;
         public int itemID;
         public QualityType quality;
         public int skillID;
-        public int[] battleEffectConditionIds;
+        public int battleEffectConditionId;
         public string battleEffectConditionDescription;
-    }
-
-    public enum ArmorType
-    {
-        None,
-        Leather1,
-        Leather2,
-        Leather3,
-        Light1,
-        Light2,
-        Light3,
-        Light4,
-        Light5,
-        Heavy1,
-        Heavy2,
-        Heavy3,
-        Heavy4,
-        Heavy5,
     }
 }

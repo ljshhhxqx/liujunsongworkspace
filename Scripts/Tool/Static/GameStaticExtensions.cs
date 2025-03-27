@@ -32,10 +32,22 @@ namespace HotUpdate.Scripts.Tool.Static
                 if (randomValue < accumulated)
                     return item;
             }
-
-            var lastItem = new List<IWeight>(enumerable);
         
             return enumerable.Last();
+        }
+        
+        public static T Select<T>(Dictionary<T, float> weightedItems)
+        {
+            float total = weightedItems.Values.Sum();
+            float random = UnityEngine.Random.Range(0, total);
+        
+            foreach (var item in weightedItems)
+            {
+                if (random < item.Value) return item.Key;
+                random -= item.Value;
+            }
+        
+            return weightedItems.Last().Key;
         }
     }
     

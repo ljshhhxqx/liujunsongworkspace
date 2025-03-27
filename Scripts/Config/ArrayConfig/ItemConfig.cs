@@ -50,13 +50,12 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 gameItemData.sellPriceRatio = float.Parse(row[4]);
                 gameItemData.itemType = (PlayerItemType) Enum.Parse(typeof(PlayerItemType), row[5]);
                 gameItemData.maxStack = int.Parse(row[6]);
-                gameItemData.weight = int.Parse(row[7]);
-                gameItemData.iconLocation = row[8];
-                gameItemData.prefabLocation = row[9];
-                gameItemData.quality = (QualityType) Enum.Parse(typeof(QualityType), row[10]);
-                gameItemData.equipmentPart = (EquipmentPart) Enum.Parse(typeof(EquipmentPart), row[11]);
-                gameItemData.duration = float.Parse(row[12]);
-                gameItemData.propertyDesc = row[13];
+                gameItemData.iconLocation = row[7];
+                gameItemData.prefabLocation = row[8];
+                gameItemData.quality = (QualityType) Enum.Parse(typeof(QualityType), row[9]);
+                gameItemData.equipmentPart = (EquipmentPart) Enum.Parse(typeof(EquipmentPart), row[10]);
+                gameItemData.duration = float.Parse(row[11]);
+                gameItemData.propertyDesc = row[12];
                 var buffExtra = JsonConvert.DeserializeObject<BuffExtraData[]>(row[14],jsonSerializerSettings);
                 if (buffExtra.Length != 0)
                 {

@@ -5,6 +5,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
+using Random = System.Random;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
 {
@@ -86,6 +87,18 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public PropertyTypeEnum GetPropertyType(AnimationState animationState)
         {
             return propertyData.Find(x => x.animationState == animationState).propertyType;
+        }
+
+        public float GetBaseValue(PropertyTypeEnum type)
+        {
+            return propertyData.Find(x => x.propertyType == type).baseValue;
+        }
+
+        public float CalculatePropertyValue(PropertyTypeEnum type, float multiplier)
+        {
+            var baseValue = GetBaseValue(type);
+            var configData = propertyData.Find(x => x.propertyType == type);
+            return configData.isHundredPercent ? baseValue * multiplier * 0.01f : baseValue * multiplier;
         }
 
         public IEnumerable<(PropertyTypeEnum, BuffIncreaseType, float)> GetItemDescriptionProperties(string itemPropertyDescription)

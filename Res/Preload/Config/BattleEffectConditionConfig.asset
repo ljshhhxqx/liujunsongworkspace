@@ -13,27 +13,20 @@ MonoBehaviour:
   m_Name: BattleEffectConditionConfig
   m_EditorClassIdentifier: 
   excelAssetReference:
-    guid: 
+    guid: afcb27a37860bed489c689f04b28b549
   csvAssetReference:
-    guid: 
+    guid: f79490033f1ba7d4c817acd9581f3173
   jsonAssetReference:
-    guid: 
-  configName: 
-  isArray: 0
+    guid: 36a25296697c2fe44a5305e443be106f
+  configName: BattleEffectConditionConfig
+  isArray: 1
   conditionList: []
-  selectedTypeName: 
-  jsonTemplate: {fileID: 0}
   effectData:
     id: 0
     triggerType: 1
     probability: 74
-    effectType: 0
-    controlTime: 0
     interval: 30
-    extraData:
-      buffId: 0
-      buffType: 0
-      collectObjectBuffSize: 0
+    duration: 0
     targetType: 8
     targetCount: 2
     conditionParam:
@@ -53,5 +46,3 @@ MonoBehaviour:
           min: 50
           max: 100
         attackRangeType: 1
-        ConditionHeader:
-          triggerType: 1

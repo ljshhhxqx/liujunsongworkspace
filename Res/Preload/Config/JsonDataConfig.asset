@@ -29,178 +29,10 @@ MonoBehaviour:
       RotateSpeed: 7
       OnStairsSpeedRatioFactor: 0.75
       JumpSpeed: 45
-      MaxProperties:
-      - type: 0
-        value: 15
-      - type: 1
-        value: 30
-      - type: 2
-        value: 30
-      - type: 3
-        value: 300
-      - type: 4
-        value: 300
-      - type: 5
-        value: 100000000
-      - type: 6
-        value: 1
-      - type: 7
-        value: 3
-      - type: 8
-        value: 25
-      - type: 9
-        value: 25
-      - type: 6
-        value: 3
-      - type: 11
-        value: 1
-      BaseProperties:
-      - type: 0
-        value: 3.5
-      - type: 1
-        value: 10
-      - type: 2
-        value: 10
-      - type: 3
-        value: 100
-      - type: 4
-        value: 100
-      - type: 5
-        value: 0
-      - type: 6
-        value: 0.05
-      - type: 7
-        value: 1.5
-      - type: 8
-        value: 5
-      - type: 9
-        value: 1
-      - type: 10
-        value: 2
-      - type: 11
-        value: 0.75
-      MinProperties:
-      - type: 0
-        value: 0
-      - type: 1
-        value: 0
-      - type: 2
-        value: 0
-      - type: 3
-        value: 0
-      - type: 4
-        value: 0
-      - type: 5
-        value: 0
-      - type: 6
-        value: 0
-      - type: 7
-        value: 1
-      - type: 8
-        value: 0
-      - type: 9
-        value: 0
-      - type: 10
-        value: 1
-      - type: 11
-        value: 0.5
       RollForce: 40
-      BaseAttackData:
-        attackAngle: 45
-        attackRadius: 0.5
-        minAttackHeight: 1
       InputBufferTick: 0
       AttackComboWindow: 1
       AttackComboMaxCount: 3
-      AnimationInfos:
-      - state: 0
-        cost: 0
-        cooldown: 0
-        priority: 0
-        animationType: 0
-        canBeInterrupted: 0
-        actionType: 0
-        animationNames: []
-      - state: 0
-        cost: 0
-        cooldown: 0
-        priority: 0
-        animationType: 0
-        canBeInterrupted: 0
-        actionType: 0
-        animationNames: []
-      - state: 0
-        cost: 0
-        cooldown: 0
-        priority: 0
-        animationType: 0
-        canBeInterrupted: 0
-        actionType: 0
-        animationNames: []
-      - state: 0
-        cost: 0
-        cooldown: 0
-        priority: 0
-        animationType: 0
-        canBeInterrupted: 0
-        actionType: 0
-        animationNames: []
-      - state: 0
-        cost: 0
-        cooldown: 0
-        priority: 0
-        animationType: 0
-        canBeInterrupted: 0
-        actionType: 0
-        animationNames: []
-      - state: 0
-        cost: 0
-        cooldown: 0
-        priority: 0
-        animationType: 0
-        canBeInterrupted: 0
-        actionType: 0
-        animationNames: []
-      - state: 0
-        cost: 0
-        cooldown: 0
-        priority: 0
-        animationType: 0
-        canBeInterrupted: 0
-        actionType: 0
-        animationNames: []
-      - state: 0
-        cost: 0
-        cooldown: 0
-        priority: 0
-        animationType: 0
-        canBeInterrupted: 0
-        actionType: 0
-        animationNames: []
-      - state: 0
-        cost: 0
-        cooldown: 0
-        priority: 0
-        animationType: 0
-        canBeInterrupted: 0
-        actionType: 0
-        animationNames: []
-      - state: 0
-        cost: 0
-        cooldown: 0
-        priority: 0
-        animationType: 0
-        canBeInterrupted: 0
-        actionType: 0
-        animationNames: []
-      - state: 0
-        cost: 0
-        cooldown: 0
-        priority: 0
-        animationType: 0
-        canBeInterrupted: 0
-        actionType: 0
-        animationNames: []
     collectData:
       itemSpacing: 3
       maxGridItems: 10
@@ -210,6 +42,19 @@ MonoBehaviour:
       onceSpawnWeight: 50
     damageData:
       defenseRatio: 15
+      amplificationRatio: 0
+      elementalMasteryBuff: 0
+      playerGaugeUnitRatio: 0
+      enemyGaugeUnitRatio: 0
+      environmentGaugeUnitRatio: 0
+      rareBuffWeightRange:
+        isPercent: 0
+        min: 0
+        max: 0
+      legendaryBuffWeightRange:
+        isPercent: 0
+        min: 0
+        max: 0
     buffConstantData:
       buffSizeDataList:
       - collectObjectBuffSize: 1
@@ -223,6 +68,7 @@ MonoBehaviour:
         serializedVersion: 2
         m_Bits: 128
       syncTime: 0.016
+      gridSize: 0
       safetyMargin: 5
       fixedSpacing: 1
       warmupTime: 10
@@ -240,6 +86,7 @@ MonoBehaviour:
       tickRate: 0.05
       inputThreshold: 0.1
       maxCommandAge: 0
+      uiUpdateInterval: 0
     dayNightCycleData:
       timeMultiplier: 60
       weatherChangeTime: 150
@@ -442,6 +289,176 @@ MonoBehaviour:
     gameModeData:
       times: 
       scores: 
+    bagCommonData:
+      maxBagCount: 0
+      maxStack: 0
+    propertyValueData:
+      propertyWeightData:
+      - equipmentPart: 1
+        propertyWeightList:
+        - propertyType: 6
+          buffIncreaseType: 3
+          weight: 0.5
+        - propertyType: 7
+          buffIncreaseType: 3
+          weight: 0.5
+      - equipmentPart: 2
+        propertyWeightList:
+        - propertyType: 3
+          buffIncreaseType: 1
+          weight: 0.6
+        - propertyType: 2
+          buffIncreaseType: 1
+          weight: 0.4
+      - equipmentPart: 3
+        propertyWeightList:
+        - propertyType: 8
+          buffIncreaseType: 1
+          weight: 0.4
+        - propertyType: 4
+          buffIncreaseType: 1
+          weight: 0.6
+      - equipmentPart: 5
+        propertyWeightList:
+        - propertyType: 1
+          buffIncreaseType: 3
+          weight: 0.7
+        - propertyType: 9
+          buffIncreaseType: 1
+          weight: 0.3
+      - equipmentPart: 4
+        propertyWeightList:
+        - propertyType: 0
+          buffIncreaseType: 1
+          weight: 0.6
+        - propertyType: 12
+          buffIncreaseType: 3
+          weight: 0.4
+      - equipmentPart: 6
+        propertyWeightList:
+        - propertyType: 1
+          buffIncreaseType: 3
+          weight: 0.4
+        - propertyType: 12
+          buffIncreaseType: 1
+          weight: 0.2
+        - propertyType: 6
+          buffIncreaseType: 3
+          weight: 0.2
+        - propertyType: 7
+          buffIncreaseType: 3
+          weight: 0.2
+      propertyIncreaseValue:
+      - propertyType: 0
+        propertyIncreaseValueList:
+        - buffIncreaseType: 1
+          value: 1000
+        - buffIncreaseType: 2
+          value: 2500
+        - buffIncreaseType: 3
+          value: 1500
+        - buffIncreaseType: 4
+          value: 3000
+      - propertyType: 1
+        propertyIncreaseValueList:
+        - buffIncreaseType: 1
+          value: 20
+        - buffIncreaseType: 2
+          value: 150
+        - buffIncreaseType: 3
+          value: 30
+        - buffIncreaseType: 4
+          value: 200
+      - propertyType: 2
+        propertyIncreaseValueList:
+        - buffIncreaseType: 1
+          value: 2
+        - buffIncreaseType: 2
+          value: 80
+        - buffIncreaseType: 3
+          value: 4
+        - buffIncreaseType: 4
+          value: 120
+      - propertyType: 3
+        propertyIncreaseValueList:
+        - buffIncreaseType: 1
+          value: 2
+        - buffIncreaseType: 2
+          value: 200
+        - buffIncreaseType: 3
+          value: 4
+        - buffIncreaseType: 4
+          value: 320
+      - propertyType: 4
+        propertyIncreaseValueList:
+        - buffIncreaseType: 1
+          value: 2
+        - buffIncreaseType: 2
+          value: 200
+        - buffIncreaseType: 3
+          value: 4
+        - buffIncreaseType: 4
+          value: 320
+      - propertyType: 6
+        propertyIncreaseValueList:
+        - buffIncreaseType: 1
+          value: 500
+        - buffIncreaseType: 2
+          value: 800
+        - buffIncreaseType: 3
+          value: 600
+        - buffIncreaseType: 4
+          value: 1000
+      - propertyType: 7
+        propertyIncreaseValueList:
+        - buffIncreaseType: 1
+          value: 200
+        - buffIncreaseType: 2
+          value: 500
+        - buffIncreaseType: 3
+          value: 300
+        - buffIncreaseType: 4
+          value: 600
+      - propertyType: 8
+        propertyIncreaseValueList:
+        - buffIncreaseType: 1
+          value: 25
+        - buffIncreaseType: 2
+          value: 375
+        - buffIncreaseType: 3
+          value: 50
+        - buffIncreaseType: 4
+          value: 600
+      - propertyType: 9
+        propertyIncreaseValueList:
+        - buffIncreaseType: 1
+          value: 25
+        - buffIncreaseType: 2
+          value: 375
+        - buffIncreaseType: 3
+          value: 50
+        - buffIncreaseType: 4
+          value: 600
+      - propertyType: 12
+        propertyIncreaseValueList:
+        - buffIncreaseType: 1
+          value: 160
+        - buffIncreaseType: 2
+          value: 600
+        - buffIncreaseType: 3
+          value: 240
+        - buffIncreaseType: 4
+          value: 800
+      qualityRatioData:
+      - qualityType: 0
+        ratio: 1
+        mainAttributeRatio: 1
+      - qualityType: 1
+        ratio: 1.2
+        mainAttributeRatio: 0.6
+      - qualityType: 2
+        ratio: 1.5
+        mainAttributeRatio: 0.6
     otherData:
       animationActionData:
       - actionType: 3

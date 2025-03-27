@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using AOTScripts.Data;
+using System.Linq;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Tool.Static;
 using UnityEngine;
 using AnimationInfo = HotUpdate.Scripts.Config.ArrayConfig.AnimationInfo;
 using Random = UnityEngine.Random;
-using TriggerType = PlayFab.CloudScriptModels.TriggerType;
 
 namespace HotUpdate.Scripts.Config.JsonConfig
 {
@@ -42,6 +42,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public WeatherConstantData WeatherConstantData => jsonConfigData.weatherData;
         public GameModeData GameModeData => jsonConfigData.gameModeData;
         public BagCommonData BagCommonData => jsonConfigData.bagCommonData;
+        public PropertyValueData PropertyValueData => jsonConfigData.propertyValueData;
 
         // public override void Init(TextAsset asset = null)
         // {
@@ -79,6 +80,251 @@ namespace HotUpdate.Scripts.Config.JsonConfig
             var damage = attackPower * (1f - damageReduction) * (isCritical? criticalDamageRatio : 1f);
             return damage;
         }
+        
+        #region 装备生成器
+        public EquipmentAttributeData GenerateEquipment(
+            float totalGold,
+            EquipmentPart part,
+            QualityType quality,
+            float passiveRatio = 1f,
+            bool generateMain = true,
+            bool generatePassive = true)
+        {
+            var equipment = new EquipmentAttributeData();
+            var config = jsonConfigData.propertyValueData;
+            float qualityFactor = GetQualityFactor(quality, config);
+            float actualValue = totalGold * qualityFactor;
+
+            (float mainBudget, float passiveBudget) = SplitBudget(actualValue, quality, passiveRatio);
+
+            if (generateMain)
+            {
+                equipment.mainAttributeList = GenerateMainAttributes(
+                    mainBudget, part, config.propertyWeightData, config.propertyIncreaseValue);
+            }
+
+            if (generatePassive && quality != QualityType.Normal)
+            {
+                equipment.passiveAttributeList = new List<AttributeIncreaseData>();
+                equipment.passiveAttributeList.Add(GeneratePassiveAttribute(
+                    passiveBudget, part, equipment.mainAttributeList, 
+                    config.propertyWeightData, config.propertyIncreaseValue));
+            }
+
+            return equipment;
+        }
+
+        private (float main, float passive) SplitBudget(float total, QualityType quality, float passiveRatio)
+        {
+            var propertyData = jsonConfigData.propertyValueData;
+            if (quality == QualityType.Normal)
+                return (total, 0);
+
+            var qualityData = jsonConfigData.propertyValueData.qualityRatioData.First(q => q.qualityType == quality);
+            var variance = Random.Range(-propertyData.valueVariance, propertyData.valueVariance);
+            passiveRatio = Mathf.Clamp( (1 - qualityData.mainAttributeRatio) * passiveRatio  * (1 + variance), qualityData.minPassiveAttributeRatio, 1 - qualityData.mainAttributeRatio);
+            
+            return (
+                main: total * (1 - passiveRatio),
+                passive: total * passiveRatio
+            );
+        }
+
+        private List<AttributeIncreaseData> GenerateMainAttributes(
+            float budget,
+            EquipmentPart part,
+            PropertyWeightData[] weightConfig,
+            PropertyIncreaseValue[] valueConfig)
+        {
+            var attributes = new List<AttributeIncreaseData>();
+            var partWeights = GetPartWeights(part, weightConfig);
+            
+            // 必须包含最高权重属性
+            var mustHave = partWeights.propertyWeightList
+                .OrderByDescending(w => w.weight)
+                .First();
+            
+            attributes.Add(GenerateProperty(ref budget, mustHave, valueConfig));
+
+            // 生成其他属性
+            while (budget > 0 && attributes.Count < 3)
+            {
+                var candidates = GetAvailableWeights(partWeights, attributes);
+                if (candidates.Count == 0) break;
+
+                var selected = GameStaticExtensions.Select(candidates);
+                attributes.Add(GenerateProperty(ref budget, selected, valueConfig));
+            }
+
+            return attributes;
+        }
+
+        private AttributeIncreaseData GeneratePassiveAttribute(
+            float budget,
+            EquipmentPart part,
+            List<AttributeIncreaseData> mainAttributes,
+            PropertyWeightData[] weightConfig,
+            PropertyIncreaseValue[] valueConfig)
+        {
+            if (budget <= 0) return default;
+
+            var partWeights = GetPartWeights(part, weightConfig);
+            var forbiddenTypes = mainAttributes.Select(p => p.propertyType).ToHashSet();
+            var forbiddenIncreaseTypes = mainAttributes.Select(p => p.buffIncreaseType).ToHashSet();
+
+            var availableWeights = partWeights.propertyWeightList
+                .Where(w => 
+                    !forbiddenTypes.Contains(w.propertyType) && 
+                    !forbiddenIncreaseTypes.Contains(w.buffIncreaseType))
+                .ToList();
+
+            if (availableWeights.Count == 0) return default;
+
+            var selected = GameStaticExtensions.Select(availableWeights
+                .ToDictionary(w => w, w => w.weight));
+
+            return GenerateProperty(budget, selected, valueConfig);
+        }
+
+        private AttributeIncreaseData GenerateProperty(ref float budget, PropertyWeight weight, 
+            PropertyIncreaseValue[] valueConfig)
+        {
+            var costPerUnit = GetCostPerUnit(weight, valueConfig);
+            float maxValue = budget / costPerUnit;
+            float actualValue = maxValue * Random.Range(0.7f, 1.0f);
+            
+            budget -= actualValue * costPerUnit;
+            return CreateProperty(weight, actualValue);
+        }
+
+        private AttributeIncreaseData GenerateProperty(float budget, PropertyWeight weight,
+            PropertyIncreaseValue[] valueConfig)
+        {
+            var costPerUnit = GetCostPerUnit(weight, valueConfig);
+            float maxValue = budget / costPerUnit;
+            if (maxValue < GetMinEffectiveValue(weight.propertyType, weight.buffIncreaseType))
+                return default;
+
+            float actualValue = maxValue * Random.Range(0.7f, 1.0f);
+            return CreateProperty(weight, actualValue);
+        }
+
+        // 辅助方法
+        private PropertyWeightData GetPartWeights(EquipmentPart part, PropertyWeightData[] config)
+        {
+            var weights = config.FirstOrDefault(w => w.equipmentPart == part);
+            if (weights.Equals(default(PropertyWeightData)))
+                throw new ArgumentException($"No weight config for part {part}");
+            return weights;
+        }
+
+        private float GetQualityFactor(QualityType quality, PropertyValueData config)
+        {
+            var ratioData = config.qualityRatioData.FirstOrDefault(q => q.qualityType == quality);
+            if (ratioData.Equals(default(QualityRatioData)))
+                throw new ArgumentException($"No quality ratio for {quality}");
+            return ratioData.ratio;
+        }
+
+        private Dictionary<PropertyWeight, float> GetAvailableWeights(
+            PropertyWeightData partWeights, 
+            List<AttributeIncreaseData> existing)
+        {
+            return partWeights.propertyWeightList
+                .Where(w => !existing.Any(p => 
+                    p.propertyType == w.propertyType && 
+                    p.buffIncreaseType == w.buffIncreaseType))
+                .ToDictionary(w => w, w => w.weight);
+        }
+
+        private float GetCostPerUnit(PropertyWeight weight, PropertyIncreaseValue[] config)
+        {
+            var valueData = config.First(v => v.propertyType == weight.propertyType);
+            return valueData.propertyIncreaseValueList
+                .First(d => d.buffIncreaseType == weight.buffIncreaseType).value;
+        }
+
+        private AttributeIncreaseData CreateProperty(PropertyWeight weight, float value)
+        {
+            return new AttributeIncreaseData
+            {
+                propertyType = weight.propertyType,
+                buffIncreaseType = weight.buffIncreaseType,
+                increaseValue = value,
+                buffOperationType = BuffOperationType.Add
+            };
+        }
+
+        private float GetMinEffectiveValue(PropertyTypeEnum type, BuffIncreaseType increaseType)
+        {
+            return increaseType switch
+            {
+                BuffIncreaseType.Base => 1f,
+                BuffIncreaseType.Multiplier => 0.05f,
+                BuffIncreaseType.Extra => 0.01f,
+                _ => 0.1f
+            };
+        }
+        public bool Validate(
+            EquipmentAttributeData equipment,
+            float originalGold,
+            EquipmentPart part,
+            QualityType quality,
+            PropertyValueData config,
+            bool checkMain = true,
+            bool checkPassive = true)
+        {
+            float totalCost = 0f;
+            bool mainValid = true;
+            bool passiveValid = true;
+
+            if (checkMain)
+            {
+                totalCost += equipment.mainAttributeList?.Sum(p => GetPropertyCost(p, config)) ?? 0;
+                mainValid = CheckCoreAttribute(equipment.mainAttributeList, part, config);
+            }
+
+            if (checkPassive && equipment.passiveAttributeList != null)
+            {
+                totalCost += GetPropertyCost(equipment.passiveAttributeList.First(), config);
+                passiveValid = CheckPassiveAttribute(equipment, config);
+            }
+
+            float maxAllowed = originalGold * GetQualityFactor(quality, config) * 1.1f;
+            return totalCost <= maxAllowed && mainValid && passiveValid;
+        }
+
+        private bool CheckCoreAttribute(List<AttributeIncreaseData> mainAttributes, EquipmentPart part, PropertyValueData config)
+        {
+            var partWeights = config.propertyWeightData.First(w => w.equipmentPart == part);
+            var maxWeight = partWeights.propertyWeightList.OrderByDescending(w => w.weight).First();
+            return mainAttributes.Any(p => 
+                p.propertyType == maxWeight.propertyType && 
+                p.buffIncreaseType == maxWeight.buffIncreaseType);
+        }
+
+        private bool CheckPassiveAttribute(EquipmentAttributeData equipment, PropertyValueData config)
+        {
+            if (equipment.passiveAttributeList == null) return true;
+
+            var mainTypes = equipment.mainAttributeList.Select(p => p.propertyType);
+            var mainIncreaseTypes = equipment.mainAttributeList.Select(p => p.buffIncreaseType);
+
+            return !mainTypes.Contains(equipment.passiveAttributeList[0].propertyType) 
+                && !mainIncreaseTypes.Contains(equipment.passiveAttributeList[0].buffIncreaseType);
+        }
+
+        private float GetPropertyCost(AttributeIncreaseData prop, PropertyValueData config)
+        {
+            var increaseValue = config.propertyIncreaseValue
+                .First(v => v.propertyType == prop.propertyType)
+                .propertyIncreaseValueList
+                .First(d => d.buffIncreaseType == prop.buffIncreaseType);
+            
+            return prop.increaseValue * increaseValue.value;
+        }
+        
+        #endregion
     }
 
     [Serializable]
@@ -104,42 +350,111 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public GameModeData gameModeData;
         [Header("背包数据")]
         public BagCommonData bagCommonData;
+        [Header("属性数据")]
+        public PropertyValueData propertyValueData;
         [Header("其他数据")]
         public OtherData otherData;
         // [Header("配置字符串")]
         // public ConfigString configString;
     }
 
-    // [Serializable]
-    // public struct ConfigString
-    // {
-    //     public List<PropertyKeyValue> properties;
-    //     public List<BattleTriggerKeyValue> battleTriggerList;
-    //     public List<ConditionTargetTypeKeyValue> conditionTargetTypeList;
-    //     
-    //     
-    // }
+    [Serializable]
+    public struct PropertyValueData
+    {
+        [Header("属性权重数据")]
+        public PropertyWeightData[] propertyWeightData;
+        [Header("属性数据")]
+        public PropertyIncreaseValue[] propertyIncreaseValue;
+        [Header("品质比例数据")]
+        public QualityRatioData[] qualityRatioData;
+        [Header("误差")]
+        public float valueVariance;
+    }
+    
+    [Serializable]
+    public struct QualityRatioData : IEquatable<QualityRatioData>
+    {
+        public QualityType qualityType;
+        public float ratio;
+        public float mainAttributeRatio;
+        public float minPassiveAttributeRatio;
 
-    // [Serializable]
-    // public struct PropertyKeyValue
-    // {
-    //     public PropertyTypeEnum propertyType;
-    //     public string desc;
-    // }
-    //
-    // [Serializable]
-    // public struct BattleTriggerKeyValue
-    // {
-    //     public TriggerType triggerType;
-    //     public string desc;
-    // }
-    //
-    // [Serializable]
-    // public struct ConditionTargetTypeKeyValue
-    // {
-    //     public ConditionTargetType triggerType;
-    //     public string desc;
-    // }
+        public bool Equals(QualityRatioData other)
+        {
+            return qualityType == other.qualityType && ratio.Equals(other.ratio) && mainAttributeRatio.Equals(other.mainAttributeRatio);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is QualityRatioData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine((int)qualityType, ratio, mainAttributeRatio);
+        }
+    }
+
+    //表示该装备部位每个属性的权重(没有该属性则不会被随机到)
+    [Serializable]
+    public struct PropertyWeightData : IEquatable<PropertyWeightData>
+    {
+        public EquipmentPart equipmentPart;
+        public List<PropertyWeight> propertyWeightList;
+
+        public bool Equals(PropertyWeightData other)
+        {
+            return equipmentPart == other.equipmentPart && Equals(propertyWeightList, other.propertyWeightList);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is PropertyWeightData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine((int)equipmentPart, propertyWeightList);
+        }
+    }
+    
+    [Serializable]
+    public struct PropertyWeight : IEquatable<PropertyWeight>
+    {
+        public PropertyTypeEnum propertyType;
+        public BuffIncreaseType buffIncreaseType;
+        public float weight;
+
+        public bool Equals(PropertyWeight other)
+        {
+            return propertyType == other.propertyType && buffIncreaseType == other.buffIncreaseType && weight.Equals(other.weight);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is PropertyWeight other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine((int)propertyType, (int)buffIncreaseType, weight);
+        }
+    }
+
+    //表示每个属性在不同BuffIncreaseType下提升一点需要的价值
+    [Serializable]
+    public struct PropertyIncreaseValue
+    {
+        public PropertyTypeEnum propertyType;
+        public List<PropertyIncreaseValueData> propertyIncreaseValueList;
+    }
+
+    [Serializable]
+    public struct PropertyIncreaseValueData
+    {
+        public BuffIncreaseType buffIncreaseType;
+        public float value;
+    }
 
     [Serializable]
     public struct OtherData

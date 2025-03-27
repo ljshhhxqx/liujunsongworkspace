@@ -38,6 +38,25 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             Debug.LogError("WeaponConfigData not found for WeaponType: " + type);
             return new List<WeaponConfigData>();
         }
+        
+        public WeaponConfigData GetWeaponConfigByItemID(int itemID)
+        {
+            foreach (var data in weaponConfigData)
+            {
+                if (data.itemID == itemID)
+                {
+                    return data;
+                }
+            }
+
+            Debug.LogError("ArmorConfigData not found for itemID: " + itemID);
+            return new WeaponConfigData();
+        }
+
+        public int GetWeaponBattleConditionID(int itemID)
+        {
+            return GetWeaponConfigByItemID(itemID).battleEffectConditionId;
+        }
 
         public WeaponConfigData GetRandomWeapon(WeaponType type)
         {
@@ -58,10 +77,13 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 var data = textAsset[i];
                 var weaponConfig = new WeaponConfigData();
                 weaponConfig.weaponID = int.Parse(data[0]);
-                weaponConfig.weaponType = Enum.Parse<WeaponType>(data[1]);
-                weaponConfig.skillID = int.Parse(data[2]);
-                weaponConfig.itemID = int.Parse(data[3]);
-                weaponConfig.quality = Enum.Parse<QualityType>(data[4]);
+                weaponConfig.itemID = int.Parse(data[1]);
+                weaponConfig.weaponName = data[2];
+                weaponConfig.weaponType = Enum.Parse<WeaponType>(data[3]);
+                weaponConfig.skillID = int.Parse(data[4]);
+                weaponConfig.quality = Enum.Parse<QualityType>(data[5]);
+                weaponConfig.battleEffectConditionId = int.Parse(data[6]);
+                weaponConfig.battleEffectConditionDescription = data[7];
                 weaponConfigData.Add(weaponConfig);
             }
         }
@@ -91,7 +113,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public QualityType quality;
         public WeaponType weaponType;
         public int skillID;
-        public int[] battleEffectConditionIds;
+        public int battleEffectConditionId;
         public string battleEffectConditionDescription;
     }
 

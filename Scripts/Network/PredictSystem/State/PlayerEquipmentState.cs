@@ -66,6 +66,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             }
             return false;
         }
+
+        public static void PlayerEquipmentPassiveEffect(ref PlayerPredictablePropertyState equipmentState)
+        {
+            return;
+        }
     }
      
     [MemoryPackable]
@@ -81,16 +86,41 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         public bool IsEquipped;
         [MemoryPackOrder(4)]
         public EquipmentPart EquipmentPartType;
+        [MemoryPackOrder(5)]
+        public ImmutableList<EquipmentPassiveEffectData> EquipmentPassiveEffectData;
         
         [MemoryPackConstructor]
         public EquipmentData(ImmutableList<BuffData> equipmentBuffData, ImmutableList<BattleEffectConditionConfigData> battleEffectConditions, uint equipmentId
-            , EquipmentPart equipmentPartType)
+            , EquipmentPart equipmentPartType, ImmutableList<EquipmentPassiveEffectData> equipmentPassiveEffectData)
         {
             EquipmentBuffData = equipmentBuffData;
             BattleEffectConditions = battleEffectConditions;
             EquipmentId = equipmentId;
             IsEquipped = false;
             EquipmentPartType = equipmentPartType;
+            EquipmentPassiveEffectData = equipmentPassiveEffectData;
+        }
+        
+        public bool PassiveEffectOn(ref PlayerPredictablePropertyState playerState)
+        {
+            foreach (var passiveEffectData in EquipmentPassiveEffectData)
+            {
+                var property = playerState.Properties[passiveEffectData.propertyType];
+                playerState.Properties[passiveEffectData.propertyType] = property.UpdateCalculator(property, passiveEffectData.increaseData);
+            }
+            return true;
+        }
+        
+        public bool PassiveEffectOff(ref PlayerPredictablePropertyState playerState)
+        {
+            foreach (var passiveEffectData in EquipmentPassiveEffectData)
+            {
+                var property = playerState.Properties[passiveEffectData.propertyType];
+                var data = passiveEffectData.increaseData;
+                data.operationType = BuffOperationType.Subtract;
+                playerState.Properties[passiveEffectData.propertyType] = property.UpdateCalculator(property, data);
+            }
+            return true;
         }
 
         public bool EquipPlayer(ref PlayerPredictablePropertyState playerState)
@@ -107,6 +137,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                     playerState.Properties[buffData.propertyType] = calculator.UpdateCalculator(buffData.increaseDataList);
                 }
             }
+            PassiveEffectOff(ref playerState);
             return IsEquipped;
         }
         

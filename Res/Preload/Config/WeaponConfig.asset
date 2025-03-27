@@ -21,3 +21,4 @@ MonoBehaviour:
   configName: WeaponConfig
   isArray: 1
   weaponConfigData: []
+  configManager: {fileID: 11400000, guid: 56662f2e2c781224386c67bee26f4b6c, type: 2}
