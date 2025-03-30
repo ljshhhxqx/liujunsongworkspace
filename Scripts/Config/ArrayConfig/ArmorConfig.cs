@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Mirror;
+using Sirenix.OdinInspector;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
 {
@@ -65,22 +67,52 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             for (var i = 2; i < textAsset.Count; i++)
             {
                 var data = textAsset[i];
-                var weaponConfig = new ArmorConfigData();
-                weaponConfig.armorID = int.Parse(data[0]);
-                weaponConfig.itemID = int.Parse(data[1]);
-                weaponConfig.equipmentPart = (EquipmentPart) Enum.Parse(typeof(EquipmentPart), data[1]);
-                weaponConfig.itemID = int.Parse(data[2]);
-                weaponConfig.skillID = int.Parse(data[3]);
-                weaponConfig.quality = (QualityType) Enum.Parse(typeof(QualityType), data[4]);
-                armorConfigs.Add(weaponConfig);
+                var armorConfigData = new ArmorConfigData();
+                armorConfigData.armorID = int.Parse(data[0]);
+                armorConfigData.itemID = int.Parse(data[1]);
+                armorConfigData.armorName = data[2];
+                armorConfigData.equipmentPart = Enum.Parse<EquipmentPart>(data[3]);
+                armorConfigData.skillID = int.Parse(data[4]);
+                armorConfigData.quality = Enum.Parse<QualityType>(data[5]);
+                //weaponConfig.battleEffectConditionId = int.Parse(data[6]);
+                armorConfigData.battleEffectConditionDescription = data[7];
+                armorConfigs.Add(armorConfigData);
             }
         }
+        
+#if UNITY_EDITOR
+        [SerializeField]
+        private ConstantBuffConfig constantBuffConfig;
+        [SerializeField]
+        private BattleEffectConditionConfig battleEffectConditionConfig;
+
+
+        [Button("将armor的条件加入到BattleEffectConditionConfig")]
+        public void GenerateWeaponConditionExcel()
+        {
+            for (int i = 0; i < armorConfigs.Count; i++)
+            {
+                var data = armorConfigs[i];
+                var condition = battleEffectConditionConfig.AnalysisDataString(data.battleEffectConditionDescription);
+                if (condition.id == 0)
+                {
+                    Debug.Log("battleEffectConditionId not found for weaponID: " + data.armorID + "Start to generate a new one");
+                    condition.id = battleEffectConditionConfig.GetConditionMaxId() + 1;
+                    data.battleEffectConditionId = condition.id;
+                    battleEffectConditionConfig.AddConditionData(condition);
+                    armorConfigs[i] = data;
+                    EditorUtility.SetDirty(this);
+                }
+            }
+        }
+#endif
     }
     
     [Serializable]
     public struct ArmorConfigData
     {
         public int armorID;
+        public string armorName;
         public EquipmentPart equipmentPart;
         public int itemID;
         public QualityType quality;

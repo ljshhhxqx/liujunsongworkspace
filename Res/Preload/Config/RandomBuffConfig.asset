@@ -24,374 +24,1014 @@ MonoBehaviour:
   - buffId: 1
     propertyType: 5
     duration:
+      isPercent: 0
       min: 0
       max: 0
     increaseDataList:
-    - increaseType: 4
+    - increaseType: 5
       increaseValueRange:
+        isPercent: 0
         min: 1
         max: 2
-    isCollectBuff: 1
+    sourceType: 1
   - buffId: 2
     propertyType: 5
     duration:
+      isPercent: 0
       min: 0
       max: 0
     increaseDataList:
-    - increaseType: 4
+    - increaseType: 5
       increaseValueRange:
+        isPercent: 0
         min: 4
         max: 7
-    isCollectBuff: 1
+    sourceType: 1
   - buffId: 3
     propertyType: 5
     duration:
+      isPercent: 0
       min: 0
       max: 0
     increaseDataList:
-    - increaseType: 4
+    - increaseType: 5
       increaseValueRange:
+        isPercent: 0
         min: 9
         max: 12
-    isCollectBuff: 1
+    sourceType: 1
   - buffId: 4
     propertyType: 5
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 3
+    - increaseType: 4
       increaseValueRange:
+        isPercent: 0
         min: 0.1
         max: 0.15
-    isCollectBuff: 0
+    sourceType: 4
   - buffId: 5
     propertyType: 5
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 3
+    - increaseType: 4
       increaseValueRange:
+        isPercent: 0
         min: 0.2
         max: 0.3
-    isCollectBuff: 0
+    sourceType: 4
   - buffId: 6
     propertyType: 5
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 3
+    - increaseType: 4
       increaseValueRange:
+        isPercent: 0
         min: 0.4
         max: 0.5
-    isCollectBuff: 0
+    sourceType: 4
   - buffId: 7
     propertyType: 0
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 0
+    - increaseType: 1
       increaseValueRange:
+        isPercent: 0
         min: 0.5
         max: 0.75
-    isCollectBuff: 1
+    sourceType: 1
   - buffId: 8
     propertyType: 1
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 0
+    - increaseType: 1
       increaseValueRange:
+        isPercent: 0
         min: 2
         max: 2.5
-    isCollectBuff: 1
+    sourceType: 1
   - buffId: 9
     propertyType: 2
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 0
+    - increaseType: 1
       increaseValueRange:
+        isPercent: 0
         min: 2
         max: 2.5
-    isCollectBuff: 1
+    sourceType: 1
   - buffId: 10
     propertyType: 4
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 0
+    - increaseType: 1
       increaseValueRange:
+        isPercent: 0
         min: 7.5
-        max: 0
-    isCollectBuff: 1
+        max: 10
+    sourceType: 1
   - buffId: 11
     propertyType: 3
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 0
+    - increaseType: 1
       increaseValueRange:
+        isPercent: 0
         min: 7.5
-        max: 0
-    isCollectBuff: 1
+        max: 10
+    sourceType: 1
   - buffId: 12
     propertyType: 0
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 1
+    - increaseType: 2
       increaseValueRange:
+        isPercent: 0
         min: 0.2
         max: 0.25
-    isCollectBuff: 1
+    sourceType: 1
   - buffId: 13
     propertyType: 1
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 1
+    - increaseType: 2
       increaseValueRange:
+        isPercent: 0
         min: 0.2
         max: 0.25
-    isCollectBuff: 1
+    sourceType: 1
   - buffId: 14
     propertyType: 2
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 1
+    - increaseType: 2
       increaseValueRange:
+        isPercent: 0
         min: 0.2
         max: 0.25
-    isCollectBuff: 1
+    sourceType: 1
   - buffId: 15
     propertyType: 6
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 1
+    - increaseType: 2
       increaseValueRange:
+        isPercent: 0
         min: 0.2
         max: 0.25
-    isCollectBuff: 1
+    sourceType: 1
   - buffId: 16
     propertyType: 7
     duration:
-      min: 5
-      max: 10
-    increaseDataList:
-    - increaseType: 1
-      increaseValueRange:
-        min: 0.2
-        max: 0.25
-    isCollectBuff: 1
-  - buffId: 17
-    propertyType: 4
-    duration:
-      min: 5
-      max: 10
-    increaseDataList:
-    - increaseType: 1
-      increaseValueRange:
-        min: 0.2
-        max: 0.25
-    isCollectBuff: 1
-  - buffId: 18
-    propertyType: 3
-    duration:
-      min: 5
-      max: 10
-    increaseDataList:
-    - increaseType: 1
-      increaseValueRange:
-        min: 0.2
-        max: 0.25
-    isCollectBuff: 1
-  - buffId: 19
-    propertyType: 0
-    duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
     - increaseType: 2
       increaseValueRange:
+        isPercent: 0
+        min: 0.2
+        max: 0.25
+    sourceType: 1
+  - buffId: 17
+    propertyType: 8
+    duration:
+      isPercent: 0
+      min: 5
+      max: 10
+    increaseDataList:
+    - increaseType: 2
+      increaseValueRange:
+        isPercent: 0
+        min: 0.2
+        max: 0.25
+    sourceType: 1
+  - buffId: 18
+    propertyType: 9
+    duration:
+      isPercent: 0
+      min: 5
+      max: 10
+    increaseDataList:
+    - increaseType: 2
+      increaseValueRange:
+        isPercent: 0
+        min: 0.2
+        max: 0.25
+    sourceType: 1
+  - buffId: 19
+    propertyType: 4
+    duration:
+      isPercent: 0
+      min: 5
+      max: 10
+    increaseDataList:
+    - increaseType: 2
+      increaseValueRange:
+        isPercent: 0
+        min: 0.2
+        max: 0.25
+    sourceType: 1
+  - buffId: 20
+    propertyType: 3
+    duration:
+      isPercent: 0
+      min: 5
+      max: 10
+    increaseDataList:
+    - increaseType: 2
+      increaseValueRange:
+        isPercent: 0
+        min: 0.2
+        max: 0.25
+    sourceType: 1
+  - buffId: 21
+    propertyType: 0
+    duration:
+      isPercent: 0
+      min: 5
+      max: 10
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
         min: 0.5
         max: 0.65
-    isCollectBuff: 1
-  - buffId: 20
+    sourceType: 1
+  - buffId: 22
     propertyType: 1
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValueRange:
+        isPercent: 0
         min: 2
         max: 2.5
-    isCollectBuff: 1
-  - buffId: 21
+    sourceType: 1
+  - buffId: 23
     propertyType: 2
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValueRange:
+        isPercent: 0
         min: 2
         max: 2.5
-    isCollectBuff: 1
-  - buffId: 22
+    sourceType: 1
+  - buffId: 24
     propertyType: 4
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValueRange:
+        isPercent: 0
         min: 7.5
         max: 20
-    isCollectBuff: 1
-  - buffId: 23
+    sourceType: 1
+  - buffId: 25
     propertyType: 3
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValueRange:
+        isPercent: 0
         min: 7.5
         max: 20
-    isCollectBuff: 1
-  - buffId: 24
+    sourceType: 1
+  - buffId: 26
     propertyType: 6
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValueRange:
+        isPercent: 0
         min: 0.1
         max: 0.15
-    isCollectBuff: 1
-  - buffId: 25
+    sourceType: 1
+  - buffId: 27
     propertyType: 7
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValueRange:
+        isPercent: 0
         min: 0.2
         max: 0.3
-    isCollectBuff: 1
-  - buffId: 26
+    sourceType: 1
+  - buffId: 28
+    propertyType: 8
+    duration:
+      isPercent: 0
+      min: 5
+      max: 10
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 2.5
+        max: 3
+    sourceType: 1
+  - buffId: 29
+    propertyType: 9
+    duration:
+      isPercent: 0
+      min: 5
+      max: 10
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 0.5
+        max: 0.75
+    sourceType: 1
+  - buffId: 30
     propertyType: 0
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 3
+    - increaseType: 4
       increaseValueRange:
+        isPercent: 0
         min: 0.1
         max: 0.15
-    isCollectBuff: 1
-  - buffId: 27
+    sourceType: 1
+  - buffId: 31
     propertyType: 1
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 3
+    - increaseType: 4
       increaseValueRange:
+        isPercent: 0
         min: 0.1
         max: 0.15
-    isCollectBuff: 1
-  - buffId: 28
+    sourceType: 1
+  - buffId: 32
     propertyType: 2
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 3
+    - increaseType: 4
       increaseValueRange:
+        isPercent: 0
         min: 0.1
         max: 0.15
-    isCollectBuff: 1
-  - buffId: 29
+    sourceType: 1
+  - buffId: 33
     propertyType: 6
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
-    - increaseType: 3
+    - increaseType: 4
       increaseValueRange:
+        isPercent: 0
         min: 0.1
         max: 0.15
-    isCollectBuff: 1
-  - buffId: 30
+    sourceType: 1
+  - buffId: 34
     propertyType: 7
     duration:
-      min: 5
-      max: 10
-    increaseDataList:
-    - increaseType: 3
-      increaseValueRange:
-        min: 0.1
-        max: 0.15
-    isCollectBuff: 1
-  - buffId: 31
-    propertyType: 4
-    duration:
-      min: 5
-      max: 10
-    increaseDataList:
-    - increaseType: 3
-      increaseValueRange:
-        min: 0.1
-        max: 0.15
-    isCollectBuff: 1
-  - buffId: 32
-    propertyType: 3
-    duration:
-      min: 5
-      max: 10
-    increaseDataList:
-    - increaseType: 3
-      increaseValueRange:
-        min: 0.1
-        max: 0.15
-    isCollectBuff: 1
-  - buffId: 33
-    propertyType: 4
-    duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
     - increaseType: 4
       increaseValueRange:
-        min: 10
-        max: 12.5
-    isCollectBuff: 1
-  - buffId: 34
-    propertyType: 3
+        isPercent: 0
+        min: 0.1
+        max: 0.15
+    sourceType: 1
+  - buffId: 35
+    propertyType: 8
     duration:
+      isPercent: 0
       min: 5
       max: 10
     increaseDataList:
     - increaseType: 4
       increaseValueRange:
+        isPercent: 0
+        min: 0.1
+        max: 0.15
+    sourceType: 1
+  - buffId: 36
+    propertyType: 9
+    duration:
+      isPercent: 0
+      min: 5
+      max: 10
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.1
+        max: 0.15
+    sourceType: 1
+  - buffId: 37
+    propertyType: 4
+    duration:
+      isPercent: 0
+      min: 5
+      max: 10
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.1
+        max: 0.15
+    sourceType: 1
+  - buffId: 38
+    propertyType: 3
+    duration:
+      isPercent: 0
+      min: 5
+      max: 10
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.1
+        max: 0.15
+    sourceType: 1
+  - buffId: 39
+    propertyType: 4
+    duration:
+      isPercent: 0
+      min: 5
+      max: 10
+    increaseDataList:
+    - increaseType: 5
+      increaseValueRange:
+        isPercent: 0
         min: 10
         max: 12.5
-    isCollectBuff: 1
+    sourceType: 1
+  - buffId: 40
+    propertyType: 3
+    duration:
+      isPercent: 0
+      min: 5
+      max: 10
+    increaseDataList:
+    - increaseType: 5
+      increaseValueRange:
+        isPercent: 0
+        min: 10
+        max: 12.5
+    sourceType: 1
+  - buffId: 41
+    propertyType: 1
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValueRange:
+        isPercent: 0
+        min: 3
+        max: 7.5
+    sourceType: 2
+  - buffId: 42
+    propertyType: 0
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValueRange:
+        isPercent: 0
+        min: 1
+        max: 2.5
+    sourceType: 2
+  - buffId: 43
+    propertyType: 2
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValueRange:
+        isPercent: 0
+        min: 3
+        max: 7.5
+    sourceType: 2
+  - buffId: 44
+    propertyType: 4
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValueRange:
+        isPercent: 0
+        min: 30
+        max: 75
+    sourceType: 2
+  - buffId: 45
+    propertyType: 8
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValueRange:
+        isPercent: 0
+        min: 1.5
+        max: 3
+    sourceType: 2
+  - buffId: 46
+    propertyType: 9
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValueRange:
+        isPercent: 0
+        min: 1
+        max: 2.5
+    sourceType: 2
+  - buffId: 47
+    propertyType: 3
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValueRange:
+        isPercent: 0
+        min: 30
+        max: 75
+    sourceType: 2
+  - buffId: 48
+    propertyType: 0
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 2
+      increaseValueRange:
+        isPercent: 0
+        min: 0.15
+        max: 0.3
+    sourceType: 2
+  - buffId: 49
+    propertyType: 1
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 2
+      increaseValueRange:
+        isPercent: 0
+        min: 0.2
+        max: 0.5
+    sourceType: 2
+  - buffId: 50
+    propertyType: 2
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 2
+      increaseValueRange:
+        isPercent: 0
+        min: 0.2
+        max: 0.5
+    sourceType: 2
+  - buffId: 51
+    propertyType: 3
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 2
+      increaseValueRange:
+        isPercent: 0
+        min: 0.3
+        max: 0.6
+    sourceType: 2
+  - buffId: 52
+    propertyType: 4
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 2
+      increaseValueRange:
+        isPercent: 0
+        min: 0.3
+        max: 0.6
+    sourceType: 2
+  - buffId: 53
+    propertyType: 6
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 2
+      increaseValueRange:
+        isPercent: 0
+        min: 0.2
+        max: 0.5
+    sourceType: 2
+  - buffId: 54
+    propertyType: 7
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 2
+      increaseValueRange:
+        isPercent: 0
+        min: 0.2
+        max: 0.5
+    sourceType: 2
+  - buffId: 55
+    propertyType: 8
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 2
+      increaseValueRange:
+        isPercent: 0
+        min: 0.2
+        max: 0.5
+    sourceType: 2
+  - buffId: 56
+    propertyType: 9
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 2
+      increaseValueRange:
+        isPercent: 0
+        min: 0.15
+        max: 0.3
+    sourceType: 2
+  - buffId: 57
+    propertyType: 12
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 2
+      increaseValueRange:
+        isPercent: 0
+        min: 0.15
+        max: 0.3
+    sourceType: 2
+  - buffId: 58
+    propertyType: 0
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 1.5
+        max: 3
+    sourceType: 2
+  - buffId: 59
+    propertyType: 1
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 5
+        max: 12.5
+    sourceType: 2
+  - buffId: 60
+    propertyType: 2
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 5
+        max: 12.5
+    sourceType: 2
+  - buffId: 61
+    propertyType: 3
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 50
+        max: 125
+    sourceType: 2
+  - buffId: 62
+    propertyType: 4
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 50
+        max: 125
+    sourceType: 2
+  - buffId: 63
+    propertyType: 6
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 0.1
+        max: 0.25
+    sourceType: 2
+  - buffId: 64
+    propertyType: 7
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 0.2
+        max: 0.5
+    sourceType: 2
+  - buffId: 65
+    propertyType: 8
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 2
+        max: 5
+    sourceType: 2
+  - buffId: 66
+    propertyType: 9
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 1.5
+        max: 4
+    sourceType: 2
+  - buffId: 67
+    propertyType: 12
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 0.2
+        max: 0.5
+    sourceType: 2
+  - buffId: 68
+    propertyType: 0
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.05
+        max: 0.1
+    sourceType: 2
+  - buffId: 69
+    propertyType: 1
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.1
+        max: 0.2
+    sourceType: 2
+  - buffId: 70
+    propertyType: 2
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.1
+        max: 0.2
+    sourceType: 2
+  - buffId: 71
+    propertyType: 3
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.1
+        max: 0.2
+    sourceType: 2
+  - buffId: 72
+    propertyType: 4
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.1
+        max: 0.2
+    sourceType: 2
+  - buffId: 73
+    propertyType: 6
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.1
+        max: 0.2
+    sourceType: 2
+  - buffId: 74
+    propertyType: 7
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.1
+        max: 0.2
+    sourceType: 2
+  - buffId: 75
+    propertyType: 8
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.1
+        max: 0.2
+    sourceType: 2
+  - buffId: 76
+    propertyType: 9
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.05
+        max: 0.1
+    sourceType: 2
+  - buffId: 77
+    propertyType: 12
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.05
+        max: 0.1
+    sourceType: 2
+  - buffId: 78
+    propertyType: 5
+    duration:
+      isPercent: 0
+      min: -1
+      max: -1
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.15
+        max: 0.3
+    sourceType: 2

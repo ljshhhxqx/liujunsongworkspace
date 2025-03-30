@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
 {
@@ -66,7 +66,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 return new WeaponConfigData();
             }
 
-            return weapons[UnityEngine.Random.Range(0, weapons.Count)];
+            return weapons[Random.Range(0, weapons.Count)];
         }
         
         protected override void ReadFromCsv(List<string[]> textAsset)
@@ -82,26 +82,39 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 weaponConfig.weaponType = Enum.Parse<WeaponType>(data[3]);
                 weaponConfig.skillID = int.Parse(data[4]);
                 weaponConfig.quality = Enum.Parse<QualityType>(data[5]);
-                weaponConfig.battleEffectConditionId = int.Parse(data[6]);
+                //weaponConfig.battleEffectConditionId = int.Parse(data[6]);
                 weaponConfig.battleEffectConditionDescription = data[7];
                 weaponConfigData.Add(weaponConfig);
             }
         }
         
         #if UNITY_EDITOR
+        
         [SerializeField]
-        private EditorConfigManager configManager;
-        private ConstantBuffConfig _constantBuffConfig;
-        private BattleEffectConditionConfig _battleEffectConditionConfig;
+        private ConstantBuffConfig constantBuffConfig;
+        [SerializeField]
+        private BattleEffectConditionConfig battleEffectConditionConfig;
 
-        private void OnValidate()
+        [Button("将Weapon的条件加入到BattleEffectConditionConfig")]
+        public void GenerateWeaponConditionExcel()
         {
-            configManager ??= EditorConfigManager.Instance;
-            _constantBuffConfig ??= configManager?.GetConfig<ConstantBuffConfig>();
-            _battleEffectConditionConfig ??= configManager?.GetConfig<BattleEffectConditionConfig>();
-            EditorUtility.SetDirty(this);
+            for (int i = 0; i < weaponConfigData.Count; i++)
+            {
+                var data = weaponConfigData[i];
+                var condition = battleEffectConditionConfig.AnalysisDataString(data.battleEffectConditionDescription);
+                var maxId = battleEffectConditionConfig.GetConditionMaxId();
+                if (condition.id == 0)
+                {
+                    Debug.Log("battleEffectConditionId not found for weaponID: " + data.weaponID+ "Start to generate a new one");
+                    condition.id = battleEffectConditionConfig.GetConditionMaxId() + 1;
+                    data.battleEffectConditionId = condition.id;
+                    battleEffectConditionConfig.AddConditionData(condition);
+                    weaponConfigData[i] = data;
+                    EditorUtility.SetDirty(this);
+                }
+            }
         }
-        #endif
+#endif
     }
 
     [Serializable]
@@ -147,11 +160,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         Sword7,
         Sword8,
         Sword9,
-        Katana1,
-        Katana2,
-        Katana3,
-        Katana4,
-        Katana5,
-        Katana6,
+        Sword10,
     }
 }

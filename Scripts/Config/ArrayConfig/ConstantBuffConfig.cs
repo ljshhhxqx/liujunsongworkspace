@@ -16,6 +16,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [ReadOnly]
         [SerializeField]
         private List<BuffData> buffs = new List<BuffData>();
+        private readonly Dictionary<PropertyTypeEnum, List<BuffData>> _collectBuffs = new Dictionary<PropertyTypeEnum, List<BuffData>>(); 
+        private readonly Dictionary<PropertyTypeEnum, List<BuffData>> _equipmentbuffs = new Dictionary<PropertyTypeEnum, List<BuffData>>();
         
         public BuffData GetBuff(BuffExtraData extraData)
         {
@@ -52,6 +54,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 buff.duration = float.Parse(data[2]);
                 var json = JsonConvert.DeserializeObject<BuffIncreaseData[]>(data[3],jsonSerializerSettings);
                 buff.increaseDataList = json.ToList();
+                buff.sourceType = Enum.Parse<BuffSourceType>(data[4]);
+                buff.mainIncreaseType = Enum.Parse<BuffIncreaseType>(data[5]);
                 buffs.Add(buff);
             }
         }
@@ -84,6 +88,11 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 #if UNITY_EDITOR
         public void AddItemBuff(BuffData newBuff)
         {
+            if (buffs.Exists(b => b.buffId == newBuff.buffId))
+            {
+                Debug.LogWarning("Buff with buff id " + newBuff.buffId + " already exists.");
+                return;
+            }
             buffs.Add(newBuff);
             
             EditorUtility.SetDirty(this);

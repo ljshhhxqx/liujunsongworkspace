@@ -4,12 +4,19 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-namespace CustomEditor.Scripts
+namespace HotUpdate.Scripts.Config
 {
     public static class EnumHeaderParser
     {
         // 缓存枚举类型到 Header 的映射（仅基础值）
-        private static Dictionary<Type, Dictionary<Enum, string>> _headerCache = new Dictionary<Type, Dictionary<Enum, string>>();
+        private static readonly Dictionary<Type, (Dictionary<Enum, string> headers, bool isFlags)> _headerCache 
+        = new Dictionary<Type, (Dictionary<Enum, string>, bool)>();
+        
+        private static bool IsFlagsEnum(Type enumType)
+        {
+            return enumType.GetCustomAttribute<FlagsAttribute>() != null;
+        }
+        
         public static T GetEnumValue<T>(string header) where T : Enum
         {
             foreach (var field in typeof(T).GetFields())
@@ -29,10 +36,11 @@ namespace CustomEditor.Scripts
             if (!enumType.IsEnum)
                 throw new ArgumentException($"{enumType} 不是枚举类型");
 
-            if (_headerCache.TryGetValue(enumType, out var cachedMap))
-                return cachedMap;
+            if (_headerCache.TryGetValue(enumType, out var cached))
+                return cached.headers;
 
             var map = new Dictionary<Enum, string>();
+            bool isFlags = IsFlagsEnum(enumType);
             var fields = enumType.GetFields(BindingFlags.Public | BindingFlags.Static);
 
             foreach (var field in fields)
@@ -45,7 +53,7 @@ namespace CustomEditor.Scripts
                 }
             }
 
-            _headerCache[enumType] = map;
+            _headerCache[enumType] = (map, isFlags);
             return map;
         }
 
@@ -54,58 +62,97 @@ namespace CustomEditor.Scripts
         {
             var type = value.GetType();
             var headers = GetEnumHeaders(type);
-            var underlyingValue = Convert.ToInt32(value); // 获取底层整数值
-            if (underlyingValue == 0 && headers.ContainsKey(value))
-                return headers[value]; // 处理 None 的情况
+            var isFlags = _headerCache[type].isFlags;
+            var underlyingValue = Convert.ToInt32(value);
 
-            // 分解 Flags 组合
-            var flags = headers.Keys
-                .Where(k => Convert.ToInt32(k) != 0 && (underlyingValue & Convert.ToInt32(k)) == Convert.ToInt32(k))
-                .Select(k => headers[k]);
+            // 处理非 Flags 枚举
+            if (!isFlags)
+            {
+                return headers.GetValueOrDefault(value, "未知");
+            }
 
-            return flags.Any() ? string.Join(", ", flags) : "未知";
+            // 以下是 Flags 特有处理逻辑
+            if (underlyingValue == 0)
+                return headers.GetValueOrDefault(value, "None");
+
+            var flags = new List<string>();
+            foreach (var pair in headers)
+            {
+                int flagValue = Convert.ToInt32(pair.Key);
+                if (flagValue != 0 && (underlyingValue & flagValue) == flagValue)
+                {
+                    flags.Add(pair.Value);
+                }
+            }
+
+            return flags.Count > 0 ? string.Join(", ", flags) : "未知";
         }
 
         // 根据字符串查找枚举值（支持 Flags 组合）
         public static bool TryGetEnumFromHeader<T>(string header, out T enumValue) where T : Enum
         {
-            var headers = GetEnumHeaders(typeof(T));
-            var headerParts = header.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+            var type = typeof(T);
+            var (headers, isFlags) = _headerCache[type];
+        
+            // 处理非 Flags 枚举
+            if (!isFlags)
+            {
+                var pair = headers.FirstOrDefault(kvp => kvp.Value == header);
+                if (!string.IsNullOrEmpty(pair.Value))
+                {
+                    enumValue = (T)pair.Key;
+                    return true;
+                }
+                enumValue = default;
+                return false;
+            }
 
+            // Flags 特有逻辑
+            var headerParts = header.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
             int combinedValue = 0;
+
             foreach (var part in headerParts)
             {
                 var match = headers.FirstOrDefault(kvp => kvp.Value == part);
                 if (match.Key == null)
                 {
                     enumValue = default;
-                    return false; // 有一个部分无法匹配则失败
+                    return false;
                 }
                 combinedValue |= Convert.ToInt32(match.Key);
             }
 
-            enumValue = (T)Enum.ToObject(typeof(T), combinedValue);
+            enumValue = (T)Enum.ToObject(type, combinedValue);
             return true;
         }
 
         // 获取最接近的枚举值（拼写错误时用）
         public static T GetClosestEnumFromHeader<T>(string header, out string closestHeader) where T : Enum
         {
-            var headers = GetEnumHeaders(typeof(T));
-            var headerParts = header.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+            var type = typeof(T);
+            var (headers, isFlags) = _headerCache[type];
+        
+            if (!isFlags)
+            {
+                var closest = headers.OrderBy(kvp => LevenshteinDistance(kvp.Value, header)).First();
+                closestHeader = closest.Value;
+                return (T)closest.Key;
+            }
 
+            // Flags 组合逻辑
+            var headerParts = header.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+            var closestParts = new List<string>();
             int combinedValue = 0;
-            var closestHeaders = new List<string>();
 
             foreach (var part in headerParts)
             {
                 var closest = headers.OrderBy(kvp => LevenshteinDistance(kvp.Value, part)).First();
+                closestParts.Add(closest.Value);
                 combinedValue |= Convert.ToInt32(closest.Key);
-                closestHeaders.Add(closest.Value);
             }
 
-            closestHeader = string.Join(", ", closestHeaders);
-            return (T)Enum.ToObject(typeof(T), combinedValue);
+            closestHeader = string.Join(", ", closestParts);
+            return (T)Enum.ToObject(type, combinedValue);
         }
 
         // 计算字符串相似度

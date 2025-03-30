@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using AOTScripts.Data;
-using CustomEditor.Scripts;
 using HotUpdate.Scripts.Config.ArrayConfig;
 
 namespace HotUpdate.Scripts.Config

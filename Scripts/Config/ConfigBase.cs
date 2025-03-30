@@ -6,6 +6,7 @@ using System.Text;
 using AOTScripts.Tool.Resource;
 using ExcelDataReader;
 using Sirenix.OdinInspector;
+using UnityEditor;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Config
@@ -108,6 +109,7 @@ namespace HotUpdate.Scripts.Config
             {
                 Debug.LogError($"配置文件未找到：{configName}。请确保存在 .xlsx 文件。");
             }
+            EditorUtility.SetDirty(this);
         }
 
         private string ConvertExcelToCsv(string excelPath)
@@ -294,6 +296,7 @@ namespace HotUpdate.Scripts.Config
         protected void ReadFromJson(TextAsset textAsset)
         {
             JsonUtility.FromJsonOverwrite(textAsset.text, this);
+            EditorUtility.SetDirty(this);
         }
 
         /// <summary>

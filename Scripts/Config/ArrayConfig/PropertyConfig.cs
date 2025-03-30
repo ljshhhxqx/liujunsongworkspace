@@ -39,6 +39,11 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         {
             return propertyData.Find(x => x.propertyType == propertyType);
         }
+        
+        public bool IsHundredPercent(PropertyTypeEnum type)
+        {
+            return propertyData.Find(x => x.propertyType == type).isHundredPercent;
+        }
 
         public PropertyConsumeType GetPropertyConsumeType(PropertyTypeEnum type)
         {
@@ -103,6 +108,10 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
         public IEnumerable<(PropertyTypeEnum, BuffIncreaseType, float)> GetItemDescriptionProperties(string itemPropertyDescription)
         {
+            if (string.IsNullOrEmpty(itemPropertyDescription))
+            {
+                yield break;
+            }
             var strs = itemPropertyDescription.Split(',');
             foreach (var str in strs)
             {

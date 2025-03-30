@@ -29,38 +29,43 @@ MonoBehaviour:
     isHandleWithCorrectFactor: 0
     description: "\u79FB\u52A8\u901F\u5EA6"
     animationState: 0
+    isHundredPercent: 0
   - propertyType: 1
-    baseValue: 10
+    baseValue: 15
     minValue: 0
-    maxValue: 30
+    maxValue: 100
     consumeType: 2
     isHandleWithCorrectFactor: 0
     description: "\u653B\u51FB\u529B"
     animationState: 0
+    isHundredPercent: 0
   - propertyType: 2
-    baseValue: 10
+    baseValue: 15
     minValue: 0
-    maxValue: 30
+    maxValue: 100
     consumeType: 2
     isHandleWithCorrectFactor: 0
     description: "\u9632\u5FA1"
     animationState: 0
+    isHundredPercent: 0
   - propertyType: 3
     baseValue: 100
     minValue: 0
-    maxValue: 300
+    maxValue: 500
     consumeType: 1
     isHandleWithCorrectFactor: 0
     description: "\u751F\u547D"
     animationState: 0
+    isHundredPercent: 0
   - propertyType: 4
     baseValue: 100
     minValue: 0
-    maxValue: 300
+    maxValue: 500
     consumeType: 1
     isHandleWithCorrectFactor: 0
     description: "\u4F53\u529B"
     animationState: 0
+    isHundredPercent: 0
   - propertyType: 5
     baseValue: 0
     minValue: 0
@@ -69,6 +74,7 @@ MonoBehaviour:
     isHandleWithCorrectFactor: 1
     description: "\u5206\u6570"
     animationState: 0
+    isHundredPercent: 0
   - propertyType: 6
     baseValue: 0.05
     minValue: 0
@@ -77,6 +83,7 @@ MonoBehaviour:
     isHandleWithCorrectFactor: 0
     description: "\u66B4\u51FB\u7387"
     animationState: 0
+    isHundredPercent: 1
   - propertyType: 7
     baseValue: 1.5
     minValue: 1
@@ -85,6 +92,7 @@ MonoBehaviour:
     isHandleWithCorrectFactor: 0
     description: "\u66B4\u51FB\u4F24\u5BB3"
     animationState: 0
+    isHundredPercent: 1
   - propertyType: 8
     baseValue: 5
     minValue: 0
@@ -93,38 +101,25 @@ MonoBehaviour:
     isHandleWithCorrectFactor: 0
     description: "\u4F53\u529B\u6062\u590D"
     animationState: 0
+    isHundredPercent: 0
   - propertyType: 9
-    baseValue: 1
+    baseValue: 3
     minValue: 0
     maxValue: 25
     consumeType: 2
     isHandleWithCorrectFactor: 0
     description: "\u751F\u547D\u6062\u590D"
     animationState: 0
-  - propertyType: 10
-    baseValue: 2
-    minValue: 1
-    maxValue: 3
-    consumeType: 2
-    isHandleWithCorrectFactor: 0
-    description: "\u5954\u8DD1\u901F\u5EA6\u4FEE\u6B63\u7CFB\u6570"
-    animationState: 0
-  - propertyType: 11
-    baseValue: 0.75
-    minValue: 0.5
-    maxValue: 1
-    consumeType: 2
-    isHandleWithCorrectFactor: 0
-    description: "\u697C\u68AF\u901F\u5EA6\u4FEE\u6B63\u7CFB\u6570"
-    animationState: 0
+    isHundredPercent: 0
   - propertyType: 12
     baseValue: 1
     minValue: 0.5
-    maxValue: 2
+    maxValue: 2.5
     consumeType: 2
     isHandleWithCorrectFactor: 0
     description: "\u653B\u51FB\u901F\u5EA6"
     animationState: 256
+    isHundredPercent: 1
   - propertyType: 13
     baseValue: 0.5
     minValue: 0.35
@@ -133,6 +128,7 @@ MonoBehaviour:
     isHandleWithCorrectFactor: 0
     description: "\u653B\u51FB\u8DDD\u79BB"
     animationState: 0
+    isHundredPercent: 0
   - propertyType: 14
     baseValue: 60
     minValue: 45
@@ -141,6 +137,7 @@ MonoBehaviour:
     isHandleWithCorrectFactor: 0
     description: "\u653B\u51FB\u89D2\u5EA6"
     animationState: 0
+    isHundredPercent: 0
   - propertyType: 15
     baseValue: 0.35
     minValue: 0.15
@@ -149,3 +146,22 @@ MonoBehaviour:
     isHandleWithCorrectFactor: 0
     description: "\u653B\u51FB\u9AD8\u5EA6"
     animationState: 0
+    isHundredPercent: 0
+  - propertyType: 10
+    baseValue: 2
+    minValue: 1
+    maxValue: 3
+    consumeType: 2
+    isHandleWithCorrectFactor: 0
+    description: "\u5954\u8DD1\u901F\u5EA6\u4FEE\u6B63\u7CFB\u6570"
+    animationState: 0
+    isHundredPercent: 0
+  - propertyType: 11
+    baseValue: 0.75
+    minValue: 0.5
+    maxValue: 1
+    consumeType: 2
+    isHandleWithCorrectFactor: 0
+    description: "\u697C\u68AF\u901F\u5EA6\u4FEE\u6B63\u7CFB\u6570"
+    animationState: 0
+    isHundredPercent: 0

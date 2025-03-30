@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using AOTScripts.CustomAttribute;
 using AOTScripts.Data;
-using CustomEditor.Scripts;
 using HotUpdate.Scripts.Common;
 using Newtonsoft.Json;
+using OfficeOpenXml;
 using Sirenix.OdinInspector;
+using UnityEditor;
 using UnityEngine;
 using Random = System.Random;
 
@@ -17,7 +19,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         menuName = "ScriptableObjects/BattleEffectConditionConfig")]
     public class BattleEffectConditionConfig : ConfigBase
     {
-        [ReadOnly] [SerializeField]
+        //[ReadOnly] 
+        [SerializeField]
         private List<BattleEffectConditionConfigData> conditionList = new List<BattleEffectConditionConfigData>();
 #if UNITY_EDITOR
         [ReadOnly]
@@ -55,7 +58,99 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         {
             return conditionList.Find(data => data.id == id);
         }
+        
+        public int GetConditionMaxId()
+        {
+            return conditionList.Count > 0 ? conditionList.Max(data => data.id) : 0;
+        }
+        
+        #if UNITY_EDITOR
+        public void AddConditionData(BattleEffectConditionConfigData data)
+        {
+            if (conditionList.Exists(b => b.id == data.id))
+            {
+                Debug.LogWarning($"condition id already exists: {data.id}");
+                return;
+            }
+            if (data.triggerType == TriggerType.None)
+                return;
+            conditionList.Add(data);
+            EditorUtility.SetDirty(this);
+        }
 
+        [Button("将scriptable对象写入excel")]
+        public void WriteToExcel()
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            };
+            jsonSerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+            var excel = Path.Combine(excelAssetReference.Path, $"{configName}.xlsx");
+            using (var package = new ExcelPackage(new FileInfo(excel)))
+            {
+                var worksheet = package.Workbook.Worksheets[0]; // 假设数据在第一个工作表
+                int rowCount = worksheet.Dimension.Rows;
+                
+                const int idCol = 1; // buffId 列
+                const int triggerTypeCol = 2;
+                const int probabilityCol = 3;
+                const int intervalCol = 4;
+                const int durationCol = 5;
+                const int targetTypeCol = 6;
+                const int targetCountCol = 7;
+                const int buffWeightCol = 8;
+                const int buffIncreaseTypeCol = 9;
+                const int conditionParamCol = 10;
+                int row = 0;
+                var existingIds = new HashSet<int>();
+                for (row = 3; row <= rowCount; row++)
+                {
+                    //var value = worksheet.Cells[row, idCol].GetValue<double>();
+                    int buffId = (int)worksheet.Cells[row, idCol].GetValue<double>();
+                    existingIds.Add(buffId);
+                }
+
+                try
+                {
+                    // 从第 2 行开始（跳过表头）
+                    var newRow = rowCount + 1;
+                    foreach (var configData in conditionList)
+                    {
+                        if (!existingIds.Contains(configData.id))
+                        {
+                            worksheet.Cells[newRow, idCol].Value = configData.id;
+                            worksheet.Cells[newRow, triggerTypeCol].Value = configData.triggerType.ToString();
+                            worksheet.Cells[newRow, probabilityCol].Value = configData.probability;
+                            worksheet.Cells[newRow, intervalCol].Value = configData.interval;
+                            worksheet.Cells[newRow, durationCol].Value = configData.duration;
+                            worksheet.Cells[newRow, targetTypeCol].Value = configData.targetType.ToString();
+                            worksheet.Cells[newRow, targetCountCol].Value = configData.targetCount;
+                            worksheet.Cells[newRow, buffWeightCol].Value = configData.buffWeight;
+                            worksheet.Cells[newRow, buffIncreaseTypeCol].Value = configData.buffIncreaseType.ToString();
+                            worksheet.Cells[newRow, durationCol].Value = configData.duration;
+
+                            var json = JsonConvert.SerializeObject(configData.conditionParam, jsonSerializerSettings);
+                            worksheet.Cells[newRow, conditionParamCol].Value = json;
+
+                            newRow++;
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Error in {row} ");
+                    throw;
+                }
+
+                // 保存文件
+                package.Save();
+                Debug.Log("Equipment table updated successfully!");
+            }
+        }
+
+#endif
         public BattleEffectConditionConfigData AnalysisDataString(string dataString)
         {
             var data = new BattleEffectConditionConfigData();
@@ -64,15 +159,15 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 return data;
             }
             var cleanString = dataString.Replace("[PassiveEffect]", "").Trim();
-            var parts = cleanString.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            var parts = cleanString.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
 
             // 解析基础字段（固定顺序的前5个参数）
-            data.triggerType = EnumHeaderParser.GetEnumValue<TriggerType>(parts[0].Trim());
+            data.triggerType = Enum.Parse<TriggerType>(parts[0].Trim());// EnumHeaderParser.GetEnumValue<TriggerType>();
             data.probability = float.Parse(parts[1].Replace("概率", "").Replace("%", ""));
             
             var targetPart = parts[2].Split(new[] { "个" }, StringSplitOptions.RemoveEmptyEntries);
             data.targetCount = int.Parse(targetPart[0].Replace("Buff目标对象", ""));
-            data.targetType = EnumHeaderParser.GetEnumValue<ConditionTargetType>(targetPart[1]);
+            data.targetType = Enum.Parse<ConditionTargetType>(targetPart[1]);
             
             data.interval = float.Parse(parts[3].Replace("冷却", "").Replace("秒", ""));
             data.duration = float.Parse(parts[4].Replace("持续时间", "").Replace("秒", ""));
@@ -86,13 +181,13 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             
             // 解析最后的Buff参数
             data.buffWeight = float.Parse(parts[^2].Replace("Buff权重", ""));
-            data.buffIncreaseType = EnumHeaderParser.GetEnumValue<BuffIncreaseType>(
+            data.buffIncreaseType = Enum.Parse<BuffIncreaseType>(
                 parts[^1].Replace("Buff增益类型", ""));
 
             // 处理条件参数
             if (paramParts.Count > 0)
             {
-                var paramString = string.Join(",", paramParts);
+                var paramString = string.Join("、", paramParts);
                 data.conditionParam = data.triggerType switch
                 {
                     TriggerType.OnAttackHit => new AttackHitConditionParam().AnalysisConditionParam<IConditionParam>(paramString),
@@ -429,7 +524,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             var increaseDesc = effect.increaseData.increaseType switch
             {
                 BuffIncreaseType.Base => "基础",
-                BuffIncreaseType.Multiplier => "基础",
+                BuffIncreaseType.Multiplier => "",
                 BuffIncreaseType.Extra => "额外",
                 BuffIncreaseType.CorrectionFactor => "总",
                 BuffIncreaseType.Current => "当前",
@@ -474,8 +569,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
         public bool Equals(BattleEffectConditionConfigData other)
         {
-            return id == other.id && triggerType == other.triggerType && Mathf.Approximately(probability, other.probability) && Mathf.Approximately(interval, other.interval) &&
-                   targetType == other.targetType && targetCount == other.targetCount && conditionParam.Equals(other.conditionParam);
+            return triggerType == other.triggerType && Mathf.Approximately(probability, other.probability) && Mathf.Approximately(interval, other.interval) &&
+                   targetType == other.targetType && targetCount == other.targetCount;
         }
     }
 
@@ -502,15 +597,14 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
         public string GetConditionDesc()
         {
-            var attackRangeStr = EnumHeaderParser.GetHeader(attackRangeType);
-            return $"目标类型:{targetType},造成伤害百分比:[{hpRange.min},{hpRange.max}]%,造成伤害:[{damageRange.min},{damageRange.max}]%,攻击范围:{attackRangeStr}";
+            return $"目标类型:{targetType}、造成伤害百分比:[{hpRange.min}%,{hpRange.max}%]、造成伤害:[{damageRange.min},{damageRange.max}],攻击范围:{attackRangeType}";
         }
 
         public T AnalysisConditionParam<T>(string str) where T : IConditionParam
         {
             if (str == null) return default;
             AttackHitConditionParam result; 
-            var parts = str.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
             var targetTypeStr = parts[0].Replace("目标类型:", "");
             result.targetType = (ConditionTargetType)Enum.Parse(typeof(ConditionTargetType), targetTypeStr);
             var damageProperty = parts[1].Replace("造成伤害百分比:", "");
@@ -542,18 +636,17 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
         public string GetConditionDesc()
         {
-            var skillStr = EnumHeaderParser.GetHeader(skillType);
-            return $"技能类型:{skillStr},消耗MP百分比:[{mpRange.min},{mpRange.max}]%";
+            return $"技能类型:{skillType}、消耗MP百分比:[{mpRange.min}%,{mpRange.max}%]";
         }
 
         public T AnalysisConditionParam<T>(string str) where T : IConditionParam
         {
             if (str == null) return default;
             SkillCastConditionParam result;
-            var parts = str.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            var mpProperty = parts[0].Replace("消耗MP百分比:", "");
+            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
+            var mpProperty = parts[1].Replace("消耗MP百分比:", "");
             result.mpRange = Range.GetRange(mpProperty);
-            var skillStr = parts[1].Replace("技能类型:", "");
+            var skillStr = parts[0].Replace("技能类型:", "");
             result.skillType = (SkillType)Enum.Parse(typeof(SkillType), skillStr);
             return (T)(IConditionParam)result;
         }
@@ -585,19 +678,19 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         {
             var damageStr = EnumHeaderParser.GetHeader(damageType);
             var damageCastStr = EnumHeaderParser.GetHeader(damageCastType);
-            return $"造成伤害类型:{damageStr},伤害百分比:[{damageRange.min},{damageRange.max}]%,造成伤害:[{hpRange.min},{hpRange.max}]%,伤害来源:{damageCastStr}";
+            return $"受到伤害类型:{damageStr}、受到伤害百分比:[{damageRange.min}%,{damageRange.max}%]、造成伤害:[{hpRange.min},{hpRange.max}]、伤害来源:{damageCastStr}";
         }
 
         public T AnalysisConditionParam<T>(string str) where T : IConditionParam
         {
             if (str == null) return default;
             TakeDamageConditionParam result;
-            var parts = str.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            var damageProperty = parts[0].Replace("造成伤害百分比:", "");
+            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
+            var damageProperty = parts[1].Replace("受到伤害百分比:", "");
             result.hpRange = Range.GetRange(damageProperty);
-            var damageRangeStr = parts[1].Replace("造成伤害:", "");
+            var damageRangeStr = parts[2].Replace("受到伤害:", "");
             result.damageRange = Range.GetRange(damageRangeStr);
-            var damageTypeStr = parts[2].Replace("造成伤害类型:", "");    
+            var damageTypeStr = parts[0].Replace("受到伤害类型:", "");    
             result.damageType = (DamageType)Enum.Parse(typeof(DamageType), damageTypeStr);
             var damageCastStr = parts[3].Replace("伤害来源:", "");
             result.damageCastType = (DamageCastType)Enum.Parse(typeof(DamageCastType), damageCastStr);
@@ -624,14 +717,14 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
         public string GetConditionDesc()
         {
-            return $"目标类型:{targetType},击杀目标数量:{targetCount},时间窗口:{timeWindow}秒";
+            return $"目标类型:{targetType}、击杀目标数量:{targetCount}、时间窗口:{timeWindow}秒";
         }
 
         public T AnalysisConditionParam<T>(string str) where T : IConditionParam
         {
             if (str == null) return default;
             KillConditionParam result;
-            var parts = str.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
             var targetTypeStr = parts[0].Replace("目标类型:", "");
             result.targetType = (ConditionTargetType)Enum.Parse(typeof(ConditionTargetType), targetTypeStr);
             var targetCountStr = parts[1].Replace("击杀目标数量:", "");
@@ -659,14 +752,14 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         
         public string GetConditionDesc()
         {
-            return $"生命值百分比:[{hpRange.min},{hpRange.max}]%";
+            return $"生命值百分比:[{hpRange.min}%,{hpRange.max}%]";
         }
 
         public T AnalysisConditionParam<T>(string str) where T : IConditionParam
         {
             if (str == null) return default;
             HpChangeConditionParam result;
-            var parts = str.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
             var hpProperty = parts[0].Replace("生命值百分比:", "");
             result.hpRange = Range.GetRange(hpProperty);
             return (T)(IConditionParam)result;
@@ -689,14 +782,14 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         }
         public string GetConditionDesc()
         {
-            return $"魔法值百分比:[{mpRange.min},{mpRange.max}]%";
+            return $"魔法值百分比:[{mpRange.min}%,{mpRange.max}%]";
         }
 
         public T AnalysisConditionParam<T>(string str) where T : IConditionParam
         {
             if (str == null) return default;
             MpChangeConditionParam result;
-            var parts = str.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);            
+            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);            
             var mpProperty = parts[0].Replace("魔法值百分比:", "");
             result.mpRange = Range.GetRange(mpProperty);
             return (T)(IConditionParam)result;
@@ -728,23 +821,21 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         }
         public string GetConditionDesc()
         {
-            var damageStr = EnumHeaderParser.GetHeader(damageType);
-            var damageCastStr = EnumHeaderParser.GetHeader(damageCastType);
-            return $"目标类型:{targetType},造成伤害类型:{damageStr},伤害百分比:[{damageRange.min},{damageRange.max}]%,造成伤害:[{hpRange.min},{hpRange.max}]%,伤害来源:{damageCastStr}";
+            return $"目标类型:{targetType}、造成伤害类型:{damageType}、造成伤害百分比:[{damageRange.min}%,{damageRange.max}%]、造成伤害:[{hpRange.min},{hpRange.max}]、伤害来源:{damageCastType}";
         }
 
         public T AnalysisConditionParam<T>(string str) where T : IConditionParam
         {
             if (str == null) return default;
             CriticalHitConditionParam result;
-            var parts = str.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            var targeTypeStr = parts[0].Replace("目标类型:", "");
-            result.targetType = (ConditionTargetType)Enum.Parse(typeof(ConditionTargetType), targeTypeStr);
-            var damageProperty = parts[1].Replace("造成伤害百分比:", "");
+            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
+            var targetTypeStr = parts[0].Replace("目标类型:", "");
+            result.targetType = (ConditionTargetType)Enum.Parse(typeof(ConditionTargetType), targetTypeStr);
+            var damageProperty = parts[2].Replace("造成伤害百分比:", "");
             result.hpRange = Range.GetRange(damageProperty);
-            var damageRangeStr = parts[2].Replace("造成伤害:", "");
+            var damageRangeStr = parts[3].Replace("造成伤害:", "");
             result.damageRange = Range.GetRange(damageRangeStr);
-            var damageTypeStr = parts[3].Replace("造成伤害类型:", "");
+            var damageTypeStr = parts[1].Replace("造成伤害类型:", "");
             result.damageType = (DamageType)Enum.Parse(typeof(DamageType), damageTypeStr);
             var damageCastStr = parts[4].Replace("伤害来源:", "");
             result.damageCastType = (DamageCastType)Enum.Parse(typeof(DamageCastType), damageCastStr);
@@ -768,14 +859,14 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         }
         public string GetConditionDesc()
         {
-            return $"闪避次数:{dodgeCount},闪避率:{dodgeRate}%";
+            return $"闪避次数:{dodgeCount}、闪避率:{dodgeRate}";
         }
 
         public T AnalysisConditionParam<T>(string str) where T : IConditionParam
         {
             if (str == null) return default;
             DodgeConditionParam result;
-            var parts = str.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
             var dodgeCountStr = parts[0].Replace("闪避次数:", "");
             result.dodgeCount = int.Parse(dodgeCountStr);
             var dodgeRateStr = parts[1].Replace("闪避率:", "");
@@ -801,15 +892,14 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         }
         public string GetConditionDesc()
         {
-            var attackRangeStr = EnumHeaderParser.GetHeader(attackRangeType);
-            return $"攻击力:{attack},攻击范围:{attackRangeStr}";
+            return $"攻击力:{attack}、攻击范围:{attackRangeType}";
         }
 
         public T AnalysisConditionParam<T>(string str) where T : IConditionParam
         {
             if (str == null) return default;
             AttackConditionParam result;
-            var parts = str.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
             var attackStr = parts[0].Replace("攻击力:", "");
             result.attack = float.Parse(attackStr);
             var attackRangeStr = parts[1].Replace("攻击范围:", "");
@@ -840,24 +930,23 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         }
         public string GetConditionDesc()
         {
-            var skillStr = EnumHeaderParser.GetHeader(skillType);
-            return $"目标类型:{targetType},技能类型:{skillStr},消耗MP百分比:[{mpRange.min},{mpRange.max}]%,造成伤害百分比:[{hpRange.min},{hpRange.max}]%,造成伤害:[{damageRange.min},{damageRange.max}]%";
+            return $"目标类型:{targetType}、技能类型:{skillType}、消耗MP百分比:[{mpRange.min}%,{mpRange.max}%]、造成伤害百分比:[{hpRange.min}%,{hpRange.max}%]、造成伤害:[{damageRange.min},{damageRange.max}]";
         }
 
         public T AnalysisConditionParam<T>(string str) where T : IConditionParam
         {
             if (str == null) return default;
             SkillHitConditionParam result;
-            var parts = str.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
             var targetTypeStr = parts[0].Replace("目标类型:", "");
             result.targetType = (ConditionTargetType)Enum.Parse(typeof(ConditionTargetType), targetTypeStr);
-            var damageProperty = parts[1].Replace("造成伤害百分比:", "");
+            var damageProperty = parts[3].Replace("造成伤害百分比:", "");
             result.hpRange = Range.GetRange(damageProperty);
-            var damageRangeStr = parts[2].Replace("造成伤害:", "");
+            var damageRangeStr = parts[4].Replace("造成伤害:", "");
             result.damageRange = Range.GetRange(damageRangeStr);
-            var skillStr = parts[3].Replace("技能类型:", "");
+            var skillStr = parts[1].Replace("技能类型:", "");
             result.skillType = (SkillType)Enum.Parse(typeof(SkillType), skillStr);
-            var mpProperty = parts[4].Replace("消耗MP百分比:", "");
+            var mpProperty = parts[2].Replace("消耗MP百分比:", "");
             result.mpRange = Range.GetRange(mpProperty);
             return (T)(IConditionParam)result;
         }

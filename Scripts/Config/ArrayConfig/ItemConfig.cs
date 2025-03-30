@@ -56,7 +56,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 gameItemData.equipmentPart = (EquipmentPart) Enum.Parse(typeof(EquipmentPart), row[10]);
                 gameItemData.duration = float.Parse(row[11]);
                 gameItemData.propertyDesc = row[12];
-                var buffExtra = JsonConvert.DeserializeObject<BuffExtraData[]>(row[14],jsonSerializerSettings);
+                var buffExtra = JsonConvert.DeserializeObject<BuffExtraData[]>(row[13],jsonSerializerSettings);
                 if (buffExtra.Length != 0)
                 {
                     gameItemData.isDealWithBuffExtraData = true;
@@ -68,25 +68,19 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         
 #if UNITY_EDITOR
         [SerializeField]
-        private EditorConfigManager editorConfigManager;
-        private PropertyConfig _propertyConfig;
-        private ConstantBuffConfig _constantBuffConfig;
-        private WeaponConfig _equipmentConfig;
-        private ArmorConfig _armorConfig;
-
-        private void OnValidate()
-        {
-            _propertyConfig ??= editorConfigManager.GetConfig<PropertyConfig>();
-            _constantBuffConfig ??= editorConfigManager.GetConfig<ConstantBuffConfig>();
-            _equipmentConfig ??= editorConfigManager.GetConfig<WeaponConfig>();
-            _armorConfig ??= editorConfigManager.GetConfig<ArmorConfig>();
-        }
+        private PropertyConfig propertyConfig;
+        [SerializeField]
+        private ConstantBuffConfig constantBuffConfig;
+        [SerializeField]
+        private WeaponConfig equipmentConfig;
+        [SerializeField]
+        private ArmorConfig armorConfig;
 
         /// <summary>
         /// 将道具的buffExtraData数据写入Excel
         /// </summary>
         /// <returns></returns>
-        [Button]
+        [Button("将道具的buffExtraData数据写入Excel")]
         public void WriteBuffExtraDataToExcel()
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
@@ -113,8 +107,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                         var item = gameItemDatas.FirstOrDefault(i => i.id == itemId);
                         if (item.id == 0) continue;
                     
-                        const int buffExtraCol = 16;
-                        const int buffIncreaseTypeCol = 15;
+                        const int buffExtraCol = 14;
+                        const int buffIncreaseTypeCol = 13;
                         if (item.buffExtraData != null && item.buffExtraData.Length > 0)
                         {
                             // 将 buffExtraData 序列化为字符串
@@ -141,29 +135,29 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         /// 2. 如果没有找到，则手动添加到ConstantBuffConfig中
         /// 3. 找到对应的buffExtraData，并设置到道具的buffExtraData中
         /// </summary>
-        [Button]
+        [Button("自动添加buffExtraData到ConstantBuffConfig的ScriptableObject中(但不写入Excel)")]
         public void CoverBuffExtraData()
         {
             for (int i = 0; i < gameItemDatas.Count; i++)
             {
                 var gameItemData = gameItemDatas[i];
-                if (gameItemData.isDealWithBuffExtraData)
+                if (gameItemData.isDealWithBuffExtraData || string.IsNullOrEmpty(gameItemData.propertyDesc))
                 {
                     continue;
                 }
-                var itemDescriptionProperties = _propertyConfig.GetItemDescriptionProperties(gameItemDatas[i].propertyDesc).ToArray();
+                var itemDescriptionProperties = propertyConfig.GetItemDescriptionProperties(gameItemDatas[i].propertyDesc).ToArray();
                 var list = new List<BuffExtraData>();
                 for (int j = 0; j < itemDescriptionProperties.Length; j++)
                 {
                     var tuple = itemDescriptionProperties[j];
-                    var buffExtraData = _constantBuffConfig.GetBuffDataByProperty(tuple);
+                    var buffExtraData = constantBuffConfig.GetBuffDataByProperty(tuple);
                     if (buffExtraData.buffId == 0)
                     {
                         //说明没有找到对应的buff数据，需要手动添加到constantBuffConfig中
                         Debug.Log($"Item {gameItemData.id}-{tuple.Item1}-{tuple.Item2} buffExtraData is null, now add {tuple.Item1}-{tuple.Item2} to ConstantBuffConfig");
-                        _constantBuffConfig.AddItemBuff(new BuffData
+                        constantBuffConfig.AddItemBuff(new BuffData
                         {
-                            buffId = _constantBuffConfig.GetMaxBuffId() +1,
+                            buffId = constantBuffConfig.GetMaxBuffId() +1,
                             propertyType = tuple.Item1,
                             duration = gameItemData.duration,
                             increaseDataList = new List<BuffIncreaseData>()
@@ -266,5 +260,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         Armor,
         Consume,
         Item,
+        Gold,
+        Score,
     }
 }

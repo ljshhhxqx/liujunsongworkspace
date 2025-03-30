@@ -25,832 +25,1106 @@ MonoBehaviour:
     propertyType: 0
     duration: 30
     increaseDataList:
-    - increaseType: 3
+    - increaseType: 4
       increaseValue: 0.2
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 2
     propertyType: 1
     duration: 30
     increaseDataList:
-    - increaseType: 3
+    - increaseType: 4
       increaseValue: 0.2
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 3
     propertyType: 5
     duration: 30
     increaseDataList:
-    - increaseType: 3
+    - increaseType: 4
       increaseValue: 0.2
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 4
     propertyType: 4
     duration: 30
     increaseDataList:
-    - increaseType: 3
+    - increaseType: 4
       increaseValue: 0.2
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 5
     propertyType: 5
     duration: 0
     increaseDataList:
-    - increaseType: 4
+    - increaseType: 5
       increaseValue: 50
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 6
     propertyType: 1
     duration: -1
     increaseDataList:
-    - increaseType: 0
+    - increaseType: 1
       increaseValue: 1
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 7
     propertyType: 1
     duration: -1
     increaseDataList:
-    - increaseType: 0
+    - increaseType: 1
       increaseValue: 2
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 8
     propertyType: 1
     duration: -1
     increaseDataList:
-    - increaseType: 0
+    - increaseType: 1
       increaseValue: 3
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 9
     propertyType: 1
     duration: -1
     increaseDataList:
-    - increaseType: 0
+    - increaseType: 1
       increaseValue: 4
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 10
     propertyType: 1
     duration: -1
     increaseDataList:
-    - increaseType: 0
+    - increaseType: 1
       increaseValue: 4.5
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 11
     propertyType: 1
     duration: -1
     increaseDataList:
-    - increaseType: 0
+    - increaseType: 1
       increaseValue: 5
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 12
     propertyType: 1
     duration: -1
     increaseDataList:
-    - increaseType: 0
+    - increaseType: 1
       increaseValue: 7
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 13
     propertyType: 1
     duration: -1
     increaseDataList:
-    - increaseType: 0
+    - increaseType: 1
       increaseValue: 10
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 14
     propertyType: 12
     duration: -1
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValue: 0.1
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 15
     propertyType: 12
     duration: -1
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValue: 0.2
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 16
     propertyType: 12
     duration: -1
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValue: 0.25
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 17
     propertyType: 12
     duration: -1
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValue: 0.3
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 18
     propertyType: 12
     duration: -1
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValue: 0.45
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 19
     propertyType: 12
     duration: -1
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValue: 0.6
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 20
     propertyType: 6
     duration: -1
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValue: 0.05
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 21
     propertyType: 6
     duration: -1
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValue: 0.07
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 22
     propertyType: 6
     duration: -1
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValue: 0.1
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 23
     propertyType: 6
     duration: -1
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValue: 0.15
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 24
     propertyType: 6
     duration: -1
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValue: 0.2
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 25
     propertyType: 7
     duration: -1
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValue: 0.1
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 26
     propertyType: 7
     duration: -1
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValue: 0.15
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 27
     propertyType: 7
     duration: -1
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValue: 0.2
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 28
     propertyType: 7
     duration: -1
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValue: 0.3
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 29
     propertyType: 7
     duration: -1
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValue: 0.4
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 30
+    propertyType: 7
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.05
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 31
     propertyType: 1
     duration: -1
     increaseDataList:
-    - increaseType: 0
-      increaseValue: 5.5
+    - increaseType: 1
+      increaseValue: 6
       operationType: 0
-  - buffId: 31
-    propertyType: 3
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 20
-      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 32
-    propertyType: 2
+    propertyType: 1
     duration: -1
     increaseDataList:
-    - increaseType: 0
-      increaseValue: 5
+    - increaseType: 1
+      increaseValue: 12
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 33
-    propertyType: 3
+    propertyType: 6
     duration: -1
     increaseDataList:
-    - increaseType: 0
-      increaseValue: 10
+    - increaseType: 3
+      increaseValue: 0.03
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 34
-    propertyType: 2
+    propertyType: 6
     duration: -1
     increaseDataList:
-    - increaseType: 0
-      increaseValue: 10
-      operationType: 0
-  - buffId: 35
-    propertyType: 3
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 25
-      operationType: 0
-  - buffId: 36
-    propertyType: 2
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 2.5
-      operationType: 0
-  - buffId: 37
-    propertyType: 3
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 50
-      operationType: 0
-  - buffId: 38
-    propertyType: 2
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 15
-      operationType: 0
-  - buffId: 39
-    propertyType: 3
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 30
-      operationType: 0
-  - buffId: 40
-    propertyType: 2
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 7.5
-      operationType: 0
-  - buffId: 41
-    propertyType: 3
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 15
-      operationType: 0
-  - buffId: 42
-    propertyType: 3
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 37.5
-      operationType: 0
-  - buffId: 43
-    propertyType: 2
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 4.5
-      operationType: 0
-  - buffId: 44
-    propertyType: 3
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 75
-      operationType: 0
-  - buffId: 45
-    propertyType: 2
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 22.5
-      operationType: 0
-  - buffId: 46
-    propertyType: 3
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 45
-      operationType: 0
-  - buffId: 47
-    propertyType: 3
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 100
-      operationType: 0
-  - buffId: 48
-    propertyType: 2
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 25
-      operationType: 0
-  - buffId: 49
-    propertyType: 0
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 0.05
-      operationType: 0
-  - buffId: 50
-    propertyType: 12
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 0.05
-      operationType: 0
-  - buffId: 51
-    propertyType: 0
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 0.075
-      operationType: 0
-  - buffId: 52
-    propertyType: 12
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 0.025
-      operationType: 0
-  - buffId: 53
-    propertyType: 0
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 0.01
-      operationType: 0
-  - buffId: 54
-    propertyType: 12
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 0.09
-      operationType: 0
-  - buffId: 55
-    propertyType: 0
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 0.1
-      operationType: 0
-  - buffId: 56
-    propertyType: 0
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 0.025
-      operationType: 0
-  - buffId: 57
-    propertyType: 12
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 0.075
-      operationType: 0
-  - buffId: 58
-    propertyType: 0
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 0.105
-      operationType: 0
-  - buffId: 59
-    propertyType: 12
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 0.045
-      operationType: 0
-  - buffId: 60
-    propertyType: 12
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 0.125
-      operationType: 0
-  - buffId: 61
-    propertyType: 0
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 0.15
-      operationType: 0
-  - buffId: 62
-    propertyType: 0
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 0.14
-      operationType: 0
-  - buffId: 63
-    propertyType: 12
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
       increaseValue: 0.06
       operationType: 0
-  - buffId: 64
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 35
+    propertyType: 6
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.12
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 36
     propertyType: 12
     duration: -1
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 3
+      increaseValue: 0.4
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 37
+    propertyType: 7
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.025
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 38
+    propertyType: 1
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 20
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 39
+    propertyType: 6
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.015
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 40
+    propertyType: 1
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 15
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 41
+    propertyType: 6
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.08
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 42
+    propertyType: 12
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.05
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 43
+    propertyType: 1
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 1.5
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 44
+    propertyType: 6
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.24
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 45
+    propertyType: 12
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
       increaseValue: 0.15
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 46
+    propertyType: 1
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 8
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 47
+    propertyType: 12
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.5
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 48
+    propertyType: 3
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 20
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 49
+    propertyType: 2
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 5
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 50
+    propertyType: 3
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 10
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 51
+    propertyType: 2
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 10
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 52
+    propertyType: 3
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 25
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 53
+    propertyType: 2
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 2.5
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 54
+    propertyType: 3
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 50
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 55
+    propertyType: 2
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 15
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 56
+    propertyType: 3
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 30
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 57
+    propertyType: 2
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 7.5
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 58
+    propertyType: 3
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 15
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 59
+    propertyType: 3
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 37.5
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 60
+    propertyType: 2
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 4.5
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 61
+    propertyType: 3
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 75
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 62
+    propertyType: 2
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 22.5
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 63
+    propertyType: 3
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 45
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 64
+    propertyType: 3
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 100
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 65
+    propertyType: 2
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 25
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 66
     propertyType: 0
     duration: -1
     increaseDataList:
-    - increaseType: 0
+    - increaseType: 1
+      increaseValue: 0.05
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 67
+    propertyType: 0
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 0.075
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 68
+    propertyType: 12
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.025
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 69
+    propertyType: 0
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 0.01
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 70
+    propertyType: 12
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.09
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 71
+    propertyType: 0
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 0.1
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 72
+    propertyType: 0
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 0.025
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 73
+    propertyType: 12
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.075
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 74
+    propertyType: 0
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 0.105
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 75
+    propertyType: 12
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.045
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 76
+    propertyType: 12
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.125
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 77
+    propertyType: 0
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 0.15
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 78
+    propertyType: 0
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 0.14
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 79
+    propertyType: 12
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.06
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 80
+    propertyType: 0
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
       increaseValue: 0.225
       operationType: 0
-  - buffId: 66
-    propertyType: 4
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 20
-      operationType: 0
-  - buffId: 67
-    propertyType: 4
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 1
-      operationType: 0
-  - buffId: 68
-    propertyType: 4
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 30
-      operationType: 0
-  - buffId: 69
-    propertyType: 4
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 0.5
-      operationType: 0
-  - buffId: 70
-    propertyType: 4
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 15
-      operationType: 0
-  - buffId: 71
-    propertyType: 4
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 2
-      operationType: 0
-  - buffId: 72
-    propertyType: 4
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 50
-      operationType: 0
-  - buffId: 73
-    propertyType: 4
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 5
-      operationType: 0
-  - buffId: 74
-    propertyType: 4
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 1.5
-      operationType: 0
-  - buffId: 75
-    propertyType: 4
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 45
-      operationType: 0
-  - buffId: 76
-    propertyType: 4
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 0.75
-      operationType: 0
-  - buffId: 77
-    propertyType: 4
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 22.5
-      operationType: 0
-  - buffId: 78
-    propertyType: 4
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 3
-      operationType: 0
-  - buffId: 79
-    propertyType: 4
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 75
-      operationType: 0
-  - buffId: 80
-    propertyType: 4
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 7.5
-      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 81
     propertyType: 4
     duration: -1
     increaseDataList:
-    - increaseType: 0
-      increaseValue: 2.25
+    - increaseType: 1
+      increaseValue: 20
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 82
     propertyType: 4
     duration: -1
     increaseDataList:
-    - increaseType: 0
-      increaseValue: 60
+    - increaseType: 1
+      increaseValue: 1
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 83
     propertyType: 4
     duration: -1
     increaseDataList:
-    - increaseType: 0
-      increaseValue: 1.25
+    - increaseType: 1
+      increaseValue: 30
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 84
     propertyType: 4
     duration: -1
     increaseDataList:
-    - increaseType: 0
-      increaseValue: 35
+    - increaseType: 1
+      increaseValue: 0.5
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 85
     propertyType: 4
     duration: -1
     increaseDataList:
-    - increaseType: 0
-      increaseValue: 4.5
+    - increaseType: 1
+      increaseValue: 15
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 86
     propertyType: 4
     duration: -1
     increaseDataList:
-    - increaseType: 0
-      increaseValue: 120
+    - increaseType: 1
+      increaseValue: 2
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 87
     propertyType: 4
     duration: -1
     increaseDataList:
-    - increaseType: 0
-      increaseValue: 10
+    - increaseType: 1
+      increaseValue: 50
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 88
-    propertyType: 6
+    propertyType: 4
     duration: -1
     increaseDataList:
-    - increaseType: 2
-      increaseValue: 0.03
-      operationType: 0
-  - buffId: 89
-    propertyType: 7
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 0.08
-      operationType: 0
-  - buffId: 90
-    propertyType: 7
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 0.05
-      operationType: 0
-  - buffId: 91
-    propertyType: 6
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 0.02
-      operationType: 0
-  - buffId: 92
-    propertyType: 7
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 0.075
-      operationType: 0
-  - buffId: 93
-    propertyType: 6
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 0.08
-      operationType: 0
-  - buffId: 94
-    propertyType: 6
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 0.045
-      operationType: 0
-  - buffId: 95
-    propertyType: 7
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 0.12
-      operationType: 0
-  - buffId: 96
-    propertyType: 6
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 0.075
-      operationType: 0
-  - buffId: 97
-    propertyType: 6
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 0.12
-      operationType: 0
-  - buffId: 98
-    propertyType: 7
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 0.24
-      operationType: 0
-  - buffId: 99
-    propertyType: 7
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 0.25
-      operationType: 0
-  - buffId: 100
-    propertyType: 6
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 0.18
-      operationType: 0
-  - buffId: 101
-    propertyType: 7
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 0.36
-      operationType: 0
-  - buffId: 102
-    propertyType: 1
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 1.5
-      operationType: 0
-  - buffId: 103
-    propertyType: 3
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 0.5
-      operationType: 0
-  - buffId: 104
-    propertyType: 1
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 2
-      operationType: 0
-  - buffId: 105
-    propertyType: 3
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 0.25
-      operationType: 0
-  - buffId: 106
-    propertyType: 1
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 1
-      operationType: 0
-  - buffId: 107
-    propertyType: 3
-    duration: -1
-    increaseDataList:
-    - increaseType: 0
-      increaseValue: 1
-      operationType: 0
-  - buffId: 108
-    propertyType: 1
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
+    - increaseType: 1
       increaseValue: 5
       operationType: 0
-  - buffId: 109
-    propertyType: 3
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 89
+    propertyType: 4
     duration: -1
     increaseDataList:
-    - increaseType: 0
-      increaseValue: 2
+    - increaseType: 1
+      increaseValue: 1.5
       operationType: 0
-  - buffId: 110
-    propertyType: 1
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 90
+    propertyType: 4
     duration: -1
     increaseDataList:
-    - increaseType: 2
-      increaseValue: 2.5
+    - increaseType: 1
+      increaseValue: 45
       operationType: 0
-  - buffId: 111
-    propertyType: 3
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 91
+    propertyType: 4
     duration: -1
     increaseDataList:
-    - increaseType: 0
+    - increaseType: 1
       increaseValue: 0.75
       operationType: 0
-  - buffId: 112
-    propertyType: 1
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 92
+    propertyType: 4
     duration: -1
     increaseDataList:
-    - increaseType: 2
+    - increaseType: 1
+      increaseValue: 22.5
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 93
+    propertyType: 4
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
       increaseValue: 3
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 94
+    propertyType: 4
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 75
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 95
+    propertyType: 4
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 7.5
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 96
+    propertyType: 4
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 2.25
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 97
+    propertyType: 4
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 60
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 98
+    propertyType: 4
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 1.25
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 99
+    propertyType: 4
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 35
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 100
+    propertyType: 4
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 4.5
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 101
+    propertyType: 4
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 120
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 102
+    propertyType: 4
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 10
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 103
+    propertyType: 7
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.08
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 104
+    propertyType: 6
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.02
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 105
+    propertyType: 7
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.075
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 106
+    propertyType: 6
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.045
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 107
+    propertyType: 7
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.12
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 108
+    propertyType: 6
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.075
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 109
+    propertyType: 7
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.24
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 110
+    propertyType: 7
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.25
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 111
+    propertyType: 6
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.18
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 112
+    propertyType: 7
+    duration: -1
+    increaseDataList:
+    - increaseType: 3
+      increaseValue: 0.36
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 113
     propertyType: 3
     duration: -1
     increaseDataList:
-    - increaseType: 0
-      increaseValue: 1.5
+    - increaseType: 1
+      increaseValue: 0.5
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 114
-    propertyType: 1
+    propertyType: 3
     duration: -1
     increaseDataList:
-    - increaseType: 2
-      increaseValue: 7.5
+    - increaseType: 1
+      increaseValue: 0.25
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 115
     propertyType: 3
     duration: -1
     increaseDataList:
-    - increaseType: 0
-      increaseValue: 3
+    - increaseType: 1
+      increaseValue: 1
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 116
-    propertyType: 1
-    duration: -1
-    increaseDataList:
-    - increaseType: 2
-      increaseValue: 4
-      operationType: 0
-  - buffId: 117
     propertyType: 3
     duration: -1
     increaseDataList:
-    - increaseType: 0
-      increaseValue: 2.5
+    - increaseType: 1
+      increaseValue: 2
       operationType: 0
-  - buffId: 118
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 117
     propertyType: 1
     duration: -1
     increaseDataList:
-    - increaseType: 2
-      increaseValue: 10
+    - increaseType: 1
+      increaseValue: 2.5
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 118
+    propertyType: 3
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 0.75
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
   - buffId: 119
     propertyType: 3
     duration: -1
     increaseDataList:
-    - increaseType: 0
+    - increaseType: 1
+      increaseValue: 1.5
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 120
+    propertyType: 1
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 7.5
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 121
+    propertyType: 3
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 3
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 122
+    propertyType: 3
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
+      increaseValue: 2.5
+      operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0
+  - buffId: 123
+    propertyType: 3
+    duration: -1
+    increaseDataList:
+    - increaseType: 1
       increaseValue: 5
       operationType: 0
+    sourceType: 0
+    mainIncreaseType: 0

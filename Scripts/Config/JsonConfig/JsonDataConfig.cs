@@ -80,7 +80,14 @@ namespace HotUpdate.Scripts.Config.JsonConfig
             var damage = attackPower * (1f - damageReduction) * (isCritical? criticalDamageRatio : 1f);
             return damage;
         }
+
+        public float GetQualityWeight(QualityType quality)
+        {
+            var qualityData = jsonConfigData.propertyValueData.qualityRatioData.First(q => q.qualityType == quality);
+            return qualityData.weight;
         
+        }
+
         #region 装备生成器
         public EquipmentAttributeData GenerateEquipment(
             float totalGold,
@@ -147,7 +154,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
             attributes.Add(GenerateProperty(ref budget, mustHave, valueConfig));
 
             // 生成其他属性
-            while (budget > 0 && attributes.Count < 3)
+            while (budget > 0 && attributes.Count < 2)
             {
                 var candidates = GetAvailableWeights(partWeights, attributes);
                 if (candidates.Count == 0) break;
@@ -378,6 +385,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public float ratio;
         public float mainAttributeRatio;
         public float minPassiveAttributeRatio;
+        public float weight;
 
         public bool Equals(QualityRatioData other)
         {

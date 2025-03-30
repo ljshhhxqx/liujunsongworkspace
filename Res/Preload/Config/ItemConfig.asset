@@ -24,86 +24,77 @@ MonoBehaviour:
   - id: 3001
     name: "\u5355\u624B\u52511"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60011"
-    price: 10
+    price: 50
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 50
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 0
     equipmentPart: 6
     buffExtraData:
-    - buffId: 11
+    - buffId: 8
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 14
+    - buffId: 30
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 20
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+5%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+3,[Extra]|\u66B4\u51FB\u4F24\u5BB3+5%"
     isDealWithBuffExtraData: 1
   - id: 3002
     name: "\u5355\u624B\u52511"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60011"
-    price: 25
+    price: 100
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 75
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 1
     equipmentPart: 6
     buffExtraData:
-    - buffId: 12
+    - buffId: 31
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 14
+    - buffId: 25
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 21
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+7%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+6,[Extra]|\u66B4\u51FB\u4F24\u5BB3+10%"
     isDealWithBuffExtraData: 1
   - id: 3003
     name: "\u5355\u624B\u52511"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60011"
-    price: 100
+    price: 300
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 100
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 2
     equipmentPart: 6
     buffExtraData:
-    - buffId: 13
+    - buffId: 32
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 14
+    - buffId: 27
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 22
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+10,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+10%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+12,[Extra]|\u66B4\u51FB\u4F24\u5BB3+20%"
     isDealWithBuffExtraData: 1
   - id: 3004
     name: "\u5355\u624B\u52512"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60012"
-    price: 10
+    price: 50
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 50
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
@@ -113,72 +104,63 @@ MonoBehaviour:
     - buffId: 8
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 15
+    - buffId: 33
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 20
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u7387+5%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+3,[Extra]|\u66B4\u51FB\u7387+3%"
     isDealWithBuffExtraData: 1
   - id: 3005
     name: "\u5355\u624B\u52512"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60012"
-    price: 25
+    price: 100
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 75
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 1
     equipmentPart: 6
     buffExtraData:
-    - buffId: 10
+    - buffId: 31
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 16
+    - buffId: 34
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 20
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+25%,\u66B4\u51FB\u7387+5%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+6,[Extra]|\u66B4\u51FB\u7387+6%"
     isDealWithBuffExtraData: 1
   - id: 3006
     name: "\u5355\u624B\u52512"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60012"
-    price: 100
+    price: 300
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 100
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 2
     equipmentPart: 6
     buffExtraData:
-    - buffId: 12
+    - buffId: 32
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 17
+    - buffId: 35
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 20
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+30%,\u66B4\u51FB\u7387+5%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+12,[Extra]|\u66B4\u51FB\u7387+12%"
     isDealWithBuffExtraData: 1
   - id: 3007
     name: "\u5355\u624B\u52513"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60013"
-    price: 10
+    price: 50
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 50
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
@@ -191,1141 +173,1467 @@ MonoBehaviour:
     - buffId: 14
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 20
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+5%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+3,[Extra]|\u653B\u51FB\u901F\u5EA6+10%"
     isDealWithBuffExtraData: 1
   - id: 3008
     name: "\u5355\u624B\u52513"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60013"
-    price: 25
+    price: 100
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 75
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 1
     equipmentPart: 6
     buffExtraData:
-    - buffId: 10
+    - buffId: 31
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 14
+    - buffId: 15
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 21
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+7%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+6,[Extra]|\u653B\u51FB\u901F\u5EA6+20%"
     isDealWithBuffExtraData: 1
   - id: 3009
     name: "\u5355\u624B\u52513"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60013"
-    price: 100
+    price: 300
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 100
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 2
     equipmentPart: 6
     buffExtraData:
-    - buffId: 12
+    - buffId: 32
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 14
+    - buffId: 36
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 22
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+10%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+12,[Extra]|\u653B\u51FB\u901F\u5EA6+40%"
     isDealWithBuffExtraData: 1
   - id: 3010
     name: "\u5355\u624B\u52514"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60014"
-    price: 10
+    price: 50
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 50
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 0
     equipmentPart: 6
     buffExtraData:
-    - buffId: 8
+    - buffId: 11
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 14
+    - buffId: 37
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 22
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+10%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+5,[Extra]|\u66B4\u51FB\u4F24\u5BB3+2.5%"
     isDealWithBuffExtraData: 1
   - id: 3011
     name: "\u5355\u624B\u52514"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60014"
-    price: 25
+    price: 100
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 75
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 1
     equipmentPart: 6
     buffExtraData:
-    - buffId: 10
+    - buffId: 13
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 14
+    - buffId: 30
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 23
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+15%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+10,[Extra]|\u66B4\u51FB\u4F24\u5BB3+5%"
     isDealWithBuffExtraData: 1
   - id: 3012
     name: "\u5355\u624B\u52514"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60014"
-    price: 100
+    price: 300
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 100
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 2
     equipmentPart: 6
     buffExtraData:
-    - buffId: 12
+    - buffId: 38
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 14
+    - buffId: 25
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 24
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u7387+20%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+20,[Extra]|\u66B4\u51FB\u4F24\u5BB3+10%"
     isDealWithBuffExtraData: 1
   - id: 3013
     name: "\u5355\u624B\u52515"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60015"
-    price: 10
+    price: 50
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 50
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 0
     equipmentPart: 6
     buffExtraData:
-    - buffId: 6
+    - buffId: 11
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 17
+    - buffId: 39
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 20
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+1,\u653B\u51FB\u901F\u5EA6+30%,\u66B4\u51FB\u7387+5%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+5,[Extra]|\u66B4\u51FB\u7387+1.5%"
     isDealWithBuffExtraData: 1
   - id: 3014
     name: "\u5355\u624B\u52515"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60015"
-    price: 25
+    price: 100
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 75
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 1
     equipmentPart: 6
     buffExtraData:
-    - buffId: 7
+    - buffId: 13
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 18
+    - buffId: 33
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 20
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+2,\u653B\u51FB\u901F\u5EA6+45%,\u66B4\u51FB\u7387+5%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+10,[Extra]|\u66B4\u51FB\u7387+3%"
     isDealWithBuffExtraData: 1
   - id: 3015
     name: "\u5355\u624B\u52515"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60015"
-    price: 100
+    price: 300
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 100
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 2
     equipmentPart: 6
     buffExtraData:
-    - buffId: 11
+    - buffId: 38
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 19
+    - buffId: 34
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 20
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+5,\u653B\u51FB\u901F\u5EA6+60%,\u66B4\u51FB\u7387+5%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+20,[Extra]|\u66B4\u51FB\u7387+6%"
     isDealWithBuffExtraData: 1
   - id: 3016
     name: "\u5355\u624B\u52515"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60015"
-    price: 100
+    price: 300
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 100
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 2
     equipmentPart: 6
     buffExtraData:
-    - buffId: 11
+    - buffId: 40
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 17
+    - buffId: 41
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 22
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+5,\u653B\u51FB\u901F\u5EA6+30%,\u66B4\u51FB\u7387+10%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+15,[Extra]|\u66B4\u51FB\u7387+8%"
     isDealWithBuffExtraData: 1
   - id: 3017
     name: "\u5355\u624B\u52516"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60016"
-    price: 10
+    price: 50
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 50
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 0
     equipmentPart: 6
     buffExtraData:
-    - buffId: 8
+    - buffId: 11
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 14
+    - buffId: 42
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 25
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+10%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+5,[Extra]|\u653B\u51FB\u901F\u5EA6+5%"
     isDealWithBuffExtraData: 1
   - id: 3018
     name: "\u5355\u624B\u52516"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60016"
-    price: 25
+    price: 100
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 75
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 1
     equipmentPart: 6
     buffExtraData:
-    - buffId: 10
+    - buffId: 13
       buffType: 1
       collectObjectBuffSize: 0
     - buffId: 14
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 26
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+15%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+10,[Extra]|\u653B\u51FB\u901F\u5EA6+10%"
     isDealWithBuffExtraData: 1
   - id: 3019
     name: "\u5355\u624B\u52516"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60016"
-    price: 100
+    price: 300
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 100
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 2
     equipmentPart: 6
     buffExtraData:
-    - buffId: 12
+    - buffId: 40
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 14
+    - buffId: 15
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 27
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+20%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+15,[Extra]|\u653B\u51FB\u901F\u5EA6+20%"
     isDealWithBuffExtraData: 1
   - id: 3020
     name: "\u5355\u624B\u52517"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60017"
-    price: 10
+    price: 50
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 50
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 0
     equipmentPart: 6
     buffExtraData:
-    - buffId: 11
+    - buffId: 43
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 14
+    - buffId: 34
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 25
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+10%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+1.5,[Extra]|\u66B4\u51FB\u7387+6%"
     isDealWithBuffExtraData: 1
   - id: 3021
     name: "\u5355\u624B\u52517"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60017"
-    price: 25
+    price: 100
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 75
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 1
     equipmentPart: 6
     buffExtraData:
-    - buffId: 12
+    - buffId: 8
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 14
+    - buffId: 35
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 26
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+15%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+3,[Extra]|\u66B4\u51FB\u7387+12%"
     isDealWithBuffExtraData: 1
   - id: 3022
     name: "\u5355\u624B\u52517"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60017"
-    price: 100
+    price: 300
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 100
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 2
     equipmentPart: 6
     buffExtraData:
-    - buffId: 13
+    - buffId: 31
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 14
+    - buffId: 44
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 27
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+10,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+20%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+6,[Extra]|\u66B4\u51FB\u7387+24%"
     isDealWithBuffExtraData: 1
   - id: 3023
     name: "\u5355\u624B\u52518"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60018"
-    price: 10
+    price: 50
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 50
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 0
     equipmentPart: 6
     buffExtraData:
-    - buffId: 8
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 15
+    - buffId: 43
       buffType: 1
       collectObjectBuffSize: 0
     - buffId: 25
       buffType: 1
       collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+10%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+1.5,[Extra]|\u66B4\u51FB\u4F24\u5BB3+10%"
     isDealWithBuffExtraData: 1
   - id: 3024
     name: "\u5355\u624B\u52518"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60018"
-    price: 25
+    price: 100
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 75
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 1
     equipmentPart: 6
     buffExtraData:
-    - buffId: 10
+    - buffId: 8
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 16
+    - buffId: 27
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 25
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+25%,\u66B4\u51FB\u4F24\u5BB3+10%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+3,[Extra]|\u66B4\u51FB\u4F24\u5BB3+20%"
     isDealWithBuffExtraData: 1
   - id: 3025
     name: "\u5355\u624B\u52518"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60018"
-    price: 100
+    price: 300
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 100
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 2
     equipmentPart: 6
     buffExtraData:
-    - buffId: 12
+    - buffId: 31
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 17
+    - buffId: 29
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 25
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+30%,\u66B4\u51FB\u4F24\u5BB3+10%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+6,[Extra]|\u66B4\u51FB\u4F24\u5BB3+40%"
     isDealWithBuffExtraData: 1
   - id: 3026
     name: "\u5355\u624B\u52519"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60019"
-    price: 10
+    price: 50
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 50
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 0
     equipmentPart: 6
     buffExtraData:
-    - buffId: 8
+    - buffId: 43
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 14
+    - buffId: 45
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 25
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+10%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+1.5,[Extra]|\u653B\u51FB\u901F\u5EA6+15%"
     isDealWithBuffExtraData: 1
   - id: 3027
     name: "\u5355\u624B\u52519"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60019"
-    price: 25
+    price: 100
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 75
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 1
     equipmentPart: 6
     buffExtraData:
-    - buffId: 10
+    - buffId: 8
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 14
+    - buffId: 16
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 26
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+15%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+3,[Extra]|\u653B\u51FB\u901F\u5EA6+25%"
     isDealWithBuffExtraData: 1
   - id: 3028
     name: "\u5355\u624B\u52519"
     desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u60019"
-    price: 25
+    price: 100
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 75
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 1
     equipmentPart: 6
     buffExtraData:
-    - buffId: 10
+    - buffId: 9
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 14
+    - buffId: 15
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 26
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+15%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+4,[Extra]|\u653B\u51FB\u901F\u5EA6+20%"
     isDealWithBuffExtraData: 1
   - id: 3029
     name: "\u5355\u624B\u52519"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60019"
-    price: 100
+    price: 300
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 100
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 2
     equipmentPart: 6
     buffExtraData:
-    - buffId: 12
+    - buffId: 46
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 14
+    - buffId: 36
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 27
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+20%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+8,[Extra]|\u653B\u51FB\u901F\u5EA6+40%"
     isDealWithBuffExtraData: 1
   - id: 3030
     name: "\u5355\u624B\u52519"
     desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u60019"
-    price: 100
+    price: 300
     sellPriceRatio: 0.6
     itemType: 1
     maxStack: 1
-    weight: 100
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 2
     equipmentPart: 6
     buffExtraData:
-    - buffId: 12
+    - buffId: 31
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 15
+    - buffId: 47
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 26
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+15%"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+6,[Extra]|\u653B\u51FB\u901F\u5EA6+50%"
     isDealWithBuffExtraData: 1
   - id: 3031
-    name: "\u5355\u624B\u525110"
-    desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u600110"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 1
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 6
-    buffExtraData:
-    - buffId: 11
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 14
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 25
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+5,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+10%"
-    isDealWithBuffExtraData: 1
-  - id: 3032
-    name: "\u5355\u624B\u525110"
-    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u600110"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 1
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 6
-    buffExtraData:
-    - buffId: 12
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 14
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 26
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+15%"
-    isDealWithBuffExtraData: 1
-  - id: 3033
-    name: "\u5355\u624B\u525110"
-    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600110"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 1
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 6
-    buffExtraData:
-    - buffId: 13
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 14
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 27
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+10,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+20%"
-    isDealWithBuffExtraData: 1
-  - id: 3034
-    name: "\u5355\u624B\u525111"
-    desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u600111"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 1
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 6
-    buffExtraData:
-    - buffId: 8
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 15
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 20
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u7387+5%"
-    isDealWithBuffExtraData: 1
-  - id: 3035
-    name: "\u5355\u624B\u525111"
-    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u600111"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 1
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 6
-    buffExtraData:
-    - buffId: 10
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 16
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 20
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+25%,\u66B4\u51FB\u7387+5%"
-    isDealWithBuffExtraData: 1
-  - id: 3036
-    name: "\u5355\u624B\u525111"
-    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600111"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 1
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 6
-    buffExtraData:
-    - buffId: 12
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 17
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 20
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+30%,\u66B4\u51FB\u7387+5%"
-    isDealWithBuffExtraData: 1
-  - id: 3037
-    name: "\u5355\u624B\u525112"
-    desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u600112"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 1
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 6
-    buffExtraData:
-    - buffId: 8
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 15
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 20
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u7387+5%"
-    isDealWithBuffExtraData: 1
-  - id: 3038
-    name: "\u5355\u624B\u525112"
-    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u600112"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 1
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 6
-    buffExtraData:
-    - buffId: 10
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 15
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 21
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u7387+7%"
-    isDealWithBuffExtraData: 1
-  - id: 3039
-    name: "\u5355\u624B\u525112"
-    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600112"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 1
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 6
-    buffExtraData:
-    - buffId: 12
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 15
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 22
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u7387+10%"
-    isDealWithBuffExtraData: 1
-  - id: 3040
-    name: "\u5355\u624B\u525113"
-    desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u600113"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 1
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 6
-    buffExtraData:
-    - buffId: 10
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 15
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 25
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+4.5,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+10%"
-    isDealWithBuffExtraData: 1
-  - id: 3041
-    name: "\u5355\u624B\u525113"
-    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u600113"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 1
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 6
-    buffExtraData:
-    - buffId: 12
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 15
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 25
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+10%"
-    isDealWithBuffExtraData: 1
-  - id: 3042
-    name: "\u5355\u624B\u525113"
-    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u600113"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 1
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 6
-    buffExtraData:
-    - buffId: 12
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 14
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 27
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+7,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+20%"
-    isDealWithBuffExtraData: 1
-  - id: 3043
-    name: "\u5355\u624B\u525113"
-    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600113"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 1
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 6
-    buffExtraData:
-    - buffId: 13
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 15
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 25
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+10,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+10%"
-    isDealWithBuffExtraData: 1
-  - id: 3044
-    name: "\u5355\u624B\u525113"
-    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600113"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 1
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 6
-    buffExtraData:
-    - buffId: 13
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 14
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 27
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+10,\u653B\u51FB\u901F\u5EA6+10%,\u66B4\u51FB\u4F24\u5BB3+20%"
-    isDealWithBuffExtraData: 1
-  - id: 3045
-    name: "\u5355\u624B\u525114"
-    desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u600114"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 1
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 6
-    buffExtraData:
-    - buffId: 8
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 15
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 25
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+10%"
-    isDealWithBuffExtraData: 1
-  - id: 3046
-    name: "\u5355\u624B\u525114"
-    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u600114"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 1
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 6
-    buffExtraData:
-    - buffId: 9
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 15
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 27
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+4,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+20%"
-    isDealWithBuffExtraData: 1
-  - id: 3047
-    name: "\u5355\u624B\u525114"
-    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600114"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 1
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 6
-    buffExtraData:
-    - buffId: 30
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 15
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 28
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+5.5,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+30%"
-    isDealWithBuffExtraData: 1
-  - id: 3048
-    name: "\u5355\u624B\u525115"
-    desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u600115"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 1
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 6
-    buffExtraData:
-    - buffId: 8
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 15
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 25
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+3,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+10%"
-    isDealWithBuffExtraData: 1
-  - id: 3049
-    name: "\u5355\u624B\u525115"
-    desc: "\u7A00\u6709\u5355\u624B\u5251\u5F62\u600115"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 1
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 6
-    buffExtraData:
-    - buffId: 9
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 16
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 26
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+4,\u653B\u51FB\u901F\u5EA6+25%,\u66B4\u51FB\u4F24\u5BB3+15%"
-    isDealWithBuffExtraData: 1
-  - id: 3050
-    name: "\u5355\u624B\u525115"
-    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600115"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 1
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 6
-    buffExtraData:
-    - buffId: 11
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 17
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 27
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+5,\u653B\u51FB\u901F\u5EA6+30%,\u66B4\u51FB\u4F24\u5BB3+20%"
-    isDealWithBuffExtraData: 1
-  - id: 3051
-    name: "\u5355\u624B\u525115"
-    desc: "\u4F20\u5947\u5355\u624B\u5251\u5F62\u600115"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 1
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 6
-    buffExtraData:
-    - buffId: 11
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 15
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 28
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+5,\u653B\u51FB\u901F\u5EA6+20%,\u66B4\u51FB\u4F24\u5BB3+30%"
-    isDealWithBuffExtraData: 1
-  - id: 3052
     name: "\u4E0A\u88631"
     desc: "\u666E\u901A\u4E0A\u88631"
     price: 10
     sellPriceRatio: 0.6
     itemType: 2
     maxStack: 1
-    weight: 50
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 0
-    equipmentPart: 1
+    equipmentPart: 2
     buffExtraData:
-    - buffId: 31
+    - buffId: 48
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 32
+    - buffId: 49
       buffType: 1
       collectObjectBuffSize: 0
-    propertyDesc: "\u751F\u547D\u503C+20,\u9632\u5FA1\u529B+5"
+    propertyDesc: "[Base]|\u751F\u547D\u503C+20,[Base]|\u9632\u5FA1\u529B+5"
     isDealWithBuffExtraData: 1
-  - id: 3053
+  - id: 3032
     name: "\u4E0A\u88632"
     desc: "\u666E\u901A\u4E0A\u88632"
     price: 10
     sellPriceRatio: 0.6
     itemType: 2
     maxStack: 1
-    weight: 50
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 0
+    equipmentPart: 2
+    buffExtraData:
+    - buffId: 50
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 51
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u751F\u547D\u503C+10,[Base]|\u9632\u5FA1\u529B+10"
+    isDealWithBuffExtraData: 1
+  - id: 3033
+    name: "\u4E0A\u88633"
+    desc: "\u666E\u901A\u4E0A\u88633"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 0
+    equipmentPart: 2
+    buffExtraData:
+    - buffId: 52
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 53
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u751F\u547D\u503C+25,[Base]|\u9632\u5FA1\u529B+2.5"
+    isDealWithBuffExtraData: 1
+  - id: 3034
+    name: "\u4E0A\u88634"
+    desc: "\u666E\u901A\u4E0A\u88634"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 0
+    equipmentPart: 2
+    buffExtraData:
+    - buffId: 54
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u751F\u547D\u503C+50"
+    isDealWithBuffExtraData: 1
+  - id: 3035
+    name: "\u4E0A\u88635"
+    desc: "\u666E\u901A\u4E0A\u88635"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 0
+    equipmentPart: 2
+    buffExtraData:
+    - buffId: 55
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u9632\u5FA1\u529B+15"
+    isDealWithBuffExtraData: 1
+  - id: 3036
+    name: "\u4E0A\u88631"
+    desc: "\u7A00\u6709\u4E0A\u88631"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 1
+    equipmentPart: 2
+    buffExtraData:
+    - buffId: 56
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 57
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u751F\u547D\u503C+30,[Base]|\u9632\u5FA1\u529B+7.5"
+    isDealWithBuffExtraData: 1
+  - id: 3037
+    name: "\u4E0A\u88632"
+    desc: "\u7A00\u6709\u4E0A\u88632"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 1
+    equipmentPart: 2
+    buffExtraData:
+    - buffId: 58
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 55
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u751F\u547D\u503C+15,[Base]|\u9632\u5FA1\u529B+15"
+    isDealWithBuffExtraData: 1
+  - id: 3038
+    name: "\u4E0A\u88633"
+    desc: "\u7A00\u6709\u4E0A\u88633"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 1
+    equipmentPart: 2
+    buffExtraData:
+    - buffId: 59
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 60
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u751F\u547D\u503C+37.5,[Base]|\u9632\u5FA1\u529B+4.5"
+    isDealWithBuffExtraData: 1
+  - id: 3039
+    name: "\u4E0A\u88634"
+    desc: "\u7A00\u6709\u4E0A\u88634"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 1
+    equipmentPart: 2
+    buffExtraData:
+    - buffId: 61
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u751F\u547D\u503C+75"
+    isDealWithBuffExtraData: 1
+  - id: 3040
+    name: "\u4E0A\u88635"
+    desc: "\u7A00\u6709\u4E0A\u88635"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 1
+    equipmentPart: 2
+    buffExtraData:
+    - buffId: 62
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u9632\u5FA1\u529B+22.5"
+    isDealWithBuffExtraData: 1
+  - id: 3041
+    name: "\u4E0A\u88631"
+    desc: "\u4F20\u5947\u4E0A\u88631"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 2
+    equipmentPart: 2
+    buffExtraData:
+    - buffId: 63
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 57
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u751F\u547D\u503C+45,[Base]|\u9632\u5FA1\u529B+7.5"
+    isDealWithBuffExtraData: 1
+  - id: 3042
+    name: "\u4E0A\u88632"
+    desc: "\u4F20\u5947\u4E0A\u88632"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 2
+    equipmentPart: 2
+    buffExtraData:
+    - buffId: 52
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 55
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u751F\u547D\u503C+25,[Base]|\u9632\u5FA1\u529B+15"
+    isDealWithBuffExtraData: 1
+  - id: 3043
+    name: "\u4E0A\u88633"
+    desc: "\u4F20\u5947\u4E0A\u88633"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 2
+    equipmentPart: 2
+    buffExtraData:
+    - buffId: 54
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 57
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u751F\u547D\u503C+50,[Base]|\u9632\u5FA1\u529B+7.5"
+    isDealWithBuffExtraData: 1
+  - id: 3044
+    name: "\u4E0A\u88634"
+    desc: "\u4F20\u5947\u4E0A\u88634"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 2
+    equipmentPart: 2
+    buffExtraData:
+    - buffId: 64
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u751F\u547D\u503C+100"
+    isDealWithBuffExtraData: 1
+  - id: 3045
+    name: "\u4E0A\u88635"
+    desc: "\u4F20\u5947\u4E0A\u88635"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 2
+    equipmentPart: 2
+    buffExtraData:
+    - buffId: 65
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u9632\u5FA1\u529B+25"
+    isDealWithBuffExtraData: 1
+  - id: 3046
+    name: "\u978B\u5B501"
+    desc: "\u666E\u901A\u978B\u5B501"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 0
+    equipmentPart: 4
+    buffExtraData:
+    - buffId: 66
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 42
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u79FB\u52A8\u901F\u5EA6+5%,[Extra]|\u653B\u51FB\u901F\u5EA6+5%"
+    isDealWithBuffExtraData: 1
+  - id: 3047
+    name: "\u978B\u5B502"
+    desc: "\u666E\u901A\u978B\u5B502"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 0
+    equipmentPart: 4
+    buffExtraData:
+    - buffId: 67
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 68
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u79FB\u52A8\u901F\u5EA6+7.5%,[Extra]|\u653B\u51FB\u901F\u5EA6+2.5%"
+    isDealWithBuffExtraData: 1
+  - id: 3048
+    name: "\u978B\u5B503"
+    desc: "\u666E\u901A\u978B\u5B503"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 0
+    equipmentPart: 4
+    buffExtraData:
+    - buffId: 69
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 70
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u79FB\u52A8\u901F\u5EA6+1%,[Extra]|\u653B\u51FB\u901F\u5EA6+9%"
+    isDealWithBuffExtraData: 1
+  - id: 3049
+    name: "\u978B\u5B504"
+    desc: "\u666E\u901A\u978B\u5B504"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 0
+    equipmentPart: 4
+    buffExtraData:
+    - buffId: 71
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u79FB\u52A8\u901F\u5EA6+10%"
+    isDealWithBuffExtraData: 1
+  - id: 3050
+    name: "\u978B\u5B505"
+    desc: "\u666E\u901A\u978B\u5B505"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 0
+    equipmentPart: 4
+    buffExtraData:
+    - buffId: 72
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 73
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u79FB\u52A8\u901F\u5EA6+2.5%,[Extra]|\u653B\u51FB\u901F\u5EA6+7.5%"
+    isDealWithBuffExtraData: 1
+  - id: 3051
+    name: "\u978B\u5B501"
+    desc: "\u7A00\u6709\u978B\u5B501"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 1
+    equipmentPart: 4
+    buffExtraData:
+    - buffId: 67
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 73
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u79FB\u52A8\u901F\u5EA6+7.5%,[Extra]|\u653B\u51FB\u901F\u5EA6+7.5%"
+    isDealWithBuffExtraData: 1
+  - id: 3052
+    name: "\u978B\u5B502"
+    desc: "\u7A00\u6709\u978B\u5B502"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 1
+    equipmentPart: 4
+    buffExtraData:
+    - buffId: 74
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 75
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u79FB\u52A8\u901F\u5EA6+10.5%,[Extra]|\u653B\u51FB\u901F\u5EA6+4.5%"
+    isDealWithBuffExtraData: 1
+  - id: 3053
+    name: "\u978B\u5B503"
+    desc: "\u7A00\u6709\u978B\u5B503"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 1
+    equipmentPart: 4
+    buffExtraData:
+    - buffId: 72
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 76
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u79FB\u52A8\u901F\u5EA6+2.5%,[Extra]|\u653B\u51FB\u901F\u5EA6+12.5%"
+    isDealWithBuffExtraData: 1
+  - id: 3054
+    name: "\u978B\u5B504"
+    desc: "\u7A00\u6709\u978B\u5B504"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 1
+    equipmentPart: 4
+    buffExtraData:
+    - buffId: 77
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u79FB\u52A8\u901F\u5EA6+15%"
+    isDealWithBuffExtraData: 1
+  - id: 3055
+    name: "\u978B\u5B505"
+    desc: "\u7A00\u6709\u978B\u5B505"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 1
+    equipmentPart: 4
+    buffExtraData:
+    - buffId: 66
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 14
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u79FB\u52A8\u901F\u5EA6+5%,[Extra]|\u653B\u51FB\u901F\u5EA6+10%"
+    isDealWithBuffExtraData: 1
+  - id: 3056
+    name: "\u978B\u5B501"
+    desc: "\u4F20\u5947\u978B\u5B501"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 2
+    equipmentPart: 4
+    buffExtraData:
+    - buffId: 71
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 14
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u79FB\u52A8\u901F\u5EA6+10%,[Extra]|\u653B\u51FB\u901F\u5EA6+10%"
+    isDealWithBuffExtraData: 1
+  - id: 3057
+    name: "\u978B\u5B502"
+    desc: "\u4F20\u5947\u978B\u5B502"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 2
+    equipmentPart: 4
+    buffExtraData:
+    - buffId: 78
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 79
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u79FB\u52A8\u901F\u5EA6+14%,[Extra]|\u653B\u51FB\u901F\u5EA6+6%"
+    isDealWithBuffExtraData: 1
+  - id: 3058
+    name: "\u978B\u5B503"
+    desc: "\u4F20\u5947\u978B\u5B503"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 2
+    equipmentPart: 4
+    buffExtraData:
+    - buffId: 66
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 45
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u79FB\u52A8\u901F\u5EA6+5%,[Extra]|\u653B\u51FB\u901F\u5EA6+15%"
+    isDealWithBuffExtraData: 1
+  - id: 3059
+    name: "\u978B\u5B504"
+    desc: "\u4F20\u5947\u978B\u5B504"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 2
+    equipmentPart: 4
+    buffExtraData:
+    - buffId: 80
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u79FB\u52A8\u901F\u5EA6+22.5%"
+    isDealWithBuffExtraData: 1
+  - id: 3060
+    name: "\u978B\u5B505"
+    desc: "\u4F20\u5947\u978B\u5B505"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 2
+    equipmentPart: 4
+    buffExtraData:
+    - buffId: 67
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 45
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u79FB\u52A8\u901F\u5EA6+7.5%,[Extra]|\u653B\u51FB\u901F\u5EA6+15%"
+    isDealWithBuffExtraData: 1
+  - id: 3061
+    name: "\u88E4\u5B501"
+    desc: "\u666E\u901A\u88E4\u5B501"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 0
+    equipmentPart: 3
+    buffExtraData:
+    - buffId: 81
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 82
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u4F53\u529B\u503C+20,[Base]|\u4F53\u529B\u6062\u590D+1"
+    isDealWithBuffExtraData: 1
+  - id: 3062
+    name: "\u88E4\u5B502"
+    desc: "\u666E\u901A\u88E4\u5B502"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 0
+    equipmentPart: 3
+    buffExtraData:
+    - buffId: 83
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 84
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u4F53\u529B\u503C+30,[Base]|\u4F53\u529B\u6062\u590D+0.5"
+    isDealWithBuffExtraData: 1
+  - id: 3063
+    name: "\u88E4\u5B503"
+    desc: "\u666E\u901A\u88E4\u5B503"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 0
+    equipmentPart: 3
+    buffExtraData:
+    - buffId: 85
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 86
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u4F53\u529B\u503C+15,[Base]|\u4F53\u529B\u6062\u590D+2"
+    isDealWithBuffExtraData: 1
+  - id: 3064
+    name: "\u88E4\u5B504"
+    desc: "\u666E\u901A\u88E4\u5B504"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 0
+    equipmentPart: 3
+    buffExtraData:
+    - buffId: 87
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u4F53\u529B\u503C+50"
+    isDealWithBuffExtraData: 1
+  - id: 3065
+    name: "\u88E4\u5B505"
+    desc: "\u666E\u901A\u88E4\u5B505"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 0
+    equipmentPart: 3
+    buffExtraData:
+    - buffId: 88
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u4F53\u529B\u6062\u590D+5"
+    isDealWithBuffExtraData: 1
+  - id: 3066
+    name: "\u88E4\u5B501"
+    desc: "\u7A00\u6709\u88E4\u5B501"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 1
+    equipmentPart: 3
+    buffExtraData:
+    - buffId: 83
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 89
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u4F53\u529B\u503C+30,[Base]|\u4F53\u529B\u6062\u590D+1.5"
+    isDealWithBuffExtraData: 1
+  - id: 3067
+    name: "\u88E4\u5B502"
+    desc: "\u7A00\u6709\u88E4\u5B502"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 1
+    equipmentPart: 3
+    buffExtraData:
+    - buffId: 90
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 91
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u4F53\u529B\u503C+45,[Base]|\u4F53\u529B\u6062\u590D+0.75"
+    isDealWithBuffExtraData: 1
+  - id: 3068
+    name: "\u88E4\u5B503"
+    desc: "\u7A00\u6709\u88E4\u5B503"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 1
+    equipmentPart: 3
+    buffExtraData:
+    - buffId: 92
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 93
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u4F53\u529B\u503C+22.5,[Base]|\u4F53\u529B\u6062\u590D+3"
+    isDealWithBuffExtraData: 1
+  - id: 3069
+    name: "\u88E4\u5B504"
+    desc: "\u7A00\u6709\u88E4\u5B504"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 1
+    equipmentPart: 3
+    buffExtraData:
+    - buffId: 94
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u4F53\u529B\u503C+75"
+    isDealWithBuffExtraData: 1
+  - id: 3070
+    name: "\u88E4\u5B505"
+    desc: "\u7A00\u6709\u88E4\u5B505"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 1
+    equipmentPart: 3
+    buffExtraData:
+    - buffId: 95
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u4F53\u529B\u6062\u590D+7.5"
+    isDealWithBuffExtraData: 1
+  - id: 3071
+    name: "\u88E4\u5B501"
+    desc: "\u4F20\u5947\u88E4\u5B501"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 2
+    equipmentPart: 3
+    buffExtraData:
+    - buffId: 90
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 96
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u4F53\u529B\u503C+45,[Base]|\u4F53\u529B\u6062\u590D+2.25"
+    isDealWithBuffExtraData: 1
+  - id: 3072
+    name: "\u88E4\u5B502"
+    desc: "\u4F20\u5947\u88E4\u5B502"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 2
+    equipmentPart: 3
+    buffExtraData:
+    - buffId: 97
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 98
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u4F53\u529B\u503C+60,[Base]|\u4F53\u529B\u6062\u590D+1.25"
+    isDealWithBuffExtraData: 1
+  - id: 3073
+    name: "\u88E4\u5B503"
+    desc: "\u4F20\u5947\u88E4\u5B503"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 2
+    equipmentPart: 3
+    buffExtraData:
+    - buffId: 99
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 100
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u4F53\u529B\u503C+35,[Base]|\u4F53\u529B\u6062\u590D+4.5"
+    isDealWithBuffExtraData: 1
+  - id: 3074
+    name: "\u88E4\u5B504"
+    desc: "\u4F20\u5947\u88E4\u5B504"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 2
+    equipmentPart: 3
+    buffExtraData:
+    - buffId: 101
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u4F53\u529B\u503C+120"
+    isDealWithBuffExtraData: 1
+  - id: 3075
+    name: "\u88E4\u5B505"
+    desc: "\u4F20\u5947\u88E4\u5B505"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 2
+    equipmentPart: 3
+    buffExtraData:
+    - buffId: 102
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u4F53\u529B\u6062\u590D+10"
+    isDealWithBuffExtraData: 1
+  - id: 3076
+    name: "\u5934\u76D41"
+    desc: "\u666E\u901A\u5934\u76D41"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
@@ -1335,1259 +1643,46 @@ MonoBehaviour:
     - buffId: 33
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 34
+    - buffId: 103
       buffType: 1
       collectObjectBuffSize: 0
-    propertyDesc: "\u751F\u547D\u503C+10,\u9632\u5FA1\u529B+10"
-    isDealWithBuffExtraData: 1
-  - id: 3054
-    name: "\u4E0A\u88633"
-    desc: "\u666E\u901A\u4E0A\u88633"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 1
-    buffExtraData:
-    - buffId: 35
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 36
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u751F\u547D\u503C+25,\u9632\u5FA1\u529B+2.5"
-    isDealWithBuffExtraData: 1
-  - id: 3055
-    name: "\u4E0A\u88634"
-    desc: "\u666E\u901A\u4E0A\u88634"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 1
-    buffExtraData:
-    - buffId: 37
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u751F\u547D\u503C+50"
-    isDealWithBuffExtraData: 1
-  - id: 3056
-    name: "\u4E0A\u88635"
-    desc: "\u666E\u901A\u4E0A\u88635"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 1
-    buffExtraData:
-    - buffId: 38
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u9632\u5FA1\u529B+15"
-    isDealWithBuffExtraData: 1
-  - id: 3057
-    name: "\u4E0A\u88631"
-    desc: "\u7A00\u6709\u4E0A\u88631"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 1
-    buffExtraData:
-    - buffId: 39
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 40
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u751F\u547D\u503C+30,\u9632\u5FA1\u529B+7.5"
-    isDealWithBuffExtraData: 1
-  - id: 3058
-    name: "\u4E0A\u88632"
-    desc: "\u7A00\u6709\u4E0A\u88632"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 1
-    buffExtraData:
-    - buffId: 41
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 38
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u751F\u547D\u503C+15,\u9632\u5FA1\u529B+15"
-    isDealWithBuffExtraData: 1
-  - id: 3059
-    name: "\u4E0A\u88633"
-    desc: "\u7A00\u6709\u4E0A\u88633"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 1
-    buffExtraData:
-    - buffId: 42
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 43
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u751F\u547D\u503C+37.5,\u9632\u5FA1\u529B+4.5"
-    isDealWithBuffExtraData: 1
-  - id: 3060
-    name: "\u4E0A\u88634"
-    desc: "\u7A00\u6709\u4E0A\u88634"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 1
-    buffExtraData:
-    - buffId: 44
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u751F\u547D\u503C+75"
-    isDealWithBuffExtraData: 1
-  - id: 3061
-    name: "\u4E0A\u88635"
-    desc: "\u7A00\u6709\u4E0A\u88635"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 1
-    buffExtraData:
-    - buffId: 45
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u9632\u5FA1\u529B+22.5"
-    isDealWithBuffExtraData: 1
-  - id: 3062
-    name: "\u4E0A\u88631"
-    desc: "\u4F20\u5947\u4E0A\u88631"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 1
-    buffExtraData:
-    - buffId: 46
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 40
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u751F\u547D\u503C+45,\u9632\u5FA1\u529B+7.5"
-    isDealWithBuffExtraData: 1
-  - id: 3063
-    name: "\u4E0A\u88632"
-    desc: "\u4F20\u5947\u4E0A\u88632"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 1
-    buffExtraData:
-    - buffId: 35
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 38
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u751F\u547D\u503C+25,\u9632\u5FA1\u529B+15"
-    isDealWithBuffExtraData: 1
-  - id: 3064
-    name: "\u4E0A\u88633"
-    desc: "\u4F20\u5947\u4E0A\u88633"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 1
-    buffExtraData:
-    - buffId: 37
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 40
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u751F\u547D\u503C+50,\u9632\u5FA1\u529B+7.5"
-    isDealWithBuffExtraData: 1
-  - id: 3065
-    name: "\u4E0A\u88634"
-    desc: "\u4F20\u5947\u4E0A\u88634"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 1
-    buffExtraData:
-    - buffId: 47
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u751F\u547D\u503C+100"
-    isDealWithBuffExtraData: 1
-  - id: 3066
-    name: "\u4E0A\u88635"
-    desc: "\u4F20\u5947\u4E0A\u88635"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 1
-    buffExtraData:
-    - buffId: 48
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u9632\u5FA1\u529B+25"
-    isDealWithBuffExtraData: 1
-  - id: 3067
-    name: "\u978B\u5B501"
-    desc: "\u666E\u901A\u978B\u5B501"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 4
-    buffExtraData:
-    - buffId: 49
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 50
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u79FB\u52A8\u901F\u5EA6+5%,\u653B\u51FB\u901F\u5EA6+5%"
-    isDealWithBuffExtraData: 1
-  - id: 3068
-    name: "\u978B\u5B502"
-    desc: "\u666E\u901A\u978B\u5B502"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 4
-    buffExtraData:
-    - buffId: 51
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 52
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u79FB\u52A8\u901F\u5EA6+7.5%,\u653B\u51FB\u901F\u5EA6+2.5%"
-    isDealWithBuffExtraData: 1
-  - id: 3069
-    name: "\u978B\u5B503"
-    desc: "\u666E\u901A\u978B\u5B503"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 4
-    buffExtraData:
-    - buffId: 53
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 54
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u79FB\u52A8\u901F\u5EA6+1%,\u653B\u51FB\u901F\u5EA6+9%"
-    isDealWithBuffExtraData: 1
-  - id: 3070
-    name: "\u978B\u5B504"
-    desc: "\u666E\u901A\u978B\u5B504"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 4
-    buffExtraData:
-    - buffId: 55
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u79FB\u52A8\u901F\u5EA6+10%"
-    isDealWithBuffExtraData: 1
-  - id: 3071
-    name: "\u978B\u5B505"
-    desc: "\u666E\u901A\u978B\u5B505"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 4
-    buffExtraData:
-    - buffId: 56
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 57
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u79FB\u52A8\u901F\u5EA6+2.5%,\u653B\u51FB\u901F\u5EA6+7.5%"
-    isDealWithBuffExtraData: 1
-  - id: 3072
-    name: "\u978B\u5B501"
-    desc: "\u7A00\u6709\u978B\u5B501"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 4
-    buffExtraData:
-    - buffId: 51
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 57
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u79FB\u52A8\u901F\u5EA6+7.5%,\u653B\u51FB\u901F\u5EA6+7.5%"
-    isDealWithBuffExtraData: 1
-  - id: 3073
-    name: "\u978B\u5B502"
-    desc: "\u7A00\u6709\u978B\u5B502"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 4
-    buffExtraData:
-    - buffId: 58
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 59
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u79FB\u52A8\u901F\u5EA6+10.5%,\u653B\u51FB\u901F\u5EA6+4.5%"
-    isDealWithBuffExtraData: 1
-  - id: 3074
-    name: "\u978B\u5B503"
-    desc: "\u7A00\u6709\u978B\u5B503"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 4
-    buffExtraData:
-    - buffId: 56
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 60
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u79FB\u52A8\u901F\u5EA6+2.5%,\u653B\u51FB\u901F\u5EA6+12.5%"
-    isDealWithBuffExtraData: 1
-  - id: 3075
-    name: "\u978B\u5B504"
-    desc: "\u7A00\u6709\u978B\u5B504"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 4
-    buffExtraData:
-    - buffId: 61
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u79FB\u52A8\u901F\u5EA6+15%"
-    isDealWithBuffExtraData: 1
-  - id: 3076
-    name: "\u978B\u5B505"
-    desc: "\u7A00\u6709\u978B\u5B505"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 4
-    buffExtraData:
-    - buffId: 49
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 14
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u79FB\u52A8\u901F\u5EA6+5%,\u653B\u51FB\u901F\u5EA6+10%"
+    propertyDesc: "[Extra]|\u66B4\u51FB\u7387+3%,[Extra]|\u66B4\u51FB\u4F24\u5BB3+8%"
     isDealWithBuffExtraData: 1
   - id: 3077
-    name: "\u978B\u5B501"
-    desc: "\u4F20\u5947\u978B\u5B501"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 4
-    buffExtraData:
-    - buffId: 55
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 14
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u79FB\u52A8\u901F\u5EA6+10%,\u653B\u51FB\u901F\u5EA6+10%"
-    isDealWithBuffExtraData: 1
-  - id: 3078
-    name: "\u978B\u5B502"
-    desc: "\u4F20\u5947\u978B\u5B502"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 4
-    buffExtraData:
-    - buffId: 62
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 63
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u79FB\u52A8\u901F\u5EA6+14%,\u653B\u51FB\u901F\u5EA6+6%"
-    isDealWithBuffExtraData: 1
-  - id: 3079
-    name: "\u978B\u5B503"
-    desc: "\u4F20\u5947\u978B\u5B503"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 4
-    buffExtraData:
-    - buffId: 49
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 64
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u79FB\u52A8\u901F\u5EA6+5%,\u653B\u51FB\u901F\u5EA6+15%"
-    isDealWithBuffExtraData: 1
-  - id: 3080
-    name: "\u978B\u5B504"
-    desc: "\u4F20\u5947\u978B\u5B504"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 4
-    buffExtraData:
-    - buffId: 65
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u79FB\u52A8\u901F\u5EA6+22.5%"
-    isDealWithBuffExtraData: 1
-  - id: 3081
-    name: "\u978B\u5B505"
-    desc: "\u4F20\u5947\u978B\u5B505"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 4
-    buffExtraData:
-    - buffId: 51
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 64
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u79FB\u52A8\u901F\u5EA6+7.5%,\u653B\u51FB\u901F\u5EA6+15%"
-    isDealWithBuffExtraData: 1
-  - id: 3082
-    name: "\u88E4\u5B501"
-    desc: "\u666E\u901A\u88E4\u5B501"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 3
-    buffExtraData:
-    - buffId: 66
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 67
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u4F53\u529B\u503C+20,\u4F53\u529B\u6062\u590D+1"
-    isDealWithBuffExtraData: 1
-  - id: 3083
-    name: "\u88E4\u5B502"
-    desc: "\u666E\u901A\u88E4\u5B502"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 3
-    buffExtraData:
-    - buffId: 68
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 69
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u4F53\u529B\u503C+30,\u4F53\u529B\u6062\u590D+0.5"
-    isDealWithBuffExtraData: 1
-  - id: 3084
-    name: "\u88E4\u5B503"
-    desc: "\u666E\u901A\u88E4\u5B503"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 3
-    buffExtraData:
-    - buffId: 70
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 71
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u4F53\u529B\u503C+15,\u4F53\u529B\u6062\u590D+2"
-    isDealWithBuffExtraData: 1
-  - id: 3085
-    name: "\u88E4\u5B504"
-    desc: "\u666E\u901A\u88E4\u5B504"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 3
-    buffExtraData:
-    - buffId: 72
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u4F53\u529B\u503C+50"
-    isDealWithBuffExtraData: 1
-  - id: 3086
-    name: "\u88E4\u5B505"
-    desc: "\u666E\u901A\u88E4\u5B505"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 3
-    buffExtraData:
-    - buffId: 73
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u4F53\u529B\u6062\u590D+5"
-    isDealWithBuffExtraData: 1
-  - id: 3087
-    name: "\u88E4\u5B501"
-    desc: "\u7A00\u6709\u88E4\u5B501"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 3
-    buffExtraData:
-    - buffId: 68
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 74
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u4F53\u529B\u503C+30,\u4F53\u529B\u6062\u590D+1.5"
-    isDealWithBuffExtraData: 1
-  - id: 3088
-    name: "\u88E4\u5B502"
-    desc: "\u7A00\u6709\u88E4\u5B502"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 3
-    buffExtraData:
-    - buffId: 75
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 76
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u4F53\u529B\u503C+45,\u4F53\u529B\u6062\u590D+0.75"
-    isDealWithBuffExtraData: 1
-  - id: 3089
-    name: "\u88E4\u5B503"
-    desc: "\u7A00\u6709\u88E4\u5B503"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 3
-    buffExtraData:
-    - buffId: 77
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 78
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u4F53\u529B\u503C+22.5,\u4F53\u529B\u6062\u590D+3"
-    isDealWithBuffExtraData: 1
-  - id: 3090
-    name: "\u88E4\u5B504"
-    desc: "\u7A00\u6709\u88E4\u5B504"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 3
-    buffExtraData:
-    - buffId: 79
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u4F53\u529B\u503C+75"
-    isDealWithBuffExtraData: 1
-  - id: 3091
-    name: "\u88E4\u5B505"
-    desc: "\u7A00\u6709\u88E4\u5B505"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 3
-    buffExtraData:
-    - buffId: 80
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u4F53\u529B\u6062\u590D+7.5"
-    isDealWithBuffExtraData: 1
-  - id: 3092
-    name: "\u88E4\u5B501"
-    desc: "\u4F20\u5947\u88E4\u5B501"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 3
-    buffExtraData:
-    - buffId: 75
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 81
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u4F53\u529B\u503C+45,\u4F53\u529B\u6062\u590D+2.25"
-    isDealWithBuffExtraData: 1
-  - id: 3093
-    name: "\u88E4\u5B502"
-    desc: "\u4F20\u5947\u88E4\u5B502"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 3
-    buffExtraData:
-    - buffId: 82
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 83
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u4F53\u529B\u503C+60,\u4F53\u529B\u6062\u590D+1.25"
-    isDealWithBuffExtraData: 1
-  - id: 3094
-    name: "\u88E4\u5B503"
-    desc: "\u4F20\u5947\u88E4\u5B503"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 3
-    buffExtraData:
-    - buffId: 84
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 85
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u4F53\u529B\u503C+35,\u4F53\u529B\u6062\u590D+4.5"
-    isDealWithBuffExtraData: 1
-  - id: 3095
-    name: "\u88E4\u5B504"
-    desc: "\u4F20\u5947\u88E4\u5B504"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 3
-    buffExtraData:
-    - buffId: 86
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u4F53\u529B\u503C+120"
-    isDealWithBuffExtraData: 1
-  - id: 3096
-    name: "\u88E4\u5B505"
-    desc: "\u4F20\u5947\u88E4\u5B505"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 3
-    buffExtraData:
-    - buffId: 87
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u4F53\u529B\u6062\u590D+10"
-    isDealWithBuffExtraData: 1
-  - id: 3097
-    name: "\u5934\u76D41"
-    desc: "\u666E\u901A\u5934\u76D41"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 0
-    buffExtraData:
-    - buffId: 88
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 89
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u66B4\u51FB\u7387+3%,\u66B4\u51FB\u4F24\u5BB3+8%"
-    isDealWithBuffExtraData: 1
-  - id: 3098
     name: "\u5934\u76D42"
     desc: "\u666E\u901A\u5934\u76D42"
     price: 10
     sellPriceRatio: 0.6
     itemType: 2
     maxStack: 1
-    weight: 50
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 0
-    equipmentPart: 0
+    equipmentPart: 1
     buffExtraData:
     - buffId: 20
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 90
+    - buffId: 30
       buffType: 1
       collectObjectBuffSize: 0
-    propertyDesc: "\u66B4\u51FB\u7387+5%,\u66B4\u51FB\u4F24\u5BB3+5%"
+    propertyDesc: "[Extra]|\u66B4\u51FB\u7387+5%,[Extra]|\u66B4\u51FB\u4F24\u5BB3+5%"
     isDealWithBuffExtraData: 1
-  - id: 3099
+  - id: 3078
     name: "\u5934\u76D43"
     desc: "\u666E\u901A\u5934\u76D43"
     price: 10
     sellPriceRatio: 0.6
     itemType: 2
     maxStack: 1
-    weight: 50
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 0
-    equipmentPart: 0
-    buffExtraData:
-    - buffId: 91
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 92
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u66B4\u51FB\u7387+2%,\u66B4\u51FB\u4F24\u5BB3+7.5%"
-    isDealWithBuffExtraData: 1
-  - id: 3100
-    name: "\u5934\u76D44"
-    desc: "\u666E\u901A\u5934\u76D44"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 0
-    buffExtraData:
-    - buffId: 93
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u66B4\u51FB\u7387+8%"
-    isDealWithBuffExtraData: 1
-  - id: 3101
-    name: "\u5934\u76D45"
-    desc: "\u666E\u901A\u5934\u76D45"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 0
-    buffExtraData:
-    - buffId: 26
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u66B4\u51FB\u4F24\u5BB3+15%"
-    isDealWithBuffExtraData: 1
-  - id: 3102
-    name: "\u5934\u76D41"
-    desc: "\u7A00\u6709\u5934\u76D41"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 0
-    buffExtraData:
-    - buffId: 94
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 95
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u66B4\u51FB\u7387+4.5%,\u66B4\u51FB\u4F24\u5BB3+12%"
-    isDealWithBuffExtraData: 1
-  - id: 3103
-    name: "\u5934\u76D42"
-    desc: "\u7A00\u6709\u5934\u76D42"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 0
-    buffExtraData:
-    - buffId: 96
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 92
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u66B4\u51FB\u7387+7.5%,\u66B4\u51FB\u4F24\u5BB3+7.5%"
-    isDealWithBuffExtraData: 1
-  - id: 3104
-    name: "\u5934\u76D43"
-    desc: "\u7A00\u6709\u5934\u76D43"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 0
-    buffExtraData:
-    - buffId: 88
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 25
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u66B4\u51FB\u7387+3%,\u66B4\u51FB\u4F24\u5BB3+10%"
-    isDealWithBuffExtraData: 1
-  - id: 3105
-    name: "\u5934\u76D44"
-    desc: "\u7A00\u6709\u5934\u76D44"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 0
-    buffExtraData:
-    - buffId: 97
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u66B4\u51FB\u7387+12%"
-    isDealWithBuffExtraData: 1
-  - id: 3106
-    name: "\u5934\u76D45"
-    desc: "\u7A00\u6709\u5934\u76D45"
-    price: 25
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 75
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 1
-    equipmentPart: 0
-    buffExtraData:
-    - buffId: 98
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u66B4\u51FB\u4F24\u5BB3+24%"
-    isDealWithBuffExtraData: 1
-  - id: 3107
-    name: "\u5934\u76D41"
-    desc: "\u4F20\u5947\u5934\u76D41"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 0
-    buffExtraData:
-    - buffId: 96
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 26
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u66B4\u51FB\u7387+7.5%,\u66B4\u51FB\u4F24\u5BB3+15%"
-    isDealWithBuffExtraData: 1
-  - id: 3108
-    name: "\u5934\u76D42"
-    desc: "\u4F20\u5947\u5934\u76D42"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 0
-    buffExtraData:
-    - buffId: 22
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 25
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u66B4\u51FB\u7387+10%,\u66B4\u51FB\u4F24\u5BB3+10%"
-    isDealWithBuffExtraData: 1
-  - id: 3109
-    name: "\u5934\u76D43"
-    desc: "\u4F20\u5947\u5934\u76D43"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 0
-    buffExtraData:
-    - buffId: 20
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 99
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u66B4\u51FB\u7387+5%,\u66B4\u51FB\u4F24\u5BB3+25%"
-    isDealWithBuffExtraData: 1
-  - id: 3110
-    name: "\u5934\u76D44"
-    desc: "\u4F20\u5947\u5934\u76D44"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 0
-    buffExtraData:
-    - buffId: 100
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u66B4\u51FB\u7387+18%"
-    isDealWithBuffExtraData: 1
-  - id: 3111
-    name: "\u5934\u76D45"
-    desc: "\u4F20\u5947\u5934\u76D45"
-    price: 100
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 100
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 2
-    equipmentPart: 0
-    buffExtraData:
-    - buffId: 101
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u66B4\u51FB\u4F24\u5BB3+36%"
-    isDealWithBuffExtraData: 1
-  - id: 3112
-    name: "\u8170\u5E261"
-    desc: "\u666E\u901A\u8170\u5E261"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 5
-    buffExtraData:
-    - buffId: 102
-      buffType: 1
-      collectObjectBuffSize: 0
-    - buffId: 103
-      buffType: 1
-      collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+1.5,\u751F\u547D\u6062\u590D+0.5"
-    isDealWithBuffExtraData: 1
-  - id: 3113
-    name: "\u8170\u5E262"
-    desc: "\u666E\u901A\u8170\u5E262"
-    price: 10
-    sellPriceRatio: 0.6
-    itemType: 2
-    maxStack: 1
-    weight: 50
-    iconLocation: 1
-    prefabLocation: 1
-    duration: -1
-    quality: 0
-    equipmentPart: 5
+    equipmentPart: 1
     buffExtraData:
     - buffId: 104
       buffType: 1
@@ -2595,21 +1690,59 @@ MonoBehaviour:
     - buffId: 105
       buffType: 1
       collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+2,\u751F\u547D\u6062\u590D+0.25"
+    propertyDesc: "[Extra]|\u66B4\u51FB\u7387+2%,[Extra]|\u66B4\u51FB\u4F24\u5BB3+7.5%"
     isDealWithBuffExtraData: 1
-  - id: 3114
-    name: "\u8170\u5E263"
-    desc: "\u666E\u901A\u8170\u5E263"
+  - id: 3079
+    name: "\u5934\u76D44"
+    desc: "\u666E\u901A\u5934\u76D44"
     price: 10
     sellPriceRatio: 0.6
     itemType: 2
     maxStack: 1
-    weight: 50
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 0
-    equipmentPart: 5
+    equipmentPart: 1
+    buffExtraData:
+    - buffId: 41
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Extra]|\u66B4\u51FB\u7387+8%"
+    isDealWithBuffExtraData: 1
+  - id: 3080
+    name: "\u5934\u76D45"
+    desc: "\u666E\u901A\u5934\u76D45"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 0
+    equipmentPart: 1
+    buffExtraData:
+    - buffId: 26
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Extra]|\u66B4\u51FB\u4F24\u5BB3+15%"
+    isDealWithBuffExtraData: 1
+  - id: 3081
+    name: "\u5934\u76D41"
+    desc: "\u7A00\u6709\u5934\u76D41"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 1
+    equipmentPart: 1
     buffExtraData:
     - buffId: 106
       buffType: 1
@@ -2617,252 +1750,507 @@ MonoBehaviour:
     - buffId: 107
       buffType: 1
       collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+1,\u751F\u547D\u6062\u590D+1"
+    propertyDesc: "[Extra]|\u66B4\u51FB\u7387+4.5%,[Extra]|\u66B4\u51FB\u4F24\u5BB3+12%"
     isDealWithBuffExtraData: 1
-  - id: 3115
+  - id: 3082
+    name: "\u5934\u76D42"
+    desc: "\u7A00\u6709\u5934\u76D42"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 1
+    equipmentPart: 1
+    buffExtraData:
+    - buffId: 108
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 105
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Extra]|\u66B4\u51FB\u7387+7.5%,[Extra]|\u66B4\u51FB\u4F24\u5BB3+7.5%"
+    isDealWithBuffExtraData: 1
+  - id: 3083
+    name: "\u5934\u76D43"
+    desc: "\u7A00\u6709\u5934\u76D43"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 1
+    equipmentPart: 1
+    buffExtraData:
+    - buffId: 33
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 25
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Extra]|\u66B4\u51FB\u7387+3%,[Extra]|\u66B4\u51FB\u4F24\u5BB3+10%"
+    isDealWithBuffExtraData: 1
+  - id: 3084
+    name: "\u5934\u76D44"
+    desc: "\u7A00\u6709\u5934\u76D44"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 1
+    equipmentPart: 1
+    buffExtraData:
+    - buffId: 35
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Extra]|\u66B4\u51FB\u7387+12%"
+    isDealWithBuffExtraData: 1
+  - id: 3085
+    name: "\u5934\u76D45"
+    desc: "\u7A00\u6709\u5934\u76D45"
+    price: 25
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 1
+    equipmentPart: 1
+    buffExtraData:
+    - buffId: 109
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Extra]|\u66B4\u51FB\u4F24\u5BB3+24%"
+    isDealWithBuffExtraData: 1
+  - id: 3086
+    name: "\u5934\u76D41"
+    desc: "\u4F20\u5947\u5934\u76D41"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 2
+    equipmentPart: 1
+    buffExtraData:
+    - buffId: 108
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 26
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Extra]|\u66B4\u51FB\u7387+7.5%,[Extra]|\u66B4\u51FB\u4F24\u5BB3+15%"
+    isDealWithBuffExtraData: 1
+  - id: 3087
+    name: "\u5934\u76D42"
+    desc: "\u4F20\u5947\u5934\u76D42"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 2
+    equipmentPart: 1
+    buffExtraData:
+    - buffId: 22
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 25
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Extra]|\u66B4\u51FB\u7387+10%,[Extra]|\u66B4\u51FB\u4F24\u5BB3+10%"
+    isDealWithBuffExtraData: 1
+  - id: 3088
+    name: "\u5934\u76D43"
+    desc: "\u4F20\u5947\u5934\u76D43"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 2
+    equipmentPart: 1
+    buffExtraData:
+    - buffId: 20
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 110
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Extra]|\u66B4\u51FB\u7387+5%,[Extra]|\u66B4\u51FB\u4F24\u5BB3+25%"
+    isDealWithBuffExtraData: 1
+  - id: 3089
+    name: "\u5934\u76D44"
+    desc: "\u4F20\u5947\u5934\u76D44"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 2
+    equipmentPart: 1
+    buffExtraData:
+    - buffId: 111
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Extra]|\u66B4\u51FB\u7387+18%"
+    isDealWithBuffExtraData: 1
+  - id: 3090
+    name: "\u5934\u76D45"
+    desc: "\u4F20\u5947\u5934\u76D45"
+    price: 100
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 2
+    equipmentPart: 1
+    buffExtraData:
+    - buffId: 112
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Extra]|\u66B4\u51FB\u4F24\u5BB3+36%"
+    isDealWithBuffExtraData: 1
+  - id: 3091
+    name: "\u8170\u5E261"
+    desc: "\u666E\u901A\u8170\u5E261"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 0
+    equipmentPart: 5
+    buffExtraData:
+    - buffId: 43
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 113
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+1.5,[Base]|\u751F\u547D\u6062\u590D+0.5"
+    isDealWithBuffExtraData: 1
+  - id: 3092
+    name: "\u8170\u5E262"
+    desc: "\u666E\u901A\u8170\u5E262"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 0
+    equipmentPart: 5
+    buffExtraData:
+    - buffId: 7
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 114
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+2,[Base]|\u751F\u547D\u6062\u590D+0.25"
+    isDealWithBuffExtraData: 1
+  - id: 3093
+    name: "\u8170\u5E263"
+    desc: "\u666E\u901A\u8170\u5E263"
+    price: 10
+    sellPriceRatio: 0.6
+    itemType: 2
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: -1
+    quality: 0
+    equipmentPart: 5
+    buffExtraData:
+    - buffId: 6
+      buffType: 1
+      collectObjectBuffSize: 0
+    - buffId: 115
+      buffType: 1
+      collectObjectBuffSize: 0
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+1,[Base]|\u751F\u547D\u6062\u590D+1"
+    isDealWithBuffExtraData: 1
+  - id: 3094
     name: "\u8170\u5E264"
     desc: "\u666E\u901A\u8170\u5E264"
     price: 10
     sellPriceRatio: 0.6
     itemType: 2
     maxStack: 1
-    weight: 50
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 0
     equipmentPart: 5
     buffExtraData:
-    - buffId: 108
+    - buffId: 11
       buffType: 1
       collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+5"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+5"
     isDealWithBuffExtraData: 1
-  - id: 3116
+  - id: 3095
     name: "\u8170\u5E265"
     desc: "\u666E\u901A\u8170\u5E265"
     price: 10
     sellPriceRatio: 0.6
     itemType: 2
     maxStack: 1
-    weight: 50
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 0
     equipmentPart: 5
     buffExtraData:
-    - buffId: 109
+    - buffId: 116
       buffType: 1
       collectObjectBuffSize: 0
-    propertyDesc: "\u751F\u547D\u6062\u590D+2"
+    propertyDesc: "[Base]|\u751F\u547D\u6062\u590D+2"
     isDealWithBuffExtraData: 1
-  - id: 3117
+  - id: 3096
     name: "\u8170\u5E261"
     desc: "\u7A00\u6709\u8170\u5E261"
     price: 25
     sellPriceRatio: 0.6
     itemType: 2
     maxStack: 1
-    weight: 75
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 1
     equipmentPart: 5
     buffExtraData:
-    - buffId: 110
+    - buffId: 117
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 111
+    - buffId: 118
       buffType: 1
       collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+2.5,\u751F\u547D\u6062\u590D+0.75"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+2.5,[Base]|\u751F\u547D\u6062\u590D+0.75"
     isDealWithBuffExtraData: 1
-  - id: 3118
+  - id: 3097
     name: "\u8170\u5E262"
     desc: "\u7A00\u6709\u8170\u5E262"
     price: 25
     sellPriceRatio: 0.6
     itemType: 2
     maxStack: 1
-    weight: 75
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 1
     equipmentPart: 5
     buffExtraData:
-    - buffId: 112
+    - buffId: 8
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 103
+    - buffId: 113
       buffType: 1
       collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+3,\u751F\u547D\u6062\u590D+0.5"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+3,[Base]|\u751F\u547D\u6062\u590D+0.5"
     isDealWithBuffExtraData: 1
-  - id: 3119
+  - id: 3098
     name: "\u8170\u5E263"
     desc: "\u7A00\u6709\u8170\u5E263"
     price: 25
     sellPriceRatio: 0.6
     itemType: 2
     maxStack: 1
-    weight: 75
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 1
     equipmentPart: 5
     buffExtraData:
-    - buffId: 102
+    - buffId: 43
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 113
+    - buffId: 119
       buffType: 1
       collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+1.5,\u751F\u547D\u6062\u590D+1.5"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+1.5,[Base]|\u751F\u547D\u6062\u590D+1.5"
     isDealWithBuffExtraData: 1
-  - id: 3120
+  - id: 3099
     name: "\u8170\u5E264"
     desc: "\u7A00\u6709\u8170\u5E264"
     price: 25
     sellPriceRatio: 0.6
     itemType: 2
     maxStack: 1
-    weight: 75
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 1
     equipmentPart: 5
     buffExtraData:
-    - buffId: 114
+    - buffId: 120
       buffType: 1
       collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+7.5"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+7.5"
     isDealWithBuffExtraData: 1
-  - id: 3121
+  - id: 3100
     name: "\u8170\u5E265"
     desc: "\u7A00\u6709\u8170\u5E265"
     price: 25
     sellPriceRatio: 0.6
     itemType: 2
     maxStack: 1
-    weight: 75
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 1
     equipmentPart: 5
     buffExtraData:
-    - buffId: 115
+    - buffId: 121
       buffType: 1
       collectObjectBuffSize: 0
-    propertyDesc: "\u751F\u547D\u6062\u590D+3"
+    propertyDesc: "[Base]|\u751F\u547D\u6062\u590D+3"
     isDealWithBuffExtraData: 1
-  - id: 3122
+  - id: 3101
     name: "\u8170\u5E261"
     desc: "\u4F20\u5947\u8170\u5E261"
     price: 100
     sellPriceRatio: 0.6
     itemType: 2
     maxStack: 1
-    weight: 100
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 2
     equipmentPart: 5
     buffExtraData:
-    - buffId: 116
+    - buffId: 9
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 107
+    - buffId: 115
       buffType: 1
       collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+4,\u751F\u547D\u6062\u590D+1"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+4,[Base]|\u751F\u547D\u6062\u590D+1"
     isDealWithBuffExtraData: 1
-  - id: 3123
+  - id: 3102
     name: "\u8170\u5E262"
     desc: "\u4F20\u5947\u8170\u5E262"
     price: 100
     sellPriceRatio: 0.6
     itemType: 2
     maxStack: 1
-    weight: 100
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 2
     equipmentPart: 5
     buffExtraData:
-    - buffId: 108
+    - buffId: 11
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 111
+    - buffId: 118
       buffType: 1
       collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+5,\u751F\u547D\u6062\u590D+0.75"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+5,[Base]|\u751F\u547D\u6062\u590D+0.75"
     isDealWithBuffExtraData: 1
-  - id: 3124
+  - id: 3103
     name: "\u8170\u5E263"
     desc: "\u4F20\u5947\u8170\u5E263"
     price: 100
     sellPriceRatio: 0.6
     itemType: 2
     maxStack: 1
-    weight: 100
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 2
     equipmentPart: 5
     buffExtraData:
-    - buffId: 104
+    - buffId: 7
       buffType: 1
       collectObjectBuffSize: 0
-    - buffId: 117
+    - buffId: 122
       buffType: 1
       collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+2,\u751F\u547D\u6062\u590D+2.5"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+2,[Base]|\u751F\u547D\u6062\u590D+2.5"
     isDealWithBuffExtraData: 1
-  - id: 3125
+  - id: 3104
     name: "\u8170\u5E264"
     desc: "\u4F20\u5947\u8170\u5E264"
     price: 100
     sellPriceRatio: 0.6
     itemType: 2
     maxStack: 1
-    weight: 100
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 2
     equipmentPart: 5
     buffExtraData:
-    - buffId: 118
+    - buffId: 13
       buffType: 1
       collectObjectBuffSize: 0
-    propertyDesc: "\u653B\u51FB\u529B+10"
+    propertyDesc: "[Base]|\u653B\u51FB\u529B+10"
     isDealWithBuffExtraData: 1
-  - id: 3126
+  - id: 3105
     name: "\u8170\u5E265"
     desc: "\u4F20\u5947\u8170\u5E265"
     price: 100
     sellPriceRatio: 0.6
     itemType: 2
     maxStack: 1
-    weight: 100
+    weight: 0
     iconLocation: 1
     prefabLocation: 1
     duration: -1
     quality: 2
     equipmentPart: 5
     buffExtraData:
-    - buffId: 119
+    - buffId: 123
       buffType: 1
       collectObjectBuffSize: 0
-    propertyDesc: "\u751F\u547D\u6062\u590D+5"
+    propertyDesc: "[Base]|\u751F\u547D\u6062\u590D+5"
     isDealWithBuffExtraData: 1
-  editorConfigManager: {fileID: 11400000, guid: 56662f2e2c781224386c67bee26f4b6c, type: 2}
+  propertyConfig: {fileID: 11400000, guid: a73d25488f1c5ab45b0ebe0d7b2b8773, type: 2}
+  constantBuffConfig: {fileID: 11400000, guid: 35e3c4f0b7f37c746b61bfdd3070e326, type: 2}
+  equipmentConfig: {fileID: 11400000, guid: 13c80828bdc532049a897fa41da6dd89, type: 2}
+  armorConfig: {fileID: 11400000, guid: 202a595842ec9a8438ae84d35ea46aec, type: 2}

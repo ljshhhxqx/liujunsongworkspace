@@ -442,23 +442,30 @@ MonoBehaviour:
       - propertyType: 12
         propertyIncreaseValueList:
         - buffIncreaseType: 1
-          value: 160
+          value: 320
         - buffIncreaseType: 2
-          value: 600
+          value: 1200
         - buffIncreaseType: 3
-          value: 240
+          value: 480
         - buffIncreaseType: 4
-          value: 800
+          value: 1600
       qualityRatioData:
       - qualityType: 0
         ratio: 1
         mainAttributeRatio: 1
+        minPassiveAttributeRatio: 0.24
+        weight: 0
       - qualityType: 1
         ratio: 1.2
         mainAttributeRatio: 0.6
+        minPassiveAttributeRatio: 0.24
+        weight: 0.2
       - qualityType: 2
         ratio: 1.5
         mainAttributeRatio: 0.6
+        minPassiveAttributeRatio: 0.24
+        weight: 0.9
+      valueVariance: 0
     otherData:
       animationActionData:
       - actionType: 3
