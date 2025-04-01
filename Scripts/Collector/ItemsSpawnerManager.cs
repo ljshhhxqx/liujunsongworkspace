@@ -15,6 +15,7 @@ using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
+using HotUpdate.Scripts.Tool.Static;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using MemoryPack;
 using Mirror;
@@ -29,7 +30,9 @@ namespace HotUpdate.Scripts.Collector
     public class ItemsSpawnerManager : ServerNetworkComponent
     {
         private readonly Dictionary<int, CollectObjectController> _collectiblePrefabs = new Dictionary<int, CollectObjectController>();
-        private readonly Dictionary<CollectObjectBuffSize, Dictionary<PropertyTypeEnum, Material>> _collectibleMaterials = new Dictionary<CollectObjectBuffSize, Dictionary<PropertyTypeEnum, Material>>();
+
+        private readonly Dictionary<QualityType, Dictionary<PropertyTypeEnum, Material>> _collectibleMaterials =
+            new Dictionary<QualityType, Dictionary<PropertyTypeEnum, Material>>();
         private TreasureChestComponent _treasureChestPrefab;
         private IConfigProvider _configProvider;
         private MapBoundDefiner _mapBoundDefiner;
@@ -52,6 +55,7 @@ namespace HotUpdate.Scripts.Collector
         private UIManager _uiManager;
         private ConstantBuffConfig _constantBuffConfig;
         private RandomBuffConfig _randomBuffConfig;
+        private ShopConfig _shopConfig;
         private GameLoopController _gameLoopController;
         private GameSyncManager _gameSyncManager;
         private PlayerInGameManager _playerInGameManager;
@@ -83,6 +87,7 @@ namespace HotUpdate.Scripts.Collector
             _constantBuffConfig = _configProvider.GetConfig<ConstantBuffConfig>();
             _randomBuffConfig = _configProvider.GetConfig<RandomBuffConfig>();
             _chestConfig = _configProvider.GetConfig<ChestDataConfig>();
+            _shopConfig = _configProvider.GetConfig<ShopConfig>();
             _sceneLayer = _jsonDataConfig.GameConfig.groundSceneLayer;
             // _messageCenter.Register<PickerPickUpChestMessage>(OnPickerPickUpChestMessage);
             // _messageCenter.Register<PickerPickUpMessage>(OnPickUpItem);
@@ -129,17 +134,18 @@ namespace HotUpdate.Scripts.Collector
 
             if (ValidatePickup(chestPos, player.transform.position, _chestColliderConfig, playerCollider))
             {
-                var configData = _chestConfig.GetChestConfigData(chestData.ChestType);
-                if (configData.BuffExtraData.buffType != BuffType.None)
-                {
-                    _gameSyncManager.EnqueueServerCommand(new PropertyBuffCommand
-                    {
-                        Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property),
-                        TargetId = connectionId,
-                        BuffExtraData = configData.BuffExtraData
-                    });
-                    Debug.Log($"Add buff {configData.BuffExtraData.buffType} to player {player.name}");
-                }
+                //var configData = _chestConfig.GetChestConfigData(chestData.ChestId);
+                //todo: 处理掉落物品
+                // if (configData.buffExtraData.buffType != BuffType.None)
+                // {
+                //     _gameSyncManager.EnqueueServerCommand(new PropertyBuffCommand
+                //     {
+                //         Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property),
+                //         TargetId = connectionId,
+                //         BuffExtraData = configData.buffExtraData
+                //     });
+                //     Debug.Log($"Add buff {configData.buffExtraData.buffType} to player {player.name}");
+                // }
                 JudgeEndRound();
                 RpcPickupChest(pickerId, itemId);
             }
@@ -193,16 +199,20 @@ namespace HotUpdate.Scripts.Collector
 
             if (_collectibleMaterials.Count == 0)
             {
-                for (var i = (int)CollectObjectBuffSize.Small; i <= (int)CollectObjectBuffSize.Large; i++)
+                var collectObjectSizes = Enum.GetValues(typeof(QualityType)).Cast<QualityType>().ToArray();
+                for (var i = 0; i < collectObjectSizes.Length; i++)
                 {
-                    var collectObjectSize = (CollectObjectBuffSize)i;
-                    var matList = ResourceManager.Instance.GetMapCollectObjectMaterial(sceneName, collectObjectSize.ToString());
-                    _collectibleMaterials.Add(collectObjectSize, new Dictionary<PropertyTypeEnum, Material>());
+                    var qualityType = collectObjectSizes[i];
+                    if (!_collectibleMaterials.ContainsKey(qualityType))
+                    {
+                        _collectibleMaterials.Add(qualityType, new Dictionary<PropertyTypeEnum, Material>());
+                    }
+                    var matList = ResourceManager.Instance.GetMapCollectObjectMaterial(sceneName, qualityType.ToString());
                     foreach (var material in matList)
                     {
                         if (Enum.TryParse(material.name, out PropertyTypeEnum propertyType))
                         {
-                            _collectibleMaterials[collectObjectSize].Add(propertyType, material);
+                            _collectibleMaterials[qualityType].Add(propertyType, material);
                         }
                     }
                 }
@@ -419,7 +429,6 @@ namespace HotUpdate.Scripts.Collector
                         var extraData = new CollectItemCustomData
                         {
                             RandomBuffId = buff.buffId,
-                            BuffSize = buffData.collectObjectBuffSize,
                         };
                         var itemMetaData = new CollectItemMetaData(id, 
                             item.Item2,
@@ -451,16 +460,16 @@ namespace HotUpdate.Scripts.Collector
         private BuffExtraData GetBuffExtraData(int configId)
         {
             var configData = _collectObjectDataConfig.GetCollectObjectData(configId);
-            if (configData.isRandomBuff)
-            {
-                var propertyTypeEnum = PropertyTypeEnum.Score;
-                while (propertyTypeEnum == PropertyTypeEnum.Score)
-                {
-                    propertyTypeEnum = (PropertyTypeEnum)Random.Range((int)PropertyTypeEnum.Speed, (int)PropertyTypeEnum.CriticalDamageRatio + 1);
-                }
-                var buff = _randomBuffConfig.GetCollectBuff(propertyTypeEnum);
-                return buff;
-            }
+            // if (true)
+            // {
+            //     var propertyTypeEnum = PropertyTypeEnum.Score;
+            //     while (propertyTypeEnum == PropertyTypeEnum.Score)
+            //     {
+            //         propertyTypeEnum = (PropertyTypeEnum)Random.Range((int)PropertyTypeEnum.Speed, (int)PropertyTypeEnum.CriticalDamageRatio + 1);
+            //     }
+            //     var buff = _randomBuffConfig.GetCollectBuff(propertyTypeEnum);
+            //     return buff;
+            // }
 
             return configData.buffExtraData;
         }
@@ -468,20 +477,24 @@ namespace HotUpdate.Scripts.Collector
         [Server]
         public void SpawnTreasureChestServer()
         {
-            var chestType = (ChestType)Random.Range(1, (int)ChestType.Score + 1);
+            var random = Random.Range(0, 1);
+            var chestData = _chestConfig.RandomOne(random);
             var position = GetRandomStartPoint(0.75f);
             var id = CollectItemMetaData.GenerateItemId(position);
             var metaData = new CollectItemMetaData(id,
                 position,
                 0,
-                (int)chestType,
+                chestData.chestId,
                 (uint)Mathf.Abs(GameSyncManager.CurrentTick),
                 30,
                 (ushort)Random.Range(0, 65535),
                 -1);
+            var qualityItems = RandomItemsData.GenerateQualityItems(chestData.randomItems, random);
+            var shopIds = _shopConfig.GetQualityItems(qualityItems, random);
             metaData.SetCustomData(new ChestItemCustomData
             {
-                ChestType = chestType
+                ChestId = chestData.chestId,
+                ShopIds = shopIds.ToArray()
             });
             _serverTreasureChestMetaDataBytes = MemoryPackSerializer.Serialize(metaData);
             RpcSpawnTreasureChest(_serverTreasureChestMetaDataBytes);
@@ -492,7 +505,7 @@ namespace HotUpdate.Scripts.Collector
         {
             var metaData = MemoryPackSerializer.Deserialize<CollectItemMetaData>(serverTreasureChestMetaData);
             var position = metaData.Position.ToVector3();
-            var chestType = (ChestType)metaData.GetCustomData<ChestItemCustomData>().ChestType;
+            var chestType = (int)metaData.GetCustomData<ChestItemCustomData>().ChestId;
             var spawnedChest = GameObjectPoolManger.Instance.GetObject(
                 _treasureChestPrefab.gameObject,
                 position,
@@ -502,7 +515,7 @@ namespace HotUpdate.Scripts.Collector
             );
             _clientTreasureChest = spawnedChest.GetComponent<TreasureChestComponent>();
             _clientTreasureChest.ItemId = metaData.ItemId;
-            _clientTreasureChest.chestType = chestType;
+            //_clientTreasureChest.chestType = chestType;
             Debug.Log($"Client spawning treasure chest at position: {position} with id: {metaData.ItemId}");
         }
 
@@ -537,15 +550,14 @@ namespace HotUpdate.Scripts.Collector
                 var collectItemCustomData = data.GetCustomData<CollectItemCustomData>();
                 var buff = _randomBuffConfig.GetRandomBuffData(collectItemCustomData.RandomBuffId);
                 var component = go.GetComponent<CollectObjectController>();
-                var material = _collectibleMaterials[configData.buffExtraData.collectObjectBuffSize][buff.propertyType];
-                component.CollectId = data.ItemId;
+                var material = _collectibleMaterials[component.Quality][buff.propertyType];
+                component.collectId = data.ItemId;
                 if (component.CollectObjectData.collectObjectClass == CollectObjectClass.Buff)
                 {
                     component.SetBuffData(new BuffExtraData
                     {
                         buffId = buff.buffId,
                         buffType = BuffType.Random,
-                        collectObjectBuffSize = collectItemCustomData.BuffSize,
                     });
                     component.SetMaterial(material);
                 }
@@ -595,7 +607,7 @@ namespace HotUpdate.Scripts.Collector
                     break;
             }
 
-            return PlaceItems(collectTypes);
+            return GameStaticExtensions.Shuffle(PlaceItems(collectTypes)) as List<(int, Vector3)>;
         }
 
         /// <summary>
@@ -607,9 +619,11 @@ namespace HotUpdate.Scripts.Collector
         {
             var scoreCount = 0;
             var count = 0;
+            var goldCount = 0;
             while (remainingWeight > 0)
             {
                 var scoreItem = GetRandomItem(CollectObjectClass.Score);
+                var goldItem = GetRandomItem(CollectObjectClass.Gold);
                 if (scoreItem != -1)
                 {
                     var configData = _collectObjectDataConfig.GetCollectObjectData(scoreItem);
@@ -619,7 +633,16 @@ namespace HotUpdate.Scripts.Collector
                     count++;
                 }
 
-                if (count == 2 && remainingWeight > 0)
+                if (goldItem != -1)
+                {
+                    var configData = _collectObjectDataConfig.GetCollectObjectData(goldItem);
+                    itemsToSpawn.Add(goldItem);
+                    remainingWeight -= configData.weight;
+                    count++;
+                    goldCount++;
+                }
+
+                if (count >= 3 && remainingWeight > 0)
                 {
                     count = 0;
                     var buffItem = GetRandomItem(CollectObjectClass.Buff);
@@ -633,12 +656,18 @@ namespace HotUpdate.Scripts.Collector
                 }
             }
 
-            if (scoreCount > 0 && remainingWeight > 0)
+            if ((scoreCount > 0 && goldCount > 0) && remainingWeight > 0)
             {
                 var buffItem = GetRandomItem(CollectObjectClass.Score);
+                var goldItem = GetRandomItem(CollectObjectClass.Gold);
                 if (buffItem != -1)
                 {
                     itemsToSpawn.Add(buffItem);
+                }
+
+                if (goldItem != -1)
+                {
+                    itemsToSpawn.Add(goldItem);
                 }
             }
         }
@@ -666,11 +695,11 @@ namespace HotUpdate.Scripts.Collector
                     remainingWeight -= configData.weight;
                 }
                 
-                var scoreItem2 = GetRandomItem(CollectObjectClass.Score);
-                if (scoreItem2 != -1)
+                var goldItem = GetRandomItem(CollectObjectClass.Gold);
+                if (goldItem != -1)
                 {
-                    var configData = _collectObjectDataConfig.GetCollectObjectData(scoreItem2);
-                    scoreItems.Add(scoreItem2);
+                    var configData = _collectObjectDataConfig.GetCollectObjectData(goldItem);
+                    scoreItems.Add(goldItem);
                     remainingWeight -= configData.weight;
                 }
             }
@@ -681,10 +710,11 @@ namespace HotUpdate.Scripts.Collector
 
         private void SpawnMode3(List<int> itemsToSpawn, ref int remainingWeight)
         {
+            var collectTypes = Enum.GetValues(typeof(CollectObjectClass)).Cast<CollectObjectClass>().ToArray();
             while (remainingWeight > 0)
             {
-                var randomType = Random.Range(0, 1) > 0.66f ? CollectObjectClass.Score : CollectObjectClass.Buff;
-                var item = GetRandomItem(randomType);
+                var randomType = Random.Range(0, collectTypes.Length);
+                var item = GetRandomItem(collectTypes[randomType]);
                 if (item != -1)
                 {
                     var type = item;

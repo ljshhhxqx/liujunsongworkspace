@@ -13,7 +13,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [ReadOnly]
         [SerializeField]
         private List<CollectObjectData> collectConfigDatas;
-        public List<CollectObjectData> CollectConfigDatas => collectConfigDatas;
+        private readonly Dictionary<CollectObjectClass, HashSet<int>> _collectObjectDatas = new Dictionary<CollectObjectClass, HashSet<int>>();
         
         public CollectObjectData GetCollectObjectData(int configId)
         {
@@ -42,17 +42,24 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
             collectConfigDatas.Clear();
+            _collectObjectDatas.Clear();
             for (int i = 2; i < textAsset.Count; i++)
             {
                 var row = textAsset[i];
                 var collectConfigData = new CollectObjectData();
                 collectConfigData.id = int.Parse(row[0]);
-                collectConfigData.weight = int.Parse(row[1]);                
-                collectConfigData.buffExtraData = JsonConvert.DeserializeObject<BuffExtraData>(row[2]);
-                collectConfigData.buffSize = Enum.Parse<CollectObjectBuffSize>(row[3]);
-                collectConfigData.collectObjectClass = Enum.Parse<CollectObjectClass>(row[4]);
-                collectConfigData.isRandomBuff = bool.Parse(row[5]);
+                collectConfigData.itemId = int.Parse(row[1]);
+                collectConfigData.weight = int.Parse(row[2]);    
+                collectConfigData.description = row[3];
+                collectConfigData.buffExtraData = JsonConvert.DeserializeObject<BuffExtraData>(row[4]);
+                collectConfigData.collectObjectClass = Enum.Parse<CollectObjectClass>(row[5]);
+                // collectConfigData.randomItems = JsonConvert.DeserializeObject<RandomItemsData>(row[6]);
                 collectConfigDatas.Add(collectConfigData);
+                if (!_collectObjectDatas.ContainsKey(collectConfigData.collectObjectClass))
+                {
+                    _collectObjectDatas.Add(collectConfigData.collectObjectClass, new HashSet<int>());
+                }
+                _collectObjectDatas[collectConfigData.collectObjectClass].Add(collectConfigData.id);
             }
         }
     }
@@ -62,15 +69,16 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     public struct CollectObjectData
     {
         public int id;
+        public int itemId;
+        public string description;
         public int weight;
         public BuffExtraData buffExtraData;
-        public CollectObjectBuffSize buffSize;
         public CollectObjectClass collectObjectClass;
-        public bool isRandomBuff;
+        public QualityType qualityType;
+        //public RandomItemsData randomItems;
     }
 
     [Serializable]
-    [JsonSerializable]
     public struct CollectData
     {
         public float itemSpacing;
@@ -92,8 +100,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
     public enum CollectObjectClass
     {
-        TreasureChest,
         Score,
+        Gold,
         Buff,
     }
 }

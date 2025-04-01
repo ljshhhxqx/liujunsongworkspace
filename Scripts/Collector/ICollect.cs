@@ -3,6 +3,7 @@ using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using Mirror;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace HotUpdate.Scripts.Collector
 {
@@ -21,7 +22,12 @@ namespace HotUpdate.Scripts.Collector
 
     public abstract class CollectObject : NetworkMonoController, ICollect, IItem
     {
-        [SyncVar] public uint CollectId;
+        [HideInInspector]
+        [SyncVar] 
+        public uint collectId;
+        [SerializeField]
+        private QualityType quality;
+        public QualityType Quality => quality;
         public abstract Collider Collider { get; }
         protected abstract void SendCollectRequest(uint pickerId, PickerType pickerType);
 

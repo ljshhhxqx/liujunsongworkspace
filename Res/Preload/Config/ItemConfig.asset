@@ -21,6 +21,70 @@ MonoBehaviour:
   configName: ItemConfig
   isArray: 1
   gameItemDatas:
+  - id: 1001
+    name: "\u91D1\u5E01"
+    desc: "\u8D27\u5E01\u8D44\u6E90"
+    price: 1
+    sellPriceRatio: 0
+    itemType: 5
+    maxStack: 999999999
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: 0
+    quality: 0
+    equipmentPart: 0
+    buffExtraData: []
+    propertyDesc: null
+    isDealWithBuffExtraData: 0
+  - id: 1002
+    name: "\u94BB\u77F3"
+    desc: "\u8D27\u5E01\u8D44\u6E90"
+    price: 5
+    sellPriceRatio: 0
+    itemType: 5
+    maxStack: 999999999
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: 0
+    quality: 1
+    equipmentPart: 0
+    buffExtraData: []
+    propertyDesc: null
+    isDealWithBuffExtraData: 0
+  - id: 2001
+    name: "\u5B9D\u85CF"
+    desc: "\u8D27\u5E01\u8D44\u6E90"
+    price: 100
+    sellPriceRatio: 0
+    itemType: 3
+    maxStack: 999
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: 0
+    quality: 2
+    equipmentPart: 0
+    buffExtraData: []
+    propertyDesc: null
+    isDealWithBuffExtraData: 0
+  - id: 2002
+    name: "\u4F53\u529B\u836F\u5242(\u7C7B\u578B\u2160)"
+    desc: "\u7ACB\u5373\u6062\u590D10%\u4F53\u529B"
+    price: 10
+    sellPriceRatio: 0.75
+    itemType: 3
+    maxStack: 99
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: 0
+    quality: 0
+    equipmentPart: 0
+    buffExtraData: []
+    propertyDesc: null
+    isDealWithBuffExtraData: 0
   - id: 3001
     name: "\u5355\u624B\u52511"
     desc: "\u666E\u901A\u5355\u624B\u5251\u5F62\u60011"
@@ -2250,6 +2314,54 @@ MonoBehaviour:
       collectObjectBuffSize: 0
     propertyDesc: "[Base]|\u751F\u547D\u6062\u590D+5"
     isDealWithBuffExtraData: 1
+  - id: 4001
+    name: "\u5206\u65701"
+    desc: "\u5206\u6570\u8D44\u6E90"
+    price: 1
+    sellPriceRatio: 0
+    itemType: 6
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: 0
+    quality: 0
+    equipmentPart: 0
+    buffExtraData: []
+    propertyDesc: null
+    isDealWithBuffExtraData: 0
+  - id: 4002
+    name: "\u5206\u65702"
+    desc: "\u5206\u6570\u8D44\u6E90"
+    price: 5
+    sellPriceRatio: 0
+    itemType: 6
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: 1
+    quality: 1
+    equipmentPart: 0
+    buffExtraData: []
+    propertyDesc: null
+    isDealWithBuffExtraData: 0
+  - id: 4003
+    name: "\u5206\u65703"
+    desc: "\u5206\u6570\u8D44\u6E90"
+    price: 10
+    sellPriceRatio: 0
+    itemType: 6
+    maxStack: 1
+    weight: 0
+    iconLocation: 1
+    prefabLocation: 1
+    duration: 2
+    quality: 2
+    equipmentPart: 0
+    buffExtraData: []
+    propertyDesc: null
+    isDealWithBuffExtraData: 0
   propertyConfig: {fileID: 11400000, guid: a73d25488f1c5ab45b0ebe0d7b2b8773, type: 2}
   constantBuffConfig: {fileID: 11400000, guid: 35e3c4f0b7f37c746b61bfdd3070e326, type: 2}
   equipmentConfig: {fileID: 11400000, guid: 13c80828bdc532049a897fa41da6dd89, type: 2}

@@ -37,7 +37,9 @@ namespace HotUpdate.Scripts.Collector
     public partial struct ChestItemCustomData : IItemCustomData
     {
         [MemoryPackOrder(0)]
-        public ChestType ChestType;
+        public int ChestId;
+        [MemoryPackOrder(1)]
+        public int[] ShopIds;
         
         public byte[] Serialize()
         {

@@ -28,8 +28,8 @@ MonoBehaviour:
     - increaseType: 4
       increaseValue: 0.2
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 5
+    mainIncreaseType: 4
   - buffId: 2
     propertyType: 1
     duration: 30
@@ -37,8 +37,8 @@ MonoBehaviour:
     - increaseType: 4
       increaseValue: 0.2
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 5
+    mainIncreaseType: 4
   - buffId: 3
     propertyType: 5
     duration: 30
@@ -46,8 +46,8 @@ MonoBehaviour:
     - increaseType: 4
       increaseValue: 0.2
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 5
+    mainIncreaseType: 4
   - buffId: 4
     propertyType: 4
     duration: 30
@@ -55,8 +55,8 @@ MonoBehaviour:
     - increaseType: 4
       increaseValue: 0.2
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 5
+    mainIncreaseType: 4
   - buffId: 5
     propertyType: 5
     duration: 0
@@ -64,8 +64,8 @@ MonoBehaviour:
     - increaseType: 5
       increaseValue: 50
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 5
+    mainIncreaseType: 5
   - buffId: 6
     propertyType: 1
     duration: -1
@@ -73,8 +73,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 1
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 7
     propertyType: 1
     duration: -1
@@ -82,8 +82,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 2
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 8
     propertyType: 1
     duration: -1
@@ -91,8 +91,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 3
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 9
     propertyType: 1
     duration: -1
@@ -100,8 +100,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 4
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 10
     propertyType: 1
     duration: -1
@@ -109,8 +109,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 4.5
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 11
     propertyType: 1
     duration: -1
@@ -118,8 +118,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 5
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 12
     propertyType: 1
     duration: -1
@@ -127,8 +127,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 7
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 13
     propertyType: 1
     duration: -1
@@ -136,8 +136,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 10
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 14
     propertyType: 12
     duration: -1
@@ -145,8 +145,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.1
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 15
     propertyType: 12
     duration: -1
@@ -154,8 +154,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.2
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 16
     propertyType: 12
     duration: -1
@@ -163,8 +163,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.25
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 17
     propertyType: 12
     duration: -1
@@ -172,8 +172,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.3
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 18
     propertyType: 12
     duration: -1
@@ -181,8 +181,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.45
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 19
     propertyType: 12
     duration: -1
@@ -190,8 +190,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.6
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 20
     propertyType: 6
     duration: -1
@@ -199,8 +199,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.05
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 21
     propertyType: 6
     duration: -1
@@ -208,8 +208,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.07
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 22
     propertyType: 6
     duration: -1
@@ -217,8 +217,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.1
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 23
     propertyType: 6
     duration: -1
@@ -226,8 +226,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.15
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 24
     propertyType: 6
     duration: -1
@@ -235,8 +235,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.2
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 25
     propertyType: 7
     duration: -1
@@ -244,8 +244,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.1
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 26
     propertyType: 7
     duration: -1
@@ -253,8 +253,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.15
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 27
     propertyType: 7
     duration: -1
@@ -262,8 +262,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.2
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 28
     propertyType: 7
     duration: -1
@@ -271,8 +271,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.3
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 29
     propertyType: 7
     duration: -1
@@ -280,8 +280,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.4
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 30
     propertyType: 7
     duration: -1
@@ -289,8 +289,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.05
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 31
     propertyType: 1
     duration: -1
@@ -298,8 +298,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 6
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 32
     propertyType: 1
     duration: -1
@@ -307,8 +307,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 12
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 33
     propertyType: 6
     duration: -1
@@ -316,8 +316,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.03
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 34
     propertyType: 6
     duration: -1
@@ -325,8 +325,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.06
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 35
     propertyType: 6
     duration: -1
@@ -334,8 +334,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.12
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 36
     propertyType: 12
     duration: -1
@@ -343,8 +343,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.4
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 37
     propertyType: 7
     duration: -1
@@ -352,8 +352,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.025
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 38
     propertyType: 1
     duration: -1
@@ -361,8 +361,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 20
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 39
     propertyType: 6
     duration: -1
@@ -370,8 +370,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.015
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 40
     propertyType: 1
     duration: -1
@@ -379,8 +379,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 15
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 41
     propertyType: 6
     duration: -1
@@ -388,8 +388,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.08
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 42
     propertyType: 12
     duration: -1
@@ -397,8 +397,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.05
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 43
     propertyType: 1
     duration: -1
@@ -406,8 +406,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 1.5
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 44
     propertyType: 6
     duration: -1
@@ -415,8 +415,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.24
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 45
     propertyType: 12
     duration: -1
@@ -424,8 +424,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.15
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 46
     propertyType: 1
     duration: -1
@@ -433,8 +433,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 8
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 47
     propertyType: 12
     duration: -1
@@ -442,8 +442,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.5
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 48
     propertyType: 3
     duration: -1
@@ -451,8 +451,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 20
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 49
     propertyType: 2
     duration: -1
@@ -460,8 +460,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 5
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 50
     propertyType: 3
     duration: -1
@@ -469,8 +469,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 10
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 51
     propertyType: 2
     duration: -1
@@ -478,8 +478,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 10
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 52
     propertyType: 3
     duration: -1
@@ -487,8 +487,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 25
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 53
     propertyType: 2
     duration: -1
@@ -496,8 +496,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 2.5
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 54
     propertyType: 3
     duration: -1
@@ -505,8 +505,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 50
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 55
     propertyType: 2
     duration: -1
@@ -514,8 +514,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 15
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 56
     propertyType: 3
     duration: -1
@@ -523,8 +523,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 30
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 57
     propertyType: 2
     duration: -1
@@ -532,8 +532,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 7.5
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 58
     propertyType: 3
     duration: -1
@@ -541,8 +541,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 15
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 59
     propertyType: 3
     duration: -1
@@ -550,8 +550,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 37.5
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 60
     propertyType: 2
     duration: -1
@@ -559,8 +559,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 4.5
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 61
     propertyType: 3
     duration: -1
@@ -568,8 +568,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 75
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 62
     propertyType: 2
     duration: -1
@@ -577,8 +577,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 22.5
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 63
     propertyType: 3
     duration: -1
@@ -586,8 +586,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 45
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 64
     propertyType: 3
     duration: -1
@@ -595,8 +595,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 100
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 65
     propertyType: 2
     duration: -1
@@ -604,8 +604,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 25
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 66
     propertyType: 0
     duration: -1
@@ -613,8 +613,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 0.05
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 67
     propertyType: 0
     duration: -1
@@ -622,8 +622,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 0.075
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 68
     propertyType: 12
     duration: -1
@@ -631,8 +631,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.025
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 69
     propertyType: 0
     duration: -1
@@ -640,8 +640,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 0.01
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 70
     propertyType: 12
     duration: -1
@@ -649,8 +649,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.09
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 71
     propertyType: 0
     duration: -1
@@ -658,8 +658,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 0.1
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 72
     propertyType: 0
     duration: -1
@@ -667,8 +667,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 0.025
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 73
     propertyType: 12
     duration: -1
@@ -676,8 +676,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.075
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 74
     propertyType: 0
     duration: -1
@@ -685,8 +685,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 0.105
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 75
     propertyType: 12
     duration: -1
@@ -694,8 +694,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.045
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 76
     propertyType: 12
     duration: -1
@@ -703,8 +703,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.125
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 77
     propertyType: 0
     duration: -1
@@ -712,8 +712,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 0.15
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 78
     propertyType: 0
     duration: -1
@@ -721,8 +721,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 0.14
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 79
     propertyType: 12
     duration: -1
@@ -730,8 +730,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.06
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 80
     propertyType: 0
     duration: -1
@@ -739,8 +739,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 0.225
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 81
     propertyType: 4
     duration: -1
@@ -748,8 +748,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 20
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 82
     propertyType: 4
     duration: -1
@@ -757,8 +757,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 1
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 83
     propertyType: 4
     duration: -1
@@ -766,8 +766,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 30
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 84
     propertyType: 4
     duration: -1
@@ -775,8 +775,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 0.5
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 85
     propertyType: 4
     duration: -1
@@ -784,8 +784,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 15
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 86
     propertyType: 4
     duration: -1
@@ -793,8 +793,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 2
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 87
     propertyType: 4
     duration: -1
@@ -802,8 +802,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 50
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 88
     propertyType: 4
     duration: -1
@@ -811,8 +811,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 5
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 89
     propertyType: 4
     duration: -1
@@ -820,8 +820,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 1.5
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 90
     propertyType: 4
     duration: -1
@@ -829,8 +829,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 45
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 91
     propertyType: 4
     duration: -1
@@ -838,8 +838,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 0.75
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 92
     propertyType: 4
     duration: -1
@@ -847,8 +847,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 22.5
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 93
     propertyType: 4
     duration: -1
@@ -856,8 +856,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 3
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 94
     propertyType: 4
     duration: -1
@@ -865,8 +865,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 75
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 95
     propertyType: 4
     duration: -1
@@ -874,8 +874,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 7.5
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 96
     propertyType: 4
     duration: -1
@@ -883,8 +883,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 2.25
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 97
     propertyType: 4
     duration: -1
@@ -892,8 +892,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 60
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 98
     propertyType: 4
     duration: -1
@@ -901,8 +901,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 1.25
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 99
     propertyType: 4
     duration: -1
@@ -910,8 +910,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 35
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 100
     propertyType: 4
     duration: -1
@@ -919,8 +919,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 4.5
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 101
     propertyType: 4
     duration: -1
@@ -928,8 +928,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 120
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 102
     propertyType: 4
     duration: -1
@@ -937,8 +937,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 10
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 103
     propertyType: 7
     duration: -1
@@ -946,8 +946,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.08
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 104
     propertyType: 6
     duration: -1
@@ -955,8 +955,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.02
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 105
     propertyType: 7
     duration: -1
@@ -964,8 +964,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.075
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 106
     propertyType: 6
     duration: -1
@@ -973,8 +973,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.045
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 107
     propertyType: 7
     duration: -1
@@ -982,8 +982,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.12
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 108
     propertyType: 6
     duration: -1
@@ -991,8 +991,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.075
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 109
     propertyType: 7
     duration: -1
@@ -1000,8 +1000,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.24
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 110
     propertyType: 7
     duration: -1
@@ -1009,8 +1009,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.25
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 111
     propertyType: 6
     duration: -1
@@ -1018,8 +1018,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.18
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 112
     propertyType: 7
     duration: -1
@@ -1027,8 +1027,8 @@ MonoBehaviour:
     - increaseType: 3
       increaseValue: 0.36
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 113
     propertyType: 3
     duration: -1
@@ -1036,8 +1036,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 0.5
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 114
     propertyType: 3
     duration: -1
@@ -1045,8 +1045,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 0.25
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 115
     propertyType: 3
     duration: -1
@@ -1054,8 +1054,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 1
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 116
     propertyType: 3
     duration: -1
@@ -1063,8 +1063,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 2
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 117
     propertyType: 1
     duration: -1
@@ -1072,8 +1072,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 2.5
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 118
     propertyType: 3
     duration: -1
@@ -1081,8 +1081,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 0.75
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 119
     propertyType: 3
     duration: -1
@@ -1090,8 +1090,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 1.5
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 120
     propertyType: 1
     duration: -1
@@ -1099,8 +1099,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 7.5
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 121
     propertyType: 3
     duration: -1
@@ -1108,8 +1108,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 3
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 122
     propertyType: 3
     duration: -1
@@ -1117,8 +1117,8 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 2.5
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 123
     propertyType: 3
     duration: -1
@@ -1126,5 +1126,59 @@ MonoBehaviour:
     - increaseType: 1
       increaseValue: 5
       operationType: 0
-    sourceType: 0
-    mainIncreaseType: 0
+    sourceType: 3
+    mainIncreaseType: 1
+  - buffId: 124
+    propertyType: 3
+    duration: 0
+    increaseDataList:
+    - increaseType: 5
+      increaseValue: 0.15
+      operationType: 0
+    sourceType: 1
+    mainIncreaseType: 5
+  - buffId: 125
+    propertyType: 3
+    duration: 0
+    increaseDataList:
+    - increaseType: 5
+      increaseValue: 0.35
+      operationType: 0
+    sourceType: 1
+    mainIncreaseType: 5
+  - buffId: 126
+    propertyType: 3
+    duration: 0
+    increaseDataList:
+    - increaseType: 5
+      increaseValue: 0.65
+      operationType: 0
+    sourceType: 1
+    mainIncreaseType: 5
+  - buffId: 127
+    propertyType: 4
+    duration: 0
+    increaseDataList:
+    - increaseType: 5
+      increaseValue: 0.15
+      operationType: 0
+    sourceType: 1
+    mainIncreaseType: 5
+  - buffId: 128
+    propertyType: 4
+    duration: 0
+    increaseDataList:
+    - increaseType: 5
+      increaseValue: 0.35
+      operationType: 0
+    sourceType: 1
+    mainIncreaseType: 5
+  - buffId: 129
+    propertyType: 4
+    duration: 0
+    increaseDataList:
+    - increaseType: 5
+      increaseValue: 0.65
+      operationType: 0
+    sourceType: 1
+    mainIncreaseType: 5

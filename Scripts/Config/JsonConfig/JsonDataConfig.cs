@@ -532,6 +532,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
     {
         public float OpenSpeed;
         public Vector3 InitEulerAngles;
+        public Vector3 EndEulerAngles;
     }
 
     [Serializable]

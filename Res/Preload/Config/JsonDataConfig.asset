@@ -38,8 +38,8 @@ MonoBehaviour:
       maxGridItems: 10
       itemHeight: 0.75
       gridSize: 10
-      onceSpawnCount: 50
-      onceSpawnWeight: 50
+      onceSpawnCount: 40
+      onceSpawnWeight: 100
     damageData:
       defenseRatio: 15
       amplificationRatio: 0
@@ -281,7 +281,8 @@ MonoBehaviour:
           m_NumAlphaKeys: 2
     chestCommonData:
       OpenSpeed: 1.5
-      InitEulerAngles: {x: 90, y: 0, z: 0}
+      InitEulerAngles: {x: 0, y: 0, z: 0}
+      EndEulerAngles: {x: -90, y: 0, z: 0}
     weatherData:
       weatherChangeTime: 10
       maxTransitionDuration: 25

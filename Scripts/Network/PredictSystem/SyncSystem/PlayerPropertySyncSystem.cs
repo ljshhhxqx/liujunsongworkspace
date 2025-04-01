@@ -212,7 +212,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var buffManagerData = new BuffManagerData
             {
                 BuffData = newBuff,
-                Size = buffExtraData.collectObjectBuffSize,
             };
             var propertyCalculator = playerState.Properties[newBuff.BuffData.propertyType];
             playerState.Properties[newBuff.BuffData.propertyType] = HandleBuffInfo(propertyCalculator, newBuff);

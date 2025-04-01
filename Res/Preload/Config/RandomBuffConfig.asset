@@ -34,6 +34,7 @@ MonoBehaviour:
         min: 1
         max: 2
     sourceType: 1
+    mainIncreaseType: 5
   - buffId: 2
     propertyType: 5
     duration:
@@ -47,6 +48,7 @@ MonoBehaviour:
         min: 4
         max: 7
     sourceType: 1
+    mainIncreaseType: 5
   - buffId: 3
     propertyType: 5
     duration:
@@ -60,6 +62,7 @@ MonoBehaviour:
         min: 9
         max: 12
     sourceType: 1
+    mainIncreaseType: 5
   - buffId: 4
     propertyType: 5
     duration:
@@ -72,7 +75,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.1
         max: 0.15
-    sourceType: 4
+    sourceType: 5
+    mainIncreaseType: 4
   - buffId: 5
     propertyType: 5
     duration:
@@ -85,7 +89,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.2
         max: 0.3
-    sourceType: 4
+    sourceType: 5
+    mainIncreaseType: 4
   - buffId: 6
     propertyType: 5
     duration:
@@ -98,7 +103,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.4
         max: 0.5
-    sourceType: 4
+    sourceType: 5
+    mainIncreaseType: 4
   - buffId: 7
     propertyType: 0
     duration:
@@ -112,6 +118,7 @@ MonoBehaviour:
         min: 0.5
         max: 0.75
     sourceType: 1
+    mainIncreaseType: 1
   - buffId: 8
     propertyType: 1
     duration:
@@ -125,6 +132,7 @@ MonoBehaviour:
         min: 2
         max: 2.5
     sourceType: 1
+    mainIncreaseType: 1
   - buffId: 9
     propertyType: 2
     duration:
@@ -138,6 +146,7 @@ MonoBehaviour:
         min: 2
         max: 2.5
     sourceType: 1
+    mainIncreaseType: 1
   - buffId: 10
     propertyType: 4
     duration:
@@ -151,6 +160,7 @@ MonoBehaviour:
         min: 7.5
         max: 10
     sourceType: 1
+    mainIncreaseType: 1
   - buffId: 11
     propertyType: 3
     duration:
@@ -164,6 +174,7 @@ MonoBehaviour:
         min: 7.5
         max: 10
     sourceType: 1
+    mainIncreaseType: 1
   - buffId: 12
     propertyType: 0
     duration:
@@ -177,6 +188,7 @@ MonoBehaviour:
         min: 0.2
         max: 0.25
     sourceType: 1
+    mainIncreaseType: 2
   - buffId: 13
     propertyType: 1
     duration:
@@ -190,6 +202,7 @@ MonoBehaviour:
         min: 0.2
         max: 0.25
     sourceType: 1
+    mainIncreaseType: 2
   - buffId: 14
     propertyType: 2
     duration:
@@ -203,6 +216,7 @@ MonoBehaviour:
         min: 0.2
         max: 0.25
     sourceType: 1
+    mainIncreaseType: 2
   - buffId: 15
     propertyType: 6
     duration:
@@ -216,6 +230,7 @@ MonoBehaviour:
         min: 0.2
         max: 0.25
     sourceType: 1
+    mainIncreaseType: 2
   - buffId: 16
     propertyType: 7
     duration:
@@ -229,6 +244,7 @@ MonoBehaviour:
         min: 0.2
         max: 0.25
     sourceType: 1
+    mainIncreaseType: 2
   - buffId: 17
     propertyType: 8
     duration:
@@ -242,6 +258,7 @@ MonoBehaviour:
         min: 0.2
         max: 0.25
     sourceType: 1
+    mainIncreaseType: 2
   - buffId: 18
     propertyType: 9
     duration:
@@ -255,6 +272,7 @@ MonoBehaviour:
         min: 0.2
         max: 0.25
     sourceType: 1
+    mainIncreaseType: 2
   - buffId: 19
     propertyType: 4
     duration:
@@ -268,6 +286,7 @@ MonoBehaviour:
         min: 0.2
         max: 0.25
     sourceType: 1
+    mainIncreaseType: 2
   - buffId: 20
     propertyType: 3
     duration:
@@ -281,6 +300,7 @@ MonoBehaviour:
         min: 0.2
         max: 0.25
     sourceType: 1
+    mainIncreaseType: 2
   - buffId: 21
     propertyType: 0
     duration:
@@ -294,6 +314,7 @@ MonoBehaviour:
         min: 0.5
         max: 0.65
     sourceType: 1
+    mainIncreaseType: 3
   - buffId: 22
     propertyType: 1
     duration:
@@ -307,6 +328,7 @@ MonoBehaviour:
         min: 2
         max: 2.5
     sourceType: 1
+    mainIncreaseType: 3
   - buffId: 23
     propertyType: 2
     duration:
@@ -320,6 +342,7 @@ MonoBehaviour:
         min: 2
         max: 2.5
     sourceType: 1
+    mainIncreaseType: 3
   - buffId: 24
     propertyType: 4
     duration:
@@ -333,6 +356,7 @@ MonoBehaviour:
         min: 7.5
         max: 20
     sourceType: 1
+    mainIncreaseType: 3
   - buffId: 25
     propertyType: 3
     duration:
@@ -346,6 +370,7 @@ MonoBehaviour:
         min: 7.5
         max: 20
     sourceType: 1
+    mainIncreaseType: 3
   - buffId: 26
     propertyType: 6
     duration:
@@ -359,6 +384,7 @@ MonoBehaviour:
         min: 0.1
         max: 0.15
     sourceType: 1
+    mainIncreaseType: 3
   - buffId: 27
     propertyType: 7
     duration:
@@ -372,6 +398,7 @@ MonoBehaviour:
         min: 0.2
         max: 0.3
     sourceType: 1
+    mainIncreaseType: 3
   - buffId: 28
     propertyType: 8
     duration:
@@ -385,6 +412,7 @@ MonoBehaviour:
         min: 2.5
         max: 3
     sourceType: 1
+    mainIncreaseType: 3
   - buffId: 29
     propertyType: 9
     duration:
@@ -398,6 +426,7 @@ MonoBehaviour:
         min: 0.5
         max: 0.75
     sourceType: 1
+    mainIncreaseType: 3
   - buffId: 30
     propertyType: 0
     duration:
@@ -411,6 +440,7 @@ MonoBehaviour:
         min: 0.1
         max: 0.15
     sourceType: 1
+    mainIncreaseType: 4
   - buffId: 31
     propertyType: 1
     duration:
@@ -424,6 +454,7 @@ MonoBehaviour:
         min: 0.1
         max: 0.15
     sourceType: 1
+    mainIncreaseType: 4
   - buffId: 32
     propertyType: 2
     duration:
@@ -437,6 +468,7 @@ MonoBehaviour:
         min: 0.1
         max: 0.15
     sourceType: 1
+    mainIncreaseType: 4
   - buffId: 33
     propertyType: 6
     duration:
@@ -450,6 +482,7 @@ MonoBehaviour:
         min: 0.1
         max: 0.15
     sourceType: 1
+    mainIncreaseType: 4
   - buffId: 34
     propertyType: 7
     duration:
@@ -463,6 +496,7 @@ MonoBehaviour:
         min: 0.1
         max: 0.15
     sourceType: 1
+    mainIncreaseType: 4
   - buffId: 35
     propertyType: 8
     duration:
@@ -476,6 +510,7 @@ MonoBehaviour:
         min: 0.1
         max: 0.15
     sourceType: 1
+    mainIncreaseType: 4
   - buffId: 36
     propertyType: 9
     duration:
@@ -489,6 +524,7 @@ MonoBehaviour:
         min: 0.1
         max: 0.15
     sourceType: 1
+    mainIncreaseType: 4
   - buffId: 37
     propertyType: 4
     duration:
@@ -502,6 +538,7 @@ MonoBehaviour:
         min: 0.1
         max: 0.15
     sourceType: 1
+    mainIncreaseType: 4
   - buffId: 38
     propertyType: 3
     duration:
@@ -515,6 +552,7 @@ MonoBehaviour:
         min: 0.1
         max: 0.15
     sourceType: 1
+    mainIncreaseType: 4
   - buffId: 39
     propertyType: 4
     duration:
@@ -528,6 +566,7 @@ MonoBehaviour:
         min: 10
         max: 12.5
     sourceType: 1
+    mainIncreaseType: 5
   - buffId: 40
     propertyType: 3
     duration:
@@ -541,6 +580,7 @@ MonoBehaviour:
         min: 10
         max: 12.5
     sourceType: 1
+    mainIncreaseType: 5
   - buffId: 41
     propertyType: 1
     duration:
@@ -553,7 +593,8 @@ MonoBehaviour:
         isPercent: 0
         min: 3
         max: 7.5
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 42
     propertyType: 0
     duration:
@@ -566,7 +607,8 @@ MonoBehaviour:
         isPercent: 0
         min: 1
         max: 2.5
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 43
     propertyType: 2
     duration:
@@ -579,7 +621,8 @@ MonoBehaviour:
         isPercent: 0
         min: 3
         max: 7.5
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 44
     propertyType: 4
     duration:
@@ -592,7 +635,8 @@ MonoBehaviour:
         isPercent: 0
         min: 30
         max: 75
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 45
     propertyType: 8
     duration:
@@ -605,7 +649,8 @@ MonoBehaviour:
         isPercent: 0
         min: 1.5
         max: 3
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 46
     propertyType: 9
     duration:
@@ -618,7 +663,8 @@ MonoBehaviour:
         isPercent: 0
         min: 1
         max: 2.5
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 47
     propertyType: 3
     duration:
@@ -631,7 +677,8 @@ MonoBehaviour:
         isPercent: 0
         min: 30
         max: 75
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 1
   - buffId: 48
     propertyType: 0
     duration:
@@ -644,7 +691,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.15
         max: 0.3
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 2
   - buffId: 49
     propertyType: 1
     duration:
@@ -657,7 +705,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.2
         max: 0.5
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 2
   - buffId: 50
     propertyType: 2
     duration:
@@ -670,7 +719,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.2
         max: 0.5
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 2
   - buffId: 51
     propertyType: 3
     duration:
@@ -683,7 +733,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.3
         max: 0.6
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 2
   - buffId: 52
     propertyType: 4
     duration:
@@ -696,7 +747,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.3
         max: 0.6
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 2
   - buffId: 53
     propertyType: 6
     duration:
@@ -709,7 +761,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.2
         max: 0.5
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 2
   - buffId: 54
     propertyType: 7
     duration:
@@ -722,7 +775,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.2
         max: 0.5
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 2
   - buffId: 55
     propertyType: 8
     duration:
@@ -735,7 +789,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.2
         max: 0.5
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 2
   - buffId: 56
     propertyType: 9
     duration:
@@ -748,7 +803,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.15
         max: 0.3
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 2
   - buffId: 57
     propertyType: 12
     duration:
@@ -761,7 +817,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.15
         max: 0.3
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 2
   - buffId: 58
     propertyType: 0
     duration:
@@ -774,7 +831,8 @@ MonoBehaviour:
         isPercent: 0
         min: 1.5
         max: 3
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 59
     propertyType: 1
     duration:
@@ -787,7 +845,8 @@ MonoBehaviour:
         isPercent: 0
         min: 5
         max: 12.5
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 60
     propertyType: 2
     duration:
@@ -800,7 +859,8 @@ MonoBehaviour:
         isPercent: 0
         min: 5
         max: 12.5
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 61
     propertyType: 3
     duration:
@@ -813,7 +873,8 @@ MonoBehaviour:
         isPercent: 0
         min: 50
         max: 125
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 62
     propertyType: 4
     duration:
@@ -826,7 +887,8 @@ MonoBehaviour:
         isPercent: 0
         min: 50
         max: 125
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 63
     propertyType: 6
     duration:
@@ -839,7 +901,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.1
         max: 0.25
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 64
     propertyType: 7
     duration:
@@ -852,7 +915,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.2
         max: 0.5
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 65
     propertyType: 8
     duration:
@@ -865,7 +929,8 @@ MonoBehaviour:
         isPercent: 0
         min: 2
         max: 5
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 66
     propertyType: 9
     duration:
@@ -878,7 +943,8 @@ MonoBehaviour:
         isPercent: 0
         min: 1.5
         max: 4
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 67
     propertyType: 12
     duration:
@@ -891,7 +957,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.2
         max: 0.5
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 3
   - buffId: 68
     propertyType: 0
     duration:
@@ -904,7 +971,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.05
         max: 0.1
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 4
   - buffId: 69
     propertyType: 1
     duration:
@@ -917,7 +985,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.1
         max: 0.2
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 4
   - buffId: 70
     propertyType: 2
     duration:
@@ -930,7 +999,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.1
         max: 0.2
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 4
   - buffId: 71
     propertyType: 3
     duration:
@@ -943,7 +1013,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.1
         max: 0.2
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 4
   - buffId: 72
     propertyType: 4
     duration:
@@ -956,7 +1027,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.1
         max: 0.2
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 4
   - buffId: 73
     propertyType: 6
     duration:
@@ -969,7 +1041,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.1
         max: 0.2
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 4
   - buffId: 74
     propertyType: 7
     duration:
@@ -982,7 +1055,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.1
         max: 0.2
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 4
   - buffId: 75
     propertyType: 8
     duration:
@@ -995,7 +1069,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.1
         max: 0.2
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 4
   - buffId: 76
     propertyType: 9
     duration:
@@ -1008,7 +1083,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.05
         max: 0.1
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 4
   - buffId: 77
     propertyType: 12
     duration:
@@ -1021,7 +1097,8 @@ MonoBehaviour:
         isPercent: 0
         min: 0.05
         max: 0.1
-    sourceType: 2
+    sourceType: 3
+    mainIncreaseType: 4
   - buffId: 78
     propertyType: 5
     duration:
@@ -1034,4 +1111,761 @@ MonoBehaviour:
         isPercent: 0
         min: 0.15
         max: 0.3
+    sourceType: 3
+    mainIncreaseType: 4
+  - buffId: 79
+    propertyType: 4
+    duration:
+      isPercent: 0
+      min: 0
+      max: 0
+    increaseDataList:
+    - increaseType: 5
+      increaseValueRange:
+        isPercent: 0
+        min: 10
+        max: 20
+    sourceType: 1
+    mainIncreaseType: 5
+  - buffId: 80
+    propertyType: 4
+    duration:
+      isPercent: 0
+      min: 0
+      max: 0
+    increaseDataList:
+    - increaseType: 5
+      increaseValueRange:
+        isPercent: 0
+        min: 25
+        max: 45
+    sourceType: 1
+    mainIncreaseType: 5
+  - buffId: 81
+    propertyType: 4
+    duration:
+      isPercent: 0
+      min: 0
+      max: 0
+    increaseDataList:
+    - increaseType: 5
+      increaseValueRange:
+        isPercent: 0
+        min: 45
+        max: 70
+    sourceType: 1
+    mainIncreaseType: 5
+  - buffId: 82
+    propertyType: 3
+    duration:
+      isPercent: 0
+      min: 0
+      max: 0
+    increaseDataList:
+    - increaseType: 5
+      increaseValueRange:
+        isPercent: 0
+        min: 10
+        max: 20
+    sourceType: 1
+    mainIncreaseType: 5
+  - buffId: 83
+    propertyType: 3
+    duration:
+      isPercent: 0
+      min: 0
+      max: 0
+    increaseDataList:
+    - increaseType: 5
+      increaseValueRange:
+        isPercent: 0
+        min: 25
+        max: 45
+    sourceType: 1
+    mainIncreaseType: 5
+  - buffId: 84
+    propertyType: 3
+    duration:
+      isPercent: 0
+      min: 0
+      max: 0
+    increaseDataList:
+    - increaseType: 5
+      increaseValueRange:
+        isPercent: 0
+        min: 45
+        max: 70
+    sourceType: 1
+    mainIncreaseType: 5
+  - buffId: 85
+    propertyType: 1
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 5
+        max: 7
     sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 86
+    propertyType: 6
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 0.05
+        max: 0.1
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 87
+    propertyType: 1
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.05
+        max: 0.08
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 88
+    propertyType: 6
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.05
+        max: 0.08
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 89
+    propertyType: 1
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 10
+        max: 15
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 90
+    propertyType: 6
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 0.1
+        max: 0.15
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 91
+    propertyType: 1
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.1
+        max: 0.15
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 92
+    propertyType: 6
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.1
+        max: 0.15
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 93
+    propertyType: 1
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 20
+        max: 30
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 94
+    propertyType: 6
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 0.2
+        max: 0.3
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 95
+    propertyType: 1
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.2
+        max: 0.3
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 96
+    propertyType: 6
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.2
+        max: 0.3
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 97
+    propertyType: 0
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 0.5
+        max: 1
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 98
+    propertyType: 12
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 0.1
+        max: 0.15
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 99
+    propertyType: 0
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.05
+        max: 0.08
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 100
+    propertyType: 12
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.05
+        max: 0.08
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 101
+    propertyType: 0
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 1
+        max: 1.5
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 102
+    propertyType: 12
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 0.2
+        max: 0.3
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 103
+    propertyType: 0
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.1
+        max: 0.15
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 104
+    propertyType: 12
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.1
+        max: 0.15
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 105
+    propertyType: 0
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 1.8
+        max: 2.5
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 106
+    propertyType: 12
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 0.3
+        max: 0.5
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 107
+    propertyType: 0
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.2
+        max: 0.3
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 108
+    propertyType: 12
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.2
+        max: 0.3
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 109
+    propertyType: 2
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 5
+        max: 7
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 110
+    propertyType: 9
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 0.5
+        max: 1.5
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 111
+    propertyType: 2
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.05
+        max: 0.08
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 112
+    propertyType: 9
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.05
+        max: 0.08
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 113
+    propertyType: 2
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 10
+        max: 15
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 114
+    propertyType: 9
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 2
+        max: 3
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 115
+    propertyType: 2
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.1
+        max: 0.15
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 116
+    propertyType: 9
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.1
+        max: 0.15
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 117
+    propertyType: 2
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 20
+        max: 30
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 118
+    propertyType: 9
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 3.5
+        max: 5
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 119
+    propertyType: 2
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.2
+        max: 0.3
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 120
+    propertyType: 9
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.2
+        max: 0.3
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 121
+    propertyType: 4
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 5
+        max: 7
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 122
+    propertyType: 8
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 0.5
+        max: 1.5
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 123
+    propertyType: 4
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.05
+        max: 0.08
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 124
+    propertyType: 8
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.05
+        max: 0.08
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 125
+    propertyType: 4
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 10
+        max: 15
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 126
+    propertyType: 8
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 2
+        max: 3
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 127
+    propertyType: 4
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.1
+        max: 0.15
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 128
+    propertyType: 8
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.1
+        max: 0.15
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 129
+    propertyType: 4
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 20
+        max: 30
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 130
+    propertyType: 8
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 3
+      increaseValueRange:
+        isPercent: 0
+        min: 3.5
+        max: 5
+    sourceType: 2
+    mainIncreaseType: 3
+  - buffId: 131
+    propertyType: 4
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.2
+        max: 0.3
+    sourceType: 2
+    mainIncreaseType: 4
+  - buffId: 132
+    propertyType: 8
+    duration:
+      isPercent: 0
+      min: 10
+      max: 15
+    increaseDataList:
+    - increaseType: 4
+      increaseValueRange:
+        isPercent: 0
+        min: 0.2
+        max: 0.3
+    sourceType: 2
+    mainIncreaseType: 4

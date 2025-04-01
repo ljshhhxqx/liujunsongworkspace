@@ -109,7 +109,7 @@ namespace HotUpdate.Scripts.Collector
         {
             if (isLocalPlayer)
             {
-                _mirrorNetworkMessageHandler.SendToServer(new MirrorPickerPickUpCollectMessage(pickerId, CollectId));
+                _mirrorNetworkMessageHandler.SendToServer(new MirrorPickerPickUpCollectMessage(pickerId, collectId));
             }
         }
 

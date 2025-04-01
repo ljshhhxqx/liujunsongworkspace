@@ -175,7 +175,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                     {
                         buffId = buffExtraData.buffId,
                         buffType = BuffType.Constant,
-                        collectObjectBuffSize = CollectObjectBuffSize.Small,
                     };
                     list.Add(extraData);
                 }

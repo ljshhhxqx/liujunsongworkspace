@@ -24,8 +24,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private PropertyConfig _propertyConfig;
         private AnimationState _currentAnimationState;
         
-        [SyncVar(hook = nameof(OnCurrentChestTypeChanged))] 
-        private ChestType _currentChestType;
         [SyncVar(hook = nameof(OnPlayerStateChanged))]
         private PlayerEnvironmentState _playerEnvironmentState;
         [SyncVar(hook = nameof(OnHasMovementInputChanged))] 
@@ -33,10 +31,10 @@ namespace HotUpdate.Scripts.Network.Client.Player
         [SyncVar(hook = nameof(OnIsInvincibleChanged))]
         private bool _isInvincible;
 
-        private void OnCurrentChestTypeChanged(ChestType oldValue, ChestType newValue)
-        {
-            _currentChestTypeProperty.Value = newValue;
-        }
+        // private void OnCurrentChestTypeChanged(ChestType oldValue, ChestType newValue)
+        // {
+        //     _currentChestTypeProperty.Value = newValue;
+        // }
         
         private void OnPlayerStateChanged(PlayerEnvironmentState oldValue, PlayerEnvironmentState newValue)
         {
@@ -69,21 +67,21 @@ namespace HotUpdate.Scripts.Network.Client.Player
             }   
         }
 
-        public ChestType CurrentChestType
-        {
-            get => _currentChestType;
-            set
-            {
-                if (isServer)
-                {
-                    _currentChestType = value;
-                }
-                else if (isLocalPlayer)
-                {
-                    Debug.Log("Client cannot change CurrentChestType.");
-                }
-            }
-        }
+        // public ChestType CurrentChestType
+        // {
+        //     get => _currentChestType;
+        //     set
+        //     {
+        //         if (isServer)
+        //         {
+        //             _currentChestType = value;
+        //         }
+        //         else if (isLocalPlayer)
+        //         {
+        //             Debug.Log("Client cannot change CurrentChestType.");
+        //         }
+        //     }
+        // }
         
         public PlayerEnvironmentState PlayerEnvironmentState
         {
@@ -128,8 +126,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
         {
             _playerEnvironmentState = environmentState;
         }
-        private ReactiveProperty<ChestType> _currentChestTypeProperty { get; } = new ReactiveProperty<ChestType>();
-        public IReadOnlyReactiveProperty<ChestType> CurrentChestTypeProperty => _currentChestTypeProperty;
+        // private ReactiveProperty<ChestType> _currentChestTypeProperty { get; } = new ReactiveProperty<ChestType>();
+        // public IReadOnlyReactiveProperty<ChestType> CurrentChestTypeProperty => _currentChestTypeProperty;
         private ReactiveProperty<PlayerEnvironmentState> _playerStateProperty { get; } = new ReactiveProperty<PlayerEnvironmentState>();
         public IReadOnlyReactiveProperty<PlayerEnvironmentState> PlayerStateProperty => _playerStateProperty;
         private ReactiveProperty<bool> _hasMovementInputProperty { get; } = new ReactiveProperty<bool>();
@@ -155,7 +153,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         {
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             InitializeProperties();
-            _currentChestTypeProperty.Value = ChestType.Attack;
+            //_currentChestTypeProperty.Value = ChestType.Attack;
             _animationConfig = configProvider.GetConfig<AnimationConfig>();
             _propertyConfig = configProvider.GetConfig<PropertyConfig>();
             if (isLocalPlayer)

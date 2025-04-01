@@ -36,6 +36,7 @@ namespace HotUpdate.Scripts.Tool.Static
             return enumerable.Last();
         }
         
+        
         public static T Select<T>(Dictionary<T, float> weightedItems)
         {
             float total = weightedItems.Values.Sum();
@@ -48,6 +49,28 @@ namespace HotUpdate.Scripts.Tool.Static
             }
         
             return weightedItems.Last().Key;
+        }
+        
+        public static IList<T> Shuffle<T>(IList<T> list)
+        {
+            var random = new Random();
+            var enumerable = list as T[] ?? list.ToArray();
+            var n = enumerable.Length;
+            while (n > 1) 
+            {
+                n--;
+                int k = random.Next(n + 1);
+                (enumerable[k], enumerable[n]) = (enumerable[n], enumerable[k]);
+            }
+            return enumerable;
+        }
+
+        public static T RandomSelect<T>(IList<T> list)
+        {
+            if (list == null || list.Count == 0)
+                throw new ArgumentException("At least one item is required");
+        
+            return list[UnityEngine.Random.Range(0, list.Count)];
         }
     }
     

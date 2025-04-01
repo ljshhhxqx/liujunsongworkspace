@@ -123,3 +123,9 @@ int,PropertyTypeEnum,float,BuffIncreaseData[],BuffSourceType,BuffIncreaseType
 121,Health,-1,"[{"increaseType":"Base","increaseValue":3.0,"operationType":"Add"}]",Equipment,Base
 122,Health,-1,"[{"increaseType":"Base","increaseValue":2.5,"operationType":"Add"}]",Equipment,Base
 123,Health,-1,"[{"increaseType":"Base","increaseValue":5.0,"operationType":"Add"}]",Equipment,Base
+124,Health,0,"[{"increaseType":"Current","increaseValue":0.15,"operationType":"Add"}]",Collect,Current
+125,Health,0,"[{"increaseType":"Current","increaseValue":0.35,"operationType":"Add"}]",Collect,Current
+126,Health,0,"[{"increaseType":"Current","increaseValue":0.65,"operationType":"Add"}]",Collect,Current
+127,Strength,0,"[{"increaseType":"Current","increaseValue":0.15,"operationType":"Add"}]",Collect,Current
+128,Strength,0,"[{"increaseType":"Current","increaseValue":0.35,"operationType":"Add"}]",Collect,Current
+129,Strength,0,"[{"increaseType":"Current","increaseValue":0.65,"operationType":"Add"}]",Collect,Current

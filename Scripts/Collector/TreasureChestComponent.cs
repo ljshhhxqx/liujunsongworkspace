@@ -1,7 +1,5 @@
 using System;
-using System.Linq;
 using Cysharp.Threading.Tasks;
-using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.NetworkMes;
@@ -12,7 +10,6 @@ using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
 using MemoryPack;
 using Mirror;
-using Network.NetworkMes;
 using Sirenix.OdinInspector;
 using Tool.GameEvent;
 using UniRx;
@@ -29,8 +26,10 @@ namespace HotUpdate.Scripts.Collector
         private GameObject lid; // 宝箱盖子
         [SerializeField]
         private LayerMask playerLayer;
+        [SerializeField]
+        private QualityType quality;
         private Collider _chestCollider;
-        private ChestDataConfig _chestDataConfig;
+        //private ChestDataConfig _chestDataConfig;
         private JsonDataConfig _jsonDataConfig;
         private MessageCenter _messageCenter;
         private MirrorNetworkMessageHandler _mirrorNetworkMessageHandler;
@@ -40,9 +39,11 @@ namespace HotUpdate.Scripts.Collector
         private InteractSystem _interactSystem;
         private PooledObject _pooledObject;
         public Collider ChestCollider => _chestCollider;
+        public QualityType Quality => quality;
         
-        [SyncVar]
-        public ChestType chestType;
+        // [SyncVar]
+        // public ChestType chestType;
+        [HideInInspector]
         [SyncVar]
         public bool isPicked;
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
@@ -66,7 +67,7 @@ namespace HotUpdate.Scripts.Collector
             }
             _chestCollider = collectCollider.GetComponent<Collider>();
             _chestCollider.enabled = true;
-            _chestDataConfig = configProvider.GetConfig<ChestDataConfig>();
+            //_chestDataConfig = configProvider.GetConfig<ChestDataConfig>();
             _chestCommonData = _jsonDataConfig.ChestCommonData;
             _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
             if (isLocalPlayer)
@@ -89,7 +90,7 @@ namespace HotUpdate.Scripts.Collector
                 _gameEventManager?.Publish(new TargetShowEvent(null));
             }
             _gameEventManager = null;
-            _chestDataConfig = null;
+            //_chestDataConfig = null;
             _chestCommonData = default;
             _mirrorNetworkMessageHandler = null;
             _disposables?.Clear();
@@ -122,12 +123,12 @@ namespace HotUpdate.Scripts.Collector
         {
             _chestCollider.enabled = false;
             // 计算开启动画的目标角度
-            var targetRotation = Quaternion.Euler(0, lid.transform.rotation.eulerAngles.y, lid.transform.rotation.eulerAngles.z);
+            var targetRotation = Quaternion.Euler(_chestCommonData.EndEulerAngles.x, _chestCommonData.EndEulerAngles.y, _chestCommonData.EndEulerAngles.z);
          
             // 当宝箱盖子没有完全打开时
             while (Quaternion.Angle(lid.transform.rotation, targetRotation) > 0.5f)
             {
-                lid.transform.rotation = Quaternion.Slerp(lid.transform.rotation, targetRotation, Time.deltaTime * _chestCommonData.OpenSpeed);
+                lid.transform.rotation = Quaternion.Slerp(lid.transform.rotation, targetRotation, Time.fixedDeltaTime * _chestCommonData.OpenSpeed);
                 await UniTask.Yield();
             }
         }
@@ -161,6 +162,6 @@ namespace HotUpdate.Scripts.Collector
     public struct ChestData
     {
         public int Id;
-        public ChestType Type;
+        //public ChestType Type;
     }
 }

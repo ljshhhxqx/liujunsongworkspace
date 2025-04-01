@@ -226,7 +226,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return Enum.IsDefined(typeof(BuffType), BuffExtraData.buffType) && BuffExtraData.buffId > 0 && TargetId > 0 && Enum.IsDefined(typeof(CollectObjectBuffSize), BuffExtraData.collectObjectBuffSize);
+            return Enum.IsDefined(typeof(BuffType), BuffExtraData.buffType) && BuffExtraData.buffId > 0 && TargetId > 0;
         }
         
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
