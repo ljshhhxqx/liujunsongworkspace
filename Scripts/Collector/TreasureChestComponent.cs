@@ -60,7 +60,7 @@ namespace HotUpdate.Scripts.Collector
 
             _gameEventManager = gameEventManager;
             var collectCollider = GetComponentInChildren<CollectCollider>();
-            if (collectCollider == null)
+            if (!collectCollider)
             {
                 Debug.LogError("Collider not found");
                 return;

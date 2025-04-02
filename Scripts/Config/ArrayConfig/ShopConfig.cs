@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using HotUpdate.Scripts.Tool.Static;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
 {
@@ -54,6 +54,19 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 _qualityIds[shopConfig.qualityType].Add(shopConfig.itemId);
                 shopConfigData.Add(shopConfig);
             }
+        }
+
+        public HashSet<int> GetItemsByShopId(IList<int> shopIds)
+        {
+            var result = new HashSet<int>();
+            foreach (var shopId in shopIds)
+            {
+                var shopConfig = shopConfigData.FirstOrDefault(d => d.id == shopId);
+                if (shopConfig.name==null) continue;
+                result.Add(shopConfig.itemId);
+            }
+            return result;
+            
         }
 
         public HashSet<int> GetQualityItems(List<QualityType> qualityType, float weight)
@@ -127,7 +140,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             // 按品质分组
             var qualityGroups = items
                 .GroupBy(d => d.qualityType)
-                .OrderBy(g => UnityEngine.Random.value)
+                .OrderBy(g => Random.value)
                 .Take(2)
                 .ToList();
 
@@ -137,7 +150,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             // 从每个品质组随机选一个
             foreach (var group in qualityGroups)
             {
-                var randomItem = group.OrderBy(x => UnityEngine.Random.value).First();
+                var randomItem = group.OrderBy(x => Random.value).First();
                 result.Add(randomItem.id);
             }
 

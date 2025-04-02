@@ -62,6 +62,11 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 _collectObjectDatas[collectConfigData.collectObjectClass].Add(collectConfigData.id);
             }
         }
+
+        public int GetItemId(int configId)
+        {
+            return GetCollectObjectData(configId).itemId;
+        }
     }
 
     [Serializable]

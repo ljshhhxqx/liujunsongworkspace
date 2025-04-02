@@ -5,11 +5,11 @@ using AOTScripts.Tool.ECS;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Common;
-using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game;
 using HotUpdate.Scripts.Game.Inject;
+using HotUpdate.Scripts.Network.Item;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
@@ -33,7 +33,7 @@ namespace HotUpdate.Scripts.Collector
 
         private readonly Dictionary<QualityType, Dictionary<PropertyTypeEnum, Material>> _collectibleMaterials =
             new Dictionary<QualityType, Dictionary<PropertyTypeEnum, Material>>();
-        private TreasureChestComponent _treasureChestPrefab;
+        private readonly Dictionary<QualityType, TreasureChestComponent> _treasureChestPrefabs = new Dictionary<QualityType, TreasureChestComponent>();
         private IConfigProvider _configProvider;
         private MapBoundDefiner _mapBoundDefiner;
         private JsonDataConfig _jsonDataConfig;
@@ -67,8 +67,9 @@ namespace HotUpdate.Scripts.Collector
         private readonly Dictionary<uint, CollectObjectController> _clientCollectObjectControllers = new Dictionary<uint, CollectObjectController>();
         
         [SyncVar]
-        private byte[] _serverTreasureChestMetaDataBytes;
-        private IColliderConfig _chestColliderConfig;
+        //private byte[] _serverTreasureChestMetaDataBytes;
+        private CollectItemMetaData _serverTreasureChestMetaData;
+        private readonly Dictionary<QualityType, IColliderConfig> _chestColliderConfigs = new Dictionary<QualityType, IColliderConfig>();
         private TreasureChestComponent _clientTreasureChest;
 
         [Inject]
@@ -111,45 +112,70 @@ namespace HotUpdate.Scripts.Collector
         [Server]
         public void PickerPickUpChest(uint pickerId, uint itemId)
         {
-            var data = MemoryPackSerializer.Deserialize<CollectItemMetaData>(_serverTreasureChestMetaDataBytes);
-            if (itemId != data.ItemId)
+            var state = (ItemState)_serverTreasureChestMetaData.StateFlags;
+            if (state.HasAnyState(ItemState.IsInteracting) || state.HasAnyState(ItemState.IsInBag)) return;
+            state = state.AddState(ItemState.IsInteracting);
+            _serverTreasureChestMetaData.StateFlags = (byte)state;
+            if (itemId != _serverTreasureChestMetaData.ItemId)
             {
-                Debug.LogError($"Item id {itemId} is not match with treasure chest id {data.ItemId}");
+                Debug.LogError($"Item id {itemId} is not match with treasure chest id {_serverTreasureChestMetaData.ItemId}");
+                state = state.RemoveState(ItemState.IsInteracting);
+                _serverTreasureChestMetaData.StateFlags = (byte)state;
                 return;
             }
-            var state = (ItemState)data.StateFlags;
-            var chestData = data.GetCustomData<ChestItemCustomData>();
-            if (state.HasAnyState(ItemState.IsInteracting) || state.HasAnyState(ItemState.IsProcessed)) return;
-            state.AddState(ItemState.IsInteracting);
-            var chestPos = data.Position.ToVector3();
+            var chestData = _serverTreasureChestMetaData.GetCustomData<ChestItemCustomData>();
+            var chestPos = _serverTreasureChestMetaData.Position.ToVector3();
             var player = NetworkServer.spawned[pickerId];
             var connectionId = player.connectionToClient.connectionId;
             if (!player)
             {
                 Debug.LogError($"Player {pickerId} could not be found");
+                state = state.RemoveState(ItemState.IsInteracting);
+                _serverTreasureChestMetaData.StateFlags = (byte)state;
                 return;
             }
             var playerConnection = player.connectionToClient.connectionId;
             var playerCollider = _playerInGameManager.GetPlayerPhysicsData(playerConnection);
 
-            if (ValidatePickup(chestPos, player.transform.position, _chestColliderConfig, playerCollider))
+            var chestCollider = _chestColliderConfigs.GetValueOrDefault(chestData.Quality);
+
+            try
             {
-                //var configData = _chestConfig.GetChestConfigData(chestData.ChestId);
-                //todo: 处理掉落物品
-                // if (configData.buffExtraData.buffType != BuffType.None)
-                // {
-                //     _gameSyncManager.EnqueueServerCommand(new PropertyBuffCommand
-                //     {
-                //         Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property),
-                //         TargetId = connectionId,
-                //         BuffExtraData = configData.buffExtraData
-                //     });
-                //     Debug.Log($"Add buff {configData.buffExtraData.buffType} to player {player.name}");
-                // }
-                JudgeEndRound();
-                RpcPickupChest(pickerId, itemId);
+                if (ValidatePickup(chestPos, player.transform.position, chestCollider, playerCollider))
+                {
+                     var configData = _chestConfig.GetChestConfigData(chestData.ChestConfigId);
+                     var extraItems = _shopConfig.GetItemsByShopId(chestData.ShopIds);
+                     extraItems.UnionWith(configData.itemIds);
+                     var items = extraItems.Select(x => new ItemCommandData
+                     {
+                         ItemConfigId = x,
+                         Count = 1,
+                         ItemUniqueId = HybridIdGenerator.GenerateItemId(x, GameSyncManager.CurrentTick)
+                     }).ToArray();
+                     _gameSyncManager.EnqueueServerCommand(new ItemsGetCommand
+                     {
+                         Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Item),
+                         Items = items,
+                     });
+                     Debug.Log($"Player {player.name} pick up chest {chestData.ChestConfigId}");
+                     _serverTreasureChestMetaData = default;
+                     RpcPickupChest(pickerId, itemId);
+                }
+                else
+                {
+                    state = state.RemoveState(ItemState.IsInteracting);
+                    _serverTreasureChestMetaData.StateFlags = (byte)state;
+                    Debug.Log($"Player {player.netId} cannot pick up chest");
+                }
+            
             }
-            state.RemoveState(ItemState.IsInteracting);
+            catch (Exception e)
+            {
+                state = state.RemoveState(ItemState.IsInteracting);
+                _serverTreasureChestMetaData.StateFlags = (byte)state;
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         [ClientRpc]
@@ -218,21 +244,28 @@ namespace HotUpdate.Scripts.Collector
                 }
             }
 
-            if (!_treasureChestPrefab)
+            if (_treasureChestPrefabs.Count == 0)
             {
                 foreach (var go in res)
                 {
                     if (go.TryGetComponent<TreasureChestComponent>(out var treasureChest))
                     {
-                        _treasureChestPrefab = treasureChest;
-                        break;
+                        _treasureChestPrefabs.Add(treasureChest.Quality, treasureChest);
                     }
                 }
             }
 
-            if (_chestColliderConfig == null)
+            if (_chestColliderConfigs.Count == 0)
             {
-                _chestColliderConfig = GamePhysicsSystem.CreateColliderConfig(_treasureChestPrefab.GetComponent<Collider>());
+                foreach (var data in _treasureChestPrefabs.Values)
+                {
+                    var gameObjectCollider = data.GetComponent<Collider>();
+                    var config = GamePhysicsSystem.CreateColliderConfig(gameObjectCollider);
+                    if (config != null)
+                    {
+                        _chestColliderConfigs.Add(data.Quality, config);
+                    }
+                }
             }
 
             _uiManager.SwitchUI<TargetShowOverlay>();
@@ -256,8 +289,10 @@ namespace HotUpdate.Scripts.Collector
                     return;
                 }
                 var itemData = MemoryPackSerializer.Deserialize<CollectItemMetaData>(itemInfo);
-                var itemColliderData = _colliderConfigs.GetValueOrDefault(itemData.ItemConfigId);
+                var itemColliderData = _colliderConfigs.GetValueOrDefault(itemData.ItemCollectConfigId);
+                var itemConfigId = _collectObjectDataConfig.GetCollectObjectData(itemData.ItemCollectConfigId).itemId;
                 var itemPos = itemData.Position;
+                var customData = itemData.GetCustomData<CollectItemCustomData>();
                 var player =  NetworkServer.spawned[pickerId];
                 var playerConnectionId = _playerInGameManager.GetPlayerId(pickerId);
                 var playerColliderConfig = _playerInGameManager.GetPlayerPhysicsData(playerConnectionId);
@@ -271,31 +306,18 @@ namespace HotUpdate.Scripts.Collector
                 if (ValidatePickup(itemPos.ToVector3(), player.transform.position, itemColliderData, playerColliderConfig))
                 {
                     // 处理拾取逻辑
-                    var configData = _collectObjectDataConfig.GetCollectObjectData(itemData.ItemConfigId);
+                    //var configData = _collectObjectDataConfig.GetCollectObjectData(itemData.ItemCollectConfigId);
                     
-                    _gameSyncManager.EnqueueServerCommand(new PropertyBuffCommand
+                    _gameSyncManager.EnqueueServerCommand(new ItemGetCommand
                     {
-                        Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Property),
-                        TargetId = playerConnectionId,
-                        BuffExtraData = configData.buffExtraData
+                        Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Item),
+                        Item = new ItemCommandData
+                        {
+                            ItemConfigId = itemConfigId,
+                            Count = 1,
+                            ItemUniqueId = customData.ItemUniqueId,
+                        },
                     });
-                    // switch (configData.collectObjectClass)
-                    // {
-                    //     case CollectObjectClass.Score:
-                    //         // var buff = configData.buffExtraData.buffType == BuffType.Constant ? _constantBuffConfig.GetBuff(configData.buffExtraData) : _randomBuffConfig.GetBuff(configData.buffExtraData);
-                    //         // playerProperty.IncreaseProperty(PropertyTypeEnum.Score, buff.increaseDataList);
-                    //         break;
-                    //     case CollectObjectClass.Buff:
-                    //         // if (configData.isRandomBuff)
-                    //         // {
-                    //         //     _buffManager.AddBuffToPlayer(playerProperty, item.BuffData, itemInfo.buffSize);
-                    //         // }
-                    //         // else
-                    //         // {
-                    //         //     _buffManager.AddBuffToPlayer(playerProperty, configData.buffExtraData, itemInfo.buffSize);
-                    //         // }
-                    //         break;
-                    // }
 
                     // 通知客户端
                     RpcPickupItem(itemId);
@@ -331,9 +353,7 @@ namespace HotUpdate.Scripts.Collector
         [Server]
         private void JudgeEndRound()
         {
-            var data = MemoryPackSerializer.Deserialize<CollectItemMetaData>(_serverTreasureChestMetaDataBytes);
-            var state = (ItemState)data.StateFlags;
-            var endRound = _serverItemMap.Count == 0 && state.HasAnyState(ItemState.IsProcessed);
+            var endRound = _serverItemMap.Count == 0 && _serverTreasureChestMetaData.ItemId == 0;
             if (endRound)
             {
                 _gameLoopController.IsEndRound = true;
@@ -347,7 +367,7 @@ namespace HotUpdate.Scripts.Collector
             {
                 Debug.Log("Starting EndRound");
                 // 清理网格数据
-                _serverTreasureChestMetaDataBytes = null;
+                _serverTreasureChestMetaData = default;
                 foreach (var grid in _gridMap)
                 {
                     _gridMap[grid.Key] = new Grid(new List<int>());
@@ -429,6 +449,7 @@ namespace HotUpdate.Scripts.Collector
                         var extraData = new CollectItemCustomData
                         {
                             RandomBuffId = buff.buffId,
+                            ItemUniqueId = HybridIdGenerator.GenerateItemId(_collectObjectDataConfig.GetItemId(item.Item1), GameSyncManager.CurrentTick),
                         };
                         var itemMetaData = new CollectItemMetaData(id, 
                             item.Item2,
@@ -438,7 +459,7 @@ namespace HotUpdate.Scripts.Collector
                             30, 
                             (ushort)Random.Range(0, 65535),
                             -1);
-                        itemMetaData.SetCustomData(extraData);
+                        itemMetaData = itemMetaData.SetCustomData(extraData);
                         var state = (ItemState)itemMetaData.StateFlags;
                         state = state.AddState(ItemState.IsActive);
                         itemMetaData.StateFlags = (byte)state;
@@ -491,13 +512,22 @@ namespace HotUpdate.Scripts.Collector
                 -1);
             var qualityItems = RandomItemsData.GenerateQualityItems(chestData.randomItems, random);
             var shopIds = _shopConfig.GetQualityItems(qualityItems, random);
-            metaData.SetCustomData(new ChestItemCustomData
+            var chestUniqueId = HybridIdGenerator.GenerateChestId(chestData.chestId, GameSyncManager.CurrentTick);
+            metaData = metaData.SetCustomData(new ChestItemCustomData
             {
-                ChestId = chestData.chestId,
-                ShopIds = shopIds.ToArray()
+                ChestConfigId = chestData.chestId,
+                ShopIds = shopIds.ToArray(),
+                ChestUniqueId = chestUniqueId,
+                Quality = chestData.randomItems.quality,
             });
-            _serverTreasureChestMetaDataBytes = MemoryPackSerializer.Serialize(metaData);
-            RpcSpawnTreasureChest(_serverTreasureChestMetaDataBytes);
+            var serverTreasureChestMetaDataBytes = MemoryPackSerializer.Serialize(metaData);
+            _serverTreasureChestMetaData = metaData;
+            RpcSpawnTreasureChest(serverTreasureChestMetaDataBytes);
+            GameItemManager.AddChestData(new GameChestData
+            {
+                ChestId = chestUniqueId,
+                ChestConfigId = chestData.chestId,
+            }, netIdentity);
         }
 
         [ClientRpc]
@@ -505,9 +535,15 @@ namespace HotUpdate.Scripts.Collector
         {
             var metaData = MemoryPackSerializer.Deserialize<CollectItemMetaData>(serverTreasureChestMetaData);
             var position = metaData.Position.ToVector3();
-            var chestType = (int)metaData.GetCustomData<ChestItemCustomData>().ChestId;
+            var quality = metaData.GetCustomData<ChestItemCustomData>().Quality;
+            var treasureChestPrefab = _treasureChestPrefabs.GetValueOrDefault(quality);
+            if (!treasureChestPrefab)
+            {
+                Debug.LogError($"No treasure chest prefab found for quality: {quality}");
+                return;
+            }
             var spawnedChest = GameObjectPoolManger.Instance.GetObject(
-                _treasureChestPrefab.gameObject,
+                treasureChestPrefab.gameObject,
                 position,
                 Quaternion.identity,
                 _spawnedParent,
@@ -532,10 +568,10 @@ namespace HotUpdate.Scripts.Collector
             {
                 var position = data.Position;
                 Debug.Log($"Client spawning item at position: {position}"); // 添加日志
-                var prefab = GetPrefabByCollectType(data.ItemConfigId);
+                var prefab = GetPrefabByCollectType(data.ItemCollectConfigId);
                 if (!prefab)
                 {
-                    Debug.LogError($"Failed to find prefab for CollectType: {data.ItemConfigId}");
+                    Debug.LogError($"Failed to find prefab for CollectType: {data.ItemCollectConfigId}");
                     continue;
                 }
 
@@ -546,7 +582,7 @@ namespace HotUpdate.Scripts.Collector
                     Debug.LogError("Failed to get object from pool");
                     continue;
                 }
-                var configData = _collectObjectDataConfig.GetCollectObjectData(data.ItemConfigId);
+                var configData = _collectObjectDataConfig.GetCollectObjectData(data.ItemCollectConfigId);
                 var collectItemCustomData = data.GetCustomData<CollectItemCustomData>();
                 var buff = _randomBuffConfig.GetRandomBuffData(collectItemCustomData.RandomBuffId);
                 var component = go.GetComponent<CollectObjectController>();
@@ -561,7 +597,7 @@ namespace HotUpdate.Scripts.Collector
                     });
                     component.SetMaterial(material);
                 }
-                Debug.Log($"Spawning item at position: {position} with id: {data.ItemId}-{data.OwnerId}-{data.ItemConfigId}-{buff.propertyType}-{buff.buffId}-{collectItemCustomData.BuffSize}-{material.name}");
+                Debug.Log($"Spawning item at position: {position} with id: {data.ItemId}-{data.OwnerId}-{data.ItemCollectConfigId}-{buff.propertyType}-{buff.buffId}-{material.name}");
         
                 // 确保位置正确设置
                 go.transform.position = position;

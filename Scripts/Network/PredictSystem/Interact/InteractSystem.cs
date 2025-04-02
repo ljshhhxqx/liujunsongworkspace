@@ -76,10 +76,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             switch (request.InteractionType)
             {
                 case InteractionType.PickupItem:
-                    _itemsSpawnerManager.PickerPickupItem(request.SceneItemId, playerNetId);
+                    _itemsSpawnerManager.PickerPickupItem(playerNetId, request.SceneItemId);
                     break;
                 case InteractionType.PickupChest:
-                    _itemsSpawnerManager.PickerPickUpChest(request.SceneItemId, playerNetId);
+                    _itemsSpawnerManager.PickerPickUpChest(playerNetId, request.SceneItemId);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

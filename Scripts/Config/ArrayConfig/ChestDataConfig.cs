@@ -47,6 +47,11 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 chestConfigData.Add(chestData);
             }
         }
+
+        public ChestPropertyData GetChestConfigData(int chestDataChestId)
+        {
+            return chestConfigData.FirstOrDefault(x => x.chestId == chestDataChestId);
+        }
     }
 
     [Serializable]

@@ -21,7 +21,7 @@ namespace HotUpdate.Scripts.Collector
 
         // 物品ConfigId
         [MemoryPackOrder(3)]
-        public int ItemConfigId;
+        public int ItemCollectConfigId;
 
         // 服务器生成帧
         [MemoryPackOrder(4)]
@@ -42,13 +42,13 @@ namespace HotUpdate.Scripts.Collector
         [MemoryPackOrder(8)]
         public byte[] ExtraData;
 
-        public CollectItemMetaData(uint itemId, Vector3 position, byte stateFlags, int itemConfigId, uint spawnTick, ushort lifetime, ushort randomSeed, int ownerId,
+        public CollectItemMetaData(uint itemId, Vector3 position, byte stateFlags, int itemCollectConfigId, uint spawnTick, ushort lifetime, ushort randomSeed, int ownerId,
             byte[] extraData = null)
         {
             ItemId = itemId;
             Position = CompressedVector3.FromVector3(position);
             StateFlags = stateFlags;
-            ItemConfigId = itemConfigId;
+            ItemCollectConfigId = itemCollectConfigId;
             SpawnTick = spawnTick;
             Lifetime = lifetime;
             RandomSeed = randomSeed;
@@ -114,17 +114,6 @@ namespace HotUpdate.Scripts.Collector
             z = (short)(q.z * 100),
             w = (short)(q.w * 100)
         };
-    }
-    
-    [Flags]
-    public enum ItemState : byte
-    {
-        None = 0,
-        IsActive = 1 << 0,     // 00000001 - 存在于场景中
-        IsCollected = 1 << 1,  // 00000010 - 已被收集
-        IsLocked = 1 << 2,     // 00000100 - 锁定状态
-        IsInteracting = 1 << 3,// 00001000 - 正在交互中（播放动画）
-        IsProcessed = 1 << 4   // 00010000 - 已完成处理（防止重复）
     }
 
     public enum ColliderType

@@ -16,9 +16,9 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     {
         [ReadOnly]
         [SerializeField]
-        private List<GameItemData> gameItemDatas;
+        private List<GameItemConfigData> gameItemDatas;
         
-        public GameItemData GetGameItemData(int configId)
+        public GameItemConfigData GetGameItemData(int configId)
         {
             foreach (var itemData in gameItemDatas)
             {
@@ -28,7 +28,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 }
             }
 
-            return new GameItemData();
+            Debug.LogWarning("No GameItemData found with id " + configId);
+            return new GameItemConfigData();
         }
         
         protected override void ReadFromCsv(List<string[]> textAsset)
@@ -42,7 +43,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             for (var i = 2; i < textAsset.Count; i++)
             {
                 var row = textAsset[i];
-                var gameItemData = new GameItemData();
+                var gameItemData = new GameItemConfigData();
                 gameItemData.id = int.Parse(row[0]);
                 gameItemData.name = row[1];
                 gameItemData.desc = row[2];
@@ -202,7 +203,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     }
 
     [Serializable]
-    public struct GameItemData
+    public struct GameItemConfigData
     {
         public int id;
         public string name;
@@ -259,7 +260,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         Armor,
         Consume,
         Item,
-        Gold,
-        Score,
+        Collect,
     }
 }

@@ -16,10 +16,12 @@ namespace HotUpdate.Scripts.Collector
     public partial struct CollectItemCustomData : IItemCustomData
     {
         [MemoryPackOrder(0)]
-        public CollectObjectBuffSize BuffSize;
+        public int ItemUniqueId;
         [MemoryPackOrder(1)]
-        public int BuffId;
+        public int ItemConfigId;
         [MemoryPackOrder(2)]
+        public int BuffId;
+        [MemoryPackOrder(3)]
         public int RandomBuffId;
         
         public byte[] Serialize()
@@ -37,9 +39,13 @@ namespace HotUpdate.Scripts.Collector
     public partial struct ChestItemCustomData : IItemCustomData
     {
         [MemoryPackOrder(0)]
-        public int ChestId;
+        public int ChestConfigId;
         [MemoryPackOrder(1)]
+        public int ChestUniqueId;
+        [MemoryPackOrder(2)]
         public int[] ShopIds;
+        [MemoryPackOrder(3)]
+        public QualityType Quality;
         
         public byte[] Serialize()
         {
@@ -65,9 +71,10 @@ namespace HotUpdate.Scripts.Collector
             return MemoryPackSerializer.Deserialize<T>(meta.ExtraData, SerializerOptions);
         }
 
-        public static void SetCustomData<T>(ref this CollectItemMetaData meta, T data) where T : IItemCustomData
+        public static CollectItemMetaData SetCustomData<T>(ref this CollectItemMetaData meta, T data) where T : IItemCustomData
         {
             meta.ExtraData = MemoryPackSerializer.Serialize(data, SerializerOptions);
+            return meta;
         }
     }
 }

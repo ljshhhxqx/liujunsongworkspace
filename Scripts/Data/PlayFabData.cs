@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Data
 {
     [Serializable]
-    public class PlayerInternalData
+    public struct PlayerInternalData
     {
         public string PlayerId;
         public string LastLoginTime;
@@ -14,7 +14,7 @@ namespace Data
     }
 
     [Serializable]
-    public class PlayerReadOnlyData
+    public struct PlayerReadOnlyData
     {
         public string PlayerId;
         public string Nickname;
@@ -37,14 +37,14 @@ namespace Data
 
     [Serializable]
     //获取所有可邀请玩家信息
-    public class InvitablePlayersData 
+    public struct InvitablePlayersData 
     {
          public List<PlayerReadOnlyData> Players;
     }
 
     [Serializable]
     //可邀请玩家信息(其实是我整个项目核心玩家信息，可能需要做很多额外拓展)
-    public class PlayerInfo 
+    public struct PlayerInfo 
     {
         public string PlayerId;
         public string AccountId;
@@ -55,21 +55,21 @@ namespace Data
 
     [Serializable]
     //unity本地需要的一些数据
-    public class RoomGlobalInfo 
+    public struct RoomGlobalInfo 
     {
         public int MaxPlayers;
         public int MinPlayers;
     }
 
     [Serializable]
-    public class RoomsData 
+    public struct RoomsData 
     {
         public List<RoomData> AllRooms;
     }
 
     [Serializable]
     //房间自定义信息
-    public class RoomCustomInfo
+    public struct RoomCustomInfo
     {
         public string RoomName;
         // 0: public, 1: local
@@ -85,7 +85,7 @@ namespace Data
     }
     
     [Serializable]
-    public class RoomData
+    public struct RoomData
     {
         // 房间ID，需要服务器生成
         public string RoomId;

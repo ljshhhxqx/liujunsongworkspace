@@ -78,7 +78,7 @@ namespace UI.UIs.Panel
 
         private void OnSetRoomInfo(RoomData roomInfo)
         {
-            if (roomInfo != null)
+            if (roomInfo.PlayersInfo != null)
             {
                 roomNameText.text = roomInfo.RoomCustomInfo.RoomName;
                 if (roomInfo.PlayersInfo is { Count: > 0 })

@@ -8,7 +8,7 @@ namespace Network.Server.PlayFab
 {
     public static class PlayFabMessageFactory
     {
-        public static MessageContent ConvertMessage(Dictionary<string, object> messageData)
+        public static IMessageContent ConvertMessage(Dictionary<string, object> messageData)
         {
             var messageType = (MessageType)Convert.ToInt32(messageData["type"]);
 
@@ -16,7 +16,7 @@ namespace Network.Server.PlayFab
             {
                 // MessageType.Invitation => JsonUtility.FromJson<InvitationMessage>(
                 //     JsonConvert.SerializeObject(messageData)),
-                MessageType.SystemNotification => JsonUtility.FromJson<MessageContent>(
+                MessageType.SystemNotification => JsonUtility.FromJson<IMessageContent>(
                     JsonConvert.SerializeObject(messageData)),
                 _ => throw new ArgumentException($"Unknown message type: {messageType}")
             };

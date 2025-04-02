@@ -1165,10 +1165,10 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
-            "Name": "Gold Chest",
+            "Name": "GoldChest",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/Collect/Prefab/Gold Chest.prefab"
+            "Address": "/Map/Town/Collect/Prefab/GoldChest.prefab"
         },
         {
             "UID": 2800009,
@@ -1205,10 +1205,10 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
-            "Name": "Old Chest",
+            "Name": "OldChest",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/Collect/Prefab/Old Chest.prefab"
+            "Address": "/Map/Town/Collect/Prefab/OldChest.prefab"
         },
         {
             "UID": 2800013,
@@ -1235,10 +1235,10 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
-            "Name": "Stone Chest",
+            "Name": "StoneChest",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/Collect/Prefab/Stone Chest.prefab"
+            "Address": "/Map/Town/Collect/Prefab/StoneChest.prefab"
         },
         {
             "UID": 2900000,

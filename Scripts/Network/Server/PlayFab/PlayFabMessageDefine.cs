@@ -34,7 +34,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
     }
 
     [Serializable]
-    public class Message
+    public struct Message
     {
         /// <summary>
         /// 消息的唯一标识符(服务器创建)
@@ -95,7 +95,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
     }
     
     [Serializable]
-    public class SendMessageResponse
+    public struct SendMessageResponse
     {
         public bool success;
         public string message;
@@ -103,20 +103,19 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
     }
 
     [Serializable]
-    public class GetNewMessagesResponse
+    public struct GetNewMessagesResponse
     {
         public List<Message> messages;
     }
 
-    [Serializable]
-    public class MessageContent
+    public interface IMessageContent
     {
         
     }
 
     // 特定类型的消息可以继承自 Message 类
     [Serializable]
-    public class RequestJoinRoomMessage : MessageContent
+    public struct RequestJoinRoomMessage : IMessageContent
     {
         public string roomId;
         public string roomName;
@@ -125,7 +124,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
     }
     
     [Serializable]
-    public class InvitationMessage : MessageContent
+    public struct InvitationMessage : IMessageContent
     {
         public string inviterId;
         public string inviterName;
@@ -134,13 +133,13 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
     }
     
     [Serializable]
-    public class ApproveJoinRoomMessage : MessageContent
+    public struct ApproveJoinRoomMessage : IMessageContent
     {
         public RoomData roomData;
     }
 
     [Serializable]
-    public class DownloadFileMessage : MessageContent
+    public struct DownloadFileMessage : IMessageContent
     {
         public string fileContents;
         public string fileName;
@@ -148,7 +147,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
     }
 
     [Serializable]
-    public class TestMessage : MessageContent
+    public struct TestMessage : IMessageContent
     {
         public string testContent;
     }

@@ -269,9 +269,9 @@ namespace Network.Server.PlayFab
         /// 离开房间
         /// </summary>
         /// <param name="roomData">没有数据表示退出当前房间，有数据表示其他人退出房间</param>
-        public void LeaveRoom(RoomData roomData = null)
+        public void LeaveRoom(RoomData roomData = default)
         {
-            if (roomData == null)
+            if (roomData.RoomId == null)
             {
                 var request = new ExecuteEntityCloudScriptRequest
                 {

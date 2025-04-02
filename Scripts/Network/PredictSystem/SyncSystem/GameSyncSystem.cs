@@ -342,7 +342,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             int? noSequence = null;
             var connectionIdValue = connectionId.GetValueOrDefault();
             var header = ObjectPool<InteractHeader>.Get();
-            header.CommandId = HybridCommandId.Generate(authority == CommandAuthority.Server, CommandType.Interact, ref noSequence);
+            header.CommandId = HybridIdGenerator.GenerateCommandId(authority == CommandAuthority.Server, CommandType.Interact, ref noSequence);
             header.RequestConnectionId = connectionIdValue;
             header.Tick = CurrentTick;
             header.Category = category;
@@ -357,7 +357,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var tick = (int?)CurrentTick;
             var connectionIdValue = connectionId.GetValueOrDefault();
             var header = ObjectPool<NetworkCommandHeader>.Get();
-            header.CommandId = HybridCommandId.Generate(authority == CommandAuthority.Server, commandType, ref tick);
+            header.CommandId = HybridIdGenerator.GenerateCommandId(authority == CommandAuthority.Server, commandType, ref tick);
             header.ConnectionId = connectionIdValue;
             header.CommandType = commandType;
             header.Tick = tick.GetValueOrDefault();

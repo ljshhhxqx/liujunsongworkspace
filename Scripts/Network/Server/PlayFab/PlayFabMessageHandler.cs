@@ -341,7 +341,7 @@ namespace Network.Server.PlayFab
             Debug.Log($"Test message received {messageContent.testContent}");
         }
         
-        private T ConvertToMessageContent<T>(string content) where T : MessageContent, new()
+        private T ConvertToMessageContent<T>(string content) where T : IMessageContent, new()
         {
             var messageContent = JsonUtility.FromJson<T>(content);
             return messageContent;
