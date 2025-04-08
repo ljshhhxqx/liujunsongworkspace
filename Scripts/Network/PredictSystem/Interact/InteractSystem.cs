@@ -78,6 +78,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             _commandQueue.Enqueue(command);
         }
 
+        [Server]
+        public void EnqueueServerCommand(IInteractRequest command)
+        {
+            var header = command.GetHeader();
+            var validCommand = command.CommandValidResult();
+            if (!validCommand.IsValid)
+            {
+                Debug.LogError($"Invalid command: {header}");
+                return;
+            }
+            _commandQueue.Enqueue(command);
+        }
+
         private void HandleSceneInteractRequest(SceneInteractRequest request)
         {
             var header = request.GetHeader();

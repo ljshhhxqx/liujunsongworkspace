@@ -2,6 +2,7 @@
 using System.Linq;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
+using HotUpdate.Scripts.Network.PredictSystem.State;
 using MemoryPack;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Interact
@@ -53,6 +54,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
     [MemoryPackUnion(0, typeof(SceneInteractRequest))]
     [MemoryPackUnion(1, typeof(PlayerInteractRequest))]
     [MemoryPackUnion(2, typeof(EnvironmentInteractRequest))]
+    [MemoryPackUnion(3, typeof(PlayerToSceneRequest))]
     public partial interface IInteractRequest
     {
         InteractHeader GetHeader();
@@ -64,13 +66,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
     public partial struct PlayerToSceneRequest : IInteractRequest
     {
         [MemoryPackOrder(0)] public InteractHeader Header;
-        [MemoryPackOrder(1)] public int[] ItemIds; // 物品id（由服务器生成的id，而非场景id）
+        [MemoryPackOrder(1)] public DroppedItemData[] ItemDatas; // 物品id（由服务器生成的id，而非场景id）
         [MemoryPackOrder(2)] public InteractionType InteractionType; // 交互类型（开门/拾取等）
         public InteractCategory Category => Header.Category;
         public InteractHeader GetHeader() => Header;
         public bool IsValid()
         {
-            return Enum.IsDefined(typeof(InteractionType), Header) && ItemIds.Length > 0 && ItemIds.All(id => id > 0);
+            return Enum.IsDefined(typeof(InteractionType), Header) && ItemDatas.Length > 0 && ItemDatas.All(id => id.ItemConfigId > 0 && id.Count > 0);
         }
     }
 
@@ -155,6 +157,30 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             }
 
             return result;
+        }
+    }
+
+    [MemoryPackable]
+    public partial struct DroppedItemData : IEquatable<DroppedItemData>
+    {
+        [MemoryPackOrder(0)]
+        public int ItemConfigId;
+        [MemoryPackOrder(1)]
+        public int Count;
+
+        public bool Equals(DroppedItemData other)
+        {
+            return ItemConfigId == other.ItemConfigId && Count == other.Count;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is DroppedItemData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(ItemConfigId, Count);
         }
     }
 }

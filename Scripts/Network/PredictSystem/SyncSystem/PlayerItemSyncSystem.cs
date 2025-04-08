@@ -5,13 +5,16 @@ using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Item;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.PredictSystem.State;
+using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using MemoryPack;
 using Mirror;
 using UnityEngine;
 using VContainer;
+using Object = UnityEngine.Object;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
@@ -19,11 +22,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
     {
         private readonly Dictionary<int, PlayerItemSyncState> _playerItemSyncStates = new Dictionary<int, PlayerItemSyncState>();
         private ItemConfig _itemConfig;
+        private WeaponConfig _weaponConfig;
+        private ArmorConfig _armorConfig;
+        private InteractSystem _interactSystem;
+        private PlayerInGameManager _playerInGameManager;
 
         [Inject]
-        private void Init(IConfigProvider configProvider)
+        private void Init(IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
         {
             _itemConfig = configProvider.GetConfig<ItemConfig>();
+            _weaponConfig = configProvider.GetConfig<WeaponConfig>();
+            _armorConfig = configProvider.GetConfig<ArmorConfig>();
+            _playerInGameManager = playerInGameManager;
+            _interactSystem = Object.FindObjectOfType<InteractSystem>();
         }
 
         protected override void OnClientProcessStateUpdate(byte[] state)
@@ -74,22 +85,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     }
                     break;
                 case ItemsUseCommand itemUseCommand:
-                    CommandUseItems(itemUseCommand);
+                    CommandUseItems(itemUseCommand, ref playerItemState);
                     break;
                 case ItemEquipCommand itemEquipCommand:
-                    CommandEquipItem(itemEquipCommand, ref playerItemState);
+                    CommandEquipItem(itemEquipCommand, ref playerItemState, header.ConnectionId);
                     break;
                 case ItemLockCommand itemLockCommand:
                     CommandLockItem(itemLockCommand, ref playerItemState);
                     break;
                 case ItemDropCommand itemDropCommand:
-                    CommandDropItem(itemDropCommand, ref playerItemState);
+                    CommandDropItem(itemDropCommand, ref playerItemState , header.ConnectionId);
                     break;
                 case ItemsBuyCommand itemBuyCommand:
                     CommandBuyItem(itemBuyCommand, ref playerItemState);
                     break;
                 case ItemsSellCommand itemSellCommand:
-                    CommandSellItem(itemSellCommand, ref playerItemState);
+                    CommandSellItem(itemSellCommand, ref playerItemState, header.ConnectionId);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -106,45 +117,122 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
         }
 
-        private void CommandSellItem(ItemsSellCommand itemSellCommand, ref PlayerItemState playerItemState)
+        private void CommandSellItem(ItemsSellCommand itemSellCommand, ref PlayerItemState playerItemState, int connectionId)
         {
-            
+            foreach (var item in itemSellCommand.Slots)
+            {
+                if (PlayerItemState.RemoveItem(ref playerItemState, item.SlotIndex, item.Count, out var bagSlotItem))
+                {
+                    var config = _itemConfig.GetGameItemData(bagSlotItem.ConfigId);
+                    if (config.itemType != PlayerItemType.Weapon && config.itemType != PlayerItemType.Armor)
+                    {
+                        continue;
+                    }
+                    var configId = GetConfigId(config.itemType, bagSlotItem.ConfigId);
+                    if (configId != 0)
+                    {
+                        GameSyncManager.EnqueueServerCommand(new EquipmentCommand
+                        {
+                            Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
+                            EquipmentConfigId = configId,
+                            EquipmentPart = config.equipmentPart,
+                            IsEquip = false
+                        });
+                    }
+                }
+            }
         }
         
         private void CommandLockItem(ItemLockCommand itemLockCommand, ref PlayerItemState playerItemState)
         {
-            if (!PlayerItemState.UpdateItemState(ref playerItemState, itemLockCommand.SlotIndex, ItemState.IsLocked))
+            if (!PlayerItemState.UpdateItemState(ref playerItemState, itemLockCommand.SlotIndex, itemLockCommand.IsLocked ? ItemState.IsLocked : ItemState.IsInBag))
             {
                 Debug.LogError($"Failed to lock item {itemLockCommand.SlotIndex}");
                 return;
             }
             Debug.Log($"Item {itemLockCommand.SlotIndex} locked");
         }
-
-        private void CommandEquipItem(ItemEquipCommand itemEquipCommand, ref PlayerItemState playerItemState)
+        
+        private int GetConfigId(PlayerItemType itemType, int itemConfigId)
         {
-            if (!PlayerItemState.UpdateItemState(ref playerItemState, itemEquipCommand.SlotIndex, ItemState.IsEquipped))
+            switch (itemType)
+            {
+                case PlayerItemType.Weapon:
+                    return _weaponConfig.GetWeaponConfigByItemID(itemConfigId).weaponID;
+                case PlayerItemType.Armor:
+                    return _armorConfig.GetArmorConfigByItemID(itemConfigId).armorID;
+                default:
+                    return 0;
+            }
+        }
+
+        private void CommandEquipItem(ItemEquipCommand itemEquipCommand, ref PlayerItemState playerItemState, int connectionId)
+        {
+            if (!PlayerItemState.UpdateItemState(ref playerItemState, itemEquipCommand.SlotIndex, itemEquipCommand.IsEquip ? ItemState.IsEquipped : ItemState.IsInBag))
             {
                 Debug.LogError($"Failed to equip item {itemEquipCommand.SlotIndex}");
                 return;
             }
             Debug.Log($"Item {itemEquipCommand.SlotIndex} equipped");
+            if (!PlayerItemState.TryGetEquipItemBySlotIndex(playerItemState, itemEquipCommand.SlotIndex, out var bagItem)
+                || bagItem.PlayerItemType == PlayerItemType.None)
+            {
+                return;
+            }
+
+            var configId = GetConfigId(bagItem.PlayerItemType, bagItem.ConfigId);
             GameSyncManager.EnqueueServerCommand(new EquipmentCommand
             {
-                
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
+                EquipmentConfigId = configId,
+                EquipmentPart = bagItem.EquipmentPart,
+                IsEquip = itemEquipCommand.IsEquip
             });
         }
 
-        private void CommandDropItem(ItemDropCommand itemDropCommand, ref PlayerItemState playerItemState)
+        private void CommandDropItem(ItemDropCommand itemDropCommand, ref PlayerItemState playerItemState, int connectionId)
         {
-            
+            var droppedItemDatas = new DroppedItemData[itemDropCommand.Slots.Length];
+            for (int i = 0; i < itemDropCommand.Slots.Length; i++)
+            {
+                var item = itemDropCommand.Slots[i];
+                if (!PlayerItemState.RemoveItem(ref playerItemState, item.SlotIndex, item.Count, out var bagSlotItem))
+                {
+                    Debug.LogError($"Failed to remove item {item.SlotIndex}");
+                    return;
+                }
+
+                droppedItemDatas[i] = new DroppedItemData
+                {
+                    Count = bagSlotItem.Count,
+                    ItemConfigId = bagSlotItem.ConfigId,
+                };
+            }
+            var player = _playerInGameManager.GetPlayerNetId(connectionId);
+            var playerComponent = NetworkServer.spawned[player];
+
+            var request = new PlayerToSceneRequest
+            {
+                Header = GameSyncManager.CreateInteractHeader(connectionId, InteractCategory.PlayerToScene,
+                    playerComponent.transform.position),
+                InteractionType = InteractionType.DropItem,
+                ItemDatas = droppedItemDatas,
+            };
+            _interactSystem.EnqueueServerCommand(request);
         }
 
-        private void CommandUseItems(ItemsUseCommand itemsUseCommand)
+        private void CommandUseItems(ItemsUseCommand itemsUseCommand, ref PlayerItemState playerItemState)
         {
-            foreach (var itemData in itemsUseCommand.Items)
+            foreach (var itemData in itemsUseCommand.Slots)
             {
-                foreach (var itemId in itemData.ItemUniqueId)
+                if (!PlayerItemState.TryGetSlotItemBySlotIndex(playerItemState, itemData.SlotIndex, out var bagItem))
+                {
+                    Debug.LogError($"Failed to use item {itemData.SlotIndex}");
+                    return;
+                }
+
+                var itemIds = bagItem.ItemIds;
+                foreach (var itemId in itemIds)
                 {
                     var item = GameItemManager.GetGameItemData(itemId);
                     if (item.ItemId != itemId)
@@ -152,6 +240,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         Debug.LogError($"Item id {itemId} not found");
                         return;
                     }
+
+                    if (item.ItemType != PlayerItemType.Consume)
+                    {
+                        Debug.LogError($"Item {itemId} is not a consume item");
+                        return;
+                    }
+
                     var header = itemsUseCommand.Header;
                     var itemConfigData = _itemConfig.GetGameItemData(item.ItemConfigId);
                     if (itemConfigData.id == 0)
@@ -162,7 +257,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             
                     var buffCommand = new PropertyBuffCommand
                     {
-                        Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property),
+                        Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property, CommandAuthority.Server, CommandExecuteType.Immediate),
                         CasterId = null,
                         TargetId = header.ConnectionId,
                     };
@@ -188,7 +283,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 case PlayerItemType.Weapon:
                 case PlayerItemType.Armor:
-                    break;
                 case PlayerItemType.Consume:
                 case PlayerItemType.Item:
                     //todo: 操作玩家背包
@@ -227,7 +321,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             bagItem.PlayerItemType = itemConfigData.itemType;
             bagItem.State = ItemState.IsInBag;
             bagItem.MaxStack = itemConfigData.maxStack;
-            if (!PlayerItemState.AddItem(ref playerItemState, bagItem))
+            bagItem.IndexSlot = -1;
+            bagItem.EquipmentPart = itemConfigData.equipmentPart;
+            if (!PlayerItemState.TryAddAndEquipItem(ref playerItemState, bagItem))
             {
                 Debug.LogError($"Failed to add item {bagItem.ItemId}");
                 ObjectPool<PlayerBagItem>.Return(bagItem);

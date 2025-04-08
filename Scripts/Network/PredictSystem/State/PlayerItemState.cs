@@ -120,7 +120,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                             ConfigId = _items[i].ConfigId,
                             Count = 1,
                             ItemIds = new HashSet<int> {_items[i].ItemId},
-                            MaxStack = _items[i].MaxStack
+                            MaxStack = _items[i].MaxStack,
+                            PlayerItemType = _items[i].PlayerItemType,
+                            State = _items[i].State,
                         };
                     }
                     else
@@ -202,7 +204,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                     ConfigId = configId, 
                     Count = Mathf.Min(count, newItem.MaxStack), 
                     ItemIds = new HashSet<int>(), 
-                    MaxStack = maxStack
+                    MaxStack = maxStack,
+                    PlayerItemType = itemType,
+                    State = itemState,
                 };
 
                 for (int i = 0; i < itemIds.Length; i++)
@@ -254,10 +258,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                     PlayerItemType = item.PlayerItemType,
                     State = item.State,
                     IndexSlot = freeSlot,
-                    MaxStack = item.MaxStack 
+                    MaxStack = item.MaxStack,
+                    EquipmentPart = item.EquipmentPart,
                 };
 
-                var newSlotItem = new PlayerBagSlotItem { IndexSlot = freeSlot, ConfigId = item.ConfigId, Count = Mathf.Min(1, newItem.MaxStack) };
+                var newSlotItem = new PlayerBagSlotItem
+                {
+                    IndexSlot = freeSlot,
+                    ConfigId = item.ConfigId,
+                    Count = Mathf.Min(1, newItem.MaxStack),
+                    ItemIds = new HashSet<int> {item.ItemId},
+                    MaxStack = item.MaxStack,
+                    PlayerItemType = item.PlayerItemType,
+                    State = item.State,
+                    
+                };
 
                 state.PlayerItems.Add(item.ItemId, newItem);
                 state.PlayerItemConfigIdSlotDictionary.Add(freeSlot, newSlotItem);
@@ -267,9 +282,67 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             return false;
         }
 
-        public static bool RemoveItem(ref PlayerItemState state, int slotIndex, int count = 1)
+        
+        public static bool TryAddAndEquipItem(ref PlayerItemState state, PlayerBagItem bagItem)
         {
-            if (!state.PlayerItemConfigIdSlotDictionary.TryGetValue(slotIndex, out var slotItem))
+            if (!AddItem(ref state, bagItem))
+            {
+                return false;
+            }
+            if (bagItem.PlayerItemType.IsEquipment())
+            {
+                var equipPart = bagItem.EquipmentPart;
+                if (state.PlayerEquipSlotItems.ContainsKey(equipPart))
+                {
+                    Debug.Log($"{equipPart}已经装备，存入背包");
+                }
+                state.PlayerEquipSlotItems[equipPart] = new PlayerEquipSlotItem
+                {
+                    EquipmentPart = equipPart,
+                    ItemId = bagItem.ItemId,
+                    ConfigId = bagItem.ConfigId,
+                };
+                return true;
+            }
+            return false;
+        
+        }
+
+        public static bool RemoveItems(ref PlayerItemState state, int[] itemIds)
+        {
+            bool success = true;
+            foreach (var itemId in itemIds)
+            {
+                if (!state.PlayerItems.Remove(itemId, out var item))
+                {
+                    success = false;
+                    Debug.LogWarning($"物品不存在: {itemId}");
+                    break;
+                }
+                if (item.State == ItemState.IsEquipped)
+                {
+                    var equipPart = item.EquipmentPart;
+                    state.PlayerEquipSlotItems.Remove(equipPart);
+                }
+                var slotItem = state.PlayerItemConfigIdSlotDictionary[item.ConfigId];
+                slotItem.Count -= 1;
+                slotItem.ItemIds.Remove(itemId);
+                if (slotItem.Count == 0)
+                {
+                    state.PlayerItemConfigIdSlotDictionary.Remove(item.ConfigId);
+                }
+                else
+                {
+                    state.PlayerItemConfigIdSlotDictionary[item.ConfigId] = slotItem;
+                }
+                state.PlayerItems.Remove(itemId);
+            }
+            return success;
+        }
+
+        public static bool RemoveItem(ref PlayerItemState state, int slotIndex, int count, out PlayerBagSlotItem slotItem)
+        {
+            if (!state.PlayerItemConfigIdSlotDictionary.TryGetValue(slotIndex, out slotItem))
             {
                 Debug.LogWarning($"槽位物品不存在: {slotIndex}");
                 return false;
@@ -311,13 +384,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
 
         public static bool RemoveItemByConfigId(ref PlayerItemState state, int configId, int count = 1)
         {
-            if (!TryGetSlotItemByConfigId( state, configId, out var slotItem))
+            if (!TryGetSlotItemByConfigId(state, configId, out var slotItem))
             {
                 Debug.LogWarning($"配置ID物品不存在: {configId}");
                 return false;
             }
     
-            return RemoveItem(ref state, slotItem.IndexSlot, count);
+            return RemoveItem(ref state, slotItem.IndexSlot, count, out slotItem);
         }
         public static bool UpdateItemState(ref PlayerItemState state, int slotIndex, ItemState newState)
         {
@@ -358,6 +431,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                     }
                     item.State = newState;
                     state.PlayerItems[itemId] = item;
+                    slotItem.State = newState;
+                    state.PlayerItemConfigIdSlotDictionary[slotItem.IndexSlot] = slotItem;
                 }
             }
             return true;
@@ -405,6 +480,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         public static bool TryGetSlotItemBySlotIndex(PlayerItemState state, int slotIndex, out PlayerBagSlotItem slotItem)
         {
             return state.PlayerItemConfigIdSlotDictionary.TryGetValue(slotIndex, out slotItem);
+        }
+
+        public static bool TryGetEquipItemBySlotIndex(PlayerItemState state, int slotIndex,
+            out PlayerBagItem bagItem)
+        {
+            if (state.PlayerItemConfigIdSlotDictionary.TryGetValue(slotIndex, out var slotItem))
+            {
+                return state.PlayerItems.TryGetValue(slotItem.ItemIds.First(), out bagItem);
+            }
+            bagItem = default(PlayerBagItem);
+            return false;
+        }
+
+        public static bool TryGetItemByItemId(PlayerItemState state, int itemId, out PlayerBagItem item)
+        {
+            return state.PlayerItems.TryGetValue(itemId, out item);
         }
 
         public static int GetItemCount(PlayerItemState state, int configId)
@@ -557,7 +648,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             {
                 IndexSlot = freeSlot,
                 ConfigId = slotItem.ConfigId,
-                Count = splitCount
+                Count = splitCount,
+                State = slotItem.State,
+                PlayerItemType = slotItem.PlayerItemType,
+                ItemIds = new HashSet<int>(items),
+                MaxStack = slotItem.MaxStack,
+                
             };
     
             state.PlayerItemConfigIdSlotDictionary.Add(freeSlot, newSlotItem);
@@ -599,6 +695,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         public int MaxStack;
         [MemoryPackOrder(6)]
         public EquipmentPart EquipmentPart;
+        
+        public PlayerBagItem(int itemId, int configId, PlayerItemType playerItemType, int maxStack, EquipmentPart equipmentPart = EquipmentPart.None, ItemState state = ItemState.IsInBag, int indexSlot = -1)
+        {
+            ItemId = itemId;
+            ConfigId = configId;
+            PlayerItemType = playerItemType;
+            State = state;
+            IndexSlot = indexSlot;
+            MaxStack = maxStack;
+            EquipmentPart = equipmentPart;
+        }
 
         public bool Equals(PlayerBagItem other)
         {
@@ -657,7 +764,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         public HashSet<int> ItemIds;
         [MemoryPackOrder(5)]
         public ItemState State;
-        
+        [MemoryPackOrder(6)]
+        public PlayerItemType PlayerItemType;
 
         public bool Equals(PlayerBagSlotItem other)
         {
@@ -674,5 +782,4 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             return HashCode.Combine(IndexSlot, ConfigId, Count, MaxStack);
         }
     }
-    
 }

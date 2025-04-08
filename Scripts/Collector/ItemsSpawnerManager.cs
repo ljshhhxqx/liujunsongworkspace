@@ -110,9 +110,9 @@ namespace HotUpdate.Scripts.Collector
         }
 
         [Server]
-        public void SpawnItemsByDroppedItems()
+        public void SpawnItemsByDroppedItems(byte[] droppedItemsBytes)
         {
-            
+            var items = MemoryPackSerializer.Deserialize<List<CollectItemMetaData>>(droppedItemsBytes);
         }
 
         [Server]
