@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
-using HotUpdate.Scripts.UI.UIs.Common;
+using HotUpdate.Scripts.Tool.Static;
 using MemoryPack;
 using UnityEngine;
 
@@ -18,15 +17,35 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
 
         [MemoryPackOrder(1)] 
         public int SlotCount;
-
+        
+        [MemoryPackIgnore]
+        private Dictionary<EquipmentPart, PlayerEquipSlotItem> _playerEquipSlotItemsCache;
+        
         // itemId-PlayerBagItem
         [MemoryPackIgnore]
         private Dictionary<int, PlayerBagItem> _playerItemsCache;
         
-        //configid-PlayerBagSlotItem
+        // indexSlot-PlayerBagSlotItem
         [MemoryPackIgnore]
         private Dictionary<int, PlayerBagSlotItem> _playerSlotIndexItemConfigIdCache;
+        
+        public Dictionary<EquipmentPart, PlayerEquipSlotItem> PlayerEquipSlotItems
+        {
+            get
+            {
+                if (_playerEquipSlotItemsCache == null)
+                {
+                    RebuildCache();
+                }
+                return _playerEquipSlotItemsCache;
+            }
+            set
+            {
+                _playerEquipSlotItemsCache = value;
+            }
+        }
 
+        [MemoryPackIgnore]
         public Dictionary<int, PlayerBagItem> PlayerItems
         {
             get
@@ -43,6 +62,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             }
         }
         
+        [MemoryPackIgnore]
         public Dictionary<int, PlayerBagSlotItem> PlayerItemConfigIdSlotDictionary
         {
             get
@@ -92,82 +112,166 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                             $"Duplicate property type: {_items[i]}");
                     }
                     _playerItemsCache[_items[i].ItemId] = _items[i];
+                    if (!_playerSlotIndexItemConfigIdCache.ContainsKey(_items[i].IndexSlot))
+                    {
+                        _playerSlotIndexItemConfigIdCache[_items[i].IndexSlot] = new PlayerBagSlotItem
+                        {
+                            IndexSlot = _items[i].IndexSlot,
+                            ConfigId = _items[i].ConfigId,
+                            Count = 1,
+                            ItemIds = new HashSet<int> {_items[i].ItemId},
+                            MaxStack = _items[i].MaxStack
+                        };
+                    }
+                    else
+                    {
+                        var playerBagSlotItem = _playerSlotIndexItemConfigIdCache[_items[i].IndexSlot];
+                        playerBagSlotItem.Count += 1;
+                        playerBagSlotItem.ItemIds.Add(_items[i].ItemId);
+                        _playerSlotIndexItemConfigIdCache[_items[i].IndexSlot] = playerBagSlotItem;
+                    }
+
+                    if (_items[i].PlayerItemType.IsEquipment() && _items[i].State == ItemState.IsEquipped)
+                    {
+                        var equipPart = _items[i].EquipmentPart;
+                        if (PlayerEquipSlotItems.ContainsKey(equipPart))
+                        {
+                            throw new InvalidOperationException(
+                                $"Duplicate property type: {_items[i]}");
+                        }
+                        PlayerEquipSlotItems[equipPart] = new PlayerEquipSlotItem
+                        {
+                            EquipmentPart = equipPart,
+                            ItemId = _items[i].ItemId,
+                            ConfigId = _items[i].ConfigId,
+                        };
+                    }
                 }
             }
         }
         
-        public bool AddItem(int configId, int count, PlayerItemType type, ItemState state = ItemState.IsInBag)
+        public static bool AddItems(ref PlayerItemState state, int[] itemIds, int configId, int maxStack, PlayerItemType itemType, ItemState itemState = ItemState.IsInBag, int count = 1)
         {
-            // 检查是否是可堆叠物品
-            if (TryGetSlotItemByConfigId(configId, out var slotItem) && slotItem.MaxStack > 1)
+            if (TryGetSlotItemByConfigId( state, configId, out var slotItem) && slotItem.MaxStack > 1)
             {
                 // 可堆叠物品 - 增加数量
                 int remainingSpace = slotItem.MaxStack - slotItem.Count;
                 if (remainingSpace >= count)
                 {
                     slotItem.Count += count;
-                    UpdateSlotItem(slotItem);
+                    for (int i = 0; i < count; i++)
+                    {
+                        slotItem.ItemIds.Add(itemIds[i]);
+                    }
+                    UpdateSlotItem(ref state, slotItem);
                     return true;
                 }
-                else
-                {
-                    slotItem.Count = slotItem.MaxStack;
-                    UpdateSlotItem(slotItem);
-                    return AddItem(configId, count - remainingSpace, type, state);
-                }
+
+                slotItem.Count = slotItem.MaxStack;
+                UpdateSlotItem(ref state, slotItem);
             }
             else
             {
                 // 不可堆叠或新物品 - 创建新条目
-                if (_playerItemsCache.Count >= SlotCount) // maxBagSize需要定义
+                if (state.PlayerItemConfigIdSlotDictionary.Count >= state.SlotCount) 
                 {
                     Debug.LogWarning("背包已满");
                     return false;
                 }
-        
-                int newItemId = GenerateNewItemId(); // 需要实现生成唯一ID的方法
-                int freeSlot = FindFreeSlotIndex(); // 需要实现查找空闲槽位的方法
-        
+
+                if (maxStack < count)
+                {
+                    Debug.LogWarning("获得物品数量超过最大堆叠数量");
+                    return false;
+                }
+
+                var freeSlot = FindFreeSlotIndex(ref state); 
+
                 var newItem = new PlayerBagItem
                 {
-                    ItemId = newItemId,
                     ConfigId = configId,
-                    PlayerItemType = type,
-                    State = state,
+                    PlayerItemType = itemType,
+                    State = itemState,
                     IndexSlot = freeSlot,
-                    MaxStack = GetMaxStackForConfig(configId) // 需要实现获取配置最大堆叠数的方法
+                    MaxStack = maxStack 
                 };
-        
+
                 var newSlotItem = new PlayerBagSlotItem
                 {
-                    IndexSlot = freeSlot,
-                    ConfigId = configId,
-                    Count = Mathf.Min(count, newItem.MaxStack)
+                    IndexSlot = freeSlot, 
+                    ConfigId = configId, 
+                    Count = Mathf.Min(count, newItem.MaxStack), 
+                    ItemIds = new HashSet<int>(), 
+                    MaxStack = maxStack
                 };
-        
-                _playerItemsCache.Add(newItemId, newItem);
-                _playerSlotIndexItemConfigIdCache.Add(freeSlot, newSlotItem);
-        
-                // 如果还有剩余数量，递归添加
-                if (count > newItem.MaxStack)
+
+                for (int i = 0; i < itemIds.Length; i++)
                 {
-                    return AddItem(configId, count - newItem.MaxStack, type, state);
+                    newItem.ItemId = itemIds[i];
+                    newSlotItem.ItemIds.Add(itemIds[i]);
+                    state.PlayerItems.Add(itemIds[i], newItem);
                 }
-        
+                state.PlayerItemConfigIdSlotDictionary.Add(freeSlot, newSlotItem);
+
                 return true;
             }
+            return false;
         }
-        public bool RemoveItem(int itemId, int count = 1)
+
+        public static bool AddItem(ref PlayerItemState state, PlayerBagItem item)
         {
-            if (!_playerItemsCache.TryGetValue(itemId, out var item))
+            // 检查是否是可堆叠物品
+            if (TryGetSlotItemByConfigId( state, item.ConfigId, out var slotItem) && slotItem.MaxStack > 1)
             {
-                Debug.LogWarning($"物品不存在: {itemId}");
-                return false;
+                // 可堆叠物品 - 增加数量
+                int remainingSpace = slotItem.MaxStack - slotItem.Count;
+                if (remainingSpace >= 1)
+                {
+                    slotItem.Count += 1;
+                    slotItem.ItemIds.Add(item.ItemId);
+                    UpdateSlotItem(ref state,slotItem);
+                    return true;
+                }
+
+                slotItem.Count = slotItem.MaxStack;
+                UpdateSlotItem(ref state, slotItem);
             }
-    
-            if (!_playerSlotIndexItemConfigIdCache.TryGetValue(item.IndexSlot, out var slotItem))
+            else
             {
-                Debug.LogWarning($"槽位物品不存在: {item.IndexSlot}");
+                // 不可堆叠或新物品 - 创建新条目
+                if (state.PlayerItemConfigIdSlotDictionary.Count >= state.SlotCount) 
+                {
+                    Debug.LogWarning("背包已满");
+                    return false;
+                }
+
+                var freeSlot = FindFreeSlotIndex(ref state); // 需要实现查找空闲槽位的方法
+
+                var newItem = new PlayerBagItem
+                {
+                    ItemId = item.ItemId,
+                    ConfigId = item.ConfigId,
+                    PlayerItemType = item.PlayerItemType,
+                    State = item.State,
+                    IndexSlot = freeSlot,
+                    MaxStack = item.MaxStack 
+                };
+
+                var newSlotItem = new PlayerBagSlotItem { IndexSlot = freeSlot, ConfigId = item.ConfigId, Count = Mathf.Min(1, newItem.MaxStack) };
+
+                state.PlayerItems.Add(item.ItemId, newItem);
+                state.PlayerItemConfigIdSlotDictionary.Add(freeSlot, newSlotItem);
+
+                return true;
+            }
+            return false;
+        }
+
+        public static bool RemoveItem(ref PlayerItemState state, int slotIndex, int count = 1)
+        {
+            if (!state.PlayerItemConfigIdSlotDictionary.TryGetValue(slotIndex, out var slotItem))
+            {
+                Debug.LogWarning($"槽位物品不存在: {slotIndex}");
                 return false;
             }
     
@@ -176,217 +280,243 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 Debug.LogWarning($"物品数量不足: 需要{count}, 当前{slotItem.Count}");
                 return false;
             }
+
+            if (slotItem.State == ItemState.IsLocked)
+            {
+                Debug.LogWarning($"锁定的物品无法移除: {slotItem.State}");
+                return false;
+            }
+
+            var itemId = slotItem.ItemIds.RandomSelects(count);
     
             // 更新数量或完全移除
             if (slotItem.Count > count)
             {
                 slotItem.Count -= count;
-                UpdateSlotItem(slotItem);
+                UpdateSlotItem(ref state, slotItem);
             }
             else
             {
-                _playerItemsCache.Remove(itemId);
-                _playerSlotIndexItemConfigIdCache.Remove(item.IndexSlot);
+                state.PlayerItemConfigIdSlotDictionary.Remove(slotIndex);
             }
+            
+            for (int i = 0; i < itemId.Length; i++)
+            {
+                state.PlayerItems.Remove(itemId[i]);
+            }
+
     
             return true;
         }
 
-        public bool RemoveItemByConfigId(int configId, int count = 1)
+        public static bool RemoveItemByConfigId(ref PlayerItemState state, int configId, int count = 1)
         {
-            if (!TryGetSlotItemByConfigId(configId, out var slotItem))
+            if (!TryGetSlotItemByConfigId( state, configId, out var slotItem))
             {
                 Debug.LogWarning($"配置ID物品不存在: {configId}");
                 return false;
             }
     
-            // 找到对应的PlayerBagItem
-            var item = _playerItemsCache.Values.FirstOrDefault(x => 
-                x.ConfigId == configId && x.IndexSlot == slotItem.IndexSlot);
-    
-            if (item.Equals(default(PlayerBagItem)))
-            {
-                Debug.LogWarning($"找不到对应的PlayerBagItem: {configId}");
-                return false;
-            }
-    
-            return RemoveItem(item.ItemId, count);
+            return RemoveItem(ref state, slotItem.IndexSlot, count);
         }
-        public bool UpdateItemState(int itemId, ItemState newState)
+        public static bool UpdateItemState(ref PlayerItemState state, int slotIndex, ItemState newState)
         {
-            if (!_playerItemsCache.TryGetValue(itemId, out var item))
+            if ( !state.PlayerItemConfigIdSlotDictionary.TryGetValue(slotIndex, out var slotItem))
             {
-                Debug.LogWarning($"物品不存在: {itemId}");
+                Debug.LogWarning($"物品槽位不存在: {slotIndex}");
                 return false;
             }
-    
-            item.State = newState;
-            _playerItemsCache[itemId] = item;
+            foreach (var itemId in slotItem.ItemIds)
+            {
+                if (state.PlayerItems.TryGetValue(itemId, out var item))
+                {
+                    if (item.State == newState)
+                    {
+                        Debug.LogWarning($"物品状态未改变: {item}");
+                        return false;
+                    }
+                    if (newState == ItemState.IsEquipped )
+                    {
+                        
+                        if (!item.PlayerItemType.IsEquipment())
+                        {
+                            Debug.LogWarning($"非装备物品不能装备: {item}");
+                            return false;
+                        }
+
+                        var equipPart = item.EquipmentPart;
+                        if (state.PlayerEquipSlotItems.ContainsKey(equipPart))
+                        {
+                            state.PlayerEquipSlotItems.Remove(equipPart);
+                        }
+                        state.PlayerEquipSlotItems[equipPart] = new PlayerEquipSlotItem
+                        {
+                            EquipmentPart = equipPart,
+                            ItemId = item.ItemId,
+                            ConfigId = item.ConfigId,
+                        };
+                    }
+                    item.State = newState;
+                    state.PlayerItems[itemId] = item;
+                }
+            }
             return true;
         }
 
-        public bool UpdateItemSlot(int itemId, int newSlotIndex)
+        // 交换物品到空闲槽位
+        public static bool UpdateItemSlot(ref PlayerItemState state, int slotIndex, int newSlotIndex)
         {
-            if (!_playerItemsCache.TryGetValue(itemId, out var item))
+            if (!state.PlayerItemConfigIdSlotDictionary.TryGetValue(slotIndex, out var oldSlotItem))
             {
-                Debug.LogWarning($"物品不存在: {itemId}");
+                Debug.LogWarning($"源槽位物品不存在: {slotIndex}");
                 return false;
+            
             }
-    
-            if (_playerSlotIndexItemConfigIdCache.ContainsKey(newSlotIndex))
+
+            if (state.PlayerItemConfigIdSlotDictionary.ContainsKey(newSlotIndex))
             {
                 Debug.LogWarning($"目标槽位已被占用: {newSlotIndex}");
                 return false;
             }
-    
-            // 更新PlayerBagItem
-            item.IndexSlot = newSlotIndex;
-            _playerItemsCache[itemId] = item;
-    
-            // 更新PlayerBagSlotItem
-            if (_playerSlotIndexItemConfigIdCache.TryGetValue(item.IndexSlot, out var slotItem))
+
+            foreach (var itemId in oldSlotItem.ItemIds)
             {
-                _playerSlotIndexItemConfigIdCache.Remove(item.IndexSlot);
-                slotItem.IndexSlot = newSlotIndex;
-                _playerSlotIndexItemConfigIdCache.Add(newSlotIndex, slotItem);
+                var item = state.PlayerItems[itemId];
+                item.IndexSlot = newSlotIndex;
+                state.PlayerItems[itemId] = item;
             }
-    
+            state.PlayerItemConfigIdSlotDictionary[newSlotIndex] = oldSlotItem;
+            state.PlayerItemConfigIdSlotDictionary.Remove(slotIndex);
             return true;
         }
 
-        private void UpdateSlotItem(PlayerBagSlotItem slotItem)
+        private static void UpdateSlotItem(ref PlayerItemState state, PlayerBagSlotItem slotItem)
         {
-            _playerSlotIndexItemConfigIdCache[slotItem.IndexSlot] = slotItem;
-        }
-        public bool TryGetItem(int itemId, out PlayerBagItem item)
-        {
-            return _playerItemsCache.TryGetValue(itemId, out item);
+            state.PlayerItemConfigIdSlotDictionary[slotItem.IndexSlot] = slotItem;
         }
 
-        public bool TryGetSlotItemByConfigId(int configId, out PlayerBagSlotItem slotItem)
+        public static bool TryGetSlotItemByConfigId(PlayerItemState state, int configId, out PlayerBagSlotItem slotItem)
         {
-            slotItem = _playerSlotIndexItemConfigIdCache.Values
+            slotItem = state.PlayerItemConfigIdSlotDictionary.Values
                 .FirstOrDefault(x => x.ConfigId == configId);
             return !slotItem.Equals(default(PlayerBagSlotItem));
         }
 
-        public bool TryGetSlotItemBySlotIndex(int slotIndex, out PlayerBagSlotItem slotItem)
+        public static bool TryGetSlotItemBySlotIndex(PlayerItemState state, int slotIndex, out PlayerBagSlotItem slotItem)
         {
-            return _playerSlotIndexItemConfigIdCache.TryGetValue(slotIndex, out slotItem);
+            return state.PlayerItemConfigIdSlotDictionary.TryGetValue(slotIndex, out slotItem);
         }
 
-        public int GetItemCount(int configId)
+        public static int GetItemCount(PlayerItemState state, int configId)
         {
-            if (TryGetSlotItemByConfigId(configId, out var slotItem))
+            if (TryGetSlotItemByConfigId(state, configId, out var slotItem))
             {
                 return slotItem.Count;
             }
             return 0;
         }
 
-        public List<PlayerBagItem> GetAllItems()
+        public static List<PlayerBagItem> GetAllItems(PlayerItemState state)
         {
-            return _playerItemsCache.Values.ToList();
+            return state.PlayerItems.Values.ToList();
         }
 
-        public List<PlayerBagItem> GetItemsByType(PlayerItemType type)
+        public static List<PlayerBagItem> GetItemsByType(PlayerItemState state,PlayerItemType type)
         {
-            return _playerItemsCache.Values
+            return state.PlayerItems.Values
                 .Where(x => x.PlayerItemType == type)
                 .ToList();
         }
-        public bool SwapItems(int itemId1, int itemId2)
+        
+        public static bool SwapItems(ref PlayerItemState state,int slotIndex1, int slotIndex2)
         {
-            if (!_playerItemsCache.TryGetValue(itemId1, out var item1) || 
-                !_playerItemsCache.TryGetValue(itemId2, out var item2))
+            if (!state.PlayerItemConfigIdSlotDictionary.TryGetValue(slotIndex1, out var slotItem1) || 
+               !state.PlayerItemConfigIdSlotDictionary.TryGetValue(slotIndex2, out var slotItem2))
             {
                 Debug.LogWarning("交换物品中有不存在的物品");
                 return false;
             }
-    
-            // 交换槽位
-            (item1.IndexSlot, item2.IndexSlot) = (item2.IndexSlot, item1.IndexSlot);
 
-            // 更新缓存
-            _playerItemsCache[itemId1] = item1;
-            _playerItemsCache[itemId2] = item2;
-    
-            // 更新SlotItem
-            if (_playerSlotIndexItemConfigIdCache.TryGetValue(item1.IndexSlot, out var slotItem1))
+            if (slotItem1.ConfigId == slotItem2.ConfigId)
             {
-                slotItem1.IndexSlot = item1.IndexSlot;
-                _playerSlotIndexItemConfigIdCache[item1.IndexSlot] = slotItem1;
-            }
-    
-            if (_playerSlotIndexItemConfigIdCache.TryGetValue(item2.IndexSlot, out var slotItem2))
-            {
-                slotItem2.IndexSlot = item2.IndexSlot;
-                _playerSlotIndexItemConfigIdCache[item2.IndexSlot] = slotItem2;
-            }
-    
-            return true;
-        }
-        public bool TryMergeItems(int sourceItemId, int targetItemId)
-        {
-            if (!_playerItemsCache.TryGetValue(sourceItemId, out var sourceItem) || 
-                !_playerItemsCache.TryGetValue(targetItemId, out var targetItem))
-            {
-                Debug.LogWarning("合并物品中有不存在的物品");
+                Debug.LogWarning("只能交换不同配置ID的物品");
                 return false;
             }
-    
-            if (sourceItem.ConfigId != targetItem.ConfigId)
+            foreach (var itemId in slotItem1.ItemIds)
+            {
+                var item = state.PlayerItems[itemId];
+                item.IndexSlot = slotIndex2;
+                state.PlayerItems[itemId] = item;
+            }
+            foreach (var itemId in slotItem2.ItemIds)
+            {
+                var item = state.PlayerItems[itemId];
+                item.IndexSlot = slotIndex1;
+                state.PlayerItems[itemId] = item;
+            }
+            (state.PlayerItemConfigIdSlotDictionary[slotIndex1], state.PlayerItemConfigIdSlotDictionary[slotIndex2]) = (state.PlayerItemConfigIdSlotDictionary[slotIndex2], state.PlayerItemConfigIdSlotDictionary[slotIndex1]);
+            return true;
+        }
+        
+        public static bool TryMergeItems(ref PlayerItemState state, int sourceSlot, int targetSlot)
+        {
+            if (!state.PlayerItemConfigIdSlotDictionary.TryGetValue(sourceSlot, out var sourceSlotItem) || 
+               !state.PlayerItemConfigIdSlotDictionary.TryGetValue(targetSlot, out var targetSlotItem))
+            {
+                Debug.LogWarning("背包槽位不存在");
+                return false;
+            }
+            
+            if (sourceSlotItem.ConfigId != targetSlotItem.ConfigId)
             {
                 Debug.LogWarning("只能合并相同配置ID的物品");
                 return false;
             }
-    
-            if (!_playerSlotIndexItemConfigIdCache.TryGetValue(sourceItem.IndexSlot, out var sourceSlot) || 
-                !_playerSlotIndexItemConfigIdCache.TryGetValue(targetItem.IndexSlot, out var targetSlot))
-            {
-                Debug.LogWarning("槽位信息缺失");
-                return false;
-            }
-    
-            int totalCount = sourceSlot.Count + targetSlot.Count;
-            int maxStack = sourceItem.MaxStack;
-    
-            if (targetSlot.Count >= maxStack)
+
+            int maxStack = sourceSlotItem.MaxStack;
+            if (targetSlotItem.Count >= maxStack)
             {
                 Debug.LogWarning("目标物品已满");
                 return false;
             }
-    
+            
             // 计算可转移数量
-            int transferAmount = Mathf.Min(sourceSlot.Count, maxStack - targetSlot.Count);
-    
+            int transferAmount = Mathf.Min(sourceSlotItem.Count, maxStack - targetSlotItem.Count);
+            
             // 更新目标物品数量
-            targetSlot.Count += transferAmount;
-            _playerSlotIndexItemConfigIdCache[targetItem.IndexSlot] = targetSlot;
-    
-            // 更新或移除源物品
-            if (sourceSlot.Count > transferAmount)
+            targetSlotItem.Count += transferAmount;
+            state.PlayerItemConfigIdSlotDictionary[targetSlotItem.IndexSlot] = targetSlotItem;
+            
+            // 未转移完全原物品
+            if (sourceSlotItem.Count > transferAmount)
             {
-                sourceSlot.Count -= transferAmount;
-                _playerSlotIndexItemConfigIdCache[sourceItem.IndexSlot] = sourceSlot;
+                sourceSlotItem.Count -= transferAmount;
+                var removedId = sourceSlotItem.ItemIds.RandomSelects(transferAmount);
+                for (var i = 0; i < removedId.Length; i++)
+                {
+                    var item = state.PlayerItems[removedId[i]];
+                    item.IndexSlot = targetSlot;
+                    state.PlayerItems[removedId[i]] = item;
+                }
+                state.PlayerItemConfigIdSlotDictionary[sourceSlotItem.IndexSlot] = sourceSlotItem;
             }
+            // 完全转移原物品
             else
             {
-                _playerItemsCache.Remove(sourceItemId);
-                _playerSlotIndexItemConfigIdCache.Remove(sourceItem.IndexSlot);
+                foreach (var itemId in sourceSlotItem.ItemIds)
+                {
+                    var item = state.PlayerItems[itemId];
+                    item.IndexSlot = targetSlot;
+                    state.PlayerItems[itemId] = item;
+                }
+                state.PlayerItemConfigIdSlotDictionary.Remove(sourceSlot);
             }
-    
+            
             return true;
         }
-        public bool TrySplitItem(int itemId, int splitCount)
+        public static bool TrySplitItem(ref PlayerItemState state, int slotIndex, int splitCount)
         {
-            if (!_playerItemsCache.TryGetValue(itemId, out var item))
-            {
-                Debug.LogWarning("物品不存在");
-                return false;
-            }
-    
-            if (!_playerSlotIndexItemConfigIdCache.TryGetValue(item.IndexSlot, out var slotItem))
+            if (!state.PlayerItemConfigIdSlotDictionary.TryGetValue(slotIndex, out var slotItem))
             {
                 Debug.LogWarning("槽位物品不存在");
                 return false;
@@ -398,13 +528,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 return false;
             }
     
-            if (_playerItemsCache.Count >= SlotCount) // maxBagSize需要定义
+            if (state.PlayerItems.Count >= state.SlotCount) // maxBagSize需要定义
             {
                 Debug.LogWarning("背包已满，无法拆分");
                 return false;
             }
     
-            int freeSlot = FindFreeSlotIndex(); // 需要实现查找空闲槽位的方法
+            int freeSlot = FindFreeSlotIndex(ref state); // 需要实现查找空闲槽位的方法
             if (freeSlot == -1)
             {
                 Debug.LogWarning("没有可用槽位");
@@ -412,135 +542,45 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             }
     
             // 减少原物品数量
-            slotItem.Count -= splitCount;
-            _playerSlotIndexItemConfigIdCache[item.IndexSlot] = slotItem;
-    
-            // 创建新物品
-            int newItemId = GenerateNewItemId();
-            var newItem = new PlayerBagItem
+            var items = slotItem.ItemIds.RandomSelects(splitCount);
+            
+            for (var i = 0; i < items.Length; i++)
             {
-                ItemId = newItemId,
-                ConfigId = item.ConfigId,
-                PlayerItemType = item.PlayerItemType,
-                State = ItemState.IsInBag,
-                IndexSlot = freeSlot,
-                MaxStack = item.MaxStack
-            };
+                var item = state.PlayerItems[items[i]];
+                item.IndexSlot = freeSlot;
+                state.PlayerItems[items[i]] = item;
+            }
+            slotItem.Count -= splitCount;
+            state.PlayerItemConfigIdSlotDictionary[slotIndex] = slotItem;
     
             var newSlotItem = new PlayerBagSlotItem
             {
                 IndexSlot = freeSlot,
-                ConfigId = item.ConfigId,
+                ConfigId = slotItem.ConfigId,
                 Count = splitCount
             };
     
-            _playerItemsCache.Add(newItemId, newItem);
-            _playerSlotIndexItemConfigIdCache.Add(freeSlot, newSlotItem);
+            state.PlayerItemConfigIdSlotDictionary.Add(freeSlot, newSlotItem);
     
             return true;
         }
-        private int GenerateNewItemId()
-        {
-            // 简单实现 - 实际项目中可能需要更复杂的ID生成逻辑
-            return _playerItemsCache.Count > 0 ? _playerItemsCache.Keys.Max() + 1 : 1;
-        }
 
-        private int FindFreeSlotIndex()
+        private static int FindFreeSlotIndex(ref PlayerItemState state)
         {
             // 查找第一个空闲的槽位
-            for (int i = 0; i < SlotCount; i++)
+            for (int i = 0; i < state.SlotCount; i++)
             {
-                if (!_playerSlotIndexItemConfigIdCache.ContainsKey(i))
+                if (!state.PlayerItemConfigIdSlotDictionary.ContainsKey(i))
                 {
                     return i;
                 }
             }
             return -1;
         }
-
-        private int GetMaxStackForConfig(int configId)
-        {
-            // 这里应该从配置表获取最大堆叠数
-            // 简单实现返回默认值
-            return 99; // 或其他默认值
-        }
-        // public static void RemovePlayerItem(ref PlayerItemState state, int itemId)
-        // {
-        //     if (!state.PlayerItems.TryGetValue(itemId, out var playerBagItem))
-        //     {
-        //         Debug.LogError($"未找到物品{itemId}");
-        //         return;
-        //     }
-        //     var dic = state.PlayerItemConfigIdSlotDictionary;
-        //     if (dic.TryGetValue(playerBagItem.ConfigId, out var playerBagSlotItem))
-        //     {
-        //         playerBagSlotItem.Count--;
-        //         if (playerBagSlotItem.Count <= 0)
-        //         {
-        //             dic.Remove(playerBagItem.ConfigId);
-        //         }
-        //     }
-        //     state.PlayerItems.Remove(itemId);
-        // }
-        //
-        // public static void AddPlayerItem(ref PlayerItemState state, PlayerBagItem playerBagItem)
-        // {
-        //     var dic = state.PlayerItemConfigIdSlotDictionary;
-        //     var isNewSlot = false;
-        //     var canStack = true;
-        //     //先检查是否可堆叠
-        //     if (dic.TryGetValue(playerBagItem.ConfigId, out var playerBagSlotItem))
-        //     {
-        //         isNewSlot = playerBagSlotItem.Count == playerBagItem.MaxStack;
-        //     }
-        //     //再检查是否有空闲槽位
-        //     if (dic.Count == state.SlotCount)
-        //     {
-        //         canStack = false;
-        //     }
-        //
-        //     if (!canStack)
-        //     {
-        //         // 没有空闲槽位，直接返回
-        //         Debug.Log("玩家背包已满");
-        //         return;
-        //     }
-        //
-        //     if (isNewSlot)
-        //     {
-        //         for (int i = 0; i < state.SlotCount; i++)
-        //         {
-        //             if (dic.ContainsKey(i))
-        //             {
-        //                 continue;
-        //             }
-        //             playerBagItem.IndexSlot = i;
-        //             dic[i] = new PlayerBagSlotItem
-        //             {
-        //                 IndexSlot = i,
-        //                 ConfigId = playerBagItem.ConfigId,
-        //                 Count = 1
-        //             };
-        //             break;
-        //         }   
-        //     }
-        //     else
-        //     {
-        //         playerBagItem.IndexSlot = playerBagSlotItem.IndexSlot;
-        //         playerBagSlotItem.Count++;
-        //     }
-        //     state.PlayerItems[playerBagItem.ItemId] = playerBagItem;
-        //     state.PlayerItemConfigIdSlotDictionary[playerBagItem.ConfigId] = new PlayerBagSlotItem
-        //     {
-        //         IndexSlot = playerBagItem.IndexSlot,
-        //         ConfigId = playerBagItem.ConfigId,
-        //         Count = playerBagSlotItem.Count
-        //     };
-        // }
     }
 
     [MemoryPackable]
-    public partial struct PlayerBagItem
+    public partial struct PlayerBagItem : IEquatable<PlayerBagItem>
     {
         // 服务器唯一生成的id
         [MemoryPackOrder(0)]
@@ -555,12 +595,55 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         public ItemState State;
         [MemoryPackOrder(4)] 
         public int IndexSlot;
-        [MemoryPackOrder(4)] 
+        [MemoryPackOrder(5)] 
         public int MaxStack;
+        [MemoryPackOrder(6)]
+        public EquipmentPart EquipmentPart;
+
+        public bool Equals(PlayerBagItem other)
+        {
+            return ItemId == other.ItemId && EquipmentPart == other.EquipmentPart && ConfigId == other.ConfigId && PlayerItemType == other.PlayerItemType && State == other.State && IndexSlot == other.IndexSlot && MaxStack == other.MaxStack;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is PlayerBagItem other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(ItemId, ConfigId, (int)PlayerItemType, (int)State, IndexSlot, MaxStack);
+        }
     }
     
     [MemoryPackable]
-    public partial struct PlayerBagSlotItem
+    public partial struct PlayerEquipSlotItem : IEquatable<PlayerEquipSlotItem>
+    {
+        [MemoryPackOrder(0)]
+        public EquipmentPart EquipmentPart;
+        [MemoryPackOrder(1)]
+        public int ConfigId;
+        [MemoryPackOrder(2)]
+        public int ItemId;
+
+        public bool Equals(PlayerEquipSlotItem other)
+        {
+            return EquipmentPart == other.EquipmentPart && ConfigId == other.ConfigId && ItemId == other.ItemId;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is PlayerEquipSlotItem other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine((int)EquipmentPart, ConfigId, ItemId);
+        }
+    }
+    
+    [MemoryPackable]
+    public partial struct PlayerBagSlotItem : IEquatable<PlayerBagSlotItem>
     {
         [MemoryPackOrder(0)]
         public int IndexSlot;
@@ -568,8 +651,28 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         public int ConfigId;
         [MemoryPackOrder(2)]
         public int Count;
-        [MemoryPackOrder(2)]
+        [MemoryPackOrder(3)]
         public int MaxStack;
+        [MemoryPackOrder(4)]
+        public HashSet<int> ItemIds;
+        [MemoryPackOrder(5)]
+        public ItemState State;
+        
+
+        public bool Equals(PlayerBagSlotItem other)
+        {
+            return IndexSlot == other.IndexSlot && ConfigId == other.ConfigId && Count == other.Count && MaxStack == other.MaxStack;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is PlayerBagSlotItem other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(IndexSlot, ConfigId, Count, MaxStack);
+        }
     }
     
 }

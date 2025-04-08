@@ -110,6 +110,12 @@ namespace HotUpdate.Scripts.Collector
         }
 
         [Server]
+        public void SpawnItemsByDroppedItems()
+        {
+            
+        }
+
+        [Server]
         public void PickerPickUpChest(uint pickerId, uint itemId)
         {
             var state = (ItemState)_serverTreasureChestMetaData.StateFlags;
@@ -146,11 +152,11 @@ namespace HotUpdate.Scripts.Collector
                      var configData = _chestConfig.GetChestConfigData(chestData.ChestConfigId);
                      var extraItems = _shopConfig.GetItemsByShopId(chestData.ShopIds);
                      extraItems.UnionWith(configData.itemIds);
-                     var items = extraItems.Select(x => new ItemCommandData
+                     var items = extraItems.Select(x => new ItemsCommandData
                      {
                          ItemConfigId = x,
                          Count = 1,
-                         ItemUniqueId = HybridIdGenerator.GenerateItemId(x, GameSyncManager.CurrentTick)
+                         ItemUniqueId = new int[]{ HybridIdGenerator.GenerateItemId(x, GameSyncManager.CurrentTick) } 
                      }).ToArray();
                      _gameSyncManager.EnqueueServerCommand(new ItemsGetCommand
                      {
@@ -306,16 +312,17 @@ namespace HotUpdate.Scripts.Collector
                 if (ValidatePickup(itemPos.ToVector3(), player.transform.position, itemColliderData, playerColliderConfig))
                 {
                     // 处理拾取逻辑
-                    //var configData = _collectObjectDataConfig.GetCollectObjectData(itemData.ItemCollectConfigId);
-                    
-                    _gameSyncManager.EnqueueServerCommand(new ItemGetCommand
+                    _gameSyncManager.EnqueueServerCommand(new ItemsGetCommand
                     {
                         Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Item),
-                        Item = new ItemCommandData
+                        Items = new ItemsCommandData[]
                         {
-                            ItemConfigId = itemConfigId,
-                            Count = 1,
-                            ItemUniqueId = customData.ItemUniqueId,
+                            new ItemsCommandData()
+                            {
+                                ItemConfigId = itemConfigId,
+                                Count = 1,
+                                ItemUniqueId = new []{ customData.ItemUniqueId},
+                            },
                         },
                     });
 
@@ -643,7 +650,7 @@ namespace HotUpdate.Scripts.Collector
                     break;
             }
 
-            return GameStaticExtensions.Shuffle(PlaceItems(collectTypes)) as List<(int, Vector3)>;
+            return PlaceItems(collectTypes).Shuffle() as List<(int, Vector3)>;
         }
 
         /// <summary>

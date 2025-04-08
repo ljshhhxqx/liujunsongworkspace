@@ -67,40 +67,72 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
             switch (command)
             {
-                case ItemGetCommand itemGetCommand:
-                    for (var i = 0; i < itemGetCommand.Item.Count; i++)
-                    {
-                        CommandGetItem(itemGetCommand.Item, header, ref playerItemState);
-                    }
-                    break;
                 case ItemsGetCommand itemsGetCommand:
                     for (var i = 0; i < itemsGetCommand.Items.Length; i++)
                     {
-                        CommandGetItem(itemsGetCommand.Items[i], header, ref playerItemState);
+                        CommandGetItem(ref playerItemState, itemsGetCommand.Items[i], header);
                     }
                     break;
-                case ItemUseCommand itemUseCommand:
-                    CommandUseItem(itemUseCommand);
+                case ItemsUseCommand itemUseCommand:
+                    CommandUseItems(itemUseCommand);
                     break;
                 case ItemEquipCommand itemEquipCommand:
+                    CommandEquipItem(itemEquipCommand, ref playerItemState);
                     break;
                 case ItemLockCommand itemLockCommand:
+                    CommandLockItem(itemLockCommand, ref playerItemState);
                     break;
                 case ItemDropCommand itemDropCommand:
+                    CommandDropItem(itemDropCommand, ref playerItemState);
                     break;
+                case ItemsBuyCommand itemBuyCommand:
+                    CommandBuyItem(itemBuyCommand, ref playerItemState);
+                    break;
+                case ItemsSellCommand itemSellCommand:
+                    CommandSellItem(itemSellCommand, ref playerItemState);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
             PropertyStates[header.ConnectionId] = playerItemState;
             return playerItemState;
         }
         
-        private void CommandLockItem(ItemLockCommand itemLockCommand, ref PlayerItemState playerItemState)
+        private void CommandBuyItem(ItemsBuyCommand itemBuyCommand, ref PlayerItemState playerItemState)
+        {
+            foreach (var item in itemBuyCommand.Items)
+            {
+                CommandGetItem(ref playerItemState, item);
+            }
+        }
+
+        private void CommandSellItem(ItemsSellCommand itemSellCommand, ref PlayerItemState playerItemState)
         {
             
+        }
+        
+        private void CommandLockItem(ItemLockCommand itemLockCommand, ref PlayerItemState playerItemState)
+        {
+            if (!PlayerItemState.UpdateItemState(ref playerItemState, itemLockCommand.SlotIndex, ItemState.IsLocked))
+            {
+                Debug.LogError($"Failed to lock item {itemLockCommand.SlotIndex}");
+                return;
+            }
+            Debug.Log($"Item {itemLockCommand.SlotIndex} locked");
         }
 
         private void CommandEquipItem(ItemEquipCommand itemEquipCommand, ref PlayerItemState playerItemState)
         {
-            
+            if (!PlayerItemState.UpdateItemState(ref playerItemState, itemEquipCommand.SlotIndex, ItemState.IsEquipped))
+            {
+                Debug.LogError($"Failed to equip item {itemEquipCommand.SlotIndex}");
+                return;
+            }
+            Debug.Log($"Item {itemEquipCommand.SlotIndex} equipped");
+            GameSyncManager.EnqueueServerCommand(new EquipmentCommand
+            {
+                
+            });
         }
 
         private void CommandDropItem(ItemDropCommand itemDropCommand, ref PlayerItemState playerItemState)
@@ -108,42 +140,47 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             
         }
 
-        private void CommandUseItem(ItemUseCommand itemUseCommand)
+        private void CommandUseItems(ItemsUseCommand itemsUseCommand)
         {
-            var item = GameItemManager.GetGameItemData(itemUseCommand.ItemId);
-            if (item.ItemId != itemUseCommand.ItemId)
+            foreach (var itemData in itemsUseCommand.Items)
             {
-                Debug.LogError($"Item id {itemUseCommand.ItemId} not found");
-                return;
-            }
-            var header = itemUseCommand.Header;
-            var itemConfigData = _itemConfig.GetGameItemData(item.ItemId);
-            if (itemConfigData.id == 0)
-            {
-                Debug.LogError($"Item config id {item.ItemId} not found");
-                return;
-            }
+                foreach (var itemId in itemData.ItemUniqueId)
+                {
+                    var item = GameItemManager.GetGameItemData(itemId);
+                    if (item.ItemId != itemId)
+                    {
+                        Debug.LogError($"Item id {itemId} not found");
+                        return;
+                    }
+                    var header = itemsUseCommand.Header;
+                    var itemConfigData = _itemConfig.GetGameItemData(item.ItemConfigId);
+                    if (itemConfigData.id == 0)
+                    {
+                        Debug.LogError($"Item config id {item.ItemId} not found");
+                        return;
+                    }
             
-            var buffCommand = new PropertyBuffCommand
-            {
-                Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property),
-                CasterId = null,
-                TargetId = header.ConnectionId,
-            };
-            foreach (var buffExtra in itemConfigData.buffExtraData)
-            {
-                buffCommand.BuffExtraData = buffExtra;
-                GameSyncManager.EnqueueServerCommand(buffCommand);
+                    var buffCommand = new PropertyBuffCommand
+                    {
+                        Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property),
+                        CasterId = null,
+                        TargetId = header.ConnectionId,
+                    };
+                    foreach (var buffExtra in itemConfigData.buffExtraData)
+                    {
+                        buffCommand.BuffExtraData = buffExtra;
+                        GameSyncManager.EnqueueServerCommand(buffCommand);
+                    }
+                }
             }
         }
 
-        private void CommandGetItem(ItemCommandData itemData, NetworkCommandHeader header,
-            ref PlayerItemState playerItemState)
+        private void CommandGetItem(ref PlayerItemState playerItemState, ItemsCommandData itemsData, NetworkCommandHeader header = default)
         {
-            var itemConfigData = _itemConfig.GetGameItemData(itemData.ItemConfigId);
+            var itemConfigData = _itemConfig.GetGameItemData(itemsData.ItemConfigId);
             if (itemConfigData.id == 0)
             {
-                Debug.LogError($"Item config id {itemData.ItemConfigId} not found");
+                Debug.LogError($"Item config id {itemsData.ItemConfigId} not found");
                 return;
             }
 
@@ -155,29 +192,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 case PlayerItemType.Consume:
                 case PlayerItemType.Item:
                     //todo: 操作玩家背包
-                    ModifyPlayerItems(itemData, header, ref playerItemState);
-                    // var playerItems = playerItemState.PlayerItems;
-                    // if (playerItems.ContainsKey(itemData.ItemUniqueId))
-                    // {
-                    //     var itemState = playerItems[itemData.ItemUniqueId];
-                    //     itemState.ItemCount += itemData.Count;
-                    //     playerItems[itemData.ItemUniqueId] = itemState;
-                    // }
-                    // else
-                    // {
-                    //     var playerItem = new PlayerBagItem
-                    //     {
-                    //         ItemId = itemData.ItemUniqueId,
-                    //         ConfigId = itemData.ItemConfigId,
-                    //         PlayerItemType = itemConfigData.itemType,
-                    //         State = ItemState.IsInBag,
-                    //         IndexSlot = 1,
-                    //     };
-                    //     playerItems.Add(itemData.ItemUniqueId, playerItem);
-                    // }
-                    //playerItemState.PlayerItems = playerItems;
+                    AddPlayerItems(itemsData, header, ref playerItemState);
                     break;
                 case PlayerItemType.Collect:
+                    if (header.ConnectionId == 0)
+                    {
+                        break;
+                    }
                     var buffCommand = new PropertyBuffCommand
                     {
                         Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property),
@@ -195,10 +216,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
         }
 
-        private void ModifyPlayerItems(ItemCommandData itemData, NetworkCommandHeader header,
+        private void AddPlayerItems(ItemsCommandData itemsData, NetworkCommandHeader header,
             ref PlayerItemState playerItemState)
         {
-            
+            var itemConfigData = _itemConfig.GetGameItemData(itemsData.ItemConfigId);
+
+            var bagItem = ObjectPool<PlayerBagItem>.Get();
+            bagItem.ItemId = itemsData.ItemUniqueId[0];
+            bagItem.ConfigId = itemsData.ItemConfigId;
+            bagItem.PlayerItemType = itemConfigData.itemType;
+            bagItem.State = ItemState.IsInBag;
+            bagItem.MaxStack = itemConfigData.maxStack;
+            if (!PlayerItemState.AddItem(ref playerItemState, bagItem))
+            {
+                Debug.LogError($"Failed to add item {bagItem.ItemId}");
+                ObjectPool<PlayerBagItem>.Return(bagItem);
+            }
         }
 
         public override void SetState<T>(int connectionId, T state)

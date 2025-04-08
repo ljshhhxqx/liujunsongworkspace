@@ -29,7 +29,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     [MemoryPackUnion(7, typeof(InputCommand))]
     [MemoryPackUnion(8, typeof(AnimationCommand))]
     [MemoryPackUnion(9, typeof(InteractionCommand))]
-    [MemoryPackUnion(10, typeof(ItemUseCommand))]
+    [MemoryPackUnion(10, typeof(ItemsUseCommand))]
     [MemoryPackUnion(11, typeof(ItemLockCommand))]
     [MemoryPackUnion(12, typeof(ItemEquipCommand))]
     [MemoryPackUnion(13, typeof(ItemDropCommand))]
@@ -395,52 +395,36 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     #endregion
     
     #region ItemCommand
+    /// <summary>
+    /// 多个道具的交互数据(可以是多个不同的道具)
+    /// </summary>
     [MemoryPackable]
-    public partial struct ItemGetCommand : INetworkCommand
+    public partial struct ItemsCommandData
     {
         [MemoryPackOrder(0)]
-        public NetworkCommandHeader Header;
-        [MemoryPackOrder(1)]
-        public ItemCommandData Item;
-        public NetworkCommandHeader GetHeader() => Header;
-
-        public bool IsValid()
-        {
-            return Item.ItemConfigId > 0 && Item.Count > 0;
-        }
-        
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
-        }
-    }
-
-    [MemoryPackable]
-    public partial struct ItemCommandData
-    {
-        [MemoryPackOrder(1)]
         public int ItemConfigId;
-        [MemoryPackOrder(2)] 
+        [MemoryPackOrder(1)] 
         public int Count;
+        [MemoryPackOrder(2)]
+        public int[] ItemUniqueId;
         [MemoryPackOrder(3)]
-        public int ItemUniqueId;
+        public int? ItemShopId;
+        [MemoryPackOrder(4)]
+        public PlayerItemType? ItemType;
     }
-
+    
     [MemoryPackable]
-    public partial struct ItemsGetCommand : INetworkCommand
+    public partial struct ItemsSellCommand : INetworkCommand
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public ItemCommandData[] Items;
+        public ItemsCommandData[] Items;
         public NetworkCommandHeader GetHeader() => Header;
 
         public bool IsValid()
         {
-            return  Items.Length > 0 && Items.All(i => i.ItemConfigId > 0 && i.Count > 0);
+            return Items.Length > 0 && Items.All(i => i.ItemConfigId > 0 && i.Count > 0);
         }
         
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
@@ -453,21 +437,63 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     }
     
     [MemoryPackable]
-    public partial struct ItemUseCommand : INetworkCommand
+    public partial struct ItemsBuyCommand : INetworkCommand
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public int ItemId;
-        [MemoryPackOrder(2)] 
-        public int Count;
-        [MemoryPackOrder(2)] 
-        public PlayerItemType PlayerItemType;
+        public ItemsCommandData[] Items;
         public NetworkCommandHeader GetHeader() => Header;
 
         public bool IsValid()
         {
-            return ItemId > 0 && Count > 0 && Enum.IsDefined(typeof(PlayerItemType), PlayerItemType) && PlayerItemType == PlayerItemType.Consume;
+            return Items.Length > 0 && Items.All(i => i.ItemConfigId > 0 && i.Count > 0 && i.ItemShopId > 0);
+        }
+        
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
+    }
+
+    [MemoryPackable]
+    public partial struct ItemsGetCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)]
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public ItemsCommandData[] Items;
+        public NetworkCommandHeader GetHeader() => Header;
+
+        public bool IsValid()
+        {
+            return Items.Length > 0 && Items.All(i => i.ItemConfigId > 0 && i.Count > 0);
+        }
+        
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
+    }
+    
+    [MemoryPackable]
+    public partial struct ItemsUseCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)]
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public ItemsCommandData[] Items;
+        public NetworkCommandHeader GetHeader() => Header;
+
+        public bool IsValid()
+        {
+            return Items.Length > 0 && Items.All(i => i.ItemConfigId > 0 && i.Count > 0 && i.ItemType == PlayerItemType.Consume);// && Items.All(i => );
         }
         
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
@@ -485,13 +511,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public int ItemId;
+        public int SlotIndex;
 
         public NetworkCommandHeader GetHeader() => Header;
 
         public bool IsValid()
         {
-            return ItemId > 0;
+            return SlotIndex > 0;
         }
         
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
@@ -509,14 +535,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public int ItemId;
+        public int SlotIndex;
         [MemoryPackOrder(2)] 
         public PlayerItemType PlayerItemType;
         public NetworkCommandHeader GetHeader() => Header;
         
         public bool IsValid()
         {
-            return ItemId > 0 && Enum.IsDefined(typeof(PlayerItemType), PlayerItemType) && (PlayerItemType == PlayerItemType.Armor || PlayerItemType == PlayerItemType.Weapon);
+            return SlotIndex > 0 && Enum.IsDefined(typeof(PlayerItemType), PlayerItemType) && (PlayerItemType == PlayerItemType.Armor || PlayerItemType == PlayerItemType.Weapon);
         }
         
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
@@ -535,14 +561,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public int ItemId;
+        public int SlotIndex;
         [MemoryPackOrder(2)] 
         public int Count;
         public NetworkCommandHeader GetHeader() => Header;
 
         public bool IsValid()
         {
-            return ItemId > 0 && Count > 0;
+            return SlotIndex > 0 && Count > 0;
         }
         
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)

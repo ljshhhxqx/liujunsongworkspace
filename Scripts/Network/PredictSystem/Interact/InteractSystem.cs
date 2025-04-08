@@ -41,24 +41,33 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                 {
                     switch (command)
                     {
-                        case Interact.SceneInteractRequest sceneInteractRequest:
+                        case SceneInteractRequest sceneInteractRequest:
                             HandleSceneInteractRequest(sceneInteractRequest);
                             break;
-                        case Interact.PlayerInteractRequest playerInteractRequest:
+                        case PlayerInteractRequest playerInteractRequest:
                             HandlePlayerInteractRequest(playerInteractRequest);
                             break;
-                        case Interact.EnvironmentInteractRequest environmentInteractRequest:
+                        case EnvironmentInteractRequest environmentInteractRequest:
                             HandleEnvironmentInteractRequest(environmentInteractRequest);
                             break;
+                        case PlayerToSceneRequest playerInteractRequest:
+                            HandlePlayerToSceneRequest(playerInteractRequest);
+                            break;
+                        
                     }
                 }
             }
         }
 
+        private void HandlePlayerToSceneRequest(PlayerToSceneRequest playerInteractRequest)
+        {
+            
+        }
+
         [Command]
         public void EnqueueCommand(byte[] commandBytes)
         {
-            var command = MemoryPackSerializer.Deserialize<Interact.IInteractRequest>(commandBytes);
+            var command = MemoryPackSerializer.Deserialize<IInteractRequest>(commandBytes);
             var header = command.GetHeader();
             var validCommand = command.CommandValidResult();
             if (!validCommand.IsValid)
@@ -69,7 +78,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             _commandQueue.Enqueue(command);
         }
 
-        private void HandleSceneInteractRequest(Interact.SceneInteractRequest request)
+        private void HandleSceneInteractRequest(SceneInteractRequest request)
         {
             var header = request.GetHeader();
             var playerNetId = _playerInGameManager.GetPlayerNetId(header.RequestConnectionId);

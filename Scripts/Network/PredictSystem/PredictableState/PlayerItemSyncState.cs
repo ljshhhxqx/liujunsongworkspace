@@ -23,7 +23,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             }
             switch (command)
             {
-                case ItemUseCommand itemUseCommand:
+                case ItemsUseCommand itemUseCommand:
                     break;
                 case ItemEquipCommand itemEquipCommand:
                     break;

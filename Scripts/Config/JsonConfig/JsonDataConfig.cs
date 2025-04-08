@@ -159,7 +159,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
                 var candidates = GetAvailableWeights(partWeights, attributes);
                 if (candidates.Count == 0) break;
 
-                var selected = GameStaticExtensions.Select(candidates);
+                var selected = candidates.SelectByWeight();
                 attributes.Add(GenerateProperty(ref budget, selected, valueConfig));
             }
 
@@ -187,8 +187,8 @@ namespace HotUpdate.Scripts.Config.JsonConfig
 
             if (availableWeights.Count == 0) return default;
 
-            var selected = GameStaticExtensions.Select(availableWeights
-                .ToDictionary(w => w, w => w.weight));
+            var selected = availableWeights
+                .ToDictionary(w => w, w => w.weight).SelectByWeight();
 
             return GenerateProperty(budget, selected, valueConfig);
         }

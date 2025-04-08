@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using MemoryPack;
@@ -24,6 +25,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
     {
         PickupItem = 0,
         PickupChest,
+        DropItem,
     }
 
     // 基础交互头
@@ -55,6 +57,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
     {
         InteractHeader GetHeader();
         bool IsValid();
+    }
+    
+    //玩家主动创造物品给场景(比如扔下可以被交互的物品)
+    [MemoryPackable]
+    public partial struct PlayerToSceneRequest : IInteractRequest
+    {
+        [MemoryPackOrder(0)] public InteractHeader Header;
+        [MemoryPackOrder(1)] public int[] ItemIds; // 物品id（由服务器生成的id，而非场景id）
+        [MemoryPackOrder(2)] public InteractionType InteractionType; // 交互类型（开门/拾取等）
+        public InteractCategory Category => Header.Category;
+        public InteractHeader GetHeader() => Header;
+        public bool IsValid()
+        {
+            return Enum.IsDefined(typeof(InteractionType), Header) && ItemIds.Length > 0 && ItemIds.All(id => id > 0);
+        }
     }
 
     // 玩家与场景交互

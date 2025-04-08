@@ -262,4 +262,12 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         Item,
         Collect,
     }
+    
+    public static class PlayerItemTypeExtension
+    {
+        public static bool IsEquipment(this PlayerItemType itemType)
+        {
+            return itemType == PlayerItemType.Weapon || itemType == PlayerItemType.Armor;
+        }
+    }   
 }

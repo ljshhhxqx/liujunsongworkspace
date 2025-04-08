@@ -1,6 +1,11 @@
 ﻿using System;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.NetworkMes;
+using HotUpdate.Scripts.Network.PredictSystem.Data;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.Server.InGame;
+using MemoryPack;
 using Network.NetworkMes;
 using Sirenix.OdinInspector;
 using UniRx;
@@ -15,8 +20,10 @@ namespace HotUpdate.Scripts.Collector
         private PooledObject _pooledObject;
         private CollectParticlePlayer _collectParticlePlayer;
         private CollectAnimationComponent _collectAnimationComponent;
+        private InteractSystem _interactSystem;
         private Collider _positionCollider;
         private BuffExtraData _buffData;
+        private PlayerInGameManager _playerInGameManager;
         [SerializeField]
         private int collectConfigId;
         [SerializeField]
@@ -57,7 +64,7 @@ namespace HotUpdate.Scripts.Collector
         }
 
         [Inject]
-        private void Init(IConfigProvider configProvider)
+        private void Init(IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
         {
             var collectObjectDataConfig = configProvider.GetConfig<CollectObjectDataConfig>();
             _pooledObject = GetComponent<PooledObject>();
@@ -67,7 +74,9 @@ namespace HotUpdate.Scripts.Collector
             }
             _collectParticlePlayer = GetComponentInChildren<CollectParticlePlayer>();
             _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
+            _playerInGameManager = playerInGameManager;
             _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
+            _interactSystem = FindObjectOfType<InteractSystem>();
             _collectAnimationComponent?.Play();
             var collectCollider = GetComponentInChildren<CollectCollider>();
             if (!collectCollider)
@@ -109,7 +118,16 @@ namespace HotUpdate.Scripts.Collector
         {
             if (isLocalPlayer)
             {
-                _mirrorNetworkMessageHandler.SendToServer(new MirrorPickerPickUpCollectMessage(pickerId, collectId));
+                var request = new SceneInteractRequest
+                {
+                    Header = GameSyncManager.CreateInteractHeader(_playerInGameManager.GetPlayerId(pickerId), InteractCategory.PlayerToScene,
+                        transform.position, CommandAuthority.Client),
+                    InteractionType = InteractionType.PickupItem,
+                    SceneItemId = ItemId,
+                };
+                var json = MemoryPackSerializer.Serialize(request);
+                _interactSystem.EnqueueCommand(json);
+                //_mirrorNetworkMessageHandler.SendToServer(new MirrorPickerPickUpCollectMessage(pickerId, collectId));
             }
         }
 
