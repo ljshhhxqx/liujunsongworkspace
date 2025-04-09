@@ -72,7 +72,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
             
         }
-        
+
+        public PlayerPredictablePropertyState GetPredictablePropertyState(int playerId)
+        {
+            if (PropertyStates.TryGetValue(playerId, out var predictionState))
+            {
+                if (predictionState is PlayerPredictablePropertyState state)
+                {
+                    return state;
+                }
+            }
+            return default;
+        }
+
         private void PropertyChange(int connectionId)
         {
             var playerState = PropertyStates[connectionId];

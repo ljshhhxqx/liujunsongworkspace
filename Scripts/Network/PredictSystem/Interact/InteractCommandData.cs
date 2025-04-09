@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using MemoryPack;
@@ -167,10 +168,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         public int ItemConfigId;
         [MemoryPackOrder(1)]
         public int Count;
+        [MemoryPackOrder(2)]
+        public QualityType Quality;
 
         public bool Equals(DroppedItemData other)
         {
-            return ItemConfigId == other.ItemConfigId && Count == other.Count;
+            return ItemConfigId == other.ItemConfigId && Count == other.Count && Quality == other.Quality;
         }
 
         public override bool Equals(object obj)

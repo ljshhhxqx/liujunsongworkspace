@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Battle;
 using MemoryPack;
+using UnityEngine;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
@@ -16,24 +18,44 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         public ImmutableList<EquipmentData> EquipmentDatas;
         [MemoryPackIgnore]
         public ImmutableList<IConditionChecker> ConditionCheckers;
-        // [MemoryPackOrder(1)] 
-        // public ImmutableList<byte[]> PlayerCheckerParameters;
 
-        public static bool EquipPlayerOrNot(ref PlayerPredictablePropertyState playerState, PlayerEquipmentState equipmentState, uint equipmentId, bool equip)
+        public static bool TryUnequipped(ref PlayerEquipmentState equipmentState, int itemId, EquipmentPart equipmentPartType)
         {
-            var equipmentData = equipmentState.EquipmentDatas;
-            for (int i = 0; i < equipmentData.Count; i++)
+            for (int i = 0; i < equipmentState.EquipmentDatas.Count; i++)
             {
-                if (equipmentData[i].EquipmentId == equipmentId)
+                var equipmentData = equipmentState.EquipmentDatas[i];
+                if (equipmentData.ItemId == itemId || equipmentData.EquipmentPartType == equipmentPartType)
                 {
-                    if (equip)
-                    {
-                        return equipmentData[i].EquipPlayer(ref playerState);
-                    }
-                    return equipmentData[i].UnEquipPlayer(ref playerState);
+                    equipmentState.EquipmentDatas = equipmentState.EquipmentDatas.RemoveAt(i);
+                    equipmentState.ConditionCheckers = equipmentState.ConditionCheckers.RemoveAt(i);
+                    return true;
                 }
             }
             return false;
+        }
+
+        public static bool TryAddEquipmentData(ref PlayerEquipmentState equipmentState, int itemId, EquipmentPart equipmentPartType, IConditionChecker conditionChecker)
+        {
+            if (equipmentState.EquipmentDatas.Any(x => x.ItemId == itemId))
+            {
+                Debug.LogError($"EquipmentId {itemId} already exists in EquipmentDatas");
+                return false;
+            }
+            var equipmentData = new EquipmentData(itemId, equipmentPartType);
+            //该部位有装备，则卸下原装备
+            for (int i = 0; i < equipmentState.EquipmentDatas.Count; i++)
+            {
+                var oldEquip = equipmentState.EquipmentDatas[i];
+                if (oldEquip.EquipmentPartType == equipmentPartType)
+                {
+                    equipmentState.EquipmentDatas = equipmentState.EquipmentDatas.RemoveAt(i);
+                    equipmentState.ConditionCheckers = equipmentState.ConditionCheckers.RemoveAt(i);
+                    break;
+                }
+            }
+            equipmentState.EquipmentDatas = equipmentState.EquipmentDatas.Add(equipmentData);
+            equipmentState.ConditionCheckers = equipmentState.ConditionCheckers.Add(conditionChecker);
+            return true;
         }
 
         public static void UpdateCheckerCd(ref PlayerEquipmentState equipmentState, float deltaTime)
@@ -77,91 +99,24 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     public partial struct EquipmentData
     {
         [MemoryPackOrder(0)]
-        public ImmutableList<BuffData> EquipmentBuffData;
+        public int ItemId;
         [MemoryPackOrder(1)]
-        public ImmutableList<BattleEffectConditionConfigData> BattleEffectConditions;
-        [MemoryPackOrder(2)]
-        public uint EquipmentId;
-        [MemoryPackOrder(3)]
-        public bool IsEquipped;
-        [MemoryPackOrder(4)]
         public EquipmentPart EquipmentPartType;
-        [MemoryPackOrder(5)]
+        [MemoryPackOrder(2)]
+        public int ConstantBuffId;
+        [MemoryPackOrder(3)]
+        public int VariableBuffId;
+        [MemoryPackOrder(4)]
         public ImmutableList<EquipmentPassiveEffectData> EquipmentPassiveEffectData;
         
         [MemoryPackConstructor]
-        public EquipmentData(ImmutableList<BuffData> equipmentBuffData, ImmutableList<BattleEffectConditionConfigData> battleEffectConditions, uint equipmentId
-            , EquipmentPart equipmentPartType, ImmutableList<EquipmentPassiveEffectData> equipmentPassiveEffectData)
+        public EquipmentData(int itemId, EquipmentPart equipmentPartType, int constantBuffId = 0, int variableBuffId = 0, ImmutableList<EquipmentPassiveEffectData> equipmentPassiveEffectData = null)
         {
-            EquipmentBuffData = equipmentBuffData;
-            BattleEffectConditions = battleEffectConditions;
-            EquipmentId = equipmentId;
-            IsEquipped = false;
+            ItemId = itemId;
             EquipmentPartType = equipmentPartType;
-            EquipmentPassiveEffectData = equipmentPassiveEffectData;
-        }
-        
-        public bool PassiveEffectOn(ref PlayerPredictablePropertyState playerState)
-        {
-            foreach (var passiveEffectData in EquipmentPassiveEffectData)
-            {
-                var property = playerState.Properties[passiveEffectData.propertyType];
-                playerState.Properties[passiveEffectData.propertyType] = property.UpdateCalculator(property, passiveEffectData.increaseData);
-            }
-            return true;
-        }
-        
-        public bool PassiveEffectOff(ref PlayerPredictablePropertyState playerState)
-        {
-            foreach (var passiveEffectData in EquipmentPassiveEffectData)
-            {
-                var property = playerState.Properties[passiveEffectData.propertyType];
-                var data = passiveEffectData.increaseData;
-                data.operationType = BuffOperationType.Subtract;
-                playerState.Properties[passiveEffectData.propertyType] = property.UpdateCalculator(property, data);
-            }
-            return true;
-        }
-
-        public bool EquipPlayer(ref PlayerPredictablePropertyState playerState)
-        {
-            if (IsEquipped)
-            {
-                return false;
-            }
-            IsEquipped = true;
-            foreach (var buffData in EquipmentBuffData)
-            {
-                if (playerState.Properties.TryGetValue(buffData.propertyType, out var calculator))
-                {
-                    playerState.Properties[buffData.propertyType] = calculator.UpdateCalculator(buffData.increaseDataList);
-                }
-            }
-            PassiveEffectOff(ref playerState);
-            return IsEquipped;
-        }
-        
-        public bool UnEquipPlayer(ref PlayerPredictablePropertyState playerState)
-        {
-            if (!IsEquipped)
-            {
-                return false;
-            }
-            IsEquipped = false;
-            foreach (var buffData in EquipmentBuffData)
-            {
-                if (playerState.Properties.TryGetValue(buffData.propertyType, out var calculator))
-                {
-                    for (var i = 0; i < buffData.increaseDataList.Count; i++)
-                    {
-                        var increaseData = buffData.increaseDataList[i];
-                        increaseData.operationType = BuffOperationType.Subtract;
-                        buffData.increaseDataList[i] = increaseData;
-                    }
-                    playerState.Properties[buffData.propertyType] = calculator.UpdateCalculator(buffData.increaseDataList);
-                }
-            }
-            return true;
+            ConstantBuffId = constantBuffId;
+            VariableBuffId = variableBuffId;
+            EquipmentPassiveEffectData = equipmentPassiveEffectData ?? ImmutableList<EquipmentPassiveEffectData>.Empty;
         }
     }
 }

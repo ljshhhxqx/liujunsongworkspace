@@ -56,6 +56,16 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 buff.increaseDataList = json.ToList();
                 buff.sourceType = Enum.Parse<BuffSourceType>(data[4]);
                 buff.mainIncreaseType = Enum.Parse<BuffIncreaseType>(data[5]);
+                if (!_equipmentbuffs.ContainsKey(buff.propertyType))
+                {
+                    _equipmentbuffs.Add(buff.propertyType, new List<BuffData>());
+                }
+                _equipmentbuffs[buff.propertyType].Add(buff);
+                if (!_collectBuffs.ContainsKey(buff.propertyType))
+                {
+                    _collectBuffs.Add(buff.propertyType, new List<BuffData>());
+                }
+                _collectBuffs[buff.propertyType].Add(buff);
                 buffs.Add(buff);
             }
         }

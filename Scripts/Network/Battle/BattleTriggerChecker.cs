@@ -9,7 +9,6 @@ using MemoryPack;
 using Newtonsoft.Json;
 using Tool.Coroutine;
 using UnityEngine;
-using TriggerType = PlayFab.CloudScriptModels.TriggerType;
 
 namespace HotUpdate.Scripts.Network.Battle
 {
@@ -49,6 +48,35 @@ namespace HotUpdate.Scripts.Network.Battle
             var header = checker.GetConditionCheckerHeader();
             checker.SetCdTime(header.Interval);
         }
+
+        public static IConditionChecker CreateChecker(ConditionCheckerHeader header)
+        {
+            switch (header.TriggerType)
+            {
+                case TriggerType.OnAttack:
+                    return new AttackChecker { Header = header,  };
+                case TriggerType.OnAttackHit:
+                    return new AttackHitChecker { Header = header };
+                case TriggerType.OnSkillCast:
+                    return new SkillCastChecker { Header = header };
+                case TriggerType.OnSkillHit:
+                    return new SkillHitChecker { Header = header };
+                case TriggerType.OnTakeDamage:
+                    return new TakeDamageChecker { Header = header };
+                case TriggerType.OnKill:
+                    return new KillChecker { Header = header };
+                case TriggerType.OnHpChange:
+                    return new HpChangeChecker { Header = header };
+                case TriggerType.OnManaChange:
+                    return new MpChangeChecker { Header = header };
+                case TriggerType.OnCriticalHit:
+                    return new CriticalHitChecker { Header = header };
+                case TriggerType.OnDodge:
+                    return new DodgeChecker { Header = header };
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
     }
 
     [MemoryPackable]
@@ -66,6 +94,20 @@ namespace HotUpdate.Scripts.Network.Battle
         public ConditionTargetType TargetType;
         [MemoryPackOrder(5)]
         public int TargetCount;
+
+        public static ConditionCheckerHeader Create(TriggerType triggerType, float interval, float probability,
+            IConditionParam checkParams, ConditionTargetType targetType, int targetCount)
+        {
+            return new ConditionCheckerHeader
+            {
+                TriggerType = triggerType,
+                Interval = interval,
+                Probability = probability,
+                CheckParams = JsonConvert.SerializeObject(checkParams),
+                TargetType = targetType,
+                TargetCount = targetCount
+            };
+        }
     }
 
     public struct CurrentConditionCommonParameters

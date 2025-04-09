@@ -57,6 +57,27 @@ namespace HotUpdate.Scripts.Collector
             return MemoryPackSerializer.Deserialize<ChestItemCustomData>(data);
         }
     }
+    
+    [MemoryPackable]
+    public partial struct DroppedItemCustomData : IItemCustomData
+    {
+        [MemoryPackOrder(0)]
+        public int ItemUniqueId;
+        [MemoryPackOrder(1)]
+        public int ItemConfigId;
+        [MemoryPackOrder(2)]
+        public QualityType Quality;
+        
+        public byte[] Serialize()
+        {
+            return MemoryPackSerializer.Serialize(this);
+        }
+
+        public IItemCustomData Deserialize(byte[] data)
+        {
+            return MemoryPackSerializer.Deserialize<ChestItemCustomData>(data);
+        }
+    }
 
     public static class ItemCustomDataExtension
     {

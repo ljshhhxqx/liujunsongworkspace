@@ -9,6 +9,11 @@ namespace HotUpdate.Scripts.Network.Item
         private static Dictionary<int, GameItemData> _gameItemDatas = new Dictionary<int, GameItemData>();
         private static Dictionary<int, GameChestData> _chestDatas = new Dictionary<int, GameChestData>();
 
+        public static bool HasGameItemData(int gameItemId)
+        {
+            return _gameItemDatas.ContainsKey(gameItemId);
+        }
+        
         public static GameItemData GetGameItemData(int itemId)
         {
             return _gameItemDatas.GetValueOrDefault(itemId);

@@ -11,6 +11,7 @@ using HotUpdate.Scripts.Game;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Item;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
@@ -33,6 +34,7 @@ namespace HotUpdate.Scripts.Collector
 
         private readonly Dictionary<QualityType, Dictionary<PropertyTypeEnum, Material>> _collectibleMaterials =
             new Dictionary<QualityType, Dictionary<PropertyTypeEnum, Material>>();
+        private readonly Dictionary<QualityType, DroppedItem> _droppedItemPrefabs = new Dictionary<QualityType, DroppedItem>();
         private readonly Dictionary<QualityType, TreasureChestComponent> _treasureChestPrefabs = new Dictionary<QualityType, TreasureChestComponent>();
         private IConfigProvider _configProvider;
         private MapBoundDefiner _mapBoundDefiner;
@@ -70,6 +72,7 @@ namespace HotUpdate.Scripts.Collector
         //private byte[] _serverTreasureChestMetaDataBytes;
         private CollectItemMetaData _serverTreasureChestMetaData;
         private readonly Dictionary<QualityType, IColliderConfig> _chestColliderConfigs = new Dictionary<QualityType, IColliderConfig>();
+        private readonly Dictionary<QualityType, IColliderConfig> _droppedItemColliderConfigs = new Dictionary<QualityType, IColliderConfig> ();
         private TreasureChestComponent _clientTreasureChest;
 
         [Inject]
@@ -110,9 +113,29 @@ namespace HotUpdate.Scripts.Collector
         }
 
         [Server]
-        public void SpawnItemsByDroppedItems(byte[] droppedItemsBytes)
+        public void SpawnItemsByDroppedItems(byte[] droppedItemsBytes, Vector3 position)
         {
-            var items = MemoryPackSerializer.Deserialize<List<CollectItemMetaData>>(droppedItemsBytes);
+            var items = MemoryPackSerializer.Deserialize<DroppedItemData[]>(droppedItemsBytes);
+            for (int i = 0; i < items.Length; i++)
+            {
+                var item = items[i];
+                var go = GameObjectPoolManger.Instance.GetObject(_droppedItemPrefabs[item.Quality].gameObject, position, Quaternion.identity
+                , _spawnedParent);
+                var droppedItem = go.GetComponent<DroppedItem>();
+            }
+        }
+        
+        [ClientRpc]
+        public void SpawnItemsByDroppedItemsClientRpc(byte[] droppedItemsBytes, Vector3 position)
+        {
+            var items = MemoryPackSerializer.Deserialize<DroppedItemData[]>(droppedItemsBytes);
+            for (int i = 0; i < items.Length; i++)
+            {
+                var item = items[i];
+                var go = GameObjectPoolManger.Instance.GetObject(_droppedItemPrefabs[item.Quality].gameObject, position, Quaternion.identity
+                , _spawnedParent);
+                var droppedItem = go.GetComponent<DroppedItem>();
+            }
         }
 
         [Server]
@@ -270,6 +293,30 @@ namespace HotUpdate.Scripts.Collector
                     if (config != null)
                     {
                         _chestColliderConfigs.Add(data.Quality, config);
+                    }
+                }
+            }
+            
+            if (_droppedItemPrefabs.Count == 0)
+            {
+                foreach (var go in res)
+                {
+                    if (go.TryGetComponent<DroppedItem>(out var droppedItem))
+                    {
+                        _droppedItemPrefabs.Add(droppedItem.droppedItemSceneData.qualityType, droppedItem);
+                    }
+                }
+            }
+            
+            if (_droppedItemColliderConfigs.Count == 0)
+            {
+                foreach (var data in _droppedItemPrefabs.Values)
+                {
+                    var gameObjectCollider = data.GetComponent<Collider>();
+                    var config = GamePhysicsSystem.CreateColliderConfig(gameObjectCollider);
+                    if (config != null)
+                    {
+                        _droppedItemColliderConfigs.Add(data.droppedItemSceneData.qualityType, config);
                     }
                 }
             }
@@ -458,18 +505,17 @@ namespace HotUpdate.Scripts.Collector
                             RandomBuffId = buff.buffId,
                             ItemUniqueId = HybridIdGenerator.GenerateItemId(_collectObjectDataConfig.GetItemId(item.Item1), GameSyncManager.CurrentTick),
                         };
+                        var state = (ItemState)0;
+                        state = state.AddState(ItemState.IsActive);
                         var itemMetaData = new CollectItemMetaData(id, 
                             item.Item2,
-                            0, 
+                            (byte)state, 
                             item.Item1,
                             (uint)Mathf.Abs(GameSyncManager.CurrentTick),
                             30, 
                             (ushort)Random.Range(0, 65535),
                             -1);
                         itemMetaData = itemMetaData.SetCustomData(extraData);
-                        var state = (ItemState)itemMetaData.StateFlags;
-                        state = state.AddState(ItemState.IsActive);
-                        itemMetaData.StateFlags = (byte)state;
                         itemInfo = MemoryPackSerializer.Serialize(itemMetaData);
                         _serverItemMap.Add(id, itemInfo);
                     }
@@ -488,17 +534,6 @@ namespace HotUpdate.Scripts.Collector
         private BuffExtraData GetBuffExtraData(int configId)
         {
             var configData = _collectObjectDataConfig.GetCollectObjectData(configId);
-            // if (true)
-            // {
-            //     var propertyTypeEnum = PropertyTypeEnum.Score;
-            //     while (propertyTypeEnum == PropertyTypeEnum.Score)
-            //     {
-            //         propertyTypeEnum = (PropertyTypeEnum)Random.Range((int)PropertyTypeEnum.Speed, (int)PropertyTypeEnum.CriticalDamageRatio + 1);
-            //     }
-            //     var buff = _randomBuffConfig.GetCollectBuff(propertyTypeEnum);
-            //     return buff;
-            // }
-
             return configData.buffExtraData;
         }
 

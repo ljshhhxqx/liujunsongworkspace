@@ -15,7 +15,7 @@ namespace HotUpdate.Scripts.Collector
         [MemoryPackOrder(1)]
         public CompressedVector3 Position;
 
-        // 使用位掩码存储状态（0b00000001:是否激活, 0b00000010:是否已收集）
+        // 使用位掩码存储状态
         [MemoryPackOrder(2)]
         public byte StateFlags;
 
@@ -42,10 +42,10 @@ namespace HotUpdate.Scripts.Collector
         [MemoryPackOrder(8)]
         public byte[] ExtraData;
 
-        public CollectItemMetaData(uint itemId, Vector3 position, byte stateFlags, int itemCollectConfigId, uint spawnTick, ushort lifetime, ushort randomSeed, int ownerId,
+        public CollectItemMetaData(uint itemCollectId, Vector3 position, byte stateFlags, int itemCollectConfigId, uint spawnTick, ushort lifetime, ushort randomSeed, int ownerId,
             byte[] extraData = null)
         {
-            ItemId = itemId;
+            ItemId = itemCollectId;
             Position = CompressedVector3.FromVector3(position);
             StateFlags = stateFlags;
             ItemCollectConfigId = itemCollectConfigId;
@@ -68,6 +68,12 @@ namespace HotUpdate.Scripts.Collector
             var z = (ushort)(position.z * 100);
             return (uint)((x << 16) | z);
         }
+    }
+    
+    [MemoryPackable]
+    public partial struct DroppedItemMetaData
+    {
+        
     }
     
     [MemoryPackable]

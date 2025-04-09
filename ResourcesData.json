@@ -1235,6 +1235,36 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
+            "Name": "Stone 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Collect/Prefab/Stone 1.prefab"
+        },
+        {
+            "UID": 2800016,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Stone 2",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Collect/Prefab/Stone 2.prefab"
+        },
+        {
+            "UID": 2800017,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Stone",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Collect/Prefab/Stone.prefab"
+        },
+        {
+            "UID": 2800018,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "StoneChest",
             "IsPermanent": false,
             "IsPreload": false,

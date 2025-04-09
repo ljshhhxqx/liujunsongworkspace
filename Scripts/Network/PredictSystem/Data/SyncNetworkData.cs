@@ -33,6 +33,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     [MemoryPackUnion(11, typeof(ItemLockCommand))]
     [MemoryPackUnion(12, typeof(ItemEquipCommand))]
     [MemoryPackUnion(13, typeof(ItemDropCommand))]
+    
     public partial interface INetworkCommand
     {
         NetworkCommandHeader GetHeader();
@@ -204,6 +205,68 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             return Enum.IsDefined(typeof(AnimationState), AnimationState);
         }
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
+    }
+    
+    [MemoryPackable]
+    public partial struct PropertyEquipmentPassiveCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)] 
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)] 
+        public QualityType QualityType;
+        [MemoryPackOrder(2)] 
+        public bool IsEquipped;
+        
+        public NetworkCommandHeader GetHeader()
+        {
+            return Header;
+        }
+
+        public bool IsValid()
+        {
+            return Enum.IsDefined(typeof(QualityType), QualityType);
+        }
+
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
+            CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
+    }
+    
+    [MemoryPackable]
+    public partial struct PropertyEquipmentChangedCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)] 
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)] 
+        public PlayerItemType ItemType;
+        [MemoryPackOrder(2)] 
+        public int EquipmentConfigId;
+        [MemoryPackOrder(3)]
+        public bool IsEquipped;
+        
+        public NetworkCommandHeader GetHeader()
+        {
+            return Header;
+        }
+
+        public bool IsValid()
+        {
+            return Enum.IsDefined(typeof(PlayerItemType), ItemType) && EquipmentConfigId != 0;
+        }
+
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
+            CommandAuthority authority = CommandAuthority.Client)
         {
             Header.ConnectionId = headerConnectionId;
             Header.Tick = currentTick;
@@ -605,6 +668,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public EquipmentPart EquipmentPart;
         [MemoryPackOrder(3)]
         public bool IsEquip;
+        [MemoryPackOrder(4)] 
+        public int ItemId;
+        
         public NetworkCommandHeader GetHeader() => Header;
 
         public bool IsValid()
@@ -783,6 +849,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public static string RoomId;
         private static int _currentItemId;
         private static int _currentChestId;
+        private static int _currentEquipmentId;
+
+        public static int GenerateEquipmentId(int configId, int currentTick)
+        {
+            _currentEquipmentId++;
+            return _currentEquipmentId;
+        }
 
         /// <summary>
         /// 生成物品ID(玩家id+时间戳+物品类型+序列号)

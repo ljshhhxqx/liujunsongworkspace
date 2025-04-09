@@ -136,7 +136,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                             Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
                             EquipmentConfigId = configId,
                             EquipmentPart = config.equipmentPart,
-                            IsEquip = false
+                            IsEquip = false,
+                            ItemId = bagSlotItem.ItemIds.First(),
                         });
                     }
                 }
@@ -186,7 +187,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
                 EquipmentConfigId = configId,
                 EquipmentPart = bagItem.EquipmentPart,
-                IsEquip = itemEquipCommand.IsEquip
+                IsEquip = itemEquipCommand.IsEquip,
+                ItemId = bagItem.ItemId
             });
         }
 
