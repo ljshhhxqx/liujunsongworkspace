@@ -55,15 +55,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerPredictableState = player.GetComponent<PlayerItemSyncState>();
             var playerItemState = new PlayerItemState();
             var items = ObjectPool<List<PlayerBagItem>>.Get();
-            ModifyPlayerItems(items);
+            ModifyPlayerItems(ref items);
             playerItemState.PlayerItems = items.ToDictionary(x => x.ItemId, x => x);
             PropertyStates.Add(connectionId, playerItemState);
             _playerItemSyncStates.Add(connectionId, playerPredictableState);
         }
 
-        private void ModifyPlayerItems(List<PlayerBagItem> playerItems)
+        private void ModifyPlayerItems(ref List<PlayerBagItem> playerItems)
         {
-            
+            playerItems = new List<PlayerBagItem>(8);
         }
 
         public override CommandType HandledCommandType => CommandType.Item;

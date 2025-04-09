@@ -17,9 +17,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     /// 服务器强制同步内容
     /// </summary>
     [MemoryPackable(GenerateType.NoGenerate)]
-    [MemoryPackUnion(0, typeof(PlayerItemState))]
-    [MemoryPackUnion(1, typeof(PlayerInputState))]
-    [MemoryPackUnion(2, typeof(PlayerPredictablePropertyState))]
+    [MemoryPackUnion(0, typeof(PlayerEquipmentState))]
+    [MemoryPackUnion(1, typeof(PlayerItemState))]
     public partial interface ISyncPropertyState
     {
         

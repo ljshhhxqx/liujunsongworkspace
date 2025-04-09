@@ -158,15 +158,25 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     {
                         Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property,
                             CommandAuthority.Server, CommandExecuteType.Immediate),
-                        ItemType = itemConfig.itemType,
-                        EquipmentConfigId = equipmentCommand.EquipmentConfigId,
+                        EquipConfigId = configId,
+                        EquipItemId = itemId,
                         IsEquipped = equipmentCommand.IsEquip,
+                    };
+                    var propertyEquipPassiveCommand = new PropertyEquipmentPassiveCommand
+                    {
+                        Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property,
+                            CommandAuthority.Server, CommandExecuteType.Immediate),
+                        EquipItemConfigId = configId,
+                        EquipItemId = itemConfig.id,
+                        PlayerItemType = itemConfig.itemType,
+                        IsEquipped = false,
                     };
 
                     if (!equipmentCommand.IsEquip)
                     {
                         PlayerEquipmentState.TryUnequipped(ref playerEquipmentState, itemId, itemConfig.equipmentPart);
                         GameSyncManager.EnqueueServerCommand(propertyEquipmentChangedCommand);
+                        GameSyncManager.EnqueueServerCommand(propertyEquipPassiveCommand);
                         //todo: 
                         return playerEquipmentState;
                     }

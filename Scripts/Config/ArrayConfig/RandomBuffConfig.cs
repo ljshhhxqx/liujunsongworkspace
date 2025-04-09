@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using HotUpdate.Scripts.Tool.Static;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEditor;
@@ -16,16 +17,23 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         private readonly Dictionary<BuffIncreaseType, HashSet<int>> _equipmentBuffs = new Dictionary<BuffIncreaseType, HashSet<int>>();
         private readonly Dictionary<PropertyTypeEnum, HashSet<int>> _randomCollectBuffs = new Dictionary<PropertyTypeEnum, HashSet<int>>();
         private readonly Dictionary<PropertyTypeEnum, HashSet<int>> _randomEquipmentBuffs = new Dictionary<PropertyTypeEnum, HashSet<int>>();
+        private readonly HashSet<BuffIncreaseType> _equipmentBuffTypes = new HashSet<BuffIncreaseType>();
         public RandomBuffData GetRandomBuffData(int buffId)
         {
             return randomBuffs.Find(buff => buff.buffId == buffId);
         }
         
-        public BuffData GetBuff(BuffExtraData extraData)
+        public BuffData GetBuff(BuffExtraData extraData, float weight = 1)
         {
-            return GetRandomBuff(extraData.buffId);
+            return GetRandomBuff(extraData.buffId, weight);
         }
-        
+
+        public BuffExtraData GetEquipmentBuffNoType()
+        {
+            var types = _equipmentBuffTypes.RandomSelect();
+            return GetEquipmentBuff(types);
+        }
+
         public BuffExtraData GetEquipmentBuff(BuffIncreaseType buffIncreaseType)
         {
             if (_equipmentBuffs.Count == 0)
@@ -88,7 +96,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             };
         }
         
-        public BuffData GetRandomBuff(int buffId, CollectObjectBuffSize collectObjectBuffSize = CollectObjectBuffSize.Small)
+        public BuffData GetRandomBuff(int buffId, float weight)
         {
             var randomBuff = randomBuffs.Find(buff => buff.buffId == buffId);
             if (randomBuff.buffId != 0)
@@ -97,11 +105,20 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 for (int i = 0; i < randomBuff.increaseDataList.Count; i++)
                 {
                     var increaseData = randomBuff.increaseDataList[i];
-                    var increaseValue = increaseData.increaseValueRange.GetRandomValue();
+                    float increaseValue = 0; 
+                    if (Mathf.Approximately(weight, 1))
+                    {
+                        increaseValue = increaseData.increaseValueRange.GetRandomValue();
+                    }
+                    else
+                    {
+                        increaseValue = increaseData.increaseValueRange.GetRandomByWeight(weight);
+                    }
+
                     buffIncreaseData.Add(new BuffIncreaseData
                     {
                         increaseType = increaseData.increaseType,
-                        increaseValue = increaseValue * BuffDataReaderWriter.GetBuffRatioBySize(collectObjectBuffSize),
+                        increaseValue = increaseValue,
                     });
                 }
                 var buff = new BuffData
@@ -122,6 +139,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             randomBuffs.Clear();
             _randomEquipmentBuffs.Clear();
             _randomCollectBuffs.Clear();
+            _equipmentBuffTypes.Clear();
+            _equipmentBuffs.Clear();
 
             for (int i = 2; i < textAsset.Count; i++)
             {
@@ -134,10 +153,10 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 randomBuff.sourceType = (BuffSourceType)System.Enum.Parse(typeof(BuffSourceType), row[4]);
                 randomBuff.mainIncreaseType = (BuffIncreaseType)System.Enum.Parse(typeof(BuffIncreaseType), row[5]);
                 randomBuffs.Add(randomBuff);
-            }
-
-            foreach (var randomBuff in randomBuffs)
-            {
+                if (randomBuff.sourceType == BuffSourceType.Equipment)
+                {
+                    _equipmentBuffTypes.Add(randomBuff.mainIncreaseType);
+                }
                 if (randomBuff.sourceType == BuffSourceType.Collect)
                 {
                     if (!_randomCollectBuffs.ContainsKey(randomBuff.propertyType))
@@ -164,8 +183,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                     _equipmentBuffs[randomBuff.mainIncreaseType].Add(randomBuff.buffId);
                 }
             }
-        
-            EditorUtility.SetDirty(this);
             
         }
     }

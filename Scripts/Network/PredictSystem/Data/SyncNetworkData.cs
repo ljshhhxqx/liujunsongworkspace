@@ -219,9 +219,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(0)] 
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)] 
-        public QualityType QualityType;
+        public int EquipItemConfigId;
         [MemoryPackOrder(2)] 
+        public int EquipItemId;
+        [MemoryPackOrder(3)] 
         public bool IsEquipped;
+        [MemoryPackOrder(4)] 
+        public PlayerItemType PlayerItemType;
         
         public NetworkCommandHeader GetHeader()
         {
@@ -230,7 +234,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return Enum.IsDefined(typeof(QualityType), QualityType);
+            return EquipItemConfigId > 0 && EquipItemId > 0;
         }
 
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
@@ -248,11 +252,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     {
         [MemoryPackOrder(0)] 
         public NetworkCommandHeader Header;
-        [MemoryPackOrder(1)] 
-        public PlayerItemType ItemType;
-        [MemoryPackOrder(2)] 
-        public int EquipmentConfigId;
-        [MemoryPackOrder(3)]
+        [MemoryPackOrder(1)]
+        public int EquipConfigId;
+        [MemoryPackOrder(2)]
+        public int EquipItemId;
+        [MemoryPackOrder(3)] 
         public bool IsEquipped;
         
         public NetworkCommandHeader GetHeader()
@@ -262,7 +266,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return Enum.IsDefined(typeof(PlayerItemType), ItemType) && EquipmentConfigId != 0;
+            return EquipConfigId > 0 && EquipItemId > 0;
         }
 
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
@@ -699,8 +703,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
         public TriggerType TriggerType;
-
-        [MemoryPackOrder(2)] 
+        [MemoryPackOrder(2)]
+        public int EquipmentConfigId;
+        [MemoryPackOrder(3)] 
         public byte[] TriggerData;
         public NetworkCommandHeader GetHeader() => Header;
 
