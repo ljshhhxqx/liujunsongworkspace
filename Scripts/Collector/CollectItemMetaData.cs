@@ -42,10 +42,10 @@ namespace HotUpdate.Scripts.Collector
         [MemoryPackOrder(8)]
         public byte[] ExtraData;
 
-        public CollectItemMetaData(uint itemCollectId, Vector3 position, byte stateFlags, int itemCollectConfigId, uint spawnTick, ushort lifetime, ushort randomSeed, int ownerId,
+        public CollectItemMetaData(uint itemId, Vector3 position, byte stateFlags, int itemCollectConfigId, uint spawnTick, ushort lifetime, ushort randomSeed, int ownerId,
             byte[] extraData = null)
         {
-            ItemId = itemCollectId;
+            ItemId = itemId;
             Position = CompressedVector3.FromVector3(position);
             StateFlags = stateFlags;
             ItemCollectConfigId = itemCollectConfigId;
