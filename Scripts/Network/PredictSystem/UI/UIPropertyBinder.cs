@@ -13,7 +13,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         private static readonly Dictionary<UIPropertyDefine, Type> KeyTypeMap = new Dictionary<UIPropertyDefine, Type>();
         private static readonly Dictionary<BindingKey, object> KeyPropertyMap = 
             new Dictionary<BindingKey, object>();
-        private static readonly ReaderWriterLockSlim LockSlim = new ReaderWriterLockSlim();
         private static readonly Dictionary<UIPropertyDefine, List<BindingKey>> KeyIndex = 
             new Dictionary<UIPropertyDefine, List<BindingKey>>();
         #region 数据层接口
@@ -22,6 +21,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         {
             var bindingKey = new BindingKey(key, DataScope.Global);
             UpdateValue(bindingKey, value);
+        }
+
+        public static void SetGlobalCollectionValue<T>(UIPropertyDefine key, T value)
+        {
+            
         }
 
         // 设置指定玩家数据
@@ -40,28 +44,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         #endregion
         #region UI层接口
         // 绑定全局数据
-        public static void BindGlobalClass<T>(
+        public static void BindGlobalProperty<T>(
             UIPropertyDefine key, 
             Action<T> onUpdate, 
             Component context, 
             IEqualityComparer<T> customComparer = null)
             where T : class
         {
-            BindInternalClass(
-                new BindingKey(key, DataScope.Global),
-                onUpdate,
-                context,
-                customComparer
-            );
-        }
-        public static void BindGlobalStruct<T>(
-            UIPropertyDefine key, 
-            Action<T> onUpdate, 
-            Component context, 
-            IEqualityComparer<T> customComparer = null)
-            where T : struct
-        {
-            BindInternalStruct(
+            BindInternalProperty(
                 new BindingKey(key, DataScope.Global),
                 onUpdate,
                 context,
@@ -70,36 +60,30 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         }
 
         // 绑定本地玩家数据
-        public static void BindLocalClass<T>(UIPropertyDefine key, Action<T> onUpdate, Component context, IEqualityComparer<T> customComparer = null)
+        public static void BindLocalProperty<T>(UIPropertyDefine key, Action<T> onUpdate, Component context, IEqualityComparer<T> customComparer = null)
             where T : class
         {
-            BindInternalClass(new BindingKey(key), onUpdate, context, customComparer);
+            BindInternalProperty(new BindingKey(key), onUpdate, context, customComparer);
         }
         
-        public static void BindLocalStruct<T>(UIPropertyDefine key, Action<T> onUpdate, Component context, IEqualityComparer<T> customComparer = null)
-            where T : struct
-        {
-            BindInternalStruct(new BindingKey(key), onUpdate, context, customComparer);
-        }
 
         // 绑定指定玩家数据
-        public static void BindPlayerClass<T>(UIPropertyDefine key, int playerId, Action<T> onUpdate, Component context, IEqualityComparer<T> customComparer = null)
+        public static void BindPlayerProperty<T>(UIPropertyDefine key, int playerId, Action<T> onUpdate, Component context, IEqualityComparer<T> customComparer = null)
             where T : class
         {
-            BindInternalClass(new BindingKey(key, DataScope.SpecificPlayer, playerId), onUpdate, context, customComparer);
+            BindInternalProperty(new BindingKey(key, DataScope.SpecificPlayer, playerId), onUpdate, context, customComparer);
         }
-        
-        public static void BindPlayerStruct<T>(UIPropertyDefine key, int playerId, Action<T> onUpdate, Component context, IEqualityComparer<T> customComparer = null)
-            where T : struct
+
+        private static void BindInternalProperty<T>(BindingKey bindingKey, Action<T> onUpdate, Component context, IEqualityComparer<T> customComparer) where T : class
         {
-            BindInternalStruct(new BindingKey(key, DataScope.SpecificPlayer, playerId), onUpdate, context, customComparer);
+            
         }
+
         #endregion
 
         #region 核心实现
         private static void UpdateValue<T>(BindingKey key, T value)
         {
-            LockSlim.EnterWriteLock();
             try
             {
                 if (!KeyIndex.TryGetValue(key.PropertyKey, out var list))
@@ -117,8 +101,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
                     return;
                 }
 
-                var reactiveProp = property as ReactiveProperty<T>;
-                reactiveProp?.SetValue(LockSlim, key.PropertyKey, value);
+                if (property is ReactiveProperty<T> reactiveProp)
+                    reactiveProp.Value = value;
             }
             catch (Exception e)
             {
@@ -127,114 +111,94 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
             }
         }
 
-        private static void BindInternalClass<T>(
-            BindingKey key,
-            Action<T> onUpdate,
-            Component context,
-            IEqualityComparer<T> customComparer = null)
-            where T : class
+        private static void UpdateCollectionValue<T>(BindingKey key, int index, T newValue)
         {
-            GetEnhancedObservableClass(key, context, customComparer)
-                .Subscribe(onUpdate)
-                .AddTo(context);
-        }
-        
-        private static void BindInternalStruct<T>(
-            BindingKey key,
-            Action<T> onUpdate, 
-            Component context,
-            IEqualityComparer<T> customComparer = null)
-            where T : struct
-        {
-            GetEnhancedObservableStruct(key, context, customComparer)
-                .Subscribe(onUpdate)
-                .AddTo(context);
-        }
-
-        private static IObservable<T> GetEnhancedObservableStruct<T>(
-            BindingKey key,
-            Component context,
-            IEqualityComparer<T> customComparer)
-            where T : struct
-        {
-            return Observable.Create<T>(observer =>
+            try
             {
-                var disposable = new CompositeDisposable();
+                if (!KeyIndex.TryGetValue(key.PropertyKey, out var list))
+                {
+                    list = new List<BindingKey>();
+                    KeyIndex[key.PropertyKey] = list;
+                }
+                list.Add(key);
+                ValidateType(key, typeof(T));
 
-                // 智能选择比较策略
-                var finalComparer = customComparer ?? new ValueTypeComparer<T>();
+                if (!KeyPropertyMap.TryGetValue(key, out var property))
+                {
+                    property = new ReactiveCollection<T>();
+                    KeyPropertyMap[key] = property;
+                }
 
-                // 获取基础数据流
-                GetObservable<T>(key, context)
-                    .DistinctUntilChanged(finalComparer)
-                    .Subscribe(observer.OnNext)
-                    .AddTo(disposable);
-
-                return disposable;
-            });
-        }
-
-        private static IObservable<T> GetEnhancedObservableClass<T>(
-            BindingKey key,
-            Component context,
-            IEqualityComparer<T> customComparer)
-            where T : class
-        {
-            return Observable.Create<T>(observer =>
+                if (property is ReactiveCollection<T> reactiveCollection)
+                {
+                    if (index >= reactiveCollection.Count)
+                        reactiveCollection.Add(newValue);
+                    else
+                        reactiveCollection[index] = newValue;
+                }
+            }
+            catch (Exception e)
             {
-                var disposable = new CompositeDisposable();
-
-                // 智能选择比较策略
-                var finalComparer = customComparer ?? EqualityComparer<T>.Default;
-
-                // 获取基础数据流
-                GetObservable<T>(key, context)
-                    .DistinctUntilChanged(finalComparer)
-                    .Subscribe(observer.OnNext)
-                    .AddTo(disposable);
-
-                return disposable;
-            });
+                Console.WriteLine(e);
+                throw;
+            }
         }
+
+        private static void UpdateDictionaryValue<T1, T2>(BindingKey bindingKey, T1 key, T2 value)
+        {
+            try
+            {
+                if (!KeyIndex.TryGetValue(bindingKey.PropertyKey, out var list))
+                {
+                    list = new List<BindingKey>();
+                    KeyIndex[bindingKey.PropertyKey] = list;
+                }
+                list.Add(bindingKey);
+                ValidateType(bindingKey, typeof(T2));
+
+                if (!KeyPropertyMap.TryGetValue(bindingKey, out var property))
+                {
+                    property = new ReactiveDictionary<T1, T2>();
+                    KeyPropertyMap[bindingKey] = property;
+                }
+
+                if (property is ReactiveDictionary<T1, T2> reactiveDictionary)
+                    reactiveDictionary[key] = value;    
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
         public static IObservable<T> GetObservable<T>(BindingKey key, Component context)
         {
             ValidateType(key, typeof(T));
         
             var property = GetOrCreateProperty<T>(key);
-            return property.AsObservable()
-                .TakeUntilDestroy(context.gameObject);
+            if (property is ReactiveProperty<T> reactiveProp)
+                return reactiveProp.AsObservable()
+                   .TakeUntilDestroy(context.gameObject);
+            return null;
         }
 
-        private class ValueTypeComparer<T> : IEqualityComparer<T> where T : struct
+        private static object GetOrCreateProperty<T>(BindingKey key)
         {
-            public bool Equals(T x, T y) => x.Equals(y);
-        
-            public int GetHashCode(T obj) => obj.GetHashCode();
-        }
-
-        private static ReactiveProperty<T> GetOrCreateProperty<T>(BindingKey key)
-        {
-            LockSlim.EnterUpgradeableReadLock();
             try
             {
+                ValidateType(key, typeof(T));
                 if (!KeyPropertyMap.TryGetValue(key, out var property))
                 {
-                    LockSlim.EnterWriteLock();
-                    try
-                    {
-                        property = new ReactiveProperty<T>();
-                        KeyPropertyMap[key] = property;
-                    }
-                    finally
-                    {
-                        LockSlim.ExitWriteLock();
-                    }
+                    property = new ReactiveProperty<T>();
+                    KeyPropertyMap[key] = property;
                 }
-                return (ReactiveProperty<T>)property;
+                return property;
             }
-            finally
+            catch (Exception e)
             {
-                LockSlim.ExitUpgradeableReadLock();
+                Console.WriteLine(e);
+                throw;
             }
         }
         #endregion
@@ -302,12 +266,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
             Component context)
         {
             var version = 0;
-            return GetOrCreateProperty<T>(key)
-                .AsObservable()
-                .Select(x => (Value: x, Version: ++version))
-                .TakeUntilDestroy(context.gameObject)
-                .Subscribe(t => onUpdate(t.Value, t.Version))
-                .AddTo(context);
+            var property = GetOrCreateProperty<T>(key);
+            if (property is ReactiveProperty<T> reactiveProp)
+            {
+                return reactiveProp.ObserveEveryValueChanged(x => x.Value)
+                    .Select(x => (Value: x, Version: ++version))
+                    .TakeUntilDestroy(context.gameObject)
+                    .Subscribe(t => onUpdate(t.Value, t.Version))
+                    .AddTo(context);;
+            }
+            return null;
         }
         #endregion
         [RuntimeInitializeOnLoadMethod]
@@ -364,52 +332,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
                 KeyPropertyMap.Remove(key);
             }
         }
-
-        private class ReactiveProperty<T>
-        {
-            private readonly BehaviorSubject<T> _subject;
-            private IEqualityComparer<T> _comparer;
-
-            public ReactiveProperty() => _subject = new BehaviorSubject<T>(default(T));
-            public ReactiveProperty(T value) => _subject = new BehaviorSubject<T>(value);
-            public ReactiveProperty(T initialValue = default, 
-                IEqualityComparer<T> comparer = null)
-            {
-                _comparer = comparer ?? EqualityComparer<T>.Default;
-                _subject = new BehaviorSubject<T>(initialValue);
-            }
-
-            // 扩展SetValue方法
-            public void SetValue(ReaderWriterLockSlim locker,
-                UIPropertyDefine key, 
-                T value, 
-                IEqualityComparer<T> comparer = null,
-                DataScope scope = DataScope.LocalPlayer,
-                int playerId = 0)
-            {
-                var bindingKey = new BindingKey(key, scope, playerId);
-    
-                locker.EnterWriteLock();
-                try
-                {
-                    if(KeyPropertyMap.TryGetValue(bindingKey, out var existing))
-                    {
-                        var prop = existing as ReactiveProperty<T>;
-                        prop?.SetValue(LockSlim, key, value, comparer, scope, playerId);
-                    }
-                    else
-                    {
-                        KeyPropertyMap[bindingKey] = new ReactiveProperty<T>(value, comparer);
-                    }
-                }
-                finally
-                {
-                    locker.ExitWriteLock();
-                }
-            }
-            public IObservable<T> AsObservable() => _subject.AsObservable();
-        }
-
+        
         // 异常定义
         private class TypeMismatchException : InvalidOperationException
         {

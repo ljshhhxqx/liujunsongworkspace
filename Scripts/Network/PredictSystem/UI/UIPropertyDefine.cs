@@ -8,6 +8,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         [UIPropertyType(typeof(PropertyItemData[]))]
         PlayerProperty,
     }
+
+    public enum ReactiveCollectionEvent
+    {
+        Add,
+        Remove,
+        Clear,
+        Replace,
+        Move,
+        CountChanged,
+    }
+
     // 复合键结构（玩家ID + 数据Key）
     public struct BindingKey : IEquatable<BindingKey>
     {

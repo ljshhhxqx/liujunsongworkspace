@@ -59,8 +59,6 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             //  {
             //      hasMovementInput.SetField(hasMovementInput.name, hasInput);
             //  });
-            UIPropertyBinder.BindLocalClass<PropertyItemData[]>(UIPropertyDefine.PlayerProperty,
-                OnPlayerPropertiesChanged, this);
             var list = new List<PropertyItemData>();
             var enumValues = Enum.GetValues(typeof(PropertyTypeEnum));
             for (var i = 0; i < enumValues.Length; i++)
