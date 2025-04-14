@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Data;
 using Game.Map;
-using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
-using HotUpdate.Scripts.Network.Client.Player;
+using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
@@ -18,7 +17,7 @@ using VContainer.Unity;
 using PlayerInGameData = HotUpdate.Scripts.Network.Server.InGame.PlayerInGameData;
 using Random = UnityEngine.Random;
 
-namespace Network.Server
+namespace HotUpdate.Scripts.Network.Server
 {
     public class NetworkManagerCustom : NetworkManager, IInjectableObject
     {
@@ -67,6 +66,7 @@ namespace Network.Server
         {
             base.OnClientConnect();
             Debug.Log("成功连接到服务器！");
+            UIPropertyBinder.CurrentLocalPlayerId = NetworkClient.connection.connectionId;
         }
         
         // 客户端断开连接时调用
@@ -74,6 +74,7 @@ namespace Network.Server
         {
             Debug.Log("与服务器断开连接。");
             base.OnClientDisconnect();
+            UIPropertyBinder.CurrentLocalPlayerId = -1;
         }
 
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)

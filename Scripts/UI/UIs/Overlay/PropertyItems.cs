@@ -16,27 +16,25 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private TextMeshProUGUI valueText;
         [SerializeField]
         private Image iconImage;
-        private ReactiveProperty<PropertyType> _currentProperty;
-        private ReactiveProperty<PropertyType> _maxProperty;
         
         public override void SetData<T>(T data)
         {
             if (data is PropertyItemData propertyData)
             {
                 nameText.text = propertyData.Name;
-                _currentProperty = propertyData.CurrentProperty;
-                _maxProperty = propertyData.MaxProperty;
-                SetValue(propertyData.ConsumeType, _currentProperty.Value.Value, _maxProperty.Value.Value);
-                _currentProperty.Subscribe(x =>
-                {
-                    SetValue(propertyData.ConsumeType, x.Value, _maxProperty.Value.Value);
-                }).AddTo(this);
-                _maxProperty.Subscribe(x =>
-                {
-                    var currentValue = Mathf.RoundToInt(_currentProperty.Value.Value);
-                    var maxValue = Mathf.RoundToInt(_maxProperty.Value.Value);
-                    SetValue(propertyData.ConsumeType, _currentProperty.Value.Value, x.Value);
-                }).AddTo(this);
+                // _currentProperty = propertyData.CurrentProperty;
+                // _maxProperty = propertyData.MaxProperty;
+                // SetValue(propertyData.ConsumeType, _currentProperty.Value.Value, _maxProperty.Value.Value);
+                // _currentProperty.Subscribe(x =>
+                // {
+                //     SetValue(propertyData.ConsumeType, x.Value, _maxProperty.Value.Value);
+                // }).AddTo(this);
+                // _maxProperty.Subscribe(x =>
+                // {
+                //     var currentValue = Mathf.RoundToInt(_currentProperty.Value.Value);
+                //     var maxValue = Mathf.RoundToInt(_maxProperty.Value.Value);
+                //     SetValue(propertyData.ConsumeType, _currentProperty.Value.Value, x.Value);
+                // }).AddTo(this);
             }
         }
 

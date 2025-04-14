@@ -159,7 +159,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             if (isLocalPlayer)
             {
                 var properties = uiManager.SwitchUI<PlayerPropertiesOverlay>();
-                properties.SetPlayerProperties(this);
+                //properties.SetPlayerProperties(this);
                 var playerAnimationComponent = GetComponent<PlayerAnimationComponent>();
                 if (playerAnimationComponent)
                 {

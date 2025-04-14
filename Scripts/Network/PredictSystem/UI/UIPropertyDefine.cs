@@ -1,10 +1,12 @@
 ﻿using System;
+using HotUpdate.Scripts.UI.UIs.Panel.Item;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.UI
 {
     public enum UIPropertyDefine
     {
-        
+        [UIPropertyType(typeof(PropertyItemData[]))]
+        PlayerProperty,
     }
     // 复合键结构（玩家ID + 数据Key）
     public struct BindingKey : IEquatable<BindingKey>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using UniRx;
 using UnityEngine;
@@ -35,19 +34,34 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         // 设置本地玩家数据（快捷方式）
         public static void SetLocalValue<T>(UIPropertyDefine key, T value)
         {
-            var bindingKey = new BindingKey(key, DataScope.LocalPlayer);
+            var bindingKey = new BindingKey(key);
             UpdateValue(bindingKey, value);
         }
         #endregion
         #region UI层接口
         // 绑定全局数据
-        public static void BindGlobal<T>(
+        public static void BindGlobalClass<T>(
             UIPropertyDefine key, 
             Action<T> onUpdate, 
             Component context, 
             IEqualityComparer<T> customComparer = null)
+            where T : class
         {
-            BindInternal(
+            BindInternalClass(
+                new BindingKey(key, DataScope.Global),
+                onUpdate,
+                context,
+                customComparer
+            );
+        }
+        public static void BindGlobalStruct<T>(
+            UIPropertyDefine key, 
+            Action<T> onUpdate, 
+            Component context, 
+            IEqualityComparer<T> customComparer = null)
+            where T : struct
+        {
+            BindInternalStruct(
                 new BindingKey(key, DataScope.Global),
                 onUpdate,
                 context,
@@ -56,15 +70,29 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         }
 
         // 绑定本地玩家数据
-        public static void BindLocal<T>(UIPropertyDefine key, Action<T> onUpdate, Component context, IEqualityComparer<T> customComparer = null)
+        public static void BindLocalClass<T>(UIPropertyDefine key, Action<T> onUpdate, Component context, IEqualityComparer<T> customComparer = null)
+            where T : class
         {
-            BindInternal(new BindingKey(key), onUpdate, context, customComparer);
+            BindInternalClass(new BindingKey(key), onUpdate, context, customComparer);
+        }
+        
+        public static void BindLocalStruct<T>(UIPropertyDefine key, Action<T> onUpdate, Component context, IEqualityComparer<T> customComparer = null)
+            where T : struct
+        {
+            BindInternalStruct(new BindingKey(key), onUpdate, context, customComparer);
         }
 
         // 绑定指定玩家数据
-        public static void BindPlayer<T>(UIPropertyDefine key, int playerId, Action<T> onUpdate, Component context, IEqualityComparer<T> customComparer = null)
+        public static void BindPlayerClass<T>(UIPropertyDefine key, int playerId, Action<T> onUpdate, Component context, IEqualityComparer<T> customComparer = null)
+            where T : class
         {
-            BindInternal(new BindingKey(key, DataScope.SpecificPlayer, playerId), onUpdate, context, customComparer);
+            BindInternalClass(new BindingKey(key, DataScope.SpecificPlayer, playerId), onUpdate, context, customComparer);
+        }
+        
+        public static void BindPlayerStruct<T>(UIPropertyDefine key, int playerId, Action<T> onUpdate, Component context, IEqualityComparer<T> customComparer = null)
+            where T : struct
+        {
+            BindInternalStruct(new BindingKey(key, DataScope.SpecificPlayer, playerId), onUpdate, context, customComparer);
         }
         #endregion
 
@@ -99,31 +127,65 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
             }
         }
 
-        private static void BindInternal<T>(
+        private static void BindInternalClass<T>(
             BindingKey key,
             Action<T> onUpdate,
             Component context,
             IEqualityComparer<T> customComparer = null)
+            where T : class
         {
-            GetEnhancedObservable(key, context, customComparer)
+            GetEnhancedObservableClass(key, context, customComparer)
+                .Subscribe(onUpdate)
+                .AddTo(context);
+        }
+        
+        private static void BindInternalStruct<T>(
+            BindingKey key,
+            Action<T> onUpdate, 
+            Component context,
+            IEqualityComparer<T> customComparer = null)
+            where T : struct
+        {
+            GetEnhancedObservableStruct(key, context, customComparer)
                 .Subscribe(onUpdate)
                 .AddTo(context);
         }
 
-        private static IObservable<T> GetEnhancedObservable<T>(
+        private static IObservable<T> GetEnhancedObservableStruct<T>(
             BindingKey key,
             Component context,
             IEqualityComparer<T> customComparer)
+            where T : struct
         {
             return Observable.Create<T>(observer =>
             {
                 var disposable = new CompositeDisposable();
-                var isValueType = typeof(T).IsValueType;
 
                 // 智能选择比较策略
-                var finalComparer = customComparer ?? (isValueType 
-                    ? new ValueTypeComparer<T>() 
-                    : EqualityComparer<T>.Default);
+                var finalComparer = customComparer ?? new ValueTypeComparer<T>();
+
+                // 获取基础数据流
+                GetObservable<T>(key, context)
+                    .DistinctUntilChanged(finalComparer)
+                    .Subscribe(observer.OnNext)
+                    .AddTo(disposable);
+
+                return disposable;
+            });
+        }
+
+        private static IObservable<T> GetEnhancedObservableClass<T>(
+            BindingKey key,
+            Component context,
+            IEqualityComparer<T> customComparer)
+            where T : class
+        {
+            return Observable.Create<T>(observer =>
+            {
+                var disposable = new CompositeDisposable();
+
+                // 智能选择比较策略
+                var finalComparer = customComparer ?? EqualityComparer<T>.Default;
 
                 // 获取基础数据流
                 GetObservable<T>(key, context)
@@ -148,14 +210,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
             public bool Equals(T x, T y) => x.Equals(y);
         
             public int GetHashCode(T obj) => obj.GetHashCode();
-        }
-
-        // 引用类型安全比较器
-        private class ReferenceTypeComparer<T> : IEqualityComparer<T> where T : class
-        {
-            public bool Equals(T x, T y) => ReferenceEquals(x, y);
-        
-            public int GetHashCode(T obj) => RuntimeHelpers.GetHashCode(obj);
         }
 
         private static ReactiveProperty<T> GetOrCreateProperty<T>(BindingKey key)
@@ -311,8 +365,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
             }
         }
 
-        // 响应式属性封装
-        // ReactiveProperty定义（支持深度对象比较）
         private class ReactiveProperty<T>
         {
             private readonly BehaviorSubject<T> _subject;

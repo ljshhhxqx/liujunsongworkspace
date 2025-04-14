@@ -76,7 +76,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             {
                 return;
             }
-            //todo:上述代码需要更换为直接调用PlayerComponentController,不再使用
             var propertyState = PlayerPredictablePropertyState;
             PropertyChanged(propertyState);
             

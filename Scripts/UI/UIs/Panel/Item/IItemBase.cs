@@ -19,7 +19,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         
     }
     
-    public class RoomMemberItemData : IItemBaseData
+    public struct RoomMemberItemData : IItemBaseData
     {
         public string PlayerId;
         public string Name;
@@ -29,7 +29,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public Action<string> OnAddFriendClick;
     }
     
-    public class RoomInviteItemData : IItemBaseData
+    public struct RoomInviteItemData : IItemBaseData
     {
         public string PlayerId;
         public string Name;
@@ -37,7 +37,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public Action<string> OnInviteClick;
     }
 
-    public class RoomListItemData : IItemBaseData
+    public struct RoomListItemData : IItemBaseData
     {
         public string RoomId;
         public string RoomName;
@@ -48,12 +48,13 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public Action<string> OnJoinClick;
     }
 
-    public class PropertyItemData : IItemBaseData
+    public struct PropertyItemData : IItemBaseData
     {
+        public PropertyTypeEnum PropertyType;
         public string Name;
         public PropertyConsumeType ConsumeType;
-        public ReactiveProperty<PropertyType> CurrentProperty;
-        public ReactiveProperty<PropertyType> MaxProperty;
+        public float CurrentProperty;
+        public float MaxProperty;
     }
     
     public class BagItemData : IItemBaseData

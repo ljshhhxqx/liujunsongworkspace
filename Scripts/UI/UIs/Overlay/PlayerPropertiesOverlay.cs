@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Client.Player;
+using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
@@ -41,43 +42,48 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         public void SetPlayerProperties(PlayerPropertyComponent playerPropertyComponent)
         {
-            _playerPropertyComponent = playerPropertyComponent;
-           //  playerPropertyComponent.CurrentAnimationStateProperty.Subscribe(state =>
-           //  {
-           //      animationState.SetField(animationState.name, state);
-           // });
-            playerPropertyComponent.PlayerStateProperty.Subscribe(state =>
-            {
-                playerStateProperty.SetField(animationState.name, state);
-            });
-            // playerPropertyComponent.CurrentAnimationStateProperty.Subscribe(chestType =>
-            // {
-            //     currentChestType.SetField(currentChestType.name, chestType);
-            // });
-            playerPropertyComponent.HasMovementInputProperty.Subscribe(hasInput =>
-            {
-                hasMovementInput.SetField(hasMovementInput.name, hasInput);
-            });
-            
+            //  _playerPropertyComponent = playerPropertyComponent;
+            // //  playerPropertyComponent.CurrentAnimationStateProperty.Subscribe(state =>
+            // //  {
+            // //      animationState.SetField(animationState.name, state);
+            // // });
+            //  playerPropertyComponent.PlayerStateProperty.Subscribe(state =>
+            //  {
+            //      playerStateProperty.SetField(animationState.name, state);
+            //  });
+            //  // playerPropertyComponent.CurrentAnimationStateProperty.Subscribe(chestType =>
+            //  // {
+            //  //     currentChestType.SetField(currentChestType.name, chestType);
+            //  // });
+            //  playerPropertyComponent.HasMovementInputProperty.Subscribe(hasInput =>
+            //  {
+            //      hasMovementInput.SetField(hasMovementInput.name, hasInput);
+            //  });
+            UIPropertyBinder.BindLocalClass<PropertyItemData[]>(UIPropertyDefine.PlayerProperty,
+                OnPlayerPropertiesChanged, this);
             var list = new List<PropertyItemData>();
             var enumValues = Enum.GetValues(typeof(PropertyTypeEnum));
             for (var i = 0; i < enumValues.Length; i++)
             {
                 var propertyType = (PropertyTypeEnum)enumValues.GetValue(i);
-                var currentProperty = playerPropertyComponent.GetProperty(propertyType);
-                var maxProperty = playerPropertyComponent.GetMaxProperty(propertyType);
                 var propertyConfig = _propertyConfig.GetPropertyConfigData(propertyType);
                 var displayName = propertyConfig.description;
                 var consumeType = propertyConfig.consumeType;
                 list.Add(new PropertyItemData
                 {
                     Name = displayName,
-                    CurrentProperty = currentProperty,
-                    MaxProperty = maxProperty,
+                    CurrentProperty = 1,
+                    MaxProperty = 1,
                     ConsumeType = consumeType
                 });
             }
+
             contentItemList.SetItemList(list.ToArray());
+        }
+
+        private void OnPlayerPropertiesChanged(PropertyItemData[] value) 
+        {
+            
         }
 
         public override UIType Type => UIType.PlayerPropertiesOverlay;
