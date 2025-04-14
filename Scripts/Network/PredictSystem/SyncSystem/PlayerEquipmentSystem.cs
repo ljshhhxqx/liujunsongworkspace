@@ -77,10 +77,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     conditionConfigId = _armorConfig.GetArmorConfigByItemID(itemConfigId).battleEffectConditionId;
                     break;
             }
-            var congfig = _battleEffectConfig.GetConditionData(conditionConfigId);
+            var config = _battleEffectConfig.GetConditionData(conditionConfigId);
 
-            var header = ConditionCheckerHeader.Create(congfig.triggerType, congfig.interval, congfig.probability,
-                congfig.conditionParam, congfig.targetType, congfig.targetCount);
+            var header = ConditionCheckerHeader.Create(config.triggerType, config.interval, config.probability,
+                config.conditionParam, config.targetType, config.targetCount);
             return header;
         }
 
