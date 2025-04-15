@@ -36,9 +36,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
         public void InitializeSlots(IEnumerable<BagItemData> bagItemData)
         {
             var bagItemDatas = new List<BagItemData>();
+            var originalBagItemDatas = bagItemData.ToArray();
             for (var i = 0; i < BagCommonData.maxBagCount; i++)
             {
-                var data = bagItemDatas.FirstOrDefault(x => x.Index == i) ?? new BagItemData();
+                var data = originalBagItemDatas.FirstOrDefault(x => x.Index == i) ?? new BagItemData();
                 bagItemDatas.Add(data);
             }
             contentItemList.SetItemList(bagItemDatas.ToArray());

@@ -152,5 +152,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         //关联的动画状态
         public AnimationState animationState;
         public bool isHundredPercent;
+        public bool showInHud;
     }
 }

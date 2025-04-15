@@ -1,349 +1,183 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
+using HotUpdate.Scripts.Tool.ObjectPool;
+using Sirenix.Utilities;
 using UniRx;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.UI
 {
     public static class UIPropertyBinder
     {
-        private static readonly Dictionary<UIPropertyDefine, Type> KeyTypeMap = new Dictionary<UIPropertyDefine, Type>();
-        private static readonly Dictionary<BindingKey, object> KeyPropertyMap = 
-            new Dictionary<BindingKey, object>();
-        private static readonly Dictionary<UIPropertyDefine, List<BindingKey>> KeyIndex = 
-            new Dictionary<UIPropertyDefine, List<BindingKey>>();
-        #region 数据层接口
-        // 设置全局数据
-        public static void SetGlobalValue<T>(UIPropertyDefine key, T value)
+        private static readonly Dictionary<BindingKey, ReactiveProperty<IUIDatabase>> KeyPropertyMap =
+            new Dictionary<BindingKey, ReactiveProperty<IUIDatabase>>();
+
+        //必须使用int作为响应式字典的key
+        private static readonly Dictionary<BindingKey, ReactiveDictionary<int, IUIDatabase>> KeyDictionaryMap =
+            new Dictionary<BindingKey, ReactiveDictionary<int, IUIDatabase>>();
+
+        private static readonly Dictionary<BindingKey, ReactiveCollection<IUIDatabase>> KeyListMap =
+            new Dictionary<BindingKey, ReactiveCollection<IUIDatabase>>();
+
+        #region Property Operations
+
+        public static bool HasProperty(BindingKey key)
         {
-            var bindingKey = new BindingKey(key, DataScope.Global);
-            UpdateValue(bindingKey, value);
+            return KeyPropertyMap.ContainsKey(key);
         }
 
-        public static void SetGlobalCollectionValue<T>(UIPropertyDefine key, T value)
+        public static IObservable<IUIDatabase> ObserveProperty(BindingKey key)
         {
-            
+            return GetOrCreateProperty(key).AsObservable();
         }
 
-        // 设置指定玩家数据
-        public static void SetPlayerValue<T>(UIPropertyDefine key, int playerId, T value)
+        public static void SetProperty(BindingKey key, IUIDatabase value)
         {
-            var bindingKey = new BindingKey(key, DataScope.SpecificPlayer, playerId);
-            UpdateValue(bindingKey, value);
+            GetOrCreateProperty(key).Value = value;
         }
 
-        // 设置本地玩家数据（快捷方式）
-        public static void SetLocalValue<T>(UIPropertyDefine key, T value)
+        private static ReactiveProperty<IUIDatabase> GetOrCreateProperty(BindingKey key)
         {
-            var bindingKey = new BindingKey(key);
-            UpdateValue(bindingKey, value);
-        }
-        #endregion
-        #region UI层接口
-        // 绑定全局数据
-        public static void BindGlobalProperty<T>(
-            UIPropertyDefine key, 
-            Action<T> onUpdate, 
-            Component context, 
-            IEqualityComparer<T> customComparer = null)
-            where T : class
-        {
-            BindInternalProperty(
-                new BindingKey(key, DataScope.Global),
-                onUpdate,
-                context,
-                customComparer
-            );
-        }
+            if (!KeyPropertyMap.TryGetValue(key, out var property))
+            {
+                property = ObjectPool<ReactiveProperty<IUIDatabase>>.Get();
+                property.Value = null;
+                KeyPropertyMap[key] = property;
+            }
 
-        // 绑定本地玩家数据
-        public static void BindLocalProperty<T>(UIPropertyDefine key, Action<T> onUpdate, Component context, IEqualityComparer<T> customComparer = null)
-            where T : class
-        {
-            BindInternalProperty(new BindingKey(key), onUpdate, context, customComparer);
-        }
-        
-
-        // 绑定指定玩家数据
-        public static void BindPlayerProperty<T>(UIPropertyDefine key, int playerId, Action<T> onUpdate, Component context, IEqualityComparer<T> customComparer = null)
-            where T : class
-        {
-            BindInternalProperty(new BindingKey(key, DataScope.SpecificPlayer, playerId), onUpdate, context, customComparer);
-        }
-
-        private static void BindInternalProperty<T>(BindingKey bindingKey, Action<T> onUpdate, Component context, IEqualityComparer<T> customComparer) where T : class
-        {
-            
+            return property;
         }
 
         #endregion
 
-        #region 核心实现
-        private static void UpdateValue<T>(BindingKey key, T value)
+        #region Dictionary Operations
+
+        public static bool HasDictionary(BindingKey key)
         {
-            try
+            return KeyDictionaryMap.ContainsKey(key);
+        }
+        public static void OptimizedBatchAdd(BindingKey key, Dictionary<int, IUIDatabase> items)
+        {
+            var tempDict = new Dictionary<int, IUIDatabase>();
+            foreach (var item in items)
             {
-                if (!KeyIndex.TryGetValue(key.PropertyKey, out var list))
-                {
-                    list = new List<BindingKey>();
-                    KeyIndex[key.PropertyKey] = list;
-                }
-                list.Add(key);
-                ValidateType(key, typeof(T));
-
-                if (!KeyPropertyMap.TryGetValue(key, out var property))
-                {
-                    property = new ReactiveProperty<T>(value);
-                    KeyPropertyMap[key] = property;
-                    return;
-                }
-
-                if (property is ReactiveProperty<T> reactiveProp)
-                    reactiveProp.Value = value;
+                tempDict.Add(item.Key, item.Value);
             }
-            catch (Exception e)
+    
+            var dict = GetOrCreateDictionary(key);
+            dict.Clear();
+            foreach (var item in tempDict)
             {
-                Console.WriteLine(e);
-                throw;
+                dict.Add(item.Key, item.Value);
             }
         }
 
-        private static void UpdateCollectionValue<T>(BindingKey key, int index, T newValue)
+        public static void AddToDictionary(BindingKey dictKey, int itemKey, IUIDatabase value)
         {
-            try
-            {
-                if (!KeyIndex.TryGetValue(key.PropertyKey, out var list))
-                {
-                    list = new List<BindingKey>();
-                    KeyIndex[key.PropertyKey] = list;
-                }
-                list.Add(key);
-                ValidateType(key, typeof(T));
+            GetOrCreateDictionary(dictKey).Add(itemKey, value);
+        }
 
-                if (!KeyPropertyMap.TryGetValue(key, out var property))
-                {
-                    property = new ReactiveCollection<T>();
-                    KeyPropertyMap[key] = property;
-                }
+        public static void RemoveFromDictionary(BindingKey dictKey, int itemKey)
+        {
+            GetOrCreateDictionary(dictKey).Remove(itemKey);
+        }
 
-                if (property is ReactiveCollection<T> reactiveCollection)
-                {
-                    if (index >= reactiveCollection.Count)
-                        reactiveCollection.Add(newValue);
-                    else
-                        reactiveCollection[index] = newValue;
-                }
-            }
-            catch (Exception e)
+        public static void BatchAddToDictionary(BindingKey dictKey, IEnumerable<KeyValuePair<int, IUIDatabase>> items)
+        {
+            var dict = GetOrCreateDictionary(dictKey);
+            foreach (var item in items)
             {
-                Console.WriteLine(e);
-                throw;
+                dict.Add(item.Key, item.Value);
             }
         }
 
-        private static void UpdateDictionaryValue<T1, T2>(BindingKey bindingKey, T1 key, T2 value)
+        public static ReactiveDictionary<int, T> GetReactiveDictionary<T>(BindingKey key) where T : IUIDatabase
         {
-            try
-            {
-                if (!KeyIndex.TryGetValue(bindingKey.PropertyKey, out var list))
-                {
-                    list = new List<BindingKey>();
-                    KeyIndex[bindingKey.PropertyKey] = list;
-                }
-                list.Add(bindingKey);
-                ValidateType(bindingKey, typeof(T2));
-
-                if (!KeyPropertyMap.TryGetValue(bindingKey, out var property))
-                {
-                    property = new ReactiveDictionary<T1, T2>();
-                    KeyPropertyMap[bindingKey] = property;
-                }
-
-                if (property is ReactiveDictionary<T1, T2> reactiveDictionary)
-                    reactiveDictionary[key] = value;    
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            return GetOrCreateDictionary(key) as ReactiveDictionary<int, T>;
         }
 
-        public static IObservable<T> GetObservable<T>(BindingKey key, Component context)
+        private static ReactiveDictionary<int, IUIDatabase> GetOrCreateDictionary(BindingKey key)
         {
-            ValidateType(key, typeof(T));
-        
-            var property = GetOrCreateProperty<T>(key);
-            if (property is ReactiveProperty<T> reactiveProp)
-                return reactiveProp.AsObservable()
-                   .TakeUntilDestroy(context.gameObject);
-            return null;
+            if (!KeyDictionaryMap.TryGetValue(key, out var dict))
+            {
+                dict = ObjectPool<ReactiveDictionary<int, IUIDatabase>>.Get();
+                dict.Clear();
+                KeyDictionaryMap[key] = dict;
+            }
+
+            return dict;
         }
 
-        private static object GetOrCreateProperty<T>(BindingKey key)
-        {
-            try
-            {
-                ValidateType(key, typeof(T));
-                if (!KeyPropertyMap.TryGetValue(key, out var property))
-                {
-                    property = new ReactiveProperty<T>();
-                    KeyPropertyMap[key] = property;
-                }
-                return property;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
         #endregion
-        #region 高级功能
-        // 观察任意玩家数据变化（用于GM工具等）
-        public static IObservable<T> ObserveAnyPlayer<T>(UIPropertyDefine key)
-        {
-            return Observable.Create<T>(observer =>
-            {
-                var disposables = new CompositeDisposable();
-            
-                foreach (var kv in KeyPropertyMap)
-                {
-                    if (kv.Key.PropertyKey == key && kv.Value is ReactiveProperty<T> prop)
-                    {
-                        prop.AsObservable()
-                            .Subscribe(observer.OnNext)
-                            .AddTo(disposables);
-                    }
-                }
-            
-                return disposables;
-            });
-        }
-        // 添加数据清理接口
-        public static void CleanupData(DataScope? scopeFilter = null, 
-            Predicate<BindingKey>? customFilter = null)
-        {
-            var keysToRemove = KeyPropertyMap.Keys
-                .Where(k => 
-                    (scopeFilter == null || k.Scope == scopeFilter) &&
-                    (customFilter == null || customFilter(k)))
-                .ToList();
 
-            foreach(var key in keysToRemove)
+        #region List Operations
+
+        public static bool HasList(BindingKey key)
+        {
+            return KeyListMap.ContainsKey(key);
+        }
+
+        public static void AddToList(BindingKey listKey, IUIDatabase item)
+        {
+            GetOrCreateList(listKey).Add(item);
+        }
+
+        public static void RemoveFromList(BindingKey listKey, IUIDatabase item)
+        {
+            GetOrCreateList(listKey).Remove(item);
+        }
+
+        public static void BatchAddToList(BindingKey listKey, IEnumerable<IUIDatabase> items)
+        {
+            var list = GetOrCreateList(listKey);
+            list.AddRange(items);
+        }
+
+        public static ReactiveCollection<T> GetReactiveCollection<T>(BindingKey listKey) where T : IUIDatabase
+        {
+            return GetOrCreateList(listKey) as ReactiveCollection<T>;
+        }
+
+        private static ReactiveCollection<IUIDatabase> GetOrCreateList(BindingKey key)
+        {
+            if (!KeyListMap.TryGetValue(key, out var list))
             {
-                KeyPropertyMap.Remove(key);
+                list = ObjectPool<ReactiveCollection<IUIDatabase>>.Get();
+                list.Clear();
+                KeyListMap[key] = list;
             }
+
+            return list;
         }
 
-        // 场景卸载时自动清理
-        [RuntimeInitializeOnLoadMethod]
-        static void OnSceneUnload()
-        {
-            SceneManager.sceneUnloaded += scene => 
-            {
-                CleanupData(customFilter: k => 
-                    k.Scope != DataScope.Global);
-            };
-        }
-
-        // 批量更新玩家数据
-        public static void BatchUpdatePlayers<T>(UIPropertyDefine key, IEnumerable<int> playerIds, T value)
-        {
-            foreach (var playerId in playerIds)
-            {
-                SetPlayerValue(key, playerId, value);
-            }
-        }
-
-        // 数据版本控制（解决网络延迟导致的数据顺序问题）
-        public static IDisposable BindWithVersion<T>(
-            BindingKey key, 
-            Action<T, int> onUpdate, 
-            Component context)
-        {
-            var version = 0;
-            var property = GetOrCreateProperty<T>(key);
-            if (property is ReactiveProperty<T> reactiveProp)
-            {
-                return reactiveProp.ObserveEveryValueChanged(x => x.Value)
-                    .Select(x => (Value: x, Version: ++version))
-                    .TakeUntilDestroy(context.gameObject)
-                    .Subscribe(t => onUpdate(t.Value, t.Version))
-                    .AddTo(context);;
-            }
-            return null;
-        }
         #endregion
-        [RuntimeInitializeOnLoadMethod]
-        private static void Initialize()
+
+        #region Helper Methods
+
+        public static void ClearAllData()
         {
-            // 自动扫描枚举类型定义
-            var enumType = typeof(UIPropertyDefine);
-            foreach (UIPropertyDefine key in Enum.GetValues(enumType))
-            {
-                var fieldInfo = enumType.GetField(Enum.GetName(enumType, key));
-                var attribute = fieldInfo.GetCustomAttributes(typeof(UIPropertyTypeAttribute), false)[0] 
-                    as UIPropertyTypeAttribute;
-            
-                KeyTypeMap[key] = attribute?.ValueType ?? 
-                                  throw new InvalidOperationException($"Missing UIPropertyTypeAttribute for {key}");
-            }
+            KeyPropertyMap.Clear();
+            KeyDictionaryMap.Clear();
+            KeyListMap.Clear();
         }
 
-        private static void ValidateType(BindingKey key, Type requestedType)
-        {
-            if (!KeyTypeMap.TryGetValue(key.PropertyKey, out var definedType))
-                throw new KeyNotRegisteredException(key.PropertyKey);
+        #endregion
 
-            if (definedType != requestedType)
-                throw new TypeMismatchException(key.PropertyKey, definedType, requestedType);
-        }
-        // 添加本地玩家管理模块
-        private static int _currentLocalPlayerId = 0;
-
-        public static int CurrentLocalPlayerId
-        {
-            get => _currentLocalPlayerId;
+        private static int _localPlayerId;
+        public static int LocalPlayerId 
+        { 
+            get=> _localPlayerId;
             set
             {
-                if(_currentLocalPlayerId != value)
+                _localPlayerId = value;
+                if (_localPlayerId == -1)
                 {
-                    // 触发本地玩家数据迁移逻辑
-                    MigrateLocalPlayerData(_currentLocalPlayerId, value);
-                    _currentLocalPlayerId = value;
+                    // foreach (var VARIABLE in KeyDictionaryMap.)
+                    // {
+                    //     var 
+                    // }
                 }
             }
         }
-
-        private static void MigrateLocalPlayerData(int oldId, int newId)
-        {
-            var oldKeys = KeyPropertyMap.Keys
-                .Where(k => k.Scope == DataScope.LocalPlayer)
-                .ToList();
-
-            foreach(var key in oldKeys)
-            {
-                var newKey = new BindingKey(key.PropertyKey, DataScope.LocalPlayer, newId);
-                KeyPropertyMap[newKey] = KeyPropertyMap[key];
-                KeyPropertyMap.Remove(key);
-            }
-        }
         
-        // 异常定义
-        private class TypeMismatchException : InvalidOperationException
-        {
-            public TypeMismatchException(UIPropertyDefine key, Type defined, Type requested)
-                : base($"[{key}] Type mismatch! Defined: {defined.Name}, Requested: {requested.Name}") {}
-        }
-
-        private class KeyNotRegisteredException : InvalidOperationException
-        {
-            public KeyNotRegisteredException(UIPropertyDefine key)
-                : base($"[{key}] is not registered with UIPropertyTypeAttribute") {}
-        }
     }
 }

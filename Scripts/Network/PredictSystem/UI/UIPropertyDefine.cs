@@ -5,22 +5,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
 {
     public enum UIPropertyDefine
     {
-        [UIPropertyType(typeof(PropertyItemData[]))]
+        [UIPropertyType(typeof(PropertyItemData))]
         PlayerProperty,
+        [UIPropertyType(typeof(BagItemData))]
+        BagItem,
+        // [UIPropertyType(typeof(EquipmentItemData))]
+        // EquipmentItem,
     }
 
-    public enum ReactiveCollectionEvent
+    public interface IUIDatabase
     {
-        Add,
-        Remove,
-        Clear,
-        Replace,
-        Move,
-        CountChanged,
+        
     }
 
     // 复合键结构（玩家ID + 数据Key）
-    public struct BindingKey : IEquatable<BindingKey>
+    public readonly struct BindingKey : IEquatable<BindingKey>
     {
         public readonly int PlayerId;
         public readonly UIPropertyDefine PropertyKey;
@@ -41,6 +40,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         public override int GetHashCode() => 
             HashCode.Combine(PlayerId, (int)PropertyKey, (int)Scope);
     }
+    
     public enum DataScope
     {
         LocalPlayer,   // 本地玩家数据

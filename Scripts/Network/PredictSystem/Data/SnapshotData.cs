@@ -462,7 +462,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     
     // 快照数据结构优化
     [MemoryPackable]
-    public partial struct CooldownSnapshotData
+    public partial struct CooldownSnapshotData : IEquatable<CooldownSnapshotData>
     {
         // 通用字段
         [MemoryPackOrder(0)] public AnimationState AnimationState;
@@ -576,6 +576,33 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 KeyframeCurrentTime = comboKeyframe.CurrentTime,
                 AnimationSpeed = comboKeyframe.AnimationSpeed,
             };
+        }
+
+        public bool Equals(CooldownSnapshotData other)
+        {
+            return AnimationState == other.AnimationState && Cooldown.Equals(other.Cooldown) && CurrentCountdown.Equals(other.CurrentCountdown) && MaxAttackCount == other.MaxAttackCount && AttackWindow.Equals(other.AttackWindow) && CurrentAttackStage == other.CurrentAttackStage && IsInComboWindow == other.IsInComboWindow && WindowCountdown.Equals(other.WindowCountdown) && KeyframeCurrentTime.Equals(other.KeyframeCurrentTime) && ResetCooldownWindow.Equals(other.ResetCooldownWindow) && AnimationSpeed.Equals(other.AnimationSpeed);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is CooldownSnapshotData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add((int)AnimationState);
+            hashCode.Add(Cooldown);
+            hashCode.Add(CurrentCountdown);
+            hashCode.Add(MaxAttackCount);
+            hashCode.Add(AttackWindow);
+            hashCode.Add(CurrentAttackStage);
+            hashCode.Add(IsInComboWindow);
+            hashCode.Add(WindowCountdown);
+            hashCode.Add(KeyframeCurrentTime);
+            hashCode.Add(ResetCooldownWindow);
+            hashCode.Add(AnimationSpeed);
+            return hashCode.ToHashCode();
         }
     }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
@@ -7,6 +8,9 @@ using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.PredictSystem.UI;
+using HotUpdate.Scripts.UI.UIs.Panel.Item;
+using UniRx;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
 using PropertyCalculator = HotUpdate.Scripts.Network.PredictSystem.State.PropertyCalculator;
 
@@ -16,6 +20,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
     {
         protected override ISyncPropertyState CurrentState { get; set; }
         private AnimationConfig _animationConfig;
+        private PropertyConfig _propertyConfig;
+        private BindingKey _bindKey;
+        private ReactiveDictionary<int, PropertyItemData> _uiPropertyData;
 
         public PlayerPredictablePropertyState PlayerPredictablePropertyState => (PlayerPredictablePropertyState)CurrentState;
 
@@ -25,6 +32,34 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             base.Init(gameSyncManager, configProvider);
             _animationConfig = configProvider.GetConfig<AnimationConfig>();
+            _propertyConfig = configProvider.GetConfig<PropertyConfig>();
+            if (isLocalPlayer)
+            {
+                _bindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
+                var itemDatas = new Dictionary<int, IUIDatabase>();
+                var enumValues = Enum.GetValues(typeof(PropertyTypeEnum));
+                for (var i = 0; i < enumValues.Length; i++)
+                {
+                    var propertyType = (PropertyTypeEnum)enumValues.GetValue(i);
+                    var propertyConfig = _propertyConfig.GetPropertyConfigData(propertyType);
+                    if (!propertyConfig.showInHud)
+                    {
+                        continue;
+                    }
+
+                    var displayName = propertyConfig.description;
+                    var consumeType = propertyConfig.consumeType;
+                    itemDatas.Add((int)propertyType, new PropertyItemData
+                    {
+                        Name = displayName,
+                        PropertyType = propertyType,
+                        CurrentProperty = 1,
+                        MaxProperty = 1,
+                        ConsumeType = consumeType
+                    });
+                }
+                UIPropertyBinder.OptimizedBatchAdd(_bindKey, itemDatas);
+            }
         }
         
         public float GetProperty(PropertyTypeEnum propertyType)
@@ -105,14 +140,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void PropertyChanged(PlayerPredictablePropertyState predictablePropertyState)
         {
+            _uiPropertyData ??= UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_bindKey);
             foreach (var property in predictablePropertyState.Properties)
             {
+                var data = _uiPropertyData[(int)property.Key];
                 if (property.Value.IsResourceProperty())
                 {
                     OnPropertyChanged?.Invoke(property.Key, property.Value);
+                    data.CurrentProperty = property.Value.CurrentValue;
+                    data.MaxProperty = property.Value.MaxCurrentValue;
+                    _uiPropertyData[(int)property.Key] = data;
                     continue;
                 }
                 OnPropertyChanged?.Invoke(property.Key, property.Value);
+                data.CurrentProperty = property.Value.CurrentValue;
+                _uiPropertyData[(int)property.Key] = data;
                 if (property.Key == PropertyTypeEnum.AttackSpeed)
                 {
                     PlayerComponentController.SetAnimatorSpeed(AnimationState.Attack, property.Value.CurrentValue);

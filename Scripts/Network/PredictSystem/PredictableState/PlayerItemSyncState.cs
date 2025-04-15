@@ -33,5 +33,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     break;
             }
         }
+
+        public override void ApplyServerState<T>(T state)
+        {
+            if (state is not PlayerItemState playerItemState)
+            {
+                return;
+            }
+            base.ApplyServerState(playerItemState);
+            CurrentState = playerItemState;
+        }
     }
 }

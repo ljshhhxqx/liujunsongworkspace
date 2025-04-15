@@ -66,7 +66,7 @@ namespace HotUpdate.Scripts.Network.Server
         {
             base.OnClientConnect();
             Debug.Log("成功连接到服务器！");
-            //UIPropertyBinder.CurrentLocalPlayerId = NetworkClient.connection.connectionId;
+            UIPropertyBinder.LocalPlayerId = NetworkClient.connection.connectionId;
         }
         
         // 客户端断开连接时调用
@@ -74,7 +74,7 @@ namespace HotUpdate.Scripts.Network.Server
         {
             Debug.Log("与服务器断开连接。");
             base.OnClientDisconnect();
-            //UIPropertyBinder.CurrentLocalPlayerId = -1;
+            UIPropertyBinder.LocalPlayerId = -1;
         }
 
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)

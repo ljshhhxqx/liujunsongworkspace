@@ -11,8 +11,12 @@ using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.UI.UIs.Overlay;
+using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using Mirror;
+using UI.UIBase;
 using UniRx;
 using UnityEngine;
 using VContainer;
@@ -75,7 +79,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private GameSyncManager _gameSyncManager;
         private MapBoundDefiner _mapBoundDefiner;
         private IConfigProvider _configProvider;
+        private UIManager _uiManager;
         private PlayerInGameManager _playerInGameManager;
+        
+        private BindingKey _propertyBindKey;
         
         public int CurrentComboStage { get; private set; }
         public IObservable<PlayerInputStateData> InputStream => _inputStream;
@@ -91,12 +98,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         }
 
         [Inject]
-        private void Init(IConfigProvider configProvider, GameSyncManager gameSyncManager, MapBoundDefiner mapBoundDefiner, PlayerInGameManager playerInGameManager)
+        private void Init(IConfigProvider configProvider, 
+            GameSyncManager gameSyncManager, 
+            MapBoundDefiner mapBoundDefiner, 
+            PlayerInGameManager playerInGameManager,
+            UIManager uiManager)
         {
             _configProvider = configProvider;
             _gameSyncManager = gameSyncManager;
             _mapBoundDefiner = mapBoundDefiner;
             _playerInGameManager = playerInGameManager;
+            _uiManager = uiManager;
             _rigidbody = GetComponent<Rigidbody>();
             _inputState = GetComponent<PlayerInputPredictionState>();
             _propertyPredictionState = GetComponent<PropertyPredictionState>();
@@ -146,6 +158,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _inputStream.Throttle(TimeSpan.FromMilliseconds(FixedDeltaTime * 1000))
                 .Subscribe(HandleInputPhysics)
                 .AddTo(_disposables);
+            if (isLocalPlayer)
+            {
+                _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
+                    UIPropertyBinder.LocalPlayerId);
+                HandleLocalInitCallback();
+            }
+        }
+
+        private void HandleLocalInitCallback()
+        {
+            var playerPropertiesOverlay = _uiManager.SwitchUI<PlayerPropertiesOverlay>();
+            playerPropertiesOverlay.BindPlayerProperty(UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_propertyBindKey));
         }
 
         private bool HandleSpecialState()

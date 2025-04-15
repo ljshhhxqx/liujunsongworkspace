@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
+using Mirror.BouncyCastle.Math.EC.Rfc7748;
 using UI.UIBase;
 using UI.UIs.Common;
 using UniRx;
@@ -33,6 +35,8 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         [SerializeField]
         private FieldItem frameCount;
         
+        private PropertyItemData[] _propertyItemDatas;
+        
         [Inject]
         private void Init(PlayerInGameManager playerInGameManager, IConfigProvider configProvider)
         {
@@ -40,48 +44,61 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             _propertyConfig = configProvider.GetConfig<PropertyConfig>();
         }
 
-        public void SetPlayerProperties(PlayerPropertyComponent playerPropertyComponent)
+        public void BindPlayerProperty(ReactiveDictionary<int, PropertyItemData> playerPropertyData)
         {
-            //  _playerPropertyComponent = playerPropertyComponent;
-            // //  playerPropertyComponent.CurrentAnimationStateProperty.Subscribe(state =>
-            // //  {
-            // //      animationState.SetField(animationState.name, state);
-            // // });
-            //  playerPropertyComponent.PlayerStateProperty.Subscribe(state =>
-            //  {
-            //      playerStateProperty.SetField(animationState.name, state);
-            //  });
-            //  // playerPropertyComponent.CurrentAnimationStateProperty.Subscribe(chestType =>
-            //  // {
-            //  //     currentChestType.SetField(currentChestType.name, chestType);
-            //  // });
-            //  playerPropertyComponent.HasMovementInputProperty.Subscribe(hasInput =>
-            //  {
-            //      hasMovementInput.SetField(hasMovementInput.name, hasInput);
-            //  });
-            var list = new List<PropertyItemData>();
-            var enumValues = Enum.GetValues(typeof(PropertyTypeEnum));
-            for (var i = 0; i < enumValues.Length; i++)
-            {
-                var propertyType = (PropertyTypeEnum)enumValues.GetValue(i);
-                var propertyConfig = _propertyConfig.GetPropertyConfigData(propertyType);
-                var displayName = propertyConfig.description;
-                var consumeType = propertyConfig.consumeType;
-                list.Add(new PropertyItemData
+            _propertyItemDatas ??= playerPropertyData.Values.ToArray();
+            contentItemList.SetItemList(_propertyItemDatas);
+            playerPropertyData.ObserveReplace()
+                .Subscribe(x =>
                 {
-                    Name = displayName,
-                    CurrentProperty = 1,
-                    MaxProperty = 1,
-                    ConsumeType = consumeType
-                });
-            }
+                    for (int i = 0; i < _propertyItemDatas.Length; i++)
+                    {
+                        if (x.Key == (int)_propertyItemDatas[i].PropertyType)
+                        {
+                            _propertyItemDatas[i] = x.NewValue;
+                            break;
+                        }
+                    }
+                    contentItemList.SetItemList(_propertyItemDatas);
+                })
+                .AddTo(this);
+            playerPropertyData.ObserveAdd()
+                .Subscribe(x =>
+                {
+                    var newPropertyItemDatas = new PropertyItemData[_propertyItemDatas.Length + 1];
+                    for (var i = 0; i < newPropertyItemDatas.Length; i++)
+                    {
+                        if (i < _propertyItemDatas.Length)
+                        {
+                            newPropertyItemDatas[i] = _propertyItemDatas[i];
+                        }
+                        else
+                        {
+                            newPropertyItemDatas[i] = x.Value;
+                        }
+                    }
 
-            contentItemList.SetItemList(list.ToArray());
-        }
+                    _propertyItemDatas = newPropertyItemDatas;
 
-        private void OnPlayerPropertiesChanged(PropertyItemData[] value) 
-        {
-            
+                    contentItemList.SetItemList(_propertyItemDatas);
+                })
+                .AddTo(this);
+            playerPropertyData.ObserveRemove()
+                .Subscribe(x =>
+                {
+                    var originalArray = _propertyItemDatas.ToList();
+                    originalArray.RemoveAll(y => (int)y.PropertyType == x.Key);
+                    _propertyItemDatas = originalArray.ToArray();
+                    contentItemList.SetItemList(_propertyItemDatas);
+                })
+                .AddTo(this);
+            playerPropertyData.ObserveReset()
+                .Subscribe(x =>
+                {
+                    _propertyItemDatas = Array.Empty<PropertyItemData>();
+                    contentItemList.SetItemList(_propertyItemDatas);
+                })
+                .AddTo(this);
         }
 
         public override UIType Type => UIType.PlayerPropertiesOverlay;

@@ -1,4 +1,5 @@
 using System;
+using HotUpdate.Scripts.Network.PredictSystem.UI;
 using UniRx;
 using UnityEngine;
 
@@ -14,7 +15,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public abstract void SetData<T>(T data) where T : IItemBaseData, new();
     }
 
-    public interface IItemBaseData
+    public interface IItemBaseData : IUIDatabase
     {
         
     }
