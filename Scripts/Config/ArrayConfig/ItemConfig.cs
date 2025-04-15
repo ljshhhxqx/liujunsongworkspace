@@ -17,6 +17,10 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [ReadOnly]
         [SerializeField]
         private List<GameItemConfigData> gameItemDatas;
+        [SerializeField]
+        private ItemOtherData itemOtherData;
+        
+        public int MaxBagSize => itemOtherData.maxBagSize;
         
         public GameItemConfigData GetGameItemData(int configId)
         {
@@ -225,6 +229,12 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 #if UNITY_EDITOR
         public bool isDealWithBuffExtraData;
 #endif
+    }
+
+    [Serializable]
+    public struct ItemOtherData
+    {
+        public int maxBagSize;
     }
 
     public enum EquipmentPart : byte

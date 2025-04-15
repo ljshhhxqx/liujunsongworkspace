@@ -1,4 +1,6 @@
-﻿using HotUpdate.Scripts.Common;
+﻿using System;
+using HotUpdate.Scripts.Common;
+using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 
@@ -17,20 +19,38 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         public override void Simulate(INetworkCommand command)
         {
             var header = command.GetHeader();
-            if (header.CommandType.HasAnyState(CommandType))
+            if (header.CommandType.HasAnyState(CommandType) || CurrentState is not PlayerItemState playerItemState)
             {
                 return;
             }
             switch (command)
             {
+                case ItemsGetCommand itemsGetCommand:
+                    for (var i = 0; i < itemsGetCommand.Items.Length; i++)
+                    {
+                        PlayerItemCalculator.CommandGetItem(ref playerItemState, itemsGetCommand.Items[i], header);
+                    }
+                    break;
                 case ItemsUseCommand itemUseCommand:
+                    PlayerItemCalculator.CommandUseItems(itemUseCommand, ref playerItemState);
                     break;
                 case ItemEquipCommand itemEquipCommand:
+                    PlayerItemCalculator.CommandEquipItem(itemEquipCommand, ref playerItemState, header.ConnectionId);
                     break;
                 case ItemLockCommand itemLockCommand:
+                    PlayerItemCalculator.CommandLockItem(itemLockCommand, ref playerItemState);
                     break;
                 case ItemDropCommand itemDropCommand:
+                    PlayerItemCalculator.CommandDropItem(itemDropCommand, ref playerItemState , header.ConnectionId);
                     break;
+                case ItemsBuyCommand itemBuyCommand:
+                    PlayerItemCalculator.CommandBuyItem(itemBuyCommand, ref playerItemState);
+                    break;
+                case ItemsSellCommand itemSellCommand:
+                    PlayerItemCalculator.CommandSellItem(itemSellCommand, ref playerItemState, header.ConnectionId);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
