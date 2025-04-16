@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Network.Battle;
 using HotUpdate.Scripts.Network.Item;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
@@ -20,7 +21,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         {
             Constant = constant;
         }
-        public static int GetConfigId(PlayerItemType itemType, int itemConfigId)
+        public static int GetEquipmentConfigId(PlayerItemType itemType, int itemConfigId)
         {
             switch (itemType)
             {
@@ -32,6 +33,43 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     return 0;
             }
         }
+
+        public static int GetItemConfigId(EquipmentPart part, int equipmentConfigId)
+        {
+            switch (part)
+            {
+                case EquipmentPart.Weapon:
+                    return Constant.WeaponConfig.GetWeaponConfigData(equipmentConfigId).itemID;
+                case EquipmentPart.Body:
+                case EquipmentPart.Head:
+                case EquipmentPart.Leg:
+                case EquipmentPart.Feet:
+                case EquipmentPart.Waist:
+                    return Constant.ArmorConfig.GetArmorConfigData(equipmentConfigId).itemID;
+                default:
+                    return 0;
+            }
+        }
+
+        public static ConditionCheckerHeader GetConditionCheckerHeader(PlayerItemType itemType, int itemConfigId)
+        {
+            var conditionConfigId = 0;
+            switch (itemType)
+            {
+                case PlayerItemType.Weapon:
+                    conditionConfigId = Constant.WeaponConfig.GetWeaponConfigByItemID(itemConfigId).battleEffectConditionId;
+                    break;
+                case PlayerItemType.Armor:
+                    conditionConfigId = Constant.ArmorConfig.GetArmorConfigByItemID(itemConfigId).battleEffectConditionId;
+                    break;
+            }
+            var config = Constant.ConditionConfig.GetConditionData(conditionConfigId);
+
+            var header = ConditionCheckerHeader.Create(config.triggerType, config.interval, config.probability,
+                config.conditionParam, config.targetType, config.targetCount);
+            return header;
+        }
+        
         public static void CommandBuyItem(ItemsBuyCommand itemBuyCommand, ref PlayerItemState playerItemState)
         {
             foreach (var item in itemBuyCommand.Items)
@@ -51,7 +89,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     {
                         continue;
                     }
-                    var configId = GetConfigId(config.itemType, bagSlotItem.ConfigId);
+                    var configId = GetEquipmentConfigId(config.itemType, bagSlotItem.ConfigId);
                     if (configId != 0 && Constant.IsServer)
                     {
                         Constant.GameSyncManager.EnqueueServerCommand(new EquipmentCommand
@@ -125,7 +163,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 return;
             }
 
-            var configId = GetConfigId(bagItem.PlayerItemType, bagItem.ConfigId);
+            var configId = GetEquipmentConfigId(bagItem.PlayerItemType, bagItem.ConfigId);
             Constant.GameSyncManager.EnqueueServerCommand(new EquipmentCommand
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),

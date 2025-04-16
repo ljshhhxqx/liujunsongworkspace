@@ -419,13 +419,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public float InputThreshold;
         public int AttackComboMaxCount;
         public AnimationConfig AnimationConfig;
-        
-        public AnimationConstant(float maxGroundDistance, float inputThreshold, int attackComboMaxCount, AnimationConfig animationConfig)
+        public bool IsServer;
+
+        public AnimationConstant(float maxGroundDistance, float inputThreshold, int attackComboMaxCount, AnimationConfig animationConfig, bool isServer)
         {
             MaxGroundDistance = maxGroundDistance;
             InputThreshold = inputThreshold;
             AttackComboMaxCount = attackComboMaxCount;
             AnimationConfig = animationConfig;
+            IsServer = isServer;
         }
     }
 }

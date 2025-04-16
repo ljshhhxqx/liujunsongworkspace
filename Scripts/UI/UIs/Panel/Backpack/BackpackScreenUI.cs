@@ -17,7 +17,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
         [SerializeField]
         private ContentItemList contentItemList;
 
-        private List<BagSlotItem> _bagSlotItems = new List<BagSlotItem>(); // 存储格子引用
+        private List<BagSlotItem> _bagSlotItems; // 存储格子引用
         private List<BagItemData> _bagItemData = new List<BagItemData>();  // 存储物品
         
         private GameObject _dragIcon; // 拖拽临时图标
@@ -32,17 +32,49 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             BagCommonData = jsonConfig.BagCommonData;
         }
 
-        // 初始化格子
-        public void InitializeSlots(IEnumerable<BagItemData> bagItemData)
+        public void BindBagItemData(ReactiveDictionary<int, BagItemData> bagItemData)
         {
-            var bagItemDatas = new List<BagItemData>();
-            var originalBagItemDatas = bagItemData.ToArray();
+            _bagItemData ??= bagItemData.Values.ToList();
+            RefreshBag(_bagItemData);
+            InitializeSlots();
+            bagItemData.ObserveAdd()
+                .Subscribe(x =>
+                {
+                    _bagItemData.Add(x.Value);
+                    contentItemList.SetItemList(_bagItemData.ToArray());
+                })
+                .AddTo(this);
+            bagItemData.ObserveRemove()
+                .Subscribe(x =>
+                {
+                    _bagItemData.RemoveAll(y => y.Index == x.Key);
+                    contentItemList.SetItemList(_bagItemData.ToArray());
+                })
+                .AddTo(this);
+            bagItemData.ObserveReplace()
+                .Subscribe(x =>
+                {
+                    var index = _bagItemData.FindIndex(y => y.Index == x.Key);
+                    _bagItemData[index] = x.NewValue;
+                    contentItemList.SetItemList(_bagItemData.ToArray());
+                })
+                .AddTo(this);
+        }
+
+        private void RefreshBag(List<BagItemData> bagItemData)
+        {
             for (var i = 0; i < BagCommonData.maxBagCount; i++)
             {
-                var data = originalBagItemDatas.FirstOrDefault(x => x.Index == i) ?? new BagItemData();
-                bagItemDatas.Add(data);
+                var originalData = bagItemData.FirstOrDefault(x => x.Index == i);
+                var data = originalData.ItemName != null ? originalData : new BagItemData();
+                _bagItemData.Add(data);
             }
-            contentItemList.SetItemList(bagItemDatas.ToArray());
+            contentItemList.SetItemList(_bagItemData.ToArray());
+        }
+
+        // 初始化格子
+        private void InitializeSlots()
+        {
             foreach (var item in contentItemList.ItemBases)
             {
                 var slot = item as BagSlotItem;
@@ -58,8 +90,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
                     .AddTo(this);
                 _bagSlotItems.Add(slot);
             }
-
-            _bagItemData = bagItemDatas.ToList();
         }
         
         // 处理拖拽开始
@@ -71,7 +101,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             _draggedSlot = slot;
             _dragIcon = new GameObject("DragIcon");
             var dragImage = _dragIcon.AddComponent<Image>();
-            dragImage.sprite = slot.Item.Icon;
+            dragImage.sprite = _draggedSlot.CurrentItem.Icon;
             dragImage.raycastTarget = false;
             _dragIcon.transform.SetParent(transform.root, false);
             _dragIcon.transform.position = eventData.position;
@@ -95,17 +125,17 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
         private void SwapItemsBetweenSlots(BagSlotItem source, BagSlotItem target)
         {
             // 交换数据
-            var tempItem = target.Item;
+            var tempItem = target.CurrentItem;
             var tempCount = target.MaxStack;
 
-            target.SetItem(source.Item, source.MaxStack);
-            if (tempItem != null)
+            target.SetItem(source.CurrentItem, source.MaxStack);
+            if (tempItem.ItemName != null)
             {
                 source.SetItem(tempItem, tempCount);
             }
             else
             {
-                source.SetItem(null, 0);
+                source.SetItem(default, 0);
             }
         }
 
@@ -114,7 +144,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
         {
             if (slot.HasItem())
             {
-                Debug.Log($"显示物品详情: {slot.Item.ItemName}");
+                Debug.Log($"显示物品详情: {slot.CurrentItem.ItemName}");
                 // 这里可以在Inventory中统一控制UI面板
             }
         }
@@ -125,7 +155,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             // 先检查是否可以堆叠
             foreach (var slot in _bagSlotItems)
             {
-                if (slot.HasItem() && slot.Item.ItemName == newItem.ItemName && slot.MaxStack < slot.Item.MaxStack)
+                if (slot.HasItem() && slot.CurrentItem.ItemName == newItem.ItemName && slot.MaxStack < slot.CurrentItem.MaxStack)
                 {
                     slot.AddToStack(1); // 增加堆叠数量
                     return true;

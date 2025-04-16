@@ -285,8 +285,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public LayerMask GroundSceneLayer;
         public LayerMask StairsSceneLayer;
         public float RotateSpeed;
-        
-        public PhysicsDetermineConstant(float groundMinDistance, float groundMaxDistance, float maxSlopeAngle, float stairsCheckDistance, LayerMask groundSceneLayer, LayerMask stairsSceneLayer, float rotateSpeed)
+        public bool IsServer;
+
+        public PhysicsDetermineConstant(float groundMinDistance, float groundMaxDistance, float maxSlopeAngle, float stairsCheckDistance, LayerMask groundSceneLayer, LayerMask stairsSceneLayer, float rotateSpeed, bool isServer = false)
         {
             GroundMinDistance = groundMinDistance;
             GroundMaxDistance = groundMaxDistance;
@@ -295,6 +296,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             GroundSceneLayer = groundSceneLayer;
             StairsSceneLayer = stairsSceneLayer;
             RotateSpeed = rotateSpeed;
+            IsServer = isServer;
         }
     }
 

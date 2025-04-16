@@ -20,7 +20,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
             ItemBases.ForEach(x => Destroy(x.gameObject));
             ItemBases.Clear();
             ItemBaseDatas.Clear();
-            if (itemDataList is { Length: > 0 })
+            if (itemDataList.Length > 0)
             {
                 foreach (var itemData in itemDataList)
                 {

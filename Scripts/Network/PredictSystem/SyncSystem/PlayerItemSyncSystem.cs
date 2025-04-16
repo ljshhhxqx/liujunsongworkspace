@@ -56,20 +56,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerPredictableState = player.GetComponent<PlayerItemSyncState>();
             var playerItemState = new PlayerItemState();
             var items = ObjectPool<List<PlayerBagItem>>.Get();
-            ModifyPlayerItems(items);
+            items.Clear();
             playerItemState.PlayerItems = items.ToDictionary(x => x.ItemId, x => x);
+            playerItemState.SlotCount = _itemConfig.MaxBagSize;
             PropertyStates.Add(connectionId, playerItemState);
             _playerItemSyncStates.Add(connectionId, playerPredictableState);
         }
-
-        private void ModifyPlayerItems(List<PlayerBagItem> playerItems)
-        {
-            for (var i = 0; i < _itemConfig.MaxBagSize; i++)
-            {
-                
-            }
-        }
-
+        
         public override CommandType HandledCommandType => CommandType.Item;
         public override ISyncPropertyState ProcessCommand(INetworkCommand command)
         {

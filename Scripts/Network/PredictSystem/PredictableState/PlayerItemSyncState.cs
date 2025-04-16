@@ -3,6 +3,10 @@ using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.State;
+using HotUpdate.Scripts.Network.PredictSystem.UI;
+using HotUpdate.Scripts.UI.UIs.Panel.Item;
+using UniRx;
+using VContainer;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {
@@ -10,10 +14,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
     {
         protected override ISyncPropertyState CurrentState { get; set; }
         protected override CommandType CommandType => CommandType.Item;
-        
+        private ReactiveDictionary<int,BagItemData> _bagItems;
+        private BindingKey _bindKey;
+
+        [Inject]
+        private void Init()
+        {
+            _bindKey = new BindingKey(UIPropertyDefine.BagItem);
+        }
+
         public override bool NeedsReconciliation<T>(T state)
         {
             return state is not null && state is PlayerItemState;
+        }
+
+        public void RegisterState(PlayerItemState state)
+        {
+            OnPlayerItemUpdate(state);
         }
 
         public override void Simulate(INetworkCommand command)
@@ -62,6 +79,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             }
             base.ApplyServerState(playerItemState);
             CurrentState = playerItemState;
+            OnPlayerItemUpdate(playerItemState);
+        }
+
+        private void OnPlayerItemUpdate(PlayerItemState playerItemState)
+        {
+            _bagItems ??= UIPropertyBinder.GetReactiveDictionary<BagItemData>(_bindKey);
         }
     }
 }

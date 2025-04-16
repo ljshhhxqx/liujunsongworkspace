@@ -13,10 +13,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         private Image itemImage;        // 显示物品图标的Image组件
         [SerializeField]
         private Text stackText;         // 显示堆叠数量的Text组件
-        private BagItemData item;              // 当前格子的物品
-        private int stackCount = 0;     // 物品堆叠数量
-        private int slotIndex;         // 格子索引
-        public int MaxStack => item.MaxStack;
+        private BagItemData _currentItem;              // 当前格子的物品
+        private int _stackCount;     // 物品堆叠数量
+        private int _slotIndex;         // 格子索引
+        public int MaxStack => _currentItem.MaxStack;
         private Subject<PointerEventData> OnPointerEnterObservable = new Subject<PointerEventData>();
         private Subject<PointerEventData> OnPointerExitObservable = new Subject<PointerEventData>();
         private Subject<PointerEventData> OnBeginDragObservable = new Subject<PointerEventData>();
@@ -28,14 +28,14 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public IObservable<PointerEventData> OnBeginDragObserver => OnBeginDragObservable;
         public IObservable<PointerEventData> OnDragObserver => OnDragObservable;
         public IObservable<PointerEventData> OnEndDragObserver => OnEndDragObservable;
-        public BagItemData Item => item;
+        public BagItemData CurrentItem => _currentItem;
         
         public override void SetData<T>(T data)
         {
             if (data is BagItemData bagItemData)
             {
-                item = bagItemData;
-                slotIndex = item.Index;
+                _currentItem = bagItemData;
+                _slotIndex = _currentItem.Index;
                 UpdateSlotUI();
             }
             
@@ -43,36 +43,37 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
 
         public void SetSlotIndex(int index)
         {
-            slotIndex = index;
+            _slotIndex = index;
         }
 
         // 设置物品到格子
         public void SetItem(BagItemData newItem, int count)
         {
-            item = newItem;
-            stackCount = count;
+            _currentItem = newItem;
+            _stackCount = count;
             UpdateSlotUI();
         }
 
         // 添加到堆叠
         public void AddToStack(int count)
         {
-            stackCount += count;
+            _stackCount += count;
             UpdateSlotUI();
         }
 
         // 是否有物品
         public bool HasItem()
         {
-            return item != null;
+            return _currentItem.ItemName != null;
         }
 
         // 更新格子UI
         private void UpdateSlotUI()
         {
-            itemImage.sprite = item?.Icon;
-            itemImage.enabled = item != null;
-            stackText.text = item != null && stackCount > 1 ? stackCount.ToString() : "";
+            var itemIsNull = _currentItem.ItemName == null;
+            itemImage.sprite = itemIsNull ? null : _currentItem.Icon;
+            itemImage.enabled = !itemIsNull;
+            stackText.text = !itemIsNull && _stackCount > 1 ? _stackCount.ToString() : "";
         }
 
         // 鼠标悬停显示信息（可选）
@@ -108,18 +109,18 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         // 交换物品
         private void SwapItems(BagSlotItem targetSlot)
         {
-            var tempItem = targetSlot.item;
-            var tempCount = targetSlot.stackCount;
+            var tempItem = targetSlot._currentItem;
+            var tempCount = targetSlot._stackCount;
 
-            targetSlot.SetItem(item, stackCount);
-            if (tempItem != null)
+            targetSlot.SetItem(_currentItem, _stackCount);
+            if (tempItem.ItemName != null)
             {
                 SetItem(tempItem, tempCount);
             }
             else
             {
-                item = null;
-                stackCount = 0;
+                _currentItem = default;
+                _stackCount = 0;
                 UpdateSlotUI();
             }
         }

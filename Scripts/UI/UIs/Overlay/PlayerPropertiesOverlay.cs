@@ -35,7 +35,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         [SerializeField]
         private FieldItem frameCount;
         
-        private PropertyItemData[] _propertyItemDatas;
+        private List<PropertyItemData> _propertyItemDatas;
         
         [Inject]
         private void Init(PlayerInGameManager playerInGameManager, IConfigProvider configProvider)
@@ -46,57 +46,35 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         public void BindPlayerProperty(ReactiveDictionary<int, PropertyItemData> playerPropertyData)
         {
-            _propertyItemDatas ??= playerPropertyData.Values.ToArray();
-            contentItemList.SetItemList(_propertyItemDatas);
+            _propertyItemDatas ??= playerPropertyData.Values.ToList();
+            contentItemList.SetItemList(_propertyItemDatas.ToArray());
             playerPropertyData.ObserveReplace()
                 .Subscribe(x =>
                 {
-                    for (int i = 0; i < _propertyItemDatas.Length; i++)
-                    {
-                        if (x.Key == (int)_propertyItemDatas[i].PropertyType)
-                        {
-                            _propertyItemDatas[i] = x.NewValue;
-                            break;
-                        }
-                    }
-                    contentItemList.SetItemList(_propertyItemDatas);
+                    var index = _propertyItemDatas.FindIndex(y => (int)y.PropertyType == x.Key);
+                    _propertyItemDatas[index] = x.NewValue;
+                    contentItemList.SetItemList(_propertyItemDatas.ToArray());
                 })
                 .AddTo(this);
             playerPropertyData.ObserveAdd()
                 .Subscribe(x =>
                 {
-                    var newPropertyItemDatas = new PropertyItemData[_propertyItemDatas.Length + 1];
-                    for (var i = 0; i < newPropertyItemDatas.Length; i++)
-                    {
-                        if (i < _propertyItemDatas.Length)
-                        {
-                            newPropertyItemDatas[i] = _propertyItemDatas[i];
-                        }
-                        else
-                        {
-                            newPropertyItemDatas[i] = x.Value;
-                        }
-                    }
-
-                    _propertyItemDatas = newPropertyItemDatas;
-
-                    contentItemList.SetItemList(_propertyItemDatas);
+                    _propertyItemDatas.Add(x.Value);
+                    contentItemList.SetItemList(_propertyItemDatas.ToArray());
                 })
                 .AddTo(this);
             playerPropertyData.ObserveRemove()
                 .Subscribe(x =>
                 {
-                    var originalArray = _propertyItemDatas.ToList();
-                    originalArray.RemoveAll(y => (int)y.PropertyType == x.Key);
-                    _propertyItemDatas = originalArray.ToArray();
-                    contentItemList.SetItemList(_propertyItemDatas);
+                    _propertyItemDatas.RemoveAll(y => (int)y.PropertyType == x.Key);
+                    contentItemList.SetItemList(_propertyItemDatas.ToArray());
                 })
                 .AddTo(this);
             playerPropertyData.ObserveReset()
                 .Subscribe(x =>
                 {
-                    _propertyItemDatas = Array.Empty<PropertyItemData>();
-                    contentItemList.SetItemList(_propertyItemDatas);
+                    _propertyItemDatas.Clear();
+                    contentItemList.SetItemList(_propertyItemDatas.ToArray());
                 })
                 .AddTo(this);
         }

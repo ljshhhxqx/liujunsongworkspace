@@ -8,12 +8,14 @@ using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.UI.UIs.Overlay;
+using HotUpdate.Scripts.UI.UIs.Panel.Backpack;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using Mirror;
 using UI.UIBase;
@@ -64,6 +66,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private PlayerBattleCalculator _playerBattleCalculator;
         private PlayerItemCalculator _playerItemCalculator;
         private PlayerElementCalculator _playerElementCalculator;
+        private PlayerEquipmentCalculator _playerEquipmentCalculator;
         
         [Header("Parameters")]
         private float _currentSpeed;
@@ -81,8 +84,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private IConfigProvider _configProvider;
         private UIManager _uiManager;
         private PlayerInGameManager _playerInGameManager;
+        private InteractSystem _interactSystem;
         
         private BindingKey _propertyBindKey;
+        private BindingKey _itemBindKey;
         
         public int CurrentComboStage { get; private set; }
         public IObservable<PlayerInputStateData> InputStream => _inputStream;
@@ -108,6 +113,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _gameSyncManager = gameSyncManager;
             _mapBoundDefiner = mapBoundDefiner;
             _playerInGameManager = playerInGameManager;
+            _interactSystem = FindObjectOfType<InteractSystem>();
             _uiManager = uiManager;
             _rigidbody = GetComponent<Rigidbody>();
             _inputState = GetComponent<PlayerInputPredictionState>();
@@ -162,6 +168,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             {
                 _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
                     UIPropertyBinder.LocalPlayerId);
+                _itemBindKey = new BindingKey(UIPropertyDefine.BagItem, DataScope.LocalPlayer,
+                    UIPropertyBinder.LocalPlayerId);
                 HandleLocalInitCallback();
             }
         }
@@ -170,6 +178,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             var playerPropertiesOverlay = _uiManager.SwitchUI<PlayerPropertiesOverlay>();
             playerPropertiesOverlay.BindPlayerProperty(UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_propertyBindKey));
+            
+            var bagItemOverlay = _uiManager.SwitchUI<BackpackScreenUI>();
+            bagItemOverlay.BindBagItemData(UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey));
         }
 
         private bool HandleSpecialState()
@@ -247,6 +258,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerBattleCalculator = new PlayerBattleCalculator(new PlayerBattleComponent(transform,_mapBoundDefiner, _playerInGameManager));
             _playerItemCalculator = new PlayerItemCalculator();
             _playerElementCalculator = new PlayerElementCalculator();
+            _playerEquipmentCalculator = new PlayerEquipmentCalculator();
             var jsonData = configProvider.GetConfig<JsonDataConfig>();
             var propertyConfig = configProvider.GetConfig<PropertyConfig>();
             var gameData = jsonData.GameConfig;
@@ -262,10 +274,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 GroundSceneLayer = gameData.groundSceneLayer,
                 StairsSceneLayer = gameData.stairSceneLayer,
                 RotateSpeed = playerData.RotateSpeed,
+                IsServer = isServer,
             });
             PlayerPropertyCalculator.SetCalculatorConstant(new PropertyCalculatorConstant
             {
                 TickRate = gameSyncManager.TickRate,
+                IsServer = isServer,
             });
             PlayerAnimationCalculator.SetAnimationConstant(new AnimationConstant
             {
@@ -273,8 +287,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 InputThreshold = gameData.inputThreshold,
                 AttackComboMaxCount = playerData.AttackComboMaxCount,
                 AnimationConfig = configProvider.GetConfig<AnimationConfig>(),
+                IsServer = isServer,
             });
             PlayerBattleCalculator.SetAttackConfigData(noneWeapon);
+            PlayerItemCalculator.SetConstant(new PlayerItemConstant
+            {
+                ItemConfig = configProvider.GetConfig<ItemConfig>(),
+                WeaponConfig = configProvider.GetConfig<WeaponConfig>(),
+                ArmorConfig = configProvider.GetConfig<ArmorConfig>(),
+                PropertyConfig = configProvider.GetConfig<PropertyConfig>(),
+                ConditionConfig = configProvider.GetConfig<BattleEffectConditionConfig>(),
+                GameSyncManager = gameSyncManager,
+                InteractSystem = _interactSystem,
+                IsServer = isServer,
+            });
+            PlayerEquipmentCalculator.SetConstant(new PlayerEquipmentConstant
+            {
+                GameSyncManager = gameSyncManager,
+                ItemConfig = configProvider.GetConfig<ItemConfig>(),
+                IsServer = isServer,
+            });
         }
 
         private void OnAttack(int stage)

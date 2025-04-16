@@ -191,10 +191,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
     public struct PropertyCalculatorConstant
     {
         public float TickRate;
-        
-        public PropertyCalculatorConstant(float tickRate)
+        public bool IsServer;
+
+        public PropertyCalculatorConstant(float tickRate, bool isServer)
         {
             TickRate = tickRate;
+            IsServer = isServer;
         }
     }
 }

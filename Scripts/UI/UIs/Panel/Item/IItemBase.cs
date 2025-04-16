@@ -1,4 +1,5 @@
 using System;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using UniRx;
 using UnityEngine;
@@ -58,14 +59,18 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public float MaxProperty;
     }
     
-    public class BagItemData : IItemBaseData
+    public struct BagItemData : IItemBaseData
     {
         public string ItemName;
         public Sprite Icon;
         public int Index;
+        public int Stack;
+        public string Description;
+        public PlayerItemType PlayerItemType;
+        public bool IsEquip;
+        public bool IsLock;
         public int MaxStack; // 最大堆叠数量
         public event Action OnUseItem;
-        // todo:添加更多的Action来配合实际的业务逻辑
     }
     
     public struct BagItemExchangeData
