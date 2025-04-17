@@ -182,6 +182,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             
             var bagItemOverlay = _uiManager.SwitchUI<BackpackScreenUI>();
             bagItemOverlay.BindBagItemData(UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey));
+            bagItemOverlay.BindEquipItemData(UIPropertyBinder.GetReactiveDictionary<EquipItemData>(_itemBindKey));
         }
 
         private bool HandleSpecialState()

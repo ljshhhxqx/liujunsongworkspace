@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
@@ -8,7 +10,6 @@ using UI.UIBase;
 using UniRx;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using VContainer;
 
@@ -17,14 +18,18 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
     public class BackpackScreenUI : ScreenUIBase
     {
         [SerializeField]
-        private ContentItemList contentItemList;
+        private ContentItemList equipmentItemList;
+        [SerializeField]
+        private ContentItemList bagItemList;
         [SerializeField]
         [Header("拖拽临时图标")]
         private GameObject dragIcon;
         private UIManager _uiManager;
 
         private List<BagSlotItem> _bagSlotItems; // 存储格子引用
+        private List<EquipmentSlotItem> _slotItems;
         private List<BagItemData> _bagItemData = new List<BagItemData>();  // 存储物品
+        private List<EquipItemData> _slotEquipItemData = new List<EquipItemData>();
         
         private BagSlotItem _draggedSlot; // 当前被拖拽的格子
 
@@ -38,9 +43,45 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             BagCommonData = jsonConfig.BagCommonData;
         }
 
+        public void BindEquipItemData(ReactiveDictionary<int, EquipItemData> slotEquipItemData)
+        {
+            _slotEquipItemData ??= slotEquipItemData.Values.ToList();
+            _slotItems = new List<EquipmentSlotItem>();
+            slotEquipItemData.ObserveAdd()
+                .Subscribe(x =>
+                 {
+                     _slotEquipItemData.Add(x.Value);
+                     equipmentItemList.SetItemList(_slotEquipItemData.ToArray());
+                 })
+                .AddTo(this);
+            slotEquipItemData.ObserveRemove()
+                .Subscribe(x =>
+                 {
+                     _slotEquipItemData.RemoveAll(y => (int)y.EquipmentPartType == x.Key);
+                     equipmentItemList.SetItemList(_slotEquipItemData.ToArray());
+                 })
+                .AddTo(this);
+            slotEquipItemData.ObserveReplace()
+                .Subscribe(x =>
+                 {
+                     var index = _slotEquipItemData.FindIndex(y => (int)y.EquipmentPartType == x.Key);
+                     _slotEquipItemData[index] = x.NewValue;
+                     equipmentItemList.SetItemList(_slotEquipItemData.ToArray());
+                 })
+                .AddTo(this);
+            RefreshEquip(_slotEquipItemData);
+        }
+
+        private void RefreshEquip(List<EquipItemData> slotEquipItemData)
+        {
+            equipmentItemList.SetItemList(slotEquipItemData.ToArray());
+            InitializeEquipSlots();
+        }
+
         public void BindBagItemData(ReactiveDictionary<int, BagItemData> bagItemData)
         {
             _bagItemData ??= bagItemData.Values.ToList();
+            _bagSlotItems = new List<BagSlotItem>();
             var dragImage = dragIcon.GetComponent<Image>();
             dragImage.raycastTarget = false;
             dragImage.transform.SetParent(transform.root, false);
@@ -51,14 +92,14 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
                 .Subscribe(x =>
                 {
                     _bagItemData.Add(x.Value);
-                    contentItemList.SetItemList(_bagItemData.ToArray());
+                    bagItemList.SetItemList(_bagItemData.ToArray());
                 })
                 .AddTo(this);
             bagItemData.ObserveRemove()
                 .Subscribe(x =>
                 {
                     _bagItemData.RemoveAll(y => y.Index == x.Key);
-                    contentItemList.SetItemList(_bagItemData.ToArray());
+                    bagItemList.SetItemList(_bagItemData.ToArray());
                 })
                 .AddTo(this);
             bagItemData.ObserveReplace()
@@ -66,26 +107,46 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
                 {
                     var index = _bagItemData.FindIndex(y => y.Index == x.Key);
                     _bagItemData[index] = x.NewValue;
-                    contentItemList.SetItemList(_bagItemData.ToArray());
+                    bagItemList.SetItemList(_bagItemData.ToArray());
                 })
                 .AddTo(this);
         }
 
         private void RefreshBag(List<BagItemData> bagItemData)
         {
-            for (var i = 0; i < BagCommonData.maxBagCount; i++)
+            // for (var i = 0; i < BagCommonData.maxBagCount; i++)
+            // {
+            //     var originalData = bagItemData.FirstOrDefault(x => x.Index == i);
+            //     var data = originalData.ItemName != null ? originalData : new BagItemData();
+            //     _bagItemData.Add(data);
+            // }
+            bagItemList.SetItemList(bagItemData.ToArray());
+        }
+        
+        private void InitializeEquipSlots()
+        {
+            foreach (var item in equipmentItemList.ItemBases)
             {
-                var originalData = bagItemData.FirstOrDefault(x => x.Index == i);
-                var data = originalData.ItemName != null ? originalData : new BagItemData();
-                _bagItemData.Add(data);
+                var slot = item as EquipmentSlotItem;
+                if (!slot) continue;
+                slot.OnPointerClickObservable
+                    .Subscribe(x => OnEquipClick(slot, x))
+                    .AddTo(this);
+                _slotItems.Add(slot);
             }
-            contentItemList.SetItemList(_bagItemData.ToArray());
+        }
+
+        private void OnEquipClick(EquipmentSlotItem slot, PointerEventData pointerEventData)
+        {
+            if (slot.IsEmpty()) return;
+            // 这里可以弹出物品详情面板
+            Debug.Log($"显示物品详情: {slot.name}");
         }
 
         // 初始化格子
         private void InitializeSlots()
         {
-            foreach (var item in contentItemList.ItemBases)
+            foreach (var item in bagItemList.ItemBases)
             {
                 var slot = item as BagSlotItem;
                 if (!slot) continue;

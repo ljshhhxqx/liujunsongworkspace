@@ -77,4 +77,15 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public Action<int, bool, PlayerItemType> OnEquipItem;
         public Action<int, int> OnSellItem;
     }
+
+    public struct EquipItemData : IItemBaseData
+    {
+        public string ItemName;
+        public string Description;
+        public bool IsLock;
+        public EquipmentPart EquipmentPartType;
+        public Action<int, bool> OnLockItem;
+        public Action<int, bool> OnEquipItem;
+        public Action<int> OnDropItem;
+    }
 }
