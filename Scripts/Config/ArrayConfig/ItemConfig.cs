@@ -20,25 +20,19 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [SerializeField]
         private ItemOtherData itemOtherData;
         
+        private Dictionary<int, GameItemConfigData> _gameItemDataDict = new Dictionary<int, GameItemConfigData>();
+        
         public int MaxBagSize => itemOtherData.maxBagSize;
         
         public GameItemConfigData GetGameItemData(int configId)
         {
-            foreach (var itemData in gameItemDatas)
-            {
-                if (itemData.id == configId)
-                {
-                    return itemData;
-                }
-            }
-
-            Debug.LogWarning("No GameItemData found with id " + configId);
-            return new GameItemConfigData();
+            return _gameItemDataDict.GetValueOrDefault(configId);
         }
         
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
             gameItemDatas.Clear();
+            _gameItemDataDict.Clear();
             var jsonSerializerSettings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
@@ -55,8 +49,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 gameItemData.sellPriceRatio = float.Parse(row[4]);
                 gameItemData.itemType = (PlayerItemType) Enum.Parse(typeof(PlayerItemType), row[5]);
                 gameItemData.maxStack = int.Parse(row[6]);
-                gameItemData.iconLocation = row[7];
-                gameItemData.prefabLocation = row[8];
+                gameItemData.iconName = row[7];
+                gameItemData.prefabName = row[8];
                 gameItemData.quality = (QualityType) Enum.Parse(typeof(QualityType), row[9]);
                 gameItemData.equipmentPart = (EquipmentPart) Enum.Parse(typeof(EquipmentPart), row[10]);
                 gameItemData.duration = float.Parse(row[11]);
@@ -68,6 +62,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 }
                 gameItemData.buffExtraData = gameItemData.isDealWithBuffExtraData ? buffExtra : null;
                 gameItemDatas.Add(gameItemData);
+                _gameItemDataDict.Add(gameItemData.id, gameItemData);
             }
         }
         
@@ -218,8 +213,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public PlayerItemType itemType;
         public int maxStack;
         public int weight;
-        public string iconLocation;
-        public string prefabLocation;
+        public string iconName;
+        public string prefabName;
         //消耗品的持续时间，装备为-1(只有脱下才消失)
         public float duration;
         public QualityType quality;

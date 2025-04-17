@@ -1,4 +1,5 @@
 ﻿using System;
+using HotUpdate.Scripts.UI.UIBase;
 using PlayFab;
 using PlayFab.CloudScriptModels;
 using UI.UIBase;

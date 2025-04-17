@@ -3,6 +3,7 @@ using AOTScripts.Tool;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.UI.UIBase;
 using Network.Data;
 using Network.Server.PlayFab;
 using PlayFab;

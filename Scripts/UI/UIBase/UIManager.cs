@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using HotUpdate.Scripts.Game.Inject;
+using HotUpdate.Scripts.Static;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using HotUpdate.Scripts.UI.UIs.Popup;
 using Resource;
+using UI.UIBase;
 using UI.UIs.Exception;
 using UI.UIs.Popup;
 using UI.UIs.SecondPanel;
@@ -12,7 +14,7 @@ using UnityEngine;
 using VContainer;
 using Object = UnityEngine.Object;
 
-namespace UI.UIBase
+namespace HotUpdate.Scripts.UI.UIBase
 {
     public class UIManager
     {
@@ -38,6 +40,21 @@ namespace UI.UIBase
         public void InitUIs()
         {
             GetUIResources(ResourceManager.Instance.GetAllUIObjects());
+        }
+
+        public void InitMapSprites(string mapName)
+        {
+            var mapSprites = ResourceManager.Instance.GetMapSprite(mapName);
+            var spriteInfo = new SpriteInfo[mapSprites.Count];
+            for (int i = 0; i < mapSprites.Count; i++)
+            {
+                spriteInfo[i] = new SpriteInfo
+                {
+                    Sprite = mapSprites[i],
+                    Name = mapSprites[i].name
+                };  
+            }
+            UISpriteContainer.InitUISprites(spriteInfo);
         }
 
         private void GetUIResources(IReadOnlyCollection<GameObject> uiObjects)

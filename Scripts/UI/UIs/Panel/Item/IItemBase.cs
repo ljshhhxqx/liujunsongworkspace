@@ -70,16 +70,11 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public bool IsEquip;
         public bool IsLock;
         public int MaxStack; // 最大堆叠数量
-        public event Action OnUseItem;
-    }
-    
-    public struct BagItemExchangeData
-    {
-        public BagItemData FromItem;
-        public BagItemData ToItem;
-        public int FromStack;
-        public int ToStack;
-        public int FromIndex;
-        public int ToIndex;
+        public Action<int, int> OnUseItem;
+        public Action<int, int> OnDropItem;
+        public Action<int, int> OnExchangeItem;
+        public Action<int, bool> OnLockItem;
+        public Action<int, bool, PlayerItemType> OnEquipItem;
+        public Action<int, int> OnSellItem;
     }
 }

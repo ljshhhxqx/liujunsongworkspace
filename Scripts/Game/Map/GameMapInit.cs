@@ -4,6 +4,7 @@ using HotUpdate.Scripts.Config;
 using System;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.UI.UIBase;
 using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
@@ -15,12 +16,13 @@ namespace HotUpdate.Scripts.Game.Map
         private string mapName;
 
         [Inject]
-        private async void Init(GameEventManager gameEventManager)
+        private async void Init(GameEventManager gameEventManager, UIManager uiManager)
         {
             mapName ??= gameObject.scene.name;
             InjectGameObjects();
             await LoadGameResources();
             gameEventManager.Publish(new GameSceneResourcesLoadedEvent(mapName));
+            uiManager.InitMapSprites(mapName);
             Debug.Log("game map init complete!!!!!!!!!!");
         }
 

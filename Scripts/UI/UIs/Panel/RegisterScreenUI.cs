@@ -1,6 +1,7 @@
 using AOTScripts.Tool;
 using Cysharp.Threading.Tasks;
 using Data;
+using HotUpdate.Scripts.UI.UIBase;
 using TMPro;
 using UI.UIBase;
 using UnityEngine;

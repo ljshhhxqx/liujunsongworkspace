@@ -1,6 +1,7 @@
 ﻿using HotUpdate.Scripts.Network.Server.Sync;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
+using HotUpdate.Scripts.UI.UIBase;
 using Mirror;
 using Model;
 using Network.Server;

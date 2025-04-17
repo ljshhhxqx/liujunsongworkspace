@@ -139,23 +139,24 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private void PropertyChanged(PlayerPredictablePropertyState predictablePropertyState)
         {
             _uiPropertyData ??= UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_bindKey);
-            foreach (var property in predictablePropertyState.Properties)
+            foreach (var key in predictablePropertyState.Properties.Keys)
             {
-                var data = _uiPropertyData[(int)property.Key];
-                if (property.Value.IsResourceProperty())
+                var property = predictablePropertyState.Properties[key];
+                var data = _uiPropertyData[(int)key];
+                if (property.IsResourceProperty())
                 {
-                    OnPropertyChanged?.Invoke(property.Key, property.Value);
-                    data.CurrentProperty = property.Value.CurrentValue;
-                    data.MaxProperty = property.Value.MaxCurrentValue;
-                    _uiPropertyData[(int)property.Key] = data;
+                    OnPropertyChanged?.Invoke(key, property);
+                    data.CurrentProperty = property.CurrentValue;
+                    data.MaxProperty = property.MaxCurrentValue;
+                    _uiPropertyData[(int)key] = data;
                     continue;
                 }
-                OnPropertyChanged?.Invoke(property.Key, property.Value);
-                data.CurrentProperty = property.Value.CurrentValue;
-                _uiPropertyData[(int)property.Key] = data;
-                if (property.Key == PropertyTypeEnum.AttackSpeed)
+                OnPropertyChanged?.Invoke(key, property);
+                data.CurrentProperty = property.CurrentValue;
+                _uiPropertyData[(int)key] = data;
+                if (key == PropertyTypeEnum.AttackSpeed)
                 {
-                    PlayerComponentController.SetAnimatorSpeed(AnimationState.Attack, property.Value.CurrentValue);
+                    PlayerComponentController.SetAnimatorSpeed(AnimationState.Attack, property.CurrentValue);
                 }
             }
         }

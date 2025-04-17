@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using Sirenix.Utilities;
 using UniRx;
@@ -168,14 +169,32 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
             get=> _localPlayerId;
             set
             {
-                _localPlayerId = value;
-                if (_localPlayerId == -1)
+                if (_localPlayerId != value && value != -1)
                 {
-                    // foreach (var VARIABLE in KeyDictionaryMap.)
-                    // {
-                    //     var 
-                    // }
+                    foreach (var key in KeyDictionaryMap.Keys)
+                    {
+                        if (key.Scope == DataScope.LocalPlayer)
+                        {
+                            KeyDictionaryMap.Remove(key);
+                        }   
+                    }
+                    foreach (var key in KeyListMap.Keys)
+                    {
+                        if (key.Scope == DataScope.LocalPlayer)
+                        {
+                            KeyListMap.Remove(key);
+                        }   
+                    }
+
+                    foreach (var key in KeyPropertyMap.Keys)
+                    {
+                        if (key.Scope == DataScope.LocalPlayer)
+                        {
+                            KeyPropertyMap.Remove(key);
+                        } 
+                    }
                 }
+                _localPlayerId = value;
             }
         }
         

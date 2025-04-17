@@ -2,6 +2,7 @@
 using System.Linq;
 using AOTScripts.Tool;
 using Data;
+using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
 using Network.Data;

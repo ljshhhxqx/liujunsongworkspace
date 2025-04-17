@@ -635,6 +635,31 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     }
     
     [MemoryPackable]
+    public partial struct ItemExchangeCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)]
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public int FromSlotIndex;
+        [MemoryPackOrder(2)]
+        public int ToSlotIndex;
+        public NetworkCommandHeader GetHeader() => Header;
+        
+        public bool IsValid()
+        {
+            return FromSlotIndex > 0 && ToSlotIndex > 0;
+        }
+        
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
+    }
+    
+    [MemoryPackable]
     public partial struct ItemDropCommand : INetworkCommand
     {
         [MemoryPackOrder(0)]

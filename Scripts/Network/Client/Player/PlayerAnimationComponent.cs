@@ -5,6 +5,7 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.Server.Sync;
+using HotUpdate.Scripts.UI.UIBase;
 using Mirror;
 using Network.NetworkMes;
 using UI.UIBase;

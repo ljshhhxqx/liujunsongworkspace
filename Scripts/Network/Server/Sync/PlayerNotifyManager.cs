@@ -1,4 +1,5 @@
-﻿using Mirror;
+﻿using HotUpdate.Scripts.UI.UIBase;
+using Mirror;
 using UI.UIBase;
 using UnityEngine;
 using VContainer;

@@ -1,4 +1,5 @@
 ﻿using HotUpdate.Scripts.Network.Inject;
+using HotUpdate.Scripts.UI.UIBase;
 using UI.UIBase;
 using VContainer;
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using HotUpdate.Scripts.UI.UIBase;
 using UI.UIBase;
 using UnityEngine;
 using VContainer;

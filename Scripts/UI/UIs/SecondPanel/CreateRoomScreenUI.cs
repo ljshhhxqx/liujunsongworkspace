@@ -5,6 +5,7 @@ using Data;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.UI.UIBase;
 using Network.Server.PlayFab;
 using TMPro;
 using UI.UIBase;

@@ -1,5 +1,6 @@
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Network.Server;
+using HotUpdate.Scripts.UI.UIBase;
 using Network.Server;
 using UI.UIBase;
 using UnityEngine;

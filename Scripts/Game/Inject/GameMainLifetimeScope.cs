@@ -7,6 +7,7 @@ using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
+using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.Weather;
 using Model;
 using Network.Server.Edgegap;

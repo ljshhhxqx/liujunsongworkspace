@@ -1,6 +1,7 @@
 ﻿using System;
 using AOTScripts.Tool;
 using Data;
+using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.SecondPanel;
 using Network.Server.PlayFab;
 using TMPro;

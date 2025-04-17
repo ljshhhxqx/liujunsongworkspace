@@ -5,6 +5,7 @@ using System.Linq;
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.UI.UIBase;
 using Network.Data;
 using Newtonsoft.Json;
 using PlayFab;

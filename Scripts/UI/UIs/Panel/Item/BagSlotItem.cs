@@ -1,13 +1,12 @@
 ﻿using System;
 using UniRx;
-using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace HotUpdate.Scripts.UI.UIs.Panel.Item
 {
-    public class BagSlotItem : ItemBase, IPointerEnterHandler, IPointerExitHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
+    public class BagSlotItem : ItemBase, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         [SerializeField]
         private Image itemImage;        // 显示物品图标的Image组件
@@ -16,19 +15,18 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         private BagItemData _currentItem;              // 当前格子的物品
         private int _stackCount;     // 物品堆叠数量
         private int _slotIndex;         // 格子索引
-        public int MaxStack => _currentItem.MaxStack;
-        private Subject<PointerEventData> OnPointerEnterObservable = new Subject<PointerEventData>();
-        private Subject<PointerEventData> OnPointerExitObservable = new Subject<PointerEventData>();
+        private Subject<PointerEventData> _pointerClickObservable = new Subject<PointerEventData>();
         private Subject<PointerEventData> OnBeginDragObservable = new Subject<PointerEventData>();
         private Subject<PointerEventData> OnDragObservable = new Subject<PointerEventData>();
         private Subject<PointerEventData> OnEndDragObservable = new Subject<PointerEventData>();
         
-        public IObservable<PointerEventData> OnPointerEnterObserver => OnPointerEnterObservable;
-        public IObservable<PointerEventData> OnPointerExitObserver => OnPointerExitObservable;
+        public IObservable<PointerEventData> OnPointerClickObserver => _pointerClickObservable;
         public IObservable<PointerEventData> OnBeginDragObserver => OnBeginDragObservable;
         public IObservable<PointerEventData> OnDragObserver => OnDragObservable;
         public IObservable<PointerEventData> OnEndDragObserver => OnEndDragObservable;
         public BagItemData CurrentItem => _currentItem;
+        public int SlotIndex => _slotIndex;
+        public int MaxStack => _currentItem.MaxStack;
         
         public override void SetData<T>(T data)
         {
@@ -41,10 +39,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
             
         }
 
-        public void SetSlotIndex(int index)
-        {
-            _slotIndex = index;
-        }
+        // public void SetSlotIndex(int index)
+        // {
+        //     _slotIndex = index;
+        // }
 
         // 设置物品到格子
         public void SetItem(BagItemData newItem, int count)
@@ -76,18 +74,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
             stackText.text = !itemIsNull && _stackCount > 1 ? _stackCount.ToString() : "";
         }
 
-        // 鼠标悬停显示信息（可选）
-        public void OnPointerEnter(PointerEventData eventData)
-        {
-            OnPointerEnterObservable.OnNext(eventData);
-        }
-
-        public void OnPointerExit(PointerEventData eventData)
-        {
-            // 隐藏物品详情面板（如果有）
-            OnPointerExitObservable.OnNext(eventData);
-        }
-
         // 拖拽开始
         public void OnBeginDrag(PointerEventData eventData)
         {
@@ -107,22 +93,27 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         }
 
         // 交换物品
-        private void SwapItems(BagSlotItem targetSlot)
-        {
-            var tempItem = targetSlot._currentItem;
-            var tempCount = targetSlot._stackCount;
+        // private void SwapItems(BagSlotItem targetSlot)
+        // {
+        //     var tempItem = targetSlot._currentItem;
+        //     var tempCount = targetSlot._stackCount;
+        //
+        //     targetSlot.SetItem(_currentItem, _stackCount);
+        //     if (tempItem.ItemName != null)
+        //     {
+        //         SetItem(tempItem, tempCount);
+        //     }
+        //     else
+        //     {
+        //         _currentItem = default;
+        //         _stackCount = 0;
+        //         UpdateSlotUI();
+        //     }
+        // }
 
-            targetSlot.SetItem(_currentItem, _stackCount);
-            if (tempItem.ItemName != null)
-            {
-                SetItem(tempItem, tempCount);
-            }
-            else
-            {
-                _currentItem = default;
-                _stackCount = 0;
-                UpdateSlotUI();
-            }
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            _pointerClickObservable.OnNext(eventData);
         }
     }
 }

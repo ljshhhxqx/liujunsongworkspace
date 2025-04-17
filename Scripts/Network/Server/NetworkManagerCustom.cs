@@ -7,6 +7,7 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.UI.UIBase;
 using Mirror;
 using Network.NetworkMes;
 using Tool.GameEvent;
