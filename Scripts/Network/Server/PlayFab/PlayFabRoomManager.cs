@@ -206,7 +206,7 @@ namespace Network.Server.PlayFab
             {
                 var roomData = JsonUtility.FromJson<RoomData>(value.ToString());
                 CurrentRoomId = roomData.RoomId;
-                _uiManager.SwitchUI<RoomScreenUI>(() =>
+                _uiManager.SwitchUI<RoomScreenUI>(ui =>
                 {
                     _currentRoomData = roomData;
                     OnCreateRoom?.Invoke(roomData);
@@ -327,7 +327,7 @@ namespace Network.Server.PlayFab
                 }
                 else
                 {
-                    _uiManager.SwitchUI<RoomListScreenUI>(() =>
+                    _uiManager.SwitchUI<RoomListScreenUI>( ui =>
                     {
                         OnRefreshRoomData?.Invoke(roomData.AllRooms);
                     });

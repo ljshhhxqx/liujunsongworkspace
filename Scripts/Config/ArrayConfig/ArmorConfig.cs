@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using Newtonsoft.Json;
+using OfficeOpenXml;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
@@ -10,7 +13,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     [CreateAssetMenu(fileName = "ArmorConfig", menuName = "ScriptableObjects/ArmorConfig")]
     public class ArmorConfig : ConfigBase
     {
-        [ReadOnly]
+        //[ReadOnly]
         [SerializeField]
         private List<ArmorConfigData> armorConfigs = new List<ArmorConfigData>();
         
@@ -74,7 +77,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 armorConfigData.equipmentPart = Enum.Parse<EquipmentPart>(data[3]);
                 armorConfigData.skillID = int.Parse(data[4]);
                 armorConfigData.quality = Enum.Parse<QualityType>(data[5]);
-                //weaponConfig.battleEffectConditionId = int.Parse(data[6]);
+                armorConfigData.battleEffectConditionId = int.Parse(data[6]);
                 armorConfigData.battleEffectConditionDescription = data[7];
                 armorConfigs.Add(armorConfigData);
             }
@@ -93,16 +96,85 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             for (int i = 0; i < armorConfigs.Count; i++)
             {
                 var data = armorConfigs[i];
-                var condition = battleEffectConditionConfig.AnalysisDataString(data.battleEffectConditionDescription);
-                if (condition.id == 0)
+                var isTrueData = battleEffectConditionConfig.AnalysisDataString(data.battleEffectConditionDescription, out var conditionConfigData);
+                if (data.battleEffectConditionDescription == "0")
+                {
+                    continue;
+                }
+                if (isTrueData)
                 {
                     Debug.Log("battleEffectConditionId not found for weaponID: " + data.armorID + "Start to generate a new one");
-                    condition.id = battleEffectConditionConfig.GetConditionMaxId() + 1;
-                    data.battleEffectConditionId = condition.id;
-                    battleEffectConditionConfig.AddConditionData(condition);
+                    conditionConfigData.id = battleEffectConditionConfig.GetConditionMaxId() + 1;
+                    data.battleEffectConditionId = conditionConfigData.id;
+                    battleEffectConditionConfig.AddConditionData(conditionConfigData);
                     armorConfigs[i] = data;
-                    EditorUtility.SetDirty(this);
                 }
+            }
+            EditorUtility.SetDirty(this);
+        }
+        
+        [Button("将scriptable对象写入excel")]
+        public void WriteToExcel()
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            };
+            jsonSerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+            var excel = Path.Combine(excelAssetReference.Path, $"{configName}.xlsx");
+            using (var package = new ExcelPackage(new FileInfo(excel)))
+            {
+                var worksheet = package.Workbook.Worksheets[0]; // 假设数据在第一个工作表
+                int rowCount = worksheet.Dimension.Rows;
+                
+                const int idCol = 1;
+                const int itemIdCol = 2;
+                const int armorNameCol = 3;
+                const int equipmentPartCol = 4;
+                const int skillIdCol = 5;
+                const int qualityCol = 6;
+                const int battleEffectConditionIdCol = 7;
+                const int battleEffectConditionDescriptionCol = 8;
+                int row = 0;
+                var existingIds = new HashSet<int>();
+                for (row = 3; row <= rowCount; row++)
+                {
+                    //var value = worksheet.Cells[row, idCol].GetValue<double>();
+                    int buffId = (int)worksheet.Cells[row, idCol].GetValue<double>();
+                    existingIds.Add(buffId);
+                }
+
+                try
+                {
+                    // 从第 2 行开始（跳过表头）
+                    var newRow = rowCount + 1;
+                    foreach (var configData in armorConfigs)
+                    {
+                        if (!existingIds.Contains(configData.armorID))
+                        {
+                            worksheet.Cells[newRow, idCol].Value = configData.armorID;
+                            worksheet.Cells[newRow, itemIdCol].Value = configData.itemID;
+                            worksheet.Cells[newRow, armorNameCol].Value = configData.armorName;
+                            worksheet.Cells[newRow, equipmentPartCol].Value = configData.equipmentPart.ToString();
+                            worksheet.Cells[newRow, skillIdCol].Value = configData.skillID;
+                            worksheet.Cells[newRow, qualityCol].Value = configData.quality.ToString();
+                            worksheet.Cells[newRow, battleEffectConditionIdCol].Value = configData.battleEffectConditionId;
+                            worksheet.Cells[newRow, battleEffectConditionDescriptionCol].Value = configData.battleEffectConditionDescription;
+
+                            newRow++;
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Error in {row} ");
+                    throw;
+                }
+
+                // 保存文件
+                package.Save();
+                Debug.Log("Equipment table updated successfully!");
             }
         }
 #endif

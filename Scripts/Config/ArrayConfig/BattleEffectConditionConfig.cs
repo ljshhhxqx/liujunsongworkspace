@@ -72,8 +72,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 Debug.LogWarning($"condition id already exists: {data.id}");
                 return;
             }
-            if (data.triggerType == TriggerType.None)
-                return;
             conditionList.Add(data);
             EditorUtility.SetDirty(this);
         }
@@ -151,12 +149,12 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         }
 
 #endif
-        public BattleEffectConditionConfigData AnalysisDataString(string dataString)
+        public bool AnalysisDataString(string dataString, out BattleEffectConditionConfigData data)
         {
-            var data = new BattleEffectConditionConfigData();
+            data = new BattleEffectConditionConfigData();
             if (string.IsNullOrEmpty(dataString) || dataString.Equals("0"))
             {
-                return data;
+                return false;
             }
             var cleanString = dataString.Replace("[PassiveEffect]", "").Trim();
             var parts = cleanString.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
@@ -205,7 +203,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 };
             }
 
-            return data;
+            return true;
         }
 
         public IConditionParam GetConditionParam(int id)

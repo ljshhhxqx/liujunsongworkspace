@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UI.UIs.Root
+namespace HotUpdate.Scripts.UI.UIs.Root
 {
     public class UIRoot : MonoBehaviour
     {

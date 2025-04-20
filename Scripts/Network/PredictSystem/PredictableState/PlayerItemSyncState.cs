@@ -43,6 +43,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             OnPlayerItemUpdate(state);
         }
 
+        private PlayerItemState GetPlayerItemState()
+        {
+            if (CurrentState is not PlayerItemState playerItemState)
+            {
+                return default;
+            }
+            return playerItemState;
+        }
+
         public override void Simulate(INetworkCommand command)
         {
             var header = command.GetHeader();
@@ -111,10 +120,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             GameSyncManager.EnqueueCommand(MemoryPackSerializer.Serialize(useItemCommand));
         }
 
-        private void OnEquipItem(int slotIndex, bool isEquip, PlayerItemType playerItemType)
+        private void OnEquipItem(int slotIndex, bool isEquip)
         {
             if(!isLocalPlayer)
                 return;
+            var state = GetPlayerItemState();
+            var playerItemType = state.PlayerItemConfigIdSlotDictionary[slotIndex].PlayerItemType;
             var equipItemCommand = new ItemEquipCommand
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
@@ -205,6 +216,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     Index = bagItemData.IndexSlot,
                     Stack = bagItemData.Count,
                     Icon = UISpriteContainer.GetSprite(itemConfig.iconName),
+                    QualityIcon = UISpriteContainer.GetQualitySprite(itemConfig.quality),
                     Description = itemConfig.propertyDesc,
                     PlayerItemType = itemConfig.itemType,
                     IsEquip = bagItemData.State == ItemState.IsEquipped,

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Static
@@ -15,6 +16,17 @@ namespace HotUpdate.Scripts.Static
             }
 
             Debug.LogWarning($"UISpriteContainer: {name} not found in the container.");
+            return null;
+        }
+
+        public static Sprite GetQualitySprite(QualityType quality)
+        {
+            if (Sprites.TryGetValue(quality.ToString(), out var sprite))
+            {
+                return sprite.Sprite;
+            }
+
+            Debug.LogWarning($"UISpriteContainer: {quality} not found in the container.");
             return null;
         }
 

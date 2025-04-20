@@ -895,13 +895,23 @@
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
+            "Name": "BattleEffectConditionConfig",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/ConfigAsset/Csv/BattleEffectConditionConfig.csv"
+        },
+        {
+            "UID": 2700003,
+            "ResourceType": "UnityEngine.TextAsset",
+            "AssetType": 7,
+            "Extension": ".csv",
             "Name": "ChestDataConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/ConfigAsset/Csv/ChestDataConfig.csv"
         },
         {
-            "UID": 2700003,
+            "UID": 2700004,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -911,7 +921,7 @@
             "Address": "/Preload/ConfigAsset/Csv/CollectObjectDataConfig.csv"
         },
         {
-            "UID": 2700004,
+            "UID": 2700005,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -921,7 +931,7 @@
             "Address": "/Preload/ConfigAsset/Csv/ConstantBuffConfig.csv"
         },
         {
-            "UID": 2700005,
+            "UID": 2700006,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -931,7 +941,7 @@
             "Address": "/Preload/ConfigAsset/Csv/ItemConfig.csv"
         },
         {
-            "UID": 2700006,
+            "UID": 2700007,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -941,7 +951,7 @@
             "Address": "/Preload/ConfigAsset/Csv/MapConfig.csv"
         },
         {
-            "UID": 2700007,
+            "UID": 2700008,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -951,7 +961,7 @@
             "Address": "/Preload/ConfigAsset/Csv/PropertyConfig.csv"
         },
         {
-            "UID": 2700008,
+            "UID": 2700009,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -961,7 +971,7 @@
             "Address": "/Preload/ConfigAsset/Csv/RandomBuffConfig.csv"
         },
         {
-            "UID": 2700009,
+            "UID": 2700010,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -971,7 +981,7 @@
             "Address": "/Preload/ConfigAsset/Csv/WeaponConfig.csv"
         },
         {
-            "UID": 2700010,
+            "UID": 2700011,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -981,7 +991,7 @@
             "Address": "/Preload/ConfigAsset/Csv/WeatherConfig.csv"
         },
         {
-            "UID": 2700011,
+            "UID": 2700012,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -991,7 +1001,7 @@
             "Address": "/Preload/ConfigAsset/Json/AnimationConfig.json"
         },
         {
-            "UID": 2700012,
+            "UID": 2700013,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -1001,7 +1011,7 @@
             "Address": "/Preload/ConfigAsset/Json/ChestDataConfig.json"
         },
         {
-            "UID": 2700013,
+            "UID": 2700014,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -1011,7 +1021,7 @@
             "Address": "/Preload/ConfigAsset/Json/CollectObjectDataConfig.json"
         },
         {
-            "UID": 2700014,
+            "UID": 2700015,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -1021,7 +1031,7 @@
             "Address": "/Preload/ConfigAsset/Json/ConstantBuffConfig.json"
         },
         {
-            "UID": 2700015,
+            "UID": 2700016,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -1031,7 +1041,7 @@
             "Address": "/Preload/ConfigAsset/Json/ItemConfig.json"
         },
         {
-            "UID": 2700016,
+            "UID": 2700017,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -1041,7 +1051,7 @@
             "Address": "/Preload/ConfigAsset/Json/JsonDataConfig.json"
         },
         {
-            "UID": 2700017,
+            "UID": 2700018,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -1051,7 +1061,7 @@
             "Address": "/Preload/ConfigAsset/Json/MapConfig.json"
         },
         {
-            "UID": 2700018,
+            "UID": 2700019,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -1061,7 +1071,7 @@
             "Address": "/Preload/ConfigAsset/Json/PropertyConfig.json"
         },
         {
-            "UID": 2700019,
+            "UID": 2700020,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -1071,7 +1081,7 @@
             "Address": "/Preload/ConfigAsset/Json/RandomBuffConfig.json"
         },
         {
-            "UID": 2700020,
+            "UID": 2700021,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",

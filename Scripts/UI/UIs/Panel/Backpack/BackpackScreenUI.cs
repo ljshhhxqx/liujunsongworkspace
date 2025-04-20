@@ -6,6 +6,7 @@ using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
+using HotUpdate.Scripts.UI.UIs.SecondPanel;
 using UI.UIBase;
 using UniRx;
 using UnityEngine;
@@ -49,25 +50,32 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             _slotItems = new List<EquipmentSlotItem>();
             slotEquipItemData.ObserveAdd()
                 .Subscribe(x =>
-                 {
-                     _slotEquipItemData.Add(x.Value);
-                     equipmentItemList.SetItemList(_slotEquipItemData.ToArray());
-                 })
+                {
+                    _slotEquipItemData.Add(x.Value);
+                    equipmentItemList.SetItemList(_slotEquipItemData.ToArray());
+                })
                 .AddTo(this);
             slotEquipItemData.ObserveRemove()
                 .Subscribe(x =>
-                 {
-                     _slotEquipItemData.RemoveAll(y => (int)y.EquipmentPartType == x.Key);
-                     equipmentItemList.SetItemList(_slotEquipItemData.ToArray());
-                 })
+                {
+                    _slotEquipItemData.RemoveAll(y => (int)y.EquipmentPartType == x.Key);
+                    equipmentItemList.SetItemList(_slotEquipItemData.ToArray());
+                })
                 .AddTo(this);
             slotEquipItemData.ObserveReplace()
                 .Subscribe(x =>
-                 {
-                     var index = _slotEquipItemData.FindIndex(y => (int)y.EquipmentPartType == x.Key);
-                     _slotEquipItemData[index] = x.NewValue;
-                     equipmentItemList.SetItemList(_slotEquipItemData.ToArray());
-                 })
+                {
+                    var index = _slotEquipItemData.FindIndex(y => (int)y.EquipmentPartType == x.Key);
+                    _slotEquipItemData[index] = x.NewValue;
+                    equipmentItemList.SetItemList(_slotEquipItemData.ToArray());
+                })
+                .AddTo(this);
+            slotEquipItemData.ObserveReset()
+                .Subscribe(x =>
+                {
+                    _slotEquipItemData.Clear();
+                    equipmentItemList.SetItemList(Array.Empty<EquipItemData>());
+                })
                 .AddTo(this);
             RefreshEquip(_slotEquipItemData);
         }
@@ -141,6 +149,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             if (slot.IsEmpty()) return;
             // 这里可以弹出物品详情面板
             Debug.Log($"显示物品详情: {slot.name}");
+            _uiManager.SwitchUI<ItemDetailsScreenUI>(ui => ui.Open(slot.CurrentItem.ToBagItemData()));
         }
 
         // 初始化格子
@@ -197,7 +206,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             }
         }
 
-        // 统一管理物品交换逻辑
         private void SwapItemsBetweenSlots(BagSlotItem source, BagSlotItem target)
         {
             // 交换数据
@@ -223,6 +231,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             {
                 Debug.Log($"显示物品详情: {slot.CurrentItem.ItemName}");
                 // 这里可以在Inventory中统一控制UI面板
+                _uiManager.SwitchUI<ItemDetailsScreenUI>(ui => ui.Open(slot.CurrentItem));
             }
         }
 

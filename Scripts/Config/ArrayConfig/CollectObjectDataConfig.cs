@@ -43,15 +43,20 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         {
             collectConfigDatas.Clear();
             _collectObjectDatas.Clear();
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            };
+            jsonSerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
             for (int i = 2; i < textAsset.Count; i++)
             {
                 var row = textAsset[i];
                 var collectConfigData = new CollectObjectData();
                 collectConfigData.id = int.Parse(row[0]);
                 collectConfigData.itemId = int.Parse(row[1]);
-                collectConfigData.weight = int.Parse(row[2]);    
-                collectConfigData.description = row[3];
-                collectConfigData.buffExtraData = JsonConvert.DeserializeObject<BuffExtraData>(row[4]);
+                collectConfigData.weight = int.Parse(row[3]);    
+                collectConfigData.description = row[2];
+                collectConfigData.buffExtraData = JsonConvert.DeserializeObject<BuffExtraData[]>(row[4], jsonSerializerSettings)[0];
                 collectConfigData.collectObjectClass = Enum.Parse<CollectObjectClass>(row[5]);
                 // collectConfigData.randomItems = JsonConvert.DeserializeObject<RandomItemsData>(row[6]);
                 collectConfigDatas.Add(collectConfigData);

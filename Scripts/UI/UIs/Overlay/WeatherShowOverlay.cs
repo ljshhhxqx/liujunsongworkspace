@@ -1,6 +1,5 @@
 using AOTScripts.Tool;
 using Data;
-using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Weather;
@@ -36,6 +35,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         [Inject]
         private void Init()
         {
+            //todo: 使用UIPropertyBinder来绑定数据
             GameLoopDataModel.WarmupRemainingTime.Subscribe(x => SetWarmupRemainingTime(x.ToHMSStr())).AddTo(this);
             GameLoopDataModel.GameLoopData.Subscribe(x =>
             {

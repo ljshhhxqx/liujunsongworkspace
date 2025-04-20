@@ -21,19 +21,63 @@ MonoBehaviour:
   configName: ChestDataConfig
   isArray: 1
   chestConfigData:
-  - ChestType: 1
-    BuffExtraData:
-      buffId: 1
-      buffType: 1
-  - ChestType: 2
-    BuffExtraData:
-      buffId: 2
-      buffType: 1
-  - ChestType: 3
-    BuffExtraData:
-      buffId: 0
-      buffType: 0
-  - ChestType: 4
-    BuffExtraData:
-      buffId: 4
-      buffType: 1
+  - chestId: 1
+    itemIds: d1070000
+    description: "\u589E\u52A050\u91D1\u5E01\u548C\u666E\u901A\u54C1\u8D28\u76841\u4E2A\u7269\u54C1"
+    randomItems:
+      count: 1
+      quality: 0
+  - chestId: 2
+    itemIds: d2070000
+    description: "\u589E\u52A050\u5206\u6570\u548C\u666E\u901A\u54C1\u8D28\u76841\u4E2A\u7269\u54C1"
+    randomItems:
+      count: 1
+      quality: 0
+  - chestId: 3
+    itemIds: d3070000
+    description: "\u589E\u52A0100\u91D1\u5E01\u548C\u666E\u901A\u6216\u7A00\u6709\u54C1\u8D28\u76842\u4E2A\u7269\u54C1"
+    randomItems:
+      count: 2
+      quality: 0
+  - chestId: 4
+    itemIds: d4070000
+    description: "\u589E\u52A0100\u5206\u6570\u548C\u666E\u901A\u6216\u7A00\u6709\u54C1\u8D28\u76842\u4E2A\u7269\u54C1"
+    randomItems:
+      count: 2
+      quality: 0
+  - chestId: 5
+    itemIds: d1070000d2070000
+    description: "\u589E\u52A050\u5206\u6570\u300150\u91D1\u5E01\u548C\u7A00\u6709\u54C1\u8D28\u76842\u4E2A\u7269\u54C1"
+    randomItems:
+      count: 2
+      quality: 0
+  - chestId: 6
+    itemIds: d3070000d4070000
+    description: "\u589E\u52A0100\u91D1\u5E01\u3001100\u5206\u6570\u548C\u7A00\u6709\u6216\u666E\u901A\u54C1\u8D28\u76841\u4E2A\u7269\u54C1"
+    randomItems:
+      count: 1
+      quality: 0
+  - chestId: 7
+    itemIds: d1070000d4070000
+    description: "\u589E\u52A050\u91D1\u5E01\u3001100\u5206\u6570\u548C\u7A00\u6709\u6216\u4F20\u5947\u54C1\u8D28\u76843\u4E2A\u7269\u54C1"
+    randomItems:
+      count: 3
+      quality: 0
+  - chestId: 8
+    itemIds: d2070000d3070000
+    description: "\u589E\u52A050\u5206\u6570\u3001100\u91D1\u5E01\u548C\u7A00\u6709\u6216\u4F20\u5947\u54C1\u8D28\u76843\u4E2A\u7269\u54C1"
+    randomItems:
+      count: 3
+      quality: 0
+  - chestId: 9
+    itemIds: d3070000d4070000
+    description: "\u589E\u52A0100\u91D1\u5E01\u3001100\u5206\u6570\u548C\u7A00\u6709\u6216\u4F20\u5947\u54C1\u8D28\u76842\u4E2A\u7269\u54C1"
+    randomItems:
+      count: 2
+      quality: 0
+  - chestId: 10
+    itemIds: d1070000d2070000d3070000d4070000
+    description: "\u589E\u52A0150\u91D1\u5E01\u3001150\u5206\u6570\u548C\u7A00\u6709\u6216\u4F20\u5947\u54C1\u8D28\u76841\u4E2A\u7269\u54C1"
+    randomItems:
+      count: 1
+      quality: 0

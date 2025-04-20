@@ -59,33 +59,111 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public float MaxProperty;
     }
     
-    public struct BagItemData : IItemBaseData
+    public struct BagItemData : IItemBaseData, IEquatable<BagItemData>
     {
         public string ItemName;
         public Sprite Icon;
         public int Index;
         public int Stack;
+        //简要描述(非属性类的物品的描述)
         public string Description;
+        //属性描述
+        public string PropertyDescription;
+        //装备被动描述
+        public string EquipPassiveDescription;
         public PlayerItemType PlayerItemType;
         public bool IsEquip;
         public bool IsLock;
-        public int MaxStack; // 最大堆叠数量
+        public int MaxStack; 
+        public float Price;
+        public float SellRatio;
+        //<售卖的格子, 数量>
         public Action<int, int> OnUseItem;
+        //<丢弃的格子, 数量>
         public Action<int, int> OnDropItem;
+        //<格子1, 格子2>
         public Action<int, int> OnExchangeItem;
+        //<格子, 是否锁定>
         public Action<int, bool> OnLockItem;
-        public Action<int, bool, PlayerItemType> OnEquipItem;
+        //<格子, 是否装备>
+        public Action<int, bool> OnEquipItem;
+        //<格子, 数量>
         public Action<int, int> OnSellItem;
+        public Sprite QualityIcon;
+
+        public bool Equals(BagItemData other)
+        {
+            return ItemName == other.ItemName && Index == other.Index && Stack == other.Stack && Description == other.Description && PlayerItemType == other.PlayerItemType && IsEquip == other.IsEquip && IsLock == other.IsLock && MaxStack == other.MaxStack;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(ItemName);
+            hashCode.Add(Index);
+            hashCode.Add(Stack);
+            hashCode.Add(Description);
+            hashCode.Add((int)PlayerItemType);
+            hashCode.Add(IsEquip);
+            hashCode.Add(IsLock);
+            hashCode.Add(MaxStack);
+            return hashCode.ToHashCode();
+        }
     }
 
-    public struct EquipItemData : IItemBaseData
+    public struct EquipItemData : IItemBaseData, IEquatable<EquipItemData>
     {
         public string ItemName;
         public string Description;
         public bool IsLock;
+        public Sprite Icon;
+        public Sprite QualityIcon;
         public EquipmentPart EquipmentPartType;
+        public PlayerItemType PlayerItemType;
         public Action<int, bool> OnLockItem;
         public Action<int, bool> OnEquipItem;
         public Action<int> OnDropItem;
+
+        public bool Equals(EquipItemData other)
+        {
+            return ItemName == other.ItemName && Description == other.Description && IsLock == other.IsLock && EquipmentPartType == other.EquipmentPartType;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(ItemName);
+            hashCode.Add(Description);
+            hashCode.Add(IsLock);
+            hashCode.Add((int)EquipmentPartType);
+            return hashCode.ToHashCode();
+        }
+
+        public BagItemData ToBagItemData()
+        {
+            return new BagItemData
+            {
+                ItemName = ItemName,
+                Icon = Icon,
+                Index = -1,
+                Stack = 1,
+                Description = Description,
+                PropertyDescription = "",
+                EquipPassiveDescription = "",
+                PlayerItemType = PlayerItemType.Item,
+                IsEquip = true,
+                IsLock = IsLock,
+                MaxStack = 1,
+                Price = 0,
+                SellRatio = 0,
+                OnUseItem = null,
+                OnDropItem = null,
+                OnExchangeItem = null,
+                OnLockItem = OnLockItem,
+                OnEquipItem = OnEquipItem,
+                OnSellItem = null,
+                QualityIcon = QualityIcon
+            };
+        }
     }
 }

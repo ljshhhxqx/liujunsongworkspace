@@ -11,7 +11,11 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         [SerializeField]
         private Image itemImage;        // 显示物品图标的Image组件
         [SerializeField]
+        private Image qualityImage;        // 显示物品图标的Image组件
+        [SerializeField]
         private Text stackText;         // 显示堆叠数量的Text组件
+        [SerializeField]
+        private GameObject lockIcon;    // 锁定图标的GameObject组件
         private BagItemData _currentItem;              // 当前格子的物品
         private int _stackCount;     // 物品堆叠数量
         private int _slotIndex;         // 格子索引
@@ -39,11 +43,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
             
         }
 
-        // public void SetSlotIndex(int index)
-        // {
-        //     _slotIndex = index;
-        // }
-
         // 设置物品到格子
         public void SetItem(BagItemData newItem, int count)
         {
@@ -52,26 +51,21 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
             UpdateSlotUI();
         }
 
-        // 添加到堆叠
-        public void AddToStack(int count)
-        {
-            _stackCount += count;
-            UpdateSlotUI();
-        }
-
         // 是否有物品
         public bool HasItem()
         {
-            return _currentItem.ItemName != null;
+            return !_currentItem.Equals(default(BagItemData));
         }
 
         // 更新格子UI
         private void UpdateSlotUI()
         {
-            var itemIsNull = _currentItem.ItemName == null;
+            var itemIsNull = _currentItem.Equals(default(BagItemData));
             itemImage.sprite = itemIsNull ? null : _currentItem.Icon;
             itemImage.enabled = !itemIsNull;
             stackText.text = !itemIsNull && _stackCount > 1 ? _stackCount.ToString() : "";
+            qualityImage.sprite = _currentItem.QualityIcon;
+            lockIcon.SetActive(_currentItem.IsLock);
         }
 
         // 拖拽开始

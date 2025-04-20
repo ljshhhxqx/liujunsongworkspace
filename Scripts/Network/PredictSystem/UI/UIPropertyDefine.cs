@@ -1,4 +1,5 @@
 ﻿using System;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.UI
@@ -9,13 +10,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         PlayerProperty,
         [UIPropertyType(typeof(BagItemData))]
         BagItem,
-        // [UIPropertyType(typeof(EquipmentItemData))]
-        // EquipmentItem,
-    }
-
-    public interface IUIDatabase
-    {
-        
+        [UIPropertyType(typeof(EquipItemData))]
+        EquipmentItem,
     }
 
     // 复合键结构（玩家ID + 数据Key）
@@ -57,5 +53,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         {
             ValueType = valueType;
         }
+    }
+
+    public interface IUIDatabase
+    {
+        
+    }
+
+    public struct ItemDetailData
+    {
+        public int ItemConfigId;
+        public string ItemName;
+        public QualityType Quality;
     }
 }

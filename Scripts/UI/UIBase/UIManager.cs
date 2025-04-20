@@ -115,7 +115,7 @@ namespace HotUpdate.Scripts.UI.UIBase
             return null;
         }
 
-        public T SwitchUI<T>(Action onShow = null) where T : ScreenUIBase, new()
+        public T SwitchUI<T>(Action<T> onShow = null) where T : ScreenUIBase, new()
         {
             var ui = GetUI<T>();
             if (ui) 
@@ -158,7 +158,7 @@ namespace HotUpdate.Scripts.UI.UIBase
                         _currentActiveScreenUI2 = ui;
                     }
                 }
-                onShow?.Invoke();
+                onShow?.Invoke(ui);
             }
 
             return ui;
