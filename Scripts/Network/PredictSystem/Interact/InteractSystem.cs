@@ -115,5 +115,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         private void HandleEnvironmentInteractRequest(Interact.EnvironmentInteractRequest request)
         {
         }
+
+        public void Clear()
+        {
+            _cts.Cancel();
+            _commandQueue.Clear();
+        }
     }
 }

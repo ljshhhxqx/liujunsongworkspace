@@ -222,6 +222,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             return false;
         }
 
+        // public static void Init(ref PlayerItemState state, int maxSlotCount)
+        // {
+        //     for (int i = 1; i <= maxSlotCount; i++)
+        //     {
+        //         var slotItem = new PlayerBagSlotItem();
+        //         slotItem.IndexSlot = i;
+        //         slotItem.ItemIds = new HashSet<int>();
+        //         state.PlayerItemConfigIdSlotDictionary.Add(slotItem.IndexSlot, slotItem);
+        //     }
+        //     state.PlayerItems = new Dictionary<int, PlayerBagItem>();
+        // }
+
         public static bool AddItem(ref PlayerItemState state, PlayerBagItem item)
         {
             // 检查是否是可堆叠物品
@@ -696,7 +708,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         [MemoryPackOrder(6)]
         public EquipmentPart EquipmentPart;
         
-        public PlayerBagItem(int itemId, int configId, PlayerItemType playerItemType, int maxStack, EquipmentPart equipmentPart = EquipmentPart.None, ItemState state = ItemState.IsInBag, int indexSlot = -1)
+        
+        public PlayerBagItem(int itemId, int configId, 
+            PlayerItemType playerItemType, int maxStack, EquipmentPart equipmentPart = EquipmentPart.None, ItemState state = ItemState.IsInBag, int indexSlot = -1)
         {
             ItemId = itemId;
             ConfigId = configId;
@@ -732,6 +746,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         public int ConfigId;
         [MemoryPackOrder(2)]
         public int ItemId;
+        //必须赋值具体的主属性
+        [MemoryPackOrder(3)]
+        public AttributeIncreaseData[] MainIncreaseDatas;
+        //必须赋值具体的被动属性(由随机值计算出来的具体的值)
+        [MemoryPackOrder(4)]
+        public AttributeIncreaseData[] PassiveIncreaseDatas;
 
         public bool Equals(PlayerEquipSlotItem other)
         {
@@ -766,6 +786,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         public ItemState State;
         [MemoryPackOrder(6)]
         public PlayerItemType PlayerItemType;
+        //消耗品：显示确定的属性增益
+        //装备：显示主要属性增益
+        [MemoryPackOrder(7)]
+        public AttributeIncreaseData[] MainIncreaseDatas;
+        //消耗品：显示随机属性增益(精确到数值的范围最大值和最小值)
+        //装备：显示被动属性增益(精确到数值的范围最大值和最小值)
+        [MemoryPackOrder(8)]
+        public RandomAttributeIncreaseData[] PassiveIncreaseDatas;
 
         public bool Equals(PlayerBagSlotItem other)
         {

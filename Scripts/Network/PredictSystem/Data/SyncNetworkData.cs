@@ -33,7 +33,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     [MemoryPackUnion(11, typeof(ItemLockCommand))]
     [MemoryPackUnion(12, typeof(ItemEquipCommand))]
     [MemoryPackUnion(13, typeof(ItemDropCommand))]
-    
+    [MemoryPackUnion(14, typeof(ItemExchangeCommand))]
+    [MemoryPackUnion(15, typeof(ItemsSellCommand))]
     public partial interface INetworkCommand
     {
         NetworkCommandHeader GetHeader();
@@ -880,6 +881,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         private static int _currentItemId;
         private static int _currentChestId;
         private static int _currentEquipmentId;
+        private static int _currentShopId;
 
         public static int GenerateEquipmentId(int configId, int currentTick)
         {
@@ -963,6 +965,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public static int GenerateChestId(int configId, int currentTick)
         {
             return ++_currentChestId; 
+        }
+        
+        public static int GenerateShopId(int configId, int currentTick)
+        {
+            return ++_currentShopId; 
         }
     }
     

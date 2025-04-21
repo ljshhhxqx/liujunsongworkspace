@@ -149,7 +149,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             if (slot.IsEmpty()) return;
             // 这里可以弹出物品详情面板
             Debug.Log($"显示物品详情: {slot.name}");
-            _uiManager.SwitchUI<ItemDetailsScreenUI>(ui => ui.Open(slot.CurrentItem.ToBagItemData()));
+            _uiManager.SwitchUI<ItemDetailsScreenUI>(ui => ui.Open(slot.CurrentItem.ToBagItemData(), ItemDetailsType.Equipment));
         }
 
         // 初始化格子
@@ -187,6 +187,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
 
             // 创建拖拽图标（由Inventory统一管理）
             _draggedSlot = slot;
+            _draggedSlot.gameObject.SetActive(true);
             var dragImage = dragIcon.GetComponent<Image>();
             dragImage.sprite = slot.CurrentItem.Icon;
             dragIcon.SetActive(true);
@@ -196,8 +197,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
         // 处理拖拽结束
         private void OnSlotEndDrag(BagSlotItem sourceSlot, PointerEventData eventData)
         {
-            Destroy(dragIcon);
-
+            //Destroy(_draggedSlot.gameObject);
+            _draggedSlot.gameObject.SetActive(false);
             // 获取目标格子
             var targetSlot = eventData.pointerEnter?.GetComponent<BagSlotItem>();
             if (targetSlot && targetSlot != sourceSlot)

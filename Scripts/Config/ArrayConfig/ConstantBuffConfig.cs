@@ -23,7 +23,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         {
             return GetBuffData(extraData.buffId);
         }
-
+        
+        
         public BuffData GetBuffData(int buffId, CollectObjectBuffSize collectObjectBuffSize = CollectObjectBuffSize.Small)
         {
             var buff = buffs.Find(b => b.buffId == buffId);

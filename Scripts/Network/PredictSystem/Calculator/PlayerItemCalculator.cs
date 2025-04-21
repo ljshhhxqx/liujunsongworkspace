@@ -238,6 +238,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
         }
 
+        public static void CommandExchangeItem(ItemExchangeCommand itemExchangeCommand, ref PlayerItemState playerItemState)
+        {
+            try
+            {
+                PlayerItemState.SwapItems(ref playerItemState, itemExchangeCommand.FromSlotIndex, itemExchangeCommand.ToSlotIndex);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
         public static void CommandUseItems(ItemsUseCommand itemsUseCommand, ref PlayerItemState playerItemState)
         {
             foreach (var itemData in itemsUseCommand.Slots)

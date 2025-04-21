@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using HotUpdate.Scripts.Config;
 
 namespace HotUpdate.Scripts.Tool.Static
 {
@@ -111,6 +113,108 @@ namespace HotUpdate.Scripts.Tool.Static
                 result[i] = list[UnityEngine.Random.Range(0, list.Count)];
             }
             return result;
+        }
+        
+        public static string GetPropertyDesc(BuffData extraData)
+        {
+            var data = extraData.increaseDataList[0];
+            var attributeIncreaseData = new AttributeIncreaseData();
+            attributeIncreaseData.propertyType = extraData.propertyType;
+            attributeIncreaseData.buffIncreaseType = extraData.mainIncreaseType;
+            attributeIncreaseData.increaseValue = data.increaseValue;
+            attributeIncreaseData.buffOperationType = data.operationType;
+            return GetBuffEffectDesc(attributeIncreaseData);
+        }
+
+        public static string GetBuffEffectDesc(AttributeIncreaseData[] extraDatas)
+        {
+            var str = new StringBuilder();
+            foreach (var data in extraDatas)
+            {
+                str.Append(GetBuffEffectDesc(data));
+                str.Append("\\n");
+            }
+            return str.ToString().TrimEnd('\n');
+        }
+
+        public static string GetRandomBuffEffectDesc(RandomAttributeIncreaseData[] extraDatas)
+        {
+            var str = new StringBuilder();
+            foreach (var data in extraDatas)
+            {
+                str.Append(GetRandomBuffEffectDesc(data));
+                str.Append("\\n");
+            }   
+            return str.ToString().TrimEnd('\n');
+        }
+
+        public static string GetRandomBuffEffectDesc(RandomAttributeIncreaseData extraData)
+        {
+            var propName = EnumHeaderParser.GetHeader(extraData.propertyType);
+            var operation = extraData.buffOperationType switch
+            {
+                BuffOperationType.Add => "增加",
+                BuffOperationType.Subtract => "减少", 
+                BuffOperationType.Multiply => "提升",
+                BuffOperationType.Divide => "降低",
+                _ => "调整"
+            };
+            var increaseDesc = extraData.buffIncreaseType switch
+            {
+                BuffIncreaseType.Base => "基础",
+                BuffIncreaseType.Multiplier => "",
+                BuffIncreaseType.Extra => "额外",
+                BuffIncreaseType.CorrectionFactor => "总",
+                BuffIncreaseType.Current => "当前",
+                _ => "数值"
+            };
+
+            return $"{operation}{{{GetDynamicValueDesc(extraData)}的{increaseDesc}{propName}}}";
+        }
+
+        public static string GetBuffEffectDesc(AttributeIncreaseData effect)
+        {
+            var propName = EnumHeaderParser.GetHeader(effect.propertyType);
+
+            var operation = effect.buffOperationType switch
+            {
+                BuffOperationType.Add => "增加",
+                BuffOperationType.Subtract => "减少", 
+                BuffOperationType.Multiply => "提升",
+                BuffOperationType.Divide => "降低",
+                _ => "调整"
+            };
+            var increaseDesc = effect.buffIncreaseType switch
+            {
+                BuffIncreaseType.Base => "基础",
+                BuffIncreaseType.Multiplier => "",
+                BuffIncreaseType.Extra => "额外",
+                BuffIncreaseType.CorrectionFactor => "总",
+                BuffIncreaseType.Current => "当前",
+                _ => "数值"
+            };
+
+            return $"{operation}{{{GetDynamicValueDesc(effect)}的{increaseDesc}{propName}}}";
+        }
+
+        public static string GetDynamicValueDesc(AttributeIncreaseData effect)
+        {
+            return effect.buffIncreaseType switch
+            {
+                BuffIncreaseType.Multiplier => $"{effect.increaseValue:P0}",
+                BuffIncreaseType.CorrectionFactor => $"{effect.increaseValue:P0}",
+                _ => $"{effect.increaseValue:F1}"
+            };
+        }
+        
+        public static string GetDynamicValueDesc(RandomAttributeIncreaseData effect)
+        {
+            return effect.buffIncreaseType switch
+            {
+                BuffIncreaseType.Multiplier => $"{effect.increaseValueRange.min:P0}~{effect.increaseValueRange.max:P0}",
+                BuffIncreaseType.CorrectionFactor => $"{effect.increaseValueRange.min:P0}~{effect.increaseValueRange.max:P0}",
+                _ => $"{effect.increaseValueRange.min:F1}~{effect.increaseValueRange.max:F1}"
+            };
         }
     }
     

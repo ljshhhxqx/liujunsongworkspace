@@ -8,6 +8,7 @@ using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.Static;
+using HotUpdate.Scripts.Tool.Static;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using MemoryPack;
 using UniRx;
@@ -84,6 +85,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     break;
                 case ItemsSellCommand itemSellCommand:
                     PlayerItemCalculator.CommandSellItem(itemSellCommand, ref playerItemState, header.ConnectionId);
+                    break;
+                case ItemExchangeCommand itemExchangeCommand:
+                    PlayerItemCalculator.CommandExchangeItem(itemExchangeCommand, ref playerItemState);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -207,20 +211,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _bagItems ??= UIPropertyBinder.GetReactiveDictionary<BagItemData>(_bindKey);
             foreach (var item in playerItemState.PlayerItemConfigIdSlotDictionary.Keys)
             {
-                var bagItemData = playerItemState.PlayerItemConfigIdSlotDictionary[item];
-                var itemConfig = _itemConfig.GetGameItemData(bagItemData.ConfigId);
-                
+                var playerBagSlotItem = playerItemState.PlayerItemConfigIdSlotDictionary[item];
+                var itemConfig = _itemConfig.GetGameItemData(playerBagSlotItem.ConfigId);
+                var mainProperty = GameStaticExtensions.GetBuffEffectDesc(playerBagSlotItem.MainIncreaseDatas);
+                var passiveProperty = GameStaticExtensions.GetRandomBuffEffectDesc(playerBagSlotItem.PassiveIncreaseDatas);
                 var bagItem = new BagItemData
                 {
                     ItemName = itemConfig.name,
-                    Index = bagItemData.IndexSlot,
-                    Stack = bagItemData.Count,
+                    Index = playerBagSlotItem.IndexSlot,
+                    Stack = playerBagSlotItem.Count,
                     Icon = UISpriteContainer.GetSprite(itemConfig.iconName),
                     QualityIcon = UISpriteContainer.GetQualitySprite(itemConfig.quality),
-                    Description = itemConfig.propertyDesc,
+                    Description = itemConfig.desc,
+                    PropertyDescription = mainProperty,
+                    EquipPassiveDescription = passiveProperty,
                     PlayerItemType = itemConfig.itemType,
-                    IsEquip = bagItemData.State == ItemState.IsEquipped,
-                    IsLock = bagItemData.State == ItemState.IsLocked,
+                    IsEquip = playerBagSlotItem.State == ItemState.IsEquipped,
+                    IsLock = playerBagSlotItem.State == ItemState.IsLocked,
                     MaxStack = itemConfig.maxStack,
                     OnUseItem = OnUseItem,
                     OnDropItem = OnDropItem,

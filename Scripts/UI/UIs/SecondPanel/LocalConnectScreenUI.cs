@@ -23,7 +23,7 @@ namespace UI.UIs
         
         public override UIType Type => UIType.LocalConnect;
         public override UICanvasType CanvasType => UICanvasType.SecondPanel;
-        
+
         [Inject]
         private void Init(UIManager uiManager, NetworkManagerCustom networkManager)
         {

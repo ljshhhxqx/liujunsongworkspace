@@ -202,7 +202,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     }
 
     [Serializable]
-    public struct GameItemConfigData
+    public struct GameItemConfigData : IEquatable<GameItemConfigData>
     {
         public int id;
         public string name;
@@ -224,6 +224,37 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 #if UNITY_EDITOR
         public bool isDealWithBuffExtraData;
 #endif
+        public bool Equals(GameItemConfigData other)
+        {
+            return id == other.id && name == other.name && desc == other.desc && price.Equals(other.price) && sellPriceRatio.Equals(other.sellPriceRatio) && itemType == other.itemType && maxStack == other.maxStack && weight == other.weight && iconName == other.iconName && prefabName == other.prefabName && duration.Equals(other.duration) && quality == other.quality && equipmentPart == other.equipmentPart && buffExtraData == null && propertyDesc == other.propertyDesc && isDealWithBuffExtraData == other.isDealWithBuffExtraData;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is GameItemConfigData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(id);
+            hashCode.Add(name);
+            hashCode.Add(desc);
+            hashCode.Add(price);
+            hashCode.Add(sellPriceRatio);
+            hashCode.Add((int)itemType);
+            hashCode.Add(maxStack);
+            hashCode.Add(weight);
+            hashCode.Add(iconName);
+            hashCode.Add(prefabName);
+            hashCode.Add(duration);
+            hashCode.Add((int)quality);
+            hashCode.Add((int)equipmentPart);
+            hashCode.Add(buffExtraData);
+            hashCode.Add(propertyDesc);
+            hashCode.Add(isDealWithBuffExtraData);
+            return hashCode.ToHashCode();
+        }
     }
 
     [Serializable]
@@ -273,6 +304,11 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public static bool IsEquipment(this PlayerItemType itemType)
         {
             return itemType == PlayerItemType.Weapon || itemType == PlayerItemType.Armor;
+        }
+        
+        public static bool ShowProperty(this PlayerItemType itemType)
+        {
+            return itemType == PlayerItemType.Weapon || itemType == PlayerItemType.Armor || itemType == PlayerItemType.Consume;
         }
     }   
 }

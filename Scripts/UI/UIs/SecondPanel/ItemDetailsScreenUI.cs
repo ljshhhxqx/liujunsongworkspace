@@ -2,6 +2,7 @@
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
+using HotUpdate.Scripts.UI.UIs.ThirdPanel;
 using TMPro;
 using UI.UIBase;
 using UniRx;
@@ -27,15 +28,12 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         [SerializeField] private Button useButton;
         [SerializeField] private Button equipButton;
         [SerializeField] private Button lockButton;
-        [SerializeField] private Button sellButton;
         [SerializeField] private Button dropButton;
-
-        [Header("Sub Panels")]
-        [SerializeField] private QuantitySelectionPanel quantityPanel;
+        [SerializeField] private Button sellButton;
         
         private UIManager _uiManager;
         private BagItemData _currentItemData;
-        private bool _isEquippedState; // 当前装备状态缓存
+        private ItemDetailsType _currentItemDetailsType;
 
         [Inject]
         private void Init(UIManager uiManager)
@@ -44,13 +42,13 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             useButton.OnClickAsObservable().Subscribe(_ => OnUseClicked()).AddTo(this);
             equipButton.OnClickAsObservable().Subscribe(_ => OnEquipClicked()).AddTo(this);
             lockButton.OnClickAsObservable().Subscribe(_ => OnLockClicked()).AddTo(this);
-            sellButton.OnClickAsObservable().Subscribe(_ => OnSellClicked()).AddTo(this);
             dropButton.OnClickAsObservable().Subscribe(_ => OnDropClicked()).AddTo(this);
         }
 
-        public void Open(BagItemData itemData)
+        public void Open(BagItemData itemData, ItemDetailsType itemDetailsType = ItemDetailsType.Bag)
         {
             _currentItemData = itemData;
+            _currentItemDetailsType = itemDetailsType;
             UpdateUI();
         }
 
@@ -67,6 +65,9 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
 
             // 描述信息
             descriptionText.text = _currentItemData.Description;
+            var showProperty = _currentItemData.PlayerItemType.ShowProperty();
+            propertyText.gameObject.SetActive(showProperty);
+            propertyText.text = showProperty ? _currentItemData.PropertyDescription : "";
             propertyText.text = _currentItemData.PropertyDescription;
             
             // 被动效果（仅装备类显示）
@@ -75,7 +76,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             passiveEffectText.text = showPassive ? _currentItemData.EquipPassiveDescription : "";
 
             // 价格信息
-            priceText.text = $"价格: {_currentItemData.Price}G\n售价: {_currentItemData.Price * _currentItemData.SellRatio}G";
+            priceText.text = $"价格: {_currentItemData.Price * _currentItemData.SellRatio}G";
 
             // 按钮状态
             UpdateButtonStates();
@@ -84,20 +85,38 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         private void UpdateButtonStates()
         {
             var isLocked = _currentItemData.IsLock;
-            
-            useButton.interactable = !isLocked;
-            equipButton.interactable = !isLocked && _currentItemData.PlayerItemType.IsEquipment();
-            sellButton.interactable = !isLocked;
-            dropButton.interactable = !isLocked;
+            switch (_currentItemDetailsType)
+            {
+                case ItemDetailsType.Bag:
+                    useButton.gameObject.SetActive(!isLocked && _currentItemData.PlayerItemType == PlayerItemType.Consume);
+                    dropButton.gameObject.SetActive(!isLocked);
+                    equipButton.gameObject.SetActive(!isLocked && _currentItemData.PlayerItemType.IsEquipment());
+                    lockButton.gameObject.SetActive(true);
+                    sellButton.gameObject.SetActive(false);
+                    break;
+                case ItemDetailsType.Equipment:
+                    useButton.gameObject.SetActive(false);
+                    dropButton.gameObject.SetActive(false);
+                    equipButton.gameObject.SetActive(!isLocked && _currentItemData.PlayerItemType.IsEquipment());
+                    lockButton.gameObject.SetActive(true);
+                    sellButton.gameObject.SetActive(false);
+                    break;
+                case ItemDetailsType.Shop:
+                    useButton.gameObject.SetActive(false);
+                    dropButton.gameObject.SetActive(false);
+                    equipButton.gameObject.SetActive(false);
+                    lockButton.gameObject.SetActive(false);
+                    sellButton.gameObject.SetActive(true);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
 
+            
             lockButton.GetComponentInChildren<TextMeshProUGUI>().text = 
                 _currentItemData.IsLock ? "解锁" : "锁定";
-            
-            if(equipButton.interactable)
-            {
-                equipButton.GetComponentInChildren<TextMeshProUGUI>().text = 
-                    _currentItemData.IsEquip ? "卸下" : "装备";
-            }
+            equipButton.GetComponentInChildren<TextMeshProUGUI>().text = 
+                _currentItemData.IsEquip ? "卸下" : "装备";
         }
 
         #region Button Handlers
@@ -105,10 +124,13 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         {
             if(_currentItemData.Stack > 1)
             {
-                quantityPanel.Show(max: _currentItemData.Stack, onConfirm: (amount) => 
+                _uiManager.SwitchUI<QuantitySelectionPanel>(ui =>
                 {
-                    _currentItemData.OnUseItem?.Invoke(_currentItemData.Index, amount);
-                    Close();
+                    ui.Show(max: _currentItemData.Stack, onConfirm: (amount) =>
+                    {
+                        _currentItemData.OnUseItem?.Invoke(_currentItemData.Index, amount);
+                        Close();
+                    });
                 });
             }
             else
@@ -136,6 +158,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
 
         private void OnSellClicked()
         {
+            var quantityPanel = _uiManager.SwitchUI<QuantitySelectionPanel>();
             quantityPanel.Show(max: _currentItemData.Stack, onConfirm: (amount) => 
             {
                 _currentItemData.OnSellItem?.Invoke(_currentItemData.Index, amount);
@@ -145,6 +168,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
 
         private void OnDropClicked()
         {
+            var quantityPanel = _uiManager.SwitchUI<QuantitySelectionPanel>();
             quantityPanel.Show(max: _currentItemData.Stack, onConfirm: (amount) => 
             {
                 _currentItemData.OnDropItem?.Invoke(_currentItemData.Index, amount);
@@ -162,33 +186,11 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         public override UICanvasType CanvasType => UICanvasType.SecondPanel;
     }
 
-    // 数量选择面板（简版实现）
-    public class QuantitySelectionPanel : MonoBehaviour
+    public enum ItemDetailsType
     {
-        [SerializeField] private TMP_InputField amountInput;
-        [SerializeField] private Button confirmButton;
-
-        public void Show(int max, Action<int> onConfirm)
-        {
-            gameObject.SetActive(true);
-            amountInput.text = "1";
-            amountInput.onValueChanged.AddListener(v => 
-            {
-                if(!int.TryParse(v, out int value)) return;
-                value = Mathf.Clamp(value, 1, max);
-                amountInput.text = value.ToString();
-            });
-
-            confirmButton.onClick.AddListener(() => 
-            {
-                if(int.TryParse(amountInput.text, out int result))
-                {
-                    onConfirm?.Invoke(Mathf.Clamp(result, 1, max));
-                    Hide();
-                }
-            });
-        }
-
-        public void Hide() => gameObject.SetActive(false);
+        None,
+        Bag,
+        Equipment,
+        Shop,
     }
 }
