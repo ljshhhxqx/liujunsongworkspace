@@ -8,6 +8,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Tool.ObjectPool;
+using HotUpdate.Scripts.Tool.Static;
 using Mirror;
 using UnityEngine;
 
@@ -307,18 +308,45 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 {
                     bagItem.MainIncreaseDatas = mainAttributeData;
                 }
-
-                if (bagItem.RandomIncreaseDatas == null || bagItem.RandomIncreaseDatas.Length == 0)
+                
+                if (itemConfigData.itemType == PlayerItemType.Consume && bagItem.RandomIncreaseDatas == null || bagItem.RandomIncreaseDatas.Length == 0)
                 {
-                    if (itemConfigData.itemType == PlayerItemType.Consume)
-                    {
-                        bagItem.RandomIncreaseDatas = passiveAttributeData;
-                    }
+                    bagItem.RandomIncreaseDatas = passiveAttributeData;
                 }
 
-                if (bagItem.PassiveAttributeIncreaseDatas == null || bagItem.PassiveAttributeIncreaseDatas.Length == 0)
+                if (itemConfigData.itemType.IsEquipment() && bagItem.PassiveAttributeIncreaseDatas == null || bagItem.PassiveAttributeIncreaseDatas.Length == 0)
                 {
-                    
+                    var configId = GetEquipmentConfigId(bagItem.PlayerItemType, bagItem.ConfigId);
+                    int battleEffectConfigId;
+                    switch (bagItem.PlayerItemType)
+                    {
+                        case PlayerItemType.Weapon:
+                            battleEffectConfigId = Constant.WeaponConfig.GetWeaponConfigData(configId).battleEffectConditionId;
+                            break;
+                        case PlayerItemType.Armor:
+                            battleEffectConfigId = Constant.ArmorConfig.GetArmorConfigData(configId).battleEffectConditionId;
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                    var conditionConfig = Constant.ConditionConfig.GetConditionData(battleEffectConfigId);
+                    var buffIncreaseTypes = Enum.GetValues(typeof(BuffIncreaseType)).Cast<BuffIncreaseType>();
+                    var equipmentBuff = Constant.RandomBuffConfig.GetEquipmentBuff(buffIncreaseTypes.RandomSelect());
+                    var attribute = Constant.RandomBuffConfig.GetBuff(equipmentBuff, conditionConfig.buffWeight);
+                    bagItem.PassiveAttributeIncreaseDatas = new AttributeIncreaseData[attribute.increaseDataList.Count];
+                    for (int i = 0; i < attribute.increaseDataList.Count; i++)
+                    {
+                        bagItem.PassiveAttributeIncreaseDatas[i] = new AttributeIncreaseData
+                        {
+                            header = new AttributeIncreaseDataHeader
+                            {
+                                buffIncreaseType = attribute.increaseDataList[i].increaseType,
+                                propertyType = attribute.propertyType,
+                                buffOperationType = BuffOperationType.Add
+                            },
+                            increaseValue = attribute.increaseDataList[i].increaseValue
+                        };
+                    }
                 }
             }
         }

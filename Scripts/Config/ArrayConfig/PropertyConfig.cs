@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
+using HotUpdate.Scripts.Tool.Static;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;

@@ -347,6 +347,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 GameSyncManager = gameSyncManager,
                 InteractSystem = _interactSystem,
                 IsServer = isServer,
+                ConstantBuffConfig = configProvider.GetConfig<ConstantBuffConfig>(),
+                RandomBuffConfig = configProvider.GetConfig<RandomBuffConfig>(),
             });
             PlayerEquipmentCalculator.SetConstant(new PlayerEquipmentConstant
             {

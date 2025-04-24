@@ -151,19 +151,16 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                     var newRow = rowCount + 1;
                     foreach (var configData in armorConfigs)
                     {
-                        if (!existingIds.Contains(configData.armorID))
-                        {
-                            worksheet.Cells[newRow, idCol].Value = configData.armorID;
-                            worksheet.Cells[newRow, itemIdCol].Value = configData.itemID;
-                            worksheet.Cells[newRow, armorNameCol].Value = configData.armorName;
-                            worksheet.Cells[newRow, equipmentPartCol].Value = configData.equipmentPart.ToString();
-                            worksheet.Cells[newRow, skillIdCol].Value = configData.skillID;
-                            worksheet.Cells[newRow, qualityCol].Value = configData.quality.ToString();
-                            worksheet.Cells[newRow, battleEffectConditionIdCol].Value = configData.battleEffectConditionId;
-                            worksheet.Cells[newRow, battleEffectConditionDescriptionCol].Value = configData.battleEffectConditionDescription;
+                        worksheet.Cells[newRow, idCol].Value = configData.armorID;
+                        worksheet.Cells[newRow, itemIdCol].Value = configData.itemID;
+                        worksheet.Cells[newRow, armorNameCol].Value = configData.armorName;
+                        worksheet.Cells[newRow, equipmentPartCol].Value = configData.equipmentPart.ToString();
+                        worksheet.Cells[newRow, skillIdCol].Value = configData.skillID;
+                        worksheet.Cells[newRow, qualityCol].Value = configData.quality.ToString();
+                        worksheet.Cells[newRow, battleEffectConditionIdCol].Value = configData.battleEffectConditionId;
+                        worksheet.Cells[newRow, battleEffectConditionDescriptionCol].Value = configData.battleEffectConditionDescription;
 
-                            newRow++;
-                        }
+                        newRow++;
                     }
                 }
                 catch (Exception e)
