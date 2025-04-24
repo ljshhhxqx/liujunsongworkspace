@@ -119,10 +119,12 @@ namespace HotUpdate.Scripts.Tool.Static
         {
             var data = extraData.increaseDataList[0];
             var attributeIncreaseData = new AttributeIncreaseData();
-            attributeIncreaseData.propertyType = extraData.propertyType;
-            attributeIncreaseData.buffIncreaseType = extraData.mainIncreaseType;
+            var header = new AttributeIncreaseDataHeader();
+            header.propertyType = extraData.propertyType;
+            header.buffIncreaseType = extraData.mainIncreaseType;
             attributeIncreaseData.increaseValue = data.increaseValue;
-            attributeIncreaseData.buffOperationType = data.operationType;
+            header.buffOperationType = data.operationType;
+            attributeIncreaseData.header = header;
             return GetBuffEffectDesc(attributeIncreaseData);
         }
 
@@ -150,8 +152,9 @@ namespace HotUpdate.Scripts.Tool.Static
 
         public static string GetRandomBuffEffectDesc(RandomAttributeIncreaseData extraData)
         {
-            var propName = EnumHeaderParser.GetHeader(extraData.propertyType);
-            var operation = extraData.buffOperationType switch
+            var header = extraData.header;
+            var propName = EnumHeaderParser.GetHeader(header.propertyType);
+            var operation = header.buffOperationType switch
             {
                 BuffOperationType.Add => "增加",
                 BuffOperationType.Subtract => "减少", 
@@ -159,7 +162,7 @@ namespace HotUpdate.Scripts.Tool.Static
                 BuffOperationType.Divide => "降低",
                 _ => "调整"
             };
-            var increaseDesc = extraData.buffIncreaseType switch
+            var increaseDesc = header.buffIncreaseType switch
             {
                 BuffIncreaseType.Base => "基础",
                 BuffIncreaseType.Multiplier => "",
@@ -174,9 +177,10 @@ namespace HotUpdate.Scripts.Tool.Static
 
         public static string GetBuffEffectDesc(AttributeIncreaseData effect)
         {
-            var propName = EnumHeaderParser.GetHeader(effect.propertyType);
+            var header = effect.header;
+            var propName = EnumHeaderParser.GetHeader(header.propertyType);
 
-            var operation = effect.buffOperationType switch
+            var operation = header.buffOperationType switch
             {
                 BuffOperationType.Add => "增加",
                 BuffOperationType.Subtract => "减少", 
@@ -184,7 +188,7 @@ namespace HotUpdate.Scripts.Tool.Static
                 BuffOperationType.Divide => "降低",
                 _ => "调整"
             };
-            var increaseDesc = effect.buffIncreaseType switch
+            var increaseDesc = header.buffIncreaseType switch
             {
                 BuffIncreaseType.Base => "基础",
                 BuffIncreaseType.Multiplier => "",
@@ -199,7 +203,7 @@ namespace HotUpdate.Scripts.Tool.Static
 
         public static string GetDynamicValueDesc(AttributeIncreaseData effect)
         {
-            return effect.buffIncreaseType switch
+            return effect.header.buffIncreaseType switch
             {
                 BuffIncreaseType.Multiplier => $"{effect.increaseValue:P0}",
                 BuffIncreaseType.CorrectionFactor => $"{effect.increaseValue:P0}",
@@ -209,7 +213,7 @@ namespace HotUpdate.Scripts.Tool.Static
         
         public static string GetDynamicValueDesc(RandomAttributeIncreaseData effect)
         {
-            return effect.buffIncreaseType switch
+            return effect.header.buffIncreaseType switch
             {
                 BuffIncreaseType.Multiplier => $"{effect.increaseValueRange.min:P0}~{effect.increaseValueRange.max:P0}",
                 BuffIncreaseType.CorrectionFactor => $"{effect.increaseValueRange.min:P0}~{effect.increaseValueRange.max:P0}",

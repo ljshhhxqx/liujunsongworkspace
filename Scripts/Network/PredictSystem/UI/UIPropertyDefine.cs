@@ -12,6 +12,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         BagItem,
         [UIPropertyType(typeof(EquipItemData))]
         EquipmentItem,
+        [UIPropertyType(typeof(RandomShopItemData))]
+        ShopItem
     }
 
     // 复合键结构（玩家ID + 数据Key）

@@ -213,11 +213,25 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 HandlePropertyEquipmentPassiveCommand(header.ConnectionId, propertyEquipmentPassiveCommand.EquipItemConfigId, propertyEquipmentPassiveCommand.EquipItemId, propertyEquipmentPassiveCommand.IsEquipped, propertyEquipmentPassiveCommand.PlayerItemType);
             }
+            else if (command is GoldChangedCommand goldChangedCommand)
+            {
+                HandleGoldChanged(header.ConnectionId, goldChangedCommand.Gold);
+            }
             else
             {
                 Debug.LogError($"PlayerPropertySyncSystem: Unknown command type {command.GetType().Name}");
             }
             return null;
+        }
+
+        private void HandleGoldChanged(int headerConnectionId, float gold)
+        {
+            var playerState = GetState<PlayerPredictablePropertyState>(headerConnectionId);
+            var propertyCalculator = playerState.Properties[PropertyTypeEnum.Gold];
+            propertyCalculator = propertyCalculator.UpdateCurrentValue(gold);
+            playerState.Properties[PropertyTypeEnum.Gold] = propertyCalculator;
+            PropertyStates[headerConnectionId] = playerState;
+            PropertyChange(headerConnectionId);
         }
 
         private void HandlePropertyEquipmentPassiveCommand(int targetId, int equipConfigId, int equipItemId, bool isEquipped, PlayerItemType playerItemType)
@@ -463,7 +477,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             return GetState<PlayerPredictablePropertyState>(connectionId).Properties;
         }
+
+        public bool TryUseGold(int connectionId, int costGold, out float currentGold)
+        {
+            var gold = GetPlayerProperty(connectionId, PropertyTypeEnum.Gold);
+            currentGold = gold - costGold;
+            return currentGold >= 0;
+        }
         
+        public float GetPlayerGold(int connectionId)
+        {
+            return GetPlayerProperty(connectionId, PropertyTypeEnum.Gold);
+        }
+
         public float GetPlayerProperty(int connectionId, PropertyTypeEnum propertyType)
         {
             return GetState<PlayerPredictablePropertyState>(connectionId).Properties[propertyType].CurrentValue;

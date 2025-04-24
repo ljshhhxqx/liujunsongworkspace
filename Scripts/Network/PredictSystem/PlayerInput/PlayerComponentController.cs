@@ -16,6 +16,7 @@ using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Overlay;
+using HotUpdate.Scripts.UI.UIs.Panel;
 using HotUpdate.Scripts.UI.UIs.Panel.Backpack;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using Mirror;
@@ -68,6 +69,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private PlayerItemCalculator _playerItemCalculator;
         private PlayerElementCalculator _playerElementCalculator;
         private PlayerEquipmentCalculator _playerEquipmentCalculator;
+        private PlayerShopCalculator _playerShopCalculator;
         
         [Header("Parameters")]
         private float _currentSpeed;
@@ -89,6 +91,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         
         private BindingKey _propertyBindKey;
         private BindingKey _itemBindKey;
+        private BindingKey _shopBindKey;
+        
+        private Dictionary<Type, bool> _reactivePropertyBinds = new Dictionary<Type, bool>();
+        
+        private Vector3 _bornPosition;
         
         public int CurrentComboStage { get; private set; }
         public IObservable<PlayerInputStateData> InputStream => _inputStream;
@@ -171,18 +178,55 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     UIPropertyBinder.LocalPlayerId);
                 _itemBindKey = new BindingKey(UIPropertyDefine.BagItem, DataScope.LocalPlayer,
                     UIPropertyBinder.LocalPlayerId);
+                _shopBindKey = new BindingKey(UIPropertyDefine.ShopItem, DataScope.LocalPlayer,
+                    UIPropertyBinder.LocalPlayerId);
                 HandleLocalInitCallback();
             }
         }
 
         private void HandleLocalInitCallback()
         {
-            var playerPropertiesOverlay = _uiManager.SwitchUI<PlayerPropertiesOverlay>();
-            playerPropertiesOverlay.BindPlayerProperty(UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_propertyBindKey));
+            if (!_reactivePropertyBinds.ContainsKey(typeof(PropertyItemData)))
+            {
+                _reactivePropertyBinds.Add(typeof(PropertyItemData), true);
+                var playerPropertiesOverlay = _uiManager.SwitchUI<PlayerPropertiesOverlay>();
+                playerPropertiesOverlay.BindPlayerProperty(UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_propertyBindKey));
+            }
             
+        }
+
+        public void OpenBag()
+        {
+            if (!isLocalPlayer)
+            {
+                return;
+            }
+
+            if (_uiManager.IsUIOpen(UIType.Backpack))
+            {
+                _uiManager.CloseUI(UIType.Backpack);
+                return;
+            }
             var bagItemOverlay = _uiManager.SwitchUI<BackpackScreenUI>();
             bagItemOverlay.BindBagItemData(UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey));
             bagItemOverlay.BindEquipItemData(UIPropertyBinder.GetReactiveDictionary<EquipItemData>(_itemBindKey));
+        }
+
+        public void OpenShop()
+        {
+            if (!isLocalPlayer)
+            {
+                return;
+            }
+            
+            if (_uiManager.IsUIOpen(UIType.Shop))
+            {
+                _uiManager.CloseUI(UIType.Shop);
+                return;
+            }
+            var shopScreenUI = _uiManager.SwitchUI<ShopScreenUI>();
+            shopScreenUI.BindShopItemData(UIPropertyBinder.GetReactiveDictionary<RandomShopItemData>(_itemBindKey));
+            shopScreenUI.BindBagItemData(UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey));
         }
 
         private bool HandleSpecialState()
@@ -261,6 +305,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerItemCalculator = new PlayerItemCalculator();
             _playerElementCalculator = new PlayerElementCalculator();
             _playerEquipmentCalculator = new PlayerEquipmentCalculator();
+            _playerShopCalculator = new PlayerShopCalculator();
             var jsonData = configProvider.GetConfig<JsonDataConfig>();
             var propertyConfig = configProvider.GetConfig<PropertyConfig>();
             var gameData = jsonData.GameConfig;
@@ -306,6 +351,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             PlayerEquipmentCalculator.SetConstant(new PlayerEquipmentConstant
             {
                 GameSyncManager = gameSyncManager,
+                ItemConfig = configProvider.GetConfig<ItemConfig>(),
+                IsServer = isServer,
+            });
+            PlayerShopCalculator.SetConstant(new ShopCalculatorConstant
+            {
+                GameSyncManager = gameSyncManager,
+                ShopConfig = configProvider.GetConfig<ShopConfig>(),
                 ItemConfig = configProvider.GetConfig<ItemConfig>(),
                 IsServer = isServer,
             });

@@ -3,6 +3,7 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using UniRx;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace HotUpdate.Scripts.UI.UIs.Panel.Item
 {
@@ -164,6 +165,40 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                 OnSellItem = null,
                 QualityIcon = QualityIcon
             };
+        }
+    }
+
+    public struct RandomShopItemData : IItemBaseData, IEquatable<RandomShopItemData>
+    {
+        public int ShopId;
+        public int ItemConfigId;
+        public int ShopConfigId;
+        public int RemainingCount;
+        public float Price;
+        public float SellPrice;
+        public int MaxCount;
+        public QualityType QualityType;
+        public Sprite Icon;
+        public Sprite QualityIcon;
+        public string Name;
+        public string MainProperty;
+        public string PassiveProperty;
+        public PlayerItemType ItemType;
+        public Action<int, int> OnBuyItem;
+
+        public bool Equals(RandomShopItemData other)
+        {
+            return ShopId == other.ShopId && RemainingCount == other.RemainingCount;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is RandomShopItemData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(ShopId, RemainingCount);
         }
     }
 }

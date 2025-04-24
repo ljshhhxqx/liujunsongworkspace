@@ -12,19 +12,17 @@ using HotUpdate.Scripts.Tool.Static;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using MemoryPack;
 using UniRx;
-using UnityEngine;
 using VContainer;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {
-    public class PlayerItemSyncState : PredictableStateBase
+    public class PlayerItemPredictableState : PredictableStateBase
     {
         protected override ISyncPropertyState CurrentState { get; set; }
         protected override CommandType CommandType => CommandType.Item;
-        private ReactiveDictionary<int,BagItemData> _bagItems;
+        private ReactiveDictionary<int, BagItemData> _bagItems;
         private ItemConfig _itemConfig;
         private BindingKey _bindKey;
-        private Dictionary<string, Sprite> _sprites = new Dictionary<string, Sprite>();
 
         [Inject]
         protected override void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider)
@@ -208,13 +206,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             if (!isLocalPlayer)
                 return;
+            CurrentState = playerItemState;
             _bagItems ??= UIPropertyBinder.GetReactiveDictionary<BagItemData>(_bindKey);
             foreach (var item in playerItemState.PlayerItemConfigIdSlotDictionary.Keys)
             {
                 var playerBagSlotItem = playerItemState.PlayerItemConfigIdSlotDictionary[item];
                 var itemConfig = _itemConfig.GetGameItemData(playerBagSlotItem.ConfigId);
                 var mainProperty = GameStaticExtensions.GetBuffEffectDesc(playerBagSlotItem.MainIncreaseDatas);
-                var passiveProperty = GameStaticExtensions.GetRandomBuffEffectDesc(playerBagSlotItem.PassiveIncreaseDatas);
+                var passiveProperty = GameStaticExtensions.GetRandomBuffEffectDesc(playerBagSlotItem.RandomIncreaseDatas);
                 var bagItem = new BagItemData
                 {
                     ItemName = itemConfig.name,
@@ -236,10 +235,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     OnExchangeItem = OnExchangeItem,
                     OnSellItem = OnSellItem,
                 };
-                if (!_bagItems.TryAdd(item, bagItem))
-                {
-                    _bagItems[item] = bagItem;
-                }
+                _bagItems[item] = bagItem;
             }
         }
     }

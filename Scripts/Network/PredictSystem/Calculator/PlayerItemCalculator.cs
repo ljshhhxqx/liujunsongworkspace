@@ -51,6 +51,46 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
         }
 
+        public static IAttributeIncreaseData[] GetAttributeIncreaseDatas(BuffExtraData[] buffExtraData)
+        {
+            var attributeIncreaseDatas = new IAttributeIncreaseData[buffExtraData.Length];
+            for (int i = 0; i < buffExtraData.Length; i++)
+            {
+                attributeIncreaseDatas[i] = GetAttributeIncreaseData(buffExtraData[i]);
+            }
+            return attributeIncreaseDatas;
+        }
+
+        public static IAttributeIncreaseData GetAttributeIncreaseData(BuffExtraData buffExtraData)
+        {
+            switch (buffExtraData.buffType)
+            {
+                case BuffType.Constant:
+                    var constantBuff = Constant.ConstantBuffConfig.GetBuff(buffExtraData);
+                    var header = new AttributeIncreaseDataHeader();
+                    header.buffIncreaseType = constantBuff.mainIncreaseType;
+                    header.propertyType = constantBuff.propertyType;
+                    header.buffOperationType = BuffOperationType.Add;
+                    var data = new AttributeIncreaseData();
+                    data.header = header;
+                    data.increaseValue = constantBuff.increaseDataList[0].increaseValue;
+                    return data;
+                case BuffType.Random:
+                    var randomBuff = Constant.RandomBuffConfig.GetRandomBuffData(buffExtraData.buffId);
+                    var header2 = new AttributeIncreaseDataHeader();
+                    header2.buffIncreaseType = randomBuff.mainIncreaseType;
+                    header2.propertyType = randomBuff.propertyType;
+                    header2.buffOperationType = BuffOperationType.Add;
+                    var data2 = new RandomAttributeIncreaseData();
+                    data2.header = header2;
+                    data2.increaseValueRange = randomBuff.increaseDataList[0].increaseValueRange;
+                    return data2;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            return null;
+        }
+
         public static ConditionCheckerHeader GetConditionCheckerHeader(PlayerItemType itemType, int itemConfigId)
         {
             var conditionConfigId = 0;
@@ -227,7 +267,24 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 bagItem.MaxStack = itemConfigData.maxStack;
                 bagItem.IndexSlot = -1;
                 bagItem.EquipmentPart = itemConfigData.equipmentPart;
-                PlayerItemState.TryAddAndEquipItem(ref playerItemState, bagItem);
+                PlayerItemState.TryAddAndEquipItem(ref playerItemState, bagItem, out var isEquipped);
+                if (!Constant.IsServer)
+                    return;
+                if (isEquipped)
+                {
+                    var equipmentCommand = new EquipmentCommand();
+                    equipmentCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate);
+                    equipmentCommand.EquipmentPart = itemConfigData.equipmentPart;
+                    equipmentCommand.IsEquip = true;
+                    equipmentCommand.EquipmentConfigId = GetEquipmentConfigId(itemConfigData.itemType, itemsData.ItemConfigId);
+                    equipmentCommand.ItemId = itemsData.ItemUniqueId[0];
+                    Constant.GameSyncManager.EnqueueServerCommand(equipmentCommand);
+                }
+
+                if (bagItem.PlayerItemType.ShowProperty())
+                {
+                    CheckAndAddBagAttributes(ref playerItemState, itemConfigData);
+                }
             }
 
             catch (Exception e)
@@ -235,6 +292,34 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 ObjectPool<PlayerBagItem>.Return(bagItem);
                 Console.WriteLine(e);
                 throw;
+            }
+        }
+
+        private static void CheckAndAddBagAttributes(ref PlayerItemState playerItemState, GameItemConfigData itemConfigData)
+        {
+            foreach (var key in playerItemState.PlayerItemConfigIdSlotDictionary.Keys)
+            {
+                var bagItem = playerItemState.PlayerItemConfigIdSlotDictionary[key];
+                var attributeData = GetAttributeIncreaseDatas(itemConfigData.buffExtraData);
+                var mainAttributeData = new AttributeIncreaseData[attributeData.Length];
+                var passiveAttributeData = new RandomAttributeIncreaseData[attributeData.Length];
+                if (bagItem.MainIncreaseDatas == null || bagItem.MainIncreaseDatas.Length == 0)
+                {
+                    bagItem.MainIncreaseDatas = mainAttributeData;
+                }
+
+                if (bagItem.RandomIncreaseDatas == null || bagItem.RandomIncreaseDatas.Length == 0)
+                {
+                    if (itemConfigData.itemType == PlayerItemType.Consume)
+                    {
+                        bagItem.RandomIncreaseDatas = passiveAttributeData;
+                    }
+                }
+
+                if (bagItem.PassiveAttributeIncreaseDatas == null || bagItem.PassiveAttributeIncreaseDatas.Length == 0)
+                {
+                    
+                }
             }
         }
 
@@ -321,6 +406,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public BattleEffectConditionConfig ConditionConfig;
         public GameSyncManager GameSyncManager;
         public InteractSystem InteractSystem;
+        public ConstantBuffConfig ConstantBuffConfig;
+        public RandomBuffConfig RandomBuffConfig;
         public bool IsServer;
     }
 }

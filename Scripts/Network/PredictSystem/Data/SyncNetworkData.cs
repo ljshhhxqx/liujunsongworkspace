@@ -35,6 +35,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     [MemoryPackUnion(13, typeof(ItemDropCommand))]
     [MemoryPackUnion(14, typeof(ItemExchangeCommand))]
     [MemoryPackUnion(15, typeof(ItemsSellCommand))]
+    [MemoryPackUnion(16, typeof(ItemsBuyCommand))]
+    [MemoryPackUnion(17, typeof(GoldChangedCommand))]
     public partial interface INetworkCommand
     {
         NetworkCommandHeader GetHeader();
@@ -91,7 +93,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         UI,         // UI相关
         Skill,      // 技能相关
         Equipment,  // 装备相关
-        Interact    // 交互相关
+        Interact,    // 交互相关
+        Shop
     }
     
     #endregion
@@ -307,7 +310,33 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             Header.Authority = authority;
         }
     }
-    
+
+    [MemoryPackable]
+    public partial struct GoldChangedCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)] 
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)] 
+        public float Gold;
+        
+        public NetworkCommandHeader GetHeader() => Header;
+
+        public bool IsValid()
+        {
+            return Gold > 0;
+        }
+
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
+            CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
+    }
+
+
     [MemoryPackable]
     public partial struct PropertyAttackCommand : INetworkCommand
     {
@@ -719,7 +748,87 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     }
 
     #endregion
+    #region ShopCommand
+
+    [MemoryPackable]
+    public partial struct BuyCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)]
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public int ShopId;
+        [MemoryPackOrder(2)] 
+        public int Count;
+        
+        public NetworkCommandHeader GetHeader() => Header;
+
+        public bool IsValid()
+        {
+            return ShopId > 0 && Count > 0;
+        }
+
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
+            CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
+    }
     
+    [MemoryPackable]
+    public partial struct RefreshShopCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)]
+        public NetworkCommandHeader Header;
+        
+        public NetworkCommandHeader GetHeader() => Header;
+
+        public bool IsValid()
+        {
+            return true;
+        }
+
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
+            CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
+    }
+    
+    [MemoryPackable]
+    public partial struct SellCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)]
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public int ItemSlotIndex;
+        [MemoryPackOrder(2)]
+        public int Count;
+        
+        public NetworkCommandHeader GetHeader() => Header;
+
+        public bool IsValid()
+        {
+            return ItemSlotIndex > 0 && Count > 0;
+        }
+
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
+            CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
+    }
+    
+    #endregion
+
     #region Command
 
     [MemoryPackable]
@@ -868,6 +977,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                     return new PlayerItemSyncSystem();
                 case CommandType.Equipment:
                     return new PlayerEquipmentSystem();
+                case CommandType.Shop:
+                    return new ShopSyncSystem();
+                case CommandType.Skill:
+                    return new PlayerSkillSystem();
                 // case CommandType.UI:
                 //     return new PlayerCombatSyncSystem();
             }   

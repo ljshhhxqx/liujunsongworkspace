@@ -21,7 +21,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
     public class PlayerItemSyncSystem : BaseSyncSystem
     {
-        private readonly Dictionary<int, PlayerItemSyncState> _playerItemSyncStates = new Dictionary<int, PlayerItemSyncState>();
+        private readonly Dictionary<int, PlayerItemPredictableState> _playerItemSyncStates = new Dictionary<int, PlayerItemPredictableState>();
         private ItemConfig _itemConfig;
         private WeaponConfig _weaponConfig;
         private ArmorConfig _armorConfig;
@@ -53,22 +53,25 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         protected override void RegisterState(int connectionId, NetworkIdentity player)
         {
-            var playerPredictableState = player.GetComponent<PlayerItemSyncState>();
-            var playerItemState = new PlayerItemState();
-            var items = ObjectPool<List<PlayerBagItem>>.Get();
+            var playerPredictableState = player.GetComponent<PlayerItemPredictableState>();
+            var state = GetPlayerItemState();
             playerPredictableState.RegisterState(GetPlayerItemState());
-            items.Clear();
-            playerItemState.PlayerItems = items.ToDictionary(x => x.ItemId, x => x);
-            playerItemState.SlotCount = _itemConfig.MaxBagSize;
-            PropertyStates.Add(connectionId, playerItemState);
+            PropertyStates.Add(connectionId, state);
             _playerItemSyncStates.Add(connectionId, playerPredictableState);
         }
 
 
-        private static PlayerItemState GetPlayerItemState()
+        private PlayerItemState GetPlayerItemState()
         {
             var playerItemState = new PlayerItemState();
+            PlayerItemState.Init(ref playerItemState, _itemConfig.MaxBagSize);
             return playerItemState;
+        }
+        
+        public Dictionary<int, PlayerBagSlotItem> GetPlayerBagSlotItems(int connectionId)
+        {
+            var playerItemState = GetState<PlayerItemState>(connectionId);
+            return playerItemState.PlayerItemConfigIdSlotDictionary;
         }
 
         public override CommandType HandledCommandType => CommandType.Item;

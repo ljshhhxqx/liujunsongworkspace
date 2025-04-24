@@ -222,17 +222,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             return false;
         }
 
-        // public static void Init(ref PlayerItemState state, int maxSlotCount)
-        // {
-        //     for (int i = 1; i <= maxSlotCount; i++)
-        //     {
-        //         var slotItem = new PlayerBagSlotItem();
-        //         slotItem.IndexSlot = i;
-        //         slotItem.ItemIds = new HashSet<int>();
-        //         state.PlayerItemConfigIdSlotDictionary.Add(slotItem.IndexSlot, slotItem);
-        //     }
-        //     state.PlayerItems = new Dictionary<int, PlayerBagItem>();
-        // }
+        public static void Init(ref PlayerItemState state, int maxSlotCount)
+        {
+            state.PlayerItems = new Dictionary<int, PlayerBagItem>();
+            state.PlayerItemConfigIdSlotDictionary = new Dictionary<int, PlayerBagSlotItem>();
+            state.PlayerEquipSlotItems = new Dictionary<EquipmentPart, PlayerEquipSlotItem>();
+            state.SlotCount = maxSlotCount;
+        }
 
         public static bool AddItem(ref PlayerItemState state, PlayerBagItem item)
         {
@@ -295,27 +291,31 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         }
 
         
-        public static bool TryAddAndEquipItem(ref PlayerItemState state, PlayerBagItem bagItem)
+        public static bool TryAddAndEquipItem(ref PlayerItemState state, PlayerBagItem bagItem, out bool isEquipped)
         {
             if (!AddItem(ref state, bagItem))
             {
+                isEquipped = false;
                 return false;
             }
             if (bagItem.PlayerItemType.IsEquipment())
             {
+                isEquipped = false;
                 var equipPart = bagItem.EquipmentPart;
-                if (state.PlayerEquipSlotItems.ContainsKey(equipPart))
+                if (!state.PlayerEquipSlotItems.ContainsKey(equipPart))
                 {
-                    Debug.Log($"{equipPart}已经装备，存入背包");
+                    state.PlayerEquipSlotItems[equipPart] = new PlayerEquipSlotItem
+                    {
+                        EquipmentPart = equipPart,
+                        ItemId = bagItem.ItemId,
+                        ConfigId = bagItem.ConfigId,
+                    };
+                    isEquipped = true;
                 }
-                state.PlayerEquipSlotItems[equipPart] = new PlayerEquipSlotItem
-                {
-                    EquipmentPart = equipPart,
-                    ItemId = bagItem.ItemId,
-                    ConfigId = bagItem.ConfigId,
-                };
+                Debug.Log($"{equipPart}已经装备，存入背包");
                 return true;
             }
+            isEquipped = false;
             return false;
         
         }
@@ -486,7 +486,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         {
             slotItem = state.PlayerItemConfigIdSlotDictionary.Values
                 .FirstOrDefault(x => x.ConfigId == configId);
-            return !slotItem.Equals(default(PlayerBagSlotItem));
+            return !slotItem.Equals(default);
         }
 
         public static bool TryGetSlotItemBySlotIndex(PlayerItemState state, int slotIndex, out PlayerBagSlotItem slotItem)
@@ -676,7 +676,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         private static int FindFreeSlotIndex(ref PlayerItemState state)
         {
             // 查找第一个空闲的槽位
-            for (int i = 0; i < state.SlotCount; i++)
+            for (int i = 1; i <= state.SlotCount; i++)
             {
                 if (!state.PlayerItemConfigIdSlotDictionary.ContainsKey(i))
                 {
@@ -791,9 +791,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         [MemoryPackOrder(7)]
         public AttributeIncreaseData[] MainIncreaseDatas;
         //消耗品：显示随机属性增益(精确到数值的范围最大值和最小值)
-        //装备：显示被动属性增益(精确到数值的范围最大值和最小值)
+        //装备：不显示
         [MemoryPackOrder(8)]
-        public RandomAttributeIncreaseData[] PassiveIncreaseDatas;
+        public RandomAttributeIncreaseData[] RandomIncreaseDatas;
+        //装备：显示被动属性增益
+        [MemoryPackOrder(9)]
+        public AttributeIncreaseData[] PassiveAttributeIncreaseDatas;
 
         public bool Equals(PlayerBagSlotItem other)
         {

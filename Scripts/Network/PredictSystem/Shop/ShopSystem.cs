@@ -5,8 +5,11 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using MemoryPack;
 using Mirror;
+using UniRx;
+using UnityEngine;
 using VContainer;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Shop
@@ -19,7 +22,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Shop
         private PlayerInGameManager _playerInGameManager;
         private GameSyncManager _gameSyncManager;
         private ShopConfig _shopConfig;
-        private SyncDictionary<int, PlayerShopData> _playerShopDataDict;
+        private SyncDictionary<int, RandomShopItemData[]> _playerShopDataDict;
+        private Dictionary<int, ReactiveDictionary<int, RandomShopItemData>> _playerInventoryDict;
 
         [Inject]
         private void Init(PlayerInGameManager playerInGameManager, IConfigProvider configProvider)
@@ -27,9 +31,32 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Shop
             _gameSyncManager = FindObjectOfType<GameSyncManager>();
             _shopConfig = configProvider.GetConfig<ShopConfig>();
             _playerInGameManager = playerInGameManager;
-            _playerShopDataDict = new SyncDictionary<int, PlayerShopData>();
+            _playerShopDataDict = new SyncDictionary<int, RandomShopItemData[]>();
+            _playerInventoryDict = new Dictionary<int, ReactiveDictionary<int, RandomShopItemData>>();
+            _playerShopDataDict.OnChange += OnPlayerShopDataChanged;
             _gameSyncManager.OnPlayerConnected += OnPlayerConnected;
             _gameSyncManager.OnPlayerDisconnected += OnPlayerDisconnected;
+        }
+
+        private void OnPlayerShopDataChanged(SyncIDictionary<int, RandomShopItemData[]>.Operation operation, int connectionId, RandomShopItemData[] newData)
+        {
+            switch (operation)
+            {
+                case SyncIDictionary<int, RandomShopItemData[]>.Operation.OP_ADD:
+                    foreach (var key in _playerInventoryDict.Keys)
+                    {
+                        
+                    }
+                    break;
+                case SyncIDictionary<int, RandomShopItemData[]>.Operation.OP_CLEAR:
+                    break;
+                case SyncIDictionary<int, RandomShopItemData[]>.Operation.OP_REMOVE:
+                    break;
+                case SyncIDictionary<int, RandomShopItemData[]>.Operation.OP_SET:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(operation), operation, null);
+            }
         }
 
         [ServerCallback]
@@ -42,13 +69,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Shop
         [ServerCallback]
         private void OnPlayerConnected(int connectionId, NetworkIdentity identity)
         {
-            PlayerShopData playerShopData;
             var shopIds = _shopConfig.RefreshShopItems();
-            var shopData = new HashSet<RandomShopData>();
+            var shopData = new HashSet<RandomShopItemData>();
             foreach (var shopId in shopIds)
             {
                 var shopConfigData = _shopConfig.GetShopConfigData(shopId);
-                var randomShopData = new RandomShopData
+                var randomShopData = new RandomShopItemData
                 {
                     ShopId = HybridIdGenerator.GenerateChestId(shopId, GameSyncManager.CurrentTick),
                     ShopConfigId = shopId,
@@ -57,24 +83,46 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Shop
                 };
                 shopData.Add(randomShopData);
             }
-            _playerShopDataDict.Add(connectionId, new PlayerShopData
-            {
-                PlayerId = connectionId,
-                ShopData = shopData,
-            });
+            _playerShopDataDict.Add(connectionId, shopData.ToArray());
         }
 
-        public void RefreshShopItems(int connectionId)
+        public bool TryRefreshShopItems(int connectionId)
         {
-            
-        }
-
-        public void SellShopItem(int connectionId, int shopId, int count)
-        {
-            if (connectionId == 0 || !isLocalPlayer)
-                return;
+            var propertySystem = _gameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
+            if (propertySystem == null)
+                return false;
             if (!_playerShopDataDict.TryGetValue(connectionId, out var playerShopData))
-                return;
+                return false;
+            var costGold = _shopConfig.GetShopConstantData().onceCostGold;
+            if (!propertySystem.TryUseGold(connectionId, costGold, out var remaining))
+            {
+                Debug.Log($"Player {connectionId} has not enough gold to refresh shop items. current gold is {remaining + costGold}, needed {costGold}");
+                return false;
+            }
+            var shopIds = _shopConfig.RefreshShopItems();
+            var shopData = new HashSet<RandomShopItemData>();
+            foreach (var shopId in shopIds)
+            {
+                var shopConfigData = _shopConfig.GetShopConfigData(shopId);
+                var randomShopData = new RandomShopItemData
+                {
+                    ShopId = HybridIdGenerator.GenerateChestId(shopId, GameSyncManager.CurrentTick),
+                    ShopConfigId = shopId,
+                    RemainingCount = shopConfigData.maxCount,
+                    ItemType = shopConfigData.playerItemType
+                };
+                shopData.Add(randomShopData);
+            }
+            _playerShopDataDict[connectionId] = shopData.ToArray();
+            var command = new GoldChangedCommand
+            {
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Item,
+                    CommandAuthority.Client, CommandExecuteType.Immediate),
+                Gold = -costGold
+            };
+            var commandData = MemoryPackSerializer.Serialize(command);
+            _gameSyncManager.EnqueueCommand(commandData);
+            return true;
         }
 
         public void BuyShopItem(int connectionId, int shopId, int count)
@@ -83,7 +131,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Shop
                 return;
             if (!_playerShopDataDict.TryGetValue(connectionId, out var playerShopData))
                 return;
-            var shopData = playerShopData.ShopData;
+            var shopData = playerShopData;
             var randomShopData = shopData.First(x => x.ShopId == shopId);
             var randomShopConfigData = _shopConfig.GetShopConfigData(randomShopData.ShopConfigId);
             var otherShopData = shopData.First(x => x.ItemType == randomShopData.ItemType);
@@ -93,16 +141,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Shop
             
             if (randomShopData.RemainingCount == 0)
             {
-                var newConfigId = _shopConfig.GetRandomItem(randomShopData.ShopConfigId, otherShopData.ShopConfigId, randomShopData.ItemType);
-                var newRandomConfigData = _shopConfig.GetShopConfigData(newConfigId);
-                playerShopData.ShopData.Remove(randomShopData);
-                playerShopData.ShopData.Add(new RandomShopData
-                {
-                    ShopId = HybridIdGenerator.GenerateChestId(newConfigId, GameSyncManager.CurrentTick),
-                    ShopConfigId = newConfigId,
-                    RemainingCount = newRandomConfigData.maxCount,
-                    ItemType = newRandomConfigData.playerItemType
-                });
+                RefreshShopItems(ref playerShopData, randomShopData, otherShopData);
             }
             _playerShopDataDict[connectionId] = playerShopData;
 
@@ -125,34 +164,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Shop
             var itemBuyCommandData = MemoryPackSerializer.Serialize(itemBuyCommand);
             _gameSyncManager.EnqueueCommand(itemBuyCommandData);
         }
-    }
 
-    public struct PlayerShopData
-    {
-        public int PlayerId;
-        public HashSet<RandomShopData> ShopData;
-    }
-
-    public struct RandomShopData : IEquatable<RandomShopData>
-    {
-        public int ShopId;
-        public int ShopConfigId;
-        public int RemainingCount;
-        public PlayerItemType ItemType;
-
-        public bool Equals(RandomShopData other)
+        private void RefreshShopItems(ref RandomShopItemData[] playerShopData, RandomShopItemData randomShopItemData, RandomShopItemData otherShopItemData)
         {
-            return ShopId == other.ShopId && RemainingCount == other.RemainingCount;
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj is RandomShopData other && Equals(other);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(ShopId, RemainingCount);
+            var newConfigId = _shopConfig.GetRandomItem(randomShopItemData.ShopConfigId, otherShopItemData.ShopConfigId, randomShopItemData.ItemType);
+            var newRandomConfigData = _shopConfig.GetShopConfigData(newConfigId);
+            var hashSet = playerShopData.ToHashSet();
+            hashSet.Remove(randomShopItemData);
+            hashSet.Add(new RandomShopItemData
+            {
+                ShopId = HybridIdGenerator.GenerateChestId(newConfigId, GameSyncManager.CurrentTick),
+                ShopConfigId = newConfigId,
+                RemainingCount = newRandomConfigData.maxCount,
+                ItemType = newRandomConfigData.playerItemType
+            });
+            playerShopData = hashSet.ToArray();
         }
     }
 }

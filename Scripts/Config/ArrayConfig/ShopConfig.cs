@@ -14,6 +14,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [ReadOnly]
         [SerializeField]
         private List<ShopConfigData> shopConfigData = new List<ShopConfigData>();
+        [SerializeField]
+        private ShopConstantData shopConstantData;
         private readonly Dictionary<int, ShopConfigData> _shopConfigDataDict = new Dictionary<int, ShopConfigData>();
         
         private readonly Dictionary<QualityType, HashSet<int>> _qualityIds = new Dictionary<QualityType, HashSet<int>>();
@@ -72,6 +74,11 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             }
             return result;
             
+        }
+        
+        public ShopConfigData GetShopDataByItemId(int itemId)
+        {
+            return _shopConfigDataDict.Values.FirstOrDefault(d => d.itemId == itemId);
         }
         
         public ShopConfigData GetShopConfigData(int shopId)
@@ -164,6 +171,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         {
             result = new HashSet<int>();
             List<ShopConfigData> items;
+            var count = shopConstantData.onceEachTypeCount;
     
             // 获取该类型所有配置数据
             if (preShopIds != null)
@@ -183,11 +191,11 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             var qualityGroups = items
                 .GroupBy(d => d.qualityType)
                 .OrderBy(g => Random.value)
-                .Take(2)
+                .Take(count)
                 .ToList();
 
             // 需要至少两个不同品质组
-            if (qualityGroups.Count < 2) return false;
+            if (qualityGroups.Count < count) return false;
 
             // 从每个品质组随机选一个
             foreach (var group in qualityGroups)
@@ -196,9 +204,27 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 result.Add(randomItem.id);
             }
 
-            return result.Count == 2;
+            return result.Count == count;
         }
 
+        public bool CanRefreshShopItems(int gold)
+        {
+            return gold >= shopConstantData.onceCostGold;
+        }
+        
+        public ShopConstantData GetShopConstantData()
+        {
+            return shopConstantData;
+        }
+    }
+
+    [Serializable]
+    public struct ShopConstantData
+    {
+        //每次每一种类刷新的数量
+        public int onceEachTypeCount;
+        //每次刷新花费的金币
+        public int onceCostGold;
     }
 
     [Serializable]
