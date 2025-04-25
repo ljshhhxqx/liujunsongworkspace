@@ -92,6 +92,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private BindingKey _propertyBindKey;
         private BindingKey _itemBindKey;
         private BindingKey _shopBindKey;
+        private BindingKey _goldBindKey;
         
         private Dictionary<Type, bool> _reactivePropertyBinds = new Dictionary<Type, bool>();
         
@@ -180,6 +181,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     UIPropertyBinder.LocalPlayerId);
                 _shopBindKey = new BindingKey(UIPropertyDefine.ShopItem, DataScope.LocalPlayer,
                     UIPropertyBinder.LocalPlayerId);
+                _goldBindKey = new BindingKey(UIPropertyDefine.PlayerBaseData, DataScope.LocalPlayer,
+                    UIPropertyBinder.LocalPlayerId);
                 HandleLocalInitCallback();
             }
         }
@@ -227,6 +230,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             var shopScreenUI = _uiManager.SwitchUI<ShopScreenUI>();
             shopScreenUI.BindShopItemData(UIPropertyBinder.GetReactiveDictionary<RandomShopItemData>(_itemBindKey));
             shopScreenUI.BindBagItemData(UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey));
+            shopScreenUI.BindPlayerGold(UIPropertyBinder.ObserveProperty<GoldData>(_propertyBindKey));
         }
 
         private bool HandleSpecialState()

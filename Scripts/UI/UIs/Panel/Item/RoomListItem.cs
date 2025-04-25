@@ -1,3 +1,4 @@
+using AOTScripts.Tool;
 using TMPro;
 using UI.UIs.Common;
 using UnityEngine;
@@ -29,11 +30,16 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                 roomOwnerText.text = roomData.RoomOwnerName;
                 roomTypeText.text = roomData.RoomType;
                 roomStatusText.text = roomData.RoomStatus;
-                joinButton.onClick.AddListener(() =>
+                joinButton.BindDebouncedListener(() =>
                 {
                     roomData.OnJoinClick(roomData.RoomId);
                 });
             }
+        }
+
+        public override void Clear()
+        {
+            joinButton.onClick.RemoveAllListeners();
         }
     }
 }

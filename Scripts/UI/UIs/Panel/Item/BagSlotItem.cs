@@ -43,6 +43,13 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
             
         }
 
+        public override void Clear()
+        {
+            _currentItem = default;
+            _stackCount = 0;
+            UpdateSlotUI();
+        }
+
         // 设置物品到格子
         public void SetItem(BagItemData newItem, int count)
         {

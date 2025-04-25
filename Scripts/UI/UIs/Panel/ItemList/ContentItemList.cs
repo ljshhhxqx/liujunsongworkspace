@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using UI.UIs.Common;
 using UnityEngine;
@@ -24,8 +25,9 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
             {
                 foreach (var itemData in itemDataList)
                 {
-                    var item = Instantiate(itemPrefab.gameObject, content);
+                    var item = GameObjectPoolManger.Instance.GetObject(prefab: itemPrefab.gameObject, parent: content);
                     var itemBase = item.GetComponent<ItemBase>();
+                    itemBase.Clear();
                     itemBase.SetData(itemData);
                     ItemBases.Add(itemBase);
                     ItemBaseDatas.Add(itemData);

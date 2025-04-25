@@ -130,6 +130,10 @@ namespace HotUpdate.Scripts.Tool.Static
 
         public static string GetBuffEffectDesc(AttributeIncreaseData[] extraDatas)
         {
+            if (extraDatas == null || extraDatas.Length == 0)
+            {
+                return null;
+            }
             var str = new StringBuilder();
             foreach (var data in extraDatas)
             {
@@ -141,6 +145,10 @@ namespace HotUpdate.Scripts.Tool.Static
 
         public static string GetRandomBuffEffectDesc(RandomAttributeIncreaseData[] extraDatas)
         {
+            if (extraDatas == null || extraDatas.Length == 0)
+            {
+                return null;
+            }
             var str = new StringBuilder();
             foreach (var data in extraDatas)
             {

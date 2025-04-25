@@ -38,6 +38,11 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             }
         }
 
+        public override void Clear()
+        {
+            
+        }
+
         private void SetValue(PropertyConsumeType consumeType, float currentValue, float maxValue)
         {
             switch (consumeType)

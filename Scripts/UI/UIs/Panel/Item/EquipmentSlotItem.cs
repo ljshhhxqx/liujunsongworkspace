@@ -31,6 +31,14 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                 UpdateSlotUI();
             }
         }
+
+        public override void Clear()
+        {
+            _currentItem = default;
+            _equipmentPart = default;
+            UpdateSlotUI();
+        }
+
         private void UpdateSlotUI()
         {
             var itemIsNull = _currentItem.Equals(default);

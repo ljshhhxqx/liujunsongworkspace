@@ -213,7 +213,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 var playerBagSlotItem = playerItemState.PlayerItemConfigIdSlotDictionary[item];
                 var itemConfig = _itemConfig.GetGameItemData(playerBagSlotItem.ConfigId);
                 var mainProperty = GameStaticExtensions.GetBuffEffectDesc(playerBagSlotItem.MainIncreaseDatas);
-                var passiveProperty = GameStaticExtensions.GetRandomBuffEffectDesc(playerBagSlotItem.RandomIncreaseDatas);
+                var randomBuffEffectDesc = GameStaticExtensions.GetRandomBuffEffectDesc(playerBagSlotItem.RandomIncreaseDatas);
+                var passiveProperty =
+                    GameStaticExtensions.GetBuffEffectDesc(playerBagSlotItem.PassiveAttributeIncreaseDatas);
                 var bagItem = new BagItemData
                 {
                     ItemName = itemConfig.name,
@@ -222,8 +224,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     Icon = UISpriteContainer.GetSprite(itemConfig.iconName),
                     QualityIcon = UISpriteContainer.GetQualitySprite(itemConfig.quality),
                     Description = itemConfig.desc,
-                    PropertyDescription = mainProperty,
-                    EquipPassiveDescription = passiveProperty,
+                    PropertyDescription = mainProperty ?? "",
+                    RandomDescription = randomBuffEffectDesc ?? "",
+                    PassiveDescription = passiveProperty,
                     PlayerItemType = itemConfig.itemType,
                     IsEquip = playerBagSlotItem.State == ItemState.IsEquipped,
                     IsLock = playerBagSlotItem.State == ItemState.IsLocked,

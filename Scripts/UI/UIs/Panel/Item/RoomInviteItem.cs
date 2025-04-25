@@ -25,5 +25,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
             }
             Debug.Log($"Error: Data {data} is not RoomInviteItemData");
         }
+
+        public override void Clear()
+        {
+            inviteButton.onClick.RemoveAllListeners();
+        }
     }
 }

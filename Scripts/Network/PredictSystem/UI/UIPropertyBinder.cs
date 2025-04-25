@@ -26,17 +26,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
             return KeyPropertyMap.ContainsKey(key);
         }
 
-        public static IObservable<IUIDatabase> ObserveProperty(BindingKey key)
+        public static IObservable<T> ObserveProperty<T>(BindingKey key) where T : IUIDatabase
         {
-            return GetOrCreateProperty(key).AsObservable();
+            return GetOrCreateProperty<T>(key).AsObservable();
         }
 
-        public static void SetProperty(BindingKey key, IUIDatabase value)
+        public static void SetProperty<T>(BindingKey key, T value) where T : IUIDatabase
         {
-            GetOrCreateProperty(key).Value = value;
+            GetOrCreateProperty<T>(key).Value = value;
         }
 
-        private static ReactiveProperty<IUIDatabase> GetOrCreateProperty(BindingKey key)
+        private static ReactiveProperty<T> GetOrCreateProperty<T>(BindingKey key)  where T : IUIDatabase
         {
             if (!KeyPropertyMap.TryGetValue(key, out var property))
             {
@@ -45,7 +45,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
                 KeyPropertyMap[key] = property;
             }
 
-            return property;
+            return property as ReactiveProperty<T>;
         }
 
         #endregion

@@ -192,6 +192,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             return _isResourceProperty;
         }
 
+        public bool IsBaseData()
+        {
+            return _propertyType is PropertyTypeEnum.Speed or PropertyTypeEnum.Health or PropertyTypeEnum.Attack
+                or PropertyTypeEnum.Gold or PropertyTypeEnum.Experience;
+        }
+
         public PropertyCalculator UpdateCurrentValue(float value)
         {
             return new PropertyCalculator(_propertyType, new PropertyData

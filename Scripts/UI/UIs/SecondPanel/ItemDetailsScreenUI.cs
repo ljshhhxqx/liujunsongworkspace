@@ -1,5 +1,7 @@
 ﻿using System;
+using AOTScripts.Tool;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.ThirdPanel;
@@ -25,165 +27,354 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         [SerializeField] private TextMeshProUGUI priceText;
         
         [Header("Interaction Buttons")]
-        [SerializeField] private Button useButton;
         [SerializeField] private Button equipButton;
         [SerializeField] private Button lockButton;
-        [SerializeField] private Button dropButton;
-        [SerializeField] private Button sellButton;
+        
+        [Header("Count Slider")]
+        [SerializeField] private CountSliderButtonGroup useCountSlider;
+        [SerializeField] private CountSliderButtonGroup dropCountSlider;
+        [SerializeField] private CountSliderButtonGroup sellCountSlider;
+        [SerializeField] private CountSliderButtonGroup buyCountSlider;
         
         private UIManager _uiManager;
-        private BagItemData _currentItemData;
+        private IItemBaseData _currentItemData;
         private ItemDetailsType _currentItemDetailsType;
+        private GoldData _currentGoldData;
 
         [Inject]
         private void Init(UIManager uiManager)
         {
             _uiManager = uiManager;
-            useButton.OnClickAsObservable().Subscribe(_ => OnUseClicked()).AddTo(this);
-            equipButton.OnClickAsObservable().Subscribe(_ => OnEquipClicked()).AddTo(this);
-            lockButton.OnClickAsObservable().Subscribe(_ => OnLockClicked()).AddTo(this);
-            dropButton.OnClickAsObservable().Subscribe(_ => OnDropClicked()).AddTo(this);
+
+            equipButton.onClick.RemoveAllListeners();
+            lockButton.onClick.RemoveAllListeners();
+            equipButton.BindDebouncedListener(OnEquipClicked);
+            lockButton.BindDebouncedListener(OnLockClicked);
         }
 
-        public void Open(BagItemData itemData, ItemDetailsType itemDetailsType = ItemDetailsType.Bag)
+        public void BindPlayerGold(IObservable<GoldData> playerGold)
+        {
+            playerGold.Subscribe(data =>
+            {
+                _currentGoldData = data;
+                useCountSlider.SetPlayerGold(data.Gold);
+                dropCountSlider.SetPlayerGold(data.Gold);
+                sellCountSlider.SetPlayerGold(data.Gold);
+                buyCountSlider.SetPlayerGold(data.Gold);
+                UpdateUI();
+            }).AddTo(this);
+        }
+
+        // private void OnBuyClicked()
+        // {
+        //     switch (_currentItemData)
+        //     {
+        //         case RandomShopItemData randomShopItemData:
+        //             randomShopItemData.OnBuyItem?.Invoke(randomShopItemData.ShopId, buyCountSlider.Value);
+        //             UpdateButtonStates();
+        //             break;
+        //         default:
+        //             throw new ArgumentOutOfRangeException(nameof(_currentItemData));
+        //     }
+        // }
+
+        public void OpenBag(BagItemData itemData, ItemDetailsType itemDetailsType = ItemDetailsType.Bag)
         {
             _currentItemData = itemData;
             _currentItemDetailsType = itemDetailsType;
             UpdateUI();
+            UpdateButtonStates();
+        }
+
+        public void OpenShop(RandomShopItemData itemData)
+        {
+            UpdateShopItemUI(itemData);
+            UpdateButtonStates();
         }
 
         private void UpdateUI()
         {
-            // 基础信息
-            itemIcon.sprite = _currentItemData.Icon;
-            qualityBorder.sprite = _currentItemData.QualityIcon;
-            itemNameText.text = _currentItemData.ItemName;
-            
-            // 堆叠显示
-            stackText.text = $"{_currentItemData.Stack}/{_currentItemData.MaxStack}";
-            stackText.gameObject.SetActive(_currentItemData.MaxStack > 1);
-
-            // 描述信息
-            descriptionText.text = _currentItemData.Description;
-            var showProperty = _currentItemData.PlayerItemType.ShowProperty();
-            propertyText.gameObject.SetActive(showProperty);
-            propertyText.text = showProperty ? _currentItemData.PropertyDescription : "";
-            propertyText.text = _currentItemData.PropertyDescription;
-            
-            // 被动效果（仅装备类显示）
-            var showPassive = _currentItemData.PlayerItemType.IsEquipment();
-            passiveEffectText.gameObject.SetActive(showPassive);
-            passiveEffectText.text = showPassive ? _currentItemData.EquipPassiveDescription : "";
-
-            // 价格信息
-            priceText.text = $"价格: {_currentItemData.Price * _currentItemData.SellRatio}G";
-
-            // 按钮状态
-            UpdateButtonStates();
-        }
-
-        private void UpdateButtonStates()
-        {
-            var isLocked = _currentItemData.IsLock;
-            switch (_currentItemDetailsType)
+            switch (_currentItemData)
             {
-                case ItemDetailsType.Bag:
-                    useButton.gameObject.SetActive(!isLocked && _currentItemData.PlayerItemType == PlayerItemType.Consume);
-                    dropButton.gameObject.SetActive(!isLocked);
-                    equipButton.gameObject.SetActive(!isLocked && _currentItemData.PlayerItemType.IsEquipment());
-                    lockButton.gameObject.SetActive(true);
-                    sellButton.gameObject.SetActive(false);
+                case BagItemData bagItemData:
+                    UpdateBagItemUI(bagItemData);
                     break;
-                case ItemDetailsType.Equipment:
-                    useButton.gameObject.SetActive(false);
-                    dropButton.gameObject.SetActive(false);
-                    equipButton.gameObject.SetActive(!isLocked && _currentItemData.PlayerItemType.IsEquipment());
-                    lockButton.gameObject.SetActive(true);
-                    sellButton.gameObject.SetActive(false);
-                    break;
-                case ItemDetailsType.Shop:
-                    useButton.gameObject.SetActive(false);
-                    dropButton.gameObject.SetActive(false);
-                    equipButton.gameObject.SetActive(false);
-                    lockButton.gameObject.SetActive(false);
-                    sellButton.gameObject.SetActive(true);
+                case RandomShopItemData randomShopItemData:
+                    UpdateShopItemUI(randomShopItemData);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        private void UpdateShopItemUI(RandomShopItemData randomShopItemData)
+        {
+            itemIcon.sprite = randomShopItemData.Icon;
+            qualityBorder.sprite = randomShopItemData.QualityIcon;
+            itemNameText.text = randomShopItemData.Name;
+            stackText.text = $"剩余：{randomShopItemData.RemainingCount}个，总量：{randomShopItemData.MaxCount}个";
+            stackText.color = randomShopItemData.RemainingCount > 0 ? Color.green : Color.red;
+            
+            // 描述信息
+            descriptionText.text = randomShopItemData.Description;
+            var showProperty = randomShopItemData.ItemType.ShowProperty();
+            propertyText.gameObject.SetActive(showProperty);
+            if (!string.IsNullOrEmpty(randomShopItemData.MainProperty))
+            {
+                propertyText.text = randomShopItemData.MainProperty;
+            }
+            else if (!string.IsNullOrEmpty(randomShopItemData.RandomProperty))
+            {
+                propertyText.text = randomShopItemData.RandomProperty;
+            }
+            
+            // 被动效果（仅装备类显示）
+            var showPassive = randomShopItemData.ItemType.IsEquipment();
+            passiveEffectText.gameObject.SetActive(showPassive);
+            passiveEffectText.text = showPassive ? randomShopItemData.PassiveDescription : "";
+            // 价格信息
+            priceText.text = $"价格: {randomShopItemData.Price}G 当前金币: {_currentGoldData.Gold}G";
+            priceText.color = randomShopItemData.Price <= _currentGoldData.Gold ? Color.green : Color.red;
+            
+            var countSliderButtonGroupData = new CountSliderButtonGroupData
+            {
+                MinCount = Mathf.Min(1, randomShopItemData.RemainingCount),
+                MaxCount = randomShopItemData.MaxCount,
+                Callback = x => randomShopItemData.OnBuyItem?.Invoke(randomShopItemData.ShopId, x),
+                PricePerItem = randomShopItemData.Price,
+                ShowPrice = true,
+                CurrentGold = _currentGoldData.Gold
+            };
+            buyCountSlider.Init(countSliderButtonGroupData);
+            buyCountSlider.OnSliderChanged.Subscribe(x =>
+            {
+                var newPrice = randomShopItemData.Price * x;
+                priceText.text = $"价格: {newPrice}G 当前金币: {_currentGoldData.Gold}G";
+                priceText.color = newPrice <= _currentGoldData.Gold ? Color.green : Color.red;
+            }).AddTo(this);
+        }
+
+        private void UpdateBagItemUI(BagItemData bagItemData)
+        {
+            // 基础信息
+            itemIcon.sprite = bagItemData.Icon;
+            qualityBorder.sprite = bagItemData.QualityIcon;
+            itemNameText.text = bagItemData.ItemName;
+            
+            // 堆叠显示
+            stackText.text = $"{bagItemData.Stack}/{bagItemData.MaxStack}";
+            stackText.gameObject.SetActive(bagItemData.MaxStack > 1);
+
+            // 描述信息
+            descriptionText.text = bagItemData.Description;
+            var showProperty = bagItemData.PlayerItemType.ShowProperty();
+            propertyText.gameObject.SetActive(showProperty);
+            if (!string.IsNullOrEmpty(bagItemData.PropertyDescription))
+            {
+                propertyText.text = bagItemData.PropertyDescription;
+            }
+            else if (!string.IsNullOrEmpty(bagItemData.RandomDescription))
+            {
+                propertyText.text = bagItemData.RandomDescription;
+            }
+            
+            // 被动效果（仅装备类显示）
+            var showPassive = bagItemData.PlayerItemType.IsEquipment();
+            passiveEffectText.gameObject.SetActive(showPassive);
+            passiveEffectText.text = showPassive ? bagItemData.PassiveDescription : "";
+
+            // 价格信息
+            priceText.text = $"价格: {bagItemData.Price * bagItemData.SellRatio}G";
+            var countSliderButtonGroupData = new CountSliderButtonGroupData
+            {
+                MinCount = Mathf.Min(1, bagItemData.Stack),
+                MaxCount = bagItemData.Stack,
+                Callback = x => bagItemData.OnUseItem?.Invoke(bagItemData.Index, x),
+                PricePerItem = bagItemData.Price * bagItemData.SellRatio,
+                ShowPrice = false,
+                CurrentGold = _currentGoldData.Gold
+            };
+            useCountSlider.Init(countSliderButtonGroupData);
+            countSliderButtonGroupData.Callback = x => bagItemData.OnDropItem?.Invoke(bagItemData.Index, x);
+            dropCountSlider.Init(countSliderButtonGroupData);
+            countSliderButtonGroupData.ShowPrice = true;
+            countSliderButtonGroupData.Callback = x => bagItemData.OnSellItem?.Invoke(bagItemData.Index, x);
+            sellCountSlider.Init(countSliderButtonGroupData);
+        }
+
+        private void UpdateButtonStates()
+        {
+            switch (_currentItemData)
+            {
+                case BagItemData bagItemData:
+                    var isLocked = bagItemData.IsLock;
+                    buyCountSlider.gameObject.SetActive(false);
+                    switch (_currentItemDetailsType)
+                    {
+                        case ItemDetailsType.Bag:
+                            useCountSlider.gameObject.SetActive(!isLocked && bagItemData.PlayerItemType == PlayerItemType.Consume);
+                            dropCountSlider.gameObject.SetActive(!isLocked);
+                            equipButton.gameObject.SetActive(!isLocked && bagItemData.PlayerItemType.IsEquipment());
+                            lockButton.gameObject.SetActive(true);
+                            sellCountSlider.gameObject.SetActive(false);
+                            break;
+                        case ItemDetailsType.Equipment:
+                            useCountSlider.gameObject.SetActive(false);
+                            dropCountSlider.gameObject.SetActive(false);
+                            equipButton.gameObject.SetActive(!isLocked && bagItemData.PlayerItemType.IsEquipment());
+                            lockButton.gameObject.SetActive(true);
+                            sellCountSlider.gameObject.SetActive(false);
+                            break;
+                        case ItemDetailsType.Shop:
+                            useCountSlider.gameObject.SetActive(false);
+                            dropCountSlider.gameObject.SetActive(false);
+                            equipButton.gameObject.SetActive(false);
+                            lockButton.gameObject.SetActive(false);
+                            sellCountSlider.gameObject.SetActive(true);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
 
             
-            lockButton.GetComponentInChildren<TextMeshProUGUI>().text = 
-                _currentItemData.IsLock ? "解锁" : "锁定";
-            equipButton.GetComponentInChildren<TextMeshProUGUI>().text = 
-                _currentItemData.IsEquip ? "卸下" : "装备";
+                    lockButton.GetComponentInChildren<TextMeshProUGUI>().text = 
+                        bagItemData.IsLock ? "解锁" : "锁定";
+                    equipButton.GetComponentInChildren<TextMeshProUGUI>().text = 
+                        bagItemData.IsEquip ? "卸下" : "装备";
+                    break;
+                case RandomShopItemData randomShopItemData:
+                    buyCountSlider.gameObject.SetActive(true);
+                    useCountSlider.gameObject.SetActive(false);
+                    dropCountSlider.gameObject.SetActive(false);
+                    equipButton.gameObject.SetActive(false);
+                    lockButton.gameObject.SetActive(false);
+                    sellCountSlider.gameObject.SetActive(false);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(_currentItemData));
+            }
+            
         }
 
         #region Button Handlers
-        private void OnUseClicked()
-        {
-            if(_currentItemData.Stack > 1)
-            {
-                _uiManager.SwitchUI<QuantitySelectionPanel>(ui =>
-                {
-                    ui.Show(max: _currentItemData.Stack, onConfirm: (amount) =>
-                    {
-                        _currentItemData.OnUseItem?.Invoke(_currentItemData.Index, amount);
-                        Close();
-                    });
-                });
-            }
-            else
-            {
-                _currentItemData.OnUseItem?.Invoke(_currentItemData.Index, 1);
-                Close();
-            }
-        }
+        // private void OnUseClicked()
+        // {
+        //     switch (_currentItemData)
+        //     {
+        //         case BagItemData bagItemData:
+        //
+        //             if(bagItemData.Stack > 1)
+        //             {
+        //                 _uiManager.SwitchUI<QuantitySelectionPanel>(ui =>
+        //                 {
+        //                     ui.Show(max: bagItemData.Stack, onConfirm: (amount) =>
+        //                     {
+        //                         bagItemData.OnUseItem?.Invoke(bagItemData.Index, amount);
+        //                         Close();
+        //                     });
+        //                 });
+        //             }
+        //             else
+        //             {
+        //                 bagItemData.OnUseItem?.Invoke(bagItemData.Index, 1);
+        //                 Close();
+        //             }
+        //             break;
+        //         case RandomShopItemData randomShopItemData:
+        //             break;
+        //         default:
+        //             throw new ArgumentOutOfRangeException();
+        //     }
+        // }
 
         private void OnEquipClicked()
         {
-            bool newEquipState = !_currentItemData.IsEquip;
-            _currentItemData.OnEquipItem?.Invoke(_currentItemData.Index, newEquipState);
-            _currentItemData.IsEquip = newEquipState;
-            UpdateButtonStates();
+            switch (_currentItemData)
+            {
+                case BagItemData bagItemData:
+                    var newEquipState = !bagItemData.IsEquip;
+                    bagItemData.OnEquipItem?.Invoke(bagItemData.Index, newEquipState);
+                    bagItemData.IsEquip = newEquipState;
+                    UpdateButtonStates();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         private void OnLockClicked()
         {
-            bool newLockState = !_currentItemData.IsLock;
-            _currentItemData.OnLockItem?.Invoke(_currentItemData.Index, newLockState);
-            _currentItemData.IsLock = newLockState;
-            UpdateButtonStates();
+            switch (_currentItemData)
+            {
+                case BagItemData bagItemData:
+                    bool newLockState = !bagItemData.IsLock;
+                    bagItemData.OnLockItem?.Invoke(bagItemData.Index, newLockState);
+                    bagItemData.IsLock = newLockState;
+                    UpdateButtonStates();
+                    break;
+                case RandomShopItemData randomShopItemData:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(_currentItemData));
+            }
         }
 
-        private void OnSellClicked()
-        {
-            var quantityPanel = _uiManager.SwitchUI<QuantitySelectionPanel>();
-            quantityPanel.Show(max: _currentItemData.Stack, onConfirm: (amount) => 
-            {
-                _currentItemData.OnSellItem?.Invoke(_currentItemData.Index, amount);
-                Close();
-            });
-        }
-
-        private void OnDropClicked()
-        {
-            var quantityPanel = _uiManager.SwitchUI<QuantitySelectionPanel>();
-            quantityPanel.Show(max: _currentItemData.Stack, onConfirm: (amount) => 
-            {
-                _currentItemData.OnDropItem?.Invoke(_currentItemData.Index, amount);
-                Close();
-            });
-        }
+        // private void OnSellClicked()
+        // {
+        //     switch (_currentItemData)
+        //     {
+        //         case BagItemData bagItemData:
+        //             var quantityPanel = _uiManager.SwitchUI<QuantitySelectionPanel>();
+        //             quantityPanel.Show(max: bagItemData.Stack, onConfirm: (amount) => 
+        //             {
+        //                 bagItemData.OnSellItem?.Invoke(bagItemData.Index, amount);
+        //                 Close();
+        //             });
+        //             break;
+        //         case RandomShopItemData randomShopItemData:
+        //             break;
+        //         default:
+        //             throw new ArgumentOutOfRangeException(nameof(_currentItemData));
+        //     }
+        // }
+        //
+        // private void OnDropClicked()
+        // {
+        //     switch (_currentItemData)
+        //     {
+        //         case BagItemData bagItemData:
+        //             var quantityPanel = _uiManager.SwitchUI<QuantitySelectionPanel>();
+        //             quantityPanel.Show(max: bagItemData.Stack, onConfirm: (amount) => 
+        //             {
+        //                 bagItemData.OnDropItem?.Invoke(bagItemData.Index, amount);
+        //                 Close();
+        //             });
+        //             break;
+        //         case RandomShopItemData randomShopItemData:
+        //             break;
+        //         default:
+        //             throw new ArgumentOutOfRangeException(nameof(_currentItemData));
+        //     }
+        // }
         #endregion
 
         private void Close()
         {
-            ;
             _currentItemData = default;
+            _currentItemDetailsType = ItemDetailsType.None;
         }
         public override UIType Type => UIType.ItemDetails;
         public override UICanvasType CanvasType => UICanvasType.SecondPanel;
+    }
+
+    public struct CountSliderButtonGroupData
+    {
+        public int MinCount;
+        public int MaxCount;
+        public Action<int> Callback;
+        public float PricePerItem;
+        public bool ShowPrice;
+        public float CurrentGold;
     }
 
     public enum ItemDetailsType

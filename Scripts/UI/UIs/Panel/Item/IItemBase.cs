@@ -15,6 +15,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
     public abstract class ItemBase : MonoBehaviour, IItemBase
     {
         public abstract void SetData<T>(T data) where T : IItemBaseData, new();
+        public abstract void Clear();
     }
 
     public interface IItemBaseData : IUIDatabase
@@ -71,7 +72,9 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         //属性描述
         public string PropertyDescription;
         //装备被动描述
-        public string EquipPassiveDescription;
+        public string RandomDescription;
+        //装备被动属性
+        public string PassiveDescription;
         public PlayerItemType PlayerItemType;
         public bool IsEquip;
         public bool IsLock;
@@ -150,7 +153,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                 Stack = 1,
                 Description = Description,
                 PropertyDescription = "",
-                EquipPassiveDescription = "",
+                RandomDescription = "",
                 PlayerItemType = PlayerItemType.Item,
                 IsEquip = true,
                 IsLock = IsLock,
@@ -181,8 +184,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public Sprite Icon;
         public Sprite QualityIcon;
         public string Name;
+        public string Description;
         public string MainProperty;
-        public string PassiveProperty;
+        public string RandomProperty;
+        public string PassiveDescription;
         public PlayerItemType ItemType;
         public Action<int, int> OnBuyItem;
 

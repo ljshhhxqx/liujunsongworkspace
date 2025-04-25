@@ -36,5 +36,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
             }
             Debug.Log($"Error: Data {data} is not RoomMemberItemData");
         }
+
+        public override void Clear()
+        {
+            
+        }
     }
 }

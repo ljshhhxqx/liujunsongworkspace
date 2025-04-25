@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
@@ -139,7 +138,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
                 if (!slot) continue;
                 slot.OnPointerClickObservable
                     .Subscribe(x => OnEquipClick(slot, x))
-                    .AddTo(this);
+                    .AddTo(slot.gameObject);
                 _slotItems.Add(slot);
             }
         }
@@ -149,7 +148,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             if (slot.IsEmpty()) return;
             // 这里可以弹出物品详情面板
             Debug.Log($"显示物品详情: {slot.name}");
-            _uiManager.SwitchUI<ItemDetailsScreenUI>(ui => ui.Open(slot.CurrentItem.ToBagItemData(), ItemDetailsType.Equipment));
+            _uiManager.SwitchUI<ItemDetailsScreenUI>(ui => ui.OpenBag(slot.CurrentItem.ToBagItemData(), ItemDetailsType.Equipment));
         }
 
         // 初始化格子
@@ -161,16 +160,16 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
                 if (!slot) continue;
                 slot.OnBeginDragObserver
                     .Subscribe(x => OnSlotBeginDrag(slot, x))
-                    .AddTo(this);
+                    .AddTo(slot.gameObject);
                 slot.OnDragObserver
                     .Subscribe(x => OnSlotDrag(slot, x))
-                    .AddTo(this);
+                    .AddTo(slot.gameObject);
                 slot.OnEndDragObserver
                     .Subscribe(x => OnSlotEndDrag(slot, x))
-                    .AddTo(this);
+                    .AddTo(slot.gameObject);
                 slot.OnPointerClickObserver
                     .Subscribe(x => OnSlotClick(slot, x))
-                    .AddTo(this);
+                    .AddTo(slot.gameObject);
                 _bagSlotItems.Add(slot);
             }
         }
@@ -232,7 +231,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             {
                 Debug.Log($"显示物品详情: {slot.CurrentItem.ItemName}");
                 // 这里可以在Inventory中统一控制UI面板
-                _uiManager.SwitchUI<ItemDetailsScreenUI>(ui => ui.Open(slot.CurrentItem));
+                _uiManager.SwitchUI<ItemDetailsScreenUI>(ui => ui.OpenBag(slot.CurrentItem));
             }
         }
 

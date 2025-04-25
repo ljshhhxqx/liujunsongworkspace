@@ -20,7 +20,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private AnimationConfig _animationConfig;
         private PropertyConfig _propertyConfig;
         private BindingKey _bindKey;
+        private BindingKey _goldBindKey;
         private ReactiveDictionary<int, PropertyItemData> _uiPropertyData;
+        private ReactiveProperty<GoldData> _goldData;
 
         public PlayerPredictablePropertyState PlayerPredictablePropertyState => (PlayerPredictablePropertyState)CurrentState;
 
@@ -34,6 +36,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             if (isLocalPlayer)
             {
                 _bindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
+                _goldBindKey = new BindingKey(UIPropertyDefine.PlayerBaseData, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
                 var itemDatas = new Dictionary<int, IUIDatabase>();
                 var enumValues = Enum.GetValues(typeof(PropertyTypeEnum));
                 for (var i = 0; i < enumValues.Length; i++)
@@ -139,10 +142,29 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private void PropertyChanged(PlayerPredictablePropertyState predictablePropertyState)
         {
             _uiPropertyData ??= UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_bindKey);
+            var goldData = new GoldData();
             foreach (var key in predictablePropertyState.Properties.Keys)
             {
                 var property = predictablePropertyState.Properties[key];
                 var data = _uiPropertyData[(int)key];
+                switch (key)
+                {
+                    case PropertyTypeEnum.Gold:
+                        goldData.Gold = property.CurrentValue;
+                        break;
+                    case PropertyTypeEnum.Attack:
+                        goldData.Attack = property.CurrentValue;
+                        break;
+                    case PropertyTypeEnum.Defense:
+                        goldData.Health = property.CurrentValue;
+                        break;
+                    case PropertyTypeEnum.Speed:
+                        goldData.Speed = property.CurrentValue;
+                        break;
+                    case PropertyTypeEnum.Experience:
+                        goldData.Exp = property.CurrentValue;
+                        break;
+                }
                 if (property.IsResourceProperty())
                 {
                     OnPropertyChanged?.Invoke(key, property);
@@ -151,6 +173,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     _uiPropertyData[(int)key] = data;
                     continue;
                 }
+                
                 OnPropertyChanged?.Invoke(key, property);
                 data.CurrentProperty = property.CurrentValue;
                 _uiPropertyData[(int)key] = data;
@@ -159,6 +182,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     PlayerComponentController.SetAnimatorSpeed(AnimationState.Attack, property.CurrentValue);
                 }
             }
+            UIPropertyBinder.SetProperty(_goldBindKey, goldData);
         }
     }
 }

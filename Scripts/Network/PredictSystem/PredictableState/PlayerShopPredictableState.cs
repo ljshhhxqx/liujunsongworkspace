@@ -80,7 +80,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 var shopConfigData = _shopConfig.GetShopConfigData(item.ShopConfigId);
                 var itemConfigData = _itemConfig.GetGameItemData(item.ItemConfigId);
                 var mainProperty = GameStaticExtensions.GetBuffEffectDesc(item.MainIncreaseDatas);
-                var passiveProperty = GameStaticExtensions.GetRandomBuffEffectDesc(item.PassiveIncreaseDatas);
+                var randomBuffEffectDesc = GameStaticExtensions.GetRandomBuffEffectDesc(item.PassiveIncreaseDatas);
                 var randomShopData = new RandomShopItemData();
                 randomShopData.ShopConfigId = item.ShopConfigId;
                 randomShopData.ShopId = item.ShopId;
@@ -94,8 +94,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 randomShopData.RemainingCount = item.RemainingCount;
                 randomShopData.QualityType = item.Quality;
                 randomShopData.SellPrice = item.SellPrice;
-                randomShopData.MainProperty = mainProperty;
-                randomShopData.PassiveProperty = passiveProperty;
+                randomShopData.MainProperty = mainProperty ?? "";
+                randomShopData.RandomProperty = randomBuffEffectDesc ?? "";
+                randomShopData.PassiveDescription = item.ItemType.IsEquipment()
+                    ? _shopConfig.GetShopConstantData().shopEquipPassiveDescription
+                    : ""; 
                 randomShopData.OnBuyItem = OnBuyItem;
                 _shopItems[key] = randomShopData;
             }

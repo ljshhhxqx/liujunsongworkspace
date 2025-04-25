@@ -225,6 +225,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public int onceEachTypeCount;
         //每次刷新花费的金币
         public int onceCostGold;
+        public string shopEquipPassiveDescription;
     }
 
     [Serializable]

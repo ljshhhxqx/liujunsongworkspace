@@ -13,7 +13,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         [UIPropertyType(typeof(EquipItemData))]
         EquipmentItem,
         [UIPropertyType(typeof(RandomShopItemData))]
-        ShopItem
+        ShopItem,
+        [UIPropertyType(typeof(GoldData))]
+        PlayerBaseData,
     }
 
     // 复合键结构（玩家ID + 数据Key）
@@ -60,6 +62,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
     public interface IUIDatabase
     {
         
+    }
+
+    public struct GoldData : IUIDatabase
+    {
+        public float Gold;
+        public float Exp;
+        public float Health;
+        public float Attack;
+        public float Speed;
     }
 
     public struct ItemDetailData
