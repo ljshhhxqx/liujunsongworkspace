@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AOTScripts.Tool;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
@@ -9,6 +10,8 @@ using HotUpdate.Scripts.UI.UIs.SecondPanel;
 using UI.UIBase;
 using UniRx;
 using UnityEngine;
+using UnityEngine.UI;
+using VContainer;
 
 namespace HotUpdate.Scripts.UI.UIs.Panel
 {
@@ -18,12 +21,27 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         private ContentItemList shopItemList;
         [SerializeField]
         private ContentItemList bagItemList;
+        [SerializeField]
+        private Button refreshButton;
         private UIManager _uiManager;
         private readonly List<ShopSlotItem> _shopSlotItems = new List<ShopSlotItem>();
         private readonly List<ShopBagSlotItem> _bagSlotItems = new List<ShopBagSlotItem>();
         private readonly Dictionary<int, RandomShopItemData> _shopItemData = new Dictionary<int, RandomShopItemData>();
         private readonly Dictionary<int, BagItemData> _bagItemData = new Dictionary<int, BagItemData>();
         private IObservable<GoldData> _goldObservable;
+        private Subject<Unit> _refreshSubject = new Subject<Unit>();
+        public IObservable<Unit> OnRefresh => _refreshSubject;
+
+        [Inject]
+        private void Init(UIManager uiManager)
+        {
+            _uiManager = uiManager;
+            refreshButton.onClick.RemoveAllListeners();
+            refreshButton.BindDebouncedListener(() =>
+            {
+                _refreshSubject.OnNext(Unit.Default);
+            });
+        }
 
         public void BindPlayerGold(IObservable<GoldData> playerGold)
         {

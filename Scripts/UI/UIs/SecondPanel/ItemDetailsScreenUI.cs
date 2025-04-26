@@ -312,8 +312,6 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                     bagItemData.IsLock = newLockState;
                     UpdateButtonStates();
                     break;
-                case RandomShopItemData randomShopItemData:
-                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(_currentItemData));
             }

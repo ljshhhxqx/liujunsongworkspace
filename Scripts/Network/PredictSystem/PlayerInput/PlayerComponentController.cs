@@ -19,6 +19,7 @@ using HotUpdate.Scripts.UI.UIs.Overlay;
 using HotUpdate.Scripts.UI.UIs.Panel;
 using HotUpdate.Scripts.UI.UIs.Panel.Backpack;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
+using MemoryPack;
 using Mirror;
 using UI.UIBase;
 using UniRx;
@@ -231,6 +232,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             shopScreenUI.BindShopItemData(UIPropertyBinder.GetReactiveDictionary<RandomShopItemData>(_itemBindKey));
             shopScreenUI.BindBagItemData(UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey));
             shopScreenUI.BindPlayerGold(UIPropertyBinder.ObserveProperty<GoldData>(_propertyBindKey));
+            shopScreenUI.OnRefresh.Subscribe(_ =>
+            {
+                var refreshCommand = new RefreshShopCommand
+                {
+                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Shop, CommandAuthority.Client
+                    , CommandExecuteType.Immediate),
+                };
+                _gameSyncManager.EnqueueCommand(MemoryPackSerializer.Serialize(refreshCommand));
+            }).AddTo(shopScreenUI.gameObject);
         }
 
         private bool HandleSpecialState()
