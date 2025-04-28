@@ -1,4 +1,5 @@
 ﻿using System;
+using TMPro;
 using UniRx;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -13,7 +14,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         [SerializeField]
         private Image qualityImage;        // 显示物品图标的Image组件
         [SerializeField]
-        private Text stackText;         // 显示堆叠数量的Text组件
+        private TextMeshProUGUI stackText;         // 显示堆叠数量的Text组件
         [SerializeField]
         private GameObject lockIcon;    // 锁定图标的GameObject组件
         [SerializeField]

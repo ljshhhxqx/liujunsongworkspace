@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using TMPro;
 using UniRx;
 using UniRx.Triggers;
@@ -14,6 +15,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         [SerializeField] private Image qualityFrame;
         [SerializeField] private TextMeshProUGUI priceText;
         [SerializeField] private Slider quantitySlider;
+        [SerializeField] private TextMeshProUGUI quantityText;
         [SerializeField] private Button buyButton;
         private RandomShopItemData _shopItemData;
         private Subject<int> _onBuySubject = new Subject<int>();
@@ -42,10 +44,18 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         
                 icon.sprite = shopItemData.Icon;
                 qualityFrame.sprite = shopItemData.QualityIcon;
-                priceText.text = $"{shopItemData.Price}G";
                 quantitySlider.maxValue = shopItemData.RemainingCount;
                 quantitySlider.minValue = 1;
                 quantitySlider.wholeNumbers = true;
+                quantitySlider.OnValueChangedAsObservable()
+                   .Subscribe(value =>
+                   {
+                       var quantity = (int) value;
+                       quantityText.text = quantity.ToString(CultureInfo.InvariantCulture);
+                       var total = quantity * shopItemData.Price;
+                       priceText.text = $"{total}G";
+                   } )
+                   .AddTo(_disposable);
             }
         }
 
