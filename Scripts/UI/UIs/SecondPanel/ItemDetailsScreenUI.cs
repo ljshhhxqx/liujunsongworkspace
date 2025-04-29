@@ -143,7 +143,8 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 Callback = x => randomShopItemData.OnBuyItem?.Invoke(randomShopItemData.ShopId, x),
                 PricePerItem = randomShopItemData.Price,
                 ShowPrice = true,
-                CurrentGold = _currentGoldData.Gold
+                CurrentGold = _currentGoldData.Gold,
+                ButtonType = ButtonType.Buy
             };
             buyCountSlider.Init(countSliderButtonGroupData);
             buyCountSlider.OnSliderChanged.Subscribe(x =>
@@ -192,13 +193,16 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 Callback = x => bagItemData.OnUseItem?.Invoke(bagItemData.Index, x),
                 PricePerItem = bagItemData.Price * bagItemData.SellRatio,
                 ShowPrice = false,
-                CurrentGold = _currentGoldData.Gold
+                CurrentGold = _currentGoldData.Gold,
+                ButtonType = ButtonType.Use
             };
             useCountSlider.Init(countSliderButtonGroupData);
             countSliderButtonGroupData.Callback = x => bagItemData.OnDropItem?.Invoke(bagItemData.Index, x);
+            countSliderButtonGroupData.ButtonType = ButtonType.Drop;
             dropCountSlider.Init(countSliderButtonGroupData);
             countSliderButtonGroupData.ShowPrice = true;
             countSliderButtonGroupData.Callback = x => bagItemData.OnSellItem?.Invoke(bagItemData.Index, x);
+            countSliderButtonGroupData.ButtonType = ButtonType.Sell;
             sellCountSlider.Init(countSliderButtonGroupData);
         }
 
@@ -373,6 +377,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         public float PricePerItem;
         public bool ShowPrice;
         public float CurrentGold;
+        public ButtonType ButtonType;
     }
 
     public enum ItemDetailsType
@@ -381,5 +386,17 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         Bag,
         Equipment,
         Shop,
+    }
+
+    public enum ButtonType
+    {
+        [Header("使用")]
+        Use,
+        [Header("丢弃")]
+        Drop,
+        [Header("售出")]
+        Sell,
+        [Header("购买")]
+        Buy,
     }
 }

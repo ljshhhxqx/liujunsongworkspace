@@ -1,5 +1,6 @@
 ﻿using System;
 using AOTScripts.Tool;
+using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.UI.UIs.SecondPanel;
 using TMPro;
 using UniRx;
@@ -14,6 +15,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         [SerializeField] private Slider slider;
         [SerializeField] private Button button;
         [SerializeField] private TextMeshProUGUI priceText;
+        [SerializeField] private TextMeshProUGUI buttonText;
         private Subject<int> _sliderSubject = new Subject<int>();
         public IObservable<int> OnSliderChanged => _sliderSubject;
 
@@ -32,6 +34,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public void Init(CountSliderButtonGroupData countSliderButtonGroupData)
         {
             _countSliderButtonGroupData = countSliderButtonGroupData;
+            buttonText.text = EnumHeaderParser.GetHeader(_countSliderButtonGroupData.ButtonType);
             button.onClick.RemoveAllListeners();
             button.BindDebouncedListener(() =>
             {

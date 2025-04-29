@@ -911,6 +911,26 @@
             "Address": "/Map/Town/UIPrefab/BackpackUI.prefab"
         },
         {
+            "UID": 2800001,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "ItemDetailUI",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/UIPrefab/ItemDetailUI.prefab"
+        },
+        {
+            "UID": 2800002,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "ShopUI",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/UIPrefab/ShopUI.prefab"
+        },
+        {
             "UID": 2900000,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
