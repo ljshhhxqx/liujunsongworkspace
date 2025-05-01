@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
@@ -11,6 +12,7 @@ using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.Server.InGame;
 using MemoryPack;
 using Mirror;
+using UniRx;
 using UnityEngine;
 using VContainer;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
@@ -307,7 +309,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void HandleInvincibleChanged(int headerConnectionId, bool isInvincible)
         {
             var playerState = GetState<PlayerPredictablePropertyState>(headerConnectionId);
-            playerState.IsInvisible = isInvincible;
+            playerState.SubjectedState = playerState.SubjectedState.AddState(SubjectedStateType.IsInvisible);
             PropertyStates[headerConnectionId] = playerState;
             PropertyChange(headerConnectionId);
         }
@@ -521,6 +523,48 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             base.Clear();
             _activeBuffs = _activeBuffs.Clear();
             PlayerPredictionState.Clear();
+        }
+
+
+        public IEnumerable<(int, float)> GetPlayerPropertiesWithCondition(Func<PropertyCalculator, bool> condition, bool isCurrentValue = false)
+        {
+            foreach (var playerState in PropertyStates.Keys)
+            {
+                var value = PropertyStates[playerState];
+                if (value is PlayerPredictablePropertyState playerPredictablePropertyState)
+                {
+                    foreach (var property in playerPredictablePropertyState.Properties.Keys)
+                    {
+                        var propertyValue = playerPredictablePropertyState.Properties[property];
+                        if (condition(propertyValue))
+                        {
+                            yield return (playerState, isCurrentValue ? propertyValue.CurrentValue : propertyValue.MaxValue);
+                        }
+                    }
+                }
+            }
+        }
+
+        public (int, float)[] GetSortedPlayerPropertiesWithCondition(Func<PropertyCalculator, bool> condition,
+            Func<(int, float), int> sortFunc, bool isCurrentValue = false)
+        {
+            var properties = GetPlayerPropertiesWithCondition(condition, isCurrentValue).ToArray();
+            return SortPlayerProperties(properties, sortFunc);
+        }
+
+        public (int, float)[] SortPlayerProperties((int, float)[] properties, Func<(int, float), int> sortFunc)
+        {
+            for (int i = 0; i < properties.Length; i++)
+            {
+                for (int j = i + 1; j < properties.Length; j++)
+                {
+                    if (sortFunc(properties[i]) > sortFunc(properties[j]))
+                    {
+                        (properties[i], properties[j]) = (properties[j], properties[i]);
+                    }
+                }
+            }
+            return properties;
         }
 
         [Serializable]

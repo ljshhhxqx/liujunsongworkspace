@@ -53,18 +53,17 @@ namespace HotUpdate.Scripts.Tool.Static
             return weightedItems.Last().Key;
         }
         
-        public static IList<T> Shuffle<T>(this IList<T> list)
+        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source)
         {
-            var random = new Random();
-            var enumerable = list as T[] ?? list.ToArray();
-            var n = enumerable.Length;
-            while (n > 1) 
+            var list = source.ToList();
+            int n = list.Count;
+            while (n > 1)
             {
                 n--;
-                int k = random.Next(n + 1);
-                (enumerable[k], enumerable[n]) = (enumerable[n], enumerable[k]);
+                int k = Random.Next(n + 1);
+                (list[k], list[n]) = (list[n], list[k]);
             }
-            return enumerable;
+            return list;
         }
 
         public static T RandomSelect<T>(this IList<T> list)
@@ -227,6 +226,44 @@ namespace HotUpdate.Scripts.Tool.Static
                 BuffIncreaseType.CorrectionFactor => $"{effect.increaseValueRange.min:P0}~{effect.increaseValueRange.max:P0}",
                 _ => $"{effect.increaseValueRange.min:F1}~{effect.increaseValueRange.max:F1}"
             };
+        }
+        
+        private static readonly System.Random ChunkRandom = new System.Random();
+    
+        public static IEnumerable<IEnumerable<T>> Chunk<T>(
+            this IEnumerable<T> source, 
+            int count, 
+            bool isRandomChunk = false)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (count <= 0) throw new ArgumentOutOfRangeException(nameof(count), "Count must be greater than 0.");
+        
+            if (isRandomChunk)
+            {
+                // 随机化处理
+                var randomized = source.Shuffle().ToList();
+                return ChunkInternal(randomized, count);
+            }
+        
+            return ChunkInternal(source, count);
+        }
+    
+        private static IEnumerable<IEnumerable<T>> ChunkInternal<T>(IEnumerable<T> source, int count)
+        {
+            var enumerator = source.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                yield return GetChunk(enumerator, count - 1);
+            }
+        }
+    
+        private static IEnumerable<T> GetChunk<T>(IEnumerator<T> enumerator, int count)
+        {
+            do
+            {
+                yield return enumerator.Current;
+            }
+            while (count-- > 0 && enumerator.MoveNext());
         }
     }
     

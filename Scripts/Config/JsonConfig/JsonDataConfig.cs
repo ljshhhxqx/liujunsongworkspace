@@ -509,6 +509,19 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public float inputThreshold;
         public float maxCommandAge;
         public float uiUpdateInterval;
+
+        #region 结盟和基地的相关
+
+        public float playerBaseSize;
+        public int minUnionPlayerCount;
+        public float playerBaseHpRecoverRatioPerSec;
+
+        public bool IsWithinBase(Vector3 unionPosition, Vector3 playerPosition)
+        {
+            return (unionPosition - playerPosition).sqrMagnitude < playerBaseSize * playerBaseSize;
+        }
+
+        #endregion
     }
 
     [Serializable]

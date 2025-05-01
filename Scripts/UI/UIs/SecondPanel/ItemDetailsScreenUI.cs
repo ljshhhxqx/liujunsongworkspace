@@ -4,7 +4,6 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
-using HotUpdate.Scripts.UI.UIs.ThirdPanel;
 using TMPro;
 using UI.UIBase;
 using UniRx;

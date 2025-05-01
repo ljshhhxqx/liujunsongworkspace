@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using Unity.Jobs;
@@ -51,7 +52,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var defenderPropertyStates = defenders;
             foreach (var (key, defenderPropertyState) in defenders)
             {
-                if (defenderPropertyState.IsInvisible)
+                if (defenderPropertyState.SubjectedState.HasAnyState(SubjectedStateType.IsInvisible))
                 {
                     Debug.Log($"PlayerConnectionId: {key} is invisible, cannot attack.");
                     continue;

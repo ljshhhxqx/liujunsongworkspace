@@ -21,7 +21,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         private PropertyCalculator[] _calculators;
         
         [MemoryPackOrder(2)]
-        public bool IsInvisible;
+        public SubjectedStateType SubjectedState;
 
         [MemoryPackOrder(3)] 
         public ElementState ElementState;
@@ -451,13 +451,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         public float RemainingDuration;
     }
 
+    [Flags]
     public enum SubjectedStateType : byte
     {
         None = 0,
-        IsInvisible,
-        IsFrozen,
-        IsElectrified,
-        IsBlowup,
-        IsStunned,
+        IsInvisible = 1 << 0,
+        IsFrozen = 1 << 1,
+        IsElectrified = 1 << 2,
+        IsBlowup = 1 << 3,
+        IsStunned = 1 << 4,
+        IsDead = 1 << 5,
+        IsCantMoved = 1 << 6,
     }
 }
