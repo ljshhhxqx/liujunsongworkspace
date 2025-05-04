@@ -19,8 +19,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         protected override ISyncPropertyState CurrentState { get; set; }
         private AnimationConfig _animationConfig;
         private PropertyConfig _propertyConfig;
+        private JsonDataConfig _jsonDataConfig;
         private BindingKey _bindKey;
         private BindingKey _goldBindKey;
+        private BindingKey _playerDeathTimeBindKey;
         private ReactiveDictionary<int, PropertyItemData> _uiPropertyData;
         private ReactiveProperty<GoldData> _goldData;
 
@@ -33,10 +35,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             base.Init(gameSyncManager, configProvider);
             _animationConfig = configProvider.GetConfig<AnimationConfig>();
             _propertyConfig = configProvider.GetConfig<PropertyConfig>();
+            _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             if (isLocalPlayer)
             {
                 _bindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
                 _goldBindKey = new BindingKey(UIPropertyDefine.PlayerBaseData, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
+                _playerDeathTimeBindKey = new BindingKey(UIPropertyDefine.PlayerDeathTime, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
+                _uiPropertyData = UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_bindKey);
                 var itemDatas = new Dictionary<int, IUIDatabase>();
                 var enumValues = Enum.GetValues(typeof(PropertyTypeEnum));
                 for (var i = 0; i < enumValues.Length; i++)
@@ -78,6 +83,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         }
 
         public event Action<PropertyTypeEnum, PropertyCalculator> OnPropertyChanged;
+        public event Action<SubjectedStateType> OnStateChanged;
+        public event Action<float> OnPlayerDead; 
+        public event Action OnPlayerRespawned; 
         
         public override void ApplyServerState<T>(T state)
         {
@@ -138,10 +146,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             PropertyChanged(predictablePropertyState);
         }
+        
+        private SubjectedStateType _subjectedStateType;
 
         private void PropertyChanged(PlayerPredictablePropertyState predictablePropertyState)
         {
-            _uiPropertyData ??= UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_bindKey);
+            if (!_subjectedStateType.HasAnyState(SubjectedStateType.IsDead) && predictablePropertyState.SubjectedState.HasAnyState(SubjectedStateType.IsDead))
+            {
+                var countDown = _jsonDataConfig.GameConfig.GetPlayerDeathTime((int)predictablePropertyState.Properties[PropertyTypeEnum.Score].CurrentValue);
+                OnPlayerDead?.Invoke(countDown);
+                
+            }
+            else if (_subjectedStateType.HasAnyState(SubjectedStateType.IsDead) && !predictablePropertyState.SubjectedState.HasAnyState(SubjectedStateType.IsDead))
+            {
+                OnPlayerRespawned?.Invoke();
+            }
+            _subjectedStateType = predictablePropertyState.SubjectedState;
+            OnStateChanged?.Invoke(predictablePropertyState.SubjectedState);
             var goldData = new GoldData();
             foreach (var key in predictablePropertyState.Properties.Keys)
             {

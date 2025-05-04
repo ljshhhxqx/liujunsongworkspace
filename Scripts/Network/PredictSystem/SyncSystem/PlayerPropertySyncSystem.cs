@@ -309,7 +309,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void HandleInvincibleChanged(int headerConnectionId, bool isInvincible)
         {
             var playerState = GetState<PlayerPredictablePropertyState>(headerConnectionId);
-            playerState.SubjectedState = playerState.SubjectedState.AddState(SubjectedStateType.IsInvisible);
+            if (isInvincible)
+            {
+                playerState.SubjectedState = playerState.SubjectedState.AddState(SubjectedStateType.IsInvisible);
+            }
+            else
+            {
+                playerState.SubjectedState = playerState.SubjectedState.RemoveState(SubjectedStateType.IsInvisible);
+            }
             PropertyStates[headerConnectionId] = playerState;
             PropertyChange(headerConnectionId);
         }
@@ -435,10 +442,49 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     playerPropertyState.Properties[PropertyTypeEnum.Health].CurrentValue <= 0)
                 {
                     //todo: handle dead player logic
+                    var deadManId = _playerInGameManager.GetPlayerNetId(defenderPlayerIds[i]);
+                    var deadTime = _jsonDataConfig.GameConfig.GetPlayerDeathTime((int)defendersState[defenderPlayerIds[i]].Properties[PropertyTypeEnum.Score].CurrentValue);
+                    if (!_playerInGameManager.TryAddDeathPlayer(deadManId, deadTime, attacker, OnPlayerDeath, OnPlayerRespawn))
+                    {
+                        Debug.LogError($"PlayerPropertySyncSystem: Failed to add death player {deadManId}");
+                    }
                 }
             }
             PropertyStates[attacker] = propertyState;   
             PropertyChange(attacker);
+        }
+
+        private void OnPlayerDeath(uint playerId, int killerId, float countdownTime)
+        {
+            var playerConnection = _playerInGameManager.GetPlayerId(playerId);
+            var playerController = GameSyncManager.GetPlayerConnection(playerConnection);
+            var playerState = GetState<PlayerPredictablePropertyState>(playerConnection);
+            playerState.SubjectedState = playerState.SubjectedState.AddState(SubjectedStateType.IsDead);
+            playerState = playerController.HandlePlayerDie(playerState, countdownTime);
+            GameSyncManager.EnqueueServerCommand(new PlayerDeathCommand
+            {
+                Header = GameSyncManager.CreateNetworkCommandHeader(playerConnection, CommandType.Input, CommandAuthority.Server, CommandExecuteType.Immediate),
+                DeadCountdownTime = countdownTime,
+                KillerId = killerId,
+            });
+            PropertyStates[playerConnection] = playerState;
+            PropertyChange(playerConnection);
+        }
+
+        private void OnPlayerRespawn(uint playerId)
+        {
+            var playerConnection = _playerInGameManager.GetPlayerId(playerId);
+            var playerState = GetState<PlayerPredictablePropertyState>(playerConnection);
+            playerState.SubjectedState = playerState.SubjectedState.RemoveState(SubjectedStateType.IsDead);
+            var playerController = GameSyncManager.GetPlayerConnection(playerConnection);
+            playerState = playerController.HandlePlayerRespawn(playerState);
+            GameSyncManager.EnqueueServerCommand(new PlayerRebornCommand
+            {
+                Header = GameSyncManager.CreateNetworkCommandHeader(playerConnection, CommandType.Input, CommandAuthority.Server, CommandExecuteType.Immediate),
+                RebornPosition = _playerInGameManager.GetPlayerRebornPoint(playerId)
+            });
+            PropertyStates[playerConnection] = playerState;
+            PropertyChange(playerConnection);
         }
 
         private void HandleSkill(int attacker, int skillId)
@@ -545,13 +591,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
         }
 
-        public (int, float)[] GetSortedPlayerPropertiesWithCondition(Func<PropertyCalculator, bool> condition,
-            Func<(int, float), int> sortFunc, bool isCurrentValue = false)
-        {
-            var properties = GetPlayerPropertiesWithCondition(condition, isCurrentValue).ToArray();
-            return SortPlayerProperties(properties, sortFunc);
-        }
-
         public (int, float)[] SortPlayerProperties((int, float)[] properties, Func<(int, float), int> sortFunc)
         {
             for (int i = 0; i < properties.Length; i++)
@@ -565,6 +604,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 }
             }
             return properties;
+        }
+
+        public (int, float)[] GetSortedPlayerPropertiesWithCondition(Func<PropertyCalculator, bool> condition,
+            Func<(int, float), int> sortFunc, bool isCurrentValue = false)
+        {
+            var properties = GetPlayerPropertiesWithCondition(condition, isCurrentValue).ToArray();
+            return SortPlayerProperties(properties, sortFunc);
         }
 
         [Serializable]

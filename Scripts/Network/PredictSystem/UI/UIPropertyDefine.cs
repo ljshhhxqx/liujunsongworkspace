@@ -16,6 +16,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         ShopItem,
         [UIPropertyType(typeof(GoldData))]
         PlayerBaseData,
+        [UIPropertyType(typeof(PlayerDeathTimeData))]
+        PlayerDeathTime
     }
 
     // 复合键结构（玩家ID + 数据Key）
@@ -71,6 +73,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         public float Health;
         public float Attack;
         public float Speed;
+    }
+    
+    public struct PlayerDeathTimeData : IUIDatabase
+    {
+        public float DeathTime;
+        public bool IsDead;
     }
 
     public struct ItemDetailData

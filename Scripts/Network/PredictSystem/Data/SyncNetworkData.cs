@@ -310,6 +310,54 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             Header.Authority = authority;
         }
     }
+    
+    [MemoryPackable]
+    public partial struct PlayerDeathCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)] 
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public int KillerId;
+        [MemoryPackOrder(2)]
+        public float DeadCountdownTime;
+        public NetworkCommandHeader GetHeader() => Header;
+
+        public bool IsValid()
+        {
+            return KillerId > 0 && DeadCountdownTime > 0;
+        }
+
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
+    }
+    
+    [MemoryPackable]
+    public partial struct PlayerRebornCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)] 
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public Vector3 RebornPosition;
+        public NetworkCommandHeader GetHeader() => Header;
+
+        public bool IsValid()
+        {
+            return RebornPosition != Vector3.zero;
+        }
+
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
+    }
 
     [MemoryPackable]
     public partial struct GoldChangedCommand : INetworkCommand

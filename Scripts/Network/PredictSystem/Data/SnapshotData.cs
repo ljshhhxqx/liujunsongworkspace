@@ -604,6 +604,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             hashCode.Add(AnimationSpeed);
             return hashCode.ToHashCode();
         }
+        
+        public CooldownSnapshotData Reset(CooldownSnapshotData snapshotData)
+        {
+            snapshotData.CurrentCountdown = 0;
+            snapshotData.KeyframeCurrentTime = 0;
+            snapshotData.CurrentAttackStage = 0;
+            snapshotData.IsInComboWindow = false;
+            snapshotData.WindowCountdown = 0;
+            snapshotData.ResetCooldownWindow = 0;
+            return snapshotData;
+        }
     }
 
     public static class AnimationCooldownExtensions

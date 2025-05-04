@@ -203,6 +203,11 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             return _playerInGameData.GetValueOrDefault(playerId);
         }   
         
+        public Vector3 GetPlayerRebornPoint(uint playerNetId)
+        {
+            return _playerBornPoints.GetValueOrDefault(playerNetId);
+        }
+        
         public T GetPlayerComponent<T>(int playerId) where T : Component
         {
             return GetPlayer(playerId)?.networkIdentity.GetComponent<T>();
@@ -368,13 +373,13 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         }
 
         [Server]
-        public bool TryAddDeathPlayer(uint playerNetId, float countdown, Action<uint> playerDeathCallback, Action<uint> playerBornCallback)
+        public bool TryAddDeathPlayer(uint playerNetId, float countdown, int killerPlayerId, Action<uint, int, float> playerDeathCallback, Action<uint> playerBornCallback)
         {
             if (!_playerDeathCountdowns.TryAdd(playerNetId, countdown))
             {
                 return false;
             }
-            playerDeathCallback?.Invoke(playerNetId);
+            playerDeathCallback?.Invoke(playerNetId,killerPlayerId, countdown);
             _playerBornCallbacks.Add(playerNetId, playerBornCallback);
             return true;
         }

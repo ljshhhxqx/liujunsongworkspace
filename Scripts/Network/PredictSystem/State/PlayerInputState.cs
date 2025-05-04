@@ -49,6 +49,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             AnimationCooldowns = animationCooldowns;
         }
 
+        public PlayerAnimationCooldownState Reset(PlayerAnimationCooldownState state)
+        {
+            for (int i = 0; i < AnimationCooldowns.Count; i++)
+            {
+                var cooldown = AnimationCooldowns[i];
+                AnimationCooldowns[i] = cooldown.Reset(cooldown);
+            }
+            return state;
+        }
+
         public bool IsEqual(PlayerAnimationCooldownState other)
         {
             if (AnimationCooldowns.Count != other.AnimationCooldowns.Count)

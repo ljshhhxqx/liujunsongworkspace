@@ -521,6 +521,11 @@ namespace HotUpdate.Scripts.Config.JsonConfig
             return (unionPosition - playerPosition).sqrMagnitude < playerBaseSize * playerBaseSize;
         }
 
+        public float GetPlayerDeathTime(int score)
+        {
+            return 0.002f * score + 10f;
+        }
+
         #endregion
     }
 

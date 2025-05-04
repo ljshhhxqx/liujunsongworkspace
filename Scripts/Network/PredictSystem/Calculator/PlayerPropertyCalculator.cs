@@ -13,6 +13,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
     public class PlayerPropertyCalculator : IPlayerStateCalculator, IJobParallelFor
     {
         private static PropertyCalculatorConstant _calculatorConstant;
+        public SubjectedStateType SubjectedStateType { get; private set; }
         public bool IsClient { get; private set; }
         public event Action<PropertyTypeEnum, float> OnPropertyChanged;
         public Dictionary<PropertyTypeEnum, PropertyCalculator> Properties { get; private set; }
@@ -173,14 +174,41 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             });
         }
 
+        public PlayerPredictablePropertyState HandlePlayerDeath(PlayerPredictablePropertyState playerPredictablePropertyState)
+        {
+            var propertyState = playerPredictablePropertyState;
+            var state = propertyState.Properties;
+            var health = state[PropertyTypeEnum.Health];
+            var remainHealth = health.UpdateCurrentValue(0);
+            state[PropertyTypeEnum.Health] = remainHealth;
+            playerPredictablePropertyState = propertyState;
+            return playerPredictablePropertyState;
+        }
+
+        public PlayerPredictablePropertyState HandlePlayerRespawn(PlayerPredictablePropertyState playerPredictablePropertyState)
+        {
+            var propertyState = playerPredictablePropertyState;
+            var state = propertyState.Properties;
+            var health = state[PropertyTypeEnum.Health];
+            var remainHealth = health.UpdateCurrentValue(health.MaxCurrentValue);
+            var strength = state[PropertyTypeEnum.Strength];
+            var remainStrength = strength.UpdateCurrentValue(strength.MaxCurrentValue);
+            state[PropertyTypeEnum.Strength] = remainStrength;
+            state[PropertyTypeEnum.Health] = remainHealth;
+            playerPredictablePropertyState = propertyState;
+            return playerPredictablePropertyState;
+        }
+
         public void UpdateProperty(PropertyTypeEnum propertyType, PropertyCalculator property)
         {
-            if (!Properties.ContainsKey(propertyType))
-            {
-                Properties.Add(propertyType, property);
-            }
+            Properties.TryAdd(propertyType, property);
             Properties[propertyType] = property;
             OnPropertyChanged?.Invoke(propertyType, property.CurrentValue);
+        }
+
+        public void UpdateState(SubjectedStateType subjectType)
+        {
+            SubjectedStateType = subjectType;
         }
 
         public void Execute(int index)

@@ -117,6 +117,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
 
             return true;
         }
+
+        public static void Respawn(ref PlayerPredictablePropertyState state)
+        {
+            state = new PlayerPredictablePropertyState
+            {
+                Properties = new Dictionary<PropertyTypeEnum, PropertyCalculator>(),
+                SubjectedState = SubjectedStateType.None,
+                ElementState = new ElementState()
+            };
+        }
     }
     
     [MemoryPackable]

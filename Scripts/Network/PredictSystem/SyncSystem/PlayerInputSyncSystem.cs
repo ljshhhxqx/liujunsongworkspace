@@ -139,9 +139,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public override CommandType HandledCommandType => CommandType.Input;
         public override ISyncPropertyState ProcessCommand(INetworkCommand command)
         {
+            var header = command.GetHeader();
+            if (!PropertyStates.ContainsKey(header.ConnectionId) || PropertyStates[header.ConnectionId]  is not PlayerInputState playerInputState)
+                return null;
             if (command is InputCommand inputCommand)
             {
-                var header = inputCommand.GetHeader();
                 var playerSyncSystem = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
                 var playerController = GameSyncManager.GetPlayerConnection(header.ConnectionId);
                 if (playerController.IsInSpecialState())
@@ -214,6 +216,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 var playerGameStateData = playerController.HandleServerMoveAndAnimation(inputStateData);
                 PropertyStates[header.ConnectionId] = new PlayerInputState(playerGameStateData, new PlayerAnimationCooldownState(GetCooldownSnapshotData(header.ConnectionId)));
                 return PropertyStates[header.ConnectionId];
+            }
+
+            if (command is PlayerDeathCommand)
+            {
+                playerInputState.PlayerGameStateData.Velocity = Vector3.zero;
+                playerInputState.PlayerGameStateData.AnimationState = AnimationState.Dead;
+                PropertyStates[header.ConnectionId] = playerInputState;
+                return playerInputState;
+            }
+            
+            if (command is PlayerRebornCommand playerRebornCommand)
+            {
+                playerInputState.PlayerGameStateData.Velocity = Vector3.zero;
+                playerInputState.PlayerGameStateData.AnimationState = AnimationState.Idle;
+                playerInputState.PlayerAnimationCooldownState = playerInputState.PlayerAnimationCooldownState.Reset(playerInputState.PlayerAnimationCooldownState);
+                playerInputState.PlayerGameStateData.Position = playerRebornCommand.RebornPosition;
+                playerInputState.PlayerGameStateData.Quaternion = Quaternion.identity;
+                playerInputState.PlayerGameStateData.PlayerEnvironmentState = PlayerEnvironmentState.OnGround;
+                PropertyStates[header.ConnectionId] = playerInputState;
+                return playerInputState;
             }
 
             return null;
