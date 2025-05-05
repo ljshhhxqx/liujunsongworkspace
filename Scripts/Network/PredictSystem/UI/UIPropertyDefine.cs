@@ -66,13 +66,43 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         
     }
 
-    public struct GoldData : IUIDatabase
+    public struct GoldData : IUIDatabase, IEquatable<GoldData>
     {
         public float Gold;
         public float Exp;
         public float Health;
         public float Attack;
+        public float MaxHealth;
+        public float Mana;
+        public float MaxMana;
         public float Speed;
+        public float Score;
+
+        public bool Equals(GoldData other)
+        {
+            return Gold.Equals(other.Gold) && Exp.Equals(other.Exp) && Health.Equals(other.Health) && Attack.Equals(other.Attack) && Speed.Equals(other.Speed)
+                && MaxHealth.Equals(other.MaxHealth) && Mana.Equals(other.Mana) && MaxMana.Equals(other.MaxMana) && Score.Equals(other.Score);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is GoldData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(Gold);
+            hashCode.Add(Exp);
+            hashCode.Add(Health);
+            hashCode.Add(Attack);
+            hashCode.Add(MaxHealth);
+            hashCode.Add(Mana);
+            hashCode.Add(MaxMana);
+            hashCode.Add(Speed);
+            hashCode.Add(Score);
+            return hashCode.ToHashCode();
+        }
     }
     
     public struct PlayerDeathTimeData : IUIDatabase

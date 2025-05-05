@@ -178,12 +178,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                         break;
                     case PropertyTypeEnum.Defense:
                         goldData.Health = property.CurrentValue;
+                        goldData.MaxHealth = property.MaxCurrentValue;
                         break;
                     case PropertyTypeEnum.Speed:
                         goldData.Speed = property.CurrentValue;
                         break;
                     case PropertyTypeEnum.Experience:
                         goldData.Exp = property.CurrentValue;
+                        break;
+                    case PropertyTypeEnum.Score:
+                        goldData.Score = property.CurrentValue;
+                        break;
+                    case PropertyTypeEnum.Strength:
+                        goldData.Mana = property.CurrentValue;
+                        goldData.MaxMana = property.MaxCurrentValue;
                         break;
                 }
                 if (property.IsResourceProperty())

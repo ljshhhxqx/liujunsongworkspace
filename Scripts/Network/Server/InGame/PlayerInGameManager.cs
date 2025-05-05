@@ -276,7 +276,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 var union = new UnionData
                 {
                     unionId = ++_currentUnionId,
-                    PlayerIds = new HashSet<uint>(playerIds)
+                    PlayerIds = playerIds
                 };
                 _unionData.Add(union.unionId, union);
                 foreach (var playerId in playerIds)
@@ -402,7 +402,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
     [Serializable]
     public struct UnionData
     {
-        public HashSet<uint> PlayerIds;
+        public uint[] PlayerIds;
         public int unionId;
     }
 

@@ -515,6 +515,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public float playerBaseSize;
         public int minUnionPlayerCount;
         public float playerBaseHpRecoverRatioPerSec;
+        public float playerHpRatioToWarning;
 
         public bool IsWithinBase(Vector3 unionPosition, Vector3 playerPosition)
         {

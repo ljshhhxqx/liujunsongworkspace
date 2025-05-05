@@ -234,7 +234,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             
         }
 
-        public void OpenBag()
+        public void SwitchBag()
         {
             if (!isLocalPlayer)
             {
@@ -251,7 +251,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             bagItemOverlay.BindEquipItemData(UIPropertyBinder.GetReactiveDictionary<EquipItemData>(_equipBindKey));
         }
 
-        public void OpenShop()
+        public void SwitchShop()
         {
             if (!isLocalPlayer)
             {
@@ -278,20 +278,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }).AddTo(shopScreenUI.gameObject);
         }
         
-        public void OpenPlayerDeathTime()
+        public void SwitchPlayerDeathTime()
         {
             if (!isLocalPlayer)
             {
                 return;
             }
             
-            if (_uiManager.IsUIOpen(UIType.PlayerDeathTime))
-            {
-                _uiManager.CloseUI(UIType.PlayerDeathTime);
-                return;
-            }
-            var playerDeathTimeUI = _uiManager.SwitchUI<PlayerDeathTimeUI>();
-            playerDeathTimeUI.BindPlayerDeathTime(UIPropertyBinder.ObserveProperty<PlayerDeathTimeData>(_playerDeathTimeBindKey));
+            // if (_uiManager.IsUIOpen(UIType.PlayerDeathTime))
+            // {
+            //     _uiManager.CloseUI(UIType.PlayerDeathTime);
+            //     return;
+            // }
+            // var playerDeathTimeUI = _uiManager.SwitchUI<PlayerDeathTimeUI>();
+            // playerDeathTimeUI.BindPlayerDeathTime(UIPropertyBinder.ObserveProperty<PlayerDeathTimeData>(_playerDeathTimeBindKey));
         }
 
         private bool HandleSpecialState()
