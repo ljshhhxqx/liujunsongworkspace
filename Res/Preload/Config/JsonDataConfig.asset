@@ -87,10 +87,21 @@ MonoBehaviour:
       inputThreshold: 0.1
       maxCommandAge: 0
       uiUpdateInterval: 0
-      playerBaseSize: 5
+      gameBaseData:
+        playerBaseHpRecoverRatioPerSec: 25
+        playerBaseManaRecoverRatioPerSec: 25
+        basePositions:
+        - {x: 41.9, y: 0, z: 20.05}
+        - {x: -13.9, y: 0, z: 20.05}
+        - {x: -41.9, y: 0, z: -20.05}
+        - {x: 13.9, y: 0, z: -20.05}
+        baseCenter: {x: 0, y: 2, z: 0}
+        baseRadius: 1.7
+        baseHeight: 7
+        baseDirection: 1
       minUnionPlayerCount: 2
-      playerBaseHpRecoverRatioPerSec: 0.25
       playerHpRatioToWarning: 0.3
+      basePrefabName: PlayerBase
     dayNightCycleData:
       timeMultiplier: 60
       weatherChangeTime: 150

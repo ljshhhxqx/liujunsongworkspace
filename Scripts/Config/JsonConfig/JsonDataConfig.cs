@@ -510,6 +510,11 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public float inputThreshold;
         public float maxCommandAge;
         public float uiUpdateInterval;
+        
+        public float maxTraceDistance;
+        public float maxViewAngle;
+        public float obstacleCheckRadius;
+        public float screenBorderOffset;
 
         #region 结盟和基地的相关
 

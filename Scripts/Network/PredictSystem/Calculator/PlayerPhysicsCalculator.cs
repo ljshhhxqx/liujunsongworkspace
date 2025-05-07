@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
@@ -254,7 +256,85 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         {
             return (ushort)(yaw % 360f * 65535f / 360f);
         }
-        
+
+        private static readonly RaycastHit[] CachedHits = new RaycastHit[32];
+        /// <summary>
+        /// 获取屏幕内可见的敌人列表
+        /// </summary>
+        /// <param name="camera">玩家摄像机</param>
+        /// <param name="potentialTargets">需要检测的敌人列表</param>
+        /// <param name="playersInScreen">输出的屏幕内可见敌人列表</param>
+        /// <param name="layerMask">检测层</param>
+        /// <returns>是否找到可见敌人</returns>
+        public static bool TryGetPlayersInScreen(
+            Camera camera,
+            IEnumerable<Transform> potentialTargets,
+            out List<int> playersInScreen,
+            int layerMask)
+        {
+            playersInScreen = new List<int>();
+            if (!camera) return false;
+
+            var cameraPos = camera.transform.position;
+            var cameraForward = camera.transform.forward;
+
+            foreach (var target in potentialTargets)
+            {
+                if (!target) continue;
+
+                var targetPos = target.position;
+                var directionToTarget = targetPos - cameraPos;
+                var distanceToTarget = directionToTarget.magnitude;
+
+                // 1. 距离检查
+                if (distanceToTarget > _physicsDetermineConstant.MaxDetermineDistance)  continue;
+
+                // 2. 视角检查
+                var dot = Vector3.Dot(cameraForward, directionToTarget.normalized);
+                if (dot < _physicsDetermineConstant.ViewAngle) continue;
+
+                // 3. 视锥检查
+                var viewportPos = camera.WorldToViewportPoint(targetPos);
+                if (viewportPos.z <= 0 || 
+                    viewportPos.x < 0 || viewportPos.x > 1 || 
+                    viewportPos.y < 0 || viewportPos.y > 1)
+                {
+                    continue;
+                }
+
+                // 4. 遮挡检查（使用 SphereCastNonAlloc）
+                var hitCount = Physics.SphereCastNonAlloc(
+                    cameraPos,
+                    _physicsDetermineConstant.ObstructionCheckRadius,
+                    directionToTarget.normalized,
+                    CachedHits,
+                    distanceToTarget,
+                    layerMask);
+
+                var isObstructed = false;
+                for (var i = 0; i < hitCount; i++)
+                {
+                    var hit = CachedHits[i];
+                    if (hit.transform == target) continue;
+                    var layer = hit.collider.gameObject.layer;
+                    if (layer == _physicsDetermineConstant.StairsSceneLayer || 
+                        layer == _physicsDetermineConstant.GroundSceneLayer)
+                    {
+                        isObstructed = true;
+                        break;
+                    }
+                }
+
+                if (!isObstructed)
+                {
+                    var component = target.GetComponent<PlayerComponentController>();
+                    playersInScreen.Add(component.connectionToClient.connectionId);
+                }
+            }
+
+            return playersInScreen.Count > 0;
+        }
+
         public bool IsClient { get; private set; }
     }
     
@@ -285,9 +365,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public LayerMask GroundSceneLayer;
         public LayerMask StairsSceneLayer;
         public float RotateSpeed;
+        public float MaxDetermineDistance;
+        public float ViewAngle;
+        public float ObstructionCheckRadius;
         public bool IsServer;
 
-        public PhysicsDetermineConstant(float groundMinDistance, float groundMaxDistance, float maxSlopeAngle, float stairsCheckDistance, LayerMask groundSceneLayer, LayerMask stairsSceneLayer, float rotateSpeed, bool isServer = false)
+        public PhysicsDetermineConstant(float groundMinDistance, float groundMaxDistance, float maxSlopeAngle, float stairsCheckDistance, 
+            LayerMask groundSceneLayer, LayerMask stairsSceneLayer, float rotateSpeed, float maxDetermineDistance, float viewAngle, float obstructionCheckRadius,bool isServer = false)
         {
             GroundMinDistance = groundMinDistance;
             GroundMaxDistance = groundMaxDistance;
@@ -297,6 +381,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             StairsSceneLayer = stairsSceneLayer;
             RotateSpeed = rotateSpeed;
             IsServer = isServer;
+            MaxDetermineDistance = maxDetermineDistance;
+            ViewAngle = viewAngle;
+            ObstructionCheckRadius = obstructionCheckRadius;
         }
     }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using HotUpdate.Scripts.Config;
+using TMPro;
 using UnityEngine;
 using Random = System.Random;
 
@@ -283,11 +284,72 @@ namespace HotUpdate.Scripts.Tool.Static
             }
             return nearest;
         }
+        
+        public static void FollowTarget(FollowTargetParams followParams)
+        {
+            // 计算距离
+            if (followParams.DistanceText)
+            {
+                var distance = Vector3.Distance(followParams.Player.position, followParams.Target.position);
+                followParams.DistanceText.text = $"{distance:F1}m";
+            }
+
+            // 将目标世界坐标转换为屏幕坐标
+            var screenPos = followParams.MainCamera.WorldToScreenPoint(followParams.Target.position);
+
+            // 检查目标是否在相机前方
+            var isBehind = screenPos.z < 0;
+            screenPos.z = 0;
+
+            // 如果目标在相机后方，将指示器翻转到屏幕另一边
+            if (isBehind)
+            {
+                screenPos.x = Screen.width - screenPos.x;
+                screenPos.y = Screen.height - screenPos.y;
+            }
+
+            // 将屏幕坐标转换为Canvas坐标
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                followParams.CanvasRect, screenPos, null, out var localPos);
+            
+            // 确保指示器在屏幕边界内
+            var clampedPos = ClampToScreen(followParams, localPos);
+            followParams.IndicatorUI.localPosition = clampedPos;
+
+            // 计算指示器的旋转（指向目标方向）
+            var direction = localPos - (Vector2)followParams.IndicatorUI.localPosition;
+            var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            followParams.IndicatorUI.localRotation = Quaternion.Euler(0, 0, angle);
+        }
+
+        private static Vector2 ClampToScreen(FollowTargetParams targetParams,Vector2 position)
+        {
+            // 获取Canvas的一半大小
+            var halfSize = targetParams.CanvasRect.rect.size * 0.5f;
+            halfSize -= new Vector2(targetParams.ScreenBorderOffset, targetParams.ScreenBorderOffset);
+
+            // 限制位置在屏幕边界内
+            var clampedX = Mathf.Clamp(position.x, -halfSize.x, halfSize.x);
+            var clampedY = Mathf.Clamp(position.y, -halfSize.y, halfSize.y);
+
+            return new Vector2(clampedX, clampedY);
+        }
     }
     
     
     public interface IWeight
     {
         int GetWeight();
+    }
+
+    public class FollowTargetParams
+    {
+        public Transform Target;
+        public Transform Player;
+        public TextMeshProUGUI DistanceText;
+        public RectTransform IndicatorUI;
+        public Camera MainCamera;
+        public RectTransform CanvasRect;
+        public float ScreenBorderOffset;
     }
 }

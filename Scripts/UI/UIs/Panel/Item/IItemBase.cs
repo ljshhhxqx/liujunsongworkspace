@@ -206,4 +206,14 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
             return HashCode.Combine(ShopId, RemainingCount);
         }
     }
+
+    public struct PlayerHpItemData : IItemBaseData
+    {
+        public uint PlayerId;
+        public string Name;
+        public float CurrentHp;
+        public float MaxHp;
+        public float CurrentMp;
+        public float MaxMp;
+    }
 }

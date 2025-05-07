@@ -427,6 +427,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 StairsSceneLayer = gameData.stairSceneLayer,
                 RotateSpeed = playerData.RotateSpeed,
                 IsServer = isServer,
+                MaxDetermineDistance = gameData.maxTraceDistance,
+                ViewAngle = gameData.maxViewAngle,
+                ObstructionCheckRadius = gameData.obstacleCheckRadius,
             });
             PlayerPropertyCalculator.SetCalculatorConstant(new PropertyCalculatorConstant
             {
