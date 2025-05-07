@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Tool.Static;
 using UnityEngine;
@@ -512,22 +513,60 @@ namespace HotUpdate.Scripts.Config.JsonConfig
 
         #region 结盟和基地的相关
 
-        public float playerBaseSize;
+        public GameBaseData gameBaseData;
         public int minUnionPlayerCount;
-        public float playerBaseHpRecoverRatioPerSec;
         public float playerHpRatioToWarning;
-
-        public bool IsWithinBase(Vector3 unionPosition, Vector3 playerPosition)
-        {
-            return (unionPosition - playerPosition).sqrMagnitude < playerBaseSize * playerBaseSize;
-        }
+        public string basePrefabName;
 
         public float GetPlayerDeathTime(int score)
         {
             return 0.002f * score + 10f;
         }
+        
+        public Vector3 GetPlayerSpawnPosition(Vector3[] existPositions) 
+        {
+            if (existPositions.Length == 0) return gameBaseData.basePositions[0];
+            for (int i = 0; i < gameBaseData.basePositions.Length; i++)
+            {
+                var pos = gameBaseData.basePositions[i];
+                if (existPositions.Contains(pos))
+                {
+                    continue;
+                }
+                return pos;
+            }
+            return default;
+        }
+
+        public CapsuleColliderConfig GetBaseColliderConfig()
+        {
+            return new CapsuleColliderConfig
+            {
+                Center = gameBaseData.baseCenter,
+                Radius = gameBaseData.baseRadius,
+                Height = gameBaseData.baseHeight,
+                Direction = gameBaseData.baseDirection
+            };
+        }
 
         #endregion
+
+        public Vector3 GetNearestBase(Vector3 targetPosition)
+        {
+            return gameBaseData.basePositions.GetNearestVector(targetPosition);
+        }
+    }
+
+    [Serializable]
+    public struct GameBaseData
+    {
+        public float playerBaseHpRecoverRatioPerSec;
+        public float playerBaseManaRecoverRatioPerSec;
+        public Vector3[] basePositions;
+        public Vector3 baseCenter;
+        public float baseRadius;
+        public float baseHeight;
+        public int baseDirection;
     }
 
     [Serializable]

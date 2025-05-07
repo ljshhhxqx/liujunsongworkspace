@@ -43,8 +43,6 @@ namespace HotUpdate.Scripts.Collector
             CalculateAdjustedBounds();
             InitializeGrid();
         }
-        
-        
 
         public Vector2Int GetGridPosition(Vector3 worldPos)
         {

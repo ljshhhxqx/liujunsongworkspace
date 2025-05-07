@@ -6,6 +6,7 @@ using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
+using HotUpdate.Scripts.GameBase;
 using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
@@ -24,6 +25,7 @@ using MemoryPack;
 using Mirror;
 using UI.UIBase;
 using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 using VContainer;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
@@ -78,6 +80,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private float _targetSpeed;
         private float _speedSmoothTime = 0.1f;
         private float _speedSmoothVelocity;
+        private bool _canOpenShop;
         private SubjectedStateType _subjectedStateType;
         private List<IAnimationCooldown> _animationCooldowns = new List<IAnimationCooldown>();
         
@@ -101,6 +104,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private Dictionary<Type, bool> _reactivePropertyBinds = new Dictionary<Type, bool>();
         
         private Vector3 _bornPosition;
+
+        [SyncVar] 
+        public int unionId;
+
+        [SyncVar] 
+        public bool isDead;
 
         public int CurrentComboStage { get; private set; }
         public IObservable<PlayerInputStateData> InputStream => _inputStream;
@@ -144,6 +153,32 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _inputState.OnPlayerInputStateChanged += HandlePlayerInputStateChanged;
             _inputState.IsInSpecialState += HandleSpecialState;
             _animationCooldowns = GetAnimationCooldowns();
+            _capsuleCollider.OnTriggerEnterAsObservable()
+                .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
+                .Subscribe(c =>
+                {
+                    _canOpenShop = _playerInGameManager.IsPlayerInHisBase(netId, out _);
+                })
+                .AddTo(_disposables);
+            _capsuleCollider.OnTriggerStayAsObservable()
+                .Throttle(TimeSpan.FromMilliseconds(_gameSyncManager.TickRate * 1000))
+                .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
+                .Subscribe(c =>
+                {
+                    var header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
+                        CommandType.Property, CommandAuthority.Client);
+                    var playerTouchedBaseCommand = new PlayerTouchedBaseCommand
+                    {
+                        Header = header,
+                    };
+                    _gameSyncManager.EnqueueCommand(MemoryPackSerializer.Serialize(playerTouchedBaseCommand));
+                }).AddTo(_disposables);
+            _capsuleCollider.OnTriggerExitAsObservable()
+                .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
+                .Subscribe(_ =>
+                {
+                    _canOpenShop = false;
+                }).AddTo(_disposables);
             
             Observable.EveryUpdate()
                 .Where(_ => isLocalPlayer && _subjectedStateType.HasAllStates(SubjectedStateType.None))
@@ -231,7 +266,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 var playerPropertiesOverlay = _uiManager.SwitchUI<PlayerPropertiesOverlay>();
                 playerPropertiesOverlay.BindPlayerProperty(UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_propertyBindKey));
             }
-            
+
+            if (!_reactivePropertyBinds.ContainsKey(typeof(GoldData)))
+            {
+                var playerDamageOverlay = _uiManager.SwitchUI<PlayerDamageDeathOverlay>();
+                playerDamageOverlay.BindGold(UIPropertyBinder.ObserveProperty<GoldData>(_goldBindKey));
+            }
         }
 
         public void SwitchBag()
@@ -458,12 +498,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void HandlePlayerDeadClient(float countdownTime)
         {
+            if (!isLocalPlayer)
+            {
+                return;
+            }
             _playerAnimationCalculator.HandleAnimation(AnimationState.Dead);
+            var playerDamageDeathOverlay = _uiManager.GetUI<PlayerDamageDeathOverlay>();
+            playerDamageDeathOverlay.PlayDeathEffect(countdownTime);
         }
 
         private void HandlePlayerRespawnedClient()
         {
-            throw new NotImplementedException();
+            var playerDamageDeathOverlay = _uiManager.GetUI<PlayerDamageDeathOverlay>();
+            playerDamageDeathOverlay.Clear();
         }
 
         public AnimationState GetCurrentAnimationState(PlayerInputStateData inputData)
@@ -565,6 +612,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public PlayerPredictablePropertyState HandlePlayerDie(PlayerPredictablePropertyState playerPredictablePropertyState, float countdownTime)
         {
             var diePlayerState = _playerPropertyCalculator.HandlePlayerDeath(playerPredictablePropertyState);
+            isDead = true;
             return diePlayerState;
         }
 
@@ -573,6 +621,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             PlayerPredictablePropertyState playerPredictablePropertyState)
         {
             var playerState = _playerPropertyCalculator.HandlePlayerRespawn(playerPredictablePropertyState);
+            isDead = false;
             return playerState;
         }
 

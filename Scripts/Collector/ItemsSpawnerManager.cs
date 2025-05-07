@@ -165,7 +165,7 @@ namespace HotUpdate.Scripts.Collector
                 return;
             }
             var playerConnection = player.connectionToClient.connectionId;
-            var playerCollider = _playerInGameManager.GetPlayerPhysicsData(playerConnection);
+            var playerCollider = _playerInGameManager.GetPlayerPhysicsData();
 
             var chestCollider = _chestColliderConfigs.GetValueOrDefault(chestData.Quality);
 
@@ -349,7 +349,7 @@ namespace HotUpdate.Scripts.Collector
                 var customData = itemData.GetCustomData<CollectItemCustomData>();
                 var player =  NetworkServer.spawned[pickerId];
                 var playerConnectionId = _playerInGameManager.GetPlayerId(pickerId);
-                var playerColliderConfig = _playerInGameManager.GetPlayerPhysicsData(playerConnectionId);
+                var playerColliderConfig = _playerInGameManager.GetPlayerPhysicsData();
                 if (!player)
                 {
                     Debug.LogError($"Cannot find player with netId: {pickerId}");
@@ -821,7 +821,7 @@ namespace HotUpdate.Scripts.Collector
         
         private bool ValidatePickup(Vector3 item, Vector3 player, IColliderConfig itemColliderConfig, IColliderConfig playerColliderConfig)
         {
-            return GamePhysicsSystem.CheckPickupWithMargin(player, item, playerColliderConfig, itemColliderConfig);
+            return GamePhysicsSystem.CheckIntersectsWithMargin(player, item, playerColliderConfig, itemColliderConfig);
         }
         
         private List<(int, Vector3)> PlaceItems(List<int> itemsToSpawn)

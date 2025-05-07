@@ -221,6 +221,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 MaxCurrentValue = _propertyData.MaxCurrentValue
             }, _maxValue, _minValue, _isResourceProperty);
         }
+        public PropertyCalculator UpdateCurrentValueByRatio(float ratio)
+        {
+            var newValue = _propertyData.CurrentValue * ratio;
+            return new PropertyCalculator(_propertyType, new PropertyData
+            {
+                BaseValue = _propertyData.BaseValue,
+                Additive = _propertyData.Additive,
+                Multiplier = _propertyData.Multiplier,
+                Correction = _propertyData.Correction,
+                CurrentValue = Mathf.Clamp(newValue, _minValue, 
+                    IsResourceProperty() ? _propertyData.MaxCurrentValue : _maxValue),
+                MaxCurrentValue = _propertyData.MaxCurrentValue
+            }, _maxValue, _minValue, _isResourceProperty);
+        }
 
         public PropertyCalculator UpdateCalculator(List<BuffIncreaseData> data)
         {

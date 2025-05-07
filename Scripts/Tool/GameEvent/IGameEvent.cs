@@ -38,10 +38,12 @@ namespace Tool.GameEvent
     public struct TargetShowEvent : IGameEvent
     {
         public Transform Target { get; private set; }
+        public Transform Player { get; private set; }
 
-        public TargetShowEvent(Transform target)
+        public TargetShowEvent(Transform target, Transform player)
         {
             Target = target;
+            Player = player;
         }
     }
 

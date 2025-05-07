@@ -6,6 +6,7 @@ using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
 using MemoryPack;
@@ -34,6 +35,7 @@ namespace HotUpdate.Scripts.Collector
         private MessageCenter _messageCenter;
         private MirrorNetworkMessageHandler _mirrorNetworkMessageHandler;
         private ChestCommonData _chestCommonData;
+        private PlayerInGameManager _playerInGameManager;
         private GameEventManager _gameEventManager;
         private Collider _positionCollider;
         private InteractSystem _interactSystem;
@@ -52,6 +54,7 @@ namespace HotUpdate.Scripts.Collector
         private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)
         {
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
+            _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
             _pooledObject = GetComponent<PooledObject>();
             if (_pooledObject)
             {
@@ -72,7 +75,7 @@ namespace HotUpdate.Scripts.Collector
             _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
             if (isLocalPlayer)
             {
-                _gameEventManager?.Publish(new TargetShowEvent(null));
+                _gameEventManager?.Publish(new TargetShowEvent(null, null));
             }
             lid.transform.eulerAngles = _chestCommonData.InitEulerAngles;
             _chestCollider.OnTriggerEnterAsObservable()
@@ -87,7 +90,8 @@ namespace HotUpdate.Scripts.Collector
         {
             if (isLocalPlayer)
             {
-                _gameEventManager?.Publish(new TargetShowEvent(null));
+                var player = _playerInGameManager.GetPlayerComponent<Transform>(connectionToClient.connectionId);
+                _gameEventManager?.Publish(new TargetShowEvent(null, player));
             }
             _gameEventManager = null;
             //_chestDataConfig = null;

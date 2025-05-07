@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using HotUpdate.Scripts.Config;
+using UnityEngine;
+using Random = System.Random;
 
 namespace HotUpdate.Scripts.Tool.Static
 {
@@ -257,13 +259,29 @@ namespace HotUpdate.Scripts.Tool.Static
             }
         }
     
-        private static IEnumerable<T> GetChunk<T>(IEnumerator<T> enumerator, int count)
+        private static IEnumerable<T> GetChunk<T>(this IEnumerator<T> enumerator, int count)
         {
             do
             {
                 yield return enumerator.Current;
             }
             while (count-- > 0 && enumerator.MoveNext());
+        }
+
+        public static Vector3 GetNearestVector(this IEnumerable<Vector3> vectors, Vector3 target)
+        {
+            var distance = float.MaxValue;
+            Vector3 nearest = default;
+            foreach (var vector in vectors)
+            {
+                var dis = Vector3.Distance(vector, target);
+                if (dis < distance)
+                {
+                    distance = dis;
+                    nearest = vector;
+                }
+            }
+            return nearest;
         }
     }
     

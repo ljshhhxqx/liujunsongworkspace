@@ -68,7 +68,7 @@ MonoBehaviour:
         serializedVersion: 2
         m_Bits: 128
       syncTime: 0.016
-      gridSize: 0
+      gridSize: 5
       safetyMargin: 5
       fixedSpacing: 1
       warmupTime: 10
@@ -87,6 +87,10 @@ MonoBehaviour:
       inputThreshold: 0.1
       maxCommandAge: 0
       uiUpdateInterval: 0
+      playerBaseSize: 5
+      minUnionPlayerCount: 2
+      playerBaseHpRecoverRatioPerSec: 0.25
+      playerHpRatioToWarning: 0.3
     dayNightCycleData:
       timeMultiplier: 60
       weatherChangeTime: 150

@@ -102,7 +102,7 @@ namespace HotUpdate.Scripts.UI.UIBase
             return _uiDict.ContainsKey(uIType);
         }
         
-        private T GetUI<T>() where T : ScreenUIBase
+        public T GetUI<T>() where T : ScreenUIBase
         {
             foreach (var uiBase in _uIPrefabs)
             {
@@ -114,6 +114,8 @@ namespace HotUpdate.Scripts.UI.UIBase
             Debug.Log($"UI类型有误{typeof(T).Name}");
             return null;
         }
+        
+        
 
         public T SwitchUI<T>(Action<T> onShow = null) where T : ScreenUIBase, new()
         {

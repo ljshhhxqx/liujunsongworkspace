@@ -6,12 +6,11 @@ using Cysharp.Threading.Tasks;
 using Data;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.GameBase;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Tool.Static;
 using Mirror;
-using UniRx;
 using UnityEngine;
-using UnityEngine.Serialization;
 using VContainer;
 
 namespace HotUpdate.Scripts.Network.Server.InGame
@@ -24,17 +23,22 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         private readonly SyncDictionary<int, PlayerInGameData> _playerInGameData = new SyncDictionary<int, PlayerInGameData>();
         private readonly SyncDictionary<uint, Vector2Int> _playerGrids = new SyncDictionary<uint, Vector2Int>();
         private readonly SyncDictionary<uint, Vector3> _playerPositions = new SyncDictionary<uint, Vector3>();
-        private readonly SyncDictionary<uint, Vector3> _playerBornPoints = new SyncDictionary<uint, Vector3>();
         private readonly SyncDictionary<int, UnionData> _unionData = new SyncDictionary<int, UnionData>();
         private readonly SyncDictionary<uint, float> _playerDeathCountdowns = new SyncDictionary<uint, float>();
         private readonly SyncDictionary<uint, int> _playerUnionIds = new SyncDictionary<uint, int>();
-        private readonly Dictionary<int, IColliderConfig> _playerPhysicsData = new Dictionary<int, IColliderConfig>();
         private readonly SyncGridDictionary _gridPlayers = new SyncGridDictionary();
         private readonly Dictionary<uint, Action<uint>> _playerBornCallbacks = new Dictionary<uint, Action<uint>>();
         private CancellationTokenSource _updateGridsTokenSource;
         private GameSyncManager _gameSyncManager;
         private MapBoundDefiner _mapBoundDefiner;
         private GameConfigData _gameConfigData;
+        
+        private PlayerBase _playerBasePrefab;
+        private SyncDictionary<Vector3, uint> _playerSpawnPoints = new SyncDictionary<Vector3, uint>();
+        private Dictionary<int, PlayerBase> _playerBases = new Dictionary<int, PlayerBase>();
+        private IColliderConfig _playerBaseColliderData;
+        private IColliderConfig _playerPhysicsData;
+        private uint _baseId;
         
         [SyncVar(hook = nameof(OnIsGameStartedChanged))]
         public bool isGameStarted;
@@ -46,16 +50,59 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             _gameSyncManager = gameSyncManager;
             _gameConfigData = configProvider.GetConfig<JsonDataConfig>().GameConfig;
             _updateGridsTokenSource = new CancellationTokenSource();
+            _playerBasePrefab = ResourceManager.Instance.GetResource<PlayerBase>(_gameConfigData.basePrefabName);
             if (isServer)
             {
                 UpdateAllPlayerGrids(_updateGridsTokenSource.Token).Forget();
             }
         }
-        
-        public IColliderConfig GetPlayerPhysicsData(int playerId)
+
+        [Server]
+        public void SpawnAllBases()
         {
-            return _playerPhysicsData.GetValueOrDefault(playerId);
+            var allSpawnPoints = _gameConfigData.gameBaseData.basePositions;
+            for (var i = 0; i < allSpawnPoints.Length; i++)
+            {
+                var spawnPoint = allSpawnPoints[i];
+                _playerSpawnPoints.Add(spawnPoint, 0);
+            }
+            _playerBaseColliderData = GamePhysicsSystem.CreateColliderConfig(_playerBasePrefab.GetComponent<Collider>());
+            var bases = _playerSpawnPoints.Keys.ToArray();
+            SpawnAllBasesRpc(bases);
         }
+
+        [ClientRpc]
+        public void SpawnAllBasesRpc(Vector3[] spawnPoints)
+        {
+            SpawnPlayerBases(spawnPoints);
+        }
+
+        private void SpawnPlayerBases(Vector3[] spawnPoints)
+        {
+            for (int i = 0; i < spawnPoints.Length; i++)
+            {
+                var spawnPoint = spawnPoints[i];
+                var playerBase = Instantiate(_playerBasePrefab, spawnPoint, Quaternion.identity);
+                _playerBases.Add(i, playerBase);
+            }
+            _playerBaseColliderData = GamePhysicsSystem.CreateColliderConfig(_playerBasePrefab.GetComponent<Collider>());
+        }
+
+        private Vector3 GetPlayerBasePositionByNetId(uint id)
+        {
+            foreach (var vKey in _playerSpawnPoints.Keys)
+            {
+                if (_playerSpawnPoints[vKey] == id)
+                {
+                    return vKey;
+                }
+            }
+            return default;
+        }
+
+        public IColliderConfig GetPlayerPhysicsData() => _playerPhysicsData;
+        
+        public IColliderConfig GetPlayerBaseColliderData() => _playerBaseColliderData;
         
         private async UniTaskVoid UpdateAllPlayerGrids(CancellationToken token)
         {
@@ -153,14 +200,47 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         public void AddPlayer(int connectId, PlayerInGameData playerInGameData)
         {
             var playerIdentity = playerInGameData.networkIdentity;
-            var playerCollider = playerIdentity.GetComponent<Collider>();
-            _playerPhysicsData.Add(connectId, GamePhysicsSystem.CreateColliderConfig(playerCollider));
+            if (_playerPhysicsData == null)
+            {
+                var playerCollider = playerIdentity.GetComponent<Collider>();
+                _playerBaseColliderData = GamePhysicsSystem.CreateColliderConfig(playerCollider);
+            }
             _playerIds.Add(connectId, playerInGameData.player.PlayerId);
             _playerNetIds.Add(connectId, playerInGameData.networkIdentity.netId);
             _playerInGameData.Add(connectId, playerInGameData);
             _playerIdsByNetId.Add(playerInGameData.networkIdentity.netId, connectId);
-            _playerPositions.Add(playerInGameData.networkIdentity.netId, playerInGameData.networkIdentity.transform.position);
-            _playerBornPoints.Add(playerInGameData.networkIdentity.netId, playerInGameData.networkIdentity.transform.position);
+            var pos = playerInGameData.networkIdentity.transform.position;
+            var nearestBase = _gameConfigData.GetNearestBase(pos);
+            _playerSpawnPoints[nearestBase] = playerInGameData.networkIdentity.netId;
+            _playerPositions.Add(playerInGameData.networkIdentity.netId, pos);
+            _playerGrids.Add(playerInGameData.networkIdentity.netId, _mapBoundDefiner.GetGridPosition(pos));
+            RpcAddPlayer(connectId, playerInGameData);
+        }
+
+        [ClientRpc]
+        private void RpcAddPlayer(int connectId, PlayerInGameData playerInGameData)
+        {
+            var playerIdentity = playerInGameData.networkIdentity;
+            if (_playerPhysicsData == null)
+            {
+                var playerCollider = playerIdentity.GetComponent<Collider>();
+                _playerBaseColliderData = GamePhysicsSystem.CreateColliderConfig(playerCollider);
+            }
+            var pos = playerInGameData.networkIdentity.transform.position;
+            var nearestBase = _gameConfigData.GetNearestBase(pos);
+            var index = 0;
+            foreach (var key in _playerBases.Keys)
+            {
+                var basePosition = _playerBases[key].transform.position;
+                if (nearestBase == basePosition)
+                {
+                    var value  = _playerBases[key];
+                    value.PlayerId = GetPlayerNetId(connectId);
+                    _playerBases[connectId] = value;
+                    _playerBases.Remove(index);
+                }
+                index++;
+            }
         }
 
         public void RemovePlayer(int connectId)
@@ -169,9 +249,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             _playerNetIds.Remove(connectId);
             _playerIdsByNetId.Remove(_playerNetIds.GetValueOrDefault(connectId));
             _playerInGameData.Remove(connectId);
-            _playerPhysicsData.Remove(connectId);
             _playerGrids.Remove(_playerNetIds.GetValueOrDefault(connectId));
-            _playerBornPoints.Remove(_playerNetIds.GetValueOrDefault(connectId));
             _playerPositions.Remove(_playerNetIds.GetValueOrDefault(connectId));
         }
         
@@ -205,7 +283,14 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         
         public Vector3 GetPlayerRebornPoint(uint playerNetId)
         {
-            return _playerBornPoints.GetValueOrDefault(playerNetId);
+            foreach (var v3 in _playerSpawnPoints.Keys)
+            {
+                if (_playerSpawnPoints[v3] == playerNetId)
+                {
+                    return v3;
+                }
+            }
+            return Vector3.zero;
         }
         
         public T GetPlayerComponent<T>(int playerId) where T : Component
@@ -276,7 +361,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 var union = new UnionData
                 {
                     unionId = ++_currentUnionId,
-                    PlayerIds = playerIds
+                    playerIds = playerIds,
                 };
                 _unionData.Add(union.unionId, union);
                 foreach (var playerId in playerIds)
@@ -304,7 +389,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         {
             foreach (var union in _unionData.Values)
             {
-                if (union.PlayerIds.Contains(playerId))
+                if (union.playerIds.Contains(playerId))
                 {
                     return true;
                 }
@@ -318,8 +403,8 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             var isInUnion = IsPlayerInUnion(playerId);
             if (isInUnion)
             {
-                var union = _unionData.Values.First(u => u.PlayerIds.Contains(playerId));
-                unionPlayerIds = new HashSet<uint>(union.PlayerIds);
+                var union = _unionData.Values.First(u => u.playerIds.Contains(playerId));
+                unionPlayerIds = new HashSet<uint>(union.playerIds);
                 unionPlayerIds.Remove(playerId);
                 return true;
             }
@@ -343,32 +428,62 @@ namespace HotUpdate.Scripts.Network.Server.InGame
 
         #region Base
 
-        public bool IsPlayerInBase(uint playerNetId)
+        public bool IsPlayerInOtherPlayerBase(uint playerNetId, out bool isPlayerInHisBase)
+        {
+            if (IsPlayerInHisBase(playerNetId, out var playerBasePosition))
+            {
+                isPlayerInHisBase = true;
+                return false;
+            }
+            isPlayerInHisBase = false;
+            var playerPosition = _playerPositions.GetValueOrDefault(playerNetId);
+            var playerColliderData = _playerPhysicsData;
+
+            foreach (var key in _playerSpawnPoints.Keys)
+            {
+                if (playerBasePosition == key)
+                {
+                    continue;
+                }
+
+                if (GamePhysicsSystem.FastCheckItemIntersects(playerPosition, key, playerColliderData,
+                        _playerBaseColliderData))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool IsPlayerInHisBase(uint playerNetId, out Vector3 playerBasePosition)
         {
             var playerPosition = _playerPositions.GetValueOrDefault(playerNetId);
-            var basePosition = _playerBornPoints.GetValueOrDefault(playerNetId);
+            var playerColliderData = _playerPhysicsData;
+            var basePosition = GetPlayerBasePositionByNetId(playerNetId);
             var unionId = _playerUnionIds.GetValueOrDefault(playerNetId);
             if (unionId != 0)
             {
                 var union = _unionData.GetValueOrDefault(unionId);
-                foreach (var playerId in union.PlayerIds)
+                foreach (var playerId in union.playerIds)
                 {
                     if (playerId == playerNetId) continue;
-                    var unionPlayerPosition = _playerBornPoints.GetValueOrDefault(playerId);
-                    if (_gameConfigData.IsWithinBase(unionPlayerPosition, playerPosition))
+                    var unionBasePosition = GetPlayerBasePositionByNetId(playerId);
+                    if (GamePhysicsSystem.FastCheckItemIntersects(playerPosition, unionBasePosition, playerColliderData,_playerBaseColliderData))
                     {
+                        playerBasePosition = unionBasePosition;
                         return true;
                     }
                 }
             }
-            return _gameConfigData.IsWithinBase(basePosition, playerPosition);
+            playerBasePosition = basePosition;
+            return GamePhysicsSystem.FastCheckItemIntersects(playerPosition, basePosition, playerColliderData,_playerBaseColliderData);
         }
 
-        public bool TryPlayerRecoverHpInBase(uint playerNetId, Action<uint> callback)
+        public bool TryPlayerRecoverHpInBase(int playerId, out bool isPlayerInHisBase)
         {
-            if (!IsPlayerInBase(playerNetId)) 
+            var playerNetId = GetPlayerNetId(playerId);
+            if (!IsPlayerInOtherPlayerBase(playerNetId, out isPlayerInHisBase) && !isPlayerInHisBase) 
                 return false;
-            callback?.Invoke(playerNetId);
             return true;
         }
 
@@ -384,9 +499,24 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             return true;
         }
 
-        public bool CanUseShop(uint playerNetId)
+        // public bool CanUseShop(uint playerNetId)
+        // {
+        //     return IsPlayerInHisBase(playerNetId) || _playerDeathCountdowns.ContainsKey(playerNetId);
+        // }
+
+        public void Clear()
         {
-            return IsPlayerInBase(playerNetId) || _playerDeathCountdowns.ContainsKey(playerNetId);
+            _playerIds.Clear();
+            _playerNetIds.Clear();
+            _playerIdsByNetId.Clear();
+            _playerInGameData.Clear();
+            _playerGrids.Clear();
+            _playerPositions.Clear();
+            _playerDeathCountdowns.Clear();
+            _playerUnionIds.Clear();
+            _unionData.Clear();
+            _gridPlayers.Clear();
+            _playerBornCallbacks.Clear();
         }
 
         #endregion
@@ -402,7 +532,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
     [Serializable]
     public struct UnionData
     {
-        public uint[] PlayerIds;
+        public uint[] playerIds;
         public int unionId;
     }
 

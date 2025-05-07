@@ -140,7 +140,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public override ISyncPropertyState ProcessCommand(INetworkCommand command)
         {
             var header = command.GetHeader();
-            if (!PropertyStates.ContainsKey(header.ConnectionId) || PropertyStates[header.ConnectionId]  is not PlayerInputState playerInputState)
+            if (!PropertyStates.ContainsKey(header.ConnectionId) || PropertyStates[header.ConnectionId] is not PlayerInputState playerInputState)
                 return null;
             if (command is InputCommand inputCommand)
             {

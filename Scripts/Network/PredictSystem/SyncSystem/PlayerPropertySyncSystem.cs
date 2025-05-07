@@ -47,6 +47,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private WeaponConfig _weaponConfig;
         private ArmorConfig _armorConfig;
         private ItemConfig _itemConfig;
+        private GameConfigData _gameConfigData;
         private BattleEffectConditionConfig _battleEffectConfig;
         
         public event Action<int, PropertyTypeEnum, float> OnPropertyChange;
@@ -56,6 +57,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             _configProvider = configProvider;
             _jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
+            _gameConfigData = _jsonDataConfig.GameConfig;
             _animationConfig = _configProvider.GetConfig<AnimationConfig>();
             _constantBuffConfig = configProvider.GetConfig<ConstantBuffConfig>();
             _randomBuffConfig = configProvider.GetConfig<RandomBuffConfig>();
@@ -218,12 +220,33 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             else if (command is GoldChangedCommand goldChangedCommand)
             {
                 HandleGoldChanged(header.ConnectionId, goldChangedCommand.Gold);
+            } 
+            else if (command is PlayerTouchedBaseCommand playerTouchedBaseCommand)
+            {
+                HandlePlayerTouchedBase(header.ConnectionId);
             }
             else
             {
                 Debug.LogError($"PlayerPropertySyncSystem: Unknown command type {command.GetType().Name}");
             }
             return null;
+        }
+
+        private void HandlePlayerTouchedBase(int headerConnectionId)
+        {
+            var playerState = GetState<PlayerPredictablePropertyState>(headerConnectionId);
+            if (!_playerInGameManager.TryPlayerRecoverHpInBase(headerConnectionId, out var isPlayerInHisBase))
+            {
+                Debug.Log($"PlayerPropertySyncSystem: Player {headerConnectionId} not found in base");
+                return;
+            }
+
+            var recoverHpRatio = isPlayerInHisBase ? _gameConfigData.gameBaseData.playerBaseHpRecoverRatioPerSec : -_gameConfigData.gameBaseData.playerBaseHpRecoverRatioPerSec;
+            var recoverMpRatio = isPlayerInHisBase ? _gameConfigData.gameBaseData.playerBaseManaRecoverRatioPerSec : -_gameConfigData.gameBaseData.playerBaseManaRecoverRatioPerSec;
+            playerState.Properties[PropertyTypeEnum.Health] = playerState.Properties[PropertyTypeEnum.Health].UpdateCurrentValueByRatio(recoverHpRatio);
+            playerState.Properties[PropertyTypeEnum.Strength] = playerState.Properties[PropertyTypeEnum.Strength].UpdateCurrentValueByRatio(recoverMpRatio);
+            
+            PropertyStates[headerConnectionId] = playerState;
         }
 
         private void HandleGoldChanged(int headerConnectionId, float gold)

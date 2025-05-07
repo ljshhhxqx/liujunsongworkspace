@@ -384,6 +384,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         }
     }
 
+    [MemoryPackable]
+    public partial struct PlayerTouchedBaseCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)] 
+        public NetworkCommandHeader Header;
+        
+        public NetworkCommandHeader GetHeader() => Header;
+        public bool IsValid()
+        {
+            return true;
+        }
+        
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
+    }
 
     [MemoryPackable]
     public partial struct PropertyAttackCommand : INetworkCommand

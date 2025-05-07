@@ -46,7 +46,7 @@ namespace HotUpdate.Scripts.Collector
     public static class GamePhysicsSystem
     {
         // 快速检测物品是否被拾取
-        public static bool FastCheckItemPickUp(
+        public static bool FastCheckItemIntersects(
             Vector3 a,
             Vector3 b,
             IColliderConfig aConfig,
@@ -59,7 +59,7 @@ namespace HotUpdate.Scripts.Collector
         }
 
         // 带安全距离的检测
-        public static bool CheckPickupWithMargin(
+        public static bool CheckIntersectsWithMargin(
             Vector3 a,
             Vector3 b,
             IColliderConfig aConfig,
@@ -77,7 +77,7 @@ namespace HotUpdate.Scripts.Collector
             return config.ColliderType switch
             {
                 ColliderType.Box => new Bounds(position, config.Size),
-                ColliderType.Sphere => new Bounds(position, Vector3.one * config.Radius * 2),
+                ColliderType.Sphere => new Bounds(position, Vector3.one * (config.Radius * 2)),
                 ColliderType.Capsule => GetCapsuleBounds(position, config),
                 _ => throw new ArgumentOutOfRangeException()
             };
