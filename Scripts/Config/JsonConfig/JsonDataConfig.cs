@@ -626,6 +626,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public float JumpSpeed;
         public float RollForce;
         public int InputBufferTick;
+        public LayerMask PlayerLayer;
         
         #endregion
         #region Animation

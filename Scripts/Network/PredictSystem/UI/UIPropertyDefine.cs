@@ -17,7 +17,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         [UIPropertyType(typeof(GoldData))]
         PlayerBaseData,
         [UIPropertyType(typeof(PlayerDeathTimeData))]
-        PlayerDeathTime
+        PlayerDeathTime,
+        [UIPropertyType(typeof(PlayerHpItemData))]
+        PlayerTraceOtherPlayerHp
     }
 
     // 复合键结构（玩家ID + 数据Key）

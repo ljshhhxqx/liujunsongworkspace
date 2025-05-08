@@ -209,11 +209,13 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
 
     public struct PlayerHpItemData : IItemBaseData
     {
-        public uint PlayerId;
+        public int PlayerId;
         public string Name;
         public float CurrentHp;
         public float MaxHp;
         public float CurrentMp;
         public float MaxMp;
+        public Vector3 TargetPosition;
+        public Vector3 PlayerPosition;
     }
 }

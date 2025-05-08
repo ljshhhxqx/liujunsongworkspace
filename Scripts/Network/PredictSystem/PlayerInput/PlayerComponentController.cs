@@ -16,6 +16,7 @@ using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Tool.Static;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using HotUpdate.Scripts.UI.UIs.Panel;
@@ -90,6 +91,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private GameSyncManager _gameSyncManager;
         private MapBoundDefiner _mapBoundDefiner;
         private IConfigProvider _configProvider;
+        private GameConfigData _gameConfigData;
+        private PlayerConfigData _playerConfigData;
         private UIManager _uiManager;
         private PlayerInGameManager _playerInGameManager;
         private InteractSystem _interactSystem;
@@ -100,6 +103,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private BindingKey _shopBindKey;
         private BindingKey _goldBindKey;
         private BindingKey _playerDeathTimeBindKey;
+        private BindingKey _playerTraceOtherPlayerHpBindKey;
+        
         
         private Dictionary<Type, bool> _reactivePropertyBinds = new Dictionary<Type, bool>();
         
@@ -132,6 +137,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             UIManager uiManager)
         {
             _configProvider = configProvider;
+            var jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
+            _gameConfigData = jsonDataConfig.GameConfig;
+            _playerConfigData = jsonDataConfig.PlayerConfig;
             _gameSyncManager = gameSyncManager;
             _mapBoundDefiner = mapBoundDefiner;
             _playerInGameManager = playerInGameManager;
@@ -214,6 +222,27 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _inputStream.Throttle(TimeSpan.FromMilliseconds(FixedDeltaTime * 1000))
                 .Subscribe(HandleInputPhysics)
                 .AddTo(_disposables);
+            Observable.EveryUpdate().Throttle(TimeSpan.FromMilliseconds(FixedDeltaTime * 10 * 1000))
+                .Where(_ => isLocalPlayer)
+                .Subscribe(_ =>
+                {
+                    var otherPlayers = NetworkServer.connections
+                        .Where(x => x.Value.connectionId != connectionToClient.connectionId)
+                        .Select(x => x.Value.identity.GetComponent<Transform>());
+                    var layerMask = _gameConfigData.groundSceneLayer | _gameConfigData.stairSceneLayer | _playerConfigData.PlayerLayer;
+                    if (PlayerPhysicsCalculator.TryGetPlayersInScreen(_camera, otherPlayers, out var playersInScreen, layerMask))
+                    {
+                        var header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
+                            CommandType.Property, CommandAuthority.Client);
+                        var playerInScreenCommand = new PlayerTraceOtherPlayerHpCommand
+                        {
+                            Header = header,
+                            TargetConnectionIds = playersInScreen.ToArray(),
+                        };
+                        _gameSyncManager.EnqueueCommand(MemoryPackSerializer.Serialize(playerInScreenCommand));
+                    }
+                })
+                .AddTo(_disposables);
             if (isLocalPlayer)
             {
                 _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
@@ -227,6 +256,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 _equipBindKey = new BindingKey(UIPropertyDefine.EquipmentItem, DataScope.LocalPlayer,
                     UIPropertyBinder.LocalPlayerId);
                 _playerDeathTimeBindKey = new BindingKey(UIPropertyDefine.PlayerDeathTime, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
+                _playerTraceOtherPlayerHpBindKey = new BindingKey(UIPropertyDefine.PlayerTraceOtherPlayerHp, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
                 HandleLocalInitCallback();
             }
         }
@@ -269,8 +299,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
             if (!_reactivePropertyBinds.ContainsKey(typeof(GoldData)))
             {
+                _reactivePropertyBinds.Add(typeof(GoldData), true);
                 var playerDamageOverlay = _uiManager.SwitchUI<PlayerDamageDeathOverlay>();
                 playerDamageOverlay.BindGold(UIPropertyBinder.ObserveProperty<GoldData>(_goldBindKey));
+            }
+
+            if (!_reactivePropertyBinds.ContainsKey(typeof(PlayerHpItemData)))
+            {
+                var followData = new FollowTargetParams();
+                followData.ScreenBorderOffset = _gameConfigData.screenBorderOffset;
+                followData.MainCamera = _camera;
+                _reactivePropertyBinds.Add(typeof(PlayerHpItemData), true);
+                var playerDamageOverlay = _uiManager.SwitchUI<PlayerHpShowOverlay>();
+                playerDamageOverlay.BindPlayersHp(UIPropertyBinder.GetReactiveDictionary<PlayerHpItemData>(_playerTraceOtherPlayerHpBindKey), followData);
             }
         }
 
@@ -318,21 +359,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }).AddTo(shopScreenUI.gameObject);
         }
         
-        public void SwitchPlayerDeathTime()
-        {
-            if (!isLocalPlayer)
-            {
-                return;
-            }
-            
-            // if (_uiManager.IsUIOpen(UIType.PlayerDeathTime))
-            // {
-            //     _uiManager.CloseUI(UIType.PlayerDeathTime);
-            //     return;
-            // }
-            // var playerDeathTimeUI = _uiManager.SwitchUI<PlayerDeathTimeUI>();
-            // playerDeathTimeUI.BindPlayerDeathTime(UIPropertyBinder.ObserveProperty<PlayerDeathTimeData>(_playerDeathTimeBindKey));
-        }
+        // public void SwitchPlayerDeathTime()
+        // {
+        //     if (!isLocalPlayer)
+        //     {
+        //         return;
+        //     }
+        //     
+        //     // if (_uiManager.IsUIOpen(UIType.PlayerDamageDeathOverlay))
+        //     // {
+        //     //     _uiManager.CloseUI(UIType.PlayerDeathTime);
+        //     //     return;
+        //     // }
+        //     // var playerDeathTimeUI = _uiManager.SwitchUI<PlayerDeathTimeUI>();
+        //     // playerDeathTimeUI.BindPlayerDeathTime(UIPropertyBinder.ObserveProperty<PlayerDeathTimeData>(_playerDeathTimeBindKey));
+        // }
 
         private bool HandleSpecialState()
         {
@@ -626,6 +667,40 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             var playerState = _playerPropertyCalculator.HandlePlayerRespawn(playerPredictablePropertyState);
             isDead = false;
             return playerState;
+        }
+
+        [Server]
+        public void HandleTracedPlayerHp(int connectionId, List<TracedPlayerInfo> tracedInfo)
+        {
+            var player = NetworkServer.connections[connectionId];
+            if (player == null)
+            {
+                return;
+            }
+            TargetRpcHandlePlayerHp(player, MemoryPackSerializer.Serialize(tracedInfo));
+        }
+
+        [TargetRpc]
+        private void TargetRpcHandlePlayerHp(NetworkConnection target, byte[] data)
+        {
+            var info = MemoryPackSerializer.Deserialize<List<TracedPlayerInfo>>(data);
+            var dic = UIPropertyBinder.GetReactiveDictionary<PlayerHpItemData>(_playerTraceOtherPlayerHpBindKey);
+            for (int i = 0; i < info.Count; i++)
+            {
+                var tracedInfo = info[i];
+                var player = NetworkServer.connections[i].identity;
+                dic[tracedInfo.PlayerId] = new PlayerHpItemData
+                {
+                    PlayerId = tracedInfo.PlayerId,
+                    PlayerPosition = player.transform.position,
+                    TargetPosition = tracedInfo.Position,
+                    MaxMp = tracedInfo.MaxMana,
+                    CurrentHp = tracedInfo.Hp,
+                    CurrentMp = tracedInfo.Mana,
+                    MaxHp = tracedInfo.MaxHp,
+                    Name = tracedInfo.PlayerName,
+                };
+            }
         }
 
         public void SetAnimatorSpeed(AnimationState animationState, float speed)

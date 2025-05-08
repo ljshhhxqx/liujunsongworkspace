@@ -47,7 +47,6 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             }
             indicatorUI.gameObject.SetActive(IsTargetNotNull);
             _player ??= targetShowEvent.Player;
-            _followTargetParams.Player = _player;
             if (!_player)
             {
                 Debug.LogError("Player not found!");
@@ -61,7 +60,8 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             for (int i = 0; i < _targets.Count; i++)
             {
                 var target = _targets[i];
-                _followTargetParams.Target = target;
+                _followTargetParams.Target = target.position;
+                _followTargetParams.Player = _player.position;
                 GameStaticExtensions.FollowTarget(_followTargetParams);
             }
         }

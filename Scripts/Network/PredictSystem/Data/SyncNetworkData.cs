@@ -410,11 +410,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     {
         [MemoryPackOrder(0)] 
         public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public int[] TargetConnectionIds;
         public NetworkCommandHeader GetHeader() => Header;
 
         public bool IsValid()
         {
-            return true;
+            return TargetConnectionIds.Length > 0 && TargetConnectionIds.All(t => t > 0);
         }
 
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,

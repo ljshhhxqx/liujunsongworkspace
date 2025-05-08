@@ -7,6 +7,7 @@ using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
+using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.Server.InGame;
@@ -225,11 +226,38 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 HandlePlayerTouchedBase(header.ConnectionId);
             }
+            else if(command is PlayerTraceOtherPlayerHpCommand playerTraceOtherPlayerHpCommand)
+            {
+                HandlePlayerTraceOtherPlayerHp(header.ConnectionId, playerTraceOtherPlayerHpCommand.TargetConnectionIds);
+            }
             else
             {
                 Debug.LogError($"PlayerPropertySyncSystem: Unknown command type {command.GetType().Name}");
             }
             return null;
+        }
+
+        private void HandlePlayerTraceOtherPlayerHp(int headerConnectionId, int[] targetConnectionIds)
+        {
+            var playerController = _playerInGameManager.GetPlayerComponent<PlayerComponentController>(headerConnectionId);
+            var list = new List<TracedPlayerInfo>();
+            foreach (var id in targetConnectionIds)
+            {
+                var playerState = GetState<PlayerPredictablePropertyState>(id);
+                var targetPlayer = _playerInGameManager.GetPlayerComponent<PlayerComponentController>(id);
+                var tracedPlayerInfo = new TracedPlayerInfo
+                {
+                    PlayerId = id,
+                    PlayerName = _playerInGameManager.GetPlayer(id).player.Nickname,
+                    Hp = playerState.Properties[PropertyTypeEnum.Health].CurrentValue,
+                    MaxHp = playerState.Properties[PropertyTypeEnum.Health].MaxCurrentValue,
+                    Mana = playerState.Properties[PropertyTypeEnum.Strength].CurrentValue,
+                    MaxMana = playerState.Properties[PropertyTypeEnum.Strength].MaxCurrentValue,
+                    Position = targetPlayer.transform.position,
+                };
+                list.Add(tracedPlayerInfo);
+            }
+            playerController.HandleTracedPlayerHp(headerConnectionId, list);
         }
 
         private void HandlePlayerTouchedBase(int headerConnectionId)
@@ -666,5 +694,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             public int equipItemId;
             public BuffBase BuffData;
         }
+    }
+
+    [MemoryPackable]
+    public struct TracedPlayerInfo
+    {
+        [MemoryPackOrder(0)]
+        public int PlayerId;
+        [MemoryPackOrder(1)]
+        public string PlayerName;
+        [MemoryPackOrder(2)]
+        public Vector3 Position;
+        [MemoryPackOrder(3)]
+        public float Hp;
+        [MemoryPackOrder(4)]
+        public float MaxHp;
+        [MemoryPackOrder(5)]
+        public float Score;
+        [MemoryPackOrder(6)]
+        public float Mana;
+        [MemoryPackOrder(7)]
+        public float MaxMana;
     }
 }

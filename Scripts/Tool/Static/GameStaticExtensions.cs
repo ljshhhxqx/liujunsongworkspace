@@ -290,12 +290,12 @@ namespace HotUpdate.Scripts.Tool.Static
             // 计算距离
             if (followParams.DistanceText)
             {
-                var distance = Vector3.Distance(followParams.Player.position, followParams.Target.position);
+                var distance = Vector3.Distance(followParams.Player, followParams.Target);
                 followParams.DistanceText.text = $"{distance:F1}m";
             }
 
             // 将目标世界坐标转换为屏幕坐标
-            var screenPos = followParams.MainCamera.WorldToScreenPoint(followParams.Target.position);
+            var screenPos = followParams.MainCamera.WorldToScreenPoint(followParams.Target);
 
             // 检查目标是否在相机前方
             var isBehind = screenPos.z < 0;
@@ -344,8 +344,8 @@ namespace HotUpdate.Scripts.Tool.Static
 
     public class FollowTargetParams
     {
-        public Transform Target;
-        public Transform Player;
+        public Vector3 Target;
+        public Vector3 Player;
         public TextMeshProUGUI DistanceText;
         public RectTransform IndicatorUI;
         public Camera MainCamera;
