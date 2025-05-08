@@ -195,7 +195,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
             else if (command is PropertyAttackCommand attackCommand)
             {
-                var targetPlayerIds = _playerInGameManager.GetPlayersWithNetIds(attackCommand.TargetIds);
+                var playerNetId = _playerInGameManager.GetPlayerNetId(header.ConnectionId);
+                var hitPlayer = attackCommand.TargetIds.ToHashSet();
+                if (_playerInGameManager.TryGetOtherPlayersInUnion(playerNetId, out var otherPlayers) && GameSyncManager.IsRandomUnionStart)
+                {
+                    for (int i = 0; i < attackCommand.TargetIds.Length; i++)
+                    {
+                        var player = attackCommand.TargetIds[i];
+                        if (otherPlayers.Contains(player))
+                        {
+                            hitPlayer.Remove(player);
+                        }
+                    }
+                }
+                var targetPlayerIds = _playerInGameManager.GetPlayersWithNetIds(hitPlayer.ToArray());
                 HandlePlayerAttack(header.ConnectionId, targetPlayerIds);
             }
             else if (command is PropertySkillCommand skillCommand)
@@ -382,6 +395,28 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         }
 
         private void HandleBuff(int targetId, BuffExtraData buffExtraData, int? casterId = null)
+        {
+            var allPlayers = new HashSet<int> { targetId };
+            if (GameSyncManager.IsRandomUnionStart)
+            {
+                var playerNetId = _playerInGameManager.GetPlayerNetId(targetId);
+                if (_playerInGameManager.TryGetOtherPlayersInUnion(playerNetId, out var otherPlayers))
+                {
+                    foreach (var player in otherPlayers)
+                    {
+                        var playerConnectionId = _playerInGameManager.GetPlayerId(player);
+                        allPlayers.Add(playerConnectionId);
+                    }
+                }
+            }
+
+            foreach (var player in allPlayers)
+            {
+                AddBuffToPlayer(player, buffExtraData, casterId);
+            }
+        }
+
+        private void AddBuffToPlayer(int targetId, BuffExtraData buffExtraData, int? casterId = null)
         {
             var playerState = GetState<PlayerPredictablePropertyState>(targetId);
             var buff = buffExtraData.buffType == BuffType.Constant ? _constantBuffConfig.GetBuff(buffExtraData) : _randomBuffConfig.GetBuff(buffExtraData);

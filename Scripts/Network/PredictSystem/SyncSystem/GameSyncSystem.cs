@@ -42,6 +42,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private CancellationTokenSource _cts;
         
         private InteractSystem _interactSystem;
+
+        [SyncVar(hook = nameof(OnIsRandomUnionStartChanged))] 
+        public static bool IsRandomUnionStart;
         
         public static int CurrentTick { get; private set; }
 
@@ -81,6 +84,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 .AddTo(this);
                 
             ProcessImmediateCommands(_cts.Token);
+        }
+
+        private void OnIsRandomUnionStartChanged(bool oldValue, bool newValue)
+        {
+            if (newValue)
+                _playerInGameManager.RandomUnion();
         }
 
         private void OnPlayerDisconnect(PlayerDisconnectEvent disconnectEvent)

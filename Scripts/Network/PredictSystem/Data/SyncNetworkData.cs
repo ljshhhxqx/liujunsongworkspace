@@ -294,12 +294,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public int TargetId;
         [MemoryPackOrder(3)]
         public BuffExtraData BuffExtraData;
+        [MemoryPackOrder(4)]
+        public BuffSourceType BuffSourceType;
 
         public NetworkCommandHeader GetHeader() => Header;
 
         public bool IsValid()
         {
-            return Enum.IsDefined(typeof(BuffType), BuffExtraData.buffType) && BuffExtraData.buffId > 0 && TargetId > 0;
+            return Enum.IsDefined(typeof(BuffType), BuffExtraData.buffType) && BuffExtraData.buffId > 0 && TargetId > 0 && CasterId.HasValue && BuffExtraData.buffId > 0 && BuffExtraData.buffType != BuffType.None
+                && Enum.IsDefined(typeof(BuffSourceType), BuffSourceType);
         }
         
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)

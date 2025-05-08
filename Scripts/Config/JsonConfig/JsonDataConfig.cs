@@ -522,6 +522,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public int minUnionPlayerCount;
         public float playerHpRatioToWarning;
         public string basePrefabName;
+        public float noUnionTime;
 
         public float GetPlayerDeathTime(int score)
         {

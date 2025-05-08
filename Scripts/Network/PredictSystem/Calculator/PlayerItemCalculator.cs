@@ -241,6 +241,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                         Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property),
                         CasterId = null,
                         TargetId = header.ConnectionId,
+                        BuffSourceType = BuffSourceType.Collect,
                     };
                     foreach (var buffExtra in itemConfigData.buffExtraData)
                     {
@@ -409,6 +410,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                             CommandAuthority.Server, CommandExecuteType.Immediate),
                         CasterId = null,
                         TargetId = header.ConnectionId,
+                        BuffSourceType = BuffSourceType.Drug
                     };
                     foreach (var buffExtra in itemConfigData.buffExtraData)
                     {

@@ -9,6 +9,7 @@ using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.NetworkMes;
+using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
@@ -32,6 +33,7 @@ namespace HotUpdate.Scripts.Game
         private bool _isEndRound;
         private float _mainGameTime;
         private float _warmupTime;
+        private float _noUnionTime;
         private CancellationTokenSource _cts;
         private GameEventManager _gameEventManager;
         private JsonDataConfig _jsonDataConfig;
@@ -158,6 +160,7 @@ namespace HotUpdate.Scripts.Game
                 _cts = new CancellationTokenSource();
                 IsEndGame = false;
                 _warmupTime = _jsonDataConfig.GameConfig.warmupTime;
+                _noUnionTime = _jsonDataConfig.GameConfig.noUnionTime;
                 _mainGameTime = _gameInfo.GameMode == GameMode.Time ? _gameInfo.GameTime : 0;
                 StartGameLoop(_cts).Forget();
             }
@@ -242,6 +245,14 @@ namespace HotUpdate.Scripts.Game
                         remainingTime += interval;
                     }
 
+                    if (!GameSyncManager.IsRandomUnionStart)
+                    {
+                        _noUnionTime -= interval;
+                        if (_noUnionTime <= 0)
+                        {
+                            GameSyncManager.IsRandomUnionStart = true;
+                        }
+                    }
                     _messageHandler.SendToAllClients(new MirrorCountdownMessage(remainingTime));
 
                     // 检查是否满足结束游戏的条件

@@ -22,8 +22,8 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         public void BindPlayersHp(ReactiveDictionary<int, PlayerHpItemData> playerHpItemDatas, FollowTargetParams defaultFollowTargetParams)
         {
-            _defaultFollowTargetParams = new FollowTargetParams();
             _defaultFollowTargetParams = defaultFollowTargetParams; 
+            _defaultFollowTargetParams.CanvasRect = canvasRect;
             _playerHpItemDatas = playerHpItemDatas;
             _playerHpItemDatas.ObserveAdd().Subscribe(x =>
             {
