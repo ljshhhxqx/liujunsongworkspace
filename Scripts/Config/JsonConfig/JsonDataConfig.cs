@@ -16,22 +16,8 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         [SerializeField] 
         private JsonConfigData jsonConfigData;
 
-#if UNITY_EDITOR
-        [SerializeField]
-        private bool canEdit;
-#endif
         private readonly Dictionary<AnimationState, AnimationInfo> _animationInfos = new Dictionary<AnimationState, AnimationInfo>();
 
-        public JsonConfigData JsonConfigData
-        {
-            set
-            {
-                if (canEdit)
-                {
-                    jsonConfigData = value;
-                }
-            }
-        }
 
         public PlayerConfigData PlayerConfig => jsonConfigData.playerConfig;
         public CollectData CollectData => jsonConfigData.collectData;
@@ -628,6 +614,8 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public float RollForce;
         public int InputBufferTick;
         public LayerMask PlayerLayer;
+        public float NoUnionMoreGoldRatio;
+        public float NoUnionMoreScoreRatio;
         
         #endregion
         #region Animation

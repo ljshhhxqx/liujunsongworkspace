@@ -16,12 +16,14 @@ using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.Tool.Static;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using HotUpdate.Scripts.UI.UIs.Panel;
 using HotUpdate.Scripts.UI.UIs.Panel.Backpack;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
+using HotUpdate.Scripts.UI.UIs.Popup;
 using MemoryPack;
 using Mirror;
 using UI.UIBase;
@@ -701,6 +703,45 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     Name = tracedInfo.PlayerName,
                 };
             }
+        }
+
+        [Server]
+        public void ShowPlayerCanChangeUnionUI(int connectionId, uint killerPlayerId, uint victimPlayerId)
+        {
+            var connection = NetworkServer.connections[connectionId];
+            if (connection == null)
+            {
+                return;
+            }
+            TargetRpcShowPlayerCanChangeUnionUI(connection, killerPlayerId, victimPlayerId);
+        }
+
+        [TargetRpc]
+        private void TargetRpcShowPlayerCanChangeUnionUI(NetworkConnection connection, uint killerPlayerId, uint victimPlayerId)
+        {
+            DelayInvoker.DelayInvoke(10, () =>
+            {
+                if (_uiManager.IsUIOpen(UIType.TipsPopup))
+                {
+                    _uiManager.CloseUI(UIType.TipsPopup);
+                }
+            });
+            _uiManager.SwitchUI<TipsPopup>(ui =>
+            {
+                ui.ShowTips($"是否与刚刚击杀的玩家交换阵营？", () =>
+                {
+                    var playerChangeUnionCommand = new PlayerChangeUnionRequest
+                    {
+                        Header = GameSyncManager.CreateInteractHeader(connection.connectionId, InteractCategory.PlayerToPlayer),
+                        KillerPlayerId = killerPlayerId,
+                        DeadPlayerId = victimPlayerId,
+                    };
+                    _interactSystem.EnqueueCommand(MemoryPackSerializer.Serialize(playerChangeUnionCommand));
+                }, () =>
+                {
+                    _uiManager.CloseUI(UIType.TipsPopup);
+                });
+            });
         }
 
         public void SetAnimatorSpeed(AnimationState animationState, float speed)

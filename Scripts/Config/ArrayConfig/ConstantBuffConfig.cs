@@ -18,6 +18,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         private List<BuffData> buffs = new List<BuffData>();
         private readonly Dictionary<PropertyTypeEnum, List<BuffData>> _collectBuffs = new Dictionary<PropertyTypeEnum, List<BuffData>>(); 
         private readonly Dictionary<PropertyTypeEnum, List<BuffData>> _equipmentbuffs = new Dictionary<PropertyTypeEnum, List<BuffData>>();
+        //private readonly Dictionary<PropertyTypeEnum, List<BuffData>> _noUnionBuffs = new Dictionary<PropertyTypeEnum, List<BuffData>>();
         
         public BuffData GetBuff(BuffExtraData extraData)
         {
@@ -57,18 +58,45 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 buff.increaseDataList = json.ToList();
                 buff.sourceType = Enum.Parse<BuffSourceType>(data[4]);
                 buff.mainIncreaseType = Enum.Parse<BuffIncreaseType>(data[5]);
-                if (!_equipmentbuffs.ContainsKey(buff.propertyType))
+                if (buff.sourceType == BuffSourceType.Equipment)
                 {
-                    _equipmentbuffs.Add(buff.propertyType, new List<BuffData>());
+                    if (!_equipmentbuffs.ContainsKey(buff.propertyType))
+                    {
+                        _equipmentbuffs.Add(buff.propertyType, new List<BuffData>());
+                    }
+                    _equipmentbuffs[buff.propertyType].Add(buff);
                 }
-                _equipmentbuffs[buff.propertyType].Add(buff);
-                if (!_collectBuffs.ContainsKey(buff.propertyType))
+
+                else if (buff.sourceType == BuffSourceType.Collect)
                 {
-                    _collectBuffs.Add(buff.propertyType, new List<BuffData>());
+                    if (!_collectBuffs.ContainsKey(buff.propertyType))
+                    {
+                        _collectBuffs.Add(buff.propertyType, new List<BuffData>());
+                    }
+                    _collectBuffs[buff.propertyType].Add(buff);
                 }
-                _collectBuffs[buff.propertyType].Add(buff);
+                // else if (buff.sourceType == BuffSourceType.NoUnion)
+                // {
+                //     if (!_noUnionBuffs.ContainsKey(buff.propertyType))
+                //     {
+                //         _noUnionBuffs.Add(buff.propertyType, new List<BuffData>());
+                //     }
+                //     _noUnionBuffs[buff.propertyType].Add(buff);
+                // }
                 buffs.Add(buff);
             }
+        }
+
+        public List<BuffExtraData> GetNoUnionBuffs()
+        {
+            return buffs.Where(b => b.sourceType== BuffSourceType.NoUnion)
+                .Select(b =>
+                {
+                    var buff = new BuffExtraData();
+                    buff.buffId = b.buffId;
+                    buff.buffType = BuffType.Constant;
+                    return buff;
+                }).ToList();
         }
 
         public BuffData GetBuffDataByProperty((PropertyTypeEnum, BuffIncreaseType, float) property)

@@ -211,6 +211,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             return GetConditionData(id).conditionParam;
         }
 
+        #if UNITY_EDITOR
         public static BattleEffectConditionConfigData GenerateConfig(QualityType rarity)
         {
             var config = new BattleEffectConditionConfigData();
@@ -278,6 +279,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
             return mActual;
         }
+        #endif
 
         public static float GetTriggerTypeFrequency(TriggerType type)
         {

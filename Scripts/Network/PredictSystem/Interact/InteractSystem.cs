@@ -53,9 +53,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                         case PlayerToSceneRequest playerInteractRequest:
                             HandlePlayerToSceneRequest(playerInteractRequest);
                             break;
+                        case PlayerChangeUnionRequest playerKillPlayerRequest:
+                            HandlePlayerChangeUnion(playerKillPlayerRequest);
+                            break;
                         
                     }
                 }
+            }
+        }
+
+        private void HandlePlayerChangeUnion(PlayerChangeUnionRequest playerChangeUnionRequest)
+        {
+            var changedResult = _playerInGameManager.TryPlayerExchangeUnion(playerChangeUnionRequest.KillerPlayerId,
+                playerChangeUnionRequest.DeadPlayerId, out _, out _);
+            if (changedResult)
+            {
+                Debug.Log($"Player {playerChangeUnionRequest.KillerPlayerId} changed union with player {playerChangeUnionRequest.DeadPlayerId}");
+            }
+            else
+            {
+                Debug.Log($"Player {playerChangeUnionRequest.KillerPlayerId} failed to change union with player {playerChangeUnionRequest.DeadPlayerId}");
             }
         }
 
@@ -108,11 +125,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             }
         }
 
-        private void HandlePlayerInteractRequest(Interact.PlayerInteractRequest request)
+        private void HandlePlayerInteractRequest(PlayerInteractRequest request)
         {
         }
 
-        private void HandleEnvironmentInteractRequest(Interact.EnvironmentInteractRequest request)
+        private void HandleEnvironmentInteractRequest(EnvironmentInteractRequest request)
         {
         }
 

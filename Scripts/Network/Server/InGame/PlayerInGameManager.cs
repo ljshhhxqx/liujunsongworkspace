@@ -26,6 +26,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         private readonly SyncDictionary<int, UnionData> _unionData = new SyncDictionary<int, UnionData>();
         private readonly SyncDictionary<uint, float> _playerDeathCountdowns = new SyncDictionary<uint, float>();
         private readonly SyncDictionary<uint, int> _playerUnionIds = new SyncDictionary<uint, int>();
+        private readonly SyncHashSet<uint> _playerIsChangedUnion = new SyncHashSet<uint>();
         private readonly SyncGridDictionary _gridPlayers = new SyncGridDictionary();
         private readonly Dictionary<uint, Action<uint>> _playerBornCallbacks = new Dictionary<uint, Action<uint>>();
         private CancellationTokenSource _updateGridsTokenSource;
@@ -351,7 +352,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         private int _currentUnionId;
         
         [Server]
-        public void RandomUnion()
+        public void RandomUnion(out int noUnionPlayerId)
         {
             var allPlayers = GetAllPlayers();
             var chunkedPlayers = allPlayers.Chunk(_gameConfigData.minUnionPlayerCount);
@@ -369,20 +370,100 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                     _playerUnionIds.TryAdd(playerId, union.unionId);
                 }
             }
+            var noUnionPlayers = GetPlayerWithNoUnion();
+            if (noUnionPlayers == null || noUnionPlayers.Count == 0)
+            {
+                noUnionPlayerId = 0;
+                return;
+            }
+            var id = GetPlayerWithNoUnion().First();
+            noUnionPlayerId = _playerIdsByNetId[id];
         }
         
         public HashSet<uint> GetPlayerWithNoUnion()
         {
-            var noUnionPlayers = new HashSet<uint>();
-            foreach (var player in _playerNetIds.Keys)
+            HashSet<uint> noUnionPlayers = null;
+            foreach (var player in _unionData.Keys)
             {
-                var playerNetId = _playerNetIds[player];
-                if (!_playerUnionIds.ContainsKey(playerNetId))
+                var union = _unionData[player];
+                if (union.playerIds.Length == 1)
                 {
-                    noUnionPlayers.Add(playerNetId);
+                    noUnionPlayers = new HashSet<uint>(union.playerIds);
+                    break;
                 }
             }
             return noUnionPlayers;
+        }
+
+        public bool CanExchangeUnion(uint killerNetId, uint deathPlayerNetId)
+        {
+            if (!IsPlayerInUnion(deathPlayerNetId))
+            {
+                Debug.Log($"Player {killerNetId} not in union");
+                return false;
+            }
+
+            if (_playerIsChangedUnion.Contains(killerNetId))
+            {
+                Debug.Log($"Player {killerNetId} has changed");
+                return false;
+            }
+            
+            var exchangeUnionId = _playerUnionIds.GetValueOrDefault(deathPlayerNetId);
+            var union = _unionData.GetValueOrDefault(exchangeUnionId);
+
+            if (union.playerIds.Length == 1)
+            {
+                Debug.Log($"Player {deathPlayerNetId} has no union");
+                return false;
+            }
+            
+            var oldUnionId = _playerUnionIds.GetValueOrDefault(killerNetId);
+            if (exchangeUnionId == oldUnionId)
+            {
+                Debug.Log($"Player {killerNetId} and {deathPlayerNetId} are in the same union");
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool TryPlayerExchangeUnion(uint killerNetId, uint deathPlayerNetId, out UnionData exchangeUnion, out UnionData oldUnion)
+        {
+            exchangeUnion = default;
+            oldUnion = default;
+            if (!CanExchangeUnion(killerNetId, deathPlayerNetId))
+            {
+                Debug.Log($"Player {deathPlayerNetId} can not exchange union with {killerNetId}");
+                return false;
+            }
+
+            var exchangeUnionId = _playerUnionIds.GetValueOrDefault(deathPlayerNetId);
+            var oldUnionId = _playerUnionIds.GetValueOrDefault(killerNetId);
+            exchangeUnion = _unionData[exchangeUnionId];
+            oldUnion = _unionData[oldUnionId];
+            var oldUnionPlayerIds = oldUnion.playerIds.ToList();
+            var exchangeUnionPlayerIds = exchangeUnion.playerIds.ToList();
+            oldUnionPlayerIds.Remove(deathPlayerNetId);
+            exchangeUnionPlayerIds.Remove(killerNetId);
+            exchangeUnionPlayerIds.Add(killerNetId);
+            oldUnionPlayerIds.Add(deathPlayerNetId);
+            exchangeUnion = new UnionData
+            {
+                unionId = exchangeUnionId,
+                playerIds = exchangeUnionPlayerIds.ToArray()
+            };
+            oldUnion = new UnionData
+            {
+                unionId = oldUnionId,
+                playerIds = oldUnionPlayerIds.ToArray()
+            };
+            _unionData[exchangeUnionId] = exchangeUnion;
+            _unionData[oldUnionId] = oldUnion;
+            _playerUnionIds[killerNetId] = exchangeUnionId;
+            _playerUnionIds[deathPlayerNetId] = oldUnionId;
+            _playerIsChangedUnion.Add(killerNetId);
+            return true;
         }
 
         public bool IsPlayerInUnion(uint playerId)

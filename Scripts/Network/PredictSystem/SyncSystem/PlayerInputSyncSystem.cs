@@ -113,7 +113,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private void HandlePlayerRoll(int connectionId, bool isRollStart)
         {
-            GameSyncManager.EnqueueServerCommand(new PropertyInvincibleChangedCommand()
+            GameSyncManager.EnqueueServerCommand(new PropertyInvincibleChangedCommand
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property),
                 IsInvincible = isRollStart,

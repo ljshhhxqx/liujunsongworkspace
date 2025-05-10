@@ -109,7 +109,9 @@ namespace HotUpdate.Scripts.Config
             {
                 Debug.LogError($"配置文件未找到：{configName}。请确保存在 .xlsx 文件。");
             }
+#if UNITY_EDITOR
             EditorUtility.SetDirty(this);
+            #endif
         }
 
         private string ConvertExcelToCsv(string excelPath)
@@ -296,7 +298,9 @@ namespace HotUpdate.Scripts.Config
         protected void ReadFromJson(TextAsset textAsset)
         {
             JsonUtility.FromJsonOverwrite(textAsset.text, this);
+            #if UNITY_EDITOR
             EditorUtility.SetDirty(this);
+            #endif
         }
 
         /// <summary>

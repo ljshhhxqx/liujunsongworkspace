@@ -410,7 +410,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                             CommandAuthority.Server, CommandExecuteType.Immediate),
                         CasterId = null,
                         TargetId = header.ConnectionId,
-                        BuffSourceType = BuffSourceType.Drug
+                        BuffSourceType = BuffSourceType.Consume
                     };
                     foreach (var buffExtra in itemConfigData.buffExtraData)
                     {

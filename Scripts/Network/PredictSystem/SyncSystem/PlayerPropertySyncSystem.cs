@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using HotUpdate.Scripts.Common;
-using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.Server.InGame;
 using MemoryPack;
 using Mirror;
-using UniRx;
 using UnityEngine;
 using VContainer;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
+using Object = UnityEngine.Object;
 using PropertyAttackCommand = HotUpdate.Scripts.Network.PredictSystem.Data.PropertyAttackCommand;
 using PropertyAutoRecoverCommand = HotUpdate.Scripts.Network.PredictSystem.Data.PropertyAutoRecoverCommand;
 using PropertyBuffCommand = HotUpdate.Scripts.Network.PredictSystem.Data.PropertyBuffCommand;
@@ -50,6 +50,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private ItemConfig _itemConfig;
         private GameConfigData _gameConfigData;
         private BattleEffectConditionConfig _battleEffectConfig;
+        
+        private List<(BuffBase, int)> _previousNoUnionPlayerBuff = new List<(BuffBase, int)>();
         
         public event Action<int, PropertyTypeEnum, float> OnPropertyChange;
 
@@ -191,13 +193,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
             else if (command is PropertyBuffCommand buffCommand)
             {
-                HandleBuff(header.ConnectionId, buffCommand.BuffExtraData, buffCommand.CasterId);
+                HandleBuff(header.ConnectionId, buffCommand.BuffExtraData, buffCommand.CasterId, buffCommand.BuffSourceType);
             }
             else if (command is PropertyAttackCommand attackCommand)
             {
                 var playerNetId = _playerInGameManager.GetPlayerNetId(header.ConnectionId);
                 var hitPlayer = attackCommand.TargetIds.ToHashSet();
-                if (_playerInGameManager.TryGetOtherPlayersInUnion(playerNetId, out var otherPlayers) && GameSyncManager.IsRandomUnionStart)
+                if (_playerInGameManager.TryGetOtherPlayersInUnion(playerNetId, out var otherPlayers) && GameSyncManager.isRandomUnionStart)
                 {
                     for (int i = 0; i < attackCommand.TargetIds.Length; i++)
                     {
@@ -243,11 +245,38 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 HandlePlayerTraceOtherPlayerHp(header.ConnectionId, playerTraceOtherPlayerHpCommand.TargetConnectionIds);
             }
+            else if(command is NoUnionPlayerAddMoreScoreAndGoldCommand noUnionPlayerAddMoreScoreAndGoldCommand)
+            {
+                HandleNoUnionPlayerAddMoreScoreAndGold(header.ConnectionId, noUnionPlayerAddMoreScoreAndGoldCommand.PreNoUnionPlayer);
+            }
             else
             {
                 Debug.LogError($"PlayerPropertySyncSystem: Unknown command type {command.GetType().Name}");
             }
             return null;
+        }
+
+        private void HandleNoUnionPlayerAddMoreScoreAndGold(int headerConnectionId, int preNoUnionPlayer)
+        {
+            var noUnionBuffs = _constantBuffConfig.GetNoUnionBuffs();
+            for (int i = 0; i < noUnionBuffs.Count; i++)
+            {
+                _previousNoUnionPlayerBuff.Add(AddBuffToPlayer(headerConnectionId, noUnionBuffs[i]));
+            }
+            if (preNoUnionPlayer != 0)
+            {
+                for (int i = 0; i < _previousNoUnionPlayerBuff.Count; i++)
+                {
+                    var buffTuple = _previousNoUnionPlayerBuff[i];
+                    HandleBuffRemove(buffTuple.Item1, buffTuple.Item2);
+                    _previousNoUnionPlayerBuff.RemoveAt(i);
+                }
+                
+                for (int i = 0; i < noUnionBuffs.Count; i++)
+                {
+                    _previousNoUnionPlayerBuff.Add(AddBuffToPlayer(preNoUnionPlayer, noUnionBuffs[i]));
+                }
+            }
         }
 
         private void HandlePlayerTraceOtherPlayerHp(int headerConnectionId, int[] targetConnectionIds)
@@ -394,10 +423,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             PropertyChange(connectionId);
         }
 
-        private void HandleBuff(int targetId, BuffExtraData buffExtraData, int? casterId = null)
+        private void HandleBuff(int targetId, BuffExtraData buffExtraData, int? casterId = null, BuffSourceType buffSourceType = BuffSourceType.None)
         {
             var allPlayers = new HashSet<int> { targetId };
-            if (GameSyncManager.IsRandomUnionStart)
+            if (GameSyncManager.isRandomUnionStart && buffSourceType is BuffSourceType.Collect or BuffSourceType.Consume)
             {
                 var playerNetId = _playerInGameManager.GetPlayerNetId(targetId);
                 if (_playerInGameManager.TryGetOtherPlayersInUnion(playerNetId, out var otherPlayers))
@@ -416,7 +445,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
         }
 
-        private void AddBuffToPlayer(int targetId, BuffExtraData buffExtraData, int? casterId = null)
+        private (BuffBase, int) AddBuffToPlayer(int targetId, BuffExtraData buffExtraData, int? casterId = null)
         {
             var playerState = GetState<PlayerPredictablePropertyState>(targetId);
             var buff = buffExtraData.buffType == BuffType.Constant ? _constantBuffConfig.GetBuff(buffExtraData) : _randomBuffConfig.GetBuff(buffExtraData);
@@ -428,8 +457,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var propertyCalculator = playerState.Properties[newBuff.BuffData.propertyType];
             playerState.Properties[newBuff.BuffData.propertyType] = HandleBuffInfo(propertyCalculator, newBuff);
             _activeBuffs = _activeBuffs.Add(buffManagerData);
+            var index = _activeBuffs.Count - 1;
             PropertyStates[targetId] = playerState;
             PropertyChange(targetId);
+            return (newBuff, index);
         }
 
         private void HandleEquipProperty(int targetId, BuffExtraData buffExtraData, int equipItemConfigId, int equipItemId)
@@ -553,6 +584,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 DeadCountdownTime = countdownTime,
                 KillerId = killerId,
             });
+            var killerPlayer = GameSyncManager.GetPlayerConnection(killerId);
             PropertyStates[playerConnection] = playerState;
             PropertyChange(playerConnection);
         }
@@ -732,7 +764,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
     }
 
     [MemoryPackable]
-    public struct TracedPlayerInfo
+    public partial struct TracedPlayerInfo
     {
         [MemoryPackOrder(0)]
         public int PlayerId;

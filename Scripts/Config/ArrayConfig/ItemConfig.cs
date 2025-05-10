@@ -56,11 +56,13 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 gameItemData.duration = float.Parse(row[11]);
                 gameItemData.propertyDesc = row[12];
                 var buffExtra = JsonConvert.DeserializeObject<BuffExtraData[]>(row[13],jsonSerializerSettings);
+                #if UNITY_EDITOR
                 if (buffExtra.Length != 0)
                 {
                     gameItemData.isDealWithBuffExtraData = true;
                 }
                 gameItemData.buffExtraData = gameItemData.isDealWithBuffExtraData ? buffExtra : null;
+                #endif
                 gameItemDatas.Add(gameItemData);
                 _gameItemDataDict.Add(gameItemData.id, gameItemData);
             }
@@ -226,7 +228,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 #endif
         public bool Equals(GameItemConfigData other)
         {
-            return id == other.id && name == other.name && desc == other.desc && price.Equals(other.price) && sellPriceRatio.Equals(other.sellPriceRatio) && itemType == other.itemType && maxStack == other.maxStack && weight == other.weight && iconName == other.iconName && prefabName == other.prefabName && duration.Equals(other.duration) && quality == other.quality && equipmentPart == other.equipmentPart && buffExtraData == null && propertyDesc == other.propertyDesc && isDealWithBuffExtraData == other.isDealWithBuffExtraData;
+            return id == other.id && name == other.name && desc == other.desc && price.Equals(other.price) && sellPriceRatio.Equals(other.sellPriceRatio) && itemType == other.itemType && maxStack == other.maxStack && weight == other.weight && iconName == other.iconName && prefabName == other.prefabName && duration.Equals(other.duration) && quality == other.quality && equipmentPart == other.equipmentPart && buffExtraData == null && propertyDesc == other.propertyDesc;
         }
 
         public override bool Equals(object obj)
@@ -252,7 +254,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             hashCode.Add((int)equipmentPart);
             hashCode.Add(buffExtraData);
             hashCode.Add(propertyDesc);
-            hashCode.Add(isDealWithBuffExtraData);
             return hashCode.ToHashCode();
         }
     }

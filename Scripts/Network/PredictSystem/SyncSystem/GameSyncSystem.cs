@@ -17,6 +17,7 @@ using Mirror;
 using Tool.GameEvent;
 using UniRx;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VContainer;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
 using InteractHeader = HotUpdate.Scripts.Network.PredictSystem.Interact.InteractHeader;
@@ -44,7 +45,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private InteractSystem _interactSystem;
 
         [SyncVar(hook = nameof(OnIsRandomUnionStartChanged))] 
-        public static bool IsRandomUnionStart;
+        public bool isRandomUnionStart;
         
         public static int CurrentTick { get; private set; }
 
@@ -89,7 +90,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void OnIsRandomUnionStartChanged(bool oldValue, bool newValue)
         {
             if (newValue)
-                _playerInGameManager.RandomUnion();
+            {
+                _playerInGameManager.RandomUnion(out var noUnionPlayerId);
+                if (noUnionPlayerId != 0)
+                {
+                    var command = new NoUnionPlayerAddMoreScoreAndGoldCommand
+                    {
+                        Header = CreateNetworkCommandHeader(noUnionPlayerId, CommandType.Property, CommandAuthority.Server, CommandExecuteType.Immediate),
+                    };
+                    EnqueueServerCommand(command);
+                }
+            }
         }
 
         private void OnPlayerDisconnect(PlayerDisconnectEvent disconnectEvent)
@@ -343,14 +354,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [ClientRpc]
         private void RpcUpdateState()
         {
-            OnBroadcastStateUpdate?.Invoke();
+            OnBroadcastStateUpdate?.Invoke(); 
         }
 
-        public static InteractHeader CreateInteractHeader(int? connectionId, InteractCategory category, CompressedVector3 position, CommandAuthority authority = CommandAuthority.Server)
+        public static InteractHeader CreateInteractHeader(int? connectionId, InteractCategory category, CompressedVector3 position = default, CommandAuthority authority = CommandAuthority.Server)
         {
             int? noSequence = null;
             var connectionIdValue = connectionId.GetValueOrDefault();
             var header = ObjectPool<InteractHeader>.Get();
+            header = default;
             header.CommandId = HybridIdGenerator.GenerateCommandId(authority == CommandAuthority.Server, CommandType.Interact, ref noSequence);
             header.RequestConnectionId = connectionIdValue;
             header.Tick = CurrentTick;

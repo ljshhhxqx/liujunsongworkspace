@@ -36,6 +36,7 @@ namespace HotUpdate.Scripts.Game
         private float _noUnionTime;
         private CancellationTokenSource _cts;
         private GameEventManager _gameEventManager;
+        private GameSyncManager _gameSyncManager;
         private JsonDataConfig _jsonDataConfig;
         private ItemsSpawnerManager _itemsSpawnerManager;
         private PlayerInGameManager _playerInGameManager;
@@ -117,6 +118,7 @@ namespace HotUpdate.Scripts.Game
             _networkAudioManager = FindObjectOfType<NetworkAudioManager>();
             _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
             _weatherManager = FindObjectOfType<WeatherManager>();
+            _gameSyncManager = FindObjectOfType<GameSyncManager>();
             RegisterMessage();
         }
         
@@ -245,12 +247,12 @@ namespace HotUpdate.Scripts.Game
                         remainingTime += interval;
                     }
 
-                    if (!GameSyncManager.IsRandomUnionStart)
+                    if (!_gameSyncManager.isRandomUnionStart)
                     {
                         _noUnionTime -= interval;
                         if (_noUnionTime <= 0)
                         {
-                            GameSyncManager.IsRandomUnionStart = true;
+                            _gameSyncManager.isRandomUnionStart = true;
                         }
                     }
                     _messageHandler.SendToAllClients(new MirrorCountdownMessage(remainingTime));

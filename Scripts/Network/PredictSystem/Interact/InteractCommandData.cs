@@ -121,6 +121,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             return HazardId > 0 && Intensity > 0;
         }
     }
+    
+    [MemoryPackable]
+    public partial struct PlayerChangeUnionRequest : IInteractRequest
+    {
+        [MemoryPackOrder(0)] public InteractHeader Header;
+        [MemoryPackOrder(1)] public uint KillerPlayerId;
+        [MemoryPackOrder(2)] public uint DeadPlayerId;
+        public InteractCategory Category => Header.Category;
+        public InteractHeader GetHeader() => Header;
+        public bool IsValid()
+        {
+            return KillerPlayerId > 0 && DeadPlayerId > 0;
+        }
+    }
 
     public static class InteractNetworkDataExtensions
     {
