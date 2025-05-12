@@ -67,6 +67,26 @@ namespace Tool.GameEvent
             Progress = progress;
         }
     }
+    
+    public struct AddBuffToAllPlayerEvent : IGameEvent
+    {
+        public int CurrentRound { get; private set; }
+
+        public AddBuffToAllPlayerEvent(int currentRound)
+        {
+            CurrentRound = currentRound;
+        }
+    }
+    
+    public struct AddDeBuffToLowScorePlayerEvent : IGameEvent
+    {
+        public int CurrentRound { get; private set; }
+
+        public AddDeBuffToLowScorePlayerEvent(int currentRound)
+        {
+            CurrentRound = currentRound;
+        }
+    }
 
     public struct PlayerConnectEvent : IGameEvent
     {

@@ -14,7 +14,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         EquipmentItem,
         [UIPropertyType(typeof(RandomShopItemData))]
         ShopItem,
-        [UIPropertyType(typeof(GoldData))]
+        [UIPropertyType(typeof(ValuePropertyData))]
         PlayerBaseData,
         [UIPropertyType(typeof(PlayerDeathTimeData))]
         PlayerDeathTime,
@@ -68,7 +68,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         
     }
 
-    public struct GoldData : IUIDatabase, IEquatable<GoldData>
+    public struct ValuePropertyData : IUIDatabase, IEquatable<ValuePropertyData>
     {
         public float Gold;
         public float Exp;
@@ -79,16 +79,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         public float MaxMana;
         public float Speed;
         public float Score;
+        public float Fov;
 
-        public bool Equals(GoldData other)
+        public bool Equals(ValuePropertyData other)
         {
             return Gold.Equals(other.Gold) && Exp.Equals(other.Exp) && Health.Equals(other.Health) && Attack.Equals(other.Attack) && Speed.Equals(other.Speed)
-                && MaxHealth.Equals(other.MaxHealth) && Mana.Equals(other.Mana) && MaxMana.Equals(other.MaxMana) && Score.Equals(other.Score);
+                && MaxHealth.Equals(other.MaxHealth) && Mana.Equals(other.Mana) && MaxMana.Equals(other.MaxMana) && Score.Equals(other.Score) && Fov.Equals(other.Fov);
         }
 
         public override bool Equals(object obj)
         {
-            return obj is GoldData other && Equals(other);
+            return obj is ValuePropertyData other && Equals(other);
         }
 
         public override int GetHashCode()
@@ -103,6 +104,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
             hashCode.Add(MaxMana);
             hashCode.Add(Speed);
             hashCode.Add(Score);
+            hashCode.Add(Fov);
             return hashCode.ToHashCode();
         }
     }

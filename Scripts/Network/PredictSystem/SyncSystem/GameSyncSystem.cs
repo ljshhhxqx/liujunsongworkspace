@@ -66,6 +66,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _maxCommandAge = _jsonDataConfig.GameConfig.maxCommandAge;
             gameEventManager.Subscribe<PlayerConnectEvent>(OnPlayerConnect);
             gameEventManager.Subscribe<PlayerDisconnectEvent>(OnPlayerDisconnect);
+            gameEventManager.Subscribe<AddBuffToAllPlayerEvent>(OnAddBuffToAllPlayer);
+            gameEventManager.Subscribe<AddDeBuffToLowScorePlayerEvent>(OnAddDeBuffToLowScorePlayer);
             var commandTypes = Enum.GetValues(typeof(CommandType));
             foreach (CommandType commandType in commandTypes)
             {
@@ -85,6 +87,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 .AddTo(this);
                 
             ProcessImmediateCommands(_cts.Token);
+        }
+
+        private void OnAddBuffToAllPlayer(AddBuffToAllPlayerEvent addBuffToAllPlayerEvent)
+        {
+            
+        }
+
+        private void OnAddDeBuffToLowScorePlayer(AddDeBuffToLowScorePlayerEvent addDeBuffToLowScorePlayerEvent)
+        {
+            
         }
 
         private void OnIsRandomUnionStartChanged(bool oldValue, bool newValue)

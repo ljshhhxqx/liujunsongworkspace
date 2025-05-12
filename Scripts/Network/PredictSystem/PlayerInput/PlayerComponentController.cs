@@ -98,6 +98,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private UIManager _uiManager;
         private PlayerInGameManager _playerInGameManager;
         private InteractSystem _interactSystem;
+        private UIHoleOverlay _uiHoleOverlay;
         
         private BindingKey _propertyBindKey;
         private BindingKey _itemBindKey;
@@ -106,7 +107,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private BindingKey _goldBindKey;
         private BindingKey _playerDeathTimeBindKey;
         private BindingKey _playerTraceOtherPlayerHpBindKey;
-        
         
         private Dictionary<Type, bool> _reactivePropertyBinds = new Dictionary<Type, bool>();
         
@@ -292,6 +292,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void HandleLocalInitCallback()
         {
+            _uiHoleOverlay = _uiManager.SwitchUI<UIHoleOverlay>();
             if (!_reactivePropertyBinds.ContainsKey(typeof(PropertyItemData)))
             {
                 _reactivePropertyBinds.Add(typeof(PropertyItemData), true);
@@ -299,11 +300,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 playerPropertiesOverlay.BindPlayerProperty(UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_propertyBindKey));
             }
 
-            if (!_reactivePropertyBinds.ContainsKey(typeof(GoldData)))
+            if (!_reactivePropertyBinds.ContainsKey(typeof(ValuePropertyData)))
             {
-                _reactivePropertyBinds.Add(typeof(GoldData), true);
+                _reactivePropertyBinds.Add(typeof(ValuePropertyData), true);
                 var playerDamageOverlay = _uiManager.SwitchUI<PlayerDamageDeathOverlay>();
-                playerDamageOverlay.BindGold(UIPropertyBinder.ObserveProperty<GoldData>(_goldBindKey));
+                playerDamageOverlay.BindGold(UIPropertyBinder.ObserveProperty<ValuePropertyData>(_goldBindKey));
             }
 
             if (!_reactivePropertyBinds.ContainsKey(typeof(PlayerHpItemData)))
@@ -349,7 +350,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             var shopScreenUI = _uiManager.SwitchUI<ShopScreenUI>();
             shopScreenUI.BindShopItemData(UIPropertyBinder.GetReactiveDictionary<RandomShopItemData>(_shopBindKey));
             shopScreenUI.BindBagItemData(UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey));
-            shopScreenUI.BindPlayerGold(UIPropertyBinder.ObserveProperty<GoldData>(_propertyBindKey));
+            shopScreenUI.BindPlayerGold(UIPropertyBinder.ObserveProperty<ValuePropertyData>(_propertyBindKey));
             shopScreenUI.OnRefresh.Subscribe(_ =>
             {
                 var refreshCommand = new RefreshShopCommand

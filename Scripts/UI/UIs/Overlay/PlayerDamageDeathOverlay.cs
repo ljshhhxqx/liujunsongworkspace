@@ -31,8 +31,8 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         [SerializeField]
         private TextMeshProUGUI countDownText;
         private UIManager _uiManager;
-        private IObservable<GoldData> _goldObservable;
-        private GoldData _goldData;
+        private IObservable<ValuePropertyData> _goldObservable;
+        private ValuePropertyData _valuePropertyData;
         private float _hpRatioToWarning;
         
         private Sequence _damageSequence;
@@ -54,18 +54,18 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             damageImage.color = new Color(damageImage.color.r, damageImage.color.g, damageImage.color.b, 0f);
         }
 
-        public void BindGold(IObservable<GoldData> goldObservable)
+        public void BindGold(IObservable<ValuePropertyData> goldObservable)
         {
             _goldObservable = goldObservable;
             _goldObservable.Subscribe(OnGoldChanged).AddTo(this);
         }
 
-        private void OnGoldChanged(GoldData goldData)
+        private void OnGoldChanged(ValuePropertyData valuePropertyData)
         {
-            if (goldData.Equals(default) || Mathf.Approximately(goldData.Health, _goldData.Health)) return;
+            if (valuePropertyData.Equals(default) || Mathf.Approximately(valuePropertyData.Health, _valuePropertyData.Health)) return;
             deathRoot.SetActive(false);
-            _goldData = goldData;
-            PlayDamageEffect(_goldData.Health, goldData.Health, _goldData.MaxHealth);
+            _valuePropertyData = valuePropertyData;
+            PlayDamageEffect(_valuePropertyData.Health, valuePropertyData.Health, _valuePropertyData.MaxHealth);
         }
 
         public void PlayDamageEffect(float oldHealth, float newHealth, float maxHealth)

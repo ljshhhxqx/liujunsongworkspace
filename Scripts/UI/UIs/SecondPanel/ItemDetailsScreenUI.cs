@@ -38,7 +38,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         private UIManager _uiManager;
         private IItemBaseData _currentItemData;
         private ItemDetailsType _currentItemDetailsType;
-        private GoldData _currentGoldData;
+        private ValuePropertyData _currentValuePropertyData;
 
         [Inject]
         private void Init(UIManager uiManager)
@@ -51,11 +51,11 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             lockButton.BindDebouncedListener(OnLockClicked);
         }
 
-        public void BindPlayerGold(IObservable<GoldData> playerGold)
+        public void BindPlayerGold(IObservable<ValuePropertyData> playerGold)
         {
             playerGold.Subscribe(data =>
             {
-                _currentGoldData = data;
+                _currentValuePropertyData = data;
                 useCountSlider.SetPlayerGold(data.Gold);
                 dropCountSlider.SetPlayerGold(data.Gold);
                 sellCountSlider.SetPlayerGold(data.Gold);
@@ -132,8 +132,8 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             passiveEffectText.gameObject.SetActive(showPassive);
             passiveEffectText.text = showPassive ? randomShopItemData.PassiveDescription : "";
             // 价格信息
-            priceText.text = $"价格: {randomShopItemData.Price}G 当前金币: {_currentGoldData.Gold}G";
-            priceText.color = randomShopItemData.Price <= _currentGoldData.Gold ? Color.green : Color.red;
+            priceText.text = $"价格: {randomShopItemData.Price}G 当前金币: {_currentValuePropertyData.Gold}G";
+            priceText.color = randomShopItemData.Price <= _currentValuePropertyData.Gold ? Color.green : Color.red;
             
             var countSliderButtonGroupData = new CountSliderButtonGroupData
             {
@@ -142,15 +142,15 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 Callback = x => randomShopItemData.OnBuyItem?.Invoke(randomShopItemData.ShopId, x),
                 PricePerItem = randomShopItemData.Price,
                 ShowPrice = true,
-                CurrentGold = _currentGoldData.Gold,
+                CurrentGold = _currentValuePropertyData.Gold,
                 ButtonType = ButtonType.Buy
             };
             buyCountSlider.Init(countSliderButtonGroupData);
             buyCountSlider.OnSliderChanged.Subscribe(x =>
             {
                 var newPrice = randomShopItemData.Price * x;
-                priceText.text = $"价格: {newPrice}G 当前金币: {_currentGoldData.Gold}G";
-                priceText.color = newPrice <= _currentGoldData.Gold ? Color.green : Color.red;
+                priceText.text = $"价格: {newPrice}G 当前金币: {_currentValuePropertyData.Gold}G";
+                priceText.color = newPrice <= _currentValuePropertyData.Gold ? Color.green : Color.red;
             }).AddTo(this);
         }
 
@@ -192,7 +192,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 Callback = x => bagItemData.OnUseItem?.Invoke(bagItemData.Index, x),
                 PricePerItem = bagItemData.Price * bagItemData.SellRatio,
                 ShowPrice = false,
-                CurrentGold = _currentGoldData.Gold,
+                CurrentGold = _currentValuePropertyData.Gold,
                 ButtonType = ButtonType.Use
             };
             useCountSlider.Init(countSliderButtonGroupData);

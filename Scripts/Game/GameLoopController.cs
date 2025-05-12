@@ -217,6 +217,10 @@ namespace HotUpdate.Scripts.Game
             Debug.Log($"Round Start -- {_currentRound.ToString()}!");
             await _itemsSpawnerManager.SpawnItemsAndChest();
             Debug.Log("Random event handled.");
+            //todo: 给所有玩家添加TimedBuff
+            //todo: 给分数较低的玩家增加DeBuff
+            _gameEventManager.Publish(new AddBuffToAllPlayerEvent(_currentRound));
+            _gameEventManager.Publish(new AddDeBuffToLowScorePlayerEvent(_currentRound));
         }
 
         private async UniTask RoundEndAsync()

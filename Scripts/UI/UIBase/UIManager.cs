@@ -21,6 +21,7 @@ namespace HotUpdate.Scripts.UI.UIBase
         private List<ScreenUIBase> _uIPrefabs = new List<ScreenUIBase>();
         private ScreenUIBase _currentActiveScreenUI1;
         private ScreenUIBase _currentActiveScreenUI2;
+        private ScreenUIBase _currentActiveScreenUI3;
         private UICanvasRoot[] _roots;
         private IObjectInjector _injector;
         private readonly Dictionary<UIType, ScreenUIBase> _uiDict = new Dictionary<UIType, ScreenUIBase>();
@@ -114,8 +115,6 @@ namespace HotUpdate.Scripts.UI.UIBase
             Debug.Log($"UI类型有误{typeof(T).Name}");
             return null;
         }
-        
-        
 
         public T SwitchUI<T>(Action<T> onShow = null) where T : ScreenUIBase, new()
         {
@@ -140,25 +139,27 @@ namespace HotUpdate.Scripts.UI.UIBase
                 _uiDict.TryAdd(uIType, ui);
                 if (ui.CanvasType == UICanvasType.Panel)
                 {
-                    if (_currentActiveScreenUI1 != ui)
+                    if (_currentActiveScreenUI1 != ui && _currentActiveScreenUI1)
                     {
-                        if (_currentActiveScreenUI1)
-                        {
-                            Object.Destroy(_currentActiveScreenUI1.gameObject);
-                        }
+                        Object.Destroy(_currentActiveScreenUI2.gameObject);
                         _currentActiveScreenUI1 = ui;
                     }
                 }
                 else if (ui.CanvasType == UICanvasType.SecondPanel)
                 {
-                    if (_currentActiveScreenUI2 != ui)
+                    if (_currentActiveScreenUI2 != ui && _currentActiveScreenUI2)
                     {
-                        if (_currentActiveScreenUI2)
-                        {
-                            Object.Destroy(_currentActiveScreenUI2.gameObject);
-                        }
+                        Object.Destroy(_currentActiveScreenUI2.gameObject);
                         _currentActiveScreenUI2 = ui;
                     }
+                }
+                else if (ui.CanvasType == UICanvasType.ThirdPanel)
+                {
+                    if (_currentActiveScreenUI3 != ui && _currentActiveScreenUI3)
+                    {
+                        Object.Destroy(_currentActiveScreenUI3.gameObject);
+                    }
+                    _currentActiveScreenUI3 = ui;
                 }
                 onShow?.Invoke(ui);
             }

@@ -28,7 +28,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         private readonly List<ShopBagSlotItem> _bagSlotItems = new List<ShopBagSlotItem>();
         private readonly Dictionary<int, RandomShopItemData> _shopItemData = new Dictionary<int, RandomShopItemData>();
         private readonly Dictionary<int, BagItemData> _bagItemData = new Dictionary<int, BagItemData>();
-        private IObservable<GoldData> _goldObservable;
+        private IObservable<ValuePropertyData> _goldObservable;
         private Subject<Unit> _refreshSubject = new Subject<Unit>();
         public IObservable<Unit> OnRefresh => _refreshSubject;
 
@@ -43,7 +43,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             });
         }
 
-        public void BindPlayerGold(IObservable<GoldData> playerGold)
+        public void BindPlayerGold(IObservable<ValuePropertyData> playerGold)
         {
             _goldObservable = playerGold;
         }

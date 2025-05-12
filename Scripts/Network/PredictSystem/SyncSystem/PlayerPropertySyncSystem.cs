@@ -36,12 +36,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public Dictionary<PropertyTypeEnum, float> ConfigPlayerBaseProperties { get; private set; }
         public Dictionary<int, PropertyPredictionState> PlayerPredictionState { get; private set; }
         private ImmutableList<BuffManagerData> _activeBuffs;
+        private ImmutableList<TimedBuffData> _timedBuffs;
         private ImmutableList<EquipmentData> _activeEquipments;
         private ImmutableList<EquipmentPassiveData> _passiveBuffs;
         private IConfigProvider _configProvider;
         private AnimationConfig _animationConfig;
         private ConstantBuffConfig _constantBuffConfig;
         private JsonDataConfig _jsonDataConfig;
+        private TimedBuffConfig _timedBuffConfig;
         private RandomBuffConfig _randomBuffConfig;
         private PropertyConfig _propertyConfig;
         private PlayerInGameManager _playerInGameManager;
@@ -50,8 +52,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private ItemConfig _itemConfig;
         private GameConfigData _gameConfigData;
         private BattleEffectConditionConfig _battleEffectConfig;
-        
-        private List<(BuffBase, int)> _previousNoUnionPlayerBuff = new List<(BuffBase, int)>();
+        private float _timeBuffTimer;
+        private readonly List<(BuffBase, int)> _previousNoUnionPlayerBuff = new List<(BuffBase, int)>();
         
         public event Action<int, PropertyTypeEnum, float> OnPropertyChange;
 
@@ -62,6 +64,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
             _gameConfigData = _jsonDataConfig.GameConfig;
             _animationConfig = _configProvider.GetConfig<AnimationConfig>();
+            _timedBuffConfig = _configProvider.GetConfig<TimedBuffConfig>();
             _constantBuffConfig = configProvider.GetConfig<ConstantBuffConfig>();
             _randomBuffConfig = configProvider.GetConfig<RandomBuffConfig>();
             _propertyConfig = configProvider.GetConfig<PropertyConfig>();
@@ -75,6 +78,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             ConfigPlayerBaseProperties = _propertyConfig.GetPlayerBaseProperties();
             _activeBuffs ??= ImmutableList<BuffManagerData>.Empty;
             _passiveBuffs??= ImmutableList<EquipmentPassiveData>.Empty;
+            _timedBuffs ??= ImmutableList<TimedBuffData>.Empty;
             _activeEquipments ??= ImmutableList<EquipmentData>.Empty;
             BuffDataReaderWriter.RegisterReaderWriter();
         }
@@ -171,6 +175,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         buffData.BuffData.increaseDataList[j] = buff;
                     }
                     HandleBuffRemove(_activeBuffs[i].BuffData, i);
+                }
+            }
+        }
+        
+        private void UpdateTimedBuffs(float deltaTime)
+        {
+            if (_timedBuffs.Count <= 0)
+                return;
+            for (var i = _timedBuffs.Count - 1; i >= 0; i--)
+            {
+                var buffData = _timedBuffs[i];
+                var newBuffData = _timedBuffConfig.GetCurrentBuffByDeltaTime(buffData.buffId, deltaTime);
+                //_timedBuffs = _timedBuffs.SetItem(i, newBuffData);
+                if (_timedBuffs[i].IsExpired())
+                {
+                    HandleTimedBuffRemove(_timedBuffs[i], i);
+                }
+                else
+                {
+                    ModifyPlayerTimedBuff(buffData, i, newBuffData);
                 }
             }
         }
@@ -445,6 +469,66 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
         }
 
+        private void HandleTimedBuff(int targetId, int buffConfigId, bool giveAlly = false)
+        {
+            var allPlayers = new HashSet<int> { targetId };
+            if (GameSyncManager.isRandomUnionStart && giveAlly)
+            {
+                var playerNetId = _playerInGameManager.GetPlayerNetId(targetId);
+                if (_playerInGameManager.TryGetOtherPlayersInUnion(playerNetId, out var otherPlayers))
+                {
+                    foreach (var player in otherPlayers)
+                    {
+                        var playerConnectionId = _playerInGameManager.GetPlayerId(player);
+                        allPlayers.Add(playerConnectionId);
+                    }
+                }
+            }
+            foreach (var player in allPlayers)
+            {
+                AddTimedBuffToPlayer(player, buffConfigId);
+            }
+        }
+
+        private void AddTimedBuffToPlayer(int player, int buffConfigId)
+        {
+            var playerState = GetState<PlayerPredictablePropertyState>(player);
+            var buffData = _timedBuffConfig.GetTimedBuffData(buffConfigId);
+            var newBuff = new TimedBuffData
+            {
+                targetPlayerId = player,
+                buffId = buffConfigId,
+                propertyType = buffData.propertyType,
+                duration = buffData.duration.max,
+                increaseValue = buffData.increaseRange.min,
+                increaseType =  buffData.increaseType,
+                operationType = buffData.operationType,
+                sourceType = buffData.sourceType,
+                isPermanent = buffData.isPermanent,
+            };
+            AddTimedBuff(player, playerState, newBuff);
+        }
+
+        private void AddTimedBuff(int player, PlayerPredictablePropertyState playerState, TimedBuffData buff)
+        {
+            _timedBuffs = _timedBuffs.Add(buff);
+            var propertyCalculator = playerState.Properties[buff.propertyType];
+            playerState.Properties[buff.propertyType] = propertyCalculator.UpdateCalculator(propertyCalculator, new BuffIncreaseData
+            {
+                increaseValue = buff.increaseValue,
+                increaseType = buff.increaseType,
+            });
+            PropertyStates[player] = playerState;
+            PropertyChange(player);
+        }
+
+        private void ModifyPlayerTimedBuff(TimedBuffData oldBuff, int oldIndex, TimedBuffData newBuff)
+        {
+            HandleTimedBuffRemove(oldBuff, oldIndex);
+            var state = GetState<PlayerPredictablePropertyState>(oldBuff.targetPlayerId);
+            AddTimedBuff(oldBuff.targetPlayerId, state, newBuff);
+        }
+
         private (BuffBase, int) AddBuffToPlayer(int targetId, BuffExtraData buffExtraData, int? casterId = null)
         {
             var playerState = GetState<PlayerPredictablePropertyState>(targetId);
@@ -535,6 +619,31 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
             playerState.Properties[buff.BuffData.propertyType] = HandleBuffInfo(propertyCalculator, buff);
             _activeBuffs = _activeBuffs.RemoveAt(index);
+            PropertyStates[buff.TargetPlayerId] = playerState;
+            PropertyChange(buff.TargetPlayerId);
+        }
+        
+        public void HandleTimedBuffRemove(TimedBuffData buff, int index = -1)
+        {
+            var playerState = GetState<PlayerPredictablePropertyState>(buff.targetPlayerId);
+            var propertyCalculator = playerState.Properties[buff.propertyType];
+            var increaseData = new BuffIncreaseData
+            {
+                increaseValue = buff.increaseValue,
+            };
+            increaseData.operationType = buff.operationType switch
+            {
+                BuffOperationType.Add => BuffOperationType.Subtract,
+                BuffOperationType.Subtract => BuffOperationType.Add,
+                BuffOperationType.Multiply => BuffOperationType.Divide,
+                BuffOperationType.Divide => BuffOperationType.Multiply,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            playerState.Properties[buff.propertyType] = propertyCalculator.UpdateCalculator(propertyCalculator, increaseData);
+            PropertyStates[buff.targetPlayerId] = playerState;
+            PropertyChange(buff.targetPlayerId);
+            if (index != -1)
+                _timedBuffs = _timedBuffs.RemoveAt(index);
         }
 
 
@@ -613,6 +722,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         protected override void OnBroadcastStateUpdate()
         {
             UpdateBuffs(GameSyncManager.TickRate);
+            _timeBuffTimer += GameSyncManager.TickRate;
+            if (_timeBuffTimer >= 0.3f)
+            {
+                _timeBuffTimer = 0;
+                UpdateTimedBuffs(GameSyncManager.TickRate);
+            }
+
             base.OnBroadcastStateUpdate();
         }
 

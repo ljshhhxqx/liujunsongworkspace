@@ -63,10 +63,10 @@ namespace HotUpdate.Scripts.Tool.GameEvent
         public void Publish<T>(T gameEvent) where T : IGameEvent
         {
             Type eventType = typeof(T);
-            if (_eventListeners.ContainsKey(eventType))
+            if (_eventListeners.TryGetValue(eventType, out var listener))
             {
                 //Debug.Log($"Publishing event {eventType.Name}");
-                _eventListeners[eventType].Invoke(gameEvent);
+                listener.Invoke(gameEvent);
             }
         }
     }

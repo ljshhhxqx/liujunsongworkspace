@@ -50,13 +50,16 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             buffData.buffId = timedBuffData.buffId;
             buffData.propertyType = timedBuffData.propertyType;
             buffData.sourceType = timedBuffData.sourceType;
-            buffData.increaseData = new BuffIncreaseData
-            {
-                increaseType = timedBuffData.increaseType,
-                increaseValue = (float)CalculateY(deltaTime, timedBuffData.duration.max, timedBuffData.duration.min, timedBuffData.increaseRange.min,
-                    timedBuffData.increaseRange.max, timedBuffData.steepAngle, timedBuffData.growthType, timedBuffData.isPermanent)
-            };
+            buffData.increaseValue = (float)CalculateY(deltaTime, timedBuffData.duration.max,
+                timedBuffData.duration.min, timedBuffData.increaseRange.min,
+                timedBuffData.increaseRange.max, timedBuffData.steepAngle, timedBuffData.growthType,
+                timedBuffData.isPermanent);
+            buffData.increaseType = timedBuffData.increaseType;
+            buffData.increaseType = timedBuffData.increaseType;
+            buffData.duration = timedBuffData.duration.max;
+            buffData.isPermanent = timedBuffData.isPermanent;
             buffData.operationType = timedBuffData.operationType;
+            buffData = buffData.Update(deltaTime);
             return buffData;
         }
         

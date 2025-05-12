@@ -24,7 +24,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private BindingKey _goldBindKey;
         private BindingKey _playerDeathTimeBindKey;
         private ReactiveDictionary<int, PropertyItemData> _uiPropertyData;
-        private ReactiveProperty<GoldData> _goldData;
+        private ReactiveProperty<ValuePropertyData> _goldData;
 
         public PlayerPredictablePropertyState PlayerPredictablePropertyState => (PlayerPredictablePropertyState)CurrentState;
 
@@ -163,7 +163,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             }
             _subjectedStateType = predictablePropertyState.SubjectedState;
             OnStateChanged?.Invoke(predictablePropertyState.SubjectedState);
-            var goldData = new GoldData();
+            var goldData = new ValuePropertyData();
             foreach (var key in predictablePropertyState.Properties.Keys)
             {
                 var property = predictablePropertyState.Properties[key];
@@ -193,6 +193,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                         goldData.Mana = property.CurrentValue;
                         goldData.MaxMana = property.MaxCurrentValue;
                         break;
+                    
                 }
                 if (property.IsResourceProperty())
                 {
