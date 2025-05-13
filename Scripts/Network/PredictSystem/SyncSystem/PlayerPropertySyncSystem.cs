@@ -6,18 +6,17 @@ using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
-using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Tool.Static;
 using MemoryPack;
 using Mirror;
 using UnityEngine;
 using VContainer;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
-using Object = UnityEngine.Object;
 using PropertyAttackCommand = HotUpdate.Scripts.Network.PredictSystem.Data.PropertyAttackCommand;
 using PropertyAutoRecoverCommand = HotUpdate.Scripts.Network.PredictSystem.Data.PropertyAutoRecoverCommand;
 using PropertyBuffCommand = HotUpdate.Scripts.Network.PredictSystem.Data.PropertyBuffCommand;
@@ -56,7 +55,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private readonly List<(BuffBase, int)> _previousNoUnionPlayerBuff = new List<(BuffBase, int)>();
         
         public event Action<int, PropertyTypeEnum, float> OnPropertyChange;
-
+        
+        
         [Inject]
         private void InitContainers(IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
         {
@@ -96,6 +96,82 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 PropertyChange(playerState.Key);
             }
             
+        }
+        
+        [Server]
+        public void AddBuffToAllPlayer(int currentRound)
+        {
+            var connections = NetworkServer.connections;
+            var buffs = _timedBuffConfig.GetRandomBuffs(BuffSourceType.Round, connections.Count);
+            if (buffs == null || buffs.Count == 0)
+            {
+                Debug.LogError($"No buffs available for {currentRound}");
+                return;
+            }
+            foreach (var id in connections.Keys)
+            {
+                var buff = buffs.RandomSelect();
+                buffs.Remove(buff);
+                HandleTimedBuff(id, buff);
+            }
+        }
+
+        [Server]
+        public void AddBuffToLowScorePlayer(int currentRound)
+        {
+            var buff = _timedBuffConfig.GetRandomBuff(BuffSourceType.Score);
+            if (buff == 0)
+            {
+                Debug.LogError($"No buffs available for {currentRound}");
+                return;
+            }
+            var sortedPlayerProperties = GetSortedPlayerProperties(PropertyTypeEnum.Score, true, true);
+            var maxScorePlayer = sortedPlayerProperties.Last().Key;
+            sortedPlayerProperties.Remove(maxScorePlayer);
+            var player = sortedPlayerProperties.SelectByWeight();
+            HandleTimedBuff(player, buff);
+        }
+        
+        [Server]
+        public void AllPlayerGetSpeed()
+        {
+            var speedBuff = _timedBuffConfig.GetNoUnionSpeedBuffId();
+            if (speedBuff == 0)
+            {
+                Debug.LogError("No speed buff available");
+                return;
+            }
+            foreach (var connection in NetworkServer.connections.Values)
+            {
+                HandleTimedBuff(connection.connectionId, speedBuff);
+            }   
+        }
+        
+        private Dictionary<int, float> GetPlayerProperties(PropertyTypeEnum propertyType, bool isMaxValue = false)
+        {
+            var playerProperties = new Dictionary<int, float>();
+            foreach (var playerId in PropertyStates.Keys)
+            {
+                var playerState = PropertyStates[playerId];
+                if (playerState is PlayerPredictablePropertyState predictablePropertyState)
+                {
+                    if (predictablePropertyState.Properties.TryGetValue(propertyType, out var propertyValue))
+                    {
+                        playerProperties.Add(playerId, isMaxValue ? propertyValue.MaxCurrentValue : propertyValue.CurrentValue);
+                    }
+                }
+            }
+            return playerProperties;
+        }
+
+        private Dictionary<int, float> GetSortedPlayerProperties(PropertyTypeEnum propertyType, bool isAscending = true, bool isMaxValue = false)
+        {
+            var playerProperties = GetPlayerProperties(propertyType, isMaxValue);
+            if (isAscending)
+            {
+                return playerProperties.OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+            }
+            return playerProperties.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
         }
 
         public PlayerPredictablePropertyState GetPredictablePropertyState(int playerId)

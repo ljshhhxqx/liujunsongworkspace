@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using HotUpdate.Scripts.Tool.Static;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -10,6 +12,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     {
         [SerializeField]
         private List<TimedBuffConfigData> timedBuffs;
+        private Dictionary<BuffSourceType, Dictionary<int, TimedBuffConfigData>> _sourceTypeDictionary = new Dictionary<BuffSourceType, Dictionary<int, TimedBuffConfigData>>();
+        
         
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
@@ -26,9 +30,50 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 timedBuffData.increaseRange = JsonConvert.DeserializeObject<Range>(text[5]);
                 timedBuffData.isPermanent = bool.Parse(text[6]);
                 timedBuffs.Add(timedBuffData);
+                if (!_sourceTypeDictionary.ContainsKey(timedBuffData.sourceType))
+                {
+                    _sourceTypeDictionary[timedBuffData.sourceType] = new Dictionary<int, TimedBuffConfigData>();
+                }
+                _sourceTypeDictionary[timedBuffData.sourceType].TryAdd(timedBuffData.buffId, timedBuffData);
             }
         }
+
+        public int GetNoUnionSpeedBuffId()
+        {
+            var noUnionBuffs = _sourceTypeDictionary[BuffSourceType.NoUnion];
+            if (noUnionBuffs == null || noUnionBuffs.Count == 0)
+            {
+                Debug.LogError("NoUnion buff not found in TimedBuffConfig");
+                return default;
+            }
+            
+            return noUnionBuffs.First(x => x.Value.propertyType == PropertyTypeEnum.Speed).Key;
+        }
+
+        public HashSet<int> GetRandomBuffs(BuffSourceType sourceType, int count)
+        {
+            if (!_sourceTypeDictionary.TryGetValue(sourceType, out var value))
+            {
+                Debug.LogError($"BuffSourceType {sourceType} not found in TimedBuffConfig");
+                return null;
+            }
+            var buffs = value.Values;
+            var randomBuffs = buffs.RandomSelects(count);
+            return randomBuffs.Select(x => x.buffId).ToHashSet();
+        }
         
+        public int GetRandomBuff(BuffSourceType sourceType)
+        {
+            if (!_sourceTypeDictionary.TryGetValue(sourceType, out var value))
+            {
+                Debug.LogError($"BuffSourceType {sourceType} not found in TimedBuffConfig");
+                return default;
+            }
+            var buffs = value.Values;
+            var randomBuff = buffs.RandomSelect();
+            return randomBuff.buffId;
+        }
+
         public TimedBuffConfigData GetTimedBuffData(int buffId)
         {
             foreach (var timedBuffData in timedBuffs)

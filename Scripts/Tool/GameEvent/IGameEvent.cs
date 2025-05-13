@@ -88,6 +88,11 @@ namespace Tool.GameEvent
         }
     }
 
+    public struct AllPlayerGetSpeedEvent : IGameEvent
+    {
+        
+    }
+
     public struct PlayerConnectEvent : IGameEvent
     {
         public int ConnectionId { get; private set; }

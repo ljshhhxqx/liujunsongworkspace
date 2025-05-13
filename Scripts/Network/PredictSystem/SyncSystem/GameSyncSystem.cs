@@ -39,6 +39,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private float _tickTimer;
         private PlayerInGameManager _playerInGameManager;
         private JsonDataConfig _jsonDataConfig;
+        private PlayerPropertySyncSystem _playerPropertySyncSystem;
         private bool _isProcessing; // 防止重入
         private CancellationTokenSource _cts;
         
@@ -68,12 +69,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             gameEventManager.Subscribe<PlayerDisconnectEvent>(OnPlayerDisconnect);
             gameEventManager.Subscribe<AddBuffToAllPlayerEvent>(OnAddBuffToAllPlayer);
             gameEventManager.Subscribe<AddDeBuffToLowScorePlayerEvent>(OnAddDeBuffToLowScorePlayer);
+            gameEventManager.Subscribe<AllPlayerGetSpeedEvent>(OnAllPlayerGetSpeed);
             var commandTypes = Enum.GetValues(typeof(CommandType));
             foreach (CommandType commandType in commandTypes)
             {
                 _syncSystems[commandType] = commandType.GetSyncSystem();
                 _syncSystems[commandType].Initialize(this);
                 ObjectInjectProvider.Instance.Inject(_syncSystems[commandType]);
+                if (_syncSystems[commandType] is PlayerPropertySyncSystem playerPropertySyncSystem)
+                {
+                    _playerPropertySyncSystem = playerPropertySyncSystem;
+                }
             }
             Observable.EveryUpdate()
                 .Throttle(TimeSpan.FromSeconds(1 / _tickRate))
@@ -89,14 +95,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             ProcessImmediateCommands(_cts.Token);
         }
 
+        private void OnAllPlayerGetSpeed(AllPlayerGetSpeedEvent allPlayerGetSpeedEvent)
+        {
+            _playerPropertySyncSystem.AllPlayerGetSpeed();
+        }
+
         private void OnAddBuffToAllPlayer(AddBuffToAllPlayerEvent addBuffToAllPlayerEvent)
         {
-            
+            _playerPropertySyncSystem.AddBuffToAllPlayer(addBuffToAllPlayerEvent.CurrentRound);
         }
 
         private void OnAddDeBuffToLowScorePlayer(AddDeBuffToLowScorePlayerEvent addDeBuffToLowScorePlayerEvent)
         {
-            
+            _playerPropertySyncSystem.AddBuffToLowScorePlayer(addDeBuffToLowScorePlayerEvent.CurrentRound);
         }
 
         private void OnIsRandomUnionStartChanged(bool oldValue, bool newValue)

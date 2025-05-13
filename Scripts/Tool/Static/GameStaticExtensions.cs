@@ -86,7 +86,7 @@ namespace HotUpdate.Scripts.Tool.Static
             return list.RandomSelect();
         }
 
-        public static T[] RandomSelects<T>(this IEnumerable<T> list, int count = 1)
+        public static T[] RandomSelects<T>(this IEnumerable<T> list, int count = 1, bool allowDistinct = false)
         {
             var enumerable = list as T[] ?? list.ToArray();
             if (enumerable.Length == 0)
@@ -95,9 +95,16 @@ namespace HotUpdate.Scripts.Tool.Static
                 throw new ArgumentException("Count must be less than or equal to the number of items");
         
             var result = new T[count];
+            var indexSet = new HashSet<int>();
             for (int i = 0; i < count; i++)
             {
+                var index = UnityEngine.Random.Range(0, enumerable.Length);
+                if (!allowDistinct && indexSet.Contains(index))
+                {
+                    continue;
+                }
                 result[i] = enumerable[UnityEngine.Random.Range(0, enumerable.Length)];
+                indexSet.Add(index);
             }
             return result;
         }
