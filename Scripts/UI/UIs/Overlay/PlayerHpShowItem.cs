@@ -16,6 +16,8 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private Slider mpSlider;
         [SerializeField]
         private TextMeshProUGUI nameText;
+        [SerializeField]
+        private TextMeshProUGUI damageOrHealTextPrefab;
 
         private PlayerHpItemData _data;
         public int PlayerId { get; private set; }
@@ -30,6 +32,11 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                 hpSlider.value = playerHpItemData.CurrentHp / playerHpItemData.MaxHp;
                 mpSlider.value = playerHpItemData.CurrentMp / playerHpItemData.MaxMp;
             }
+        }
+
+        public void SetDamageOrHealText(int damageOrHeal)
+        {
+            
         }
 
         public override void Clear()

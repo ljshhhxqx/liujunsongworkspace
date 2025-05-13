@@ -304,15 +304,17 @@ namespace HotUpdate.Scripts.Tool.Static
             // 将目标世界坐标转换为屏幕坐标
             var screenPos = followParams.MainCamera.WorldToScreenPoint(followParams.Target);
 
-            // 检查目标是否在相机前方
-            var isBehind = screenPos.z < 0;
-            screenPos.z = 0;
-
             // 如果目标在相机后方，将指示器翻转到屏幕另一边
-            if (isBehind)
+            if (followParams.ShowBehindIndicator)
             {
-                screenPos.x = Screen.width - screenPos.x;
-                screenPos.y = Screen.height - screenPos.y;
+                // 检查目标是否在相机前方
+                var isBehind = screenPos.z < 0;
+                screenPos.z = 0;
+                if (isBehind)
+                {
+                    screenPos.x = Screen.width - screenPos.x;
+                    screenPos.y = Screen.height - screenPos.y;
+                }
             }
 
             // 将屏幕坐标转换为Canvas坐标
@@ -358,5 +360,6 @@ namespace HotUpdate.Scripts.Tool.Static
         public Camera MainCamera;
         public RectTransform CanvasRect;
         public float ScreenBorderOffset;
+        public bool ShowBehindIndicator;
     }
 }
