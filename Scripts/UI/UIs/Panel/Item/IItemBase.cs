@@ -217,5 +217,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public float MaxMp;
         public Vector3 TargetPosition;
         public Vector3 PlayerPosition;
+        public PropertyTypeEnum PropertyType;
+        public float DiffValue;
     }
 }

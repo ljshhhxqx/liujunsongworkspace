@@ -80,11 +80,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         public float Speed;
         public float Score;
         public float Fov;
+        public float Alpha;
 
         public bool Equals(ValuePropertyData other)
         {
             return Gold.Equals(other.Gold) && Exp.Equals(other.Exp) && Health.Equals(other.Health) && Attack.Equals(other.Attack) && Speed.Equals(other.Speed)
-                && MaxHealth.Equals(other.MaxHealth) && Mana.Equals(other.Mana) && MaxMana.Equals(other.MaxMana) && Score.Equals(other.Score) && Fov.Equals(other.Fov);
+                && MaxHealth.Equals(other.MaxHealth) && Mana.Equals(other.Mana) && MaxMana.Equals(other.MaxMana) && Score.Equals(other.Score) && Alpha.Equals(other.Alpha) && Fov.Equals(other.Fov);
         }
 
         public override bool Equals(object obj)
@@ -105,6 +106,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
             hashCode.Add(Speed);
             hashCode.Add(Score);
             hashCode.Add(Fov);
+            hashCode.Add(Alpha);
             return hashCode.ToHashCode();
         }
     }

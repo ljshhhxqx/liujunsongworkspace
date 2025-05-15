@@ -1,3 +1,4 @@
+using System;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using UI.UIBase;
 using UniRx;
@@ -15,7 +16,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         private Material _holeMaterial;
 
-        public void BindGoldData(ReactiveProperty<ValuePropertyData> goldData)
+        public void BindGoldData(IObservable<ValuePropertyData> goldData)
         {
             _holeMaterial ??= holeImage.material;
             goldData.Subscribe(data =>

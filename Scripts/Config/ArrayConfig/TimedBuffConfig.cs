@@ -205,5 +205,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public GrowthType growthType;
         public double steepAngle;
         public BuffOperationType operationType;
+        public PlayerEffectType playerEffectType;
     }
 }

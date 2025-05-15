@@ -193,7 +193,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                         goldData.Mana = property.CurrentValue;
                         goldData.MaxMana = property.MaxCurrentValue;
                         break;
-                    
+                    case PropertyTypeEnum.View:
+                        goldData.Fov = property.CurrentValue;
+                        break;
+                    case PropertyTypeEnum.Alpha:
+                        goldData.Alpha = property.CurrentValue;
+                        break;
                 }
                 if (property.IsResourceProperty())
                 {

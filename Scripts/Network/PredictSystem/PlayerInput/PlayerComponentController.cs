@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
@@ -54,6 +55,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private Transform _checkStairTransform;
         [SerializeField]
         private Camera _camera;
+        [SerializeField]
+        private PlayerEffectPlayer playerEffectPlayer;
+        [SerializeField]
+        private Transform effectContainer;
         
         [Header("States-NetworkBehaviour")]
         private PlayerInputPredictionState _inputState;
@@ -305,6 +310,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 _reactivePropertyBinds.Add(typeof(ValuePropertyData), true);
                 var playerDamageOverlay = _uiManager.SwitchUI<PlayerDamageDeathOverlay>();
                 playerDamageOverlay.BindGold(UIPropertyBinder.ObserveProperty<ValuePropertyData>(_goldBindKey));
+                _uiHoleOverlay.BindGoldData(UIPropertyBinder.ObserveProperty<ValuePropertyData>(_goldBindKey));
             }
 
             if (!_reactivePropertyBinds.ContainsKey(typeof(PlayerHpItemData)))
@@ -541,6 +547,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _inputState.OnPlayerAnimationCooldownChanged -= HandlePlayerAnimationCooldownChanged;
             _inputState.OnPlayerInputStateChanged -= HandlePlayerInputStateChanged;
             _inputState.IsInSpecialState -= HandleSpecialState;
+            _animationCooldowns.Clear();
+            _inputStream.Dispose();
+            _effectContainer.Clear();
+            playerEffectPlayer.StopAllEffect(container => GameObjectPoolManger.Instance.ReturnObject(container.gameObject));
+            _effectPool.Clear();
         }
 
         private void HandlePlayerDeadClient(float countdownTime)
@@ -691,11 +702,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             for (int i = 0; i < info.Count; i++)
             {
                 var tracedInfo = info[i];
-                var player = NetworkServer.connections[i].identity;
                 dic[tracedInfo.PlayerId] = new PlayerHpItemData
                 {
                     PlayerId = tracedInfo.PlayerId,
-                    PlayerPosition = player.transform.position,
+                    PlayerPosition = transform.position,
                     TargetPosition = tracedInfo.Position,
                     MaxMp = tracedInfo.MaxMana,
                     CurrentHp = tracedInfo.Hp,
@@ -743,6 +753,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     _uiManager.CloseUI(UIType.TipsPopup);
                 });
             });
+        }
+
+        [ClientRpc]
+        public void RpcSetPlayerAlpha(float alpha)
+        {
+            playerEffectPlayer.SetAlpha(alpha / 1000f);
         }
 
         public void SetAnimatorSpeed(AnimationState animationState, float speed)
@@ -810,6 +826,92 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 var snapshotCoolDown = snapshotData[i];
                 animationCooldown.Refresh(snapshotCoolDown);
             }
+        }
+
+        [ClientRpc]
+        public void HandlePlayerPropertyDifference(byte[] data)
+        {
+            if (!isLocalPlayer)
+            {
+                return;
+            }
+            var tracedInfo = MemoryPackSerializer.Deserialize<TracedPlayerInfo>(data);
+
+            PlayerComponentController playerComponent;
+            if (tracedInfo.PlayerId == connectionToClient.connectionId)
+            {
+                playerComponent = this;
+            }
+            else
+            {
+                var otherPlayer = NetworkServer.connections[tracedInfo.PlayerId].identity.transform;
+                playerComponent = otherPlayer.GetComponent<PlayerComponentController>();
+                
+                var transforms = new List<Transform> { otherPlayer };
+                var layerMask = _gameConfigData.groundSceneLayer | _gameConfigData.stairSceneLayer | _playerConfigData.PlayerLayer;
+                
+                if (PlayerPhysicsCalculator.TryGetPlayersInScreen(_camera, transforms, out var playersInScreen, layerMask))
+                {
+                    if (playersInScreen.Count == 0)
+                    {
+                        return;       
+                    }
+                    var player = playersInScreen[0];
+                    if (player != tracedInfo.PlayerId)
+                    {
+                        return;
+                    }
+                }
+            }
+
+            playerComponent.HandlePlayerPropertyChange(tracedInfo);
+        }
+
+        [Client]
+        private void HandlePlayerPropertyChange(TracedPlayerInfo tracedInfo)
+        {
+            var dic = UIPropertyBinder.GetReactiveDictionary<PlayerHpItemData>(_playerTraceOtherPlayerHpBindKey);
+            dic[tracedInfo.PlayerId] = new PlayerHpItemData
+            {
+                PlayerId = tracedInfo.PlayerId,
+                PlayerPosition = transform.position,
+                TargetPosition = tracedInfo.Position,
+                MaxMp = tracedInfo.MaxMana,
+                CurrentHp = tracedInfo.Hp,
+                CurrentMp = tracedInfo.Mana,
+                MaxHp = tracedInfo.MaxHp,
+                Name = tracedInfo.PlayerName,
+                PropertyType = tracedInfo.PropertyDifferentPropertyType,
+                DiffValue = tracedInfo.PropertyDifferentValue,
+            };
+        }
+        
+        private readonly Dictionary<PlayerEffectType, GameObject> _effectPool = new Dictionary<PlayerEffectType, GameObject>();
+        private readonly Dictionary<PlayerEffectType, PlayerEffectContainer> _effectContainer = new Dictionary<PlayerEffectType, PlayerEffectContainer>();
+
+        [ClientRpc]
+        public void RpcPlayEffect(PlayerEffectType effectType)
+        {
+            if (!isLocalPlayer)
+            {
+                return;
+            }
+
+            if (!_effectPool.TryGetValue(effectType, out var effectPrefab))
+            {
+                effectPrefab = ResourceManager.Instance.GetResource<GameObject>(effectType.ToString());
+                _effectPool.Add(effectType, effectPrefab);
+            }
+            var prefab = effectPrefab;
+
+            if (!_effectContainer.TryGetValue(effectType, out var container))
+            {
+                var go = GameObjectPoolManger.Instance.GetObject(prefab, parent: effectContainer);
+                container = go.GetComponent<PlayerEffectContainer>();
+                _effectContainer.Add(effectType, container);
+            }
+            var player = container;
+            playerEffectPlayer.PlayEffect(player);
         }
     }
 }

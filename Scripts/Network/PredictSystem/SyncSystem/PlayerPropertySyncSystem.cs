@@ -200,6 +200,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     {
                         playerController.SetAnimatorSpeed(AnimationState.Attack, propertyValue.CurrentValue);
                     }
+                    else if (property == PropertyTypeEnum.Alpha)
+                    {
+                        playerController.RpcSetPlayerAlpha(propertyValue.CurrentValue);
+                    }
                 }
             }
         }
@@ -337,7 +341,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 HandleGoldChanged(header.ConnectionId, goldChangedCommand.Gold);
             } 
-            else if (command is PlayerTouchedBaseCommand playerTouchedBaseCommand)
+            else if (command is PlayerTouchedBaseCommand)
             {
                 HandlePlayerTouchedBase(header.ConnectionId);
             }
@@ -417,6 +421,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             playerState.Properties[PropertyTypeEnum.Strength] = playerState.Properties[PropertyTypeEnum.Strength].UpdateCurrentValueByRatio(recoverMpRatio);
             
             PropertyStates[headerConnectionId] = playerState;
+            PropertyChange(headerConnectionId);
         }
 
         private void HandleGoldChanged(int headerConnectionId, float gold)
@@ -570,6 +575,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerState = GetState<PlayerPredictablePropertyState>(player);
             var buffData = _timedBuffConfig.GetTimedBuffData(buffConfigId);
+            var playerConnection = GameSyncManager.GetPlayerConnection(player);
+            playerConnection?.RpcPlayEffect(buffData.playerEffectType);
             var newBuff = new TimedBuffData
             {
                 targetPlayerId = player,
@@ -581,6 +588,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 operationType = buffData.operationType,
                 sourceType = buffData.sourceType,
                 isPermanent = buffData.isPermanent,
+                playerEffectType = buffData.playerEffectType,
             };
             AddTimedBuff(player, playerState, newBuff);
         }
@@ -619,8 +627,38 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _activeBuffs = _activeBuffs.Add(buffManagerData);
             var index = _activeBuffs.Count - 1;
             PropertyStates[targetId] = playerState;
+            HandlePlayerPropertyDifference(targetId, propertyCalculator, playerState.Properties[newBuff.BuffData.propertyType], newBuff.BuffData.propertyType);
             PropertyChange(targetId);
+            var playerConnection = GameSyncManager.GetPlayerConnection(targetId);
+            playerConnection?.RpcPlayEffect(buff.playerEffectType);
             return (newBuff, index);
+        }
+
+        private void HandlePlayerPropertyDifference(int targetId, PropertyCalculator oldCalculator, PropertyCalculator newCalculator, PropertyTypeEnum propertyType)
+        {
+            var difference = PropertyCalculator.GetDifferences(oldCalculator, newCalculator);
+            if (difference.Count == 0)
+            {
+                return;
+            }
+            var currentValueDifference = difference.FirstOrDefault(x => x.Item1 == BuffIncreaseType.Current);
+            if (currentValueDifference.Item2 != 0)
+            {
+                var playerController = GameSyncManager.GetPlayerConnection(targetId);
+                var tracedPlayerInfo = new TracedPlayerInfo
+                {
+                    PlayerId = targetId,
+                    PlayerName = _playerInGameManager.GetPlayer(targetId).player.Nickname,
+                    Hp = newCalculator.CurrentValue,
+                    MaxHp = newCalculator.MaxCurrentValue,
+                    Mana = newCalculator.CurrentValue,
+                    MaxMana = newCalculator.MaxCurrentValue,
+                    Position = playerController.transform.position,
+                    PropertyDifferentPropertyType = propertyType,
+                    PropertyDifferentValue = currentValueDifference.Item2,
+                };
+                playerController.HandlePlayerPropertyDifference(MemoryPackSerializer.Serialize(tracedPlayerInfo));
+            }
         }
 
         private void HandleEquipProperty(int targetId, BuffExtraData buffExtraData, int equipItemConfigId, int equipItemId)
@@ -974,5 +1012,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public float Mana;
         [MemoryPackOrder(7)]
         public float MaxMana;
+        [MemoryPackOrder(8)]
+        public PropertyTypeEnum PropertyDifferentPropertyType;
+        [MemoryPackOrder(9)]
+        public float PropertyDifferentValue;
     }
 }

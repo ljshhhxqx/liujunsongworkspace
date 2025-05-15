@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using DG.Tweening;
-using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Mat;
 using UniRx;
 using UnityEngine;
 using VContainer;
@@ -12,9 +12,11 @@ namespace HotUpdate.Scripts.Weather.WeatherEffects
     public class Clouds : WeatherEffects
     {
         [SerializeField]
-        private Material lowCloud;
+        private Renderer lowCloud;
         [SerializeField]
-        private Material highCloud;
+        private Renderer highCloud;
+        private MaterialPropertyBlock _lowCloudBlock;
+        private MaterialPropertyBlock _highCloudBlock;
         private Gradient _colorGradient;
         private DayNightCycleData _dayNightCycleData;
         private WeatherConstantData _weatherConstantData;
@@ -28,6 +30,8 @@ namespace HotUpdate.Scripts.Weather.WeatherEffects
             var config = configProvider.GetConfig<JsonDataConfig>();
             _dayNightCycleData = config.DayNightCycleData;
             _weatherConstantData = config.WeatherConstantData;
+            _lowCloudBlock = MatStaticExtension.GetPropertyBlock(lowCloud);
+            _highCloudBlock = MatStaticExtension.GetPropertyBlock(highCloud);
             WeatherDataModel.time.Subscribe(UpdateCloudsColor).AddTo(this);
         }
 
@@ -35,10 +39,22 @@ namespace HotUpdate.Scripts.Weather.WeatherEffects
         {
             _colorGradient = _dayNightCycleData.cloudColorGradients.FirstOrDefault(x => x.weatherType == weatherData.weatherType).cloudColor;
             Debug.Log($"Play Clouds Effect {weatherData.cloudDensity} {weatherData.cloudSpeed}");
-            lowCloud.DOFloat(weatherData.cloudDensity, DensityProperty, _weatherConstantData.weatherChangeTime);
-            highCloud.DOFloat(weatherData.cloudDensity, DensityProperty, _weatherConstantData.weatherChangeTime);
-            lowCloud.SetFloat(SpeedProperty, weatherData.cloudSpeed);
-            highCloud.SetFloat(SpeedProperty, weatherData.cloudSpeed);
+            DOTween.To(() => _lowCloudBlock.GetFloat(DensityProperty), x =>
+            {
+                _lowCloudBlock.SetFloat(DensityProperty, x);
+                lowCloud.SetPropertyBlock(_lowCloudBlock);
+            },
+                weatherData.cloudDensity, _weatherConstantData.weatherChangeTime);
+            DOTween.To(() => _highCloudBlock.GetFloat(DensityProperty), x =>
+            {
+                _highCloudBlock.SetFloat(DensityProperty, x);
+                highCloud.SetPropertyBlock(_highCloudBlock);
+            },
+                weatherData.cloudDensity, _weatherConstantData.weatherChangeTime);
+            _lowCloudBlock.SetFloat(SpeedProperty, weatherData.cloudSpeed);
+            _highCloudBlock.SetFloat(SpeedProperty, weatherData.cloudSpeed);
+            lowCloud.SetPropertyBlock(_lowCloudBlock);
+            highCloud.SetPropertyBlock(_highCloudBlock);
         }
 
         private void UpdateCloudsColor(float currentTime)
@@ -50,8 +66,16 @@ namespace HotUpdate.Scripts.Weather.WeatherEffects
             var t = currentTime / _dayNightCycleData.oneDayDuration;
             // 颜色渐变
             var cloudColor = _colorGradient.Evaluate(t);
-            highCloud.DOColor(cloudColor, ColorProperty, 0.99f);
-            lowCloud.DOColor(cloudColor, ColorProperty, 0.99f);
+            _lowCloudBlock.SetColor(ColorProperty, cloudColor);
+            _highCloudBlock.SetColor(ColorProperty, cloudColor);
+            lowCloud.SetPropertyBlock(_lowCloudBlock);
+            highCloud.SetPropertyBlock(_highCloudBlock);
+        }
+
+        private void OnDestroy()
+        {
+            MatStaticExtension.ClearCache(lowCloud);
+            MatStaticExtension.ClearCache(highCloud);
         }
     }
 }

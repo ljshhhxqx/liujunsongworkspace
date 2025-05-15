@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using HotUpdate.Scripts.Tool.Static;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
@@ -35,7 +34,9 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             }).AddTo(this); 
             _playerHpItemDatas.ObserveReplace().Subscribe(x =>
             {
-                SetItemDataAndShow(_playerHpItemDatas.Values.ToArray());
+                var item = contentItemList.GetItem<PlayerHpItem>(x.Key);
+                item.DataChanged(x.NewValue);
+                item.Show(_defaultFollowTargetParams);
             }).AddTo(this);
             _playerHpItemDatas.ObserveReset().Subscribe(_ =>
             {

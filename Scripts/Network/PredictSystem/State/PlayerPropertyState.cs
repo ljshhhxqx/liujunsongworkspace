@@ -120,13 +120,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     }
     
     [MemoryPackable]
-    public partial struct PropertyCalculator
+    public partial struct PropertyCalculator : IEquatable<PropertyCalculator>
     {
         /// <summary>
         /// 属性 = math.clamp(（基础值 * 乘数 + 附加值 ）* 修正系数,  最小值, 最大值)
         /// </summary>
         [MemoryPackable]
-        public partial struct PropertyData
+        public partial struct PropertyData : IEquatable<PropertyData>
         {
             [MemoryPackOrder(0)] 
             public float BaseValue;
@@ -140,8 +140,53 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             public float CurrentValue;
             [MemoryPackOrder(5)] 
             public float MaxCurrentValue;
+
+            public bool Equals(PropertyData other)
+            {
+                return BaseValue.Equals(other.BaseValue) && Additive.Equals(other.Additive) && Multiplier.Equals(other.Multiplier) && Correction.Equals(other.Correction) && CurrentValue.Equals(other.CurrentValue) && MaxCurrentValue.Equals(other.MaxCurrentValue);
+            }
+
+            public override bool Equals(object obj)
+            {
+                return obj is PropertyData other && Equals(other);
+            }
+
+            public override int GetHashCode()
+            {
+                return HashCode.Combine(BaseValue, Additive, Multiplier, Correction, CurrentValue, MaxCurrentValue);
+            }
+
+            public static bool operator ==(PropertyData left, PropertyData right)
+            {
+                return left.Equals(right);
+            }
+
+            public static bool operator !=(PropertyData left, PropertyData right)
+            {
+                return !left.Equals(right);
+            }
         }
-        
+
+        public static List<(BuffIncreaseType, float)> GetDifferences(PropertyCalculator oldCalculator,
+            PropertyCalculator newCalculator)
+        {
+            var differences = new List<(BuffIncreaseType, float)>();
+            if (oldCalculator.Equals(newCalculator))
+            {
+                return differences;
+            }
+            
+            differences.Add((BuffIncreaseType.Current, newCalculator._propertyData.CurrentValue - oldCalculator._propertyData.CurrentValue));
+            differences.Add((BuffIncreaseType.Multiplier, newCalculator._propertyData.Multiplier - oldCalculator._propertyData.Multiplier));
+            differences.Add((BuffIncreaseType.Extra, newCalculator._propertyData.Additive - oldCalculator._propertyData.Additive));
+            differences.Add((BuffIncreaseType.CorrectionFactor, newCalculator._propertyData.Correction - oldCalculator._propertyData.Correction));
+            differences.Add((BuffIncreaseType.Base, newCalculator._propertyData.BaseValue - oldCalculator._propertyData.BaseValue));
+            differences.Add((BuffIncreaseType.Max, newCalculator._propertyData.MaxCurrentValue - oldCalculator._propertyData.MaxCurrentValue));
+            differences.RemoveAll(x => x.Item2 == 0);
+            
+            return differences;
+        }
+
         public float CurrentValue => _propertyData.CurrentValue;
         public float MaxCurrentValue => _propertyData.MaxCurrentValue;
 
@@ -336,6 +381,31 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             propertyData.CurrentValue = Mathf.Clamp(newValue, _minValue, _maxValue);
 
             return new PropertyCalculator(_propertyType, propertyData, _maxValue, _minValue, _isResourceProperty);
+        }
+
+        public bool Equals(PropertyCalculator other)
+        {
+            return _propertyType == other._propertyType && _propertyData.Equals(other._propertyData) && _maxValue.Equals(other._maxValue) && _minValue.Equals(other._minValue) && _isResourceProperty == other._isResourceProperty;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is PropertyCalculator other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine((int)_propertyType, _propertyData, _maxValue, _minValue, _isResourceProperty);
+        }
+
+        public static bool operator ==(PropertyCalculator left, PropertyCalculator right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(PropertyCalculator left, PropertyCalculator right)
+        {
+            return !left.Equals(right);
         }
     }
     

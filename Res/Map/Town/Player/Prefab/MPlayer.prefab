@@ -4079,6 +4079,58 @@ Transform:
   - {fileID: 7502581798299892432}
   m_Father: {fileID: 7762164053148306262}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6065778531477895901
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 602517458217082247}
+  - component: {fileID: 3940613001798115561}
+  m_Layer: 6
+  m_Name: BuffContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &602517458217082247
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6065778531477895901}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6440390397820898895}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3940613001798115561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6065778531477895901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bf40290e0f16014fa5a4b6c0459c600, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  renderers:
+  - {fileID: 1935355320767242871}
+  - {fileID: 250946968660321047}
+  - {fileID: 4236417101260063027}
+  - {fileID: 5823740409691039680}
+  - {fileID: 3375506862892169026}
+  - {fileID: 4236417101260063027}
+  - {fileID: 3297613966987195105}
 --- !u!1 &6081138216484683587
 GameObject:
   m_ObjectHideFlags: 0
@@ -5084,6 +5136,7 @@ Transform:
   - {fileID: 4195659592868122471}
   - {fileID: 689235366103777897}
   - {fileID: 7564044400887088144}
+  - {fileID: 602517458217082247}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &7780707582190085363
@@ -5171,6 +5224,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  autoInject: 1
+  isForClient: 1
+  isForLocalPlayer: 1
 --- !u!54 &1007857405232916623
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5314,6 +5370,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0.01
+  autoInject: 1
+  isForClient: 1
+  isForLocalPlayer: 1
 --- !u!114 &7023319456120417876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5329,6 +5388,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  autoInject: 1
+  isForClient: 1
+  isForLocalPlayer: 1
   reconcileThreshold: 2
   interpolationTime: 0.1
   groundMinDistance: 0.1
@@ -5364,6 +5426,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  autoInject: 1
+  isForClient: 1
+  isForLocalPlayer: 1
   inputBufferTime: 0.1
   moveThreshold: 0.1
 --- !u!1 &8357527339398811249

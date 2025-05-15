@@ -21,6 +21,96 @@
             "Address": "/Audio/AudioUIEffectPrefab.prefab"
         },
         {
+            "UID": 2,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "AttackBuff",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Effect/AttackBuff.prefab"
+        },
+        {
+            "UID": 3,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "AttackDebuff",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Effect/AttackDebuff.prefab"
+        },
+        {
+            "UID": 4,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "DefenseBuff",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Effect/DefenseBuff.prefab"
+        },
+        {
+            "UID": 5,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "DefenseDebuff",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Effect/DefenseDebuff.prefab"
+        },
+        {
+            "UID": 6,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Die",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Effect/Die.prefab"
+        },
+        {
+            "UID": 7,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "HitEffect",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Effect/HitEffect.prefab"
+        },
+        {
+            "UID": 8,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "RecoverBuff",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Effect/RecoverBuff.prefab"
+        },
+        {
+            "UID": 9,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "RecoverDebuff",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Effect/RecoverDebuff.prefab"
+        },
+        {
+            "UID": 10,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Skill",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Effect/Skill.prefab"
+        },
+        {
             "UID": 100000,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,

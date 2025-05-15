@@ -14,6 +14,16 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
         private Transform content;
         public List<ItemBase> ItemBases { get; } = new List<ItemBase>();
         public List<IItemBaseData> ItemBaseDatas { get; } = new List<IItemBaseData>();
+        
+        public T GetItem<T>(int index) where T : ItemBase
+        {
+            if (index < 0 || index >= ItemBases.Count)
+            {
+                Debug.LogWarning($"ItemList: GetItem failed, index --{index}-- out of range.");
+                return null;
+            }
+            return ItemBases[index] as T;
+        }
 
         public void SetItemList<T>(T[] itemDataList) where T : IItemBaseData, new()
         {
