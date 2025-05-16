@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98c6016f21c94ef4967641b730a10760, type: 3}
+  m_Name: KeyAnimationConfig
+  m_EditorClassIdentifier: 
+  excelAssetReference:
+    guid: afcb27a37860bed489c689f04b28b549
+  csvAssetReference:
+    guid: f79490033f1ba7d4c817acd9581f3173
+  jsonAssetReference:
+    guid: 36a25296697c2fe44a5305e443be106f
+  configName: KeyAnimationConfig
+  isArray: 1
+  keyAnimationConfigData:
+  - animationState: 4
+    isComboKey: 0
+    animationKeys:
+    - Running
+  - animationState: 8
+    isComboKey: 0
+    animationKeys:
+    - Jump
+  - animationState: 16
+    isComboKey: 1
+    animationKeys:
+    - Running
+    - Jump
+  - animationState: 32
+    isComboKey: 0
+    animationKeys:
+    - Roll
+  - animationState: 256
+    isComboKey: 0
+    animationKeys:
+    - Fire1
+  - animationState: 2048
+    isComboKey: 0
+    animationKeys:
+    - Collect

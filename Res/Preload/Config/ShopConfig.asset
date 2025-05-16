@@ -1,0 +1,1107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8042281fe97c4b91ba77b0f7cb1358dd, type: 3}
+  m_Name: ShopConfig
+  m_EditorClassIdentifier: 
+  excelAssetReference:
+    guid: afcb27a37860bed489c689f04b28b549
+  csvAssetReference:
+    guid: f79490033f1ba7d4c817acd9581f3173
+  jsonAssetReference:
+    guid: 36a25296697c2fe44a5305e443be106f
+  configName: ShopConfig
+  isArray: 1
+  shopConfigData:
+  - id: 1
+    itemId: 2017
+    name: "\u5927\u529B\u836F\u5242\u2160\uFF08\u5C0F\uFF09"
+    price: 20
+    sellPrice: 15
+    qualityType: 0
+    playerItemType: 3
+    maxCount: 5
+  - id: 2
+    itemId: 2018
+    name: "\u5927\u529B\u836F\u5242\u2161\uFF08\u5C0F\uFF09"
+    price: 30
+    sellPrice: 22.5
+    qualityType: 0
+    playerItemType: 3
+    maxCount: 5
+  - id: 3
+    itemId: 2019
+    name: "\u5927\u529B\u836F\u5242\u2160\uFF08\u4E2D\uFF09"
+    price: 40
+    sellPrice: 30
+    qualityType: 1
+    playerItemType: 3
+    maxCount: 5
+  - id: 4
+    itemId: 2020
+    name: "\u5927\u529B\u836F\u5242\u2161\uFF08\u4E2D\uFF09"
+    price: 50
+    sellPrice: 37.5
+    qualityType: 1
+    playerItemType: 3
+    maxCount: 5
+  - id: 5
+    itemId: 2021
+    name: "\u5927\u529B\u836F\u5242\u2160\uFF08\u5927\uFF09"
+    price: 70
+    sellPrice: 52.5
+    qualityType: 2
+    playerItemType: 3
+    maxCount: 5
+  - id: 6
+    itemId: 2022
+    name: "\u5927\u529B\u836F\u5242\u2161\uFF08\u5927\uFF09"
+    price: 100
+    sellPrice: 75
+    qualityType: 2
+    playerItemType: 3
+    maxCount: 5
+  - id: 7
+    itemId: 2023
+    name: "\u8F7B\u76C8\u836F\u5242\u2160\uFF08\u5C0F\uFF09"
+    price: 20
+    sellPrice: 15
+    qualityType: 0
+    playerItemType: 3
+    maxCount: 5
+  - id: 8
+    itemId: 2024
+    name: "\u8F7B\u76C8\u836F\u5242\u2161\uFF08\u5C0F\uFF09"
+    price: 30
+    sellPrice: 22.5
+    qualityType: 0
+    playerItemType: 3
+    maxCount: 5
+  - id: 9
+    itemId: 2025
+    name: "\u8F7B\u76C8\u836F\u5242\u2160\uFF08\u4E2D\uFF09"
+    price: 40
+    sellPrice: 30
+    qualityType: 1
+    playerItemType: 3
+    maxCount: 5
+  - id: 10
+    itemId: 2026
+    name: "\u8F7B\u76C8\u836F\u5242\u2161\uFF08\u4E2D\uFF09"
+    price: 50
+    sellPrice: 37.5
+    qualityType: 1
+    playerItemType: 3
+    maxCount: 5
+  - id: 11
+    itemId: 2027
+    name: "\u8F7B\u76C8\u836F\u5242\u2160\uFF08\u5927\uFF09"
+    price: 70
+    sellPrice: 52.5
+    qualityType: 2
+    playerItemType: 3
+    maxCount: 5
+  - id: 12
+    itemId: 2028
+    name: "\u8F7B\u76C8\u836F\u5242\u2161\uFF08\u5927\uFF09"
+    price: 100
+    sellPrice: 75
+    qualityType: 2
+    playerItemType: 3
+    maxCount: 5
+  - id: 13
+    itemId: 2029
+    name: "\u575A\u97E7\u836F\u5242\u2160\uFF08\u5C0F\uFF09"
+    price: 20
+    sellPrice: 15
+    qualityType: 0
+    playerItemType: 3
+    maxCount: 5
+  - id: 14
+    itemId: 2030
+    name: "\u575A\u97E7\u836F\u5242\u2161\uFF08\u5C0F\uFF09"
+    price: 30
+    sellPrice: 22.5
+    qualityType: 0
+    playerItemType: 3
+    maxCount: 5
+  - id: 15
+    itemId: 2031
+    name: "\u575A\u97E7\u836F\u5242\u2160\uFF08\u4E2D\uFF09"
+    price: 40
+    sellPrice: 30
+    qualityType: 1
+    playerItemType: 3
+    maxCount: 5
+  - id: 16
+    itemId: 2032
+    name: "\u575A\u97E7\u836F\u5242\u2161\uFF08\u4E2D\uFF09"
+    price: 50
+    sellPrice: 37.5
+    qualityType: 1
+    playerItemType: 3
+    maxCount: 5
+  - id: 17
+    itemId: 2033
+    name: "\u575A\u97E7\u836F\u5242\u2160\uFF08\u5927\uFF09"
+    price: 70
+    sellPrice: 52.5
+    qualityType: 2
+    playerItemType: 3
+    maxCount: 5
+  - id: 18
+    itemId: 2034
+    name: "\u575A\u97E7\u836F\u5242\u2161\uFF08\u5927\uFF09"
+    price: 100
+    sellPrice: 75
+    qualityType: 2
+    playerItemType: 3
+    maxCount: 5
+  - id: 19
+    itemId: 2035
+    name: "\u7EED\u822A\u836F\u5242\u2160\uFF08\u5C0F\uFF09"
+    price: 20
+    sellPrice: 15
+    qualityType: 0
+    playerItemType: 3
+    maxCount: 5
+  - id: 20
+    itemId: 2036
+    name: "\u7EED\u822A\u836F\u5242\u2161\uFF08\u5C0F\uFF09"
+    price: 30
+    sellPrice: 22.5
+    qualityType: 0
+    playerItemType: 3
+    maxCount: 5
+  - id: 21
+    itemId: 2037
+    name: "\u7EED\u822A\u836F\u5242\u2160\uFF08\u4E2D\uFF09"
+    price: 40
+    sellPrice: 30
+    qualityType: 1
+    playerItemType: 3
+    maxCount: 5
+  - id: 22
+    itemId: 2038
+    name: "\u7EED\u822A\u836F\u5242\u2161\uFF08\u4E2D\uFF09"
+    price: 50
+    sellPrice: 37.5
+    qualityType: 1
+    playerItemType: 3
+    maxCount: 5
+  - id: 23
+    itemId: 2039
+    name: "\u7EED\u822A\u836F\u5242\u2160\uFF08\u5927\uFF09"
+    price: 70
+    sellPrice: 52.5
+    qualityType: 2
+    playerItemType: 3
+    maxCount: 5
+  - id: 24
+    itemId: 2040
+    name: "\u7EED\u822A\u836F\u5242\u2161\uFF08\u5927\uFF09"
+    price: 100
+    sellPrice: 75
+    qualityType: 2
+    playerItemType: 3
+    maxCount: 5
+  - id: 25
+    itemId: 2041
+    name: "\u8D2A\u8D22\u836F\u5242(\u5C0F)"
+    price: 25
+    sellPrice: 18.75
+    qualityType: 0
+    playerItemType: 3
+    maxCount: 5
+  - id: 26
+    itemId: 2042
+    name: "\u8D2A\u8D22\u836F\u5242(\u4E2D)"
+    price: 60
+    sellPrice: 45
+    qualityType: 1
+    playerItemType: 3
+    maxCount: 5
+  - id: 27
+    itemId: 2043
+    name: "\u8D2A\u8D22\u836F\u5242(\u5927)"
+    price: 150
+    sellPrice: 112.5
+    qualityType: 2
+    playerItemType: 3
+    maxCount: 5
+  - id: 28
+    itemId: 2044
+    name: "\u98DE\u5347\u836F\u5242(\u5C0F)"
+    price: 25
+    sellPrice: 18.75
+    qualityType: 0
+    playerItemType: 3
+    maxCount: 5
+  - id: 29
+    itemId: 2045
+    name: "\u98DE\u5347\u836F\u5242(\u4E2D)"
+    price: 60
+    sellPrice: 45
+    qualityType: 1
+    playerItemType: 3
+    maxCount: 5
+  - id: 30
+    itemId: 2046
+    name: "\u98DE\u5347\u836F\u5242(\u5927)"
+    price: 150
+    sellPrice: 112.5
+    qualityType: 2
+    playerItemType: 3
+    maxCount: 5
+  - id: 31
+    itemId: 3001
+    name: "\u5355\u624B\u52511"
+    price: 50
+    sellPrice: 30
+    qualityType: 0
+    playerItemType: 1
+    maxCount: 1
+  - id: 32
+    itemId: 3002
+    name: "\u5355\u624B\u52511"
+    price: 100
+    sellPrice: 60
+    qualityType: 1
+    playerItemType: 1
+    maxCount: 1
+  - id: 33
+    itemId: 3003
+    name: "\u5355\u624B\u52511"
+    price: 300
+    sellPrice: 180
+    qualityType: 2
+    playerItemType: 1
+    maxCount: 1
+  - id: 34
+    itemId: 3004
+    name: "\u5355\u624B\u52512"
+    price: 50
+    sellPrice: 30
+    qualityType: 0
+    playerItemType: 1
+    maxCount: 1
+  - id: 35
+    itemId: 3005
+    name: "\u5355\u624B\u52512"
+    price: 100
+    sellPrice: 60
+    qualityType: 1
+    playerItemType: 1
+    maxCount: 1
+  - id: 36
+    itemId: 3006
+    name: "\u5355\u624B\u52512"
+    price: 300
+    sellPrice: 180
+    qualityType: 2
+    playerItemType: 1
+    maxCount: 1
+  - id: 37
+    itemId: 3007
+    name: "\u5355\u624B\u52513"
+    price: 50
+    sellPrice: 30
+    qualityType: 0
+    playerItemType: 1
+    maxCount: 1
+  - id: 38
+    itemId: 3008
+    name: "\u5355\u624B\u52513"
+    price: 100
+    sellPrice: 60
+    qualityType: 1
+    playerItemType: 1
+    maxCount: 1
+  - id: 39
+    itemId: 3009
+    name: "\u5355\u624B\u52513"
+    price: 300
+    sellPrice: 180
+    qualityType: 2
+    playerItemType: 1
+    maxCount: 1
+  - id: 40
+    itemId: 3010
+    name: "\u5355\u624B\u52514"
+    price: 50
+    sellPrice: 30
+    qualityType: 0
+    playerItemType: 1
+    maxCount: 1
+  - id: 41
+    itemId: 3011
+    name: "\u5355\u624B\u52514"
+    price: 100
+    sellPrice: 60
+    qualityType: 1
+    playerItemType: 1
+    maxCount: 1
+  - id: 42
+    itemId: 3012
+    name: "\u5355\u624B\u52514"
+    price: 300
+    sellPrice: 180
+    qualityType: 2
+    playerItemType: 1
+    maxCount: 1
+  - id: 43
+    itemId: 3013
+    name: "\u5355\u624B\u52515"
+    price: 50
+    sellPrice: 30
+    qualityType: 0
+    playerItemType: 1
+    maxCount: 1
+  - id: 44
+    itemId: 3014
+    name: "\u5355\u624B\u52515"
+    price: 100
+    sellPrice: 60
+    qualityType: 1
+    playerItemType: 1
+    maxCount: 1
+  - id: 45
+    itemId: 3015
+    name: "\u5355\u624B\u52515"
+    price: 300
+    sellPrice: 180
+    qualityType: 2
+    playerItemType: 1
+    maxCount: 1
+  - id: 46
+    itemId: 3016
+    name: "\u5355\u624B\u52515"
+    price: 300
+    sellPrice: 180
+    qualityType: 2
+    playerItemType: 1
+    maxCount: 1
+  - id: 47
+    itemId: 3017
+    name: "\u5355\u624B\u52516"
+    price: 50
+    sellPrice: 30
+    qualityType: 0
+    playerItemType: 1
+    maxCount: 1
+  - id: 48
+    itemId: 3018
+    name: "\u5355\u624B\u52516"
+    price: 100
+    sellPrice: 60
+    qualityType: 1
+    playerItemType: 1
+    maxCount: 1
+  - id: 49
+    itemId: 3019
+    name: "\u5355\u624B\u52516"
+    price: 300
+    sellPrice: 180
+    qualityType: 2
+    playerItemType: 1
+    maxCount: 1
+  - id: 50
+    itemId: 3020
+    name: "\u5355\u624B\u52517"
+    price: 50
+    sellPrice: 30
+    qualityType: 0
+    playerItemType: 1
+    maxCount: 1
+  - id: 51
+    itemId: 3021
+    name: "\u5355\u624B\u52517"
+    price: 100
+    sellPrice: 60
+    qualityType: 1
+    playerItemType: 1
+    maxCount: 1
+  - id: 52
+    itemId: 3022
+    name: "\u5355\u624B\u52517"
+    price: 300
+    sellPrice: 180
+    qualityType: 2
+    playerItemType: 1
+    maxCount: 1
+  - id: 53
+    itemId: 3023
+    name: "\u5355\u624B\u52518"
+    price: 50
+    sellPrice: 30
+    qualityType: 0
+    playerItemType: 1
+    maxCount: 1
+  - id: 54
+    itemId: 3024
+    name: "\u5355\u624B\u52518"
+    price: 100
+    sellPrice: 60
+    qualityType: 1
+    playerItemType: 1
+    maxCount: 1
+  - id: 55
+    itemId: 3025
+    name: "\u5355\u624B\u52518"
+    price: 300
+    sellPrice: 180
+    qualityType: 2
+    playerItemType: 1
+    maxCount: 1
+  - id: 56
+    itemId: 3026
+    name: "\u5355\u624B\u52519"
+    price: 50
+    sellPrice: 30
+    qualityType: 0
+    playerItemType: 1
+    maxCount: 1
+  - id: 57
+    itemId: 3027
+    name: "\u5355\u624B\u52519"
+    price: 100
+    sellPrice: 60
+    qualityType: 1
+    playerItemType: 1
+    maxCount: 1
+  - id: 58
+    itemId: 3028
+    name: "\u5355\u624B\u52519"
+    price: 100
+    sellPrice: 60
+    qualityType: 1
+    playerItemType: 1
+    maxCount: 1
+  - id: 59
+    itemId: 3029
+    name: "\u5355\u624B\u52519"
+    price: 300
+    sellPrice: 180
+    qualityType: 2
+    playerItemType: 1
+    maxCount: 1
+  - id: 60
+    itemId: 3030
+    name: "\u5355\u624B\u52519"
+    price: 300
+    sellPrice: 180
+    qualityType: 2
+    playerItemType: 1
+    maxCount: 1
+  - id: 61
+    itemId: 3031
+    name: "\u4E0A\u88631"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 62
+    itemId: 3032
+    name: "\u4E0A\u88632"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 63
+    itemId: 3033
+    name: "\u4E0A\u88633"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 64
+    itemId: 3034
+    name: "\u4E0A\u88634"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 65
+    itemId: 3035
+    name: "\u4E0A\u88635"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 66
+    itemId: 3036
+    name: "\u4E0A\u88631"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 67
+    itemId: 3037
+    name: "\u4E0A\u88632"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 68
+    itemId: 3038
+    name: "\u4E0A\u88633"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 69
+    itemId: 3039
+    name: "\u4E0A\u88634"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 70
+    itemId: 3040
+    name: "\u4E0A\u88635"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 71
+    itemId: 3041
+    name: "\u4E0A\u88631"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 72
+    itemId: 3042
+    name: "\u4E0A\u88632"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 73
+    itemId: 3043
+    name: "\u4E0A\u88633"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 74
+    itemId: 3044
+    name: "\u4E0A\u88634"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 75
+    itemId: 3045
+    name: "\u4E0A\u88635"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 76
+    itemId: 3046
+    name: "\u978B\u5B501"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 77
+    itemId: 3047
+    name: "\u978B\u5B502"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 78
+    itemId: 3048
+    name: "\u978B\u5B503"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 79
+    itemId: 3049
+    name: "\u978B\u5B504"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 80
+    itemId: 3050
+    name: "\u978B\u5B505"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 81
+    itemId: 3051
+    name: "\u978B\u5B501"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 82
+    itemId: 3052
+    name: "\u978B\u5B502"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 83
+    itemId: 3053
+    name: "\u978B\u5B503"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 84
+    itemId: 3054
+    name: "\u978B\u5B504"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 85
+    itemId: 3055
+    name: "\u978B\u5B505"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 86
+    itemId: 3056
+    name: "\u978B\u5B501"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 87
+    itemId: 3057
+    name: "\u978B\u5B502"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 88
+    itemId: 3058
+    name: "\u978B\u5B503"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 89
+    itemId: 3059
+    name: "\u978B\u5B504"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 90
+    itemId: 3060
+    name: "\u978B\u5B505"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 91
+    itemId: 3061
+    name: "\u88E4\u5B501"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 92
+    itemId: 3062
+    name: "\u88E4\u5B502"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 93
+    itemId: 3063
+    name: "\u88E4\u5B503"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 94
+    itemId: 3064
+    name: "\u88E4\u5B504"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 95
+    itemId: 3065
+    name: "\u88E4\u5B505"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 96
+    itemId: 3066
+    name: "\u88E4\u5B501"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 97
+    itemId: 3067
+    name: "\u88E4\u5B502"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 98
+    itemId: 3068
+    name: "\u88E4\u5B503"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 99
+    itemId: 3069
+    name: "\u88E4\u5B504"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 100
+    itemId: 3070
+    name: "\u88E4\u5B505"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 101
+    itemId: 3071
+    name: "\u88E4\u5B501"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 102
+    itemId: 3072
+    name: "\u88E4\u5B502"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 103
+    itemId: 3073
+    name: "\u88E4\u5B503"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 104
+    itemId: 3074
+    name: "\u88E4\u5B504"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 105
+    itemId: 3075
+    name: "\u88E4\u5B505"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 106
+    itemId: 3076
+    name: "\u5934\u76D41"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 107
+    itemId: 3077
+    name: "\u5934\u76D42"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 108
+    itemId: 3078
+    name: "\u5934\u76D43"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 109
+    itemId: 3079
+    name: "\u5934\u76D44"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 110
+    itemId: 3080
+    name: "\u5934\u76D45"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 111
+    itemId: 3081
+    name: "\u5934\u76D41"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 112
+    itemId: 3082
+    name: "\u5934\u76D42"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 113
+    itemId: 3083
+    name: "\u5934\u76D43"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 114
+    itemId: 3084
+    name: "\u5934\u76D44"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 115
+    itemId: 3085
+    name: "\u5934\u76D45"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 116
+    itemId: 3086
+    name: "\u5934\u76D41"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 117
+    itemId: 3087
+    name: "\u5934\u76D42"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 118
+    itemId: 3088
+    name: "\u5934\u76D43"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 119
+    itemId: 3089
+    name: "\u5934\u76D44"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 120
+    itemId: 3090
+    name: "\u5934\u76D45"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 121
+    itemId: 3091
+    name: "\u8170\u5E261"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 122
+    itemId: 3092
+    name: "\u8170\u5E262"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 123
+    itemId: 3093
+    name: "\u8170\u5E263"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 124
+    itemId: 3094
+    name: "\u8170\u5E264"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 125
+    itemId: 3095
+    name: "\u8170\u5E265"
+    price: 10
+    sellPrice: 6
+    qualityType: 0
+    playerItemType: 2
+    maxCount: 1
+  - id: 126
+    itemId: 3096
+    name: "\u8170\u5E261"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 127
+    itemId: 3097
+    name: "\u8170\u5E262"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 128
+    itemId: 3098
+    name: "\u8170\u5E263"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 129
+    itemId: 3099
+    name: "\u8170\u5E264"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 130
+    itemId: 3100
+    name: "\u8170\u5E265"
+    price: 25
+    sellPrice: 15
+    qualityType: 1
+    playerItemType: 2
+    maxCount: 1
+  - id: 131
+    itemId: 3101
+    name: "\u8170\u5E261"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 132
+    itemId: 3102
+    name: "\u8170\u5E262"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 133
+    itemId: 3103
+    name: "\u8170\u5E263"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 134
+    itemId: 3104
+    name: "\u8170\u5E264"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  - id: 135
+    itemId: 3105
+    name: "\u8170\u5E265"
+    price: 100
+    sellPrice: 60
+    qualityType: 2
+    playerItemType: 2
+    maxCount: 1
+  shopConstantData:
+    onceEachTypeCount: 2
+    onceCostGold: 0
+    shopEquipPassiveDescription: 

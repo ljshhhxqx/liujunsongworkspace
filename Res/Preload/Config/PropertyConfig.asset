@@ -30,6 +30,7 @@ MonoBehaviour:
     description: "\u79FB\u52A8\u901F\u5EA6"
     animationState: 0
     isHundredPercent: 0
+    showInHud: 0
   - propertyType: 1
     baseValue: 15
     minValue: 0
@@ -39,6 +40,7 @@ MonoBehaviour:
     description: "\u653B\u51FB\u529B"
     animationState: 0
     isHundredPercent: 0
+    showInHud: 0
   - propertyType: 2
     baseValue: 15
     minValue: 0
@@ -48,6 +50,7 @@ MonoBehaviour:
     description: "\u9632\u5FA1"
     animationState: 0
     isHundredPercent: 0
+    showInHud: 0
   - propertyType: 3
     baseValue: 100
     minValue: 0
@@ -57,6 +60,7 @@ MonoBehaviour:
     description: "\u751F\u547D"
     animationState: 0
     isHundredPercent: 0
+    showInHud: 0
   - propertyType: 4
     baseValue: 100
     minValue: 0
@@ -66,15 +70,17 @@ MonoBehaviour:
     description: "\u4F53\u529B"
     animationState: 0
     isHundredPercent: 0
+    showInHud: 0
   - propertyType: 5
     baseValue: 0
     minValue: 0
-    maxValue: 100000000
+    maxValue: 1e+9
     consumeType: 2
     isHandleWithCorrectFactor: 1
     description: "\u5206\u6570"
     animationState: 0
     isHundredPercent: 0
+    showInHud: 0
   - propertyType: 6
     baseValue: 0.05
     minValue: 0
@@ -84,6 +90,7 @@ MonoBehaviour:
     description: "\u66B4\u51FB\u7387"
     animationState: 0
     isHundredPercent: 1
+    showInHud: 0
   - propertyType: 7
     baseValue: 1.5
     minValue: 1
@@ -93,6 +100,7 @@ MonoBehaviour:
     description: "\u66B4\u51FB\u4F24\u5BB3"
     animationState: 0
     isHundredPercent: 1
+    showInHud: 0
   - propertyType: 8
     baseValue: 5
     minValue: 0
@@ -102,6 +110,7 @@ MonoBehaviour:
     description: "\u4F53\u529B\u6062\u590D"
     animationState: 0
     isHundredPercent: 0
+    showInHud: 0
   - propertyType: 9
     baseValue: 3
     minValue: 0
@@ -111,6 +120,7 @@ MonoBehaviour:
     description: "\u751F\u547D\u6062\u590D"
     animationState: 0
     isHundredPercent: 0
+    showInHud: 0
   - propertyType: 12
     baseValue: 1
     minValue: 0.5
@@ -120,6 +130,7 @@ MonoBehaviour:
     description: "\u653B\u51FB\u901F\u5EA6"
     animationState: 256
     isHundredPercent: 1
+    showInHud: 0
   - propertyType: 13
     baseValue: 0.5
     minValue: 0.35
@@ -129,6 +140,7 @@ MonoBehaviour:
     description: "\u653B\u51FB\u8DDD\u79BB"
     animationState: 0
     isHundredPercent: 0
+    showInHud: 0
   - propertyType: 14
     baseValue: 60
     minValue: 45
@@ -138,6 +150,7 @@ MonoBehaviour:
     description: "\u653B\u51FB\u89D2\u5EA6"
     animationState: 0
     isHundredPercent: 0
+    showInHud: 0
   - propertyType: 15
     baseValue: 0.35
     minValue: 0.15
@@ -147,6 +160,7 @@ MonoBehaviour:
     description: "\u653B\u51FB\u9AD8\u5EA6"
     animationState: 0
     isHundredPercent: 0
+    showInHud: 0
   - propertyType: 10
     baseValue: 2
     minValue: 1
@@ -156,6 +170,7 @@ MonoBehaviour:
     description: "\u5954\u8DD1\u901F\u5EA6\u4FEE\u6B63\u7CFB\u6570"
     animationState: 0
     isHundredPercent: 0
+    showInHud: 0
   - propertyType: 11
     baseValue: 0.75
     minValue: 0.5
@@ -165,3 +180,44 @@ MonoBehaviour:
     description: "\u697C\u68AF\u901F\u5EA6\u4FEE\u6B63\u7CFB\u6570"
     animationState: 0
     isHundredPercent: 0
+    showInHud: 0
+  - propertyType: 16
+    baseValue: 0
+    minValue: 0
+    maxValue: 1e+9
+    consumeType: 2
+    isHandleWithCorrectFactor: 1
+    description: "\u91D1\u5E01"
+    animationState: 0
+    isHundredPercent: 0
+    showInHud: 0
+  - propertyType: 17
+    baseValue: 0
+    minValue: 0
+    maxValue: 1e+9
+    consumeType: 2
+    isHandleWithCorrectFactor: 1
+    description: "\u7ECF\u9A8C"
+    animationState: 0
+    isHundredPercent: 0
+    showInHud: 0
+  - propertyType: 20
+    baseValue: 1000
+    minValue: 15
+    maxValue: 1000
+    consumeType: 2
+    isHandleWithCorrectFactor: 0
+    description: "\u89C6\u91CE"
+    animationState: 0
+    isHundredPercent: 0
+    showInHud: 0
+  - propertyType: 21
+    baseValue: 1000
+    minValue: 0
+    maxValue: 1000
+    consumeType: 2
+    isHandleWithCorrectFactor: 0
+    description: "\u900F\u660E\u5EA6"
+    animationState: 0
+    isHundredPercent: 0
+    showInHud: 0

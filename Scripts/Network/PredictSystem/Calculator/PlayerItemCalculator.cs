@@ -10,6 +10,7 @@ using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Tool.Static;
 using Mirror;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
@@ -205,13 +206,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
 
             var configId = GetEquipmentConfigId(bagItem.PlayerItemType, bagItem.ConfigId);
+            if (!PlayerItemState.TryGetPlayerEquipItemByEquipPart(playerItemState, bagItem.EquipmentPart, out var equipSlotItem))
+            {
+                return;
+            }
             Constant.GameSyncManager.EnqueueServerCommand(new EquipmentCommand
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
                 EquipmentConfigId = configId,
                 EquipmentPart = bagItem.EquipmentPart,
                 IsEquip = itemEquipCommand.IsEquip,
-                ItemId = bagItem.ItemId
+                ItemId = bagItem.ItemId,
+                EquipmentPassiveEffectData = JsonConvert.SerializeObject(equipSlotItem.MainIncreaseDatas),
+                EquipmentMainEffectData = JsonConvert.SerializeObject(equipSlotItem.PassiveIncreaseDatas),
             });
         }
         public static void CommandGetItem(ref PlayerItemState playerItemState, ItemsCommandData itemsData, NetworkCommandHeader header = default)

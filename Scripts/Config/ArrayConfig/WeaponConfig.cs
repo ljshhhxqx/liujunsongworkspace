@@ -156,7 +156,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 try
                 {
                     // 从第 2 行开始（跳过表头）
-                    var newRow = rowCount + 1;
+                    var newRow = 3;
                     foreach (var configData in weaponConfigData)
                     {
                         worksheet.Cells[newRow, idCol].Value = configData.weaponID;

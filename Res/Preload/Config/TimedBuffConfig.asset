@@ -1,0 +1,499 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1602c8f6a382480faffc636edab9e24d, type: 3}
+  m_Name: TimedBuffConfig
+  m_EditorClassIdentifier: 
+  excelAssetReference:
+    guid: afcb27a37860bed489c689f04b28b549
+  csvAssetReference:
+    guid: f79490033f1ba7d4c817acd9581f3173
+  jsonAssetReference:
+    guid: 36a25296697c2fe44a5305e443be106f
+  configName: TimedBuffConfig
+  isArray: 1
+  timedBuffs:
+  - buffId: 1
+    propertyType: 0
+    duration:
+      isPercent: 0
+      min: 0
+      max: 300
+    sourceType: 9
+    increaseType: 4
+    increaseRange:
+      isPercent: 0
+      min: 0
+      max: 1
+    isPermanent: 1
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 2
+    propertyType: 3
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 7
+    increaseType: 1
+    increaseRange:
+      isPercent: 0
+      min: 10
+      max: 30
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 3
+    propertyType: 4
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 7
+    increaseType: 1
+    increaseRange:
+      isPercent: 0
+      min: 10
+      max: 30
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 4
+    propertyType: 1
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 7
+    increaseType: 1
+    increaseRange:
+      isPercent: 0
+      min: 2.5
+      max: 7.5
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 5
+    propertyType: 0
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 7
+    increaseType: 1
+    increaseRange:
+      isPercent: 0
+      min: 0.5
+      max: 1.5
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 6
+    propertyType: 7
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 7
+    increaseType: 1
+    increaseRange:
+      isPercent: 0
+      min: 0.1
+      max: 0.3
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 7
+    propertyType: 6
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 7
+    increaseType: 1
+    increaseRange:
+      isPercent: 0
+      min: 0.2
+      max: 0.6
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 8
+    propertyType: 12
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 7
+    increaseType: 1
+    increaseRange:
+      isPercent: 0
+      min: 0.15
+      max: 0.45
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 9
+    propertyType: 2
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 7
+    increaseType: 1
+    increaseRange:
+      isPercent: 0
+      min: 2.5
+      max: 7.5
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 10
+    propertyType: 3
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 7
+    increaseType: 1
+    increaseRange:
+      isPercent: 0
+      min: 10
+      max: 30
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 11
+    propertyType: 4
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 7
+    increaseType: 1
+    increaseRange:
+      isPercent: 0
+      min: 10
+      max: 30
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 12
+    propertyType: 1
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 7
+    increaseType: 1
+    increaseRange:
+      isPercent: 0
+      min: 2.5
+      max: 7.5
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 13
+    propertyType: 0
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 7
+    increaseType: 1
+    increaseRange:
+      isPercent: 0
+      min: 0.5
+      max: 1.5
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 14
+    propertyType: 7
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 7
+    increaseType: 1
+    increaseRange:
+      isPercent: 0
+      min: 0.1
+      max: 0.3
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 15
+    propertyType: 6
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 7
+    increaseType: 1
+    increaseRange:
+      isPercent: 0
+      min: 0.2
+      max: 0.6
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 16
+    propertyType: 12
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 7
+    increaseType: 1
+    increaseRange:
+      isPercent: 0
+      min: 0.15
+      max: 0.45
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 17
+    propertyType: 2
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 7
+    increaseType: 1
+    increaseRange:
+      isPercent: 0
+      min: 2.5
+      max: 7.5
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 18
+    propertyType: 3
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 8
+    increaseType: 4
+    increaseRange:
+      isPercent: 0
+      min: 0.1
+      max: 0.25
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 19
+    propertyType: 4
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 8
+    increaseType: 4
+    increaseRange:
+      isPercent: 0
+      min: 0.1
+      max: 0.25
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 20
+    propertyType: 1
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 8
+    increaseType: 4
+    increaseRange:
+      isPercent: 0
+      min: 0.1
+      max: 0.25
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 21
+    propertyType: 0
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 8
+    increaseType: 4
+    increaseRange:
+      isPercent: 0
+      min: 0.1
+      max: 0.25
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 22
+    propertyType: 16
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 8
+    increaseType: 4
+    increaseRange:
+      isPercent: 0
+      min: 0.1
+      max: 0.25
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 23
+    propertyType: 5
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 8
+    increaseType: 4
+    increaseRange:
+      isPercent: 0
+      min: 0.1
+      max: 0.25
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 24
+    propertyType: 7
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 8
+    increaseType: 4
+    increaseRange:
+      isPercent: 0
+      min: 0.1
+      max: 0.25
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 25
+    propertyType: 6
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 8
+    increaseType: 4
+    increaseRange:
+      isPercent: 0
+      min: 0.1
+      max: 0.25
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 26
+    propertyType: 12
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 8
+    increaseType: 4
+    increaseRange:
+      isPercent: 0
+      min: 0.1
+      max: 0.25
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 27
+    propertyType: 20
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 8
+    increaseType: 4
+    increaseRange:
+      isPercent: 0
+      min: 0.8
+      max: 0.985
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0
+  - buffId: 28
+    propertyType: 21
+    duration:
+      isPercent: 0
+      min: 0
+      max: 29
+    sourceType: 7
+    increaseType: 1
+    increaseRange:
+      isPercent: 0
+      min: 700
+      max: 1000
+    isPermanent: 0
+    growthType: 0
+    steepAngle: 0
+    operationType: 0
+    playerEffectType: 0

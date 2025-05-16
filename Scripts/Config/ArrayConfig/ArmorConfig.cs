@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using OfficeOpenXml;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
 {
@@ -96,11 +96,11 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             for (int i = 0; i < armorConfigs.Count; i++)
             {
                 var data = armorConfigs[i];
-                var isTrueData = battleEffectConditionConfig.AnalysisDataString(data.battleEffectConditionDescription, out var conditionConfigData);
                 if (data.battleEffectConditionDescription == "0")
                 {
                     continue;
                 }
+                var isTrueData = battleEffectConditionConfig.AnalysisDataString(data.battleEffectConditionDescription, out var conditionConfigData);
                 if (isTrueData)
                 {
                     Debug.Log("battleEffectConditionId not found for weaponID: " + data.armorID + "Start to generate a new one");
@@ -121,7 +121,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             {
                 NullValueHandling = NullValueHandling.Ignore
             };
-            jsonSerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+            jsonSerializerSettings.Converters.Add(new StringEnumConverter());
             var excel = Path.Combine(excelAssetReference.Path, $"{configName}.xlsx");
             using (var package = new ExcelPackage(new FileInfo(excel)))
             {
@@ -148,7 +148,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 try
                 {
                     // 从第 2 行开始（跳过表头）
-                    var newRow = rowCount + 1;
+                    var newRow = 3;
                     foreach (var configData in armorConfigs)
                     {
                         worksheet.Cells[newRow, idCol].Value = configData.armorID;

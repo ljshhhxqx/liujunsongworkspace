@@ -3,16 +3,12 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Common;
-using HotUpdate.Scripts.Config.ArrayConfig;
-using HotUpdate.Scripts.Network.Battle;
-using HotUpdate.Scripts.Network.Item;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using MemoryPack;
 using Mirror;
-using UnityEngine;
 using VContainer;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
@@ -83,6 +79,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 PropertyStates[header.ConnectionId] = playerEquipmentState;
                 if (isCheckPassed)
                 {
+                    var equipment = playerEquipmentState.EquipmentDatas.Find(x => x.ItemId == triggerCommand.ItemId);
                     return playerEquipmentState;
                 }
             }

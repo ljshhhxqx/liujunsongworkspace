@@ -290,7 +290,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             return false;
         }
 
-        
+        public static bool TryGetPlayerEquipItemByEquipPart(PlayerItemState state, EquipmentPart equipPart,
+            out PlayerEquipSlotItem bagItem)
+        {
+            return state.PlayerEquipSlotItems.TryGetValue(equipPart, out bagItem);
+        }
+
         public static bool TryAddAndEquipItem(ref PlayerItemState state, PlayerBagItem bagItem, out bool isEquipped)
         {
             if (!AddItem(ref state, bagItem))

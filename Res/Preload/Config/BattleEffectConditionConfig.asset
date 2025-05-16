@@ -20,7 +20,810 @@ MonoBehaviour:
     guid: 36a25296697c2fe44a5305e443be106f
   configName: BattleEffectConditionConfig
   isArray: 1
-  conditionList: []
+  conditionList:
+  - id: 1
+    triggerType: 0
+    probability: 100
+    interval: 0
+    duration: -1
+    targetType: 1
+    buffWeight: 0.2
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: -2
+  - id: 2
+    triggerType: 6
+    probability: 50
+    interval: 10
+    duration: 5
+    targetType: 1
+    buffWeight: 0.3
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153024
+  - id: 3
+    triggerType: 8
+    probability: 50
+    interval: 10
+    duration: 5
+    targetType: 1
+    buffWeight: 0.3
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153025
+  - id: 4
+    triggerType: 2
+    probability: 50
+    interval: 8
+    duration: 5
+    targetType: 1
+    buffWeight: 0.4
+    buffIncreaseType: 1
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153026
+  - id: 5
+    triggerType: 4
+    probability: 5
+    interval: 10
+    duration: 5
+    targetType: 1
+    buffWeight: 0.5
+    buffIncreaseType: 3
+    targetCount: 1
+    conditionParam:
+      rid: -2
+  - id: 6
+    triggerType: 0
+    probability: 100
+    interval: 0
+    duration: -1
+    targetType: 1
+    buffWeight: 0.6
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: -2
+  - id: 7
+    triggerType: 6
+    probability: 80
+    interval: 5
+    duration: 7
+    targetType: 1
+    buffWeight: 0.9
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153027
+  - id: 8
+    triggerType: 8
+    probability: 80
+    interval: 7
+    duration: 7
+    targetType: 1
+    buffWeight: 0.9
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153028
+  - id: 9
+    triggerType: 2
+    probability: 80
+    interval: 8
+    duration: 5
+    targetType: 1
+    buffWeight: 0.9
+    buffIncreaseType: 1
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153029
+  - id: 10
+    triggerType: 4
+    probability: 15
+    interval: 5
+    duration: 7
+    targetType: 1
+    buffWeight: 0.9
+    buffIncreaseType: 3
+    targetCount: 1
+    conditionParam:
+      rid: -2
+  - id: 11
+    triggerType: 0
+    probability: 100
+    interval: 0
+    duration: -1
+    targetType: 1
+    buffWeight: 0.6
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: -2
+  - id: 12
+    triggerType: 6
+    probability: 50
+    interval: 10
+    duration: 5
+    targetType: 1
+    buffWeight: 0.35
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153030
+  - id: 13
+    triggerType: 2
+    probability: 50
+    interval: 8
+    duration: 5
+    targetType: 1
+    buffWeight: 0.9
+    buffIncreaseType: 1
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153031
+  - id: 14
+    triggerType: 4
+    probability: 5
+    interval: 10
+    duration: 5
+    targetType: 1
+    buffWeight: 0.9
+    buffIncreaseType: 3
+    targetCount: 1
+    conditionParam:
+      rid: -2
+  - id: 15
+    triggerType: 9
+    probability: 20
+    interval: 10
+    duration: 5
+    targetType: 1
+    buffWeight: 0.75
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153032
+  - id: 16
+    triggerType: 0
+    probability: 100
+    interval: 0
+    duration: -1
+    targetType: 1
+    buffWeight: 0.75
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: -2
+  - id: 17
+    triggerType: 6
+    probability: 50
+    interval: 10
+    duration: 5
+    targetType: 1
+    buffWeight: 0.8
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153033
+  - id: 18
+    triggerType: 2
+    probability: 80
+    interval: 5
+    duration: 10
+    targetType: 1
+    buffWeight: 1
+    buffIncreaseType: 1
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153034
+  - id: 19
+    triggerType: 4
+    probability: 15
+    interval: 10
+    duration: 10
+    targetType: 1
+    buffWeight: 1
+    buffIncreaseType: 3
+    targetCount: 1
+    conditionParam:
+      rid: -2
+  - id: 20
+    triggerType: 9
+    probability: 30
+    interval: 10
+    duration: 7
+    targetType: 1
+    buffWeight: 0.75
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153035
+  - id: 21
+    triggerType: 0
+    probability: 100
+    interval: 0
+    duration: -1
+    targetType: 1
+    buffWeight: 0.2
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: -2
+  - id: 22
+    triggerType: 8
+    probability: 50
+    interval: 10
+    duration: 5
+    targetType: 1
+    buffWeight: 0.3
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153036
+  - id: 23
+    triggerType: 4
+    probability: 5
+    interval: 10
+    duration: 5
+    targetType: 1
+    buffWeight: 0.5
+    buffIncreaseType: 3
+    targetCount: 1
+    conditionParam:
+      rid: -2
+  - id: 24
+    triggerType: 2
+    probability: 50
+    interval: 8
+    duration: 5
+    targetType: 1
+    buffWeight: 0.9
+    buffIncreaseType: 1
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153037
+  - id: 25
+    triggerType: 9
+    probability: 20
+    interval: 10
+    duration: 5
+    targetType: 1
+    buffWeight: 0.75
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153038
+  - id: 26
+    triggerType: 0
+    probability: 100
+    interval: 0
+    duration: -1
+    targetType: 1
+    buffWeight: 0.6
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: -2
+  - id: 27
+    triggerType: 8
+    probability: 80
+    interval: 7
+    duration: 7
+    targetType: 1
+    buffWeight: 0.8
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153039
+  - id: 28
+    triggerType: 4
+    probability: 10
+    interval: 7
+    duration: 7
+    targetType: 1
+    buffWeight: 1
+    buffIncreaseType: 3
+    targetCount: 1
+    conditionParam:
+      rid: -2
+  - id: 29
+    triggerType: 2
+    probability: 80
+    interval: 5
+    duration: 10
+    targetType: 1
+    buffWeight: 1
+    buffIncreaseType: 1
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153040
+  - id: 30
+    triggerType: 9
+    probability: 50
+    interval: 7
+    duration: 7
+    targetType: 1
+    buffWeight: 0.9
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153041
+  - id: 31
+    triggerType: 0
+    probability: 100
+    interval: 0
+    duration: -1
+    targetType: 1
+    buffWeight: 0.2
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: -2
+  - id: 32
+    triggerType: 2
+    probability: 50
+    interval: 8
+    duration: 5
+    targetType: 1
+    buffWeight: 0.3
+    buffIncreaseType: 1
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153042
+  - id: 33
+    triggerType: 1
+    probability: 50
+    interval: 10
+    duration: 7
+    targetType: 1
+    buffWeight: 0.25
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153043
+  - id: 34
+    triggerType: 10
+    probability: 100
+    interval: 10
+    duration: 5
+    targetType: 1
+    buffWeight: 0.35
+    buffIncreaseType: 1
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153044
+  - id: 35
+    triggerType: 3
+    probability: 100
+    interval: 10
+    duration: 7.5
+    targetType: 1
+    buffWeight: 0.35
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153045
+  - id: 36
+    triggerType: 0
+    probability: 100
+    interval: 0
+    duration: -1
+    targetType: 1
+    buffWeight: 0.6
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: -2
+  - id: 37
+    triggerType: 2
+    probability: 80
+    interval: 7
+    duration: 7
+    targetType: 1
+    buffWeight: 0.8
+    buffIncreaseType: 1
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153046
+  - id: 38
+    triggerType: 1
+    probability: 80
+    interval: 10
+    duration: 10
+    targetType: 1
+    buffWeight: 0.9
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153047
+  - id: 39
+    triggerType: 10
+    probability: 100
+    interval: 5
+    duration: 10
+    targetType: 1
+    buffWeight: 1
+    buffIncreaseType: 1
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153048
+  - id: 40
+    triggerType: 3
+    probability: 100
+    interval: 10
+    duration: 7.5
+    targetType: 1
+    buffWeight: 1
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153049
+  - id: 41
+    triggerType: 0
+    probability: 100
+    interval: 0
+    duration: -1
+    targetType: 1
+    buffWeight: 0.2
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: -2
+  - id: 42
+    triggerType: 2
+    probability: 50
+    interval: 8
+    duration: 5
+    targetType: 1
+    buffWeight: 0.3
+    buffIncreaseType: 1
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153050
+  - id: 43
+    triggerType: 8
+    probability: 50
+    interval: 10
+    duration: 5
+    targetType: 1
+    buffWeight: 0.25
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153051
+  - id: 44
+    triggerType: 6
+    probability: 50
+    interval: 10
+    duration: 5
+    targetType: 1
+    buffWeight: 0.25
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153052
+  - id: 45
+    triggerType: 12
+    probability: 100
+    interval: 30
+    duration: 15
+    targetType: 12
+    buffWeight: 0.15
+    buffIncreaseType: 4
+    targetCount: 2
+    conditionParam:
+      rid: -2
+  - id: 46
+    triggerType: 0
+    probability: 100
+    interval: 0
+    duration: -1
+    targetType: 1
+    buffWeight: 0.6
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: -2
+  - id: 47
+    triggerType: 2
+    probability: 70
+    interval: 7
+    duration: 7
+    targetType: 1
+    buffWeight: 0.9
+    buffIncreaseType: 1
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153053
+  - id: 48
+    triggerType: 8
+    probability: 50
+    interval: 10
+    duration: 10
+    targetType: 1
+    buffWeight: 0.9
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153054
+  - id: 49
+    triggerType: 6
+    probability: 50
+    interval: 10
+    duration: 10
+    targetType: 1
+    buffWeight: 0.9
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153055
+  - id: 50
+    triggerType: 12
+    probability: 100
+    interval: 10
+    duration: 10
+    targetType: 12
+    buffWeight: 0.4
+    buffIncreaseType: 4
+    targetCount: 2
+    conditionParam:
+      rid: -2
+  - id: 51
+    triggerType: 0
+    probability: 100
+    interval: 0
+    duration: -1
+    targetType: 1
+    buffWeight: 0.2
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: -2
+  - id: 52
+    triggerType: 0
+    probability: 100
+    interval: 0
+    duration: -1
+    targetType: 1
+    buffWeight: 0.7
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: -2
+  - id: 53
+    triggerType: 8
+    probability: 50
+    interval: 10
+    duration: 5
+    targetType: 1
+    buffWeight: 0.3
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153056
+  - id: 54
+    triggerType: 8
+    probability: 80
+    interval: 7
+    duration: 7
+    targetType: 1
+    buffWeight: 0.8
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153057
+  - id: 55
+    triggerType: 4
+    probability: 5
+    interval: 10
+    duration: 5
+    targetType: 1
+    buffWeight: 0.5
+    buffIncreaseType: 3
+    targetCount: 1
+    conditionParam:
+      rid: -2
+  - id: 56
+    triggerType: 4
+    probability: 10
+    interval: 7
+    duration: 7
+    targetType: 1
+    buffWeight: 1
+    buffIncreaseType: 3
+    targetCount: 1
+    conditionParam:
+      rid: -2
+  - id: 57
+    triggerType: 10
+    probability: 100
+    interval: 10
+    duration: 5
+    targetType: 1
+    buffWeight: 0.3
+    buffIncreaseType: 1
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153058
+  - id: 58
+    triggerType: 10
+    probability: 100
+    interval: 5
+    duration: 5
+    targetType: 1
+    buffWeight: 0.8
+    buffIncreaseType: 1
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153059
+  - id: 59
+    triggerType: 1
+    probability: 50
+    interval: 10
+    duration: 7
+    targetType: 1
+    buffWeight: 0.3
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153060
+  - id: 60
+    triggerType: 1
+    probability: 70
+    interval: 7
+    duration: 10
+    targetType: 1
+    buffWeight: 0.85
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153061
+  - id: 61
+    triggerType: 1
+    probability: 50
+    interval: 7
+    duration: 7
+    targetType: 1
+    buffWeight: 1
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153062
+  - id: 62
+    triggerType: 2
+    probability: 20
+    interval: 10
+    duration: 5
+    targetType: 1
+    buffWeight: 0.4
+    buffIncreaseType: 1
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153063
+  - id: 63
+    triggerType: 2
+    probability: 40
+    interval: 8
+    duration: 5
+    targetType: 1
+    buffWeight: 0.85
+    buffIncreaseType: 1
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153064
+  - id: 64
+    triggerType: 3
+    probability: 80
+    interval: 10
+    duration: 5
+    targetType: 1
+    buffWeight: 0.3
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153065
+  - id: 65
+    triggerType: 3
+    probability: 100
+    interval: 10
+    duration: 7.5
+    targetType: 1
+    buffWeight: 0.8
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153066
+  - id: 66
+    triggerType: 5
+    probability: 50
+    interval: 10
+    duration: 5
+    targetType: 1
+    buffWeight: 0.35
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153067
+  - id: 67
+    triggerType: 5
+    probability: 80
+    interval: 5
+    duration: 5
+    targetType: 1
+    buffWeight: 0.8
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153068
+  - id: 68
+    triggerType: 6
+    probability: 50
+    interval: 10
+    duration: 5
+    targetType: 1
+    buffWeight: 0.35
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153069
+  - id: 69
+    triggerType: 6
+    probability: 100
+    interval: 10
+    duration: 5
+    targetType: 1
+    buffWeight: 0.35
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153070
+  - id: 70
+    triggerType: 6
+    probability: 50
+    interval: 10
+    duration: 5
+    targetType: 1
+    buffWeight: 0.8
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153071
+  - id: 71
+    triggerType: 6
+    probability: 100
+    interval: 10
+    duration: 10
+    targetType: 1
+    buffWeight: 0.8
+    buffIncreaseType: 2
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153072
+  - id: 72
+    triggerType: 7
+    probability: 80
+    interval: 10
+    duration: 10
+    targetType: 2
+    buffWeight: 0.4
+    buffIncreaseType: 4
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153073
+  - id: 73
+    triggerType: 7
+    probability: 100
+    interval: 10
+    duration: 10
+    targetType: 2
+    buffWeight: 0.9
+    buffIncreaseType: 4
+    targetCount: 1
+    conditionParam:
+      rid: 1935707083937153074
   effectData:
     id: 0
     triggerType: 1
@@ -36,6 +839,499 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 1935707083937153024
+      type: {class: TakeDamageConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        damageType: 0
+        damageCastType: 0
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153025
+      type: {class: HpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153026
+      type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        attackRangeType: 0
+        attack: 0
+    - rid: 1935707083937153027
+      type: {class: TakeDamageConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        damageType: 0
+        damageCastType: 0
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153028
+      type: {class: HpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153029
+      type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        attackRangeType: 0
+        attack: 0
+    - rid: 1935707083937153030
+      type: {class: TakeDamageConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        damageType: 0
+        damageCastType: 0
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153031
+      type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        attackRangeType: 0
+        attack: 0
+    - rid: 1935707083937153032
+      type: {class: MpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        mpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153033
+      type: {class: TakeDamageConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        damageType: 0
+        damageCastType: 0
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153034
+      type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        attackRangeType: 0
+        attack: 0
+    - rid: 1935707083937153035
+      type: {class: MpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        mpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153036
+      type: {class: HpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153037
+      type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        attackRangeType: 0
+        attack: 0
+    - rid: 1935707083937153038
+      type: {class: MpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        mpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153039
+      type: {class: HpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153040
+      type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        attackRangeType: 0
+        attack: 0
+    - rid: 1935707083937153041
+      type: {class: MpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        mpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153042
+      type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        attackRangeType: 0
+        attack: 0
+    - rid: 1935707083937153043
+      type: {class: AttackHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        targetType: 2
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        attackRangeType: 0
+    - rid: 1935707083937153044
+      type: {class: CriticalHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        targetType: 2
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        damageType: 0
+        damageCastType: 0
+    - rid: 1935707083937153045
+      type: {class: SkillHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        targetType: 2
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        skillType: 0
+        mpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153046
+      type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        attackRangeType: 0
+        attack: 0
+    - rid: 1935707083937153047
+      type: {class: AttackHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        targetType: 2
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        attackRangeType: 0
+    - rid: 1935707083937153048
+      type: {class: CriticalHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        targetType: 2
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        damageType: 0
+        damageCastType: 0
+    - rid: 1935707083937153049
+      type: {class: SkillHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        targetType: 2
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        skillType: 0
+        mpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153050
+      type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        attackRangeType: 0
+        attack: 0
+    - rid: 1935707083937153051
+      type: {class: HpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153052
+      type: {class: TakeDamageConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        damageType: 0
+        damageCastType: 0
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153053
+      type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        attackRangeType: 0
+        attack: 0
+    - rid: 1935707083937153054
+      type: {class: HpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153055
+      type: {class: TakeDamageConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        damageType: 0
+        damageCastType: 0
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153056
+      type: {class: HpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153057
+      type: {class: HpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153058
+      type: {class: CriticalHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        targetType: 2
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        damageType: 0
+        damageCastType: 0
+    - rid: 1935707083937153059
+      type: {class: CriticalHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        targetType: 2
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        damageType: 0
+        damageCastType: 0
+    - rid: 1935707083937153060
+      type: {class: AttackHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        targetType: 2
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        attackRangeType: 0
+    - rid: 1935707083937153061
+      type: {class: AttackHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        targetType: 2
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        attackRangeType: 0
+    - rid: 1935707083937153062
+      type: {class: AttackHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        targetType: 2
+        hpRange:
+          isPercent: 1
+          min: 0.2
+          max: 0.2
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        attackRangeType: 0
+    - rid: 1935707083937153063
+      type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        attackRangeType: 0
+        attack: 0
+    - rid: 1935707083937153064
+      type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        attackRangeType: 0
+        attack: 0
+    - rid: 1935707083937153065
+      type: {class: SkillHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        targetType: 0
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        skillType: 0
+        mpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153066
+      type: {class: SkillHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        targetType: 0
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        skillType: 0
+        mpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153067
+      type: {class: SkillCastConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        mpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        skillType: 0
+    - rid: 1935707083937153068
+      type: {class: SkillCastConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        mpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        skillType: 0
+    - rid: 1935707083937153069
+      type: {class: TakeDamageConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        damageType: 0
+        damageCastType: 0
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153070
+      type: {class: TakeDamageConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        hpRange:
+          isPercent: 1
+          min: 0.3
+          max: 0.3
+        damageType: 0
+        damageCastType: 0
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153071
+      type: {class: TakeDamageConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        hpRange:
+          isPercent: 0
+          min: 0
+          max: 0
+        damageType: 0
+        damageCastType: 0
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153072
+      type: {class: TakeDamageConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        hpRange:
+          isPercent: 1
+          min: 0.2
+          max: 0.2
+        damageType: 0
+        damageCastType: 0
+        damageRange:
+          isPercent: 0
+          min: 0
+          max: 0
+    - rid: 1935707083937153073
+      type: {class: KillConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        targetCount: 1
+        timeWindow: 0
+        targetType: 2
+    - rid: 1935707083937153074
+      type: {class: KillConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
+      data:
+        targetCount: 1
+        timeWindow: 0
+        targetType: 2
     - rid: 5224356400721821696
       type: {class: AttackHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:

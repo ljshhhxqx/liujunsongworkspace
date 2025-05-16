@@ -1,0 +1,8 @@
+animationState,isComboKey,animationKeys
+AnimationState,bool,string[]
+Sprint,False,["Running"]
+Jump,False,["Jump"]
+SprintJump,True,"["Running","Jump"]"
+Roll,False,["Roll"]
+Attack,False,["Fire1"]
+Collect,False,["Collect"]

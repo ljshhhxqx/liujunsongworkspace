@@ -113,27 +113,24 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 try
                 {
                     // 从第 2 行开始（跳过表头）
-                    var newRow = rowCount + 1;
+                    var newRow = 3;
                     foreach (var configData in conditionList)
                     {
-                        if (!existingIds.Contains(configData.id))
-                        {
-                            worksheet.Cells[newRow, idCol].Value = configData.id;
-                            worksheet.Cells[newRow, triggerTypeCol].Value = configData.triggerType.ToString();
-                            worksheet.Cells[newRow, probabilityCol].Value = configData.probability;
-                            worksheet.Cells[newRow, intervalCol].Value = configData.interval;
-                            worksheet.Cells[newRow, durationCol].Value = configData.duration;
-                            worksheet.Cells[newRow, targetTypeCol].Value = configData.targetType.ToString();
-                            worksheet.Cells[newRow, targetCountCol].Value = configData.targetCount;
-                            worksheet.Cells[newRow, buffWeightCol].Value = configData.buffWeight;
-                            worksheet.Cells[newRow, buffIncreaseTypeCol].Value = configData.buffIncreaseType.ToString();
-                            worksheet.Cells[newRow, durationCol].Value = configData.duration;
+                        worksheet.Cells[newRow, idCol].Value = configData.id;
+                        worksheet.Cells[newRow, triggerTypeCol].Value = configData.triggerType.ToString();
+                        worksheet.Cells[newRow, probabilityCol].Value = configData.probability;
+                        worksheet.Cells[newRow, intervalCol].Value = configData.interval;
+                        worksheet.Cells[newRow, durationCol].Value = configData.duration;
+                        worksheet.Cells[newRow, targetTypeCol].Value = configData.targetType.ToString();
+                        worksheet.Cells[newRow, targetCountCol].Value = configData.targetCount;
+                        worksheet.Cells[newRow, buffWeightCol].Value = configData.buffWeight;
+                        worksheet.Cells[newRow, buffIncreaseTypeCol].Value = configData.buffIncreaseType.ToString();
+                        worksheet.Cells[newRow, durationCol].Value = configData.duration;
 
-                            var json = JsonConvert.SerializeObject(configData.conditionParam, jsonSerializerSettings);
-                            worksheet.Cells[newRow, conditionParamCol].Value = json;
+                        var json = JsonConvert.SerializeObject(configData.conditionParam, jsonSerializerSettings);
+                        worksheet.Cells[newRow, conditionParamCol].Value = json;
 
-                            newRow++;
-                        }
+                        newRow++;
                     }
                 }
                 catch (Exception e)
@@ -423,7 +420,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             }
         }
         
-        public string ToLocalizedString(BattleEffectConditionConfigData data, EquipmentPassiveEffectData effect)
+        public string ToLocalizedString(BattleEffectConditionConfigData data, EquipmentPropertyData effect)
         {
             var sb = new StringBuilder();
             if (data.triggerType == TriggerType.None)
@@ -509,7 +506,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             return $"{count}个{targetDesc}";
         }
 
-        private string GetBuffEffectDesc(EquipmentPassiveEffectData effect)
+        private string GetBuffEffectDesc(EquipmentPropertyData effect)
         {
             var propName = EnumHeaderParser.GetHeader(effect.propertyType);
 
@@ -534,7 +531,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             return $"{operation}{{{GetDynamicValueDesc(effect)}的{increaseDesc}{propName}}}";
         }
 
-        private string GetDynamicValueDesc(EquipmentPassiveEffectData effect)
+        private string GetDynamicValueDesc(EquipmentPropertyData effect)
         {
             return effect.increaseData.increaseType switch
             {

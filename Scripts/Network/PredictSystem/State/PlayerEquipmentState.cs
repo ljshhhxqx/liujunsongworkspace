@@ -1,7 +1,9 @@
-﻿using System.Collections.Immutable;
+﻿using System;
+using System.Collections.Immutable;
 using System.Linq;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Battle;
+using HotUpdate.Scripts.Network.Item;
 using MemoryPack;
 using UnityEngine;
 
@@ -33,7 +35,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             return false;
         }
 
-        public static bool TryAddEquipmentData(ref PlayerEquipmentState equipmentState, int itemId, EquipmentPart equipmentPartType, IConditionChecker conditionChecker)
+        public static bool TryAddEquipmentData(ref PlayerEquipmentState equipmentState, int itemId,
+            EquipmentPart equipmentPartType, IConditionChecker conditionChecker)
         {
             if (equipmentState.EquipmentDatas.Any(x => x.ItemId == itemId))
             {
@@ -55,6 +58,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             equipmentState.EquipmentDatas = equipmentState.EquipmentDatas.Add(equipmentData);
             equipmentState.ConditionCheckers = equipmentState.ConditionCheckers.Add(conditionChecker);
             return true;
+        }
+
+        public static bool TryAddEquipmentPassiveEffectData(ref PlayerEquipmentState equipmentData, int itemId,
+            EquipmentPart equipmentPartType, AttributeIncreaseData[] mainIncreaseData, AttributeIncreaseData[] passiveIncreaseData)
+        {
+            for (int i = 0; i < equipmentData.EquipmentDatas.Count; i++)
+            {
+                var equipment = equipmentData.EquipmentDatas[i];
+                if (equipment.ItemId == itemId && equipment.EquipmentPartType == equipmentPartType)
+                {
+                    equipmentData.EquipmentDatas = equipmentData.EquipmentDatas.SetItem(i,
+                        new EquipmentData(itemId, equipmentPartType,
+                            mainIncreaseData, passiveIncreaseData));
+                    return true;
+                }
+            }
+            return false;   
         }
 
         public static void UpdateCheckerCd(ref PlayerEquipmentState equipmentState, float deltaTime)
@@ -80,17 +100,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 if (checkerParameterHeader.TriggerType == conditionConfigData.TriggerType)
                 {
                     var checkOver = checkers[i].Check(ref checker, checkerParameter);
-                    IConditionChecker.TakeEffect(ref checker);
-                    equipmentState.ConditionCheckers = checkers.SetItem(i, checker);
                     return checkOver;
                 }
             }
             return false;
-        }
-
-        public static void PlayerEquipmentPassiveEffect(ref PlayerPredictablePropertyState equipmentState)
-        {
-            return;
         }
     }
      
@@ -102,20 +115,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         [MemoryPackOrder(1)]
         public EquipmentPart EquipmentPartType;
         [MemoryPackOrder(2)]
-        public int ConstantBuffId;
-        [MemoryPackOrder(3)]
-        public int VariableBuffId;
-        [MemoryPackOrder(4)]
-        public ImmutableList<EquipmentPassiveEffectData> EquipmentPassiveEffectData;
+        public AttributeIncreaseData[] EquipmentPassiveEffectData;
+        [MemoryPackOrder(2)]
+        public AttributeIncreaseData[] EquipmentConstantPropertyData;
         
         [MemoryPackConstructor]
-        public EquipmentData(int itemId, EquipmentPart equipmentPartType, int constantBuffId = 0, int variableBuffId = 0, ImmutableList<EquipmentPassiveEffectData> equipmentPassiveEffectData = null)
+        public EquipmentData(int itemId, EquipmentPart equipmentPartType, AttributeIncreaseData[] equipmentPassiveEffectData = null, AttributeIncreaseData[] equipmentConstantPropertyData = null)
         {
             ItemId = itemId;
             EquipmentPartType = equipmentPartType;
-            ConstantBuffId = constantBuffId;
-            VariableBuffId = variableBuffId;
-            EquipmentPassiveEffectData = equipmentPassiveEffectData ?? ImmutableList<EquipmentPassiveEffectData>.Empty;
+            EquipmentPassiveEffectData = equipmentPassiveEffectData ?? Array.Empty<AttributeIncreaseData>();
+            EquipmentConstantPropertyData = equipmentConstantPropertyData ?? Array.Empty<AttributeIncreaseData>();
         }
     }
 }
