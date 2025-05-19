@@ -17,8 +17,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     {
         [MemoryPackOrder(0)]
         public ImmutableList<EquipmentData> EquipmentDatas;
-        [MemoryPackIgnore]
-        public ImmutableList<IConditionChecker> ConditionCheckers;
 
         public static bool TryUnequipped(ref PlayerEquipmentState equipmentState, int itemId, EquipmentPart equipmentPartType)
         {
@@ -28,14 +26,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 if (equipmentData.ItemId == itemId || equipmentData.EquipmentPartType == equipmentPartType)
                 {
                     equipmentState.EquipmentDatas = equipmentState.EquipmentDatas.RemoveAt(i);
-                    equipmentState.ConditionCheckers = equipmentState.ConditionCheckers.RemoveAt(i);
                     return true;
                 }
             }
             return false;
         }
 
-        public static bool TryAddEquipmentData(ref PlayerEquipmentState equipmentState, int itemId,
+        public static bool TryAddEquipmentData(ref PlayerEquipmentState equipmentState, int itemId, int equipConfigId,
             EquipmentPart equipmentPartType, IConditionChecker conditionChecker)
         {
             if (equipmentState.EquipmentDatas.Any(x => x.ItemId == itemId))
@@ -43,7 +40,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 Debug.LogError($"EquipmentId {itemId} already exists in EquipmentDatas");
                 return false;
             }
-            var equipmentData = new EquipmentData(itemId, equipmentPartType);
+            var equipmentData = new EquipmentData(itemId, equipConfigId, equipmentPartType);
+            equipmentData.ConditionChecker = conditionChecker;
             //该部位有装备，则卸下原装备
             for (int i = 0; i < equipmentState.EquipmentDatas.Count; i++)
             {
@@ -51,16 +49,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 if (oldEquip.EquipmentPartType == equipmentPartType)
                 {
                     equipmentState.EquipmentDatas = equipmentState.EquipmentDatas.RemoveAt(i);
-                    equipmentState.ConditionCheckers = equipmentState.ConditionCheckers.RemoveAt(i);
                     break;
                 }
             }
             equipmentState.EquipmentDatas = equipmentState.EquipmentDatas.Add(equipmentData);
-            equipmentState.ConditionCheckers = equipmentState.ConditionCheckers.Add(conditionChecker);
             return true;
         }
 
-        public static bool TryAddEquipmentPassiveEffectData(ref PlayerEquipmentState equipmentData, int itemId,
+        public static bool TryAddEquipmentPassiveEffectData(ref PlayerEquipmentState equipmentData, int itemId, int equipConfigId,
             EquipmentPart equipmentPartType, AttributeIncreaseData[] mainIncreaseData, AttributeIncreaseData[] passiveIncreaseData)
         {
             for (int i = 0; i < equipmentData.EquipmentDatas.Count; i++)
@@ -69,7 +65,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 if (equipment.ItemId == itemId && equipment.EquipmentPartType == equipmentPartType)
                 {
                     equipmentData.EquipmentDatas = equipmentData.EquipmentDatas.SetItem(i,
-                        new EquipmentData(itemId, equipmentPartType,
+                        new EquipmentData(itemId, equipConfigId,equipmentPartType,
                             mainIncreaseData, passiveIncreaseData));
                     return true;
                 }
@@ -79,27 +75,24 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
 
         public static void UpdateCheckerCd(ref PlayerEquipmentState equipmentState, float deltaTime)
         {
-            var checkers = equipmentState.ConditionCheckers;
-            for (int i = 0; i < checkers.Count; i++)
+            for (int i = 0; i < equipmentState.EquipmentDatas.Count; i++)
             {
-                var checker = checkers[i];
-                IConditionChecker.UpdateCd(ref checker, deltaTime);
-                checkers = checkers.SetItem(i, checker);
+                var equipment = equipmentState.EquipmentDatas[i];
+                IConditionChecker.UpdateCd(ref equipment.ConditionChecker, deltaTime);
+                equipmentState.EquipmentDatas = equipmentState.EquipmentDatas.SetItem(i, equipment);
             }
-            equipmentState.ConditionCheckers = checkers;
         }
 
         public static bool CheckConditions<T>(ref PlayerEquipmentState equipmentState, T checkerParameter) where T : IConditionCheckerParameters
         {
-            var checkers = equipmentState.ConditionCheckers;
-            for (int i = 0; i < checkers.Count; i++)
+            for (int i = 0; i < equipmentState.EquipmentDatas.Count; i++)
             {
-                var checker = checkers[i];
+                var checker = equipmentState.EquipmentDatas[i].ConditionChecker;
                 var checkerParameterHeader = checker.GetConditionCheckerHeader();
                 var conditionConfigData = checkerParameter.GetCommonParameters();
                 if (checkerParameterHeader.TriggerType == conditionConfigData.TriggerType)
                 {
-                    var checkOver = checkers[i].Check(ref checker, checkerParameter);
+                    var checkOver = checker.Check(ref checker, checkerParameter);
                     return checkOver;
                 }
             }
@@ -113,19 +106,30 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         [MemoryPackOrder(0)]
         public int ItemId;
         [MemoryPackOrder(1)]
+        public int EquipConfigId;
+        [MemoryPackOrder(2)]
         public EquipmentPart EquipmentPartType;
-        [MemoryPackOrder(2)]
+        [MemoryPackOrder(3)]
         public AttributeIncreaseData[] EquipmentPassiveEffectData;
-        [MemoryPackOrder(2)]
+        [MemoryPackOrder(4)]
         public AttributeIncreaseData[] EquipmentConstantPropertyData;
+
+        [MemoryPackOrder(5)]
+        public int[] TargetIds;
+        [MemoryPackIgnore]
+        public IConditionChecker ConditionChecker;
         
         [MemoryPackConstructor]
-        public EquipmentData(int itemId, EquipmentPart equipmentPartType, AttributeIncreaseData[] equipmentPassiveEffectData = null, AttributeIncreaseData[] equipmentConstantPropertyData = null)
+        public EquipmentData(int itemId, int equipConfigId, EquipmentPart equipmentPartType, AttributeIncreaseData[] equipmentPassiveEffectData = null, 
+            AttributeIncreaseData[] equipmentConstantPropertyData = null)
         {
             ItemId = itemId;
+            EquipConfigId = equipConfigId;
             EquipmentPartType = equipmentPartType;
             EquipmentPassiveEffectData = equipmentPassiveEffectData ?? Array.Empty<AttributeIncreaseData>();
             EquipmentConstantPropertyData = equipmentConstantPropertyData ?? Array.Empty<AttributeIncreaseData>();
+            ConditionChecker = null;
+            TargetIds = Array.Empty<int>();
         }
     }
 }

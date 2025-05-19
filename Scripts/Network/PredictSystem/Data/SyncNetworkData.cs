@@ -232,6 +232,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public PlayerItemType PlayerItemType;
         [MemoryPackOrder(5)]
         public string EquipProperty;
+        [MemoryPackOrder(6)]
+        public int[] TargetIds;
         
         public NetworkCommandHeader GetHeader()
         {
@@ -240,7 +242,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return EquipItemConfigId > 0 && EquipItemId > 0;
+            return EquipItemConfigId > 0 && EquipItemId > 0 && Enum.IsDefined(typeof(PlayerItemType), PlayerItemType) && !string.IsNullOrEmpty(EquipProperty);
         }
 
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
@@ -264,6 +266,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public int EquipItemId;
         [MemoryPackOrder(3)] 
         public bool IsEquipped;
+        [MemoryPackOrder(3)] 
+        public int ItemConfigId;
+        [MemoryPackOrder(3)] 
+        public EquipmentPart EquipmentPart;
         
         public NetworkCommandHeader GetHeader()
         {
@@ -965,8 +971,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
         public TriggerType TriggerType;
-        [MemoryPackOrder(2)]
-        public int ItemId;
         [MemoryPackOrder(3)] 
         public byte[] TriggerData;
         public NetworkCommandHeader GetHeader() => Header;

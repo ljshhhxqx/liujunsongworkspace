@@ -39,12 +39,11 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 conditionData.triggerType = (TriggerType)Enum.Parse(typeof(TriggerType), text[1]);
                 conditionData.probability = float.Parse(text[2]);
                 conditionData.interval = float.Parse(text[3]);
-                conditionData.duration = float.Parse(text[4]);
-                conditionData.targetType = (ConditionTargetType)Enum.Parse(typeof(ConditionTargetType), text[5]);
-                conditionData.targetCount = int.Parse(text[6]);
-                conditionData.conditionParam = JsonConvert.DeserializeObject<IConditionParam>(text[7]);
-                conditionData.buffWeight = float.Parse(text[8]);
-                conditionData.buffIncreaseType = (BuffIncreaseType)Enum.Parse(typeof(BuffIncreaseType), text[9]);
+                conditionData.targetType = (ConditionTargetType)Enum.Parse(typeof(ConditionTargetType), text[4]);
+                conditionData.targetCount = int.Parse(text[5]);
+                conditionData.conditionParam = JsonConvert.DeserializeObject<IConditionParam>(text[6]);
+                conditionData.buffWeight = float.Parse(text[7]);
+                conditionData.buffIncreaseType = (BuffIncreaseType)Enum.Parse(typeof(BuffIncreaseType), text[8]);
                 conditionList.Add(conditionData);
             }
         }
@@ -95,12 +94,11 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 const int triggerTypeCol = 2;
                 const int probabilityCol = 3;
                 const int intervalCol = 4;
-                const int durationCol = 5;
-                const int targetTypeCol = 6;
-                const int targetCountCol = 7;
-                const int buffWeightCol = 8;
-                const int buffIncreaseTypeCol = 9;
-                const int conditionParamCol = 10;
+                const int targetTypeCol = 5;
+                const int targetCountCol = 6;
+                const int buffWeightCol = 7;
+                const int buffIncreaseTypeCol = 8;
+                const int conditionParamCol = 9;
                 int row = 0;
                 var existingIds = new HashSet<int>();
                 for (row = 3; row <= rowCount; row++)
@@ -120,12 +118,10 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                         worksheet.Cells[newRow, triggerTypeCol].Value = configData.triggerType.ToString();
                         worksheet.Cells[newRow, probabilityCol].Value = configData.probability;
                         worksheet.Cells[newRow, intervalCol].Value = configData.interval;
-                        worksheet.Cells[newRow, durationCol].Value = configData.duration;
                         worksheet.Cells[newRow, targetTypeCol].Value = configData.targetType.ToString();
                         worksheet.Cells[newRow, targetCountCol].Value = configData.targetCount;
                         worksheet.Cells[newRow, buffWeightCol].Value = configData.buffWeight;
                         worksheet.Cells[newRow, buffIncreaseTypeCol].Value = configData.buffIncreaseType.ToString();
-                        worksheet.Cells[newRow, durationCol].Value = configData.duration;
 
                         var json = JsonConvert.SerializeObject(configData.conditionParam, jsonSerializerSettings);
                         worksheet.Cells[newRow, conditionParamCol].Value = json;
@@ -165,7 +161,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             data.targetType = Enum.Parse<ConditionTargetType>(targetPart[1]);
             
             data.interval = float.Parse(parts[3].Replace("冷却", "").Replace("秒", ""));
-            data.duration = float.Parse(parts[4].Replace("持续时间", "").Replace("秒", ""));
 
             // 解析条件参数（中间部分）
             var paramParts = new List<string>();
@@ -447,7 +442,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             sb.Append(GetBuffEffectDesc(effect));
     
             // 冷却和持续时间
-            sb.Append($"，冷却{{{data.interval}秒}}，持续{{{data.duration}秒}}");
+            sb.Append($"，冷却{{{data.interval}秒}}");
 
             return sb.ToString();
         }
@@ -552,7 +547,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [Header("触发类型")] public TriggerType triggerType;
         [Header("触发概率")] public float probability;
         [Header("触发间隔")] public float interval;
-        [Header("触发时间")] public float duration;
         [Header("Buff施加对象的类型")]
         public ConditionTargetType targetType;
         [Header("Buff额外权重系数")]

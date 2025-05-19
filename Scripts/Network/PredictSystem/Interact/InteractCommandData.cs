@@ -184,6 +184,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         public int Count;
         [MemoryPackOrder(2)]
         public QualityType Quality;
+        [MemoryPackOrder(3)]
+        public int[] ItemIds;
 
         public bool Equals(DroppedItemData other)
         {

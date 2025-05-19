@@ -130,7 +130,7 @@ namespace HotUpdate.Scripts.Config
             var targetName = EnumHeaderParser.GetEnumHeaders(typeof(ConditionTargetType))[data.targetType];
             var paramString = data.conditionParam?.GetConditionDesc() ?? "";
 
-            var effectString = $"[PassiveEffect]{triggerName},概率{data.probability}%,目标{data.targetCount}个{targetName},冷却{data.interval}秒,持续时间{data.duration}秒,Buff权重{data.buffWeight},Buff增益类型{data.buffIncreaseType}";
+            var effectString = $"[PassiveEffect]{triggerName},概率{data.probability}%,目标{data.targetCount}个{targetName},冷却{data.interval}秒,Buff权重{data.buffWeight},Buff增益类型{data.buffIncreaseType}";
             if (!string.IsNullOrEmpty(paramString))
             {
                 effectString += $",{paramString}";

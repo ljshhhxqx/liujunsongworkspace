@@ -17,14 +17,7 @@ namespace HotUpdate.Scripts.Network.Item
         public static GameItemData GetGameItemData(int itemId)
         {
             return _gameItemDatas.GetValueOrDefault(itemId);
-        }
-
-        public static void AddGameItemData(GameItemData gameItemConfigData, NetworkIdentity networkIdentity)
-        {
-            if (networkIdentity.isServer)
-            {
-                _gameItemDatas.TryAdd(gameItemConfigData.ItemId, gameItemConfigData);
-            }
+            
         }
 
         public static void RemoveGameItemData(int itemId, NetworkIdentity networkIdentity)

@@ -125,7 +125,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 {
                     buffId = randomBuff.buffId,
                     propertyType = randomBuff.propertyType,
-                    duration = randomBuff.duration.GetRandomValue(),
+                    duration = randomBuff.duration.GetRandomByWeight(weight),
                     increaseDataList = buffIncreaseData
                 };
                 return buff;

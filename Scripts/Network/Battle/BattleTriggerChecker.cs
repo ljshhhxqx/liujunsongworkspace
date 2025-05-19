@@ -53,6 +53,8 @@ namespace HotUpdate.Scripts.Network.Battle
         {
             switch (header.TriggerType)
             {
+                case TriggerType.None:
+                    return new NoConditionChecker { Header = header };
                 case TriggerType.OnAttack:
                     return new AttackChecker { Header = header,  };
                 case TriggerType.OnAttackHit:
@@ -210,6 +212,29 @@ namespace HotUpdate.Scripts.Network.Battle
         public CurrentConditionCommonParameters CommonParameters;
         public CurrentConditionCommonParameters GetCommonParameters() => CommonParameters;
     }
+    
+    [MemoryPackable]
+    public partial struct NoConditionChecker : IConditionChecker
+    {
+        [MemoryPackOrder(0)]
+        public ConditionCheckerHeader Header;
+        [MemoryPackOrder(1)]
+        private float _cdTime;
+        public float GetCdTime() => _cdTime;
+
+        public float SetCdTime(float cdTime)
+        {
+            _cdTime = cdTime;
+            return _cdTime;
+        }
+
+        public ConditionCheckerHeader GetConditionCheckerHeader() => Header;
+
+        public bool Check<T>(ref IConditionChecker checker, T t) where T : IConditionCheckerParameters
+        {
+            return true;
+        }
+    }
 
     [MemoryPackable]
     public partial struct AttackChecker : IConditionChecker
@@ -236,7 +261,7 @@ namespace HotUpdate.Scripts.Network.Battle
                 var configData = JsonConvert.DeserializeObject<IConditionParam>(header.CheckParams);
                 if (configData != null && configData is AttackConditionParam attackConditionParam)
                 {
-                    return this.CheckCommonParamsCondition(t) &&
+                    return attackConditionParam.CheckConditionValid() && this.CheckCommonParamsCondition(t) &&
                            attackConditionParam.attackRangeType == parameters.AttackRangeType &&
                            Mathf.Approximately(attackConditionParam.attack, parameters.Attack);
                 }
@@ -269,7 +294,7 @@ namespace HotUpdate.Scripts.Network.Battle
                 var configData = JsonConvert.DeserializeObject<IConditionParam>(header.CheckParams);
                 if (configData != null && configData is AttackHitConditionParam attackHitConditionParam)
                 {
-                    return this.CheckCommonParamsCondition(t) && attackHitConditionParam.hpRange.IsInRange(parameters.HpRatio) && 
+                    return attackHitConditionParam.CheckConditionValid() && this.CheckCommonParamsCondition(t) && attackHitConditionParam.hpRange.IsInRange(parameters.HpRatio) && 
                            attackHitConditionParam.damageRange.IsInRange(parameters.Damage) && attackHitConditionParam.attackRangeType == parameters.AttackRangeType;
                 }
             }
@@ -302,8 +327,8 @@ namespace HotUpdate.Scripts.Network.Battle
                 var configData = JsonConvert.DeserializeObject<IConditionParam>(header.CheckParams);
                 if (configData != null && configData is SkillCastConditionParam skillCastConditionParam)
                 {
-                    return this.CheckCommonParamsCondition(t) && skillCastConditionParam.skillType == parameters.SkillType && 
-                            skillCastConditionParam.mpRange.IsInRange(parameters.MpRatio);
+                    return configData.CheckConditionValid() && this.CheckCommonParamsCondition(t) && skillCastConditionParam.skillType == parameters.SkillType && 
+                           skillCastConditionParam.mpRange.IsInRange(parameters.MpRatio);
                 }
             }
             return false;
@@ -335,7 +360,7 @@ namespace HotUpdate.Scripts.Network.Battle
                 var configData = JsonConvert.DeserializeObject<IConditionParam>(header.CheckParams);
                 if (configData != null && configData is SkillHitConditionParam skillHitConditionParam)
                 {
-                    return this.CheckCommonParamsCondition(t) && skillHitConditionParam.skillType == parameters.SkillType && 
+                    return configData.CheckConditionValid() && this.CheckCommonParamsCondition(t) && skillHitConditionParam.skillType == parameters.SkillType && 
                            skillHitConditionParam.mpRange.IsInRange(parameters.MpRatio) && skillHitConditionParam.hpRange.IsInRange(parameters.HpRatio)
                            && skillHitConditionParam.damageRange.IsInRange(parameters.DamageRatio);
                 }
@@ -369,9 +394,9 @@ namespace HotUpdate.Scripts.Network.Battle
                 var configData = JsonConvert.DeserializeObject<IConditionParam>(header.CheckParams);
                 if (configData != null && configData is TakeDamageConditionParam takeDamageConditionParam)
                 {
-                    return this.CheckCommonParamsCondition(t) && takeDamageConditionParam.damageType == parameters.DamageType
-                            && takeDamageConditionParam.hpRange.IsInRange(parameters.HpRatio)
-                            && takeDamageConditionParam.damageRange.IsInRange(parameters.DamageRatio);
+                    return configData.CheckConditionValid() && this.CheckCommonParamsCondition(t) && takeDamageConditionParam.damageType == parameters.DamageType
+                           && takeDamageConditionParam.hpRange.IsInRange(parameters.HpRatio)
+                           && takeDamageConditionParam.damageRange.IsInRange(parameters.DamageRatio);
                 }
             }
             return false;
@@ -416,7 +441,7 @@ namespace HotUpdate.Scripts.Network.Battle
                         killChecker.IsNotInWindow = false;
                     }, null, 0.1f, _cancellationTokenSource.Token);
 
-                    return this.CheckCommonParamsCondition(t) && killConditionParam.targetCount == killChecker.CurrentKillCount;
+                    return configData.CheckConditionValid() && this.CheckCommonParamsCondition(t) && killConditionParam.targetCount == killChecker.CurrentKillCount;
                 }
             }
             return false;
@@ -457,7 +482,7 @@ namespace HotUpdate.Scripts.Network.Battle
                 var configData = JsonConvert.DeserializeObject<IConditionParam>(header.CheckParams);
                 if (configData != null && configData is HpChangeConditionParam hpChangeConditionParam)
                 {
-                    return this.CheckCommonParamsCondition(t) && hpChangeConditionParam.hpRange.IsInRange(parameters.HpRatio);
+                    return configData.CheckConditionValid() && this.CheckCommonParamsCondition(t) && hpChangeConditionParam.hpRange.IsInRange(parameters.HpRatio);
                 }
             }
             return false;
@@ -488,7 +513,7 @@ namespace HotUpdate.Scripts.Network.Battle
                 var configData = JsonConvert.DeserializeObject<IConditionParam>(header.CheckParams);
                 if (configData != null && configData is MpChangeConditionParam mpChangeConditionParam)
                 {
-                    return this.CheckCommonParamsCondition(t)  && mpChangeConditionParam.mpRange.IsInRange(parameters.MpRatio);
+                    return configData.CheckConditionValid() && this.CheckCommonParamsCondition(t)  && mpChangeConditionParam.mpRange.IsInRange(parameters.MpRatio);
                 }
             }
             return false;
@@ -519,9 +544,9 @@ namespace HotUpdate.Scripts.Network.Battle
                 var configData = JsonConvert.DeserializeObject<IConditionParam>(header.CheckParams);
                 if (configData != null && configData is CriticalHitConditionParam criticalHitConditionParam)
                 {
-                    return this.CheckCommonParamsCondition(t) && criticalHitConditionParam.hpRange.IsInRange(parameters.HpRatio) 
-                                                              && criticalHitConditionParam.damageType == parameters.DamageType 
-                                                              && criticalHitConditionParam.damageRange.IsInRange(parameters.DamageRatio);
+                    return configData.CheckConditionValid() && this.CheckCommonParamsCondition(t) && criticalHitConditionParam.hpRange.IsInRange(parameters.HpRatio) 
+                           && criticalHitConditionParam.damageType == parameters.DamageType 
+                           && criticalHitConditionParam.damageRange.IsInRange(parameters.DamageRatio);
                 }
             }
             return false;
@@ -552,7 +577,7 @@ namespace HotUpdate.Scripts.Network.Battle
                 var configData = JsonConvert.DeserializeObject<IConditionParam>(header.CheckParams);
                 if (configData != null && configData is  DodgeConditionParam dodgeConditionParam)
                 {
-                    return this.CheckCommonParamsCondition(t);
+                    return configData.CheckConditionValid() && this.CheckCommonParamsCondition(t);
                 }
             }
             return false;
@@ -564,7 +589,7 @@ namespace HotUpdate.Scripts.Network.Battle
         public static bool CheckCommonParamsCondition(this IConditionChecker conditionChecker, IConditionCheckerParameters parameters)
         {
             var checkerHeader = conditionChecker.GetConditionCheckerHeader();
-            var configData = JsonConvert.DeserializeObject<IConditionParam>(checkerHeader.CheckParams);
+            //var configData = JsonConvert.DeserializeObject<IConditionParam>(checkerHeader.CheckParams);
             var commonParams = parameters.GetCommonParameters();
             return commonParams.Probability >= checkerHeader.Probability && commonParams.TargetCount >= checkerHeader.TargetCount &&
                    commonParams.ConditionTargetType.HasAllStates(checkerHeader.TargetType);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using AOTScripts.Data;
 using Cysharp.Threading.Tasks;
 using Data;
 using HotUpdate.Scripts.Collector;
@@ -70,6 +71,68 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             _playerBaseColliderData = GamePhysicsSystem.CreateColliderConfig(_playerBasePrefab.GetComponent<Collider>());
             var bases = _playerSpawnPoints.Keys.ToArray();
             SpawnAllBasesRpc(bases);
+        }
+
+        [Server]
+        public int[] GetPlayerIdsByTargetType(int selfId, int count, ConditionTargetType targetType)
+        {
+            switch (targetType)
+            {
+                case ConditionTargetType.Self:
+                    return new int[] { selfId };
+                case ConditionTargetType.Enemy:
+                    return GetPlayerIdsWithEnemy(selfId, count);
+                case ConditionTargetType.Ally:
+                    return GetPlayerIdsWithAlly(selfId, count);
+                case ConditionTargetType.Player:
+                    return GetPlayerIds(selfId, count);
+                case ConditionTargetType.EnemyPlayer:
+                    return GetPlayerIdsWithEnemy(selfId, count);
+                case ConditionTargetType.AllyPlayer:
+                    return GetPlayerIdsWithAlly(selfId, count);
+                case ConditionTargetType.All:
+                    return GetPlayerIds(selfId, count);
+                default:
+                    return new int[] { selfId };
+            }
+        }
+
+        public int[] GetPlayerIds(int selfId, int count)
+        {
+            return _playerIds.Keys.Where(id => id != selfId).Take(count).ToArray();
+        }
+
+        private int[] GetPlayerIdsWithEnemy(int selfId, int count)
+        {
+            var playerIds = _playerIds.Keys;
+            var enemyIds = new HashSet<int>();
+            foreach (var id in playerIds)
+            {
+                var unionId = _playerUnionIds.GetValueOrDefault(GetPlayerNetId(id));
+                if (unionId == _playerUnionIds.GetValueOrDefault(GetPlayerNetId(id)))
+                {
+                    enemyIds.Add(id);
+                }
+            }
+            return enemyIds.Take(count).ToArray();
+        }
+
+        private int[] GetPlayerIdsWithAlly(int selfId, int count, bool includeSelf = false)
+        {
+            var playerIds = _playerIds.Keys;
+            var allyIds = new HashSet<int>();
+            foreach (var id in playerIds)
+            {
+                if (id != selfId)
+                {
+                    var unionId = _playerUnionIds.GetValueOrDefault(GetPlayerNetId(id));
+                    if (unionId == _playerUnionIds.GetValueOrDefault(GetPlayerNetId(selfId)))
+                    {
+                        allyIds.Add(id);
+                    }
+                }
+            }
+            return allyIds.Take(count).ToArray();
         }
 
         [ClientRpc]

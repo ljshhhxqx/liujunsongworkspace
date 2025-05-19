@@ -357,8 +357,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             return success;
         }
 
-        public static bool RemoveItem(ref PlayerItemState state, int slotIndex, int count, out PlayerBagSlotItem slotItem)
+        public static bool RemoveItem(ref PlayerItemState state, int slotIndex, int count, out PlayerBagSlotItem slotItem, out int[] removedItemIds)
         {
+            removedItemIds = new int[count];
             if (!state.PlayerItemConfigIdSlotDictionary.TryGetValue(slotIndex, out slotItem))
             {
                 Debug.LogWarning($"槽位物品不存在: {slotIndex}");
@@ -377,7 +378,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 return false;
             }
 
-            var itemId = slotItem.ItemIds.RandomSelects(count);
+            removedItemIds = slotItem.ItemIds.RandomSelects(count);
     
             // 更新数量或完全移除
             if (slotItem.Count > count)
@@ -390,9 +391,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 state.PlayerItemConfigIdSlotDictionary.Remove(slotIndex);
             }
             
-            for (int i = 0; i < itemId.Length; i++)
+            for (int i = 0; i < removedItemIds.Length; i++)
             {
-                state.PlayerItems.Remove(itemId[i]);
+                state.PlayerItems.Remove(removedItemIds[i]);
             }
 
     
@@ -407,7 +408,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 return false;
             }
     
-            return RemoveItem(ref state, slotItem.IndexSlot, count, out slotItem);
+            return RemoveItem(ref state, slotItem.IndexSlot, count, out slotItem, out _);
         }
         public static bool UpdateItemState(ref PlayerItemState state, int slotIndex, ItemState newState)
         {

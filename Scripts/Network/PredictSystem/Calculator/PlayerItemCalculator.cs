@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using AOTScripts.Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Battle;
 using HotUpdate.Scripts.Network.Item;
@@ -93,6 +94,24 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return null;
         }
 
+        public static BattleEffectConditionConfigData GetBattleEffectConditionConfigData(int equipConfigId,
+            EquipmentPart part)
+        {
+            var battleEffectId = part switch
+            {
+                EquipmentPart.Weapon => Constant.WeaponConfig.GetWeaponConfigData(equipConfigId).battleEffectConditionId,
+                EquipmentPart.Body or EquipmentPart.Head or EquipmentPart.Leg or EquipmentPart.Feet
+                    or EquipmentPart.Waist => Constant.ArmorConfig.GetArmorConfigData(equipConfigId).battleEffectConditionId,
+                _ => 0
+            };
+            if (battleEffectId == 0)
+            {
+                Debug.LogError($"{nameof(BattleEffectConditionConfigData)} not found");
+                return default;
+            }
+            return Constant.ConditionConfig.GetConditionData(battleEffectId);
+        }
+
         public static ConditionCheckerHeader GetConditionCheckerHeader(PlayerItemType itemType, int itemConfigId)
         {
             var conditionConfigId = 0;
@@ -124,7 +143,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         {
             foreach (var item in itemSellCommand.Slots)
             {
-                if (PlayerItemState.RemoveItem(ref playerItemState, item.SlotIndex, item.Count, out var bagSlotItem))
+                if (PlayerItemState.RemoveItem(ref playerItemState, item.SlotIndex, item.Count, out var bagSlotItem, out var removedItemIds))
                 {
                     var config = Constant.ItemConfig.GetGameItemData(bagSlotItem.ConfigId);
                     if (config.itemType != PlayerItemType.Weapon && config.itemType != PlayerItemType.Armor)
@@ -134,6 +153,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     var configId = GetEquipmentConfigId(config.itemType, bagSlotItem.ConfigId);
                     if (configId != 0 && Constant.IsServer)
                     {
+                        for (int i = 0; i < removedItemIds.Length; i++)
+                        {
+                            GameItemManager.RemoveGameItemData(removedItemIds[i], Constant.GameSyncManager.netIdentity);
+                        }
                         Constant.GameSyncManager.EnqueueServerCommand(new EquipmentCommand
                         {
                             Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
@@ -153,7 +176,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             for (int i = 0; i < itemDropCommand.Slots.Length; i++)
             {
                 var item = itemDropCommand.Slots[i];
-                if (!PlayerItemState.RemoveItem(ref playerItemState, item.SlotIndex, item.Count, out var bagSlotItem))
+                if (!PlayerItemState.RemoveItem(ref playerItemState, item.SlotIndex, item.Count, out var bagSlotItem, out var removedItemIds))
                 {
                     Debug.LogError($"Failed to remove item {item.SlotIndex}");
                     return;
@@ -163,6 +186,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 {
                     Count = bagSlotItem.Count,
                     ItemConfigId = bagSlotItem.ConfigId,
+                    ItemIds = Constant.IsServer ? removedItemIds : Array.Empty<int>(),
                 };
             }
             if (!Constant.IsServer)
@@ -279,6 +303,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 PlayerItemState.TryAddAndEquipItem(ref playerItemState, bagItem, out var isEquipped);
                 if (!Constant.IsServer)
                     return;
+                var gameItemData = new GameItemData
+                {
+                    ItemId = itemsData.ItemUniqueId[0],
+                    ItemConfigId = itemsData.ItemConfigId,
+                    ItemType = itemConfigData.itemType,
+                    ItemState = ItemState.IsInBag,
+                };
+                GameItemManager.AddItemData(gameItemData, Constant.GameSyncManager.netIdentity);
                 if (isEquipped)
                 {
                     var equipmentCommand = new EquipmentCommand();
