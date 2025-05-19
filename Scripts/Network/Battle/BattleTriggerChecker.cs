@@ -9,6 +9,7 @@ using MemoryPack;
 using Newtonsoft.Json;
 using Tool.Coroutine;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Network.Battle
 {
@@ -115,44 +116,130 @@ namespace HotUpdate.Scripts.Network.Battle
     public struct CurrentConditionCommonParameters
     {
         public float Probability;
-        public ConditionTargetType ConditionTargetType;
-        public int TargetCount;
         public TriggerType TriggerType;
+
+        public static CurrentConditionCommonParameters CreateParameters(TriggerType triggerType, float probability)
+        {
+            return new CurrentConditionCommonParameters
+            {
+                Probability = probability,
+                TriggerType = triggerType
+            };
+        }
     }
 
-    public interface IConditionCheckerParameters
+    [MemoryPackable(GenerateType.NoGenerate)]
+    [MemoryPackUnion(0, typeof(AttackCheckerParameters))]
+    [MemoryPackUnion(1, typeof(AttackHitCheckerParameters))]
+    [MemoryPackUnion(2, typeof(SkillCastCheckerParameters))]
+    [MemoryPackUnion(3, typeof(SkillHitCheckerParameters))]
+    [MemoryPackUnion(4, typeof(TakeDamageCheckerParameters))]
+    [MemoryPackUnion(5, typeof(KillCheckerParameters))]
+    [MemoryPackUnion(6, typeof(HpChangeCheckerParameters))]
+    [MemoryPackUnion(7, typeof(MpChangeCheckerParameters))]
+    [MemoryPackUnion(8, typeof(CriticalHitCheckerParameters))]
+    [MemoryPackUnion(9, typeof(DodgeCheckerParameters))]
+    [MemoryPackUnion(10, typeof(DeathCheckerParameters))]
+    public partial interface IConditionCheckerParameters
     {
         CurrentConditionCommonParameters GetCommonParameters();
     }
 
-    public struct AttackCheckerParameters : IConditionCheckerParameters
+    [MemoryPackable]
+    public partial struct DeathCheckerParameters : IConditionCheckerParameters
     {
+        [MemoryPackOrder(0)]
         public CurrentConditionCommonParameters CommonParameters;
+        public CurrentConditionCommonParameters GetCommonParameters() => CommonParameters;
+
+        public static DeathCheckerParameters CreateParameters(TriggerType triggerType)
+        {
+            var probability = Random.Range(0f, 100f);
+            return new DeathCheckerParameters
+            {
+                CommonParameters = CurrentConditionCommonParameters.CreateParameters(triggerType, probability)
+            };
+        }
+    }
+
+    [MemoryPackable]
+    public partial struct AttackCheckerParameters : IConditionCheckerParameters
+    {
+        [MemoryPackOrder(0)]
+        public CurrentConditionCommonParameters CommonParameters;
+        [MemoryPackOrder(1)]
         public AttackRangeType AttackRangeType;
+        [MemoryPackOrder(2)]
         public float Attack;
         public CurrentConditionCommonParameters GetCommonParameters() => CommonParameters;
+
+        public static AttackCheckerParameters CreateParameters(TriggerType triggerType, 
+            AttackRangeType attackRangeType, float attack)
+        {
+            var probability = Random.Range(0f, 100f);
+            return new AttackCheckerParameters
+            {
+                CommonParameters = CurrentConditionCommonParameters.CreateParameters(triggerType, probability),
+                AttackRangeType = attackRangeType,
+                Attack = attack
+            };
+        }
     }
 
-    public struct AttackHitCheckerParameters : IConditionCheckerParameters
+    [MemoryPackable]
+    public partial struct AttackHitCheckerParameters : IConditionCheckerParameters
     {
+        [MemoryPackOrder(0)]
         public CurrentConditionCommonParameters CommonParameters;
+        [MemoryPackOrder(1)]
         public float HpRatio;
+        [MemoryPackOrder(2)]
         public float Damage;
+        [MemoryPackOrder(3)]
         public AttackRangeType AttackRangeType;
         public CurrentConditionCommonParameters GetCommonParameters() => CommonParameters;
+        public static AttackHitCheckerParameters CreateParameters(TriggerType triggerType, 
+            float hpRatio, float damage, AttackRangeType attackRangeType)
+        {
+            var probability = Random.Range(0f, 100f);
+            return new AttackHitCheckerParameters
+            {
+                CommonParameters = CurrentConditionCommonParameters.CreateParameters(triggerType, probability),
+                HpRatio = hpRatio,
+                Damage = damage,
+                AttackRangeType = attackRangeType
+            };
+        }
     }
 
-    public struct SkillCastCheckerParameters : IConditionCheckerParameters
+    [MemoryPackable]
+    public partial struct SkillCastCheckerParameters : IConditionCheckerParameters
     {
+        [MemoryPackOrder(0)]
         public CurrentConditionCommonParameters CommonParameters;
+        [MemoryPackOrder(1)]
         public float MpRatio;
+        [MemoryPackOrder(2)]
         public SkillType SkillType;
 
         public CurrentConditionCommonParameters GetCommonParameters() => CommonParameters;
+        public static SkillCastCheckerParameters CreateParameters(TriggerType triggerType, 
+            float mpRatio, SkillType skillType)
+        {
+            var probability = Random.Range(0f, 100f);
+            return new SkillCastCheckerParameters
+            {
+                CommonParameters = CurrentConditionCommonParameters.CreateParameters(triggerType, probability),
+                MpRatio = mpRatio,
+                SkillType = skillType
+            };
+            }
     }
     
-    public struct SkillHitCheckerParameters : IConditionCheckerParameters
+    [MemoryPackable]
+    public partial struct SkillHitCheckerParameters : IConditionCheckerParameters
     {
+        [MemoryPackOrder(0)]
         public CurrentConditionCommonParameters CommonParameters;
         public float DamageRatio;
         public float MpRatio;
@@ -160,57 +247,152 @@ namespace HotUpdate.Scripts.Network.Battle
         public float HpRatio;
 
         public CurrentConditionCommonParameters GetCommonParameters() => CommonParameters;
+        
+        public static SkillHitCheckerParameters CreateParameters(TriggerType triggerType, 
+            float damageRatio, float mpRatio, SkillType skillType, float hpRatio)
+        {
+            
+            var probability = Random.Range(0f, 100f);
+            return new SkillHitCheckerParameters
+            {
+                CommonParameters = CurrentConditionCommonParameters.CreateParameters(triggerType, probability),
+                DamageRatio = damageRatio,
+                MpRatio = mpRatio,
+                SkillType = skillType,
+                HpRatio = hpRatio
+            };
+        }
     }
 
-    public struct TakeDamageCheckerParameters : IConditionCheckerParameters
+    [MemoryPackable]
+    public partial struct TakeDamageCheckerParameters : IConditionCheckerParameters
     {
-        
+        [MemoryPackOrder(0)]
         public CurrentConditionCommonParameters CommonParameters;
+        [MemoryPackOrder(1)]
         public DamageType DamageType;
+        //剩余HP占比
+        [MemoryPackOrder(2)]
         public float HpRatio;
+        //受伤占最大生命值比例
+        [MemoryPackOrder(3)]
         public float DamageRatio;
 
         public CurrentConditionCommonParameters GetCommonParameters() => CommonParameters;
+        
+        public static TakeDamageCheckerParameters CreateParameters(TriggerType triggerType, 
+            DamageType damageType, float hpRatio, float damageRatio)
+        {
+            var probability = Random.Range(0f, 100f);
+            return new TakeDamageCheckerParameters
+            {
+                CommonParameters = CurrentConditionCommonParameters.CreateParameters(triggerType, probability),
+                DamageType = damageType,
+                HpRatio = hpRatio,
+                DamageRatio = damageRatio
+            };
+        }
     }
 
-    public struct KillCheckerParameters : IConditionCheckerParameters
+    [MemoryPackable]
+    public partial struct KillCheckerParameters : IConditionCheckerParameters
     {
+        [MemoryPackOrder(0)]
         public CurrentConditionCommonParameters CommonParameters;
         public CurrentConditionCommonParameters GetCommonParameters() => CommonParameters;
+        public static KillCheckerParameters CreateParameters(TriggerType triggerType)
+        {
+            var probability = Random.Range(0f, 100f);
+            return new KillCheckerParameters
+            {
+                CommonParameters = CurrentConditionCommonParameters.CreateParameters(triggerType, probability)
+            };
+        }
     }
 
-    public struct HpChangeCheckerParameters : IConditionCheckerParameters
+    [MemoryPackable]
+    public partial struct HpChangeCheckerParameters : IConditionCheckerParameters
     {
+        [MemoryPackOrder(0)]
         public CurrentConditionCommonParameters CommonParameters;
+        [MemoryPackOrder(1)]
         public float HpRatio;
 
         public CurrentConditionCommonParameters GetCommonParameters() => CommonParameters;
+        public static HpChangeCheckerParameters CreateParameters(TriggerType triggerType, float hpRatio)
+        {
+            
+            var probability = Random.Range(0f, 100f);
+            return new HpChangeCheckerParameters
+            {
+                CommonParameters = CurrentConditionCommonParameters.CreateParameters(triggerType, probability),
+                HpRatio = hpRatio
+            };
+        }
     }
 
-    public struct MpChangeCheckerParameters : IConditionCheckerParameters
+    [MemoryPackable]
+    public partial struct MpChangeCheckerParameters : IConditionCheckerParameters
     {
-        
+        [MemoryPackOrder(0)]
         public CurrentConditionCommonParameters CommonParameters;
-        public float MpRatio { get; set; }
+        [MemoryPackOrder(1)]
+
+        public float MpRatio;
 
         public CurrentConditionCommonParameters GetCommonParameters() => CommonParameters;
+        public static MpChangeCheckerParameters CreateParameters(TriggerType triggerType, float mpRatio)
+        {
+            var probability = Random.Range(0f, 100f);
+            return new MpChangeCheckerParameters
+            {
+                CommonParameters = CurrentConditionCommonParameters.CreateParameters(triggerType, probability),
+                MpRatio = mpRatio
+            };
+        }
     }
 
-    public struct CriticalHitCheckerParameters : IConditionCheckerParameters
+    [MemoryPackable]
+    public partial struct CriticalHitCheckerParameters : IConditionCheckerParameters
     {
+        [MemoryPackOrder(0)]
         public CurrentConditionCommonParameters CommonParameters;
-
-        public float DamageRatio { get; set; }
-        public float HpRatio { get; set; }
-        public DamageType DamageType { get; set; }
+        [MemoryPackOrder(1)]
+        public float DamageRatio;
+        [MemoryPackOrder(2)]
+        public float HpRatio;
+        [MemoryPackOrder(3)]
+        public DamageType DamageType;
 
         public CurrentConditionCommonParameters GetCommonParameters() => CommonParameters;
+        public static CriticalHitCheckerParameters CreateParameters(TriggerType triggerType, 
+            float damageRatio, float hpRatio, DamageType damageType)
+        {
+            var probability = Random.Range(0f, 100f);
+            return new CriticalHitCheckerParameters
+            {
+                CommonParameters = CurrentConditionCommonParameters.CreateParameters(triggerType, probability),
+                DamageRatio = damageRatio,
+                HpRatio = hpRatio,
+                DamageType = damageType
+            };
+        }
     }
 
-    public struct DodgeCheckerParameters : IConditionCheckerParameters
+    [MemoryPackable]
+    public partial struct DodgeCheckerParameters : IConditionCheckerParameters
     {
+        [MemoryPackOrder(0)]
         public CurrentConditionCommonParameters CommonParameters;
         public CurrentConditionCommonParameters GetCommonParameters() => CommonParameters;
+        public static DodgeCheckerParameters CreateParameters(TriggerType triggerType)
+        {
+            var probability = Random.Range(0f, 100f);
+            return new DodgeCheckerParameters
+            {
+                CommonParameters = CurrentConditionCommonParameters.CreateParameters(triggerType, probability)
+            };
+        }
     }
     
     [MemoryPackable]
@@ -591,8 +773,7 @@ namespace HotUpdate.Scripts.Network.Battle
             var checkerHeader = conditionChecker.GetConditionCheckerHeader();
             //var configData = JsonConvert.DeserializeObject<IConditionParam>(checkerHeader.CheckParams);
             var commonParams = parameters.GetCommonParameters();
-            return commonParams.Probability >= checkerHeader.Probability && commonParams.TargetCount >= checkerHeader.TargetCount &&
-                   commonParams.ConditionTargetType.HasAllStates(checkerHeader.TargetType);
+            return commonParams.Probability >= checkerHeader.Probability && commonParams.TriggerType == checkerHeader.TriggerType;
         }
     }
 }

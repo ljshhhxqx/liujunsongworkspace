@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using AOTScripts.Data;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.Battle;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
@@ -24,6 +26,7 @@ using PlayerGameStateData = HotUpdate.Scripts.Network.PredictSystem.State.Player
 using PlayerInputState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerInputState;
 using PropertyAttackCommand = HotUpdate.Scripts.Network.PredictSystem.Data.PropertyAttackCommand;
 using PropertyServerAnimationCommand = HotUpdate.Scripts.Network.PredictSystem.Data.PropertyServerAnimationCommand;
+using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
@@ -133,6 +136,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property),
                 AttackerId = connectionId,
                 TargetIds = defenders,
+            });
+            var attack = propertySyncSystem.GetPlayerProperty(connectionId, PropertyTypeEnum.Attack);
+            var triggerParams = AttackCheckerParameters.CreateParameters(TriggerType.OnAttack,
+                AttackRangeType.None, attack);
+            GameSyncManager.EnqueueServerCommand(new TriggerCommand
+            {
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment),
+                TriggerType = TriggerType.OnAttack,
+                TriggerData = MemoryPackSerializer.Serialize(triggerParams),
             });
         }
 

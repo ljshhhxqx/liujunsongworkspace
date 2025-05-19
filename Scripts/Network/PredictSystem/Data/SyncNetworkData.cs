@@ -971,7 +971,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
         public TriggerType TriggerType;
-        [MemoryPackOrder(3)] 
+        [MemoryPackOrder(2)] 
         public byte[] TriggerData;
         public NetworkCommandHeader GetHeader() => Header;
 

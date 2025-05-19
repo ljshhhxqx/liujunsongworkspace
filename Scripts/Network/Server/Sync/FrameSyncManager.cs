@@ -278,7 +278,7 @@ namespace HotUpdate.Scripts.Network.Server.Sync
                     return new DamageResult
                     {
                         targetId = player.connectionToClient.connectionId,
-                        damageAmount = damage,
+                        damageAmount = damage.Damage,
                         isDead = remainingHp <= 0
                     };
                 }

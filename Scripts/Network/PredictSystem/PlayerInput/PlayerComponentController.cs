@@ -643,12 +643,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         }
 
         [Server]
-        public void HandleAttackProperty(ref PlayerPredictablePropertyState playerPredictablePropertyState, ref Dictionary<int, PlayerPredictablePropertyState> defenders, Func<float, float, float, float, float> getDamageFunction)
-        {
-            _playerPropertyCalculator.HandleAttack(ref playerPredictablePropertyState, ref defenders, getDamageFunction);
-        }
-
-        [Server]
         public void HandleAnimationCost(ref PlayerPredictablePropertyState playerPredictablePropertyState, AnimationState animationState, float cost)
         {
             _playerPropertyCalculator.HandleAnimationCommand(ref playerPredictablePropertyState, animationState, cost);

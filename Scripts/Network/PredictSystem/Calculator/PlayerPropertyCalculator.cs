@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AOTScripts.Data;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.State;
@@ -43,7 +44,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return Properties[propertyType].CurrentValue;
         }
 
-        public void HandleAttack(ref PlayerPredictablePropertyState playerPredictablePropertyState, ref Dictionary<int, PlayerPredictablePropertyState> defenders, Func<float, float, float, float, float> getDamageFunction)
+        public static DamageResultData[] HandleAttack(int connectionId, ref PlayerPredictablePropertyState playerPredictablePropertyState, 
+            ref Dictionary<int, PlayerPredictablePropertyState> defenders, Func<float, float, float, float, DamageCalculateResultData> getDamageFunction)
         {
             var playerState = playerPredictablePropertyState;
             var propertyState = playerState.Properties;
@@ -51,25 +53,45 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var critical = propertyState[PropertyTypeEnum.CriticalRate].CurrentValue;
             var criticalDamage = propertyState[PropertyTypeEnum.CriticalDamageRatio].CurrentValue;
             var defenderPropertyStates = defenders;
+            var damageResultDatas = new List<DamageResultData>();
             foreach (var (key, defenderPropertyState) in defenders)
             {
+                var resultData = new DamageResultData();
+                resultData.Hitter = connectionId;
+                resultData.Defender = key;
+                resultData.DamageCalculateResult = new DamageCalculateResultData();
+                resultData.DamageCalculateResult.Damage = 0;
+                resultData.DamageCalculateResult.IsCritical = false;
+                resultData.IsDodged = false;
+                resultData.DamageType = DamageType.Physical;
+                resultData.DamageCastType = DamageCastType.NormalAttack;
+                resultData.DamageRatio = 0;
+                resultData.IsDead = false;
                 if (defenderPropertyState.SubjectedState.HasAnyState(SubjectedStateType.IsInvisible))
                 {
                     Debug.Log($"PlayerConnectionId: {key} is invisible, cannot attack.");
+                    resultData.IsDodged = true;
+                    damageResultDatas.Add(resultData);
                     continue;
                 }
                 var defense = defenderPropertyState.Properties[PropertyTypeEnum.Defense].CurrentValue;
-                var damage = getDamageFunction(attack, defense, critical, criticalDamage);
-                if (damage <= 0)
-                {
-                    continue;
-                }
-                var remainHealth = GetRemainHealth(defenderPropertyState.Properties[PropertyTypeEnum.Health], damage);
+                resultData.DamageCalculateResult = getDamageFunction(attack, defense, critical, criticalDamage);
+                resultData.DamageRatio = resultData.DamageCalculateResult.Damage /
+                                         defenderPropertyState.Properties[PropertyTypeEnum.Health].MaxCurrentValue;
+                var remainHealth = GetRemainHealth(defenderPropertyState.Properties[PropertyTypeEnum.Health], resultData.DamageCalculateResult.Damage);
                 defenderPropertyState.Properties[PropertyTypeEnum.Health] = remainHealth;
                 defenderPropertyStates[key] = defenderPropertyState;
+                resultData.HpRemainRatio = remainHealth.CurrentValue /
+                                          defenderPropertyState.Properties[PropertyTypeEnum.Health].MaxCurrentValue;
+                if (remainHealth.CurrentValue <= 0)
+                {
+                    resultData.IsDead = true;
+                }
+                damageResultDatas.Add(resultData);
             }
             defenders = defenderPropertyStates;
             playerPredictablePropertyState = playerState;   
+            return damageResultDatas.ToArray();
         }
         
         public void HandlePropertyRecover(ref PlayerPredictablePropertyState playerPredictablePropertyState)
@@ -164,7 +186,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             playerPredictablePropertyState = propertyState;
         }
 
-        private PropertyCalculator GetRemainHealth(PropertyCalculator health, float damage)
+        private static PropertyCalculator GetRemainHealth(PropertyCalculator health, float damage)
         {
             return health.UpdateCalculator(health, new BuffIncreaseData
             {

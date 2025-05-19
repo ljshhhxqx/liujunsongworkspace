@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using AOTScripts.Data;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.Battle;
+using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
@@ -772,8 +775,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var defendersState = PropertyStates
                 .Where(x => defenderPlayerIds.Contains(x.Key))
                 .ToDictionary(x => x.Key, x => (PlayerPredictablePropertyState)x.Value);
-            var playerController = GameSyncManager.GetPlayerConnection(attacker);
-            playerController.HandleAttackProperty(ref propertyState, ref defendersState, _jsonDataConfig.GetDamage);
+            var damageDatas = PlayerPropertyCalculator.HandleAttack(attacker, ref propertyState, ref defendersState, _jsonDataConfig.GetDamage);
             for (int i = 0; i < defenderPlayerIds.Length; i++)
             {
                 PropertyStates[defenderPlayerIds[i]] = defendersState[defenderPlayerIds[i]];
@@ -781,13 +783,52 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 if (PropertyStates[defenderPlayerIds[i]] is PlayerPredictablePropertyState playerPropertyState &&
                     playerPropertyState.Properties[PropertyTypeEnum.Health].CurrentValue <= 0)
                 {
-                    //todo: handle dead player logic
                     var deadManId = _playerInGameManager.GetPlayerNetId(defenderPlayerIds[i]);
                     var deadTime = _jsonDataConfig.GameConfig.GetPlayerDeathTime((int)defendersState[defenderPlayerIds[i]].Properties[PropertyTypeEnum.Score].CurrentValue);
                     if (!_playerInGameManager.TryAddDeathPlayer(deadManId, deadTime, attacker, OnPlayerDeath, OnPlayerRespawn))
                     {
                         Debug.LogError($"PlayerPropertySyncSystem: Failed to add death player {deadManId}");
                     }
+                }
+            }
+
+            foreach (var damageData in damageDatas)
+            {
+                var attackHitCheckerParameters = AttackHitCheckerParameters.CreateParameters(TriggerType.OnAttackHit,
+                    damageData.DamageRatio, damageData.DamageCalculateResult.Damage, AttackRangeType.None);
+                GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                {
+                    Header = GameSyncManager.CreateNetworkCommandHeader(attacker, CommandType.Equipment),
+                    TriggerType = TriggerType.OnAttack,
+                    TriggerData = MemoryPackSerializer.Serialize(attackHitCheckerParameters),
+                });
+                if (damageData.DamageCalculateResult.IsCritical)
+                {
+                    var criticalHitCheckerParameters = CriticalHitCheckerParameters.CreateParameters(
+                        TriggerType.OnCriticalHit,
+                        damageData.DamageRatio, damageData.DamageCalculateResult.Damage, DamageType.Physical);
+                    
+                    GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                    {
+                        Header = GameSyncManager.CreateNetworkCommandHeader(attacker, CommandType.Equipment),
+                        TriggerType = TriggerType.OnCriticalHit,
+                        TriggerData = MemoryPackSerializer.Serialize(criticalHitCheckerParameters),
+                    });
+
+                }
+
+                if (damageData.IsDead)
+                {
+                    var deadManId = damageData.Defender;
+                    var hitterPlayerId = damageData.Hitter;
+                    var deathCheckerParameters = DeathCheckerParameters.CreateParameters(TriggerType.OnDeath);
+                    
+                    GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                    {
+                        Header = GameSyncManager.CreateNetworkCommandHeader(deadManId, CommandType.Equipment),
+                        TriggerType = TriggerType.OnDeath,
+                        TriggerData = MemoryPackSerializer.Serialize(deathCheckerParameters),
+                    });
                 }
             }
             PropertyStates[attacker] = propertyState;   
