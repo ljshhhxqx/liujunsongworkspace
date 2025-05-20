@@ -140,9 +140,34 @@ namespace HotUpdate.Scripts.Network.Battle
     [MemoryPackUnion(8, typeof(CriticalHitCheckerParameters))]
     [MemoryPackUnion(9, typeof(DodgeCheckerParameters))]
     [MemoryPackUnion(10, typeof(DeathCheckerParameters))]
+    [MemoryPackUnion(11, typeof(MoveCheckerParameters))]
     public partial interface IConditionCheckerParameters
     {
         CurrentConditionCommonParameters GetCommonParameters();
+    }
+
+    [MemoryPackable]
+    public partial struct MoveCheckerParameters : IConditionCheckerParameters
+    {
+        [MemoryPackOrder(0)]
+        public CurrentConditionCommonParameters CommonParameters;
+        [MemoryPackOrder(1)]
+        public float MoveSpeed;
+        [MemoryPackOrder(2)]
+        public float MoveDistance;
+        public CurrentConditionCommonParameters GetCommonParameters() => CommonParameters;
+
+        public static MoveCheckerParameters CreateParameters(TriggerType triggerType, float moveSpeed,
+            float moveDistance)
+        {
+            var probability = Random.Range(0f, 100f);
+            return new MoveCheckerParameters
+            {
+                CommonParameters = CurrentConditionCommonParameters.CreateParameters(triggerType, probability),
+                MoveSpeed = moveSpeed,
+                MoveDistance = moveDistance
+            };
+        }
     }
 
     [MemoryPackable]
@@ -233,7 +258,7 @@ namespace HotUpdate.Scripts.Network.Battle
                 MpRatio = mpRatio,
                 SkillType = skillType
             };
-            }
+        }
     }
     
     [MemoryPackable]

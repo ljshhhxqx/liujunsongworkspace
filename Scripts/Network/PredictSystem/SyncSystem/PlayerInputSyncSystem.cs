@@ -227,6 +227,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 
                 var playerGameStateData = playerController.HandleServerMoveAndAnimation(inputStateData);
                 PropertyStates[header.ConnectionId] = new PlayerInputState(playerGameStateData, new PlayerAnimationCooldownState(GetCooldownSnapshotData(header.ConnectionId)));
+                if (inputCommand.InputMovement.magnitude > 0.1f && playerGameStateData.AnimationState == AnimationState.Move || playerGameStateData.AnimationState == AnimationState.Sprint)
+                {
+                    var moveSpeed = playerProperty[PropertyTypeEnum.Speed].CurrentValue;
+                    var hpChangedCheckerParameters = MoveCheckerParameters.CreateParameters(
+                        TriggerType.OnHpChange, moveSpeed, moveSpeed * inputCommand.InputMovement.magnitude * GameSyncManager.TickRate);
+                    GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                    {
+                        Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Equipment),
+                        TriggerType = TriggerType.OnMove,
+                        TriggerData = MemoryPackSerializer.Serialize(hpChangedCheckerParameters),
+                    });
+                }
                 return PropertyStates[header.ConnectionId];
             }
 

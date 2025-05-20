@@ -150,7 +150,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }   
         }
         
-        private Dictionary<int, float> GetPlayerProperties(PropertyTypeEnum propertyType, bool isMaxValue = false)
+        private Dictionary<int, float> GetAllPlayerProperties(PropertyTypeEnum propertyType, bool isMaxValue = false)
         {
             var playerProperties = new Dictionary<int, float>();
             foreach (var playerId in PropertyStates.Keys)
@@ -167,9 +167,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             return playerProperties;
         }
 
+        private float GetPlayerOneProperty(int playerId, PropertyTypeEnum propertyType, bool isMaxValue = false)
+        {
+            var playerProperties = GetAllPlayerProperties(propertyType, isMaxValue);
+            return playerProperties.GetValueOrDefault(playerId, 0);
+        }
+
         private Dictionary<int, float> GetSortedPlayerProperties(PropertyTypeEnum propertyType, bool isAscending = true, bool isMaxValue = false)
         {
-            var playerProperties = GetPlayerProperties(propertyType, isMaxValue);
+            var playerProperties = GetAllPlayerProperties(propertyType, isMaxValue);
             if (isAscending)
             {
                 return playerProperties.OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
@@ -626,12 +632,41 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 BuffData = newBuff,
             };
             var propertyCalculator = playerState.Properties[newBuff.BuffData.propertyType];
+            var preHealth = playerState.Properties[PropertyTypeEnum.Health].CurrentValue;
+            var preMana = playerState.Properties[PropertyTypeEnum.Strength].CurrentValue;
             playerState.Properties[newBuff.BuffData.propertyType] = HandleBuffInfo(propertyCalculator, newBuff);
             _activeBuffs = _activeBuffs.Add(buffManagerData);
             var index = _activeBuffs.Count - 1;
             PropertyStates[targetId] = playerState;
+            var changedHp = playerState.Properties[PropertyTypeEnum.Health].CurrentValue - preHealth;
+            var changedMp = playerState.Properties[PropertyTypeEnum.Strength].CurrentValue - preMana;
+            var maxHp = playerState.Properties[PropertyTypeEnum.Health].MaxCurrentValue;
+            var maxMana = playerState.Properties[PropertyTypeEnum.Health].MaxCurrentValue;
             HandlePlayerPropertyDifference(targetId, propertyCalculator, playerState.Properties[newBuff.BuffData.propertyType], newBuff.BuffData.propertyType);
             PropertyChange(targetId);
+            if (changedHp > 0)
+            {
+                var hpChangedCheckerParameters = HpChangeCheckerParameters.CreateParameters(
+                    TriggerType.OnHpChange, changedHp / maxHp);
+                GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                {
+                    Header = GameSyncManager.CreateNetworkCommandHeader(targetId, CommandType.Equipment),
+                    TriggerType = TriggerType.OnHpChange,
+                    TriggerData = MemoryPackSerializer.Serialize(hpChangedCheckerParameters),
+                });
+            }
+
+            if (changedMp > 0)
+            {
+                var mpChangedCheckerParameters = MpChangeCheckerParameters.CreateParameters(
+                    TriggerType.OnManaChange, changedMp / maxMana);
+                GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                {
+                    Header = GameSyncManager.CreateNetworkCommandHeader(targetId, CommandType.Equipment),
+                    TriggerType = TriggerType.OnManaChange,
+                    TriggerData = MemoryPackSerializer.Serialize(mpChangedCheckerParameters),
+                });
+            }
             var playerConnection = GameSyncManager.GetPlayerConnection(targetId);
             playerConnection?.RpcPlayEffect(buff.playerEffectType);
             return (newBuff, index);
@@ -799,7 +834,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 GameSyncManager.EnqueueServerCommand(new TriggerCommand
                 {
                     Header = GameSyncManager.CreateNetworkCommandHeader(attacker, CommandType.Equipment),
-                    TriggerType = TriggerType.OnAttack,
+                    TriggerType = TriggerType.OnAttackHit,
                     TriggerData = MemoryPackSerializer.Serialize(attackHitCheckerParameters),
                 });
                 if (damageData.DamageCalculateResult.IsCritical)
@@ -821,6 +856,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 {
                     var deadManId = damageData.Defender;
                     var hitterPlayerId = damageData.Hitter;
+                    var killCheckerParameters = KillCheckerParameters.CreateParameters(TriggerType.OnKill);
                     var deathCheckerParameters = DeathCheckerParameters.CreateParameters(TriggerType.OnDeath);
                     
                     GameSyncManager.EnqueueServerCommand(new TriggerCommand
@@ -828,6 +864,48 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         Header = GameSyncManager.CreateNetworkCommandHeader(deadManId, CommandType.Equipment),
                         TriggerType = TriggerType.OnDeath,
                         TriggerData = MemoryPackSerializer.Serialize(deathCheckerParameters),
+                    });
+
+                    GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                    {
+                        Header = GameSyncManager.CreateNetworkCommandHeader(hitterPlayerId, CommandType.Equipment),
+                        TriggerType = TriggerType.OnKill,
+                        TriggerData = MemoryPackSerializer.Serialize(killCheckerParameters),
+                    });
+                }
+
+                if (damageData.DamageCalculateResult.Damage > 0 && !damageData.IsDead)
+                {
+                    var takeDamageCheckerParameters = TakeDamageCheckerParameters.CreateParameters(
+                        TriggerType.OnTakeDamage, DamageType.Physical, 
+                        damageData.HpRemainRatio, damageData.DamageRatio);
+                    
+                    var hpChangedCheckerParameters = HpChangeCheckerParameters.CreateParameters(
+                        TriggerType.OnHpChange, damageData.DamageRatio);
+                    
+                    GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                    {
+                        Header = GameSyncManager.CreateNetworkCommandHeader(damageData.Defender, CommandType.Equipment),
+                        TriggerType = TriggerType.OnHpChange,
+                        TriggerData = MemoryPackSerializer.Serialize(hpChangedCheckerParameters),
+                    });
+                    
+                    GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                    {
+                        Header = GameSyncManager.CreateNetworkCommandHeader(damageData.Defender, CommandType.Equipment),
+                        TriggerType = TriggerType.OnTakeDamage,
+                        TriggerData = MemoryPackSerializer.Serialize(takeDamageCheckerParameters),
+                    });
+                }
+
+                if (damageData.IsDodged)
+                {
+                    var dodgeCheckerParameters = DodgeCheckerParameters.CreateParameters(TriggerType.OnDodge);
+                    GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                    {
+                        Header = GameSyncManager.CreateNetworkCommandHeader(damageData.Defender, CommandType.Equipment),
+                        TriggerType = TriggerType.OnDodge,
+                        TriggerData = MemoryPackSerializer.Serialize(dodgeCheckerParameters),
                     });
                 }
             }

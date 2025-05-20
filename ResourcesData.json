@@ -311,6 +311,26 @@
             "Address": "/Map/Animation/Run.anim"
         },
         {
+            "UID": 700002,
+            "ResourceType": "UnityEngine.AnimationClip",
+            "AssetType": 14,
+            "Extension": ".anim",
+            "Name": "SpellCast",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Animation/SpellCast.anim"
+        },
+        {
+            "UID": 700003,
+            "ResourceType": "UnityEngine.AnimationClip",
+            "AssetType": 14,
+            "Extension": ".anim",
+            "Name": "StunnedLoop",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Animation/StunnedLoop.anim"
+        },
+        {
             "UID": 800000,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
