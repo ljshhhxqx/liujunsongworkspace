@@ -24,7 +24,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 data.id = int.Parse(text[0]);
                 data.name = text[1];
                 data.type = (SkillType) Enum.Parse(typeof(SkillType), text[2]);
-                data.damage = float.Parse(text[3]);
+                data.damageRatio = float.Parse(text[3]);
                 data.damageType = (DamageType) Enum.Parse(typeof(DamageType), text[4]);
                 skillData.Add(data);
             }
@@ -38,7 +38,11 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public int id;
         public string name;
         public SkillType type;
-        public float damage;
+        public float baseDamage;
+        public float damageRatio;
         public DamageType damageType;
+        public float cooldown;
+        public bool isAreaOfEffect;
+        public int controlId;
     }
 }
