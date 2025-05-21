@@ -37,9 +37,9 @@ namespace HotUpdate.Scripts.Network.UISync
         {
             if (_pendingOperations.TryGetValue(syncCommand.Header.CommandHeader.CommandId, out var op)) 
             {
-                var data = MemoryPackSerializer.Deserialize<IUIData>(op.ReadOnlyData);
-                _localData[syncCommand.SyncDataType] = data;
-                PublishData<IUIData>(syncCommand.SyncDataType, syncCommand.CommandData);
+                // var data = MemoryPackSerializer.Deserialize<IUIData>(op.ReadOnlyData);
+                // _localData[syncCommand.SyncDataType] = data;
+                // PublishData<IUIData>(syncCommand.SyncDataType, syncCommand.CommandData);
             }
         }
 

@@ -245,18 +245,18 @@ namespace HotUpdate.Scripts.Network.Battle
         [MemoryPackOrder(1)]
         public float MpRatio;
         [MemoryPackOrder(2)]
-        public SkillType SkillType;
+        public SkillBaseType SkillBaseType;
 
         public CurrentConditionCommonParameters GetCommonParameters() => CommonParameters;
         public static SkillCastCheckerParameters CreateParameters(TriggerType triggerType, 
-            float mpRatio, SkillType skillType)
+            float mpRatio, SkillBaseType skillBaseType)
         {
             var probability = Random.Range(0f, 100f);
             return new SkillCastCheckerParameters
             {
                 CommonParameters = CurrentConditionCommonParameters.CreateParameters(triggerType, probability),
                 MpRatio = mpRatio,
-                SkillType = skillType
+                SkillBaseType = skillBaseType
             };
         }
     }
@@ -268,13 +268,13 @@ namespace HotUpdate.Scripts.Network.Battle
         public CurrentConditionCommonParameters CommonParameters;
         public float DamageRatio;
         public float MpRatio;
-        public SkillType SkillType;
+        public SkillBaseType SkillBaseType;
         public float HpRatio;
 
         public CurrentConditionCommonParameters GetCommonParameters() => CommonParameters;
         
         public static SkillHitCheckerParameters CreateParameters(TriggerType triggerType, 
-            float damageRatio, float mpRatio, SkillType skillType, float hpRatio)
+            float damageRatio, float mpRatio, SkillBaseType skillBaseType, float hpRatio)
         {
             
             var probability = Random.Range(0f, 100f);
@@ -283,7 +283,7 @@ namespace HotUpdate.Scripts.Network.Battle
                 CommonParameters = CurrentConditionCommonParameters.CreateParameters(triggerType, probability),
                 DamageRatio = damageRatio,
                 MpRatio = mpRatio,
-                SkillType = skillType,
+                SkillBaseType = skillBaseType,
                 HpRatio = hpRatio
             };
         }
@@ -534,7 +534,7 @@ namespace HotUpdate.Scripts.Network.Battle
                 var configData = JsonConvert.DeserializeObject<IConditionParam>(header.CheckParams);
                 if (configData != null && configData is SkillCastConditionParam skillCastConditionParam)
                 {
-                    return configData.CheckConditionValid() && this.CheckCommonParamsCondition(t) && skillCastConditionParam.skillType == parameters.SkillType && 
+                    return configData.CheckConditionValid() && this.CheckCommonParamsCondition(t) && skillCastConditionParam.skillBaseType == parameters.SkillBaseType && 
                            skillCastConditionParam.mpRange.IsInRange(parameters.MpRatio);
                 }
             }
@@ -567,7 +567,7 @@ namespace HotUpdate.Scripts.Network.Battle
                 var configData = JsonConvert.DeserializeObject<IConditionParam>(header.CheckParams);
                 if (configData != null && configData is SkillHitConditionParam skillHitConditionParam)
                 {
-                    return configData.CheckConditionValid() && this.CheckCommonParamsCondition(t) && skillHitConditionParam.skillType == parameters.SkillType && 
+                    return configData.CheckConditionValid() && this.CheckCommonParamsCondition(t) && skillHitConditionParam.skillBaseType == parameters.SkillBaseType && 
                            skillHitConditionParam.mpRange.IsInRange(parameters.MpRatio) && skillHitConditionParam.hpRange.IsInRange(parameters.HpRatio)
                            && skillHitConditionParam.damageRange.IsInRange(parameters.DamageRatio);
                 }

@@ -11,6 +11,7 @@ using OfficeOpenXml;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = System.Random;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
@@ -354,7 +355,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                     return new SkillCastConditionParam
                     {
                         mpRange = new Range { min = r.Next(0, 50), max = r.Next(50, 101)  },
-                        skillType = (SkillType)r.Next(Enum.GetValues(typeof(SkillType)).Length)
+                        skillBaseType = (SkillBaseType)r.Next(Enum.GetValues(typeof(SkillBaseType)).Length)
                     };
                 case TriggerType.OnTakeDamage:
                     return new TakeDamageConditionParam
@@ -404,7 +405,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                     return new SkillHitConditionParam
                     {
                         damageRange = new Range { min = r.Next(0, 50) , max = r.Next(50, 101)  },
-                        skillType = (SkillType)r.Next(Enum.GetValues(typeof(SkillType)).Length),
+                        skillBaseType = (SkillBaseType)r.Next(Enum.GetValues(typeof(SkillBaseType)).Length),
                         mpRange = new Range { min = r.Next(0, 50) , max = r.Next(50, 101)  },
                         hpRange = new Range { min = r.Next(0, 50) , max = r.Next(50, 101)  }
                     };
@@ -465,7 +466,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             
                 SkillCastConditionParam p => FormatCondition(
                     (p.mpRange.min > 0 || p.mpRange.max < 1, $"消耗MP在{p.mpRange}"),
-                    (p.skillType != default, $"使用{EnumHeaderParser.GetHeader(p.skillType)}技能")),
+                    (p.skillBaseType != default, $"使用{EnumHeaderParser.GetHeader(p.skillBaseType)}技能")),
             
                 TakeDamageConditionParam p => FormatCondition(
                     (p.damageType != default, $"伤害类型：{EnumHeaderParser.GetHeader(p.damageType)}"),
@@ -614,20 +615,20 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     {
         [Header("消耗MP百分比范围")]
         public Range mpRange;
-        [Header("技能类型")]
-        public SkillType skillType;
+        [FormerlySerializedAs("skillType")] [Header("技能类型")]
+        public SkillBaseType skillBaseType;
 
         public TriggerType GetTriggerType() => TriggerType.OnSkillCast;
 
         public bool CheckConditionValid()
         {
-            return this.CheckConditionHeader() && Enum.IsDefined(typeof(SkillType), skillType) &&
+            return this.CheckConditionHeader() && Enum.IsDefined(typeof(SkillBaseType), skillBaseType) &&
                    mpRange.min >= 0 && mpRange.max >= mpRange.min && mpRange.max <= 1f;
         }
 
         public string GetConditionDesc()
         {
-            return $"技能类型:{skillType}、消耗MP百分比:[{mpRange.min}%,{mpRange.max}%]";
+            return $"技能类型:{skillBaseType}、消耗MP百分比:[{mpRange.min}%,{mpRange.max}%]";
         }
 
         public T AnalysisConditionParam<T>(string str) where T : IConditionParam
@@ -638,7 +639,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             var mpProperty = parts[1].Replace("消耗MP百分比:", "");
             result.mpRange = Range.GetRange(mpProperty);
             var skillStr = parts[0].Replace("技能类型:", "");
-            result.skillType = (SkillType)Enum.Parse(typeof(SkillType), skillStr);
+            result.skillBaseType = (SkillBaseType)Enum.Parse(typeof(SkillBaseType), skillStr);
             return (T)(IConditionParam)result;
         }
     }
@@ -907,8 +908,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public ConditionTargetType targetType;
         [Header("伤害值范围")]
         public Range damageRange;
-        [Header("技能类型")]
-        public SkillType skillType;
+        [FormerlySerializedAs("skillType")] [Header("技能类型")]
+        public SkillBaseType skillBaseType;
         [Header("消耗MP百分比范围")]
         public Range mpRange;
         [Header("造成伤害占生命值最大值百分比范围")]
@@ -921,7 +922,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         }
         public string GetConditionDesc()
         {
-            return $"目标类型:{targetType}、技能类型:{skillType}、消耗MP百分比:[{mpRange.min}%,{mpRange.max}%]、造成伤害百分比:[{hpRange.min}%,{hpRange.max}%]、造成伤害:[{damageRange.min},{damageRange.max}]";
+            return $"目标类型:{targetType}、技能类型:{skillBaseType}、消耗MP百分比:[{mpRange.min}%,{mpRange.max}%]、造成伤害百分比:[{hpRange.min}%,{hpRange.max}%]、造成伤害:[{damageRange.min},{damageRange.max}]";
         }
 
         public T AnalysisConditionParam<T>(string str) where T : IConditionParam
@@ -936,7 +937,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             var damageRangeStr = parts[4].Replace("造成伤害:", "");
             result.damageRange = Range.GetRange(damageRangeStr);
             var skillStr = parts[1].Replace("技能类型:", "");
-            result.skillType = (SkillType)Enum.Parse(typeof(SkillType), skillStr);
+            result.skillBaseType = (SkillBaseType)Enum.Parse(typeof(SkillBaseType), skillStr);
             var mpProperty = parts[2].Replace("消耗MP百分比:", "");
             result.mpRange = Range.GetRange(mpProperty);
             return (T)(IConditionParam)result;
