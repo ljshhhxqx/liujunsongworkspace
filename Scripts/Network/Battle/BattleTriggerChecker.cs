@@ -45,6 +45,8 @@ namespace HotUpdate.Scripts.Network.Battle
         
         public CooldownHeader Update(float deltaTime)
         {
+            if(!IsCooldown())
+                return this;
             if (CurrentTime > 0)
             {
                 CurrentTime = Mathf.Max(0, CurrentTime - deltaTime);
@@ -69,6 +71,8 @@ namespace HotUpdate.Scripts.Network.Battle
 
         public CooldownHeader TakeEffect(float cooldown)
         {
+            if(IsCooldown())
+                return this;
             Cooldown = cooldown;
             CurrentTime = cooldown;
             return new CooldownHeader
@@ -76,6 +80,11 @@ namespace HotUpdate.Scripts.Network.Battle
                 Cooldown = cooldown,
                 CurrentTime = cooldown,
             };
+        }
+        
+        public bool IsCooldown()
+        {
+            return CurrentTime > 0;
         }
     }
 
