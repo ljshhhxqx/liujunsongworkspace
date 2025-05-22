@@ -78,7 +78,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             for (int i = 0; i < equipmentState.EquipmentDatas.Count; i++)
             {
                 var equipment = equipmentState.EquipmentDatas[i];
-                IConditionChecker.UpdateCd(ref equipment.ConditionChecker, deltaTime);
+                var cooldownHeader = equipment.ConditionChecker.GetCooldownHeader();
+                var newHeader = cooldownHeader.Update(deltaTime);
+                equipment.ConditionChecker.SetCooldownHeader(newHeader);
                 equipmentState.EquipmentDatas = equipmentState.EquipmentDatas.SetItem(i, equipment);
             }
         }

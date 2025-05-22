@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Threading;
 using AOTScripts.Data;
-using Cysharp.Threading.Tasks;
-using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Tool.Coroutine;
 using MemoryPack;
 using Newtonsoft.Json;
-using Tool.Coroutine;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -26,59 +23,59 @@ namespace HotUpdate.Scripts.Network.Battle
     [MemoryPackUnion(9, typeof(DodgeChecker))]
     public partial interface IConditionChecker
     {
-        float GetCdTime();
-        float SetCdTime(float cdTime);
         ConditionCheckerHeader GetConditionCheckerHeader();
+        CooldownHeader GetCooldownHeader();
+        CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader);
         bool Check<T>(ref IConditionChecker checker, T t) where T : IConditionCheckerParameters;
-
-        public static void UpdateCd(ref IConditionChecker checker, float deltaTime)
+    }
+    
+    [MemoryPackable]
+    public partial struct CooldownHeader
+    {
+        [MemoryPackOrder(0)]
+        public float Cooldown;
+        [MemoryPackOrder(1)]
+        public float CurrentTime;
+        
+        public CooldownHeader(float cooldown)
         {
-            var cdTime = checker.GetCdTime();
-            if (cdTime > 0)
+            Cooldown = cooldown;
+            CurrentTime = 0;
+        }
+        
+        public CooldownHeader Update(float deltaTime)
+        {
+            if (CurrentTime > 0)
             {
-                cdTime = checker.SetCdTime(Mathf.Max(0, cdTime - deltaTime));
-                if (cdTime <= 0)
-                {
-                    checker.SetCdTime(0);
-                }
+                CurrentTime = Mathf.Max(0, CurrentTime - deltaTime);
             }
+
+            return new CooldownHeader
+            {
+                Cooldown = Cooldown,
+                CurrentTime = CurrentTime,
+            };
         }
 
-        public static void TakeEffect(ref IConditionChecker checker)
+        public CooldownHeader Reset()
         {
-            var header = checker.GetConditionCheckerHeader();
-            checker.SetCdTime(header.Interval);
+            CurrentTime = Cooldown;
+            return new CooldownHeader
+            {
+                Cooldown = Cooldown,
+                CurrentTime = 0,
+            };
         }
 
-        public static IConditionChecker CreateChecker(ConditionCheckerHeader header)
+        public CooldownHeader TakeEffect(float cooldown)
         {
-            switch (header.TriggerType)
+            Cooldown = cooldown;
+            CurrentTime = cooldown;
+            return new CooldownHeader
             {
-                case TriggerType.None:
-                    return new NoConditionChecker { Header = header };
-                case TriggerType.OnAttack:
-                    return new AttackChecker { Header = header,  };
-                case TriggerType.OnAttackHit:
-                    return new AttackHitChecker { Header = header };
-                case TriggerType.OnSkillCast:
-                    return new SkillCastChecker { Header = header };
-                case TriggerType.OnSkillHit:
-                    return new SkillHitChecker { Header = header };
-                case TriggerType.OnTakeDamage:
-                    return new TakeDamageChecker { Header = header };
-                case TriggerType.OnKill:
-                    return new KillChecker { Header = header };
-                case TriggerType.OnHpChange:
-                    return new HpChangeChecker { Header = header };
-                case TriggerType.OnManaChange:
-                    return new MpChangeChecker { Header = header };
-                case TriggerType.OnCriticalHit:
-                    return new CriticalHitChecker { Header = header };
-                case TriggerType.OnDodge:
-                    return new DodgeChecker { Header = header };
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                Cooldown = cooldown,
+                CurrentTime = cooldown,
+            };
         }
     }
 
@@ -110,6 +107,37 @@ namespace HotUpdate.Scripts.Network.Battle
                 TargetType = targetType,
                 TargetCount = targetCount
             };
+        }
+
+        public static IConditionChecker CreateChecker(ConditionCheckerHeader header)
+        {
+            switch (header.TriggerType)
+            {
+                case TriggerType.None:
+                    return new NoConditionChecker { Header = header };
+                case TriggerType.OnAttack:
+                    return new AttackChecker { Header = header,  };
+                case TriggerType.OnAttackHit:
+                    return new AttackHitChecker { Header = header };
+                case TriggerType.OnSkillCast:
+                    return new SkillCastChecker { Header = header };
+                case TriggerType.OnSkillHit:
+                    return new SkillHitChecker { Header = header };
+                case TriggerType.OnTakeDamage:
+                    return new TakeDamageChecker { Header = header };
+                case TriggerType.OnKill:
+                    return new KillChecker { Header = header };
+                case TriggerType.OnHpChange:
+                    return new HpChangeChecker { Header = header };
+                case TriggerType.OnManaChange:
+                    return new MpChangeChecker { Header = header };
+                case TriggerType.OnCriticalHit:
+                    return new CriticalHitChecker { Header = header };
+                case TriggerType.OnDodge:
+                    return new DodgeChecker { Header = header };
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
     }
 
@@ -426,16 +454,16 @@ namespace HotUpdate.Scripts.Network.Battle
         [MemoryPackOrder(0)]
         public ConditionCheckerHeader Header;
         [MemoryPackOrder(1)]
-        private float _cdTime;
-        public float GetCdTime() => _cdTime;
-
-        public float SetCdTime(float cdTime)
-        {
-            _cdTime = cdTime;
-            return _cdTime;
-        }
+        public CooldownHeader CooldownHeader;
 
         public ConditionCheckerHeader GetConditionCheckerHeader() => Header;
+        public CooldownHeader GetCooldownHeader() => CooldownHeader;
+
+        public CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader)
+        {
+            CooldownHeader = cooldownHeader;
+            return CooldownHeader;
+        }
 
         public bool Check<T>(ref IConditionChecker checker, T t) where T : IConditionCheckerParameters
         {
@@ -449,16 +477,16 @@ namespace HotUpdate.Scripts.Network.Battle
         [MemoryPackOrder(0)]
         public ConditionCheckerHeader Header;
         [MemoryPackOrder(1)]
-        private float _cdTime;
-        public float GetCdTime() => _cdTime;
-
-        public float SetCdTime(float cdTime)
-        {
-            _cdTime = cdTime;
-            return _cdTime;
-        }
+        public CooldownHeader CooldownHeader;
 
         public ConditionCheckerHeader GetConditionCheckerHeader() => Header;
+        public CooldownHeader GetCooldownHeader() => CooldownHeader;
+
+        public CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader)
+        {
+            CooldownHeader = cooldownHeader;
+            return CooldownHeader;
+        }
 
         public bool Check<T>(ref IConditionChecker checker, T t) where T : IConditionCheckerParameters
         {
@@ -484,12 +512,14 @@ namespace HotUpdate.Scripts.Network.Battle
         [MemoryPackOrder(0)]
         public ConditionCheckerHeader Header;
         [MemoryPackOrder(1)]
-        private float _cdTime;
-        public float GetCdTime() => _cdTime;
-        public float SetCdTime(float cdTime)
+        public CooldownHeader CooldownHeader;
+
+        public CooldownHeader GetCooldownHeader() => CooldownHeader;
+
+        public CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader)
         {
-            _cdTime = cdTime;
-            return _cdTime;
+            CooldownHeader = cooldownHeader;
+            return CooldownHeader;
         }
         public ConditionCheckerHeader GetConditionCheckerHeader() => Header;
         
@@ -512,16 +542,17 @@ namespace HotUpdate.Scripts.Network.Battle
     [MemoryPackable]
     public partial struct SkillCastChecker : IConditionChecker
     {
-        
         [MemoryPackOrder(0)]
         public ConditionCheckerHeader Header;
         [MemoryPackOrder(1)]
-        private float _cdTime;
-        public float GetCdTime() => _cdTime;
-        public float SetCdTime(float cdTime)
+        public CooldownHeader CooldownHeader;
+
+        public CooldownHeader GetCooldownHeader() => CooldownHeader;
+
+        public CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader)
         {
-            _cdTime = cdTime;
-            return _cdTime;
+            CooldownHeader = cooldownHeader;
+            return CooldownHeader;
         }
         
         public ConditionCheckerHeader GetConditionCheckerHeader() => Header;
@@ -549,12 +580,14 @@ namespace HotUpdate.Scripts.Network.Battle
         [MemoryPackOrder(0)]
         public ConditionCheckerHeader Header;
         [MemoryPackOrder(1)]
-        private float _cdTime;
-        public float GetCdTime() => _cdTime;
-        public float SetCdTime(float cdTime)
+        public CooldownHeader CooldownHeader;
+
+        public CooldownHeader GetCooldownHeader() => CooldownHeader;
+
+        public CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader)
         {
-            _cdTime = cdTime;
-            return _cdTime;
+            CooldownHeader = cooldownHeader;
+            return CooldownHeader;
         }
         
         public ConditionCheckerHeader GetConditionCheckerHeader() => Header;
@@ -583,12 +616,14 @@ namespace HotUpdate.Scripts.Network.Battle
         [MemoryPackOrder(0)]
         public ConditionCheckerHeader Header;
         [MemoryPackOrder(1)]
-        private float _cdTime;
-        public float GetCdTime() => _cdTime;
-        public float SetCdTime(float cdTime)
+        public CooldownHeader CooldownHeader;
+
+        public CooldownHeader GetCooldownHeader() => CooldownHeader;
+
+        public CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader)
         {
-            _cdTime = cdTime;
-            return _cdTime;
+            CooldownHeader = cooldownHeader;
+            return CooldownHeader;
         }
         
         public ConditionCheckerHeader GetConditionCheckerHeader() => Header;
@@ -616,12 +651,14 @@ namespace HotUpdate.Scripts.Network.Battle
         [MemoryPackOrder(0)]
         public ConditionCheckerHeader Header;
         [MemoryPackOrder(1)]
-        private float _cdTime;
-        public float GetCdTime() => _cdTime;
-        public float SetCdTime(float cdTime)
+        public CooldownHeader CooldownHeader;
+
+        public CooldownHeader GetCooldownHeader() => CooldownHeader;
+
+        public CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader)
         {
-            _cdTime = cdTime;
-            return _cdTime;
+            CooldownHeader = cooldownHeader;
+            return CooldownHeader;
         }
         [MemoryPackOrder(2)]
         public int CurrentKillCount;
@@ -671,13 +708,16 @@ namespace HotUpdate.Scripts.Network.Battle
     {
         [MemoryPackOrder(0)]
         public ConditionCheckerHeader Header;
+        
         [MemoryPackOrder(1)]
-        private float _cdTime;
-        public float GetCdTime() => _cdTime;
-        public float SetCdTime(float cdTime)
+        public CooldownHeader CooldownHeader;
+
+        public CooldownHeader GetCooldownHeader() => CooldownHeader;
+
+        public CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader)
         {
-            _cdTime = cdTime;
-            return _cdTime;
+            CooldownHeader = cooldownHeader;
+            return CooldownHeader;
         }
         public ConditionCheckerHeader GetConditionCheckerHeader() => Header;
         
@@ -701,13 +741,16 @@ namespace HotUpdate.Scripts.Network.Battle
     {
         [MemoryPackOrder(0)]
         public ConditionCheckerHeader Header;
+        
         [MemoryPackOrder(1)]
-        private float _cdTime;
-        public float GetCdTime() => _cdTime;
-        public float SetCdTime(float cdTime)
+        public CooldownHeader CooldownHeader;
+
+        public CooldownHeader GetCooldownHeader() => CooldownHeader;
+
+        public CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader)
         {
-            _cdTime = cdTime;
-            return _cdTime;
+            CooldownHeader = cooldownHeader;
+            return CooldownHeader;
         }
         
         public ConditionCheckerHeader GetConditionCheckerHeader() => Header;
@@ -732,13 +775,16 @@ namespace HotUpdate.Scripts.Network.Battle
     {
         [MemoryPackOrder(0)]
         public ConditionCheckerHeader Header;
+        
         [MemoryPackOrder(1)]
-        private float _cdTime;
-        public float GetCdTime() => _cdTime;
-        public float SetCdTime(float cdTime)
+        public CooldownHeader CooldownHeader;
+
+        public CooldownHeader GetCooldownHeader() => CooldownHeader;
+
+        public CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader)
         {
-            _cdTime = cdTime;
-            return _cdTime;
+            CooldownHeader = cooldownHeader;
+            return CooldownHeader;
         }
         
         public ConditionCheckerHeader GetConditionCheckerHeader() => Header;
@@ -765,13 +811,16 @@ namespace HotUpdate.Scripts.Network.Battle
     {
         [MemoryPackOrder(0)]
         public ConditionCheckerHeader Header;
+        
         [MemoryPackOrder(1)]
-        private float _cdTime;
-        public float GetCdTime() => _cdTime;
-        public float SetCdTime(float cdTime)
+        public CooldownHeader CooldownHeader;
+
+        public CooldownHeader GetCooldownHeader() => CooldownHeader;
+
+        public CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader)
         {
-            _cdTime = cdTime;
-            return _cdTime;
+            CooldownHeader = cooldownHeader;
+            return CooldownHeader;
         }
         
         public ConditionCheckerHeader GetConditionCheckerHeader() => Header;

@@ -31,7 +31,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 Debug.LogWarning($"Can't find condition params for item {itemConfigId}");
                 return null;
             }
-            var conditionChecker = IConditionChecker.CreateChecker(header);
+            var conditionChecker = ConditionCheckerHeader.CreateChecker(header);
             return conditionChecker;
         }
         
