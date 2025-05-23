@@ -1,4 +1,5 @@
 ﻿using System;
+using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Network.Battle;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using MemoryPack;
@@ -196,9 +197,16 @@ namespace HotUpdate.Scripts.Skill
         public DistanceCheckerParams DistanceCheckerParams; 
         public CommonSkillCheckerParams GetCommonSkillCheckerParams() => CommonSkillCheckerParams;
     }
-    
+
     [MemoryPackable]
-    public partial struct SkillFlyEffectLifeCycle
+    public partial class SkillContinuousDamageLifeCycle
+    {
+        
+    }
+
+    //非持续性、飞行技能的生命周期
+    [MemoryPackable]
+    public partial class SkillFlyEffectLifeCycle
     { 
         [MemoryPackOrder(0)]
         public Vector3 Origin;
@@ -210,15 +218,61 @@ namespace HotUpdate.Scripts.Skill
         public float Speed;
         [MemoryPackOrder(4)]
         public float CurrentTime;
+        //预期到达目标位置的时间，如果为0则立即在目标处释放
         [MemoryPackOrder(5)]
         public float ExpectationTime;
         [MemoryPackOrder(6)] 
         public int EffectCount;
+        [MemoryPackOrder(7)]
+        public SkillEffectFlyType SkillEffectFlyType;
+        [MemoryPackOrder(8)]
+        public Vector3 CurrentPosition;
+        [MemoryPackIgnore]
+        private IColliderConfig _colliderConfig;
         
+        public SkillFlyEffectLifeCycle(Vector3 origin, Vector3 target, float size, float speed, float expectationTime, int effectCount, SkillEffectFlyType skillEffectFlyType,
+            float currentTime = 0)
+        {
+            Origin = origin;
+            Target = target;
+            Size = size;
+            Speed = speed;
+            ExpectationTime = expectationTime;
+            EffectCount = effectCount;
+            CurrentTime = currentTime;
+            SkillEffectFlyType = skillEffectFlyType;
+            _colliderConfig = new SphereColliderConfig
+            {
+                Radius = size,
+                Center = Vector3.zero
+            };
+            Update(0, (position, colliderConfig) =>
+            {
+                var isHit = GamePhysicsSystem.FastCheckItemIntersects(target, position, _colliderConfig, new BoxColliderConfig());
+                return isHit;
+            });
+        }
+
+        public bool Update(float deltaTime, Func<Vector3, IColliderConfig, bool> isHitFunc)
+        {
+            if (CurrentTime >= ExpectationTime || EffectCount <= 0 || Vector3.Distance(CurrentPosition, Target) < 0.1f)
+            {
+                return true;
+            }
+            CurrentTime += deltaTime;
+            var distance = Vector3.Distance(Origin, Target);
+            var step = Speed * deltaTime;
+            if (step > distance)
+            {
+                step = distance;
+            }
+            CurrentPosition += (Target - Origin).normalized * step;
+            return isHitFunc(CurrentPosition, _colliderConfig);
+        }
     }
     
     [MemoryPackable]
-    public partial struct SkillPropertyLifeCycle
+    public partial class SkillPropertyLifeCycle
     {
         [MemoryPackOrder(0)] 
         public float BaseValue;
@@ -234,17 +288,18 @@ namespace HotUpdate.Scripts.Skill
         [MemoryPackOrder(5)] 
         public PropertyTypeEnum BuffPropertyType;
         //对目标造成技能效果时，目标哪一个属性会受到效果
-        [MemoryPackOrder(6)] public PropertyTypeEnum TargetPropertyType;
+        [MemoryPackOrder(6)] 
+        public PropertyTypeEnum TargetPropertyType;
 
         //MemoryPackConstructor]
-        public SkillPropertyLifeCycle(float baseValue, float extraRatio, float cooldown, float interval, 
+        public SkillPropertyLifeCycle(float baseValue, float extraRatio, float cooldown, float effectInterval, 
             PropertyTypeEnum buffPropertyType, PropertyTypeEnum targetPropertyType, float currentTime = 0)
         {
             BaseValue = baseValue;
             ExtraRatio = extraRatio;
             Cooldown = cooldown;
             CurrentTime = currentTime;
-            EffectInterval = interval;
+            EffectInterval = effectInterval;
             BuffPropertyType = buffPropertyType;
             TargetPropertyType = targetPropertyType;
         }
@@ -254,23 +309,23 @@ namespace HotUpdate.Scripts.Skill
             return CurrentTime > 0;
         }
         
-        public SkillPropertyLifeCycle UpdateProperty(BuffOperationType buffOperationType, PropertyCalculator buffCalculator, ref PropertyCalculator targetCalculator, 
+        public void UpdateProperty(BuffOperationType buffOperationType, PropertyCalculator buffCalculator, ref PropertyCalculator targetCalculator, 
             out float damage)
         {
             damage = 0;
             if (!IsCooldown() || EffectInterval == 0)
             {
-                return this;
+                return;
             }
             if (buffCalculator.PropertyType != BuffPropertyType || targetCalculator.PropertyType != TargetPropertyType)
             {
                 Debug.LogError("BuffPropertyType or TargetPropertyType is not match");
-                return this;
+                return;
             }
-            return TakeEffect(this, buffOperationType, buffCalculator, ref targetCalculator, out damage);
+            TakeEffect(this, buffOperationType, buffCalculator, ref targetCalculator, out damage);
         }
 
-        private static SkillPropertyLifeCycle TakeEffect(SkillPropertyLifeCycle skillPropertyLifeCycle, BuffOperationType buffOperationType, PropertyCalculator buffCalculator, ref PropertyCalculator targetCalculator, 
+        private static void TakeEffect(SkillPropertyLifeCycle skillPropertyLifeCycle, BuffOperationType buffOperationType, PropertyCalculator buffCalculator, ref PropertyCalculator targetCalculator, 
             out float damage)
         {
             damage = skillPropertyLifeCycle.BaseValue + skillPropertyLifeCycle.ExtraRatio * (skillPropertyLifeCycle.EffectInterval == 0 ? 1 : skillPropertyLifeCycle.EffectInterval);
@@ -281,24 +336,23 @@ namespace HotUpdate.Scripts.Skill
                 increaseValue = damage,
                 operationType = buffOperationType,
             });
-            return skillPropertyLifeCycle;
         }
 
-        public SkillPropertyLifeCycle Execute(SkillPropertyLifeCycle skillPropertyLifeCycle, BuffOperationType buffOperationType, PropertyCalculator buffCalculator, ref PropertyCalculator targetCalculator, 
+        public void Execute(SkillPropertyLifeCycle skillPropertyLifeCycle, BuffOperationType buffOperationType, PropertyCalculator buffCalculator, ref PropertyCalculator targetCalculator, 
             out float damage)
         {
             damage = 0;
             if (!IsCooldown())
             {
-                return this;
+                return;
             }
             
             if (buffCalculator.PropertyType != BuffPropertyType || targetCalculator.PropertyType != TargetPropertyType)
             {
                 Debug.LogError("BuffPropertyType or TargetPropertyType is not match");
-                return this;
+                return;
             }
-            return TakeEffect(this, buffOperationType, buffCalculator, ref targetCalculator, out damage);
+            TakeEffect(this, buffOperationType, buffCalculator, ref targetCalculator, out damage);
         }
     }
 
@@ -309,8 +363,10 @@ namespace HotUpdate.Scripts.Skill
         public CooldownHeader CooldownHeader;
         [MemoryPackOrder(1)]
         public CommonSkillCheckerHeader CommonSkillCheckerHeader;
-        [MemoryPackOrder(2)]
+        [MemoryPackOrder(2)] 
         public SkillPropertyLifeCycle SkillPropertyLifeCycle;
+        [MemoryPackOrder(3)] 
+        public SkillFlyEffectLifeCycle SkillFlyEffectLifeCycle;
         public CooldownHeader GetCooldownHeader() => CooldownHeader;
 
         public CommonSkillCheckerHeader GetCommonSkillCheckerHeader() => CommonSkillCheckerHeader;
