@@ -50,12 +50,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public float cooldown;
         public AnimationState animationState;
         public int particleId;
-        //是否需要创建飞行特效
-        public bool createFlyEffect;
-        //是否是必定命中
-        public bool isMustBeHit;
-        //是否系统自动选择目标
-        public bool isAutoSelectTarget;
         public DamageSkillData damageData;
         public HealSkillData healData;
         public ControlSkillData controlData;

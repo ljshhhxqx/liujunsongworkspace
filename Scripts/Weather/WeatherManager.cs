@@ -43,7 +43,6 @@ namespace HotUpdate.Scripts.Weather
         private readonly List<WeatherSetting> _weatherPrefabs = new List<WeatherSetting>();
         private List<GameObject> _weatherEffectPrefabs = new List<GameObject>();
         private WeatherSetting _currentWeatherSetting;
-        private MapBoundDefiner _mapBoundDefiner;
         private LightAndFogEffect _lightAndFogEffect;
         private Clouds _clouds;
         private List<Material> _weatherMaterials = new List<Material>();
@@ -83,14 +82,13 @@ namespace HotUpdate.Scripts.Weather
 
         [Inject]
         private async void Init(MessageCenter messageCenter, IObjectResolver objectResolver,GameEventManager gameEventManager,IConfigProvider configProvider, 
-            MapBoundDefiner mapBoundDefiner, UIManager uiManager)
+            UIManager uiManager)
         {
             WeatherReaderWriter.RegisterReaderWriter(); 
             WeatherDataModel.Init();
             _uiManager = uiManager;
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _weatherConfig = configProvider.GetConfig<WeatherConfig>();
-            _mapBoundDefiner = mapBoundDefiner;
             _isDayNightCycle = false;
             _gameEventManager = gameEventManager;
             _objectResolver = objectResolver;
@@ -232,7 +230,7 @@ namespace HotUpdate.Scripts.Weather
             }
         }
         
-        private Vector3 GetRandomPos() => _mapBoundDefiner.GetRandomPoint();
+        private Vector3 GetRandomPos() => MapBoundDefiner.Instance.GetRandomPoint();
 
         private WeatherLoadData GetWeatherLoadData(WeatherData data)
         {

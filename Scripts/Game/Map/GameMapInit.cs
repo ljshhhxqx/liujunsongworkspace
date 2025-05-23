@@ -5,13 +5,15 @@ using System;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
+using Mirror;
+using Sirenix.OdinInspector;
 using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
 
 namespace HotUpdate.Scripts.Game.Map
 {
-    public class GameMapInit : MonoBehaviour
+    public class GameMapInit : NetworkBehaviour
     {
         private string mapName;
 
@@ -23,6 +25,7 @@ namespace HotUpdate.Scripts.Game.Map
             await LoadGameResources();
             gameEventManager.Publish(new GameSceneResourcesLoadedEvent(mapName));
             uiManager.InitMapSprites(mapName);
+            InitMapStaticObjects();
             Debug.Log("game map init complete!!!!!!!!!!");
         }
 
@@ -71,9 +74,37 @@ namespace HotUpdate.Scripts.Game.Map
             }
         }
 
+        private void InitMapStaticObjects()
+        {
+            var mapStaticObject = FindObjectsOfType<GameStaticObject>();
+            foreach (var staticObject in mapStaticObject)
+            {
+                if (isServer)
+                {
+                    GameStaticObjectContainer.Instance.ServerAddStaticObject(staticObject.gameObject);   
+                }
+                else
+                {
+                    GameStaticObjectContainer.Instance.ClientAddStaticObject(staticObject.gameObject);
+                }
+            }
+        }
+
         private void OnDestroy()
         {
             ResourceManager.Instance.UnloadResourcesByAddress($"/Map/{mapName}");
+        }
+
+        private int _staticObjectId;
+        [Button]
+        private void InitMapStaticObjectsId(int staticObjectId)
+        {
+            var mapStaticObject = FindObjectsOfType<GameStaticObject>();
+            foreach (var staticObject in mapStaticObject)
+            {
+                staticObjectId++;
+                staticObject.ModifyId(staticObjectId);
+            }
         }
     }
 }

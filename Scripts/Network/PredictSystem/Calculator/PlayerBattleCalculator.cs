@@ -29,13 +29,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var hitPlayers = new HashSet<uint>();
         
             // 获取攻击者所在Grid
-            var attackerGrid = PlayerBattleComponent.MapBoundDefiner.GetGridPosition(attackParams.attackPos);
+            var attackerGrid = MapBoundDefiner.Instance.GetGridPosition(attackParams.attackPos);
         
             // 计算检测半径对应的Grid范围
-            var gridRadius = Mathf.CeilToInt(AttackConfigData.AttackRadius / PlayerBattleComponent.MapBoundDefiner.GridSize);
+            var gridRadius = Mathf.CeilToInt(AttackConfigData.AttackRadius / MapBoundDefiner.Instance.GridSize);
         
             // 获取周围Grid中的玩家
-            var nearbyGrids = PlayerBattleComponent.MapBoundDefiner.GetSurroundingGrids(attackerGrid, gridRadius);
+            var nearbyGrids = MapBoundDefiner.Instance.GetSurroundingGrids(attackerGrid, gridRadius);
             var candidates = PlayerBattleComponent.PlayerInGameManager.GetPlayersInGrids(nearbyGrids);
 
             foreach (var candidate in candidates)
@@ -90,13 +90,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
     public class PlayerBattleComponent
     {
         public Transform Transform;
-        public MapBoundDefiner MapBoundDefiner;
         public PlayerInGameManager PlayerInGameManager;
         
-        public PlayerBattleComponent(Transform transform, MapBoundDefiner mapBoundDefiner, PlayerInGameManager playerInGameManager)
+        public PlayerBattleComponent(Transform transform, PlayerInGameManager playerInGameManager)
         {
             Transform = transform;
-            MapBoundDefiner = mapBoundDefiner;
             PlayerInGameManager = playerInGameManager;
         }
     }

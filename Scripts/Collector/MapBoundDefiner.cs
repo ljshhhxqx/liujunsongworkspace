@@ -14,8 +14,7 @@ using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Collector
 {
-    [RequireComponent(typeof(NetworkIdentity))]
-    public class MapBoundDefiner : NetworkBehaviour
+    public class MapBoundDefiner : Singleton<MapBoundDefiner>
     {
         private float _safetyMargin = 5.0f;
         private GameObject[] _walls;
@@ -23,6 +22,7 @@ namespace HotUpdate.Scripts.Collector
         private JsonDataConfig _jsonDataConfig;
         private LayerMask _sceneLayer;
         private readonly List<Vector2Int> _gridMap = new List<Vector2Int>();
+        private readonly Dictionary<Vector2Int, List<Vector3>> _gridGameObjectMap = new Dictionary<Vector2Int, List<Vector3>>();
         private float _gridSize = 2f;
         public float GridSize => _gridSize;
         public Vector3 MapMinBoundary { get; private set; }
@@ -160,6 +160,15 @@ namespace HotUpdate.Scripts.Collector
                 count++;
             }
             return Vector3.zero;
+        }
+
+        public void Clear()
+        {
+            _gridMap.Clear();
+            _walls = null;
+            MapMinBoundary = Vector3.zero;
+            MapMaxBoundary = Vector3.zero;
+            Debug.Log("MapBoundDefiner cleared");
         }
     }
 }

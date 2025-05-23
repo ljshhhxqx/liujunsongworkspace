@@ -20,7 +20,6 @@ namespace HotUpdate.Scripts.Game.Inject
         protected override void Configure(IContainerBuilder builder)
         {
             RegisterComponent<MirrorNetworkMessageHandler>(builder);
-            RegisterComponent<MapBoundDefiner>(builder);
             RegisterComponent<NetworkManagerCustom>(builder);
             RegisterComponent<GameLoopController>(builder);
             RegisterComponent<NetworkAudioManager>(builder);

@@ -257,8 +257,6 @@ namespace HotUpdate.Scripts.Network.Server.InGame
 
         private void OnIsGameStartedChanged(bool oldIsGameStarted, bool newIsGameStarted)
         {
-            if (newIsGameStarted)
-                _mapBoundDefiner = FindObjectOfType<MapBoundDefiner>();
         }
 
         public void AddPlayer(int connectId, PlayerInGameData playerInGameData)

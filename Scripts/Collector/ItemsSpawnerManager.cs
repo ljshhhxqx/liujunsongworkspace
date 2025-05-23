@@ -38,7 +38,6 @@ namespace HotUpdate.Scripts.Collector
         private readonly Dictionary<QualityType, DroppedItem> _droppedItemPrefabs = new Dictionary<QualityType, DroppedItem>();
         private readonly Dictionary<QualityType, TreasureChestComponent> _treasureChestPrefabs = new Dictionary<QualityType, TreasureChestComponent>();
         private IConfigProvider _configProvider;
-        private MapBoundDefiner _mapBoundDefiner;
         private JsonDataConfig _jsonDataConfig;
         private ChestDataConfig _chestConfig;
         private MessageCenter _messageCenter;
@@ -77,12 +76,11 @@ namespace HotUpdate.Scripts.Collector
         private TreasureChestComponent _clientTreasureChest;
 
         [Inject]
-        private void Init(MapBoundDefiner mapBoundDefiner, UIManager uiManager, IConfigProvider configProvider, GameSyncManager gameSyncManager, GameMapInjector gameMapInjector, PlayerInGameManager playerInGameManager,GameEventManager gameEventManager, MessageCenter messageCenter)
+        private void Init(UIManager uiManager, IConfigProvider configProvider, GameSyncManager gameSyncManager, GameMapInjector gameMapInjector, PlayerInGameManager playerInGameManager,GameEventManager gameEventManager, MessageCenter messageCenter)
         {
             _uiManager = uiManager;
             _configProvider = configProvider;
             _jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
-            _mapBoundDefiner = mapBoundDefiner;
             _playerInGameManager = playerInGameManager;
             _gameMapInjector = gameMapInjector;
             _gameSyncManager = gameSyncManager;
@@ -226,7 +224,7 @@ namespace HotUpdate.Scripts.Collector
         private void OnGameStart(string sceneName)
         {
             _gridMap.Clear();
-            _gridMap = _mapBoundDefiner.GridMap.ToDictionary(x => x,_ => new Grid());
+            _gridMap = MapBoundDefiner.Instance.GridMap.ToDictionary(x => x,_ => new Grid());
             var res = ResourceManager.Instance.GetMapCollectObject(sceneName);
             if (_collectiblePrefabs.Count == 0)
             {
@@ -651,9 +649,9 @@ namespace HotUpdate.Scripts.Collector
 
         private void InitializeGrid()
         {
-            for (var x = _mapBoundDefiner.MapMinBoundary.x; x <= _mapBoundDefiner.MapMaxBoundary.x; x += _gridSize)
+            for (var x = MapBoundDefiner.Instance.MapMinBoundary.x; x <= MapBoundDefiner.Instance.MapMaxBoundary.x; x += _gridSize)
             {
-                for (var z = _mapBoundDefiner.MapMinBoundary.z; z <= _mapBoundDefiner.MapMaxBoundary.z; z += _gridSize)
+                for (var z = MapBoundDefiner.Instance.MapMinBoundary.z; z <= MapBoundDefiner.Instance.MapMaxBoundary.z; z += _gridSize)
                 {
                     var gridPos = GetGridPosition(new Vector3(x, 0, z));
                     _gridMap[gridPos] = new Grid(new List<int>());
@@ -893,13 +891,13 @@ namespace HotUpdate.Scripts.Collector
     
         private Vector3 GetRandomStartPoint(float height)
         {
-            var randomPos = _mapBoundDefiner.GetRandomPoint(IsPositionValidWithoutItem);
+            var randomPos = MapBoundDefiner.Instance.GetRandomPoint(IsPositionValidWithoutItem);
             return new Vector3(randomPos.x, randomPos.y + height, randomPos.z);
         }
     
         private Vector3 GetRandomDirection()
         {
-            return _mapBoundDefiner.GetRandomDirection();
+            return MapBoundDefiner.Instance.GetRandomDirection();
         }
 
         private bool IsPositionValid(Vector3 position, Collider itemPrefab)
@@ -987,7 +985,7 @@ namespace HotUpdate.Scripts.Collector
 
         private bool IsWithinBoundary(Vector3 position)
         {
-            return _mapBoundDefiner.IsWithinMapBounds(position);
+            return MapBoundDefiner.Instance.IsWithinMapBounds(position);
         
         }
         

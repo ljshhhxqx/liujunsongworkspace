@@ -96,7 +96,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private static float DeltaTime => Time.deltaTime;
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private GameSyncManager _gameSyncManager;
-        private MapBoundDefiner _mapBoundDefiner;
         private IConfigProvider _configProvider;
         private GameConfigData _gameConfigData;
         private PlayerConfigData _playerConfigData;
@@ -139,7 +138,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [Inject]
         private void Init(IConfigProvider configProvider, 
             GameSyncManager gameSyncManager, 
-            MapBoundDefiner mapBoundDefiner, 
             PlayerInGameManager playerInGameManager,
             UIManager uiManager)
         {
@@ -148,7 +146,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _gameConfigData = jsonDataConfig.GameConfig;
             _playerConfigData = jsonDataConfig.PlayerConfig;
             _gameSyncManager = gameSyncManager;
-            _mapBoundDefiner = mapBoundDefiner;
             _playerInGameManager = playerInGameManager;
             _interactSystem = FindObjectOfType<InteractSystem>();
             _uiManager = uiManager;
@@ -456,7 +453,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerPhysicsCalculator = new PlayerPhysicsCalculator(new PhysicsComponent(_rigidbody, transform, _checkStairTransform, _capsuleCollider, _camera));
             _playerPropertyCalculator = new PlayerPropertyCalculator(new Dictionary<PropertyTypeEnum, PropertyCalculator>());
             _playerAnimationCalculator = new PlayerAnimationCalculator(new AnimationComponent{ Animator = _animator});
-            _playerBattleCalculator = new PlayerBattleCalculator(new PlayerBattleComponent(transform,_mapBoundDefiner, _playerInGameManager));
+            _playerBattleCalculator = new PlayerBattleCalculator(new PlayerBattleComponent(transform, _playerInGameManager));
             _playerItemCalculator = new PlayerItemCalculator();
             _playerElementCalculator = new PlayerElementCalculator();
             _playerEquipmentCalculator = new PlayerEquipmentCalculator();
