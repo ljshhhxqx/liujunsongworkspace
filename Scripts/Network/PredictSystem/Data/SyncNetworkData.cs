@@ -37,6 +37,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     [MemoryPackUnion(15, typeof(ItemsSellCommand))]
     [MemoryPackUnion(16, typeof(ItemsBuyCommand))]
     [MemoryPackUnion(17, typeof(GoldChangedCommand))]
+    [MemoryPackUnion(18, typeof(PropertyInvincibleChangedCommand))]
+    [MemoryPackUnion(19, typeof(PropertyEquipmentPassiveCommand))]
+    [MemoryPackUnion(20, typeof(PropertyEquipmentChangedCommand))]
+    [MemoryPackUnion(21, typeof(NoUnionPlayerAddMoreScoreAndGoldCommand))]
+    [MemoryPackUnion(22, typeof(SkillCommand))]
     public partial interface INetworkCommand
     {
         NetworkCommandHeader GetHeader();
@@ -960,6 +965,40 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         }
     }
     
+    #endregion
+    #region SkillCommand
+
+    [MemoryPackable]
+    public partial struct SkillCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)] public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)] public int SkillId;
+        [MemoryPackOrder(2)] public bool IsCast;
+        [MemoryPackOrder(3)] public Vector3 CastPosition;
+        [MemoryPackOrder(4)] public Vector3 CastDirection;
+        [MemoryPackOrder(5)] public int TargetId;
+        [MemoryPackOrder(6)] public int[] TargetIds;
+        [MemoryPackOrder(7)] public int[] TargetPointIds;
+        [MemoryPackOrder(8)] public int[] TargetPointIds2;
+        [MemoryPackOrder(9)] public int[] TargetPointIds3;
+        [MemoryPackOrder(10)] public int[] TargetPointIds4;
+        [MemoryPackOrder(11)] public int[] TargetPointIds5;
+        [MemoryPackOrder(12)] public int[] TargetPointIds6;
+        [MemoryPackOrder(13)] public int[] TargetPointIds7;
+        public NetworkCommandHeader GetHeader() => Header;
+
+        public bool IsValid()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
+            CommandAuthority authority = CommandAuthority.Client)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     #endregion
 
     #region Command

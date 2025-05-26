@@ -109,6 +109,31 @@ namespace HotUpdate.Scripts.Collector
             };
         }
         
+        public static IColliderConfig CreateColliderConfig(ColliderType colliderType, Vector3 size, Vector3 center, float radius, float height = 0, int direction = 1)
+        {
+            return colliderType switch
+            {
+                ColliderType.Box => new BoxColliderConfig
+                {
+                    Size = size,
+                    Center = center
+                },
+                ColliderType.Sphere => new SphereColliderConfig
+                {
+                    Radius = radius,
+                    Center = center
+                },
+                ColliderType.Capsule => new CapsuleColliderConfig
+                {
+                    Height = height,
+                    Radius = radius,
+                    Direction = direction,
+                    Center = center
+                },
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        }
+        
         public static IColliderConfig CreateColliderConfig(Collider collider)
         {
             switch (collider)
