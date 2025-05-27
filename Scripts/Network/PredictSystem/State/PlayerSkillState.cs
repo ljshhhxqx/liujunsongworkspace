@@ -10,7 +10,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         [MemoryPackOrder(0)] public CooldownHeader CooldownHeader;
         [MemoryPackIgnore] public ISkillChecker SkillChecker;
 
-        public void Execute<T>(T skillCheckerParams, params object[] args) where T : ISkillCheckerParams
+        public void Execute(SkillCheckerParams skillCheckerParams, params object[] args)
         {
             SkillChecker.Execute(ref SkillChecker, skillCheckerParams,args);
         }

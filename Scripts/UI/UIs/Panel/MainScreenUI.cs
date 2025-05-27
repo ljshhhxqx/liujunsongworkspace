@@ -1,11 +1,11 @@
 ﻿using System;
 using AOTScripts.Tool;
 using Data;
+using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.SecondPanel;
 using Network.Server.PlayFab;
 using TMPro;
-using Tool.Coroutine;
 using UI.UIBase;
 using UI.UIs.SecondPanel;
 using UnityEngine;

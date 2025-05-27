@@ -1,7 +1,7 @@
-﻿using HotUpdate.Scripts.Tool.Message;
+﻿using HotUpdate.Scripts.Tool.Coroutine;
+using HotUpdate.Scripts.Tool.Message;
 using Mirror;
 using Model;
-using Tool.Coroutine;
 using Tool.Message;
 using VContainer;
 
@@ -11,15 +11,14 @@ namespace Network.Server
     {
         protected PlayersGameModelManager playersGameModelManager;
         protected IConfigProvider configProvider;
-        protected RepeatedTask repeatedTask;
         protected MessageCenter messageCenter;
 
         [Inject]
-        protected virtual void Init(PlayersGameModelManager playersGameModelManager, IConfigProvider configProvider, RepeatedTask repeatedTask, MessageCenter messageCenter)
+        protected virtual void Init(PlayersGameModelManager playersGameModelManager, 
+            IConfigProvider configProvider, MessageCenter messageCenter)
         {                                          
             this.playersGameModelManager = playersGameModelManager;
             this.configProvider = configProvider;
-            this.repeatedTask = repeatedTask;
             this.messageCenter = messageCenter;
             InitCallback();
         }

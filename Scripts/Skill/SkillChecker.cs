@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using AOTScripts.Data;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Network.Battle;
@@ -20,22 +21,21 @@ namespace HotUpdate.Scripts.Skill
         CooldownHeader GetCooldownHeader();
         CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader);
         CommonSkillCheckerHeader GetCommonSkillCheckerHeader();
-        bool CheckExecute<T>(ref ISkillChecker checker, T t) where T : ISkillCheckerParams;
-        bool Execute<T>(ref ISkillChecker checker, T t, params object[] args) where T : ISkillCheckerParams;
+        bool CheckExecute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams);
+        bool Execute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams, params object[] args);
         void Destroy();
     }
 
     public static class SkillCheckerExtensions
     {
-        public static bool IsSkillNotCdAndCostEnough(this ISkillChecker skillChecker, ISkillCheckerParams skillCheckerParams)
+        public static bool IsSkillNotCdAndCostEnough(this ISkillChecker skillChecker, SkillCheckerParams skillCheckerParams)
         {
             var cooldownHeader = skillChecker.GetCooldownHeader();
             if (cooldownHeader.IsCooldown())
                 return false;
-            var commonSkillCheckerHeader = skillCheckerParams.GetCommonSkillCheckerParams();
             var skillCheckHeader = skillChecker.GetCommonSkillCheckerHeader();
-            if (commonSkillCheckerHeader.StrengthCalculator.PropertyType != PropertyTypeEnum.Strength
-                || commonSkillCheckerHeader.StrengthCalculator.CurrentValue < skillCheckHeader.SkillCost)
+            if (skillCheckerParams.StrengthCalculator.PropertyType != PropertyTypeEnum.Strength
+                || skillCheckerParams.StrengthCalculator.CurrentValue < skillCheckHeader.SkillCost)
             {
                 return false;
             }
@@ -63,134 +63,16 @@ namespace HotUpdate.Scripts.Skill
     }
 
     [MemoryPackable]
-    public partial struct CommonSkillCheckerParams
+    public partial struct SkillCheckerParams
     {
         [MemoryPackOrder(0)]
         public PropertyCalculator StrengthCalculator;
         [MemoryPackOrder(1)]
-        public SkillBaseType SkillType;
-    }
-    
-    [MemoryPackable]
-    public partial struct DistanceCheckerParams
-    {
-        [MemoryPackOrder(0)]
         public Vector3 PlayerPosition;
-        [MemoryPackOrder(1)]
-        public Vector3 TargetPosition;
         [MemoryPackOrder(2)]
-        public float Radius;
-    }
-    
-    [MemoryPackable]
-    public partial struct DashCheckerParams
-    {
-        [MemoryPackOrder(0)]
-        public Vector3 PlayerPosition;
-        [MemoryPackOrder(1)]
         public Vector3 TargetPosition;
-    }
-
-    //检查技能释放所需要的参数
-    [MemoryPackable(GenerateType.NoGenerate)]
-    [MemoryPackUnion(0, typeof(SingleTargetContinuousDamageSkillCheckerParams))]
-    [MemoryPackUnion(1, typeof(SingleTargetFlyEffectDamageSkillCheckerParams))]
-    [MemoryPackUnion(2, typeof(DashSkillCheckerParams))]
-    [MemoryPackUnion(3, typeof(AreaOfRangedContinuousDamageSkillCheckerParams))]
-    [MemoryPackUnion(4, typeof(AreaOfRangedDamageSkillCheckerParams))]
-    [MemoryPackUnion(5, typeof(AreaOfRangedFlyEffectDamageSkillCheckerParams))]
-    [MemoryPackUnion(6, typeof(DashAreaOfRangedControlDamageSkillCheckerParams))]
-    public partial interface ISkillCheckerParams
-    {
-        CommonSkillCheckerParams GetCommonSkillCheckerParams();
-    }
-
-    //飞行技能，对第一个命中的敌人造成持续伤害
-    [MemoryPackable]
-    public partial struct SingleTargetContinuousDamageSkillCheckerParams : ISkillCheckerParams
-    {
-        [MemoryPackOrder(0)]
-        public CommonSkillCheckerParams CommonSkillCheckerParams;
-        [MemoryPackOrder(1)]
-        public DistanceCheckerParams DistanceCheckerParams; 
-        public CommonSkillCheckerParams GetCommonSkillCheckerParams() => CommonSkillCheckerParams;
-    }
-    
-    //飞行技能，对第一个命中的敌人造成伤害
-    [MemoryPackable]
-    public partial struct SingleTargetFlyEffectDamageSkillCheckerParams : ISkillCheckerParams
-    {
-        [MemoryPackOrder(0)]
-        public CommonSkillCheckerParams CommonSkillCheckerParams;
-        [MemoryPackOrder(1)]
-        public DistanceCheckerParams DistanceCheckerParams; 
-        public CommonSkillCheckerParams GetCommonSkillCheckerParams() => CommonSkillCheckerParams;
-    }
-    
-    // //飞行技能，对第一个命中的敌人造成伤害
-    // [MemoryPackable]
-    // public partial struct SingleTargetSkillCheckerParams : ISkillCheckerParams
-    // {
-    //     [MemoryPackOrder(0)]
-    //     public CommonSkillCheckerParams CommonSkillCheckerParams;
-    //     [MemoryPackOrder(1)]
-    //     public DistanceCheckerParams DistanceCheckerParams; 
-    //     public CommonSkillCheckerParams GetCommonSkillCheckerParams() => CommonSkillCheckerParams;
-    // }
-    
-    //位移技能
-    [MemoryPackable]
-    public partial struct DashSkillCheckerParams : ISkillCheckerParams
-    {
-        [MemoryPackOrder(0)]
-        public CommonSkillCheckerParams CommonSkillCheckerParams;
-        [MemoryPackOrder(1)]
-        public DashCheckerParams DashCheckerParams; 
-        public CommonSkillCheckerParams GetCommonSkillCheckerParams() => CommonSkillCheckerParams;
-    }
-    
-    //在一段区域内持续对目标造成持续伤害(减速为主，如果是其他控制则大幅削减伤害)
-    [MemoryPackable]
-    public partial struct AreaOfRangedContinuousDamageSkillCheckerParams : ISkillCheckerParams
-    {
-        [MemoryPackOrder(0)]
-        public CommonSkillCheckerParams CommonSkillCheckerParams;
-        [MemoryPackOrder(1)]
-        public DistanceCheckerParams DistanceCheckerParams; 
-        public CommonSkillCheckerParams GetCommonSkillCheckerParams() => CommonSkillCheckerParams;
-    }
-    
-    //飞行技能，对命中区域内所有敌人造成伤害(可以有控制效果)
-    [MemoryPackable]
-    public partial struct AreaOfRangedDamageSkillCheckerParams : ISkillCheckerParams
-    {
-        [MemoryPackOrder(0)]
-        public CommonSkillCheckerParams CommonSkillCheckerParams;
-        [MemoryPackOrder(1)]
-        public DistanceCheckerParams DistanceCheckerParams; 
-        public CommonSkillCheckerParams GetCommonSkillCheckerParams() => CommonSkillCheckerParams;
-    }
-    
-    //飞行技能，对命中区域内所有敌人造成伤害
-    [MemoryPackable]
-    public partial struct AreaOfRangedFlyEffectDamageSkillCheckerParams : ISkillCheckerParams
-    {
-        [MemoryPackOrder(0)]
-        public CommonSkillCheckerParams CommonSkillCheckerParams;
-        [MemoryPackOrder(1)]
-        public DistanceCheckerParams DistanceCheckerParams; 
-        public CommonSkillCheckerParams GetCommonSkillCheckerParams() => CommonSkillCheckerParams;
-    }
-    
-    //位移技能，位移后对命中的区域内所有敌人造成伤害和控制效果
-    [MemoryPackable]
-    public partial struct DashAreaOfRangedControlDamageSkillCheckerParams : ISkillCheckerParams
-    {
-        [MemoryPackOrder(0)]
-        public CommonSkillCheckerParams CommonSkillCheckerParams;
-        [MemoryPackOrder(1)]
-        public DistanceCheckerParams DistanceCheckerParams; 
-        public CommonSkillCheckerParams GetCommonSkillCheckerParams() => CommonSkillCheckerParams;
+        [MemoryPackOrder(3)]
+        public float Radius;
     }
     
     //持续性技能的生命周期
@@ -399,10 +281,21 @@ namespace HotUpdate.Scripts.Skill
         public SkillPropertyLifeCycle SkillPropertyLifeCycle;
         [MemoryPackOrder(3)] 
         public SkillFlyEffectLifeCycle SkillFlyEffectLifeCycle;
+
+        [MemoryPackIgnore] public CancellationToken Token;
         public CooldownHeader GetCooldownHeader() => CooldownHeader;
 
         public CommonSkillCheckerHeader GetCommonSkillCheckerHeader() => CommonSkillCheckerHeader;
-        
+        public bool CheckExecute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams)
+        {
+            return this.IsSkillNotCdAndCostEnough(skillCheckerParams);
+        }
+
+        public bool Execute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams, params object[] args)
+        {
+            return CheckExecute(ref checker, skillCheckerParams);
+        }
+
         public SingleTargetContinuousDamageSkillChecker(CooldownHeader cooldownHeader, CommonSkillCheckerHeader commonSkillCheckerHeader,
             SkillPropertyLifeCycle skillPropertyLifeCycle, SkillFlyEffectLifeCycle skillFlyEffectLifeCycle)
         {
@@ -421,24 +314,6 @@ namespace HotUpdate.Scripts.Skill
             };
         }
 
-        public bool CheckExecute<T>(ref ISkillChecker checker, T t) where T : ISkillCheckerParams
-        {
-            return this.IsSkillNotCdAndCostEnough(t);
-        }
-
-        public bool Execute<T>(ref ISkillChecker checker, T t, params object[] args) where T : ISkillCheckerParams
-        {
-            if (CheckExecute(ref checker, t))
-            {
-                if (t is SingleTargetContinuousDamageSkillCheckerParams singleTargetContinuousDamageSkillCheckerParams)
-                {
-                    
-                }
-                return true;
-            }
-            return false;
-        }
-
         public void Destroy()
         {
             SkillPropertyLifeCycle = null;
@@ -449,6 +324,10 @@ namespace HotUpdate.Scripts.Skill
         public PropertyCalculatorData UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc, Func<int, PropertyCalculatorData> getPropertyCalculatorDataFunc)
         {
             var hitPlayer = SkillFlyEffectLifeCycle.Update(deltaTime, isHitFunc);
+            if (hitPlayer.Length == 0)
+            {
+                return null;
+            }
             return getPropertyCalculatorDataFunc(hitPlayer[0]);
         }
 
@@ -492,22 +371,14 @@ namespace HotUpdate.Scripts.Skill
             };
         }
 
-        public bool CheckExecute<T>(ref ISkillChecker checker, T t) where T : ISkillCheckerParams
+        public bool CheckExecute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams)
         {
-            return this.IsSkillNotCdAndCostEnough(t);
+            return this.IsSkillNotCdAndCostEnough(skillCheckerParams);
         }
 
-        public bool Execute<T>(ref ISkillChecker checker, T t, params object[] args) where T : ISkillCheckerParams
+        public bool Execute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams, params object[] args)
         {
-            if (CheckExecute(ref checker, t))
-            {
-                if (t is SingleTargetContinuousDamageSkillCheckerParams singleTargetContinuousDamageSkillCheckerParams)
-                {
-                    
-                }
-                return true;
-            }
-            return false;
+            return CheckExecute(ref checker, skillCheckerParams);
         }
 
         public void Destroy()
@@ -563,22 +434,14 @@ namespace HotUpdate.Scripts.Skill
             };
         }
 
-        public bool CheckExecute<T>(ref ISkillChecker checker, T t) where T : ISkillCheckerParams
+        public bool CheckExecute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams)
         {
-            return this.IsSkillNotCdAndCostEnough(t);
+            return this.IsSkillNotCdAndCostEnough(skillCheckerParams);
         }
 
-        public bool Execute<T>(ref ISkillChecker checker, T t, params object[] args) where T : ISkillCheckerParams
+        public bool Execute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams, params object[] args)
         {
-            if (CheckExecute(ref checker, t))
-            {
-                if (t is DashSkillCheckerParams dashCheckerParams)
-                {
-                    
-                }
-                return true;
-            }
-            return false;
+            return CheckExecute(ref checker, skillCheckerParams);
         }
 
         public void Destroy()
@@ -613,30 +476,15 @@ namespace HotUpdate.Scripts.Skill
 
         public CommonSkillCheckerHeader GetCommonSkillCheckerHeader() => CommonSkillCheckerHeader;
 
-        public bool CheckExecute<T>(ref ISkillChecker checker, T t) where T : ISkillCheckerParams
+        
+        public bool CheckExecute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams)
         {
-            return this.IsSkillNotCdAndCostEnough(t);
+            return this.IsSkillNotCdAndCostEnough(skillCheckerParams);
         }
 
-        public bool Execute<T>(ref ISkillChecker checker, T t, params object[] args) where T : ISkillCheckerParams
+        public bool Execute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams, params object[] args)
         {
-            if (CheckExecute(ref checker, t))
-            {
-                // if (t is AreaOfRangedFlySkillCheckerParams areaOfRangedFlySkillCheckerParams)
-                // {
-                //     var origin = areaOfRangedFlySkillCheckerParams.Origin;
-                //     var target = areaOfRangedFlySkillCheckerParams.Target;
-                //     var size = areaOfRangedFlySkillCheckerParams.Size;
-                //     var speed = areaOfRangedFlySkillCheckerParams.Speed;
-                //     var expectationTime = areaOfRangedFlySkillCheckerParams.ExpectationTime;
-                //     var effectCount = areaOfRangedFlySkillCheckerParams.EffectCount;
-                //     var skillEffectFlyType = areaOfRangedFlySkillCheckerParams.SkillEffectFlyType;
-                //     var currentTime = areaOfRangedFlySkillCheckerParams.CurrentTime;
-                //     SkillFlyEffectLifeCycle = new SkillFlyEffectLifeCycle(origin, target, size, speed, expectationTime, effectCount, skillEffectFlyType, currentTime);
-                // }
-                return true;
-            }
-            return false;
+            return CheckExecute(ref checker, skillCheckerParams);
         }
 
         public void Destroy()
@@ -693,34 +541,32 @@ namespace HotUpdate.Scripts.Skill
 
         public CommonSkillCheckerHeader GetCommonSkillCheckerHeader() => CommonSkillCheckerHeader;
 
-        public bool CheckExecute<T>(ref ISkillChecker checker, T t) where T : ISkillCheckerParams
-        {
-            return this.IsSkillNotCdAndCostEnough(t);
-        }
         
-        public bool Execute<T>(ref ISkillChecker checker, T t, params object[] args) where T : ISkillCheckerParams
+        public bool CheckExecute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams)
         {
-            if (CheckExecute(ref checker, t))
-            {
-                if (t is AreaOfRangedDamageSkillCheckerParams areaOfRangedSkillCheckerParams)
-                {
-                    int[] hitPlayers = null;
-                    foreach (var arg in args)
-                    {
-                        if (arg is Func<Vector3, IColliderConfig, int[]> isHitFunc)
-                        {
-                            var colliderConfig = GamePhysicsSystem.CreateColliderConfig(ColliderType.Sphere, Vector3.zero,
-                                Vector3.zero, areaOfRangedSkillCheckerParams.DistanceCheckerParams.Radius);
-                            hitPlayers = isHitFunc(areaOfRangedSkillCheckerParams.DistanceCheckerParams.TargetPosition, colliderConfig);
-                        }
+            return this.IsSkillNotCdAndCostEnough(skillCheckerParams);
+        }
 
-                        if (arg is Func<int, PropertyCalculatorData> getPropertyCalculatorDataFunc && hitPlayers != null && hitPlayers.Length > 0)
+        public bool Execute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams, params object[] args)
+        {
+            if (CheckExecute(ref checker, skillCheckerParams))
+            {
+                int[] hitPlayers = null;
+                foreach (var arg in args)
+                {
+                    if (arg is Func<Vector3, IColliderConfig, int[]> isHitFunc)
+                    {
+                        var colliderConfig = GamePhysicsSystem.CreateColliderConfig(ColliderType.Sphere, Vector3.zero,
+                            Vector3.zero, skillCheckerParams.Radius);
+                        hitPlayers = isHitFunc(skillCheckerParams.TargetPosition, colliderConfig);
+                    }
+
+                    if (arg is Func<int, PropertyCalculatorData> getPropertyCalculatorDataFunc && hitPlayers != null && hitPlayers.Length > 0)
+                    {
+                        foreach (var hitPlayer in hitPlayers)
                         {
-                            foreach (var hitPlayer in hitPlayers)
-                            {
-                                var propertyCalculatorData = getPropertyCalculatorDataFunc(hitPlayer);
-                                SkillPropertyLifeCycle.UpdateProperty(propertyCalculatorData.OperationType, propertyCalculatorData.BuffCalculator, ref propertyCalculatorData.TargetCalculator, out var damage);
-                            }
+                            var propertyCalculatorData = getPropertyCalculatorDataFunc(hitPlayer);
+                            SkillPropertyLifeCycle.UpdateProperty(propertyCalculatorData.OperationType, propertyCalculatorData.BuffCalculator, ref propertyCalculatorData.TargetCalculator, out var damage);
                         }
                     }
                 }

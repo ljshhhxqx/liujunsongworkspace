@@ -4,13 +4,13 @@ using System.IO;
 using System.Linq;
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Network.Server.PlayFab;
+using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
 using Network.Data;
 using Newtonsoft.Json;
 using PlayFab;
 using PlayFab.CloudScriptModels;
-using Tool.Coroutine;
 using Tool.GameEvent;
 using UI.UIBase;
 using UnityEngine;
@@ -21,7 +21,6 @@ namespace Network.Server.PlayFab
     public class PlayFabMessageHandler
     {
         // RepeatedTask是一套用UniTask封装的定时器，可以方便地实现重复任务
-        private readonly RepeatedTask _repeatedTask;
         private readonly UIManager _uiManager;
         private readonly GameEventManager _gameEventManager;
         private bool _isProcessingPopup;
@@ -38,9 +37,8 @@ namespace Network.Server.PlayFab
         // private readonly Dictionary<string, List<PlayerEventData>> _cachedEvents = new Dictionary<string, List<PlayerEventData>>();
         
         [Inject]
-        private PlayFabMessageHandler(RepeatedTask repeatedTask, UIManager uiManager, GameEventManager gameEventManager)
+        private PlayFabMessageHandler( UIManager uiManager, GameEventManager gameEventManager)
         {
-            _repeatedTask = repeatedTask;
             // UIManager是用来显示弹窗的
             _uiManager = uiManager;
             _gameEventManager = gameEventManager;
@@ -50,12 +48,12 @@ namespace Network.Server.PlayFab
 
         private void OnLogoutEvent(PlayerLogoutEvent playerLogoutEvent)
         {
-            _repeatedTask.StopRepeatingTask(GetNewMessages);
+            RepeatedTask.Instance.StopRepeatingTask(GetNewMessages);
         }
 
         private void OnLoginEvent(PlayerLoginEvent playerLoginEvent)
         {
-            _repeatedTask.StartRepeatingTask(GetNewMessages, 2);
+            RepeatedTask.Instance.StartRepeatingTask(GetNewMessages, 2);
         }
 
         public void SendMessage(Message message)

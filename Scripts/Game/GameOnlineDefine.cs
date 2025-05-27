@@ -1,11 +1,11 @@
 using System;
 using Cysharp.Threading.Tasks;
+using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.Tool.GameEvent;
 using Network.Data;
 using PlayFab;
 using PlayFab.ClientModels;
 using PlayFab.CloudScriptModels;
-using Tool.Coroutine;
 using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
@@ -19,25 +19,23 @@ namespace Game
         private const int MAX_RETRY_ATTEMPTS = 3;
         private const float RETRY_DELAY = 5f;
         private GameEventManager _gameEventManager;
-        private RepeatedTask _repeatedTask;
         
         [Inject]
-        private void Init(GameEventManager gameEventManager, RepeatedTask repeatedTask)
+        private void Init(GameEventManager gameEventManager)
         {
             _gameEventManager = gameEventManager;
-            _repeatedTask = repeatedTask;
             _gameEventManager.Subscribe<PlayerLoginEvent>(OnPlayerLogin);
             _gameEventManager.Subscribe<PlayerLogoutEvent>(OnPlayerLogout);
         }
 
         private void OnPlayerLogin(PlayerLoginEvent obj)
         {
-            _repeatedTask.StartUniTaskVoidTask(SendHeartbeat,HEARTBEAT_INTERVAL);
+            RepeatedTask.Instance.StartUniTaskVoidTask(SendHeartbeat,HEARTBEAT_INTERVAL);
         }
 
         private void OnPlayerLogout(PlayerLogoutEvent obj)
         {
-            _repeatedTask.StopUniTaskVoidTask(SendHeartbeat);
+            RepeatedTask.Instance.StopUniTaskVoidTask(SendHeartbeat);
         }
 
         private async UniTaskVoid SendHeartbeat()

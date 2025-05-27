@@ -53,6 +53,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public float baseValue;
         public float extraRatio;
         public float maxMoveDistance;
+        public float radius;
         public DamageSkillData damageData;
         public HealSkillData healData;
         public ControlSkillData controlData;

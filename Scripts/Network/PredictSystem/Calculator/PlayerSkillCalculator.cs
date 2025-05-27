@@ -1,4 +1,6 @@
-﻿using HotUpdate.Scripts.Config.ArrayConfig;
+﻿using System;
+using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
@@ -18,10 +20,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         }
 
         public static bool ExecuteSkill(PlayerSkillState skillState, SkillConfigData skillConfigData,
-            SkillCommand skillCommand)
+            SkillCommand skillCommand, PropertyCalculator propertyCalculator, Func<Vector3, IColliderConfig, int[]> isHitFunc, Func<int, PropertyCalculatorData> getPropertyCalculatorDataFunc)
         {
             var header = skillCommand.Header;
-            Vector3 position = Vector3.zero;
+            var position = Vector3.zero;
             if (skillCommand.IsAutoSelectTarget)
             {
                 //自动选择目标，找寻离自己最近且在距离内的玩家
@@ -42,9 +44,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 position = Constant.PlayerInGameManager.GetPositionInPlayerDirection(header.ConnectionId, skillCommand.DirectionNormalized, skillConfigData.maxMoveDistance);
             }
 
-            ISkillCheckerParams commonParam = null;
+            var commonParam = new SkillCheckerParams
+            {
+                StrengthCalculator = propertyCalculator,
+                PlayerPosition = Constant.PlayerInGameManager.GetPlayerPosition(header.ConnectionId),
+                TargetPosition = position,
+                Radius = skillConfigData.radius,
+            };
 
-            if (!skillState.SkillChecker.Execute(ref skillState.SkillChecker, commonParam))
+            if (!skillState.SkillChecker.Execute(ref skillState.SkillChecker, commonParam, isHitFunc, getPropertyCalculatorDataFunc))
             {
                 Debug.Log("技能条件不满足");
                 return false;
@@ -52,9 +60,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return true;
         }
 
-        public static void UpdateSkillEffectAndValue()
+        public static void UpdateSkillEffectAndValue(float deltaTime, PlayerSkillState skillState, Func<Vector3, IColliderConfig, int[]> isHitFunc, Func<int, PropertyCalculatorData> getPropertyCalculatorDataFunc)
         {
-            
+            switch (skillState.SkillChecker)
+            {
+                case AreaOfRangedFlySkillChecker areaOfRangedFlySkillChecker:
+                    areaOfRangedFlySkillChecker.UpdateFly(deltaTime, isHitFunc, getPropertyCalculatorDataFunc);
+                    break;
+                case SingleTargetContinuousDamageSkillChecker singleTargetContinuousDamageSkillChecker:
+                    singleTargetContinuousDamageSkillChecker.UpdateFly(deltaTime, isHitFunc, getPropertyCalculatorDataFunc);
+                    break;
+            }
         }
     }
 

@@ -10,7 +10,6 @@ using Network.Data;
 using PlayFab;
 using PlayFab.CloudScriptModels;
 using PlayFab.MultiplayerModels;
-using Tool.Coroutine;
 using UI.UIBase;
 using UI.UIs.Panel;
 using UnityEngine;

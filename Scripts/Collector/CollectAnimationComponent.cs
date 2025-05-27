@@ -1,6 +1,6 @@
 using DG.Tweening;
+using HotUpdate.Scripts.Tool.Coroutine;
 using Sirenix.OdinInspector;
-using Tool.Coroutine;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -9,7 +9,6 @@ namespace HotUpdate.Scripts.Collector
     public class CollectAnimationComponent : MonoBehaviour
     {
         private Renderer _outline;
-        private RepeatedTask _repeatedTask;
         private Sequence _colorSequence;
         private Sequence _animationSequence;
         private Sequence _scaleSequence;

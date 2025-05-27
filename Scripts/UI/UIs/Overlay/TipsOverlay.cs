@@ -4,7 +4,6 @@ using HotUpdate.Scripts.Tool.Coroutine;
 using Sirenix.OdinInspector;
 using Sirenix.Utilities;
 using TMPro;
-using Tool.Coroutine;
 using UI.UIBase;
 using UnityEngine;
 

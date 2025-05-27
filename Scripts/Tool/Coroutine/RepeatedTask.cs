@@ -4,10 +4,13 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-namespace Tool.Coroutine
+namespace HotUpdate.Scripts.Tool.Coroutine
 {
-    public class RepeatedTask
+    public class RepeatedTask : Singleton<RepeatedTask>
     {
+        private readonly Dictionary<TaskDelegate, float> _taskTimers = new Dictionary<TaskDelegate, float>();
+        private readonly Dictionary<TaskDelegate, float> _taskCountdown = new Dictionary<TaskDelegate, float>();
+        
         private readonly Dictionary<TaskDelegate, CancellationTokenSource> _taskCancellationTokens = new Dictionary<TaskDelegate, CancellationTokenSource>();
         private readonly Dictionary<UniTaskVoidTaskDelegate, CancellationTokenSource> _uniTaskVoidTaskCancellationTokens = new Dictionary<UniTaskVoidTaskDelegate, CancellationTokenSource>();
         
@@ -140,6 +143,11 @@ namespace Tool.Coroutine
             }
             _taskCancellationTokens.Clear();
             _uniTaskVoidTaskCancellationTokens.Clear();
+        }
+
+        public void Dispose()
+        {
+            StopAllTasks();
         }
     }
 }

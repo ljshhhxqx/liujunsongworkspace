@@ -1,5 +1,5 @@
 using System;
-using Tool.Coroutine;
+using HotUpdate.Scripts.Tool.Coroutine;
 using UI.UIBase;
 using UnityEngine;
 using VContainer;
@@ -17,18 +17,16 @@ namespace UI.UIs.Exception
         private float _elapsedTime;
         private Quaternion _targetRotation;
         private Quaternion _initialRotation;
-        private RepeatedTask _repeatedTask;
         
         public override UIType Type => UIType.Loading;
         public override UICanvasType CanvasType=> UICanvasType.Exception;
         
         [Inject]
-        private void Init(RepeatedTask repeatedTask)
+        private void Init()
         {
-            _repeatedTask = repeatedTask;
             logo.SetActive(true);
             logo.transform.rotation = Quaternion.identity;
-            _repeatedTask.StartRepeatingTask(RotateLogo, rotationInterval);
+            RepeatedTask.Instance.StartRepeatingTask(RotateLogo, rotationInterval);
         }
 
         private void RotateLogo()
@@ -46,7 +44,7 @@ namespace UI.UIs.Exception
 
         private void OnDestroy()
         {
-            _repeatedTask.StopRepeatingTask(RotateLogo);
+            RepeatedTask.Instance.StopRepeatingTask(RotateLogo);
         }
     }
 }

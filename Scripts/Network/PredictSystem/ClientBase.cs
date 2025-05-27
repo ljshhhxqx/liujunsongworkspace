@@ -1,11 +1,11 @@
 ﻿using HotUpdate.Scripts.Network.Server.Sync;
+using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
 using HotUpdate.Scripts.UI.UIBase;
 using Mirror;
 using Model;
 using Network.Server;
-using Tool.Coroutine;
 using Tool.GameEvent;
 using Tool.Message;
 using UI.UIBase;
@@ -19,19 +19,17 @@ namespace Network.Client
         protected PlayerGameModel playerGameModel;
         protected GameEventManager gameEventManager;
         protected IConfigProvider configProvider;
-        protected RepeatedTask repeatedTask;
         protected MessageCenter messageCenter;
         protected FrameSyncManager frameSyncManager;
         protected UIManager uiManager;
         
         [Inject]
         protected virtual void Init(PlayersGameModelManager playersGameModelManager,
-         GameEventManager gameEventManager, IConfigProvider configProvider, RepeatedTask repeatedTask, MessageCenter messageCenter, UIManager uiManager,
+         GameEventManager gameEventManager, IConfigProvider configProvider, MessageCenter messageCenter, UIManager uiManager,
          FrameSyncManager frameSyncManager)
         {
             this.gameEventManager = gameEventManager;
             this.configProvider = configProvider;
-            this.repeatedTask = repeatedTask;
             this.messageCenter = messageCenter;
             this.uiManager = uiManager;
             this.frameSyncManager = frameSyncManager;
