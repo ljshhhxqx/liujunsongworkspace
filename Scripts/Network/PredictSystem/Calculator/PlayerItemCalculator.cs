@@ -466,7 +466,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
     {
     }
 
-    public struct PlayerItemConstant
+    public class PlayerItemConstant
     {
         public ItemConfig ItemConfig;
         public WeaponConfig WeaponConfig;

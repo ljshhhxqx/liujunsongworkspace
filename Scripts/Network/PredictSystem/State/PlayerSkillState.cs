@@ -8,17 +8,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     public partial class PlayerSkillState : ISyncPropertyState
     {
         [MemoryPackOrder(0)] public CooldownHeader CooldownHeader;
+        [MemoryPackOrder(1)] public int CurrentSkillConfigId;
         [MemoryPackIgnore] public ISkillChecker SkillChecker;
-
-        public void Execute(SkillCheckerParams skillCheckerParams, params object[] args)
-        {
-            SkillChecker.Execute(ref SkillChecker, skillCheckerParams,args);
-        }
-
-        public void Update(params object[] args)
-        {
-            
-        }
     }
 
 }

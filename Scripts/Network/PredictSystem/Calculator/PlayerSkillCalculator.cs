@@ -60,17 +60,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return true;
         }
 
-        public static void UpdateSkillFlyEffect(float deltaTime, PlayerSkillState skillState, Func<Vector3, IColliderConfig, int[]> isHitFunc, Func<int, PropertyCalculatorData> getPropertyCalculatorDataFunc)
+        public static void UpdateSkillFlyEffect(int connectionId, float deltaTime, PlayerSkillState skillState, Func<Vector3, IColliderConfig, int[]> isHitFunc)
         {
-            switch (skillState.SkillChecker)
+            var hitPlayers = skillState.SkillChecker.UpdateFly(deltaTime, isHitFunc);
+            if (hitPlayers.Length == 0)
             {
-                case AreaOfRangedFlySkillChecker areaOfRangedFlySkillChecker:
-                    areaOfRangedFlySkillChecker.UpdateFly(deltaTime, isHitFunc, getPropertyCalculatorDataFunc);
-                    break;
-                case SingleTargetContinuousSkillChecker singleTargetContinuousDamageSkillChecker:
-                    singleTargetContinuousDamageSkillChecker.UpdateFly(deltaTime, isHitFunc, getPropertyCalculatorDataFunc);
-                    break;
+                Debug.Log("没有命中任何玩家");
+                return;
             }
+
+            var command = new PropertySkillCommand();
+            command.Header =GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate);
+            command.SkillId = skillState.CurrentSkillConfigId;
+            command.HitPlayerIds = hitPlayers;
+            Constant.GameSyncManager.EnqueueServerCommand(command);
         }
     }
 

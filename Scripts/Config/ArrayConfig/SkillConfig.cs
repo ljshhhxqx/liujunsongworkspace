@@ -62,11 +62,10 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public ControlSkillType controlType;
         public float controlTime;
         public PropertyTypeEnum propertyType;
-        //是否是瞬移，不是则需要一段位移过程
         public bool isFlash;
-        //指定的目标类型，没有则可以选择地面或墙壁
         public float duration;
         public float interval;
+        public BuffOperationType buffOperationType;
     }
 
     // [JsonSerializable]

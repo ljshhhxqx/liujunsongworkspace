@@ -153,7 +153,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         }
     }
 
-    public struct PlayerEquipmentConstant
+    public class PlayerEquipmentConstant
     {
         public GameSyncManager GameSyncManager;
         public ItemConfig ItemConfig;

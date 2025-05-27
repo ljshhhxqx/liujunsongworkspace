@@ -26,6 +26,7 @@ namespace HotUpdate.Scripts.Skill
         bool CheckExecute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams);
         bool Execute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams, params object[] args);
         void Destroy();
+        int[] UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc);
     }
 
     public static class SkillCheckerExtensions
@@ -235,14 +236,9 @@ namespace HotUpdate.Scripts.Skill
         }
 
         //释放、飞行、命中后造成伤害
-        public PropertyCalculatorData UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc, Func<int, PropertyCalculatorData> getPropertyCalculatorDataFunc)
+        public int[] UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc)
         {
-            var hitPlayer = SkillFlyEffectLifeCycle.Update(deltaTime, isHitFunc);
-            if (hitPlayer.Length == 0)
-            {
-                return null;
-            }
-            return getPropertyCalculatorDataFunc(hitPlayer[0]);
+            return SkillFlyEffectLifeCycle.Update(deltaTime, isHitFunc);
         }
     }
     
@@ -295,15 +291,9 @@ namespace HotUpdate.Scripts.Skill
         }
 
         //释放、飞行、命中后造成伤害
-        public PropertyCalculatorData UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc, Func<int, PropertyCalculatorData> getPropertyCalculatorDataFunc)
+        public int[] UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc)
         {
-            var hitPlayer = SkillFlyEffectLifeCycle.Update(deltaTime, isHitFunc);
-            if (hitPlayer == null || hitPlayer.Length == 0)
-            {
-                return null;
-            }
-            var propertyCalculatorData = getPropertyCalculatorDataFunc(hitPlayer[0]);
-            return propertyCalculatorData;
+            return SkillFlyEffectLifeCycle.Update(deltaTime, isHitFunc);
         }
     }
     
@@ -350,6 +340,11 @@ namespace HotUpdate.Scripts.Skill
             return CheckExecute(ref checker, skillCheckerParams);
         }
 
+        public int[] UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc)
+        {
+            return SkillFlyEffectLifeCycle.Update(deltaTime, isHitFunc);
+        }
+        
         public void Destroy()
         {
             SkillFlyEffectLifeCycle = null;
@@ -398,26 +393,10 @@ namespace HotUpdate.Scripts.Skill
             SkillFlyEffectLifeCycle = null;
         }
         //释放、飞行、命中后造成伤害
-        public List<PropertyCalculatorData> UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc, Func<int, PropertyCalculatorData> getPropertyCalculatorDataFunc)
+       
+        public int[] UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc)
         {
-            var hitPlayer = SkillFlyEffectLifeCycle.Update(deltaTime, isHitFunc);
-            if (hitPlayer == null || hitPlayer.Length == 0)
-            {
-                return null;
-            }
-
-            var propertyCalculatorData = new List<PropertyCalculatorData>();
-            for (int i = 0; i < hitPlayer.Length; i++)
-            {
-                var calculatorData = getPropertyCalculatorDataFunc(i);
-                if (calculatorData == null)
-                {
-                    continue;
-                }
-                propertyCalculatorData.Add(calculatorData);
-            }
-            
-            return propertyCalculatorData;
+            return SkillFlyEffectLifeCycle.Update(deltaTime, isHitFunc);
         }
     }
     
@@ -459,26 +438,10 @@ namespace HotUpdate.Scripts.Skill
             return CheckExecute(ref checker, skillCheckerParams);
         }
 
-        public List<PropertyCalculatorData> UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc, Func<int, PropertyCalculatorData> getPropertyCalculatorDataFunc)
+        
+        public int[] UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc)
         {
-            var propertyCalculatorDatas = new List<PropertyCalculatorData>();
-            var colliderConfig = GamePhysicsSystem.CreateColliderConfig(ColliderType.Sphere, Vector3.zero,
-                Vector3.zero, CommonSkillCheckerHeader.Radius);
-            var hitPlayers = isHitFunc(SkillFlyEffectLifeCycle.Target, colliderConfig);
-            if (hitPlayers == null || hitPlayers.Length == 0)
-            {
-                return null;
-            }
-            for (int i = 0; i < hitPlayers.Length; i++)
-            {
-                var calculatorData = getPropertyCalculatorDataFunc(hitPlayers[i]);
-                if (calculatorData == null)
-                {
-                    continue;
-                }
-                propertyCalculatorDatas.Add(calculatorData);
-            }
-            return propertyCalculatorDatas;
+            return SkillFlyEffectLifeCycle.Update(deltaTime, isHitFunc);
         }
 
         public void Destroy()
@@ -495,7 +458,7 @@ namespace HotUpdate.Scripts.Skill
         [MemoryPackOrder(1)]
         public CommonSkillCheckerHeader CommonSkillCheckerHeader;
         [MemoryPackOrder(2)] 
-        public SkillContinuousLifeCycle SkillFlyEffectLifeCycle;
+        public SkillFlyEffectLifeCycle SkillFlyEffectLifeCycle;
         [MemoryPackOrder(3)] 
         public float FlyDistance;
         public float GetFlyDistance() => FlyDistance;
@@ -525,26 +488,10 @@ namespace HotUpdate.Scripts.Skill
         }
 
         
-        public List<PropertyCalculatorData> UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc, Func<int, PropertyCalculatorData> getPropertyCalculatorDataFunc)
+        
+        public int[] UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc)
         {
-            var propertyCalculatorDatas = new List<PropertyCalculatorData>();
-            var colliderConfig = GamePhysicsSystem.CreateColliderConfig(ColliderType.Sphere, Vector3.zero,
-                Vector3.zero, CommonSkillCheckerHeader.Radius);
-            var hitPlayers = isHitFunc(SkillFlyEffectLifeCycle.Target, colliderConfig);
-            if (hitPlayers == null || hitPlayers.Length == 0)
-            {
-                return null;
-            }
-            for (int i = 0; i < hitPlayers.Length; i++)
-            {
-                var calculatorData = getPropertyCalculatorDataFunc(hitPlayers[i]);
-                if (calculatorData == null)
-                {
-                    continue;
-                }
-                propertyCalculatorDatas.Add(calculatorData);
-            }
-            return propertyCalculatorDatas;
+            return SkillFlyEffectLifeCycle.Update(deltaTime, isHitFunc);
         }
 
         public void Destroy()
@@ -553,7 +500,7 @@ namespace HotUpdate.Scripts.Skill
         }
     }
     [MemoryPackable]
-    public partial class PropertyCalculatorData
+    public partial struct PropertyCalculatorData : IEquatable<PropertyCalculatorData>
     {
         [MemoryPackOrder(0)]
         public PropertyCalculator BuffCalculator;
@@ -565,5 +512,30 @@ namespace HotUpdate.Scripts.Skill
         public int PlayerId;
         [MemoryPackOrder(4)] 
         public float Value;
+
+        public bool Equals(PropertyCalculatorData other)
+        {
+            return BuffCalculator.Equals(other.BuffCalculator) && TargetCalculator.Equals(other.TargetCalculator) && OperationType == other.OperationType && PlayerId == other.PlayerId && Value.Equals(other.Value);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is PropertyCalculatorData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(BuffCalculator, TargetCalculator, (int)OperationType, PlayerId, Value);
+        }
+
+        public static bool operator ==(PropertyCalculatorData left, PropertyCalculatorData right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(PropertyCalculatorData left, PropertyCalculatorData right)
+        {
+            return !left.Equals(right);
+        }
     }
 }

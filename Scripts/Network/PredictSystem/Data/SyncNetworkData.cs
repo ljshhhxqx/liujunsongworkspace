@@ -500,12 +500,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     {
         [MemoryPackOrder(0)] 
         public NetworkCommandHeader Header;
-        [MemoryPackOrder(0)]
+        [MemoryPackOrder(1)]
         public int SkillId;
+        [MemoryPackOrder(2)]
+        public int[] HitPlayerIds;
         public NetworkCommandHeader GetHeader() => Header;
         public bool IsValid()
         {
-            return SkillId > 0;
+            return SkillId > 0 && HitPlayerIds.Length > 0 && HitPlayerIds.All(t => t > 0);
         }
         
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)

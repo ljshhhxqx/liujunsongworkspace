@@ -191,7 +191,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         }
     }
 
-    public struct ShopCalculatorConstant
+    public class ShopCalculatorConstant
     {
         public GameSyncManager GameSyncManager;
         public ShopConfig ShopConfig;
