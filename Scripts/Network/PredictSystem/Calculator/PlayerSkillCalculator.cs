@@ -3,6 +3,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Skill;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
@@ -16,7 +17,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             Constant = constant;
         }
 
-        public static void ExecuteSkill(PlayerSkillState skillState, SkillConfigData skillConfigData,
+        public static bool ExecuteSkill(PlayerSkillState skillState, SkillConfigData skillConfigData,
             SkillCommand skillCommand)
         {
             var header = skillCommand.Header;
@@ -38,9 +39,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             if (position == Vector3.zero)
             {
                 //如果没有找到，就在玩家面朝方向最远处释放技能
-                position =  Constant.PlayerInGameManager.GetPositionInPlayerDirection(header.ConnectionId, skillCommand.DirectionNormalized, skillConfigData.maxMoveDistance);
+                position = Constant.PlayerInGameManager.GetPositionInPlayerDirection(header.ConnectionId, skillCommand.DirectionNormalized, skillConfigData.maxMoveDistance);
             }
-            skillState.SkillChecker.Execute(ref skillState.SkillChecker, );
+
+            ISkillCheckerParams commonParam = null;
+
+            if (!skillState.SkillChecker.Execute(ref skillState.SkillChecker, commonParam))
+            {
+                Debug.Log("技能条件不满足");
+                return false;
+            }
+            return true;
         }
 
         public static void UpdateSkillEffectAndValue()

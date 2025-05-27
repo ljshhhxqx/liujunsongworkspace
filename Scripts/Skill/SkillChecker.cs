@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AOTScripts.Data;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Network.Battle;
 using HotUpdate.Scripts.Network.PredictSystem.State;
@@ -67,7 +68,7 @@ namespace HotUpdate.Scripts.Skill
         [MemoryPackOrder(0)]
         public PropertyCalculator StrengthCalculator;
         [MemoryPackOrder(1)]
-        public bool IsLongTouch;
+        public SkillBaseType SkillType;
     }
     
     [MemoryPackable]

@@ -615,7 +615,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     {
         [Header("消耗MP百分比范围")]
         public Range mpRange;
-        [FormerlySerializedAs("skillType")] [Header("技能类型")]
+        [Header("技能类型")]
         public SkillBaseType skillBaseType;
 
         public TriggerType GetTriggerType() => TriggerType.OnSkillCast;
