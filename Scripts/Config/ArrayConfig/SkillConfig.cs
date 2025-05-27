@@ -28,13 +28,17 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 data.cooldown = float.Parse(text[3]);
                 data.animationState = JsonConvert.DeserializeObject<AnimationState>(text[4]);
                 data.particleId = int.Parse(text[5]);
-                data.damageData = JsonConvert.DeserializeObject<DamageSkillData>(text[6]);
-                data.healData = JsonConvert.DeserializeObject<HealSkillData>(text[7]);
-                data.controlData = JsonConvert.DeserializeObject<ControlSkillData>(text[8]);
-                data.moveData = JsonConvert.DeserializeObject<MoveSkillData>(text[9]);
-                data.continuousEffectData = JsonConvert.DeserializeObject<ContinuousEffectSkillData>(text[10]);
-                data.areaEffectData = JsonConvert.DeserializeObject<AreaEffectSkillData>(text[11]);
-                data.singleEffectData = JsonConvert.DeserializeObject<SingleEffectSkillData>(text[12]);
+                data.baseValue = float.Parse(text[6]);
+                data.extraRatio = float.Parse(text[7]);
+                data.maxDistance = float.Parse(text[8]);
+                data.radius = float.Parse(text[9]);
+                data.isAreaOfRange = bool.Parse(text[10]);
+                data.controlType = (ControlSkillType) Enum.Parse(typeof(ControlSkillType), text[11]);
+                data.controlTime = float.Parse(text[12]);
+                data.propertyType = (PropertyTypeEnum) Enum.Parse(typeof(PropertyTypeEnum), text[13]);
+                data.isFlash = bool.Parse(text[14]);
+                data.duration = float.Parse(text[15]);
+                data.interval = float.Parse(text[16]);
                 skillData.Add(data);
             }
         }
@@ -52,75 +56,17 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public int particleId;
         public float baseValue;
         public float extraRatio;
-        public float maxMoveDistance;
+        public float maxDistance;
         public float radius;
-        public DamageSkillData damageData;
-        public HealSkillData healData;
-        public ControlSkillData controlData;
-        public MoveSkillData moveData;
-        public ContinuousEffectSkillData continuousEffectData;
-        public AreaEffectSkillData areaEffectData;
-        public SingleEffectSkillData singleEffectData;
-    }
-
-    [Serializable]
-    [JsonSerializable]
-    public struct DamageSkillData
-    {
-        //吃到伤害增益的属性
-        public PropertyTypeEnum propertyType;
-        public DamageType damageType;
-    }
-
-    [Serializable]
-    [JsonSerializable]
-    public struct HealSkillData
-    {
-        //吃到治疗增益的属性
-        public PropertyTypeEnum propertyType;
-        //恢复属性
-        public PropertyTypeEnum healPropertyType;
-    }
-
-    [Serializable]
-    [JsonSerializable]
-    public struct ControlSkillData
-    {
+        public bool isAreaOfRange;
         public ControlSkillType controlType;
         public float controlTime;
-    }
-
-    [Serializable]
-    [JsonSerializable]
-    public struct MoveSkillData
-    {
+        public PropertyTypeEnum propertyType;
         //是否是瞬移，不是则需要一段位移过程
         public bool isFlash;
         //指定的目标类型，没有则可以选择地面或墙壁
-        public ConditionTargetType conditionTarget;
-    }
-
-    [Serializable]
-    [JsonSerializable]
-    public struct ContinuousEffectSkillData
-    {
         public float duration;
         public float interval;
-    }
-
-    [Serializable]
-    [JsonSerializable]
-    public struct AreaEffectSkillData
-    {
-        public float radius;
-        public float maxDistance;
-    }
-
-    [Serializable]
-    [JsonSerializable]
-    public struct SingleEffectSkillData
-    {
-        public float maxDistance;
     }
 
     // [JsonSerializable]

@@ -11,16 +11,18 @@ using UnityEngine;
 namespace HotUpdate.Scripts.Skill
 {
     [MemoryPackable(GenerateType.NoGenerate)]
-    [MemoryPackUnion(0, typeof(SingleTargetContinuousDamageSkillChecker))]
+    [MemoryPackUnion(0, typeof(SingleTargetContinuousSkillChecker))]
     [MemoryPackUnion(1, typeof(SingleTargetDamageSkillChecker))]
     [MemoryPackUnion(2, typeof(AreaOfRangedSkillChecker))]
     [MemoryPackUnion(3, typeof(DashSkillChecker))]
     [MemoryPackUnion(4, typeof(AreaOfRangedFlySkillChecker))]
+    [MemoryPackUnion(5, typeof(AreaOfRangedContinuousSkillChecker))]
     public partial interface ISkillChecker
     {
         CooldownHeader GetCooldownHeader();
         CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader);
         CommonSkillCheckerHeader GetCommonSkillCheckerHeader();
+        float GetFlyDistance();
         bool CheckExecute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams);
         bool Execute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams, params object[] args);
         void Destroy();
@@ -59,7 +61,8 @@ namespace HotUpdate.Scripts.Skill
         [MemoryPackOrder(7)] public float MinDistance;
         [MemoryPackOrder(8)] public float ExistTime;
         [MemoryPackOrder(9)] public PropertyTypeEnum BuffPropertyType;
-        [MemoryPackOrder(9)] public PropertyTypeEnum EffectPropertyType;
+        [MemoryPackOrder(10)] public PropertyTypeEnum EffectPropertyType;
+        [MemoryPackOrder(11)] public float Radius;
     }
 
     [MemoryPackable]
@@ -182,110 +185,24 @@ namespace HotUpdate.Scripts.Skill
             return isHitFunc(CurrentPosition, _colliderConfig);
         }
     }
-    
-    [MemoryPackable]
-    public partial class SkillPropertyLifeCycle
-    {
-        [MemoryPackOrder(0)] 
-        public float BaseValue;
-        [MemoryPackOrder(1)] 
-        public float ExtraRatio;
-        [MemoryPackOrder(2)]
-        public float Cooldown;
-        [MemoryPackOrder(3)]
-        public float CurrentTime;
-        [MemoryPackOrder(4)]
-        public float EffectInterval;
-        //造成技能效果时，增益受益于的属性类型
-        [MemoryPackOrder(5)] 
-        public PropertyTypeEnum BuffPropertyType;
-        //对目标造成技能效果时，目标哪一个属性会受到效果
-        [MemoryPackOrder(6)] 
-        public PropertyTypeEnum TargetPropertyType;
-
-        //MemoryPackConstructor]
-        public SkillPropertyLifeCycle(float baseValue, float extraRatio, float cooldown, float effectInterval, 
-            PropertyTypeEnum buffPropertyType, PropertyTypeEnum targetPropertyType, float currentTime = 0)
-        {
-            BaseValue = baseValue;
-            ExtraRatio = extraRatio;
-            Cooldown = cooldown;
-            CurrentTime = currentTime;
-            EffectInterval = effectInterval;
-            BuffPropertyType = buffPropertyType;
-            TargetPropertyType = targetPropertyType;
-        }
-        
-        public bool IsCooldown()
-        {
-            return CurrentTime > 0;
-        }
-        
-        public bool UpdateProperty(BuffOperationType buffOperationType, PropertyCalculator buffCalculator, ref PropertyCalculator targetCalculator, 
-            out float damage)
-        {
-            damage = 0;
-            if (!IsCooldown() || EffectInterval == 0)
-            {
-                return false;
-            }
-            if (buffCalculator.PropertyType != BuffPropertyType || targetCalculator.PropertyType != TargetPropertyType)
-            {
-                Debug.LogError("BuffPropertyType or TargetPropertyType is not match");
-                return false;
-            }
-            TakeEffect(this, buffOperationType, buffCalculator, ref targetCalculator, out damage);
-            return true;
-        }
-
-        private static void TakeEffect(SkillPropertyLifeCycle skillPropertyLifeCycle, BuffOperationType buffOperationType, PropertyCalculator buffCalculator, ref PropertyCalculator targetCalculator, 
-            out float damage)
-        {
-            damage = skillPropertyLifeCycle.BaseValue + skillPropertyLifeCycle.ExtraRatio * (skillPropertyLifeCycle.EffectInterval == 0 ? 1 : skillPropertyLifeCycle.EffectInterval);
-            skillPropertyLifeCycle.CurrentTime = Math.Max(0, skillPropertyLifeCycle.CurrentTime - skillPropertyLifeCycle.EffectInterval);
-            targetCalculator = targetCalculator.UpdateCalculator(targetCalculator, new BuffIncreaseData
-            {
-                increaseType = BuffIncreaseType.Current,
-                increaseValue = damage,
-                operationType = buffOperationType,
-            });
-        }
-
-        public void Execute(BuffOperationType buffOperationType, PropertyCalculator buffCalculator, ref PropertyCalculator targetCalculator, 
-            out float damage)
-        {
-            damage = 0;
-            if (!IsCooldown())
-            {
-                return;
-            }
-            
-            if (buffCalculator.PropertyType != BuffPropertyType || targetCalculator.PropertyType != TargetPropertyType)
-            {
-                Debug.LogError("BuffPropertyType or TargetPropertyType is not match");
-                return;
-            }
-            TakeEffect(this, buffOperationType, buffCalculator, ref targetCalculator, out damage);
-        }
-    }
 
     //飞行技能、命中后造成单体持续伤害的技能
     [MemoryPackable]
-    public partial class SingleTargetContinuousDamageSkillChecker : ISkillChecker
+    public partial class SingleTargetContinuousSkillChecker : ISkillChecker
     {
         [MemoryPackOrder(0)]
         public CooldownHeader CooldownHeader;
         [MemoryPackOrder(1)]
         public CommonSkillCheckerHeader CommonSkillCheckerHeader;
-        [MemoryPackOrder(2)] 
-        public SkillPropertyLifeCycle SkillPropertyLifeCycle;
         [MemoryPackOrder(3)] 
         public SkillFlyEffectLifeCycle SkillFlyEffectLifeCycle;
-
-        [MemoryPackIgnore] public CancellationToken Token;
+        [MemoryPackOrder(4)] 
+        public float FlyDistance;
+        public float GetFlyDistance() => FlyDistance;
         public CooldownHeader GetCooldownHeader() => CooldownHeader;
 
         public CommonSkillCheckerHeader GetCommonSkillCheckerHeader() => CommonSkillCheckerHeader;
+
         public bool CheckExecute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams)
         {
             return this.IsSkillNotCdAndCostEnough(skillCheckerParams);
@@ -296,12 +213,10 @@ namespace HotUpdate.Scripts.Skill
             return CheckExecute(ref checker, skillCheckerParams);
         }
 
-        public SingleTargetContinuousDamageSkillChecker(CooldownHeader cooldownHeader, CommonSkillCheckerHeader commonSkillCheckerHeader,
-            SkillPropertyLifeCycle skillPropertyLifeCycle, SkillFlyEffectLifeCycle skillFlyEffectLifeCycle)
+        public SingleTargetContinuousSkillChecker(CooldownHeader cooldownHeader, CommonSkillCheckerHeader commonSkillCheckerHeader,SkillFlyEffectLifeCycle skillFlyEffectLifeCycle)
         {
             CooldownHeader = cooldownHeader;
             CommonSkillCheckerHeader = commonSkillCheckerHeader;
-            SkillPropertyLifeCycle = skillPropertyLifeCycle;
             SkillFlyEffectLifeCycle = skillFlyEffectLifeCycle;
         }
 
@@ -316,7 +231,6 @@ namespace HotUpdate.Scripts.Skill
 
         public void Destroy()
         {
-            SkillPropertyLifeCycle = null;
             SkillFlyEffectLifeCycle = null;
         }
 
@@ -330,11 +244,6 @@ namespace HotUpdate.Scripts.Skill
             }
             return getPropertyCalculatorDataFunc(hitPlayer[0]);
         }
-
-        public bool UpdateDamage(PropertyCalculatorData propertyCalculatorData, out float damage)
-        {
-            return SkillPropertyLifeCycle.UpdateProperty(propertyCalculatorData.OperationType, propertyCalculatorData.BuffCalculator, ref propertyCalculatorData.TargetCalculator, out damage);
-        }
     }
     
     //飞行技能、命中后造成单体伤害的技能(可以有控制技能)
@@ -346,19 +255,18 @@ namespace HotUpdate.Scripts.Skill
         [MemoryPackOrder(1)]
         public CommonSkillCheckerHeader CommonSkillCheckerHeader;
         [MemoryPackOrder(2)] 
-        public SkillPropertyLifeCycle SkillPropertyLifeCycle;
-        [MemoryPackOrder(3)] 
         public SkillFlyEffectLifeCycle SkillFlyEffectLifeCycle;
+        [MemoryPackOrder(3)] 
+        public float FlyDistance;
+        public float GetFlyDistance() => FlyDistance;
         public CooldownHeader GetCooldownHeader() => CooldownHeader;
 
         public CommonSkillCheckerHeader GetCommonSkillCheckerHeader() => CommonSkillCheckerHeader;
         
-        public SingleTargetDamageSkillChecker(CooldownHeader cooldownHeader, CommonSkillCheckerHeader commonSkillCheckerHeader,
-            SkillPropertyLifeCycle skillPropertyLifeCycle, SkillFlyEffectLifeCycle skillFlyEffectLifeCycle)
+        public SingleTargetDamageSkillChecker(CooldownHeader cooldownHeader, CommonSkillCheckerHeader commonSkillCheckerHeader, SkillFlyEffectLifeCycle skillFlyEffectLifeCycle)
         {
             CooldownHeader = cooldownHeader;
             CommonSkillCheckerHeader = commonSkillCheckerHeader;
-            SkillPropertyLifeCycle = skillPropertyLifeCycle;
             SkillFlyEffectLifeCycle = skillFlyEffectLifeCycle;
         }
 
@@ -383,7 +291,6 @@ namespace HotUpdate.Scripts.Skill
 
         public void Destroy()
         {
-            SkillPropertyLifeCycle = null;
             SkillFlyEffectLifeCycle = null;
         }
 
@@ -391,12 +298,12 @@ namespace HotUpdate.Scripts.Skill
         public PropertyCalculatorData UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc, Func<int, PropertyCalculatorData> getPropertyCalculatorDataFunc)
         {
             var hitPlayer = SkillFlyEffectLifeCycle.Update(deltaTime, isHitFunc);
-            var propertyCalculatorData = getPropertyCalculatorDataFunc(hitPlayer[0]);
-            if (SkillPropertyLifeCycle.UpdateProperty(propertyCalculatorData.OperationType, propertyCalculatorData.BuffCalculator, ref propertyCalculatorData.TargetCalculator, out var damage))
+            if (hitPlayer == null || hitPlayer.Length == 0)
             {
-                return propertyCalculatorData;
+                return null;
             }
-            return null;
+            var propertyCalculatorData = getPropertyCalculatorDataFunc(hitPlayer[0]);
+            return propertyCalculatorData;
         }
     }
     
@@ -409,19 +316,18 @@ namespace HotUpdate.Scripts.Skill
         [MemoryPackOrder(1)]
         public CommonSkillCheckerHeader CommonSkillCheckerHeader;
         [MemoryPackOrder(2)] 
-        public SkillPropertyLifeCycle SkillPropertyLifeCycle;
-        [MemoryPackOrder(3)] 
         public SkillFlyEffectLifeCycle SkillFlyEffectLifeCycle;
+        [MemoryPackOrder(3)] 
+        public float FlyDistance;
+        public float GetFlyDistance() => FlyDistance;
         public CooldownHeader GetCooldownHeader() => CooldownHeader;
 
         public CommonSkillCheckerHeader GetCommonSkillCheckerHeader() => CommonSkillCheckerHeader;
         
-        public DashSkillChecker(CooldownHeader cooldownHeader, CommonSkillCheckerHeader commonSkillCheckerHeader,
-            SkillPropertyLifeCycle skillPropertyLifeCycle, SkillFlyEffectLifeCycle skillFlyEffectLifeCycle)
+        public DashSkillChecker(CooldownHeader cooldownHeader, CommonSkillCheckerHeader commonSkillCheckerHeader, SkillFlyEffectLifeCycle skillFlyEffectLifeCycle)
         {
             CooldownHeader = cooldownHeader;
             CommonSkillCheckerHeader = commonSkillCheckerHeader;
-            SkillPropertyLifeCycle = skillPropertyLifeCycle;
             SkillFlyEffectLifeCycle = skillFlyEffectLifeCycle;
         }
 
@@ -446,7 +352,6 @@ namespace HotUpdate.Scripts.Skill
 
         public void Destroy()
         {
-            SkillPropertyLifeCycle = null;
             SkillFlyEffectLifeCycle = null;
         } 
     }
@@ -459,9 +364,10 @@ namespace HotUpdate.Scripts.Skill
         [MemoryPackOrder(1)]
         public CommonSkillCheckerHeader CommonSkillCheckerHeader;
         [MemoryPackOrder(2)] 
-        public SkillPropertyLifeCycle SkillPropertyLifeCycle;
-        [MemoryPackOrder(3)] 
         public SkillFlyEffectLifeCycle SkillFlyEffectLifeCycle;
+        [MemoryPackOrder(3)] 
+        public float FlyDistance;
+        public float GetFlyDistance() => FlyDistance;
         
         public CooldownHeader GetCooldownHeader() => CooldownHeader;
 
@@ -489,7 +395,6 @@ namespace HotUpdate.Scripts.Skill
 
         public void Destroy()
         {
-            SkillPropertyLifeCycle = null;
             SkillFlyEffectLifeCycle = null;
         }
         //释放、飞行、命中后造成伤害
@@ -505,10 +410,11 @@ namespace HotUpdate.Scripts.Skill
             for (int i = 0; i < hitPlayer.Length; i++)
             {
                 var calculatorData = getPropertyCalculatorDataFunc(i);
-                if (SkillPropertyLifeCycle.UpdateProperty(calculatorData.OperationType, calculatorData.BuffCalculator, ref calculatorData.TargetCalculator, out var damage))
+                if (calculatorData == null)
                 {
-                    propertyCalculatorData.Add(calculatorData);
+                    continue;
                 }
+                propertyCalculatorData.Add(calculatorData);
             }
             
             return propertyCalculatorData;
@@ -524,9 +430,10 @@ namespace HotUpdate.Scripts.Skill
         [MemoryPackOrder(1)]
         public CommonSkillCheckerHeader CommonSkillCheckerHeader;
         [MemoryPackOrder(2)] 
-        public SkillPropertyLifeCycle SkillPropertyLifeCycle;
+        public SkillFlyEffectLifeCycle SkillFlyEffectLifeCycle;
         [MemoryPackOrder(3)] 
-        public SkillContinuousLifeCycle SkillFlyEffectLifeCycle;
+        public float FlyDistance;
+        public float GetFlyDistance() => FlyDistance;
         
         public CooldownHeader GetCooldownHeader() => CooldownHeader;
 
@@ -549,39 +456,102 @@ namespace HotUpdate.Scripts.Skill
 
         public bool Execute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams, params object[] args)
         {
-            if (CheckExecute(ref checker, skillCheckerParams))
-            {
-                int[] hitPlayers = null;
-                foreach (var arg in args)
-                {
-                    if (arg is Func<Vector3, IColliderConfig, int[]> isHitFunc)
-                    {
-                        var colliderConfig = GamePhysicsSystem.CreateColliderConfig(ColliderType.Sphere, Vector3.zero,
-                            Vector3.zero, skillCheckerParams.Radius);
-                        hitPlayers = isHitFunc(skillCheckerParams.TargetPosition, colliderConfig);
-                    }
+            return CheckExecute(ref checker, skillCheckerParams);
+        }
 
-                    if (arg is Func<int, PropertyCalculatorData> getPropertyCalculatorDataFunc && hitPlayers != null && hitPlayers.Length > 0)
-                    {
-                        foreach (var hitPlayer in hitPlayers)
-                        {
-                            var propertyCalculatorData = getPropertyCalculatorDataFunc(hitPlayer);
-                            SkillPropertyLifeCycle.UpdateProperty(propertyCalculatorData.OperationType, propertyCalculatorData.BuffCalculator, ref propertyCalculatorData.TargetCalculator, out var damage);
-                        }
-                    }
-                }
-                return true;
+        public List<PropertyCalculatorData> UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc, Func<int, PropertyCalculatorData> getPropertyCalculatorDataFunc)
+        {
+            var propertyCalculatorDatas = new List<PropertyCalculatorData>();
+            var colliderConfig = GamePhysicsSystem.CreateColliderConfig(ColliderType.Sphere, Vector3.zero,
+                Vector3.zero, CommonSkillCheckerHeader.Radius);
+            var hitPlayers = isHitFunc(SkillFlyEffectLifeCycle.Target, colliderConfig);
+            if (hitPlayers == null || hitPlayers.Length == 0)
+            {
+                return null;
             }
-            return false;
+            for (int i = 0; i < hitPlayers.Length; i++)
+            {
+                var calculatorData = getPropertyCalculatorDataFunc(hitPlayers[i]);
+                if (calculatorData == null)
+                {
+                    continue;
+                }
+                propertyCalculatorDatas.Add(calculatorData);
+            }
+            return propertyCalculatorDatas;
         }
 
         public void Destroy()
         {
-            SkillPropertyLifeCycle = null;
             SkillFlyEffectLifeCycle = null;
         }
     }
-    
+    //技能引导后立即在目标出释放的范围持续技能
+    [MemoryPackable]
+    public partial class AreaOfRangedContinuousSkillChecker : ISkillChecker
+    {
+        [MemoryPackOrder(0)]
+        public CooldownHeader CooldownHeader;
+        [MemoryPackOrder(1)]
+        public CommonSkillCheckerHeader CommonSkillCheckerHeader;
+        [MemoryPackOrder(2)] 
+        public SkillContinuousLifeCycle SkillFlyEffectLifeCycle;
+        [MemoryPackOrder(3)] 
+        public float FlyDistance;
+        public float GetFlyDistance() => FlyDistance;
+        
+        public CooldownHeader GetCooldownHeader() => CooldownHeader;
+
+        public CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader)
+        {
+            return new CooldownHeader
+            {
+                CurrentTime = cooldownHeader.CurrentTime,
+                Cooldown = cooldownHeader.Cooldown,
+            };
+        }
+
+        public CommonSkillCheckerHeader GetCommonSkillCheckerHeader() => CommonSkillCheckerHeader;
+
+        
+        public bool CheckExecute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams)
+        {
+            return this.IsSkillNotCdAndCostEnough(skillCheckerParams);
+        }
+
+        public bool Execute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams, params object[] args)
+        {
+            return CheckExecute(ref checker, skillCheckerParams);
+        }
+
+        
+        public List<PropertyCalculatorData> UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc, Func<int, PropertyCalculatorData> getPropertyCalculatorDataFunc)
+        {
+            var propertyCalculatorDatas = new List<PropertyCalculatorData>();
+            var colliderConfig = GamePhysicsSystem.CreateColliderConfig(ColliderType.Sphere, Vector3.zero,
+                Vector3.zero, CommonSkillCheckerHeader.Radius);
+            var hitPlayers = isHitFunc(SkillFlyEffectLifeCycle.Target, colliderConfig);
+            if (hitPlayers == null || hitPlayers.Length == 0)
+            {
+                return null;
+            }
+            for (int i = 0; i < hitPlayers.Length; i++)
+            {
+                var calculatorData = getPropertyCalculatorDataFunc(hitPlayers[i]);
+                if (calculatorData == null)
+                {
+                    continue;
+                }
+                propertyCalculatorDatas.Add(calculatorData);
+            }
+            return propertyCalculatorDatas;
+        }
+
+        public void Destroy()
+        {
+            SkillFlyEffectLifeCycle = null;
+        }
+    }
     [MemoryPackable]
     public partial class PropertyCalculatorData
     {

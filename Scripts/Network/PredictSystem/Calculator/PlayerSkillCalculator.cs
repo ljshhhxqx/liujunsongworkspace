@@ -27,12 +27,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             if (skillCommand.IsAutoSelectTarget)
             {
                 //自动选择目标，找寻离自己最近且在距离内的玩家
-                position = Constant.PlayerInGameManager.GetOtherPlayerNearestPlayer(header.ConnectionId, skillConfigData.maxMoveDistance);
+                position = Constant.PlayerInGameManager.GetOtherPlayerNearestPlayer(header.ConnectionId, skillConfigData.maxDistance);
             }
             else
             {
                 if (Physics.Raycast(Constant.PlayerInGameManager.GetPlayerPosition(header.ConnectionId),
-                        skillCommand.DirectionNormalized, out var hit, skillConfigData.maxMoveDistance,
+                        skillCommand.DirectionNormalized, out var hit, skillConfigData.maxDistance,
                         Constant.SceneLayerMask))
                 {
                     position = hit.point;
@@ -41,7 +41,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             if (position == Vector3.zero)
             {
                 //如果没有找到，就在玩家面朝方向最远处释放技能
-                position = Constant.PlayerInGameManager.GetPositionInPlayerDirection(header.ConnectionId, skillCommand.DirectionNormalized, skillConfigData.maxMoveDistance);
+                position = Constant.PlayerInGameManager.GetPositionInPlayerDirection(header.ConnectionId, skillCommand.DirectionNormalized, skillConfigData.maxDistance);
             }
 
             var commonParam = new SkillCheckerParams
@@ -60,14 +60,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return true;
         }
 
-        public static void UpdateSkillEffectAndValue(float deltaTime, PlayerSkillState skillState, Func<Vector3, IColliderConfig, int[]> isHitFunc, Func<int, PropertyCalculatorData> getPropertyCalculatorDataFunc)
+        public static void UpdateSkillFlyEffect(float deltaTime, PlayerSkillState skillState, Func<Vector3, IColliderConfig, int[]> isHitFunc, Func<int, PropertyCalculatorData> getPropertyCalculatorDataFunc)
         {
             switch (skillState.SkillChecker)
             {
                 case AreaOfRangedFlySkillChecker areaOfRangedFlySkillChecker:
                     areaOfRangedFlySkillChecker.UpdateFly(deltaTime, isHitFunc, getPropertyCalculatorDataFunc);
                     break;
-                case SingleTargetContinuousDamageSkillChecker singleTargetContinuousDamageSkillChecker:
+                case SingleTargetContinuousSkillChecker singleTargetContinuousDamageSkillChecker:
                     singleTargetContinuousDamageSkillChecker.UpdateFly(deltaTime, isHitFunc, getPropertyCalculatorDataFunc);
                     break;
             }
