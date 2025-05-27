@@ -972,30 +972,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     public partial struct SkillCommand : INetworkCommand
     {
         [MemoryPackOrder(0)] public NetworkCommandHeader Header;
-        [MemoryPackOrder(1)] public int SkillId;
-        [MemoryPackOrder(2)] public bool IsCast;
-        [MemoryPackOrder(3)] public Vector3 CastPosition;
-        [MemoryPackOrder(4)] public Vector3 CastDirection;
-        [MemoryPackOrder(5)] public int TargetId;
-        [MemoryPackOrder(6)] public int[] TargetIds;
-        [MemoryPackOrder(7)] public int[] TargetPointIds;
-        [MemoryPackOrder(8)] public int[] TargetPointIds2;
-        [MemoryPackOrder(9)] public int[] TargetPointIds3;
-        [MemoryPackOrder(10)] public int[] TargetPointIds4;
-        [MemoryPackOrder(11)] public int[] TargetPointIds5;
-        [MemoryPackOrder(12)] public int[] TargetPointIds6;
-        [MemoryPackOrder(13)] public int[] TargetPointIds7;
+        [MemoryPackOrder(1)] public int SkillConfigId;
+        [MemoryPackOrder(2)] public Vector3 DirectionNormalized;
+        [MemoryPackOrder(3)] public bool IsAutoSelectTarget;
         public NetworkCommandHeader GetHeader() => Header;
 
         public bool IsValid()
         {
-            throw new NotImplementedException();
+            return SkillConfigId > 0 && DirectionNormalized != Vector3.zero;
         }
 
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
             CommandAuthority authority = CommandAuthority.Client)
         {
-            throw new NotImplementedException();
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
         }
     }
 

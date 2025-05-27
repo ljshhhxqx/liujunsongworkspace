@@ -3,7 +3,7 @@ using HotUpdate.Scripts.Network.PredictSystem.State;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {
-    public class PlayerSkillPredictableState : SyncStateBase
+    public class PlayerSkillSyncState : SyncStateBase
     {
         protected override ISyncPropertyState CurrentState { get; set; }
         protected override CommandType CommandType => CommandType.Skill;

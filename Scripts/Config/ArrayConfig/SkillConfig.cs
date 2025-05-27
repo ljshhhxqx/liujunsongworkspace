@@ -50,6 +50,9 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public float cooldown;
         public AnimationState animationState;
         public int particleId;
+        public float baseValue;
+        public float extraRatio;
+        public float maxMoveDistance;
         public DamageSkillData damageData;
         public HealSkillData healData;
         public ControlSkillData controlData;
@@ -63,8 +66,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     [JsonSerializable]
     public struct DamageSkillData
     {
-        public float baseDamageRatio;
-        public float extraDamageRatio;
         //吃到伤害增益的属性
         public PropertyTypeEnum propertyType;
         public DamageType damageType;
@@ -74,8 +75,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     [JsonSerializable]
     public struct HealSkillData
     {
-        public float baseHealRatio;
-        public float extraHealRatio;
         //吃到治疗增益的属性
         public PropertyTypeEnum propertyType;
         //恢复属性
@@ -86,14 +85,14 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     [JsonSerializable]
     public struct ControlSkillData
     {
-        public int controlId;
+        public ControlSkillType controlType;
+        public float controlTime;
     }
 
     [Serializable]
     [JsonSerializable]
     public struct MoveSkillData
     {
-        public float maxMoveDistance;
         //是否是瞬移，不是则需要一段位移过程
         public bool isFlash;
         //指定的目标类型，没有则可以选择地面或墙壁

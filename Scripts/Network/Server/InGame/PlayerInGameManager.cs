@@ -662,6 +662,67 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         }
 
         #endregion
+
+        public Vector3 GetPlayerPosition(int headerConnectionId)
+        {
+            return _playerPositions.GetValueOrDefault(GetPlayerNetId(headerConnectionId));
+        }
+
+        public Vector3 GetOtherPlayerNearestPlayer(int headerConnectionId, float distance)
+        {
+            var playerNetId = GetPlayerNetId(headerConnectionId);
+            var playerPosition = _playerPositions.GetValueOrDefault(playerNetId);
+            var nearestPlayer = Vector3.zero;
+            foreach (var key in _playerPositions.Keys)  
+            {
+                if (key == playerNetId) continue;
+                var otherPlayerPosition = _playerPositions.GetValueOrDefault(key);
+                if (Vector3.Distance(playerPosition, otherPlayerPosition) <= distance)
+                {
+                    if (nearestPlayer == Vector3.zero)
+                    {
+                        nearestPlayer = otherPlayerPosition;
+                    }
+                    else
+                    {
+                        var distanceToNearestPlayer = Vector3.Distance(playerPosition, nearestPlayer);
+                        var distanceToOtherPlayer = Vector3.Distance(playerPosition, otherPlayerPosition);
+                        if (distanceToOtherPlayer < distanceToNearestPlayer)
+                        {
+                            nearestPlayer = otherPlayerPosition;
+                        }
+                    }
+                }
+            }
+            return nearestPlayer;
+        }
+
+        public List<int> GetOtherPlayersWithinRange(int headerConnectionId, float distance)
+        {
+            var playerNetId = GetPlayerNetId(headerConnectionId);
+            var playerPosition = _playerPositions.GetValueOrDefault(playerNetId);
+            var otherPlayers = new List<int>();
+            foreach (var key in _playerPositions.Keys)
+            {
+                if (key == playerNetId) continue;
+                var otherPlayerPosition = _playerPositions.GetValueOrDefault(key);
+                if (Vector3.Distance(playerPosition, otherPlayerPosition) <= distance)
+                {
+                    otherPlayers.Add(GetPlayerId(key));
+                }
+            }
+            return otherPlayers;
+        
+        }
+
+        public Vector3 GetPositionInPlayerDirection(int headerConnectionId, Vector3 direction, float distance)
+        {
+            var playerNetId = GetPlayerNetId(headerConnectionId);
+            var playerPosition = _playerPositions.GetValueOrDefault(playerNetId);
+            var player = NetworkServer.connections[headerConnectionId].identity.transform;
+            var newPosition = playerPosition + (direction == Vector3.zero ? player.forward : direction.normalized) * distance;
+            return newPosition;
+        }
     }
 
     [Serializable]
