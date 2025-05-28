@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AOTScripts.CustomAttribute;
 using AOTScripts.Data;
+using HotUpdate.Scripts.Collector;
 using Mirror;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -18,6 +19,11 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
             skillData.Clear();
+            // var setting = new JsonSerializerSettings
+            // {
+            //     NullValueHandling = NullValueHandling.Ignore
+            // };
+            // setting.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
             for (var i = 2; i < textAsset.Count; i++)
             {
                 var text = textAsset[i];
@@ -26,19 +32,21 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 data.name = text[1];
                 data.description = text[2];
                 data.cooldown = float.Parse(text[3]);
-                data.animationState = JsonConvert.DeserializeObject<AnimationState>(text[4]);
+                data.animationState = Enum.Parse<AnimationState>(text[4]);
                 data.particleId = int.Parse(text[5]);
                 data.baseValue = float.Parse(text[6]);
                 data.extraRatio = float.Parse(text[7]);
                 data.maxDistance = float.Parse(text[8]);
                 data.radius = float.Parse(text[9]);
                 data.isAreaOfRange = bool.Parse(text[10]);
-                data.controlType = (ControlSkillType) Enum.Parse(typeof(ControlSkillType), text[11]);
+                data.controlType = Enum.Parse<ControlSkillType>(text[11]);
                 data.controlTime = float.Parse(text[12]);
-                data.propertyType = (PropertyTypeEnum) Enum.Parse(typeof(PropertyTypeEnum), text[13]);
+                data.propertyType = Enum.Parse<PropertyTypeEnum>(text[13]);
                 data.isFlash = bool.Parse(text[14]);
                 data.duration = float.Parse(text[15]);
                 data.interval = float.Parse(text[16]);
+                data.buffOperationType = Enum.Parse<BuffOperationType>(text[17]);
+                data.colliderType = Enum.Parse<ColliderType>(text[18]);
                 skillData.Add(data);
             }
         }
@@ -66,6 +74,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public float duration;
         public float interval;
         public BuffOperationType buffOperationType;
+        public ColliderType colliderType;
     }
 
     // [JsonSerializable]
