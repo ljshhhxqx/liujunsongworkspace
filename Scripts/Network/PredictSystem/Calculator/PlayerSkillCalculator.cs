@@ -19,8 +19,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             Constant = constant;
         }
 
+        private bool CheckSkillCdAndCost(PlayerSkillState skillState, SkillConfigData skillConfigData,
+            PropertyCalculator propertyCalculator)
+        {
+            return skillState.SkillChecker.IsSkillNotCd() && SkillConfig.IsSkillCostEnough(skillConfigData, propertyCalculator);
+        }
+
         public static bool ExecuteSkill(PlayerSkillState skillState, SkillConfigData skillConfigData,
-            SkillCommand skillCommand, PropertyCalculator propertyCalculator, Func<Vector3, IColliderConfig, int[]> isHitFunc, Func<int, PropertyCalculatorData> getPropertyCalculatorDataFunc)
+            SkillCommand skillCommand, Func<Vector3, IColliderConfig, int[]> isHitFunc, Func<int, PropertyCalculatorData> getPropertyCalculatorDataFunc)
         {
             var header = skillCommand.Header;
             var position = Vector3.zero;
@@ -46,7 +52,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
             var commonParam = new SkillCheckerParams
             {
-                StrengthCalculator = propertyCalculator,
                 PlayerPosition = Constant.PlayerInGameManager.GetPlayerPosition(header.ConnectionId),
                 TargetPosition = position,
                 Radius = skillConfigData.radius,
@@ -70,7 +75,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
 
             var command = new PropertySkillCommand();
-            command.Header =GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate);
+            command.Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate);
             command.SkillId = skillState.CurrentSkillConfigId;
             command.HitPlayerIds = hitPlayers;
             Constant.GameSyncManager.EnqueueServerCommand(command);

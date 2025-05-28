@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using AOTScripts.CustomAttribute;
 using AOTScripts.Data;
 using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Network.PredictSystem.State;
 using Mirror;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -41,14 +42,38 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 data.isAreaOfRange = bool.Parse(text[10]);
                 data.controlType = Enum.Parse<ControlSkillType>(text[11]);
                 data.controlTime = float.Parse(text[12]);
-                data.propertyType = Enum.Parse<PropertyTypeEnum>(text[13]);
+                data.costProperty = Enum.Parse<PropertyTypeEnum>(text[13]);
                 data.isFlash = bool.Parse(text[14]);
                 data.duration = float.Parse(text[15]);
                 data.interval = float.Parse(text[16]);
                 data.buffOperationType = Enum.Parse<BuffOperationType>(text[17]);
                 data.colliderType = Enum.Parse<ColliderType>(text[18]);
+                data.buffProperty = Enum.Parse<PropertyTypeEnum>(text[19]);
+                data.effectProperty = Enum.Parse<PropertyTypeEnum>(text[20]);
                 skillData.Add(data);
             }
+        }
+        
+        public SkillConfigData GetSkillData(int id)
+        {
+            return skillData.Find(data => data.id == id);
+        }
+
+        public static bool IsSkillCostEnough(SkillConfigData skillData, PropertyCalculator propertyCalculator)
+        {
+            var propertyType = skillData.costProperty;
+            var cost = skillData.cost;
+            var isPropertyRight = propertyType == PropertyTypeEnum.None || propertyCalculator.PropertyType == propertyType;
+            if (propertyType == PropertyTypeEnum.None)
+            {
+                return true;
+            }
+
+            if (skillData.isCostCurrentPercent)
+            {
+                return isPropertyRight && propertyCalculator.CurrentValue >= propertyCalculator.CurrentValue * (cost / 100);
+            }
+            return isPropertyRight && propertyCalculator.CurrentValue >= cost;
         }
     }
 
@@ -69,12 +94,16 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public bool isAreaOfRange;
         public ControlSkillType controlType;
         public float controlTime;
-        public PropertyTypeEnum propertyType;
+        public PropertyTypeEnum costProperty;
         public bool isFlash;
         public float duration;
         public float interval;
         public BuffOperationType buffOperationType;
         public ColliderType colliderType;
+        public PropertyTypeEnum buffProperty;
+        public PropertyTypeEnum effectProperty;
+        public float cost;
+        public bool isCostCurrentPercent;
     }
 
     // [JsonSerializable]
@@ -272,4 +301,12 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     //     }
     // }
     
+    //技能主动触发的事件
+    public enum SkillEventType
+    {
+        None = 0,
+        OnCast,
+        OnHitUpdate,
+        OnEnd,
+    }
 }
