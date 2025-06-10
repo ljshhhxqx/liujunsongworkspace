@@ -53,6 +53,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 data.cost = float.Parse(text[20]);
                 data.isCostCurrentPercent = bool.Parse(text[21]);
                 data.events = JsonConvert.DeserializeObject<SkillConfigEventData[]>(text[22], setting);
+                data.conditionTarget = Enum.Parse<ConditionTargetType>(text[23]);
+                data.attributeIncreaseDataHeader = JsonConvert.DeserializeObject<AttributeIncreaseDataHeader[]>(text[24], setting);
                 skillData.Add(data);
             }
         }
@@ -125,6 +127,10 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public float cost;
         public bool isCostCurrentPercent;
         public SkillConfigEventData[] events;
+        //技能首要选择的目标类型
+        public ConditionTargetType conditionTarget;
+        //技能的buff效果
+        public AttributeIncreaseDataHeader[] attributeIncreaseDataHeader;
     }
     
     [Serializable]

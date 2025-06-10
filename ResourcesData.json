@@ -1255,23 +1255,13 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
-            "Name": "Portal yellow 1",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Skill/Portal yellow 1.prefab"
-        },
-        {
-            "UID": 3600017,
-            "ResourceType": "UnityEngine.GameObject",
-            "AssetType": 2,
-            "Extension": ".prefab",
             "Name": "Red energy explosion 1",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/Skill/Red energy explosion 1.prefab"
         },
         {
-            "UID": 3600018,
+            "UID": 3600017,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1281,7 +1271,7 @@
             "Address": "/Map/Town/Skill/Slash.prefab"
         },
         {
-            "UID": 3600019,
+            "UID": 3600018,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1291,7 +1281,7 @@
             "Address": "/Map/Town/Skill/Snow AOE 1.prefab"
         },
         {
-            "UID": 3600020,
+            "UID": 3600019,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1301,37 +1291,7 @@
             "Address": "/Map/Town/Skill/Snow hit 1.prefab"
         },
         {
-            "UID": 3600021,
-            "ResourceType": "UnityEngine.GameObject",
-            "AssetType": 2,
-            "Extension": ".prefab",
-            "Name": "Snow slash 1",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Skill/Snow slash 1.prefab"
-        },
-        {
-            "UID": 3600022,
-            "ResourceType": "UnityEngine.GameObject",
-            "AssetType": 2,
-            "Extension": ".prefab",
-            "Name": "Sparks explode pink 1",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Skill/Sparks explode pink 1.prefab"
-        },
-        {
-            "UID": 3600023,
-            "ResourceType": "UnityEngine.GameObject",
-            "AssetType": 2,
-            "Extension": ".prefab",
-            "Name": "Sparks flashing red 1",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/Skill/Sparks flashing red 1.prefab"
-        },
-        {
-            "UID": 3600024,
+            "UID": 3600020,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1341,7 +1301,7 @@
             "Address": "/Map/Town/UIPrefab/BackpackUI.prefab"
         },
         {
-            "UID": 3600025,
+            "UID": 3600021,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1351,7 +1311,7 @@
             "Address": "/Map/Town/UIPrefab/ItemDetailUI.prefab"
         },
         {
-            "UID": 3600026,
+            "UID": 3600022,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1361,7 +1321,7 @@
             "Address": "/Map/Town/UIPrefab/PlayerDamageDeathTimeOverlay.prefab"
         },
         {
-            "UID": 3600027,
+            "UID": 3600023,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
