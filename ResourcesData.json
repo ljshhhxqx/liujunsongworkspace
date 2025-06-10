@@ -1095,13 +1095,253 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
+            "Name": "AoE slash green 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/AoE slash green 1.prefab"
+        },
+        {
+            "UID": 3600001,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Buff 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Buff 1.prefab"
+        },
+        {
+            "UID": 3600002,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Crystals crossfade 2",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Crystals crossfade 2.prefab"
+        },
+        {
+            "UID": 3600003,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Debuff 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Debuff 1.prefab"
+        },
+        {
+            "UID": 3600004,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Dust ground 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Dust ground 1.prefab"
+        },
+        {
+            "UID": 3600005,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Electro slash 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Electro slash 1.prefab"
+        },
+        {
+            "UID": 3600006,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Freeze circle 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Freeze circle 1.prefab"
+        },
+        {
+            "UID": 3600007,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Ground AOE explosion 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Ground AOE explosion 1.prefab"
+        },
+        {
+            "UID": 3600008,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Healing circle 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Healing circle 1.prefab"
+        },
+        {
+            "UID": 3600009,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Holy hit 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Holy hit 1.prefab"
+        },
+        {
+            "UID": 3600010,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Laser AOE 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Laser AOE 1.prefab"
+        },
+        {
+            "UID": 3600011,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Lightning aura 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Lightning aura 1.prefab"
+        },
+        {
+            "UID": 3600012,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Magic circle 2",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Magic circle 2.prefab"
+        },
+        {
+            "UID": 3600013,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Magic shield blue 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Magic shield blue 1.prefab"
+        },
+        {
+            "UID": 3600014,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Meteors AOE 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Meteors AOE 1.prefab"
+        },
+        {
+            "UID": 3600015,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Plexus AoE 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Plexus AoE 1.prefab"
+        },
+        {
+            "UID": 3600016,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Portal yellow 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Portal yellow 1.prefab"
+        },
+        {
+            "UID": 3600017,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Red energy explosion 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Red energy explosion 1.prefab"
+        },
+        {
+            "UID": 3600018,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Slash",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Slash.prefab"
+        },
+        {
+            "UID": 3600019,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Snow AOE 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Snow AOE 1.prefab"
+        },
+        {
+            "UID": 3600020,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Snow hit 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Snow hit 1.prefab"
+        },
+        {
+            "UID": 3600021,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Snow slash 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Snow slash 1.prefab"
+        },
+        {
+            "UID": 3600022,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Sparks explode pink 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Sparks explode pink 1.prefab"
+        },
+        {
+            "UID": 3600023,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Sparks flashing red 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Skill/Sparks flashing red 1.prefab"
+        },
+        {
+            "UID": 3600024,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "BackpackUI",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/UIPrefab/BackpackUI.prefab"
         },
         {
-            "UID": 3600001,
+            "UID": 3600025,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1111,7 +1351,7 @@
             "Address": "/Map/Town/UIPrefab/ItemDetailUI.prefab"
         },
         {
-            "UID": 3600002,
+            "UID": 3600026,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1121,7 +1361,7 @@
             "Address": "/Map/Town/UIPrefab/PlayerDamageDeathTimeOverlay.prefab"
         },
         {
-            "UID": 3600003,
+            "UID": 3600027,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using AOTScripts.CustomAttribute;
 using AOTScripts.Data;
 using HotUpdate.Scripts.Collector;
@@ -20,11 +21,11 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
             skillData.Clear();
-            // var setting = new JsonSerializerSettings
-            // {
-            //     NullValueHandling = NullValueHandling.Ignore
-            // };
-            // setting.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+            var setting = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            };
+            setting.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
             for (var i = 2; i < textAsset.Count; i++)
             {
                 var text = textAsset[i];
@@ -43,13 +44,15 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 data.controlType = Enum.Parse<ControlSkillType>(text[11]);
                 data.controlTime = float.Parse(text[12]);
                 data.costProperty = Enum.Parse<PropertyTypeEnum>(text[13]);
-                data.isFlash = bool.Parse(text[14]);
+                data.isFly = bool.Parse(text[14]);
                 data.duration = float.Parse(text[15]);
-                data.interval = float.Parse(text[16]);
-                data.buffOperationType = Enum.Parse<BuffOperationType>(text[17]);
-                data.colliderType = Enum.Parse<ColliderType>(text[18]);
-                data.buffProperty = Enum.Parse<PropertyTypeEnum>(text[19]);
-                data.effectProperty = Enum.Parse<PropertyTypeEnum>(text[20]);
+                data.buffOperationType = Enum.Parse<BuffOperationType>(text[16]);
+                data.colliderType = Enum.Parse<ColliderType>(text[17]);
+                data.buffProperty = Enum.Parse<PropertyTypeEnum>(text[18]);
+                data.effectProperty = Enum.Parse<PropertyTypeEnum>(text[19]);
+                data.cost = float.Parse(text[20]);
+                data.isCostCurrentPercent = bool.Parse(text[21]);
+                data.events = JsonConvert.DeserializeObject<SkillConfigEventData[]>(text[22], setting);
                 skillData.Add(data);
             }
         }
@@ -75,6 +78,18 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             }
             return isPropertyRight && propertyCalculator.CurrentValue >= cost;
         }
+
+        public static string GetSkillValueByBuff(SkillConfigData skillData, PropertyCalculator propertyCalculator)
+        {
+            if (propertyCalculator.PropertyType != skillData.buffProperty)
+            {
+                Debug.LogError($"{skillData.name} buff property type is not match with property calculator property type");
+                return null;
+            }
+            var desc = new StringBuilder(skillData.description);
+            desc = desc.Replace("{value}", $"{propertyCalculator.CurrentValue * skillData.extraRatio:F0}");
+            return desc.ToString();
+        }
     }
 
     [Serializable]
@@ -92,18 +107,37 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public float maxDistance;
         public float radius;
         public bool isAreaOfRange;
+        //命中的玩家施加什么控制
         public ControlSkillType controlType;
+        //命中的玩家控制时间
         public float controlTime;
+        //消耗的属性类型
         public PropertyTypeEnum costProperty;
-        public bool isFlash;
+        public bool isFly;
+        //技能生命周期
         public float duration;
-        public float interval;
         public BuffOperationType buffOperationType;
         public ColliderType colliderType;
+        //该技能的数值被施法者的什么属性类型影响
         public PropertyTypeEnum buffProperty;
+        //该技能作用于目标的什么属性类型
         public PropertyTypeEnum effectProperty;
         public float cost;
         public bool isCostCurrentPercent;
+        public SkillConfigEventData[] events;
+    }
+    
+    [Serializable]
+    [JsonSerializable]
+    public struct SkillConfigEventData
+    {
+        public SkillEventType skillEventType;
+        public float fireTime;
+
+        public bool UpdateAndCheck(float currentTime)
+        {
+            return currentTime >= fireTime;
+        }
     }
 
     // [JsonSerializable]

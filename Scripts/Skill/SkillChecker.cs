@@ -13,12 +13,10 @@ using UnityEngine;
 namespace HotUpdate.Scripts.Skill
 {
     [MemoryPackable(GenerateType.NoGenerate)]
-    [MemoryPackUnion(0, typeof(SingleTargetContinuousSkillChecker))]
-    [MemoryPackUnion(1, typeof(SingleTargetDamageSkillChecker))]
-    [MemoryPackUnion(2, typeof(AreaOfRangedSkillChecker))]
-    [MemoryPackUnion(3, typeof(DashSkillChecker))]
-    [MemoryPackUnion(4, typeof(AreaOfRangedFlySkillChecker))]
-    [MemoryPackUnion(5, typeof(AreaOfRangedContinuousSkillChecker))]
+    [MemoryPackUnion(0, typeof(SingleTargetFlyEffectSkillChecker))]
+    [MemoryPackUnion(1, typeof(AreaOfRangedSkillChecker))]
+    [MemoryPackUnion(2, typeof(DashSkillChecker))]
+    [MemoryPackUnion(3, typeof(AreaOfRangedFlySkillChecker))]
     public partial interface ISkillChecker
     {
         CooldownHeader GetCooldownHeader();
@@ -70,52 +68,8 @@ namespace HotUpdate.Scripts.Skill
         [MemoryPackOrder(2)]
         public float Radius;
     }
-    
-    //持续性技能的生命周期
-    [MemoryPackable]
-    public partial class SkillContinuousLifeCycle
-    {
-        [MemoryPackOrder(0)]
-        public Vector3 Target;
-        [MemoryPackOrder(1)]
-        public float Size;
-        [MemoryPackOrder(2)]
-        public float Interval;
-        [MemoryPackOrder(3)] 
-        public float CurrentTime;
-        [MemoryPackOrder(4)] 
-        public float MaxTime;
-        [MemoryPackIgnore]
-        private IColliderConfig _colliderConfig;
-        [MemoryPackIgnore]
-        public IColliderConfig ColliderConfig => _colliderConfig;
 
-        public SkillContinuousLifeCycle(Vector3 target, float size, float interval, float maxTime,
-            float currentTime = 0)
-        {
-            Target = target;
-            Size = size;
-            Interval = interval;
-            MaxTime = maxTime;
-            CurrentTime = currentTime;
-            _colliderConfig = new SphereColliderConfig
-            {
-                Radius = size,
-                Center = Vector3.zero
-            };
-        }
-        
-        public void Update()
-        {
-            if (CurrentTime >= MaxTime)
-            {
-                return;
-            }
-            CurrentTime += Interval;
-        }
-    }
-
-    //非持续性、飞行技能的生命周期
+    //技能的生命周期
     [MemoryPackable]
     public partial class SkillEffectLifeCycle
     { 
@@ -143,7 +97,7 @@ namespace HotUpdate.Scripts.Skill
         [MemoryPackIgnore]
         public IColliderConfig ColliderConfig { get; }
 
-         public event Action OnDestroy;
+        public event Action OnDestroy;
 
         public SkillEffectLifeCycle(Vector3 origin, Vector3 target, float size, float speed, float expectationTime, int effectCount, SkillEffectFlyType skillEffectFlyType,
             float currentTime = 0)
@@ -174,6 +128,7 @@ namespace HotUpdate.Scripts.Skill
                      if (eventType == SkillEventType.OnEnd)
                      {
                          OnDestroy?.Invoke();
+                         break;
                      }
                      SkillEventData.RemoveAt(i);
                      return eventType;
@@ -207,7 +162,7 @@ namespace HotUpdate.Scripts.Skill
 
     //飞行技能、命中后造成单体持续伤害的技能
     [MemoryPackable]
-    public partial class SingleTargetContinuousSkillChecker : ISkillChecker
+    public partial class SingleTargetFlyEffectSkillChecker : ISkillChecker
     {
         [MemoryPackOrder(0)]
         public CooldownHeader CooldownHeader;
@@ -232,7 +187,7 @@ namespace HotUpdate.Scripts.Skill
             return CheckExecute(ref checker, skillCheckerParams);
         }
 
-        public SingleTargetContinuousSkillChecker(CooldownHeader cooldownHeader, CommonSkillCheckerHeader commonSkillCheckerHeader,SkillEffectLifeCycle skillEffectLifeCycle)
+        public SingleTargetFlyEffectSkillChecker(CooldownHeader cooldownHeader, CommonSkillCheckerHeader commonSkillCheckerHeader,SkillEffectLifeCycle skillEffectLifeCycle)
         {
             CooldownHeader = cooldownHeader;
             CommonSkillCheckerHeader = commonSkillCheckerHeader;
@@ -247,62 +202,6 @@ namespace HotUpdate.Scripts.Skill
                 CurrentTime = cooldownHeader.CurrentTime,
                 Cooldown = cooldownHeader.Cooldown,
             };
-        }
-
-        public void Destroy()
-        {
-            SkillEffectLifeCycle = null;
-        }
-
-        //释放、飞行、命中后造成伤害
-        public int[] UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc)
-        {
-            return SkillEffectLifeCycle.Update(deltaTime, isHitFunc);
-        }
-    }
-    
-    //飞行技能、命中后造成单体伤害的技能(可以有控制技能)
-    [MemoryPackable]
-    public partial class SingleTargetDamageSkillChecker : ISkillChecker
-    {
-        [MemoryPackOrder(0)]
-        public CooldownHeader CooldownHeader;
-        [MemoryPackOrder(1)]
-        public CommonSkillCheckerHeader CommonSkillCheckerHeader;
-        [MemoryPackOrder(2)] 
-        public SkillEffectLifeCycle SkillEffectLifeCycle;
-        [MemoryPackOrder(3)] 
-        public float FlyDistance;
-        public float GetFlyDistance() => FlyDistance;
-        public CooldownHeader GetCooldownHeader() => CooldownHeader;
-
-        public CommonSkillCheckerHeader GetCommonSkillCheckerHeader() => CommonSkillCheckerHeader;
-        
-        public SingleTargetDamageSkillChecker(CooldownHeader cooldownHeader, CommonSkillCheckerHeader commonSkillCheckerHeader, SkillEffectLifeCycle skillEffectLifeCycle)
-        {
-            CooldownHeader = cooldownHeader;
-            CommonSkillCheckerHeader = commonSkillCheckerHeader;
-            SkillEffectLifeCycle = skillEffectLifeCycle;
-            SkillEffectLifeCycle.OnDestroy += Destroy;
-        }
-
-        public CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader)
-        {
-            return new CooldownHeader
-            {
-                CurrentTime = cooldownHeader.CurrentTime,
-                Cooldown = cooldownHeader.Cooldown,
-            };
-        }
-
-        public bool CheckExecute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams)
-        {
-            return this.IsSkillNotCd();
-        }
-
-        public bool Execute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams, params object[] args)
-        {
-            return CheckExecute(ref checker, skillCheckerParams);
         }
 
         public void Destroy()
@@ -484,9 +383,10 @@ namespace HotUpdate.Scripts.Skill
             SkillEffectLifeCycle = null;
         }
     }
-    //技能引导后立即在目标出释放的范围持续技能
+    
+    //延时一段时间造成效果的技能(立即在目标处释放)
     [MemoryPackable]
-    public partial class AreaOfRangedContinuousSkillChecker : ISkillChecker
+    public partial class AreaOfRangedDelayedSkillChecker : ISkillChecker
     {
         [MemoryPackOrder(0)]
         public CooldownHeader CooldownHeader;
@@ -532,6 +432,7 @@ namespace HotUpdate.Scripts.Skill
             SkillEffectLifeCycle = null;
         }
     }
+    
     [MemoryPackable]
     public partial struct PropertyCalculatorData : IEquatable<PropertyCalculatorData>
     {

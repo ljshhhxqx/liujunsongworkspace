@@ -19,15 +19,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             Constant = constant;
         }
 
-        private bool CheckSkillCdAndCost(PlayerSkillState skillState, SkillConfigData skillConfigData,
+        private static bool CheckSkillCdAndCost(PlayerSkillState skillState, SkillConfigData skillConfigData,
             PropertyCalculator propertyCalculator)
         {
-            return skillState.SkillChecker.IsSkillNotCd() && SkillConfig.IsSkillCostEnough(skillConfigData, propertyCalculator);
+            return SkillConfig.IsSkillCostEnough(skillConfigData, propertyCalculator) && skillState.SkillChecker.IsSkillNotCd();
         }
 
-        public static bool ExecuteSkill(PlayerSkillState skillState, SkillConfigData skillConfigData,
+        public static bool ExecuteSkill(PlayerSkillState skillState, SkillConfigData skillConfigData, PropertyCalculator propertyCalculator, 
             SkillCommand skillCommand, Func<Vector3, IColliderConfig, int[]> isHitFunc, Func<int, PropertyCalculatorData> getPropertyCalculatorDataFunc)
         {
+            if (!CheckSkillCdAndCost(skillState, skillConfigData, propertyCalculator))
+            {
+                return false;
+            }
             var header = skillCommand.Header;
             var position = Vector3.zero;
             if (skillCommand.IsAutoSelectTarget)
