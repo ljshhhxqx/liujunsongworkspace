@@ -35,26 +35,21 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 data.description = text[2];
                 data.cooldown = float.Parse(text[3]);
                 data.animationState = Enum.Parse<AnimationState>(text[4]);
-                data.particleId = int.Parse(text[5]);
-                data.baseValue = float.Parse(text[6]);
-                data.extraRatio = float.Parse(text[7]);
-                data.maxDistance = float.Parse(text[8]);
-                data.radius = float.Parse(text[9]);
-                data.isAreaOfRange = bool.Parse(text[10]);
-                data.controlType = Enum.Parse<ControlSkillType>(text[11]);
-                data.controlTime = float.Parse(text[12]);
-                data.costProperty = Enum.Parse<PropertyTypeEnum>(text[13]);
-                data.isFly = bool.Parse(text[14]);
-                data.duration = float.Parse(text[15]);
-                data.buffOperationType = Enum.Parse<BuffOperationType>(text[16]);
-                data.colliderType = Enum.Parse<ColliderType>(text[17]);
-                data.buffProperty = Enum.Parse<PropertyTypeEnum>(text[18]);
-                data.effectProperty = Enum.Parse<PropertyTypeEnum>(text[19]);
-                data.cost = float.Parse(text[20]);
-                data.isCostCurrentPercent = bool.Parse(text[21]);
-                data.events = JsonConvert.DeserializeObject<SkillConfigEventData[]>(text[22], setting);
-                data.conditionTarget = Enum.Parse<ConditionTargetType>(text[23]);
-                data.attributeIncreaseDataHeader = JsonConvert.DeserializeObject<AttributeIncreaseDataHeader[]>(text[24], setting);
+                data.particleName = text[5].Trim();
+                data.maxDistance = float.Parse(text[6]);
+                data.radius = float.Parse(text[7]);
+                data.isAreaOfRange = bool.Parse(text[8]);
+                data.costProperty = Enum.Parse<PropertyTypeEnum>(text[9]);
+                data.flySpeed = float.Parse(text[10]);
+                data.duration = float.Parse(text[11]);
+                data.buffOperationType = Enum.Parse<BuffOperationType>(text[12]);
+                data.colliderType = Enum.Parse<ColliderType>(text[13]);
+                data.cost = float.Parse(text[14]);
+                data.isCostCurrentPercent = bool.Parse(text[15]);
+                data.events = JsonConvert.DeserializeObject<SkillConfigEventData[]>(text[16], setting);
+                data.conditionTarget = Enum.Parse<ConditionTargetType>(text[17]);
+                data.extraEffects = JsonConvert.DeserializeObject<SkillHitExtraEffectData[]>(text[18], setting);
+                
                 skillData.Add(data);
             }
         }
@@ -83,14 +78,15 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
         public static string GetSkillValueByBuff(SkillConfigData skillData, PropertyCalculator propertyCalculator)
         {
-            if (propertyCalculator.PropertyType != skillData.buffProperty)
-            {
-                Debug.LogError($"{skillData.name} buff property type is not match with property calculator property type");
-                return null;
-            }
-            var desc = new StringBuilder(skillData.description);
-            desc = desc.Replace("{value}", $"{propertyCalculator.CurrentValue * skillData.extraRatio:F0}");
-            return desc.ToString();
+            // if (propertyCalculator.PropertyType != skillData.buffProperty)
+            // {
+            //     Debug.LogError($"{skillData.name} buff property type is not match with property calculator property type");
+            //     return null;
+            // }
+            // var desc = new StringBuilder(skillData.description);
+            // desc = desc.Replace("{value}", $"{propertyCalculator.CurrentValue * skillData.extraRatio:F0}");
+            // return desc.ToString();
+            return null;
         }
     }
 
@@ -103,34 +99,24 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public string description;
         public float cooldown;
         public AnimationState animationState;
-        public int particleId;
-        public float baseValue;
-        public float extraRatio;
+        public string particleName;
         public float maxDistance;
         public float radius;
         public bool isAreaOfRange;
-        //命中的玩家施加什么控制
-        public ControlSkillType controlType;
-        //命中的玩家控制时间
-        public float controlTime;
         //消耗的属性类型
         public PropertyTypeEnum costProperty;
-        public bool isFly;
+        public float flySpeed;
         //技能生命周期
         public float duration;
         public BuffOperationType buffOperationType;
         public ColliderType colliderType;
-        //该技能的数值被施法者的什么属性类型影响
-        public PropertyTypeEnum buffProperty;
-        //该技能作用于目标的什么属性类型
-        public PropertyTypeEnum effectProperty;
         public float cost;
         public bool isCostCurrentPercent;
         public SkillConfigEventData[] events;
-        //技能首要选择的目标类型
+        //技能首要选择的目标类型（如果没有目标时系统自选的目标类型）
         public ConditionTargetType conditionTarget;
-        //技能的buff效果
-        public AttributeIncreaseDataHeader[] attributeIncreaseDataHeader;
+        //技能附加效果
+        public SkillHitExtraEffectData[] extraEffects;
     }
     
     [Serializable]
@@ -144,6 +130,23 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         {
             return currentTime >= fireTime;
         }
+    }
+    
+    //技能附加效果，包含伤害、控制、治疗、buff等
+    [Serializable]
+    [JsonSerializable]
+    public struct SkillHitExtraEffectData
+    {
+        public ConditionTargetType target;
+        public float baseValue;
+        public PropertyTypeEnum buffProperty;
+        public bool isBuffMaxProperty;
+        public float extraRatio;
+        public PropertyTypeEnum effectProperty;
+        public BuffOperationType buffOperation;
+        public BuffIncreaseType buffIncreaseType;
+        public float duration;
+        public ControlSkillType controlSkillType;
     }
 
     // [JsonSerializable]
