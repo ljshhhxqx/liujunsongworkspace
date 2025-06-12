@@ -19,7 +19,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         [UIPropertyType(typeof(PlayerDeathTimeData))]
         PlayerDeathTime,
         [UIPropertyType(typeof(PlayerHpItemData))]
-        PlayerTraceOtherPlayerHp
+        PlayerTraceOtherPlayerHp,
+        [UIPropertyType(typeof(PlayerControlData))]
+        PlayerControl,
     }
 
     // 复合键结构（玩家ID + 数据Key）
@@ -115,6 +117,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
     {
         public float DeathTime;
         public bool IsDead;
+    }
+
+    public struct PlayerControlData : IUIDatabase
+    {
+        public ControlSkillType ControlSkill;
+        public float Duration;
     }
 
     public struct ItemDetailData

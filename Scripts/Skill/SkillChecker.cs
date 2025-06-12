@@ -19,6 +19,8 @@ namespace HotUpdate.Scripts.Skill
     [MemoryPackUnion(3, typeof(AreaOfRangedFlySkillChecker))]
     public partial interface ISkillChecker
     {
+        bool IsSkillNotInCd();
+        bool IsSkillEffect();
         CooldownHeader GetCooldownHeader();
         CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader);
         CommonSkillCheckerHeader GetCommonSkillCheckerHeader();
@@ -173,6 +175,16 @@ namespace HotUpdate.Scripts.Skill
         [MemoryPackOrder(4)] 
         public float FlyDistance;
         public float GetFlyDistance() => FlyDistance;
+        public bool IsSkillNotInCd()
+        {
+            return this.IsSkillNotCd();
+        }
+
+        public bool IsSkillEffect()
+        {
+            return SkillEffectLifeCycle != null;
+        }
+
         public CooldownHeader GetCooldownHeader() => CooldownHeader;
 
         public CommonSkillCheckerHeader GetCommonSkillCheckerHeader() => CommonSkillCheckerHeader;
@@ -230,6 +242,15 @@ namespace HotUpdate.Scripts.Skill
         public float FlyDistance;
         public float GetFlyDistance() => FlyDistance;
         public CooldownHeader GetCooldownHeader() => CooldownHeader;
+        public bool IsSkillNotInCd()
+        {
+            return this.IsSkillNotCd();
+        }
+
+        public bool IsSkillEffect()
+        {
+            return SkillEffectLifeCycle != null;
+        }
 
         public CommonSkillCheckerHeader GetCommonSkillCheckerHeader() => CommonSkillCheckerHeader;
         
@@ -300,6 +321,15 @@ namespace HotUpdate.Scripts.Skill
         
         public CooldownHeader GetCooldownHeader() => CooldownHeader;
 
+        public bool IsSkillNotInCd()
+        {
+            return this.IsSkillNotCd();
+        }
+
+        public bool IsSkillEffect()
+        {
+            return SkillEffectLifeCycle != null;
+        }
         public CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader)
         {
             return new CooldownHeader
@@ -349,6 +379,15 @@ namespace HotUpdate.Scripts.Skill
         public float GetFlyDistance() => FlyDistance;
         
         public CooldownHeader GetCooldownHeader() => CooldownHeader;
+        public bool IsSkillNotInCd()
+        {
+            return this.IsSkillNotCd();
+        }
+
+        public bool IsSkillEffect()
+        {
+            return SkillEffectLifeCycle != null;
+        }
 
         public CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader)
         {
@@ -397,6 +436,15 @@ namespace HotUpdate.Scripts.Skill
         [MemoryPackOrder(3)] 
         public float FlyDistance;
         public float GetFlyDistance() => FlyDistance;
+        public bool IsSkillNotInCd()
+        {
+            return this.IsSkillNotCd();
+        }
+
+        public bool IsSkillEffect()
+        {
+            return SkillEffectLifeCycle != null;
+        }
         
         public CooldownHeader GetCooldownHeader() => CooldownHeader;
 
