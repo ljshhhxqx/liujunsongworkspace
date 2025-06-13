@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-using AOTScripts.Data;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Battle;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using MemoryPack;
-using UniRx;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Skill
 {
     [MemoryPackable(GenerateType.NoGenerate)]
-    [MemoryPackUnion(0, typeof(SingleTargetFlyEffectSkillChecker))]
-    [MemoryPackUnion(1, typeof(AreaOfRangedSkillChecker))]
+    [MemoryPackUnion(0, typeof(AreaOfRangedSkillChecker))]
+    [MemoryPackUnion(1, typeof(SingleTargetFlyEffectSkillChecker))]
     [MemoryPackUnion(2, typeof(DashSkillChecker))]
     [MemoryPackUnion(3, typeof(AreaOfRangedFlySkillChecker))]
+    [MemoryPackUnion(4, typeof(AreaOfRangedDelayedSkillChecker))]
     public partial interface ISkillChecker
     {
         bool IsSkillNotInCd();
@@ -46,18 +44,13 @@ namespace HotUpdate.Scripts.Skill
         [MemoryPackOrder(0)]
         public int ConfigId;
         [MemoryPackOrder(1)]
-        public int CooldownTime;
+        public float CooldownTime;
         [MemoryPackOrder(2)]
-        public int SkillEffectPrefabId;
-        [MemoryPackOrder(3)] public float SkillCost;
-        [MemoryPackOrder(4)] public float SkillBaseValue;
-        [MemoryPackOrder(5)] public float SkillExtraRatio;
-        [MemoryPackOrder(6)] public float MaxDistance;
-        [MemoryPackOrder(7)] public float MinDistance;
-        [MemoryPackOrder(8)] public float ExistTime;
-        [MemoryPackOrder(9)] public PropertyTypeEnum BuffPropertyType;
-        [MemoryPackOrder(10)] public PropertyTypeEnum EffectPropertyType;
-        [MemoryPackOrder(11)] public float Radius;
+        public string SkillEffectPrefabName;
+        [MemoryPackOrder(3)] public float MaxDistance;
+        [MemoryPackOrder(4)] public float ExistTime;
+        [MemoryPackOrder(5)] public float Radius;
+        [MemoryPackOrder(6)] public bool IsAreaOfRanged;
     }
 
     [MemoryPackable]
@@ -87,13 +80,11 @@ namespace HotUpdate.Scripts.Skill
         public float CurrentTime;
         [MemoryPackOrder(5)]
         public float ExpectationTime;
-        [MemoryPackOrder(6)] 
-        public int EffectCount;
-        [MemoryPackOrder(7)]
+        [MemoryPackOrder(6)]
         public SkillEffectFlyType SkillEffectFlyType;
-        [MemoryPackOrder(8)]
+        [MemoryPackOrder(7)]
         public Vector3 CurrentPosition;
-        [MemoryPackOrder(9)]
+        [MemoryPackOrder(8)]
         public List<SkillEventData> SkillEventData;
 
         [MemoryPackIgnore]
@@ -101,7 +92,7 @@ namespace HotUpdate.Scripts.Skill
 
         public event Action OnDestroy;
 
-        public SkillEffectLifeCycle(Vector3 origin, Vector3 target, float size, float speed, float expectationTime, int effectCount, SkillEffectFlyType skillEffectFlyType,
+        public SkillEffectLifeCycle(Vector3 origin, Vector3 target, float size, float speed, float expectationTime, SkillEffectFlyType skillEffectFlyType = SkillEffectFlyType.Linear,
             float currentTime = 0)
         {
             Origin = origin;
@@ -109,7 +100,6 @@ namespace HotUpdate.Scripts.Skill
             Size = size;
             Speed = speed;
             ExpectationTime = expectationTime;
-            EffectCount = effectCount;
             CurrentTime = currentTime;
             SkillEffectFlyType = skillEffectFlyType;
             ColliderConfig = new SphereColliderConfig
@@ -317,6 +307,16 @@ namespace HotUpdate.Scripts.Skill
         public SkillEffectLifeCycle SkillEffectLifeCycle;
         [MemoryPackOrder(3)] 
         public float FlyDistance;
+
+        
+        public AreaOfRangedFlySkillChecker(CooldownHeader cooldownHeader, CommonSkillCheckerHeader commonSkillCheckerHeader,SkillEffectLifeCycle skillEffectLifeCycle)
+        {
+            CooldownHeader = cooldownHeader;
+            CommonSkillCheckerHeader = commonSkillCheckerHeader;
+            SkillEffectLifeCycle = skillEffectLifeCycle;
+            SkillEffectLifeCycle.OnDestroy += Destroy;
+        }
+
         public float GetFlyDistance() => FlyDistance;
         
         public CooldownHeader GetCooldownHeader() => CooldownHeader;
@@ -376,6 +376,15 @@ namespace HotUpdate.Scripts.Skill
         public SkillEffectLifeCycle SkillEffectLifeCycle;
         [MemoryPackOrder(3)] 
         public float FlyDistance;
+
+        public AreaOfRangedSkillChecker(CooldownHeader cooldownHeader, CommonSkillCheckerHeader commonSkillCheckerHeader, SkillEffectLifeCycle skillEffectLifeCycle)
+        {
+            CooldownHeader = cooldownHeader;
+            CommonSkillCheckerHeader = commonSkillCheckerHeader;
+            SkillEffectLifeCycle = skillEffectLifeCycle;
+            SkillEffectLifeCycle.OnDestroy += Destroy;
+        }
+
         public float GetFlyDistance() => FlyDistance;
         
         public CooldownHeader GetCooldownHeader() => CooldownHeader;
@@ -435,6 +444,16 @@ namespace HotUpdate.Scripts.Skill
         public SkillEffectLifeCycle SkillEffectLifeCycle;
         [MemoryPackOrder(3)] 
         public float FlyDistance;
+
+        
+        public AreaOfRangedDelayedSkillChecker(CooldownHeader cooldownHeader, CommonSkillCheckerHeader commonSkillCheckerHeader, SkillEffectLifeCycle skillEffectLifeCycle)
+        {
+            CooldownHeader = cooldownHeader;
+            CommonSkillCheckerHeader = commonSkillCheckerHeader;
+            SkillEffectLifeCycle = skillEffectLifeCycle;
+            SkillEffectLifeCycle.OnDestroy += Destroy;
+        }
+
         public float GetFlyDistance() => FlyDistance;
         public bool IsSkillNotInCd()
         {

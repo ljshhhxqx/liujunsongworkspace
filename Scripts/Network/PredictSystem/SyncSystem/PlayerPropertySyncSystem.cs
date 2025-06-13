@@ -61,7 +61,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         
         
         [Inject]
-        private void InitContainers(IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
+        private void Init(IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
         {
             _configProvider = configProvider;
             _jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
@@ -133,6 +133,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             sortedPlayerProperties.Remove(maxScorePlayer);
             var player = sortedPlayerProperties.SelectByWeight();
             HandleTimedBuff(player, buff);
+        }
+
+        public PropertyCalculator GetPropertyCalculator(int playerId, PropertyTypeEnum propertyType)
+        {
+            var playerState = GetPredictablePropertyState(playerId);
+            if (playerState.Properties == null)
+            {
+                Debug.LogError($"No properties available for {playerId}");
+                return default;
+            }
+            return playerState.Properties.GetValueOrDefault(propertyType);
         }
         
         [Server]

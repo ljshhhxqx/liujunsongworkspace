@@ -977,11 +977,37 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(1)] public int SkillConfigId;
         [MemoryPackOrder(2)] public Vector3 DirectionNormalized;
         [MemoryPackOrder(3)] public bool IsAutoSelectTarget;
+        [MemoryPackOrder(4)] public string KeyCode;
         public NetworkCommandHeader GetHeader() => Header;
 
         public bool IsValid()
         {
             return SkillConfigId > 0 && DirectionNormalized != Vector3.zero;
+        }
+
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
+            CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
+    }
+    
+    [MemoryPackable]
+    public partial struct SkillLoadCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)] public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)] public int SkillConfigId;
+        [MemoryPackOrder(2)] public bool IsLoad;
+        [MemoryPackOrder(3)] public string KeyCode;
+        
+        public NetworkCommandHeader GetHeader() => Header;
+
+        public bool IsValid()
+        {
+            return SkillConfigId > 0;
         }
 
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,

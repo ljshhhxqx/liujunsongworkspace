@@ -117,6 +117,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public ConditionTargetType conditionTarget;
         //技能附加效果
         public SkillHitExtraEffectData[] extraEffects;
+        public SkillType skillType;
     }
     
     [Serializable]
@@ -147,6 +148,17 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public BuffIncreaseType buffIncreaseType;
         public float duration;
         public ControlSkillType controlSkillType;
+    }
+
+    public enum SkillType
+    {
+        None = 0,
+        SingleFly,
+        Single,
+        AreaRanged,
+        AreaFly,
+        Dash,
+        DelayedAreaRanged,
     }
 
     // [JsonSerializable]
