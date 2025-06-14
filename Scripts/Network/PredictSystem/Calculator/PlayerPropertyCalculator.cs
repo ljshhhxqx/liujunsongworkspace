@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AOTScripts.Data;
 using HotUpdate.Scripts.Common;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using Unity.Jobs;

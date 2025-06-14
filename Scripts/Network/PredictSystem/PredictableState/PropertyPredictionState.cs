@@ -23,6 +23,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private BindingKey _bindKey;
         private BindingKey _goldBindKey;
         private BindingKey _playerDeathTimeBindKey;
+        private BindingKey _playerControlBindKey;
         private ReactiveDictionary<int, PropertyItemData> _uiPropertyData;
         private ReactiveProperty<ValuePropertyData> _goldData;
 
@@ -41,6 +42,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 _bindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
                 _goldBindKey = new BindingKey(UIPropertyDefine.PlayerBaseData, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
                 _playerDeathTimeBindKey = new BindingKey(UIPropertyDefine.PlayerDeathTime, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
+                _playerControlBindKey = new BindingKey(UIPropertyDefine.PlayerControl, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
                 _uiPropertyData = UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_bindKey);
                 var itemDatas = new Dictionary<int, IUIDatabase>();
                 var enumValues = Enum.GetValues(typeof(PropertyTypeEnum));

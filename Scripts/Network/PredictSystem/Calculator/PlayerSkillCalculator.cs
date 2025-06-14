@@ -84,7 +84,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         }
 
         public static bool ExecuteSkill(PlayerSkillState skillState, SkillConfigData skillConfigData, PropertyCalculator propertyCalculator, 
-            SkillCommand skillCommand, string key, Func<Vector3, IColliderConfig, int[]> isHitFunc, Func<int, PropertyCalculatorData> getPropertyCalculatorDataFunc)
+            SkillCommand skillCommand, string key, Func<Vector3, IColliderConfig, int[]> isHitFunc)
         {
             var skillChecker = skillState.SkillCheckers[key];
             if (!CheckSkillCdAndCost(skillChecker, skillConfigData, propertyCalculator, key))
@@ -120,7 +120,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 Radius = skillConfigData.radius,
             };
 
-            if (!skillChecker.Execute(ref skillChecker, commonParam, isHitFunc, getPropertyCalculatorDataFunc))
+            if (!skillChecker.Execute(ref skillChecker, commonParam, isHitFunc))
             {
                 Debug.Log("技能条件不满足");
                 return false;
@@ -128,21 +128,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return true;
         }
 
-        public static void UpdateSkillFlyEffect(int connectionId, float deltaTime, ISkillChecker skillChecker, Func<Vector3, IColliderConfig, int[]> isHitFunc)
+        public static int[] UpdateSkillFlyEffect(int connectionId, float deltaTime, ISkillChecker skillChecker, Func<Vector3, IColliderConfig, int[]> isHitFunc)
         {
             var hitPlayers = skillChecker.UpdateFly(deltaTime, isHitFunc);
             if (hitPlayers.Length == 0)
             {
                 Debug.Log("没有命中任何玩家");
-                return;
+                return Array.Empty<int>();
             }
 
             var commonSkillCheckerHeader = skillChecker.GetCommonSkillCheckerHeader();
             var command = new PropertySkillCommand();
-            command.Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate);
+            command.Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property, CommandAuthority.Server, CommandExecuteType.Immediate);
             command.SkillId = commonSkillCheckerHeader.ConfigId;
             command.HitPlayerIds = commonSkillCheckerHeader.IsAreaOfRanged ? hitPlayers : new int[] { hitPlayers[0] };
             Constant.GameSyncManager.EnqueueServerCommand(command);
+            return hitPlayers;
         }
     }
 

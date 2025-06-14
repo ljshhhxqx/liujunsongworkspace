@@ -90,7 +90,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 PropertyStates[header.ConnectionId] = playerEquipmentState;
             }
 
-            return null;
+            return PropertyStates[header.ConnectionId];
         }
         
 

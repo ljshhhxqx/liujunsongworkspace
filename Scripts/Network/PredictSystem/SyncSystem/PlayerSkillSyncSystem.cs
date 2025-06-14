@@ -1,15 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.PredictSystem.State;
+using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Skill;
 using MemoryPack;
 using Mirror;
 using UnityEngine;
 using VContainer;
+using Object = UnityEngine.Object;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
@@ -17,11 +22,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
     {
         private readonly Dictionary<int, PlayerSkillSyncState> _playerSkillSyncStates = new Dictionary<int, PlayerSkillSyncState>();
         private SkillConfig _skillConfig;
+        private PlayerInGameManager _playerInGameManager;
+        private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
         
         [Inject]
         private void Init(IConfigProvider configProvider)
         {
             _skillConfig = configProvider.GetConfig<SkillConfig>();
+            _playerInGameManager = Object.FindObjectOfType<PlayerInGameManager>();
+            UpdateEquipmentCd(_tokenSource.Token).Forget();
         }
 
         protected override void OnClientProcessStateUpdate(byte[] state)
@@ -34,6 +43,39 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     continue;
                 }
                 PropertyStates[playerState.Key] = playerState.Value;
+            }
+        }
+        private async UniTaskVoid UpdateEquipmentCd(CancellationToken token)
+        {
+            while (!token.IsCancellationRequested)
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(1 / GameSyncManager.TickRate), cancellationToken: token);
+                foreach (var playerId in PropertyStates.Keys)
+                {
+                    var playerState = PropertyStates[playerId];
+                    if (playerState is PlayerSkillState playerSkillState)
+                    {
+                        foreach (var key in playerSkillState.SkillCheckers.Keys)
+                        {
+                            var skillChecker = playerSkillState.SkillCheckers[key];
+                            if (skillChecker.IsSkillEffect())
+                            {
+                                PlayerSkillCalculator.UpdateSkillFlyEffect(playerId, GameSyncManager.TickRate, skillChecker, _playerInGameManager.GetHitPlayers);
+                               
+                            }
+
+                            if (!skillChecker.IsSkillNotInCd())
+                            {
+                                var cooldown = skillChecker.GetCooldownHeader();
+                                cooldown = cooldown.Update(GameSyncManager.TickRate);
+                                skillChecker.SetCooldownHeader(cooldown);
+                            }
+                            playerSkillState.SkillCheckers[key] = skillChecker;
+                        }
+                        
+                    }
+                    PropertyStates[playerId] = playerState;
+                }
             }
         }
 
@@ -61,19 +103,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 if (skillCommand.SkillConfigId != skillCommonHeader.ConfigId)
                 {
                     Debug.LogError($"Player {header.ConnectionId} skill checker has different config ID {skillCommonHeader.ConfigId} for player {header.ConnectionId}");
-                    return null;
+                    return PropertyStates[header.ConnectionId];
                 }
                 var skillData = _skillConfig.GetSkillData(skillCommand.SkillConfigId);
-                var player = GameSyncManager.GetPlayerConnection(header.ConnectionId);
                 var propertySync = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
                 var playerProperty = propertySync.GetPropertyCalculator(header.ConnectionId, skillData.costProperty);
-                if (!PlayerSkillCalculator.ExecuteSkill(playerSkillState, skillData, playerProperty, skillCommand, skillCommand.KeyCode))
+                if (!PlayerSkillCalculator.ExecuteSkill(playerSkillState, skillData, playerProperty, skillCommand, skillCommand.KeyCode, _playerInGameManager.GetHitPlayers))
                 {
                     Debug.LogError($"Player {header.ConnectionId} execute skill failed");
-                    return null;
+                    return PropertyStates[header.ConnectionId];
                 }
+                PropertyStates[header.ConnectionId] = playerSkillState;
+                return PropertyStates[header.ConnectionId];
             }
-            else if (command is SkillLoadCommand skillLoadCommand)
+            if (command is SkillLoadCommand skillLoadCommand)
             {
                 var checker = GetSkillChecker(skillLoadCommand, playerSkillState);
                 var skillCommonHeader = checker.GetCommonSkillCheckerHeader();
@@ -83,7 +126,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     if (skillLoadCommand.SkillConfigId != skillCommonHeader.ConfigId)
                     {
                         Debug.LogError($"Player {header.ConnectionId} skill checker has different config ID {skillCommonHeader.ConfigId} for player {header.ConnectionId}");
-                        return null;
+                        return PropertyStates[header.ConnectionId];
                     }
 
                     playerSkillState.SkillCheckers.Remove(skillLoadCommand.KeyCode);
@@ -135,6 +178,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public override bool HasStateChanged(ISyncPropertyState oldState, ISyncPropertyState newState)
         {
             return true;
+        }
+        
+        public override void Clear()
+        {
+            _playerSkillSyncStates.Clear();
+            PropertyStates.Clear();
+            _tokenSource.Cancel();
         }
     }
 }

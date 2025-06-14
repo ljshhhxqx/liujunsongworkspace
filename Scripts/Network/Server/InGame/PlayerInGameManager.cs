@@ -723,6 +723,20 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             var newPosition = playerPosition + (direction == Vector3.zero ? player.forward : direction.normalized) * distance;
             return newPosition;
         }
+
+        public int[] GetHitPlayers(Vector3 position, IColliderConfig colliderConfig)
+        {
+            var hitPlayers = new List<int>();
+            foreach (var key in _playerPositions.Keys)
+            {
+                var playerPosition = _playerPositions.GetValueOrDefault(key);
+                if (GamePhysicsSystem.FastCheckItemIntersects(position, playerPosition, colliderConfig, _playerPhysicsData))
+                {
+                    hitPlayers.Add(GetPlayerId(key));
+                }
+            }
+            return hitPlayers.ToArray();
+        }
     }
 
     [Serializable]

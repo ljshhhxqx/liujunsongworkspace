@@ -12,7 +12,19 @@ namespace HotUpdate.Scripts.Tool.Static
     public static class GameStaticExtensions
     {
         private static readonly Random Random = new Random();
-        
+
+        public static BuffOperationType GetNegativeOperationType(this BuffOperationType operationType)
+        {
+            return operationType switch
+            {
+                BuffOperationType.Add => BuffOperationType.Subtract,
+                BuffOperationType.Subtract => BuffOperationType.Add,
+                BuffOperationType.Multiply => BuffOperationType.Divide,
+                BuffOperationType.Divide => BuffOperationType.Multiply,
+                _ => BuffOperationType.Add
+            };
+        }
+
         public static IWeight RandomSelect(IEnumerable<IWeight> items)
         {
             var enumerable = items as IWeight[] ?? items.ToArray();

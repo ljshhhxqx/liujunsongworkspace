@@ -41,6 +41,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private ImmutableList<TimedBuffData> _timedBuffs;
         private ImmutableList<EquipmentData> _activeEquipments;
         private ImmutableList<EquipmentPassiveData> _passiveBuffs;
+        private ImmutableList<SkillBuffManagerData> _skillBuffs;
         private IConfigProvider _configProvider;
         private AnimationConfig _animationConfig;
         private ConstantBuffConfig _constantBuffConfig;
@@ -52,6 +53,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private WeaponConfig _weaponConfig;
         private ArmorConfig _armorConfig;
         private ItemConfig _itemConfig;
+        private SkillConfig _skillConfig;
         private GameConfigData _gameConfigData;
         private BattleEffectConditionConfig _battleEffectConfig;
         private float _timeBuffTimer;
@@ -74,6 +76,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _weaponConfig = _configProvider.GetConfig<WeaponConfig>();
             _armorConfig = _configProvider.GetConfig<ArmorConfig>();
             _itemConfig = _configProvider.GetConfig<ItemConfig>();
+            _skillConfig = _configProvider.GetConfig<SkillConfig>();
             _battleEffectConfig = _configProvider.GetConfig<BattleEffectConditionConfig>();
             _playerInGameManager = playerInGameManager;
             ConfigPlayerMinProperties = _propertyConfig.GetPlayerMinProperties();
@@ -339,7 +342,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
             else if (command is PropertySkillCommand skillCommand)
             {
-                HandleSkill(header.ConnectionId, skillCommand.SkillId);
+                HandleSkill(header.ConnectionId, skillCommand.SkillId, skillCommand.HitPlayerIds);
             }
             else if (command is PropertyEnvironmentChangeCommand environmentChangeCommand)
             {
@@ -958,14 +961,78 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             PropertyChange(playerConnection);
         }
 
-        private void HandleSkill(int attacker, int skillId)
+        private void HandleSkill(int attacker, int skillConfigId, int[] hitPlayerIds)
         {
-            
+            var skillData = _skillConfig.GetSkillData(skillConfigId);
+            var playerNetId = _playerInGameManager.GetPlayerNetId(attacker);
+            var effectData = skillData.extraEffects;
+            for (int i = 0; i < hitPlayerIds.Length; i++)
+            {
+                var hitPlayerId = hitPlayerIds[i];
+                var otherPlayerNetId = _playerInGameManager.GetPlayerNetId(attacker);
+                var isAlly = _playerInGameManager.IsOtherPlayerAlly(playerNetId, otherPlayerNetId);
+                if (skillData.conditionTarget == ConditionTargetType.Ally && isAlly)
+                {
+                    for (int j = 0; j < effectData.Length; j++)
+                    {
+                        var effect = effectData[j];
+                        HandleSkillHit(attacker, effect, hitPlayerId, true);
+                    }
+                }
+                else if (skillData.conditionTarget == ConditionTargetType.Enemy && !isAlly)
+                {
+                    for (int j = 0; j < effectData.Length; j++)
+                    {
+                        var effect = effectData[j];
+                        HandleSkillHit(attacker, effect, hitPlayerId, false);
+                    }
+                }
+            }
+        }
+
+        private void HandleSkillHit(int attacker, SkillHitExtraEffectData skillHitExtraEffectData, int hitPlayerId, bool isAlly)
+        {
+            var playerState = GetState<PlayerPredictablePropertyState>(attacker);
+            var hitPlayerState = GetState<PlayerPredictablePropertyState>(hitPlayerId);
+            var propertyCalculator = hitPlayerState.Properties[skillHitExtraEffectData.effectProperty];
+            var playerCalculator = playerState.Properties[skillHitExtraEffectData.buffProperty];
+            float value;
+            if (skillHitExtraEffectData.baseValue < 1)
+            {
+                value = playerCalculator.CurrentValue * (skillHitExtraEffectData.baseValue + skillHitExtraEffectData.extraRatio);
+            }
+            else
+            {
+                value = skillHitExtraEffectData.baseValue + playerCalculator.CurrentValue * skillHitExtraEffectData.extraRatio;
+            }
+            var buffIncreaseData = new BuffIncreaseData
+            {
+                increaseValue = value,
+                operationType = skillHitExtraEffectData.buffOperation,
+                increaseType = skillHitExtraEffectData.buffIncreaseType,
+            };
+            propertyCalculator = propertyCalculator.UpdateCalculator(propertyCalculator, buffIncreaseData);
+            if (skillHitExtraEffectData.duration > 0)
+            {
+                var data = new SkillBuffManagerData();
+                data.playerId = hitPlayerId;
+                data.value = value;
+                data.duration = skillHitExtraEffectData.duration;
+                data.operationType = skillHitExtraEffectData.buffOperation;
+                data.increaseType = skillHitExtraEffectData.buffIncreaseType;
+                data.propertyType = skillHitExtraEffectData.effectProperty;
+                data.currentTime = skillHitExtraEffectData.duration;
+                _skillBuffs = _skillBuffs.Add(data);
+            }
+            hitPlayerState.Properties[skillHitExtraEffectData.effectProperty] = propertyCalculator;
+            PropertyStates[hitPlayerId] = hitPlayerState;
+            PropertyChange(hitPlayerId);
         }
 
         protected override void OnBroadcastStateUpdate()
         {
             UpdateBuffs(GameSyncManager.TickRate);
+            UpdateSkillBuffs(GameSyncManager.TickRate);
             _timeBuffTimer += GameSyncManager.TickRate;
             if (_timeBuffTimer >= 0.3f)
             {
@@ -974,6 +1041,37 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
 
             base.OnBroadcastStateUpdate();
+        }
+
+        private void UpdateSkillBuffs(float deltaTime)
+        {
+            if (_skillBuffs.Count <= 0)
+                return;
+            for (var i = _skillBuffs.Count - 1; i >= 0; i--)
+            {
+                _skillBuffs = _skillBuffs.SetItem(i, _skillBuffs[i].Update(deltaTime));
+                if (_skillBuffs[i].currentTime > _skillBuffs[i].duration)
+                {
+                    HandleSkillBuffRemove(_skillBuffs[i], i);
+                }
+            }
+        }
+
+        private void HandleSkillBuffRemove(SkillBuffManagerData buff, int index)
+        {
+            var playerState = GetState<PlayerPredictablePropertyState>(buff.playerId);
+            var propertyCalculator = playerState.Properties[buff.propertyType];
+            var buffOperationType = buff.operationType.GetNegativeOperationType();
+            var buffIncreaseData = new BuffIncreaseData
+            {
+                increaseValue = buff.value,
+                operationType = buffOperationType,
+                increaseType = buff.increaseType,
+            };
+            playerState.Properties[buff.propertyType] = propertyCalculator.UpdateCalculator(propertyCalculator, buffIncreaseData);
+            _skillBuffs = _skillBuffs.RemoveAt(index);
+            PropertyStates[buff.playerId] = playerState;
+            PropertyChange(buff.playerId);
         }
 
         private void HandleAnimationCommand(int connectionId, AnimationState command)
@@ -1101,6 +1199,44 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 return new BuffManagerData
                 {
                     BuffData = BuffData.Update(deltaTime),
+                };
+            }
+        }
+        
+        [Serializable]
+        private struct SkillBuffManagerData
+        {
+            public int playerId;
+            public float value;
+            public float duration;
+            public BuffOperationType operationType;
+            public BuffIncreaseType increaseType;
+            public float currentTime;
+            public PropertyTypeEnum propertyType;
+            
+            public SkillBuffManagerData(int playerId, float value, float duration, BuffOperationType operationType, BuffIncreaseType increaseType, PropertyTypeEnum propertyType)
+            {
+                this.playerId = playerId;
+                this.value = value;
+                this.duration = duration;
+                this.operationType = operationType;
+                this.increaseType = increaseType;
+                currentTime = duration;
+                this.propertyType = propertyType;
+            }
+
+            public SkillBuffManagerData Update(float deltaTime)
+            {
+                currentTime -= deltaTime;
+                return new SkillBuffManagerData
+                {
+                    playerId = playerId,
+                    value = value,
+                    duration = duration,
+                    operationType = operationType,
+                    increaseType = increaseType,
+                    currentTime = currentTime,
+                    propertyType = propertyType,
                 };
             }
         }
