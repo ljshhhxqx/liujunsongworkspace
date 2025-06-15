@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Tool.ObjectPool;
-using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.GameBase;
 using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
@@ -17,6 +15,7 @@ using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Player;
 using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.Tool.Static;
 using HotUpdate.Scripts.UI.UIBase;
@@ -59,6 +58,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private PlayerEffectPlayer playerEffectPlayer;
         [SerializeField]
         private Transform effectContainer;
+        [SerializeField]
+        private PlayerControlEffect playerControlEffect;
         
         [Header("States-NetworkBehaviour")]
         private PlayerInputPredictionState _inputState;
@@ -749,7 +750,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcSetPlayerAlpha(float alpha)
         {
-            playerEffectPlayer.SetAlpha(alpha / 1000f);
+            playerControlEffect.SetTransparency(alpha / 1000f);
         }
 
         public void SetAnimatorSpeed(AnimationState animationState, float speed)
@@ -903,6 +904,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
             var player = container;
             playerEffectPlayer.PlayEffect(player);
+        }
+
+        [ClientRpc]
+        public void RpcPlayControlledEffect(ControlSkillType controlSkillType)
+        {
+            playerControlEffect.SetEffect(controlSkillType);
         }
     }
 }

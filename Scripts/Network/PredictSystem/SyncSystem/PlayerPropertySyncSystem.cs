@@ -226,6 +226,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     else if (property == PropertyTypeEnum.Alpha)
                     {
                         playerController.RpcSetPlayerAlpha(propertyValue.CurrentValue);
+                        
                     }
                 }
             }
@@ -1022,11 +1023,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 data.increaseType = skillHitExtraEffectData.buffIncreaseType;
                 data.propertyType = skillHitExtraEffectData.effectProperty;
                 data.currentTime = skillHitExtraEffectData.duration;
+                data.skillType = skillHitExtraEffectData.controlSkillType;
                 _skillBuffs = _skillBuffs.Add(data);
             }
             hitPlayerState.Properties[skillHitExtraEffectData.effectProperty] = propertyCalculator;
             PropertyStates[hitPlayerId] = hitPlayerState;
             PropertyChange(hitPlayerId);
+            HandlePlayerControl(hitPlayerId, skillHitExtraEffectData.controlSkillType);
+        }
+
+        private void HandlePlayerControl(int playerId, ControlSkillType controlSkillType)
+        {
+            var playerController = GameSyncManager.GetPlayerConnection(playerId);
+            playerController.RpcPlayControlledEffect(controlSkillType);
         }
 
         protected override void OnBroadcastStateUpdate()
@@ -1072,6 +1081,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _skillBuffs = _skillBuffs.RemoveAt(index);
             PropertyStates[buff.playerId] = playerState;
             PropertyChange(buff.playerId);
+            HandlePlayerControl(buff.playerId, ControlSkillType.None);
         }
 
         private void HandleAnimationCommand(int connectionId, AnimationState command)
@@ -1213,8 +1223,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             public BuffIncreaseType increaseType;
             public float currentTime;
             public PropertyTypeEnum propertyType;
+            public ControlSkillType skillType;
             
-            public SkillBuffManagerData(int playerId, float value, float duration, BuffOperationType operationType, BuffIncreaseType increaseType, PropertyTypeEnum propertyType)
+            public SkillBuffManagerData(int playerId, float value, float duration, BuffOperationType operationType,
+                BuffIncreaseType increaseType, PropertyTypeEnum propertyType, ControlSkillType skillType)
             {
                 this.playerId = playerId;
                 this.value = value;
@@ -1223,6 +1235,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 this.increaseType = increaseType;
                 currentTime = duration;
                 this.propertyType = propertyType;
+                this.skillType = skillType;
             }
 
             public SkillBuffManagerData Update(float deltaTime)
