@@ -24,8 +24,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private SkillConfig _skillConfig;
         private PlayerInGameManager _playerInGameManager;
         private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
-        private readonly Dictionary<int, Vector3> _skillEffectPositions = new Dictionary<int, Vector3>();
-        private readonly Dictionary<int, SkillObject> _skillObjects = new Dictionary<int, SkillObject>();
         private int _currentSkillId;
         
         [Inject]
@@ -64,7 +62,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                             if (skillChecker.IsSkillEffect())
                             {
                                 PlayerSkillCalculator.UpdateSkillFlyEffect(playerId, GameSyncManager.TickRate, skillChecker, _playerInGameManager.GetHitPlayers);
-                                
                             }
 
                             if (!skillChecker.IsSkillNotInCd())
@@ -111,12 +108,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 var skillData = _skillConfig.GetSkillData(skillCommand.SkillConfigId);
                 var propertySync = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
                 var playerProperty = propertySync.GetPropertyCalculator(header.ConnectionId, skillData.costProperty);
-                if (!PlayerSkillCalculator.ExecuteSkill(playerSkillState, skillData, playerProperty, skillCommand, skillCommand.KeyCode, _playerInGameManager.GetHitPlayers))
+                if (!PlayerSkillCalculator.ExecuteSkill(playerSkillState, skillData, playerProperty, skillCommand,
+                        skillCommand.KeyCode, _playerInGameManager.GetHitPlayers, out var position))
                 {
                     Debug.LogError($"Player {header.ConnectionId} execute skill failed");
                     return PropertyStates[header.ConnectionId];
                 }
                 PropertyStates[header.ConnectionId] = playerSkillState;
+                var playerSkillSyncState = _playerSkillSyncStates[header.ConnectionId];
+                playerSkillSyncState.RpcSpawnSkillEffect(skillCommand.SkillConfigId, position, skillCommand.KeyCode);
                 return PropertyStates[header.ConnectionId];
             }
             if (command is SkillLoadCommand skillLoadCommand)

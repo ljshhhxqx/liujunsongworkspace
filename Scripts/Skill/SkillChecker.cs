@@ -27,6 +27,7 @@ namespace HotUpdate.Scripts.Skill
         bool Execute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams, params object[] args);
         void Destroy();
         int[] UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc);
+        Vector3 GetSkillEffectPosition();
     }
 
     public static class SkillCheckerExtensions
@@ -216,6 +217,8 @@ namespace HotUpdate.Scripts.Skill
         {
             return SkillEffectLifeCycle.Update(deltaTime, isHitFunc);
         }
+
+        public Vector3 GetSkillEffectPosition() => SkillEffectLifeCycle.CurrentPosition;
     }
     
     //位移技能
@@ -241,6 +244,7 @@ namespace HotUpdate.Scripts.Skill
         {
             return SkillEffectLifeCycle != null;
         }
+        public Vector3 GetSkillEffectPosition() => SkillEffectLifeCycle.CurrentPosition;
 
         public CommonSkillCheckerHeader GetCommonSkillCheckerHeader() => CommonSkillCheckerHeader;
         
@@ -320,6 +324,7 @@ namespace HotUpdate.Scripts.Skill
         public float GetFlyDistance() => FlyDistance;
         
         public CooldownHeader GetCooldownHeader() => CooldownHeader;
+        public Vector3 GetSkillEffectPosition() => SkillEffectLifeCycle.CurrentPosition;
 
         public bool IsSkillNotInCd()
         {
@@ -386,6 +391,7 @@ namespace HotUpdate.Scripts.Skill
         }
 
         public float GetFlyDistance() => FlyDistance;
+        public Vector3 GetSkillEffectPosition() => SkillEffectLifeCycle.CurrentPosition;
         
         public CooldownHeader GetCooldownHeader() => CooldownHeader;
         public bool IsSkillNotInCd()
@@ -444,6 +450,7 @@ namespace HotUpdate.Scripts.Skill
         public SkillEffectLifeCycle SkillEffectLifeCycle;
         [MemoryPackOrder(3)] 
         public float FlyDistance;
+        public Vector3 GetSkillEffectPosition() => SkillEffectLifeCycle.CurrentPosition;
 
         
         public AreaOfRangedDelayedSkillChecker(CooldownHeader cooldownHeader, CommonSkillCheckerHeader commonSkillCheckerHeader, SkillEffectLifeCycle skillEffectLifeCycle)

@@ -911,5 +911,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             playerControlEffect.SetEffect(controlSkillType);
         }
+        
     }
 }

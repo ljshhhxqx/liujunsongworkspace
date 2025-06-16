@@ -84,15 +84,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         }
 
         public static bool ExecuteSkill(PlayerSkillState skillState, SkillConfigData skillConfigData, PropertyCalculator propertyCalculator, 
-            SkillCommand skillCommand, string key, Func<Vector3, IColliderConfig, int[]> isHitFunc)
+            SkillCommand skillCommand, string key, Func<Vector3, IColliderConfig, int[]> isHitFunc, out Vector3 position)
         {
             var skillChecker = skillState.SkillCheckers[key];
+            position = Vector3.zero;
             if (!CheckSkillCdAndCost(skillChecker, skillConfigData, propertyCalculator, key))
             {
                 return false;
             }
             var header = skillCommand.Header;
-            var position = Vector3.zero;
             if (skillCommand.IsAutoSelectTarget)
             {
                 //自动选择目标，找寻离自己最近且在距离内的玩家
