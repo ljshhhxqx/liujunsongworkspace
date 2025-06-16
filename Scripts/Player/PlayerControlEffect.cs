@@ -25,13 +25,13 @@ namespace HotUpdate.Scripts.Player
 
         public void SetEffect(ControlSkillType controlSkillType, float duration = 0f)
         {
-            if (!effectMesh)
-                return;
             if (controlSkillType == ControlSkillType.None)
             {
                 _effectTokenSource?.Cancel();
                 return;
             }
+            if (!effectMesh)
+                return;
             _effectTokenSource?.Cancel();
             _effectTokenSource = new CancellationTokenSource();
             originalMesh.enabled = false;

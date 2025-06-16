@@ -24,6 +24,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private SkillConfig _skillConfig;
         private PlayerInGameManager _playerInGameManager;
         private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
+        private readonly Dictionary<int, Vector3> _skillEffectPositions = new Dictionary<int, Vector3>();
+        private readonly Dictionary<int, SkillObject> _skillObjects = new Dictionary<int, SkillObject>();
+        private int _currentSkillId;
         
         [Inject]
         private void Init(IConfigProvider configProvider)
@@ -61,7 +64,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                             if (skillChecker.IsSkillEffect())
                             {
                                 PlayerSkillCalculator.UpdateSkillFlyEffect(playerId, GameSyncManager.TickRate, skillChecker, _playerInGameManager.GetHitPlayers);
-                               
+                                
                             }
 
                             if (!skillChecker.IsSkillNotInCd())
