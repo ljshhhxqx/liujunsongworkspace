@@ -529,6 +529,28 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             Header.Authority = authority;
         }
     }
+    
+    [MemoryPackable]
+    public partial struct PropertyUseSkillCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)] 
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public int SkillConfigId;
+        public NetworkCommandHeader GetHeader() => Header;
+        public bool IsValid()
+        {
+            return SkillConfigId > 0;
+        }
+        
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
+    }
 
     #endregion
 

@@ -377,11 +377,41 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 HandleNoUnionPlayerAddMoreScoreAndGold(header.ConnectionId, noUnionPlayerAddMoreScoreAndGoldCommand.PreNoUnionPlayer);
             }
+            else if(command is PropertyUseSkillCommand propertyUseSkillCommand)
+            {
+                HandleUseSkill(header.ConnectionId, propertyUseSkillCommand.SkillConfigId);
+            }
             else
             {
                 Debug.LogError($"PlayerPropertySyncSystem: Unknown command type {command.GetType().Name}");
             }
             return null;
+        }
+
+        private void HandleUseSkill(int headerConnectionId, int skillConfigId)
+        {
+            var playerState = GetState<PlayerPredictablePropertyState>(headerConnectionId);
+            var skillConfigData = _skillConfig.GetSkillData(skillConfigId);
+            var cost = skillConfigData.cost;
+            var calculator = playerState.Properties[PropertyTypeEnum.Strength];
+            if (calculator.CurrentValue < cost)
+            {
+                Debug.LogWarning($"PlayerPropertySyncSystem: {headerConnectionId} not enough strength to use skill {skillConfigId}");
+                return;
+            }
+            calculator = calculator.UpdateCurrentValue(-cost);
+            playerState.Properties[PropertyTypeEnum.Strength] = calculator;
+            PropertyStates[headerConnectionId] = playerState;
+            PropertyChange(headerConnectionId);
+            
+            var hpChangedCheckerParameters = SkillCastCheckerParameters.CreateParameters(
+                TriggerType.OnSkillCast, cost/calculator.MaxCurrentValue, skillConfigData.skillType);
+            GameSyncManager.EnqueueServerCommand(new TriggerCommand
+            {
+                Header = GameSyncManager.CreateNetworkCommandHeader(headerConnectionId, CommandType.Equipment),
+                TriggerType = TriggerType.OnHpChange,
+                TriggerData = MemoryPackSerializer.Serialize(hpChangedCheckerParameters),
+            });
         }
 
         private void HandleNoUnionPlayerAddMoreScoreAndGold(int headerConnectionId, int preNoUnionPlayer)
@@ -984,8 +1014,24 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 {
                     for (int j = 0; j < effectData.Length; j++)
                     {
+                        var hitPlayerState = GetState<PlayerPredictablePropertyState>(hitPlayerId);
+                        var preHealth = hitPlayerState.Properties[PropertyTypeEnum.Health].CurrentValue;
                         var effect = effectData[j];
                         HandleSkillHit(attacker, effect, hitPlayerId, false);
+                        if (effect.effectProperty == PropertyTypeEnum.Health)
+                        {
+                            var changedHp = hitPlayerState.Properties[PropertyTypeEnum.Health].CurrentValue - preHealth;
+                            var maxHp = hitPlayerState.Properties[PropertyTypeEnum.Health].MaxCurrentValue;
+                            var currentHp = hitPlayerState.Properties[PropertyTypeEnum.Health].CurrentValue;
+                            var skillHitData = SkillHitCheckerParameters.CreateParameters(TriggerType.OnSkillHit,
+                                changedHp, skillData.skillType, currentHp / maxHp);
+                            GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                            {
+                                Header = GameSyncManager.CreateNetworkCommandHeader(attacker, CommandType.Equipment),
+                                TriggerType = TriggerType.OnSkillHit,
+                                TriggerData = MemoryPackSerializer.Serialize(skillHitData),
+                            });
+                        }
                     }
                 }
             }
@@ -994,21 +1040,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void HandleSkillHit(int attacker, SkillHitExtraEffectData skillHitExtraEffectData, int hitPlayerId, bool isAlly)
         {
             var hitPlayerState = GetState<PlayerPredictablePropertyState>(hitPlayerId);
-            
-            // var skillHitData = SkillHitCheckerParameters.CreateParameters(TriggerType.OnAttackHit,
-            //     damageData.DamageRatio, damageData.DamageCalculateResult.Damage, AttackRangeType.None);
-            // GameSyncManager.EnqueueServerCommand(new TriggerCommand
-            // {
-            //     Header = GameSyncManager.CreateNetworkCommandHeader(attacker, CommandType.Equipment),
-            //     TriggerType = TriggerType.OnSkillHit,
-            //     TriggerData = MemoryPackSerializer.Serialize(skillHitData),
-            // });
             if(!isAlly && skillHitExtraEffectData.effectProperty == PropertyTypeEnum.Health && hitPlayerState.SubjectedState == SubjectedStateType.IsInvisible)
                 return;
             var playerState = GetState<PlayerPredictablePropertyState>(attacker);
             var propertyCalculator = hitPlayerState.Properties[skillHitExtraEffectData.effectProperty];
             var playerCalculator = playerState.Properties[skillHitExtraEffectData.buffProperty];
             float value;
+            var preHealth = hitPlayerState.Properties[PropertyTypeEnum.Health].CurrentValue;
             if (skillHitExtraEffectData.baseValue < 1)
             {
                 value = playerCalculator.CurrentValue * (skillHitExtraEffectData.baseValue + skillHitExtraEffectData.extraRatio);

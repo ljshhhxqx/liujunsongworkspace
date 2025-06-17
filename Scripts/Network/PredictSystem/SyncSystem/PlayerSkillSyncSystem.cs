@@ -117,6 +117,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 PropertyStates[header.ConnectionId] = playerSkillState;
                 var playerSkillSyncState = _playerSkillSyncStates[header.ConnectionId];
                 playerSkillSyncState.RpcSpawnSkillEffect(skillCommand.SkillConfigId, position, skillCommand.KeyCode);
+                var skillHeader = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property,
+                    CommandAuthority.Server, CommandExecuteType.Immediate);
+                GameSyncManager.EnqueueServerCommand(new PropertyUseSkillCommand
+                {
+                    Header = skillHeader,
+                    SkillConfigId = skillCommand.SkillConfigId,
+                });
                 return PropertyStates[header.ConnectionId];
             }
             if (command is SkillLoadCommand skillLoadCommand)
