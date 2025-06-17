@@ -993,8 +993,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private void HandleSkillHit(int attacker, SkillHitExtraEffectData skillHitExtraEffectData, int hitPlayerId, bool isAlly)
         {
-            var playerState = GetState<PlayerPredictablePropertyState>(attacker);
             var hitPlayerState = GetState<PlayerPredictablePropertyState>(hitPlayerId);
+            
+            // var skillHitData = SkillHitCheckerParameters.CreateParameters(TriggerType.OnAttackHit,
+            //     damageData.DamageRatio, damageData.DamageCalculateResult.Damage, AttackRangeType.None);
+            // GameSyncManager.EnqueueServerCommand(new TriggerCommand
+            // {
+            //     Header = GameSyncManager.CreateNetworkCommandHeader(attacker, CommandType.Equipment),
+            //     TriggerType = TriggerType.OnSkillHit,
+            //     TriggerData = MemoryPackSerializer.Serialize(skillHitData),
+            // });
+            if(!isAlly && skillHitExtraEffectData.effectProperty == PropertyTypeEnum.Health && hitPlayerState.SubjectedState == SubjectedStateType.IsInvisible)
+                return;
+            var playerState = GetState<PlayerPredictablePropertyState>(attacker);
             var propertyCalculator = hitPlayerState.Properties[skillHitExtraEffectData.effectProperty];
             var playerCalculator = playerState.Properties[skillHitExtraEffectData.buffProperty];
             float value;

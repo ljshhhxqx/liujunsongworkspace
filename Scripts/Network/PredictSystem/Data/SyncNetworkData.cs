@@ -42,6 +42,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     [MemoryPackUnion(20, typeof(PropertyEquipmentChangedCommand))]
     [MemoryPackUnion(21, typeof(NoUnionPlayerAddMoreScoreAndGoldCommand))]
     [MemoryPackUnion(22, typeof(SkillCommand))]
+    [MemoryPackUnion(23, typeof(PlayerDeathCommand))]
+    [MemoryPackUnion(24, typeof(PlayerRebornCommand))]
+    [MemoryPackUnion(25, typeof(PlayerTouchedBaseCommand))]
+    [MemoryPackUnion(26, typeof(PlayerTraceOtherPlayerHpCommand))]
+    [MemoryPackUnion(27, typeof(ItemsGetCommand))]
+    [MemoryPackUnion(28, typeof(EquipmentCommand))]
+    [MemoryPackUnion(29, typeof(BuyCommand))]
+    [MemoryPackUnion(30, typeof(RefreshShopCommand))]
+    [MemoryPackUnion(31, typeof(SellCommand))]
+    [MemoryPackUnion(32, typeof(SkillLoadCommand))]
+    [MemoryPackUnion(33, typeof(TriggerCommand))]
     public partial interface INetworkCommand
     {
         NetworkCommandHeader GetHeader();
