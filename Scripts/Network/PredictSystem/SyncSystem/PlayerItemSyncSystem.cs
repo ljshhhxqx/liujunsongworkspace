@@ -26,15 +26,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private WeaponConfig _weaponConfig;
         private ArmorConfig _armorConfig;
         private InteractSystem _interactSystem;
-        private PlayerInGameManager _playerInGameManager;
 
         [Inject]
-        private void Init(IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
+        private void Init(IConfigProvider configProvider)
         {
             _itemConfig = configProvider.GetConfig<ItemConfig>();
             _weaponConfig = configProvider.GetConfig<WeaponConfig>();
             _armorConfig = configProvider.GetConfig<ArmorConfig>();
-            _playerInGameManager = playerInGameManager;
             _interactSystem = Object.FindObjectOfType<InteractSystem>();
         }
 

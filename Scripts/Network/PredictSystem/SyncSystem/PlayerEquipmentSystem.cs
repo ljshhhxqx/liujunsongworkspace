@@ -21,13 +21,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
     {
         private readonly Dictionary<int, PlayerEquipmentSyncState> _playerEquipmentSyncStates = new Dictionary<int, PlayerEquipmentSyncState>();
         private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
-        private PlayerInGameManager _playerInGameManager;
 
         [Inject]
         private void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider)
         {
             UpdateEquipmentCd(_tokenSource.Token).Forget();
-            _playerInGameManager = Object.FindObjectOfType<PlayerInGameManager>();
         }
 
         private async UniTaskVoid UpdateEquipmentCd(CancellationToken token)
@@ -84,7 +82,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 //todo: 根据触发类型查阅是否有触发效果，没有则忽略，有则获取相关装备数据，并根据配置计算触发效果
                 var data = PlayerEquipmentCalculator.GetDataByTriggerType(playerEquipmentState, triggerCommand.TriggerType);
                 var battleConfigData = PlayerItemCalculator.GetBattleEffectConditionConfigData(data.Item2, data.Item3);
-                var targetIds = _playerInGameManager.GetPlayerIdsByTargetType(header.ConnectionId,
+                var targetIds = PlayerInGameManager.Instance.GetPlayerIdsByTargetType(header.ConnectionId,
                     battleConfigData.targetCount, battleConfigData.targetType);
                 PlayerEquipmentCalculator.CommandTrigger(triggerCommand, ref playerEquipmentState, targetIds, data.Item3, data.Item2, data.Item1);
                 PropertyStates[header.ConnectionId] = playerEquipmentState;

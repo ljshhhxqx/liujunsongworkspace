@@ -39,7 +39,6 @@ namespace HotUpdate.Scripts.Game
         private GameSyncManager _gameSyncManager;
         private JsonDataConfig _jsonDataConfig;
         private ItemsSpawnerManager _itemsSpawnerManager;
-        private PlayerInGameManager _playerInGameManager;
         private GameInfo _gameInfo;
         private MessageCenter _messageCenter;
         private MirrorNetworkMessageHandler _messageHandler;
@@ -114,7 +113,6 @@ namespace HotUpdate.Scripts.Game
             _gameEventManager.Subscribe<GameReadyEvent>(OnGameReady);
             _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
             _networkAudioManager = FindObjectOfType<NetworkAudioManager>();
-            _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
             _weatherManager = FindObjectOfType<WeatherManager>();
             _gameSyncManager = FindObjectOfType<GameSyncManager>();
             RegisterMessage();
@@ -230,7 +228,7 @@ namespace HotUpdate.Scripts.Game
 
         private async UniTask StartMainGameTimerAsync(CancellationToken token)
         {
-            _playerInGameManager.isGameStarted = true;
+            PlayerInGameManager.Instance.isGameStarted = true;
             _gameEventManager.Publish(new AllPlayerGetSpeedEvent());
             var remainingTime = _mainGameTime;
             var endGameFlag = false;
@@ -296,7 +294,7 @@ namespace HotUpdate.Scripts.Game
                 // 检查是否在分数模式下有玩家达到目标分数
                 if (_gameInfo.GameMode == GameMode.Score)
                 {
-                    if (_playerInGameManager.IsPlayerGetTargetScore(_gameInfo.GameScore))
+                    if (PlayerInGameManager.Instance.IsPlayerGetTargetScore(_gameInfo.GameScore))
                     {
                         IsEndGame = true;
                         endGameFlag = true;

@@ -36,7 +36,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         
             // 获取周围Grid中的玩家
             var nearbyGrids = MapBoundDefiner.Instance.GetSurroundingGrids(attackerGrid, gridRadius);
-            var candidates = PlayerBattleComponent.PlayerInGameManager.GetPlayersInGrids(nearbyGrids);
+            var candidates = PlayerInGameManager.Instance.GetPlayersInGrids(nearbyGrids);
 
             foreach (var candidate in candidates)
             {
@@ -90,12 +90,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
     public class PlayerBattleComponent
     {
         public Transform Transform;
-        public PlayerInGameManager PlayerInGameManager;
         
-        public PlayerBattleComponent(Transform transform, PlayerInGameManager playerInGameManager)
+        public PlayerBattleComponent(Transform transform)
         {
             Transform = transform;
-            PlayerInGameManager = playerInGameManager;
         }
     }
 

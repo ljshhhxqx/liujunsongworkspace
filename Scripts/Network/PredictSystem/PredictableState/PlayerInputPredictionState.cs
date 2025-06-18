@@ -47,7 +47,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _keyAnimationConfig = configProvider.GetConfig<KeyAnimationConfig>();
 
-            UpdateAnimationCooldowns(_cancellationTokenSource.Token, gameSyncManager.TickRate).Forget();
+            UpdateAnimationCooldowns(_cancellationTokenSource.Token, GameSyncManager.TickRate).Forget();
         }
         
         public override bool NeedsReconciliation<T>(T state)

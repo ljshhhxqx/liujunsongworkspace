@@ -33,11 +33,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private readonly Dictionary<int, Dictionary<CommandType, int>> _lastProcessedInputs = new Dictionary<int, Dictionary<CommandType, int>>();  // 记录每个玩家最后处理的输入序号
         private readonly ConcurrentQueue<INetworkCommand> _currentTickCommands = new ConcurrentQueue<INetworkCommand>();
         private readonly Dictionary<CommandType, BaseSyncSystem> _syncSystems = new Dictionary<CommandType, BaseSyncSystem>();
-        private float _tickRate; 
+        private static float _tickRate; 
         private float _maxCommandAge; 
-        public float TickRate => _tickRate;
+        public static float TickRate => _tickRate;
         private float _tickTimer;
-        private PlayerInGameManager _playerInGameManager;
         private JsonDataConfig _jsonDataConfig;
         private PlayerPropertySyncSystem _playerPropertySyncSystem;
         private bool _isProcessing; // 防止重入
@@ -51,11 +50,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public static int CurrentTick { get; private set; }
 
         [Inject]
-        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager, PlayerInGameManager playerInGameManager)
+        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)
         {
             CurrentTick = 0;
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
-            _playerInGameManager = playerInGameManager;
             if (!isServer)
             {
                 _syncSystems.Clear();
@@ -114,7 +112,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             if (newValue)
             {
-                _playerInGameManager.RandomUnion(out var noUnionPlayerId);
+                PlayerInGameManager.Instance.RandomUnion(out var noUnionPlayerId);
                 if (noUnionPlayerId != 0)
                 {
                     var command = new NoUnionPlayerAddMoreScoreAndGoldCommand
@@ -129,7 +127,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void OnPlayerDisconnect(PlayerDisconnectEvent disconnectEvent)
         {
             _playerConnections.Remove(disconnectEvent.ConnectionId);
-            _playerInGameManager.RemovePlayer(disconnectEvent.ConnectionId);
+            PlayerInGameManager.Instance.RemovePlayer(disconnectEvent.ConnectionId);
             OnPlayerDisconnected?.Invoke(disconnectEvent.ConnectionId);
             RpcPlayerDisconnect(disconnectEvent.ConnectionId);
         }
@@ -137,7 +135,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void OnPlayerConnect(PlayerConnectEvent connectEvent)
         {
             _playerConnections.Add(connectEvent.ConnectionId, connectEvent.Identity.gameObject.GetComponent<PlayerComponentController>());
-            _playerInGameManager.AddPlayer(connectEvent.ConnectionId, new PlayerInGameData
+            PlayerInGameManager.Instance.AddPlayer(connectEvent.ConnectionId, new PlayerInGameData
             {
                 player = connectEvent.ReadOnlyData,
                 networkIdentity = connectEvent.Identity
@@ -157,7 +155,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void RpcPlayerDisconnect(int connectionId)
         {
             _playerConnections.Remove(connectionId);
-            _playerInGameManager.RemovePlayer(connectionId);
+            PlayerInGameManager.Instance.RemovePlayer(connectionId);
             OnPlayerDisconnected?.Invoke(connectionId);
         }
         

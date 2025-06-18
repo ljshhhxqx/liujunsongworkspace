@@ -63,7 +63,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         
         
         [Inject]
-        private void Init(IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
+        private void Init(IConfigProvider configProvider)
         {
             _configProvider = configProvider;
             _jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
@@ -78,7 +78,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _itemConfig = _configProvider.GetConfig<ItemConfig>();
             _skillConfig = _configProvider.GetConfig<SkillConfig>();
             _battleEffectConfig = _configProvider.GetConfig<BattleEffectConditionConfig>();
-            _playerInGameManager = playerInGameManager;
+            _playerInGameManager = PlayerInGameManager.Instance;
             ConfigPlayerMinProperties = _propertyConfig.GetPlayerMinProperties();
             ConfigPlayerMaxProperties = _propertyConfig.GetPlayerMaxProperties();
             ConfigPlayerBaseProperties = _propertyConfig.GetPlayerBaseProperties();

@@ -15,19 +15,17 @@ namespace HotUpdate.Scripts.Buff
     public class BuffManager
     {
         private readonly List<BuffManagerData> _activeBuffs = new List<BuffManagerData>();
-        private PlayerInGameManager _playerDataManager;
         private MessageCenter _messageCenter;
         private ConstantBuffConfig _constantBuffConfig;
         private RandomBuffConfig _randomBuffConfig;
         private GameEventManager _gameEventManager;
 
         [Inject]
-        private void Init(IConfigProvider configProvider, PlayerInGameManager playerDataManager, MessageCenter messageCenter, GameEventManager gameEventManager)
+        private void Init(IConfigProvider configProvider, MessageCenter messageCenter, GameEventManager gameEventManager)
         {
             _constantBuffConfig = configProvider.GetConfig<ConstantBuffConfig>();
             _randomBuffConfig = configProvider.GetConfig<RandomBuffConfig>();
             _gameEventManager = gameEventManager;
-            _playerDataManager = playerDataManager;
             _messageCenter = messageCenter;//
             Debug.Log("BuffManager init");
         }

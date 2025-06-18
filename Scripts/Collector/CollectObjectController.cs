@@ -23,7 +23,6 @@ namespace HotUpdate.Scripts.Collector
         private InteractSystem _interactSystem;
         private Collider _positionCollider;
         private BuffExtraData _buffData;
-        private PlayerInGameManager _playerInGameManager;
         [SerializeField]
         private int collectConfigId;
         [SerializeField]
@@ -64,7 +63,7 @@ namespace HotUpdate.Scripts.Collector
         }
 
         [Inject]
-        private void Init(IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
+        private void Init(IConfigProvider configProvider)
         {
             var collectObjectDataConfig = configProvider.GetConfig<CollectObjectDataConfig>();
             _pooledObject = GetComponent<PooledObject>();
@@ -74,7 +73,6 @@ namespace HotUpdate.Scripts.Collector
             }
             _collectParticlePlayer = GetComponentInChildren<CollectParticlePlayer>();
             _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
-            _playerInGameManager = playerInGameManager;
             _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
             _interactSystem = FindObjectOfType<InteractSystem>();
             _collectAnimationComponent?.Play();
@@ -120,7 +118,7 @@ namespace HotUpdate.Scripts.Collector
             {
                 var request = new SceneInteractRequest
                 {
-                    Header = GameSyncManager.CreateInteractHeader(_playerInGameManager.GetPlayerId(pickerId), InteractCategory.PlayerToScene,
+                    Header = GameSyncManager.CreateInteractHeader(PlayerInGameManager.Instance.GetPlayerId(pickerId), InteractCategory.PlayerToScene,
                         transform.position, CommandAuthority.Client),
                     InteractionType = InteractionType.PickupItem,
                     SceneItemId = ItemId,

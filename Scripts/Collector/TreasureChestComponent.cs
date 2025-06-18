@@ -35,7 +35,6 @@ namespace HotUpdate.Scripts.Collector
         private MessageCenter _messageCenter;
         private MirrorNetworkMessageHandler _mirrorNetworkMessageHandler;
         private ChestCommonData _chestCommonData;
-        private PlayerInGameManager _playerInGameManager;
         private GameEventManager _gameEventManager;
         private Collider _positionCollider;
         private InteractSystem _interactSystem;
@@ -54,7 +53,6 @@ namespace HotUpdate.Scripts.Collector
         private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)
         {
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
-            _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
             _pooledObject = GetComponent<PooledObject>();
             if (_pooledObject)
             {
@@ -90,7 +88,7 @@ namespace HotUpdate.Scripts.Collector
         {
             if (isLocalPlayer)
             {
-                var player = _playerInGameManager.GetPlayerComponent<Transform>(connectionToClient.connectionId);
+                var player = PlayerInGameManager.Instance.GetPlayerComponent<Transform>(connectionToClient.connectionId);
                 _gameEventManager?.Publish(new TargetShowEvent(null, player));
             }
             _gameEventManager = null;

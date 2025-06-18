@@ -34,9 +34,9 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private List<PropertyItemData> _propertyItemDatas;
         
         [Inject]
-        private void Init(PlayerInGameManager playerInGameManager, IConfigProvider configProvider)
+        private void Init(IConfigProvider configProvider)
         {
-            _playerInGameManager = playerInGameManager;
+            _playerInGameManager = PlayerInGameManager.Instance;
             _propertyConfig = configProvider.GetConfig<PropertyConfig>();
         }
 

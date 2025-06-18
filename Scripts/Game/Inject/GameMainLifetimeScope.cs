@@ -1,26 +1,19 @@
 using Data;
+using Game;
 using HotUpdate.Scripts.Audio;
-using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;
-using HotUpdate.Scripts.Game;
-using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Server.InGame;
-using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
 using HotUpdate.Scripts.UI.UIBase;
-using HotUpdate.Scripts.Weather;
 using Model;
 using Network.Server.Edgegap;
 using Network.Server.PlayFab;
-using Tool.GameEvent;
-using Tool.Message;
-using UI.UIBase;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace Game.Inject
+namespace HotUpdate.Scripts.Game.Inject
 {
     /// <summary>
     /// 全局生命周期容器
@@ -51,7 +44,6 @@ namespace Game.Inject
             builder.Register<GameSceneManager>(Lifetime.Singleton);
             builder.Register<PlayFabMessageHandler>(Lifetime.Singleton);
             builder.RegisterComponentInHierarchy<GameOnlineDefine>();
-            builder.RegisterComponentInHierarchy<PlayerInGameManager>();
             builder.RegisterComponentInHierarchy<ObjectInjectProvider>();
             //builder.RegisterInstance(this);
             Debug.Log("GameLifetimeScope Configure");

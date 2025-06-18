@@ -14,14 +14,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
     public class InteractSystem : NetworkBehaviour
     {
         private ItemsSpawnerManager _itemsSpawnerManager;
-        private PlayerInGameManager _playerInGameManager;
         private readonly ConcurrentQueue<IInteractRequest> _commandQueue = new ConcurrentQueue<IInteractRequest>();
         private CancellationTokenSource _cts;
 
         [Inject]
-        private void Init(PlayerInGameManager playerInGameManager)
+        private void Init()
         {
-            _playerInGameManager = playerInGameManager;
             //_gameSyncManager = FindObjectOfType<GameSyncManager>();
             _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
             if (isServer)
@@ -64,7 +62,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 
         private void HandlePlayerChangeUnion(PlayerChangeUnionRequest playerChangeUnionRequest)
         {
-            var changedResult = _playerInGameManager.TryPlayerExchangeUnion(playerChangeUnionRequest.KillerPlayerId,
+            var changedResult = PlayerInGameManager.Instance.TryPlayerExchangeUnion(playerChangeUnionRequest.KillerPlayerId,
                 playerChangeUnionRequest.DeadPlayerId, out _, out _);
             if (changedResult)
             {
@@ -111,7 +109,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         private void HandleSceneInteractRequest(SceneInteractRequest request)
         {
             var header = request.GetHeader();
-            var playerNetId = _playerInGameManager.GetPlayerNetId(header.RequestConnectionId);
+            var playerNetId = PlayerInGameManager.Instance.GetPlayerNetId(header.RequestConnectionId);
             switch (request.InteractionType)
             {
                 case InteractionType.PickupItem:

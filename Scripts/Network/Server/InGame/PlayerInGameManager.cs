@@ -16,7 +16,7 @@ using VContainer;
 
 namespace HotUpdate.Scripts.Network.Server.InGame
 {
-    public class PlayerInGameManager : NetworkBehaviour
+    public class PlayerInGameManager : SingletonAutoNetMono<PlayerInGameManager>
     {
         private readonly SyncDictionary<int, string> _playerIds = new SyncDictionary<int, string>();
         private readonly SyncDictionary<int, uint> _playerNetIds = new SyncDictionary<int, uint>();
@@ -31,8 +31,6 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         private readonly SyncGridDictionary _gridPlayers = new SyncGridDictionary();
         private readonly Dictionary<uint, Action<uint>> _playerBornCallbacks = new Dictionary<uint, Action<uint>>();
         private CancellationTokenSource _updateGridsTokenSource;
-        private GameSyncManager _gameSyncManager;
-        private MapBoundDefiner _mapBoundDefiner;
         private GameConfigData _gameConfigData;
         
         private PlayerBase _playerBasePrefab;
@@ -46,10 +44,9 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         public bool isGameStarted;
 
         [Inject]
-        private void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider)
+        private void Init(IConfigProvider configProvider)
         {
             RegisterReaderWriter();
-            _gameSyncManager = gameSyncManager;
             _gameConfigData = configProvider.GetConfig<JsonDataConfig>().GameConfig;
             _updateGridsTokenSource = new CancellationTokenSource();
             _playerBasePrefab = ResourceManager.Instance.GetResource<PlayerBase>(_gameConfigData.basePrefabName);
@@ -172,7 +169,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         {
             while (!token.IsCancellationRequested && isGameStarted && isServer)
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(_gameSyncManager.TickRate), cancellationToken: token);
+                await UniTask.Delay(TimeSpan.FromSeconds(GameSyncManager.TickRate), cancellationToken: token);
                 foreach (var uid in _playerNetIds.Values)
                 {
                     var identity = NetworkServer.spawned[uid];
@@ -186,7 +183,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                         _playerBornCallbacks[uid]?.Invoke(uid);
                         _playerBornCallbacks.Remove(uid);
                     }
-                    deathCountdown -= _gameSyncManager.TickRate;
+                    deathCountdown -= GameSyncManager.TickRate;
                     _playerDeathCountdowns[uid] = deathCountdown;
                     _playerPositions[uid] = position;
                     UpdatePlayerGrid(uid, position);
@@ -195,7 +192,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         }
         private void UpdatePlayerGrid(uint id, Vector3 playerPosition)
         {
-            var newGrid = _mapBoundDefiner.GetGridPosition(playerPosition);
+            var newGrid = MapBoundDefiner.Instance.GetGridPosition(playerPosition);
         
             if (!_playerGrids.TryGetValue(id, out var oldGrid))
             {
@@ -275,7 +272,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             var nearestBase = _gameConfigData.GetNearestBase(pos);
             _playerSpawnPoints[nearestBase] = playerInGameData.networkIdentity.netId;
             _playerPositions.Add(playerInGameData.networkIdentity.netId, pos);
-            _playerGrids.Add(playerInGameData.networkIdentity.netId, _mapBoundDefiner.GetGridPosition(pos));
+            _playerGrids.Add(playerInGameData.networkIdentity.netId,  MapBoundDefiner.Instance.GetGridPosition(pos));
             RpcAddPlayer(connectId, playerInGameData);
         }
 

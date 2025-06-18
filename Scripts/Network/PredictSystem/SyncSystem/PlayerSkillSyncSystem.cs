@@ -30,7 +30,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void Init(IConfigProvider configProvider)
         {
             _skillConfig = configProvider.GetConfig<SkillConfig>();
-            _playerInGameManager = Object.FindObjectOfType<PlayerInGameManager>();
+            _playerInGameManager = PlayerInGameManager.Instance;
             UpdateEquipmentCd(_tokenSource.Token).Forget();
         }
 

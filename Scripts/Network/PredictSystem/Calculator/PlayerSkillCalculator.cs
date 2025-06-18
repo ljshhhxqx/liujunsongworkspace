@@ -96,11 +96,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             if (skillCommand.IsAutoSelectTarget)
             {
                 //自动选择目标，找寻离自己最近且在距离内的玩家
-                position = Constant.PlayerInGameManager.GetOtherPlayerNearestPlayer(header.ConnectionId, skillConfigData.maxDistance);
+                position = PlayerInGameManager.Instance.GetOtherPlayerNearestPlayer(header.ConnectionId, skillConfigData.maxDistance);
             }
             else
             {
-                if (Physics.Raycast(Constant.PlayerInGameManager.GetPlayerPosition(header.ConnectionId),
+                if (Physics.Raycast(PlayerInGameManager.Instance.GetPlayerPosition(header.ConnectionId),
                         skillCommand.DirectionNormalized, out var hit, skillConfigData.maxDistance,
                         Constant.SceneLayerMask))
                 {
@@ -110,12 +110,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             if (position == Vector3.zero)
             {
                 //如果没有找到，就在玩家面朝方向最远处释放技能
-                position = Constant.PlayerInGameManager.GetPositionInPlayerDirection(header.ConnectionId, skillCommand.DirectionNormalized, skillConfigData.maxDistance);
+                position = PlayerInGameManager.Instance.GetPositionInPlayerDirection(header.ConnectionId, skillCommand.DirectionNormalized, skillConfigData.maxDistance);
             }
 
             var commonParam = new SkillCheckerParams
             {
-                PlayerPosition = Constant.PlayerInGameManager.GetPlayerPosition(header.ConnectionId),
+                PlayerPosition = PlayerInGameManager.Instance.GetPlayerPosition(header.ConnectionId),
                 TargetPosition = position,
                 Radius = skillConfigData.radius,
             };
@@ -153,6 +153,5 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public SkillConfig SkillConfig;
         public LayerMask SceneLayerMask;
         public bool IsServer;
-        public PlayerInGameManager PlayerInGameManager;
     }
 }

@@ -33,14 +33,14 @@ namespace HotUpdate.Scripts.Network.Server
         private MapType _mapName;
 
         [Inject]
-        private void Init(GameEventManager gameEventManager, UIManager uIManager, IObjectResolver objectResolver, PlayerInGameManager playerInGameManager, PlayerDataManager playerDataManager)
+        private void Init(GameEventManager gameEventManager, UIManager uIManager, IObjectResolver objectResolver, PlayerDataManager playerDataManager)
         {
             PropertyTypeReaderWriter.RegisterReaderWriter();
             _gameEventManager = gameEventManager;
             _spawnPoints = FindObjectsByType<NetworkStartPosition>(FindObjectsSortMode.None).ToList();
             _networkManagerHUD = GetComponent<NetworkManagerHUD>();
             _networkManagerHUD.enabled = false;
-            _playerInGameManager = playerInGameManager;
+            _playerInGameManager = PlayerInGameManager.Instance;
             _gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnSceneResourcesLoaded);
             _objectResolver = objectResolver;
             _playerDataManager = playerDataManager;

@@ -101,7 +101,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private GameConfigData _gameConfigData;
         private PlayerConfigData _playerConfigData;
         private UIManager _uiManager;
-        private PlayerInGameManager _playerInGameManager;
         private InteractSystem _interactSystem;
         private UIHoleOverlay _uiHoleOverlay;
         
@@ -139,7 +138,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [Inject]
         private void Init(IConfigProvider configProvider, 
             GameSyncManager gameSyncManager, 
-            PlayerInGameManager playerInGameManager,
             UIManager uiManager)
         {
             _configProvider = configProvider;
@@ -147,7 +145,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _gameConfigData = jsonDataConfig.GameConfig;
             _playerConfigData = jsonDataConfig.PlayerConfig;
             _gameSyncManager = gameSyncManager;
-            _playerInGameManager = playerInGameManager;
             _interactSystem = FindObjectOfType<InteractSystem>();
             _uiManager = uiManager;
             _rigidbody = GetComponent<Rigidbody>();
@@ -170,11 +167,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
                 .Subscribe(c =>
                 {
-                    _canOpenShop = _playerInGameManager.IsPlayerInHisBase(netId, out _);
+                    _canOpenShop = PlayerInGameManager.Instance.IsPlayerInHisBase(netId, out _);
                 })
                 .AddTo(_disposables);
             _capsuleCollider.OnTriggerStayAsObservable()
-                .Throttle(TimeSpan.FromMilliseconds(_gameSyncManager.TickRate * 1000))
+                .Throttle(TimeSpan.FromMilliseconds(GameSyncManager.TickRate * 1000))
                 .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
                 .Subscribe(c =>
                 {
@@ -454,7 +451,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerPhysicsCalculator = new PlayerPhysicsCalculator(new PhysicsComponent(_rigidbody, transform, _checkStairTransform, _capsuleCollider, _camera));
             _playerPropertyCalculator = new PlayerPropertyCalculator(new Dictionary<PropertyTypeEnum, PropertyCalculator>());
             _playerAnimationCalculator = new PlayerAnimationCalculator(new AnimationComponent{ Animator = _animator});
-            _playerBattleCalculator = new PlayerBattleCalculator(new PlayerBattleComponent(transform, _playerInGameManager));
+            _playerBattleCalculator = new PlayerBattleCalculator(new PlayerBattleComponent(transform));
             _playerItemCalculator = new PlayerItemCalculator();
             _playerElementCalculator = new PlayerElementCalculator();
             _playerEquipmentCalculator = new PlayerEquipmentCalculator();
@@ -481,7 +478,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             });
             PlayerPropertyCalculator.SetCalculatorConstant(new PropertyCalculatorConstant
             {
-                TickRate = gameSyncManager.TickRate,
+                TickRate = GameSyncManager.TickRate,
                 IsServer = isServer,
             });
             PlayerAnimationCalculator.SetAnimationConstant(new AnimationConstant
