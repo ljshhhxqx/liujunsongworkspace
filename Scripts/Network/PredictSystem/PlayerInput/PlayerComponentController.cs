@@ -191,7 +191,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 }).AddTo(_disposables);
             
             Observable.EveryUpdate()
-                .Where(_ => isLocalPlayer && _subjectedStateType.HasAllStates(SubjectedStateType.None))
+                .Where(_ => isLocalPlayer && !_subjectedStateType.HasAllStates(SubjectedStateType.None))
                 .Subscribe(_ => {
                     var movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
                     var animationStates = _inputState.GetAnimationStates();

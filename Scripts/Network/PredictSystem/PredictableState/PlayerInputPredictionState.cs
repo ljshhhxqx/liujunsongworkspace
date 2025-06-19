@@ -29,6 +29,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private KeyAnimationConfig _keyAnimationConfig;
         private AnimationConfig _animationConfig;
         private JsonDataConfig _jsonDataConfig;
+        private SkillConfig _skillConfig;
+        private PlayerSkillSyncState _skillSyncState;
         
         protected override CommandType CommandType => CommandType.Input;
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
@@ -43,9 +45,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             base.Init(gameSyncManager, configProvider);
             _propertyPredictionState = GetComponent<PropertyPredictionState>();
+            _skillSyncState = GetComponent<PlayerSkillSyncState>();
             _animationConfig = configProvider.GetConfig<AnimationConfig>();
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _keyAnimationConfig = configProvider.GetConfig<KeyAnimationConfig>();
+            _skillConfig = configProvider.GetConfig<SkillConfig>();
 
             UpdateAnimationCooldowns(_cancellationTokenSource.Token, GameSyncManager.TickRate).Forget();
         }
@@ -88,14 +92,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 var info = _animationConfig.GetAnimationInfo(inputCommand.CommandAnimationState);
                 var actionType = _animationConfig.GetActionType(inputCommand.CommandAnimationState);
                 var health = _propertyPredictionState.GetProperty(PropertyTypeEnum.Health);
-                if (health == 0 || actionType is not ActionType.Movement and ActionType.Interaction)
+                var skillConfigData = _skillSyncState.GetSkillConfigData(inputCommand.CommandAnimationState);
+                var cost = skillConfigData.id == 0 ? info.cost : skillConfigData.cost;
+                var cooldown = skillConfigData.id == 0 ? info.cooldown : skillConfigData.cooldown;
+                if (health == 0 || actionType != ActionType.Movement && actionType != ActionType.Interaction)
                 {
                     return;
                 }
 
                 var animationCooldowns = PlayerComponentController.GetNowAnimationCooldowns();
                 var cooldownInfo = animationCooldowns.Find(x => x.AnimationState == inputCommand.CommandAnimationState);
-                if (info.cooldown > 0)
+                if (cooldown > 0)
                 {
                     if (cooldownInfo == null || !cooldownInfo.IsReady())
                     {
@@ -104,7 +111,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     }
                 }
 
-                if (info.cost > 0)
+                if (cost > 0)
                 {
                     var currentStrength = _propertyPredictionState.GetProperty(PropertyTypeEnum.Strength);
                     if (!_animationConfig.IsStrengthEnough(inputCommand.CommandAnimationState, currentStrength, GameSyncManager.TickRate))

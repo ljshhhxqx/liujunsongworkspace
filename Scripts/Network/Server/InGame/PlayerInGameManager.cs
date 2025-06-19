@@ -115,17 +115,14 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             var allyIds = new HashSet<int>();
             foreach (var id in playerIds)
             {
-                if (id != selfId)
+                var unionId = _playerUnionIds.GetValueOrDefault(GetPlayerNetId(id));
+                if (unionId == _playerUnionIds.GetValueOrDefault(GetPlayerNetId(selfId)))
                 {
-                    var unionId = _playerUnionIds.GetValueOrDefault(GetPlayerNetId(id));
-                    if (unionId == _playerUnionIds.GetValueOrDefault(GetPlayerNetId(selfId)))
+                    if (!includeSelf && id == selfId)
                     {
-                        if (!includeSelf && id == selfId)
-                        {
-                            continue;
-                        }
-                        allyIds.Add(id);
+                        continue;
                     }
+                    allyIds.Add(id);
                 }
             }
             return allyIds.Take(count).ToArray();

@@ -678,6 +678,8 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         Collect = 1 << 11,
         MoveBlend = Idle | Move | Sprint,
         JumpBlend = Jump | Sprint,
+        SkillE = 1 << 12,
+        SkillQ = 1 << 13,
         None = 0,
     }
     

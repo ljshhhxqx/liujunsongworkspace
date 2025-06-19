@@ -188,6 +188,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     IsPlayingSpecialAction = true;
                     _animationComponent.Animator.CrossFade(GetAnimationName(AnimationState.Dead), 0.01f);
                     break;
+                case AnimationState.SkillQ:
+                    IsPlayingSpecialAction = true;
+                    _animationComponent.Animator.CrossFade(GetAnimationName(AnimationState.SkillQ), 0.01f);
+                    break;
+                case AnimationState.SkillE:
+                    IsPlayingSpecialAction = true;
+                    _animationComponent.Animator.CrossFade(GetAnimationName(AnimationState.SkillE), 0.01f);
+                    break;
             }
         }
 
@@ -240,6 +248,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 
                 if (HasAnimation(parameters.InputAnimationStates, AnimationState.Jump))
                     return AnimationState.Jump;
+                
+                if (HasAnimation(parameters.InputAnimationStates, AnimationState.SkillE))
+                    return AnimationState.SkillE;
+                
+                if (HasAnimation(parameters.InputAnimationStates, AnimationState.SkillQ))
+                    return AnimationState.SkillQ;
 
                 return DetermineAnimationStateByInput(parameters.InputMovement, parameters.InputAnimationStates);
             }
@@ -270,7 +284,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         
         public bool IsSpecialActionState(AnimationState state)
         {
-            return state is AnimationState.Dead or AnimationState.Hit or AnimationState.Attack or AnimationState.Roll;
+            return state is AnimationState.Dead or AnimationState.Hit or AnimationState.Attack or AnimationState.Roll or AnimationState.SkillQ or AnimationState.SkillE;
         }
         
         private bool HasAnimation(List<AnimationState> animationStates, AnimationState animationState)
