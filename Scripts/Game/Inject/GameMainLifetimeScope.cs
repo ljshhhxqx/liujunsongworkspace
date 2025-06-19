@@ -24,9 +24,6 @@ namespace HotUpdate.Scripts.Game.Inject
         {
             builder.RegisterEntryPoint<GameLauncher>();
             builder.Register<ConfigManager>(Lifetime.Singleton);
-            //builder.Register<PlayerManager>(Lifetime.Singleton);
-            ////builder.Register<GameCommonVariant>(Lifetime.Singleton);
-            //builder.Register<CollectItemSpawner>(Lifetime.Singleton);
             builder.Register<UIAudioManager>(Lifetime.Singleton);
             builder.Register<PlayFabAccountManager>(Lifetime.Singleton);
             builder.Register<PlayerDataManager>(Lifetime.Singleton);

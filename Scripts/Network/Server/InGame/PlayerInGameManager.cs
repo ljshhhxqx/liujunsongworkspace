@@ -49,11 +49,6 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             RegisterReaderWriter();
             _gameConfigData = configProvider.GetConfig<JsonDataConfig>().GameConfig;
             _updateGridsTokenSource = new CancellationTokenSource();
-            _playerBasePrefab = ResourceManager.Instance.GetResource<PlayerBase>(_gameConfigData.basePrefabName);
-            if (isServer)
-            {
-                UpdateAllPlayerGrids(_updateGridsTokenSource.Token).Forget();
-            }
         }
 
         [Server]
@@ -125,6 +120,10 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                     var unionId = _playerUnionIds.GetValueOrDefault(GetPlayerNetId(id));
                     if (unionId == _playerUnionIds.GetValueOrDefault(GetPlayerNetId(selfId)))
                     {
+                        if (!includeSelf && id == selfId)
+                        {
+                            continue;
+                        }
                         allyIds.Add(id);
                     }
                 }
@@ -167,7 +166,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         
         private async UniTaskVoid UpdateAllPlayerGrids(CancellationToken token)
         {
-            while (!token.IsCancellationRequested && isGameStarted && isServer)
+            while (!token.IsCancellationRequested && isServer)
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(GameSyncManager.TickRate), cancellationToken: token);
                 foreach (var uid in _playerNetIds.Values)
@@ -254,6 +253,20 @@ namespace HotUpdate.Scripts.Network.Server.InGame
 
         private void OnIsGameStartedChanged(bool oldIsGameStarted, bool newIsGameStarted)
         {
+            if (newIsGameStarted)
+            {
+                _playerBasePrefab = ResourceManager.Instance.GetResource<PlayerBase>(_gameConfigData.basePrefabName);
+                if (isServer)
+                {
+                    foreach (var key in _playerNetIds.Keys)
+                    {
+                        var player = NetworkServer.connections[key];
+                        if (player == null) continue;
+                        player.identity.transform.position = GetPlayerBasePositionByNetId(player.identity.netId);
+                    }
+                }
+                UpdateAllPlayerGrids(_updateGridsTokenSource.Token).Forget();   
+            }
         }
 
         public void AddPlayer(int connectId, PlayerInGameData playerInGameData)

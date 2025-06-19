@@ -1,7 +1,6 @@
+using System;
 using Cysharp.Threading.Tasks;
 using Game.Map;
-using HotUpdate.Scripts.Config;
-using System;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
@@ -25,7 +24,7 @@ namespace HotUpdate.Scripts.Game.Map
             await LoadGameResources();
             gameEventManager.Publish(new GameSceneResourcesLoadedEvent(mapName));
             uiManager.InitMapSprites(mapName);
-            InitMapStaticObjects();
+            //InitMapStaticObjects();
             Debug.Log("game map init complete!!!!!!!!!!");
         }
 
@@ -96,14 +95,15 @@ namespace HotUpdate.Scripts.Game.Map
         }
 
         private int _staticObjectId;
-        [Button]
-        private void InitMapStaticObjectsId(int staticObjectId)
+        
+        [Button("静态物品ID初始化")]
+        private void InitMapStaticObjectsId()
         {
             var mapStaticObject = FindObjectsOfType<GameStaticObject>();
             foreach (var staticObject in mapStaticObject)
             {
-                staticObjectId++;
-                staticObject.ModifyId(staticObjectId);
+                _staticObjectId++;
+                staticObject.ModifyId(_staticObjectId);
             }
         }
     }

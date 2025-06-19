@@ -156,6 +156,7 @@ namespace HotUpdate.Scripts.Game
             if (isServer)
             {
                 _cts = new CancellationTokenSource();
+                PlayerInGameManager.Instance.SpawnAllBases();
                 IsEndGame = false;
                 _warmupTime = _jsonDataConfig.GameConfig.warmupTime;
                 _noUnionTime = _jsonDataConfig.GameConfig.noUnionTime;
