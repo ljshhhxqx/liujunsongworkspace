@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using AOTScripts.Data;
-using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
@@ -53,6 +50,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     [MemoryPackUnion(31, typeof(SellCommand))]
     [MemoryPackUnion(32, typeof(SkillLoadCommand))]
     [MemoryPackUnion(33, typeof(TriggerCommand))]
+    [MemoryPackUnion(34, typeof(SkillChangedCommand))]
     public partial interface INetworkCommand
     {
         NetworkCommandHeader GetHeader();
@@ -196,7 +194,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
         public AnimationState AnimationState;
-        
+        [MemoryPackOrder(2)]
+        public int SkillId;
+
         public NetworkCommandHeader GetHeader() => Header;
         public bool IsValid()
         {
@@ -218,11 +218,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
         public AnimationState AnimationState;
+
+        [MemoryPackOrder(2)] public int SkillId;
         
         public NetworkCommandHeader GetHeader() => Header;
         public bool IsValid()
         {
-            return Enum.IsDefined(typeof(AnimationState), AnimationState);
+            return Enum.IsDefined(typeof(AnimationState), AnimationState) && AnimationState > 0;
         }
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
         {
@@ -593,6 +595,30 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public bool IsValid()
         {
             return InputMovement.magnitude > 0 && InputAnimationStates.Length > 0 && InputAnimationStates.All(a => Enum.IsDefined(typeof(AnimationState), a));
+        }
+
+        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        {
+            Header.ConnectionId = headerConnectionId;
+            Header.Tick = currentTick;
+            Header.CommandType = headerCommandType;
+            Header.Authority = authority;
+        }
+    }
+    [MemoryPackable]
+    public partial struct SkillChangedCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)]
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public int SkillId;
+        [MemoryPackOrder(2)]
+        public AnimationState AnimationState;
+        public NetworkCommandHeader GetHeader() => Header;
+
+        public bool IsValid()
+        {
+            return SkillId > 0 && Enum.IsDefined(typeof(AnimationState), AnimationState);
         }
 
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
@@ -1010,7 +1036,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(1)] public int SkillConfigId;
         [MemoryPackOrder(2)] public Vector3 DirectionNormalized;
         [MemoryPackOrder(3)] public bool IsAutoSelectTarget;
-        [MemoryPackOrder(4)] public string KeyCode;
+        [MemoryPackOrder(4)] public AnimationState KeyCode;
         public NetworkCommandHeader GetHeader() => Header;
 
         public bool IsValid()
@@ -1034,7 +1060,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(0)] public NetworkCommandHeader Header;
         [MemoryPackOrder(1)] public int SkillConfigId;
         [MemoryPackOrder(2)] public bool IsLoad;
-        [MemoryPackOrder(3)] public string KeyCode;
+        [MemoryPackOrder(3)] public AnimationState KeyCode;
         
         public NetworkCommandHeader GetHeader() => Header;
 

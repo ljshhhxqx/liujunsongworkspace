@@ -14,7 +14,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
     {
         private SkillConfig _skillConfig;
         private SkillConfigData _currentSkillConfigData;
-        private readonly Dictionary<string, GameObject> _skillObjects = new Dictionary<string, GameObject>();
+        private readonly Dictionary<AnimationState, GameObject> _skillObjects = new Dictionary<AnimationState, GameObject>();
         private Transform _spawnTransform;
         protected override ISyncPropertyState CurrentState { get; set; }
         protected override CommandType CommandType => CommandType.Skill;
@@ -51,7 +51,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             if (CurrentState is PlayerSkillState playerSkillState)
             {
-                var skillChecker = playerSkillState.SkillCheckers[animationState.ToString()];
+                var skillChecker = playerSkillState.SkillCheckers[animationState];
                 var skillConfigData = _skillConfig.GetSkillData(skillChecker.GetCommonSkillCheckerHeader().ConfigId);
                 return skillConfigData;
             }
@@ -59,7 +59,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         }
 
         [ClientRpc]
-        public void RpcSpawnSkillEffect(int skillConfigId, Vector3 position, string code)
+        public void RpcSpawnSkillEffect(int skillConfigId, Vector3 position, AnimationState code)
         {
             _currentSkillConfigData = _skillConfig.GetSkillData(skillConfigId);
             var effectName = _currentSkillConfigData.particleName;

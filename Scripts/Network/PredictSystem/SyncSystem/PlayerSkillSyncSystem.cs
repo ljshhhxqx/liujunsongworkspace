@@ -14,6 +14,7 @@ using MemoryPack;
 using Mirror;
 using UnityEngine;
 using VContainer;
+using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 using Object = UnityEngine.Object;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
@@ -195,6 +196,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _playerSkillSyncStates.Clear();
             PropertyStates.Clear();
             _tokenSource.Cancel();
+        }
+
+        public SkillConfigData GetSkillConfigData(AnimationState animationState, int headerConnectionId)
+        {
+            var currentState = PropertyStates[headerConnectionId];
+            if (currentState is PlayerSkillState playerSkillState)
+            {
+                var skillChecker = playerSkillState.SkillCheckers[animationState];
+                var skillConfigData = _skillConfig.GetSkillData(skillChecker.GetCommonSkillCheckerHeader().ConfigId);
+                return skillConfigData;
+            }
+            return default;
         }
     }
 }

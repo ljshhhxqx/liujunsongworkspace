@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Tool.Static;
 using MemoryPack;
@@ -146,6 +147,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                             EquipmentPart = equipPart,
                             ItemId = _items[i].ItemId,
                             ConfigId = _items[i].ConfigId,
+                            SkillId = PlayerItemCalculator.GetEquipSkillId(_items[i].PlayerItemType, _items[i].ItemId),
                         };
                     }
                 }
@@ -314,6 +316,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                         EquipmentPart = equipPart,
                         ItemId = bagItem.ItemId,
                         ConfigId = bagItem.ConfigId,
+                        SkillId = PlayerItemCalculator.GetEquipSkillId(bagItem.PlayerItemType, bagItem.ItemId),
                     };
                     isEquipped = true;
                 }
@@ -445,6 +448,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                             EquipmentPart = equipPart,
                             ItemId = item.ItemId,
                             ConfigId = item.ConfigId,
+                            SkillId = PlayerItemCalculator.GetEquipSkillId(item.PlayerItemType, item.ItemId),
                         };
                     }
                     item.State = newState;
@@ -758,6 +762,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         //必须赋值具体的被动属性(由随机值计算出来的具体的值)
         [MemoryPackOrder(4)]
         public AttributeIncreaseData[] PassiveIncreaseDatas;
+        [MemoryPackOrder(5)]
+        public int SkillId;
 
         public bool Equals(PlayerEquipSlotItem other)
         {

@@ -34,6 +34,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         bool Refresh(CooldownSnapshotData snapshotData);
         //重置冷却状态
         void Reset();
+        void SkillModifyCooldown(float modifier);
     }
     
     public class ComboCooldown : IAnimationCooldown
@@ -151,6 +152,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             _windowCountdown = 0;
             _inComboWindow = false;
         }
+
+        public void SkillModifyCooldown(float modifier)
+        {
+            _configCooldown = modifier;
+        }
     }
     
     public class KeyframeCooldown : IAnimationCooldown
@@ -245,6 +251,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         {
             _currentCountdown = 0;
             _currentTime = 0;
+        }
+
+        public void SkillModifyCooldown(float modifier)
+        {
+            _configCooldown = modifier;
         }
     }
     
@@ -394,6 +405,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             if (_currentStage == 0) return 0;
             return _keyframe.Take(_currentStage - 1).Sum(s => s.triggerTime);
         }
+
+        public void SkillModifyCooldown(float modifier)
+        {
+            _configCooldown = modifier;
+        }
     }
 
     public class AnimationCooldown : IAnimationCooldown
@@ -457,6 +473,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public void Reset()
         {
             _currentCountdown = 0;
+        }
+
+        public void SkillModifyCooldown(float modifier)
+        {
+            
         }
     }
     

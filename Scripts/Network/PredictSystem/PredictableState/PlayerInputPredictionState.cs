@@ -123,6 +123,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     {
                         AnimationState = inputCommand.CommandAnimationState,
                         Header = header,
+                        SkillId = skillConfigData.id,
                     });
                 }
                 cooldownInfo?.Use(); 

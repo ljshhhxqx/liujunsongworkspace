@@ -88,6 +88,20 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             // return desc.ToString();
             return null;
         }
+        
+
+        public static AnimationState GetAnimationState(PlayerItemType playerItemType)
+        {
+            switch (playerItemType)
+            {
+                case PlayerItemType.Weapon:
+                    return AnimationState.SkillQ;
+                case PlayerItemType.Armor:
+                    return AnimationState.SkillE;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(playerItemType), playerItemType, null);
+            }
+        }
     }
 
     [Serializable]

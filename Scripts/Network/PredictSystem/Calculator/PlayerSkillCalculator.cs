@@ -9,6 +9,7 @@ using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Skill;
 using UnityEngine;
+using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {
@@ -22,7 +23,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         }
 
         private static bool CheckSkillCdAndCost(ISkillChecker skillChecker, SkillConfigData skillConfigData,
-            PropertyCalculator propertyCalculator, string key)
+            PropertyCalculator propertyCalculator, AnimationState key)
         {
             if (skillChecker == null)
             {
@@ -84,7 +85,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         }
 
         public static bool ExecuteSkill(PlayerSkillState skillState, SkillConfigData skillConfigData, PropertyCalculator propertyCalculator, 
-            SkillCommand skillCommand, string key, Func<Vector3, IColliderConfig, int[]> isHitFunc, out Vector3 position)
+            SkillCommand skillCommand, AnimationState key, Func<Vector3, IColliderConfig, int[]> isHitFunc, out Vector3 position)
         {
             var skillChecker = skillState.SkillCheckers[key];
             position = Vector3.zero;

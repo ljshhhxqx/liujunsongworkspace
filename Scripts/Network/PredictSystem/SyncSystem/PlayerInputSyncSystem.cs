@@ -36,6 +36,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private readonly Dictionary<int, PlayerInputPredictionState> _inputPredictionStates = new Dictionary<int, PlayerInputPredictionState>();
         private AnimationConfig _animationConfig;
         private JsonDataConfig _jsonDataConfig;
+        private PlayerPropertySyncSystem _playerPropertySyncSystem;
+        private SkillConfig _skillConfig;
+        private PlayerSkillSyncSystem _playerSkillSyncSystem;
         private List<IAnimationCooldown> _animationCooldownConfig;
         private CancellationTokenSource _cts;
 
@@ -44,6 +47,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             _animationConfig = configProvider.GetConfig<AnimationConfig>();
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
+            _skillConfig = configProvider.GetConfig<SkillConfig>();
+            _playerPropertySyncSystem = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
+            _playerSkillSyncSystem = GameSyncManager.GetSyncSystem<PlayerSkillSyncSystem>(CommandType.Skill);
             UpdatePlayerAnimationAsync(_cts.Token, GameSyncManager.TickRate).Forget();
         }
         
@@ -184,29 +190,31 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 if (actionType is not ActionType.Movement and ActionType.Interaction)
                 {
                     Debug.LogWarning($"Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} is not supported.");
-                    return null;
+                    return playerInputState;
                 }
                 
                 var playerAnimationCooldowns = playerController.GetNowAnimationCooldowns();
                 if (playerAnimationCooldowns.Count == 0)
                 {
-                    return null;
+                    return playerInputState;
                 }
                 var info = _animationConfig.GetAnimationInfo(commandAnimation);
-                
+                var skillConfigData = _playerSkillSyncSystem.GetSkillConfigData(inputCommand.CommandAnimationState, header.ConnectionId);
+                var cost = skillConfigData.id == 0 ? info.cost : skillConfigData.cost;
+                var cooldown = skillConfigData.id == 0 ? info.cooldown : skillConfigData.cooldown;
                 //验证冷却时间是否已到
                 var cooldownInfo = playerAnimationCooldowns.Find(x => x.AnimationState == commandAnimation);
 
-                if (info.cooldown != 0)
+                if (cooldown != 0)
                 {
                     if (cooldownInfo == null || !cooldownInfo.IsReady())
                     {
                         Debug.LogWarning($"Player {header.ConnectionId} input animation {commandAnimation} is not ready.");
-                        return null;
+                        return playerInputState;
                     }
                 }
 
-                if (info.cost > 0)
+                if (cost > 0)
                 {
                     //验证是否耐力值足够
                     if (!_animationConfig.IsStrengthEnough(inputCommand.CommandAnimationState, playerProperty[PropertyTypeEnum.Strength].CurrentValue, GameSyncManager.TickRate))
@@ -220,6 +228,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     {
                         Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property),
                         AnimationState = commandAnimation,
+                        SkillId = skillConfigData.id,
                     });
 
                 }
@@ -262,7 +271,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 return playerInputState;
             }
 
-            return null;
+            if (command is SkillChangedCommand skillChangedCommand)
+            {
+                var playerController = GameSyncManager.GetPlayerConnection(header.ConnectionId);
+                var playerAnimationCooldowns = playerController.GetNowAnimationCooldowns();
+                var animation = playerAnimationCooldowns.Find(x => x.AnimationState == skillChangedCommand.AnimationState);
+                var skillConfigData = _playerSkillSyncSystem.GetSkillConfigData(skillChangedCommand.AnimationState, header.ConnectionId);
+                animation?.SkillModifyCooldown(skillConfigData.cooldown);
+                return playerInputState;
+            }
+
+            return playerInputState;
         }
         
         private List<CooldownSnapshotData> GetCooldownSnapshotData(int connectionId)

@@ -313,11 +313,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
             else if (command is PropertyClientAnimationCommand clientAnimationCommand)
             {
-                HandleAnimationCommand(header.ConnectionId, clientAnimationCommand.AnimationState);
+                HandleAnimationCommand(header.ConnectionId, clientAnimationCommand.AnimationState, clientAnimationCommand.SkillId);
             }
             else if (command is PropertyServerAnimationCommand serverAnimationCommand)
             {
-                HandleAnimationCommand(header.ConnectionId, serverAnimationCommand.AnimationState);
+                HandleAnimationCommand(header.ConnectionId, serverAnimationCommand.AnimationState, serverAnimationCommand.SkillId);
             }
             else if (command is PropertyBuffCommand buffCommand)
             {
@@ -1133,9 +1133,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             HandlePlayerControl(buff.playerId, ControlSkillType.None);
         }
 
-        private void HandleAnimationCommand(int connectionId, AnimationState command)
+        private void HandleAnimationCommand(int connectionId, AnimationState command, int skillId = -1)
         {
-            var cost = _animationConfig.GetPlayerAnimationCost(command);
+            float cost;
+            if (skillId != -1)
+            {
+                var skillData = _skillConfig.GetSkillData(skillId);
+                cost = skillData.cost;
+            }
+            else
+            {
+                cost = _animationConfig.GetPlayerAnimationCost(command);
+            }
             if (cost <= 0)
             {
                 return;
