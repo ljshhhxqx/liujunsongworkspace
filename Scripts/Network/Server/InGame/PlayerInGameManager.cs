@@ -30,9 +30,12 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         private readonly SyncHashSet<uint> _playerIsChangedUnion = new SyncHashSet<uint>();
         private readonly SyncGridDictionary _gridPlayers = new SyncGridDictionary();
         private readonly Dictionary<uint, Action<uint>> _playerBornCallbacks = new Dictionary<uint, Action<uint>>();
-        private CancellationTokenSource _updateGridsTokenSource;
-        private GameConfigData _gameConfigData;
-        
+        private CancellationTokenSource _updateGridsTokenSource = new CancellationTokenSource();
+        private IConfigProvider _configProvider;
+
+        private GameConfigData _gameConfigData => _configProvider.GetConfig<JsonDataConfig>().GameConfig;
+
+
         private PlayerBase _playerBasePrefab;
         private SyncDictionary<Vector3, uint> _playerSpawnPoints = new SyncDictionary<Vector3, uint>();
         private Dictionary<int, PlayerBase> _playerBases = new Dictionary<int, PlayerBase>();
@@ -47,8 +50,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         private void Init(IConfigProvider configProvider)
         {
             RegisterReaderWriter();
-            _gameConfigData = configProvider.GetConfig<JsonDataConfig>().GameConfig;
-            _updateGridsTokenSource = new CancellationTokenSource();
+            _configProvider = configProvider;
         }
 
         [Server]

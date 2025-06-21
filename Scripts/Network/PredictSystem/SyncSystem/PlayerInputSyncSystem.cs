@@ -118,6 +118,36 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     .Subscribe(x => HandlePlayerRoll(connectionId, false))
                     .AddTo(_disposables);
             }
+            var skillECooldown = animationCooldowns.Find(x => x.AnimationState == AnimationState.SkillE);
+            if (skillECooldown is KeyframeComboCooldown eCooldown)
+            {
+                eCooldown.EventStream
+                    .Where(x => x == AnimationEvent.OnSkillCastE)
+                    .Subscribe(x => HandlePlayerSkill(connectionId, AnimationState.SkillE))
+                    .AddTo(_disposables);
+            }
+            var skillQCooldown = animationCooldowns.Find(x => x.AnimationState == AnimationState.SkillQ);
+            if (skillQCooldown is KeyframeComboCooldown qCooldown)
+            {
+                qCooldown.EventStream
+                    .Where(x => x == AnimationEvent.OnSkillCastQ)
+                    .Subscribe(x => HandlePlayerSkill(connectionId, AnimationState.SkillQ))
+                    .AddTo(_disposables);
+            }
+        }
+
+        private void HandlePlayerSkill(int connectionId, AnimationState animState)
+        {
+            var skillConfigData = _playerSkillSyncSystem.GetSkillConfigData(animState, connectionId);
+            var playerController = GameSyncManager.GetPlayerConnection(connectionId);
+            GameSyncManager.EnqueueServerCommand(new SkillCommand
+            {
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill, CommandAuthority.Server, CommandExecuteType.Immediate),
+                SkillConfigId = skillConfigData.id,
+                KeyCode = animState,
+                IsAutoSelectTarget = true,
+                DirectionNormalized = playerController.transform.forward,
+            });
         }
 
         private void HandlePlayerRoll(int connectionId, bool isRollStart)
@@ -222,17 +252,36 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         Debug.LogWarning($"Player {header.ConnectionId} input animation {commandAnimation} cost {info.cost} strength, but strength is {playerProperty[PropertyTypeEnum.Strength].CurrentValue}.");
                         return null;
                     }
-                    
-                    // 扣除耐力值
-                    GameSyncManager.EnqueueServerCommand(new PropertyServerAnimationCommand
+
+                    if (skillConfigData.id == 0)
                     {
-                        Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property),
-                        AnimationState = commandAnimation,
-                        SkillId = skillConfigData.id,
-                    });
+                        // 扣除耐力值
+                        GameSyncManager.EnqueueServerCommand(new PropertyServerAnimationCommand
+                        {
+                            Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property),
+                            AnimationState = commandAnimation,
+                            SkillId = skillConfigData.id,
+                        });
+                    }
 
                 }
-                cooldownInfo?.Use();
+
+                if (skillConfigData.id == 0)
+                {
+                    cooldownInfo?.Use();
+                }
+                else if (skillConfigData.id > 0 && skillConfigData.animationState != AnimationState.None)
+                {
+                    GameSyncManager.EnqueueServerCommand(new SkillCommand
+                    {
+                        Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Skill, CommandAuthority.Server, CommandExecuteType.Immediate),
+                        SkillConfigId = skillConfigData.id,
+                        KeyCode = inputCommand.CommandAnimationState,
+                        IsAutoSelectTarget = true,
+                        DirectionNormalized = playerController.transform.forward,
+                    });
+                    cooldownInfo?.Use();
+                }
                 
                 var playerGameStateData = playerController.HandleServerMoveAndAnimation(inputStateData);
                 PropertyStates[header.ConnectionId] = new PlayerInputState(playerGameStateData, new PlayerAnimationCooldownState(GetCooldownSnapshotData(header.ConnectionId)));
@@ -243,7 +292,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         TriggerType.OnHpChange, moveSpeed, moveSpeed * inputCommand.InputMovement.magnitude * GameSyncManager.TickRate);
                     GameSyncManager.EnqueueServerCommand(new TriggerCommand
                     {
-                        Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Equipment),
+                        Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
                         TriggerType = TriggerType.OnMove,
                         TriggerData = MemoryPackSerializer.Serialize(hpChangedCheckerParameters),
                     });

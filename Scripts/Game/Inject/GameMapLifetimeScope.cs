@@ -8,7 +8,6 @@ using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server;
 using HotUpdate.Scripts.Network.Server.Sync;
 using HotUpdate.Scripts.Weather;
-using Network.Server;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;

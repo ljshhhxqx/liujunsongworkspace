@@ -159,6 +159,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         OnRollStart,
         OnRollEnd,
         OnAttack,
+        OnSkillCastE,
+        OnSkillCastQ,
     }
 
     // 关键帧数据结构

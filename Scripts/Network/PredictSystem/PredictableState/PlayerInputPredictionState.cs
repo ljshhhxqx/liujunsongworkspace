@@ -95,7 +95,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 var skillConfigData = _skillSyncState.GetSkillConfigData(inputCommand.CommandAnimationState);
                 var cost = skillConfigData.id == 0 ? info.cost : skillConfigData.cost;
                 var cooldown = skillConfigData.id == 0 ? info.cooldown : skillConfigData.cooldown;
-                if (health == 0 || actionType != ActionType.Movement && actionType != ActionType.Interaction)
+                if (health == 0 || actionType != ActionType.Movement)
                 {
                     return;
                 }
@@ -126,7 +126,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                         SkillId = skillConfigData.id,
                     });
                 }
-                cooldownInfo?.Use(); 
+
+                if (skillConfigData.animationState != AnimationState.None)
+                {
+                    cooldownInfo?.Use(); 
+                }
 
                 OnPlayerInputStateChanged?.Invoke(new PlayerInputStateData
                 {
