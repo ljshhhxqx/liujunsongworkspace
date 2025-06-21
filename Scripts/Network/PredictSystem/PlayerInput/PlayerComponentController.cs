@@ -52,7 +52,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private Animator _animator;
         [SerializeField]
         private Transform _checkStairTransform;
-        [SerializeField]
         private Camera _camera;
         [SerializeField]
         private PlayerEffectPlayer playerEffectPlayer;
@@ -261,6 +260,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 _playerTraceOtherPlayerHpBindKey = new BindingKey(UIPropertyDefine.PlayerTraceOtherPlayerHp, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
                 HandleLocalInitCallback();
             }
+            HandleAllSyncState();
+        }
+
+        private void HandleAllSyncState()
+        {
+            gameObject.AddComponent<PlayerEquipmentSyncState>();
+            gameObject.AddComponent<PlayerInputPredictionState>();
+            gameObject.AddComponent<PlayerItemPredictableState>();
+            gameObject.AddComponent<PlayerShopPredictableState>();
+            gameObject.AddComponent<PlayerSkillSyncState>();
+            gameObject.AddComponent<PropertyPredictionState>();
         }
 
         private void HandlePropertyStateChanged(SubjectedStateType subjectedStateType)

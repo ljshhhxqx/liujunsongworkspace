@@ -1230,7 +1230,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 case CommandType.Shop:
                     return new ShopSyncSystem();
                 case CommandType.Skill:
-                    return new PlayerSkillSystem();
+                    return new PlayerSkillSyncSystem();
                 // case CommandType.UI:
                 //     return new PlayerCombatSyncSystem();
             }   

@@ -25,7 +25,6 @@ namespace HotUpdate.Scripts.Game.Inject
             RegisterComponent<ItemsSpawnerManager>(builder);
             RegisterComponent<WeatherManager>(builder);
             RegisterComponent<GameMapInit>(builder);
-            RegisterComponent<FrameSyncManager>(builder);
             RegisterComponent<PlayerNotifyManager>(builder);
             RegisterComponent<GameSyncManager>(builder);
             RegisterComponent<InteractSystem>(builder);

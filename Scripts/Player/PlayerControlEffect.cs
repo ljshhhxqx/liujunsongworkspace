@@ -12,8 +12,8 @@ namespace HotUpdate.Scripts.Player
         private static readonly int StoneAmount = Shader.PropertyToID("_StoneAmount");
         private static readonly int Transparency = Shader.PropertyToID("_Transparency");
 
-        [SerializeField] private SkinnedMeshRenderer originalMesh;
-        [SerializeField] private SkinnedMeshRenderer effectMesh;
+        [SerializeField] private SkinnedMeshRenderer[] originalMesh;
+        [SerializeField] private SkinnedMeshRenderer[] effectMesh;
         private MaterialPropertyBlock _effectMaterialPropertyBlock;
         private CancellationTokenSource _effectTokenSource;
         private CancellationTokenSource _transparencyTokenSource;
@@ -30,12 +30,21 @@ namespace HotUpdate.Scripts.Player
                 _effectTokenSource?.Cancel();
                 return;
             }
-            if (!effectMesh)
+            if (effectMesh == null || effectMesh.Length == 0)
                 return;
             _effectTokenSource?.Cancel();
             _effectTokenSource = new CancellationTokenSource();
-            originalMesh.enabled = false;
-            effectMesh.enabled = true;
+            for (int i = 0; i < originalMesh.Length; i++)
+            {
+                var originalMeshRenderer = originalMesh[i];
+                originalMeshRenderer.enabled = false;
+            }
+            
+            for (int i = 0; i < effectMesh.Length; i++)
+            {
+                var effectMeshRenderer = effectMesh[i];
+                effectMeshRenderer.enabled = true;
+            }
 
             var iceAmount = controlSkillType == ControlSkillType.Frozen ? 1 : 0;
             var snowAmount = controlSkillType == ControlSkillType.Slowdown ? 1 : 0;
@@ -50,36 +59,70 @@ namespace HotUpdate.Scripts.Player
             // _effectMaterialPropertyBlock.SetVector("_IceNoise_ST", new Vector4(1, 1, 0, _Time.y * 0.1f));
             // _effectMaterialPropertyBlock.SetVector("_StoneDetail_ST", new Vector4(5, 5, 0, 0));
 
-            effectMesh.SetPropertyBlock(_effectMaterialPropertyBlock);
+            for (int i = 0; i < effectMesh.Length; i++)
+            {
+                var effectMeshRenderer = effectMesh[i];
+                effectMeshRenderer.SetPropertyBlock(_effectMaterialPropertyBlock);
+            }
             if (duration == 0f)
             {
                 return;
             }
             DelayInvoker.DelayInvoke(duration, () =>
             {
-                originalMesh.enabled = true;
-                effectMesh.enabled = false;
+                for (int i = 0; i < effectMesh.Length; i++)
+                {
+                    var effectMeshRenderer = effectMesh[i];
+                    effectMeshRenderer.enabled = false;
+                }
+                for (int i = 0; i < originalMesh.Length; i++)
+                {
+                    var originalMeshRenderer = originalMesh[i];
+                    originalMeshRenderer.enabled = true;
+                }
             }, token: _effectTokenSource.Token);
         }
 
         public void SetTransparency(float transparency, float duration = 0f)
         {
-            if (!effectMesh)
+            if (effectMesh == null || effectMesh.Length == 0)
             {
                 return;
             }
             _transparencyTokenSource?.Cancel();
             _transparencyTokenSource = new CancellationTokenSource();
-            originalMesh.enabled = false;
-            effectMesh.enabled = true;
+            
+            for (int i = 0; i < originalMesh.Length; i++)
+            {
+                var originalMeshRenderer = originalMesh[i];
+                originalMeshRenderer.enabled = false;
+            }
+            
+            for (int i = 0; i < effectMesh.Length; i++)
+            {
+                var effectMeshRenderer = effectMesh[i];
+                effectMeshRenderer.enabled = true;
+            }
             _effectMaterialPropertyBlock.SetFloat(Transparency, transparency);
-            effectMesh.SetPropertyBlock(_effectMaterialPropertyBlock);
+            for (int i = 0; i < effectMesh.Length; i++)
+            {
+                var effectMeshRenderer = effectMesh[i];
+                effectMeshRenderer.SetPropertyBlock(_effectMaterialPropertyBlock);
+            }
             if (duration!=0f)
             {
                 DelayInvoker.DelayInvoke(duration, () =>
                 {
-                    originalMesh.enabled = true;
-                    effectMesh.enabled = false;
+                    for (int i = 0; i < effectMesh.Length; i++)
+                    {
+                        var effectMeshRenderer = effectMesh[i];
+                        effectMeshRenderer.enabled = false;
+                    }
+                    for (int i = 0; i < originalMesh.Length; i++)
+                    {
+                        var originalMeshRenderer = originalMesh[i];
+                        originalMeshRenderer.enabled = true;
+                    }
                 }, token: _transparencyTokenSource.Token);
             }
         }
