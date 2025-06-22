@@ -54,12 +54,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             CurrentTick = 0;
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
-            if (!isServer)
-            {
-                _syncSystems.Clear();
-                _clientCommands.Clear();
-                _currentTickCommands.Clear();
-            }
             _cts = new CancellationTokenSource();
             _tickRate = _jsonDataConfig.GameConfig.tickRate;
             _maxCommandAge = _jsonDataConfig.GameConfig.maxCommandAge;
@@ -91,6 +85,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 .AddTo(this);
                 
             ProcessImmediateCommands(_cts.Token);
+        }
+
+        private void Start()
+        {
+            if (!isServer)
+            {
+                _syncSystems.Clear();
+                _clientCommands.Clear();
+                _currentTickCommands.Clear();
+            }
         }
 
         private void OnAllPlayerGetSpeed(AllPlayerGetSpeedEvent allPlayerGetSpeedEvent)
