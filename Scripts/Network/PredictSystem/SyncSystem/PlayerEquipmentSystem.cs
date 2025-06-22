@@ -21,10 +21,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
     {
         private readonly Dictionary<int, PlayerEquipmentSyncState> _playerEquipmentSyncStates = new Dictionary<int, PlayerEquipmentSyncState>();
         private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
-
-        [Inject]
-        private void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider)
+        
+        protected override void OnGameStart(bool isGameStarted)
         {
+            if (!isGameStarted)
+            {
+                return;
+            }
+            //游戏开始才能开始倒计时
             UpdateEquipmentCd(_tokenSource.Token).Forget();
         }
 

@@ -5,6 +5,7 @@ using System.Threading;
 using AOTScripts.Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using MemoryPack;
 using Mirror;
@@ -104,7 +105,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         Property,   // 属性相关
         Input,      // 移动相关
         Item,       // 道具相关
-        UI,         // UI相关
         Skill,      // 技能相关
         Equipment,  // 装备相关
         Interact,    // 交互相关
@@ -1231,6 +1231,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                     return new ShopSyncSystem();
                 case CommandType.Skill:
                     return new PlayerSkillSyncSystem();
+                case CommandType.Interact:
+                    Debug.LogWarning("Not implemented yet");
+                    return null;
                 // case CommandType.UI:
                 //     return new PlayerCombatSyncSystem();
             }   

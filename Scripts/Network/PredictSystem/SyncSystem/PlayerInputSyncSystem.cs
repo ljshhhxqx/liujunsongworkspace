@@ -40,7 +40,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private SkillConfig _skillConfig;
         private PlayerSkillSyncSystem _playerSkillSyncSystem;
         private List<IAnimationCooldown> _animationCooldownConfig;
-        private CancellationTokenSource _cts;
+        private CancellationTokenSource _cts = new CancellationTokenSource();
 
         [Inject]
         private void InitContainers(IConfigProvider configProvider)
@@ -48,11 +48,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _animationConfig = configProvider.GetConfig<AnimationConfig>();
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _skillConfig = configProvider.GetConfig<SkillConfig>();
-            _playerPropertySyncSystem = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
-            _playerSkillSyncSystem = GameSyncManager.GetSyncSystem<PlayerSkillSyncSystem>(CommandType.Skill);
+        }
+        protected override void OnGameStart(bool isGameStarted)
+        {
+            if (!isGameStarted)
+            {
+                return;
+            }
+            //游戏开始才能开始倒计时
             UpdatePlayerAnimationAsync(_cts.Token, GameSyncManager.TickRate).Forget();
         }
-        
+
+        protected override void OnAllSystemInit()
+        {
+            _playerPropertySyncSystem = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
+            _playerSkillSyncSystem = GameSyncManager.GetSyncSystem<PlayerSkillSyncSystem>(CommandType.Skill);
+        }
+
         private async UniTaskVoid UpdatePlayerAnimationAsync(CancellationToken token, float deltaTime)
         {
             while (!token.IsCancellationRequested)

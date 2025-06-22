@@ -229,7 +229,7 @@ namespace HotUpdate.Scripts.Game
 
         private async UniTask StartMainGameTimerAsync(CancellationToken token)
         {
-            PlayerInGameManager.Instance.isGameStarted = true;
+            _gameSyncManager.isGameStart = true;
             _gameEventManager.Publish(new AllPlayerGetSpeedEvent());
             var remainingTime = _mainGameTime;
             var endGameFlag = false;
@@ -310,6 +310,7 @@ namespace HotUpdate.Scripts.Game
 
         private void OnDestroy()
         {
+            _gameSyncManager.isGameStart = false;
             _cts?.Cancel();
         }
         

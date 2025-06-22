@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
-using HotUpdate.Scripts.Network.Item;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.PredictSystem.State;
-using HotUpdate.Scripts.Network.Server.InGame;
-using HotUpdate.Scripts.Tool.ObjectPool;
 using MemoryPack;
 using Mirror;
 using UnityEngine;
@@ -136,12 +131,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         public static int CreateItemId(int configId)
         {
-            return HybridIdGenerator.GenerateItemId(configId, SyncSystem.GameSyncManager.CurrentTick);
+            return HybridIdGenerator.GenerateItemId(configId, GameSyncManager.CurrentTick);
         }
         
         public static int CreateChestId(int configId)
         {
-            return HybridIdGenerator.GenerateChestId(configId, SyncSystem.GameSyncManager.CurrentTick);
+            return HybridIdGenerator.GenerateChestId(configId, GameSyncManager.CurrentTick);
         }
     }
 }

@@ -22,6 +22,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             GameSyncManager.OnClientProcessStateUpdate += OnClientProcessStateUpdate;
             GameSyncManager.OnPlayerConnected += OnPlayerConnected;
             GameSyncManager.OnPlayerDisconnected += OnPlayerDisconnected;
+            GameSyncManager.OnGameStart += OnGameStart;
+            GameSyncManager.OnAllSystemInit += OnAllSystemInit;
+        }
+
+        protected virtual void OnAllSystemInit()
+        {
+        }
+
+        protected virtual void OnGameStart(bool isGameStarted)
+        {
+            
         }
 
         public PlayerComponentController GetPlayerComponentController(int connectionId)

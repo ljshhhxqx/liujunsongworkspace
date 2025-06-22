@@ -32,6 +32,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             _skillConfig = configProvider.GetConfig<SkillConfig>();
             _playerInGameManager = PlayerInGameManager.Instance;
+        }
+
+        protected override void OnGameStart(bool isGameStarted)
+        {
+            if (!isGameStarted)
+            {
+                return;
+            }
+            //游戏开始才能开始倒计时
             UpdateEquipmentCd(_tokenSource.Token).Forget();
         }
 

@@ -15,6 +15,7 @@ using HotUpdate.Scripts.Tool.ObjectPool;
 using MemoryPack;
 using Mirror;
 using Tool.GameEvent;
+using Tool.Message;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -46,6 +47,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         [SyncVar(hook = nameof(OnIsRandomUnionStartChanged))] 
         public bool isRandomUnionStart;
+        [SyncVar(hook = nameof(OnGameStartChanged))] 
+        public bool isGameStart;
         
         public static int CurrentTick { get; private set; }
 
@@ -65,14 +68,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var commandTypes = Enum.GetValues(typeof(CommandType));
             foreach (CommandType commandType in commandTypes)
             {
-                _syncSystems[commandType] = commandType.GetSyncSystem();
-                _syncSystems[commandType].Initialize(this);
-                ObjectInjectProvider.Instance.Inject(_syncSystems[commandType]);
-                if (_syncSystems[commandType] is PlayerPropertySyncSystem playerPropertySyncSystem)
+                var syncSystem = commandType.GetSyncSystem();
+                if (syncSystem == null)
+                {
+                    Debug.LogError($"No sync system found for {commandType}");
+                    continue;
+                }
+                syncSystem.Initialize(this);
+                ObjectInjectProvider.Instance.Inject(syncSystem);
+                if (syncSystem is PlayerPropertySyncSystem playerPropertySyncSystem)
                 {
                     _playerPropertySyncSystem = playerPropertySyncSystem;
                 }
+                _syncSystems.Add(commandType, syncSystem);
             }
+            OnAllSystemInit?.Invoke();
             Observable.EveryUpdate()
                 .Throttle(TimeSpan.FromSeconds(1 / _tickRate))
                 .Where(_ => isServer && !_isProcessing)
@@ -125,6 +135,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     };
                     EnqueueServerCommand(command);
                 }
+            }
+        }
+        
+        private void OnGameStartChanged(bool oldValue, bool newValue)
+        {
+            OnGameStart?.Invoke(newValue);
+            if (isServer)
+            {
+                PlayerInGameManager.Instance.isGameStarted = newValue;
             }
         }
 
@@ -310,6 +329,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         }
 
         public event Action<INetworkCommand> OnServerProcessCurrentTickCommand;
+        public event Action<bool> OnGameStart;
+        public event Action OnAllSystemInit;
         private void ProcessCurrentTickCommands()
         {
             while (_currentTickCommands.Count > 0)
@@ -387,7 +408,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             int? noSequence = null;
             var connectionIdValue = connectionId.GetValueOrDefault();
             var header = ObjectPool<InteractHeader>.Get();
-            header = default;
             header.CommandId = HybridIdGenerator.GenerateCommandId(authority == CommandAuthority.Server, CommandType.Interact, ref noSequence);
             header.RequestConnectionId = connectionIdValue;
             header.Tick = CurrentTick;
