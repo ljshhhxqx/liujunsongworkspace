@@ -2028,7 +2028,7 @@
             "Name": "Attack",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/CollectFill/Large/Attack.mat"
+            "Address": "/Map/Town/CollectFill/Legendary/Attack.mat"
         },
         {
             "UID": 4200001,
@@ -2038,7 +2038,7 @@
             "Name": "CriticalDamageRatio",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/CollectFill/Large/CriticalDamageRatio.mat"
+            "Address": "/Map/Town/CollectFill/Legendary/CriticalDamageRatio.mat"
         },
         {
             "UID": 4200002,
@@ -2048,7 +2048,7 @@
             "Name": "CriticalRate",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/CollectFill/Large/CriticalRate.mat"
+            "Address": "/Map/Town/CollectFill/Legendary/CriticalRate.mat"
         },
         {
             "UID": 4200003,
@@ -2058,7 +2058,7 @@
             "Name": "Defense",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/CollectFill/Large/Defense.mat"
+            "Address": "/Map/Town/CollectFill/Legendary/Defense.mat"
         },
         {
             "UID": 4200004,
@@ -2068,7 +2068,7 @@
             "Name": "Health",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/CollectFill/Large/Health.mat"
+            "Address": "/Map/Town/CollectFill/Legendary/Health.mat"
         },
         {
             "UID": 4200005,
@@ -2078,7 +2078,7 @@
             "Name": "Speed",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/CollectFill/Large/Speed.mat"
+            "Address": "/Map/Town/CollectFill/Legendary/Speed.mat"
         },
         {
             "UID": 4200006,
@@ -2088,7 +2088,7 @@
             "Name": "Strength",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/CollectFill/Large/Strength.mat"
+            "Address": "/Map/Town/CollectFill/Legendary/Strength.mat"
         },
         {
             "UID": 4200007,
@@ -2098,7 +2098,7 @@
             "Name": "Attack",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/CollectFill/Medium/Attack.mat"
+            "Address": "/Map/Town/CollectFill/Normal/Attack.mat"
         },
         {
             "UID": 4200008,
@@ -2108,7 +2108,7 @@
             "Name": "CriticalDamageRatio",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/CollectFill/Medium/CriticalDamageRatio.mat"
+            "Address": "/Map/Town/CollectFill/Normal/CriticalDamageRatio.mat"
         },
         {
             "UID": 4200009,
@@ -2118,7 +2118,7 @@
             "Name": "CriticalRate",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/CollectFill/Medium/CriticalRate.mat"
+            "Address": "/Map/Town/CollectFill/Normal/CriticalRate.mat"
         },
         {
             "UID": 4200010,
@@ -2128,7 +2128,7 @@
             "Name": "Defense",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/CollectFill/Medium/Defense.mat"
+            "Address": "/Map/Town/CollectFill/Normal/Defense.mat"
         },
         {
             "UID": 4200011,
@@ -2138,7 +2138,7 @@
             "Name": "Health",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/CollectFill/Medium/Health.mat"
+            "Address": "/Map/Town/CollectFill/Normal/Health.mat"
         },
         {
             "UID": 4200012,
@@ -2148,7 +2148,7 @@
             "Name": "Speed",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/CollectFill/Medium/Speed.mat"
+            "Address": "/Map/Town/CollectFill/Normal/Speed.mat"
         },
         {
             "UID": 4200013,
@@ -2158,7 +2158,7 @@
             "Name": "Strength",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/CollectFill/Medium/Strength.mat"
+            "Address": "/Map/Town/CollectFill/Normal/Strength.mat"
         },
         {
             "UID": 4200014,
@@ -2168,7 +2168,7 @@
             "Name": "Attack",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/CollectFill/Small/Attack.mat"
+            "Address": "/Map/Town/CollectFill/Rare/Attack.mat"
         },
         {
             "UID": 4200015,
@@ -2178,7 +2178,7 @@
             "Name": "CriticalDamageRatio",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/CollectFill/Small/CriticalDamageRatio.mat"
+            "Address": "/Map/Town/CollectFill/Rare/CriticalDamageRatio.mat"
         },
         {
             "UID": 4200016,
@@ -2188,7 +2188,7 @@
             "Name": "CriticalRate",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/CollectFill/Small/CriticalRate.mat"
+            "Address": "/Map/Town/CollectFill/Rare/CriticalRate.mat"
         },
         {
             "UID": 4200017,
@@ -2198,7 +2198,7 @@
             "Name": "Defense",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/CollectFill/Small/Defense.mat"
+            "Address": "/Map/Town/CollectFill/Rare/Defense.mat"
         },
         {
             "UID": 4200018,
@@ -2208,7 +2208,7 @@
             "Name": "Health",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/CollectFill/Small/Health.mat"
+            "Address": "/Map/Town/CollectFill/Rare/Health.mat"
         },
         {
             "UID": 4200019,
@@ -2218,7 +2218,7 @@
             "Name": "Speed",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/CollectFill/Small/Speed.mat"
+            "Address": "/Map/Town/CollectFill/Rare/Speed.mat"
         },
         {
             "UID": 4200020,
@@ -2228,7 +2228,7 @@
             "Name": "Strength",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/CollectFill/Small/Strength.mat"
+            "Address": "/Map/Town/CollectFill/Rare/Strength.mat"
         },
         {
             "UID": 4300000,

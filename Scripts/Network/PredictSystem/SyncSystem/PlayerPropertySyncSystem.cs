@@ -36,7 +36,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public Dictionary<PropertyTypeEnum, float> ConfigPlayerMinProperties { get; private set; }
         public Dictionary<PropertyTypeEnum, float> ConfigPlayerMaxProperties { get; private set; }
         public Dictionary<PropertyTypeEnum, float> ConfigPlayerBaseProperties { get; private set; }
-        public Dictionary<int, PropertyPredictionState> PlayerPredictionState { get; private set; }
+        private readonly Dictionary<int, PropertyPredictionState> _propertyPredictionStates = new Dictionary<int, PropertyPredictionState>();
         private ImmutableList<BuffManagerData> _activeBuffs;
         private ImmutableList<TimedBuffData> _timedBuffs;
         private ImmutableList<EquipmentData> _activeEquipments;
@@ -239,7 +239,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             playerPropertyState.Properties = GetPropertyCalculators();
             playerPredictableState.RegisterProperties(playerPropertyState);
             PropertyStates.Add(connectionId, playerPropertyState);
-            PlayerPredictionState.Add(connectionId, playerPredictableState);
+            _propertyPredictionStates.Add(connectionId, playerPredictableState);
         }
 
         public Dictionary<PropertyTypeEnum, PropertyCalculator> GetPropertyCalculators()
@@ -1194,7 +1194,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         public override void SetState<T>(int connectionId, T state)
         {
-            var playerPredictableState = PlayerPredictionState[connectionId];
+            var playerPredictableState = _propertyPredictionStates[connectionId];
             playerPredictableState.ApplyServerState(state);
         }
 
@@ -1212,7 +1212,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             base.Clear();
             _activeBuffs = _activeBuffs.Clear();
-            PlayerPredictionState.Clear();
+            _propertyPredictionStates.Clear();
         }
 
 

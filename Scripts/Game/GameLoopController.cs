@@ -174,6 +174,7 @@ namespace HotUpdate.Scripts.Game
 
             Debug.Log("Main game timer starts now!");
             _messageHandler.SendToAllClients(new MirrorGameStartMessage(_gameInfo));
+            _gameEventManager.Publish(new GameStartEvent());
             await StartMainGameTimerAsync(cts.Token);
 
             Debug.Log("Main game over. Exiting...");

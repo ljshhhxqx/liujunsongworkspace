@@ -4,8 +4,10 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Tool.GameEvent;
 using MemoryPack;
 using Mirror;
+using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
 
@@ -15,18 +17,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
     {
         private ItemsSpawnerManager _itemsSpawnerManager;
         private readonly ConcurrentQueue<IInteractRequest> _commandQueue = new ConcurrentQueue<IInteractRequest>();
-        private CancellationTokenSource _cts;
+        private CancellationTokenSource _cts = new CancellationTokenSource();
 
         [Inject]
-        private void Init()
+        private void Init(GameEventManager gameEventManager)
         {
             //_gameSyncManager = FindObjectOfType<GameSyncManager>();
             _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
-            if (isServer)
-            {
-                _cts = new CancellationTokenSource();
-                UpdateInteractRequests(_cts.Token).Forget();
-            }
+            gameEventManager.Subscribe<GameStartEvent>(OnGameStart);
+        }
+
+        private void OnGameStart(GameStartEvent gameStartEvent)
+        {
+            UpdateInteractRequests(_cts.Token).Forget();
         }
 
         private async UniTaskVoid UpdateInteractRequests(CancellationToken cts)

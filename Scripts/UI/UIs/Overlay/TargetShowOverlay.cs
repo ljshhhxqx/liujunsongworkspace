@@ -23,7 +23,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private bool IsTargetNotNull => _targets != null && _targets.Count > 0;
 
         [Inject]
-        private void Init(GameEventManager gameEventManager, ConfigProvider configProvider)
+        private void Init(GameEventManager gameEventManager, IConfigProvider configProvider)
         {
             gameEventManager.Subscribe<TargetShowEvent>(OnTargetShow);
             var gameConfig = configProvider.GetConfig<JsonDataConfig>().GameConfig;

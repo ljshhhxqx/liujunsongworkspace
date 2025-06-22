@@ -71,7 +71,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 var syncSystem = commandType.GetSyncSystem();
                 if (syncSystem == null)
                 {
-                    Debug.LogError($"No sync system found for {commandType}");
+                    Debug.Log($"No sync system found for {commandType}");
                     continue;
                 }
                 syncSystem.Initialize(this);

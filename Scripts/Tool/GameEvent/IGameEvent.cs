@@ -55,6 +55,15 @@ namespace Tool.GameEvent
             GameInfo = gameInfo;
         }
     }
+    
+    public struct GameStartEvent : IGameEvent
+    {
+        // public GameInfo GameInfo { get; private set; }
+        // public GameStartEvent(GameInfo gameInfo)
+        // {
+        //     GameInfo = gameInfo;
+        // }
+    }
 
     public struct GameSceneLoadingEvent : IGameEvent
     {
