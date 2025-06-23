@@ -276,15 +276,15 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 var playerCollider = playerIdentity.GetComponent<Collider>();
                 _playerBaseColliderData = GamePhysicsSystem.CreateColliderConfig(playerCollider);
             }
-            _playerIds.Add(connectId, playerInGameData.player.PlayerId);
-            _playerNetIds.Add(connectId, playerInGameData.networkIdentity.netId);
-            _playerInGameData.Add(connectId, playerInGameData);
-            _playerIdsByNetId.Add(playerInGameData.networkIdentity.netId, connectId);
+            _playerIds.TryAdd(connectId, playerInGameData.player.PlayerId);
+            _playerNetIds.TryAdd(connectId, playerInGameData.networkIdentity.netId);
+            _playerInGameData.TryAdd(connectId, playerInGameData);
+            _playerIdsByNetId.TryAdd(playerInGameData.networkIdentity.netId, connectId);
             var pos = playerInGameData.networkIdentity.transform.position;
             var nearestBase = _gameConfigData.GetNearestBase(pos);
             _playerSpawnPoints[nearestBase] = playerInGameData.networkIdentity.netId;
-            _playerPositions.Add(playerInGameData.networkIdentity.netId, pos);
-            _playerGrids.Add(playerInGameData.networkIdentity.netId,  MapBoundDefiner.Instance.GetGridPosition(pos));
+            _playerPositions.TryAdd(playerInGameData.networkIdentity.netId, pos);
+            _playerGrids.TryAdd(playerInGameData.networkIdentity.netId,  MapBoundDefiner.Instance.GetGridPosition(pos));
             RpcAddPlayer(connectId, playerInGameData);
         }
 
