@@ -111,8 +111,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             base.Clear();
             _playerEquipmentSyncStates.Clear();
-            _tokenSource?.Dispose();
             _tokenSource?.Cancel();
+            _tokenSource?.Dispose();
         }
     }
 }

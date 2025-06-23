@@ -676,8 +676,6 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         Dead = 1 << 9,
         Hit = 1 << 10,
         Collect = 1 << 11,
-        MoveBlend = Idle | Move | Sprint,
-        JumpBlend = Jump | Sprint,
         SkillE = 1 << 12,
         SkillQ = 1 << 13,
         None = 0,

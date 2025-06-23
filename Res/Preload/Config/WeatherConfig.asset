@@ -24,88 +24,112 @@ MonoBehaviour:
   - weatherType: 1
     weatherRatio: 0.35
     cloudDensityRange:
+      isPercent: 0
       min: 1.6
       max: 2
     cloudSpeedRange:
+      isPercent: 0
       min: -0.2
       max: 0.2
     lightIntensity:
+      isPercent: 0
       min: 0.9
       max: 1
     fogRatio: 0.25
     fogDensity:
+      isPercent: 0
       min: 0.01
       max: 0.2
     thunderRatio: 0
     rainDensity:
+      isPercent: 0
       min: 0
       max: 0
     snowDensity:
+      isPercent: 0
       min: 0
       max: 0
   - weatherType: 2
     weatherRatio: 0.35
     cloudDensityRange:
+      isPercent: 0
       min: 0.1
       max: 1.6
     cloudSpeedRange:
+      isPercent: 0
       min: 0.2
       max: 0.8
     lightIntensity:
+      isPercent: 0
       min: 0.75
       max: 0.9
     fogRatio: 0.05
     fogDensity:
+      isPercent: 0
       min: 0.01
       max: 0.03
     thunderRatio: 0
     rainDensity:
+      isPercent: 0
       min: 0
       max: 0
     snowDensity:
+      isPercent: 0
       min: 0
       max: 0
   - weatherType: 3
     weatherRatio: 0.25
     cloudDensityRange:
+      isPercent: 0
       min: 0
       max: 0.1
     cloudSpeedRange:
+      isPercent: 0
       min: 0.8
       max: 2
     lightIntensity:
+      isPercent: 0
       min: 0.4
       max: 0.75
     fogRatio: 0
     fogDensity:
+      isPercent: 0
       min: 0
       max: 0
     thunderRatio: 0.25
     rainDensity:
+      isPercent: 0
       min: 0
       max: 1
     snowDensity:
+      isPercent: 0
       min: 0
       max: 0
   - weatherType: 4
     weatherRatio: 0.05
     cloudDensityRange:
+      isPercent: 0
       min: 0
       max: 0.1
     cloudSpeedRange:
+      isPercent: 0
       min: 0.8
       max: 2
     lightIntensity:
+      isPercent: 0
       min: 0.4
       max: 0.75
     fogRatio: 0
     fogDensity:
+      isPercent: 0
       min: 0
       max: 0
     thunderRatio: 0.25
     rainDensity:
+      isPercent: 0
       min: 0
       max: 0
     snowDensity:
+      isPercent: 0
       min: 0
       max: 1

@@ -41,7 +41,7 @@ using PropertyEnvironmentChangeCommand = HotUpdate.Scripts.Network.PredictSystem
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 {
-    public class PlayerComponentController : NetworkAutoInjectComponent,IAttackAnimationEvent
+    public class PlayerComponentController : NetworkAutoInjectComponent, IAttackAnimationEvent
     {
         [Header("Components")]
         [SerializeField]
@@ -147,20 +147,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _interactSystem = FindObjectOfType<InteractSystem>();
             _uiManager = uiManager;
             _rigidbody = GetComponent<Rigidbody>();
-            _inputState = GetComponent<PlayerInputPredictionState>();
-            _propertyPredictionState = GetComponent<PropertyPredictionState>();
             _capsuleCollider = GetComponent<CapsuleCollider>();
             _animator = GetComponent<Animator>();
             _camera = Camera.main;
             GetAllCalculators(configProvider, gameSyncManager);
-            _propertyPredictionState.OnPropertyChanged += HandlePropertyChange;
-            _propertyPredictionState.OnStateChanged += HandlePropertyStateChanged;
-            _propertyPredictionState.OnPlayerDead += HandlePlayerDeadClient;
-            _propertyPredictionState.OnPlayerRespawned += HandlePlayerRespawnedClient;
-            _inputState.OnPlayerStateChanged += HandlePlayerStateChanged;
-            _inputState.OnPlayerAnimationCooldownChanged += HandlePlayerAnimationCooldownChanged;
-            _inputState.OnPlayerInputStateChanged += HandlePlayerInputStateChanged;
-            _inputState.IsInSpecialState += HandleSpecialState;
             _animationCooldowns = GetAnimationCooldowns();
             _capsuleCollider.OnTriggerEnterAsObservable()
                 .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
@@ -271,6 +261,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             gameObject.AddComponent<PlayerShopPredictableState>();
             gameObject.AddComponent<PlayerSkillSyncState>();
             gameObject.AddComponent<PropertyPredictionState>();
+            _inputState = GetComponent<PlayerInputPredictionState>();
+            _propertyPredictionState = GetComponent<PropertyPredictionState>();
+            _propertyPredictionState.OnPropertyChanged += HandlePropertyChange;
+            _propertyPredictionState.OnStateChanged += HandlePropertyStateChanged;
+            _propertyPredictionState.OnPlayerDead += HandlePlayerDeadClient;
+            _propertyPredictionState.OnPlayerRespawned += HandlePlayerRespawnedClient;
+            _inputState.OnPlayerStateChanged += HandlePlayerStateChanged;
+            _inputState.OnPlayerAnimationCooldownChanged += HandlePlayerAnimationCooldownChanged;
+            _inputState.OnPlayerInputStateChanged += HandlePlayerInputStateChanged;
+            _inputState.IsInSpecialState += HandleSpecialState;
         }
 
         private void HandlePropertyStateChanged(SubjectedStateType subjectedStateType)
@@ -458,14 +458,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void GetAllCalculators(IConfigProvider configProvider, GameSyncManager gameSyncManager)
         {
-            _playerPhysicsCalculator = new PlayerPhysicsCalculator(new PhysicsComponent(_rigidbody, transform, _checkStairTransform, _capsuleCollider, _camera));
-            _playerPropertyCalculator = new PlayerPropertyCalculator(new Dictionary<PropertyTypeEnum, PropertyCalculator>());
-            _playerAnimationCalculator = new PlayerAnimationCalculator(new AnimationComponent{ Animator = _animator});
-            _playerBattleCalculator = new PlayerBattleCalculator(new PlayerBattleComponent(transform));
-            _playerItemCalculator = new PlayerItemCalculator();
-            _playerElementCalculator = new PlayerElementCalculator();
-            _playerEquipmentCalculator = new PlayerEquipmentCalculator();
-            _playerShopCalculator = new PlayerShopCalculator();
             var jsonData = configProvider.GetConfig<JsonDataConfig>();
             var propertyConfig = configProvider.GetConfig<PropertyConfig>();
             var gameData = jsonData.GameConfig;
@@ -526,6 +518,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 ItemConfig = configProvider.GetConfig<ItemConfig>(),
                 IsServer = isServer,
             });
+            _playerPhysicsCalculator = new PlayerPhysicsCalculator(new PhysicsComponent(_rigidbody, transform, _checkStairTransform, _capsuleCollider, _camera));
+            _playerPropertyCalculator = new PlayerPropertyCalculator(new Dictionary<PropertyTypeEnum, PropertyCalculator>());
+            _playerAnimationCalculator = new PlayerAnimationCalculator(new AnimationComponent{ Animator = _animator});
+            _playerBattleCalculator = new PlayerBattleCalculator(new PlayerBattleComponent(transform));
+            _playerItemCalculator = new PlayerItemCalculator();
+            _playerElementCalculator = new PlayerElementCalculator();
+            _playerEquipmentCalculator = new PlayerEquipmentCalculator();
+            _playerShopCalculator = new PlayerShopCalculator();
         }
 
         private void OnAttack(int stage)
@@ -783,6 +783,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             var config = _configProvider.GetConfig<AnimationConfig>();
             foreach (var animationState in animationStates)
             {
+                if (animationState == AnimationState.None)
+                {
+                    continue;
+                }
                 var info = config.GetAnimationInfo(animationState);
                 switch (info.cooldownType)
                 {

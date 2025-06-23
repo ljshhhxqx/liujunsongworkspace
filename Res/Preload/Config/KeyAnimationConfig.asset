@@ -46,3 +46,11 @@ MonoBehaviour:
     isComboKey: 0
     animationKeys:
     - Collect
+  - animationState: 4096
+    isComboKey: 0
+    animationKeys:
+    - Skille
+  - animationState: 8192
+    isComboKey: 0
+    animationKeys:
+    - Skillq

@@ -18,7 +18,8 @@ namespace HotUpdate.Scripts.Network.Inject
         
         protected virtual void Start()
         {
-            if (isServer && !netIdentity.isServerOnly)
+            if (isServer && 
+                !netIdentity.isServerOnly)
             {
                 RpcInject();
             }

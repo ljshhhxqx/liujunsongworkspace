@@ -585,8 +585,8 @@ MonoBehaviour:
     propertyType: 1
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 1
       increaseValueRange:
@@ -599,8 +599,8 @@ MonoBehaviour:
     propertyType: 0
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 1
       increaseValueRange:
@@ -613,8 +613,8 @@ MonoBehaviour:
     propertyType: 2
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 1
       increaseValueRange:
@@ -627,8 +627,8 @@ MonoBehaviour:
     propertyType: 4
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 1
       increaseValueRange:
@@ -641,8 +641,8 @@ MonoBehaviour:
     propertyType: 8
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 1
       increaseValueRange:
@@ -655,8 +655,8 @@ MonoBehaviour:
     propertyType: 9
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 1
       increaseValueRange:
@@ -669,8 +669,8 @@ MonoBehaviour:
     propertyType: 3
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 1
       increaseValueRange:
@@ -683,8 +683,8 @@ MonoBehaviour:
     propertyType: 0
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 2
       increaseValueRange:
@@ -697,8 +697,8 @@ MonoBehaviour:
     propertyType: 1
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 2
       increaseValueRange:
@@ -711,8 +711,8 @@ MonoBehaviour:
     propertyType: 2
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 2
       increaseValueRange:
@@ -725,8 +725,8 @@ MonoBehaviour:
     propertyType: 3
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 2
       increaseValueRange:
@@ -739,8 +739,8 @@ MonoBehaviour:
     propertyType: 4
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 2
       increaseValueRange:
@@ -753,8 +753,8 @@ MonoBehaviour:
     propertyType: 6
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 2
       increaseValueRange:
@@ -767,8 +767,8 @@ MonoBehaviour:
     propertyType: 7
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 2
       increaseValueRange:
@@ -781,8 +781,8 @@ MonoBehaviour:
     propertyType: 8
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 2
       increaseValueRange:
@@ -795,8 +795,8 @@ MonoBehaviour:
     propertyType: 9
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 2
       increaseValueRange:
@@ -809,8 +809,8 @@ MonoBehaviour:
     propertyType: 12
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 2
       increaseValueRange:
@@ -823,8 +823,8 @@ MonoBehaviour:
     propertyType: 0
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 3
       increaseValueRange:
@@ -837,8 +837,8 @@ MonoBehaviour:
     propertyType: 1
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 3
       increaseValueRange:
@@ -851,8 +851,8 @@ MonoBehaviour:
     propertyType: 2
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 3
       increaseValueRange:
@@ -865,8 +865,8 @@ MonoBehaviour:
     propertyType: 3
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 3
       increaseValueRange:
@@ -879,8 +879,8 @@ MonoBehaviour:
     propertyType: 4
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 3
       increaseValueRange:
@@ -893,8 +893,8 @@ MonoBehaviour:
     propertyType: 6
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 3
       increaseValueRange:
@@ -907,8 +907,8 @@ MonoBehaviour:
     propertyType: 7
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 3
       increaseValueRange:
@@ -921,8 +921,8 @@ MonoBehaviour:
     propertyType: 8
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 3
       increaseValueRange:
@@ -935,8 +935,8 @@ MonoBehaviour:
     propertyType: 9
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 3
       increaseValueRange:
@@ -949,8 +949,8 @@ MonoBehaviour:
     propertyType: 12
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 3
       increaseValueRange:
@@ -963,8 +963,8 @@ MonoBehaviour:
     propertyType: 0
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 4
       increaseValueRange:
@@ -977,8 +977,8 @@ MonoBehaviour:
     propertyType: 1
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 4
       increaseValueRange:
@@ -991,8 +991,8 @@ MonoBehaviour:
     propertyType: 2
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 4
       increaseValueRange:
@@ -1005,8 +1005,8 @@ MonoBehaviour:
     propertyType: 3
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 4
       increaseValueRange:
@@ -1019,8 +1019,8 @@ MonoBehaviour:
     propertyType: 4
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 4
       increaseValueRange:
@@ -1033,8 +1033,8 @@ MonoBehaviour:
     propertyType: 6
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 4
       increaseValueRange:
@@ -1047,8 +1047,8 @@ MonoBehaviour:
     propertyType: 7
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 4
       increaseValueRange:
@@ -1061,8 +1061,8 @@ MonoBehaviour:
     propertyType: 8
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 4
       increaseValueRange:
@@ -1075,8 +1075,8 @@ MonoBehaviour:
     propertyType: 9
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 4
       increaseValueRange:
@@ -1089,8 +1089,8 @@ MonoBehaviour:
     propertyType: 12
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 4
       increaseValueRange:
@@ -1103,8 +1103,8 @@ MonoBehaviour:
     propertyType: 5
     duration:
       isPercent: 0
-      min: -1
-      max: -1
+      min: 5
+      max: 15
     increaseDataList:
     - increaseType: 4
       increaseValueRange:

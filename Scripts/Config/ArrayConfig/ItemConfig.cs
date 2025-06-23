@@ -298,6 +298,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         Consume,
         Item,
         Collect,
+        Gold,
+        Score,
     }
     
     public static class PlayerItemTypeExtension

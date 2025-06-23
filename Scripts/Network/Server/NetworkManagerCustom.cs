@@ -50,7 +50,7 @@ namespace HotUpdate.Scripts.Network.Server
         public override void OnServerConnect(NetworkConnectionToClient conn)
         {
             base.OnServerConnect(conn);
-            Debug.Log($"玩家 [{conn.connectionId}] 已连接到服务器。");
+            Debug.Log($"玩家 【{conn.connectionId}】 已连接到服务器。");
             
         }
         
@@ -59,21 +59,21 @@ namespace HotUpdate.Scripts.Network.Server
         {
             base.OnServerDisconnect(conn);
             _playerInGameManager.RemovePlayer(conn.connectionId);
-            Debug.Log($"Player disconnected: {conn.connectionId}");
+            Debug.Log($"玩家 【{conn.connectionId}】 已断开连接。");
         }
         
         // 客户端成功连接到服务器时调用
         public override void OnClientConnect()
         {
             base.OnClientConnect();
-            Debug.Log("成功连接到服务器！");
+            Debug.Log($"{NetworkClient.connection.connectionId}成功连接到服务器！");
             UIPropertyBinder.LocalPlayerId = NetworkClient.connection.connectionId;
         }
         
         // 客户端断开连接时调用
         public override void OnClientDisconnect()
         {
-            Debug.Log("与服务器断开连接。");
+            Debug.Log($"{NetworkClient.connection.connectionId}与服务器断开连接。");
             base.OnClientDisconnect();
             UIPropertyBinder.LocalPlayerId = -1;
         }

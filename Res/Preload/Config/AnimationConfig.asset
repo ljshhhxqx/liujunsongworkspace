@@ -21,7 +21,7 @@ MonoBehaviour:
   configName: AnimationConfig
   isArray: 1
   animationInfos:
-  - state: 0
+  - state: 1
     cost: 0
     cooldown: 0
     priority: 0
@@ -33,7 +33,7 @@ MonoBehaviour:
     keyframeData: []
     isClearVelocity: 0
     cooldownType: 4
-  - state: 1
+  - state: 2
     cost: 0
     cooldown: 0
     priority: 0
@@ -45,7 +45,7 @@ MonoBehaviour:
     keyframeData: []
     isClearVelocity: 0
     cooldownType: 4
-  - state: 2
+  - state: 4
     cost: 15
     cooldown: 0
     priority: 0
@@ -57,7 +57,7 @@ MonoBehaviour:
     keyframeData: []
     isClearVelocity: 0
     cooldownType: 4
-  - state: 3
+  - state: 8
     cost: 10
     cooldown: 1
     priority: 1
@@ -69,7 +69,7 @@ MonoBehaviour:
     keyframeData: []
     isClearVelocity: 0
     cooldownType: 0
-  - state: 4
+  - state: 16
     cost: 12
     cooldown: 1
     priority: 1
@@ -81,7 +81,7 @@ MonoBehaviour:
     keyframeData: []
     isClearVelocity: 0
     cooldownType: 0
-  - state: 5
+  - state: 32
     cost: 20
     cooldown: 2
     priority: 1
@@ -92,20 +92,20 @@ MonoBehaviour:
     - Roll
     keyframeData:
     - triggerTime: 0.05
-      eventType: OnRollStart
+      eventType: 0
       resetCooldown: 0
       resetCooldownWindowTime: 0
       tolerance: 0.1
       serverValidate: 1
     - triggerTime: 0.35
-      eventType: OnRollEnd
+      eventType: 1
       resetCooldown: 0
       resetCooldownWindowTime: 0
       tolerance: 0.1
       serverValidate: 1
     isClearVelocity: 1
     cooldownType: 1
-  - state: 6
+  - state: 64
     cost: 0
     cooldown: 0
     priority: 0
@@ -117,7 +117,7 @@ MonoBehaviour:
     keyframeData: []
     isClearVelocity: 0
     cooldownType: 4
-  - state: 7
+  - state: 128
     cost: 0
     cooldown: 0
     priority: 0
@@ -129,7 +129,7 @@ MonoBehaviour:
     keyframeData: []
     isClearVelocity: 0
     cooldownType: 4
-  - state: 8
+  - state: 256
     cost: 10
     cooldown: 2
     priority: 1
@@ -142,26 +142,26 @@ MonoBehaviour:
     - Attack3
     keyframeData:
     - triggerTime: 0.21
-      eventType: OnAttack
+      eventType: 2
       resetCooldown: 1
       resetCooldownWindowTime: 1
       tolerance: 0.1
       serverValidate: 1
     - triggerTime: 0.325
-      eventType: OnAttack
+      eventType: 2
       resetCooldown: 1
       resetCooldownWindowTime: 1
       tolerance: 0.1
       serverValidate: 1
     - triggerTime: 0.3
-      eventType: OnAttack
+      eventType: 2
       resetCooldown: 1
       resetCooldownWindowTime: 1
       tolerance: 0.1
       serverValidate: 1
     isClearVelocity: 1
     cooldownType: 3
-  - state: 9
+  - state: 512
     cost: 0
     cooldown: 10
     priority: 999
@@ -173,7 +173,7 @@ MonoBehaviour:
     keyframeData: []
     isClearVelocity: 1
     cooldownType: 0
-  - state: 10
+  - state: 1024
     cost: 0
     cooldown: 0
     priority: 2
@@ -185,8 +185,8 @@ MonoBehaviour:
     keyframeData: []
     isClearVelocity: 1
     cooldownType: 4
-  - state: 11
-    cost: 0
+  - state: 2048
+    cost: 1
     cooldown: 0
     priority: 1
     animationType: 1
@@ -197,3 +197,39 @@ MonoBehaviour:
     keyframeData: []
     isClearVelocity: 0
     cooldownType: 4
+  - state: 4096
+    cost: 70
+    cooldown: 15
+    priority: 1
+    animationType: 1
+    canBeInterrupted: 1
+    actionType: 2
+    animationNames:
+    - Skill
+    keyframeData:
+    - triggerTime: 0.75
+      eventType: 3
+      resetCooldown: 0
+      resetCooldownWindowTime: 0
+      tolerance: 0.1
+      serverValidate: 1
+    isClearVelocity: 1
+    cooldownType: 1
+  - state: 8192
+    cost: 70
+    cooldown: 15
+    priority: 1
+    animationType: 1
+    canBeInterrupted: 1
+    actionType: 2
+    animationNames:
+    - Skill
+    keyframeData:
+    - triggerTime: 1.25
+      eventType: 4
+      resetCooldown: 0
+      resetCooldownWindowTime: 0
+      tolerance: 0.1
+      serverValidate: 1
+    isClearVelocity: 1
+    cooldownType: 1

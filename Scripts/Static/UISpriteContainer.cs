@@ -34,7 +34,7 @@ namespace HotUpdate.Scripts.Static
         {
             for (int i = 0; i < sprites.Length; i++)
             {
-                Sprites.Add(sprites[i].Name, sprites[i]);
+                Sprites.TryAdd(sprites[i].Name, sprites[i]);
             }
         }
 
