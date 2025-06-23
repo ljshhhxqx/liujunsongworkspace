@@ -24,7 +24,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private BindingKey _goldBindKey;
         private BindingKey _playerDeathTimeBindKey;
         private BindingKey _playerControlBindKey;
-        private ReactiveDictionary<int, PropertyItemData> _uiPropertyData;
+        private ReactiveDictionary<int, PropertyItemData> _uiPropertyData = new ReactiveDictionary<int, PropertyItemData>();
         private ReactiveProperty<ValuePropertyData> _goldData;
 
         public PlayerPredictablePropertyState PlayerPredictablePropertyState => (PlayerPredictablePropertyState)CurrentState;

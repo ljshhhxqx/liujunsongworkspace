@@ -248,6 +248,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var enumValues = (PropertyTypeEnum[])Enum.GetValues(typeof(PropertyTypeEnum));
             foreach (var propertyType in enumValues)
             {
+                if (propertyType == PropertyTypeEnum.None)
+                {
+                    continue;
+                }
                 var propertyData = new PropertyCalculator.PropertyData();
                 var propertyConfig = _propertyConfig.GetPropertyConfigData(propertyType);
                 propertyData.BaseValue = ConfigPlayerBaseProperties[propertyType];

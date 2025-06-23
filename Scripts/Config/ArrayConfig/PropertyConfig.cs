@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using HotUpdate.Scripts.Network.PredictSystem.Calculator;
-using HotUpdate.Scripts.Tool.Static;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
-using Random = System.Random;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
 {
@@ -32,6 +29,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 data.description = row[6];
                 data.animationState = (AnimationState) Enum.Parse(typeof(AnimationState), row[7]);
                 data.isHundredPercent = bool.Parse(row[8]);
+                data.showInHud = bool.Parse(row[9]);
                 propertyData.Add(data);
             }
         }

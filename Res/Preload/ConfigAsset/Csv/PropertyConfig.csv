@@ -18,5 +18,7 @@ SprintSpeedRatio,2,1,3,Number,False,奔跑速度修正系数,None,False,False
 StairsSpeedRatio,0.75,0.5,1,Number,False,楼梯速度修正系数,None,False,False
 Gold,0,0,999999999,Number,True,金币,None,False,True
 Experience,0,0,999999999,Number,True,经验,None,False,True
+ReduceDamageRatio,0,-0.5,1,Number,False,受到伤害时减少的伤害系数,None,True,False
+ReduceDamage,0,-500,500,Number,False,受到攻击时减少的伤害,None,False,False
 View,1000,15,1000,Number,False,视野,None,False,False
 Alpha,1000,0,1000,Number,False,透明度,None,False,False
