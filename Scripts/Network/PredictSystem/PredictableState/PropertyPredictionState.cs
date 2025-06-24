@@ -9,6 +9,7 @@ using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using UniRx;
+using VContainer;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
 using PropertyCalculator = HotUpdate.Scripts.Network.PredictSystem.State.PropertyCalculator;
 
@@ -24,13 +25,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private BindingKey _goldBindKey;
         private BindingKey _playerDeathTimeBindKey;
         private BindingKey _playerControlBindKey;
-        private ReactiveDictionary<int, PropertyItemData> _uiPropertyData = new ReactiveDictionary<int, PropertyItemData>();
+        private ReactiveDictionary<int, PropertyItemData> _uiPropertyData;
         private ReactiveProperty<ValuePropertyData> _goldData;
 
         public PlayerPredictablePropertyState PlayerPredictablePropertyState => (PlayerPredictablePropertyState)CurrentState;
 
         protected override CommandType CommandType => CommandType.Property;
 
+        [Inject]
         protected override void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider)
         {
             base.Init(gameSyncManager, configProvider);
@@ -169,6 +171,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             foreach (var key in predictablePropertyState.Properties.Keys)
             {
                 var property = predictablePropertyState.Properties[key];
+                if (!_uiPropertyData.TryGetValue((int)key, out var itemData))
+                {
+                    _uiPropertyData.Add((int)key, new PropertyItemData());
+                }
                 var data = _uiPropertyData[(int)key];
                 switch (key)
                 {

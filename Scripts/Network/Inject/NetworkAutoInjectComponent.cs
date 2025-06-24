@@ -15,9 +15,10 @@ namespace HotUpdate.Scripts.Network.Inject
         
         public int ConnectionID => netIdentity.connectionToClient.connectionId;
         public string PlayerId { get;set; }
-        
-        protected virtual void Start()
+
+        public override void OnStartServer()
         {
+            base.OnStartServer();
             if (isServer && 
                 !netIdentity.isServerOnly)
             {

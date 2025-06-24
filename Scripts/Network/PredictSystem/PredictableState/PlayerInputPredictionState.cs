@@ -11,6 +11,7 @@ using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using Mirror;
 using UnityEngine;
+using VContainer;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
 using InputCommand = HotUpdate.Scripts.Network.PredictSystem.Data.InputCommand;
@@ -41,6 +42,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         public event Action<PlayerInputStateData> OnPlayerInputStateChanged;
         public event Func<bool> IsInSpecialState;
 
+        [Inject]
         protected override void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider)
         {
             base.Init(gameSyncManager, configProvider);
