@@ -9,15 +9,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
 {
     public static class UIPropertyBinder
     {
-        private static readonly Dictionary<BindingKey, ReactiveProperty<IUIDatabase>> KeyPropertyMap =
-            new Dictionary<BindingKey, ReactiveProperty<IUIDatabase>>();
+        private static readonly Dictionary<BindingKey, IReactivePropertyWrapper> KeyPropertyMap =
+            new Dictionary<BindingKey, IReactivePropertyWrapper>();
 
         //必须使用int作为响应式字典的key
-        private static readonly Dictionary<BindingKey, ReactiveDictionary<int, IUIDatabase>> KeyDictionaryMap =
-            new Dictionary<BindingKey, ReactiveDictionary<int, IUIDatabase>>();
+        private static readonly Dictionary<BindingKey, IReactivePropertyWrapper> KeyDictionaryMap =
+            new Dictionary<BindingKey, IReactivePropertyWrapper>();
 
-        private static readonly Dictionary<BindingKey, ReactiveCollection<IUIDatabase>> KeyListMap =
-            new Dictionary<BindingKey, ReactiveCollection<IUIDatabase>>();
+        private static readonly Dictionary<BindingKey, IReactivePropertyWrapper> KeyListMap =
+            new Dictionary<BindingKey, IReactivePropertyWrapper>();
 
         #region Property Operations
 
@@ -41,12 +41,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         {
             if (!KeyPropertyMap.TryGetValue(key, out var property))
             {
-                property = new ReactiveProperty<IUIDatabase>();
-                property.Value = default(T);
+                var newRp = new ReactiveProperty<T>(default(T));
+                property = new ReactivePropertyWrapper<T>(newRp);
                 KeyPropertyMap[key] = property;
+                return newRp;
             }
 
-            return property as ReactiveProperty<T>;
+            return  ((ReactivePropertyWrapper<T>)property).Property;
         }
 
         #endregion
@@ -101,11 +102,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         {
             if (!KeyDictionaryMap.TryGetValue(key, out var dict))
             {
-                dict = new ReactiveDictionary<int, IUIDatabase>();
+                var newRp = new ReactiveDictionary<int, IUIDatabase>();
+                dict = new ReactiveDictionaryWrapper<IUIDatabase>(newRp);
                 KeyDictionaryMap[key] = dict;
             }
 
-            return dict;
+            return ((ReactiveDictionaryWrapper<IUIDatabase>)dict).Dictionary;
         }
 
         #endregion
@@ -142,12 +144,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         {
             if (!KeyListMap.TryGetValue(key, out var list))
             {
-                list = ObjectPool<ReactiveCollection<IUIDatabase>>.Get();
-                list.Clear();
+                var newRp = new ReactiveCollection<IUIDatabase>();
+                list = new ReactiveCollectionWrapper<IUIDatabase>(newRp);
                 KeyListMap[key] = list;
             }
 
-            return list;
+            return ((ReactiveCollectionWrapper<IUIDatabase>)list).Collection;
         }
 
         #endregion
@@ -197,6 +199,36 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
                 _localPlayerId = value;
             }
         }
-        
+        // 非泛型接口用于统一存储
+        private interface IReactivePropertyWrapper { }
+        private class ReactivePropertyWrapper<T> : IReactivePropertyWrapper where T : IUIDatabase
+        {
+            public ReactiveProperty<T> Property { get; }
+
+            public ReactivePropertyWrapper(ReactiveProperty<T> property)
+            {
+                Property = property;
+            }
+        }
+
+        private class ReactiveDictionaryWrapper<T> : IReactivePropertyWrapper where T : IUIDatabase
+        {
+            public ReactiveDictionary<int, T> Dictionary { get; }
+
+            public ReactiveDictionaryWrapper(ReactiveDictionary<int, T> dictionary)
+            {
+                Dictionary = dictionary;
+            }
+        }
+
+        private class ReactiveCollectionWrapper<T> : IReactivePropertyWrapper where T : IUIDatabase
+        {
+            public ReactiveCollection<T> Collection { get; }
+
+            public ReactiveCollectionWrapper(ReactiveCollection<T> collection)
+            {
+                Collection = collection;
+            }
+        }
     }
 }
