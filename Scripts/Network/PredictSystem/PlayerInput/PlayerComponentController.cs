@@ -164,7 +164,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         public override void OnStartLocalPlayer()
         {
-            base.OnStartLocalPlayer();_capsuleCollider.OnTriggerEnterAsObservable()
+            base.OnStartLocalPlayer();
+            _capsuleCollider.OnTriggerEnterAsObservable()
                 .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
                 .Subscribe(c =>
                 {
@@ -315,12 +316,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private void HandleLocalInitCallback()
         {
             _uiHoleOverlay = _uiManager.SwitchUI<UIHoleOverlay>();
-            if (!_reactivePropertyBinds.ContainsKey(typeof(PropertyItemData)))
-            {
-                _reactivePropertyBinds.Add(typeof(PropertyItemData), true);
-                var playerPropertiesOverlay = _uiManager.SwitchUI<PlayerPropertiesOverlay>();
-                playerPropertiesOverlay.BindPlayerProperty(UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_propertyBindKey));
-            }
 
             if (!_reactivePropertyBinds.ContainsKey(typeof(ValuePropertyData)))
             {
@@ -336,8 +331,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 followData.ScreenBorderOffset = _gameConfigData.screenBorderOffset;
                 followData.MainCamera = _camera;
                 _reactivePropertyBinds.Add(typeof(PlayerHpItemData), true);
-                var playerDamageOverlay = _uiManager.SwitchUI<PlayerHpShowOverlay>();
-                playerDamageOverlay.BindPlayersHp(UIPropertyBinder.GetReactiveDictionary<PlayerHpItemData>(_playerTraceOtherPlayerHpBindKey), followData);
+                var playerHpShowOverlay = _uiManager.SwitchUI<PlayerHpShowOverlay>();
+                playerHpShowOverlay.BindPlayersHp(UIPropertyBinder.GetReactiveDictionary<PlayerHpItemData>(_playerTraceOtherPlayerHpBindKey), followData);
             }
         }
 

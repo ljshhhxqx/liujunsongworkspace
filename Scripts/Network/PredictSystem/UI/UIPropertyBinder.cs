@@ -28,7 +28,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
 
         public static IObservable<T> ObserveProperty<T>(BindingKey key) where T : IUIDatabase
         {
-            return GetOrCreateProperty<T>(key).AsObservable();
+            var property = GetOrCreateProperty<T>(key);
+            return property;
         }
 
         public static void SetProperty<T>(BindingKey key, T value) where T : IUIDatabase
@@ -40,8 +41,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         {
             if (!KeyPropertyMap.TryGetValue(key, out var property))
             {
-                property = ObjectPool<ReactiveProperty<IUIDatabase>>.Get();
-                property.Value = null;
+                property = new ReactiveProperty<IUIDatabase>();
+                property.Value = default(T);
                 KeyPropertyMap[key] = property;
             }
 
@@ -100,8 +101,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         {
             if (!KeyDictionaryMap.TryGetValue(key, out var dict))
             {
-                dict = ObjectPool<ReactiveDictionary<int, IUIDatabase>>.Get();
-                dict.Clear();
+                dict = new ReactiveDictionary<int, IUIDatabase>();
                 KeyDictionaryMap[key] = dict;
             }
 
