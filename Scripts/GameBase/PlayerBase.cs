@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace HotUpdate.Scripts.GameBase
 {
-    public class PlayerBase : NetworkBehaviour
+    public class PlayerBase : MonoBehaviour
     {
         [SerializeField]
         private Collider baseCollider;

@@ -143,6 +143,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
 
         private void SpawnPlayerBases(Vector3[] spawnPoints)
         {
+            _playerBasePrefab ??= ResourceManager.Instance.GetResource<PlayerBase>(_gameConfigData.basePrefabName);
             for (int i = 0; i < spawnPoints.Length; i++)
             {
                 var spawnPoint = spawnPoints[i];
@@ -169,7 +170,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             {
                 if (_playerPhysicsData == null)
                 {
-                    _playerPhysicsData = GamePhysicsSystem.CreateColliderConfig(_playerBasePrefab.GetComponent<Collider>());
+                    _playerPhysicsData = GamePhysicsSystem.CreateColliderConfig(_playerCollider);
                 }
                 return _playerPhysicsData;
             }
@@ -278,8 +279,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         {
             if (newIsGameStarted)
             {
-                _playerBasePrefab = ResourceManager.Instance.GetResource<PlayerBase>(_gameConfigData.basePrefabName);
-                _playerCollider = ResourceManager.Instance.GetResource<Collider>("MPlayer");
+                _playerCollider = ResourceManager.Instance.GetResource<Collider>(_gameConfigData.playerPrefabName);
                 if (isServer)
                 {
                     foreach (var key in _playerNetIds.Keys)

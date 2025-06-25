@@ -93,8 +93,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerPredictableState = player.GetComponent<PlayerSkillSyncState>();
             var inputState = new PlayerSkillState();
-            PropertyStates.Add(connectionId, inputState);
-            _playerSkillSyncStates.Add(connectionId, playerPredictableState);
+            PropertyStates.TryAdd(connectionId, inputState);
+            _playerSkillSyncStates.TryAdd(connectionId, playerPredictableState);
         }
 
         public override CommandType HandledCommandType => CommandType.Skill;

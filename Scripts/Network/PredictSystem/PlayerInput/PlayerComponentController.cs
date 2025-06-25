@@ -17,6 +17,7 @@ using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Player;
 using HotUpdate.Scripts.Tool.Coroutine;
+using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Static;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Overlay;
@@ -26,6 +27,7 @@ using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Popup;
 using MemoryPack;
 using Mirror;
+using Tool.GameEvent;
 using UI.UIBase;
 using UniRx;
 using UniRx.Triggers;
@@ -59,6 +61,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private Transform effectContainer;
         [SerializeField]
         private PlayerControlEffect playerControlEffect;
+        [SerializeField]
+        private Transform rotateCenter;
         
         [Header("States-NetworkBehaviour")]
         private PlayerInputPredictionState _inputState;
@@ -102,6 +106,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private UIManager _uiManager;
         private InteractSystem _interactSystem;
         private UIHoleOverlay _uiHoleOverlay;
+        private GameEventManager _gameEventManager;
         
         private BindingKey _propertyBindKey;
         private BindingKey _itemBindKey;
@@ -137,7 +142,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [Inject]
         private void Init(IConfigProvider configProvider, 
             GameSyncManager gameSyncManager, 
-            UIManager uiManager)
+            UIManager uiManager,
+            GameEventManager gameEventManager)
         {
             _configProvider = configProvider;
             var jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
@@ -152,7 +158,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _camera = Camera.main;
             GetAllCalculators(configProvider, gameSyncManager);
             _animationCooldowns = GetAnimationCooldowns();
-            _capsuleCollider.OnTriggerEnterAsObservable()
+            _gameEventManager = gameEventManager;
+            HandleAllSyncState();
+        }
+
+        public override void OnStartLocalPlayer()
+        {
+            base.OnStartLocalPlayer();_capsuleCollider.OnTriggerEnterAsObservable()
                 .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
                 .Subscribe(c =>
                 {
@@ -249,8 +261,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 _playerDeathTimeBindKey = new BindingKey(UIPropertyDefine.PlayerDeathTime, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
                 _playerTraceOtherPlayerHpBindKey = new BindingKey(UIPropertyDefine.PlayerTraceOtherPlayerHp, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
                 HandleLocalInitCallback();
+                _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter));
             }
-            HandleAllSyncState();
         }
 
         private void HandleAllSyncState()
@@ -482,6 +494,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             {
                 TickRate = GameSyncManager.TickRate,
                 IsServer = isServer,
+                PropertyConfig =   configProvider.GetConfig<PropertyConfig>(),
             });
             PlayerAnimationCalculator.SetAnimationConstant(new AnimationConstant
             {
@@ -519,7 +532,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 IsServer = isServer,
             });
             _playerPhysicsCalculator = new PlayerPhysicsCalculator(new PhysicsComponent(_rigidbody, transform, _checkStairTransform, _capsuleCollider, _camera));
-            _playerPropertyCalculator = new PlayerPropertyCalculator(new Dictionary<PropertyTypeEnum, PropertyCalculator>());
+            _playerPropertyCalculator = new PlayerPropertyCalculator(PlayerPropertyCalculator.GetPropertyCalculators());
             _playerAnimationCalculator = new PlayerAnimationCalculator(new AnimationComponent{ Animator = _animator});
             _playerBattleCalculator = new PlayerBattleCalculator(new PlayerBattleComponent(transform));
             _playerItemCalculator = new PlayerItemCalculator();

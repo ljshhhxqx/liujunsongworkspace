@@ -49,8 +49,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerPredictableState = player.GetComponent<PlayerItemPredictableState>();
             var state = GetPlayerItemState();
             playerPredictableState.RegisterState(GetPlayerItemState());
-            PropertyStates.Add(connectionId, state);
-            _playerItemSyncStates.Add(connectionId, playerPredictableState);
+            PropertyStates.TryAdd(connectionId, state);
+            _playerItemSyncStates.TryAdd(connectionId, playerPredictableState);
         }
 
 

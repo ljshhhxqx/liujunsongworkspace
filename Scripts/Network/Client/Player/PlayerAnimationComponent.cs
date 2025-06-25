@@ -8,7 +8,6 @@ using HotUpdate.Scripts.Network.Server.Sync;
 using HotUpdate.Scripts.UI.UIBase;
 using Mirror;
 using Network.NetworkMes;
-using UI.UIBase;
 using UniRx;
 using UnityEngine;
 using VContainer;

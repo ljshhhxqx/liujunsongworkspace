@@ -15,6 +15,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
     public class PlayerPropertyCalculator : IPlayerStateCalculator, IJobParallelFor
     {
         private static PropertyCalculatorConstant _calculatorConstant;
+        public static Dictionary<PropertyTypeEnum, float> ConfigPlayerMinProperties { get; private set; }
+        public static Dictionary<PropertyTypeEnum, float> ConfigPlayerMaxProperties { get; private set; }
+        public static Dictionary<PropertyTypeEnum, float> ConfigPlayerBaseProperties { get; private set; }
         public SubjectedStateType SubjectedStateType { get; private set; }
         public bool IsClient { get; private set; }
         public event Action<PropertyTypeEnum, float> OnPropertyChanged;
@@ -29,6 +32,33 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public static void SetCalculatorConstant(PropertyCalculatorConstant constant)
         {
             _calculatorConstant = constant;
+            ConfigPlayerMinProperties = _calculatorConstant.PropertyConfig.GetPlayerMinProperties();
+            ConfigPlayerMaxProperties = _calculatorConstant.PropertyConfig.GetPlayerMaxProperties();
+            ConfigPlayerBaseProperties = _calculatorConstant.PropertyConfig.GetPlayerBaseProperties();
+        }
+        
+        public static Dictionary<PropertyTypeEnum, PropertyCalculator> GetPropertyCalculators()
+        {
+            var dictionary = new Dictionary<PropertyTypeEnum, PropertyCalculator>();
+            var enumValues = (PropertyTypeEnum[])Enum.GetValues(typeof(PropertyTypeEnum));
+            foreach (var propertyType in enumValues)
+            {
+                if (propertyType == PropertyTypeEnum.None)
+                {
+                    continue;
+                }
+                var propertyData = new PropertyCalculator.PropertyData();
+                var propertyConfig = _calculatorConstant.PropertyConfig.GetPropertyConfigData(propertyType);
+                propertyData.BaseValue = ConfigPlayerBaseProperties[propertyType];
+                propertyData.Additive = 0;
+                propertyData.Multiplier = 1;
+                propertyData.Correction = 1;
+                propertyData.CurrentValue = propertyData.BaseValue;
+                propertyData.MaxCurrentValue = propertyData.BaseValue;
+                var calculator = new PropertyCalculator(propertyType, propertyData,ConfigPlayerMinProperties[propertyType], ConfigPlayerMaxProperties[propertyType], propertyConfig.consumeType == PropertyConsumeType.Consume);
+                dictionary.Add(propertyType, calculator);
+            }
+            return dictionary;
         }
         
         public float GetProperty(PropertyTypeEnum propertyType)
@@ -244,11 +274,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
     {
         public float TickRate;
         public bool IsServer;
-
-        public PropertyCalculatorConstant(float tickRate, bool isServer)
-        {
-            TickRate = tickRate;
-            IsServer = isServer;
-        }
+        public PropertyConfig PropertyConfig;
     }
 }

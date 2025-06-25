@@ -8003,7 +8003,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8351228888613827031}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9ed7f24cce934f18a95fd86bdc7a8ba0, type: 3}
   m_Name: 
@@ -8180,10 +8180,10 @@ MonoBehaviour:
   _capsuleCollider: {fileID: 5839059580005103042}
   _animator: {fileID: 7780707582190085363}
   _checkStairTransform: {fileID: 7564044400887088144}
-  _camera: {fileID: 0}
   playerEffectPlayer: {fileID: 3940613001798115561}
-  effectContainer: {fileID: 0}
-  playerControlEffect: {fileID: 0}
+  effectContainer: {fileID: 602517458217082247}
+  playerControlEffect: {fileID: 5077450697729136885}
+  rotateCenter: {fileID: 689235366103777897}
   unionId: 0
   isDead: 0
 --- !u!114 &5077450697729136885
@@ -8198,8 +8198,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f850b4841c14365bf6e68b443af6f0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  originalMesh: {fileID: 0}
-  effectMesh: {fileID: 0}
+  originalMesh:
+  - {fileID: 0}
+  effectMesh:
+  - {fileID: 0}
 --- !u!1 &8357527339398811249
 GameObject:
   m_ObjectHideFlags: 0

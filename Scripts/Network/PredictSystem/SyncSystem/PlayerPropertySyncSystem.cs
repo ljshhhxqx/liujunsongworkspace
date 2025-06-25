@@ -33,9 +33,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
     public class PlayerPropertySyncSystem : BaseSyncSystem
     {
-        public Dictionary<PropertyTypeEnum, float> ConfigPlayerMinProperties { get; private set; }
-        public Dictionary<PropertyTypeEnum, float> ConfigPlayerMaxProperties { get; private set; }
-        public Dictionary<PropertyTypeEnum, float> ConfigPlayerBaseProperties { get; private set; }
         private readonly Dictionary<int, PropertyPredictionState> _propertyPredictionStates = new Dictionary<int, PropertyPredictionState>();
         private ImmutableList<BuffManagerData> _activeBuffs;
         private ImmutableList<TimedBuffData> _timedBuffs;
@@ -79,9 +76,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _skillConfig = _configProvider.GetConfig<SkillConfig>();
             _battleEffectConfig = _configProvider.GetConfig<BattleEffectConditionConfig>();
             _playerInGameManager = PlayerInGameManager.Instance;
-            ConfigPlayerMinProperties = _propertyConfig.GetPlayerMinProperties();
-            ConfigPlayerMaxProperties = _propertyConfig.GetPlayerMaxProperties();
-            ConfigPlayerBaseProperties = _propertyConfig.GetPlayerBaseProperties();
             _activeBuffs ??= ImmutableList<BuffManagerData>.Empty;
             _passiveBuffs??= ImmutableList<EquipmentPassiveData>.Empty;
             _timedBuffs ??= ImmutableList<TimedBuffData>.Empty;
@@ -236,34 +230,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerPredictableState = player.GetComponent<PropertyPredictionState>();
             var playerPropertyState = new PlayerPredictablePropertyState();
-            playerPropertyState.Properties = GetPropertyCalculators();
+            playerPropertyState.Properties = PlayerPropertyCalculator.GetPropertyCalculators();
             playerPredictableState.RegisterProperties(playerPropertyState);
             PropertyStates.TryAdd(connectionId, playerPropertyState);
             _propertyPredictionStates.TryAdd(connectionId, playerPredictableState);
-        }
-
-        public Dictionary<PropertyTypeEnum, PropertyCalculator> GetPropertyCalculators()
-        {
-            var dictionary = new Dictionary<PropertyTypeEnum, PropertyCalculator>();
-            var enumValues = (PropertyTypeEnum[])Enum.GetValues(typeof(PropertyTypeEnum));
-            foreach (var propertyType in enumValues)
-            {
-                if (propertyType == PropertyTypeEnum.None)
-                {
-                    continue;
-                }
-                var propertyData = new PropertyCalculator.PropertyData();
-                var propertyConfig = _propertyConfig.GetPropertyConfigData(propertyType);
-                propertyData.BaseValue = ConfigPlayerBaseProperties[propertyType];
-                propertyData.Additive = 0;
-                propertyData.Multiplier = 1;
-                propertyData.Correction = 1;
-                propertyData.CurrentValue = propertyData.BaseValue;
-                propertyData.MaxCurrentValue = propertyData.BaseValue;
-                var calculator = new PropertyCalculator(propertyType, propertyData,ConfigPlayerMinProperties[propertyType], ConfigPlayerMaxProperties[propertyType], propertyConfig.consumeType == PropertyConsumeType.Consume);
-                dictionary.Add(propertyType, calculator);
-            }
-            return dictionary;
         }
 
         private void UpdateBuffs(float deltaTime)

@@ -79,7 +79,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
         protected override void OnInject()
         {
             base.OnInject();
-            _gameEventManager.Publish(new PlayerSpawnedEvent(_rotateCenter));
             _speed = _playerPropertyComponent.GetProperty(PropertyTypeEnum.Speed);
             _speed.Subscribe(x =>
             {

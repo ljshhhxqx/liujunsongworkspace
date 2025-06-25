@@ -93,6 +93,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5218070958632920156}
   - component: {fileID: 3118858124847229977}
+  - component: {fileID: 3969562844498923819}
+  - component: {fileID: -3598459715627392476}
   m_Layer: 0
   m_Name: PlayerBase
   m_TagString: Untagged
@@ -139,3 +141,28 @@ CapsuleCollider:
   m_Height: 7
   m_Direction: 1
   m_Center: {x: 0, y: 2, z: 0}
+--- !u!114 &3969562844498923819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6049140152151134914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 347401548c7234a44bf059a5706e33b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseCollider: {fileID: 3118858124847229977}
+--- !u!114 &-3598459715627392476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6049140152151134914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e743f15d5c5e4597ac62286553216e7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

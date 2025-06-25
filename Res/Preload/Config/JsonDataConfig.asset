@@ -31,6 +31,11 @@ MonoBehaviour:
       JumpSpeed: 45
       RollForce: 40
       InputBufferTick: 0
+      PlayerLayer:
+        serializedVersion: 2
+        m_Bits: 0
+      NoUnionMoreGoldRatio: 0
+      NoUnionMoreScoreRatio: 0
       AttackComboWindow: 1
       AttackComboMaxCount: 3
     collectData:
@@ -87,6 +92,10 @@ MonoBehaviour:
       inputThreshold: 0.1
       maxCommandAge: 0
       uiUpdateInterval: 0
+      maxTraceDistance: 0
+      maxViewAngle: 0
+      obstacleCheckRadius: 0
+      screenBorderOffset: 0
       gameBaseData:
         playerBaseHpRecoverRatioPerSec: 25
         playerBaseManaRecoverRatioPerSec: 25
@@ -102,6 +111,8 @@ MonoBehaviour:
       minUnionPlayerCount: 2
       playerHpRatioToWarning: 0.3
       basePrefabName: PlayerBase
+      noUnionTime: 0
+      playerPrefabName: MPlayer
     dayNightCycleData:
       timeMultiplier: 60
       weatherChangeTime: 150
@@ -506,4 +517,3 @@ MonoBehaviour:
         animationState: 6
       - actionType: 2
         animationState: 10
-  canEdit: 0

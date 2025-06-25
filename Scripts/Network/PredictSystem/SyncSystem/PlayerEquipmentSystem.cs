@@ -66,8 +66,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerPredictableState = player.GetComponent<PlayerEquipmentSyncState>();
             var playerInputState = new PlayerEquipmentState();
-            PropertyStates.Add(connectionId, playerInputState);
-            _playerEquipmentSyncStates.Add(connectionId, playerPredictableState);
+            PropertyStates.TryAdd(connectionId, playerInputState);
+            _playerEquipmentSyncStates.TryAdd(connectionId, playerPredictableState);
         }
 
         public override CommandType HandledCommandType => CommandType.Equipment;

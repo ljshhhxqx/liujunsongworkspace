@@ -100,8 +100,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerPredictableState = player.GetComponent<PlayerInputPredictionState>();
             var playerInputState = new PlayerInputState(new PlayerGameStateData(), new PlayerAnimationCooldownState());
-            PropertyStates.Add(connectionId, playerInputState);
-            _inputPredictionStates.Add(connectionId, playerPredictableState);
+            PropertyStates.TryAdd(connectionId, playerInputState);
+            _inputPredictionStates.TryAdd(connectionId, playerPredictableState);
             BindAniEvents(connectionId);
         }
 
