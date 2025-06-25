@@ -148,13 +148,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         public void RegisterProperties(PlayerPredictablePropertyState predictablePropertyState)
         {
-            PropertyChanged(predictablePropertyState);
+            //PropertyChanged(predictablePropertyState);
         }
         
         private SubjectedStateType _subjectedStateType;
 
         private void PropertyChanged(PlayerPredictablePropertyState predictablePropertyState)
         {
+            if (!isLocalPlayer)
+            {
+                return;
+            }
             if (!_subjectedStateType.HasAnyState(SubjectedStateType.IsDead) && predictablePropertyState.SubjectedState.HasAnyState(SubjectedStateType.IsDead))
             {
                 var countDown = _jsonDataConfig.GameConfig.GetPlayerDeathTime((int)predictablePropertyState.Properties[PropertyTypeEnum.Score].CurrentValue);

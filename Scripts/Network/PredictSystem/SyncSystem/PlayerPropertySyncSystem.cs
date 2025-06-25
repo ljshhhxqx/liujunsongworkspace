@@ -238,8 +238,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerPropertyState = new PlayerPredictablePropertyState();
             playerPropertyState.Properties = GetPropertyCalculators();
             playerPredictableState.RegisterProperties(playerPropertyState);
-            PropertyStates.Add(connectionId, playerPropertyState);
-            _propertyPredictionStates.Add(connectionId, playerPredictableState);
+            PropertyStates.TryAdd(connectionId, playerPropertyState);
+            _propertyPredictionStates.TryAdd(connectionId, playerPredictableState);
         }
 
         public Dictionary<PropertyTypeEnum, PropertyCalculator> GetPropertyCalculators()

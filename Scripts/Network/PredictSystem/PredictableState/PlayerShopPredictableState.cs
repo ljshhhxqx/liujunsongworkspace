@@ -37,7 +37,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         
         public void SetPlayerShopState(PlayerShopState state)
         {
-            OnPlayerShopStateChanged(state);
+            //OnPlayerShopStateChanged(state);
         }
         
         public override bool NeedsReconciliation<T>(T state)

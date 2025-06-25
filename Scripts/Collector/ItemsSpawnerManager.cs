@@ -161,7 +161,7 @@ namespace HotUpdate.Scripts.Collector
                 return;
             }
             var playerConnection = player.connectionToClient.connectionId;
-            var playerCollider = PlayerInGameManager.Instance.GetPlayerPhysicsData();
+            var playerCollider = PlayerInGameManager.Instance.PlayerPhysicsData;
 
             var chestCollider = _chestColliderConfigs.GetValueOrDefault(chestData.Quality);
 
@@ -345,7 +345,7 @@ namespace HotUpdate.Scripts.Collector
                 var customData = itemData.GetCustomData<CollectItemCustomData>();
                 var player =  NetworkServer.spawned[pickerId];
                 var playerConnectionId = PlayerInGameManager.Instance.GetPlayerId(pickerId);
-                var playerColliderConfig = PlayerInGameManager.Instance.GetPlayerPhysicsData();
+                var playerColliderConfig = PlayerInGameManager.Instance.PlayerPhysicsData;
                 if (!player)
                 {
                     Debug.LogError($"Cannot find player with netId: {pickerId}");

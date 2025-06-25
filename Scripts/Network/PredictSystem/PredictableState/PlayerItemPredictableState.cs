@@ -39,7 +39,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         public void RegisterState(PlayerItemState state)
         {
-            OnPlayerItemUpdate(state);
+            //OnPlayerItemUpdate(state);
         }
 
         private PlayerItemState GetPlayerItemState()

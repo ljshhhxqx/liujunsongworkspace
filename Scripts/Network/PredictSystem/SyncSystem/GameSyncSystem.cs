@@ -30,7 +30,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private readonly ConcurrentQueue<INetworkCommand> _clientCommands = new ConcurrentQueue<INetworkCommand>();
         private readonly ConcurrentQueue<INetworkCommand> _serverCommands = new ConcurrentQueue<INetworkCommand>();
         private readonly ConcurrentQueue<INetworkCommand> _immediateCommands = new ConcurrentQueue<INetworkCommand>();
-        private readonly Dictionary<int, PlayerComponentController> _playerConnections = new Dictionary<int, PlayerComponentController>();
         private readonly Dictionary<int, Dictionary<CommandType, int>> _lastProcessedInputs = new Dictionary<int, Dictionary<CommandType, int>>();  // 记录每个玩家最后处理的输入序号
         private readonly ConcurrentQueue<INetworkCommand> _currentTickCommands = new ConcurrentQueue<INetworkCommand>();
         private readonly Dictionary<CommandType, BaseSyncSystem> _syncSystems = new Dictionary<CommandType, BaseSyncSystem>();
@@ -149,7 +148,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private void OnPlayerDisconnect(PlayerDisconnectEvent disconnectEvent)
         {
-            _playerConnections.Remove(disconnectEvent.ConnectionId);
             PlayerInGameManager.Instance.RemovePlayer(disconnectEvent.ConnectionId);
             OnPlayerDisconnected?.Invoke(disconnectEvent.ConnectionId);
             RpcPlayerDisconnect(disconnectEvent.ConnectionId);
@@ -157,11 +155,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private void OnPlayerConnect(PlayerConnectEvent connectEvent)
         {
-            _playerConnections.Add(connectEvent.ConnectionId, connectEvent.Identity.gameObject.GetComponent<PlayerComponentController>());
+            var networkIdentity = NetworkServer.connections[connectEvent.ConnectionId].identity;
+            connectEvent = new PlayerConnectEvent(connectEvent.ConnectionId, networkIdentity, connectEvent.ReadOnlyData);
             PlayerInGameManager.Instance.AddPlayer(connectEvent.ConnectionId, new PlayerInGameData
             {
                 player = connectEvent.ReadOnlyData,
-                networkIdentity = connectEvent.Identity
+                networkIdentity = networkIdentity
             });
             OnPlayerConnected?.Invoke(connectEvent.ConnectionId, connectEvent.Identity);
             RpcPlayerConnect(connectEvent);
@@ -170,14 +169,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [ClientRpc]
         private void RpcPlayerConnect(PlayerConnectEvent connectEvent)
         {
-            _playerConnections.Add(connectEvent.ConnectionId, connectEvent.Identity.gameObject.GetComponent<PlayerComponentController>());
-            OnPlayerConnected?.Invoke(connectEvent.ConnectionId, connectEvent.Identity);
+            OnPlayerConnected?.Invoke(connectEvent.ConnectionId, NetworkServer.connections[connectEvent.ConnectionId].identity);
         }
         
         [ClientRpc]
         private void RpcPlayerDisconnect(int connectionId)
         {
-            _playerConnections.Remove(connectionId);
             PlayerInGameManager.Instance.RemovePlayer(connectionId);
             OnPlayerDisconnected?.Invoke(connectionId);
         }
@@ -198,7 +195,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         
         public PlayerComponentController GetPlayerConnection(int connectionId)
         {
-            if (_playerConnections.TryGetValue(connectionId, out var playerConnection))
+            PlayerComponentController playerConnection = null;
+            if (NetworkClient.connection.connectionId == connectionId)
+            {
+                playerConnection = NetworkClient.connection.identity.GetComponent<PlayerComponentController>();
+            }
+            else if (NetworkServer.connections.TryGetValue(connectionId, out var connection))
+            {
+                playerConnection = connection.identity.GetComponent<PlayerComponentController>();
+            }
+
+            if (playerConnection != null)
             {
                 return playerConnection;
             }

@@ -8,6 +8,7 @@ using Data;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.GameBase;
+using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Tool.Static;
 using Mirror;
@@ -37,6 +38,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
 
 
         private PlayerBase _playerBasePrefab;
+        private Collider _playerCollider;
         private SyncDictionary<Vector3, uint> _playerSpawnPoints = new SyncDictionary<Vector3, uint>();
         private Dictionary<int, PlayerBase> _playerBases = new Dictionary<int, PlayerBase>();
         private IColliderConfig _playerBaseColliderData;
@@ -60,9 +62,12 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             for (var i = 0; i < allSpawnPoints.Length; i++)
             {
                 var spawnPoint = allSpawnPoints[i];
+                if (_playerSpawnPoints.ContainsKey(spawnPoint))
+                {
+                    continue;
+                }
                 _playerSpawnPoints.Add(spawnPoint, 0);
             }
-            _playerBaseColliderData = GamePhysicsSystem.CreateColliderConfig(_playerBasePrefab.GetComponent<Collider>());
             var bases = _playerSpawnPoints.Keys.ToArray();
             SpawnAllBasesRpc(bases);
         }
@@ -144,7 +149,6 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 var playerBase = Instantiate(_playerBasePrefab, spawnPoint, Quaternion.identity);
                 _playerBases.Add(i, playerBase);
             }
-            _playerBaseColliderData = GamePhysicsSystem.CreateColliderConfig(_playerBasePrefab.GetComponent<Collider>());
         }
 
         private Vector3 GetPlayerBasePositionByNetId(uint id)
@@ -159,10 +163,30 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             return default;
         }
 
-        public IColliderConfig GetPlayerPhysicsData() => _playerPhysicsData;
-        
-        public IColliderConfig GetPlayerBaseColliderData() => _playerBaseColliderData;
-        
+        public IColliderConfig PlayerPhysicsData
+        {
+            get
+            {
+                if (_playerPhysicsData == null)
+                {
+                    _playerPhysicsData = GamePhysicsSystem.CreateColliderConfig(_playerBasePrefab.GetComponent<Collider>());
+                }
+                return _playerPhysicsData;
+            }
+        }
+
+        public IColliderConfig PlayerBaseColliderData
+        {
+            get
+            {
+                if (_playerBaseColliderData == null)
+                {
+                    _playerBaseColliderData = GamePhysicsSystem.CreateColliderConfig(_playerBasePrefab.GetComponent<Collider>());
+                }
+                return _playerBaseColliderData;
+            }
+        }
+
         private async UniTaskVoid UpdateAllPlayerGrids(CancellationToken token)
         {
             while (!token.IsCancellationRequested && isServer)
@@ -255,6 +279,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             if (newIsGameStarted)
             {
                 _playerBasePrefab = ResourceManager.Instance.GetResource<PlayerBase>(_gameConfigData.basePrefabName);
+                _playerCollider = ResourceManager.Instance.GetResource<Collider>("MPlayer");
                 if (isServer)
                 {
                     foreach (var key in _playerNetIds.Keys)
@@ -274,7 +299,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             if (_playerPhysicsData == null)
             {
                 var playerCollider = playerIdentity.GetComponent<Collider>();
-                _playerBaseColliderData = GamePhysicsSystem.CreateColliderConfig(playerCollider);
+                _playerPhysicsData = GamePhysicsSystem.CreateColliderConfig(playerCollider);
             }
             _playerIds.TryAdd(connectId, playerInGameData.player.PlayerId);
             _playerNetIds.TryAdd(connectId, playerInGameData.networkIdentity.netId);
@@ -295,7 +320,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             if (_playerPhysicsData == null)
             {
                 var playerCollider = playerIdentity.GetComponent<Collider>();
-                _playerBaseColliderData = GamePhysicsSystem.CreateColliderConfig(playerCollider);
+                _playerPhysicsData = GamePhysicsSystem.CreateColliderConfig(playerCollider);
             }
             var pos = playerInGameData.networkIdentity.transform.position;
             var nearestBase = _gameConfigData.GetNearestBase(pos);
@@ -598,7 +623,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 }
 
                 if (GamePhysicsSystem.FastCheckItemIntersects(playerPosition, key, playerColliderData,
-                        _playerBaseColliderData))
+                        PlayerBaseColliderData))
                 {
                     return true;
                 }
@@ -619,7 +644,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 {
                     if (playerId == playerNetId) continue;
                     var unionBasePosition = GetPlayerBasePositionByNetId(playerId);
-                    if (GamePhysicsSystem.FastCheckItemIntersects(playerPosition, unionBasePosition, playerColliderData,_playerBaseColliderData))
+                    if (GamePhysicsSystem.FastCheckItemIntersects(playerPosition, unionBasePosition, playerColliderData,PlayerBaseColliderData))
                     {
                         playerBasePosition = unionBasePosition;
                         return true;
@@ -627,7 +652,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 }
             }
             playerBasePosition = basePosition;
-            return GamePhysicsSystem.FastCheckItemIntersects(playerPosition, basePosition, playerColliderData,_playerBaseColliderData);
+            return GamePhysicsSystem.FastCheckItemIntersects(playerPosition, basePosition, playerColliderData,PlayerBaseColliderData);
         }
 
         public bool TryPlayerRecoverHpInBase(int playerId, out bool isPlayerInHisBase)
