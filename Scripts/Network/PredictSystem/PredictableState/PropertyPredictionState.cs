@@ -39,6 +39,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _animationConfig = configProvider.GetConfig<AnimationConfig>();
             _propertyConfig = configProvider.GetConfig<PropertyConfig>();
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
+        }
+
+        public override void OnStartLocalPlayer()
+        {
+            base.OnStartLocalPlayer();
             if (isLocalPlayer)
             {
                 _bindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
@@ -71,7 +76,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 UIPropertyBinder.OptimizedBatchAdd(_bindKey, itemDatas);
             }
         }
-        
+
         public float GetProperty(PropertyTypeEnum propertyType)
         {
             return PlayerPredictablePropertyState.Properties[propertyType].CurrentValue;
@@ -175,7 +180,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             foreach (var key in predictablePropertyState.Properties.Keys)
             {
                 var property = predictablePropertyState.Properties[key];
-                if (!_uiPropertyData.TryGetValue((int)key, out var itemData))
+                if (!_uiPropertyData.ContainsKey((int)key))
                 {
                     _uiPropertyData.Add((int)key, new PropertyItemData());
                 }
