@@ -16,20 +16,90 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         private List<ShopConfigData> shopConfigData = new List<ShopConfigData>();
         [SerializeField]
         private ShopConstantData shopConstantData;
-        private readonly Dictionary<int, ShopConfigData> _shopConfigDataDict = new Dictionary<int, ShopConfigData>();
         
-        private readonly Dictionary<QualityType, HashSet<int>> _qualityIds = new Dictionary<QualityType, HashSet<int>>();
-        private readonly HashSet<int> _consumeItems = new HashSet<int>();
-        private readonly HashSet<int> _weaponItems = new HashSet<int>();
-        private readonly HashSet<int> _armorItems = new HashSet<int>();
+        private Dictionary<QualityType, HashSet<int>> _qualityIds = new Dictionary<QualityType, HashSet<int>>();
+        private HashSet<int> _consumeItems = new HashSet<int>();
+        private HashSet<int> _weaponItems = new HashSet<int>();
+        private HashSet<int> _armorItems = new HashSet<int>();
+
+        public Dictionary<QualityType, HashSet<int>> QualityIds
+        {
+            get
+            {
+                if (_qualityIds.Count == 0)
+                {
+                    foreach (var data in shopConfigData)
+                    {
+                        if (!_qualityIds.TryGetValue(data.qualityType, out var ids))
+                        {
+                            ids = new HashSet<int>();
+                            _qualityIds.Add(data.qualityType, ids);
+                        }
+                        ids.Add(data.id);
+                    }
+                }
+                return _qualityIds;
+            }
+        }
         
+        public HashSet<int> ConsumeItems
+        {
+            get
+            {
+                if (_consumeItems.Count == 0)
+                {
+                    foreach (var data in shopConfigData)
+                    {
+                        if (data.playerItemType == PlayerItemType.Consume)
+                        {
+                            _consumeItems.Add(data.id);
+                        }
+                    }
+                }
+                return _consumeItems;
+            }
+        }
+
+        public HashSet<int> WeaponItems
+        {
+            get
+            {
+                if (_weaponItems.Count == 0)
+                {
+                    foreach (var data in shopConfigData)
+                    {
+                        if (data.playerItemType == PlayerItemType.Weapon)
+                        {
+                            _weaponItems.Add(data.id);
+                        }
+                    }
+                }
+
+                return _weaponItems;
+            }
+        }
+
+        public HashSet<int> ArmorItems
+        {
+            get
+            {
+                if (_armorItems.Count == 0)
+                {
+                    foreach (var data in shopConfigData)
+                    {
+                        if (data.playerItemType == PlayerItemType.Armor)
+                        {
+                            _armorItems.Add(data.id);
+                        }
+                    }
+                }
+                return _armorItems;
+            }    
+        }
+
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
             shopConfigData.Clear();
-            _shopConfigDataDict.Clear();
-            _consumeItems.Clear();
-            _weaponItems.Clear();
-            _armorItems.Clear();
             for (int i = 2; i < textAsset.Count; i++)
             {
                 var row = textAsset[i];
@@ -43,23 +113,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 shopConfig.qualityType = (QualityType) Enum.Parse(typeof(QualityType), row[5]);
                 shopConfig.playerItemType = (PlayerItemType) Enum.Parse(typeof(PlayerItemType), row[6]);
                 shopConfig.maxCount = int.Parse(row[7]);
-                switch (shopConfig.playerItemType)
-                {
-                    case PlayerItemType.Consume:
-                        _consumeItems.Add(shopConfig.itemId);
-                        break;
-                    case PlayerItemType.Weapon:
-                        _weaponItems.Add(shopConfig.itemId);
-                        break;
-                    case PlayerItemType.Armor:
-                        _armorItems.Add(shopConfig.itemId);
-                        break;
-                }
-                if (!_qualityIds.ContainsKey(shopConfig.qualityType))
-                    _qualityIds.Add(shopConfig.qualityType, new HashSet<int>());
-                _qualityIds[shopConfig.qualityType].Add(shopConfig.itemId);
                 shopConfigData.Add(shopConfig);
-                _shopConfigDataDict.Add(shopConfig.id, shopConfig);
             }
         }
 
@@ -68,7 +122,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             var result = new HashSet<int>();
             foreach (var shopId in shopIds)
             {
-                var shopConfig = _shopConfigDataDict.GetValueOrDefault(shopId);
+                var shopConfig = GetShopConfigData(shopId);
                 if (shopConfig.Equals(default)) continue;
                 result.Add(shopConfig.itemId);
             }
@@ -78,12 +132,12 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         
         public ShopConfigData GetShopDataByItemId(int itemId)
         {
-            return _shopConfigDataDict.Values.FirstOrDefault(d => d.itemId == itemId);
+            return shopConfigData.FirstOrDefault(d => d.itemId == itemId);
         }
         
         public ShopConfigData GetShopConfigData(int shopId)
         {
-            return _shopConfigDataDict.GetValueOrDefault(shopId);
+            return shopConfigData.Find(x => x.id == shopId);
         }
 
         public HashSet<int> GetQualityItems(List<QualityType> qualityType, float weight)
@@ -91,7 +145,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             var result = new HashSet<int>();
             foreach (var type in qualityType)
             {
-                if (_qualityIds.TryGetValue(type, out var ids))
+                if (QualityIds.TryGetValue(type, out var ids))
                 {
                     var id = -1;
                     while (result.Contains(id))
@@ -110,13 +164,16 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             var totalWeight = 0f;
             foreach (var id in source)
             {
-                totalWeight += _shopConfigDataDict[id].price;
+                var shopConfig = GetShopConfigData(id);
+                if (shopConfig.id == preShopId) continue;
+                totalWeight += shopConfig.price;
             }
             totalWeight *= weight;
             var currentWeight = 0f;
             foreach (var id in source)
             {
-                currentWeight += _shopConfigDataDict[id].price;
+                var shopConfig = GetShopConfigData(id);
+                currentWeight += shopConfig.price;
                 
                 if (currentWeight >= totalWeight)
                 {
@@ -130,7 +187,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
         public int GetRandomItem(int preShopId, int otherShopId, PlayerItemType playerItemType)
         {
-            var otherShopConfig = _shopConfigDataDict.GetValueOrDefault(otherShopId);
+            var otherShopConfig = GetShopConfigData(otherShopId);
             ShopConfigData data = default;
 
             var id = -1;
@@ -138,12 +195,12 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             {
                 id = playerItemType switch
                 {
-                    PlayerItemType.Consume => _consumeItems.RandomSelect(),
-                    PlayerItemType.Weapon => _weaponItems.RandomSelect(),
-                    PlayerItemType.Armor => _armorItems.RandomSelect(),
+                    PlayerItemType.Consume => ConsumeItems.RandomSelect(),
+                    PlayerItemType.Weapon => WeaponItems.RandomSelect(),
+                    PlayerItemType.Armor => ArmorItems.RandomSelect(),
                     _ => -1
                 };
-                data = _shopConfigDataDict.GetValueOrDefault(id);
+                data = GetShopConfigData(id);
             }
             return id;
         }
@@ -153,15 +210,15 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             HashSet<int> result = new HashSet<int>();
     
             // 从消耗品中选2个不同品质的
-            if (TryGetDistinctQualityItems(_consumeItems, PlayerItemType.Consume, preShopIds, out var consumeIds))
+            if (TryGetDistinctQualityItems(ConsumeItems, PlayerItemType.Consume, preShopIds, out var consumeIds))
                 result.UnionWith(consumeIds);
     
             // 从武器中选2个不同品质的
-            if (TryGetDistinctQualityItems(_weaponItems, PlayerItemType.Weapon, preShopIds, out var weaponIds))
+            if (TryGetDistinctQualityItems(WeaponItems, PlayerItemType.Weapon, preShopIds, out var weaponIds))
                 result.UnionWith(weaponIds);
     
             // 从护甲中选2个不同品质的
-            if (TryGetDistinctQualityItems(_armorItems, PlayerItemType.Armor, preShopIds, out var armorIds))
+            if (TryGetDistinctQualityItems(ArmorItems, PlayerItemType.Armor, preShopIds, out var armorIds))
                 result.UnionWith(armorIds);
 
             return result;
@@ -176,13 +233,13 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             // 获取该类型所有配置数据
             if (preShopIds != null)
             {
-                items = _shopConfigDataDict.Values
+                items = shopConfigData
                     .Where(d => source.Contains(d.itemId) && d.playerItemType == type && preShopIds.Contains(d.itemId))
                     .ToList();
             }
             else
             {
-                items = _shopConfigDataDict.Values
+                items = shopConfigData
                     .Where(d => source.Contains(d.itemId) && d.playerItemType == type)
                     .ToList();
             }

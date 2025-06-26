@@ -200,7 +200,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             
                     var position = identity.transform.position;
                     var deathCountdown = _playerDeathCountdowns.GetValueOrDefault(uid);
-                    if (deathCountdown <= 0)
+                    if (deathCountdown < 0)
                     {
                         _playerDeathCountdowns.Remove(uid);
                         _playerBornCallbacks[uid]?.Invoke(uid);

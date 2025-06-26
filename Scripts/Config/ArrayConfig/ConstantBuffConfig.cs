@@ -16,9 +16,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [ReadOnly]
         [SerializeField]
         private List<BuffData> buffs = new List<BuffData>();
-        private readonly Dictionary<PropertyTypeEnum, List<BuffData>> _collectBuffs = new Dictionary<PropertyTypeEnum, List<BuffData>>(); 
-        private readonly Dictionary<PropertyTypeEnum, List<BuffData>> _equipmentbuffs = new Dictionary<PropertyTypeEnum, List<BuffData>>();
-        //private readonly Dictionary<PropertyTypeEnum, List<BuffData>> _noUnionBuffs = new Dictionary<PropertyTypeEnum, List<BuffData>>();
         
         public BuffData GetBuff(BuffExtraData extraData)
         {
@@ -58,23 +55,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 buff.increaseDataList = json.ToList();
                 buff.sourceType = Enum.Parse<BuffSourceType>(data[4]);
                 buff.mainIncreaseType = Enum.Parse<BuffIncreaseType>(data[5]);
-                if (buff.sourceType == BuffSourceType.Equipment)
-                {
-                    if (!_equipmentbuffs.ContainsKey(buff.propertyType))
-                    {
-                        _equipmentbuffs.Add(buff.propertyType, new List<BuffData>());
-                    }
-                    _equipmentbuffs[buff.propertyType].Add(buff);
-                }
-
-                else if (buff.sourceType == BuffSourceType.Collect)
-                {
-                    if (!_collectBuffs.ContainsKey(buff.propertyType))
-                    {
-                        _collectBuffs.Add(buff.propertyType, new List<BuffData>());
-                    }
-                    _collectBuffs[buff.propertyType].Add(buff);
-                }
                 // else if (buff.sourceType == BuffSourceType.NoUnion)
                 // {
                 //     if (!_noUnionBuffs.ContainsKey(buff.propertyType))

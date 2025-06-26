@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HotUpdate.Scripts.Tool.Static;
 using Newtonsoft.Json;
+using UnityEditor;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
@@ -13,8 +14,27 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [SerializeField]
         private List<TimedBuffConfigData> timedBuffs;
         private Dictionary<BuffSourceType, Dictionary<int, TimedBuffConfigData>> _sourceTypeDictionary = new Dictionary<BuffSourceType, Dictionary<int, TimedBuffConfigData>>();
-        
-        
+
+        public Dictionary<BuffSourceType, Dictionary<int, TimedBuffConfigData>> SourceTypeDictionary
+        {
+            get
+            {
+                if (_sourceTypeDictionary.Count == 0)
+                {
+                    foreach (var timedBuffData in timedBuffs)
+                    {
+                        if (!_sourceTypeDictionary.TryGetValue(timedBuffData.sourceType, out var value))
+                        {
+                            value = new Dictionary<int, TimedBuffConfigData>();
+                            _sourceTypeDictionary.Add(timedBuffData.sourceType, value);
+                        }
+                        value.Add(timedBuffData.buffId, timedBuffData);
+                    }
+                }
+                return _sourceTypeDictionary;
+            }
+        }
+
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
             timedBuffs.Clear();
@@ -30,29 +50,25 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 timedBuffData.increaseRange = JsonConvert.DeserializeObject<Range>(text[5]);
                 timedBuffData.isPermanent = bool.Parse(text[6]);
                 timedBuffs.Add(timedBuffData);
-                if (!_sourceTypeDictionary.ContainsKey(timedBuffData.sourceType))
-                {
-                    _sourceTypeDictionary[timedBuffData.sourceType] = new Dictionary<int, TimedBuffConfigData>();
-                }
-                _sourceTypeDictionary[timedBuffData.sourceType].TryAdd(timedBuffData.buffId, timedBuffData);
+                
             }
         }
 
         public int GetNoUnionSpeedBuffId()
         {
-            var noUnionBuffs = _sourceTypeDictionary[BuffSourceType.NoUnion];
-            if (noUnionBuffs == null || noUnionBuffs.Count == 0)
+            var noUnionBuffs = timedBuffs.FindAll(x =>x.sourceType == BuffSourceType.Auto);
+            if (noUnionBuffs.Count == 0)
             {
                 Debug.LogError("NoUnion buff not found in TimedBuffConfig");
                 return default;
             }
             
-            return noUnionBuffs.First(x => x.Value.propertyType == PropertyTypeEnum.Speed).Key;
+            return noUnionBuffs.First(x => x.propertyType == PropertyTypeEnum.Speed).buffId;
         }
 
         public HashSet<int> GetRandomBuffs(BuffSourceType sourceType, int count)
         {
-            if (!_sourceTypeDictionary.TryGetValue(sourceType, out var value))
+            if (!SourceTypeDictionary.TryGetValue(sourceType, out var value))
             {
                 Debug.LogError($"BuffSourceType {sourceType} not found in TimedBuffConfig");
                 return null;
@@ -64,7 +80,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         
         public int GetRandomBuff(BuffSourceType sourceType)
         {
-            if (!_sourceTypeDictionary.TryGetValue(sourceType, out var value))
+            if (!SourceTypeDictionary.TryGetValue(sourceType, out var value))
             {
                 Debug.LogError($"BuffSourceType {sourceType} not found in TimedBuffConfig");
                 return default;

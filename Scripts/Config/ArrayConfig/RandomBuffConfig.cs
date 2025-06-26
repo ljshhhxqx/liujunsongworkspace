@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using HotUpdate.Scripts.Tool.Static;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
-using UnityEditor;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
 {
@@ -14,10 +14,101 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [ReadOnly]
         [SerializeField]
         private List<RandomBuffData> randomBuffs = new List<RandomBuffData>();
-        private readonly Dictionary<BuffIncreaseType, HashSet<int>> _equipmentBuffs = new Dictionary<BuffIncreaseType, HashSet<int>>();
-        private readonly Dictionary<PropertyTypeEnum, HashSet<int>> _randomCollectBuffs = new Dictionary<PropertyTypeEnum, HashSet<int>>();
-        private readonly Dictionary<PropertyTypeEnum, HashSet<int>> _randomEquipmentBuffs = new Dictionary<PropertyTypeEnum, HashSet<int>>();
-        private readonly HashSet<BuffIncreaseType> _equipmentBuffTypes = new HashSet<BuffIncreaseType>();
+        private Dictionary<BuffIncreaseType, HashSet<int>> _equipmentBuffs;
+        private Dictionary<PropertyTypeEnum, HashSet<int>> _randomCollectBuffs;
+        private Dictionary<PropertyTypeEnum, HashSet<int>> _randomEquipmentBuffs;
+        private HashSet<BuffIncreaseType> _equipmentBuffTypes = new HashSet<BuffIncreaseType>();
+
+        public HashSet<BuffIncreaseType> EquipmentBuffTypes
+        {
+            get
+            {
+                if (_equipmentBuffTypes.Count == 0)
+                {
+                    foreach (var randomBuff in randomBuffs)
+                    {
+                        if (randomBuff.sourceType == BuffSourceType.Equipment)
+                        {
+                            _equipmentBuffTypes.Add(randomBuff.mainIncreaseType);
+                        }
+                    }
+                }
+                return _equipmentBuffTypes;
+            }
+        }
+
+        public Dictionary<BuffIncreaseType, HashSet<int>> EquipmentBuffs
+        {
+            get
+            {
+                if (_equipmentBuffs == null || _equipmentBuffs.Count == 0)
+                {
+                    _equipmentBuffs = new Dictionary<BuffIncreaseType, HashSet<int>>();
+                    foreach (var randomBuff in randomBuffs)
+                    {
+                        if (randomBuff.sourceType == BuffSourceType.Equipment)
+                        {
+                            if (!_equipmentBuffs.ContainsKey(randomBuff.mainIncreaseType))
+                            {
+                                _equipmentBuffs.Add(randomBuff.mainIncreaseType, new HashSet<int>());
+                            }
+
+                            _equipmentBuffs[randomBuff.mainIncreaseType].Add(randomBuff.buffId);
+                        }
+                    }
+                }
+                return _equipmentBuffs;
+            }
+        }
+        
+        public Dictionary<PropertyTypeEnum, HashSet<int>> RandomCollectBuffs
+        {
+            get
+            {
+                if (_randomCollectBuffs == null || _randomCollectBuffs.Count == 0)
+                {
+                    _randomCollectBuffs = new Dictionary<PropertyTypeEnum, HashSet<int>>();
+                    foreach (var randomBuff in randomBuffs)
+                    {
+                        if (randomBuff.sourceType == BuffSourceType.Collect)
+                        {
+                            if (!_randomCollectBuffs.ContainsKey(randomBuff.propertyType))
+                            {
+                                _randomCollectBuffs.Add(randomBuff.propertyType, new HashSet<int>());
+                            }
+
+                            _randomCollectBuffs[randomBuff.propertyType].Add(randomBuff.buffId);
+                        }
+                    }
+                }
+                return _randomCollectBuffs;
+            }
+        }
+        
+        public Dictionary<PropertyTypeEnum, HashSet<int>> RandomEquipmentBuffs
+        {
+            get
+            {
+                if (_randomEquipmentBuffs == null || _randomEquipmentBuffs.Count == 0)
+                {
+                    _randomEquipmentBuffs = new Dictionary<PropertyTypeEnum, HashSet<int>>();
+                    foreach (var randomBuff in randomBuffs)
+                    {
+                        if (randomBuff.sourceType == BuffSourceType.Equipment)
+                        {
+                            if (!_randomEquipmentBuffs.ContainsKey(randomBuff.propertyType))
+                            {
+                                _randomEquipmentBuffs.Add(randomBuff.propertyType, new HashSet<int>());
+                            }
+
+                            _randomEquipmentBuffs[randomBuff.propertyType].Add(randomBuff.buffId);
+                        }
+                    }
+                }
+                return _randomEquipmentBuffs;
+            }
+        }
+
         public RandomBuffData GetRandomBuffData(int buffId)
         {
             return randomBuffs.Find(buff => buff.buffId == buffId);
@@ -30,28 +121,13 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
         public BuffExtraData GetEquipmentBuffNoType()
         {
-            var types = _equipmentBuffTypes.RandomSelect();
+            var types = EquipmentBuffTypes.RandomSelect();
             return GetEquipmentBuff(types);
         }
 
         public BuffExtraData GetEquipmentBuff(BuffIncreaseType buffIncreaseType)
         {
-            if (_equipmentBuffs.Count == 0)
-            {
-                foreach (var randomBuff in randomBuffs)
-                {
-                    if (randomBuff.sourceType == BuffSourceType.Equipment)
-                    {
-                        if (!_equipmentBuffs.ContainsKey(randomBuff.mainIncreaseType))
-                        {
-                            _equipmentBuffs.Add(randomBuff.mainIncreaseType, new HashSet<int>());
-                        }
-
-                        _equipmentBuffs[randomBuff.mainIncreaseType].Add(randomBuff.buffId);
-                    }
-                }
-            }
-            var equipmentBuff = _equipmentBuffs[buffIncreaseType];
+            var equipmentBuff = EquipmentBuffs[buffIncreaseType];
             var randomId = Random.Range(0, equipmentBuff.Count);
             if (!equipmentBuff.TryGetValue(randomId, out var buffId))
             {
@@ -67,24 +143,9 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         
         public BuffExtraData GetCollectBuff(PropertyTypeEnum propertyType)
         {
-            if (_randomCollectBuffs.Count == 0)
-            {
-                foreach (var randomBuff in randomBuffs)
-                {
-                    if (randomBuff.sourceType == BuffSourceType.Collect)
-                    {
-                        if (!_randomCollectBuffs.ContainsKey(randomBuff.propertyType))
-                        {
-                            _randomCollectBuffs.Add(randomBuff.propertyType, new HashSet<int>());
-                        }
-
-                        _randomCollectBuffs[randomBuff.propertyType].Add(randomBuff.buffId);
-                    }
-                }
-            }
-            var propertyBuffs = _randomCollectBuffs[propertyType];
+            var propertyBuffs = RandomCollectBuffs[propertyType];
             var randomId = Random.Range(0, propertyBuffs.Count);
-            if (!_randomCollectBuffs[propertyType].TryGetValue(randomId, out var buffId))
+            if (!RandomCollectBuffs[propertyType].TryGetValue(randomId, out var buffId))
             {
                 Debug.LogError($"Buff Id {randomId} not found");
                 return default;
@@ -137,51 +198,18 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
             randomBuffs.Clear();
-            _randomEquipmentBuffs.Clear();
-            _randomCollectBuffs.Clear();
-            _equipmentBuffTypes.Clear();
-            _equipmentBuffs.Clear();
 
             for (int i = 2; i < textAsset.Count; i++)
             {
                 var row = textAsset[i];
                 var randomBuff = new RandomBuffData();
                 randomBuff.buffId = int.Parse(row[0]);
-                randomBuff.propertyType = (PropertyTypeEnum)System.Enum.Parse(typeof(PropertyTypeEnum), row[1]);
+                randomBuff.propertyType = (PropertyTypeEnum)Enum.Parse(typeof(PropertyTypeEnum), row[1]);
                 randomBuff.duration = JsonConvert.DeserializeObject<Range>(row[2]);
                 randomBuff.increaseDataList = JsonConvert.DeserializeObject<List<RandomBuffIncreaseData>>(row[3]);
-                randomBuff.sourceType = (BuffSourceType)System.Enum.Parse(typeof(BuffSourceType), row[4]);
-                randomBuff.mainIncreaseType = (BuffIncreaseType)System.Enum.Parse(typeof(BuffIncreaseType), row[5]);
+                randomBuff.sourceType = (BuffSourceType)Enum.Parse(typeof(BuffSourceType), row[4]);
+                randomBuff.mainIncreaseType = (BuffIncreaseType)Enum.Parse(typeof(BuffIncreaseType), row[5]);
                 randomBuffs.Add(randomBuff);
-                if (randomBuff.sourceType == BuffSourceType.Equipment)
-                {
-                    _equipmentBuffTypes.Add(randomBuff.mainIncreaseType);
-                }
-                if (randomBuff.sourceType == BuffSourceType.Collect)
-                {
-                    if (!_randomCollectBuffs.ContainsKey(randomBuff.propertyType))
-                    {
-                        _randomCollectBuffs.Add(randomBuff.propertyType, new HashSet<int>());
-                        
-                    }
-
-                    _randomCollectBuffs[randomBuff.propertyType].Add(randomBuff.buffId);
-                }
-                else if (randomBuff.sourceType == BuffSourceType.Equipment)
-                {
-                    if (!_randomEquipmentBuffs.ContainsKey(randomBuff.propertyType))
-                    {
-                        _randomEquipmentBuffs.Add(randomBuff.propertyType, new HashSet<int>());
-                    }
-
-                    if (!_equipmentBuffs.ContainsKey(randomBuff.mainIncreaseType))
-                    {
-                        _equipmentBuffs.Add(randomBuff.mainIncreaseType, new HashSet<int>());
-                    }
-
-                    _randomEquipmentBuffs[randomBuff.propertyType].Add(randomBuff.buffId);
-                    _equipmentBuffs[randomBuff.mainIncreaseType].Add(randomBuff.buffId);
-                }
             }
             
         }

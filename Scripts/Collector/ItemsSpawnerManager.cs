@@ -222,6 +222,7 @@ namespace HotUpdate.Scripts.Collector
         private void OnGameStart(string sceneName)
         {
             _gridMap.Clear();
+            ObjectInjectProvider.Instance.Inject(MapBoundDefiner.Instance);
             _gridMap = MapBoundDefiner.Instance.GridMap.ToDictionary(x => x,_ => new Grid());
             var res = ResourceManager.Instance.GetMapCollectObject(sceneName);
             if (_collectiblePrefabs.Count == 0)
@@ -327,6 +328,7 @@ namespace HotUpdate.Scripts.Collector
             {
                 _uiManager.CloseUI(UIType.TargetShowOverlay);
             }
+            MapBoundDefiner.Instance.Clear();
         }
 
         [Server]
@@ -986,6 +988,8 @@ namespace HotUpdate.Scripts.Collector
             return MapBoundDefiner.Instance.IsWithinMapBounds(position);
         
         }
+        
+        
         
         [Serializable]
         private struct Grid

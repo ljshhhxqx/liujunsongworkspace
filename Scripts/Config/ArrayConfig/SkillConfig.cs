@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using AOTScripts.CustomAttribute;
 using AOTScripts.Data;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using Mirror;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using UnityEngine;
-using UnityEngine.Serialization;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
@@ -25,7 +24,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             {
                 NullValueHandling = NullValueHandling.Ignore
             };
-            setting.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+            setting.Converters.Add(new StringEnumConverter());
             for (var i = 2; i < textAsset.Count; i++)
             {
                 var text = textAsset[i];

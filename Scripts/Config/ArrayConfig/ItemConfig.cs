@@ -20,19 +20,16 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [SerializeField]
         private ItemOtherData itemOtherData;
         
-        private Dictionary<int, GameItemConfigData> _gameItemDataDict = new Dictionary<int, GameItemConfigData>();
-        
         public int MaxBagSize => itemOtherData.maxBagSize;
         
         public GameItemConfigData GetGameItemData(int configId)
         {
-            return _gameItemDataDict.GetValueOrDefault(configId);
+            return gameItemDatas.Find(x => x.id == configId);
         }
         
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
             gameItemDatas.Clear();
-            _gameItemDataDict.Clear();
             var jsonSerializerSettings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
@@ -64,7 +61,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 gameItemData.buffExtraData = gameItemData.isDealWithBuffExtraData ? buffExtra : null;
                 #endif
                 gameItemDatas.Add(gameItemData);
-                _gameItemDataDict.Add(gameItemData.id, gameItemData);
             }
         }
         

@@ -13,7 +13,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [ReadOnly]
         [SerializeField]
         private List<CollectObjectData> collectConfigDatas;
-        private readonly Dictionary<CollectObjectClass, HashSet<int>> _collectObjectDatas = new Dictionary<CollectObjectClass, HashSet<int>>();
         
         public CollectObjectData GetCollectObjectData(int configId)
         {
@@ -42,7 +41,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
             collectConfigDatas.Clear();
-            _collectObjectDatas.Clear();
             var jsonSerializerSettings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
@@ -60,11 +58,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 collectConfigData.collectObjectClass = Enum.Parse<CollectObjectClass>(row[5]);
                 // collectConfigData.randomItems = JsonConvert.DeserializeObject<RandomItemsData>(row[6]);
                 collectConfigDatas.Add(collectConfigData);
-                if (!_collectObjectDatas.ContainsKey(collectConfigData.collectObjectClass))
-                {
-                    _collectObjectDatas.Add(collectConfigData.collectObjectClass, new HashSet<int>());
-                }
-                _collectObjectDatas[collectConfigData.collectObjectClass].Add(collectConfigData.id);
             }
         }
 
