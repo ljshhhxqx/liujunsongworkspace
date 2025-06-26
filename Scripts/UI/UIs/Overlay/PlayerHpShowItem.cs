@@ -48,7 +48,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         public void SetDamageOrHealText(int damageOrHeal, PropertyTypeEnum propertyType)
         {
             var isHeal = damageOrHeal > 0;
-            var go = GameObjectPoolManger.Instance.GetObject(damageOrHealTextPrefab, parent: damageOrHealTextPrefab.transform);
+            var go = GameObjectPoolManger.Instance.GetObject(damageOrHealTextPrefab, parent: damageOrHealTextPrefab.transform.parent);
             var text = go.GetComponent<TextMeshProUGUI>();
             go.gameObject.SetActive(true);
             var property = EnumHeaderParser.GetHeader(propertyType);

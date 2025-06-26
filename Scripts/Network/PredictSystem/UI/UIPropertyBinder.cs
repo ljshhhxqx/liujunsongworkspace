@@ -66,7 +66,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
                 tempDict.Add(item.Key, item.Value);
             }
     
-            var dict = GetOrCreateDictionary(key);
+            var dict = GetOrCreateDictionary<IUIDatabase>(key).Dictionary;
             dict.Clear();
             foreach (var item in tempDict)
             {
@@ -76,38 +76,38 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
 
         public static void AddToDictionary(BindingKey dictKey, int itemKey, IUIDatabase value)
         {
-            GetOrCreateDictionary(dictKey).Add(itemKey, value);
+            GetOrCreateDictionary<IUIDatabase>(dictKey).Dictionary.Add(itemKey, value);
         }
 
         public static void RemoveFromDictionary(BindingKey dictKey, int itemKey)
         {
-            GetOrCreateDictionary(dictKey).Remove(itemKey);
+            GetOrCreateDictionary<IUIDatabase>(dictKey).Dictionary.Remove(itemKey);
         }
 
-        public static void BatchAddToDictionary(BindingKey dictKey, IEnumerable<KeyValuePair<int, IUIDatabase>> items)
+        public static void BatchAddToDictionary<T>(BindingKey dictKey, IEnumerable<KeyValuePair<int, IUIDatabase>> items)
         {
-            var dict = GetOrCreateDictionary(dictKey);
+            var dict = GetOrCreateDictionary<IUIDatabase>(dictKey);
             foreach (var item in items)
             {
-                dict.Add(item.Key, item.Value);
+                dict.Dictionary.Add(item.Key, item.Value);
             }
         }
 
         public static ReactiveDictionary<int, T> GetReactiveDictionary<T>(BindingKey key) where T : IUIDatabase
         {
-            return GetOrCreateDictionary(key) as ReactiveDictionary<int, T>;
+            return GetOrCreateDictionary<T>(key).Dictionary;
         }
 
-        private static ReactiveDictionary<int, IUIDatabase> GetOrCreateDictionary(BindingKey key)
+        private static ReactiveDictionaryWrapper<T> GetOrCreateDictionary<T>(BindingKey key) where T : IUIDatabase
         {
             if (!KeyDictionaryMap.TryGetValue(key, out var dict))
             {
-                var newRp = new ReactiveDictionary<int, IUIDatabase>();
-                dict = new ReactiveDictionaryWrapper<IUIDatabase>(newRp);
+                var newRp = new ReactiveDictionary<int, T>();
+                dict = new ReactiveDictionaryWrapper<T>(newRp);
                 KeyDictionaryMap[key] = dict;
             }
 
-            return ((ReactiveDictionaryWrapper<IUIDatabase>)dict).Dictionary;
+            return (ReactiveDictionaryWrapper<T>)dict;
         }
 
         #endregion
@@ -121,35 +121,35 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
 
         public static void AddToList(BindingKey listKey, IUIDatabase item)
         {
-            GetOrCreateList(listKey).Add(item);
+            GetOrCreateList<IUIDatabase>(listKey).Add(item);
         }
 
         public static void RemoveFromList(BindingKey listKey, IUIDatabase item)
         {
-            GetOrCreateList(listKey).Remove(item);
+            GetOrCreateList<IUIDatabase>(listKey).Remove(item);
         }
 
         public static void BatchAddToList(BindingKey listKey, IEnumerable<IUIDatabase> items)
         {
-            var list = GetOrCreateList(listKey);
+            var list = GetOrCreateList<IUIDatabase>(listKey);
             list.AddRange(items);
         }
 
         public static ReactiveCollection<T> GetReactiveCollection<T>(BindingKey listKey) where T : IUIDatabase
         {
-            return GetOrCreateList(listKey) as ReactiveCollection<T>;
+            return GetOrCreateList<T>(listKey) as ReactiveCollection<T>;
         }
 
-        private static ReactiveCollection<IUIDatabase> GetOrCreateList(BindingKey key)
+        private static ReactiveCollection<T> GetOrCreateList<T>(BindingKey key) where T : IUIDatabase
         {
             if (!KeyListMap.TryGetValue(key, out var list))
             {
-                var newRp = new ReactiveCollection<IUIDatabase>();
-                list = new ReactiveCollectionWrapper<IUIDatabase>(newRp);
+                var newRp = new ReactiveCollection<T>();
+                list = new ReactiveCollectionWrapper<T>(newRp);
                 KeyListMap[key] = list;
             }
 
-            return ((ReactiveCollectionWrapper<IUIDatabase>)list).Collection;
+            return ((ReactiveCollectionWrapper<T>)list).Collection;
         }
 
         #endregion

@@ -685,13 +685,23 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
+            "Name": "BackpackUI",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/BackpackUI.prefab"
+        },
+        {
+            "UID": 3100001,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "CreateRoomUI",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/CreateRoomUI.prefab"
         },
         {
-            "UID": 3100001,
+            "UID": 3100002,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -701,7 +711,7 @@
             "Address": "/Preload/UI/DevelopUI.prefab"
         },
         {
-            "UID": 3100002,
+            "UID": 3100003,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -711,7 +721,7 @@
             "Address": "/Preload/UI/HelpPopup.prefab"
         },
         {
-            "UID": 3100003,
+            "UID": 3100004,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -721,7 +731,7 @@
             "Address": "/Preload/UI/Hole.prefab"
         },
         {
-            "UID": 3100004,
+            "UID": 3100005,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -731,7 +741,17 @@
             "Address": "/Preload/UI/InfoPanel.prefab"
         },
         {
-            "UID": 3100005,
+            "UID": 3100006,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "ItemDetailUI",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/ItemDetailUI.prefab"
+        },
+        {
+            "UID": 3100007,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -741,7 +761,7 @@
             "Address": "/Preload/UI/LoginPanel.prefab"
         },
         {
-            "UID": 3100006,
+            "UID": 3100008,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -751,7 +771,7 @@
             "Address": "/Preload/UI/MainUI.prefab"
         },
         {
-            "UID": 3100007,
+            "UID": 3100009,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -761,7 +781,7 @@
             "Address": "/Preload/UI/ModifyNameUI.prefab"
         },
         {
-            "UID": 3100008,
+            "UID": 3100010,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -771,7 +791,27 @@
             "Address": "/Preload/UI/PasswordUI.prefab"
         },
         {
-            "UID": 3100009,
+            "UID": 3100011,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "PlayerDamageDeathTimeOverlay",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/PlayerDamageDeathTimeOverlay.prefab"
+        },
+        {
+            "UID": 3100012,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "PlayerHpShowOverlay",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/PlayerHpShowOverlay.prefab"
+        },
+        {
+            "UID": 3100013,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -781,7 +821,7 @@
             "Address": "/Preload/UI/PlayerPropertyOverlay.prefab"
         },
         {
-            "UID": 3100010,
+            "UID": 3100014,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -791,7 +831,7 @@
             "Address": "/Preload/UI/RegistPanel.prefab"
         },
         {
-            "UID": 3100011,
+            "UID": 3100015,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -801,7 +841,7 @@
             "Address": "/Preload/UI/RoomListUI.prefab"
         },
         {
-            "UID": 3100012,
+            "UID": 3100016,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -811,7 +851,17 @@
             "Address": "/Preload/UI/RoomUI.prefab"
         },
         {
-            "UID": 3100013,
+            "UID": 3100017,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "ShopUI",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/ShopUI.prefab"
+        },
+        {
+            "UID": 3100018,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -821,7 +871,7 @@
             "Address": "/Preload/UI/TargetShowOverlay.prefab"
         },
         {
-            "UID": 3100014,
+            "UID": 3100019,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -831,7 +881,7 @@
             "Address": "/Preload/UI/TipPopup.prefab"
         },
         {
-            "UID": 3100015,
+            "UID": 3100020,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -841,7 +891,7 @@
             "Address": "/Preload/UI/TipsOverlay.prefab"
         },
         {
-            "UID": 3100016,
+            "UID": 3100021,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1309,46 +1359,6 @@
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/Skill/Snow hit 1.prefab"
-        },
-        {
-            "UID": 3800020,
-            "ResourceType": "UnityEngine.GameObject",
-            "AssetType": 2,
-            "Extension": ".prefab",
-            "Name": "BackpackUI",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/UIPrefab/BackpackUI.prefab"
-        },
-        {
-            "UID": 3800021,
-            "ResourceType": "UnityEngine.GameObject",
-            "AssetType": 2,
-            "Extension": ".prefab",
-            "Name": "ItemDetailUI",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/UIPrefab/ItemDetailUI.prefab"
-        },
-        {
-            "UID": 3800022,
-            "ResourceType": "UnityEngine.GameObject",
-            "AssetType": 2,
-            "Extension": ".prefab",
-            "Name": "PlayerDamageDeathTimeOverlay",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/UIPrefab/PlayerDamageDeathTimeOverlay.prefab"
-        },
-        {
-            "UID": 3800023,
-            "ResourceType": "UnityEngine.GameObject",
-            "AssetType": 2,
-            "Extension": ".prefab",
-            "Name": "ShopUI",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Map/Town/UIPrefab/ShopUI.prefab"
         },
         {
             "UID": 3900000,
