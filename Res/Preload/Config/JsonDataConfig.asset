@@ -30,12 +30,12 @@ MonoBehaviour:
       OnStairsSpeedRatioFactor: 0.75
       JumpSpeed: 45
       RollForce: 40
-      InputBufferTick: 0
+      InputBufferTick: 2
       PlayerLayer:
         serializedVersion: 2
-        m_Bits: 0
-      NoUnionMoreGoldRatio: 0
-      NoUnionMoreScoreRatio: 0
+        m_Bits: 64
+      NoUnionMoreGoldRatio: 1
+      NoUnionMoreScoreRatio: 1
       AttackComboWindow: 1
       AttackComboMaxCount: 3
     collectData:
@@ -90,12 +90,12 @@ MonoBehaviour:
       stairsCheckDistance: 0.45
       tickRate: 0.05
       inputThreshold: 0.1
-      maxCommandAge: 0
-      uiUpdateInterval: 0
-      maxTraceDistance: 0
-      maxViewAngle: 0
-      obstacleCheckRadius: 0
-      screenBorderOffset: 0
+      maxCommandAge: 10
+      uiUpdateInterval: 0.5
+      maxTraceDistance: 10
+      maxViewAngle: 180
+      obstacleCheckRadius: 0.5
+      screenBorderOffset: 1
       gameBaseData:
         playerBaseHpRecoverRatioPerSec: 25
         playerBaseManaRecoverRatioPerSec: 25
@@ -111,7 +111,7 @@ MonoBehaviour:
       minUnionPlayerCount: 2
       playerHpRatioToWarning: 0.3
       basePrefabName: PlayerBase
-      noUnionTime: 0
+      noUnionTime: 30
       playerPrefabName: MPlayer
     dayNightCycleData:
       timeMultiplier: 60
@@ -317,8 +317,8 @@ MonoBehaviour:
       times: 
       scores: 
     bagCommonData:
-      maxBagCount: 0
-      maxStack: 0
+      maxBagCount: 12
+      maxStack: 99
     propertyValueData:
       propertyWeightData:
       - equipmentPart: 1
@@ -492,7 +492,7 @@ MonoBehaviour:
         mainAttributeRatio: 0.6
         minPassiveAttributeRatio: 0.24
         weight: 0.9
-      valueVariance: 0
+      valueVariance: 0.1
     otherData:
       animationActionData:
       - actionType: 3

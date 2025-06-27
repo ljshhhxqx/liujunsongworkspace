@@ -97,8 +97,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 var skillConfigData = _skillSyncState.GetSkillConfigData(inputCommand.CommandAnimationState);
                 var cost = skillConfigData.id == 0 ? info.cost : skillConfigData.cost;
                 var cooldown = skillConfigData.id == 0 ? info.cooldown : skillConfigData.cooldown;
+                Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
                 if (health == 0 || actionType != ActionType.Movement)
                 {
+                    Debug.Log($"[PlayerInputPredictionState] - Player is dead or not in movement state.");
                     return;
                 }
 

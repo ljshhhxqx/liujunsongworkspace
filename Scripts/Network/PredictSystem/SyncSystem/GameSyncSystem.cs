@@ -82,9 +82,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 _syncSystems.Add(commandType, syncSystem);
             }
             OnAllSystemInit?.Invoke();
+                
+            ProcessImmediateCommands(_cts.Token);
+        }
+
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+            if (!isServer)
+            {
+                _syncSystems.Clear();
+                _clientCommands.Clear();
+                _currentTickCommands.Clear();
+            }
             Observable.EveryUpdate()
-                .Throttle(TimeSpan.FromSeconds(1 / _tickRate))
                 .Where(_ => isServer && !_isProcessing)
+                .Throttle(TimeSpan.FromSeconds(1 / _tickRate))
                 .Subscribe(_ =>
                 {
                     _tickTimer = 0;
@@ -92,18 +105,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     CurrentTick++;
                 })
                 .AddTo(this);
-                
-            ProcessImmediateCommands(_cts.Token);
-        }
-
-        private void Start()
-        {
-            if (!isServer)
-            {
-                _syncSystems.Clear();
-                _clientCommands.Clear();
-                _currentTickCommands.Clear();
-            }
         }
 
         private void OnAllPlayerGetSpeed(AllPlayerGetSpeedEvent allPlayerGetSpeedEvent)
