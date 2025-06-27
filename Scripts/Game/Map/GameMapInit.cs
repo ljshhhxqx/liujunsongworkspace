@@ -24,6 +24,7 @@ namespace HotUpdate.Scripts.Game.Map
             await LoadGameResources();
             gameEventManager.Publish(new GameSceneResourcesLoadedEvent(mapName));
             uiManager.InitMapSprites(mapName);
+            uiManager.InitMapUIs(mapName);
             //InitMapStaticObjects();
             Debug.Log("game map init complete!!!!!!!!!!");
         }

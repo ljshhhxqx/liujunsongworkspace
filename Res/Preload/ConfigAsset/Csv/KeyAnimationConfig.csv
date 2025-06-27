@@ -6,5 +6,5 @@ SprintJump,True,"["Running","Jump"]"
 Roll,False,["Roll"]
 Attack,False,["Fire1"]
 Collect,False,["Collect"]
-SkillE,False,["Skille"]
-SkillQ,False,["Skillq"]
+SkillE,False,["SkillE"]
+SkillQ,False,["SkillQ"]

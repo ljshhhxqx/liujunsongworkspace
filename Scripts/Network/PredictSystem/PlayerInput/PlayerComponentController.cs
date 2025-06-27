@@ -43,7 +43,7 @@ using PropertyEnvironmentChangeCommand = HotUpdate.Scripts.Network.PredictSystem
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 {
-    public class PlayerComponentController : NetworkAutoInjectComponent, IAttackAnimationEvent
+    public class PlayerComponentController : NetworkBehaviour, IAttackAnimationEvent
     {
         [Header("Components")]
         [SerializeField]
@@ -193,9 +193,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 }).AddTo(_disposables);
             
             Observable.EveryUpdate()
-                .Where(_ => isLocalPlayer && !_subjectedStateType.HasAllStates(SubjectedStateType.None))
+                .Where(_ => isLocalPlayer && _subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible))
                 .Subscribe(_ => {
                     var movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+                    if (movement.magnitude < 0.1f)
+                    {
+                        return;
+                    }
                     var animationStates = _inputState.GetAnimationStates();
                     var playerInputStateData = new PlayerInputStateData
                     {

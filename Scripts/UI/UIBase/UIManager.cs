@@ -42,6 +42,21 @@ namespace HotUpdate.Scripts.UI.UIBase
         {
             GetUIResources(ResourceManager.Instance.GetAllUIObjects());
         }
+        
+        public void InitMapUIs(string mapName)
+        {
+            var mapUIs = ResourceManager.Instance.GetResources<GameObject>(x => x.resourceData.Address.StartsWith($"/Map/{mapName}") && x.resourceInfo.Resource is GameObject).ToList();
+            if (mapUIs.Count > 0)
+            {
+                foreach (var mapUI in mapUIs)
+                {
+                    if (mapUI.TryGetComponent(out ScreenUIBase screenUI))
+                    {
+                        _uIPrefabs.Add(screenUI);
+                    }
+                }
+            }
+        }
 
         public void InitMapSprites(string mapName)
         {

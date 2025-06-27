@@ -1,4 +1,6 @@
-﻿using HotUpdate.Scripts.Game.Inject;
+﻿using System;
+using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Game.Inject;
 using Mirror;
 using UnityEngine;
 
@@ -12,30 +14,20 @@ namespace HotUpdate.Scripts.Network.Inject
         private bool isForClient = true;
         [SerializeField]
         private bool isForLocalPlayer = true;
+
+        [SerializeField] 
+        private MapType mapType = MapType.Town;
         
         public int ConnectionID => netIdentity.connectionToClient.connectionId;
         public string PlayerId { get;set; }
 
-        public override void OnStartServer()
-        {
-            base.OnStartServer();
-            if (isServer && 
-                !netIdentity.isServerOnly)
-            {
-                RpcInject();
-            }
-        }
-        
-        [ClientRpc]
-        private void RpcInject()
+        private void Start()
         {
             if (autoInject && isForClient)
             {
-                ObjectInjectProvider.Instance.Inject(this);
-                if (isLocalPlayer && isForLocalPlayer)
-                {
-                    OnInject();
-                }
+                ObjectInjectProvider.Instance.InjectMap(mapType, this);
+                
+                OnInject();
             }
         }
 

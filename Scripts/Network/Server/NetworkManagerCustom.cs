@@ -4,6 +4,8 @@ using System.Linq;
 using Data;
 using Game.Map;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
@@ -31,9 +33,11 @@ namespace HotUpdate.Scripts.Network.Server
         private PlayerDataManager _playerDataManager;
         private PlayerInGameManager _playerInGameManager;
         private MapType _mapName;
+        private GameConfigData _gameConfigData;
 
         [Inject]
-        private void Init(GameEventManager gameEventManager, UIManager uIManager, IObjectResolver objectResolver, PlayerDataManager playerDataManager)
+        private void Init(GameEventManager gameEventManager, UIManager uIManager, IObjectResolver objectResolver,
+            PlayerDataManager playerDataManager, IConfigProvider configProvider)
         {
             PropertyTypeReaderWriter.RegisterReaderWriter();
             _gameEventManager = gameEventManager;
@@ -44,6 +48,7 @@ namespace HotUpdate.Scripts.Network.Server
             _gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnSceneResourcesLoaded);
             _objectResolver = objectResolver;
             _playerDataManager = playerDataManager;
+            _gameConfigData = configProvider.GetConfig<JsonDataConfig>().GameConfig;
         }
         
         // 服务器端有玩家连接时调用
@@ -80,7 +85,7 @@ namespace HotUpdate.Scripts.Network.Server
 
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
-            var res = DataJsonManager.Instance.GetResourceData("MPlayer");
+            var res = DataJsonManager.Instance.GetResourceData(_gameConfigData.playerPrefabName);
             var resInfo = ResourceManager.Instance.GetResource<GameObject>(res);
             if (resInfo)
             {
@@ -91,7 +96,7 @@ namespace HotUpdate.Scripts.Network.Server
                 playerGo.transform.localRotation = Quaternion.identity;
                 playerGo.name = playerGo.name.Replace("(Clone)", conn.connectionId.ToString());
                 playerGo.gameObject.SetActive(false);
-                _objectResolver.InjectGameObject(playerGo);
+                ObjectInjectProvider.Instance.InjectMapGameObject(_mapName, playerGo);
                 playerGo.gameObject.SetActive(true);
                 Debug.Log("Spawned player: " + playerGo.name);
                 _spawnPoints.Remove(spawnPoint);

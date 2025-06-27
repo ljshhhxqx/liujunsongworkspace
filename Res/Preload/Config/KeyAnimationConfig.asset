@@ -49,8 +49,8 @@ MonoBehaviour:
   - animationState: 4096
     isComboKey: 0
     animationKeys:
-    - Skille
+    - SkillE
   - animationState: 8192
     isComboKey: 0
     animationKeys:
-    - Skillq
+    - SkillQ

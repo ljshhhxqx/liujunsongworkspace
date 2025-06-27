@@ -79,11 +79,10 @@ namespace HotUpdate.Scripts.Game.Inject
 
         private LifetimeScope GetLifetimeScope(MapType mapType)
         {
-            if (!Enum.IsDefined(mapType.GetType(), typeof(MapType)))
+            if (!Enum.IsDefined(typeof(MapType), mapType))
             {
                 return null;
             }
-            
             if (_injectors.TryGetValue(mapType, out var lifetimeScope))
             {
                 return lifetimeScope;

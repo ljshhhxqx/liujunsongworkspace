@@ -34,7 +34,15 @@ namespace HotUpdate.Scripts.Game.Inject
         {
             return _injector.Resolve(type);
         }
-        
-        
+
+        public void InjectMap(MapType mapType, Object target)
+        {
+            _injector.InjectMapElement(mapType, target);
+        }
+
+        public void InjectMapGameObject(MapType mapType, GameObject target)
+        {
+            _injector.InjectMapElementWithChildren(mapType, target);
+        }
     }
 }
