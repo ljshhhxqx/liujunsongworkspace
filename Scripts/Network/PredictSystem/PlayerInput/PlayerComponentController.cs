@@ -903,7 +903,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcPlayEffect(PlayerEffectType effectType)
         {
-            if (!isLocalPlayer)
+            if (!isLocalPlayer || effectType == PlayerEffectType.None)
             {
                 return;
             }

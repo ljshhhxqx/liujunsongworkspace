@@ -76,7 +76,7 @@ MonoBehaviour:
       gridSize: 5
       safetyMargin: 5
       fixedSpacing: 1
-      warmupTime: 10
+      warmupTime: 100000
       developKey: DevelopKey
       developKeyValue: MultiplayerDemo
       stairSceneLayer:

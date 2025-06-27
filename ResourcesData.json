@@ -415,13 +415,43 @@
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
+            "Name": "OutlineScore1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Mat/OutlineScore1.mat"
+        },
+        {
+            "UID": 1200005,
+            "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
+            "Name": "OutlineScore2",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Mat/OutlineScore2.mat"
+        },
+        {
+            "UID": 1200006,
+            "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
+            "Name": "OutlineScore3",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Mat/OutlineScore3.mat"
+        },
+        {
+            "UID": 1200007,
+            "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
             "Name": "OutlineSliver",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Mat/OutlineSliver.mat"
         },
         {
-            "UID": 1200005,
+            "UID": 1200008,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -431,7 +461,7 @@
             "Address": "/Map/Mat/OutlineSmall.mat"
         },
         {
-            "UID": 1200006,
+            "UID": 1200009,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -441,7 +471,7 @@
             "Address": "/Map/Mat/Potion Glass.mat"
         },
         {
-            "UID": 1200007,
+            "UID": 1200010,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -451,7 +481,7 @@
             "Address": "/Map/Mat/Wood_1.mat"
         },
         {
-            "UID": 1200008,
+            "UID": 1200011,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -1975,23 +2005,83 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
-            "Name": "Legendary",
+            "Name": "Legendary_Health 1",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/Collect/Prefab/Legendary.prefab"
+            "Address": "/Map/Town/Collect/Prefab/Legendary_Health 1.prefab"
         },
         {
             "UID": 4100012,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
-            "Name": "Normal",
+            "Name": "Legendary_Health 2",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/Collect/Prefab/Normal.prefab"
+            "Address": "/Map/Town/Collect/Prefab/Legendary_Health 2.prefab"
         },
         {
             "UID": 4100013,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Legendary_Strength 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Collect/Prefab/Legendary_Strength 1.prefab"
+        },
+        {
+            "UID": 4100014,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Legendary_Strength 2",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Collect/Prefab/Legendary_Strength 2.prefab"
+        },
+        {
+            "UID": 4100015,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Normal_Health 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Collect/Prefab/Normal_Health 1.prefab"
+        },
+        {
+            "UID": 4100016,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Normal_Health 2",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Collect/Prefab/Normal_Health 2.prefab"
+        },
+        {
+            "UID": 4100017,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Normal_Strength 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Collect/Prefab/Normal_Strength 1.prefab"
+        },
+        {
+            "UID": 4100018,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Normal_Strength 2",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Collect/Prefab/Normal_Strength 2.prefab"
+        },
+        {
+            "UID": 4100019,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2001,17 +2091,77 @@
             "Address": "/Map/Town/Collect/Prefab/OldChest.prefab"
         },
         {
-            "UID": 4100014,
+            "UID": 4100020,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
-            "Name": "Rare",
+            "Name": "Rare_Health 1",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/Collect/Prefab/Rare.prefab"
+            "Address": "/Map/Town/Collect/Prefab/Rare_Health 1.prefab"
         },
         {
-            "UID": 4100015,
+            "UID": 4100021,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Rare_Health 2",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Collect/Prefab/Rare_Health 2.prefab"
+        },
+        {
+            "UID": 4100022,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Rare_Strength 1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Collect/Prefab/Rare_Strength 1.prefab"
+        },
+        {
+            "UID": 4100023,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Rare_Strength 2",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Collect/Prefab/Rare_Strength 2.prefab"
+        },
+        {
+            "UID": 4100024,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Score1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Collect/Prefab/Score1.prefab"
+        },
+        {
+            "UID": 4100025,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Score2",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Collect/Prefab/Score2.prefab"
+        },
+        {
+            "UID": 4100026,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Score3",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Collect/Prefab/Score3.prefab"
+        },
+        {
+            "UID": 4100027,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2021,7 +2171,7 @@
             "Address": "/Map/Town/Collect/Prefab/SliverCoin.prefab"
         },
         {
-            "UID": 4100016,
+            "UID": 4100028,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",

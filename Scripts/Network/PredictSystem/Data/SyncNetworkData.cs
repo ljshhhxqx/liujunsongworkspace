@@ -1232,7 +1232,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 case CommandType.Skill:
                     return new PlayerSkillSyncSystem();
                 case CommandType.Interact:
-                    Debug.LogWarning("Not implemented yet");
+                    //Debug.LogWarning("Not implemented yet");
                     return null;
                 // case CommandType.UI:
                 //     return new PlayerCombatSyncSystem();

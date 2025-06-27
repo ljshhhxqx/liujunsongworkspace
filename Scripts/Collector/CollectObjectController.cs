@@ -1,5 +1,6 @@
 ﻿using System;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
@@ -27,8 +28,7 @@ namespace HotUpdate.Scripts.Collector
         private int collectConfigId;
         [SerializeField]
         private Renderer fillRenderer;
-        [SerializeField]
-        private LayerMask playerLayer;  
+        private LayerMask _playerLayer;  
         
         
         public int CollectConfigId => collectConfigId;
@@ -65,6 +65,8 @@ namespace HotUpdate.Scripts.Collector
         [Inject]
         private void Init(IConfigProvider configProvider)
         {
+            var playerConfig = configProvider.GetConfig<JsonDataConfig>().PlayerConfig;
+            _playerLayer = playerConfig.PlayerLayer;
             var collectObjectDataConfig = configProvider.GetConfig<CollectObjectDataConfig>();
             _pooledObject = GetComponent<PooledObject>();
             if (_pooledObject)
@@ -101,7 +103,7 @@ namespace HotUpdate.Scripts.Collector
         
         private void OnTriggerEnterObserver(Collider other)
         {
-            if ((playerLayer.value & (1 << other.gameObject.layer)) == 0 || !isClient)
+            if ((_playerLayer.value & (1 << other.gameObject.layer)) == 0 || !isClient)
             {
                 return;
             }
