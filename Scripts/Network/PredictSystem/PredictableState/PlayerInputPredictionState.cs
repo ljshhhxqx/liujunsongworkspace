@@ -91,6 +91,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             var header = command.GetHeader();
             if (header.CommandType.HasAnyState(CommandType) && command is InputCommand inputCommand && IsInSpecialState?.Invoke() == false)
             {
+                Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
                 var info = _animationConfig.GetAnimationInfo(inputCommand.CommandAnimationState);
                 var actionType = _animationConfig.GetActionType(inputCommand.CommandAnimationState);
                 var health = _propertyPredictionState.GetProperty(PropertyTypeEnum.Health);
@@ -142,6 +143,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     Command = inputCommand.CommandAnimationState,
                     InputMovement = inputCommand.InputMovement
                 });
+                Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
             }
         }
 

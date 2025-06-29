@@ -171,7 +171,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 {
                     _canOpenShop = PlayerInGameManager.Instance.IsPlayerInHisBase(netId, out _);
                 })
-                .AddTo(_disposables);
+                .AddTo(this);
             _capsuleCollider.OnTriggerStayAsObservable()
                 .Throttle(TimeSpan.FromMilliseconds(GameSyncManager.TickRate * 1000))
                 .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
@@ -184,20 +184,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                         Header = header,
                     };
                     _gameSyncManager.EnqueueCommand(MemoryPackSerializer.Serialize(playerTouchedBaseCommand));
-                }).AddTo(_disposables);
+                }).AddTo(this);
             _capsuleCollider.OnTriggerExitAsObservable()
                 .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
                 .Subscribe(_ =>
                 {
                     _canOpenShop = false;
-                }).AddTo(_disposables);
+                }).AddTo(this);
             
             Observable.EveryUpdate()
                 .Where(_ => isLocalPlayer && _subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible))
                 .Subscribe(_ => {
                     var movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+                    //Debug.Log($"movement {movement} input");
                     if (movement.magnitude < 0.1f)
                     {
+                        //Debug.Log($"movement {movement} is below 0.1");
                         return;
                     }
                     var animationStates = _inputState.GetAnimationStates();
@@ -212,7 +214,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     _playerAnimationCalculator.UpdateAnimationState();
                     _inputStream.OnNext(playerInputStateData);
                 })
-                .AddTo(_disposables);
+                .AddTo(this);
             
             Observable.EveryUpdate()
                 .Where(_ => !_isSpecialActionStream.Value)
@@ -221,15 +223,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     _targetSpeed = _playerPropertyCalculator.GetProperty(PropertyTypeEnum.Speed);
                     _playerAnimationCalculator.UpdateAnimationState();
                 })
-                .AddTo(_disposables);
+                .AddTo(this);
             //发送网络命令
             _inputStream.Where(x=> isLocalPlayer && x.InputMovement.magnitude > 0.1f && x.InputAnimations.Count > 0 && x.Command != AnimationState.None)
                 .Subscribe(HandleSendNetworkCommand)
-                .AddTo(_disposables);
+                .AddTo(this);
             //处理物理信息
             _inputStream.Sample(TimeSpan.FromMilliseconds(FixedDeltaTime * 1000))
                 .Subscribe(HandleInputPhysics)
-                .AddTo(_disposables);
+                .AddTo(this);
             Observable.EveryUpdate().Sample(TimeSpan.FromMilliseconds(FixedDeltaTime * 10 * 1000))
                 .Where(_ => isLocalPlayer)
                 .Subscribe(_ =>
@@ -250,7 +252,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                         _gameSyncManager.EnqueueCommand(MemoryPackSerializer.Serialize(playerInScreenCommand));
                     }
                 })
-                .AddTo(_disposables);
+                .AddTo(this);
             if (isLocalPlayer)
             {
                 _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
@@ -408,6 +410,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientCallback]
         private void HandlePlayerInputStateChanged(PlayerInputStateData playerInputStateData)
         {
+            Debug.Log("HandlePlayerInputStateChanged");
             HandleClientMoveAndAnimation(playerInputStateData);
         }
 
@@ -617,6 +620,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private PlayerGameStateData HandleMoveAndAnimation(PlayerInputStateData inputData)
         {
+            Debug.Log($"[HandleMoveAndAnimation]- inputData.InputMovement ->{inputData.InputMovement} inputData.InputAnimations.Count ->{inputData.InputAnimations.Count} inputData.Command->{inputData.Command}");
             var cameraForward = Vector3.Scale(_camera.transform.forward, new Vector3(1, 0, 1)).normalized;
             //移动
             _playerPhysicsCalculator.HandleMove(new MoveParam
@@ -642,6 +646,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [Client]
         public PlayerGameStateData HandleClientMoveAndAnimation(PlayerInputStateData inputData)
         {
+            Debug.Log($"[HandleClientMoveAndAnimation] start");
             return HandleMoveAndAnimation(inputData);
         }
 
@@ -649,6 +654,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [Server]
         public PlayerGameStateData HandleServerMoveAndAnimation(PlayerInputStateData inputData)
         {
+            Debug.Log($"[HandleServerMoveAndAnimation] start");
             _inputStream.OnNext(inputData);
             return HandleMoveAndAnimation(inputData);
         }

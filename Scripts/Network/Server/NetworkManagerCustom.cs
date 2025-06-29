@@ -92,6 +92,7 @@ namespace HotUpdate.Scripts.Network.Server
                 //currentPlayer = resInfo.gameObject;
                 var spawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Count)];
                 var playerGo = Instantiate(resInfo.gameObject, spawnPoint.transform);
+                playerGo.transform.parent = spawnPoint.transform;
                 playerGo.transform.localPosition = Vector3.zero;
                 playerGo.transform.localRotation = Quaternion.identity;
                 playerGo.name = playerGo.name.Replace("(Clone)", conn.connectionId.ToString());
