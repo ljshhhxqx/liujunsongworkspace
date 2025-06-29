@@ -227,10 +227,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .Subscribe(HandleSendNetworkCommand)
                 .AddTo(_disposables);
             //处理物理信息
-            _inputStream.Throttle(TimeSpan.FromMilliseconds(FixedDeltaTime * 1000))
+            _inputStream.Sample(TimeSpan.FromMilliseconds(FixedDeltaTime * 1000))
                 .Subscribe(HandleInputPhysics)
                 .AddTo(_disposables);
-            Observable.EveryUpdate().Throttle(TimeSpan.FromMilliseconds(FixedDeltaTime * 10 * 1000))
+            Observable.EveryUpdate().Sample(TimeSpan.FromMilliseconds(FixedDeltaTime * 10 * 1000))
                 .Where(_ => isLocalPlayer)
                 .Subscribe(_ =>
                 {
@@ -830,6 +830,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         public void RefreshSnapData(List<CooldownSnapshotData> snapshotData)
         {
+            if (snapshotData == null || snapshotData.Count == 0)
+            {
+                return;
+            }
             for (var i = _animationCooldowns.Count - 1; i >= 0; i--)
             {
                 if (i == snapshotData.Count - 1)

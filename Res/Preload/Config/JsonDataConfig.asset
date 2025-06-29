@@ -88,7 +88,7 @@ MonoBehaviour:
       groundMaxDistance: 0.25
       maxSlopeAngle: 45
       stairsCheckDistance: 0.45
-      tickRate: 0.05
+      tickRate: 20
       inputThreshold: 0.1
       maxCommandAge: 10
       uiUpdateInterval: 0.5

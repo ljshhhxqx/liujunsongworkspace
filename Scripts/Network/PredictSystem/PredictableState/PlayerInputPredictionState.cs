@@ -58,9 +58,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         
         public override bool NeedsReconciliation<T>(T state)
         {
-            if (state is null || state is not PlayerInputState propertyState)
+            if (state is null || state is not PlayerInputState inputState || CurrentState is not PlayerInputState propertyState)
                 return false;
-            return !InputState.IsEqual(propertyState);
+            return !inputState.IsEqual(propertyState);
         }
 
         public override void ApplyServerState<T>(T state) 

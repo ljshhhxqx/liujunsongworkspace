@@ -105,7 +105,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void OnUseItem(int slotIndex, int count)
         {
-            if(!isLocalPlayer)
+            if(!NetworkIdentity.isLocalPlayer)
                 return;
             var useItemCommand = new ItemsUseCommand
             {
@@ -124,7 +124,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void OnEquipItem(int slotIndex, bool isEquip)
         {
-            if(!isLocalPlayer)
+            if(!NetworkIdentity.isLocalPlayer)
                 return;
             var state = GetPlayerItemState();
             var playerItemType = state.PlayerItemConfigIdSlotDictionary[slotIndex].PlayerItemType;
@@ -140,7 +140,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void OnLockItem(int slotIndex, bool isLock)
         {
-            if(!isLocalPlayer)
+            if(!NetworkIdentity.isLocalPlayer)
                 return;
             var lockItemCommand = new ItemLockCommand
             {
@@ -153,7 +153,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void OnDropItem(int slotIndex, int count)
         {
-            if(!isLocalPlayer)
+            if(!NetworkIdentity.isLocalPlayer)
                 return;
             var dropItemCommand = new ItemDropCommand
             {
@@ -172,7 +172,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void OnExchangeItem(int fromSlotIndex, int toSlotIndex)
         {
-            if(!isLocalPlayer)
+            if(!NetworkIdentity.isLocalPlayer)
                 return;
             var exchangeItemCommand = new ItemExchangeCommand
             {
@@ -185,7 +185,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void OnSellItem(int slotIndex, int count)
         {
-            if(!isLocalPlayer)
+            if(!NetworkIdentity.isLocalPlayer)
                 return;
             var sellItemCommand = new ItemsSellCommand
             {
@@ -204,7 +204,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void OnPlayerItemUpdate(PlayerItemState playerItemState)
         {
-            if (!isLocalPlayer)
+            if (!NetworkIdentity.isLocalPlayer)
                 return;
             CurrentState = playerItemState;
             _bagItems ??= UIPropertyBinder.GetReactiveDictionary<BagItemData>(_bindKey);

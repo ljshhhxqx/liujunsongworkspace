@@ -97,7 +97,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
             Observable.EveryUpdate()
                 .Where(_ => isServer && !_isProcessing)
-                .Throttle(TimeSpan.FromSeconds(1 / _tickRate))
+                .Sample(TimeSpan.FromSeconds(1 / _tickRate))
                 .Subscribe(_ =>
                 {
                     _tickTimer = 0;

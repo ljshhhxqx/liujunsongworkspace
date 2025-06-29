@@ -29,7 +29,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private BindingKey _playerDeathTimeBindKey;
         private BindingKey _playerControlBindKey;
         private BindingKey _propertyBindKey;
-        private ReactiveDictionary<int, PropertyItemData> _uiPropertyData;
+        private ReactiveDictionary<int, PropertyItemData> _uiPropertyData = new ReactiveDictionary<int, PropertyItemData>();
         private ReactiveProperty<ValuePropertyData> _goldData;
 
         public PlayerPredictablePropertyState PlayerPredictablePropertyState => (PlayerPredictablePropertyState)CurrentState;
@@ -51,7 +51,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             base.OnStartLocalPlayer();
             _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
                 UIPropertyBinder.LocalPlayerId);
-            if (isLocalPlayer)
+            if (NetworkIdentity.isLocalPlayer)
             {
                 _bindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
                 _goldBindKey = new BindingKey(UIPropertyDefine.PlayerBaseData, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
@@ -116,9 +116,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         public override bool NeedsReconciliation<T>(T state)
         {
-            if (state is null || state is not PlayerPredictablePropertyState propertyState)
+            if (state is null || state is not PlayerPredictablePropertyState propertyState || CurrentState is null || CurrentState is not PlayerPredictablePropertyState currentState)
                 return false;
-            return !PlayerPredictablePropertyState.IsEqual(propertyState);
+            return !propertyState.IsEqual(currentState);
         }
 
         public override void Simulate(INetworkCommand command)
@@ -169,7 +169,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void PropertyChanged(PlayerPredictablePropertyState predictablePropertyState)
         {
-            if (!isLocalPlayer)
+            if (!NetworkIdentity.isLocalPlayer)
             {
                 return;
             }

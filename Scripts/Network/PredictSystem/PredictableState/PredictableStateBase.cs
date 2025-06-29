@@ -26,6 +26,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         protected int LastConfirmedTick { get; private set; }
         protected abstract CommandType CommandType { get; }
         protected int InputBufferTick;
+        protected NetworkIdentity NetworkIdentity;
 
         [Inject]
         protected virtual void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider)
@@ -34,6 +35,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             JsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             InputBufferTick = JsonDataConfig.PlayerConfig.InputBufferTick;
             PlayerComponentController = GetComponent<PlayerComponentController>();
+            NetworkIdentity = GetComponent<NetworkIdentity>();
         }
 
         // 添加预测命令
@@ -81,7 +83,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         public virtual void ApplyServerState<T>(T state) where T : ISyncPropertyState
         {
             CleanupConfirmedCommands(GameSyncManager.CurrentTick);
-            if (isLocalPlayer)
+            if (NetworkIdentity.isLocalPlayer)
             {
                 if (NeedsReconciliation(state))
                 {

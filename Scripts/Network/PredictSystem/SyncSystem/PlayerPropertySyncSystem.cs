@@ -80,6 +80,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _passiveBuffs??= ImmutableList<EquipmentPassiveData>.Empty;
             _timedBuffs ??= ImmutableList<TimedBuffData>.Empty;
             _activeEquipments ??= ImmutableList<EquipmentData>.Empty;
+            _skillBuffs ??= ImmutableList<SkillBuffManagerData>.Empty;
             BuffDataReaderWriter.RegisterReaderWriter();
         }
 
