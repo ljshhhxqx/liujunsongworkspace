@@ -42,7 +42,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         public void AddPredictedCommand(INetworkCommand command)
         {
             var header = command.GetHeader();
-            if (!header.CommandType.HasAnyState(CommandType) && header.ExecuteType != CommandExecuteType.Predicate) 
+            Debug.Log($"[PredictableStatBase]Add predicted command {header.CommandType} at tick {header.Tick}");
+            if (!header.CommandType.HasAnyState(CommandType) || header.ExecuteType != CommandExecuteType.Predicate) 
                 return;
         
             CommandQueue.Enqueue(command);
@@ -62,7 +63,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         }
 
         [Command]
-        private void CmdSendCommand(byte[] commandJson)
+        protected virtual void CmdSendCommand(byte[] commandJson)
         {
             GameSyncManager.EnqueueCommand(commandJson);
         }

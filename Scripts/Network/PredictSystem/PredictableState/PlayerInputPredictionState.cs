@@ -63,6 +63,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             return !inputState.IsEqual(propertyState);
         }
 
+        [Command(channel = Channels.Unreliable)]
+        protected override void CmdSendCommand(byte[] commandJson)
+        {
+            GameSyncManager.EnqueueCommand(commandJson);
+        }
+
         public override void ApplyServerState<T>(T state) 
         {
             if (state is not PlayerInputState propertyState)

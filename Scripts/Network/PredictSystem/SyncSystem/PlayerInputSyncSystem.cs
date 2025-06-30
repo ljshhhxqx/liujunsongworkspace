@@ -166,7 +166,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             GameSyncManager.EnqueueServerCommand(new PropertyInvincibleChangedCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property),
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property, CommandAuthority.Server, CommandExecuteType.Immediate),
                 IsInvincible = isRollStart,
             });
         }
@@ -181,7 +181,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 playerController.transform.forward, connectionId, playerController.netId, attackConfigData));
             GameSyncManager.EnqueueServerCommand(new PropertyAttackCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property),
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property, CommandAuthority.Server, CommandExecuteType.Immediate),
                 AttackerId = connectionId,
                 TargetIds = defenders,
             });
@@ -190,7 +190,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 AttackRangeType.None, attack);
             GameSyncManager.EnqueueServerCommand(new TriggerCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment),
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
                 TriggerType = TriggerType.OnAttack,
                 TriggerData = MemoryPackSerializer.Serialize(triggerParams),
             });
