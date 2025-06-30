@@ -179,12 +179,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var attackConfigData = new AttackConfigData(playerProperty[PropertyTypeEnum.AttackRadius].CurrentValue, playerProperty[PropertyTypeEnum.AttackAngle].CurrentValue, playerProperty[PropertyTypeEnum.AttackHeight].CurrentValue);
             var defenders = playerController.HandleAttack(new AttackParams(playerController.transform.position,
                 playerController.transform.forward, connectionId, playerController.netId, attackConfigData));
-            GameSyncManager.EnqueueServerCommand(new PropertyAttackCommand
+            if (defenders.Length > 0)
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property, CommandAuthority.Server, CommandExecuteType.Immediate),
-                AttackerId = connectionId,
-                TargetIds = defenders,
-            });
+
+                GameSyncManager.EnqueueServerCommand(new PropertyAttackCommand
+                {
+                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property, CommandAuthority.Server, CommandExecuteType.Immediate),
+                    AttackerId = connectionId,
+                    TargetIds = defenders,
+                });
+            }
             var attack = propertySyncSystem.GetPlayerProperty(connectionId, PropertyTypeEnum.Attack);
             var triggerParams = AttackCheckerParameters.CreateParameters(TriggerType.OnAttack,
                 AttackRangeType.None, attack);

@@ -10,6 +10,7 @@ using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
+using Mirror;
 using UniRx;
 using VContainer;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
@@ -98,6 +99,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 return PlayerPredictablePropertyState.Properties[propertyType].MaxCurrentValue;
             }
             return PlayerPredictablePropertyState.Properties[propertyType].CurrentValue;
+        }
+
+
+        [Command(channel = Channels.Unreliable)]
+        protected override void CmdSendCommand(byte[] commandJson)
+        {
+            GameSyncManager.EnqueueCommand(commandJson);
         }
 
         public event Action<PropertyTypeEnum, PropertyCalculator> OnPropertyChanged;

@@ -6,7 +6,6 @@ using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.GameBase;
-using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
@@ -208,6 +207,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     _playerAnimationCalculator.UpdateAnimationState();
                     //_targetSpeed = _playerPropertyCalculator.GetProperty(PropertyTypeEnum.Speed);
                     _inputStream.OnNext(playerInputStateData);
+                    foreach (var animationState in playerInputStateData.InputAnimations)
+                    {
+                        Debug.Log($"[Subscribe] Animation State - {animationState}");
+                    }
+
+                    Debug.Log($"[Subscribe] Send Input Data - {playerInputStateData.InputMovement} - {playerInputStateData.Command}");
                 })
                 .AddTo(_disposables);
             
@@ -219,7 +224,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             //     })
             //     .AddTo(_disposables);
             //发送网络命令
-            _inputStream.Where(x=> isLocalPlayer && x.InputMovement.magnitude > 0.1f && x.InputAnimations.Count > 0 && x.Command != AnimationState.None)
+            _inputStream.Where(x=> isLocalPlayer && x.InputMovement.magnitude > 0.1f && x.Command != AnimationState.None)
                 .Subscribe(HandleSendNetworkCommand)
                 .AddTo(_disposables);
             //处理物理信息
@@ -427,6 +432,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [Client]
         private void HandleSendNetworkCommand(PlayerInputStateData inputData)
         {
+            Debug.Log($"[HandleSendNetworkCommand] inputData.InputMovement->{inputData.InputMovement}  inputData.InputAnimations->{inputData.InputAnimations}  inputData.Command->{inputData.Command}");
             _inputState.AddPredictedCommand(new InputCommand
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Input, CommandAuthority.Client),
