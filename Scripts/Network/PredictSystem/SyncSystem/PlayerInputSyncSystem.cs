@@ -56,7 +56,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 return;
             }
             //游戏开始才能开始倒计时
-            UpdatePlayerAnimationAsync(_cts.Token, GameSyncManager.TickRate).Forget();
+            UpdatePlayerAnimationAsync(_cts.Token, GameSyncManager.TickSeconds).Forget();
         }
 
         protected override void OnAllSystemInit()
@@ -269,7 +269,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 if (cost > 0)
                 {
                     //验证是否耐力值足够
-                    if (!_animationConfig.IsStrengthEnough(inputCommand.CommandAnimationState, playerProperty[PropertyTypeEnum.Strength].CurrentValue, GameSyncManager.TickRate))
+                    if (!_animationConfig.IsStrengthEnough(inputCommand.CommandAnimationState, playerProperty[PropertyTypeEnum.Strength].CurrentValue, GameSyncManager.TickSeconds))
                     {
                         Debug.LogWarning($"Player {header.ConnectionId} input animation {commandAnimation} cost {info.cost} strength, but strength is {playerProperty[PropertyTypeEnum.Strength].CurrentValue}.");
                         return null;
@@ -315,7 +315,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 {
                     var moveSpeed = playerProperty[PropertyTypeEnum.Speed].CurrentValue;
                     var hpChangedCheckerParameters = MoveCheckerParameters.CreateParameters(
-                        TriggerType.OnHpChange, moveSpeed, moveSpeed * inputCommand.InputMovement.magnitude * GameSyncManager.TickRate);
+                        TriggerType.OnHpChange, moveSpeed, moveSpeed * inputCommand.InputMovement.magnitude * GameSyncManager.TickSeconds);
                     GameSyncManager.EnqueueServerCommand(new TriggerCommand
                     {
                         Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),

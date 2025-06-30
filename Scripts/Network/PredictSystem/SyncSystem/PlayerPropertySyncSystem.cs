@@ -1064,13 +1064,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         protected override void OnBroadcastStateUpdate()
         {
-            UpdateBuffs(GameSyncManager.TickRate);
-            UpdateSkillBuffs(GameSyncManager.TickRate);
-            _timeBuffTimer += GameSyncManager.TickRate;
+            UpdateBuffs(GameSyncManager.TickSeconds);
+            UpdateSkillBuffs(GameSyncManager.TickSeconds);
+            _timeBuffTimer += GameSyncManager.TickSeconds;
             if (_timeBuffTimer >= 0.3f)
             {
                 _timeBuffTimer = 0;
-                UpdateTimedBuffs(GameSyncManager.TickRate);
+                UpdateTimedBuffs(GameSyncManager.TickSeconds);
             }
 
             base.OnBroadcastStateUpdate();

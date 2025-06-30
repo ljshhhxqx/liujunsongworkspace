@@ -36,13 +36,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             while (!token.IsCancellationRequested)
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(1 / GameSyncManager.TickRate), cancellationToken: token);
+                await UniTask.Delay(TimeSpan.FromSeconds(1 / GameSyncManager.TickSeconds), cancellationToken: token);
                 foreach (var playerId in PropertyStates.Keys)
                 {
                     var playerState = PropertyStates[playerId];
                     if (playerState is PlayerEquipmentState playerEquipmentSyncState)
                     {
-                        PlayerEquipmentState.UpdateCheckerCd(ref playerEquipmentSyncState, GameSyncManager.TickRate);
+                        PlayerEquipmentState.UpdateCheckerCd(ref playerEquipmentSyncState, GameSyncManager.TickSeconds);
                         PropertyStates[playerId] = playerEquipmentSyncState;
                     }
                 }

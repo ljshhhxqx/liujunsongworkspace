@@ -192,7 +192,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         {
             while (!token.IsCancellationRequested && isServer)
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(GameSyncManager.TickRate), cancellationToken: token);
+                await UniTask.Delay(TimeSpan.FromSeconds(GameSyncManager.TickSeconds), cancellationToken: token);
                 foreach (var uid in _playerNetIds.Values)
                 {
                     var identity = NetworkServer.spawned[uid];
@@ -206,7 +206,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                         _playerBornCallbacks[uid]?.Invoke(uid);
                         _playerBornCallbacks.Remove(uid);
                     }
-                    deathCountdown -= GameSyncManager.TickRate;
+                    deathCountdown -= GameSyncManager.TickSeconds;
                     _playerDeathCountdowns[uid] = deathCountdown;
                     _playerPositions[uid] = position;
                     UpdatePlayerGrid(uid, position);

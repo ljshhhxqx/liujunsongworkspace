@@ -520,6 +520,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public float maxSlopeAngle;
         public float stairsCheckDistance;
         public float tickRate;
+        public float serverInputRate;
         public float inputThreshold;
         public float maxCommandAge;
         public float uiUpdateInterval;

@@ -48,8 +48,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         
             CommandQueue.Enqueue(command);
             Debug.Log($"[PredictableStatBase]Add predicted command {header.CommandType} at tick {header.Tick}");
-            while (CommandQueue.Count > 0 && GameSyncManager.CurrentTick - header.Tick > 
-                   InputBufferTick)
+            while (CommandQueue.Count > 0 && GameSyncManager.CurrentTick - header.Tick >= 0)
             {
                 if (CommandQueue.TryDequeue(out command))
                 {
@@ -73,7 +72,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             while (CommandQueue.Count > 0)
             {
-                if (CommandQueue.TryPeek(out var command) && command.GetHeader().Tick == confirmedTick)
+                if (CommandQueue.TryPeek(out var command) && command.GetHeader().Tick <= confirmedTick)
                 {
                     CommandQueue.TryDequeue(out command);
                 }

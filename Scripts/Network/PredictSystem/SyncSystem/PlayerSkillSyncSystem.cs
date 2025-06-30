@@ -60,7 +60,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             while (!token.IsCancellationRequested)
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(1 / GameSyncManager.TickRate), cancellationToken: token);
+                await UniTask.Delay(TimeSpan.FromSeconds(1 / GameSyncManager.TickSeconds), cancellationToken: token);
                 foreach (var playerId in PropertyStates.Keys)
                 {
                     var playerState = PropertyStates[playerId];
@@ -71,13 +71,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                             var skillChecker = playerSkillState.SkillCheckers[key];
                             if (skillChecker.IsSkillEffect())
                             {
-                                PlayerSkillCalculator.UpdateSkillFlyEffect(playerId, GameSyncManager.TickRate, skillChecker, _playerInGameManager.GetHitPlayers);
+                                PlayerSkillCalculator.UpdateSkillFlyEffect(playerId, GameSyncManager.TickSeconds, skillChecker, _playerInGameManager.GetHitPlayers);
                             }
 
                             if (!skillChecker.IsSkillNotInCd())
                             {
                                 var cooldown = skillChecker.GetCooldownHeader();
-                                cooldown = cooldown.Update(GameSyncManager.TickRate);
+                                cooldown = cooldown.Update(GameSyncManager.TickSeconds);
                                 skillChecker.SetCooldownHeader(cooldown);
                             }
                             playerSkillState.SkillCheckers[key] = skillChecker;

@@ -34,9 +34,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private readonly ConcurrentQueue<INetworkCommand> _currentTickCommands = new ConcurrentQueue<INetworkCommand>();
         private readonly Dictionary<CommandType, BaseSyncSystem> _syncSystems = new Dictionary<CommandType, BaseSyncSystem>();
         private static float _tickRate; 
+        private static float _serverInputRate;
         private float _maxCommandAge; 
-        public static float TickRate => _tickRate;
+        public static float TickSeconds => 1f / _tickRate;
         private float _tickTimer;
+        private float _syncTimer;
         private JsonDataConfig _jsonDataConfig;
         private PlayerPropertySyncSystem _playerPropertySyncSystem;
         private bool _isProcessing; // 防止重入
@@ -58,6 +60,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _cts = new CancellationTokenSource();
             _tickRate = _jsonDataConfig.GameConfig.tickRate;
+            _serverInputRate = _jsonDataConfig.GameConfig.serverInputRate;
             _maxCommandAge = _jsonDataConfig.GameConfig.maxCommandAge;
             gameEventManager.Subscribe<PlayerConnectEvent>(OnPlayerConnect);
             gameEventManager.Subscribe<PlayerDisconnectEvent>(OnPlayerDisconnect);
@@ -95,9 +98,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 _clientCommands.Clear();
                 _currentTickCommands.Clear();
             }
-            Observable.EveryUpdate()
+            Time.fixedDeltaTime = _serverInputRate;
+            Observable.EveryFixedUpdate()
                 .Where(_ => isServer && !_isProcessing)
-                .Sample(TimeSpan.FromSeconds(1 / _tickRate))
                 .Subscribe(_ =>
                 {
                     _tickTimer = 0;
@@ -206,7 +209,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 playerConnection = connection.identity.GetComponent<PlayerComponentController>();
             }
 
-            if (playerConnection != null)
+            if (playerConnection)
             {
                 return playerConnection;
             }
@@ -259,12 +262,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
             try
             {
+                _syncTimer += Time.fixedDeltaTime;
                 // 将客户端待处理命令移到当前tick的命令队列
                 MoveCommandsToCurrentTick();
                 // 处理当前tick的所有命令
                 ProcessCurrentTickCommands();
-                // 广播状态更新
-                BroadcastStateUpdates();
+                if (_syncTimer >= 1f / _tickRate)
+                {
+                    // 广播状态更新
+                    BroadcastStateUpdates();
+                    _syncTimer = 0;
+                }
             }
             finally
             {
@@ -277,7 +285,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             // 将待处理命令移到当前tick的命令队列
             while (_clientCommands.Count > 0)
             {
-                if (!_clientCommands.TryPeek(out var command))
+                if (!_clientCommands.TryDequeue(out var command))
                 {
                     continue;
                 }
@@ -285,39 +293,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 var header = command.GetHeader();
 
                 // 检查命令是否过期
-                var commandAge = (CurrentTick - header.Tick) * _tickRate;
+                var commandAge = (CurrentTick - header.Tick) * Time.fixedDeltaTime;
                 if (commandAge > _maxCommandAge)
-                {
-                    if (_clientCommands.TryDequeue(out command))
-                    {
-                        Debug.LogWarning($"Command discarded due to age: {commandAge}s");
-                        continue;
-                    }
-                }
-
-                // 如果命令属于未来的tick，停止处理
-                if (header.Tick > CurrentTick)
-                {
-                    break;
-                }
-
-                if (_clientCommands.TryDequeue(out command))
-                {
-                    _currentTickCommands.Enqueue(command);
-                }
-            }
-            while (_serverCommands.Count > 0)
-            {
-                if (!_serverCommands.TryPeek(out var command))
-                {
-                    continue;
-                }
-                var header = command.GetHeader();
-
-                // 检查命令是否过期
-                var commandAge = (CurrentTick - header.Tick) * _tickRate;
-                
-                if (_serverCommands.TryDequeue(out command))
                 {
                     Debug.LogWarning($"Command discarded due to age: {commandAge}s");
                     continue;
@@ -329,10 +306,31 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     break;
                 }
 
-                if (_serverCommands.TryDequeue(out command))
+                _currentTickCommands.Enqueue(command);
+            }
+            while (_serverCommands.Count > 0)
+            {
+                if (!_serverCommands.TryDequeue(out var command))
                 {
-                    _currentTickCommands.Enqueue(command);
+                    continue;
                 }
+                var header = command.GetHeader();
+
+                // 检查命令是否过期
+                var commandAge = (CurrentTick - header.Tick) * Time.fixedDeltaTime;
+                if (commandAge > _maxCommandAge)
+                {
+                    Debug.LogWarning($"Command discarded due to age: {commandAge}s");
+                    continue;
+                }
+
+                // 如果命令属于未来的tick，停止处理
+                if (header.Tick > CurrentTick)
+                {
+                    break;
+                }
+
+                _currentTickCommands.Enqueue(command);
             }
         }
 

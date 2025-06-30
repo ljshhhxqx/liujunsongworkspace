@@ -53,7 +53,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _keyAnimationConfig = configProvider.GetConfig<KeyAnimationConfig>();
             _skillConfig = configProvider.GetConfig<SkillConfig>();
 
-            UpdateAnimationCooldowns(_cancellationTokenSource.Token, GameSyncManager.TickRate).Forget();
+            UpdateAnimationCooldowns(_cancellationTokenSource.Token, GameSyncManager.TickSeconds).Forget();
         }
         
         public override bool NeedsReconciliation<T>(T state)
@@ -125,7 +125,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 if (cost > 0)
                 {
                     var currentStrength = _propertyPredictionState.GetProperty(PropertyTypeEnum.Strength);
-                    if (!_animationConfig.IsStrengthEnough(inputCommand.CommandAnimationState, currentStrength, GameSyncManager.TickRate))
+                    if (!_animationConfig.IsStrengthEnough(inputCommand.CommandAnimationState, currentStrength, GameSyncManager.TickSeconds))
                     {
                         Debug.LogWarning($"Not enough strength to perform {inputCommand.CommandAnimationState}.");
                         return;

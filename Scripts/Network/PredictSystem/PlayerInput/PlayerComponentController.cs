@@ -172,7 +172,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 })
                 .AddTo(this);
             _capsuleCollider.OnTriggerStayAsObservable()
-                .Throttle(TimeSpan.FromMilliseconds(GameSyncManager.TickRate * 1000))
+                .Sample(TimeSpan.FromMilliseconds(GameSyncManager.TickSeconds * 1000))
                 .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
                 .Subscribe(c =>
                 {
@@ -207,12 +207,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     _playerAnimationCalculator.UpdateAnimationState();
                     //_targetSpeed = _playerPropertyCalculator.GetProperty(PropertyTypeEnum.Speed);
                     _inputStream.OnNext(playerInputStateData);
-                    foreach (var animationState in playerInputStateData.InputAnimations)
-                    {
-                        Debug.Log($"[Subscribe] Animation State - {animationState}");
-                    }
+                    // foreach (var animationState in playerInputStateData.InputAnimations)
+                    // {
+                    //     Debug.Log($"[Subscribe] Animation State - {animationState}");
+                    // }
 
-                    Debug.Log($"[Subscribe] Send Input Data - {playerInputStateData.InputMovement} - {playerInputStateData.Command}");
+                    //Debug.Log($"[Subscribe] Send Input Data - {playerInputStateData.InputMovement} - {playerInputStateData.Command}");
                 })
                 .AddTo(_disposables);
             
@@ -494,7 +494,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             });
             PlayerPropertyCalculator.SetCalculatorConstant(new PropertyCalculatorConstant
             {
-                TickRate = GameSyncManager.TickRate,
+                TickRate = GameSyncManager.TickSeconds,
                 IsServer = isServer,
                 PropertyConfig =   configProvider.GetConfig<PropertyConfig>(),
             });
