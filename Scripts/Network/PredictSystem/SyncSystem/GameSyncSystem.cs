@@ -57,7 +57,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)
         {
             CurrentTick = 0;
-            UnityFormatters.Register();
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _cts = new CancellationTokenSource();
             _tickRate = _jsonDataConfig.GameConfig.tickRate;
@@ -445,127 +444,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 syncSystem.Value.Clear();
             }
-        }
-    }
-
-    // 正确的 Vector3 序列化器实现
-    public class Vector3Formatter : MemoryPackFormatter<Vector3>
-    {
-        // 添加公共静态实例
-        public static readonly Vector3Formatter Instance = new Vector3Formatter();
-    
-        // 防止外部实例化
-        private Vector3Formatter()
-        {
-            Debug.Log("Vector3Formatter created");
-        }
-
-        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref Vector3 value)
-        {
-            writer.WriteUnmanaged(value.x);
-            writer.WriteUnmanaged(value.y);
-            writer.WriteUnmanaged(value.z);
-            Debug.Log($"Serialize Vector3: {value}");
-        }
-
-        public override void Deserialize(ref MemoryPackReader reader, ref Vector3 value)
-        {
-            reader.ReadUnmanaged(out float x);
-            reader.ReadUnmanaged(out float y);
-            reader.ReadUnmanaged(out float z);
-            Debug.Log($"Deserialize Vector3: {value}");
-            value = new Vector3(x, y, z);
-        }
-    }
-    
-    // Vector2 序列化器
-    public class Vector2Formatter : MemoryPackFormatter<Vector2>
-    {
-        public static readonly Vector2Formatter Instance = new Vector2Formatter();
-        private Vector2Formatter() {}
-
-        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref Vector2 value)
-        {
-            writer.WriteUnmanaged(value.x);
-            writer.WriteUnmanaged(value.y);
-            Debug.Log($"Serialize Vector2: {value}");
-        }
-
-        public override void Deserialize(ref MemoryPackReader reader, ref Vector2 value)
-        {
-            reader.ReadUnmanaged(out float x);
-            reader.ReadUnmanaged(out float y);
-            Debug.Log($"Deserialize Vector2: {value}");
-            value = new Vector2(x, y);
-        }
-    }
-    
-    // Quaternion 序列化器
-    public class QuaternionFormatter : MemoryPackFormatter<Quaternion>
-    {
-        public static readonly QuaternionFormatter Instance = new QuaternionFormatter();
-        private QuaternionFormatter() {}
-
-        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref Quaternion value)
-        {
-            writer.WriteUnmanaged(value.x);
-            writer.WriteUnmanaged(value.y);
-            writer.WriteUnmanaged(value.z);
-            writer.WriteUnmanaged(value.w);
-            Debug.Log($"Serialize Quaternion: {value}");
-        }
-
-        public override void Deserialize(ref MemoryPackReader reader, ref Quaternion value)
-        {
-            reader.ReadUnmanaged(out float x);
-            reader.ReadUnmanaged(out float y);
-            reader.ReadUnmanaged(out float z);
-            reader.ReadUnmanaged(out float w);
-            Debug.Log($"Deserialize Quaternion: {value}");
-            value = new Quaternion(x, y, z, w);
-        }
-    }
-    
-     // Color 序列化器
-     public class ColorFormatter : MemoryPackFormatter<Color>
-     {
-         public static readonly ColorFormatter Instance = new ColorFormatter();
-         private ColorFormatter() {}
-
-         public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref Color value)
-         {
-             writer.WriteUnmanaged(value.r);
-             writer.WriteUnmanaged(value.g);
-             writer.WriteUnmanaged(value.b);
-             writer.WriteUnmanaged(value.a);
-             Debug.Log($"Serialize Color: {value}");
-         }
-
-         public override void Deserialize(ref MemoryPackReader reader, ref Color value)
-         {
-             reader.ReadUnmanaged(out float r);
-             reader.ReadUnmanaged(out float g);
-             reader.ReadUnmanaged(out float b);
-             reader.ReadUnmanaged(out float a);
-             Debug.Log($"Deserialize Color: {value}");
-             value = new Color(r, g, b, a);
-         }
-     }
-
-    // Unity 类型注册器
-    public static class UnityFormatters
-    {
-        public static void Register()
-        {
-            // 使用静态实例注册
-            MemoryPackFormatterProvider.Register(Vector3Formatter.Instance);
-            MemoryPackFormatterProvider.Register(Vector2Formatter.Instance);
-            MemoryPackFormatterProvider.Register(QuaternionFormatter.Instance);
-            MemoryPackFormatterProvider.Register(ColorFormatter.Instance);
-            Debug.Log("UnityFormatters registered");
-            // 如果需要，添加其他 Unity 类型的注册
-            // MemoryPackFormatterProvider.Register(QuaternionFormatter.Instance);
-            // MemoryPackFormatterProvider.Register(ColorFormatter.Instance);
         }
     }
 }
