@@ -106,6 +106,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private InteractSystem _interactSystem;
         private UIHoleOverlay _uiHoleOverlay;
         private GameEventManager _gameEventManager;
+        private List<PredictableStateBase> _predictionStates = new List<PredictableStateBase>();
         
         private BindingKey _propertyBindKey;
         private BindingKey _itemBindKey;
@@ -279,6 +280,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             gameObject.AddComponent<PlayerShopPredictableState>();
             gameObject.AddComponent<PlayerSkillSyncState>();
             gameObject.AddComponent<PropertyPredictionState>();
+            var states = GetComponents<PredictableStateBase>();
+            foreach (var state in states)
+            {
+                _predictionStates.Add(state);
+            }
             _inputState = GetComponent<PlayerInputPredictionState>();
             _propertyPredictionState = GetComponent<PropertyPredictionState>();
             _propertyPredictionState.OnPropertyChanged += HandlePropertyChange;
@@ -451,6 +457,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 PlayerEnvironmentState = _gameStateStream.Value,
                 IsSprinting = inputData.InputAnimations.Any(x => x == AnimationState.Sprint),
             });
+            for (int i = 0; i < _predictionStates.Count; i++)
+            {
+                var state = _predictionStates[i];
+                state.ExecutePredictedCommands(GameSyncManager.CurrentTick);
+            }
         }
 
         private void HandleInputPhysics(PlayerInputStateData inputData)
