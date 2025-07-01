@@ -60,7 +60,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     break; // 未来tick的命令等待执行
                 }
 
-                CommandQueue.Dequeue();
+                command = CommandQueue.Dequeue();
                 Simulate(command);
                 SendCommandToServer(command);
                 Debug.Log($"[PredictableStateBase] Executed predicted command {header.CommandType} at tick {header.Tick}");
@@ -76,7 +76,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         [Command]
         protected virtual void CmdSendCommand(byte[] commandJson)
         {
-            if (!isServer) return;
+            if (!NetworkIdentity.isServer) return;
             
             try
             {
