@@ -101,13 +101,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             return PlayerPredictablePropertyState.Properties[propertyType].CurrentValue;
         }
 
-
-        [Command(channel = Channels.Unreliable)]
-        protected override void CmdSendCommand(byte[] commandJson)
-        {
-            GameSyncManager.EnqueueCommand(commandJson);
-        }
-
         public event Action<PropertyTypeEnum, PropertyCalculator> OnPropertyChanged;
         public event Action<SubjectedStateType> OnStateChanged;
         public event Action<float> OnPlayerDead; 

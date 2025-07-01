@@ -63,12 +63,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             return !inputState.IsEqual(propertyState);
         }
 
-        [Command(channel = Channels.Unreliable)]
-        protected override void CmdSendCommand(byte[] commandJson)
-        {
-            GameSyncManager.EnqueueCommand(commandJson);
-        }
-
         public override void ApplyServerState<T>(T state) 
         {
             if (state is not PlayerInputState propertyState)
@@ -97,14 +91,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             var header = command.GetHeader();
             if (header.CommandType.HasAnyState(CommandType) && command is InputCommand inputCommand && IsInSpecialState?.Invoke() == false)
             {
-                Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
+                //Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
                 var info = _animationConfig.GetAnimationInfo(inputCommand.CommandAnimationState);
                 var actionType = _animationConfig.GetActionType(inputCommand.CommandAnimationState);
                 var health = _propertyPredictionState.GetProperty(PropertyTypeEnum.Health);
                 var skillConfigData = _skillSyncState.GetSkillConfigData(inputCommand.CommandAnimationState);
                 var cost = skillConfigData.id == 0 ? info.cost : skillConfigData.cost;
                 var cooldown = skillConfigData.id == 0 ? info.cooldown : skillConfigData.cooldown;
-                Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
+                //Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
                 if (health == 0 || actionType != ActionType.Movement)
                 {
                     Debug.Log($"[PlayerInputPredictionState] - Player is dead or not in movement state.");
@@ -149,7 +143,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     Command = inputCommand.CommandAnimationState,
                     InputMovement = inputCommand.InputMovement.ToVector3(),
                 });
-                Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
+                //Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
             }
         }
 

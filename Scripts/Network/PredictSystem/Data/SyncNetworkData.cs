@@ -582,21 +582,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     #region InputCommand
 
     [MemoryPackable]
-    public partial struct InputCommand : INetworkCommand
+    public partial class InputCommand : INetworkCommand
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
         public CompressedVector3 InputMovement;
         [MemoryPackOrder(2)]
-        public AnimationState[] InputAnimationStates;
+        public List<AnimationState> InputAnimationStates;
         [MemoryPackOrder(3)]
         public AnimationState CommandAnimationState;
         public NetworkCommandHeader GetHeader() => Header;
 
         public bool IsValid()
         {
-            return InputMovement.ToVector3().magnitude > 0 && InputAnimationStates.Length > 0 && InputAnimationStates.All(a => Enum.IsDefined(typeof(AnimationState), a));
+            return InputMovement.ToVector3().magnitude > 0 && InputAnimationStates!=null;
         }
 
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)

@@ -35,6 +35,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             InputBufferTick = JsonDataConfig.PlayerConfig.InputBufferTick;
             PlayerComponentController = GetComponent<PlayerComponentController>();
             NetworkIdentity = GetComponent<NetworkIdentity>();
+            Debug.Log($"[PredictableStateBase] Initialized with input buffer tick {InputBufferTick}");
         }
 
         // 添加预测命令（不立即执行）
@@ -70,22 +71,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private void SendCommandToServer(INetworkCommand command)
         {
             var json = MemoryPackSerializer.Serialize(command);
-            CmdSendCommand(json);
-        }
-
-        [Command]
-        protected virtual void CmdSendCommand(byte[] commandJson)
-        {
-            if (!NetworkIdentity.isServer) return;
-            
-            try
-            {
-                GameSyncManager.EnqueueCommand(commandJson);
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogError($"Command deserialization failed: {e.Message}");
-            }
+            PlayerComponentController.CmdSendCommand(json);
         }
 
         // 清理已确认的命令
