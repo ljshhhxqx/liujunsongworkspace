@@ -92,11 +92,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         protected override void RegisterState(int connectionId, NetworkIdentity player)
         {
             var playerPredictableState = player.GetComponent<PlayerSkillSyncState>();
-            var inputState = new PlayerSkillState();
-            PropertyStates.TryAdd(connectionId, inputState);
+            var skillState = new PlayerSkillState();
+            skillState.SkillCheckers = new Dictionary<AnimationState, ISkillChecker>();
+            PropertyStates.TryAdd(connectionId, skillState);
             _playerSkillSyncStates.TryAdd(connectionId, playerPredictableState);
+            RpcSetPlayerSkillState(connectionId, MemoryPackSerializer.Serialize(skillState));
         }
 
+
+        [ClientRpc]
+        private void RpcSetPlayerSkillState(int connectionId, byte[] playerSkillState)
+        {
+            var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PlayerSkillSyncState>();
+            var playerState = MemoryPackSerializer.Deserialize<PlayerSkillState>(playerSkillState);
+            syncState.ApplyState(playerState);
+        }
+        
         public override CommandType HandledCommandType => CommandType.Skill;
         public override ISyncPropertyState ProcessCommand(INetworkCommand command)
         {

@@ -51,8 +51,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             playerPredictableState.RegisterState(GetPlayerItemState());
             PropertyStates.TryAdd(connectionId, state);
             _playerItemSyncStates.TryAdd(connectionId, playerPredictableState);
+            RpcSetPlayerItemState(connectionId, MemoryPackSerializer.Serialize(state));
+            
         }
 
+        [ClientRpc]
+        private void RpcSetPlayerItemState(int connectionId, byte[] playerItemState)
+        {
+            var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PlayerItemPredictableState>();
+            var playerState = MemoryPackSerializer.Deserialize<PlayerItemState>(playerItemState);
+            syncState.InitCurrentState(playerState);
+        }
 
         private PlayerItemState GetPlayerItemState()
         {

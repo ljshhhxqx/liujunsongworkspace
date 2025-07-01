@@ -51,7 +51,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             if (CurrentState is PlayerSkillState playerSkillState)
             {
-                var skillChecker = playerSkillState.SkillCheckers[animationState];
+                if (!playerSkillState.SkillCheckers.TryGetValue(animationState, out var skillChecker))
+                {
+                    return default;
+                }
+
                 var skillConfigData = _skillConfig.GetSkillData(skillChecker.GetCommonSkillCheckerHeader().ConfigId);
                 return skillConfigData;
             }

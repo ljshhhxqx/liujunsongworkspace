@@ -102,7 +102,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerInputState = new PlayerInputState(new PlayerGameStateData(), new PlayerAnimationCooldownState());
             PropertyStates.TryAdd(connectionId, playerInputState);
             _inputPredictionStates.TryAdd(connectionId, playerPredictableState);
+            RpcSetPlayerInputState(connectionId, MemoryPackSerializer.Serialize(playerInputState));
             BindAniEvents(connectionId);
+        }
+
+        [ClientRpc]
+        private void RpcSetPlayerInputState(int connectionId, byte[] playerInputState)
+        {
+            var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PlayerInputPredictionState>();
+            var playerState = MemoryPackSerializer.Deserialize<PlayerInputState>(playerInputState);
+            syncState.InitCurrentState(playerState);
         }
 
         [Server]

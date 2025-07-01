@@ -107,7 +107,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 if (NeedsReconciliation(state))
                 {
                     // 重置到服务器状态
-                    CurrentState = state;
+                    InitCurrentState(state);
                     
                     var commands = GetUnconfirmedCommands();
                     // 仅重放未确认的命令
@@ -120,13 +120,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             }
             
             // 非本地玩家直接应用状态
-            CurrentState = state;
+            InitCurrentState(state);
         }
 
         public abstract bool NeedsReconciliation<T>(T state) where T : ISyncPropertyState;
         public abstract void Simulate(INetworkCommand command);
-        public abstract void InitCurrentState();
-        
+
+        public virtual void InitCurrentState<T>(T state) where T : ISyncPropertyState
+        {
+            CurrentState = state;
+        }
+
         // 新增：获取未确认的命令
         public IEnumerable<INetworkCommand> GetUnconfirmedCommands()
         {

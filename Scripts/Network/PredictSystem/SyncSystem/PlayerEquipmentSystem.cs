@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Common;
@@ -65,9 +66,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         protected override void RegisterState(int connectionId, NetworkIdentity player)
         {
             var playerPredictableState = player.GetComponent<PlayerEquipmentSyncState>();
-            var playerInputState = new PlayerEquipmentState();
-            PropertyStates.TryAdd(connectionId, playerInputState);
+            var playerEquipmentState = new PlayerEquipmentState();
+            playerEquipmentState.EquipmentDatas = ImmutableList<EquipmentData>.Empty;
+            PropertyStates.TryAdd(connectionId, playerEquipmentState);
             _playerEquipmentSyncStates.TryAdd(connectionId, playerPredictableState);
+            RpcSetPlayerEquipmentState(connectionId, MemoryPackSerializer.Serialize(playerEquipmentState));
+        }
+
+        [ClientRpc]
+        private void RpcSetPlayerEquipmentState(int connectionId, byte[] playerEquipmentState)
+        {
+            var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PlayerEquipmentSyncState>();
+            var playerState = MemoryPackSerializer.Deserialize<PlayerEquipmentState>(playerEquipmentState);
+            syncState.ApplyState(playerState);
         }
 
         public override CommandType HandledCommandType => CommandType.Equipment;

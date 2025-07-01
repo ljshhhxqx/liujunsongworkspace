@@ -35,7 +35,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             playerPredictableState.SetPlayerShopState(state);
             PropertyStates[connectionId] = state;
             _playerShopSyncStates[connectionId] = playerPredictableState;
-            
+            RpcSetPlayerShopState(connectionId, MemoryPackSerializer.Serialize(state));
+        }
+
+        [ClientRpc]
+        private void RpcSetPlayerShopState(int connectionId, byte[] playerSkillState)
+        {
+            var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PlayerShopPredictableState>();
+            var playerState = MemoryPackSerializer.Deserialize<PlayerShopState>(playerSkillState);
+            syncState.InitCurrentState(playerState);
         }
 
         public override CommandType HandledCommandType => CommandType.Shop;
