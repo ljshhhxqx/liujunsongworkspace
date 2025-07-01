@@ -455,13 +455,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public static readonly Vector3Formatter Instance = new Vector3Formatter();
     
         // 防止外部实例化
-        private Vector3Formatter() {}
+        private Vector3Formatter()
+        {
+            Debug.Log("Vector3Formatter created");
+        }
 
         public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref Vector3 value)
         {
             writer.WriteUnmanaged(value.x);
             writer.WriteUnmanaged(value.y);
             writer.WriteUnmanaged(value.z);
+            Debug.Log($"Serialize Vector3: {value}");
         }
 
         public override void Deserialize(ref MemoryPackReader reader, ref Vector3 value)
@@ -469,6 +473,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             reader.ReadUnmanaged(out float x);
             reader.ReadUnmanaged(out float y);
             reader.ReadUnmanaged(out float z);
+            Debug.Log($"Deserialize Vector3: {value}");
             value = new Vector3(x, y, z);
         }
     }
@@ -478,17 +483,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
     {
         public static readonly Vector2Formatter Instance = new Vector2Formatter();
         private Vector2Formatter() {}
-    
-        public override void Serialize(ref MemoryPackWriter writer, ref Vector2 value)
+
+        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref Vector2 value)
         {
             writer.WriteUnmanaged(value.x);
             writer.WriteUnmanaged(value.y);
+            Debug.Log($"Serialize Vector2: {value}");
         }
 
         public override void Deserialize(ref MemoryPackReader reader, ref Vector2 value)
         {
             reader.ReadUnmanaged(out float x);
             reader.ReadUnmanaged(out float y);
+            Debug.Log($"Deserialize Vector2: {value}");
             value = new Vector2(x, y);
         }
     }
@@ -505,6 +512,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             writer.WriteUnmanaged(value.y);
             writer.WriteUnmanaged(value.z);
             writer.WriteUnmanaged(value.w);
+            Debug.Log($"Serialize Quaternion: {value}");
         }
 
         public override void Deserialize(ref MemoryPackReader reader, ref Quaternion value)
@@ -513,6 +521,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             reader.ReadUnmanaged(out float y);
             reader.ReadUnmanaged(out float z);
             reader.ReadUnmanaged(out float w);
+            Debug.Log($"Deserialize Quaternion: {value}");
             value = new Quaternion(x, y, z, w);
         }
     }
@@ -529,6 +538,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
              writer.WriteUnmanaged(value.g);
              writer.WriteUnmanaged(value.b);
              writer.WriteUnmanaged(value.a);
+             Debug.Log($"Serialize Color: {value}");
          }
 
          public override void Deserialize(ref MemoryPackReader reader, ref Color value)
@@ -537,6 +547,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
              reader.ReadUnmanaged(out float g);
              reader.ReadUnmanaged(out float b);
              reader.ReadUnmanaged(out float a);
+             Debug.Log($"Deserialize Color: {value}");
              value = new Color(r, g, b, a);
          }
      }
@@ -544,8 +555,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
     // Unity 类型注册器
     public static class UnityFormatters
     {
-        // 在程序启动时调用一次
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         public static void Register()
         {
             // 使用静态实例注册
@@ -553,6 +562,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             MemoryPackFormatterProvider.Register(Vector2Formatter.Instance);
             MemoryPackFormatterProvider.Register(QuaternionFormatter.Instance);
             MemoryPackFormatterProvider.Register(ColorFormatter.Instance);
+            Debug.Log("UnityFormatters registered");
             // 如果需要，添加其他 Unity 类型的注册
             // MemoryPackFormatterProvider.Register(QuaternionFormatter.Instance);
             // MemoryPackFormatterProvider.Register(ColorFormatter.Instance);
