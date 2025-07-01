@@ -472,7 +472,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             value = new Vector3(x, y, z);
         }
     }
-// Vector2 序列化器
+    
+    // Vector2 序列化器
     public class Vector2Formatter : MemoryPackFormatter<Vector2>
     {
         public static readonly Vector2Formatter Instance = new Vector2Formatter();
@@ -491,8 +492,56 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             value = new Vector2(x, y);
         }
     }
+    
+    // Quaternion 序列化器
+    public class QuaternionFormatter : MemoryPackFormatter<Quaternion>
+    {
+        public static readonly QuaternionFormatter Instance = new QuaternionFormatter();
+        private QuaternionFormatter() {}
 
-// Unity 类型注册器
+        public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref Quaternion value)
+        {
+            writer.WriteUnmanaged(value.x);
+            writer.WriteUnmanaged(value.y);
+            writer.WriteUnmanaged(value.z);
+            writer.WriteUnmanaged(value.w);
+        }
+
+        public override void Deserialize(ref MemoryPackReader reader, ref Quaternion value)
+        {
+            reader.ReadUnmanaged(out float x);
+            reader.ReadUnmanaged(out float y);
+            reader.ReadUnmanaged(out float z);
+            reader.ReadUnmanaged(out float w);
+            value = new Quaternion(x, y, z, w);
+        }
+    }
+    
+     // Color 序列化器
+     public class ColorFormatter : MemoryPackFormatter<Color>
+     {
+         public static readonly ColorFormatter Instance = new ColorFormatter();
+         private ColorFormatter() {}
+
+         public override void Serialize<TBufferWriter>(ref MemoryPackWriter<TBufferWriter> writer, ref Color value)
+         {
+             writer.WriteUnmanaged(value.r);
+             writer.WriteUnmanaged(value.g);
+             writer.WriteUnmanaged(value.b);
+             writer.WriteUnmanaged(value.a);
+         }
+
+         public override void Deserialize(ref MemoryPackReader reader, ref Color value)
+         {
+             reader.ReadUnmanaged(out float r);
+             reader.ReadUnmanaged(out float g);
+             reader.ReadUnmanaged(out float b);
+             reader.ReadUnmanaged(out float a);
+             value = new Color(r, g, b, a);
+         }
+     }
+
+    // Unity 类型注册器
     public static class UnityFormatters
     {
         // 在程序启动时调用一次
@@ -501,7 +550,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             // 使用静态实例注册
             MemoryPackFormatterProvider.Register(Vector3Formatter.Instance);
-        
+            MemoryPackFormatterProvider.Register(Vector2Formatter.Instance);
+            MemoryPackFormatterProvider.Register(QuaternionFormatter.Instance);
+            MemoryPackFormatterProvider.Register(ColorFormatter.Instance);
             // 如果需要，添加其他 Unity 类型的注册
             // MemoryPackFormatterProvider.Register(QuaternionFormatter.Instance);
             // MemoryPackFormatterProvider.Register(ColorFormatter.Instance);
