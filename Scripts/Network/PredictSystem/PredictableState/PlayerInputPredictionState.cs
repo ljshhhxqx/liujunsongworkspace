@@ -147,7 +147,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 {
                     InputAnimations = inputCommand.InputAnimationStates.ToList(),
                     Command = inputCommand.CommandAnimationState,
-                    InputMovement = inputCommand.InputMovement
+                    InputMovement = inputCommand.InputMovement.ToVector3(),
                 });
                 Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
             }

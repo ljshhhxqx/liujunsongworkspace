@@ -235,7 +235,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
                 var inputStateData = new PlayerInputStateData
                 {
-                    InputMovement = inputCommand.InputMovement,
+                    InputMovement = inputCommand.InputMovement.ToVector3(),
                     InputAnimations = inputCommand.InputAnimationStates.ToList(),
                 };
                 
@@ -318,13 +318,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 }
                 
                 var playerGameStateData = playerController.HandleServerMoveAndAnimation(inputStateData);
+                var inputMovement = inputCommand.InputMovement.ToVector3();
                 PropertyStates[header.ConnectionId] = new PlayerInputState(playerGameStateData, new PlayerAnimationCooldownState(GetCooldownSnapshotData(header.ConnectionId)));
                 Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost} player state {playerGameStateData.AnimationState}");
-                if (inputCommand.InputMovement.magnitude > 0.1f && playerGameStateData.AnimationState == AnimationState.Move || playerGameStateData.AnimationState == AnimationState.Sprint)
+                if (inputMovement.magnitude > 0.1f && playerGameStateData.AnimationState == AnimationState.Move || playerGameStateData.AnimationState == AnimationState.Sprint)
                 {
                     var moveSpeed = playerProperty[PropertyTypeEnum.Speed].CurrentValue;
                     var hpChangedCheckerParameters = MoveCheckerParameters.CreateParameters(
-                        TriggerType.OnHpChange, moveSpeed, moveSpeed * inputCommand.InputMovement.magnitude * GameSyncManager.TickSeconds);
+                        TriggerType.OnHpChange, moveSpeed, moveSpeed * inputMovement.magnitude * GameSyncManager.TickSeconds);
                     GameSyncManager.EnqueueServerCommand(new TriggerCommand
                     {
                         Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
@@ -338,7 +339,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
             if (command is PlayerDeathCommand)
             {
-                playerInputState.PlayerGameStateData.Velocity = Vector3.zero;
+                playerInputState.PlayerGameStateData.Velocity = CompressedVector3.FromVector3( Vector3.zero);
                 playerInputState.PlayerGameStateData.AnimationState = AnimationState.Dead;
                 PropertyStates[header.ConnectionId] = playerInputState;
                 return playerInputState;
@@ -346,11 +347,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             
             if (command is PlayerRebornCommand playerRebornCommand)
             {
-                playerInputState.PlayerGameStateData.Velocity = Vector3.zero;
+                playerInputState.PlayerGameStateData.Velocity = CompressedVector3.FromVector3( Vector3.zero);
                 playerInputState.PlayerGameStateData.AnimationState = AnimationState.Idle;
                 playerInputState.PlayerAnimationCooldownState = playerInputState.PlayerAnimationCooldownState.Reset(playerInputState.PlayerAnimationCooldownState);
                 playerInputState.PlayerGameStateData.Position = playerRebornCommand.RebornPosition;
-                playerInputState.PlayerGameStateData.Quaternion = Quaternion.identity;
+                playerInputState.PlayerGameStateData.Quaternion = CompressedQuaternion.FromQuaternion(Quaternion.identity);
                 playerInputState.PlayerGameStateData.PlayerEnvironmentState = PlayerEnvironmentState.OnGround;
                 PropertyStates[header.ConnectionId] = playerInputState;
                 return playerInputState;

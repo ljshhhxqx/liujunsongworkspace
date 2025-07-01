@@ -664,7 +664,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
     }
 
     [Flags]
-    public enum AnimationState : short
+    public enum AnimationState
     {
         Idle = 1 << 0,
         Move = 1 << 1,

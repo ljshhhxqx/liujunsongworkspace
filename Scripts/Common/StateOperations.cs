@@ -88,8 +88,8 @@ namespace HotUpdate.Scripts.Common
             if (!enumType.IsDefined(typeof(FlagsAttribute), false))
                 throw new ArgumentException($"{enumType.Name} 必须标记为 [Flags]");
 
-            if (Unsafe.SizeOf<T>() != sizeof(byte))
-                throw new ArgumentException($"{enumType.Name} 的底层类型必须为 byte");
+            if (Unsafe.SizeOf<T>() != sizeof(byte) && Unsafe.SizeOf<T>() != sizeof(int) && Unsafe.SizeOf<T>() != sizeof(short))
+                throw new ArgumentException($"{enumType.Name} 的底层类型必须为 byte | int | short");
         }
 
         // 高性能的 ToByte 转换（避免 IConvertible 接口调用）

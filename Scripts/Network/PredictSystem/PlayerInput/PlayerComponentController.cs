@@ -26,6 +26,7 @@ using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Popup;
 using MemoryPack;
 using Mirror;
+using Sirenix.OdinInspector;
 using Tool.GameEvent;
 using UI.UIBase;
 using UniRx;
@@ -439,10 +440,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private void HandleSendNetworkCommand(PlayerInputStateData inputData)
         {
             Debug.Log($"[HandleSendNetworkCommand] inputData.InputMovement->{inputData.InputMovement}  inputData.InputAnimations->{inputData.InputAnimations}  inputData.Command->{inputData.Command}");
+            var compressedVector = CompressedVector3.FromVector3(inputData.InputMovement);
+            var inputCompressedVector = MemoryPackSerializer.Serialize(compressedVector);
+            Debug.Log($"[HandleSendNetworkCommand] inputCompressedVector->{inputCompressedVector}");
             _inputState.AddPredictedCommand(new InputCommand
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Input, CommandAuthority.Client),
-                InputMovement = inputData.InputMovement,
+                InputMovement = CompressedVector3.FromVector3(inputData.InputMovement),
                 InputAnimationStates = inputData.InputAnimations.ToArray(),
                 CommandAnimationState = inputData.Command,
             });
@@ -955,6 +959,50 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             playerControlEffect.SetEffect(controlSkillType);
         }
-        
+
+        private void Update()
+        {
+            if (isLocalPlayer)
+            {
+                if (Input.GetKeyDown(KeyCode.F1))
+                {
+                    TestNetworkCommandHeader();
+                }
+                if (Input.GetKeyDown(KeyCode.F2))
+                {
+                    TestInputAnimationStates();
+                }
+            }
+        }
+
+        [Button]
+        public void TestNetworkCommandHeader()
+        {
+            var header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Input,
+                CommandAuthority.Client);
+            Debug.Log($"TestNetworkCommandHeader -> {header.CommandType} -> {header.CommandId} ->{header.ConnectionId} {header.Timestamp} {header.Authority} {header.Tick}");
+            var data = MemoryPackSerializer.Serialize(header);
+            var originData = MemoryPackSerializer.Deserialize<NetworkCommandHeader>(data);
+            Debug.Log($"TestNetworkCommandHeader -> {originData.CommandType} -> {originData.CommandId} ->{originData.ConnectionId} {originData.Timestamp} {originData.Authority} {originData.Tick}");
+        }
+
+        [Button]
+        public void TestInputAnimationStates()
+        {
+            var inputCommand = new InputCommand();
+            var header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Input,
+                CommandAuthority.Client);
+            var inputMovement = CompressedVector3.FromVector3(new Vector3(0,0,0.125555f));
+            var animationStates = Array.Empty<AnimationState>();
+            inputCommand.Header = header;
+            inputCommand.InputMovement = inputMovement;
+            inputCommand.InputAnimationStates = animationStates;
+            inputCommand.CommandAnimationState = AnimationState.Move;
+            Debug.Log($"TestInputAnimationStates -> {inputCommand.Header.CommandType} -> {inputCommand.Header.CommandId} ->{inputCommand.Header.ConnectionId} {inputCommand.Header.Timestamp} {inputCommand.Header.Authority} {inputCommand.Header.Tick}");
+            var data = MemoryPackSerializer.Serialize(inputCommand);
+            var originData = MemoryPackSerializer.Deserialize<InputCommand>(data);
+            Debug.Log($"TestInputAnimationStates -> {originData.Header.CommandType} -> {originData.Header.CommandId} ->{originData.Header.ConnectionId} {originData.Header.Timestamp} {originData.Header.Authority} {originData.Header.Tick}");
+            Debug.Log($"TestInputAnimationStates -> {originData.InputMovement} -> {originData.InputAnimationStates.Length} -> {originData.CommandAnimationState}");
+        }
     }
 }

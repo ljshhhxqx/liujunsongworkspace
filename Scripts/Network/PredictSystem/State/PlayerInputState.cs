@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.PredictSystem.Data;
 using MemoryPack;
 using UnityEngine;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
@@ -82,11 +83,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     public partial struct PlayerGameStateData
     {
         [MemoryPackOrder(0)] 
-        public Vector3 Position;         // 位置
+        public CompressedVector3 Position;         // 位置
         [MemoryPackOrder(1)] 
-        public Vector3 Velocity;         // rigidbody的速度
+        public CompressedVector3 Velocity;         // rigidbody的速度
         [MemoryPackOrder(2)] 
-        public Quaternion Quaternion;      // 旋转
+        public CompressedQuaternion Quaternion;      // 旋转
         [MemoryPackOrder(3)] 
         public AnimationState AnimationState;   // 当前执行的命令
         [MemoryPackOrder(4)] 
@@ -95,8 +96,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         public bool IsEqual(PlayerGameStateData other)
         {
             return Vector3.Distance(Position, other.Position) < 2f &&
-                   Mathf.Abs(Velocity.magnitude - other.Velocity.magnitude) < 0.05f &&
-                   Quaternion.Angle(Quaternion, other.Quaternion) < 10f &&
+                   Mathf.Abs(Velocity.ToVector3().magnitude - other.Velocity.ToVector3().magnitude) < 0.05f &&
+                   UnityEngine.Quaternion.Angle(Quaternion.ToQuaternion(), other.Quaternion.ToQuaternion()) < 10f &&
                    AnimationState == other.AnimationState &&
                    PlayerEnvironmentState == other.PlayerEnvironmentState;
         }

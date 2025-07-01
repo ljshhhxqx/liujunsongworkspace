@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using AOTScripts.Data;
+using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
@@ -91,7 +93,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         ServerSync,
     }
 
-    public enum CommandAuthority : byte
+    public enum CommandAuthority
     {
         Client,     // 客户端发起
         Server,     // 服务器发起
@@ -100,7 +102,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     
     // 命令类型枚举
     [Flags]
-    public enum CommandType : byte
+    public enum CommandType
     {
         Property,   // 属性相关
         Input,      // 移动相关
@@ -396,12 +398,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(0)] 
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public Vector3 RebornPosition;
+        public CompressedVector3 RebornPosition;
         public NetworkCommandHeader GetHeader() => Header;
 
         public bool IsValid()
         {
-            return RebornPosition != Vector3.zero;
+            return RebornPosition.ToVector3() != Vector3.zero;
         }
 
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
@@ -585,7 +587,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public Vector3 InputMovement;
+        public CompressedVector3 InputMovement;
         [MemoryPackOrder(2)]
         public AnimationState[] InputAnimationStates;
         [MemoryPackOrder(3)]
@@ -594,7 +596,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return InputMovement.magnitude > 0 && InputAnimationStates.Length > 0 && InputAnimationStates.All(a => Enum.IsDefined(typeof(AnimationState), a));
+            return InputMovement.ToVector3().magnitude > 0 && InputAnimationStates.Length > 0 && InputAnimationStates.All(a => Enum.IsDefined(typeof(AnimationState), a));
         }
 
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
@@ -1034,14 +1036,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     {
         [MemoryPackOrder(0)] public NetworkCommandHeader Header;
         [MemoryPackOrder(1)] public int SkillConfigId;
-        [MemoryPackOrder(2)] public Vector3 DirectionNormalized;
+        [MemoryPackOrder(2)] public CompressedVector3 DirectionNormalized;
         [MemoryPackOrder(3)] public bool IsAutoSelectTarget;
         [MemoryPackOrder(4)] public AnimationState KeyCode;
         public NetworkCommandHeader GetHeader() => Header;
 
         public bool IsValid()
         {
-            return SkillConfigId > 0 && DirectionNormalized != Vector3.zero;
+            return SkillConfigId > 0 && DirectionNormalized.ToVector3() != Vector3.zero;
         }
 
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
@@ -1382,5 +1384,100 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         //     writer.Write(header.Timestamp);
         //     return stream.ToArray();
         // }
+    }
+    
+    [MemoryPackable]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)] // 紧密打包
+    public partial struct CompressedVector2
+    {
+        [MemoryPackOrder(0)]
+        public short x;
+        [MemoryPackOrder(1)]
+        public short y;
+
+        public Vector2 ToVector2() => new Vector2(x * 0.001f, y * 0.001f);
+        public static CompressedVector2 FromVector2(Vector2 v) => new CompressedVector2()
+        {
+            x = Math.Clamp((short)(v.x * 1000), short.MinValue, short.MaxValue),
+            y = Math.Clamp((short)(v.y * 1000), short.MinValue, short.MaxValue)
+        };
+        
+        public static implicit operator Vector2(CompressedVector2 v) => v.ToVector2();
+        public static implicit operator CompressedVector2(Vector2 v) => FromVector2(v);
+    }
+    
+    [MemoryPackable]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)] // 紧密打包
+    public partial struct CompressedVector3
+    {
+        [MemoryPackOrder(0)]
+        public float x;
+        [MemoryPackOrder(1)]
+        public float y;
+        [MemoryPackOrder(2)]
+        public float z;
+
+        public Vector3 ToVector3() => new Vector3(x, y, z);
+        public static CompressedVector3 FromVector3(Vector3 v) => new CompressedVector3()
+        {
+            x = v.x,
+            y = v.y,
+            z = v.z
+        };
+        
+        public static implicit operator Vector3(CompressedVector3 v) => v.ToVector3();
+        public static implicit operator CompressedVector3(Vector3 v) => FromVector3(v);
+    }
+    
+    [MemoryPackable]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)] // 紧密打包
+    public partial struct CompressedQuaternion
+    {
+        [MemoryPackOrder(0)]
+        public short x;
+        [MemoryPackOrder(1)]
+        public short y;
+        [MemoryPackOrder(2)]
+        public short z;
+        [MemoryPackOrder(3)]
+        public short w;
+
+        public Quaternion ToQuaternion() => new Quaternion(x * 0.001f, y * 0.001f, z * 0.001f, w * 0.001f);
+        public static CompressedQuaternion FromQuaternion(Quaternion q) => new CompressedQuaternion
+        {
+            x = Math.Clamp((short)(q.x * 1000), short.MinValue, short.MaxValue),
+            y = Math.Clamp((short)(q.y * 1000), short.MinValue, short.MaxValue),
+            z = Math.Clamp((short)(q.z * 1000), short.MinValue, short.MaxValue),
+            w = Math.Clamp((short)(q.w * 1000), short.MinValue, short.MaxValue)
+        };
+        
+        public static implicit operator Quaternion(CompressedQuaternion q) => q.ToQuaternion();
+        public static implicit operator CompressedQuaternion(Quaternion q) => FromQuaternion(q);
+    }
+    
+    [MemoryPackable]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)] // 紧密打包
+    public partial struct CompressedColor
+    {
+        [MemoryPackOrder(0)]
+        public short r;
+        [MemoryPackOrder(1)]
+        public short g;
+        [MemoryPackOrder(2)]
+        public short b;
+        [MemoryPackOrder(3)]
+        public short a;
+
+        public Color ToColor() => new Color(r * 0.001f, g * 0.001f, b * 0.001f, a * 0.001f);
+        public static CompressedColor FromColor(Color q) => new CompressedColor
+        {
+            r = Math.Clamp((short)(q.r * 0.001f), short.MinValue, short.MaxValue),
+            g = Math.Clamp((short)(q.g * 0.001f), short.MinValue, short.MaxValue),
+            b = Math.Clamp((short)(q.b * 0.001f), short.MinValue, short.MaxValue),
+            a = Math.Clamp((short)(q.a * 0.001f), short.MinValue, short.MaxValue)
+        };
+        
+        public static implicit operator Color(CompressedColor c) => c.ToColor();
+        public static implicit operator CompressedColor(Color c) => FromColor(c);
     }
 }

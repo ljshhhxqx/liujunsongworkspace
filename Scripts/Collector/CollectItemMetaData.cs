@@ -1,4 +1,5 @@
 ﻿using System;
+using HotUpdate.Scripts.Network.PredictSystem.Data;
 using MemoryPack;
 using UnityEngine;
 
@@ -76,90 +77,7 @@ namespace HotUpdate.Scripts.Collector
         
     }
     
-    [MemoryPackable]
-    public partial struct CompressedVector2
-    {
-        [MemoryPackOrder(0)]
-        public short x;
-        [MemoryPackOrder(1)]
-        public short y;
-
-        public Vector2 ToVector2() => new Vector2(x * 0.0001f, y * 0.0001f);
-        public static CompressedVector2 FromVector2(Vector2 v) => new CompressedVector2()
-        {
-            x = (short)(v.x * 10000),
-            y = (short)(v.y * 10000),
-        };
-        
-        public static implicit operator Vector2(CompressedVector2 v) => v.ToVector2();
-        public static implicit operator CompressedVector2(Vector2 v) => FromVector2(v);
-    }
     
-    [MemoryPackable]
-    public partial struct CompressedVector3
-    {
-        [MemoryPackOrder(0)]
-        public short x;
-        [MemoryPackOrder(1)]
-        public short y;
-        [MemoryPackOrder(2)]
-        public short z;
-
-        public Vector3 ToVector3() => new Vector3(x * 0.0001f, y * 0.0001f, z * 0.0001f);
-        public static CompressedVector3 FromVector3(Vector3 v) => new CompressedVector3()
-        {
-            x = (short)(v.x * 10000),
-            y = (short)(v.y * 10000),
-            z = (short)(v.z * 10000)
-        };
-        
-        public static implicit operator Vector3(CompressedVector3 v) => v.ToVector3();
-        public static implicit operator CompressedVector3(Vector3 v) => FromVector3(v);
-    }
-    
-    [MemoryPackable]
-    public partial struct CompressedQuaternion
-    {
-        [MemoryPackOrder(0)]
-        public short x;
-        [MemoryPackOrder(1)]
-        public short y;
-        [MemoryPackOrder(2)]
-        public short z;
-        [MemoryPackOrder(3)]
-        public short w;
-
-        public Quaternion ToQuaternion() => new Quaternion(x * 0.0001f, y * 0.0001f, z * 0.0001f, w * 0.0001f);
-        public static CompressedQuaternion FromQuaternion(Quaternion q) => new CompressedQuaternion
-        {
-            x = (short)(q.x * 10000),
-            y = (short)(q.y * 10000),
-            z = (short)(q.z * 10000),
-            w = (short)(q.w * 10000)
-        };
-    }
-    
-    [MemoryPackable]
-    public partial struct CompressedColor
-    {
-        [MemoryPackOrder(0)]
-        public short r;
-        [MemoryPackOrder(1)]
-        public short g;
-        [MemoryPackOrder(2)]
-        public short b;
-        [MemoryPackOrder(3)]
-        public short a;
-
-        public Color ToQuaternion() => new Color(r * 0.0001f, g * 0.0001f, b * 0.0001f, a * 0.0001f);
-        public static CompressedQuaternion FromQuaternion(Quaternion q) => new CompressedQuaternion
-        {
-            x = (short)(q.x * 10000),
-            y = (short)(q.y * 10000),
-            z = (short)(q.z * 10000),
-            w = (short)(q.w * 10000)
-        };
-    }
 
     public enum ColliderType
     {
