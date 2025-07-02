@@ -41,6 +41,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private PlayerSkillSyncSystem _playerSkillSyncSystem;
         private List<IAnimationCooldown> _animationCooldownConfig;
         private CancellationTokenSource _cts = new CancellationTokenSource();
+        protected override CommandType CommandType => CommandType.Input;
 
         [Inject]
         private void InitContainers(IConfigProvider configProvider)

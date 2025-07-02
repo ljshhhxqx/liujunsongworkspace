@@ -26,6 +26,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private PlayerInGameManager _playerInGameManager;
         private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
         private int _currentSkillId;
+        protected override CommandType CommandType => CommandType.Skill;
         
         [Inject]
         private void Init(IConfigProvider configProvider)

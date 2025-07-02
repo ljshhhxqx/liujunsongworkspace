@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.JsonConfig;
@@ -18,7 +19,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
     public abstract class PredictableStateBase : NetworkAutoInjectComponent
     {
         protected abstract ISyncPropertyState CurrentState { get; set; }
-        protected readonly Queue<INetworkCommand> CommandQueue = new Queue<INetworkCommand>();
+        protected readonly ConcurrentQueue<INetworkCommand> CommandQueue = new ConcurrentQueue<INetworkCommand>();
+        protected readonly Dictionary<uint, byte[]> CommandBuffer = new Dictionary<uint, byte[]>();
         protected GameSyncManager GameSyncManager;
         protected JsonDataConfig JsonDataConfig;
         protected PlayerComponentController PlayerComponentController;
@@ -35,17 +37,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             InputBufferTick = JsonDataConfig.PlayerConfig.InputBufferTick;
             PlayerComponentController = GetComponent<PlayerComponentController>();
             NetworkIdentity = GetComponent<NetworkIdentity>();
-            Debug.Log($"[PredictableStateBase] Initialized with input buffer tick {InputBufferTick}");
+           // Debug.Log($"[PredictableStateBase] Initialized with input buffer tick {InputBufferTick}");
         }
 
         // 添加预测命令（不立即执行）
-        public void AddPredictedCommand(INetworkCommand command)
+        public void AddPredictedCommand<T>(T command) where T : INetworkCommand
         {
             var header = command.GetHeader();
             if (!header.CommandType.HasAnyState(CommandType)) return;
             
             CommandQueue.Enqueue(command);
-            Debug.Log($"[PredictableStateBase] Added predicted command {header.CommandType} at tick {header.Tick}");
+            var buffer = NetworkCommandExtensions.Serialize(command);
+            CommandBuffer.Add(header.CommandId, buffer);
+            //Debug.Log($"[PredictableStateBase] Added predicted command {header.CommandType} at tick {header.Tick}");
         }
 
         // 执行当前tick应执行的预测命令
@@ -53,7 +57,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             while (CommandQueue.Count > 0)
             {
-                var command = CommandQueue.Peek();
+                CommandQueue.TryPeek(out var command);
                 var header = command.GetHeader();
                 
                 if (header.Tick > currentTick)
@@ -61,25 +65,35 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     break; // 未来tick的命令等待执行
                 }
 
-                command = CommandQueue.Dequeue();
+                CommandQueue.TryDequeue(out command);
                 Simulate(command);
-                SendCommandToServer(command);
-                Debug.Log($"[PredictableStateBase] Executed predicted command {header.CommandType} at tick {header.Tick}");
+                SendCommandToServer(header.CommandId);
+                //Debug.Log($"[PredictableStateBase] Executed predicted command {header.CommandType} at tick {header.Tick}");
             }
         }
         
-        private void SendCommandToServer(INetworkCommand command)
+        private void SendCommandToServer(uint commandId)
         {
-            var json = MemoryPackSerializer.Serialize<INetworkCommand>(command);
-            PlayerComponentController.CmdSendCommand(json);
+            if (CommandBuffer.TryGetValue(commandId, out var json))
+            {
+                PlayerComponentController.CmdSendCommand(json);
+                CommandBuffer.Remove(commandId);
+                return;
+            }
+
+            Debug.LogError($"[PredictableStateBase] Command {commandId} not found in buffer.");
         }
 
         // 清理已确认的命令
         protected virtual void CleanupConfirmedCommands(int confirmedTick)
         {
-            while (CommandQueue.Count > 0 && CommandQueue.Peek().GetHeader().Tick <= confirmedTick)
+            while (CommandQueue.Count > 0)
             {
-                CommandQueue.Dequeue();
+                if (CommandQueue.TryPeek(out var command) && command.GetHeader().Tick <= confirmedTick)
+                {
+                    CommandQueue.TryDequeue(out _);
+                    CommandBuffer.Remove(command.GetHeader().CommandId);
+                }
             }
             LastConfirmedTick = confirmedTick;
         }

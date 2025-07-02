@@ -243,7 +243,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [Server]
         public void EnqueueCommand(byte[] commandJson)
         {
-            var command = MemoryPackSerializer.Deserialize<INetworkCommand>(commandJson);
+            var command = NetworkCommandExtensions.Deserialize(commandJson);
             var header = command.GetHeader();
             var validCommand = command.ValidateCommand();
             if (!validCommand.IsValid)

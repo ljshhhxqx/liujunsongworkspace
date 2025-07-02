@@ -52,13 +52,204 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     [MemoryPackUnion(32, typeof(SkillLoadCommand))]
     [MemoryPackUnion(33, typeof(TriggerCommand))]
     [MemoryPackUnion(34, typeof(SkillChangedCommand))]
+    [MemoryPackUnion(35, typeof(PropertyUseSkillCommand))]
     public partial interface INetworkCommand
     {
         NetworkCommandHeader GetHeader();
         bool IsValid();
+        NetworkCommandType GetCommandType();
         //void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client);
     }
     
+    public enum NetworkCommandType
+    {
+        PropertyAutoRecover,
+        PropertyClientAnimation,
+        PropertyServerAnimation,
+        PropertyBuff,
+        PropertyAttack,
+        PropertySkill,
+        PropertyEnvironmentChange,
+        Input,
+        Animation,
+        Interaction,
+        ItemsUse,
+        ItemLock,
+        ItemEquip,
+        ItemDrop,
+        ItemExchange,
+        ItemsSell,
+        ItemsBuy,
+        GoldChanged,
+        PropertyInvincibleChanged,
+        PropertyEquipmentPassive,
+        PropertyEquipmentChanged,
+        NoUnionPlayerAddMoreScoreAndGold,
+        Skill,
+        PlayerDeath,
+        PlayerReborn,
+        PlayerTouchedBase,
+        PlayerTraceOtherPlayerHp,
+        ItemsGet,
+        Equipment,
+        Buy,
+        RefreshShop,
+        Sell,
+        SkillLoad,
+        Trigger,
+        SkillChanged,
+        PropertyUseSkill,
+    }
+
+    public static class NetworkCommandExtensions
+    {
+        const byte PROTOCOL_VERSION = 1;
+    
+        // 统一序列化方法
+        public static byte[] Serialize<T>(T command) where T : INetworkCommand
+        {
+            // 获取命令类型ID
+            byte typeId = (byte)command.GetCommandType();
+        
+            // 使用具体类型序列化（不通过接口）
+            byte[] payload = MemoryPackSerializer.Serialize<T>(command);
+        
+            // 创建结果数组
+            byte[] result = new byte[6 + payload.Length];
+        
+            // 设置协议头
+            result[0] = PROTOCOL_VERSION;    // 协议版本
+            result[1] = typeId;              // 命令类型
+            Buffer.BlockCopy(BitConverter.GetBytes(payload.Length), 0, result, 2, 4); // 数据长度
+            Buffer.BlockCopy(payload, 0, result, 6, payload.Length); // 实际数据
+        
+            return result;
+        }
+        
+        // 统一反序列化方法
+        public static INetworkCommand Deserialize(byte[] data)
+        {
+            if (data == null || data.Length < 6)
+            {
+                Debug.LogError($"无效命令数据: 长度={data?.Length}");
+                return null;
+            }
+        
+            // 检查协议版本
+            byte version = data[0];
+            if (version != PROTOCOL_VERSION)
+            {
+                Debug.LogError($"协议版本不匹配: 预期={PROTOCOL_VERSION}, 实际={version}");
+                return null;
+            }
+        
+            // 获取命令类型
+            byte typeId = data[1];
+            var commandType = (NetworkCommandType)typeId;
+        
+            // 获取数据长度
+            int length = BitConverter.ToInt32(data, 2);
+        
+            // 验证长度
+            if (6 + length > data.Length)
+            {
+                Debug.LogError($"数据长度错误: 声明={length}, 实际={data.Length - 6}");
+                return null;
+            }
+        
+            // 提取有效载荷
+            byte[] payload = new byte[length];
+            Buffer.BlockCopy(data, 6, payload, 0, length);
+        
+            // 根据类型反序列化
+            try
+            {
+                return payload.GetCommand();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"反序列化失败 ({commandType}): {ex}");
+                return null;
+            }
+        }
+        
+        public static INetworkCommand GetCommand(this byte[] data)
+        {
+            var type = data[0];
+            return (NetworkCommandType)type switch
+            {
+                NetworkCommandType.PropertyAutoRecover => (INetworkCommand)MemoryPackSerializer
+                    .Deserialize<PropertyAutoRecoverCommand>(data),
+                NetworkCommandType.PropertyClientAnimation => (INetworkCommand)MemoryPackSerializer
+                    .Deserialize<PropertyClientAnimationCommand>(data),
+                NetworkCommandType.PropertyServerAnimation => (INetworkCommand)MemoryPackSerializer
+                    .Deserialize<PropertyServerAnimationCommand>(data),
+                NetworkCommandType.PropertyBuff => (INetworkCommand)MemoryPackSerializer
+                    .Deserialize<PropertyBuffCommand>(data),
+                NetworkCommandType.PropertyAttack => (INetworkCommand)MemoryPackSerializer
+                    .Deserialize<PropertyAttackCommand>(data),
+                NetworkCommandType.PropertySkill => (INetworkCommand)MemoryPackSerializer
+                    .Deserialize<PropertySkillCommand>(data),
+                NetworkCommandType.PropertyEnvironmentChange => (INetworkCommand)MemoryPackSerializer
+                    .Deserialize<PropertyEnvironmentChangeCommand>(data),
+                NetworkCommandType.Input => (INetworkCommand)MemoryPackSerializer.Deserialize<InputCommand>(data),
+                NetworkCommandType.Animation =>
+                    (INetworkCommand)MemoryPackSerializer.Deserialize<AnimationCommand>(data),
+                NetworkCommandType.Interaction => (INetworkCommand)MemoryPackSerializer
+                    .Deserialize<InteractionCommand>(data),
+                NetworkCommandType.ItemsUse =>
+                    (INetworkCommand)MemoryPackSerializer.Deserialize<ItemsUseCommand>(data),
+                NetworkCommandType.ItemLock =>
+                    (INetworkCommand)MemoryPackSerializer.Deserialize<ItemLockCommand>(data),
+                NetworkCommandType.ItemEquip =>
+                    (INetworkCommand)MemoryPackSerializer.Deserialize<ItemEquipCommand>(data),
+                NetworkCommandType.ItemDrop =>
+                    (INetworkCommand)MemoryPackSerializer.Deserialize<ItemDropCommand>(data),
+                NetworkCommandType.ItemExchange => (INetworkCommand)MemoryPackSerializer
+                    .Deserialize<ItemExchangeCommand>(data),
+                NetworkCommandType.ItemsSell =>
+                    (INetworkCommand)MemoryPackSerializer.Deserialize<ItemsSellCommand>(data),
+                NetworkCommandType.ItemsBuy =>
+                    (INetworkCommand)MemoryPackSerializer.Deserialize<ItemsBuyCommand>(data),
+                NetworkCommandType.GoldChanged => (INetworkCommand)MemoryPackSerializer
+                    .Deserialize<GoldChangedCommand>(data),
+                NetworkCommandType.PropertyInvincibleChanged => (INetworkCommand)MemoryPackSerializer
+                    .Deserialize<PropertyInvincibleChangedCommand>(data),
+                NetworkCommandType.PropertyEquipmentPassive => (INetworkCommand)MemoryPackSerializer
+                    .Deserialize<PropertyEquipmentPassiveCommand>(data),
+                NetworkCommandType.PropertyEquipmentChanged => (INetworkCommand)MemoryPackSerializer
+                    .Deserialize<PropertyEquipmentChangedCommand>(data),
+                NetworkCommandType.NoUnionPlayerAddMoreScoreAndGold => (INetworkCommand)MemoryPackSerializer
+                    .Deserialize<NoUnionPlayerAddMoreScoreAndGoldCommand>(data),
+                NetworkCommandType.Skill => (INetworkCommand)MemoryPackSerializer.Deserialize<SkillCommand>(data),
+                NetworkCommandType.PlayerDeath => (INetworkCommand)MemoryPackSerializer
+                    .Deserialize<PlayerDeathCommand>(data),
+                NetworkCommandType.PlayerReborn => (INetworkCommand)MemoryPackSerializer
+                    .Deserialize<PlayerRebornCommand>(data),
+                NetworkCommandType.PlayerTouchedBase => (INetworkCommand)MemoryPackSerializer
+                    .Deserialize<PlayerTouchedBaseCommand>(data),
+                NetworkCommandType.PlayerTraceOtherPlayerHp => (INetworkCommand)MemoryPackSerializer
+                    .Deserialize<PlayerTraceOtherPlayerHpCommand>(data),
+                NetworkCommandType.ItemsGet =>
+                    (INetworkCommand)MemoryPackSerializer.Deserialize<ItemsGetCommand>(data),
+                NetworkCommandType.Equipment =>
+                    (INetworkCommand)MemoryPackSerializer.Deserialize<EquipmentCommand>(data),
+                NetworkCommandType.Buy => (INetworkCommand)MemoryPackSerializer.Deserialize<BuyCommand>(data),
+                NetworkCommandType.RefreshShop => (INetworkCommand)MemoryPackSerializer
+                    .Deserialize<RefreshShopCommand>(data),
+                NetworkCommandType.Sell => (INetworkCommand)MemoryPackSerializer.Deserialize<SellCommand>(data),
+                NetworkCommandType.SkillLoad =>
+                    (INetworkCommand)MemoryPackSerializer.Deserialize<SkillLoadCommand>(data),
+                NetworkCommandType.Trigger =>
+                    (INetworkCommand)MemoryPackSerializer.Deserialize<TriggerCommand>(data),
+                NetworkCommandType.SkillChanged => (INetworkCommand)MemoryPackSerializer
+                    .Deserialize<SkillChangedCommand>(data),
+                NetworkCommandType.PropertyUseSkill => MemoryPackSerializer.Deserialize<PropertyUseSkillCommand>(data),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        }
+    }
+
     // 命令头
     [MemoryPackable]
     public partial struct NetworkCommandHeader
@@ -129,13 +320,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             return true;
         }
 
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
-        }
+        public NetworkCommandType GetCommandType() => NetworkCommandType.PropertyAutoRecover;
     }
     
     [MemoryPackable]
@@ -150,18 +335,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(3)]
         public bool IsSprinting;
         public NetworkCommandHeader GetHeader() => Header;
+        
+        public NetworkCommandType GetCommandType() => NetworkCommandType.PropertyEnvironmentChange;
+        
 
         public bool IsValid()
         {
             return Enum.IsDefined(typeof(PlayerEnvironmentState), PlayerEnvironmentState);
         }
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
-        }
+        
     }
     
     
@@ -178,13 +360,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         {
             return true;
         }
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
-        }
+        public NetworkCommandType GetCommandType() => NetworkCommandType.PropertyInvincibleChanged;
     }
     
     [MemoryPackable]
@@ -196,18 +372,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public AnimationState AnimationState;
         [MemoryPackOrder(2)]
         public int SkillId;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.PropertyClientAnimation;
 
         public NetworkCommandHeader GetHeader() => Header;
         public bool IsValid()
         {
             return Enum.IsDefined(typeof(AnimationState), AnimationState);
-        }
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
         }
     }
     
@@ -220,18 +390,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public AnimationState AnimationState;
 
         [MemoryPackOrder(2)] public int SkillId;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.PropertyServerAnimation;
         
         public NetworkCommandHeader GetHeader() => Header;
         public bool IsValid()
         {
             return Enum.IsDefined(typeof(AnimationState), AnimationState) && AnimationState > 0;
-        }
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
         }
     }
     
@@ -252,6 +416,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public string EquipProperty;
         [MemoryPackOrder(6)]
         public int[] TargetIds;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.PropertyEquipmentPassive;
         
         public NetworkCommandHeader GetHeader()
         {
@@ -263,14 +428,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             return EquipItemConfigId > 0 && EquipItemId > 0 && Enum.IsDefined(typeof(PlayerItemType), PlayerItemType) && !string.IsNullOrEmpty(EquipProperty);
         }
 
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
-            CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
-        }
     }
     
     [MemoryPackable]
@@ -288,6 +445,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public int ItemConfigId;
         [MemoryPackOrder(3)] 
         public EquipmentPart EquipmentPart;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.PropertyEquipmentChanged;
         
         public NetworkCommandHeader GetHeader()
         {
@@ -297,15 +455,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public bool IsValid()
         {
             return EquipConfigId > 0 && EquipItemId > 0;
-        }
-
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
-            CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
         }
     }
     
@@ -317,20 +466,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         [MemoryPackOrder(1)] 
         public int PreNoUnionPlayer;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.NoUnionPlayerAddMoreScoreAndGold;
         
         public NetworkCommandHeader GetHeader() => Header;
         
         public bool IsValid()
         {
             return PreNoUnionPlayer > 0;
-        }
-        
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
         }
     }
     
@@ -347,6 +489,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public BuffExtraData BuffExtraData;
         [MemoryPackOrder(4)]
         public BuffSourceType BuffSourceType;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.PropertyBuff;
 
         public NetworkCommandHeader GetHeader() => Header;
 
@@ -356,13 +499,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 && Enum.IsDefined(typeof(BuffSourceType), BuffSourceType);
         }
         
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
-        }
     }
     
     [MemoryPackable]
@@ -375,18 +511,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(2)]
         public float DeadCountdownTime;
         public NetworkCommandHeader GetHeader() => Header;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.PlayerDeath;
 
         public bool IsValid()
         {
             return KillerId > 0 && DeadCountdownTime > 0;
-        }
-
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
         }
     }
     
@@ -398,18 +527,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(1)]
         public CompressedVector3 RebornPosition;
         public NetworkCommandHeader GetHeader() => Header;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.PlayerReborn;
 
         public bool IsValid()
         {
             return RebornPosition.ToVector3() != Vector3.zero;
-        }
-
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
         }
     }
 
@@ -420,6 +542,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)] 
         public float Gold;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.GoldChanged;
         
         public NetworkCommandHeader GetHeader() => Header;
 
@@ -428,14 +551,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             return Gold > 0;
         }
 
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
-            CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
-        }
     }
 
     [MemoryPackable]
@@ -445,17 +560,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public NetworkCommandHeader Header;
         
         public NetworkCommandHeader GetHeader() => Header;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.PlayerTouchedBase;
         public bool IsValid()
         {
             return true;
-        }
-        
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
         }
     }
 
@@ -467,19 +575,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(1)]
         public int[] TargetConnectionIds;
         public NetworkCommandHeader GetHeader() => Header;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.PlayerTraceOtherPlayerHp;
 
         public bool IsValid()
         {
             return TargetConnectionIds.Length > 0 && TargetConnectionIds.All(t => t > 0);
-        }
-
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
-            CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
         }
     }
 
@@ -492,19 +592,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public int AttackerId;
         [MemoryPackOrder(2)]
         public uint[] TargetIds;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.PropertyAttack;
 
         public NetworkCommandHeader GetHeader() => Header;
         public bool IsValid()
         {
             return TargetIds.Length > 0 && AttackerId > 0 && TargetIds.All(t => t > 0);
-        }
-        
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
         }
     }
 
@@ -518,17 +611,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(2)]
         public int[] HitPlayerIds;
         public NetworkCommandHeader GetHeader() => Header;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.PropertySkill;
         public bool IsValid()
         {
             return SkillId > 0 && HitPlayerIds.Length > 0 && HitPlayerIds.All(t => t > 0);
-        }
-        
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
         }
     }
     
@@ -540,17 +626,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(1)]
         public int SkillConfigId;
         public NetworkCommandHeader GetHeader() => Header;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.PropertyUseSkill;
         public bool IsValid()
         {
             return SkillConfigId > 0;
-        }
-        
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
         }
     }
 
@@ -580,7 +659,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     #region InputCommand
 
     [MemoryPackable]
-    public partial class InputCommand : INetworkCommand
+    public partial struct InputCommand : INetworkCommand
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
@@ -591,6 +670,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(3)]
         public AnimationState CommandAnimationState;
         public NetworkCommandHeader GetHeader() => Header;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.Input;
 
         public bool IsValid()
         {
@@ -615,6 +695,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(2)]
         public AnimationState AnimationState;
         public NetworkCommandHeader GetHeader() => Header;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.SkillChanged;
 
         public bool IsValid()
         {
@@ -643,6 +724,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public AnimationState AnimationState;
 
         public NetworkCommandHeader GetHeader() => Header;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.Animation;
 
         public bool IsValid()
         {
@@ -667,6 +749,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
         public uint[] TargetIds;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.Interaction;
         
         public NetworkCommandHeader GetHeader() => Header;
 
@@ -712,6 +795,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(1)]
         public SlotIndexData[] Slots;
         public NetworkCommandHeader GetHeader() => Header;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.ItemsSell;
 
         public bool IsValid()
         {
@@ -735,6 +819,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(1)]
         public ItemsCommandData[] Items;
         public NetworkCommandHeader GetHeader() => Header;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.ItemsBuy;
 
         public bool IsValid()
         {
@@ -758,6 +843,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(1)]
         public ItemsCommandData[] Items;
         public NetworkCommandHeader GetHeader() => Header;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.ItemsGet;
 
         public bool IsValid()
         {
@@ -781,6 +867,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(1)]
         public SlotIndexData[] Slots;
         public NetworkCommandHeader GetHeader() => Header;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.ItemsUse;
 
         public bool IsValid()
         {
@@ -805,6 +892,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public int SlotIndex;
         [MemoryPackOrder(2)]
         public bool IsLocked;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.ItemLock;
 
         public NetworkCommandHeader GetHeader() => Header;
 
@@ -834,6 +922,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(2)]
         public bool IsEquip;
         public NetworkCommandHeader GetHeader() => Header;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.ItemEquip;
         
         public bool IsValid()
         {
@@ -868,6 +957,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(2)]
         public int ToSlotIndex;
         public NetworkCommandHeader GetHeader() => Header;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.ItemExchange;
         
         public bool IsValid()
         {
@@ -891,6 +981,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(1)]
         public SlotIndexData[] Slots;
         public NetworkCommandHeader GetHeader() => Header;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.ItemDrop;
 
         public bool IsValid()
         {
@@ -927,6 +1018,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public string EquipmentPassiveEffectData;
         [MemoryPackOrder(6)] 
         public string EquipmentMainEffectData;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.Equipment;
 
         public NetworkCommandHeader GetHeader() => Header;
 
@@ -960,6 +1052,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public int Count;
         
         public NetworkCommandHeader GetHeader() => Header;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.Buy;
 
         public bool IsValid()
         {
@@ -983,6 +1076,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public NetworkCommandHeader Header;
         
         public NetworkCommandHeader GetHeader() => Header;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.RefreshShop;
 
         public bool IsValid()
         {
@@ -1008,6 +1102,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public int ItemSlotIndex;
         [MemoryPackOrder(2)]
         public int Count;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.Sell;
         
         public NetworkCommandHeader GetHeader() => Header;
 
@@ -1038,6 +1133,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(3)] public bool IsAutoSelectTarget;
         [MemoryPackOrder(4)] public AnimationState KeyCode;
         public NetworkCommandHeader GetHeader() => Header;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.Skill;
 
         public bool IsValid()
         {
@@ -1061,6 +1157,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(1)] public int SkillConfigId;
         [MemoryPackOrder(2)] public bool IsLoad;
         [MemoryPackOrder(3)] public AnimationState KeyCode;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.SkillLoad;
         
         public NetworkCommandHeader GetHeader() => Header;
 
@@ -1093,6 +1190,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(2)] 
         public byte[] TriggerData;
         public NetworkCommandHeader GetHeader() => Header;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.Trigger;
 
         public bool IsValid()
         {

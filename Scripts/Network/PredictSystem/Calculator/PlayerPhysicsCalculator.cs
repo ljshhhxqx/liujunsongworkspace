@@ -174,7 +174,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
         public void HandleMove(MoveParam moveParam, bool isLocalPlayer = true)
         {
-            Debug.Log($"[HandleMove] START  moveParam.InputMovement-> {moveParam.InputMovement}  moveParam.IsClearVelocity-> {moveParam.IsClearVelocity} moveParam.IsMovingState-> {moveParam.IsMovingState}  moveParam.CameraForward-> {moveParam.CameraForward}  moveParam.DeltaTime-> {moveParam.DeltaTime} isLocalPlayer-> {isLocalPlayer}");
+            //Debug.Log($"[HandleMove] START  moveParam.InputMovement-> {moveParam.InputMovement}  moveParam.IsClearVelocity-> {moveParam.IsClearVelocity} moveParam.IsMovingState-> {moveParam.IsMovingState}  moveParam.CameraForward-> {moveParam.CameraForward}  moveParam.DeltaTime-> {moveParam.DeltaTime} isLocalPlayer-> {isLocalPlayer}");
             var hasMovementInput = moveParam.InputMovement.magnitude > 0f;
             Vector3 movement;
             if (_playerEnvironmentState == PlayerEnvironmentState.OnStairs)

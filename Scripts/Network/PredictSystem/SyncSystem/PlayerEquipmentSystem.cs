@@ -22,6 +22,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
     {
         private readonly Dictionary<int, PlayerEquipmentSyncState> _playerEquipmentSyncStates = new Dictionary<int, PlayerEquipmentSyncState>();
         private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
+        protected override CommandType CommandType => CommandType.Equipment;
         
         protected override void OnGameStart(bool isGameStarted)
         {

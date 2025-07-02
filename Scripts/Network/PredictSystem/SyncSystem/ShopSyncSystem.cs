@@ -13,6 +13,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
     public class ShopSyncSystem : BaseSyncSystem
     {
         private readonly Dictionary<int, PlayerShopPredictableState> _playerShopSyncStates = new Dictionary<int, PlayerShopPredictableState>();
+        protected override CommandType CommandType => CommandType.Shop;
         protected override void OnClientProcessStateUpdate(byte[] state)
         {
             var playerStates = MemoryPackSerializer.Deserialize<Dictionary<int, PlayerShopState>>(state);

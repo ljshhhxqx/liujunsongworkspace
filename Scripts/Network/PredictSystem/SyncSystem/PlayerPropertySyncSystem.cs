@@ -55,6 +55,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private BattleEffectConditionConfig _battleEffectConfig;
         private float _timeBuffTimer;
         private readonly List<(BuffBase, int)> _previousNoUnionPlayerBuff = new List<(BuffBase, int)>();
+        protected override CommandType CommandType => CommandType.Property;
         
         public event Action<int, PropertyTypeEnum, float> OnPropertyChange;
         

@@ -4,6 +4,7 @@ using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using MemoryPack;
 using Mirror;
+using UnityEngine;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
@@ -13,6 +14,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         protected readonly Dictionary<int, ISyncPropertyState> PropertyStates = new Dictionary<int, ISyncPropertyState>();
         //存储若干个字典，字典的key为客户端的connectionId，value为客户端具体重写的IPredictableState
         protected GameSyncManager GameSyncManager { get; private set; }
+        protected abstract CommandType CommandType { get; }
 
         public virtual void Initialize(GameSyncManager gameSyncManager)
         {
@@ -77,8 +79,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         protected virtual void OnServerProcessCommand(INetworkCommand command)
         {
+            if (command.GetHeader().CommandType != CommandType)
+            {
+                return;
+            }
             if (!ValidateCommand(command))
             {
+                Debug.LogError($"{GetType().ToString()} not valid command type {command.GetHeader().CommandType} for {CommandType} or Command is not Valid");
                 return;
             }
             ProcessCommand(command);

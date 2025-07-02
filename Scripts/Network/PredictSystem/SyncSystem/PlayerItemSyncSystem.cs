@@ -21,6 +21,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private WeaponConfig _weaponConfig;
         private ArmorConfig _armorConfig;
         private InteractSystem _interactSystem;
+        protected override CommandType CommandType => CommandType.Item;
 
         [Inject]
         private void Init(IConfigProvider configProvider)
