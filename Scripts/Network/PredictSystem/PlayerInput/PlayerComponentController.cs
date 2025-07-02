@@ -433,13 +433,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             // var compressedVector = CompressedVector3.FromVector3(inputData.InputMovement);
             // var inputCompressedVector = MemoryPackSerializer.Serialize(compressedVector);
             // Debug.Log($"[HandleSendNetworkCommand] inputCompressedVector->{inputCompressedVector}");
-            if(!isLocalPlayer) return;
-            var animations = new List<AnimationState>(inputData.InputAnimations);
             _inputState.AddPredictedCommand(new InputCommand
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Input, CommandAuthority.Client),
                 InputMovement = CompressedVector3.FromVector3(inputData.InputMovement),
-                InputAnimationStates = animations,
+                InputAnimationStates = inputData.InputAnimations,
                 CommandAnimationState = inputData.Command,
             });
             _propertyPredictionState.AddPredictedCommand(new PropertyAutoRecoverCommand
@@ -451,7 +449,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Property, CommandAuthority.Client),
                 HasInputMovement = inputData.InputMovement.magnitude > 0.1f,
                 PlayerEnvironmentState = _gameStateStream.Value,
-                IsSprinting = animations.Any(x => x == AnimationState.Sprint),
+                IsSprinting = inputData.InputAnimations.HasAnyState(AnimationState.Sprint),
             });
             for (int i = 0; i < _predictionStates.Count; i++)
             {
@@ -618,7 +616,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             return new DetermineAnimationStateParams
             {
                 InputMovement = inputData.InputMovement,
-                InputAnimationStates = inputData.InputAnimations.ToList(),                
+                InputAnimationStates = inputData.InputAnimations,                
                 GroundDistance = _groundDistanceStream.Value,
                 EnvironmentState = _gameStateStream.Value,
             };            
@@ -627,7 +625,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private PlayerGameStateData HandleMoveAndAnimation(PlayerInputStateData inputData)
         {
-            Debug.Log($"[HandleMoveAndAnimation]- inputData.InputMovement ->{inputData.InputMovement} inputData.InputAnimations.Count ->{inputData.InputAnimations.Count} inputData.Command->{inputData.Command}");
+            Debug.Log($"[HandleMoveAndAnimation]- inputData.InputMovement ->{inputData.InputMovement} inputData.InputAnimations.Count ->{inputData.InputAnimations} inputData.Command->{inputData.Command}");
             var cameraForward = Vector3.Scale(_camera.transform.forward, new Vector3(1, 0, 1)).normalized;
             //移动
             _playerPhysicsCalculator.HandleMove(new MoveParam
@@ -952,14 +950,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             playerControlEffect.SetEffect(controlSkillType);
         }
         
-        [Command(channel = Channels.Unreliable)]
+        [Command]/*(channel = Channels.Unreliable)*/
         public void CmdSendCommand(byte[] commandJson)
         {
             try
             {
                 _gameSyncManager.EnqueueCommand(commandJson);
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 Debug.LogError($"Command deserialization failed: {e.Message}");
             }
@@ -980,8 +978,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
         }
 
-        [Button]
-        public void TestNetworkCommandHeader()
+        private void TestNetworkCommandHeader()
         {
             var header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Input,
                 CommandAuthority.Client);
@@ -991,23 +988,32 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             Debug.Log($"TestNetworkCommandHeader -> {originData.CommandType} -> {originData.CommandId} ->{originData.ConnectionId} {originData.Timestamp} {originData.Authority} {originData.Tick}");
         }
 
-        [Button]
-        public void TestInputAnimationStates()
+        private void TestInputAnimationStates()
         {
             var inputCommand = new InputCommand();
             var header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Input,
                 CommandAuthority.Client);
             var inputMovement = CompressedVector3.FromVector3(new Vector3(0,0,0.125555f));
-            var animationStates = new List<AnimationState>();
             inputCommand.Header = header;
             inputCommand.InputMovement = inputMovement;
-            inputCommand.InputAnimationStates = animationStates;
+            inputCommand.InputAnimationStates = AnimationState.Attack;
             inputCommand.CommandAnimationState = AnimationState.Move;
             Debug.Log($"TestInputAnimationStates -> {inputCommand.Header.CommandType} -> {inputCommand.Header.CommandId} ->{inputCommand.Header.ConnectionId} {inputCommand.Header.Timestamp} {inputCommand.Header.Authority} {inputCommand.Header.Tick}");
             var data = MemoryPackSerializer.Serialize(inputCommand);
-            var originData = MemoryPackSerializer.Deserialize<InputCommand>(data);
-            Debug.Log($"TestInputAnimationStates -> {originData.Header.CommandType} -> {originData.Header.CommandId} ->{originData.Header.ConnectionId} {originData.Header.Timestamp} {originData.Header.Authority} {originData.Header.Tick}");
-            Debug.Log($"TestInputAnimationStates -> {originData.InputMovement} -> {originData.InputAnimationStates.Count} -> {originData.CommandAnimationState}");
+            var originData = MemoryPackSerializer.Deserialize<INetworkCommand>(data);
+            var headerData = originData.GetHeader();
+            Debug.Log($"TestInputAnimationStates -> {headerData.CommandType} -> {headerData.CommandId} ->{headerData.ConnectionId} {headerData.Timestamp} {headerData.Authority} {headerData.Tick}");
         }
     }
+    
+    // [MemoryPackable(GenerateType.NoGenerate)]
+    // public partial interface ITestInterface
+    // {
+    //     
+    // }
+    //
+    // public partial class MyClass
+    // {
+    //     
+    // }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using UnityEngine;
@@ -271,12 +272,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return DetermineAnimationStateByInput(parameters.InputMovement, parameters.InputAnimationStates);
         }
         
-        private AnimationState DetermineAnimationStateByInput(Vector3 inputMovement, List<AnimationState> inputStates)
+        private AnimationState DetermineAnimationStateByInput(Vector3 inputMovement, AnimationState inputStates)
         {
             // 处理移动状态
             if (inputMovement.magnitude >= _animationConstant.InputThreshold)
             {
-                return inputStates.Any(state => state == AnimationState.Sprint) ? AnimationState.Sprint : AnimationState.Move;
+                return inputStates.HasAnyState(AnimationState.Sprint) ? AnimationState.Sprint : AnimationState.Move;
             }
 
             return AnimationState.Idle;
@@ -287,9 +288,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return state is AnimationState.Dead or AnimationState.Hit or AnimationState.Attack or AnimationState.Roll or AnimationState.SkillQ or AnimationState.SkillE;
         }
         
-        private bool HasAnimation(List<AnimationState> animationStates, AnimationState animationState)
+        private bool HasAnimation(AnimationState animationStates, AnimationState animationState)
         {
-            return animationStates.Any(state => animationState == state);
+            return animationStates.HasAnyState(animationState);
         }
         
         public void SetGroundDistance(float distance)
@@ -416,9 +417,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public Vector3 InputMovement;
         public PlayerEnvironmentState EnvironmentState;
         public float GroundDistance;
-        public List<AnimationState> InputAnimationStates;
+        public AnimationState InputAnimationStates;
         
-        public DetermineAnimationStateParams(Vector3 inputMovement, PlayerEnvironmentState environmentState, float groundDistance, List<AnimationState> inputAnimationStates)
+        public DetermineAnimationStateParams(Vector3 inputMovement, PlayerEnvironmentState environmentState, float groundDistance, AnimationState inputAnimationStates)
         {
             InputMovement = inputMovement;
             EnvironmentState = environmentState;

@@ -70,7 +70,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         
         private void SendCommandToServer(INetworkCommand command)
         {
-            var json = MemoryPackSerializer.Serialize(command);
+            var json = MemoryPackSerializer.Serialize<INetworkCommand>(command);
             PlayerComponentController.CmdSendCommand(json);
         }
 

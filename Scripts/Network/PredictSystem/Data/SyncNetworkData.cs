@@ -4,10 +4,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using AOTScripts.Data;
-using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using MemoryPack;
 using Mirror;
@@ -58,7 +56,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     {
         NetworkCommandHeader GetHeader();
         bool IsValid();
-        void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client);
+        //void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client);
     }
     
     // 命令头
@@ -589,14 +587,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(1)]
         public CompressedVector3 InputMovement;
         [MemoryPackOrder(2)]
-        public List<AnimationState> InputAnimationStates;
+        public AnimationState InputAnimationStates;
         [MemoryPackOrder(3)]
         public AnimationState CommandAnimationState;
         public NetworkCommandHeader GetHeader() => Header;
 
         public bool IsValid()
         {
-            return InputMovement.ToVector3().magnitude > 0 && InputAnimationStates!=null;
+            return InputMovement.ToVector3().magnitude > 0 && Enum.IsDefined(typeof(AnimationState), InputAnimationStates) && Enum.IsDefined(typeof(AnimationState), CommandAnimationState);
         }
 
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
@@ -1480,4 +1478,5 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public static implicit operator Color(CompressedColor c) => c.ToColor();
         public static implicit operator CompressedColor(Color c) => FromColor(c);
     }
+    
 }

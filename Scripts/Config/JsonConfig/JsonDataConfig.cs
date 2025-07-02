@@ -666,6 +666,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
     [Flags]
     public enum AnimationState
     {
+        None = 0,
         Idle = 1 << 0,
         Move = 1 << 1,
         Sprint = 1 << 2,
@@ -680,7 +681,6 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         Collect = 1 << 11,
         SkillE = 1 << 12,
         SkillQ = 1 << 13,
-        None = 0,
     }
     
     [Serializable]

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HotUpdate.Scripts.Common;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -27,9 +28,9 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             }
         }
 
-        public List<AnimationState> GetAllActiveActions()
+        public AnimationState GetAllActiveActions()
         {
-            var activeKeys = new List<AnimationState>();
+            var activeKeys = AnimationState.None;
             foreach (var data in keyAnimationConfigData)
             {
                 if (data.isComboKey)
@@ -44,13 +45,13 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                     }
                     if (isComboKeysPressed)
                     {
-                        activeKeys.Add(data.animationState);
+                        activeKeys =activeKeys.AddState(data.animationState);
                     }
                 }
                 else
                 {
                     if (Input.GetButtonDown(data.animationKeys[0]))
-                        activeKeys.Add(data.animationState);
+                        activeKeys =activeKeys.AddState(data.animationState);
                 }
             }
             return activeKeys;

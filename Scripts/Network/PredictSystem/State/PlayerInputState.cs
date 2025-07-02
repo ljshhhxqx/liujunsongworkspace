@@ -35,7 +35,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     public struct PlayerInputStateData
     {
         public Vector3 InputMovement;   // 输入的移动
-        public List<AnimationState> InputAnimations; // 输入指令的动画
+        public AnimationState InputAnimations; // 输入指令的动画
         public AnimationState Command; // 指令
     }
 

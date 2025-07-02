@@ -248,7 +248,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var validCommand = command.ValidateCommand();
             if (!validCommand.IsValid)
             {
-                Debug.LogError($"Invalid command: {header.CommandType}");
+                Debug.LogError($"Invalid command: {header.CommandType} - {header.CommandId} - {validCommand}");
                 return;
             }
             _clientCommands.Enqueue(command);

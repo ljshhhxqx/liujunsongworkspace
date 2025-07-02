@@ -76,7 +76,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _isApplyingState = false;
         }
 
-        public List<AnimationState> GetAnimationStates()
+        public AnimationState GetAnimationStates()
         {
             return _keyAnimationConfig.GetAllActiveActions();
         }
@@ -139,7 +139,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
                 OnPlayerInputStateChanged?.Invoke(new PlayerInputStateData
                 {
-                    InputAnimations = inputCommand.InputAnimationStates.ToList(),
+                    InputAnimations = inputCommand.InputAnimationStates,
                     Command = inputCommand.CommandAnimationState,
                     InputMovement = inputCommand.InputMovement.ToVector3(),
                 });
