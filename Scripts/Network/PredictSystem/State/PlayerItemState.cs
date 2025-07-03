@@ -79,6 +79,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 _playerSlotIndexItemConfigIdCache = value;
             }
         }
+        public PlayerSyncStateType GetStateType() => PlayerSyncStateType.PlayerItem;
         
         [MemoryPackOnSerializing]
         private void OnSerializing()

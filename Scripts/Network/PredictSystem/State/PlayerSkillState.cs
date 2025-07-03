@@ -9,6 +9,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     public partial class PlayerSkillState : ISyncPropertyState
     {
         [MemoryPackIgnore] public Dictionary<AnimationState, ISkillChecker> SkillCheckers;
+        public PlayerSyncStateType GetStateType() => PlayerSyncStateType.PlayerSkill;
     }
 
 }

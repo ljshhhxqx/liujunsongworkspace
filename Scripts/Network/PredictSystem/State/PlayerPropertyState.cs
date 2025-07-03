@@ -79,6 +79,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 }
             }
         }
+        public PlayerSyncStateType GetStateType() => PlayerSyncStateType.PlayerProperty;
 
         // 修改属性访问方式
         public PropertyCalculator GetCalculator(PropertyTypeEnum type)

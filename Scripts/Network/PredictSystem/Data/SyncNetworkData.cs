@@ -103,7 +103,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
     public static class NetworkCommandExtensions
     {
-        const byte PROTOCOL_VERSION = 1;
+        const byte COMMAND_PROTOCOL_VERSION = 1;
+        const byte PLAYERSTATE_PROTOCOL_VERSION = 2;
     
         // 统一序列化方法
         public static byte[] Serialize<T>(T command) where T : INetworkCommand
@@ -118,7 +119,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             byte[] result = new byte[6 + payload.Length];
         
             // 设置协议头
-            result[0] = PROTOCOL_VERSION;    // 协议版本
+            result[0] = COMMAND_PROTOCOL_VERSION;    // 协议版本
             result[1] = typeId;              // 命令类型
             Buffer.BlockCopy(BitConverter.GetBytes(payload.Length), 0, result, 2, 4); // 数据长度
             Buffer.BlockCopy(payload, 0, result, 6, payload.Length); // 实际数据
@@ -137,9 +138,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         
             // 检查协议版本
             byte version = data[0];
-            if (version != PROTOCOL_VERSION)
+            if (version != COMMAND_PROTOCOL_VERSION)
             {
-                Debug.LogError($"协议版本不匹配: 预期={PROTOCOL_VERSION}, 实际={version}");
+                Debug.LogError($"协议版本不匹配: 预期={COMMAND_PROTOCOL_VERSION}, 实际={version}");
                 return null;
             }
         

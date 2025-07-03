@@ -14,6 +14,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         private ShopItemData[] _randomShopItems;
         [MemoryPackIgnore]
         private Dictionary<int, ShopItemData> _randomShopItemsDict;
+        public PlayerSyncStateType GetStateType() => PlayerSyncStateType.PlayerShop;
         
         [MemoryPackIgnore]
         public Dictionary<int, ShopItemData> RandomShopItemsDict

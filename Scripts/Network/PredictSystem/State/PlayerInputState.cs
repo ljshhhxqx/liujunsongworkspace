@@ -13,6 +13,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     {
         [MemoryPackOrder(0)] public PlayerGameStateData PlayerGameStateData;
         [MemoryPackOrder(1)] public PlayerAnimationCooldownState PlayerAnimationCooldownState;
+        public PlayerSyncStateType GetStateType() => PlayerSyncStateType.PlayerInput;
         
         [MemoryPackConstructor]
         public PlayerInputState(PlayerGameStateData playerGameStateData, PlayerAnimationCooldownState playerAnimationCooldownState)

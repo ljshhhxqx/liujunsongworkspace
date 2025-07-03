@@ -26,6 +26,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     [MemoryPackUnion(5, typeof(PlayerSkillState))]
     public partial interface ISyncPropertyState
     {
-        
+        public PlayerSyncStateType GetStateType();
+    }
+    
+    public enum PlayerSyncStateType
+    {
+        PlayerInput,
+        PlayerProperty,
+        PlayerItem,
+        PlayerEquipment,
+        PlayerShop,
+        PlayerSkill,
     }
 }

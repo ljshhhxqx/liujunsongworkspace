@@ -17,6 +17,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     {
         [MemoryPackOrder(0)]
         public ImmutableList<EquipmentData> EquipmentDatas;
+        public PlayerSyncStateType GetStateType() => PlayerSyncStateType.PlayerEquipment;
 
         public static bool TryUnequipped(ref PlayerEquipmentState equipmentState, int itemId, EquipmentPart equipmentPartType)
         {
