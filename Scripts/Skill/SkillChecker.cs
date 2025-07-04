@@ -9,13 +9,7 @@ using UnityEngine;
 
 namespace HotUpdate.Scripts.Skill
 {
-    [MemoryPackable(GenerateType.NoGenerate)]
-    [MemoryPackUnion(0, typeof(AreaOfRangedSkillChecker))]
-    [MemoryPackUnion(1, typeof(SingleTargetFlyEffectSkillChecker))]
-    [MemoryPackUnion(2, typeof(DashSkillChecker))]
-    [MemoryPackUnion(3, typeof(AreaOfRangedFlySkillChecker))]
-    [MemoryPackUnion(4, typeof(AreaOfRangedDelayedSkillChecker))]
-    public partial interface ISkillChecker
+    public interface ISkillChecker
     {
         bool IsSkillNotInCd();
         bool IsSkillEffect();
@@ -28,6 +22,7 @@ namespace HotUpdate.Scripts.Skill
         void Destroy();
         int[] UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc);
         Vector3 GetSkillEffectPosition();
+        SkillEffectLifeCycle GetSkillEffectLifeCycle();
     }
 
     public static class SkillCheckerExtensions
@@ -39,56 +34,37 @@ namespace HotUpdate.Scripts.Skill
         }
     }
 
-    [MemoryPackable]
-    public partial struct CommonSkillCheckerHeader
+    public struct CommonSkillCheckerHeader
     {
-        [MemoryPackOrder(0)]
         public int ConfigId;
-        [MemoryPackOrder(1)]
         public float CooldownTime;
-        [MemoryPackOrder(2)]
         public string SkillEffectPrefabName;
-        [MemoryPackOrder(3)] public float MaxDistance;
-        [MemoryPackOrder(4)] public float ExistTime;
-        [MemoryPackOrder(5)] public float Radius;
-        [MemoryPackOrder(6)] public bool IsAreaOfRanged;
+        public float MaxDistance;
+        public float ExistTime;
+        public float Radius;
+        public bool IsAreaOfRanged;
     }
 
-    [MemoryPackable]
-    public partial struct SkillCheckerParams
+    public struct SkillCheckerParams
     {
-        [MemoryPackOrder(0)]
         public Vector3 PlayerPosition;
-        [MemoryPackOrder(1)]
         public Vector3 TargetPosition;
-        [MemoryPackOrder(2)]
         public float Radius;
     }
 
     //技能的生命周期
-    [MemoryPackable]
-    public partial class SkillEffectLifeCycle
+    public class SkillEffectLifeCycle
     { 
-        [MemoryPackOrder(0)]
         public Vector3 Origin;
-        [MemoryPackOrder(1)]
         public Vector3 Target;
-        [MemoryPackOrder(2)]
         public float Size;
-        [MemoryPackOrder(3)]
         public float Speed;
-        [MemoryPackOrder(4)]
         public float CurrentTime;
-        [MemoryPackOrder(5)]
         public float ExpectationTime;
-        [MemoryPackOrder(6)]
         public SkillEffectFlyType SkillEffectFlyType;
-        [MemoryPackOrder(7)]
         public Vector3 CurrentPosition;
-        [MemoryPackOrder(8)]
         public List<SkillEventData> SkillEventData;
 
-        [MemoryPackIgnore]
         public IColliderConfig ColliderConfig { get; }
 
         public event Action OnDestroy;
@@ -153,23 +129,18 @@ namespace HotUpdate.Scripts.Skill
         }
     }
 
-    //飞行技能、命中后造成单体持续伤害的技能
-    [MemoryPackable]
-    public partial class SingleTargetFlyEffectSkillChecker : ISkillChecker
+    public class SingleTargetFlyEffectSkillChecker : ISkillChecker
     {
-        [MemoryPackOrder(0)]
         public CooldownHeader CooldownHeader;
-        [MemoryPackOrder(1)]
         public CommonSkillCheckerHeader CommonSkillCheckerHeader;
-        [MemoryPackOrder(3)] 
         public SkillEffectLifeCycle SkillEffectLifeCycle;
-        [MemoryPackOrder(4)] 
         public float FlyDistance;
         public float GetFlyDistance() => FlyDistance;
         public bool IsSkillNotInCd()
         {
             return this.IsSkillNotCd();
         }
+        public SkillEffectLifeCycle GetSkillEffectLifeCycle() => SkillEffectLifeCycle;
 
         public bool IsSkillEffect()
         {
@@ -222,16 +193,11 @@ namespace HotUpdate.Scripts.Skill
     }
     
     //位移技能
-    [MemoryPackable]
-    public partial class DashSkillChecker : ISkillChecker
+    public class DashSkillChecker : ISkillChecker
     {
-        [MemoryPackOrder(0)]
         public CooldownHeader CooldownHeader;
-        [MemoryPackOrder(1)]
         public CommonSkillCheckerHeader CommonSkillCheckerHeader;
-        [MemoryPackOrder(2)] 
         public SkillEffectLifeCycle SkillEffectLifeCycle;
-        [MemoryPackOrder(3)] 
         public float FlyDistance;
         public float GetFlyDistance() => FlyDistance;
         public CooldownHeader GetCooldownHeader() => CooldownHeader;
@@ -245,6 +211,7 @@ namespace HotUpdate.Scripts.Skill
             return SkillEffectLifeCycle != null;
         }
         public Vector3 GetSkillEffectPosition() => SkillEffectLifeCycle.CurrentPosition;
+        public SkillEffectLifeCycle GetSkillEffectLifeCycle() => SkillEffectLifeCycle;
 
         public CommonSkillCheckerHeader GetCommonSkillCheckerHeader() => CommonSkillCheckerHeader;
         
@@ -286,12 +253,9 @@ namespace HotUpdate.Scripts.Skill
         } 
     }
     
-    [MemoryPackable]
-    public partial struct SkillEventData
+    public struct SkillEventData
     {
-        [MemoryPackOrder(0)]
         public SkillEventType SkillEventType;
-        [MemoryPackOrder(1)]
         public float FireTime;
 
         public bool UpdateAndCheck(float currentTime)
@@ -299,18 +263,14 @@ namespace HotUpdate.Scripts.Skill
             return currentTime >= FireTime;
         }
     }
-
-    [MemoryPackable]
-    public partial class AreaOfRangedFlySkillChecker : ISkillChecker
+    
+    public class AreaOfRangedFlySkillChecker : ISkillChecker
     {
-        [MemoryPackOrder(0)]
         public CooldownHeader CooldownHeader;
-        [MemoryPackOrder(1)]
         public CommonSkillCheckerHeader CommonSkillCheckerHeader;
-        [MemoryPackOrder(2)] 
         public SkillEffectLifeCycle SkillEffectLifeCycle;
-        [MemoryPackOrder(3)] 
         public float FlyDistance;
+        public SkillEffectLifeCycle GetSkillEffectLifeCycle() => SkillEffectLifeCycle;
 
         
         public AreaOfRangedFlySkillChecker(CooldownHeader cooldownHeader, CommonSkillCheckerHeader commonSkillCheckerHeader,SkillEffectLifeCycle skillEffectLifeCycle)
@@ -369,18 +329,13 @@ namespace HotUpdate.Scripts.Skill
         }
     }
     
-    //技能引导后立即在目标出释放的范围技能
-    [MemoryPackable]
-    public partial class AreaOfRangedSkillChecker : ISkillChecker
+    public class AreaOfRangedSkillChecker : ISkillChecker
     {
-        [MemoryPackOrder(0)]
         public CooldownHeader CooldownHeader;
-        [MemoryPackOrder(1)]
         public CommonSkillCheckerHeader CommonSkillCheckerHeader;
-        [MemoryPackOrder(2)] 
         public SkillEffectLifeCycle SkillEffectLifeCycle;
-        [MemoryPackOrder(3)] 
         public float FlyDistance;
+        public SkillEffectLifeCycle GetSkillEffectLifeCycle() => SkillEffectLifeCycle;
 
         public AreaOfRangedSkillChecker(CooldownHeader cooldownHeader, CommonSkillCheckerHeader commonSkillCheckerHeader, SkillEffectLifeCycle skillEffectLifeCycle)
         {
@@ -439,19 +394,14 @@ namespace HotUpdate.Scripts.Skill
     }
     
     //延时一段时间造成效果的技能(立即在目标处释放)
-    [MemoryPackable]
-    public partial class AreaOfRangedDelayedSkillChecker : ISkillChecker
+    public class AreaOfRangedDelayedSkillChecker : ISkillChecker
     {
-        [MemoryPackOrder(0)]
         public CooldownHeader CooldownHeader;
-        [MemoryPackOrder(1)]
         public CommonSkillCheckerHeader CommonSkillCheckerHeader;
-        [MemoryPackOrder(2)] 
         public SkillEffectLifeCycle SkillEffectLifeCycle;
-        [MemoryPackOrder(3)] 
         public float FlyDistance;
         public Vector3 GetSkillEffectPosition() => SkillEffectLifeCycle.CurrentPosition;
-
+        public SkillEffectLifeCycle GetSkillEffectLifeCycle() => SkillEffectLifeCycle;
         
         public AreaOfRangedDelayedSkillChecker(CooldownHeader cooldownHeader, CommonSkillCheckerHeader commonSkillCheckerHeader, SkillEffectLifeCycle skillEffectLifeCycle)
         {
@@ -507,18 +457,12 @@ namespace HotUpdate.Scripts.Skill
         }
     }
     
-    [MemoryPackable]
-    public partial struct PropertyCalculatorData : IEquatable<PropertyCalculatorData>
+    public struct PropertyCalculatorData : IEquatable<PropertyCalculatorData>
     {
-        [MemoryPackOrder(0)]
         public PropertyCalculator BuffCalculator;
-        [MemoryPackOrder(1)]
         public PropertyCalculator TargetCalculator;
-        [MemoryPackOrder(2)]
         public BuffOperationType OperationType;
-        [MemoryPackOrder(3)] 
         public int PlayerId;
-        [MemoryPackOrder(4)] 
         public float Value;
 
         public bool Equals(PropertyCalculatorData other)
