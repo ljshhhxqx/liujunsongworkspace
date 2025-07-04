@@ -4,7 +4,6 @@ using System.Collections.Immutable;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Common;
-using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
@@ -13,8 +12,6 @@ using HotUpdate.Scripts.Network.Server.InGame;
 using MemoryPack;
 using Mirror;
 using UnityEngine;
-using VContainer;
-using Object = UnityEngine.Object;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
@@ -51,16 +48,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
         }
 
-        protected override void OnClientProcessStateUpdate(byte[] state)
+        protected override void OnClientProcessStateUpdate(int connectionId, byte[] state)
         {
-            var playerStates = MemoryPackSerializer.Deserialize<Dictionary<int, PlayerEquipmentState>>(state);
-            foreach (var playerState in playerStates)
+            var playerStates = MemoryPackSerializer.Deserialize<PlayerEquipmentState>(state);
+            if (PropertyStates.ContainsKey(connectionId))
             {
-                if (!PropertyStates.ContainsKey(playerState.Key))
-                {
-                    continue;
-                }
-                PropertyStates[playerState.Key] = playerState.Value;
+                PropertyStates[connectionId] = playerStates;
             }
         }
 
@@ -106,7 +99,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
             return PropertyStates[header.ConnectionId];
         }
-        
+
+        public override byte[] GetPlayerSerializedState(int connectionId)
+        {
+            if (PropertyStates.TryGetValue(connectionId, out var playerState))
+            {
+                if (playerState is PlayerEquipmentState playerEquipmentState)
+                {
+                    return MemoryPackSerializer.Serialize(playerEquipmentState);
+                }
+
+                Debug.LogError($"Player {connectionId} equipment state is not PlayerEquipmentState.");
+                return null;
+            }
+            Debug.LogError($"Player {connectionId} equipment state not found.");
+            return null;
+        }
 
         public override void SetState<T>(int connectionId, T state)
         {

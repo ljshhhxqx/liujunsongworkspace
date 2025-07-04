@@ -994,8 +994,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             inputCommand.InputAnimationStates = AnimationState.None;
             inputCommand.CommandAnimationState = AnimationState.Move;
             Debug.Log($"TestInputAnimationStates -> {inputCommand.Header.CommandType} -> {inputCommand.Header.CommandId} ->{inputCommand.Header.ConnectionId} {inputCommand.Header.Timestamp} {inputCommand.Header.Authority} {inputCommand.Header.Tick}");
-            var data = NetworkCommandExtensions.Serialize(inputCommand);
-            var originData = NetworkCommandExtensions.Deserialize(data);
+            var data = NetworkCommandExtensions.SerializeCommand(inputCommand);
+            var originData = NetworkCommandExtensions.DeserializeCommand(data);
             var headerData = originData.GetHeader();
             Debug.Log($"TestInputAnimationStates -> {headerData.CommandType} -> {headerData.CommandId} ->{headerData.ConnectionId} {headerData.Timestamp} {headerData.Authority} {headerData.Tick}");
         }

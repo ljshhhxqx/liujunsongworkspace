@@ -60,6 +60,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             UpdatePlayerAnimationAsync(_cts.Token, GameSyncManager.TickSeconds).Forget();
         }
 
+        public override byte[] GetPlayerSerializedState(int connectionId)
+        {
+            if (PropertyStates.TryGetValue(connectionId, out var playerState))
+            {
+                if (playerState is PlayerInputState playerInputState)
+                {
+                    return MemoryPackSerializer.Serialize(playerInputState);
+                }
+
+                Debug.LogError($"Player {connectionId} equipment state is not PlayerInputState.");
+                return null;
+            }
+            Debug.LogError($"Player {connectionId} equipment state not found.");
+            return null;
+        }
+
         protected override void OnAllSystemInit()
         {
             _playerPropertySyncSystem = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
@@ -84,16 +100,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
         }
 
-        protected override void OnClientProcessStateUpdate(byte[] state)
+        protected override void OnClientProcessStateUpdate(int connectionId, byte[] state)
         {
-            var playerStates = MemoryPackSerializer.Deserialize<Dictionary<int, PlayerInputState>>(state);
-            foreach (var playerState in playerStates)
+            var playerStates = MemoryPackSerializer.Deserialize<PlayerInputState>(state);
+            if (PropertyStates.ContainsKey(connectionId))
             {
-                if (!PropertyStates.ContainsKey(playerState.Key))
-                {
-                    continue;
-                }
-                PropertyStates[playerState.Key] = playerState.Value;
+                PropertyStates[connectionId] = playerStates;
             }
         }
 

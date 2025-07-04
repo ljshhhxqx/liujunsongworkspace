@@ -6,6 +6,7 @@ using System.Threading;
 using AOTScripts.Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using MemoryPack;
 using Mirror;
@@ -105,15 +106,72 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     {
         const byte COMMAND_PROTOCOL_VERSION = 1;
         const byte PLAYERSTATE_PROTOCOL_VERSION = 2;
-    
-        // 统一序列化方法
-        public static byte[] Serialize<T>(T command) where T : INetworkCommand
+        
+        public static byte[] SerializePlayerState<T>(T playerState) where T : ISyncPropertyState
+        {
+            byte typeId = (byte)playerState.GetStateType();
+            byte[] payload = MemoryPackSerializer.Serialize(playerState);
+            byte[] result = new byte[3 + payload.Length];
+            result[0] = PLAYERSTATE_PROTOCOL_VERSION;
+            result[1] = typeId;
+            Buffer.BlockCopy(BitConverter.GetBytes(payload.Length), 0, result, 2, 4);
+            Buffer.BlockCopy(payload, 0, result, 6, payload.Length);
+            return result;
+        }
+        
+        public static ISyncPropertyState DeserializePlayerState(byte[] data)
+        {
+            if (data == null || data.Length < 6)
+            {
+                Debug.LogError($"无效命令数据: 长度={data?.Length}");
+                return null;
+            }
+        
+            // 检查协议版本
+            byte version = data[0];
+            if (version != PLAYERSTATE_PROTOCOL_VERSION)
+            {
+                Debug.LogError($"协议版本不匹配: 预期={PLAYERSTATE_PROTOCOL_VERSION}, 实际={version}");
+                return null;
+            }
+        
+            // 获取命令类型
+            byte typeId = data[1];
+            var commandType = (NetworkCommandType)typeId;
+        
+            // 获取数据长度
+            int length = BitConverter.ToInt32(data, 2);
+        
+            // 验证长度
+            if (6 + length > data.Length)
+            {
+                Debug.LogError($"数据长度错误: 声明={length}, 实际={data.Length - 6}");
+                return null;
+            }
+        
+            // 提取有效载荷
+            byte[] payload = new byte[length];
+            Buffer.BlockCopy(data, 6, payload, 0, length);
+        
+            // 根据类型反序列化
+            try
+            {
+                return payload.GetPlayerState();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"反序列化失败 ({commandType}): {ex}");
+                return null;
+            }
+        }
+
+        public static byte[] SerializeCommand<T>(T command) where T : INetworkCommand
         {
             // 获取命令类型ID
             byte typeId = (byte)command.GetCommandType();
         
             // 使用具体类型序列化（不通过接口）
-            byte[] payload = MemoryPackSerializer.Serialize<T>(command);
+            byte[] payload = MemoryPackSerializer.Serialize(command);
         
             // 创建结果数组
             byte[] result = new byte[6 + payload.Length];
@@ -127,8 +185,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             return result;
         }
         
-        // 统一反序列化方法
-        public static INetworkCommand Deserialize(byte[] data)
+        public static INetworkCommand DeserializeCommand(byte[] data)
         {
             if (data == null || data.Length < 6)
             {
@@ -173,7 +230,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 return null;
             }
         }
-        
+
+        public static ISyncPropertyState GetPlayerState(this byte[] data)
+        {
+            var type = data[0];
+            return (PlayerSyncStateType)type switch
+            {
+                PlayerSyncStateType.PlayerEquipment => MemoryPackSerializer.Deserialize<PlayerEquipmentState>(data),
+                PlayerSyncStateType.PlayerProperty => MemoryPackSerializer.Deserialize<PlayerPredictablePropertyState>(data),
+                PlayerSyncStateType.PlayerInput => MemoryPackSerializer.Deserialize<PlayerInputState>(data),
+                PlayerSyncStateType.PlayerItem => MemoryPackSerializer.Deserialize<PlayerItemState>(data),
+                PlayerSyncStateType.PlayerSkill => MemoryPackSerializer.Deserialize<PlayerSkillState>(data),
+                PlayerSyncStateType.PlayerShop => MemoryPackSerializer.Deserialize<PlayerShopState>(data),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        }
+
         public static INetworkCommand GetCommand(this byte[] data)
         {
             var type = data[0];

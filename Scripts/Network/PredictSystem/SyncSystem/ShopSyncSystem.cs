@@ -14,16 +14,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
     {
         private readonly Dictionary<int, PlayerShopPredictableState> _playerShopSyncStates = new Dictionary<int, PlayerShopPredictableState>();
         protected override CommandType CommandType => CommandType.Shop;
-        protected override void OnClientProcessStateUpdate(byte[] state)
+        
+
+        protected override void OnClientProcessStateUpdate(int connectionId, byte[] state)
         {
-            var playerStates = MemoryPackSerializer.Deserialize<Dictionary<int, PlayerShopState>>(state);
-            foreach (var playerState in playerStates)
+            var playerStates = MemoryPackSerializer.Deserialize<PlayerShopState>(state);
+            if (PropertyStates.ContainsKey(connectionId))
             {
-                if (!PropertyStates.ContainsKey(playerState.Key))
-                {
-                    continue;
-                }
-                PropertyStates[playerState.Key] = playerState.Value;
+                PropertyStates[connectionId] = playerStates;
             }
         }
 
@@ -38,7 +36,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _playerShopSyncStates[connectionId] = playerPredictableState;
             RpcSetPlayerShopState(connectionId, MemoryPackSerializer.Serialize(state));
         }
+        public override byte[] GetPlayerSerializedState(int connectionId)
+        {
+            if (PropertyStates.TryGetValue(connectionId, out var playerState))
+            {
+                if (playerState is PlayerPredictablePropertyState playerPredictablePropertyState)
+                {
+                    return MemoryPackSerializer.Serialize(playerPredictablePropertyState);
+                }
 
+                Debug.LogError($"Player {connectionId} equipment state is not PlayerPredictablePropertyState.");
+                return null;
+            }
+            Debug.LogError($"Player {connectionId} equipment state not found.");
+            return null;
+        }
         [ClientRpc]
         private void RpcSetPlayerShopState(int connectionId, byte[] playerSkillState)
         {

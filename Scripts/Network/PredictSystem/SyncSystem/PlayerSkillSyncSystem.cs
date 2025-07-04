@@ -45,18 +45,33 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             UpdateEquipmentCd(_tokenSource.Token).Forget();
         }
 
-        protected override void OnClientProcessStateUpdate(byte[] state)
+        
+
+        protected override void OnClientProcessStateUpdate(int connectionId, byte[] state)
         {
-            var playerStates = MemoryPackSerializer.Deserialize<Dictionary<int, PlayerSkillState>>(state);
-            foreach (var playerState in playerStates)
+            var playerStates = MemoryPackSerializer.Deserialize<PlayerSkillState>(state);
+            if (PropertyStates.ContainsKey(connectionId))
             {
-                if (!PropertyStates.ContainsKey(playerState.Key))
-                {
-                    continue;
-                }
-                PropertyStates[playerState.Key] = playerState.Value;
+                PropertyStates[connectionId] = playerStates;
             }
         }
+        
+        public override byte[] GetPlayerSerializedState(int connectionId)
+        {
+            if (PropertyStates.TryGetValue(connectionId, out var playerState))
+            {
+                if (playerState is PlayerPredictablePropertyState playerPredictablePropertyState)
+                {
+                    return MemoryPackSerializer.Serialize(playerPredictablePropertyState);
+                }
+
+                Debug.LogError($"Player {connectionId} equipment state is not PlayerPredictablePropertyState.");
+                return null;
+            }
+            Debug.LogError($"Player {connectionId} equipment state not found.");
+            return null;
+        }
+        
         private async UniTaskVoid UpdateEquipmentCd(CancellationToken token)
         {
             while (!token.IsCancellationRequested)

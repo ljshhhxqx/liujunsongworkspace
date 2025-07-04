@@ -11,7 +11,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
     public abstract class BaseSyncSystem
     {
-        protected readonly Dictionary<int, ISyncPropertyState> PropertyStates = new Dictionary<int, ISyncPropertyState>();
+        public Dictionary<int, ISyncPropertyState> PropertyStates { get; } = new Dictionary<int, ISyncPropertyState>();
         //存储若干个字典，字典的key为客户端的connectionId，value为客户端具体重写的IPredictableState
         protected GameSyncManager GameSyncManager { get; private set; }
         protected abstract CommandType CommandType { get; }
@@ -57,7 +57,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         /// 把服务器PropertyStates转存到客户端内
         /// </summary>
         /// <param name="state"></param>
-        protected abstract void OnClientProcessStateUpdate(byte[] state);
+        /// <param name="connectionId"></param>
+        protected abstract void OnClientProcessStateUpdate(int connectionId, byte[] state);
 
         /// <summary>
         /// For Client(更新每个客户端PredictableStateBase的CurrentState)
@@ -109,10 +110,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             return default;
         }
 
-        public virtual byte[] GetAllState()
-        {
-            return MemoryPackSerializer.Serialize(PropertyStates);
-        }
+        public abstract byte[] GetPlayerSerializedState(int connectionId);
 
         public abstract void SetState<T>(int connectionId, T state) where T : ISyncPropertyState;
         public abstract bool HasStateChanged(ISyncPropertyState oldState, ISyncPropertyState newState);

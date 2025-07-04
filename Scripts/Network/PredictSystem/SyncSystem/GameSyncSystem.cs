@@ -229,8 +229,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     var syncSystem = GetSyncSystem(header.CommandType);
                     if (syncSystem != null)
                     {
-                        var allStates = syncSystem.GetAllState();
-                        RpcProcessCurrentTickCommand(allStates);
+                        foreach (var playerConnection in syncSystem.PropertyStates.Keys)
+                        {
+                            var state = syncSystem.GetPlayerSerializedState(playerConnection);
+                            RpcProcessCurrentTickCommand(playerConnection, state);
+                            
+                        }
                     }
                 }
             }
@@ -243,7 +247,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [Server]
         public void EnqueueCommand(byte[] commandJson)
         {
-            var command = NetworkCommandExtensions.Deserialize(commandJson);
+            var command = NetworkCommandExtensions.DeserializeCommand(commandJson);
             var header = command.GetHeader();
             var validCommand = command.ValidateCommand();
             if (!validCommand.IsValid)
@@ -349,8 +353,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 var syncSystem = GetSyncSystem(header.CommandType);
                 if (syncSystem != null)
                 {
-                    var allStates = syncSystem.GetAllState();
-                    RpcProcessCurrentTickCommand(allStates);
+                    foreach (var playerConnection in syncSystem.PropertyStates.Keys)
+                    {
+                        var state = syncSystem.GetPlayerSerializedState(playerConnection);
+                        RpcProcessCurrentTickCommand(playerConnection, state);
+                    }
                 }
             }
         }
@@ -386,11 +393,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         /// <summary>
         /// 强制更新每个BaseSyncSystem的客户端状态
         /// </summary>
-        public event Action<byte[]> OnClientProcessStateUpdate;
+        public event Action<int, byte[]> OnClientProcessStateUpdate;
         [ClientRpc]
-        private void RpcProcessCurrentTickCommand(byte[] state)
+        private void RpcProcessCurrentTickCommand(int connectionId, byte[] state)
         {
-            OnClientProcessStateUpdate?.Invoke(state);
+            OnClientProcessStateUpdate?.Invoke(connectionId, state);
         }
 
         /// <summary>

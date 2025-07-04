@@ -32,16 +32,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _interactSystem = Object.FindObjectOfType<InteractSystem>();
         }
 
-        protected override void OnClientProcessStateUpdate(byte[] state)
+        protected override void OnClientProcessStateUpdate(int connectionId, byte[] state)
         {
-            var playerStates = MemoryPackSerializer.Deserialize<Dictionary<int, PlayerItemState>>(state);
-            foreach (var playerState in playerStates)
+            var playerStates = MemoryPackSerializer.Deserialize<PlayerItemState>(state);
+            if (PropertyStates.ContainsKey(connectionId))
             {
-                if (!PropertyStates.ContainsKey(playerState.Key))
-                {
-                    continue;
-                }
-                PropertyStates[playerState.Key] = playerState.Value;
+                PropertyStates[connectionId] = playerStates;
             }
         }
 
@@ -122,6 +118,24 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             PropertyStates[header.ConnectionId] = playerItemState;
             return playerItemState;
         }
+
+
+        public override byte[] GetPlayerSerializedState(int connectionId)
+        {
+            if (PropertyStates.TryGetValue(connectionId, out var playerState))
+            {
+                if (playerState is PlayerItemState playerItemState)
+                {
+                    return MemoryPackSerializer.Serialize(playerItemState);
+                }
+
+                Debug.LogError($"Player {connectionId} equipment state is not PlayerItemState.");
+                return null;
+            }
+            Debug.LogError($"Player {connectionId} equipment state not found.");
+            return null;
+        }
+
         public override void SetState<T>(int connectionId, T state)
         {
             var playerPredictableState = _playerItemSyncStates[connectionId];
