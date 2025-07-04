@@ -22,6 +22,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             if (state is PlayerSkillState playerSkillState)
             {
+                playerSkillState.SetSkillCheckerState();
                 CurrentState = playerSkillState;
                 foreach (var key in _skillObjects.Keys)
                 {

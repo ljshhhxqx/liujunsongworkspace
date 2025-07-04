@@ -60,9 +60,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             if (PropertyStates.TryGetValue(connectionId, out var playerState))
             {
-                if (playerState is PlayerPredictablePropertyState playerPredictablePropertyState)
+                if (playerState is PlayerSkillState playerSkillState)
                 {
-                    return MemoryPackSerializer.Serialize(playerPredictablePropertyState);
+                    playerSkillState.SetSkillCheckerDatas();
+                    return MemoryPackSerializer.Serialize(playerSkillState);
                 }
 
                 Debug.LogError($"Player {connectionId} equipment state is not PlayerPredictablePropertyState.");

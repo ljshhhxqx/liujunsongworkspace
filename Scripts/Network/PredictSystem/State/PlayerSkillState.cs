@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
-using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.Battle;
+using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Skill;
 using MemoryPack;
+using UnityEngine;
+using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
@@ -12,6 +15,46 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         [MemoryPackOrder(0)]
         public SkillCheckerData[] SkillCheckerDatas;
         public PlayerSyncStateType GetStateType() => PlayerSyncStateType.PlayerSkill;
+
+        public void SetSkillCheckerState()
+        {
+            for (var i = 0; i < SkillCheckerDatas.Length; i++)
+            {
+                var skillCheckerData = SkillCheckerDatas[i];
+                if (!SkillCheckers.TryGetValue(skillCheckerData.AnimationState, out var skillChecker))
+                {
+                    Debug.LogError($"SkillChecker {skillCheckerData.AnimationState} not found");
+                    continue;
+                }
+                skillChecker.SetSkillData(skillCheckerData);
+            }
+        }
+
+        public SkillCheckerData[] SetSkillCheckerDatas()
+        {
+            var skillCheckerDatas = new SkillCheckerData[SkillCheckers.Count];
+            var i = 0;
+            foreach (var animationState in SkillCheckers.Keys)
+            {
+                var skillCheckerData = SkillCheckers[animationState];
+                var commonSkillData = skillCheckerData.GetCommonSkillCheckerHeader();
+                var skillEffectData = skillCheckerData.GetSkillEffectLifeCycle();
+                var cooldownData = skillCheckerData.GetCooldownHeader();
+                skillCheckerDatas[i] = new SkillCheckerData
+                {
+                    AnimationState = animationState,
+                    SkillId = commonSkillData.ConfigId,
+                    MaxSkillTime = commonSkillData.ExistTime,
+                    CurrentSkillTime = skillEffectData.CurrentTime,
+                    SkillCooldownTimer = cooldownData.CurrentTime,
+                    SkillCooldown = cooldownData.Cooldown,
+                    SkillPosition = skillEffectData.CurrentPosition
+                };
+                i++;
+            }
+            SkillCheckerDatas = skillCheckerDatas;
+            return SkillCheckerDatas;
+        }
     }
 
     [MemoryPackable]
@@ -29,5 +72,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         public float SkillCooldownTimer;
         [MemoryPackOrder(5)]
         public float SkillCooldown;
+        [MemoryPackOrder(6)]
+        public CompressedVector3 SkillPosition;
     }
 }

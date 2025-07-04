@@ -23,6 +23,7 @@ namespace HotUpdate.Scripts.Skill
         int[] UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc);
         Vector3 GetSkillEffectPosition();
         SkillEffectLifeCycle GetSkillEffectLifeCycle();
+        void SetSkillData(SkillCheckerData skillCheckerData);
     }
 
     public static class SkillCheckerExtensions
@@ -141,6 +142,16 @@ namespace HotUpdate.Scripts.Skill
             return this.IsSkillNotCd();
         }
         public SkillEffectLifeCycle GetSkillEffectLifeCycle() => SkillEffectLifeCycle;
+        public void SetSkillData(SkillCheckerData skillCheckerData)
+        {
+            SkillEffectLifeCycle.CurrentPosition = skillCheckerData.SkillPosition.ToVector3();
+            SkillEffectLifeCycle.CurrentTime = skillCheckerData.CurrentSkillTime;
+            CooldownHeader = new CooldownHeader
+            {
+                CurrentTime = skillCheckerData.SkillCooldownTimer,
+                Cooldown = skillCheckerData.SkillCooldown,
+            };
+        }
 
         public bool IsSkillEffect()
         {
@@ -204,6 +215,16 @@ namespace HotUpdate.Scripts.Skill
         public bool IsSkillNotInCd()
         {
             return this.IsSkillNotCd();
+        }
+        public void SetSkillData(SkillCheckerData skillCheckerData)
+        {
+            SkillEffectLifeCycle.CurrentPosition = skillCheckerData.SkillPosition.ToVector3();
+            SkillEffectLifeCycle.CurrentTime = skillCheckerData.CurrentSkillTime;
+            CooldownHeader = new CooldownHeader
+            {
+                CurrentTime = skillCheckerData.SkillCooldownTimer,
+                Cooldown = skillCheckerData.SkillCooldown,
+            };
         }
 
         public bool IsSkillEffect()
@@ -272,6 +293,16 @@ namespace HotUpdate.Scripts.Skill
         public float FlyDistance;
         public SkillEffectLifeCycle GetSkillEffectLifeCycle() => SkillEffectLifeCycle;
 
+        public void SetSkillData(SkillCheckerData skillCheckerData)
+        {
+            SkillEffectLifeCycle.CurrentPosition = skillCheckerData.SkillPosition.ToVector3();
+            SkillEffectLifeCycle.CurrentTime = skillCheckerData.CurrentSkillTime;
+            CooldownHeader = new CooldownHeader
+            {
+                CurrentTime = skillCheckerData.SkillCooldownTimer,
+                Cooldown = skillCheckerData.SkillCooldown,
+            };
+        }
         
         public AreaOfRangedFlySkillChecker(CooldownHeader cooldownHeader, CommonSkillCheckerHeader commonSkillCheckerHeader,SkillEffectLifeCycle skillEffectLifeCycle)
         {
@@ -337,6 +368,16 @@ namespace HotUpdate.Scripts.Skill
         public float FlyDistance;
         public SkillEffectLifeCycle GetSkillEffectLifeCycle() => SkillEffectLifeCycle;
 
+        public void SetSkillData(SkillCheckerData skillCheckerData)
+        {
+            SkillEffectLifeCycle.CurrentPosition = skillCheckerData.SkillPosition.ToVector3();
+            SkillEffectLifeCycle.CurrentTime = skillCheckerData.CurrentSkillTime;
+            CooldownHeader = new CooldownHeader
+            {
+                CurrentTime = skillCheckerData.SkillCooldownTimer,
+                Cooldown = skillCheckerData.SkillCooldown,
+            };
+        }
         public AreaOfRangedSkillChecker(CooldownHeader cooldownHeader, CommonSkillCheckerHeader commonSkillCheckerHeader, SkillEffectLifeCycle skillEffectLifeCycle)
         {
             CooldownHeader = cooldownHeader;
@@ -403,6 +444,16 @@ namespace HotUpdate.Scripts.Skill
         public Vector3 GetSkillEffectPosition() => SkillEffectLifeCycle.CurrentPosition;
         public SkillEffectLifeCycle GetSkillEffectLifeCycle() => SkillEffectLifeCycle;
         
+        public void SetSkillData(SkillCheckerData skillCheckerData)
+        {
+            SkillEffectLifeCycle.CurrentPosition = skillCheckerData.SkillPosition.ToVector3();
+            SkillEffectLifeCycle.CurrentTime = skillCheckerData.CurrentSkillTime;
+            CooldownHeader = new CooldownHeader
+            {
+                CurrentTime = skillCheckerData.SkillCooldownTimer,
+                Cooldown = skillCheckerData.SkillCooldown,
+            };
+        }
         public AreaOfRangedDelayedSkillChecker(CooldownHeader cooldownHeader, CommonSkillCheckerHeader commonSkillCheckerHeader, SkillEffectLifeCycle skillEffectLifeCycle)
         {
             CooldownHeader = cooldownHeader;
