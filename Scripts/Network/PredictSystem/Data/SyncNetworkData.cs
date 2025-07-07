@@ -100,6 +100,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         Trigger,
         SkillChanged,
         PropertyUseSkill,
+        SpeedChangedByInput
     }
 
     public static class NetworkCommandExtensions
@@ -437,6 +438,27 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     }
     
     [MemoryPackable]
+    public partial struct SpeedChangedByInputCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)] 
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public bool IsSprinting;
+        [MemoryPackOrder(2)]
+        public bool HasInputMovement;
+        [MemoryPackOrder(2)]
+        public PlayerEnvironmentState PlayerEnvironmentState;
+        
+        public NetworkCommandHeader GetHeader() => Header;
+
+        public bool IsValid()
+        {
+            return Enum.IsDefined(typeof(PlayerEnvironmentState), PlayerEnvironmentState);
+        }
+        public NetworkCommandType GetCommandType() => NetworkCommandType.SpeedChangedByInput;
+    }
+
+    [MemoryPackable]
     public partial struct PropertyClientAnimationCommand : INetworkCommand
     {
         [MemoryPackOrder(0)]
@@ -461,8 +483,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
         public AnimationState AnimationState;
-
-        [MemoryPackOrder(2)] public int SkillId;
+        [MemoryPackOrder(2)] 
+        public int SkillId;
         public NetworkCommandType GetCommandType() => NetworkCommandType.PropertyServerAnimation;
         
         public NetworkCommandHeader GetHeader() => Header;

@@ -305,6 +305,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                             Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property),
                             AnimationState = commandAnimation,
                             SkillId = skillConfigData.id,
+                            
                         });
                         Debug.Log($" [playerInputSyncSystem]Player {header.ConnectionId} input animation {commandAnimation} cost {info.cost} strength, now strength is {playerProperty[PropertyTypeEnum.Strength].CurrentValue}.");
                     }

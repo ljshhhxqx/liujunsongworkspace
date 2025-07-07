@@ -12,7 +12,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     /// <summary>
     /// 玩家装备状态
     /// </summary>
-    [MemoryPackable]
+    [MemoryPackable(GenerateType.VersionTolerant)]
     public partial struct PlayerEquipmentState : ISyncPropertyState
     {
         [MemoryPackOrder(0)]

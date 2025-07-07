@@ -12,7 +12,7 @@ using PropertyCalculator = HotUpdate.Scripts.Network.PredictSystem.State.Propert
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {
-    public class PlayerPropertyCalculator : IPlayerStateCalculator, IJobParallelFor
+    public class PlayerPropertyCalculator : IPlayerStateCalculator
     {
         private static PropertyCalculatorConstant _calculatorConstant;
         public static Dictionary<PropertyTypeEnum, float> ConfigPlayerMinProperties { get; private set; }
@@ -60,7 +60,29 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
             return dictionary;
         }
-        
+
+        public static PropertyCalculator UpdateSpeed(PropertyCalculator speed, bool isSprinting, bool hasInputMovement, PlayerEnvironmentState playerEnvironmentState)
+        {
+            var currentFactor = speed.GetPropertyValue(BuffIncreaseType.CorrectionFactor);
+            currentFactor = hasInputMovement ? currentFactor : 0;
+            switch (playerEnvironmentState)
+            {
+                case PlayerEnvironmentState.InAir:
+                case PlayerEnvironmentState.OnGround:
+                    currentFactor *= isSprinting ? _calculatorConstant.PlayerConfig.SprintSpeedFactor : 1;
+                    break;
+                case PlayerEnvironmentState.OnStairs:
+                    currentFactor *= isSprinting ? _calculatorConstant.PlayerConfig.OnStairsSpeedRatioFactor * _calculatorConstant.PlayerConfig.SprintSpeedFactor : _calculatorConstant.PlayerConfig.OnStairsSpeedRatioFactor;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(playerEnvironmentState), playerEnvironmentState, null);
+            }
+
+            speed = speed.SetPropertyValue(BuffIncreaseType.CorrectionFactor, currentFactor);
+
+            return speed;
+        }
+
         public float GetProperty(PropertyTypeEnum propertyType)
         {
             return Properties[propertyType].CurrentValue;
@@ -275,5 +297,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public float TickRate;
         public bool IsServer;
         public PropertyConfig PropertyConfig;
+        public PlayerConfigData PlayerConfig;
     }
 }

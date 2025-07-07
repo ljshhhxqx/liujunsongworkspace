@@ -8,16 +8,21 @@ using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
-    [MemoryPackable]
+    [MemoryPackable(GenerateType.VersionTolerant)]
     public partial class PlayerSkillState : ISyncPropertyState
     {
-        [MemoryPackIgnore] public Dictionary<AnimationState, ISkillChecker> SkillCheckers;
         [MemoryPackOrder(0)]
         public SkillCheckerData[] SkillCheckerDatas;
+        [MemoryPackIgnore] public Dictionary<AnimationState, ISkillChecker> SkillCheckers;
         public PlayerSyncStateType GetStateType() => PlayerSyncStateType.PlayerSkill;
 
         public void SetSkillCheckerState()
         {
+            if (SkillCheckerDatas == null || SkillCheckerDatas.Length == 0)
+            {
+                //Debug.LogWarning("SkillCheckers or SkillCheckerDatas is null");
+                return;
+            }
             for (var i = 0; i < SkillCheckerDatas.Length; i++)
             {
                 var skillCheckerData = SkillCheckerDatas[i];
@@ -32,6 +37,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
 
         public SkillCheckerData[] SetSkillCheckerDatas()
         {
+            if (SkillCheckers == null || SkillCheckers.Count == 0)
+            {
+                Debug.LogWarning("SkillCheckers is null or empty");
+                return null;
+            }
             var skillCheckerDatas = new SkillCheckerData[SkillCheckers.Count];
             var i = 0;
             foreach (var animationState in SkillCheckers.Keys)

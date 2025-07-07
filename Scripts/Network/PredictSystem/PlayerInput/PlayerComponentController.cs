@@ -92,6 +92,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private float _targetSpeed;
         private float _speedSmoothTime = 0.1f;
         private float _speedSmoothVelocity;
+        private float _sprintSpeedRatio;
+        private float _stairsSpeedRatio;
         private bool _canOpenShop;
         private SubjectedStateType _subjectedStateType;
         private List<IAnimationCooldown> _animationCooldowns = new List<IAnimationCooldown>();
@@ -205,7 +207,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     };
                     var command = GetCurrentAnimationState(playerInputStateData);
                     playerInputStateData.Command = command;
-                    _targetSpeed = _playerPropertyCalculator.GetProperty(PropertyTypeEnum.Speed);
+                    _targetSpeed = _propertyPredictionState.GetProperty(PropertyTypeEnum.Speed);
                     _playerAnimationCalculator.UpdateAnimationState();
                     _inputStream.OnNext(playerInputStateData);
                 })
@@ -402,7 +404,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientCallback]
         private void HandlePlayerInputStateChanged(PlayerInputStateData playerInputStateData)
         {
-            Debug.Log("HandlePlayerInputStateChanged");
+            //Debug.Log("HandlePlayerInputStateChanged");
             HandleClientMoveAndAnimation(playerInputStateData);
         }
 
@@ -497,6 +499,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 TickRate = GameSyncManager.TickSeconds,
                 IsServer = isServer,
                 PropertyConfig =   configProvider.GetConfig<PropertyConfig>(),
+                PlayerConfig = configProvider.GetConfig<JsonDataConfig>().PlayerConfig,
             });
             PlayerAnimationCalculator.SetAnimationConstant(new AnimationConstant
             {

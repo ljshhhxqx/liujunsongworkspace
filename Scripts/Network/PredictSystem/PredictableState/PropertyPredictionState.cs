@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
@@ -133,7 +134,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             }
             else if (command is PropertyClientAnimationCommand clientAnimationCommand)
             {
-                HandleAnimationCommand(ref playerState, clientAnimationCommand.AnimationState);
+                HandleAnimationCommand(ref playerState, clientAnimationCommand);
+            }
+            else if(command is PropertyEnvironmentChangeCommand environmentChangeCommand)
+            {
+                HandleEnvironmentChangeCommand(ref playerState, environmentChangeCommand);
             }
             else
             {
@@ -143,21 +148,31 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             PropertyChanged(propertyState);
             
         }
-        
+
+        private void HandleEnvironmentChangeCommand(ref PlayerPredictablePropertyState playerState, PropertyEnvironmentChangeCommand environmentChangeCommand)
+        {
+            var speed = playerState.Properties[PropertyTypeEnum.Speed];
+            PlayerPropertyCalculator.UpdateSpeed(speed, environmentChangeCommand.IsSprinting, environmentChangeCommand.HasInputMovement,
+                environmentChangeCommand.PlayerEnvironmentState);
+            playerState.Properties[PropertyTypeEnum.Speed] = speed;
+            PropertyChanged(playerState);
+        }
+
         private void HandlePropertyRecover(ref PlayerPredictablePropertyState propertyState)
         {
             PlayerComponentController.HandlePropertyRecover(ref propertyState);
             PropertyChanged(propertyState);
         }
 
-        private void HandleAnimationCommand(ref PlayerPredictablePropertyState propertyState, AnimationState command)
+        private void HandleAnimationCommand(ref PlayerPredictablePropertyState propertyState, PropertyClientAnimationCommand command)
         {
-            var cost = _animationConfig.GetPlayerAnimationCost(command);
+            var cost = _animationConfig.GetPlayerAnimationCost(command.AnimationState);
+            
             if (cost <= 0)
             {
                 return;
             }
-            PlayerComponentController.HandleAnimationCost(ref propertyState, command, cost);
+            PlayerComponentController.HandleAnimationCost(ref propertyState, command.AnimationState, cost);
             PropertyChanged(propertyState);
         }
 

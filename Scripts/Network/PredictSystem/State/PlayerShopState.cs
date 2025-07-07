@@ -7,7 +7,7 @@ using MemoryPack;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
-    [MemoryPackable]
+    [MemoryPackable(GenerateType.VersionTolerant)]
     public partial struct PlayerShopState : IPredictablePropertyState
     {
         [MemoryPackOrder(0)]

@@ -272,6 +272,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return DetermineAnimationStateByInput(parameters.InputMovement, parameters.InputAnimationStates);
         }
         
+        public static bool IsSprintingState(AnimationState state)
+        {
+            return state.HasAnyState(AnimationState.Sprint) || state.HasAnyState(AnimationState.SprintJump);
+        }
+        
         private AnimationState DetermineAnimationStateByInput(Vector3 inputMovement, AnimationState inputStates)
         {
             // 处理移动状态

@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
-    [MemoryPackable]
+    [MemoryPackable(GenerateType.VersionTolerant)]
     public partial struct PlayerPredictablePropertyState : IPredictablePropertyState
     {
         // 使用显式字段存储键集合
@@ -30,6 +30,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         [MemoryPackIgnore]
         private Dictionary<PropertyTypeEnum, PropertyCalculator> _propertiesCache;
 
+        [MemoryPackIgnore]
         public Dictionary<PropertyTypeEnum, PropertyCalculator> Properties
         {
             get
@@ -208,6 +209,49 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 default:
                     throw new ArgumentOutOfRangeException(nameof(increaseType), increaseType, null);
             }
+        }
+
+        public PropertyCalculator SetPropertyValue(BuffIncreaseType increaseType, float newValue)
+        {
+            switch (increaseType)
+            {
+                case BuffIncreaseType.Base:
+                    _propertyData.BaseValue = newValue;
+                    break;
+                case BuffIncreaseType.Multiplier:
+                    _propertyData.Multiplier = newValue;
+                    break;
+                case BuffIncreaseType.Extra:
+                    _propertyData.Additive = newValue;
+                    break;
+                case BuffIncreaseType.CorrectionFactor:
+                    _propertyData.Correction = newValue;
+                    break;
+                case BuffIncreaseType.Current:
+                    if (IsResourceProperty())
+                    {
+                        _propertyData.CurrentValue = newValue;
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(increaseType), increaseType, null);
+            }
+
+            // 计算最终值
+            var currentValue = (_propertyData.BaseValue * _propertyData.Multiplier + _propertyData.Additive) * _propertyData.Correction;
+
+            if (IsResourceProperty())
+            {
+                _propertyData.MaxCurrentValue = Mathf.Clamp(currentValue, _minValue, _maxValue);
+                _propertyData.CurrentValue = Mathf.Clamp(_propertyData.CurrentValue, _minValue, 
+                    Mathf.Min(currentValue, _maxValue));
+            }
+            else
+            {
+                _propertyData.CurrentValue = Mathf.Clamp(currentValue, _minValue, _maxValue);
+            }
+
+            return new PropertyCalculator(_propertyType, _propertyData, _maxValue, _minValue, _isResourceProperty);
         }
 
         [MemoryPackOrder(0)] 
