@@ -18,7 +18,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         protected override void OnClientProcessStateUpdate(int connectionId, byte[] state)
         {
-            var playerStates = MemoryPackSerializer.Deserialize<PlayerShopState>(state);
+            var playerStates = NetworkCommandExtensions.DeserializePlayerState(state);
             if (PropertyStates.ContainsKey(connectionId))
             {
                 PropertyStates[connectionId] = playerStates;
@@ -34,7 +34,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             playerPredictableState.SetPlayerShopState(state);
             PropertyStates[connectionId] = state;
             _playerShopSyncStates[connectionId] = playerPredictableState;
-            RpcSetPlayerShopState(connectionId, MemoryPackSerializer.Serialize(state));
+            RpcSetPlayerShopState(connectionId, NetworkCommandExtensions.SerializePlayerState(state));
         }
         public override byte[] GetPlayerSerializedState(int connectionId)
         {
@@ -42,7 +42,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 if (playerState is PlayerPredictablePropertyState playerPredictablePropertyState)
                 {
-                    return MemoryPackSerializer.Serialize(playerPredictablePropertyState);
+                    return NetworkCommandExtensions.SerializePlayerState(playerPredictablePropertyState);
                 }
 
                 Debug.LogError($"Player {connectionId} equipment state is not PlayerPredictablePropertyState.");
@@ -55,7 +55,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void RpcSetPlayerShopState(int connectionId, byte[] playerSkillState)
         {
             var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PlayerShopPredictableState>();
-            var playerState = MemoryPackSerializer.Deserialize<PlayerShopState>(playerSkillState);
+            var playerState = NetworkCommandExtensions.DeserializePlayerState(playerSkillState);
             syncState.InitCurrentState(playerState);
         }
 

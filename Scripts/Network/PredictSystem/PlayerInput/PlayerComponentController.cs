@@ -168,6 +168,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public override void OnStartLocalPlayer()
         {
             base.OnStartLocalPlayer();
+            if (isLocalPlayer)
+            {
+                _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
+                    UIPropertyBinder.LocalPlayerId);
+                _itemBindKey = new BindingKey(UIPropertyDefine.BagItem, DataScope.LocalPlayer,
+                    UIPropertyBinder.LocalPlayerId);
+                _shopBindKey = new BindingKey(UIPropertyDefine.ShopItem, DataScope.LocalPlayer,
+                    UIPropertyBinder.LocalPlayerId);
+                _goldBindKey = new BindingKey(UIPropertyDefine.PlayerBaseData, DataScope.LocalPlayer,
+                    UIPropertyBinder.LocalPlayerId);
+                _equipBindKey = new BindingKey(UIPropertyDefine.EquipmentItem, DataScope.LocalPlayer,
+                    UIPropertyBinder.LocalPlayerId);
+                _playerDeathTimeBindKey = new BindingKey(UIPropertyDefine.PlayerDeathTime, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
+                _playerTraceOtherPlayerHpBindKey = new BindingKey(UIPropertyDefine.PlayerTraceOtherPlayerHp, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
+                HandleLocalInitCallback();
+                _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter));
+            }
             _capsuleCollider.OnTriggerEnterAsObservable()
                 .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
                 .Subscribe(c =>
@@ -242,23 +259,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     }
                 })
                 .AddTo(_disposables);
-            if (isLocalPlayer)
-            {
-                _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
-                    UIPropertyBinder.LocalPlayerId);
-                _itemBindKey = new BindingKey(UIPropertyDefine.BagItem, DataScope.LocalPlayer,
-                    UIPropertyBinder.LocalPlayerId);
-                _shopBindKey = new BindingKey(UIPropertyDefine.ShopItem, DataScope.LocalPlayer,
-                    UIPropertyBinder.LocalPlayerId);
-                _goldBindKey = new BindingKey(UIPropertyDefine.PlayerBaseData, DataScope.LocalPlayer,
-                    UIPropertyBinder.LocalPlayerId);
-                _equipBindKey = new BindingKey(UIPropertyDefine.EquipmentItem, DataScope.LocalPlayer,
-                    UIPropertyBinder.LocalPlayerId);
-                _playerDeathTimeBindKey = new BindingKey(UIPropertyDefine.PlayerDeathTime, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
-                _playerTraceOtherPlayerHpBindKey = new BindingKey(UIPropertyDefine.PlayerTraceOtherPlayerHp, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
-                HandleLocalInitCallback();
-                _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter));
-            }
         }
 
         private void HandleAllSyncState()

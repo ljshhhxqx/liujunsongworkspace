@@ -89,7 +89,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         protected override void OnClientProcessStateUpdate(int connectionId, byte[] state)
         {
-            var playerStates = MemoryPackSerializer.Deserialize<PlayerPredictablePropertyState>(state);
+            var playerStates = NetworkCommandExtensions.DeserializePlayerState(state);
             if (PropertyStates.ContainsKey(connectionId))
             {
                 PropertyStates[connectionId] = playerStates;
@@ -102,7 +102,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 if (playerState is PlayerPredictablePropertyState playerPredictablePropertyState)
                 {
-                    return MemoryPackSerializer.Serialize(playerPredictablePropertyState);
+                    return NetworkCommandExtensions.SerializePlayerState(playerPredictablePropertyState);
                 }
 
                 Debug.LogError($"Player {connectionId} equipment state is not PlayerPredictablePropertyState.");
@@ -248,14 +248,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             playerPredictableState.RegisterProperties(playerPropertyState);
             PropertyStates.TryAdd(connectionId, playerPropertyState);
             _propertyPredictionStates.TryAdd(connectionId, playerPredictableState);
-            RpcSetPlayerPropertyState(connectionId, MemoryPackSerializer.Serialize(playerPropertyState));
+            RpcSetPlayerPropertyState(connectionId, NetworkCommandExtensions.SerializePlayerState(playerPropertyState));
         }
         
         [ClientRpc]
         private void RpcSetPlayerPropertyState(int connectionId, byte[] playerPropertyState)
         {
             var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PropertyPredictionState>();
-            var playerState = MemoryPackSerializer.Deserialize<PlayerPredictablePropertyState>(playerPropertyState);
+            var playerState = NetworkCommandExtensions.DeserializePlayerState(playerPropertyState);
             syncState.InitCurrentState(playerState);
         }
 

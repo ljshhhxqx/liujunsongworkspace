@@ -13,22 +13,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     public partial struct PlayerPredictablePropertyState : IPredictablePropertyState
     {
         // 使用显式字段存储键集合
-        [MemoryPackOrder(0)] 
-        private PropertyTypeEnum[] _propertyTypes;
+        [MemoryPackOrder(0)] private PropertyTypeEnum[] _propertyTypes;
 
         // 使用并行数组提升访问效率
-        [MemoryPackOrder(1)]
-        private PropertyCalculator[] _calculators;
-        
-        [MemoryPackOrder(2)]
-        public SubjectedStateType SubjectedState;
+        [MemoryPackOrder(1)] private PropertyCalculator[] _calculators;
 
-        [MemoryPackOrder(3)] 
-        public ElementState ElementState;
+        [MemoryPackOrder(2)] public SubjectedStateType SubjectedState;
+
+        [MemoryPackOrder(3)] public ElementState ElementState;
 
         // 添加字典缓存字段
-        [MemoryPackIgnore]
-        private Dictionary<PropertyTypeEnum, PropertyCalculator> _propertiesCache;
+        [MemoryPackIgnore] private Dictionary<PropertyTypeEnum, PropertyCalculator> _propertiesCache;
 
         [MemoryPackIgnore]
         public Dictionary<PropertyTypeEnum, PropertyCalculator> Properties
@@ -39,27 +34,41 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 {
                     RebuildCache();
                 }
+
                 return _propertiesCache;
             }
-            set => _propertiesCache = value;
-        }
-
-        [MemoryPackOnSerializing]
-        private void OnSerializing()
-        {
-            // 同步更新缓存
-            if (_propertiesCache != null)
+            set
             {
-                _propertyTypes = _propertiesCache.Keys.ToArray();
-                _calculators = _propertiesCache.Values.ToArray();
+                _propertiesCache = value;
+                _propertyTypes = new PropertyTypeEnum[_propertiesCache.Count];
+                _calculators = new PropertyCalculator[_propertiesCache.Count];
+                var index = 0;
+                foreach (var ePropertiesCacheKey in _propertiesCache.Keys)
+                {
+                    _propertyTypes[index] = ePropertiesCacheKey;
+                    _calculators[index] = _propertiesCache[ePropertiesCacheKey];
+                    index++;
+                }
             }
         }
+    
 
-        [MemoryPackOnDeserialized]
-        private void OnDeserialized()
-        {
-            RebuildCache();
-        }
+    // [MemoryPackOnSerializing]
+        // private void OnSerializing()
+        // {
+        //     // 同步更新缓存
+        //     if (_propertiesCache != null)
+        //     {
+        //         _propertyTypes = _propertiesCache.Keys.ToArray();
+        //         _calculators = _propertiesCache.Values.ToArray();
+        //     }
+        // }
+        //
+        // [MemoryPackOnDeserialized]
+        // private void OnDeserialized()
+        // {
+        //     RebuildCache();
+        // }
 
         private void RebuildCache()
         {
@@ -189,7 +198,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             return differences;
         }
 
+        [MemoryPackIgnore]
         public float CurrentValue => _propertyData.CurrentValue;
+        [MemoryPackIgnore]
         public float MaxCurrentValue => _propertyData.MaxCurrentValue;
 
         public float GetPropertyValue(BuffIncreaseType increaseType)
@@ -255,7 +266,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         }
 
         [MemoryPackOrder(0)] 
-        private readonly PropertyTypeEnum _propertyType;
+        private PropertyTypeEnum _propertyType;
         [MemoryPackOrder(1)] 
         private PropertyData _propertyData;
         [MemoryPackOrder(2)] 
@@ -264,9 +275,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         private float _minValue;
         [MemoryPackOrder(4)]
         private bool _isResourceProperty;
+        [MemoryPackIgnore]
         public PropertyData PropertyDataValue => _propertyData;
+        [MemoryPackIgnore]
         public float MaxValue => _maxValue;
+        [MemoryPackIgnore]
         public float MinValue => _minValue;
+        [MemoryPackIgnore]
         public PropertyTypeEnum PropertyType => _propertyType;
         public PropertyCalculator(PropertyTypeEnum propertyType, PropertyData propertyData, float maxValue, float minValue, bool isResourceProperty)
         {

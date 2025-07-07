@@ -49,7 +49,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         protected override void OnClientProcessStateUpdate(int connectionId, byte[] state)
         {
-            var playerStates = MemoryPackSerializer.Deserialize<PlayerSkillState>(state);
+            var playerStates = NetworkCommandExtensions.DeserializePlayerState(state);
             if (PropertyStates.ContainsKey(connectionId))
             {
                 PropertyStates[connectionId] = playerStates;
@@ -63,7 +63,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 if (playerState is PlayerSkillState playerSkillState)
                 {
                     playerSkillState.SetSkillCheckerDatas();
-                    return MemoryPackSerializer.Serialize(playerSkillState);
+                    return NetworkCommandExtensions.SerializePlayerState(playerSkillState);
                 }
 
                 Debug.LogError($"Player {connectionId} equipment state is not PlayerPredictablePropertyState.");
@@ -113,7 +113,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             skillState.SkillCheckers = new Dictionary<AnimationState, ISkillChecker>();
             PropertyStates.TryAdd(connectionId, skillState);
             _playerSkillSyncStates.TryAdd(connectionId, playerPredictableState);
-            RpcSetPlayerSkillState(connectionId, MemoryPackSerializer.Serialize(skillState));
+            RpcSetPlayerSkillState(connectionId, NetworkCommandExtensions.SerializePlayerState(skillState));
         }
 
 
@@ -121,7 +121,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void RpcSetPlayerSkillState(int connectionId, byte[] playerSkillState)
         {
             var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PlayerSkillSyncState>();
-            var playerState = MemoryPackSerializer.Deserialize<PlayerSkillState>(playerSkillState);
+            var playerState = NetworkCommandExtensions.DeserializePlayerState(playerSkillState);
             syncState.ApplyState(playerState);
         }
         

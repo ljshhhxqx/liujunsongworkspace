@@ -34,7 +34,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         protected override void OnClientProcessStateUpdate(int connectionId, byte[] state)
         {
-            var playerStates = MemoryPackSerializer.Deserialize<PlayerItemState>(state);
+            var playerStates = NetworkCommandExtensions.DeserializePlayerState(state);
             if (PropertyStates.ContainsKey(connectionId))
             {
                 PropertyStates[connectionId] = playerStates;
@@ -48,7 +48,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             playerPredictableState.RegisterState(GetPlayerItemState());
             PropertyStates.TryAdd(connectionId, state);
             _playerItemSyncStates.TryAdd(connectionId, playerPredictableState);
-            RpcSetPlayerItemState(connectionId, MemoryPackSerializer.Serialize(state));
+            RpcSetPlayerItemState(connectionId, NetworkCommandExtensions.SerializePlayerState(state));
             
         }
 
@@ -56,7 +56,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void RpcSetPlayerItemState(int connectionId, byte[] playerItemState)
         {
             var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PlayerItemPredictableState>();
-            var playerState = MemoryPackSerializer.Deserialize<PlayerItemState>(playerItemState);
+            var playerState = NetworkCommandExtensions.DeserializePlayerState(playerItemState);
             syncState.InitCurrentState(playerState);
         }
 
@@ -126,7 +126,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 if (playerState is PlayerItemState playerItemState)
                 {
-                    return MemoryPackSerializer.Serialize(playerItemState);
+                    return NetworkCommandExtensions.SerializePlayerState(playerItemState);
                 }
 
                 Debug.LogError($"Player {connectionId} equipment state is not PlayerItemState.");
