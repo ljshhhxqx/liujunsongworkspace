@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using AOTScripts.Data;
 using Cysharp.Threading.Tasks;
@@ -26,7 +25,6 @@ using PlayerGameStateData = HotUpdate.Scripts.Network.PredictSystem.State.Player
 using PlayerInputState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerInputState;
 using PropertyAttackCommand = HotUpdate.Scripts.Network.PredictSystem.Data.PropertyAttackCommand;
 using PropertyServerAnimationCommand = HotUpdate.Scripts.Network.PredictSystem.Data.PropertyServerAnimationCommand;
-using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
@@ -103,6 +101,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         protected override void OnClientProcessStateUpdate(int connectionId, byte[] state)
         {
             var playerStates = NetworkCommandExtensions.DeserializePlayerState(state);
+            if (playerStates is not PlayerInputState playerInputState)
+            {
+                Debug.LogError($"Player {playerStates.GetStateType().ToString()} input state is not PlayerInputState.");
+                return;
+            }
             if (PropertyStates.ContainsKey(connectionId))
             {
                 PropertyStates[connectionId] = playerStates;
@@ -333,7 +336,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 
                 var playerGameStateData = playerController.HandleServerMoveAndAnimation(inputStateData);
                 var inputMovement = inputCommand.InputMovement.ToVector3();
-                PropertyStates[header.ConnectionId] = new PlayerInputState(playerGameStateData, new PlayerAnimationCooldownState(GetCooldownSnapshotData(header.ConnectionId)));
+                //PropertyStates[header.ConnectionId] = new PlayerInputState(playerGameStateData, new PlayerAnimationCooldownState(GetCooldownSnapshotData(header.ConnectionId)));
                 //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost} player state {playerGameStateData.AnimationState}");
                 if (inputMovement.magnitude > 0.1f && playerGameStateData.AnimationState == AnimationState.Move || playerGameStateData.AnimationState == AnimationState.Sprint)
                 {

@@ -42,7 +42,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     if (playerState is PlayerEquipmentState playerEquipmentSyncState)
                     {
                         PlayerEquipmentState.UpdateCheckerCd(ref playerEquipmentSyncState, GameSyncManager.TickSeconds);
-                        PropertyStates[playerId] = playerEquipmentSyncState;
                     }
                 }
             }
@@ -51,6 +50,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         protected override void OnClientProcessStateUpdate(int connectionId, byte[] state)
         {
             var playerStates = NetworkCommandExtensions.DeserializePlayerState(state);
+            if (playerStates is not PlayerEquipmentState equipmentState)
+            {
+                Debug.LogError($"Player {playerStates.GetStateType().ToString()} equipment state is not PlayerEquipmentState.");
+                return;
+            }
             if (PropertyStates.ContainsKey(connectionId))
             {
                 PropertyStates[connectionId] = playerStates;

@@ -210,7 +210,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
             if (playerConnection)
             {
-                return playerConnection;
+                return playerConnection; 
             }
 
             Debug.LogError($"No player connection found for {connectionId}");
@@ -225,17 +225,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     cancellationToken: token);
                 if (_immediateCommands.TryDequeue(out var command))
                 {
-                    var header = command.GetHeader();
-                    var syncSystem = GetSyncSystem(header.CommandType);
-                    if (syncSystem != null)
-                    {
-                        foreach (var playerConnection in syncSystem.PropertyStates.Keys)
-                        {
-                            var state = syncSystem.GetPlayerSerializedState(playerConnection);
-                            RpcProcessCurrentTickCommand(playerConnection, state);
-                            
-                        }
-                    }
+                    //var header = command.GetHeader();
+                    //var syncSystem = GetSyncSystem(header.CommandType);
+                    OnServerProcessCurrentTickCommand?.Invoke(command);
+                    // if (syncSystem != null)
+                    // {
+                    //     foreach (var playerConnection in syncSystem.PropertyStates.Keys)
+                    //     {
+                    //         var state = syncSystem.GetPlayerSerializedState(playerConnection);
+                    //         RpcProcessCurrentTickCommand(playerConnection, state);
+                    //         
+                    //     }
+                    // }
                 }
             }
         }
@@ -348,17 +349,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 {
                     continue;
                 }
-                var header = command.GetHeader();
+                //var header = command.GetHeader();
                 OnServerProcessCurrentTickCommand?.Invoke(command);
-                var syncSystem = GetSyncSystem(header.CommandType);
-                if (syncSystem != null)
-                {
-                    foreach (var playerConnection in syncSystem.PropertyStates.Keys)
-                    {
-                        var state = syncSystem.GetPlayerSerializedState(playerConnection);
-                        RpcProcessCurrentTickCommand(playerConnection, state);
-                    }
-                }
+                //var syncSystem = GetSyncSystem(header.CommandType);
+                // if (syncSystem != null)
+                // {
+                //     foreach (var playerConnection in syncSystem.PropertyStates.Keys)
+                //     {
+                //         var state = syncSystem.GetPlayerSerializedState(playerConnection);
+                //         RpcProcessCurrentTickCommand(playerConnection, state);
+                //     }
+                // }
             }
         }
 
@@ -406,6 +407,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public event Action OnBroadcastStateUpdate;
         private void BroadcastStateUpdates()
         {
+            foreach (var commandType in _syncSystems.Keys)
+            {
+                var system = _syncSystems.GetValueOrDefault(commandType);
+                foreach (var playerConnection in system.PropertyStates.Keys)
+                {
+                    var state = system.GetPlayerSerializedState(playerConnection);
+                    RpcProcessCurrentTickCommand(playerConnection, state);
+                }
+            }
             RpcUpdateState();
         }
 

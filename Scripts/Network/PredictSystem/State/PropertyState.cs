@@ -31,11 +31,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     
     public enum PlayerSyncStateType
     {
-        PlayerInput,
-        PlayerProperty,
-        PlayerItem,
-        PlayerEquipment,
-        PlayerShop,
-        PlayerSkill,
+        PlayerInput = 2,
+        PlayerProperty = 3,
+        PlayerItem = 1,
+        PlayerEquipment = 0,
+        PlayerShop = 4,
+        PlayerSkill = 5,
     }
 }

@@ -19,6 +19,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         protected override void OnClientProcessStateUpdate(int connectionId, byte[] state)
         {
             var playerStates = NetworkCommandExtensions.DeserializePlayerState(state);
+            
+            if (playerStates is not PlayerShopState playerShopState)
+            {
+                Debug.LogError($"Player {playerStates.GetStateType().ToString()} shop state is not PlayerShopState.");
+                return;
+            }
             if (PropertyStates.ContainsKey(connectionId))
             {
                 PropertyStates[connectionId] = playerStates;
@@ -40,12 +46,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             if (PropertyStates.TryGetValue(connectionId, out var playerState))
             {
-                if (playerState is PlayerPredictablePropertyState playerPredictablePropertyState)
+                if (playerState is PlayerShopState shopState)
                 {
-                    return NetworkCommandExtensions.SerializePlayerState(playerPredictablePropertyState);
+                    return NetworkCommandExtensions.SerializePlayerState(shopState);
                 }
 
-                Debug.LogError($"Player {connectionId} equipment state is not PlayerPredictablePropertyState.");
+                Debug.LogError($"Player {connectionId} property state is not PlayerPredictablePropertyState.");
                 return null;
             }
             Debug.LogError($"Player {connectionId} equipment state not found.");

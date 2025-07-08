@@ -90,6 +90,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         protected override void OnClientProcessStateUpdate(int connectionId, byte[] state)
         {
             var playerStates = NetworkCommandExtensions.DeserializePlayerState(state);
+            
+            if (playerStates is not PlayerPredictablePropertyState playerPredictablePropertyState)
+            {
+                Debug.LogError($"Player {playerStates.GetStateType().ToString()} is not a PlayerPredictablePropertyState.");
+                return;
+            }
+
             if (PropertyStates.ContainsKey(connectionId))
             {
                 PropertyStates[connectionId] = playerStates;
