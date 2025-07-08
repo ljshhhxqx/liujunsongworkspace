@@ -7,8 +7,8 @@ using MemoryPack;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
-    [MemoryPackable(GenerateType.VersionTolerant)]
-    public partial class PlayerShopState : IPredictablePropertyState
+    [MemoryPackable]
+    public partial class PlayerShopState : ISyncPropertyState
     {
         [MemoryPackOrder(0)]
         private ShopItemData[] _randomShopItems;
@@ -63,7 +63,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             }
         }
         
-        public bool IsEqual(IPredictablePropertyState other, float tolerance = 0.01f)
+        public bool IsEqual(ISyncPropertyState other, float tolerance = 0.01f)
         {
             return true;
         }

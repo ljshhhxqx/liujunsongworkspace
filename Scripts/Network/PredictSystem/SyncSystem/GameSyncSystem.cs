@@ -71,7 +71,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             foreach (CommandType commandType in commandTypes)
             {
                 var syncSystem = commandType.GetSyncSystem();
-                if (syncSystem == null)
+                if (syncSystem == null || syncSystem.GetType() == typeof(PlayerSkillSyncSystem) || syncSystem.GetType() == typeof(PlayerItemSyncSystem) || syncSystem.GetType() == typeof(ShopSyncSystem) || syncSystem.GetType() == typeof(PlayerEquipmentSystem))
                 {
                     Debug.Log($"No sync system found for {commandType}");
                     continue;
@@ -394,11 +394,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         /// <summary>
         /// 强制更新每个BaseSyncSystem的客户端状态
         /// </summary>
-        public event Action<int, byte[]> OnClientProcessStateUpdate;
+        public event Action<int, byte[], CommandType> OnClientProcessStateUpdate;
         [ClientRpc]
-        private void RpcProcessCurrentTickCommand(int connectionId, byte[] state)
+        private void RpcProcessCurrentTickCommand(int connectionId, byte[] state, CommandType commandType)
         {
-            OnClientProcessStateUpdate?.Invoke(connectionId, state);
+            OnClientProcessStateUpdate?.Invoke(connectionId, state, commandType);
         }
 
         /// <summary>
@@ -413,7 +413,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 foreach (var playerConnection in system.PropertyStates.Keys)
                 {
                     var state = system.GetPlayerSerializedState(playerConnection);
-                    RpcProcessCurrentTickCommand(playerConnection, state);
+                    RpcProcessCurrentTickCommand(playerConnection, state, commandType);
                 }
             }
             RpcUpdateState();

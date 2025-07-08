@@ -9,8 +9,8 @@ using UnityEngine;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
-    [MemoryPackable(GenerateType.VersionTolerant)]
-    public partial class PlayerPredictablePropertyState : IPredictablePropertyState
+    [MemoryPackable]
+    public partial class PlayerPredictablePropertyState : ISyncPropertyState
     {
         // 使用显式字段存储键集合
         [MemoryPackOrder(0)] private PropertyTypeEnum[] _propertyTypes;
@@ -20,7 +20,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
 
         [MemoryPackOrder(2)] public SubjectedStateType SubjectedState;
 
-        [MemoryPackOrder(3)] public ElementState ElementState;
+        //[MemoryPackOrder(3)] public ElementState ElementState;
 
         // 添加字典缓存字段
         [MemoryPackIgnore] private Dictionary<PropertyTypeEnum, PropertyCalculator> _propertiesCache;
@@ -30,10 +30,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         {
             get
             {
-                if (_propertiesCache == null)
-                {
-                    RebuildCache();
-                }
+                // if (_propertiesCache == null)
+                // {
+                //     RebuildCache();
+                // }
 
                 return _propertiesCache;
             }
@@ -105,9 +105,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             _calculators = null;
         }
         
-        public bool IsEqual(IPredictablePropertyState other, float tolerance = 0.01f)
+        public bool IsEqual(ISyncPropertyState other, float tolerance = 0.01f)
         {
-            if (other is not PlayerPredictablePropertyState otherState)
+            if (other is not PlayerPredictablePropertyState otherState || Properties == null || otherState.Properties == null)
                 return false;
             foreach (var kvp in Properties)
             {

@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
-    [MemoryPackable]
+    [MemoryPackable(GenerateType.VersionTolerant)]
     public partial class PlayerItemState : ISyncPropertyState
     {
         [MemoryPackOrder(0)]
@@ -30,6 +30,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         [MemoryPackIgnore]
         private Dictionary<int, PlayerBagSlotItem> _playerSlotIndexItemConfigIdCache;
         
+        [MemoryPackIgnore]
         public Dictionary<EquipmentPart, PlayerEquipSlotItem> PlayerEquipSlotItems
         {
             get
