@@ -8,7 +8,7 @@ using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
-    [MemoryPackable(GenerateType.VersionTolerant)]
+    [MemoryPackable]
     public partial class PlayerSkillState : ISyncPropertyState
     {
         [MemoryPackOrder(0)]

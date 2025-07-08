@@ -47,15 +47,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         
 
-        protected override void OnClientProcessStateUpdate(int connectionId, byte[] state)
+        protected override void OnClientProcessStateUpdate(int connectionId, byte[] state, CommandType commandType)
         {
-            var playerStates = NetworkCommandExtensions.DeserializePlayerState(state);
-            
-            if (playerStates is not PlayerSkillState playerSkillState)
+            if (commandType != CommandType.Skill)
             {
-                Debug.LogError($"Player {playerStates.GetStateType().ToString()} skill state is not PlayerSkillState.");
                 return;
             }
+            var playerStates = MemoryPackSerializer.Deserialize<PlayerSkillState>(state);
+            
+            // if (playerStates is not PlayerSkillState playerSkillState)
+            // {
+            //     Debug.LogError($"Player {playerStates.GetStateType().ToString()} skill state is not PlayerSkillState.");
+            //     return;
+            // }
 
             if (PropertyStates.ContainsKey(connectionId))
             {
@@ -70,7 +74,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 if (playerState is PlayerSkillState playerSkillState)
                 {
                     playerSkillState.SetSkillCheckerDatas();
-                    return NetworkCommandExtensions.SerializePlayerState(playerSkillState);
+                    return MemoryPackSerializer.Serialize(playerSkillState);
                 }
 
                 Debug.LogError($"Player {connectionId} equipment state is not PlayerPredictablePropertyState.");
@@ -120,7 +124,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             skillState.SkillCheckers = new Dictionary<AnimationState, ISkillChecker>();
             PropertyStates.TryAdd(connectionId, skillState);
             _playerSkillSyncStates.TryAdd(connectionId, playerPredictableState);
-            RpcSetPlayerSkillState(connectionId, NetworkCommandExtensions.SerializePlayerState(skillState));
+            RpcSetPlayerSkillState(connectionId, MemoryPackSerializer.Serialize(skillState));
         }
 
 
@@ -128,7 +132,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void RpcSetPlayerSkillState(int connectionId, byte[] playerSkillState)
         {
             var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PlayerSkillSyncState>();
-            var playerState = NetworkCommandExtensions.DeserializePlayerState(playerSkillState);
+            var playerState = MemoryPackSerializer.Deserialize<PlayerSkillState>(playerSkillState);
             syncState.ApplyState(playerState);
         }
         

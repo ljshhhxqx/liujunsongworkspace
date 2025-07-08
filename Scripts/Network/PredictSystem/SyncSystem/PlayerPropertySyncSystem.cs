@@ -87,9 +87,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         
 
-        protected override void OnClientProcessStateUpdate(int connectionId, byte[] state)
+        protected override void OnClientProcessStateUpdate(int connectionId, byte[] state, CommandType commandType)
         {
-            var playerStates = NetworkCommandExtensions.DeserializePlayerState(state);
+            if (commandType!= CommandType.Property)
+            {
+                return;
+            }
+            var playerStates = MemoryPackSerializer.Deserialize<PlayerPredictablePropertyState>(state);
             
             if (playerStates is not PlayerPredictablePropertyState playerPredictablePropertyState)
             {
@@ -109,13 +113,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 if (playerState is PlayerPredictablePropertyState playerPredictablePropertyState)
                 {
-                    return NetworkCommandExtensions.SerializePlayerState(playerPredictablePropertyState);
+                    return MemoryPackSerializer.Serialize(playerPredictablePropertyState);
                 }
 
-                Debug.LogError($"Player {connectionId} equipment state is not PlayerPredictablePropertyState.");
+                Debug.LogError($"Player {playerState.GetStateType().ToString()} property state is not PlayerPredictablePropertyState.");
                 return null;
             }
-            Debug.LogError($"Player {connectionId} equipment state not found.");
+            Debug.LogError($"Player {connectionId} property state not found.");
             return null;
         }
         
@@ -255,14 +259,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             playerPredictableState.RegisterProperties(playerPropertyState);
             PropertyStates.TryAdd(connectionId, playerPropertyState);
             _propertyPredictionStates.TryAdd(connectionId, playerPredictableState);
-            RpcSetPlayerPropertyState(connectionId, NetworkCommandExtensions.SerializePlayerState(playerPropertyState));
+            RpcSetPlayerPropertyState(connectionId, MemoryPackSerializer.Serialize(playerPropertyState));
         }
         
         [ClientRpc]
         private void RpcSetPlayerPropertyState(int connectionId, byte[] playerPropertyState)
         {
             var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PropertyPredictionState>();
-            var playerState = NetworkCommandExtensions.DeserializePlayerState(playerPropertyState);
+            var playerState = MemoryPackSerializer.Deserialize<PlayerPredictablePropertyState>(playerPropertyState);
             syncState.InitCurrentState(playerState);
         }
 

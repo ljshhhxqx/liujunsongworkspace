@@ -58,7 +58,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         /// </summary>
         /// <param name="state"></param>
         /// <param name="connectionId"></param>
-        protected abstract void OnClientProcessStateUpdate(int connectionId, byte[] state);
+        /// <param name="commandType"></param>
+        protected abstract void OnClientProcessStateUpdate(int connectionId, byte[] state, CommandType commandType);
 
         /// <summary>
         /// For Client(更新每个客户端PredictableStateBase的CurrentState)

@@ -32,14 +32,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _interactSystem = Object.FindObjectOfType<InteractSystem>();
         }
 
-        protected override void OnClientProcessStateUpdate(int connectionId, byte[] state)
+        protected override void OnClientProcessStateUpdate(int connectionId, byte[] state, CommandType commandType)
         {
-            var playerStates = NetworkCommandExtensions.DeserializePlayerState(state);
-            if (playerStates is not PlayerItemState playerItemState)
+            if (commandType != CommandType.Item)
             {
-                Debug.LogError($"Player {playerStates.GetStateType().ToString()} item state is not PlayerItemState.");
                 return;
             }
+            var playerStates = MemoryPackSerializer.Deserialize<PlayerItemState>(state);
+            // if (playerStates is not PlayerItemState playerItemState)
+            // {
+            //     Debug.LogError($"Player {playerStates.GetStateType().ToString()} item state is not PlayerItemState.");
+            //     return;
+            // }
 
             if (PropertyStates.ContainsKey(connectionId))
             {
@@ -54,7 +58,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             playerPredictableState.RegisterState(GetPlayerItemState());
             PropertyStates.TryAdd(connectionId, state);
             _playerItemSyncStates.TryAdd(connectionId, playerPredictableState);
-            RpcSetPlayerItemState(connectionId, NetworkCommandExtensions.SerializePlayerState(state));
+            RpcSetPlayerItemState(connectionId, MemoryPackSerializer.Serialize(state));
             
         }
 
@@ -62,7 +66,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void RpcSetPlayerItemState(int connectionId, byte[] playerItemState)
         {
             var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PlayerItemPredictableState>();
-            var playerState = NetworkCommandExtensions.DeserializePlayerState(playerItemState);
+            var playerState = MemoryPackSerializer.Deserialize<PlayerItemState>(playerItemState);
             syncState.InitCurrentState(playerState);
         }
 
