@@ -32,7 +32,7 @@ MonoBehaviour:
     - MoveBlend
     keyframeData: []
     isClearVelocity: 0
-    cooldownType: 4
+    cooldownType: 0
   - state: 2
     cost: 0
     cooldown: 0
@@ -44,7 +44,7 @@ MonoBehaviour:
     - MoveBlend
     keyframeData: []
     isClearVelocity: 0
-    cooldownType: 4
+    cooldownType: 0
   - state: 4
     cost: 15
     cooldown: 0
@@ -56,7 +56,7 @@ MonoBehaviour:
     - MoveBlend
     keyframeData: []
     isClearVelocity: 0
-    cooldownType: 4
+    cooldownType: 0
   - state: 8
     cost: 10
     cooldown: 1
@@ -116,7 +116,7 @@ MonoBehaviour:
     - Falling
     keyframeData: []
     isClearVelocity: 0
-    cooldownType: 4
+    cooldownType: 0
   - state: 128
     cost: 0
     cooldown: 0
@@ -128,7 +128,7 @@ MonoBehaviour:
     - Landed
     keyframeData: []
     isClearVelocity: 0
-    cooldownType: 4
+    cooldownType: 0
   - state: 256
     cost: 10
     cooldown: 2
@@ -184,7 +184,7 @@ MonoBehaviour:
     - Hit
     keyframeData: []
     isClearVelocity: 1
-    cooldownType: 4
+    cooldownType: 0
   - state: 2048
     cost: 1
     cooldown: 0
@@ -196,7 +196,7 @@ MonoBehaviour:
     - Collect
     keyframeData: []
     isClearVelocity: 0
-    cooldownType: 4
+    cooldownType: 0
   - state: 4096
     cost: 70
     cooldown: 15
