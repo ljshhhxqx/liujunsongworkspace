@@ -11,7 +11,7 @@ using UnityEngine;
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
     [MemoryPackable]
-    public partial struct PlayerItemState : ISyncPropertyState
+    public partial class PlayerItemState : ISyncPropertyState
     {
         [MemoryPackOrder(0)]
         private PlayerBagItem[] _items;

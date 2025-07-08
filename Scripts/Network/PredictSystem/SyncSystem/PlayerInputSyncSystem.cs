@@ -278,7 +278,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 //验证冷却时间是否已到
                 var cooldownInfo = playerAnimationCooldowns.Find(x => x.AnimationState == commandAnimation);
 
-                Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost}");
+                //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost}");
                 if (cooldown != 0)
                 {
                     if (cooldownInfo == null || !cooldownInfo.IsReady())
@@ -307,19 +307,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                             SkillId = skillConfigData.id,
                             
                         });
-                        Debug.Log($" [playerInputSyncSystem]Player {header.ConnectionId} input animation {commandAnimation} cost {info.cost} strength, now strength is {playerProperty[PropertyTypeEnum.Strength].CurrentValue}.");
+                        //Debug.Log($" [playerInputSyncSystem]Player {header.ConnectionId} input animation {commandAnimation} cost {info.cost} strength, now strength is {playerProperty[PropertyTypeEnum.Strength].CurrentValue}.");
                     }
 
                 }
 
                 if (skillConfigData.id == 0)
                 {
-                    Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost}");
+                    //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost}");
                     cooldownInfo?.Use();
                 }
                 else if (skillConfigData.id > 0 && skillConfigData.animationState != AnimationState.None)
                 {
-                    Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input skill {skillConfigData.id} animation {skillConfigData.animationState} cooldown {skillConfigData.cooldown} cost {skillConfigData.cost}");
+                    //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input skill {skillConfigData.id} animation {skillConfigData.animationState} cooldown {skillConfigData.cooldown} cost {skillConfigData.cost}");
                     GameSyncManager.EnqueueServerCommand(new SkillCommand
                     {
                         Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Skill, CommandAuthority.Server, CommandExecuteType.Immediate),
@@ -334,7 +334,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 var playerGameStateData = playerController.HandleServerMoveAndAnimation(inputStateData);
                 var inputMovement = inputCommand.InputMovement.ToVector3();
                 PropertyStates[header.ConnectionId] = new PlayerInputState(playerGameStateData, new PlayerAnimationCooldownState(GetCooldownSnapshotData(header.ConnectionId)));
-                Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost} player state {playerGameStateData.AnimationState}");
+                //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost} player state {playerGameStateData.AnimationState}");
                 if (inputMovement.magnitude > 0.1f && playerGameStateData.AnimationState == AnimationState.Move || playerGameStateData.AnimationState == AnimationState.Sprint)
                 {
                     var moveSpeed = playerProperty[PropertyTypeEnum.Speed].CurrentValue;
@@ -346,7 +346,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         TriggerType = TriggerType.OnMove,
                         TriggerData = MemoryPackSerializer.Serialize(hpChangedCheckerParameters),
                     });
-                    Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input move {inputCommand.InputMovement} speed {moveSpeed} player state {playerGameStateData.AnimationState}");
+                    //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input move {inputCommand.InputMovement} speed {moveSpeed} player state {playerGameStateData.AnimationState}");
                 }
                 return PropertyStates[header.ConnectionId];
             }
@@ -355,7 +355,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 playerInputState.PlayerGameStateData.Velocity = CompressedVector3.FromVector3( Vector3.zero);
                 playerInputState.PlayerGameStateData.AnimationState = AnimationState.Dead;
-                PropertyStates[header.ConnectionId] = playerInputState;
                 return playerInputState;
             }
             
@@ -367,7 +366,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 playerInputState.PlayerGameStateData.Position = playerRebornCommand.RebornPosition;
                 playerInputState.PlayerGameStateData.Quaternion = CompressedQuaternion.FromQuaternion(Quaternion.identity);
                 playerInputState.PlayerGameStateData.PlayerEnvironmentState = PlayerEnvironmentState.OnGround;
-                PropertyStates[header.ConnectionId] = playerInputState;
                 return playerInputState;
             }
 

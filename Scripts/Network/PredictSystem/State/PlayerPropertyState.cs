@@ -10,7 +10,7 @@ using UnityEngine;
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
     [MemoryPackable(GenerateType.VersionTolerant)]
-    public partial struct PlayerPredictablePropertyState : IPredictablePropertyState
+    public partial class PlayerPredictablePropertyState : IPredictablePropertyState
     {
         // 使用显式字段存储键集合
         [MemoryPackOrder(0)] private PropertyTypeEnum[] _propertyTypes;

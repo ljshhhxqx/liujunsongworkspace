@@ -280,7 +280,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public float CurrentCountdown => _currentCountdown;
         public bool IsInComboWindow => _inComboWindow;
         public float CurrentTime => _currentTime;
-        public float AttackWindow => _keyframe[_currentStage-1].resetCooldownWindowTime;
+        public float AttackWindow => _currentStage == 0 ? 0 : _keyframe[_currentStage-1].resetCooldownWindowTime;
 
         public KeyframeComboCooldown(AnimationState state, float cooldown, List<KeyframeData> keyframe, float animationSpeed)
         {
@@ -552,7 +552,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 ComboCooldown combo => FromCombo(combo),
                 KeyframeCooldown keyframe => FromKeyframe(keyframe),
                 KeyframeComboCooldown comboKeyframe => FromComboKeyframe(comboKeyframe),
+                AnimationCooldown animation => FromAnimation(animation),
                 _ => throw new ArgumentException("Unsupported cooldown type")
+            };
+        }
+
+        private static CooldownSnapshotData FromAnimation(AnimationCooldown animation)
+        {
+            return new CooldownSnapshotData
+            {
+                AnimationState = animation.AnimationState,
+                CurrentCountdown = animation.CurrentCountdown,
+                Cooldown = animation.Cooldown,
+                AnimationSpeed = animation.AnimationSpeed,
             };
         }
 

@@ -112,130 +112,165 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         {
             byte typeId = (byte)playerState.GetStateType();
             byte[] payload = MemoryPackSerializer.Serialize(playerState);
-            byte[] result = new byte[3 + payload.Length];
+    
+            // 正确分配空间：头部6字节 + payload
+            byte[] result = new byte[6 + payload.Length];
+    
+            // 写入协议头和类型ID
             result[0] = PLAYERSTATE_PROTOCOL_VERSION;
             result[1] = typeId;
-            Buffer.BlockCopy(BitConverter.GetBytes(payload.Length), 0, result, 2, 4);
+    
+            // 写入长度字段（显式转为大端序）
+            byte[] lengthBytes = BitConverter.GetBytes(payload.Length);
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(lengthBytes);
+            }
+            Buffer.BlockCopy(lengthBytes, 0, result, 2, 4);
+    
+            // 写入payload数据
             Buffer.BlockCopy(payload, 0, result, 6, payload.Length);
+    
             return result;
         }
         
         public static ISyncPropertyState DeserializePlayerState(byte[] data)
         {
+            // 1. 验证基本长度
             if (data == null || data.Length < 6)
             {
-                Debug.LogError($"无效命令数据: 长度={data?.Length}");
-                return null;
+                throw new ArgumentException("Invalid data format: insufficient length", nameof(data));
             }
-        
-            // 检查协议版本
+
+            // 2. 检查协议版本
             byte version = data[0];
             if (version != PLAYERSTATE_PROTOCOL_VERSION)
             {
-                Debug.LogError($"协议版本不匹配: 预期={PLAYERSTATE_PROTOCOL_VERSION}, 实际={version}");
-                return null;
+                throw new InvalidOperationException($"Unsupported protocol version: {version}. Expected: {PLAYERSTATE_PROTOCOL_VERSION}");
             }
-        
-            // 获取命令类型
+
+            // 3. 提取类型ID
             byte typeId = data[1];
-            var commandType = (NetworkCommandType)typeId;
-        
-            // 获取数据长度
-            int length = BitConverter.ToInt32(data, 2);
-        
-            // 验证长度
-            if (6 + length > data.Length)
+
+            // 4. 读取长度字段（考虑字节序）
+            byte[] lengthBytes = new byte[4];
+            Buffer.BlockCopy(data, 2, lengthBytes, 0, 4);
+    
+            // 如果数据是以大端序存储的，需要反转字节顺序（根据序列化时的设置）
+            if (BitConverter.IsLittleEndian)
             {
-                Debug.LogError($"数据长度错误: 声明={length}, 实际={data.Length - 6}");
-                return null;
+                Array.Reverse(lengthBytes);
             }
-        
-            // 提取有效载荷
-            byte[] payload = new byte[length];
-            Buffer.BlockCopy(data, 6, payload, 0, length);
-        
-            // 根据类型反序列化
+    
+            int payloadLength = BitConverter.ToInt32(lengthBytes, 0);
+
+            // 5. 验证数据长度
+            int expectedTotalLength = 6 + payloadLength; // 1(版本) + 1(类型) + 4(长度) + payload
+            if (data.Length < expectedTotalLength)
+            {
+                throw new ArgumentException(
+                    $"Data length insufficient. Expected: {expectedTotalLength}, Actual: {data.Length}",
+                    nameof(data));
+            }
+
+            // 6. 提取payload数据
+            byte[] payload = new byte[payloadLength];
+            Buffer.BlockCopy(data, 6, payload, 0, payloadLength);
             try
             {
-                return payload.GetPlayerState();
+                return payload.GetPlayerState(typeId);
             }
             catch (Exception ex)
             {
-                Debug.LogError($"反序列化失败 ({commandType}): {ex}");
+                Debug.LogError($"反序列化失败 ({typeId}): {ex}");
                 return null;
             }
         }
 
         public static byte[] SerializeCommand<T>(T command) where T : INetworkCommand
         {
-            // 获取命令类型ID
             byte typeId = (byte)command.GetCommandType();
-        
-            // 使用具体类型序列化（不通过接口）
             byte[] payload = MemoryPackSerializer.Serialize(command);
-        
-            // 创建结果数组
+    
+            // 正确分配空间：头部6字节 + payload
             byte[] result = new byte[6 + payload.Length];
-        
-            // 设置协议头
-            result[0] = COMMAND_PROTOCOL_VERSION;    // 协议版本
-            result[1] = typeId;              // 命令类型
-            Buffer.BlockCopy(BitConverter.GetBytes(payload.Length), 0, result, 2, 4); // 数据长度
-            Buffer.BlockCopy(payload, 0, result, 6, payload.Length); // 实际数据
-        
+    
+            // 写入协议头和类型ID
+            result[0] = COMMAND_PROTOCOL_VERSION;
+            result[1] = typeId;
+    
+            // 写入长度字段（显式转为大端序）
+            byte[] lengthBytes = BitConverter.GetBytes(payload.Length);
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(lengthBytes);
+            }
+            Buffer.BlockCopy(lengthBytes, 0, result, 2, 4);
+    
+            // 写入payload数据
+            Buffer.BlockCopy(payload, 0, result, 6, payload.Length);
+    
             return result;
         }
         
         public static INetworkCommand DeserializeCommand(byte[] data)
         {
+            // 1. 验证基本长度
             if (data == null || data.Length < 6)
             {
-                Debug.LogError($"无效命令数据: 长度={data?.Length}");
-                return null;
+                throw new ArgumentException("Invalid data format: insufficient length", nameof(data));
             }
-        
-            // 检查协议版本
+
+            // 2. 检查协议版本
             byte version = data[0];
             if (version != COMMAND_PROTOCOL_VERSION)
             {
-                Debug.LogError($"协议版本不匹配: 预期={COMMAND_PROTOCOL_VERSION}, 实际={version}");
-                return null;
+                throw new InvalidOperationException($"Unsupported protocol version: {version}. Expected: {COMMAND_PROTOCOL_VERSION}");
             }
-        
-            // 获取命令类型
+
+            // 3. 提取类型ID
             byte typeId = data[1];
-            var commandType = (NetworkCommandType)typeId;
-        
-            // 获取数据长度
-            int length = BitConverter.ToInt32(data, 2);
-        
-            // 验证长度
-            if (6 + length > data.Length)
+
+            // 4. 读取长度字段（考虑字节序）
+            byte[] lengthBytes = new byte[4];
+            Buffer.BlockCopy(data, 2, lengthBytes, 0, 4);
+    
+            // 如果数据是以大端序存储的，需要反转字节顺序（根据序列化时的设置）
+            if (BitConverter.IsLittleEndian)
             {
-                Debug.LogError($"数据长度错误: 声明={length}, 实际={data.Length - 6}");
-                return null;
+                Array.Reverse(lengthBytes);
             }
-        
-            // 提取有效载荷
-            byte[] payload = new byte[length];
-            Buffer.BlockCopy(data, 6, payload, 0, length);
-        
-            // 根据类型反序列化
+    
+            int payloadLength = BitConverter.ToInt32(lengthBytes, 0);
+
+            // 5. 验证数据长度
+            int expectedTotalLength = 6 + payloadLength; // 1(版本) + 1(类型) + 4(长度) + payload
+            if (data.Length < expectedTotalLength)
+            {
+                throw new ArgumentException(
+                    $"Data length insufficient. Expected: {expectedTotalLength}, Actual: {data.Length}",
+                    nameof(data));
+            }
+
+            // 6. 提取payload数据
+            byte[] payload = new byte[payloadLength];
+            Buffer.BlockCopy(data, 6, payload, 0, payloadLength);
+
+            // 7. 根据类型ID确定具体类型并反序列化
             try
             {
-                return payload.GetCommand();
+                return payload.GetCommand(typeId);
             }
             catch (Exception ex)
             {
-                Debug.LogError($"反序列化失败 ({commandType}): {ex}");
+                Debug.LogError($"反序列化失败 ({typeId}): {ex}");
                 return null;
             }
         }
 
-        public static ISyncPropertyState GetPlayerState(this byte[] data)
+        public static ISyncPropertyState GetPlayerState(this byte[] data, int typeId)
         {
-            var type = data[0];
-            return (PlayerSyncStateType)type switch
+            return (PlayerSyncStateType)typeId switch
             {
                 PlayerSyncStateType.PlayerEquipment => MemoryPackSerializer.Deserialize<PlayerEquipmentState>(data),
                 PlayerSyncStateType.PlayerProperty => MemoryPackSerializer.Deserialize<PlayerPredictablePropertyState>(data),
@@ -247,10 +282,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             };
         }
 
-        public static INetworkCommand GetCommand(this byte[] data)
+        public static INetworkCommand GetCommand(this byte[] data, int typeId)
         {
-            var type = data[0];
-            return (NetworkCommandType)type switch
+            return (NetworkCommandType)typeId switch
             {
                 NetworkCommandType.PropertyAutoRecover => (INetworkCommand)MemoryPackSerializer
                     .Deserialize<PropertyAutoRecoverCommand>(data),

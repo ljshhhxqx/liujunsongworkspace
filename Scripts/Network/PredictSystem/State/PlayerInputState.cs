@@ -9,7 +9,7 @@ using CooldownSnapshotData = HotUpdate.Scripts.Network.PredictSystem.Data.Cooldo
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
     [MemoryPackable(GenerateType.VersionTolerant)]
-    public partial struct PlayerInputState : IPredictablePropertyState
+    public partial class PlayerInputState : IPredictablePropertyState
     {
         [MemoryPackOrder(0)] public PlayerGameStateData PlayerGameStateData;
         [MemoryPackOrder(1)] public PlayerAnimationCooldownState PlayerAnimationCooldownState;

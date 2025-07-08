@@ -94,7 +94,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 var targetIds = PlayerInGameManager.Instance.GetPlayerIdsByTargetType(header.ConnectionId,
                     battleConfigData.targetCount, battleConfigData.targetType);
                 PlayerEquipmentCalculator.CommandTrigger(triggerCommand, ref playerEquipmentState, targetIds, data.Item3, data.Item2, data.Item1);
-                PropertyStates[header.ConnectionId] = playerEquipmentState;
+                //PropertyStates[header.ConnectionId] = playerEquipmentState;
             }
 
             return PropertyStates[header.ConnectionId];
