@@ -66,7 +66,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 if (equipment.ItemId == itemId && equipment.EquipmentPartType == equipmentPartType)
                 {
                     equipmentData.EquipmentDatas[i] = new EquipmentData(itemId, equipConfigId, equipmentPartType,
-                        mainIncreaseData, passiveIncreaseData);
+                        new MemoryList<AttributeIncreaseData>(mainIncreaseData), new MemoryList<AttributeIncreaseData>(passiveIncreaseData));
                     return true;
                 }
             }
@@ -124,14 +124,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         public IConditionChecker ConditionChecker;
         
         [MemoryPackConstructor]
-        public EquipmentData(int itemId, int equipConfigId, EquipmentPart equipmentPartType, AttributeIncreaseData[] equipmentPassiveEffectData = null, 
-            AttributeIncreaseData[] equipmentConstantPropertyData = null)
+        public EquipmentData(int itemId, int equipConfigId, EquipmentPart equipmentPartType, MemoryList<AttributeIncreaseData> equipmentPassiveEffectData = null, 
+            MemoryList<AttributeIncreaseData> equipmentConstantPropertyData = null)
         {
             ItemId = itemId;
             EquipConfigId = equipConfigId;
             EquipmentPartType = equipmentPartType;
-            EquipmentPassiveEffectData = new MemoryList<AttributeIncreaseData>(equipmentPassiveEffectData ?? Array.Empty<AttributeIncreaseData>());
-            EquipmentConstantPropertyData = new MemoryList<AttributeIncreaseData>(equipmentConstantPropertyData ?? Array.Empty<AttributeIncreaseData>());
+            EquipmentPassiveEffectData = equipmentPassiveEffectData;
+            EquipmentConstantPropertyData = equipmentConstantPropertyData;
             ConditionChecker = null;
             TargetIds = new MemoryList<int>();
             ConditionCheckerBytes = new MemoryList<byte>();
