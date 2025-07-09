@@ -90,16 +90,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         public float GetProperty(PropertyTypeEnum propertyType)
         {
-            return PlayerPredictablePropertyState.Properties[propertyType].CurrentValue;
+            return PlayerPredictablePropertyState.MemoryProperty[propertyType].CurrentValue;
         }
         
         public float GetMaxProperty(PropertyTypeEnum propertyType)
         {
-            if (PlayerPredictablePropertyState.Properties[propertyType].IsResourceProperty())
+            if (PlayerPredictablePropertyState.MemoryProperty[propertyType].IsResourceProperty())
             {
-                return PlayerPredictablePropertyState.Properties[propertyType].MaxCurrentValue;
+                return PlayerPredictablePropertyState.MemoryProperty[propertyType].MaxCurrentValue;
             }
-            return PlayerPredictablePropertyState.Properties[propertyType].CurrentValue;
+            return PlayerPredictablePropertyState.MemoryProperty[propertyType].CurrentValue;
         }
 
         public event Action<PropertyTypeEnum, PropertyCalculator> OnPropertyChanged;
@@ -151,10 +151,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void HandleEnvironmentChangeCommand(ref PlayerPredictablePropertyState playerState, PropertyEnvironmentChangeCommand environmentChangeCommand)
         {
-            var speed = playerState.Properties[PropertyTypeEnum.Speed];
+            var speed = playerState.MemoryProperty[PropertyTypeEnum.Speed];
             PlayerPropertyCalculator.UpdateSpeed(speed, environmentChangeCommand.IsSprinting, environmentChangeCommand.HasInputMovement,
                 environmentChangeCommand.PlayerEnvironmentState);
-            playerState.Properties[PropertyTypeEnum.Speed] = speed;
+            playerState.MemoryProperty[PropertyTypeEnum.Speed] = speed;
             PropertyChanged(playerState);
         }
 
@@ -191,7 +191,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             }
             if (!_subjectedStateType.HasAnyState(SubjectedStateType.IsDead) && predictablePropertyState.SubjectedState.HasAnyState(SubjectedStateType.IsDead))
             {
-                var countDown = _jsonDataConfig.GameConfig.GetPlayerDeathTime((int)predictablePropertyState.Properties[PropertyTypeEnum.Score].CurrentValue);
+                var countDown = _jsonDataConfig.GameConfig.GetPlayerDeathTime((int)predictablePropertyState.MemoryProperty[PropertyTypeEnum.Score].CurrentValue);
                 OnPlayerDead?.Invoke(countDown);
                 
             }
@@ -202,9 +202,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _subjectedStateType = predictablePropertyState.SubjectedState;
             OnStateChanged?.Invoke(predictablePropertyState.SubjectedState);
             var goldData = new ValuePropertyData();
-            foreach (var key in predictablePropertyState.Properties.Keys)
+            foreach (var key in predictablePropertyState.MemoryProperty.Keys)
             {
-                var property = predictablePropertyState.Properties[key];
+                var property = predictablePropertyState.MemoryProperty[key];
                 if (!_uiPropertyData.ContainsKey((int)key))
                 {
                     _uiPropertyData.Add((int)key, new PropertyItemData());

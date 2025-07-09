@@ -11,57 +11,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     public partial class PlayerShopState : ISyncPropertyState
     {
         [MemoryPackOrder(0)]
-        private ShopItemData[] _randomShopItems;
-        [MemoryPackIgnore]
-        private Dictionary<int, ShopItemData> _randomShopItemsDict;
+        public MemoryDictionary<int, ShopItemData> RandomShopItems;
         public PlayerSyncStateType GetStateType() => PlayerSyncStateType.PlayerShop;
-        
-        [MemoryPackIgnore]
-        public Dictionary<int, ShopItemData> RandomShopItemsDict
-        {
-            get
-            {
-                if (_randomShopItemsDict == null)
-                {
-                    RebuildCache();
-                }
-                return _randomShopItemsDict;
-            }
-            set => _randomShopItemsDict = value;
-        }
-        
-        [MemoryPackOnSerializing]
-        private void OnSerializing()
-        {
-            // 同步更新缓存
-            if (_randomShopItemsDict != null)
-            {
-                _randomShopItems = _randomShopItemsDict.Values.ToArray();
-            }
-        }
-
-        [MemoryPackOnDeserialized]
-        private void OnDeserialized()
-        {
-            RebuildCache();
-        }
-
-        private void RebuildCache()
-        {
-            _randomShopItemsDict = new Dictionary<int, ShopItemData>(_randomShopItems?.Length ?? 0);
-            if (_randomShopItems != null)
-            {
-                for (int i = 0; i < _randomShopItems.Length; i++)
-                {
-                    if (_randomShopItemsDict.ContainsKey(_randomShopItems[i].ShopId))
-                    {
-                        throw new InvalidOperationException(
-                            $"Duplicate property type: {_randomShopItems[i]}");
-                    }
-                    _randomShopItemsDict[_randomShopItems[i].ShopId] = _randomShopItems[i];
-                }
-            }
-        }
         
         public bool IsEqual(ISyncPropertyState other, float tolerance = 0.01f)
         {
@@ -93,11 +44,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         //消耗品：显示确定的属性增益
         //装备：显示主要属性增益
         [MemoryPackOrder(9)]
-        public AttributeIncreaseData[] MainIncreaseDatas;
+        public MemoryList<AttributeIncreaseData> MainIncreaseDatas;
         //消耗品：显示随机属性增益(精确到数值的范围最大值和最小值)
         //装备：不显示(只有进入玩家背包才会有)
         [MemoryPackOrder(10)]
-        public RandomAttributeIncreaseData[] PassiveIncreaseDatas;
+        public MemoryList<RandomAttributeIncreaseData> PassiveIncreaseDatas;
 
         public bool Equals(ShopItemData other)
         {

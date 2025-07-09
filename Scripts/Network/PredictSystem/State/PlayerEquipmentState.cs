@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Immutable;
 using System.Linq;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Battle;
-using HotUpdate.Scripts.Network.Item;
 using MemoryPack;
 using UnityEngine;
 
@@ -16,7 +14,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     public partial class PlayerEquipmentState : ISyncPropertyState
     {
         [MemoryPackOrder(0)]
-        public ImmutableList<EquipmentData> EquipmentDatas;
+        public MemoryList<EquipmentData> EquipmentDatas;
         public PlayerSyncStateType GetStateType() => PlayerSyncStateType.PlayerEquipment;
 
         public static bool TryUnequipped(ref PlayerEquipmentState equipmentState, int itemId, EquipmentPart equipmentPartType)
@@ -26,7 +24,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 var equipmentData = equipmentState.EquipmentDatas[i];
                 if (equipmentData.ItemId == itemId || equipmentData.EquipmentPartType == equipmentPartType)
                 {
-                    equipmentState.EquipmentDatas = equipmentState.EquipmentDatas.RemoveAt(i);
+                    equipmentState.EquipmentDatas.RemoveAt(i);
                     return true;
                 }
             }
@@ -49,11 +47,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 var oldEquip = equipmentState.EquipmentDatas[i];
                 if (oldEquip.EquipmentPartType == equipmentPartType)
                 {
-                    equipmentState.EquipmentDatas = equipmentState.EquipmentDatas.RemoveAt(i);
+                    equipmentState.EquipmentDatas.RemoveAt(i);
                     break;
                 }
             }
-            equipmentState.EquipmentDatas = equipmentState.EquipmentDatas.Add(equipmentData);
+            equipmentState.EquipmentDatas.Add(equipmentData);
             return true;
         }
 
@@ -65,9 +63,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 var equipment = equipmentData.EquipmentDatas[i];
                 if (equipment.ItemId == itemId && equipment.EquipmentPartType == equipmentPartType)
                 {
-                    equipmentData.EquipmentDatas = equipmentData.EquipmentDatas.SetItem(i,
-                        new EquipmentData(itemId, equipConfigId,equipmentPartType,
-                            mainIncreaseData, passiveIncreaseData));
+                    equipmentData.EquipmentDatas[i] = new EquipmentData(itemId, equipConfigId, equipmentPartType,
+                        mainIncreaseData, passiveIncreaseData);
                     return true;
                 }
             }
@@ -82,7 +79,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 var cooldownHeader = equipment.ConditionChecker.GetCooldownHeader();
                 var newHeader = cooldownHeader.Update(deltaTime);
                 equipment.ConditionChecker.SetCooldownHeader(newHeader);
-                equipmentState.EquipmentDatas = equipmentState.EquipmentDatas.SetItem(i, equipment);
+                equipmentState.EquipmentDatas[i] = equipment;
             }
         }
 

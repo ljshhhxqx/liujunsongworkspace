@@ -49,7 +49,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         protected override void OnClientProcessStateUpdate(int connectionId, byte[] state, CommandType commandType)
         {
-            var playerStates = MemoryPackSerializer.Deserialize<PlayerEquipmentState>(state);
+            var playerStates = NetworkCommandExtensions.DeserializePlayerState(state);
             // if (playerStates is not PlayerEquipmentState equipmentState)
             // {
             //     Debug.LogError($"Player {playerStates.GetStateType().ToString()} equipment state is not PlayerEquipmentState.");
@@ -65,7 +65,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerPredictableState = player.GetComponent<PlayerEquipmentSyncState>();
             var playerEquipmentState = new PlayerEquipmentState();
-            playerEquipmentState.EquipmentDatas = ImmutableList<EquipmentData>.Empty;
+            playerEquipmentState.EquipmentDatas = new MemoryList<EquipmentData>();//<EquipmentData>();
             PropertyStates.TryAdd(connectionId, playerEquipmentState);
             _playerEquipmentSyncStates.TryAdd(connectionId, playerPredictableState);
             RpcSetPlayerEquipmentState(connectionId, MemoryPackSerializer.Serialize(playerEquipmentState));
@@ -75,7 +75,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void RpcSetPlayerEquipmentState(int connectionId, byte[] playerEquipmentState)
         {
             var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PlayerEquipmentSyncState>();
-            var playerState = MemoryPackSerializer.Deserialize<PlayerEquipmentState>(playerEquipmentState);
+            var playerState = NetworkCommandExtensions.DeserializePlayerState(playerEquipmentState);
             syncState.ApplyState(playerState);
         }
 
@@ -110,7 +110,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 if (playerState is PlayerEquipmentState playerEquipmentState)
                 {
-                    return MemoryPackSerializer.Serialize(playerEquipmentState);
+                    return NetworkCommandExtensions.SerializePlayerState(playerEquipmentState);
                 }
 
                 Debug.LogError($"Player {connectionId} equipment state is not PlayerEquipmentState.");

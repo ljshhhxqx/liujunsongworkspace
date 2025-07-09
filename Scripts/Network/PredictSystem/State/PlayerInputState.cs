@@ -44,11 +44,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     public partial struct PlayerAnimationCooldownState
     {
         [MemoryPackOrder(0)]
-        public List<CooldownSnapshotData> AnimationCooldowns;
+        public MemoryList<CooldownSnapshotData> AnimationCooldowns;
         
         public PlayerAnimationCooldownState(List<CooldownSnapshotData> animationCooldowns)
         {
-            AnimationCooldowns = animationCooldowns;
+            AnimationCooldowns = new MemoryList<CooldownSnapshotData>(animationCooldowns);
         }
 
         public PlayerAnimationCooldownState Reset(PlayerAnimationCooldownState state)

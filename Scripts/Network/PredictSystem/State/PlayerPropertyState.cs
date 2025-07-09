@@ -12,106 +12,28 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     [MemoryPackable]
     public partial class PlayerPredictablePropertyState : ISyncPropertyState
     {
-        // 使用显式字段存储键集合
-        [MemoryPackOrder(0)] private PropertyTypeEnum[] _propertyTypes;
-
-        // 使用并行数组提升访问效率
-        [MemoryPackOrder(1)] private PropertyCalculator[] _calculators;
-
-        [MemoryPackOrder(2)] public SubjectedStateType SubjectedState;
-
-        //[MemoryPackOrder(3)] public ElementState ElementState;
-
-        // 添加字典缓存字段
-        [MemoryPackIgnore] private Dictionary<PropertyTypeEnum, PropertyCalculator> _propertiesCache;
-
-        [MemoryPackIgnore]
-        public Dictionary<PropertyTypeEnum, PropertyCalculator> Properties
-        {
-            get
-            {
-                // if (_propertiesCache == null)
-                // {
-                //     RebuildCache();
-                // }
-
-                return _propertiesCache;
-            }
-            set
-            {
-                _propertiesCache = value;
-                _propertyTypes = new PropertyTypeEnum[_propertiesCache.Count];
-                _calculators = new PropertyCalculator[_propertiesCache.Count];
-                var index = 0;
-                foreach (var ePropertiesCacheKey in _propertiesCache.Keys)
-                {
-                    _propertyTypes[index] = ePropertiesCacheKey;
-                    _calculators[index] = _propertiesCache[ePropertiesCacheKey];
-                    index++;
-                }
-            }
-        }
-    
-
-    // [MemoryPackOnSerializing]
-        // private void OnSerializing()
-        // {
-        //     // 同步更新缓存
-        //     if (_propertiesCache != null)
-        //     {
-        //         _propertyTypes = _propertiesCache.Keys.ToArray();
-        //         _calculators = _propertiesCache.Values.ToArray();
-        //     }
-        // }
-        //
-        // [MemoryPackOnDeserialized]
-        // private void OnDeserialized()
-        // {
-        //     RebuildCache();
-        // }
-
-        private void RebuildCache()
-        {
-            _propertiesCache = new Dictionary<PropertyTypeEnum, PropertyCalculator>(
-                _calculators?.Length ?? 0);
-
-            if (_calculators != null && _propertyTypes != null)
-            {
-                for (int i = 0; i < _calculators.Length; i++)
-                {
-                    // 添加重复键检测
-                    if (_propertiesCache.ContainsKey(_propertyTypes[i]))
-                    {
-                        throw new InvalidOperationException(
-                            $"Duplicate property type: {_propertyTypes[i]}");
-                    }
-                    _propertiesCache[_propertyTypes[i]] = _calculators[i];
-                }
-            }
-        }
+        [MemoryPackOrder(0)] public MemoryDictionary<PropertyTypeEnum, PropertyCalculator> MemoryProperty;
+        [MemoryPackOrder(1)] public SubjectedStateType SubjectedState;
         public PlayerSyncStateType GetStateType() => PlayerSyncStateType.PlayerProperty;
 
         // 修改属性访问方式
         public PropertyCalculator GetCalculator(PropertyTypeEnum type)
         {
-            return Properties.GetValueOrDefault(type);
+            return MemoryProperty.GetValueOrDefault(type);
         }
 
         public void SetCalculator(PropertyTypeEnum type, PropertyCalculator calculator)
         {
-            Properties[type] = calculator;
-            // 标记数据已修改
-            _propertyTypes = null;
-            _calculators = null;
+            MemoryProperty[type] = calculator;
         }
         
         public bool IsEqual(ISyncPropertyState other, float tolerance = 0.01f)
         {
-            if (other is not PlayerPredictablePropertyState otherState || Properties == null || otherState.Properties == null)
+            if (other is not PlayerPredictablePropertyState otherState || MemoryProperty == null || otherState.MemoryProperty == null)
                 return false;
-            foreach (var kvp in Properties)
+            foreach (var kvp in MemoryProperty)
             {
-                if (!otherState.Properties.TryGetValue(kvp.Key, out var otherCalculator))
+                if (!otherState.MemoryProperty.TryGetValue(kvp.Key, out var otherCalculator))
                     return false;
 
                 // 只比较最终计算值
@@ -129,6 +51,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             return true;
         }
     }
+    
+    
     
     [MemoryPackable]
     public partial struct PropertyCalculator : IEquatable<PropertyCalculator>

@@ -53,8 +53,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     Price = shopConfigData.price,
                     SellPrice = shopConfigData.sellPrice,
                     Quality = shopConfigData.qualityType,
-                    MainIncreaseDatas = mainAttributeData,
-                    PassiveIncreaseDatas = passiveAttributeData,
+                    MainIncreaseDatas = new MemoryList<AttributeIncreaseData>(mainAttributeData),
+                    PassiveIncreaseDatas = new MemoryList<RandomAttributeIncreaseData>(passiveAttributeData),
                 };
                 shopData[index] = randomShopData;
                 index++;
@@ -64,7 +64,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
         public static void CommandBuyItem(ref PlayerShopState state, int connectionId, int shopId, int count, bool isServer = false)
         {
-            var shopData = state.RandomShopItemsDict.Values.ToArray();
+            var shopData = state.RandomShopItems.Values;
             var randomShopData = shopData.First(x => x.ShopId == shopId);
             var randomShopConfigData = Constant.ShopConfig.GetShopConfigData(randomShopData.ShopConfigId);
             var otherShopData = shopData.First(x => x.ItemType == randomShopData.ItemType);
@@ -79,7 +79,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
             foreach (var data in shopData)
             {
-                state.RandomShopItemsDict[data.ShopId] = data;
+                state.RandomShopItems[data.ShopId] = data;
             }
             if (!isServer)
                 return;
@@ -160,9 +160,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 Debug.Log($"Player {connectionId} has not enough gold to refresh shop items. current gold is {remaining + costGold}, needed {costGold}");
                 return;
             }
-            var shopConfigIds = state.RandomShopItemsDict.Values.Select(x => x.ShopConfigId).ToHashSet();
+            var shopConfigIds = state.RandomShopItems.Values.Select(x => x.ShopConfigId).ToHashSet();
             var newShopData = GetRandomShopItemData(shopConfigIds);
-            state.RandomShopItemsDict = newShopData.ToDictionary(x => x.ShopId, x => x);
+            var dic = newShopData.ToDictionary(x => x.ShopId, x => x);
+            state.RandomShopItems = new MemoryDictionary<int, ShopItemData>(dic);
             if (!isServer)
                 return;
             var command = new GoldChangedCommand

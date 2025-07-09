@@ -101,7 +101,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             ref Dictionary<int, PlayerPredictablePropertyState> defenders, Func<float, float, float, float, DamageCalculateResultData> getDamageFunction)
         {
             var playerState = playerPredictablePropertyState;
-            var propertyState = playerState.Properties;
+            var propertyState = playerState.MemoryProperty;
             var attack = propertyState[PropertyTypeEnum.Attack].CurrentValue;
             var critical = propertyState[PropertyTypeEnum.CriticalRate].CurrentValue;
             var criticalDamage = propertyState[PropertyTypeEnum.CriticalDamageRatio].CurrentValue;
@@ -127,15 +127,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     damageResultDatas.Add(resultData);
                     continue;
                 }
-                var defense = defenderPropertyState.Properties[PropertyTypeEnum.Defense].CurrentValue;
+                var defense = defenderPropertyState.MemoryProperty[PropertyTypeEnum.Defense].CurrentValue;
                 resultData.DamageCalculateResult = getDamageFunction(attack, defense, critical, criticalDamage);
                 resultData.DamageRatio = resultData.DamageCalculateResult.Damage /
-                                         defenderPropertyState.Properties[PropertyTypeEnum.Health].MaxCurrentValue;
-                var remainHealth = GetRemainHealth(defenderPropertyState.Properties[PropertyTypeEnum.Health], resultData.DamageCalculateResult.Damage);
-                defenderPropertyState.Properties[PropertyTypeEnum.Health] = remainHealth;
+                                         defenderPropertyState.MemoryProperty[PropertyTypeEnum.Health].MaxCurrentValue;
+                var remainHealth = GetRemainHealth(defenderPropertyState.MemoryProperty[PropertyTypeEnum.Health], resultData.DamageCalculateResult.Damage);
+                defenderPropertyState.MemoryProperty[PropertyTypeEnum.Health] = remainHealth;
                 defenderPropertyStates[key] = defenderPropertyState;
                 resultData.HpRemainRatio = remainHealth.CurrentValue /
-                                          defenderPropertyState.Properties[PropertyTypeEnum.Health].MaxCurrentValue;
+                                          defenderPropertyState.MemoryProperty[PropertyTypeEnum.Health].MaxCurrentValue;
                 if (remainHealth.CurrentValue <= 0)
                 {
                     resultData.IsDead = true;
@@ -150,7 +150,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public void HandlePropertyRecover(ref PlayerPredictablePropertyState playerPredictablePropertyState)
         {
             var propertyState = playerPredictablePropertyState;
-            var state = propertyState.Properties;
+            var state = propertyState.MemoryProperty;
             var healthRecover = state[PropertyTypeEnum.HealthRecovery];
             var strengthRecover = state[PropertyTypeEnum.StrengthRecovery];
             var health = state[PropertyTypeEnum.Health];
@@ -176,7 +176,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 return;
             }
             var propertyState = playerPredictablePropertyState;
-            var state = propertyState.Properties;
+            var state = propertyState.MemoryProperty;
             cost *= command == AnimationState.Sprint ? _calculatorConstant.TickRate : 1f;
             var strength = state[PropertyTypeEnum.Strength];
             if (cost > strength.CurrentValue)
@@ -196,9 +196,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public void HandleEnvironmentChange(ref PlayerPredictablePropertyState playerPredictablePropertyState, bool hasInputMovement, PlayerEnvironmentState environmentType, bool isSprinting)
         {
             var propertyState = playerPredictablePropertyState;
-            var speed = propertyState.Properties[PropertyTypeEnum.Speed];
-            var sprintRatio = propertyState.Properties[PropertyTypeEnum.SprintSpeedRatio];
-            var stairsRatio = propertyState.Properties[PropertyTypeEnum.StairsSpeedRatio];
+            var speed = propertyState.MemoryProperty[PropertyTypeEnum.Speed];
+            var sprintRatio = propertyState.MemoryProperty[PropertyTypeEnum.SprintSpeedRatio];
+            var stairsRatio = propertyState.MemoryProperty[PropertyTypeEnum.StairsSpeedRatio];
             if (!hasInputMovement)
             {
                 speed = speed.UpdateCalculator(speed, new BuffIncreaseData
@@ -235,7 +235,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                         throw new ArgumentOutOfRangeException(nameof(environmentType), environmentType, null);
                 }
             }
-            propertyState.Properties[PropertyTypeEnum.Speed] = speed;
+            propertyState.MemoryProperty[PropertyTypeEnum.Speed] = speed;
             playerPredictablePropertyState = propertyState;
         }
 
@@ -252,7 +252,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public PlayerPredictablePropertyState HandlePlayerDeath(PlayerPredictablePropertyState playerPredictablePropertyState)
         {
             var propertyState = playerPredictablePropertyState;
-            var state = propertyState.Properties;
+            var state = propertyState.MemoryProperty;
             var health = state[PropertyTypeEnum.Health];
             var remainHealth = health.UpdateCurrentValue(0);
             state[PropertyTypeEnum.Health] = remainHealth;
@@ -263,7 +263,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public PlayerPredictablePropertyState HandlePlayerRespawn(PlayerPredictablePropertyState playerPredictablePropertyState)
         {
             var propertyState = playerPredictablePropertyState;
-            var state = propertyState.Properties;
+            var state = propertyState.MemoryProperty;
             var health = state[PropertyTypeEnum.Health];
             var remainHealth = health.UpdateCurrentValue(health.MaxCurrentValue);
             var strength = state[PropertyTypeEnum.Strength];

@@ -38,7 +38,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 return;
             }
-            var playerStates = MemoryPackSerializer.Deserialize<PlayerItemState>(state);
+            var playerStates = NetworkCommandExtensions.DeserializePlayerState(state);
             // if (playerStates is not PlayerItemState playerItemState)
             // {
             //     Debug.LogError($"Player {playerStates.GetStateType().ToString()} item state is not PlayerItemState.");
@@ -58,7 +58,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             playerPredictableState.RegisterState(GetPlayerItemState());
             PropertyStates.TryAdd(connectionId, state);
             _playerItemSyncStates.TryAdd(connectionId, playerPredictableState);
-            RpcSetPlayerItemState(connectionId, MemoryPackSerializer.Serialize(state));
+            RpcSetPlayerItemState(connectionId, NetworkCommandExtensions.SerializePlayerState(state));
             
         }
 
@@ -66,7 +66,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void RpcSetPlayerItemState(int connectionId, byte[] playerItemState)
         {
             var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PlayerItemPredictableState>();
-            var playerState = MemoryPackSerializer.Deserialize<PlayerItemState>(playerItemState);
+            var playerState = NetworkCommandExtensions.DeserializePlayerState(playerItemState);
             syncState.InitCurrentState(playerState);
         }
 

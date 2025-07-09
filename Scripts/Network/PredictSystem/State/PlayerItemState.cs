@@ -18,143 +18,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
 
         [MemoryPackOrder(1)] 
         public int SlotCount;
-        
-        [MemoryPackIgnore]
-        private Dictionary<EquipmentPart, PlayerEquipSlotItem> _playerEquipSlotItemsCache;
-        
-        // itemId-PlayerBagItem
-        [MemoryPackIgnore]
-        private Dictionary<int, PlayerBagItem> _playerItemsCache;
-        
-        // indexSlot-PlayerBagSlotItem
-        [MemoryPackIgnore]
-        private Dictionary<int, PlayerBagSlotItem> _playerSlotIndexItemConfigIdCache;
-        
-        [MemoryPackIgnore]
-        public Dictionary<EquipmentPart, PlayerEquipSlotItem> PlayerEquipSlotItems
-        {
-            get
-            {
-                if (_playerEquipSlotItemsCache == null)
-                {
-                    RebuildCache();
-                }
-                return _playerEquipSlotItemsCache;
-            }
-            set
-            {
-                _playerEquipSlotItemsCache = value;
-            }
-        }
 
-        [MemoryPackIgnore]
-        public Dictionary<int, PlayerBagItem> PlayerItems
-        {
-            get
-            {
-                if (_playerItemsCache == null)
-                {
-                    RebuildCache();
-                }
-                return _playerItemsCache;
-            }
-            set
-            {
-                _playerItemsCache = value;
-            }
-        }
-        
-        [MemoryPackIgnore]
-        public Dictionary<int, PlayerBagSlotItem> PlayerItemConfigIdSlotDictionary
-        {
-            get
-            {
-                if (_playerSlotIndexItemConfigIdCache == null)
-                {
-                    RebuildCache();
-                }
-                return _playerSlotIndexItemConfigIdCache;
-            }
-            set
-            {
-                _playerSlotIndexItemConfigIdCache = value;
-            }
-        }
+        [MemoryPackOrder(2)] public MemoryDictionary<EquipmentPart, PlayerEquipSlotItem> PlayerEquipSlotItems;
+
+        [MemoryPackOrder(3)] public MemoryDictionary<int, PlayerBagItem> PlayerItems;
+
+        [MemoryPackOrder(4)] public MemoryDictionary<int, PlayerBagSlotItem> PlayerItemConfigIdSlotDictionary;
         public PlayerSyncStateType GetStateType() => PlayerSyncStateType.PlayerItem;
-        
-        [MemoryPackOnSerializing]
-        private void OnSerializing()
-        {
-            // 同步更新缓存
-            if (_playerItemsCache != null)
-            {
-                _items = _playerItemsCache.Values.ToArray();
-            }
-        }
-
-        [MemoryPackOnDeserialized]
-        private void OnDeserialized()
-        {
-            RebuildCache();
-        }
-
-        private void RebuildCache()
-        {
-            _playerItemsCache = new Dictionary<int, PlayerBagItem>(
-                _items?.Length ?? 0);
-            _playerSlotIndexItemConfigIdCache = new Dictionary<int, PlayerBagSlotItem>(SlotCount);
-
-            if (_items != null)
-            {
-                for (int i = 0; i < _items.Length; i++)
-                {
-                    // _playerSlotIndexItemConfigIdCache[_items[i].IndexSlot] = _items[i].ConfigId;
-                    if (_playerItemsCache.ContainsKey(_items[i].ItemId))
-                    {
-                        throw new InvalidOperationException(
-                            $"Duplicate property type: {_items[i]}");
-                    }
-                    _playerItemsCache[_items[i].ItemId] = _items[i];
-                    if (!_playerSlotIndexItemConfigIdCache.ContainsKey(_items[i].IndexSlot))
-                    {
-                        _playerSlotIndexItemConfigIdCache[_items[i].IndexSlot] = new PlayerBagSlotItem
-                        {
-                            IndexSlot = _items[i].IndexSlot,
-                            ConfigId = _items[i].ConfigId,
-                            Count = 1,
-                            ItemIds = new HashSet<int> {_items[i].ItemId},
-                            MaxStack = _items[i].MaxStack,
-                            PlayerItemType = _items[i].PlayerItemType,
-                            State = _items[i].State,
-                        };
-                    }
-                    else
-                    {
-                        var playerBagSlotItem = _playerSlotIndexItemConfigIdCache[_items[i].IndexSlot];
-                        playerBagSlotItem.Count += 1;
-                        playerBagSlotItem.ItemIds.Add(_items[i].ItemId);
-                        _playerSlotIndexItemConfigIdCache[_items[i].IndexSlot] = playerBagSlotItem;
-                    }
-
-                    if (_items[i].PlayerItemType.IsEquipment() && _items[i].State == ItemState.IsEquipped)
-                    {
-                        var equipPart = _items[i].EquipmentPart;
-                        if (PlayerEquipSlotItems.ContainsKey(equipPart))
-                        {
-                            throw new InvalidOperationException(
-                                $"Duplicate property type: {_items[i]}");
-                        }
-                        PlayerEquipSlotItems[equipPart] = new PlayerEquipSlotItem
-                        {
-                            EquipmentPart = equipPart,
-                            ItemId = _items[i].ItemId,
-                            ConfigId = _items[i].ConfigId,
-                            SkillId = PlayerItemCalculator.GetEquipSkillId(_items[i].PlayerItemType, _items[i].ItemId),
-                        };
-                    }
-                }
-            }
-        }
         
         public static bool AddItems(ref PlayerItemState state, int[] itemIds, int configId, int maxStack, PlayerItemType itemType, ItemState itemState = ItemState.IsInBag, int count = 1)
         {
@@ -228,9 +98,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
 
         public static void Init(ref PlayerItemState state, int maxSlotCount)
         {
-            state.PlayerItems = new Dictionary<int, PlayerBagItem>();
-            state.PlayerItemConfigIdSlotDictionary = new Dictionary<int, PlayerBagSlotItem>();
-            state.PlayerEquipSlotItems = new Dictionary<EquipmentPart, PlayerEquipSlotItem>();
+            state.PlayerItems = new MemoryDictionary<int, PlayerBagItem>();
+            state.PlayerItemConfigIdSlotDictionary = new MemoryDictionary<int, PlayerBagSlotItem>();
+            state.PlayerEquipSlotItems = new MemoryDictionary<EquipmentPart, PlayerEquipSlotItem>();
             state.SlotCount = maxSlotCount;
         }
 

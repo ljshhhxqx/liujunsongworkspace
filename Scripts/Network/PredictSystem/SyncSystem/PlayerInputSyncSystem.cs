@@ -64,7 +64,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 if (playerState is PlayerInputState playerInputState)
                 {
-                    return MemoryPackSerializer.Serialize(playerInputState);
+                    return NetworkCommandExtensions.SerializePlayerState(playerInputState);
                 }
 
                 Debug.LogError($"Player {connectionId} equipment state is not PlayerInputState.");
@@ -104,7 +104,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 return;
             }
-            var playerStates = MemoryPackSerializer.Deserialize<PlayerInputState>(state);
+            var playerStates = NetworkCommandExtensions.DeserializePlayerState(state);
             if (playerStates is not PlayerInputState playerInputState)
             {
                 Debug.LogError($"Player {playerStates.GetStateType().ToString()} input state is not PlayerInputState.");
@@ -122,7 +122,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerInputState = new PlayerInputState(new PlayerGameStateData(), new PlayerAnimationCooldownState());
             PropertyStates.TryAdd(connectionId, playerInputState);
             _inputPredictionStates.TryAdd(connectionId, playerPredictableState);
-            RpcSetPlayerInputState(connectionId, MemoryPackSerializer.Serialize(playerInputState));
+            RpcSetPlayerInputState(connectionId, NetworkCommandExtensions.SerializePlayerState(playerInputState));
             BindAniEvents(connectionId);
         }
 
@@ -130,7 +130,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void RpcSetPlayerInputState(int connectionId, byte[] playerInputState)
         {
             var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PlayerInputPredictionState>();
-            var playerState = MemoryPackSerializer.Deserialize<PlayerInputState>(playerInputState);
+            var playerState = NetworkCommandExtensions.DeserializePlayerState(playerInputState);
             syncState.InitCurrentState(playerState);
         }
 

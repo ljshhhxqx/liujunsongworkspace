@@ -12,18 +12,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     public partial class PlayerSkillState : ISyncPropertyState
     {
         [MemoryPackOrder(0)]
-        public SkillCheckerData[] SkillCheckerDatas;
-        [MemoryPackIgnore] public Dictionary<AnimationState, ISkillChecker> SkillCheckers;
+        public MemoryList<SkillCheckerData> SkillCheckerDatas;
+        
+        [MemoryPackIgnore]
+        public Dictionary<AnimationState, ISkillChecker> SkillCheckers;
         public PlayerSyncStateType GetStateType() => PlayerSyncStateType.PlayerSkill;
 
         public void SetSkillCheckerState()
         {
-            if (SkillCheckerDatas == null || SkillCheckerDatas.Length == 0)
+            if (SkillCheckerDatas == null || SkillCheckerDatas.Count == 0)
             {
                 //Debug.LogWarning("SkillCheckers or SkillCheckerDatas is null");
                 return;
             }
-            for (var i = 0; i < SkillCheckerDatas.Length; i++)
+            for (var i = 0; i < SkillCheckerDatas.Count; i++)
             {
                 var skillCheckerData = SkillCheckerDatas[i];
                 if (!SkillCheckers.TryGetValue(skillCheckerData.AnimationState, out var skillChecker))
@@ -35,7 +37,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             }
         }
 
-        public SkillCheckerData[] SetSkillCheckerDatas()
+        public MemoryList<SkillCheckerData> SetSkillCheckerDatas()
         {
             if (SkillCheckers == null || SkillCheckers.Count == 0)
             {
@@ -62,7 +64,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 };
                 i++;
             }
-            SkillCheckerDatas = skillCheckerDatas;
+            SkillCheckerDatas = new MemoryList<SkillCheckerData>(skillCheckerDatas);
             return SkillCheckerDatas;
         }
     }

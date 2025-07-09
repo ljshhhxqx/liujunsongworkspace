@@ -74,13 +74,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             CurrentState = playerShopState;
             _shopItems ??= UIPropertyBinder.GetReactiveDictionary<RandomShopItemData>(_bindKey);
             //_bagItems ??= UIPropertyBinder.GetReactiveDictionary<BagItemData>(_bagBindKey);
-            foreach (var key in playerShopState.RandomShopItemsDict.Keys)
+            foreach (var key in playerShopState.RandomShopItems.Keys)
             {
-                var item = playerShopState.RandomShopItemsDict[key];
+                var item = playerShopState.RandomShopItems[key];
                 var shopConfigData = _shopConfig.GetShopConfigData(item.ShopConfigId);
                 var itemConfigData = _itemConfig.GetGameItemData(item.ItemConfigId);
-                var mainProperty = GameStaticExtensions.GetBuffEffectDesc(item.MainIncreaseDatas);
-                var randomBuffEffectDesc = GameStaticExtensions.GetRandomBuffEffectDesc(item.PassiveIncreaseDatas);
+                var mainProperty = GameStaticExtensions.GetBuffEffectDesc(item.MainIncreaseDatas.Items);
+                var randomBuffEffectDesc = GameStaticExtensions.GetRandomBuffEffectDesc(item.PassiveIncreaseDatas.Items);
                 var randomShopData = new RandomShopItemData();
                 randomShopData.ShopConfigId = item.ShopConfigId;
                 randomShopData.ShopId = item.ShopId;

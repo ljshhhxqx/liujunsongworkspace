@@ -22,7 +22,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 return;
             }
-            var playerStates = MemoryPackSerializer.Deserialize<PlayerShopState>(state);
+            var playerStates = NetworkCommandExtensions.DeserializePlayerState(state);
             
             // if (playerStates is not PlayerShopState playerShopState)
             // {
@@ -40,11 +40,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerPredictableState = player.GetComponent<PlayerShopPredictableState>();
             var state = new PlayerShopState();
             var randomItems = PlayerShopCalculator.GetRandomShopItemData();
-            state.RandomShopItemsDict = randomItems.ToDictionary(x => x.ShopId, x => x);
+            state.RandomShopItems = new MemoryDictionary<int, ShopItemData>();
+            for (int i = 0; i < randomItems.Length; i++)
+            {
+                state.RandomShopItems.Add(i, randomItems[i]);
+            }
             playerPredictableState.SetPlayerShopState(state);
             PropertyStates[connectionId] = state;
             _playerShopSyncStates[connectionId] = playerPredictableState;
-            RpcSetPlayerShopState(connectionId, MemoryPackSerializer.Serialize(state));
+            RpcSetPlayerShopState(connectionId, NetworkCommandExtensions.SerializePlayerState(state));
         }
         public override byte[] GetPlayerSerializedState(int connectionId)
         {
@@ -52,7 +56,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 if (playerState is PlayerShopState shopState)
                 {
-                    return MemoryPackSerializer.Serialize(shopState);
+                    return NetworkCommandExtensions.SerializePlayerState(shopState);
                 }
 
                 Debug.LogError($"Player {connectionId} property state is not PlayerPredictablePropertyState.");
@@ -65,7 +69,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void RpcSetPlayerShopState(int connectionId, byte[] playerSkillState)
         {
             var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PlayerShopPredictableState>();
-            var playerState = MemoryPackSerializer.Deserialize<PlayerShopState>(playerSkillState);
+            var playerState = NetworkCommandExtensions.DeserializePlayerState(playerSkillState);
             syncState.InitCurrentState(playerState);
         }
 
