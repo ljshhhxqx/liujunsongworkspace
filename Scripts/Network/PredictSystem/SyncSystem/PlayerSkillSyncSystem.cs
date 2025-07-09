@@ -251,6 +251,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var currentState = PropertyStates[headerConnectionId];
             if (currentState is PlayerSkillState playerSkillState)
             {
+                if (playerSkillState.SkillCheckers == null || playerSkillState.SkillCheckers.Count == 0)
+                {
+                    return default;
+                }
+
                 if (!playerSkillState.SkillCheckers.TryGetValue(animationState, out var skillChecker))
                 {
                     return default;

@@ -237,7 +237,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 return null;
             if (command is InputCommand inputCommand)
             {
-                Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input command {inputCommand.InputMovement} {inputCommand.InputAnimationStates}");
+                //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input command {inputCommand.InputMovement} {inputCommand.InputAnimationStates}");
                 var playerSyncSystem = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
                 var playerController = GameSyncManager.GetPlayerConnection(header.ConnectionId);
                 if (playerController.IsInSpecialState())
@@ -265,7 +265,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
                 inputCommand.CommandAnimationState = commandAnimation;
                 var actionType = _animationConfig.GetActionType(inputCommand.CommandAnimationState);
-                Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input command {inputCommand.InputMovement} {inputCommand.InputAnimationStates} action type {actionType}");
+                //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input command {inputCommand.InputMovement} {inputCommand.InputAnimationStates} action type {actionType}");
                 if (actionType is not ActionType.Movement and ActionType.Interaction)
                 {
                     Debug.LogWarning($"Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} is not supported.");

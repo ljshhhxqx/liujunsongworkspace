@@ -49,6 +49,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         protected override void OnClientProcessStateUpdate(int connectionId, byte[] state, CommandType commandType)
         {
+            if (commandType!= CommandType.Equipment)
+            {
+                return;
+            }
             var playerStates = NetworkCommandExtensions.DeserializePlayerState(state);
             // if (playerStates is not PlayerEquipmentState equipmentState)
             // {

@@ -224,7 +224,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     };
                     var command = GetCurrentAnimationState(playerInputStateData);
                     playerInputStateData.Command = command;
-                    _targetSpeed = 3.5f;//_propertyPredictionState.GetProperty(PropertyTypeEnum.Speed);
+                    _targetSpeed = _propertyPredictionState.GetProperty(PropertyTypeEnum.Speed);
                     _playerAnimationCalculator.UpdateAnimationState();
                     _inputStream.OnNext(playerInputStateData);
                 })

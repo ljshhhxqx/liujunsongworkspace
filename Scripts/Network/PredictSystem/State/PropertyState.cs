@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using MemoryPack;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.State
@@ -36,10 +38,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
 
         public MemoryDictionary()
         {
+            _keys = Array.Empty<T1>();
+            _values = Array.Empty<T2>();
         }
 
         public MemoryDictionary(int capacity) : base(capacity)
         {
+            _keys = new T1[capacity];
+            _values = new T2[capacity];
         }
 
         public MemoryDictionary(IEqualityComparer<T1> comparer) : base(comparer)
@@ -48,14 +54,35 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
 
         public MemoryDictionary(IDictionary<T1, T2> dictionary) : base(dictionary)
         {
+            _keys = new T1[dictionary.Count];
+            _values = new T2[dictionary.Count];
+            int i = 0;
+            foreach (var item in dictionary)
+            {
+                _keys[i] = item.Key;
+                _values[i] = item.Value;
+                i++;
+            }
         }
 
         public MemoryDictionary(IEnumerable<KeyValuePair<T1, T2>> collection) : base(collection)
         {
+            var dictionary = collection.ToDictionary(x => x.Key, x => x.Value);
+            _keys = new T1[dictionary.Count];
+            _values = new T2[dictionary.Count];
+            int i = 0;
+            foreach (var item in dictionary)
+            {
+                _keys[i] = item.Key;
+                _values[i] = item.Value;
+                i++;
+            }
         }
 
         public MemoryDictionary(int capacity, IEqualityComparer<T1> comparer) : base(capacity, comparer)
         {
+            _keys = new T1[capacity];
+            _values = new T2[capacity];
         }
 
         public T1[] Keys
@@ -133,14 +160,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
 
         public MemoryList()
         {
+            _items = Array.Empty<T>();
         }
 
         public MemoryList(int capacity) : base(capacity)
         {
+            _items = new T[capacity];
         }
 
         public MemoryList(IEnumerable<T> collection) : base(collection)
         {
+            _items = collection.ToArray();
         }
 
         public MemoryList(T[] items)

@@ -48,7 +48,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         
         public PlayerAnimationCooldownState(List<CooldownSnapshotData> animationCooldowns)
         {
-            AnimationCooldowns = new MemoryList<CooldownSnapshotData>(animationCooldowns);
+            AnimationCooldowns = new MemoryList<CooldownSnapshotData>(animationCooldowns ?? new List<CooldownSnapshotData>());
         }
 
         public PlayerAnimationCooldownState Reset(PlayerAnimationCooldownState state)
