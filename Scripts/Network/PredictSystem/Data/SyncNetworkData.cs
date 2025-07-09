@@ -6,6 +6,7 @@ using System.Threading;
 using AOTScripts.Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.Battle;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using MemoryPack;
@@ -107,6 +108,166 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     {
         const byte COMMAND_PROTOCOL_VERSION = 1;
         const byte PLAYERSTATE_PROTOCOL_VERSION = 2;
+        const byte BATTLECONDITION_PROTOCOL_VERSION = 3;
+        const byte CONDITIONCHECKER_PROTOCOL_VERSION = 4;
+        
+         public static byte[] SerializeBattleChecker<T>(T checker) where T : IConditionChecker
+        {
+            byte typeId = (byte)checker.GetConditionCheckerHeader().TriggerType;
+            byte[] payload = MemoryPackSerializer.Serialize(checker);
+    
+            // 正确分配空间：头部6字节 + payload
+            byte[] result = new byte[6 + payload.Length];
+    
+            // 写入协议头和类型ID
+            result[0] = CONDITIONCHECKER_PROTOCOL_VERSION;
+            result[1] = typeId;
+    
+            // 写入长度字段（显式转为大端序）
+            byte[] lengthBytes = BitConverter.GetBytes(payload.Length);
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(lengthBytes);
+            }
+            Buffer.BlockCopy(lengthBytes, 0, result, 2, 4);
+    
+            // 写入payload数据
+            Buffer.BlockCopy(payload, 0, result, 6, payload.Length);
+    
+            return result;
+        }
+        
+        public static IConditionChecker DeserializeBattleChecker(byte[] data)
+        {
+            // 1. 验证基本长度
+            if (data == null || data.Length < 6)
+            {
+                throw new ArgumentException("Invalid data format: insufficient length", nameof(data));
+            }
+
+            // 2. 检查协议版本
+            byte version = data[0];
+            if (version != CONDITIONCHECKER_PROTOCOL_VERSION)
+            {
+                throw new InvalidOperationException($"Unsupported protocol version: {version}. Expected: {PLAYERSTATE_PROTOCOL_VERSION}");
+            }
+
+            // 3. 提取类型ID
+            byte typeId = data[1];
+
+            // 4. 读取长度字段（考虑字节序）
+            byte[] lengthBytes = new byte[4];
+            Buffer.BlockCopy(data, 2, lengthBytes, 0, 4);
+    
+            // 如果数据是以大端序存储的，需要反转字节顺序（根据序列化时的设置）
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(lengthBytes);
+            }
+    
+            int payloadLength = BitConverter.ToInt32(lengthBytes, 0);
+
+            // 5. 验证数据长度
+            int expectedTotalLength = 6 + payloadLength; // 1(版本) + 1(类型) + 4(长度) + payload
+            if (data.Length < expectedTotalLength)
+            {
+                throw new ArgumentException(
+                    $"Data length insufficient. Expected: {expectedTotalLength}, Actual: {data.Length}",
+                    nameof(data));
+            }
+
+            // 6. 提取payload数据
+            byte[] payload = new byte[payloadLength];
+            Buffer.BlockCopy(data, 6, payload, 0, payloadLength);
+            try
+            {
+                return payload.GetConditionChecker(typeId);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"反序列化失败 ({typeId}): {ex}");
+                return null;
+            }
+        }
+        
+        public static byte[] SerializeBattleCondition<T>(T checkerParameters) where T : IConditionCheckerParameters
+        {
+            byte typeId = (byte)checkerParameters.GetCommonParameters().TriggerType;
+            byte[] payload = MemoryPackSerializer.Serialize(checkerParameters);
+    
+            // 正确分配空间：头部6字节 + payload
+            byte[] result = new byte[6 + payload.Length];
+    
+            // 写入协议头和类型ID
+            result[0] = BATTLECONDITION_PROTOCOL_VERSION;
+            result[1] = typeId;
+    
+            // 写入长度字段（显式转为大端序）
+            byte[] lengthBytes = BitConverter.GetBytes(payload.Length);
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(lengthBytes);
+            }
+            Buffer.BlockCopy(lengthBytes, 0, result, 2, 4);
+    
+            // 写入payload数据
+            Buffer.BlockCopy(payload, 0, result, 6, payload.Length);
+    
+            return result;
+        }
+        
+        public static IConditionCheckerParameters DeserializeBattleCondition(byte[] data)
+        {
+            // 1. 验证基本长度
+            if (data == null || data.Length < 6)
+            {
+                throw new ArgumentException("Invalid data format: insufficient length", nameof(data));
+            }
+
+            // 2. 检查协议版本
+            byte version = data[0];
+            if (version != BATTLECONDITION_PROTOCOL_VERSION)
+            {
+                throw new InvalidOperationException($"Unsupported protocol version: {version}. Expected: {PLAYERSTATE_PROTOCOL_VERSION}");
+            }
+
+            // 3. 提取类型ID
+            byte typeId = data[1];
+
+            // 4. 读取长度字段（考虑字节序）
+            byte[] lengthBytes = new byte[4];
+            Buffer.BlockCopy(data, 2, lengthBytes, 0, 4);
+    
+            // 如果数据是以大端序存储的，需要反转字节顺序（根据序列化时的设置）
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(lengthBytes);
+            }
+    
+            int payloadLength = BitConverter.ToInt32(lengthBytes, 0);
+
+            // 5. 验证数据长度
+            int expectedTotalLength = 6 + payloadLength; // 1(版本) + 1(类型) + 4(长度) + payload
+            if (data.Length < expectedTotalLength)
+            {
+                throw new ArgumentException(
+                    $"Data length insufficient. Expected: {expectedTotalLength}, Actual: {data.Length}",
+                    nameof(data));
+            }
+
+            // 6. 提取payload数据
+            byte[] payload = new byte[payloadLength];
+            Buffer.BlockCopy(data, 6, payload, 0, payloadLength);
+            try
+            {
+                return payload.GetConditionCheckerParameters(typeId);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"反序列化失败 ({typeId}): {ex}");
+                return null;
+            }
+        }
         
         public static byte[] SerializePlayerState<T>(T playerState) where T : ISyncPropertyState
         {
@@ -266,6 +427,44 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 Debug.LogError($"反序列化失败 ({typeId}): {ex}");
                 return null;
             }
+        }
+        public static IConditionCheckerParameters GetConditionCheckerParameters(this byte[] data, int typeId)
+        {
+            return (TriggerType)typeId switch
+            {
+                TriggerType.OnAttackHit => MemoryPackSerializer.Deserialize<AttackHitCheckerParameters>(data),
+                TriggerType.OnAttack => MemoryPackSerializer.Deserialize<AttackCheckerParameters>(data),
+                TriggerType.OnSkillHit => MemoryPackSerializer.Deserialize<SkillHitCheckerParameters>(data),
+                TriggerType.OnMove => MemoryPackSerializer.Deserialize<MoveCheckerParameters>(data),
+                TriggerType.OnSkillCast => MemoryPackSerializer.Deserialize<SkillCastCheckerParameters>(data),
+                TriggerType.OnTakeDamage => MemoryPackSerializer.Deserialize<TakeDamageCheckerParameters>(data),
+                TriggerType.OnKill => MemoryPackSerializer.Deserialize<KillCheckerParameters>(data),
+                TriggerType.OnHpChange => MemoryPackSerializer.Deserialize<HpChangeCheckerParameters>(data),
+                TriggerType.OnManaChange => MemoryPackSerializer.Deserialize<MpChangeCheckerParameters>(data),
+                TriggerType.OnCriticalHit => MemoryPackSerializer.Deserialize<CriticalHitCheckerParameters>(data),
+                TriggerType.OnDodge => MemoryPackSerializer.Deserialize<DodgeCheckerParameters>(data),
+                TriggerType.OnDeath => MemoryPackSerializer.Deserialize<DeathCheckerParameters>(data),
+                _ => throw new ArgumentOutOfRangeException(nameof(typeId), typeId, null)
+            };
+        }
+        public static IConditionChecker GetConditionChecker(this byte[] data, int typeId)
+        {
+            return (TriggerType)typeId switch
+            {
+                TriggerType.OnAttackHit => MemoryPackSerializer.Deserialize<AttackHitChecker>(data),
+                TriggerType.OnAttack => MemoryPackSerializer.Deserialize<AttackChecker>(data),
+                TriggerType.OnSkillHit => MemoryPackSerializer.Deserialize<SkillHitChecker>(data),
+                TriggerType.OnMove => MemoryPackSerializer.Deserialize<MoveChecker>(data),
+                TriggerType.OnSkillCast => MemoryPackSerializer.Deserialize<SkillCastChecker>(data),
+                TriggerType.OnTakeDamage => MemoryPackSerializer.Deserialize<TakeDamageChecker>(data),
+                TriggerType.OnKill => MemoryPackSerializer.Deserialize<KillChecker>(data),
+                TriggerType.OnHpChange => MemoryPackSerializer.Deserialize<HpChangeChecker>(data),
+                TriggerType.OnManaChange => MemoryPackSerializer.Deserialize<MpChangeChecker>(data),
+                TriggerType.OnCriticalHit => MemoryPackSerializer.Deserialize<CriticalHitChecker>(data),
+                TriggerType.OnDodge => MemoryPackSerializer.Deserialize<DodgeChecker>(data),
+                TriggerType.OnDeath => MemoryPackSerializer.Deserialize<DeathChecker>(data),
+                _ => throw new ArgumentOutOfRangeException(nameof(typeId), typeId, null)
+            };
         }
 
         public static ISyncPropertyState GetPlayerState(this byte[] data, int typeId)

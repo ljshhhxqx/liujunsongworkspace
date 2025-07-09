@@ -212,10 +212,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             {
                 var playerBagSlotItem = playerItemState.PlayerItemConfigIdSlotDictionary[item];
                 var itemConfig = _itemConfig.GetGameItemData(playerBagSlotItem.ConfigId);
-                var mainProperty = GameStaticExtensions.GetBuffEffectDesc(playerBagSlotItem.MainIncreaseDatas);
-                var randomBuffEffectDesc = GameStaticExtensions.GetRandomBuffEffectDesc(playerBagSlotItem.RandomIncreaseDatas);
+                var mainProperty = GameStaticExtensions.GetBuffEffectDesc(playerBagSlotItem.MainIncreaseDatas.Items);
+                var randomBuffEffectDesc = GameStaticExtensions.GetRandomBuffEffectDesc(playerBagSlotItem.RandomIncreaseDatas.Items);
                 var passiveProperty =
-                    GameStaticExtensions.GetBuffEffectDesc(playerBagSlotItem.PassiveAttributeIncreaseDatas);
+                    GameStaticExtensions.GetBuffEffectDesc(playerBagSlotItem.PassiveAttributeIncreaseDatas.Items);
                 var bagItem = new BagItemData
                 {
                     ItemName = itemConfig.name,

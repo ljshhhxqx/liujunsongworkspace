@@ -630,10 +630,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         public int ItemId;
         //必须赋值具体的主属性
         [MemoryPackOrder(3)]
-        public AttributeIncreaseData[] MainIncreaseDatas;
+        public MemoryList<AttributeIncreaseData> MainIncreaseDatas;
         //必须赋值具体的被动属性(由随机值计算出来的具体的值)
         [MemoryPackOrder(4)]
-        public AttributeIncreaseData[] PassiveIncreaseDatas;
+        public MemoryList<AttributeIncreaseData> PassiveIncreaseDatas;
         [MemoryPackOrder(5)]
         public int SkillId;
 
@@ -673,14 +673,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         //消耗品：显示确定的属性增益
         //装备：显示主要属性增益
         [MemoryPackOrder(7)]
-        public AttributeIncreaseData[] MainIncreaseDatas;
+        public MemoryList<AttributeIncreaseData> MainIncreaseDatas;
         //消耗品：显示随机属性增益(精确到数值的范围最大值和最小值)
         //装备：不显示
         [MemoryPackOrder(8)]
-        public RandomAttributeIncreaseData[] RandomIncreaseDatas;
+        public MemoryList<RandomAttributeIncreaseData> RandomIncreaseDatas;
         //装备：显示被动属性增益
         [MemoryPackOrder(9)]
-        public AttributeIncreaseData[] PassiveAttributeIncreaseDatas;
+        public MemoryList<AttributeIncreaseData> PassiveAttributeIncreaseDatas;
 
         public bool Equals(PlayerBagSlotItem other)
         {

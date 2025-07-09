@@ -71,7 +71,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             foreach (CommandType commandType in commandTypes)
             {
                 var syncSystem = commandType.GetSyncSystem();
-                if (syncSystem == null || syncSystem.GetType() == typeof(PlayerSkillSyncSystem) || syncSystem.GetType() == typeof(PlayerItemSyncSystem) || syncSystem.GetType() == typeof(ShopSyncSystem) || syncSystem.GetType() == typeof(PlayerEquipmentSystem))
+                if (syncSystem == null)// || syncSystem.GetType() == typeof(PlayerSkillSyncSystem) || syncSystem.GetType() == typeof(PlayerItemSyncSystem) || syncSystem.GetType() == typeof(ShopSyncSystem) || syncSystem.GetType() == typeof(PlayerEquipmentSystem))
                 {
                     Debug.Log($"No sync system found for {commandType}");
                     continue;

@@ -115,7 +115,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var header = triggerCommand.Header;
             var data = triggerCommand.TriggerData;
             var configId = PlayerItemCalculator.GetItemConfigId(equipmentPart, equipmentConfigId);
-            var checkParams = MemoryPackSerializer.Deserialize<IConditionCheckerParameters>(data);
+            var checkParams = NetworkCommandExtensions.DeserializeBattleCondition(data);
             var isCheckPassed = PlayerEquipmentState.CheckConditions(ref playerEquipmentState, checkParams);
             if (isCheckPassed)
             {
@@ -141,7 +141,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             for (int i = 0; i < playerEquipmentState.EquipmentDatas.Count; i++)
             {
                 var data = playerEquipmentState.EquipmentDatas[i];
-                var checker = data.ConditionChecker;
+                var checker = NetworkCommandExtensions.DeserializeBattleChecker(data.ConditionCheckerBytes.Items);
                 if (checker.GetConditionCheckerHeader().TriggerType != triggerType)
                 {
                     continue;

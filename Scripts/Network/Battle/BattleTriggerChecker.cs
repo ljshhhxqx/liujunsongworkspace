@@ -6,21 +6,24 @@ using HotUpdate.Scripts.Tool.Coroutine;
 using MemoryPack;
 using Newtonsoft.Json;
 using UnityEngine;
+using IConditionParam = AOTScripts.Data.IConditionParam;
 using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Network.Battle
 {
     [MemoryPackable(GenerateType.NoGenerate)]
-    [MemoryPackUnion(0, typeof(AttackChecker))]
-    [MemoryPackUnion(1, typeof(AttackHitChecker))]
-    [MemoryPackUnion(2, typeof(SkillCastChecker))]
-    [MemoryPackUnion(3, typeof(SkillHitChecker))]
-    [MemoryPackUnion(4, typeof(TakeDamageChecker))]
-    [MemoryPackUnion(5, typeof(KillChecker))]
-    [MemoryPackUnion(6, typeof(HpChangeChecker))]
-    [MemoryPackUnion(7, typeof(MpChangeChecker))]
-    [MemoryPackUnion(8, typeof(CriticalHitChecker))]
-    [MemoryPackUnion(9, typeof(DodgeChecker))]
+    [MemoryPackUnion(3, typeof(AttackChecker))]
+    [MemoryPackUnion(2, typeof(AttackHitChecker))]
+    [MemoryPackUnion(6, typeof(SkillCastChecker))]
+    [MemoryPackUnion(4, typeof(SkillHitChecker))]
+    [MemoryPackUnion(7, typeof(TakeDamageChecker))]
+    [MemoryPackUnion(8, typeof(KillChecker))]
+    [MemoryPackUnion(9, typeof(HpChangeChecker))]
+    [MemoryPackUnion(10, typeof(MpChangeChecker))]
+    [MemoryPackUnion(11, typeof(CriticalHitChecker))]
+    [MemoryPackUnion(12, typeof(DodgeChecker))]
+    [MemoryPackUnion(13, typeof(DeathChecker))]
+    [MemoryPackUnion(5, typeof(MoveChecker))]
     public partial interface IConditionChecker
     {
         ConditionCheckerHeader GetConditionCheckerHeader();
@@ -150,9 +153,12 @@ namespace HotUpdate.Scripts.Network.Battle
         }
     }
 
-    public struct CurrentConditionCommonParameters
+    [MemoryPackable]
+    public partial struct CurrentConditionCommonParameters
     {
+        [MemoryPackOrder(0)]
         public float Probability;
+        [MemoryPackOrder(1)]
         public TriggerType TriggerType;
 
         public static CurrentConditionCommonParameters CreateParameters(TriggerType triggerType, float probability)
@@ -166,18 +172,18 @@ namespace HotUpdate.Scripts.Network.Battle
     }
 
     [MemoryPackable(GenerateType.NoGenerate)]
-    [MemoryPackUnion(0, typeof(AttackCheckerParameters))]
-    [MemoryPackUnion(1, typeof(AttackHitCheckerParameters))]
-    [MemoryPackUnion(2, typeof(SkillCastCheckerParameters))]
-    [MemoryPackUnion(3, typeof(SkillHitCheckerParameters))]
-    [MemoryPackUnion(4, typeof(TakeDamageCheckerParameters))]
-    [MemoryPackUnion(5, typeof(KillCheckerParameters))]
-    [MemoryPackUnion(6, typeof(HpChangeCheckerParameters))]
-    [MemoryPackUnion(7, typeof(MpChangeCheckerParameters))]
-    [MemoryPackUnion(8, typeof(CriticalHitCheckerParameters))]
-    [MemoryPackUnion(9, typeof(DodgeCheckerParameters))]
-    [MemoryPackUnion(10, typeof(DeathCheckerParameters))]
-    [MemoryPackUnion(11, typeof(MoveCheckerParameters))]
+    [MemoryPackUnion(2, typeof(AttackHitCheckerParameters))]
+    [MemoryPackUnion(3, typeof(AttackCheckerParameters))]
+    [MemoryPackUnion(6, typeof(SkillCastCheckerParameters))]
+    [MemoryPackUnion(4, typeof(SkillHitCheckerParameters))]
+    [MemoryPackUnion(7, typeof(TakeDamageCheckerParameters))]
+    [MemoryPackUnion(8, typeof(KillCheckerParameters))]
+    [MemoryPackUnion(9, typeof(HpChangeCheckerParameters))]
+    [MemoryPackUnion(10, typeof(MpChangeCheckerParameters))]
+    [MemoryPackUnion(11, typeof(CriticalHitCheckerParameters))]
+    [MemoryPackUnion(12, typeof(DodgeCheckerParameters))]
+    [MemoryPackUnion(13, typeof(DeathCheckerParameters))]
+    [MemoryPackUnion(5, typeof(MoveCheckerParameters))]
     public partial interface IConditionCheckerParameters
     {
         CurrentConditionCommonParameters GetCommonParameters();
@@ -842,6 +848,74 @@ namespace HotUpdate.Scripts.Network.Battle
                 var header = GetConditionCheckerHeader();
                 var configData = JsonConvert.DeserializeObject<IConditionParam>(header.CheckParams);
                 if (configData != null && configData is  DodgeConditionParam dodgeConditionParam)
+                {
+                    return configData.CheckConditionValid() && this.CheckCommonParamsCondition(t);
+                }
+            }
+            return false;
+        }
+    }
+    
+    [MemoryPackable]
+    public partial struct DeathChecker : IConditionChecker
+    {
+        [MemoryPackOrder(0)]
+        public ConditionCheckerHeader Header;
+        
+        [MemoryPackOrder(1)]
+        public CooldownHeader CooldownHeader;
+
+        public CooldownHeader GetCooldownHeader() => CooldownHeader;
+
+        public CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader)
+        {
+            CooldownHeader = cooldownHeader;
+            return CooldownHeader;
+        }
+        
+        public ConditionCheckerHeader GetConditionCheckerHeader() => Header;
+        
+        public bool Check<T>(ref IConditionChecker checker, T t) where T : IConditionCheckerParameters
+        {
+            if (t is DeathCheckerParameters parameters)
+            {
+                var header = GetConditionCheckerHeader();
+                var configData = JsonConvert.DeserializeObject<IConditionParam>(header.CheckParams);
+                if (configData != null && configData is DeathConditionParam deathConditionParam)
+                {
+                    return configData.CheckConditionValid() && this.CheckCommonParamsCondition(t);
+                }
+            }
+            return false;
+        }
+    }
+
+    [MemoryPackable]
+    public partial struct MoveChecker : IConditionChecker
+    {
+        [MemoryPackOrder(0)]
+        public ConditionCheckerHeader Header;
+        
+        [MemoryPackOrder(1)]
+        public CooldownHeader CooldownHeader;
+
+        public CooldownHeader GetCooldownHeader() => CooldownHeader;
+
+        public CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader)
+        {
+            CooldownHeader = cooldownHeader;
+            return CooldownHeader;
+        }
+        
+        public ConditionCheckerHeader GetConditionCheckerHeader() => Header;
+        
+        public bool Check<T>(ref IConditionChecker checker, T t) where T : IConditionCheckerParameters
+        {
+            if (t is MoveCheckerParameters parameters)
+            {
+                var header = GetConditionCheckerHeader();
+                var configData = JsonConvert.DeserializeObject<IConditionParam>(header.CheckParams);
+                if (configData != null && configData is MoveConditionParam moveConditionParam)
                 {
                     return configData.CheckConditionValid() && this.CheckCommonParamsCondition(t);
                 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using AOTScripts.Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Battle;
 using HotUpdate.Scripts.Network.Item;
@@ -13,7 +12,6 @@ using HotUpdate.Scripts.Tool.Static;
 using Mirror;
 using Newtonsoft.Json;
 using UnityEngine;
-using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {
@@ -372,17 +370,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 var attributeData = GetAttributeIncreaseDatas(itemConfigData.buffExtraData);
                 var mainAttributeData = new AttributeIncreaseData[attributeData.Length];
                 var passiveAttributeData = new RandomAttributeIncreaseData[attributeData.Length];
-                if (bagItem.MainIncreaseDatas == null || bagItem.MainIncreaseDatas.Length == 0)
+                if (bagItem.MainIncreaseDatas == null || bagItem.MainIncreaseDatas.Count == 0)
                 {
-                    bagItem.MainIncreaseDatas = mainAttributeData;
+                    bagItem.MainIncreaseDatas = new MemoryList<AttributeIncreaseData>(mainAttributeData);
                 }
                 
-                if (itemConfigData.itemType == PlayerItemType.Consume && bagItem.RandomIncreaseDatas == null || bagItem.RandomIncreaseDatas.Length == 0)
+                if (itemConfigData.itemType == PlayerItemType.Consume && bagItem.RandomIncreaseDatas == null || bagItem.RandomIncreaseDatas.Count == 0)
                 {
-                    bagItem.RandomIncreaseDatas = passiveAttributeData;
+                    bagItem.RandomIncreaseDatas = new MemoryList<RandomAttributeIncreaseData>(passiveAttributeData);
                 }
 
-                if (itemConfigData.itemType.IsEquipment() && bagItem.PassiveAttributeIncreaseDatas == null || bagItem.PassiveAttributeIncreaseDatas.Length == 0)
+                if (itemConfigData.itemType.IsEquipment() && bagItem.PassiveAttributeIncreaseDatas == null || bagItem.PassiveAttributeIncreaseDatas.Count == 0)
                 {
                     var configId = GetEquipmentConfigId(bagItem.PlayerItemType, bagItem.ConfigId);
                     int battleEffectConfigId;
@@ -401,7 +399,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     var buffIncreaseTypes = Enum.GetValues(typeof(BuffIncreaseType)).Cast<BuffIncreaseType>();
                     var equipmentBuff = Constant.RandomBuffConfig.GetEquipmentBuff(buffIncreaseTypes.RandomSelect());
                     var attribute = Constant.RandomBuffConfig.GetBuff(equipmentBuff, conditionConfig.buffWeight);
-                    bagItem.PassiveAttributeIncreaseDatas = new AttributeIncreaseData[attribute.increaseDataList.Count];
+                    bagItem.PassiveAttributeIncreaseDatas = new MemoryList<AttributeIncreaseData>(attribute.increaseDataList.Count);
                     for (int i = 0; i < attribute.increaseDataList.Count; i++)
                     {
                         bagItem.PassiveAttributeIncreaseDatas[i] = new AttributeIncreaseData

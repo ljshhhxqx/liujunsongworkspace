@@ -225,7 +225,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
                 TriggerType = TriggerType.OnAttack,
-                TriggerData = MemoryPackSerializer.Serialize(triggerParams),
+                TriggerData = NetworkCommandExtensions.SerializeBattleCondition(triggerParams),
             });
         }
 
@@ -351,7 +351,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     {
                         Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
                         TriggerType = TriggerType.OnMove,
-                        TriggerData = MemoryPackSerializer.Serialize(hpChangedCheckerParameters),
+                        TriggerData = NetworkCommandExtensions.SerializeBattleCondition(hpChangedCheckerParameters),
                     });
                     //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input move {inputCommand.InputMovement} speed {moveSpeed} player state {playerGameStateData.AnimationState}");
                 }

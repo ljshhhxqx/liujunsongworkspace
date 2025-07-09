@@ -2,6 +2,7 @@
 using System.Linq;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Battle;
+using HotUpdate.Scripts.Network.PredictSystem.Data;
 using MemoryPack;
 using UnityEngine;
 
@@ -31,8 +32,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             return false;
         }
 
-        public static bool TryAddEquipmentData(ref PlayerEquipmentState equipmentState, int itemId, int equipConfigId,
-            EquipmentPart equipmentPartType, IConditionChecker conditionChecker)
+        public static bool TryAddEquipmentData<T>(ref PlayerEquipmentState equipmentState, int itemId, int equipConfigId,
+            EquipmentPart equipmentPartType, T conditionChecker) where T : IConditionChecker
         {
             if (equipmentState.EquipmentDatas.Any(x => x.ItemId == itemId))
             {
@@ -41,6 +42,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             }
             var equipmentData = new EquipmentData(itemId, equipConfigId, equipmentPartType);
             equipmentData.ConditionChecker = conditionChecker;
+            equipmentData.ConditionCheckerBytes = new MemoryList<byte>(NetworkCommandExtensions.SerializeBattleChecker(conditionChecker));
             //该部位有装备，则卸下原装备
             for (int i = 0; i < equipmentState.EquipmentDatas.Count; i++)
             {
@@ -101,7 +103,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     }
      
     [MemoryPackable]
-    public partial struct EquipmentData
+    public partial class EquipmentData
     {
         [MemoryPackOrder(0)]
         public int ItemId;
@@ -110,12 +112,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         [MemoryPackOrder(2)]
         public EquipmentPart EquipmentPartType;
         [MemoryPackOrder(3)]
-        public AttributeIncreaseData[] EquipmentPassiveEffectData;
+        public MemoryList<AttributeIncreaseData> EquipmentPassiveEffectData;
         [MemoryPackOrder(4)]
-        public AttributeIncreaseData[] EquipmentConstantPropertyData;
+        public MemoryList<AttributeIncreaseData> EquipmentConstantPropertyData;
 
         [MemoryPackOrder(5)]
-        public int[] TargetIds;
+        public MemoryList<int> TargetIds;
+        [MemoryPackOrder(6)]
+        public MemoryList<byte> ConditionCheckerBytes;
         [MemoryPackIgnore]
         public IConditionChecker ConditionChecker;
         
@@ -126,10 +130,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             ItemId = itemId;
             EquipConfigId = equipConfigId;
             EquipmentPartType = equipmentPartType;
-            EquipmentPassiveEffectData = equipmentPassiveEffectData ?? Array.Empty<AttributeIncreaseData>();
-            EquipmentConstantPropertyData = equipmentConstantPropertyData ?? Array.Empty<AttributeIncreaseData>();
+            EquipmentPassiveEffectData = new MemoryList<AttributeIncreaseData>(equipmentPassiveEffectData ?? Array.Empty<AttributeIncreaseData>());
+            EquipmentConstantPropertyData = new MemoryList<AttributeIncreaseData>(equipmentConstantPropertyData ?? Array.Empty<AttributeIncreaseData>());
             ConditionChecker = null;
-            TargetIds = Array.Empty<int>();
+            TargetIds = new MemoryList<int>();
+            ConditionCheckerBytes = new MemoryList<byte>();
         }
     }
 }

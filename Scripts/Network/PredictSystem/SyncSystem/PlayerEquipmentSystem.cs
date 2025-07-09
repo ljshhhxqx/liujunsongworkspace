@@ -68,7 +68,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             playerEquipmentState.EquipmentDatas = new MemoryList<EquipmentData>();//<EquipmentData>();
             PropertyStates.TryAdd(connectionId, playerEquipmentState);
             _playerEquipmentSyncStates.TryAdd(connectionId, playerPredictableState);
-            RpcSetPlayerEquipmentState(connectionId, MemoryPackSerializer.Serialize(playerEquipmentState));
+            RpcSetPlayerEquipmentState(connectionId, NetworkCommandExtensions.SerializePlayerState(playerEquipmentState));
         }
 
         [ClientRpc]
