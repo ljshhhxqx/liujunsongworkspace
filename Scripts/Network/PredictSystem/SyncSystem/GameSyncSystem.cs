@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
+using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.JsonConfig;
@@ -257,6 +258,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 {
                     Debug.LogError($"Invalid command: CommandType-{header.CommandType} -> CommandId-{header.CommandId} -> Error-{str}");
                 }
+                ObjectPoolManager<CommandValidationResult>.Instance.Return(validCommand);
                 return;
             }
             _clientCommands.Enqueue(command);

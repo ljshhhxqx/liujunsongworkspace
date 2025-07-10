@@ -277,7 +277,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             byte[] payload = MemoryPackSerializer.Serialize(playerState);
     
             // 正确分配空间：头部6字节 + payload
-            byte[] result = ArrayPool<byte>.Shared.Rent(6 + payload.Length);//new byte[];
+            byte[] result = new byte[6 + payload.Length];
     
             // 写入协议头和类型ID
             result[0] = PLAYERSTATE_PROTOCOL_VERSION;
@@ -316,7 +316,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             byte typeId = data[1];
 
             // 4. 读取长度字段（考虑字节序）
-            byte[] lengthBytes = ArrayPool<byte>.Shared.Rent(4);
+            byte[] lengthBytes = new byte[4];
             Buffer.BlockCopy(data, 2, lengthBytes, 0, 4);
     
             // 如果数据是以大端序存储的，需要反转字节顺序（根据序列化时的设置）
@@ -337,7 +337,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             }
 
             // 6. 提取payload数据
-            byte[] payload = ArrayPool<byte>.Shared.Rent(payloadLength);
+            byte[] payload = new byte[payloadLength];
             Buffer.BlockCopy(data, 6, payload, 0, payloadLength);
             try
             {
@@ -356,7 +356,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             byte[] payload = MemoryPackSerializer.Serialize(command);
     
             // 正确分配空间：头部6字节 + payload
-            byte[] result = ArrayPool<byte>.Shared.Rent(6+payload.Length);
+            byte[] result = new byte[6 + payload.Length];
     
             // 写入协议头和类型ID
             result[0] = COMMAND_PROTOCOL_VERSION;

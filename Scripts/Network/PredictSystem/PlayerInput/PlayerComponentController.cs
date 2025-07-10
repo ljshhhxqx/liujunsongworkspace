@@ -951,14 +951,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [Command(channel = Channels.Unreliable)]/**/
         public void CmdSendCommand(byte[] commandJson)
         {
-            try
-            {
-                _gameSyncManager.EnqueueCommand(commandJson);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Command deserialization failed: {e.Message}");
-            }
+            _gameSyncManager.EnqueueCommand(commandJson);
         }
 
         private void Update()

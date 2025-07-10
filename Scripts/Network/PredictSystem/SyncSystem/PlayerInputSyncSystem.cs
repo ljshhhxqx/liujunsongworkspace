@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using AOTScripts.Data;
+using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
@@ -340,7 +341,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 
                 var playerGameStateData = playerController.HandleServerMoveAndAnimation(inputStateData);
                 var inputMovement = inputCommand.InputMovement.ToVector3();
-                PropertyStates[header.ConnectionId] = new PlayerInputState(playerGameStateData, new PlayerAnimationCooldownState(GetCooldownSnapshotData(header.ConnectionId)));
+                var cooldowns = playerInputState.PlayerAnimationCooldownState.AnimationCooldowns;
+                GetCooldownSnapshotData(header.ConnectionId, cooldowns);
+                playerInputState.PlayerGameStateData = playerGameStateData;
+                playerInputState.PlayerAnimationCooldownState.AnimationCooldowns = cooldowns;
+                //todo:**必须优化//
+                PropertyStates[header.ConnectionId] = playerInputState;
                 //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost} player state {playerGameStateData.AnimationState}");
                 if (inputMovement.magnitude > 0.1f && playerGameStateData.AnimationState == AnimationState.Move || playerGameStateData.AnimationState == AnimationState.Sprint)
                 {
@@ -389,18 +395,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             return playerInputState;
         }
         
-        private MemoryList<CooldownSnapshotData> _cachedSnapshotData = new MemoryList<CooldownSnapshotData>();
         
-        private MemoryList<CooldownSnapshotData> GetCooldownSnapshotData(int connectionId)
+        private void GetCooldownSnapshotData(int connectionId, MemoryList<CooldownSnapshotData> playerAnimationCooldowns)
         {
             var playerController = GameSyncManager.GetPlayerConnection(connectionId);
             var animationCooldowns = playerController.GetNowAnimationCooldowns();
-            _cachedSnapshotData.Clear();
             foreach (var animationCooldown in animationCooldowns)
             {
-                _cachedSnapshotData.Add(CooldownSnapshotData.Create(animationCooldown));
+                var index = playerAnimationCooldowns.FindIndex(x => x.AnimationState == animationCooldown.AnimationState);
+                playerAnimationCooldowns[index] = CooldownSnapshotData.Create(animationCooldown);
             }
-            return _cachedSnapshotData;
         }
 
         public override void SetState<T>(int connectionId, T state)
