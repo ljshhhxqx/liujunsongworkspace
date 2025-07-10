@@ -8,7 +8,7 @@ using MemoryPack;
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
     [MemoryPackable]
-    public partial class PlayerShopState : ISyncPropertyState
+    public partial struct PlayerShopState : ISyncPropertyState
     {
         [MemoryPackOrder(0)]
         public MemoryDictionary<int, ShopItemData> RandomShopItems;

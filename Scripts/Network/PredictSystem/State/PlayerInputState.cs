@@ -9,7 +9,7 @@ using CooldownSnapshotData = HotUpdate.Scripts.Network.PredictSystem.Data.Cooldo
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
     [MemoryPackable]
-    public partial class PlayerInputState : ISyncPropertyState
+    public partial struct PlayerInputState : ISyncPropertyState
     {
         [MemoryPackOrder(0)] public PlayerGameStateData PlayerGameStateData;
         [MemoryPackOrder(1)] public PlayerAnimationCooldownState PlayerAnimationCooldownState;
@@ -46,9 +46,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         [MemoryPackOrder(0)]
         public MemoryList<CooldownSnapshotData> AnimationCooldowns;
         
-        public PlayerAnimationCooldownState(List<CooldownSnapshotData> animationCooldowns)
+        public PlayerAnimationCooldownState(MemoryList<CooldownSnapshotData> animationCooldowns)
         {
-            AnimationCooldowns = new MemoryList<CooldownSnapshotData>(animationCooldowns ?? new List<CooldownSnapshotData>());
+            AnimationCooldowns = animationCooldowns;
         }
 
         public PlayerAnimationCooldownState Reset(PlayerAnimationCooldownState state)

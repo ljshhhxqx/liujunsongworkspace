@@ -9,7 +9,7 @@ using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
     [MemoryPackable]
-    public partial class PlayerSkillState : ISyncPropertyState
+    public partial struct PlayerSkillState : ISyncPropertyState
     {
         [MemoryPackOrder(0)]
         public MemoryList<SkillCheckerData> SkillCheckerDatas;
@@ -41,7 +41,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         {
             if (SkillCheckers == null || SkillCheckers.Count == 0)
             {
-                Debug.LogWarning("SkillCheckers is null or empty");
+                //Debug.LogWarning("SkillCheckers is null or empty");
                 return null;
             }
             var skillCheckerDatas = new SkillCheckerData[SkillCheckers.Count];

@@ -12,7 +12,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     /// 玩家装备状态
     /// </summary>
     [MemoryPackable]
-    public partial class PlayerEquipmentState : ISyncPropertyState
+    public partial struct PlayerEquipmentState : ISyncPropertyState
     {
         [MemoryPackOrder(0)]
         public MemoryList<EquipmentData> EquipmentDatas;
@@ -103,7 +103,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     }
      
     [MemoryPackable]
-    public partial class EquipmentData
+    public partial struct EquipmentData
     {
         [MemoryPackOrder(0)]
         public int ItemId;

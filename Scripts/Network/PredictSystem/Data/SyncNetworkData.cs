@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using AOTScripts.Data;
+using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Battle;
@@ -275,7 +277,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             byte[] payload = MemoryPackSerializer.Serialize(playerState);
     
             // 正确分配空间：头部6字节 + payload
-            byte[] result = new byte[6 + payload.Length];
+            byte[] result = ArrayPool<byte>.Shared.Rent(6 + payload.Length);//new byte[];
     
             // 写入协议头和类型ID
             result[0] = PLAYERSTATE_PROTOCOL_VERSION;
@@ -314,7 +316,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             byte typeId = data[1];
 
             // 4. 读取长度字段（考虑字节序）
-            byte[] lengthBytes = new byte[4];
+            byte[] lengthBytes = ArrayPool<byte>.Shared.Rent(4);
             Buffer.BlockCopy(data, 2, lengthBytes, 0, 4);
     
             // 如果数据是以大端序存储的，需要反转字节顺序（根据序列化时的设置）
@@ -335,7 +337,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             }
 
             // 6. 提取payload数据
-            byte[] payload = new byte[payloadLength];
+            byte[] payload = ArrayPool<byte>.Shared.Rent(payloadLength);
             Buffer.BlockCopy(data, 6, payload, 0, payloadLength);
             try
             {
@@ -354,7 +356,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             byte[] payload = MemoryPackSerializer.Serialize(command);
     
             // 正确分配空间：头部6字节 + payload
-            byte[] result = new byte[6 + payload.Length];
+            byte[] result = ArrayPool<byte>.Shared.Rent(6+payload.Length);
     
             // 写入协议头和类型ID
             result[0] = COMMAND_PROTOCOL_VERSION;
@@ -1578,14 +1580,24 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     }
     
     #endregion
-    public class CommandValidationResult
+    public class CommandValidationResult : IPoolObject
     {
         public bool IsValid => Errors.Count == 0;
-        public List<string> Errors { get; } = new List<string>();
+        public List<string> Errors { get; private set; }
 
         public void AddError(string message)
         {
             Errors.Add($"[{DateTime.UtcNow:HH:mm:ss.fff}] {message}");
+        }
+
+        public void Init()
+        {
+            Errors ??= new List<string>();
+        }
+
+        public void Clear()
+        {
+            Errors.Clear();
         }
     }
     
@@ -1610,7 +1622,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public static CommandValidationResult ValidateCommand(this INetworkCommand command)
         {
-            var result = new CommandValidationResult();
+            var result = ObjectPoolManager<CommandValidationResult>.Instance.Get();
             var header = command.GetHeader();
 
             // 1. Tick验证

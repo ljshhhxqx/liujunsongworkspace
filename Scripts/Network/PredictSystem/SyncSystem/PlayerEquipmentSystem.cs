@@ -92,17 +92,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 return null;
             if (command is EquipmentCommand equipmentCommand)
             {
-                return PlayerEquipmentCalculator.CommandEquipment(equipmentCommand, ref playerEquipmentState);
+                var equipmentData = PlayerEquipmentCalculator.CommandEquipment(equipmentCommand, ref playerEquipmentState);
+                PropertyStates[header.ConnectionId] = playerEquipmentState;
+                return PropertyStates[header.ConnectionId];
             }
             if (command is TriggerCommand triggerCommand)
             {
                 //todo: 根据触发类型查阅是否有触发效果，没有则忽略，有则获取相关装备数据，并根据配置计算触发效果
                 var data = PlayerEquipmentCalculator.GetDataByTriggerType(playerEquipmentState, triggerCommand.TriggerType);
                 var battleConfigData = PlayerItemCalculator.GetBattleEffectConditionConfigData(data.Item2, data.Item3);
+                if (battleConfigData.id == 0)
+                    return PropertyStates[header.ConnectionId];
                 var targetIds = PlayerInGameManager.Instance.GetPlayerIdsByTargetType(header.ConnectionId,
                     battleConfigData.targetCount, battleConfigData.targetType);
                 PlayerEquipmentCalculator.CommandTrigger(triggerCommand, ref playerEquipmentState, targetIds, data.Item3, data.Item2, data.Item1);
-                //PropertyStates[header.ConnectionId] = playerEquipmentState;
+                PropertyStates[header.ConnectionId] = playerEquipmentState;
             }
 
             return PropertyStates[header.ConnectionId];

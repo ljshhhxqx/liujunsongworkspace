@@ -10,7 +10,7 @@ using UnityEngine;
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
     [MemoryPackable]
-    public partial class PlayerPredictablePropertyState : ISyncPropertyState
+    public partial struct PlayerPredictablePropertyState : ISyncPropertyState
     {
         [MemoryPackOrder(0)] public MemoryDictionary<PropertyTypeEnum, PropertyCalculator> MemoryProperty;
         [MemoryPackOrder(1)] public SubjectedStateType SubjectedState;
