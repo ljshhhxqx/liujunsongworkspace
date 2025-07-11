@@ -183,8 +183,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         
         public static void CommandDropItem(ItemDropCommand itemDropCommand, ref PlayerItemState playerItemState, int connectionId)
         {
-            var droppedItemDatas = new DroppedItemData[itemDropCommand.Slots.Length];
-            for (int i = 0; i < itemDropCommand.Slots.Length; i++)
+            var droppedItemDatas = new DroppedItemData[itemDropCommand.Slots.Count];
+            for (int i = 0; i < itemDropCommand.Slots.Count; i++)
             {
                 var item = itemDropCommand.Slots[i];
                 if (!PlayerItemState.RemoveItem(ref playerItemState, item.SlotIndex, item.Count, out var bagSlotItem, out var removedItemIds))
@@ -432,8 +432,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
         public static void CommandUseItems(ItemsUseCommand itemsUseCommand, ref PlayerItemState playerItemState)
         {
-            foreach (var itemData in itemsUseCommand.Slots)
+            foreach (var index in itemsUseCommand.Slots.Keys)
             {
+                var itemData = itemsUseCommand.Slots[index];
                 if (!PlayerItemState.TryGetSlotItemBySlotIndex(playerItemState, itemData.SlotIndex, out var bagItem))
                 {
                     Debug.LogError($"Failed to use item {itemData.SlotIndex}");

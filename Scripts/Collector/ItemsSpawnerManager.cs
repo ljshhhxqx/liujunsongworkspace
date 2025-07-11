@@ -12,6 +12,7 @@ using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Item;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
@@ -177,11 +178,11 @@ namespace HotUpdate.Scripts.Collector
                          ItemConfigId = x,
                          Count = 1,
                          ItemUniqueId = new int[]{ HybridIdGenerator.GenerateItemId(x, GameSyncManager.CurrentTick) } 
-                     }).ToArray();
+                     }).ToList();
                      _gameSyncManager.EnqueueServerCommand(new ItemsGetCommand
                      {
                          Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Item),
-                         Items = items,
+                         Items = (MemoryList<ItemsCommandData>)items,
                      });
                      Debug.Log($"Player {player.name} pick up chest {chestData.ChestConfigId}");
                      _serverTreasureChestMetaData = default;
@@ -357,19 +358,18 @@ namespace HotUpdate.Scripts.Collector
                 // 验证位置和碰撞
                 if (ValidatePickup(itemPos.ToVector3(), player.transform.position, itemColliderData, playerColliderConfig))
                 {
+                    var list = new MemoryList<ItemsCommandData>(1);
+                    list[0] = new ItemsCommandData
+                    {
+                        ItemConfigId = itemConfigId,
+                        Count = 1,
+                        ItemUniqueId = new int[]{ HybridIdGenerator.GenerateItemId(itemConfigId, GameSyncManager.CurrentTick) } 
+                    };
                     // 处理拾取逻辑
                     _gameSyncManager.EnqueueServerCommand(new ItemsGetCommand
                     {
                         Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Item),
-                        Items = new ItemsCommandData[]
-                        {
-                            new ItemsCommandData()
-                            {
-                                ItemConfigId = itemConfigId,
-                                Count = 1,
-                                ItemUniqueId = new []{ customData.ItemUniqueId},
-                            },
-                        },
+                        Items = list,
                     });
 
                     // 通知客户端

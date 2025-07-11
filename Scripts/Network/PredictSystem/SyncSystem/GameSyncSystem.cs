@@ -44,6 +44,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private PlayerPropertySyncSystem _playerPropertySyncSystem;
         private bool _isProcessing; // 防止重入
         private CancellationTokenSource _cts;
+        private readonly Dictionary<int, PlayerComponentController> _playerComponentControllers = new Dictionary<int, PlayerComponentController>();
         
         private InteractSystem _interactSystem;
 
@@ -199,14 +200,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         
         public PlayerComponentController GetPlayerConnection(int connectionId)
         {
-            PlayerComponentController playerConnection = null;
-            if (NetworkClient.connection.connectionId == connectionId)
+            if (!_playerComponentControllers.TryGetValue(connectionId, out var playerConnection))
             {
-                playerConnection = NetworkClient.connection.identity.GetComponent<PlayerComponentController>();
-            }
-            else if (NetworkServer.connections.TryGetValue(connectionId, out var connection))
-            {
-                playerConnection = connection.identity.GetComponent<PlayerComponentController>();
+                if (NetworkClient.connection.connectionId == connectionId)
+                {
+                    playerConnection = NetworkClient.connection.identity.GetComponent<PlayerComponentController>();
+                    _playerComponentControllers.Add(connectionId, playerConnection);
+                }
+
+                else if (NetworkServer.connections.TryGetValue(connectionId, out var connection))
+                {
+                    playerConnection = connection.identity.GetComponent<PlayerComponentController>();
+                    _playerComponentControllers.Add(connectionId, playerConnection);
+                }
             }
 
             if (playerConnection)

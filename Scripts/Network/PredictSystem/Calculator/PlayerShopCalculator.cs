@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Codice.CM.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.State;
@@ -84,7 +85,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             if (!isServer)
                 return;
 
-            var itemsCommandData = new ItemsCommandData[count];
+            
+            var itemsCommandData = new MemoryList<ItemsCommandData>(count);
             for (var i = 0; i < count; i++)
             {
                 itemsCommandData[i] = new ItemsCommandData
@@ -131,19 +133,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 Gold = value
             };
             Constant.GameSyncManager.EnqueueServerCommand(goldCommand);
+            var list = new MemoryList<SlotIndexData>(1);
+            list[0] = new SlotIndexData
+            {
+                SlotIndex = slotIndex,
+                Count = count
+            };
             
             //从玩家背包中扣除物品
             var itemSelleCommand = new ItemsSellCommand
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Item, CommandAuthority.Server, CommandExecuteType.Immediate),
-                Slots = new SlotIndexData[]
-                {
-                    new SlotIndexData
-                    {
-                        SlotIndex = slotIndex,
-                        Count = count
-                    }
-                }
+                Slots = list
             };
             Constant.GameSyncManager.EnqueueServerCommand(itemSelleCommand);
 

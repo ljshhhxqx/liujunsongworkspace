@@ -1004,15 +1004,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return InputMovement.ToVector3().magnitude > 0 && Enum.IsDefined(typeof(AnimationState), InputAnimationStates) && Enum.IsDefined(typeof(AnimationState), CommandAnimationState);
-        }
-
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
+            return InputMovement.ToVector3().magnitude > 0 && InputAnimationStates > 0 && InputAnimationStates <= AnimationState.SkillQ&& CommandAnimationState > 0 && CommandAnimationState <= AnimationState.SkillQ;
         }
     }
     [MemoryPackable]
@@ -1029,7 +1021,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return SkillId > 0 && Enum.IsDefined(typeof(AnimationState), AnimationState);
+            return SkillId > 0 && AnimationState > 0 && AnimationState <= AnimationState.SkillQ;
         }
 
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
@@ -1058,7 +1050,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return Enum.IsDefined(typeof(AnimationState), AnimationState);
+            return AnimationState > 0 && AnimationState <= AnimationState.SkillQ;
         }
 
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
@@ -1123,21 +1115,28 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public SlotIndexData[] Slots;
+        public MemoryList< SlotIndexData> Slots;
         public NetworkCommandHeader GetHeader() => Header;
         public NetworkCommandType GetCommandType() => NetworkCommandType.ItemsSell;
 
         public bool IsValid()
         {
-            return Slots.Length > 0 && Slots.All(i => i.SlotIndex > 0 && i.Count > 0);
-        }
-        
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
+            if (Slots.Count == 0)
+            {
+                Debug.LogError("ItemsSellCommand Slots is empty");
+                return false;
+            }
+
+            for (int i = 0; i < Slots.Count; i++)
+            {
+                var slot = Slots[i];
+                if (slot.SlotIndex <= 0 || slot.Count < 0)
+                {
+                    Debug.LogError("ItemsSellCommand Slots[" + i + "] SlotIndex or Count is invalid");
+                    return false;
+                }
+            }
+            return true;
         }
     }
     
@@ -1147,21 +1146,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public ItemsCommandData[] Items;
+        public MemoryList<ItemsCommandData> Items;
         public NetworkCommandHeader GetHeader() => Header;
         public NetworkCommandType GetCommandType() => NetworkCommandType.ItemsBuy;
 
         public bool IsValid()
         {
-            return Items.Length > 0 && Items.All(i => i.ItemConfigId > 0 && i.Count > 0 && i.ItemShopId > 0);
-        }
-        
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
+            if (Items.Count == 0)
+            {
+                Debug.LogError("ItemsBuyCommand Items is empty");
+                return false;
+            }
+            foreach (var item in Items)
+            {
+                if (item.ItemConfigId <= 0 || item.Count < 0)
+                {
+                    Debug.LogError("ItemsBuyCommand Items[" + item.ItemConfigId + "] ItemConfigId or Count is invalid");
+                    return false;
+                }
+            }
+            return true;
         }
     }
 
@@ -1171,21 +1175,28 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public ItemsCommandData[] Items;
+        public MemoryList<ItemsCommandData> Items;
         public NetworkCommandHeader GetHeader() => Header;
         public NetworkCommandType GetCommandType() => NetworkCommandType.ItemsGet;
 
         public bool IsValid()
         {
-            return Items.Length > 0 && Items.All(i => i.ItemConfigId > 0 && i.Count > 0);
-        }
-        
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
+            if (Items.Count == 0)
+            {
+                Debug.LogError("ItemsGetCommand Items is empty");
+                return false;
+            }
+
+            for (int i = 0; i < Items.Count; i++)
+            {
+                var item = Items[i];
+                if (item.ItemConfigId <= 0 || item.Count < 0)
+                {
+                    Debug.LogError("ItemsGetCommand Items[" + i + "] ItemConfigId or Count is invalid");
+                    return false;
+                }
+            }
+            return true;    
         }
     }
     
@@ -1195,21 +1206,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public SlotIndexData[] Slots;
+        public MemoryDictionary<int, SlotIndexData> Slots;
         public NetworkCommandHeader GetHeader() => Header;
         public NetworkCommandType GetCommandType() => NetworkCommandType.ItemsUse;
 
         public bool IsValid()
         {
-            return Slots.Length > 0 && Slots.All(s => s.SlotIndex > 0 && s.Count > 0);
-        }
-        
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
+            if (Slots.Count == 0)
+            {
+                Debug.LogError("ItemsUseCommand Slots is empty");
+                return false;
+            }
+            foreach (var slot in Slots.Keys)
+            {
+                if (Slots[slot].SlotIndex <= 0 || Slots[slot].Count < 0)
+                {
+                    Debug.LogError("ItemsUseCommand Slots[" + slot + "] SlotIndex or Count is invalid");
+                    return false;
+                }
+            }
+            return true;
         }
     }
     
@@ -1231,13 +1247,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             return SlotIndex > 0;
         }
         
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
-        }
     }
     
     [MemoryPackable]
@@ -1256,15 +1265,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         
         public bool IsValid()
         {
-            return SlotIndex > 0 && Enum.IsDefined(typeof(PlayerItemType), PlayerItemType) && (PlayerItemType == PlayerItemType.Armor || PlayerItemType == PlayerItemType.Weapon);
-        }
-        
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
+            return SlotIndex > 0 && PlayerItemType > 0 && PlayerItemType <= PlayerItemType.Score && (PlayerItemType == PlayerItemType.Armor || PlayerItemType == PlayerItemType.Weapon);
         }
     }
     
@@ -1294,13 +1295,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             return FromSlotIndex > 0 && ToSlotIndex > 0;
         }
         
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
-        }
     }
     
     [MemoryPackable]
@@ -1309,21 +1303,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public SlotIndexData[] Slots;
+        public MemoryDictionary<int, SlotIndexData> Slots;
         public NetworkCommandHeader GetHeader() => Header;
         public NetworkCommandType GetCommandType() => NetworkCommandType.ItemDrop;
 
         public bool IsValid()
         {
-            return Slots.Length > 0 && Slots.All(s => s.SlotIndex > 0 && s.Count > 0);
-        }
-        
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
+            if (Slots.Count == 0)
+            {
+                Debug.LogError("ItemDropCommand Slots is empty");
+                return false;
+            }
+            foreach (var slot in Slots.Keys)
+            {
+                if (Slots[slot].SlotIndex <= 0 || Slots[slot].Count < 0)
+                {
+                    Debug.LogError("ItemDropCommand Slots[" + slot + "] SlotIndex or Count is invalid");
+                    return false;
+                }
+            }
+            return true;
         }
     }
     
@@ -1354,17 +1353,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return EquipmentConfigId > 0 && Enum.IsDefined(typeof(EquipmentPart), EquipmentPart)
+            return EquipmentConfigId > 0 && EquipmentPart > 0 && EquipmentPart <= EquipmentPart.Weapon 
                 && ItemId > 0 && !string.IsNullOrEmpty(EquipmentPassiveEffectData) && !string.IsNullOrEmpty(EquipmentMainEffectData);
-        }
-
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
-            CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
         }
     }
 
@@ -1412,15 +1402,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         {
             return true;
         }
-
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
-            CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
-        }
     }
     
     [MemoryPackable]
@@ -1439,15 +1420,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public bool IsValid()
         {
             return ItemSlotIndex > 0 && Count > 0;
-        }
-
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
-            CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
         }
     }
     
@@ -1524,16 +1496,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return Enum.IsDefined(typeof(TriggerType), TriggerType);
-        }
-
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
-            CommandAuthority authority = CommandAuthority.Client)
-        {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
+            return TriggerType > 0 && TriggerType <= TriggerType.OnDeath;
         }
     }
 
@@ -1543,9 +1506,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     [MemoryPackable]
     public partial struct GameItemData
     {
+        [MemoryPackOrder(0)]
         public int ItemId;
+        [MemoryPackOrder(1)]
         public int ItemConfigId;
+        [MemoryPackOrder(2)]
         public PlayerItemType ItemType;
+        [MemoryPackOrder(3)]
         public ItemState ItemState;
     }
     
@@ -1563,9 +1530,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     [MemoryPackable]
     public partial struct GameChestData
     {
+        [MemoryPackOrder(0)]
         public int ChestId;
+        [MemoryPackOrder(1)]
         public int ChestConfigId;
-        public List<int> ItemIds;
+        [MemoryPackOrder(2)]
+        public MemoryList<int> ItemIds;
     }
     
     #region Enum
@@ -1622,7 +1592,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public static CommandValidationResult ValidateCommand(this INetworkCommand command)
         {
-            var result = ObjectPoolManager<CommandValidationResult>.Instance.Get();
+            var result = ObjectPoolManager<CommandValidationResult>.Instance.Get(100);
             var header = command.GetHeader();
 
             // 1. Tick验证

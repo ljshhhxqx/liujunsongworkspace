@@ -681,6 +681,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         Collect = 1 << 11,
         SkillE = 1 << 12,
         SkillQ = 1 << 13,
+        All = Idle | Move | Sprint | Jump | SprintJump | Roll | Falling | Landed | Attack | Dead | Hit | Collect | SkillE | SkillQ,
     }
     
     [Serializable]

@@ -96,7 +96,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             switch (command)
             {
                 case ItemsGetCommand itemsGetCommand:
-                    for (var i = 0; i < itemsGetCommand.Items.Length; i++)
+                    for (var i = 0; i < itemsGetCommand.Items.Count; i++)
                     {
                         PlayerItemCalculator.CommandGetItem(ref playerItemState, itemsGetCommand.Items[i], header);
                     }
