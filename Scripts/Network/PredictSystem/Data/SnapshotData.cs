@@ -545,6 +545,42 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                    Mathf.Approximately(AnimationSpeed, comboKeyframe.AnimationSpeed);
         }
 
+        public static void CopyTo(IAnimationCooldown source, ref CooldownSnapshotData destination)
+        {
+            if (source is ComboCooldown combo)
+            {
+                
+                destination.AnimationState = combo.AnimationState;
+                destination.CurrentCountdown = combo.CurrentCountdown;
+                destination.MaxAttackCount = combo.MaxAttackCount;
+                destination.CurrentAttackStage = combo.CurrentStage;
+                destination.AttackWindow = combo.AttackWindow;
+                destination.IsInComboWindow = combo.IsInComboWindow;
+                destination.WindowCountdown = combo.WindowRemaining;
+                destination.AnimationSpeed = combo.AnimationSpeed;
+            }
+            else if (source is KeyframeCooldown keyframe)
+            {
+                destination.AnimationState = keyframe.AnimationState;
+                destination.CurrentCountdown = keyframe.CurrentCountdown;
+                destination.KeyframeCurrentTime = keyframe.CurrentTime;
+                destination.ResetCooldownWindow = keyframe.ResetWindow;
+                destination.AnimationSpeed = keyframe.AnimationSpeed;
+            }
+            else if (source is KeyframeComboCooldown comboKeyframe)
+            {
+                destination.AnimationState = comboKeyframe.AnimationState;
+                destination.CurrentCountdown = comboKeyframe.CurrentCountdown;
+                destination.MaxAttackCount = comboKeyframe.MaxAttackCount;
+                destination.CurrentAttackStage = comboKeyframe.CurrentStage;
+                destination.AttackWindow = comboKeyframe.AttackWindow;  
+                destination.IsInComboWindow = comboKeyframe.IsInComboWindow;
+                destination.WindowCountdown = comboKeyframe.WindowRemaining;
+                destination.KeyframeCurrentTime = comboKeyframe.CurrentTime;
+                destination.AnimationSpeed = comboKeyframe.AnimationSpeed;
+            }
+        }
+
         public static CooldownSnapshotData Create(IAnimationCooldown cooldown)
         {
             return cooldown switch

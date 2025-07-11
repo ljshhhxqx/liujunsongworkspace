@@ -445,13 +445,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             return header;
         }
 
-        public static NetworkCommandHeader CreateNetworkCommandHeader(int? connectionId, CommandType commandType, CommandAuthority authority = CommandAuthority.Server, CommandExecuteType commandExecuteType = CommandExecuteType.Predicate)
+        public static NetworkCommandHeader CreateNetworkCommandHeader(int connectionId, CommandType commandType, CommandAuthority authority = CommandAuthority.Server, CommandExecuteType commandExecuteType = CommandExecuteType.Predicate)
         {
             var tick = (int?)CurrentTick;
-            var connectionIdValue = connectionId.GetValueOrDefault();
             var header = ObjectPool<NetworkCommandHeader>.Get();
             header.CommandId = HybridIdGenerator.GenerateCommandId(authority == CommandAuthority.Server, commandType, ref tick);
-            header.ConnectionId = connectionIdValue;
+            header.ConnectionId = connectionId;
             header.CommandType = commandType;
             header.Tick = tick.GetValueOrDefault();
             header.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();

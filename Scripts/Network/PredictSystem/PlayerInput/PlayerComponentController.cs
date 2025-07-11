@@ -837,7 +837,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
         }
 
-        public void RefreshSnapData(List<CooldownSnapshotData> snapshotData)
+        public void RefreshSnapData(Dictionary<AnimationState, CooldownSnapshotData> snapshotData)
         {
             if (snapshotData == null || snapshotData.Count == 0)
             {
@@ -851,7 +851,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     break;
                 }
                 var animationCooldown = _animationCooldowns[i];
-                var snapshotCoolDown = snapshotData[i];
+                if (!snapshotData.TryGetValue(animationCooldown.AnimationState, out var snapshotCoolDown))
+                {
+                    Debug.LogError($"snapshotData not contain animationState {animationCooldown.AnimationState}");
+                    continue;
+                }
+
                 animationCooldown.Refresh(snapshotCoolDown);
             }
         }

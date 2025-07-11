@@ -44,19 +44,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     public partial struct PlayerAnimationCooldownState
     {
         [MemoryPackOrder(0)]
-        public MemoryList<CooldownSnapshotData> AnimationCooldowns;
+        public MemoryDictionary<AnimationState, CooldownSnapshotData> AnimationCooldowns;
         
-        public PlayerAnimationCooldownState(MemoryList<CooldownSnapshotData> animationCooldowns)
+        public PlayerAnimationCooldownState(MemoryDictionary<AnimationState, CooldownSnapshotData> animationCooldowns)
         {
             AnimationCooldowns = animationCooldowns;
         }
 
         public PlayerAnimationCooldownState Reset(PlayerAnimationCooldownState state)
         {
-            for (int i = 0; i < AnimationCooldowns.Count; i++)
+            foreach (var key in state.AnimationCooldowns.Keys)
             {
-                var cooldown = AnimationCooldowns[i];
-                AnimationCooldowns[i] = cooldown.Reset(cooldown);
+                if (AnimationCooldowns.ContainsKey(key))
+                {
+                    AnimationCooldowns[key] = state.AnimationCooldowns[key];
+                    continue;
+                }
+                AnimationCooldowns.Add(key, state.AnimationCooldowns[key]);
             }
             return state;
         }
@@ -67,10 +71,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             {
                 return false;
             }
-
-            for (int i = 0; i < AnimationCooldowns.Count; i++)
+            
+            foreach (var key in AnimationCooldowns.Keys)
             {
-                if (!AnimationCooldowns[i].Equals(other.AnimationCooldowns[i]))
+                if (!other.AnimationCooldowns.ContainsKey(key) || !AnimationCooldowns[key].Equals(other.AnimationCooldowns[key]))
                 {
                     return false;
                 }

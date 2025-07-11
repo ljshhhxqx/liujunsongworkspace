@@ -120,7 +120,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         protected override void RegisterState(int connectionId, NetworkIdentity player)
         {
             var playerPredictableState = player.GetComponent<PlayerInputPredictionState>();
-            var playerInputState = new PlayerInputState(new PlayerGameStateData(), new PlayerAnimationCooldownState());
+            var playerInputState = new PlayerInputState(new PlayerGameStateData(),
+                new PlayerAnimationCooldownState(new MemoryDictionary<AnimationState, CooldownSnapshotData>(_animationConfig.AnimationInfos.Count)));
             PropertyStates.TryAdd(connectionId, playerInputState);
             _inputPredictionStates.TryAdd(connectionId, playerPredictableState);
             RpcSetPlayerInputState(connectionId, NetworkCommandExtensions.SerializePlayerState(playerInputState));
@@ -396,14 +397,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         }
         
         
-        private void GetCooldownSnapshotData(int connectionId, MemoryList<CooldownSnapshotData> playerAnimationCooldowns)
+        private void GetCooldownSnapshotData(int connectionId, MemoryDictionary<AnimationState, CooldownSnapshotData> playerAnimationCooldowns)
         {
             var playerController = GameSyncManager.GetPlayerConnection(connectionId);
             var animationCooldowns = playerController.GetNowAnimationCooldowns();
             foreach (var animationCooldown in animationCooldowns)
             {
-                var index = playerAnimationCooldowns.FindIndex(x => x.AnimationState == animationCooldown.AnimationState);
-                playerAnimationCooldowns[index] = CooldownSnapshotData.Create(animationCooldown);
+                if (!playerAnimationCooldowns.TryGetValue(animationCooldown.AnimationState, out var snapshot))
+                {
+                    //Debug.LogWarning($"Could not find animation cooldown for {animationCooldown.AnimationState}");
+                    playerAnimationCooldowns.Add(animationCooldown.AnimationState, new CooldownSnapshotData());
+                    continue;
+                }
+                var cooldown = playerAnimationCooldowns[animationCooldown.AnimationState];
+                CooldownSnapshotData.CopyTo(animationCooldown, ref cooldown);
+                playerAnimationCooldowns[animationCooldown.AnimationState] = cooldown;
             }
         }
 

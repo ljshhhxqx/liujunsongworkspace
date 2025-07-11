@@ -93,7 +93,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             {
                 //Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
                 var info = _animationConfig.GetAnimationInfo(inputCommand.CommandAnimationState);
-                var actionType = _animationConfig.GetActionType(inputCommand.CommandAnimationState);
+                var actionType = info.actionType;
                 var health = _propertyPredictionState.GetProperty(PropertyTypeEnum.Health);
                 var skillConfigData = _skillSyncState.GetSkillConfigData(inputCommand.CommandAnimationState);
                 var cost = skillConfigData.id == 0 ? info.cost : skillConfigData.cost;
