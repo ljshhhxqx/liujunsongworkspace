@@ -65,7 +65,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 if (playerState is PlayerInputState playerInputState)
                 {
-                    return NetworkCommandExtensions.SerializePlayerState(playerInputState);
+                    return NetworkCommandExtensions.SerializePlayerState(playerInputState).Item1;
                 }
 
                 Debug.LogError($"Player {connectionId} equipment state is not PlayerInputState.");
@@ -124,7 +124,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 new PlayerAnimationCooldownState(new MemoryDictionary<AnimationState, CooldownSnapshotData>(_animationConfig.AnimationInfos.Count)));
             PropertyStates.TryAdd(connectionId, playerInputState);
             _inputPredictionStates.TryAdd(connectionId, playerPredictableState);
-            RpcSetPlayerInputState(connectionId, NetworkCommandExtensions.SerializePlayerState(playerInputState));
+            RpcSetPlayerInputState(connectionId, NetworkCommandExtensions.SerializePlayerState(playerInputState).Item1);
             BindAniEvents(connectionId);
         }
 
@@ -227,7 +227,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
                 TriggerType = TriggerType.OnAttack,
-                TriggerData = NetworkCommandExtensions.SerializeBattleCondition(triggerParams),
+                TriggerData = NetworkCommandExtensions.SerializeBattleCondition(triggerParams).buffer,
             });
         }
 
@@ -358,7 +358,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     {
                         Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
                         TriggerType = TriggerType.OnMove,
-                        TriggerData = NetworkCommandExtensions.SerializeBattleCondition(hpChangedCheckerParameters),
+                        TriggerData = NetworkCommandExtensions.SerializeBattleCondition(hpChangedCheckerParameters).buffer,
                     });
                     //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input move {inputCommand.InputMovement} speed {moveSpeed} player state {playerGameStateData.AnimationState}");
                 }

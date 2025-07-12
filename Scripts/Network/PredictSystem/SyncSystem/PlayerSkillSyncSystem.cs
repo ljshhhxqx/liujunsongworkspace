@@ -74,7 +74,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 if (playerState is PlayerSkillState playerSkillState)
                 {
                     playerSkillState.SetSkillCheckerDatas();
-                    return NetworkCommandExtensions.SerializePlayerState(playerSkillState);
+                    return NetworkCommandExtensions.SerializePlayerState(playerSkillState).Item1;
                 }
 
                 Debug.LogError($"Player {connectionId} equipment state is not PlayerPredictablePropertyState.");
@@ -124,7 +124,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             skillState.SkillCheckers = new Dictionary<AnimationState, ISkillChecker>();
             PropertyStates.TryAdd(connectionId, skillState);
             _playerSkillSyncStates.TryAdd(connectionId, playerPredictableState);
-            RpcSetPlayerSkillState(connectionId, NetworkCommandExtensions.SerializePlayerState(skillState));
+            RpcSetPlayerSkillState(connectionId, NetworkCommandExtensions.SerializePlayerState(skillState).Item1);
         }
 
 

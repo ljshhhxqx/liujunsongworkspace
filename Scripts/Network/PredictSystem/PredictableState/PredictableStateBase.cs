@@ -48,7 +48,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             
             CommandQueue.Enqueue(command);
             var buffer = NetworkCommandExtensions.SerializeCommand(command);
-            CommandBuffer.Add(header.CommandId, buffer);
+            CommandBuffer.Add(header.CommandId, buffer.Item1);
             //Debug.Log($"[PredictableStateBase] Added predicted command {header.CommandType} at tick {header.Tick}");
         }
 

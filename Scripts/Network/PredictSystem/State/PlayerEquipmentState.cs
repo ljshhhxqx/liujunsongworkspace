@@ -42,7 +42,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             }
             var equipmentData = new EquipmentData(itemId, equipConfigId, equipmentPartType);
             equipmentData.ConditionChecker = conditionChecker;
-            equipmentData.ConditionCheckerBytes = new MemoryList<byte>(NetworkCommandExtensions.SerializeBattleChecker(conditionChecker));
+            equipmentData.ConditionCheckerBytes = new MemoryList<byte>(NetworkCommandExtensions.SerializeBattleChecker(conditionChecker).buffer);
             //该部位有装备，则卸下原装备
             for (int i = 0; i < equipmentState.EquipmentDatas.Count; i++)
             {

@@ -113,77 +113,91 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         const byte BATTLECONDITION_PROTOCOL_VERSION = 3;
         const byte CONDITIONCHECKER_PROTOCOL_VERSION = 4;
         
-         public static byte[] SerializeBattleChecker<T>(T checker) where T : IConditionChecker
+        private static readonly ArrayPool<byte> ByteArrayPool = ArrayPool<byte>.Shared;
+        
+        public static (byte[] buffer, int length) SerializeBattleChecker<T>(T checker) where T : IConditionChecker
         {
             byte typeId = (byte)checker.GetConditionCheckerHeader().TriggerType;
             byte[] payload = MemoryPackSerializer.Serialize(checker);
     
-            // 正确分配空间：头部6字节 + payload
-            byte[] result = new byte[6 + payload.Length];
+            // 使用数组池获取缓冲区
+            int totalLength = 6 + payload.Length;
+            byte[] buffer = ByteArrayPool.Rent(totalLength);
     
-            // 写入协议头和类型ID
-            result[0] = CONDITIONCHECKER_PROTOCOL_VERSION;
-            result[1] = typeId;
-    
-            // 写入长度字段（显式转为大端序）
-            byte[] lengthBytes = BitConverter.GetBytes(payload.Length);
-            if (BitConverter.IsLittleEndian)
+            try
             {
-                Array.Reverse(lengthBytes);
+                // 写入协议头和类型ID
+                buffer[0] = CONDITIONCHECKER_PROTOCOL_VERSION;
+                buffer[1] = typeId;
+    
+                // 直接写入大端序长度（避免创建临时数组）
+                if (BitConverter.IsLittleEndian)
+                {
+                    buffer[2] = (byte)(payload.Length >> 24);
+                    buffer[3] = (byte)(payload.Length >> 16);
+                    buffer[4] = (byte)(payload.Length >> 8);
+                    buffer[5] = (byte)payload.Length;
+                }
+                else
+                {
+                    BitConverter.TryWriteBytes(new Span<byte>(buffer, 2, 4), payload.Length);
+                }
+    
+                // 写入payload数据
+                Buffer.BlockCopy(payload, 0, buffer, 6, payload.Length);
+    
+                return (buffer, totalLength);
             }
-            Buffer.BlockCopy(lengthBytes, 0, result, 2, 4);
-    
-            // 写入payload数据
-            Buffer.BlockCopy(payload, 0, result, 6, payload.Length);
-    
-            return result;
+            finally
+            {
+                // 立即归还payload数组
+                //ByteArrayPool.Return(payload);
+            }
         }
         
-        public static IConditionChecker DeserializeBattleChecker(byte[] data)
+        public static IConditionChecker DeserializeBattleChecker(ReadOnlySpan<byte> data)
         {
             // 1. 验证基本长度
-            if (data == null || data.Length < 6)
+            if (data.Length < 6)
             {
-                throw new ArgumentException("Invalid data format: insufficient length", nameof(data));
+                throw new ArgumentException("Invalid data format: insufficient length");
             }
 
             // 2. 检查协议版本
             byte version = data[0];
             if (version != CONDITIONCHECKER_PROTOCOL_VERSION)
             {
-                throw new InvalidOperationException($"Unsupported protocol version: {version}. Expected: {PLAYERSTATE_PROTOCOL_VERSION}");
+                throw new InvalidOperationException($"Unsupported protocol version: {version}. Expected: {CONDITIONCHECKER_PROTOCOL_VERSION}");
             }
 
             // 3. 提取类型ID
             byte typeId = data[1];
 
-            // 4. 读取长度字段（考虑字节序）
-            byte[] lengthBytes = new byte[4];
-            Buffer.BlockCopy(data, 2, lengthBytes, 0, 4);
-    
-            // 如果数据是以大端序存储的，需要反转字节顺序（根据序列化时的设置）
+            // 4. 读取长度字段（直接处理字节序）
+            int payloadLength;
             if (BitConverter.IsLittleEndian)
             {
-                Array.Reverse(lengthBytes);
+                payloadLength = (data[2] << 24) | (data[3] << 16) | (data[4] << 8) | data[5];
             }
-    
-            int payloadLength = BitConverter.ToInt32(lengthBytes, 0);
+            else
+            {
+                payloadLength = BitConverter.ToInt32(data.Slice(2, 4));
+            }
 
             // 5. 验证数据长度
-            int expectedTotalLength = 6 + payloadLength; // 1(版本) + 1(类型) + 4(长度) + payload
+            int expectedTotalLength = 6 + payloadLength;
             if (data.Length < expectedTotalLength)
             {
                 throw new ArgumentException(
-                    $"Data length insufficient. Expected: {expectedTotalLength}, Actual: {data.Length}",
-                    nameof(data));
+                    $"Data length insufficient. Expected: {expectedTotalLength}, Actual: {data.Length}");
             }
 
-            // 6. 提取payload数据
-            byte[] payload = new byte[payloadLength];
-            Buffer.BlockCopy(data, 6, payload, 0, payloadLength);
+            // 6. 直接使用数据切片，避免复制
+            ReadOnlySpan<byte> payload = data.Slice(6, payloadLength);
+    
             try
             {
-                return payload.GetConditionChecker(typeId);
+                return GetConditionChecker(payload, typeId);
             }
             catch (Exception ex)
             {
@@ -192,74 +206,87 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             }
         }
         
-        public static byte[] SerializeBattleCondition<T>(T checkerParameters) where T : IConditionCheckerParameters
+        
+        public static (byte[] buffer, int length) SerializeBattleCondition<T>(T checker) where T : IConditionCheckerParameters
         {
-            byte typeId = (byte)checkerParameters.GetCommonParameters().TriggerType;
-            byte[] payload = MemoryPackSerializer.Serialize(checkerParameters);
+            byte typeId = (byte)checker.GetCommonParameters().TriggerType;
+            byte[] payload = MemoryPackSerializer.Serialize(checker);
     
-            // 正确分配空间：头部6字节 + payload
-            byte[] result = new byte[6 + payload.Length];
+            // 使用数组池获取缓冲区
+            int totalLength = 6 + payload.Length;
+            byte[] buffer = ByteArrayPool.Rent(totalLength);
     
-            // 写入协议头和类型ID
-            result[0] = BATTLECONDITION_PROTOCOL_VERSION;
-            result[1] = typeId;
-    
-            // 写入长度字段（显式转为大端序）
-            byte[] lengthBytes = BitConverter.GetBytes(payload.Length);
-            if (BitConverter.IsLittleEndian)
+            try
             {
-                Array.Reverse(lengthBytes);
+                // 写入协议头和类型ID
+                buffer[0] = BATTLECONDITION_PROTOCOL_VERSION;
+                buffer[1] = typeId;
+    
+                // 直接写入大端序长度（避免创建临时数组）
+                if (BitConverter.IsLittleEndian)
+                {
+                    buffer[2] = (byte)(payload.Length >> 24);
+                    buffer[3] = (byte)(payload.Length >> 16);
+                    buffer[4] = (byte)(payload.Length >> 8);
+                    buffer[5] = (byte)payload.Length;
+                }
+                else
+                {
+                    BitConverter.TryWriteBytes(new Span<byte>(buffer, 2, 4), payload.Length);
+                }
+    
+                // 写入payload数据
+                Buffer.BlockCopy(payload, 0, buffer, 6, payload.Length);
+    
+                return (buffer, totalLength);
             }
-            Buffer.BlockCopy(lengthBytes, 0, result, 2, 4);
-    
-            // 写入payload数据
-            Buffer.BlockCopy(payload, 0, result, 6, payload.Length);
-    
-            return result;
+            finally
+            {
+                // 立即归还payload数组
+                //ByteArrayPool.Return(payload);
+            }
         }
         
-        public static IConditionCheckerParameters DeserializeBattleCondition(byte[] data)
+        public static IConditionCheckerParameters DeserializeBattleCondition(ReadOnlySpan<byte> data)
         {
             // 1. 验证基本长度
-            if (data == null || data.Length < 6)
+            if (data.Length < 6)
             {
-                throw new ArgumentException("Invalid data format: insufficient length", nameof(data));
+                throw new ArgumentException("Invalid data format: insufficient length");
             }
 
             // 2. 检查协议版本
             byte version = data[0];
-            if (version != BATTLECONDITION_PROTOCOL_VERSION)
+            if (version != CONDITIONCHECKER_PROTOCOL_VERSION)
             {
-                throw new InvalidOperationException($"Unsupported protocol version: {version}. Expected: {PLAYERSTATE_PROTOCOL_VERSION}");
+                throw new InvalidOperationException($"Unsupported protocol version: {version}. Expected: {CONDITIONCHECKER_PROTOCOL_VERSION}");
             }
 
             // 3. 提取类型ID
             byte typeId = data[1];
 
-            // 4. 读取长度字段（考虑字节序）
-            byte[] lengthBytes = new byte[4];
-            Buffer.BlockCopy(data, 2, lengthBytes, 0, 4);
-    
-            // 如果数据是以大端序存储的，需要反转字节顺序（根据序列化时的设置）
+            // 4. 读取长度字段（直接处理字节序）
+            int payloadLength;
             if (BitConverter.IsLittleEndian)
             {
-                Array.Reverse(lengthBytes);
+                payloadLength = (data[2] << 24) | (data[3] << 16) | (data[4] << 8) | data[5];
             }
-    
-            int payloadLength = BitConverter.ToInt32(lengthBytes, 0);
+            else
+            {
+                payloadLength = BitConverter.ToInt32(data.Slice(2, 4));
+            }
 
             // 5. 验证数据长度
-            int expectedTotalLength = 6 + payloadLength; // 1(版本) + 1(类型) + 4(长度) + payload
+            int expectedTotalLength = 6 + payloadLength;
             if (data.Length < expectedTotalLength)
             {
                 throw new ArgumentException(
-                    $"Data length insufficient. Expected: {expectedTotalLength}, Actual: {data.Length}",
-                    nameof(data));
+                    $"Data length insufficient. Expected: {expectedTotalLength}, Actual: {data.Length}");
             }
 
-            // 6. 提取payload数据
-            byte[] payload = new byte[payloadLength];
-            Buffer.BlockCopy(data, 6, payload, 0, payloadLength);
+            // 6. 直接使用数据切片，避免复制
+            ReadOnlySpan<byte> payload = data.Slice(6, payloadLength);
+    
             try
             {
                 return payload.GetConditionCheckerParameters(typeId);
@@ -271,38 +298,52 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             }
         }
         
-        public static byte[] SerializePlayerState<T>(T playerState) where T : ISyncPropertyState
+        public static (byte[], int) SerializePlayerState<T>(T playerState) where T : ISyncPropertyState
         {
             byte typeId = (byte)playerState.GetStateType();
             byte[] payload = MemoryPackSerializer.Serialize(playerState);
     
-            // 正确分配空间：头部6字节 + payload
-            byte[] result = new byte[6 + payload.Length];
+            // 使用数组池获取缓冲区
+            int totalLength = 6 + payload.Length;
+            byte[] buffer = ByteArrayPool.Rent(totalLength);
     
-            // 写入协议头和类型ID
-            result[0] = PLAYERSTATE_PROTOCOL_VERSION;
-            result[1] = typeId;
-    
-            // 写入长度字段（显式转为大端序）
-            byte[] lengthBytes = BitConverter.GetBytes(payload.Length);
-            if (BitConverter.IsLittleEndian)
+            try
             {
-                Array.Reverse(lengthBytes);
+                // 写入协议头和类型ID
+                buffer[0] = PLAYERSTATE_PROTOCOL_VERSION;
+                buffer[1] = typeId;
+    
+                // 直接写入大端序长度（避免创建临时数组）
+                if (BitConverter.IsLittleEndian)
+                {
+                    buffer[2] = (byte)(payload.Length >> 24);
+                    buffer[3] = (byte)(payload.Length >> 16);
+                    buffer[4] = (byte)(payload.Length >> 8);
+                    buffer[5] = (byte)payload.Length;
+                }
+                else
+                {
+                    BitConverter.TryWriteBytes(new Span<byte>(buffer, 2, 4), payload.Length);
+                }
+    
+                // 写入payload数据
+                Buffer.BlockCopy(payload, 0, buffer, 6, payload.Length);
+    
+                return (buffer, totalLength);
             }
-            Buffer.BlockCopy(lengthBytes, 0, result, 2, 4);
-    
-            // 写入payload数据
-            Buffer.BlockCopy(payload, 0, result, 6, payload.Length);
-    
-            return result;
+            finally
+            {
+                // 立即归还payload数组
+                //ByteArrayPool.Return(payload);
+            }
         }
         
-        public static ISyncPropertyState DeserializePlayerState(byte[] data)
+        public static ISyncPropertyState DeserializePlayerState(ReadOnlySpan<byte> data)
         {
             // 1. 验证基本长度
-            if (data == null || data.Length < 6)
+            if (data.Length < 6)
             {
-                throw new ArgumentException("Invalid data format: insufficient length", nameof(data));
+                throw new ArgumentException("Invalid data format: insufficient length");
             }
 
             // 2. 检查协议版本
@@ -315,30 +356,28 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             // 3. 提取类型ID
             byte typeId = data[1];
 
-            // 4. 读取长度字段（考虑字节序）
-            byte[] lengthBytes = new byte[4];
-            Buffer.BlockCopy(data, 2, lengthBytes, 0, 4);
-    
-            // 如果数据是以大端序存储的，需要反转字节顺序（根据序列化时的设置）
+            // 4. 读取长度字段（直接处理字节序）
+            int payloadLength;
             if (BitConverter.IsLittleEndian)
             {
-                Array.Reverse(lengthBytes);
+                payloadLength = (data[2] << 24) | (data[3] << 16) | (data[4] << 8) | data[5];
             }
-    
-            int payloadLength = BitConverter.ToInt32(lengthBytes, 0);
+            else
+            {
+                payloadLength = BitConverter.ToInt32(data.Slice(2, 4));
+            }
 
             // 5. 验证数据长度
-            int expectedTotalLength = 6 + payloadLength; // 1(版本) + 1(类型) + 4(长度) + payload
+            int expectedTotalLength = 6 + payloadLength;
             if (data.Length < expectedTotalLength)
             {
                 throw new ArgumentException(
-                    $"Data length insufficient. Expected: {expectedTotalLength}, Actual: {data.Length}",
-                    nameof(data));
+                    $"Data length insufficient. Expected: {expectedTotalLength}, Actual: {data.Length}");
             }
 
-            // 6. 提取payload数据
-            byte[] payload = new byte[payloadLength];
-            Buffer.BlockCopy(data, 6, payload, 0, payloadLength);
+            // 6. 直接使用数据切片，避免复制
+            ReadOnlySpan<byte> payload = data.Slice(6, payloadLength);
+    
             try
             {
                 return payload.GetPlayerState(typeId);
@@ -350,76 +389,87 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             }
         }
 
-        public static byte[] SerializeCommand<T>(T command) where T : INetworkCommand
+        public static (byte[], int) SerializeCommand<T>(T command) where T : INetworkCommand
         {
             byte typeId = (byte)command.GetCommandType();
             byte[] payload = MemoryPackSerializer.Serialize(command);
     
-            // 正确分配空间：头部6字节 + payload
-            byte[] result = new byte[6 + payload.Length];
+            // 使用数组池获取缓冲区
+            int totalLength = 6 + payload.Length;
+            byte[] buffer = ByteArrayPool.Rent(totalLength);
     
-            // 写入协议头和类型ID
-            result[0] = COMMAND_PROTOCOL_VERSION;
-            result[1] = typeId;
-    
-            // 写入长度字段（显式转为大端序）
-            byte[] lengthBytes = BitConverter.GetBytes(payload.Length);
-            if (BitConverter.IsLittleEndian)
+            try
             {
-                Array.Reverse(lengthBytes);
+                // 写入协议头和类型ID
+                buffer[0] = COMMAND_PROTOCOL_VERSION;
+                buffer[1] = typeId;
+    
+                // 直接写入大端序长度（避免创建临时数组）
+                if (BitConverter.IsLittleEndian)
+                {
+                    buffer[2] = (byte)(payload.Length >> 24);
+                    buffer[3] = (byte)(payload.Length >> 16);
+                    buffer[4] = (byte)(payload.Length >> 8);
+                    buffer[5] = (byte)payload.Length;
+                }
+                else
+                {
+                    BitConverter.TryWriteBytes(new Span<byte>(buffer, 2, 4), payload.Length);
+                }
+    
+                // 写入payload数据
+                Buffer.BlockCopy(payload, 0, buffer, 6, payload.Length);
+    
+                return (buffer, totalLength);
             }
-            Buffer.BlockCopy(lengthBytes, 0, result, 2, 4);
-    
-            // 写入payload数据
-            Buffer.BlockCopy(payload, 0, result, 6, payload.Length);
-    
-            return result;
+            finally
+            {
+                // 立即归还payload数组
+                //ByteArrayPool.Return(payload);
+            }
         }
-        
-        public static INetworkCommand DeserializeCommand(byte[] data)
+
+        public static INetworkCommand DeserializeCommand(ReadOnlySpan<byte> data)
         {
             // 1. 验证基本长度
-            if (data == null || data.Length < 6)
+            if (data.Length < 6)
             {
-                throw new ArgumentException("Invalid data format: insufficient length", nameof(data));
+                throw new ArgumentException("Invalid data format: insufficient length");
             }
 
             // 2. 检查协议版本
             byte version = data[0];
             if (version != COMMAND_PROTOCOL_VERSION)
             {
-                throw new InvalidOperationException($"Unsupported protocol version: {version}. Expected: {COMMAND_PROTOCOL_VERSION}");
+                throw new InvalidOperationException(
+                    $"Unsupported protocol version: {version}. Expected: {COMMAND_PROTOCOL_VERSION}");
             }
 
             // 3. 提取类型ID
             byte typeId = data[1];
 
-            // 4. 读取长度字段（考虑字节序）
-            byte[] lengthBytes = new byte[4];
-            Buffer.BlockCopy(data, 2, lengthBytes, 0, 4);
-    
-            // 如果数据是以大端序存储的，需要反转字节顺序（根据序列化时的设置）
+            // 4. 读取长度字段（直接处理字节序）
+            int payloadLength;
             if (BitConverter.IsLittleEndian)
             {
-                Array.Reverse(lengthBytes);
+                payloadLength = (data[2] << 24) | (data[3] << 16) | (data[4] << 8) | data[5];
             }
-    
-            int payloadLength = BitConverter.ToInt32(lengthBytes, 0);
+            else
+            {
+                payloadLength = BitConverter.ToInt32(data.Slice(2, 4));
+            }
 
             // 5. 验证数据长度
-            int expectedTotalLength = 6 + payloadLength; // 1(版本) + 1(类型) + 4(长度) + payload
+            int expectedTotalLength = 6 + payloadLength;
             if (data.Length < expectedTotalLength)
             {
                 throw new ArgumentException(
-                    $"Data length insufficient. Expected: {expectedTotalLength}, Actual: {data.Length}",
-                    nameof(data));
+                    $"Data length insufficient. Expected: {expectedTotalLength}, Actual: {data.Length}");
             }
 
-            // 6. 提取payload数据
-            byte[] payload = new byte[payloadLength];
-            Buffer.BlockCopy(data, 6, payload, 0, payloadLength);
+            // 6. 直接使用数据切片，避免复制
+            ReadOnlySpan<byte> payload = data.Slice(6, payloadLength);
 
-            // 7. 根据类型ID确定具体类型并反序列化
             try
             {
                 return payload.GetCommand(typeId);
@@ -430,7 +480,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 return null;
             }
         }
-        public static IConditionCheckerParameters GetConditionCheckerParameters(this byte[] data, int typeId)
+
+        public static IConditionCheckerParameters GetConditionCheckerParameters(this ReadOnlySpan<byte> data, int typeId)
         {
             return (TriggerType)typeId switch
             {
@@ -449,7 +500,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 _ => throw new ArgumentOutOfRangeException(nameof(typeId), typeId, null)
             };
         }
-        public static IConditionChecker GetConditionChecker(this byte[] data, int typeId)
+        public static IConditionChecker GetConditionChecker(this ReadOnlySpan<byte> data, int typeId)
         {
             return (TriggerType)typeId switch
             {
@@ -469,7 +520,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             };
         }
 
-        public static ISyncPropertyState GetPlayerState(this byte[] data, int typeId)
+        public static ISyncPropertyState GetPlayerState(this ReadOnlySpan<byte> data, int typeId)
         {
             return (PlayerSyncStateType)typeId switch
             {
@@ -483,7 +534,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             };
         }
 
-        public static INetworkCommand GetCommand(this byte[] data, int typeId)
+        public static INetworkCommand GetCommand(this ReadOnlySpan<byte> data, int typeId)
         {
             return (NetworkCommandType)typeId switch
             {
@@ -1749,7 +1800,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     
     public static class NetworkCommandValidator
     {
-        // 基础结构验证 (50%性能提升)
         public static bool ValidateBasic(this INetworkCommand command)
         {
             var header = command.GetHeader();
