@@ -267,6 +267,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 ObjectPoolManager<CommandValidationResult>.Instance.Return(validCommand);
                 return;
             }
+            ObjectPoolManager<CommandValidationResult>.Instance.Return(validCommand);
             _clientCommands.Enqueue(command);
         }
 

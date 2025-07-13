@@ -394,7 +394,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             byte typeId = (byte)command.GetCommandType();
             byte[] payload = MemoryPackSerializer.Serialize(command);
     
-            // 使用数组池获取缓冲区
             int totalLength = 6 + payload.Length;
             byte[] buffer = ByteArrayPool.Rent(totalLength);
     
@@ -404,18 +403,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 buffer[0] = COMMAND_PROTOCOL_VERSION;
                 buffer[1] = typeId;
     
-                // 直接写入大端序长度（避免创建临时数组）
-                if (BitConverter.IsLittleEndian)
-                {
-                    buffer[2] = (byte)(payload.Length >> 24);
-                    buffer[3] = (byte)(payload.Length >> 16);
-                    buffer[4] = (byte)(payload.Length >> 8);
-                    buffer[5] = (byte)payload.Length;
-                }
-                else
-                {
-                    BitConverter.TryWriteBytes(new Span<byte>(buffer, 2, 4), payload.Length);
-                }
+                // 修复1: 始终以网络字节序(大端序)写入长度
+                buffer[2] = (byte)(payload.Length >> 24);
+                buffer[3] = (byte)(payload.Length >> 16);
+                buffer[4] = (byte)(payload.Length >> 8);
+                buffer[5] = (byte)payload.Length;
     
                 // 写入payload数据
                 Buffer.BlockCopy(payload, 0, buffer, 6, payload.Length);
@@ -424,42 +416,31 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             }
             finally
             {
-                // 立即归还payload数组
                 //ByteArrayPool.Return(payload);
             }
         }
 
         public static INetworkCommand DeserializeCommand(ReadOnlySpan<byte> data)
         {
-            // 1. 验证基本长度
             if (data.Length < 6)
             {
                 throw new ArgumentException("Invalid data format: insufficient length");
             }
 
-            // 2. 检查协议版本
             byte version = data[0];
             if (version != COMMAND_PROTOCOL_VERSION)
             {
-                throw new InvalidOperationException(
-                    $"Unsupported protocol version: {version}. Expected: {COMMAND_PROTOCOL_VERSION}");
+                throw new InvalidOperationException($"Unsupported protocol version: {version}. Expected: {COMMAND_PROTOCOL_VERSION}");
             }
 
-            // 3. 提取类型ID
             byte typeId = data[1];
 
-            // 4. 读取长度字段（直接处理字节序）
-            int payloadLength;
-            if (BitConverter.IsLittleEndian)
-            {
-                payloadLength = (data[2] << 24) | (data[3] << 16) | (data[4] << 8) | data[5];
-            }
-            else
-            {
-                payloadLength = BitConverter.ToInt32(data.Slice(2, 4));
-            }
+            // 修复4: 直接读取大端序长度，无需反转
+            int payloadLength = (data[2] << 24) | 
+                                (data[3] << 16) | 
+                                (data[4] << 8) | 
+                                data[5];
 
-            // 5. 验证数据长度
             int expectedTotalLength = 6 + payloadLength;
             if (data.Length < expectedTotalLength)
             {
@@ -467,16 +448,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                     $"Data length insufficient. Expected: {expectedTotalLength}, Actual: {data.Length}");
             }
 
-            // 6. 直接使用数据切片，避免复制
+            // 修复5: 使用Slice获取精确范围的payload
             ReadOnlySpan<byte> payload = data.Slice(6, payloadLength);
-
+    
             try
             {
+                // 修复6: 使用MemoryPack的Span反序列化API
                 return payload.GetCommand(typeId);
             }
             catch (Exception ex)
             {
-                Debug.LogError($"反序列化失败 ({typeId}): {ex}");
+                Debug.LogError($"Deserialization failed ({typeId}): {ex}");
                 return null;
             }
         }
@@ -1055,7 +1037,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return InputMovement.ToVector3().magnitude > 0 && InputAnimationStates > 0 && InputAnimationStates <= AnimationState.SkillQ&& CommandAnimationState > 0 && CommandAnimationState <= AnimationState.SkillQ;
+             return InputMovement.ToVector3().magnitude > 0 && InputAnimationStates >= 0 && InputAnimationStates <= AnimationState.SkillQ && CommandAnimationState >= 0 && CommandAnimationState <= AnimationState.SkillQ;
         }
     }
     [MemoryPackable]
@@ -1072,7 +1054,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return SkillId > 0 && AnimationState > 0 && AnimationState <= AnimationState.SkillQ;
+            return SkillId > 0 && AnimationState >= 0 && AnimationState <= AnimationState.SkillQ;
         }
 
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
@@ -1101,7 +1083,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return AnimationState > 0 && AnimationState <= AnimationState.SkillQ;
+            return AnimationState >= 0 && AnimationState <= AnimationState.SkillQ;
         }
 
         public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
