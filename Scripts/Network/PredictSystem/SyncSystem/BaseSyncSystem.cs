@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.State;
@@ -20,12 +21,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             GameSyncManager = gameSyncManager;
             GameSyncManager.OnServerProcessCurrentTickCommand += OnServerProcessCommand;
+            GameSyncManager.OnServerProcessCurrentTickCommands += OnServerProcessCommands;
             GameSyncManager.OnBroadcastStateUpdate += OnBroadcastStateUpdate;
             GameSyncManager.OnClientProcessStateUpdate += OnClientProcessStateUpdate;
             GameSyncManager.OnPlayerConnected += OnPlayerConnected;
             GameSyncManager.OnPlayerDisconnected += OnPlayerDisconnected;
             GameSyncManager.OnGameStart += OnGameStart;
             GameSyncManager.OnAllSystemInit += OnAllSystemInit;
+        }
+
+        private void OnServerProcessCommands(ConcurrentQueue<INetworkCommand> commands)
+        {
+            
         }
 
         protected virtual void OnAllSystemInit()

@@ -2,10 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 using AOTScripts.Tool.ObjectPool;
-using Cysharp.Threading.Tasks;
-using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
@@ -14,13 +11,10 @@ using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.ObjectPool;
-using MemoryPack;
 using Mirror;
 using Tool.GameEvent;
-using Tool.Message;
 using UniRx;
 using UnityEngine;
-using UnityEngine.Serialization;
 using VContainer;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
 using InteractHeader = HotUpdate.Scripts.Network.PredictSystem.Interact.InteractHeader;
@@ -31,9 +25,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
     {
         private readonly ConcurrentQueue<INetworkCommand> _clientCommands = new ConcurrentQueue<INetworkCommand>();
         private readonly ConcurrentQueue<INetworkCommand> _serverCommands = new ConcurrentQueue<INetworkCommand>();
-        private readonly ConcurrentQueue<INetworkCommand> _immediateCommands = new ConcurrentQueue<INetworkCommand>();
         private readonly Dictionary<int, Dictionary<CommandType, int>> _lastProcessedInputs = new Dictionary<int, Dictionary<CommandType, int>>();  // 记录每个玩家最后处理的输入序号
-        private readonly ConcurrentQueue<INetworkCommand> _currentTickCommands = new ConcurrentQueue<INetworkCommand>();
+        //private readonly ConcurrentQueue<INetworkCommand> _currentTickCommands = new ConcurrentQueue<INetworkCommand>();
         private readonly Dictionary<CommandType, BaseSyncSystem> _syncSystems = new Dictionary<CommandType, BaseSyncSystem>();
         private readonly Dictionary<CommandType, ConcurrentQueue<INetworkCommand>> _commandQueues = new Dictionary<CommandType, ConcurrentQueue<INetworkCommand>>();
         private static float _tickRate; 
@@ -89,7 +82,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 _syncSystems.Add(commandType, syncSystem);
             }
             OnAllSystemInit?.Invoke();
-            ProcessImmediateCommands(_cts.Token);
         }
 
         public override void OnStartServer()
@@ -99,7 +91,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 _syncSystems.Clear();
                 _clientCommands.Clear();
-                _currentTickCommands.Clear();
+                //_currentTickCommands.Clear();
                 _commandQueues.Clear();
             }
             Time.fixedDeltaTime = _serverInputRate;
@@ -228,30 +220,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             return null;
         }
 
-        private async void ProcessImmediateCommands(CancellationToken token)
-        {
-            while (!token.IsCancellationRequested)
-            {
-                await UniTask.WaitUntil(() => !_immediateCommands.IsEmpty, 
-                    cancellationToken: token);
-                if (_immediateCommands.TryDequeue(out var command))
-                {
-                    //var header = command.GetHeader();
-                    //var syncSystem = GetSyncSystem(header.CommandType);
-                    OnServerProcessCurrentTickCommand?.Invoke(command);
-                    // if (syncSystem != null)
-                    // {
-                    //     foreach (var playerConnection in syncSystem.PropertyStates.Keys)
-                    //     {
-                    //         var state = syncSystem.GetPlayerSerializedState(playerConnection);
-                    //         RpcProcessCurrentTickCommand(playerConnection, state);
-                    //         
-                    //     }
-                    // }
-                }
-            }
-        }
-
         /// <summary>
         /// 客户端发送命令(不能给服务器使用)
         /// </summary>
@@ -286,7 +254,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 MoveCommandsToCurrentTick();
                 // 处理当前tick的所有命令
                 ProcessCurrentTickCommands();
-                BroadcastStateUpdates();
+                BroadcastStateUpdates(_commandQueues.Keys);
             }
             finally
             {
@@ -320,12 +288,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     break;
                 }
 
-                _currentTickCommands.Enqueue(command);
+                //_currentTickCommands.Enqueue(command);
                 if (!_commandQueues.TryGetValue(header.CommandType, out var commandQueue))
                 {
                     commandQueue = new ConcurrentQueue<INetworkCommand>();
                     _commandQueues.Add(header.CommandType, commandQueue);
                 }
+
                 commandQueue.Enqueue(command);
             }
             while (_serverCommands.Count > 0)
@@ -350,7 +319,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     break;
                 }
 
-                _currentTickCommands.Enqueue(command);
+                //_currentTickCommands.Enqueue(command);
                 if (!_commandQueues.TryGetValue(header.CommandType, out var commandQueue))
                 {
                     commandQueue = new ConcurrentQueue<INetworkCommand>();
@@ -369,42 +338,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             foreach (var key in _commandQueues.Keys)
             {
                 var commandQueue = _commandQueues.GetValueOrDefault(key);
-                while (commandQueue.Count > 0)
-                {
-                    if (!commandQueue.TryDequeue(out var command))
-                    {
-                        continue;
-                    }
-                    var header = command.GetHeader();
-                    var syncSystem = GetSyncSystem(header.CommandType);
-                    if (syncSystem != null)
-                    {
-                        foreach (var playerConnection in syncSystem.PropertyStates.Keys)
-                        {
-                            var state = syncSystem.GetPlayerSerializedState(playerConnection);
-                            RpcProcessCurrentTickCommand(playerConnection, state, header.CommandType);
-                        }
-                    }
-                }
+                OnServerProcessCurrentTickCommands?.Invoke(commandQueue);
             }
-            while (_currentTickCommands.Count > 0)
-            {
-                if (!_currentTickCommands.TryDequeue(out var command))
-                {
-                    continue;
-                }
-                //var header = command.GetHeader();
-                OnServerProcessCurrentTickCommand?.Invoke(command);
-                //var syncSystem = GetSyncSystem(header.CommandType);
-                // if (syncSystem != null)
-                // {
-                //     foreach (var playerConnection in syncSystem.PropertyStates.Keys)
-                //     {
-                //         var state = syncSystem.GetPlayerSerializedState(playerConnection);
-                //         RpcProcessCurrentTickCommand(playerConnection, state);
-                //     }
-                // }
-            }
+            // while (_currentTickCommands.Count > 0)
+            // {
+            //     if (!_currentTickCommands.TryDequeue(out var command))
+            //     {
+            //         continue;
+            //     }
+            //     //var header = command.GetHeader();
+            //     OnServerProcessCurrentTickCommand?.Invoke(command);
+            //     //var syncSystem = GetSyncSystem(header.CommandType);
+            //     // if (syncSystem != null)
+            //     // {
+            //     //     foreach (var playerConnection in syncSystem.PropertyStates.Keys)
+            //     //     {
+            //     //         var state = syncSystem.GetPlayerSerializedState(playerConnection);
+            //     //         RpcProcessCurrentTickCommand(playerConnection, state);
+            //     //     }
+            //     // }
+            // }
         }
 
         /// <summary>
@@ -440,7 +393,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         /// </summary>
         public event Action<int, byte[], CommandType> OnClientProcessStateUpdate;
         [ClientRpc]
-        private void RpcProcessCurrentTickCommand(int connectionId, byte[] state, CommandType commandType)
+        private void RpcUpdateState(int connectionId, byte[] state, CommandType commandType)
         {
             OnClientProcessStateUpdate?.Invoke(connectionId, state, commandType);
         }
@@ -449,15 +402,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         /// 广播状态更新
         /// </summary>
         public event Action OnBroadcastStateUpdate;
-        private void BroadcastStateUpdates()
+        private void BroadcastStateUpdates(
+            Dictionary<CommandType, ConcurrentQueue<INetworkCommand>>.KeyCollection commandQueuesKeys)
         {
-            foreach (var commandType in _syncSystems.Keys)
+            foreach (var commandType in commandQueuesKeys)
             {
-                var system = _syncSystems.GetValueOrDefault(commandType);
+                var system = GetSyncSystem(commandType);
                 foreach (var playerConnection in system.PropertyStates.Keys)
                 {
                     var state = system.GetPlayerSerializedState(playerConnection);
-                    RpcProcessCurrentTickCommand(playerConnection, state, commandType);
+                    RpcUpdateState(playerConnection, state, commandType);
                 }
             }
             RpcUpdateState();
