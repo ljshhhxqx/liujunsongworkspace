@@ -15,8 +15,9 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [ReadOnly]
         [SerializeField]
         private List<AnimationInfo> animationInfos = new List<AnimationInfo>();
-        
+
         public List<AnimationInfo> AnimationInfos => animationInfos;
+        public Dictionary<AnimationState, AnimationInfo> AnimationInfosDictionary { get; } = new Dictionary<AnimationState, AnimationInfo>();
 
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
@@ -52,15 +53,20 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
         public AnimationInfo GetAnimationInfo(AnimationState state)
         {
+            if (AnimationInfosDictionary.TryGetValue(state, out var info))
+            {
+                return info;
+            }
             foreach (var animationInfo in animationInfos)
             {
                 if (animationInfo.state == state)
                 {
+                    AnimationInfosDictionary.Add(state, animationInfo);
                     return animationInfo;
                 }
             }
             Debug.LogError("AnimationInfo not found for state: " + state);
-            return new AnimationInfo();
+            return default;
         }
 
         public float GetPlayerAnimationCost(AnimationState state)

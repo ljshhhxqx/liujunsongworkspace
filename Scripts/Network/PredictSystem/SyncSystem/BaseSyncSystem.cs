@@ -21,7 +21,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             GameSyncManager = gameSyncManager;
             GameSyncManager.OnServerProcessCurrentTickCommand += OnServerProcessCommand;
-            GameSyncManager.OnServerProcessCurrentTickCommands += OnServerProcessCommands;
             GameSyncManager.OnBroadcastStateUpdate += OnBroadcastStateUpdate;
             GameSyncManager.OnClientProcessStateUpdate += OnClientProcessStateUpdate;
             GameSyncManager.OnPlayerConnected += OnPlayerConnected;

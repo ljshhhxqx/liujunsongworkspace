@@ -16,6 +16,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     public class SkillConfig : ConfigBase
     {
         [ReadOnly] [SerializeField] private List<SkillConfigData> skillData = new List<SkillConfigData>();
+        
+        public Dictionary<int, SkillConfigData> SkillDataDictionary { get; } = new Dictionary<int, SkillConfigData>();
 
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
@@ -55,7 +57,22 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         
         public SkillConfigData GetSkillData(int id)
         {
-            return skillData.Find(data => data.id == id);
+            if (SkillDataDictionary.TryGetValue(id, out var skillConfigData))
+            {
+                return skillConfigData;    
+            }
+
+            for (int i = 0; i < skillData.Count; i++)
+            {
+                var data = skillData[i];
+                if (data.id == id)
+                {
+                    SkillDataDictionary.Add(id, data);
+                    return data;
+                }
+            }
+            Debug.LogError($"No Skill Data found with id: {id}");
+            return default(SkillConfigData);
         }
 
         public static bool IsSkillCostEnough(SkillConfigData skillData, PropertyCalculator propertyCalculator)

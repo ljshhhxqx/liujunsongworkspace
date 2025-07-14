@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using HotUpdate.Scripts.Common;
 using Newtonsoft.Json;
 using UnityEngine;
-using UnityEngine.Serialization;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
@@ -13,7 +12,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     {
         [SerializeField]
         private List<KeyAnimationConfigData> keyAnimationConfigData;
-        
+
+
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
             keyAnimationConfigData = new List<KeyAnimationConfigData>();

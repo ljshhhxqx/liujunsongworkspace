@@ -255,11 +255,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     return null;
                 }
 
-                var inputStateData = new PlayerInputStateData
-                {
-                    InputMovement = inputCommand.InputMovement.ToVector3(),
-                    InputAnimations = inputCommand.InputAnimationStates,
-                };
+                var inputStateData = ObjectPoolManager<PlayerInputStateData>.Instance.Get(100);
+                inputStateData.InputMovement = inputCommand.InputMovement.ToVector3();
+                inputStateData.InputAnimations = inputCommand.InputAnimationStates;
                 
                 //获取可以执行的动画
                 var commandAnimation = playerController.GetCurrentAnimationState(inputStateData);
@@ -406,7 +404,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 if (!playerAnimationCooldowns.TryGetValue(animationCooldown.AnimationState, out var snapshot))
                 {
                     //Debug.LogWarning($"Could not find animation cooldown for {animationCooldown.AnimationState}");
-                    playerAnimationCooldowns.Add(animationCooldown.AnimationState, new CooldownSnapshotData());
+                    snapshot = new CooldownSnapshotData();
+                    playerAnimationCooldowns.Add(animationCooldown.AnimationState, snapshot);
                     continue;
                 }
                 var cooldown = playerAnimationCooldowns[animationCooldown.AnimationState];

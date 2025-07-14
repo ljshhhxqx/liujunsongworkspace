@@ -12,13 +12,20 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [ReadOnly]
         [SerializeField]
         private List<MapConfigData> mapConfigData = new List<MapConfigData>();
+        
+        public Dictionary<MapType, MapConfigData> MapConfigDataDictionary { get; } = new Dictionary<MapType, MapConfigData>();
 
         public MapConfigData GetMapConfigData(MapType mapType)
         {
+            if (MapConfigDataDictionary.TryGetValue(mapType, out var configData))
+            {
+                return configData;
+            }
             foreach (var data in mapConfigData)
             {
                 if (data.mapType == mapType)
                 {
+                    MapConfigDataDictionary.Add(mapType, data);
                     return data;
                 }
             }

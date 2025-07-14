@@ -13,18 +13,25 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [ReadOnly]
         [SerializeField]
         private List<CollectObjectData> collectConfigDatas;
+        public Dictionary<int, CollectObjectData> CollectObjectDataDict { get; } = new Dictionary<int, CollectObjectData>();
         
         public CollectObjectData GetCollectObjectData(int configId)
         {
+            if (CollectObjectDataDict.TryGetValue(configId, out var collectObjectData))
+            {
+                return collectObjectData;
+            }
+
             foreach (var collectConfigData in collectConfigDatas)
             {
                 if (collectConfigData.id == configId)
                 {
+                    CollectObjectDataDict.Add(configId, collectConfigData);
                     return collectConfigData;
                 }
             }
             Debug.LogWarning($"Can't find collect object data for {configId}");
-            return new CollectObjectData();
+            return default;
         }
 
         public IEnumerable<CollectObjectData> GetCollectObjectDataWithCondition(Func<CollectObjectData, bool> predicate)

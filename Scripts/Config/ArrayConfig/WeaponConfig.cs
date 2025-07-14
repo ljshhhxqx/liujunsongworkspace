@@ -16,13 +16,18 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         //[ReadOnly]
         [SerializeField]
         private List<WeaponConfigData> weaponConfigData;
-        
+
+        public Dictionary<int, WeaponConfigData> WeaponConfigDataDict { get; } = new Dictionary<int, WeaponConfigData>();
+
         public WeaponConfigData GetWeaponConfigData(int weaponID)
         {
+            if (WeaponConfigDataDict.TryGetValue(weaponID, out var configData))
+                return configData;
             foreach (var data in weaponConfigData)
             {
                 if (data.weaponID == weaponID)
                 {
+                    WeaponConfigDataDict.Add(weaponID, data);
                     return data;
                 }
             }

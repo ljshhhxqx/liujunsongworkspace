@@ -16,7 +16,9 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [ReadOnly]
         [SerializeField]
         private List<BuffData> buffs = new List<BuffData>();
-        
+
+        public Dictionary<int, BuffData> buffDict { get; } = new Dictionary<int, BuffData>();
+
         public BuffData GetBuff(BuffExtraData extraData)
         {
             return GetBuffData(extraData.buffId);
@@ -25,7 +27,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         
         public BuffData GetBuffData(int buffId, CollectObjectBuffSize collectObjectBuffSize = CollectObjectBuffSize.Small)
         {
-            var buff = buffs.Find(b => b.buffId == buffId);
+            var buff = buffDict.GetValueOrDefault(buffId);
             for (var i = 0; i < buff.increaseDataList.Count; i++)
             {
                 var buffData = buff.increaseDataList[i];
@@ -33,7 +35,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 buff.increaseDataList[i] = buffData;
             }
 
-            return buffs.Find(x => x.buffId == buffId);
+            return buff;
         }
 
         protected override void ReadFromCsv(List<string[]> textAsset)

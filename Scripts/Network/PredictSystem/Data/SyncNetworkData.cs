@@ -1642,7 +1642,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             }
 
             // 3. 命令类型验证
-            if (!Enum.IsDefined(typeof(CommandType), header.CommandType))
+            if (header.CommandType < 0 || header.CommandType >= CommandType.Shop)
             {
                 result.AddError($"Unknown command type: {header.CommandType}");
             }

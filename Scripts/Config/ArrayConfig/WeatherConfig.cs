@@ -12,18 +12,25 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [ReadOnly]
         [SerializeField] private List<WeatherData> weatherData = new List<WeatherData>();
 
+        public Dictionary<WeatherType, WeatherData> WeatherDataDictionary { get; } =
+            new Dictionary<WeatherType, WeatherData>();
+
         public List<WeatherData> WeatherData => weatherData;
 
         public WeatherData GetWeatherData(WeatherType weatherType)
         {
+            if (WeatherDataDictionary.TryGetValue(weatherType, out var weatherConfigData))
+                return weatherConfigData;
             foreach (var weather in WeatherData)
             {
                 if (weather.weatherType == weatherType)
                 {
+                    WeatherDataDictionary.Add(weatherType, weather);
                     return weather;
                 }
             }
 
+            Debug.LogError($"There is no weather data for {weatherType}");
             return default;
         }
 

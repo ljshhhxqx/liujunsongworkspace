@@ -20,11 +20,25 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [SerializeField]
         private ItemOtherData itemOtherData;
         
+        public Dictionary<int, GameItemConfigData> GameItemDatasDict { get; } = new Dictionary<int, GameItemConfigData>();
+        
         public int MaxBagSize => itemOtherData.maxBagSize;
         
         public GameItemConfigData GetGameItemData(int configId)
         {
-            return gameItemDatas.Find(x => x.id == configId);
+            if (GameItemDatasDict.TryGetValue(configId, out GameItemConfigData gameItemConfigData))
+                return gameItemConfigData;
+            for (int i = 0; i < gameItemDatas.Count; i++)
+            {
+                var gameItemData = gameItemDatas[i];
+                if (gameItemData.id == configId)
+                {
+                    GameItemDatasDict.Add(configId, gameItemData);
+                    return gameItemData;
+                }
+            }
+            Debug.LogError($"Can not find item config data with id {configId}");
+            return default;
         }
         
         protected override void ReadFromCsv(List<string[]> textAsset)

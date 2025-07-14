@@ -13,6 +13,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [ReadOnly]
         [SerializeField]
         private List<PropertyConfigData> propertyData;
+        
+        public Dictionary<PropertyTypeEnum, PropertyConfigData> PropertyValues { get; }= new Dictionary<PropertyTypeEnum, PropertyConfigData>();
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
             propertyData.Clear();
@@ -36,27 +38,42 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         
         public PropertyConfigData GetPropertyConfigData(PropertyTypeEnum propertyType)
         {
-            return propertyData.Find(x => x.propertyType == propertyType);
+            if (PropertyValues.TryGetValue(propertyType, out var configData))
+            {
+                return configData;
+            }
+
+            for (int i = 0; i < propertyData.Count; i++)
+            {
+                var data = propertyData[i];
+                if (data.propertyType == propertyType)
+                {
+                    PropertyValues.Add(propertyType, data);
+                    return data;
+                }
+            }
+            Debug.LogWarning("PropertyConfig.GetPropertyConfigData: No property found for type: " + propertyType);
+            return default;
         }
         
         public bool IsHundredPercent(PropertyTypeEnum type)
         {
-            return propertyData.Find(x => x.propertyType == type).isHundredPercent;
+            return GetPropertyConfigData(type).isHundredPercent;
         }
 
         public PropertyConsumeType GetPropertyConsumeType(PropertyTypeEnum type)
         {
-            return propertyData.Find(x => x.propertyType == type).consumeType;
+            return GetPropertyConfigData(type).consumeType;
         }
         
         public string GetDescription(PropertyTypeEnum type)
         {
-            return propertyData.Find(x => x.propertyType == type).description;
+            return GetPropertyConfigData(type).description;
         }
         
         public bool IsHandleWithCorrectFactor(PropertyTypeEnum type)
         {
-            return propertyData.Find(x => x.propertyType == type).isHandleWithCorrectFactor;
+            return GetPropertyConfigData(type).isHandleWithCorrectFactor;
         }
 
         public Dictionary<PropertyTypeEnum, float> GetPlayerBaseProperties()
@@ -84,24 +101,40 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         
         public (float, float) GetMinMaxProperty(PropertyTypeEnum type)
         {
-            var property = propertyData.Find(x => x.propertyType == type);
+            var property = GetPropertyConfigData(type);
             return (property.minValue, property.maxValue);  
         }
+        
+        private Dictionary<AnimationState, PropertyTypeEnum> _animationStateToPropertyType = new Dictionary<AnimationState, PropertyTypeEnum>();
 
         public PropertyTypeEnum GetPropertyType(AnimationState animationState)
         {
-            return propertyData.Find(x => x.animationState == animationState).propertyType;
+            if (_animationStateToPropertyType.TryGetValue(animationState, out var propertyType))
+            {
+                return propertyType;
+            }
+
+            for (int i = 0; i < propertyData.Count; i++)
+            {
+                if (propertyData[i].animationState == animationState)
+                {
+                    _animationStateToPropertyType.Add(animationState, propertyData[i].propertyType);
+                    return propertyData[i].propertyType;
+                }
+            }
+            Debug.LogWarning("PropertyConfig.GetPropertyType: No property found for animation state: " + animationState);
+            return default;
         }
 
         public float GetBaseValue(PropertyTypeEnum type)
         {
-            return propertyData.Find(x => x.propertyType == type).baseValue;
+            return GetPropertyConfigData(type).baseValue;
         }
 
         public float CalculatePropertyValue(PropertyTypeEnum type, float multiplier)
         {
             var baseValue = GetBaseValue(type);
-            var configData = propertyData.Find(x => x.propertyType == type);
+            var configData = GetPropertyConfigData(type);
             return configData.isHundredPercent ? baseValue * multiplier * 0.01f : baseValue * multiplier;
         }
 

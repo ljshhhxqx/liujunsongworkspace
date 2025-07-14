@@ -28,6 +28,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public BattleEffectConditionConfigData effectData;
         public static Random random = new Random();
 #endif
+        public Dictionary<int, BattleEffectConditionConfigData> ConditionConfigDatas { get; } = new Dictionary<int, BattleEffectConditionConfigData>();
 
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
@@ -49,14 +50,22 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             }
         }
         
-        public bool HasCondition(int id)
-        {
-            return conditionList.Exists(data => data.id == id);
-        }
-        
         public BattleEffectConditionConfigData GetConditionData(int id)
         {
-            return conditionList.Find(data => data.id == id);
+            if (ConditionConfigDatas.TryGetValue(id, out var data))
+            {
+                return data;
+            }
+            foreach (var condition in conditionList)
+            {
+                if (condition.id == id)
+                {
+                    ConditionConfigDatas.Add(id, condition);
+                    return condition;
+                }
+            }
+
+            return default;
         }
         
         public int GetConditionMaxId()

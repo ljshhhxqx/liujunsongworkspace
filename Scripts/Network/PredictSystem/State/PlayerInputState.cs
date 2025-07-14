@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using MemoryPack;
@@ -33,11 +34,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         }
     }
 
-    public struct PlayerInputStateData
+    public struct PlayerInputStateData : IPoolObject
     {
         public Vector3 InputMovement;   // 输入的移动
         public AnimationState InputAnimations; // 输入指令的动画
         public AnimationState Command; // 指令
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            InputMovement = Vector3.zero;
+            InputAnimations = AnimationState.None;
+            Command = AnimationState.None;
+        }
     }
 
     [MemoryPackable]

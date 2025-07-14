@@ -16,6 +16,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [SerializeField]
         private List<ChestPropertyData> chestConfigData;
 
+
         public ChestPropertyData RandomOne(float weight)
         {
             var totalWeight = chestConfigData.Sum(x => (int)x.randomItems.quality);
