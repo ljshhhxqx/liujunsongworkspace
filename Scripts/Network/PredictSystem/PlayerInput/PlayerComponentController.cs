@@ -110,6 +110,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private UIHoleOverlay _uiHoleOverlay;
         private GameEventManager _gameEventManager;
         private List<PredictableStateBase> _predictionStates = new List<PredictableStateBase>();
+        private Dictionary<AnimationState, IAnimationCooldown> _animationCooldownsDict = new Dictionary<AnimationState, IAnimationCooldown>();
         
         private BindingKey _propertyBindKey;
         private BindingKey _itemBindKey;
@@ -137,10 +138,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public IObservable<int> AttackPointReached => _onAttackPoint;
         public IObservable<int> AttackEnded => _onAttackEnd;
         
-        public List<IAnimationCooldown> GetNowAnimationCooldowns()
+        public Dictionary<AnimationState, IAnimationCooldown> GetNowAnimationCooldownsDict()
         {
-            return _animationCooldowns;
+            if (_animationCooldownsDict.Count == 0)
+            {
+                if (_animationCooldowns.Count > 0)
+                {
+                    _animationCooldownsDict = _animationCooldowns.ToDictionary(x => x.AnimationState, x => x);
+                    return _animationCooldownsDict;
+                }
+                throw new Exception("Animation cooldowns is empty.");
+            }
+            return _animationCooldownsDict;
         }
+        
+        public List<IAnimationCooldown> GetNowAnimationCooldowns() => _animationCooldowns;
 
         [Inject]
         private void Init(IConfigProvider configProvider, 

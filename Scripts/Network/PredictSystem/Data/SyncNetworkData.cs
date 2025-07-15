@@ -648,7 +648,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
     #region PropertyCommand
     [MemoryPackable]
-    public partial struct PropertyAutoRecoverCommand : INetworkCommand
+    public partial struct PropertyAutoRecoverCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
@@ -663,10 +663,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         }
 
         public NetworkCommandType GetCommandType() => NetworkCommandType.PropertyAutoRecover;
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default; 
+            OperationType = default;
+        }
     }
     
     [MemoryPackable]
-    public partial struct PropertyEnvironmentChangeCommand : INetworkCommand
+    public partial struct PropertyEnvironmentChangeCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)] 
         public NetworkCommandHeader Header;
@@ -683,14 +692,25 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return Enum.IsDefined(typeof(PlayerEnvironmentState), PlayerEnvironmentState);
+            return PlayerEnvironmentState >= 0 && PlayerEnvironmentState <= PlayerEnvironmentState.Swimming;
         }
-        
+
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            HasInputMovement = default;
+            PlayerEnvironmentState = default;
+            IsSprinting = default;
+        }
     }
     
     
     [MemoryPackable]
-    public partial struct PropertyInvincibleChangedCommand : INetworkCommand
+    public partial struct PropertyInvincibleChangedCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)] 
         public NetworkCommandHeader Header;
@@ -703,10 +723,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             return true;
         }
         public NetworkCommandType GetCommandType() => NetworkCommandType.PropertyInvincibleChanged;
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            IsInvincible = default;
+        }
     }
     
     [MemoryPackable]
-    public partial struct SpeedChangedByInputCommand : INetworkCommand
+    public partial struct SpeedChangedByInputCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)] 
         public NetworkCommandHeader Header;
@@ -721,13 +750,24 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return Enum.IsDefined(typeof(PlayerEnvironmentState), PlayerEnvironmentState);
+            return PlayerEnvironmentState >= 0 && PlayerEnvironmentState <= PlayerEnvironmentState.Swimming;
         }
         public NetworkCommandType GetCommandType() => NetworkCommandType.SpeedChangedByInput;
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            IsSprinting = default;
+            HasInputMovement = default;
+            PlayerEnvironmentState = default;
+        }
     }
 
     [MemoryPackable]
-    public partial struct PropertyClientAnimationCommand : INetworkCommand
+    public partial struct PropertyClientAnimationCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
@@ -740,12 +780,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public NetworkCommandHeader GetHeader() => Header;
         public bool IsValid()
         {
-            return Enum.IsDefined(typeof(AnimationState), AnimationState);
+            return AnimationState >= 0 && SkillId >= 0 && AnimationState >= 0 && AnimationState <= AnimationState.SkillQ;
+        }
+
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            AnimationState = default;
+            SkillId = default;
         }
     }
     
     [MemoryPackable]
-    public partial struct PropertyServerAnimationCommand : INetworkCommand
+    public partial struct PropertyServerAnimationCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
@@ -758,12 +809,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public NetworkCommandHeader GetHeader() => Header;
         public bool IsValid()
         {
-            return Enum.IsDefined(typeof(AnimationState), AnimationState) && AnimationState > 0;
+            return AnimationState >= 0 && AnimationState <= AnimationState.SkillQ && AnimationState > 0;
+        }
+
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            AnimationState = default;
+            SkillId = default;
         }
     }
     
     [MemoryPackable]
-    public partial struct PropertyEquipmentPassiveCommand : INetworkCommand
+    public partial struct PropertyEquipmentPassiveCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)] 
         public NetworkCommandHeader Header;
@@ -788,13 +850,28 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return EquipItemConfigId > 0 && EquipItemId > 0 && Enum.IsDefined(typeof(PlayerItemType), PlayerItemType) && !string.IsNullOrEmpty(EquipProperty);
+            return EquipItemConfigId > 0 && EquipItemId > 0 && PlayerItemType >= 0 && PlayerItemType <= PlayerItemType.Score && !string.IsNullOrEmpty(EquipProperty);
+        }
+
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            EquipItemConfigId = default;
+            EquipItemId = default;
+            IsEquipped = default;
+            PlayerItemType = default;
+            EquipProperty = default;
+            TargetIds = null;
         }
 
     }
     
     [MemoryPackable]
-    public partial struct PropertyEquipmentChangedCommand : INetworkCommand
+    public partial struct PropertyEquipmentChangedCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)] 
         public NetworkCommandHeader Header;
@@ -817,12 +894,25 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return EquipConfigId > 0 && EquipItemId > 0;
+            return EquipConfigId > 0 && EquipItemId > 0 && ItemConfigId > 0 && EquipmentPart >= 0 && EquipmentPart <= EquipmentPart.Weapon;
+        }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            EquipConfigId = default;
+            EquipItemId = default;
+            IsEquipped = default;
+            ItemConfigId = default;
+            EquipmentPart = default;
         }
     }
     
     [MemoryPackable]
-    public partial struct NoUnionPlayerAddMoreScoreAndGoldCommand : INetworkCommand
+    public partial struct NoUnionPlayerAddMoreScoreAndGoldCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)] 
         public NetworkCommandHeader Header;
@@ -836,6 +926,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public bool IsValid()
         {
             return PreNoUnionPlayer > 0;
+        }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            PreNoUnionPlayer = default;
         }
     }
     
@@ -858,14 +957,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return Enum.IsDefined(typeof(BuffType), BuffExtraData.buffType) && BuffExtraData.buffId > 0 && TargetId > 0 && CasterId.HasValue && BuffExtraData.buffId > 0 && BuffExtraData.buffType != BuffType.None
-                && Enum.IsDefined(typeof(BuffSourceType), BuffSourceType);
+            return BuffExtraData.buffType >= 0 && BuffExtraData.buffType <= BuffType.Random && BuffExtraData.buffId > 0 && TargetId > 0 && CasterId.HasValue && BuffExtraData.buffId > 0 && BuffExtraData.buffType != BuffType.None
+                    && BuffSourceType <= BuffSourceType.Auto;
+        }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            CasterId = default;
+            TargetId = default;
+            BuffExtraData = default;
+            BuffSourceType = default;
         }
         
     }
     
     [MemoryPackable]
-    public partial struct PlayerDeathCommand : INetworkCommand
+    public partial struct PlayerDeathCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)] 
         public NetworkCommandHeader Header;
@@ -880,10 +991,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         {
             return KillerId > 0 && DeadCountdownTime > 0;
         }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            KillerId = default;
+            DeadCountdownTime = default;
+        }
     }
     
     [MemoryPackable]
-    public partial struct PlayerRebornCommand : INetworkCommand
+    public partial struct PlayerRebornCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)] 
         public NetworkCommandHeader Header;
@@ -896,10 +1017,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         {
             return RebornPosition.ToVector3() != Vector3.zero;
         }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            RebornPosition = default;
+        }
     }
 
     [MemoryPackable]
-    public partial struct GoldChangedCommand : INetworkCommand
+    public partial struct GoldChangedCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)] 
         public NetworkCommandHeader Header;
@@ -914,10 +1044,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             return Gold > 0;
         }
 
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            Gold = default;
+        }
     }
 
     [MemoryPackable]
-    public partial struct PlayerTouchedBaseCommand : INetworkCommand
+    public partial struct PlayerTouchedBaseCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)] 
         public NetworkCommandHeader Header;
@@ -928,10 +1067,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         {
             return true;
         }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+        }
     }
 
     [MemoryPackable]
-    public partial struct PlayerTraceOtherPlayerHpCommand : INetworkCommand
+    public partial struct PlayerTraceOtherPlayerHpCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)] 
         public NetworkCommandHeader Header;
@@ -942,12 +1089,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
+            if (TargetConnectionIds == null || TargetConnectionIds.Length == 0)
+            {
+                return false;
+            }
+
             return TargetConnectionIds.Length > 0 && TargetConnectionIds.All(t => t > 0);
+        }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            TargetConnectionIds = null;
         }
     }
 
     [MemoryPackable]
-    public partial struct PropertyAttackCommand : INetworkCommand
+    public partial struct PropertyAttackCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)] 
         public NetworkCommandHeader Header;
@@ -960,12 +1121,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public NetworkCommandHeader GetHeader() => Header;
         public bool IsValid()
         {
-            return TargetIds.Length > 0 && AttackerId > 0 && TargetIds.All(t => t > 0);
+            if (TargetIds == null || TargetIds.Length == 0)
+            {
+                return false;
+            }
+            return AttackerId > 0 && TargetIds.All(t => t > 0);
+        }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            AttackerId = default;
+            TargetIds = null;
         }
     }
 
     [MemoryPackable]
-    public partial struct PropertySkillCommand : INetworkCommand
+    public partial struct PropertySkillCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)] 
         public NetworkCommandHeader Header;
@@ -977,12 +1152,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public NetworkCommandType GetCommandType() => NetworkCommandType.PropertySkill;
         public bool IsValid()
         {
-            return SkillId > 0 && HitPlayerIds.Length > 0 && HitPlayerIds.All(t => t > 0);
+            if (HitPlayerIds == null || HitPlayerIds.Length == 0)
+            {
+                return false;
+            }
+            return SkillId > 0 && HitPlayerIds.All(t => t > 0);
+        }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            SkillId = default;
+            HitPlayerIds = null;
         }
     }
     
     [MemoryPackable]
-    public partial struct PropertyUseSkillCommand : INetworkCommand
+    public partial struct PropertyUseSkillCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)] 
         public NetworkCommandHeader Header;
@@ -993,6 +1182,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public bool IsValid()
         {
             return SkillConfigId > 0;
+        }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            SkillConfigId = default;
         }
     }
 
@@ -1022,7 +1220,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     #region InputCommand
 
     [MemoryPackable]
-    public partial struct InputCommand : INetworkCommand
+    public partial struct InputCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
@@ -1039,9 +1237,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         {
              return InputMovement.ToVector3().magnitude > 0 && InputAnimationStates >= 0 && InputAnimationStates <= AnimationState.SkillQ && CommandAnimationState >= 0 && CommandAnimationState <= AnimationState.SkillQ;
         }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            InputMovement = default;
+            InputAnimationStates = default;
+            CommandAnimationState = default;
+        }
     }
     [MemoryPackable]
-    public partial struct SkillChangedCommand : INetworkCommand
+    public partial struct SkillChangedCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
@@ -1057,12 +1266,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             return SkillId > 0 && AnimationState >= 0 && AnimationState <= AnimationState.SkillQ;
         }
 
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        public void Init()
         {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            SkillId = default;
+            AnimationState = default;
         }
     }
 
@@ -1071,7 +1283,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     #region AnimationCommand
 
     [MemoryPackable]
-    public partial struct AnimationCommand : INetworkCommand
+    public partial struct AnimationCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
@@ -1086,19 +1298,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             return AnimationState >= 0 && AnimationState <= AnimationState.SkillQ;
         }
 
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        public void Init()
         {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            AnimationState = default;
         }
     }
     #endregion
     
     #region InteractionCommand
     [MemoryPackable]
-    public partial struct InteractionCommand : INetworkCommand
+    public partial struct InteractionCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
@@ -1110,15 +1324,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return TargetIds.Length > 0 && TargetIds.All(t => t > 0);
+            if (TargetIds == null || TargetIds.Length == 0)
+            {
+                return false;
+            }
+            return TargetIds.All(t => t > 0);
         }
 
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick, CommandAuthority authority = CommandAuthority.Client)
+        public void Init()
         {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            TargetIds = null;
         }
     }
     #endregion
@@ -1143,7 +1363,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     }
     
     [MemoryPackable]
-    public partial struct ItemsSellCommand : INetworkCommand
+    public partial struct ItemsSellCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
@@ -1171,10 +1391,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             }
             return true;
         }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            Slots.Clear();
+        }
     }
     
     [MemoryPackable]
-    public partial struct ItemsBuyCommand : INetworkCommand
+    public partial struct ItemsBuyCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
@@ -1200,10 +1429,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             }
             return true;
         }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            Items.Clear();
+        }
     }
 
     [MemoryPackable]
-    public partial struct ItemsGetCommand : INetworkCommand
+    public partial struct ItemsGetCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
@@ -1231,10 +1469,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             }
             return true;    
         }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            Items.Clear();
+        }
     }
     
     [MemoryPackable]
-    public partial struct ItemsUseCommand : INetworkCommand
+    public partial struct ItemsUseCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
@@ -1260,10 +1507,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             }
             return true;
         }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            Slots.Clear();
+        }
     }
     
     [MemoryPackable]
-    public partial struct ItemLockCommand : INetworkCommand
+    public partial struct ItemLockCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
@@ -1279,11 +1535,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         {
             return SlotIndex > 0;
         }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            SlotIndex = default;
+            IsLocked = default;
+        }
         
     }
     
     [MemoryPackable]
-    public partial struct ItemEquipCommand : INetworkCommand
+    public partial struct ItemEquipCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
@@ -1300,6 +1566,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         {
             return SlotIndex > 0 && PlayerItemType > 0 && PlayerItemType <= PlayerItemType.Score && (PlayerItemType == PlayerItemType.Armor || PlayerItemType == PlayerItemType.Weapon);
         }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            SlotIndex = default;
+            PlayerItemType = default;
+            IsEquip = default;
+        }
     }
     
     [MemoryPackable]
@@ -1312,7 +1589,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     }
     
     [MemoryPackable]
-    public partial struct ItemExchangeCommand : INetworkCommand
+    public partial struct ItemExchangeCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
@@ -1328,10 +1605,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             return FromSlotIndex > 0 && ToSlotIndex > 0;
         }
         
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            FromSlotIndex = default;
+            ToSlotIndex = default;
+        }
     }
     
     [MemoryPackable]
-    public partial struct ItemDropCommand : INetworkCommand
+    public partial struct ItemDropCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
@@ -1357,6 +1644,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             }
             return true;
         }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            Slots.Clear();
+        }
     }
     
     #endregion
@@ -1364,7 +1660,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     #region EqupimentCommand
 
     [MemoryPackable]
-    public partial struct EquipmentCommand : INetworkCommand
+    public partial struct EquipmentCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
@@ -1389,13 +1685,27 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             return EquipmentConfigId > 0 && EquipmentPart > 0 && EquipmentPart <= EquipmentPart.Weapon 
                 && ItemId > 0 && !string.IsNullOrEmpty(EquipmentPassiveEffectData) && !string.IsNullOrEmpty(EquipmentMainEffectData);
         }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            EquipmentConfigId = default;
+            EquipmentPart = default;
+            IsEquip = default;
+            ItemId = default;
+            EquipmentPassiveEffectData = default;
+            EquipmentMainEffectData = default;
+        }
     }
 
     #endregion
     #region ShopCommand
 
     [MemoryPackable]
-    public partial struct BuyCommand : INetworkCommand
+    public partial struct BuyCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
@@ -1412,18 +1722,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             return ShopId > 0 && Count > 0;
         }
 
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
-            CommandAuthority authority = CommandAuthority.Client)
+        
+        public void Init()
         {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            ShopId = default;
+            Count = default;
         }
     }
     
     [MemoryPackable]
-    public partial struct RefreshShopCommand : INetworkCommand
+    public partial struct RefreshShopCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
@@ -1435,10 +1748,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         {
             return true;
         }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+        }
     }
     
     [MemoryPackable]
-    public partial struct SellCommand : INetworkCommand
+    public partial struct SellCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
@@ -1454,13 +1775,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         {
             return ItemSlotIndex > 0 && Count > 0;
         }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            ItemSlotIndex = default;
+            Count = default;
+        }
     }
     
     #endregion
     #region SkillCommand
 
     [MemoryPackable]
-    public partial struct SkillCommand : INetworkCommand
+    public partial struct SkillCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)] public NetworkCommandHeader Header;
         [MemoryPackOrder(1)] public int SkillConfigId;
@@ -1475,18 +1806,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             return SkillConfigId > 0 && DirectionNormalized.ToVector3() != Vector3.zero;
         }
 
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
-            CommandAuthority authority = CommandAuthority.Client)
+        
+        public void Init()
         {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            SkillConfigId = default;
+            DirectionNormalized = default;
+            IsAutoSelectTarget = default;
+            KeyCode = default;
         }
     }
     
     [MemoryPackable]
-    public partial struct SkillLoadCommand : INetworkCommand
+    public partial struct SkillLoadCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)] public NetworkCommandHeader Header;
         [MemoryPackOrder(1)] public int SkillConfigId;
@@ -1501,13 +1837,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             return SkillConfigId > 0;
         }
 
-        public void SetHeader(int headerConnectionId, CommandType headerCommandType, int currentTick,
-            CommandAuthority authority = CommandAuthority.Client)
+        
+        public void Init()
         {
-            Header.ConnectionId = headerConnectionId;
-            Header.Tick = currentTick;
-            Header.CommandType = headerCommandType;
-            Header.Authority = authority;
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            SkillConfigId = default;
+            IsLoad = default;
+            KeyCode = default;
         }
     }
 
@@ -1516,7 +1856,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     #region Command
 
     [MemoryPackable]
-    public partial struct TriggerCommand : INetworkCommand
+    public partial struct TriggerCommand : INetworkCommand, IPoolObject
     {
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
@@ -1530,6 +1870,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public bool IsValid()
         {
             return TriggerType > 0 && TriggerType <= TriggerType.OnDeath;
+        }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            TriggerType = default;
+            TriggerData = default;
         }
     }
 

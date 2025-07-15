@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
@@ -105,8 +106,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     return;
                 }
 
-                var animationCooldowns = PlayerComponentController.GetNowAnimationCooldowns();
-                var cooldownInfo = animationCooldowns.Find(x => x.AnimationState == inputCommand.CommandAnimationState);
+                var animationCooldowns = PlayerComponentController.GetNowAnimationCooldownsDict();
+                var cooldownInfo = animationCooldowns.GetValueOrDefault(inputCommand.CommandAnimationState);
                 if (cooldown > 0)
                 {
                     if (cooldownInfo == null || !cooldownInfo.IsReady())
@@ -124,12 +125,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                         Debug.LogWarning($"Not enough strength to perform {inputCommand.CommandAnimationState}.");
                         return;
                     }
-                    _propertyPredictionState.AddPredictedCommand(new PropertyClientAnimationCommand
-                    {
-                        AnimationState = inputCommand.CommandAnimationState,
-                        Header = header,
-                        SkillId = skillConfigData.id,
-                    });
+                    var animationCommand = ObjectPoolManager<PropertyClientAnimationCommand>.Instance.Get(100);
+                    animationCommand.AnimationState = inputCommand.CommandAnimationState;
+                    animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property, CommandAuthority.Client);
+                    animationCommand.SkillId = skillConfigData.id;
+                    _propertyPredictionState.AddPredictedCommand(animationCommand);
                 }
 
                 if (skillConfigData.animationState != AnimationState.None)
@@ -137,12 +137,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     cooldownInfo?.Use(); 
                 }
 
-                OnPlayerInputStateChanged?.Invoke(new PlayerInputStateData
-                {
-                    InputAnimations = inputCommand.InputAnimationStates,
-                    Command = inputCommand.CommandAnimationState,
-                    InputMovement = inputCommand.InputMovement.ToVector3(),
-                });
+                var inputStateData = ObjectPoolManager<PlayerInputStateData>.Instance.Get(100);
+                inputStateData.InputMovement = inputCommand.InputMovement.ToVector3();
+                inputStateData.InputAnimations = inputCommand.InputAnimationStates;
+                inputStateData.Command = inputCommand.CommandAnimationState;
+                OnPlayerInputStateChanged?.Invoke(inputStateData);
                 //Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
             }
         }

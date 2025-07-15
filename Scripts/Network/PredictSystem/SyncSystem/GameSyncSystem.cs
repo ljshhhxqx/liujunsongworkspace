@@ -149,6 +149,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private void OnPlayerDisconnect(PlayerDisconnectEvent disconnectEvent)
         {
+            if(!isServer)
+                return;
             PlayerInGameManager.Instance.RemovePlayer(disconnectEvent.ConnectionId);
             OnPlayerDisconnected?.Invoke(disconnectEvent.ConnectionId);
             RpcPlayerDisconnect(disconnectEvent.ConnectionId);
@@ -156,6 +158,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private void OnPlayerConnect(PlayerConnectEvent connectEvent)
         {
+            if(!isServer)
+                return;
             var networkIdentity = NetworkServer.connections[connectEvent.ConnectionId].identity;
             connectEvent = new PlayerConnectEvent(connectEvent.ConnectionId, networkIdentity, connectEvent.ReadOnlyData);
             PlayerInGameManager.Instance.AddPlayer(connectEvent.ConnectionId, new PlayerInGameData
@@ -170,12 +174,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [ClientRpc]
         private void RpcPlayerConnect(PlayerConnectEvent connectEvent)
         {
+            if(isServer)
+                return;
             OnPlayerConnected?.Invoke(connectEvent.ConnectionId, NetworkServer.connections[connectEvent.ConnectionId].identity);
         }
         
         [ClientRpc]
         private void RpcPlayerDisconnect(int connectionId)
         {
+            if(isServer)
+                return;
             PlayerInGameManager.Instance.RemovePlayer(connectionId);
             OnPlayerDisconnected?.Invoke(connectionId);
         }
@@ -251,6 +259,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [Server]
         public void EnqueueCommand(byte[] commandJson)
         {
+            if(!isServer)
+                return;
             var command = NetworkCommandExtensions.DeserializeCommand(commandJson);
             var header = command.GetHeader();
             var validCommand = command.ValidateCommand();
@@ -270,6 +280,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [Server]
         private void ProcessTick()
         {
+            if(!isServer)
+                return;
             _isProcessing = true;
 
             try
@@ -378,6 +390,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [Server]
         public void EnqueueServerCommand<T>(T command) where T : INetworkCommand
         {
+            if(!isServer)
+                return;
             var header = command.GetHeader();
             var validCommand = command.ValidateCommand();
             if (!validCommand.IsValid)
@@ -388,7 +402,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _serverCommands.Enqueue(command);
         }
         
-        private BaseSyncSystem GetSyncSystem(CommandType commandType)
+        public BaseSyncSystem GetSyncSystem(CommandType commandType)
         {
             if (_syncSystems.TryGetValue(commandType, out var system))
             {
@@ -406,6 +420,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [ClientRpc]
         private void RpcProcessCurrentTickCommand(int connectionId, byte[] state, CommandType commandType)
         {
+            if (isServer)
+                return;
             OnClientProcessStateUpdate?.Invoke(connectionId, state, commandType);
         }
 
@@ -415,6 +431,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public event Action OnBroadcastStateUpdate;
         private void BroadcastStateUpdates()
         {
+            if (!isServer)
+            {
+                return;
+            }
             foreach (var commandType in _syncSystems.Keys)
             {
                 var system = _syncSystems.GetValueOrDefault(commandType);
@@ -430,6 +450,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [ClientRpc]
         private void RpcUpdateState()
         {
+            if (isServer)
+                return;
             OnBroadcastStateUpdate?.Invoke(); 
         }
 

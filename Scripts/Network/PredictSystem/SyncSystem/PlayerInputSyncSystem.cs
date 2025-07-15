@@ -11,7 +11,6 @@ using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.PredictSystem.State;
-using MemoryPack;
 using Mirror;
 using UniRx;
 using UnityEngine;
@@ -140,8 +139,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void BindAniEvents(int connectionId)
         {
             var playerController = GameSyncManager.GetPlayerConnection(connectionId);
-            var animationCooldowns = playerController.GetNowAnimationCooldowns();
-            var attackCooldown = animationCooldowns.Find(x => x.AnimationState == AnimationState.Attack);
+            var animationCooldowns = playerController.GetNowAnimationCooldownsDict();
+            var attackCooldown = animationCooldowns.GetValueOrDefault( AnimationState.Attack);
             if (attackCooldown is KeyframeComboCooldown attackComboCooldown)
             {
                 attackComboCooldown.EventStream
@@ -149,7 +148,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     .Subscribe(x => HandlePlayerAttack(connectionId))
                     .AddTo(_disposables);
             }
-            var rollCooldown = animationCooldowns.Find(x => x.AnimationState == AnimationState.Roll);
+            var rollCooldown = animationCooldowns.GetValueOrDefault(AnimationState.Roll);
             if (rollCooldown is KeyframeComboCooldown rollComboCooldown)
             {
                 rollComboCooldown.EventStream
@@ -161,7 +160,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     .Subscribe(x => HandlePlayerRoll(connectionId, false))
                     .AddTo(_disposables);
             }
-            var skillECooldown = animationCooldowns.Find(x => x.AnimationState == AnimationState.SkillE);
+            var skillECooldown = animationCooldowns.GetValueOrDefault(AnimationState.SkillE);
             if (skillECooldown is KeyframeComboCooldown eCooldown)
             {
                 eCooldown.EventStream
@@ -169,7 +168,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     .Subscribe(x => HandlePlayerSkill(connectionId, AnimationState.SkillE))
                     .AddTo(_disposables);
             }
-            var skillQCooldown = animationCooldowns.Find(x => x.AnimationState == AnimationState.SkillQ);
+            var skillQCooldown = animationCooldowns.GetValueOrDefault(AnimationState.SkillQ);
             if (skillQCooldown is KeyframeComboCooldown qCooldown)
             {
                 qCooldown.EventStream
@@ -272,7 +271,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     return playerInputState;
                 }
                 
-                var playerAnimationCooldowns = playerController.GetNowAnimationCooldowns();
+                var playerAnimationCooldowns = playerController.GetNowAnimationCooldownsDict();
                 if (playerAnimationCooldowns.Count == 0)
                 {
                     Debug.LogWarning($"[playerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} is not exist.");
@@ -283,7 +282,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 var cost = skillConfigData.id == 0 ? info.cost : skillConfigData.cost;
                 var cooldown = skillConfigData.id == 0 ? info.cooldown : skillConfigData.cooldown;
                 //验证冷却时间是否已到
-                var cooldownInfo = playerAnimationCooldowns.Find(x => x.AnimationState == commandAnimation);
+                var cooldownInfo = playerAnimationCooldowns.GetValueOrDefault(commandAnimation);
 
                 //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost}");
                 if (cooldown != 0)
@@ -306,14 +305,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
                     if (skillConfigData.id == 0)
                     {
-                        // 扣除耐力值
-                        GameSyncManager.EnqueueServerCommand(new PropertyServerAnimationCommand
-                        {
-                            Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property),
-                            AnimationState = commandAnimation,
-                            SkillId = skillConfigData.id,
-                            
-                        });
+                        var animationCommand = ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Get(100);
+                        animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property);
+                        animationCommand.AnimationState = commandAnimation;
+                        animationCommand.SkillId = skillConfigData.id;
+                        GameSyncManager.EnqueueServerCommand(animationCommand);
                         //Debug.Log($" [playerInputSyncSystem]Player {header.ConnectionId} input animation {commandAnimation} cost {info.cost} strength, now strength is {playerProperty[PropertyTypeEnum.Strength].CurrentValue}.");
                     }
 
@@ -326,15 +322,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 }
                 else if (skillConfigData.id > 0 && skillConfigData.animationState != AnimationState.None)
                 {
+                    var animationCommand = ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Get(100);
+                    animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property);
+                    animationCommand.AnimationState = skillConfigData.animationState;
+                    animationCommand.SkillId = skillConfigData.id;
+                    GameSyncManager.EnqueueServerCommand(animationCommand);
                     //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input skill {skillConfigData.id} animation {skillConfigData.animationState} cooldown {skillConfigData.cooldown} cost {skillConfigData.cost}");
-                    GameSyncManager.EnqueueServerCommand(new SkillCommand
-                    {
-                        Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Skill, CommandAuthority.Server, CommandExecuteType.Immediate),
-                        SkillConfigId = skillConfigData.id,
-                        KeyCode = inputCommand.CommandAnimationState,
-                        IsAutoSelectTarget = true,
-                        DirectionNormalized = playerController.transform.forward,
-                    });
+                    
                     cooldownInfo?.Use();
                 }
                 
@@ -352,12 +346,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     var moveSpeed = playerProperty[PropertyTypeEnum.Speed].CurrentValue;
                     var hpChangedCheckerParameters = MoveCheckerParameters.CreateParameters(
                         TriggerType.OnHpChange, moveSpeed, moveSpeed * inputMovement.magnitude * GameSyncManager.TickSeconds);
-                    GameSyncManager.EnqueueServerCommand(new TriggerCommand
-                    {
-                        Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
-                        TriggerType = TriggerType.OnMove,
-                        TriggerData = NetworkCommandExtensions.SerializeBattleCondition(hpChangedCheckerParameters).buffer,
-                    });
+                    var triggerCommand = ObjectPoolManager<TriggerCommand>.Instance.Get(100);
+                    triggerCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate);
+                    triggerCommand.TriggerType = TriggerType.OnHpChange;
+                    triggerCommand.TriggerData = NetworkCommandExtensions.SerializeBattleCondition(hpChangedCheckerParameters).buffer;
+                    GameSyncManager.EnqueueServerCommand(triggerCommand);
                     //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input move {inputCommand.InputMovement} speed {moveSpeed} player state {playerGameStateData.AnimationState}");
                 }
                 return PropertyStates[header.ConnectionId];
@@ -384,8 +377,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             if (command is SkillChangedCommand skillChangedCommand)
             {
                 var playerController = GameSyncManager.GetPlayerConnection(header.ConnectionId);
-                var playerAnimationCooldowns = playerController.GetNowAnimationCooldowns();
-                var animation = playerAnimationCooldowns.Find(x => x.AnimationState == skillChangedCommand.AnimationState);
+                var playerAnimationCooldowns = playerController.GetNowAnimationCooldownsDict();
+                var animation = playerAnimationCooldowns.GetValueOrDefault(skillChangedCommand.AnimationState);
                 var skillConfigData = _playerSkillSyncSystem.GetSkillConfigData(skillChangedCommand.AnimationState, header.ConnectionId);
                 animation?.SkillModifyCooldown(skillConfigData.cooldown);
                 return playerInputState;
