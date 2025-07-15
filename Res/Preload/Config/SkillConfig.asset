@@ -1,0 +1,1045 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0aa490d3371f4d2d826a83eb4fcb809d, type: 3}
+  m_Name: SkillConfig
+  m_EditorClassIdentifier: 
+  excelAssetReference:
+    guid: afcb27a37860bed489c689f04b28b549
+  csvAssetReference:
+    guid: f79490033f1ba7d4c817acd9581f3173
+  jsonAssetReference:
+    guid: 36a25296697c2fe44a5305e443be106f
+  configName: SkillConfig
+  isArray: 1
+  skillData:
+  - id: 1
+    name: "\u6CE2\u52A8\u7403"
+    description: "\u5728\u76EE\u6807\u5904\u91CA\u653E\u4E00\u4E2A\u5EF6\u65F6\u7206\u70B8\u7684\u6CE2\u52A8\u7403\uFF0C2\u79D2\u540E\u7206\u70B8\u5BF9\u5468\u56F4\u654C\u4EBA\u9020\u6210{value}\u4F24\u5BB3"
+    cooldown: 10
+    animationState: 0
+    particleName: AoE slash green 1
+    maxDistance: 2
+    radius: 0.5
+    isAreaOfRange: 1
+    costProperty: 4
+    flySpeed: 0
+    duration: 2.2
+    buffOperationType: 1
+    colliderType: 1
+    cost: 50
+    isCostCurrentPercent: 0
+    events:
+    - skillEventType: 1
+      fireTime: 0
+    - skillEventType: 2
+      fireTime: 2
+    - skillEventType: 3
+      fireTime: 2.1
+    conditionTarget: 2
+    extraEffects:
+    - target: 2
+      baseValue: 50
+      buffProperty: 1
+      isBuffMaxProperty: 0
+      extraRatio: 0.25
+      effectProperty: 3
+      buffOperation: 1
+      buffIncreaseType: 5
+      duration: 0
+      controlSkillType: 0
+    skillType: 0
+  - id: 2
+    name: "\u529B\u91CF\u6CD5\u9635"
+    description: "\u6280\u80FD\u5F15\u5BFC\u540E\uFF0C\u5728\u76EE\u6807\u5904\u91CA\u653E\u529B\u91CF\u6CD5\u9635\uFF0C\u6BCF0.5\u79D2\u5BF9\u533A\u57DF\u5185\u547D\u4E2D\u7684\u53CB\u519B\u63D0\u4F9B{value}\u989D\u5916\u653B\u51FB\u529B\uFF0C\u6301\u7EED0.5\u79D2"
+    cooldown: 10
+    animationState: 4096
+    particleName: Buff 1
+    maxDistance: 2
+    radius: 0.5
+    isAreaOfRange: 1
+    costProperty: 4
+    flySpeed: 0
+    duration: 3
+    buffOperationType: 0
+    colliderType: 1
+    cost: 70
+    isCostCurrentPercent: 0
+    events:
+    - skillEventType: 1
+      fireTime: 0
+    - skillEventType: 2
+      fireTime: 0.01
+    - skillEventType: 2
+      fireTime: 0.5
+    - skillEventType: 2
+      fireTime: 1
+    - skillEventType: 2
+      fireTime: 1.5
+    - skillEventType: 2
+      fireTime: 2
+    - skillEventType: 2
+      fireTime: 2.5
+    - skillEventType: 2
+      fireTime: 3
+    - skillEventType: 3
+      fireTime: 3.01
+    conditionTarget: 4
+    extraEffects:
+    - target: 4
+      baseValue: 0.15
+      buffProperty: 1
+      isBuffMaxProperty: 0
+      extraRatio: 0.15
+      effectProperty: 1
+      buffOperation: 0
+      buffIncreaseType: 3
+      duration: 0.5
+      controlSkillType: 0
+    skillType: 0
+  - id: 3
+    name: "\u5BD2\u51B0\u51B2\u51FB"
+    description: "\u6280\u80FD\u5F15\u5BFC\u540E\uFF0C\u5728\u76EE\u6807\u5904\u91CA\u653E\u51B0\u9525\uFF0C\u5BF9\u5468\u56F4\u654C\u4EBA\u9020\u6210{value}\u4F24\u5BB3\uFF0C\u5E76\u65BD\u52A01\u79D2\u6655\u7729\u6548\u679C"
+    cooldown: 15
+    animationState: 8192
+    particleName: Crystals crossfade 2
+    maxDistance: 2
+    radius: 0.5
+    isAreaOfRange: 1
+    costProperty: 4
+    flySpeed: 0
+    duration: 2
+    buffOperationType: 1
+    colliderType: 1
+    cost: 70
+    isCostCurrentPercent: 0
+    events:
+    - skillEventType: 1
+      fireTime: 0
+    - skillEventType: 2
+      fireTime: 1.5
+    - skillEventType: 3
+      fireTime: 2
+    conditionTarget: 2
+    extraEffects:
+    - target: 2
+      baseValue: 25
+      buffProperty: 1
+      isBuffMaxProperty: 0
+      extraRatio: 0.15
+      effectProperty: 3
+      buffOperation: 1
+      buffIncreaseType: 5
+      duration: 1
+      controlSkillType: 1
+    skillType: 0
+  - id: 4
+    name: "\u865A\u5F31\u6CD5\u9635"
+    description: "\u6280\u80FD\u5F15\u5BFC\u540E\uFF0C\u5728\u76EE\u6807\u5904\u91CA\u653E\u865A\u5F31\u6CD5\u9635\uFF0C\u6BCF0.5\u79D2\u5BF9\u533A\u57DF\u5185\u547D\u4E2D\u7684\u654C\u519B\u964D\u4F4E{value}\u603B\u79FB\u52A8\u901F\u5EA6\u548C{value}\u603B\u653B\u51FB\u529B\uFF0C\u6301\u7EED0.5\u79D2"
+    cooldown: 10
+    animationState: 4096
+    particleName: Debuff 1
+    maxDistance: 2
+    radius: 0.5
+    isAreaOfRange: 1
+    costProperty: 4
+    flySpeed: 0
+    duration: 3
+    buffOperationType: 1
+    colliderType: 1
+    cost: 70
+    isCostCurrentPercent: 0
+    events:
+    - skillEventType: 1
+      fireTime: 0
+    - skillEventType: 2
+      fireTime: 0.01
+    - skillEventType: 2
+      fireTime: 0.5
+    - skillEventType: 2
+      fireTime: 1
+    - skillEventType: 2
+      fireTime: 1.5
+    - skillEventType: 2
+      fireTime: 2
+    - skillEventType: 2
+      fireTime: 2.5
+    - skillEventType: 2
+      fireTime: 3
+    - skillEventType: 3
+      fireTime: 3.01
+    conditionTarget: 2
+    extraEffects:
+    - target: 2
+      baseValue: 5
+      buffProperty: 1
+      isBuffMaxProperty: 0
+      extraRatio: 0.07
+      effectProperty: 1
+      buffOperation: 1
+      buffIncreaseType: 4
+      duration: 0.5
+      controlSkillType: 0
+    - target: 2
+      baseValue: 5
+      buffProperty: 0
+      isBuffMaxProperty: 0
+      extraRatio: 0.07
+      effectProperty: 0
+      buffOperation: 1
+      buffIncreaseType: 4
+      duration: 0.5
+      controlSkillType: 0
+    skillType: 0
+  - id: 5
+    name: "\u6C99\u5C18\u88AD\u51FB"
+    description: "\u5728\u76EE\u6807\u5904\u91CA\u653E\u6C99\u5C18\uFF0C\u6BCF0.5\u79D2\u5BF9\u533A\u57DF\u5185\u547D\u4E2D\u7684\u654C\u519B\u9020\u6210{value}\u4F24\u5BB3\uFF0C\u5E76\u81F4\u76F20.5\u79D2"
+    cooldown: 20
+    animationState: 8192
+    particleName: Dust ground 1
+    maxDistance: 2
+    radius: 0.5
+    isAreaOfRange: 1
+    costProperty: 4
+    flySpeed: 0
+    duration: 3
+    buffOperationType: 1
+    colliderType: 1
+    cost: 70
+    isCostCurrentPercent: 0
+    events:
+    - skillEventType: 1
+      fireTime: 0
+    - skillEventType: 2
+      fireTime: 0.01
+    - skillEventType: 2
+      fireTime: 0.5
+    - skillEventType: 2
+      fireTime: 1
+    - skillEventType: 2
+      fireTime: 1.5
+    - skillEventType: 2
+      fireTime: 2
+    - skillEventType: 2
+      fireTime: 2.5
+    - skillEventType: 2
+      fireTime: 3
+    - skillEventType: 3
+      fireTime: 3.01
+    conditionTarget: 2
+    extraEffects:
+    - target: 2
+      baseValue: 25
+      buffProperty: 1
+      isBuffMaxProperty: 0
+      extraRatio: 0.15
+      effectProperty: 3
+      buffOperation: 1
+      buffIncreaseType: 5
+      duration: 0.5
+      controlSkillType: 2
+    skillType: 0
+  - id: 6
+    name: "\u6A2A\u626B"
+    description: "\u671D\u76EE\u6807\u65B9\u5411\u5904\u91CA\u653E\u7535\u51FB\uFF0C\u5BF9\u547D\u4E2D\u7684\u7B2C\u4E00\u4E2A\u654C\u4EBA\u9020\u6210{value}\u4F24\u5BB3\u5E76\u65BD\u52A01\u79D2\u6655\u7729\u6548\u679C"
+    cooldown: 10
+    animationState: 0
+    particleName: Electro slash 1
+    maxDistance: 0.5
+    radius: 0.5
+    isAreaOfRange: 1
+    costProperty: 4
+    flySpeed: 0
+    duration: 3
+    buffOperationType: 1
+    colliderType: 1
+    cost: 30
+    isCostCurrentPercent: 0
+    events:
+    - skillEventType: 1
+      fireTime: 0
+    - skillEventType: 2
+      fireTime: 1.5
+    - skillEventType: 3
+      fireTime: 2
+    conditionTarget: 2
+    extraEffects:
+    - target: 2
+      baseValue: 60
+      buffProperty: 1
+      isBuffMaxProperty: 0
+      extraRatio: 0.3
+      effectProperty: 3
+      buffOperation: 1
+      buffIncreaseType: 5
+      duration: 1
+      controlSkillType: 1
+    skillType: 0
+  - id: 7
+    name: "\u971C\u51BB\u9886\u57DF"
+    description: "\u6280\u80FD\u5F15\u5BFC\u540E\uFF0C\u5728\u76EE\u6807\u5904\u91CA\u653E\u971C\u51BB\u9886\u57DF\uFF0C\u6BCF0.5\u79D2\u5BF9\u533A\u57DF\u5185\u547D\u4E2D\u7684\u654C\u519B\u9020\u6210{value}\u4F24\u5BB3\uFF0C\u5E76\u51CF\u901F\u6301\u7EED0.5\u79D2"
+    cooldown: 15
+    animationState: 4096
+    particleName: Freeze circle 1
+    maxDistance: 2
+    radius: 0.5
+    isAreaOfRange: 1
+    costProperty: 4
+    flySpeed: 0
+    duration: 4
+    buffOperationType: 1
+    colliderType: 1
+    cost: 70
+    isCostCurrentPercent: 0
+    events:
+    - skillEventType: 1
+      fireTime: 0
+    - skillEventType: 2
+      fireTime: 0.01
+    - skillEventType: 2
+      fireTime: 0.5
+    - skillEventType: 2
+      fireTime: 1
+    - skillEventType: 2
+      fireTime: 1.5
+    - skillEventType: 2
+      fireTime: 2
+    - skillEventType: 2
+      fireTime: 2.5
+    - skillEventType: 2
+      fireTime: 3
+    - skillEventType: 2
+      fireTime: 3.5
+    - skillEventType: 2
+      fireTime: 4
+    - skillEventType: 3
+      fireTime: 4.01
+    conditionTarget: 2
+    extraEffects:
+    - target: 2
+      baseValue: 25
+      buffProperty: 1
+      isBuffMaxProperty: 0
+      extraRatio: 0.15
+      effectProperty: 3
+      buffOperation: 1
+      buffIncreaseType: 5
+      duration: 0
+      controlSkillType: 0
+    - target: 2
+      baseValue: 0.05
+      buffProperty: 0
+      isBuffMaxProperty: 0
+      extraRatio: 0.07
+      effectProperty: 0
+      buffOperation: 1
+      buffIncreaseType: 4
+      duration: 0.5
+      controlSkillType: 0
+    skillType: 0
+  - id: 8
+    name: "\u8F70\u9E23"
+    description: "\u5728\u76EE\u6807\u5904\u91CA\u653E\u70B8\u5F39\u7206\u70B8\uFF0C\u7206\u70B8\u5BF9\u5468\u56F4\u654C\u4EBA\u9020\u6210{value}\u4F24\u5BB3\uFF0C\u5E76\u51FB\u9000\u5468\u56F4\u654C\u4EBA1\u7C73"
+    cooldown: 10
+    animationState: 0
+    particleName: Ground AOE explosion 1
+    maxDistance: 2
+    radius: 0.5
+    isAreaOfRange: 1
+    costProperty: 4
+    flySpeed: 0
+    duration: 3
+    buffOperationType: 1
+    colliderType: 1
+    cost: 70
+    isCostCurrentPercent: 0
+    events:
+    - skillEventType: 1
+      fireTime: 0
+    - skillEventType: 2
+      fireTime: 0.75
+    - skillEventType: 3
+      fireTime: 2
+    conditionTarget: 2
+    extraEffects:
+    - target: 2
+      baseValue: 25
+      buffProperty: 1
+      isBuffMaxProperty: 0
+      extraRatio: 0.15
+      effectProperty: 3
+      buffOperation: 1
+      buffIncreaseType: 5
+      duration: 0
+      controlSkillType: 0
+    - target: 2
+      baseValue: 1
+      buffProperty: -1
+      isBuffMaxProperty: 0
+      extraRatio: 0
+      effectProperty: -1
+      buffOperation: 1
+      buffIncreaseType: 5
+      duration: 0
+      controlSkillType: 5
+    skillType: 0
+  - id: 9
+    name: "\u6CBB\u7597\u4E4B\u96E8"
+    description: "\u6280\u80FD\u5F15\u5BFC\u540E\uFF0C\u5728\u76EE\u6807\u5904\u91CA\u653E\u6CBB\u7597\u6CD5\u9635\uFF0C\u6BCF0.5\u79D2\u5BF9\u533A\u57DF\u5185\u547D\u4E2D\u7684\u53CB\u519B\u6062\u590D{value}\u5F53\u524D\u751F\u547D\u503C\uFF0C\u6301\u7EED4\u79D2"
+    cooldown: 20
+    animationState: 8192
+    particleName: Healing circle 1
+    maxDistance: 2
+    radius: 0.5
+    isAreaOfRange: 1
+    costProperty: 4
+    flySpeed: 0
+    duration: 4
+    buffOperationType: 1
+    colliderType: 1
+    cost: 70
+    isCostCurrentPercent: 0
+    events:
+    - skillEventType: 1
+      fireTime: 0
+    - skillEventType: 2
+      fireTime: 0.01
+    - skillEventType: 2
+      fireTime: 0.5
+    - skillEventType: 2
+      fireTime: 1
+    - skillEventType: 2
+      fireTime: 1.5
+    - skillEventType: 2
+      fireTime: 2
+    - skillEventType: 2
+      fireTime: 2.5
+    - skillEventType: 2
+      fireTime: 3
+    - skillEventType: 2
+      fireTime: 3.5
+    - skillEventType: 2
+      fireTime: 4
+    - skillEventType: 3
+      fireTime: 4.01
+    conditionTarget: 2
+    extraEffects:
+    - target: 4
+      baseValue: 15
+      buffProperty: 3
+      isBuffMaxProperty: 0
+      extraRatio: 0.2
+      effectProperty: 3
+      buffOperation: 0
+      buffIncreaseType: 5
+      duration: 0
+      controlSkillType: 0
+    skillType: 0
+  - id: 10
+    name: "\u96F7\u795E\u4E4B\u51FB"
+    description: "\u5728\u76EE\u6807\u5904\u91CA\u653E\u7535\u51FB\uFF0C\u5BF9\u5468\u56F4\u654C\u4EBA\u9020\u6210{value}\u4F24\u5BB3"
+    cooldown: 10
+    animationState: 0
+    particleName: Holy hit 1
+    maxDistance: 2
+    radius: 0.5
+    isAreaOfRange: 1
+    costProperty: 4
+    flySpeed: 0
+    duration: 1
+    buffOperationType: 1
+    colliderType: 1
+    cost: 70
+    isCostCurrentPercent: 0
+    events:
+    - skillEventType: 1
+      fireTime: 0
+    - skillEventType: 2
+      fireTime: 0.1
+    - skillEventType: 3
+      fireTime: 1
+    conditionTarget: 2
+    extraEffects:
+    - target: 2
+      baseValue: 50
+      buffProperty: 1
+      isBuffMaxProperty: 0
+      extraRatio: 0.3
+      effectProperty: 3
+      buffOperation: 1
+      buffIncreaseType: 5
+      duration: 0
+      controlSkillType: 0
+    skillType: 0
+  - id: 11
+    name: "\u5929\u7F5A\u964D\u4E34"
+    description: "\u6280\u80FD\u5F15\u5BFC\u540E\uFF0C\u5728\u76EE\u6807\u5904\u91CA\u653E\u5929\u7F5A\u9886\u57DF\uFF0C\u6BCF0.5\u79D2\u5BF9\u533A\u57DF\u5185\u547D\u4E2D\u7684\u654C\u519B\u9020\u6210{value}\u4F24\u5BB3\uFF0C\u5E76\u964D\u4F4E{value}\u603B\u653B\u51FB\u529B\u6301\u7EED0.5\u79D2"
+    cooldown: 20
+    animationState: 8192
+    particleName: Laser AOE 1
+    maxDistance: 2
+    radius: 0.5
+    isAreaOfRange: 1
+    costProperty: 4
+    flySpeed: 0
+    duration: 3
+    buffOperationType: 1
+    colliderType: 1
+    cost: 70
+    isCostCurrentPercent: 0
+    events:
+    - skillEventType: 1
+      fireTime: 0
+    - skillEventType: 2
+      fireTime: 0.01
+    - skillEventType: 2
+      fireTime: 0.5
+    - skillEventType: 2
+      fireTime: 1
+    - skillEventType: 2
+      fireTime: 1.5
+    - skillEventType: 2
+      fireTime: 2
+    - skillEventType: 2
+      fireTime: 2.5
+    - skillEventType: 2
+      fireTime: 3
+    - skillEventType: 3
+      fireTime: 3.01
+    conditionTarget: 2
+    extraEffects:
+    - target: 2
+      baseValue: 20
+      buffProperty: 1
+      isBuffMaxProperty: 0
+      extraRatio: 0.12
+      effectProperty: 3
+      buffOperation: 1
+      buffIncreaseType: 5
+      duration: 0
+      controlSkillType: 0
+    - target: 2
+      baseValue: 0.1
+      buffProperty: 1
+      isBuffMaxProperty: 0
+      extraRatio: 0.12
+      effectProperty: 1
+      buffOperation: 1
+      buffIncreaseType: 4
+      duration: 0
+      controlSkillType: 0
+    skillType: 0
+  - id: 12
+    name: "\u7535\u6C7D\u9886\u57DF"
+    description: "\u6280\u80FD\u5F15\u5BFC\u540E\uFF0C\u5728\u76EE\u6807\u5904\u91CA\u653E\u7535\u6C7D\u9886\u57DF\uFF0C\u6BCF0.5\u79D2\u5BF9\u533A\u57DF\u5185\u547D\u4E2D\u7684\u654C\u519B\u9020\u6210{value}\u4F24\u5BB3\uFF0C\u5E76\u964D\u4F4E{value}\u603B\u9632\u5FA1\u529B\u6301\u7EED0.5\u79D2"
+    cooldown: 20
+    animationState: 8192
+    particleName: Lightning aura 1
+    maxDistance: 2
+    radius: 0.5
+    isAreaOfRange: 1
+    costProperty: 4
+    flySpeed: 0
+    duration: 4
+    buffOperationType: 1
+    colliderType: 1
+    cost: 70
+    isCostCurrentPercent: 0
+    events:
+    - skillEventType: 1
+      fireTime: 0
+    - skillEventType: 2
+      fireTime: 0.01
+    - skillEventType: 2
+      fireTime: 0.5
+    - skillEventType: 2
+      fireTime: 1
+    - skillEventType: 2
+      fireTime: 1.5
+    - skillEventType: 2
+      fireTime: 2
+    - skillEventType: 2
+      fireTime: 2.5
+    - skillEventType: 2
+      fireTime: 3
+    - skillEventType: 2
+      fireTime: 3.5
+    - skillEventType: 2
+      fireTime: 4
+    - skillEventType: 3
+      fireTime: 4.01
+    conditionTarget: 2
+    extraEffects:
+    - target: 2
+      baseValue: 20
+      buffProperty: 1
+      isBuffMaxProperty: 0
+      extraRatio: 0.15
+      effectProperty: 3
+      buffOperation: 1
+      buffIncreaseType: 5
+      duration: 0
+      controlSkillType: 0
+    - target: 2
+      baseValue: 0.1
+      buffProperty: 2
+      isBuffMaxProperty: 0
+      extraRatio: 0.12
+      effectProperty: 2
+      buffOperation: 1
+      buffIncreaseType: 4
+      duration: 0
+      controlSkillType: 0
+    skillType: 0
+  - id: 13
+    name: "\u5F15\u529B\u6D1E"
+    description: "\u6280\u80FD\u5F15\u5BFC\u540E\uFF0C\u5728\u76EE\u6807\u5904\u91CA\u653E\u5F15\u529B\u6CD5\u9635\uFF0C\u6BCF0.5\u79D2\u5BF9\u533A\u57DF\u5185\u547D\u4E2D\u7684\u654C\u519B\u9020\u6210{value}\u4F24\u5BB3\uFF0C\u5E76\u62D6\u62FD\u5468\u56F4\u654C\u519B\u81F3\u6846\u5185"
+    cooldown: 20
+    animationState: 8192
+    particleName: Magic circle 2
+    maxDistance: 2
+    radius: 0.5
+    isAreaOfRange: 1
+    costProperty: 4
+    flySpeed: 0
+    duration: 4
+    buffOperationType: 1
+    colliderType: 1
+    cost: 50
+    isCostCurrentPercent: 0
+    events:
+    - skillEventType: 1
+      fireTime: 0
+    - skillEventType: 2
+      fireTime: 0.01
+    - skillEventType: 2
+      fireTime: 0.5
+    - skillEventType: 2
+      fireTime: 1
+    - skillEventType: 2
+      fireTime: 1.5
+    - skillEventType: 2
+      fireTime: 2
+    - skillEventType: 2
+      fireTime: 2.5
+    - skillEventType: 2
+      fireTime: 3
+    - skillEventType: 2
+      fireTime: 3.5
+    - skillEventType: 2
+      fireTime: 4
+    - skillEventType: 3
+      fireTime: 4.01
+    conditionTarget: 2
+    extraEffects:
+    - target: 2
+      baseValue: 20
+      buffProperty: 1
+      isBuffMaxProperty: 0
+      extraRatio: 0.15
+      effectProperty: 3
+      buffOperation: 1
+      buffIncreaseType: 5
+      duration: 0
+      controlSkillType: 0
+    - target: 2
+      baseValue: 0
+      buffProperty: -1
+      isBuffMaxProperty: 0
+      extraRatio: 0
+      effectProperty: -1
+      buffOperation: 1
+      buffIncreaseType: 5
+      duration: 0
+      controlSkillType: 7
+    skillType: 0
+  - id: 14
+    name: "\u5931\u771F\u9886\u57DF"
+    description: "\u5728\u76EE\u6807\u5904\u91CA\u653E\u62A4\u76FE\u9886\u57DF\uFF0C\u5728\u9886\u57DF\u5185\u7684\u53CB\u519B\u514D\u75AB\u4E00\u5207\u4F24\u5BB3\uFF0C\u6301\u7EED2.5\u79D2"
+    cooldown: 20
+    animationState: 0
+    particleName: Magic shield blue 1
+    maxDistance: 1.5
+    radius: 0.5
+    isAreaOfRange: 1
+    costProperty: 4
+    flySpeed: 0
+    duration: 2.5
+    buffOperationType: 4
+    colliderType: 1
+    cost: 70
+    isCostCurrentPercent: 0
+    events:
+    - skillEventType: 1
+      fireTime: 0
+    - skillEventType: 3
+      fireTime: 2.51
+    conditionTarget: 2
+    extraEffects:
+    - target: 4
+      baseValue: 0
+      buffProperty: 0
+      isBuffMaxProperty: 0
+      extraRatio: 0
+      effectProperty: 0
+      buffOperation: 0
+      buffIncreaseType: 0
+      duration: 0
+      controlSkillType: 8
+    skillType: 0
+  - id: 15
+    name: "\u5F39\u5E55\u65F6\u95F4"
+    description: "\u6280\u80FD\u5F15\u5BFC\u540E\uFF0C\u5728\u76EE\u6807\u5904\u91CA\u653E\u5F39\u5E55\uFF0C\u6BCF0.5\u79D2\u5BF9\u533A\u57DF\u5185\u547D\u4E2D\u7684\u654C\u519B\u9020\u6210{value}\u4F24\u5BB3\uFF0C\u5E76\u51CF\u5C11{value}\u603B\u66B4\u51FB\u7387\u6301\u7EED0.5\u79D2"
+    cooldown: 20
+    animationState: 8192
+    particleName: Meteors AOE 1
+    maxDistance: 2
+    radius: 0.5
+    isAreaOfRange: 1
+    costProperty: 4
+    flySpeed: 0
+    duration: 4
+    buffOperationType: 1
+    colliderType: 1
+    cost: 70
+    isCostCurrentPercent: 0
+    events:
+    - skillEventType: 1
+      fireTime: 0
+    - skillEventType: 2
+      fireTime: 0.01
+    - skillEventType: 2
+      fireTime: 0.5
+    - skillEventType: 2
+      fireTime: 1
+    - skillEventType: 2
+      fireTime: 1.5
+    - skillEventType: 2
+      fireTime: 2
+    - skillEventType: 2
+      fireTime: 2.5
+    - skillEventType: 2
+      fireTime: 3
+    - skillEventType: 2
+      fireTime: 3.5
+    - skillEventType: 2
+      fireTime: 4
+    - skillEventType: 3
+      fireTime: 4.01
+    conditionTarget: 2
+    extraEffects:
+    - target: 2
+      baseValue: 15
+      buffProperty: 1
+      isBuffMaxProperty: 0
+      extraRatio: 0.15
+      effectProperty: 3
+      buffOperation: 1
+      buffIncreaseType: 5
+      duration: 0
+      controlSkillType: 0
+    - target: 2
+      baseValue: 0.1
+      buffProperty: 6
+      isBuffMaxProperty: 0
+      extraRatio: 0.15
+      effectProperty: 6
+      buffOperation: 1
+      buffIncreaseType: 4
+      duration: 0
+      controlSkillType: 0
+    skillType: 0
+  - id: 16
+    name: "\u7535\u6C7D\u8F70\u9E23"
+    description: "\u5728\u76EE\u6807\u5904\u91CA\u653E\u70B8\u5F39\u7206\u70B8\uFF0C\u7206\u70B8\u5BF9\u5468\u56F4\u654C\u4EBA\u9020\u6210{value}\u4F24\u5BB3\uFF0C\u5E76\u51CF\u901F\u5468\u56F4\u654C\u4EBA\u6301\u7EED2\u79D2"
+    cooldown: 12
+    animationState: 4096
+    particleName: Plexus AoE 1
+    maxDistance: 2
+    radius: 0.5
+    isAreaOfRange: 1
+    costProperty: 4
+    flySpeed: 0
+    duration: 1
+    buffOperationType: 1
+    colliderType: 1
+    cost: 70
+    isCostCurrentPercent: 0
+    events:
+    - skillEventType: 1
+      fireTime: 0
+    - skillEventType: 2
+      fireTime: 0.35
+    - skillEventType: 3
+      fireTime: 1
+    conditionTarget: 2
+    extraEffects:
+    - target: 2
+      baseValue: 0.45
+      buffProperty: 1
+      isBuffMaxProperty: 0
+      extraRatio: 0.25
+      effectProperty: 3
+      buffOperation: 1
+      buffIncreaseType: 5
+      duration: 0
+      controlSkillType: 0
+    - target: 2
+      baseValue: 0.1
+      buffProperty: 0
+      isBuffMaxProperty: 0
+      extraRatio: 0.1
+      effectProperty: 0
+      buffOperation: 1
+      buffIncreaseType: 4
+      duration: 2
+      controlSkillType: 0
+    skillType: 0
+  - id: 17
+    name: "\u8840\u8272\u8F70\u9E23"
+    description: "\u5728\u76EE\u6807\u5904\u91CA\u653E\u4E00\u4E2A\u5EF6\u65F6\u7206\u70B8\u7684\u6CE2\u52A8\u7403\uFF0C1.2\u79D2\u540E\u7206\u70B8\u5BF9\u5468\u56F4\u654C\u4EBA\u9020\u6210{value}\u4F24\u5BB3\uFF0C\u5E76\u6655\u7729\u5468\u56F4\u654C\u4EBA1\u79D2"
+    cooldown: 15
+    animationState: 0
+    particleName: Red energy explosion 1
+    maxDistance: 2
+    radius: 0.5
+    isAreaOfRange: 1
+    costProperty: 4
+    flySpeed: 0
+    duration: 2
+    buffOperationType: 1
+    colliderType: 1
+    cost: 50
+    isCostCurrentPercent: 0
+    events:
+    - skillEventType: 1
+      fireTime: 0
+    - skillEventType: 2
+      fireTime: 1.1
+    - skillEventType: 3
+      fireTime: 2
+    conditionTarget: 2
+    extraEffects:
+    - target: 2
+      baseValue: 40
+      buffProperty: 1
+      isBuffMaxProperty: 0
+      extraRatio: 0.18
+      effectProperty: 3
+      buffOperation: 1
+      buffIncreaseType: 5
+      duration: 1
+      controlSkillType: 1
+    skillType: 0
+  - id: 18
+    name: "\u8840\u6708\u65A9"
+    description: "\u671D\u76EE\u6807\u65B9\u5411\u91CA\u653E\u4E00\u4E2A\u98DE\u884C\u7684\u8840\u6708\uFF0C\u5BF9\u7ECF\u8FC7\u7684\u654C\u4EBA\u9020\u6210{value}\u4F24\u5BB3"
+    cooldown: 5
+    animationState: 0
+    particleName: Slash
+    maxDistance: 3
+    radius: 0.5
+    isAreaOfRange: 1
+    costProperty: 4
+    flySpeed: 5
+    duration: 2
+    buffOperationType: 1
+    colliderType: 1
+    cost: 30
+    isCostCurrentPercent: 0
+    events:
+    - skillEventType: 1
+      fireTime: 0
+    - skillEventType: 2
+      fireTime: 0.01
+    - skillEventType: 2
+      fireTime: 0.1
+    - skillEventType: 2
+      fireTime: 0.2
+    - skillEventType: 2
+      fireTime: 0.3
+    - skillEventType: 2
+      fireTime: 0.4
+    - skillEventType: 2
+      fireTime: 0.5
+    - skillEventType: 2
+      fireTime: 0.6
+    - skillEventType: 2
+      fireTime: 0.7
+    - skillEventType: 2
+      fireTime: 0.8
+    - skillEventType: 2
+      fireTime: 0.9
+    - skillEventType: 2
+      fireTime: 1
+    - skillEventType: 2
+      fireTime: 1.1
+    - skillEventType: 2
+      fireTime: 1.2
+    - skillEventType: 2
+      fireTime: 1.3
+    - skillEventType: 2
+      fireTime: 1.4
+    - skillEventType: 2
+      fireTime: 1.5
+    - skillEventType: 2
+      fireTime: 1.6
+    - skillEventType: 2
+      fireTime: 1.7
+    - skillEventType: 2
+      fireTime: 1.8
+    - skillEventType: 2
+      fireTime: 1.9
+    - skillEventType: 2
+      fireTime: 2
+    - skillEventType: 3
+      fireTime: 2.01
+    conditionTarget: 2
+    extraEffects:
+    - target: 2
+      baseValue: 40
+      buffProperty: 1
+      isBuffMaxProperty: 0
+      extraRatio: 0.35
+      effectProperty: 3
+      buffOperation: 1
+      buffIncreaseType: 5
+      duration: 0
+      controlSkillType: 0
+    skillType: 0
+  - id: 19
+    name: "\u51B0\u96EA\u65F6\u95F4"
+    description: "\u6280\u80FD\u5F15\u5BFC\u540E\uFF0C\u5728\u76EE\u6807\u5904\u91CA\u653E\u5F39\u5E55\uFF0C\u6BCF0.5\u79D2\u5BF9\u533A\u57DF\u5185\u547D\u4E2D\u7684\u654C\u519B\u9020\u6210{value}\u4F24\u5BB3\uFF0C\u5E76\u51CF\u5C11{value}\u603B\u79FB\u52A8\u901F\u5EA6\u6301\u7EED0.5\u79D2"
+    cooldown: 20
+    animationState: 8192
+    particleName: Snow AOE 1
+    maxDistance: 2
+    radius: 0.5
+    isAreaOfRange: 1
+    costProperty: 4
+    flySpeed: 0
+    duration: 4
+    buffOperationType: 1
+    colliderType: 1
+    cost: 70
+    isCostCurrentPercent: 0
+    events:
+    - skillEventType: 1
+      fireTime: 0
+    - skillEventType: 2
+      fireTime: 0.01
+    - skillEventType: 2
+      fireTime: 0.5
+    - skillEventType: 2
+      fireTime: 1
+    - skillEventType: 2
+      fireTime: 1.5
+    - skillEventType: 2
+      fireTime: 2
+    - skillEventType: 2
+      fireTime: 2.5
+    - skillEventType: 2
+      fireTime: 3
+    - skillEventType: 2
+      fireTime: 3.5
+    - skillEventType: 2
+      fireTime: 4
+    - skillEventType: 3
+      fireTime: 4.01
+    conditionTarget: 2
+    extraEffects:
+    - target: 2
+      baseValue: 25
+      buffProperty: 1
+      isBuffMaxProperty: 0
+      extraRatio: 0.2
+      effectProperty: 3
+      buffOperation: 1
+      buffIncreaseType: 5
+      duration: 0
+      controlSkillType: 0
+    - target: 2
+      baseValue: 0.15
+      buffProperty: 0
+      isBuffMaxProperty: 0
+      extraRatio: 0.15
+      effectProperty: 0
+      buffOperation: 1
+      buffIncreaseType: 4
+      duration: 0.5
+      controlSkillType: 0
+    skillType: 0
+  - id: 20
+    name: "\u96EA\u5D29"
+    description: "\u5728\u76EE\u6807\u5904\u91CA\u653E\u96EA\u51FB\uFF0C\u5BF9\u5468\u56F4\u654C\u4EBA\u9020\u6210{value}\u4F24\u5BB3\u5E76\u51CF\u5C11{value}\u603B\u79FB\u52A8\u901F\u5EA6\u6301\u7EED2\u79D2"
+    cooldown: 10
+    animationState: 0
+    particleName: Snow hit 1
+    maxDistance: 2
+    radius: 0.5
+    isAreaOfRange: 1
+    costProperty: 4
+    flySpeed: 0
+    duration: 1
+    buffOperationType: 1
+    colliderType: 1
+    cost: 70
+    isCostCurrentPercent: 0
+    events:
+    - skillEventType: 1
+      fireTime: 0
+    - skillEventType: 2
+      fireTime: 0.1
+    - skillEventType: 3
+      fireTime: 1
+    conditionTarget: 2
+    extraEffects:
+    - target: 2
+      baseValue: 35
+      buffProperty: 1
+      isBuffMaxProperty: 0
+      extraRatio: 0.25
+      effectProperty: 3
+      buffOperation: 1
+      buffIncreaseType: 5
+      duration: 0
+      controlSkillType: 0
+    - target: 2
+      baseValue: 0.2
+      buffProperty: 0
+      isBuffMaxProperty: 0
+      extraRatio: 0.15
+      effectProperty: 0
+      buffOperation: 1
+      buffIncreaseType: 4
+      duration: 2
+      controlSkillType: 0
+    skillType: 0
+  - id: 21
+    name: "\u95EA\u73B0"
+    description: "\u671D\u76EE\u6807\u5904\u77AC\u95F4\u79FB\u52A8\u4E00\u6BB5\u8DDD\u79BB"
+    cooldown: 10
+    animationState: 0
+    particleName: 
+    maxDistance: 1
+    radius: 0
+    isAreaOfRange: 0
+    costProperty: 4
+    flySpeed: 0
+    duration: 0
+    buffOperationType: 4
+    colliderType: 4
+    cost: 25
+    isCostCurrentPercent: 0
+    events: []
+    conditionTarget: 2
+    extraEffects: []
+    skillType: 0

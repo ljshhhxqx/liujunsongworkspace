@@ -45,7 +45,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                     }
                     if (isComboKeysPressed)
                     {
-                        activeKeys =activeKeys.AddState(data.animationState);
+                        activeKeys = activeKeys.AddState(data.animationState);
                     }
                 }
                 else

@@ -85,5 +85,6 @@ namespace HotUpdate.Scripts.Collector
         Sphere,
         Capsule,
         Mesh,
+        None
     }
 }

@@ -268,7 +268,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 foreach (var str in validCommand.Errors)
                 {
-                    Debug.LogError($"Invalid command: CommandType-{header.CommandType} -> CommandId-{header.CommandId} -> Error-{str}");
+                    Debug.LogError($"Invalid command: CommandType-{command.GetType().Name} -> CommandId-{header.CommandId} -> Error-{str}");
                 }
                 ObjectPoolManager<CommandValidationResult>.Instance.Return(validCommand);
                 return;
