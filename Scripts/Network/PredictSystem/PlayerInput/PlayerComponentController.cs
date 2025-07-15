@@ -224,7 +224,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     _canOpenShop = false;
                 }).AddTo(_disposables);
             
-            Observable.EveryFixedUpdate()
+            Observable.EveryUpdate()
                 .Where(_ => isLocalPlayer && _subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible))
                 .Subscribe(_ => {
                     var movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
@@ -247,7 +247,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .Subscribe(HandleSendNetworkCommand)
                 .AddTo(_disposables);
             //处理物理信息
-            _inputStream.Sample(TimeSpan.FromMilliseconds(FixedDeltaTime * 1000))
+            _inputStream.Sample(TimeSpan.FromSeconds(FixedDeltaTime))
                 .Subscribe(HandleInputPhysics)
                 .AddTo(_disposables);
             Observable.EveryFixedUpdate().Sample(TimeSpan.FromMilliseconds(FixedDeltaTime * 10 * 1000))
@@ -439,24 +439,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [Client]
         private void HandleSendNetworkCommand(PlayerInputStateData inputData)
         {
-            var inputCommand = new InputCommand
-            {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Input, CommandAuthority.Client),
-                InputMovement = CompressedVector3.FromVector3(inputData.InputMovement),
-                InputAnimationStates = inputData.InputAnimations,
-                CommandAnimationState = inputData.Command,
-            };
-            var propertyAutoRecoverCommand = new PropertyAutoRecoverCommand
-            {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Property, CommandAuthority.Client),
-            };
-            var propertyEnvironmentChangeCommand = new PropertyEnvironmentChangeCommand
-            {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Property, CommandAuthority.Client),
-                HasInputMovement = inputData.InputMovement.magnitude > 0.1f,
-                PlayerEnvironmentState = _gameStateStream.Value,
-                IsSprinting = inputData.InputAnimations.HasAnyState(AnimationState.Sprint),
-            };
+            var inputCommand = ObjectPoolManager<InputCommand>.Instance.Get(50);
+            inputCommand.InputMovement = CompressedVector3.FromVector3(inputData.InputMovement);
+            inputCommand.Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
+                CommandType.Input, CommandAuthority.Client);
+            inputCommand.InputAnimationStates = inputData.InputAnimations;
+            inputCommand.CommandAnimationState = inputData.Command;
+            var propertyAutoRecoverCommand = ObjectPoolManager<PropertyAutoRecoverCommand>.Instance.Get(50);
+            propertyAutoRecoverCommand.Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
+                CommandType.Property, CommandAuthority.Client);
+            var propertyEnvironmentChangeCommand = ObjectPoolManager<PropertyEnvironmentChangeCommand>.Instance.Get(50);
+            propertyEnvironmentChangeCommand.Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
+                CommandType.Property, CommandAuthority.Client);
+            propertyEnvironmentChangeCommand.HasInputMovement = inputData.InputMovement.magnitude > 0.1f;
+            propertyEnvironmentChangeCommand.PlayerEnvironmentState = _gameStateStream.Value;
+            propertyEnvironmentChangeCommand.IsSprinting = inputData.InputAnimations.HasAnyState(AnimationState.Sprint);
             _inputState.AddPredictedCommand(inputCommand);
             _propertyPredictionState.AddPredictedCommand(propertyAutoRecoverCommand);
             _propertyPredictionState.AddPredictedCommand(propertyEnvironmentChangeCommand);
@@ -670,7 +667,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public PlayerGameStateData HandleServerMoveAndAnimation(PlayerInputStateData inputData)
         {
             //Debug.Log($"[HandleServerMoveAndAnimation] start");
-            _inputStream.OnNext(inputData);
+            //_inputStream.OnNext(inputData);
             return HandleMoveAndAnimation(inputData);
         }
 
@@ -821,6 +818,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     continue;
                 }
                 var info = config.GetAnimationInfo(animationState);
+                if (info.cooldown == 0)
+                {
+                    continue;
+                }
                 switch (info.cooldownType)
                 {
                     case CooldownType.Normal:
@@ -840,6 +841,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             return list;
         }
 
+        public void UpdateAnimation(float deltaTime, ref PlayerAnimationCooldownState snapshotData)
+        {
+            for (int i = _animationCooldowns.Count - 1; i >= 0; i--)
+            {
+                var cooldown = _animationCooldowns[i];
+                cooldown.Update(deltaTime);
+                if (!snapshotData.AnimationCooldowns.TryGetValue(cooldown.AnimationState, out var snapshotCoolDown))
+                {
+                    snapshotCoolDown = new CooldownSnapshotData();
+                    snapshotData.AnimationCooldowns.Add(cooldown.AnimationState, snapshotCoolDown);
+                    continue;
+                }
+                CooldownSnapshotData.CopyTo(cooldown, ref snapshotCoolDown);
+                snapshotData.AnimationCooldowns[cooldown.AnimationState] = snapshotCoolDown;
+            }
+        }
         public void UpdateAnimation(float deltaTime)
         {
             for (int i = _animationCooldowns.Count - 1; i >= 0; i--)

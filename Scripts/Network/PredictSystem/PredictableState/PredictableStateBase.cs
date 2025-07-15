@@ -43,6 +43,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         // 添加预测命令（不立即执行）
         public void AddPredictedCommand<T>(T command) where T : INetworkCommand
         {
+            if (!NetworkIdentity.isLocalPlayer)
+            {
+                return;
+            }
             var header = command.GetHeader();
             if (!header.CommandType.HasAnyState(CommandType)) return;
             

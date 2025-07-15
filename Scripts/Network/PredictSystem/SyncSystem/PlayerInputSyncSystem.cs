@@ -94,7 +94,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             foreach (var connectionsKey in NetworkServer.connections.Keys)
             {
                 var playerController = GameSyncManager.GetPlayerConnection(connectionsKey);
-                playerController.UpdateAnimation(deltaTime);
+                var inputState = PropertyStates[connectionsKey];
+                if (inputState is not PlayerInputState playerInputState)
+                {
+                    Debug.LogError($"Player {connectionsKey} has no input state.");
+                    continue;
+                }
+                var cooldownState = playerInputState.PlayerAnimationCooldownState;
+                playerController.UpdateAnimation(deltaTime, ref cooldownState);
+                playerInputState.PlayerAnimationCooldownState = cooldownState;
+                PropertyStates[connectionsKey] = playerInputState;
             }
         }
 
@@ -120,7 +129,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerPredictableState = player.GetComponent<PlayerInputPredictionState>();
             var playerInputState = new PlayerInputState(new PlayerGameStateData(),
-                new PlayerAnimationCooldownState(new MemoryDictionary<AnimationState, CooldownSnapshotData>(_animationConfig.AnimationInfos.Count)));
+                new PlayerAnimationCooldownState(new MemoryDictionary<AnimationState, CooldownSnapshotData>()));
             PropertyStates.TryAdd(connectionId, playerInputState);
             _inputPredictionStates.TryAdd(connectionId, playerPredictableState);
             RpcSetPlayerInputState(connectionId, NetworkCommandExtensions.SerializePlayerState(playerInputState).Item1);
@@ -254,7 +263,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     return null;
                 }
 
-                var inputStateData = ObjectPoolManager<PlayerInputStateData>.Instance.Get(100);
+                var inputStateData = ObjectPoolManager<PlayerInputStateData>.Instance.Get(50);
                 inputStateData.InputMovement = inputCommand.InputMovement.ToVector3();
                 inputStateData.InputAnimations = inputCommand.InputAnimationStates;
                 
@@ -305,7 +314,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
                     if (skillConfigData.id == 0)
                     {
-                        var animationCommand = ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Get(100);
+                        var animationCommand = ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Get(10);
                         animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property);
                         animationCommand.AnimationState = commandAnimation;
                         animationCommand.SkillId = skillConfigData.id;
@@ -334,10 +343,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 
                 var playerGameStateData = playerController.HandleServerMoveAndAnimation(inputStateData);
                 var inputMovement = inputCommand.InputMovement.ToVector3();
-                var cooldowns = playerInputState.PlayerAnimationCooldownState.AnimationCooldowns;
-                GetCooldownSnapshotData(header.ConnectionId, cooldowns);
+                // var cooldowns = playerInputState.PlayerAnimationCooldownState.AnimationCooldowns;
+                // GetCooldownSnapshotData(header.ConnectionId, cooldowns);
                 playerInputState.PlayerGameStateData = playerGameStateData;
-                playerInputState.PlayerAnimationCooldownState.AnimationCooldowns = cooldowns;
+                //playerInputState.PlayerAnimationCooldownState.AnimationCooldowns = cooldowns;
                 //todo:**必须优化//
                 PropertyStates[header.ConnectionId] = playerInputState;
                 //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost} player state {playerGameStateData.AnimationState}");
@@ -385,26 +394,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
 
             return playerInputState;
-        }
-        
-        
-        private void GetCooldownSnapshotData(int connectionId, MemoryDictionary<AnimationState, CooldownSnapshotData> playerAnimationCooldowns)
-        {
-            var playerController = GameSyncManager.GetPlayerConnection(connectionId);
-            var animationCooldowns = playerController.GetNowAnimationCooldowns();
-            foreach (var animationCooldown in animationCooldowns)
-            {
-                if (!playerAnimationCooldowns.TryGetValue(animationCooldown.AnimationState, out var snapshot))
-                {
-                    //Debug.LogWarning($"Could not find animation cooldown for {animationCooldown.AnimationState}");
-                    snapshot = new CooldownSnapshotData();
-                    playerAnimationCooldowns.Add(animationCooldown.AnimationState, snapshot);
-                    continue;
-                }
-                var cooldown = playerAnimationCooldowns[animationCooldown.AnimationState];
-                CooldownSnapshotData.CopyTo(animationCooldown, ref cooldown);
-                playerAnimationCooldowns[animationCooldown.AnimationState] = cooldown;
-            }
         }
 
         public override void SetState<T>(int connectionId, T state)

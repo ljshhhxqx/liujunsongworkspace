@@ -594,7 +594,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
     // 命令头
     [MemoryPackable]
-    public partial struct NetworkCommandHeader
+    public partial struct NetworkCommandHeader : IPoolObject
     {
         [MemoryPackOrder(0)]
         public int ConnectionId;
@@ -612,6 +612,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public CommandAuthority Authority;
         [MemoryPackOrder(6)] 
         public CommandExecuteType ExecuteType;
+
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            ConnectionId = 0;
+            Tick = 0;
+            CommandType = default;
+            CommandId = 0;
+            Timestamp = 0;
+            Authority = default;
+            ExecuteType = default;
+        }
     }
 
     public enum CommandExecuteType
