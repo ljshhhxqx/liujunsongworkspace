@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
@@ -32,7 +33,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 
     // 基础交互头
     [MemoryPackable]
-    public partial struct InteractHeader
+    public partial struct InteractHeader : IPoolObject
     {
         [MemoryPackOrder(0)] 
         public uint CommandId;              // 命令唯一ID（时间戳+序列号）
@@ -49,6 +50,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         // 执行上下文
         [MemoryPackOrder(6)] 
         public CommandAuthority Authority;
+
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            CommandId = 0;
+            RequestConnectionId = 0;
+            Tick = 0;
+            Category = 0;
+            Position = default;
+            Timestamp = 0;
+            Authority = 0;
+        }
     }
     
     [MemoryPackable(GenerateType.NoGenerate)]

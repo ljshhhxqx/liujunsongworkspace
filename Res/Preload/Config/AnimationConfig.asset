@@ -186,7 +186,7 @@ MonoBehaviour:
     isClearVelocity: 1
     cooldownType: 0
   - state: 2048
-    cost: 1
+    cost: 0
     cooldown: 0
     priority: 1
     animationType: 1

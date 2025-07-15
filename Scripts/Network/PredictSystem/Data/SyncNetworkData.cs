@@ -594,7 +594,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
     // 命令头
     [MemoryPackable]
-    public partial struct NetworkCommandHeader
+    public partial struct NetworkCommandHeader : IPoolObject
     {
         [MemoryPackOrder(0)]
         public int ConnectionId;
@@ -612,6 +612,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public CommandAuthority Authority;
         [MemoryPackOrder(6)] 
         public CommandExecuteType ExecuteType;
+
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            ConnectionId = 0;
+            Tick = 0;
+            CommandType = default;
+            CommandId = 0;
+            Timestamp = 0;
+            Authority = default;
+            ExecuteType = default;
+        }
     }
 
     public enum CommandExecuteType
@@ -1235,7 +1250,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-             return InputMovement.ToVector3().magnitude > 0 && InputAnimationStates >= 0 && InputAnimationStates <= AnimationState.SkillQ && CommandAnimationState >= 0 && CommandAnimationState <= AnimationState.SkillQ;
+             return InputMovement.ToVector3().magnitude > 0 && CommandAnimationState >= 0 && CommandAnimationState <= AnimationState.SkillQ;
         }
         public void Init()
         {

@@ -1145,10 +1145,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             HandlePlayerControl(buff.playerId, ControlSkillType.None);
         }
 
-        private void HandleAnimationCommand(int connectionId, AnimationState command, int skillId = -1)
+        private void HandleAnimationCommand(int connectionId, AnimationState command, int skillId = 0)
         {
             float cost;
-            if (skillId != -1)
+            if (skillId != 0)
             {
                 var skillData = _skillConfig.GetSkillData(skillId);
                 cost = skillData.cost;

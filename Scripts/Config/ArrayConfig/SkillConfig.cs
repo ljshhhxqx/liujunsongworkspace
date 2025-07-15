@@ -4,9 +4,9 @@ using AOTScripts.CustomAttribute;
 using AOTScripts.Data;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Network.PredictSystem.State;
-using Mirror;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
@@ -15,7 +15,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     [CreateAssetMenu(fileName = "SkillConfig", menuName = "ScriptableObjects/SkillConfig")]
     public class SkillConfig : ConfigBase
     {
-        [ReadOnly] [SerializeField] private List<SkillConfigData> skillData = new List<SkillConfigData>();
+        [ReadOnly]
+        [SerializeField] private List<SkillConfigData> skillData = new List<SkillConfigData>();
         
         public Dictionary<int, SkillConfigData> SkillDataDictionary { get; } = new Dictionary<int, SkillConfigData>();
 

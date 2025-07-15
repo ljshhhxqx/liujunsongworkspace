@@ -96,7 +96,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 _currentTickCommands.Clear();
             }
             Time.fixedDeltaTime = _serverInputRate;
-            Observable.EveryFixedUpdate()
+            Observable.EveryUpdate()
                 .Where(_ => isServer && !_isProcessing)
                 .Subscribe(_ =>
                 {
@@ -268,7 +268,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 foreach (var str in validCommand.Errors)
                 {
-                    Debug.LogError($"Invalid command: CommandType-{header.CommandType} -> CommandId-{header.CommandId} -> Error-{str}");
+                    Debug.LogError($"Invalid command: CommandType-{command.GetType().Name} -> CommandId-{header.CommandId} -> Error-{str}");
                 }
                 ObjectPoolManager<CommandValidationResult>.Instance.Return(validCommand);
                 return;
@@ -459,7 +459,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             int? noSequence = null;
             var connectionIdValue = connectionId.GetValueOrDefault();
-            var header = ObjectPool<InteractHeader>.Get();
+            var header = ObjectPoolManager<InteractHeader>.Instance.Get();
+            header.Clear();
             header.CommandId = HybridIdGenerator.GenerateCommandId(authority == CommandAuthority.Server, CommandType.Interact, ref noSequence);
             header.RequestConnectionId = connectionIdValue;
             header.Tick = CurrentTick;
@@ -473,7 +474,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public static NetworkCommandHeader CreateNetworkCommandHeader(int connectionId, CommandType commandType, CommandAuthority authority = CommandAuthority.Server, CommandExecuteType commandExecuteType = CommandExecuteType.Predicate)
         {
             var tick = (int?)CurrentTick;
-            var header = ObjectPool<NetworkCommandHeader>.Get();
+            var header = ObjectPoolManager<NetworkCommandHeader>.Instance.Get(50);
+            header.Clear();
             header.CommandId = HybridIdGenerator.GenerateCommandId(authority == CommandAuthority.Server, commandType, ref tick);
             header.ConnectionId = connectionId;
             header.CommandType = commandType;
