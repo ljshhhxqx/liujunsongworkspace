@@ -152,7 +152,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private void HandleEnvironmentChangeCommand(ref PlayerPredictablePropertyState playerState, PropertyEnvironmentChangeCommand environmentChangeCommand)
         {
             var speed = playerState.MemoryProperty[PropertyTypeEnum.Speed];
-            PlayerPropertyCalculator.UpdateSpeed(speed, environmentChangeCommand.IsSprinting, environmentChangeCommand.HasInputMovement,
+            PlayerPropertyCalculator.UpdateSpeed(ref speed, environmentChangeCommand.IsSprinting, environmentChangeCommand.HasInputMovement,
                 environmentChangeCommand.PlayerEnvironmentState);
             playerState.MemoryProperty[PropertyTypeEnum.Speed] = speed;
             PropertyChanged(playerState);

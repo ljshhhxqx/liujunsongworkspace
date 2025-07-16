@@ -1178,7 +1178,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerController = GameSyncManager.GetPlayerConnection(connectionId);
             
             var speed = playerState.MemoryProperty[PropertyTypeEnum.Speed];
-            PlayerPropertyCalculator.UpdateSpeed(speed, isSprinting, hasInputMovement,
+            PlayerPropertyCalculator.UpdateSpeed(ref speed, isSprinting, hasInputMovement,
                 environmentType);
             playerState.MemoryProperty[PropertyTypeEnum.Speed] = speed;
             playerController.HandleEnvironmentChange(ref playerState, hasInputMovement, environmentType, isSprinting);

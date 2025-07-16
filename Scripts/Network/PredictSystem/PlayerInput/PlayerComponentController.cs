@@ -244,7 +244,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
             Observable.EveryUpdate()
                 .Sample(TimeSpan.FromMilliseconds(GameSyncManager.TickSeconds * 1000))
-                .Where(_ => isLocalPlayer)
+                .Where(_ => isLocalPlayer && _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) > 0)
                 .Subscribe(_ =>
                 {
                     var propertyAutoRecoverCommand = ObjectPoolManager<PropertyAutoRecoverCommand>.Instance.Get(50);

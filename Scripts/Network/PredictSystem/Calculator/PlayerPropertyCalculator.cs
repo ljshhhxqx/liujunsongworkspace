@@ -61,10 +61,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return dictionary;
         }
 
-        public static PropertyCalculator UpdateSpeed(PropertyCalculator speed, bool isSprinting, bool hasInputMovement, PlayerEnvironmentState playerEnvironmentState)
+        public static void UpdateSpeed(ref PropertyCalculator speed, bool isSprinting, bool hasInputMovement, PlayerEnvironmentState playerEnvironmentState)
         {
             var currentFactor = speed.GetPropertyValue(BuffIncreaseType.CorrectionFactor);
+            Debug.Log($"[UpdateSpeed] Current Factor: {currentFactor}");
             currentFactor = hasInputMovement ? currentFactor : 0;
+            Debug.Log($"[UpdateSpeed] hasInputMovement - playerEnvironmentState - Current Factor: {hasInputMovement} {playerEnvironmentState.ToString()} {currentFactor}");
             switch (playerEnvironmentState)
             {
                 case PlayerEnvironmentState.InAir:
@@ -79,8 +81,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
 
             speed = speed.SetPropertyValue(BuffIncreaseType.CorrectionFactor, currentFactor);
-
-            return speed;
+            Debug.Log($"[UpdateSpeed] CURRENT vALUE: {speed.CurrentValue}");
         }
 
         public float GetProperty(PropertyTypeEnum propertyType)

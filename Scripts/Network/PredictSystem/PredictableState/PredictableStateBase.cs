@@ -83,7 +83,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 CommandQueue.TryDequeue(out command);
                 Simulate(command);
                 SendCommandToServer(header.CommandId);
-                Debug.Log($"[PredictableStateBase] Executed predicted command {header.CommandId} at tick {header.Tick}");
+                //Debug.Log($"[PredictableStateBase] Executed predicted command {header.CommandId} at tick {header.Tick}");
             }
         }
         
