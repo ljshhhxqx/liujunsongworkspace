@@ -43,16 +43,27 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         // 添加预测命令（不立即执行）
         public void AddPredictedCommand<T>(T command) where T : INetworkCommand
         {
-            if (!NetworkIdentity.isLocalPlayer)
+            if (NetworkIdentity.isServer && !NetworkIdentity.isLocalPlayer)
             {
                 return;
             }
             var header = command.GetHeader();
-            if (!header.CommandType.HasAnyState(CommandType)) return;
+            if (header.CommandType != CommandType) return;
             
             CommandQueue.Enqueue(command);
             var buffer = NetworkCommandExtensions.SerializeCommand(command);
+            if (CommandBuffer.ContainsKey(header.CommandId))
+            {
+                foreach (var key in CommandBuffer.Keys)
+                {
+                    if (key == header.CommandId)
+                    {
+                        //Debug.Log($"[PredictableStateBase] Command {header.CommandType} with id {header.CommandId} already exists in buffer.");
+                    }
+                }   
+            }
             CommandBuffer.Add(header.CommandId, buffer.Item1);
+            //Debug.Log($"[PredictableStateBase] Added predicted command {header.CommandType} with id {header.CommandId} to buffer at tick {header.Tick}");
             //Debug.Log($"[PredictableStateBase] Added predicted command {header.CommandType} at tick {header.Tick}");
         }
 
@@ -72,7 +83,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 CommandQueue.TryDequeue(out command);
                 Simulate(command);
                 SendCommandToServer(header.CommandId);
-                //Debug.Log($"[PredictableStateBase] Executed predicted command {header.CommandType} at tick {header.Tick}");
+                Debug.Log($"[PredictableStateBase] Executed predicted command {header.CommandId} at tick {header.Tick}");
             }
         }
         

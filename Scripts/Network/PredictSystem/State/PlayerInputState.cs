@@ -96,7 +96,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     }
 
     [MemoryPackable]
-    public partial struct PlayerGameStateData
+    public partial struct PlayerGameStateData : IPoolObject
     {
         [MemoryPackOrder(0)] 
         public CompressedVector3 Position;         // 位置
@@ -116,6 +116,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                    UnityEngine.Quaternion.Angle(Quaternion.ToQuaternion(), other.Quaternion.ToQuaternion()) < 10f &&
                    AnimationState == other.AnimationState &&
                    PlayerEnvironmentState == other.PlayerEnvironmentState;
+        }
+
+        public void Init()
+        {
+            
+        }
+
+        public void Clear()
+        {
+            Position = default;
+            Velocity = default;
+            Quaternion = default;
+            AnimationState = AnimationState.None;
+            PlayerEnvironmentState = default;
         }
     }
 }

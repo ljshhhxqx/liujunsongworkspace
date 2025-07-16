@@ -259,7 +259,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [Server]
         public void EnqueueCommand(byte[] commandJson)
         {
-            if(!isServer)
+            if(isServer && !isClient)
                 return;
             var command = NetworkCommandExtensions.DeserializeCommand(commandJson);
             var header = command.GetHeader();
@@ -461,7 +461,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var connectionIdValue = connectionId.GetValueOrDefault();
             var header = ObjectPoolManager<InteractHeader>.Instance.Get();
             header.Clear();
-            header.CommandId = HybridIdGenerator.GenerateCommandId(authority == CommandAuthority.Server, CommandType.Interact, ref noSequence);
+            header.CommandId = HybridIdGenerator.GenerateCommandId(authority == CommandAuthority.Server, CommandType.Interact, 0, ref noSequence);
             header.RequestConnectionId = connectionIdValue;
             header.Tick = CurrentTick;
             header.Category = category;
@@ -471,12 +471,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             return header;
         }
 
-        public static NetworkCommandHeader CreateNetworkCommandHeader(int connectionId, CommandType commandType, CommandAuthority authority = CommandAuthority.Server, CommandExecuteType commandExecuteType = CommandExecuteType.Predicate)
+        public static NetworkCommandHeader CreateNetworkCommandHeader(int connectionId, CommandType commandType, CommandAuthority authority = CommandAuthority.Server, CommandExecuteType commandExecuteType = CommandExecuteType.Predicate, NetworkCommandType networkCommandType = NetworkCommandType.None)
         {
             var tick = (int?)CurrentTick;
             var header = ObjectPoolManager<NetworkCommandHeader>.Instance.Get(50);
             header.Clear();
-            header.CommandId = HybridIdGenerator.GenerateCommandId(authority == CommandAuthority.Server, commandType, ref tick);
+            header.CommandId = HybridIdGenerator.GenerateCommandId(authority == CommandAuthority.Server, commandType, networkCommandType, ref tick);
             header.ConnectionId = connectionId;
             header.CommandType = commandType;
             header.Tick = tick.GetValueOrDefault();

@@ -241,6 +241,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     _inputStream.OnNext(playerInputStateData);
                 })
                 .AddTo(_disposables);
+
+            Observable.EveryUpdate()
+                .Sample(TimeSpan.FromMilliseconds(GameSyncManager.TickSeconds * 1000))
+                .Where(_ => isLocalPlayer)
+                .Subscribe(_ =>
+                {
+                    var propertyAutoRecoverCommand = ObjectPoolManager<PropertyAutoRecoverCommand>.Instance.Get(50);
+                    propertyAutoRecoverCommand.Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
+                        CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate, NetworkCommandType.PropertyAutoRecover);
+                    _propertyPredictionState.AddPredictedCommand(propertyAutoRecoverCommand);
+                })
+                .AddTo(this);
             
             //发送网络命令
             _inputStream.Where(x=> isLocalPlayer && x.InputMovement.magnitude > 0.1f && x.Command != AnimationState.None)
@@ -442,20 +454,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             var inputCommand = ObjectPoolManager<InputCommand>.Instance.Get(50);
             inputCommand.InputMovement = CompressedVector3.FromVector3(inputData.InputMovement);
             inputCommand.Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
-                CommandType.Input, CommandAuthority.Client);
+                CommandType.Input, CommandAuthority.Client, CommandExecuteType.Predicate, NetworkCommandType.Input);
             inputCommand.InputAnimationStates = inputData.InputAnimations;
             inputCommand.CommandAnimationState = inputData.Command;
-            var propertyAutoRecoverCommand = ObjectPoolManager<PropertyAutoRecoverCommand>.Instance.Get(50);
-            propertyAutoRecoverCommand.Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
-                CommandType.Property, CommandAuthority.Client);
             var propertyEnvironmentChangeCommand = ObjectPoolManager<PropertyEnvironmentChangeCommand>.Instance.Get(50);
             propertyEnvironmentChangeCommand.Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
-                CommandType.Property, CommandAuthority.Client);
+                CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate, NetworkCommandType.PropertyEnvironmentChange);
             propertyEnvironmentChangeCommand.HasInputMovement = inputData.InputMovement.magnitude > 0.1f;
             propertyEnvironmentChangeCommand.PlayerEnvironmentState = _gameStateStream.Value;
             propertyEnvironmentChangeCommand.IsSprinting = inputData.InputAnimations.HasAnyState(AnimationState.Sprint);
             _inputState.AddPredictedCommand(inputCommand);
-            _propertyPredictionState.AddPredictedCommand(propertyAutoRecoverCommand);
             _propertyPredictionState.AddPredictedCommand(propertyEnvironmentChangeCommand);
             for (int i = 0; i < _predictionStates.Count; i++)
             {
@@ -645,14 +653,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }, isLocalPlayer);
             //执行动画
             _playerAnimationCalculator.HandleAnimation(inputData.Command);
-            return new PlayerGameStateData
-            {
-                Position = transform.position,
-                Quaternion = transform.rotation,
-                Velocity = _rigidbody.velocity,
-                PlayerEnvironmentState = _gameStateStream.Value,
-                AnimationState = inputData.Command,
-            };
+            var data = ObjectPoolManager<PlayerGameStateData>.Instance.Get(30);
+            data.Position = transform.position;
+            data.Quaternion = transform.rotation;
+            data.Velocity = _rigidbody.velocity;
+            data.PlayerEnvironmentState = _gameStateStream.Value;
+            data.AnimationState = inputData.Command;
+            return data;
         }
 
         [Client]
@@ -787,7 +794,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcSetPlayerAlpha(float alpha)
         {
-            playerControlEffect.SetTransparency(alpha / 1000f);
+            var actualAlpha = alpha * 0.001f;
+            if(Mathf.Approximately(actualAlpha, 1))
+                return;
+            playerControlEffect.SetTransparency( 1 -actualAlpha);
         }
 
         public void SetAnimatorSpeed(AnimationState animationState, float speed)

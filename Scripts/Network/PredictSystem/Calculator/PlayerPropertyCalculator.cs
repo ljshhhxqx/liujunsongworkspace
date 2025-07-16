@@ -55,7 +55,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 propertyData.Correction = 1;
                 propertyData.CurrentValue = propertyData.BaseValue;
                 propertyData.MaxCurrentValue = propertyData.BaseValue;
-                var calculator = new PropertyCalculator(propertyType, propertyData,ConfigPlayerMinProperties[propertyType], ConfigPlayerMaxProperties[propertyType], propertyConfig.consumeType == PropertyConsumeType.Consume);
+                var calculator = new PropertyCalculator(propertyType, propertyData, ConfigPlayerMaxProperties[propertyType],ConfigPlayerMinProperties[propertyType], propertyConfig.consumeType == PropertyConsumeType.Consume);
                 dictionary.Add(propertyType, calculator);
             }
             return dictionary;

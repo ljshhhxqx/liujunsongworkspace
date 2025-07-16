@@ -249,6 +249,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         playerController.RpcSetPlayerAlpha(propertyValue.CurrentValue);
                         
                     }
+                    else if (property == PropertyTypeEnum.View)
+                    {
+                        //playerController.RpcPlayEffect();
+                    }
                 }
             }
         }

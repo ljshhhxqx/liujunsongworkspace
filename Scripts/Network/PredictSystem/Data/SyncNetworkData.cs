@@ -103,7 +103,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         Trigger,
         SkillChanged,
         PropertyUseSkill,
-        SpeedChangedByInput
+        SpeedChangedByInput,
+        None = -1
     }
 
     public static class NetworkCommandExtensions
@@ -1965,7 +1966,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public void Clear()
         {
-            Errors.Clear();
+            Errors?.Clear();
         }
     }
     
@@ -2092,7 +2093,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             public int Tick;
         }
 
-        public static uint GenerateCommandId(bool isServer, CommandType commandType, ref int? sequence)
+        public static uint GenerateCommandId(bool isServer, CommandType commandType, NetworkCommandType networkCommandType, ref int? sequence)
         {
             // 时间部分：0-3599（60分钟内的秒数），12位 (0-4095)
             var time = (DateTime.UtcNow.Minute % 60) * 60 + DateTime.UtcNow.Second;
@@ -2104,7 +2105,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             var timePart = (uint)(time & 0xFFF) << 19;
         
             // CommandType部分：3位
-            var cmdTypePart = (uint)commandType << 16;
+            var cmdTypePart = networkCommandType == NetworkCommandType.None ?  (uint)commandType << 16 : (uint)networkCommandType << 16;
         
             // 序列号：16位
             var seq = sequence.GetValueOrDefault(0);
