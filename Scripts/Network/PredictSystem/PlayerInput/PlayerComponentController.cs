@@ -68,7 +68,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private PropertyPredictionState _propertyPredictionState;
         
         [Header("Subject")]
-        private readonly ReactiveProperty<PlayerInputStateData> _inputStream = new ReactiveProperty<PlayerInputStateData>();
+        private readonly Subject<PlayerInputStateData> _inputStream = new Subject<PlayerInputStateData>();
         private readonly Subject<int> _onAttackPoint = new Subject<int>();
         private readonly Subject<int> _onAttackEnd = new Subject<int>();
         
@@ -87,6 +87,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private PlayerShopCalculator _playerShopCalculator;
         
         [Header("Parameters")]
+        private PlayerInputStateData _playerInputStateData;
         private float _currentSpeed;
         private float _targetSpeed;
         private float _speedSmoothTime = 0.1f;
@@ -236,7 +237,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     var command = GetCurrentAnimationState(playerInputStateData);
                     playerInputStateData.Command = command;
                     _playerAnimationCalculator.UpdateAnimationState();
-                    _inputStream.Value = playerInputStateData;
+                    _inputStream.OnNext(playerInputStateData);
+                    _playerInputStateData = playerInputStateData;
+                    //Debug.Log($"playerInputStateData - {playerInputStateData.InputMovement} {playerInputStateData.InputAnimations} {playerInputStateData.Command}");
                 })
                 .AddTo(_disposables);
             Observable.EveryUpdate()
@@ -261,9 +264,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     var propertyEnvironmentChangeCommand = ObjectPoolManager<PropertyEnvironmentChangeCommand>.Instance.Get(50);
                     propertyEnvironmentChangeCommand.Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
                         CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate, NetworkCommandType.PropertyEnvironmentChange);
-                    propertyEnvironmentChangeCommand.HasInputMovement = _inputStream.Value.InputMovement.magnitude > 0.1f;
+                    propertyEnvironmentChangeCommand.HasInputMovement = _playerInputStateData.InputMovement.magnitude > 0.1f;
                     propertyEnvironmentChangeCommand.PlayerEnvironmentState = _gameStateStream.Value;
-                    propertyEnvironmentChangeCommand.IsSprinting = _inputStream.Value.Command.HasAnyState(AnimationState.Sprint);
+                    propertyEnvironmentChangeCommand.IsSprinting = _playerInputStateData.Command.HasAnyState(AnimationState.Sprint);
                     _propertyPredictionState.AddPredictedCommand(propertyEnvironmentChangeCommand);
                     for (int i = 0; i < _predictionStates.Count; i++)
                     {
@@ -271,6 +274,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                         state.ExecutePredictedCommands(GameSyncManager.CurrentTick);
                     }
                     ObjectPoolManager<PropertyEnvironmentChangeCommand>.Instance.Return(propertyEnvironmentChangeCommand);
+                    HandleInputPhysics(_playerInputStateData);
                 })
                 .AddTo(this);
             
@@ -279,9 +283,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .Subscribe(HandleSendNetworkCommand)
                 .AddTo(_disposables);
             //处理物理信息
-            _inputStream.Sample(TimeSpan.FromSeconds(FixedDeltaTime))
-                .Subscribe(HandleInputPhysics)
-                .AddTo(_disposables);
             Observable.EveryFixedUpdate().Sample(TimeSpan.FromMilliseconds(FixedDeltaTime * 10 * 1000))
                 .Where(_ => isLocalPlayer)
                 .Subscribe(_ =>
@@ -485,10 +486,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             _currentSpeed = Mathf.SmoothDamp(_currentSpeed, _targetSpeed, ref _speedSmoothVelocity, _speedSmoothTime);
             _playerPhysicsCalculator.CurrentSpeed = _currentSpeed;
-            // if (_currentSpeed == 0)
-            // {
-            //     Debug.Log($"[HandleInputPhysics]- _currentSpeed == 0 _targetSpeed ->{_targetSpeed}");
-            // }
+            //Debug.Log($"[HandleInputPhysics]- _currentSpeed > {_currentSpeed} _targetSpeed ->{_targetSpeed}");
             _gameStateStream.Value = _playerPhysicsCalculator.CheckPlayerState(new CheckGroundDistanceParam(inputData.InputMovement, FixedDeltaTime));
             _groundDistanceStream.Value = _playerPhysicsCalculator.GroundDistance;
             _isSpecialActionStream.Value = _playerAnimationCalculator.IsSpecialAction;

@@ -82,7 +82,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     throw new ArgumentOutOfRangeException(nameof(playerEnvironmentState), playerEnvironmentState, null);
             }
 
-            Debug.Log($"[UpdateSpeed] Current speed * currentFactor: {currentSpeed} * {currentFactor} = {currentSpeed * currentFactor}");
+            //Debug.Log($"[UpdateSpeed] Current speed * currentFactor: {currentSpeed} * {currentFactor} = {currentSpeed * currentFactor}");
             currentSpeed *= currentFactor;
             state.PlayerState.CurrentMoveSpeed = currentSpeed;
         }
