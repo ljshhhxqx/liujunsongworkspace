@@ -1175,13 +1175,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void HandleEnvironmentChange(int connectionId, bool hasInputMovement, PlayerEnvironmentState environmentType, bool isSprinting)
         {
             var playerState = GetState<PlayerPredictablePropertyState>(connectionId);
-            var playerController = GameSyncManager.GetPlayerConnection(connectionId);
+            //var playerController = GameSyncManager.GetPlayerConnection(connectionId);
             
-            var speed = playerState.MemoryProperty[PropertyTypeEnum.Speed];
-            PlayerPropertyCalculator.UpdateSpeed(ref speed, isSprinting, hasInputMovement,
+            //var speed = playerState.MemoryProperty[PropertyTypeEnum.Speed];
+            PlayerPropertyCalculator.UpdateSpeed(ref playerState, isSprinting, hasInputMovement,
                 environmentType);
-            playerState.MemoryProperty[PropertyTypeEnum.Speed] = speed;
-            playerController.HandleEnvironmentChange(ref playerState, hasInputMovement, environmentType, isSprinting);
+            //playerController.HandleEnvironmentChange(ref playerState, hasInputMovement, environmentType, isSprinting);
             PropertyStates[connectionId] = playerState;
             PropertyChange(connectionId);
         }
@@ -1189,6 +1188,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public Dictionary<PropertyTypeEnum, PropertyCalculator> GetPlayerProperty(int connectionId)
         {
             return GetState<PlayerPredictablePropertyState>(connectionId).MemoryProperty;
+        }
+        
+        public float GetMoveSpeed(int connectionId)
+        {
+            return GetState<PlayerPredictablePropertyState>(connectionId).PlayerState.CurrentMoveSpeed;
         }
 
         public bool TryUseGold(int connectionId, int costGold, out float currentGold)

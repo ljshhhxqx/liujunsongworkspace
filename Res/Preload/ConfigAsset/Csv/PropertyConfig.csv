@@ -1,6 +1,6 @@
 propertyType,baseValue,minValue,maxValue,consumeType,isHandleWithCorrectFactor,description,animationState,isHundredPercent,showInHud
 PropertyTypeEnum,float,float,float,PropertyConsumeType,bool,string,AnimationState,bool,bool
-Speed,3.5,0,15,Number,False,移动速度,None,False,True
+Speed,3.5,0,15,Number,False,移动速度,None,False,False
 Attack,15,0,100,Number,False,攻击力,None,False,True
 Defense,15,0,100,Number,False,防御,None,False,True
 Health,100,0,500,Consume,False,生命,None,False,True
@@ -14,7 +14,7 @@ AttackSpeed,1,0.5,2.5,Number,False,攻击速度,Attack,True,True
 AttackRadius,0.5,0.35,1.5,Number,False,攻击距离,None,False,False
 AttackAngle,60,45,180,Number,False,攻击角度,None,False,False
 AttackHeight,0.35,0.15,1.25,Number,False,攻击高度,None,False,False
-SprintSpeedRatio,2,1,3,Number,False,奔跑速度修正系数,None,False,False
+SprintSpeedRatio,1.5,1,3,Number,False,奔跑速度修正系数,None,False,False
 StairsSpeedRatio,0.75,0.5,1,Number,False,楼梯速度修正系数,None,False,False
 Gold,0,0,999999999,Number,True,金币,None,False,True
 Experience,0,0,999999999,Number,True,经验,None,False,True
@@ -22,3 +22,4 @@ ReduceDamageRatio,0,-0.5,1,Number,False,受到伤害时减少的伤害系数,Non
 ReduceDamage,0,-500,500,Number,False,受到攻击时减少的伤害,None,False,False
 View,1000,15,1000,Number,False,视野,None,False,False
 Alpha,1000,0,1000,Number,False,透明度,None,False,False
+MoveSpeed,0,0,15,Number,False,实际的移动速度,None,False,True

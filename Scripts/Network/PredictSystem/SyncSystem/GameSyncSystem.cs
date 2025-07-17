@@ -317,12 +317,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 var header = command.GetHeader();
 
                 // 检查命令是否过期
-                var commandAge = (CurrentTick - header.Tick) * Time.fixedDeltaTime;
-                if (commandAge > _maxCommandAge)
-                {
-                    Debug.LogWarning($"Command discarded due to age: {commandAge}s");
-                    continue;
-                }
+                // var commandAge = (CurrentTick - header.Tick) * Time.fixedDeltaTime;
+                // if (commandAge > _maxCommandAge)
+                // {
+                //     Debug.LogWarning($"Command discarded due to age: {commandAge}s");
+                //     continue;
+                // }
 
                 // 如果命令属于未来的tick，停止处理
                 if (header.Tick > CurrentTick)

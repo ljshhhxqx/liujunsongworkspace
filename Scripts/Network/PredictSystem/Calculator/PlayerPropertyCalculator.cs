@@ -61,27 +61,30 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return dictionary;
         }
 
-        public static void UpdateSpeed(ref PropertyCalculator speed, bool isSprinting, bool hasInputMovement, PlayerEnvironmentState playerEnvironmentState)
+        public static void UpdateSpeed(ref PlayerPredictablePropertyState state, bool isSprinting, bool hasInputMovement, PlayerEnvironmentState playerEnvironmentState)
         {
-            var currentFactor = speed.GetPropertyValue(BuffIncreaseType.CorrectionFactor);
-            Debug.Log($"[UpdateSpeed] Current Factor: {currentFactor}");
-            currentFactor = hasInputMovement ? currentFactor : 0;
-            Debug.Log($"[UpdateSpeed] hasInputMovement - playerEnvironmentState - Current Factor: {hasInputMovement} {playerEnvironmentState.ToString()} {currentFactor}");
+            var memoryPropertyCalculator = state.MemoryProperty;
+            var currentSpeed = state.MemoryProperty[PropertyTypeEnum.Speed].CurrentValue;
+            //Debug.Log($"[UpdateSpeed] Current speed: {currentSpeed}");
+            var currentFactor = hasInputMovement ? 1f : 0f;
+            //Debug.Log($"[UpdateSpeed] Current factor: {currentFactor}");
+            //Debug.Log($"[UpdateSpeed] isSprinting = {isSprinting} hasInputMovement = {hasInputMovement} playerEnvironmentState = {playerEnvironmentState}");
             switch (playerEnvironmentState)
             {
                 case PlayerEnvironmentState.InAir:
                 case PlayerEnvironmentState.OnGround:
-                    currentFactor *= isSprinting ? _calculatorConstant.PlayerConfig.SprintSpeedFactor : 1;
+                    currentFactor *= isSprinting ? memoryPropertyCalculator[PropertyTypeEnum.SprintSpeedRatio].CurrentValue : 1;
                     break;
                 case PlayerEnvironmentState.OnStairs:
-                    currentFactor *= isSprinting ? _calculatorConstant.PlayerConfig.OnStairsSpeedRatioFactor * _calculatorConstant.PlayerConfig.SprintSpeedFactor : _calculatorConstant.PlayerConfig.OnStairsSpeedRatioFactor;
+                    currentFactor *= isSprinting ? memoryPropertyCalculator[PropertyTypeEnum.StairsSpeedRatio].CurrentValue * memoryPropertyCalculator[PropertyTypeEnum.SprintSpeedRatio].CurrentValue : memoryPropertyCalculator[PropertyTypeEnum.StairsSpeedRatio].CurrentValue;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(playerEnvironmentState), playerEnvironmentState, null);
             }
 
-            speed = speed.SetPropertyValue(BuffIncreaseType.CorrectionFactor, currentFactor);
-            Debug.Log($"[UpdateSpeed] CURRENT vALUE: {speed.CurrentValue}");
+            currentSpeed *= currentFactor;
+            //Debug.Log($"[UpdateSpeed] Current speed * currentFactor: {currentSpeed}");
+            state.PlayerState.CurrentMoveSpeed = currentSpeed;
         }
 
         public float GetProperty(PropertyTypeEnum propertyType)
@@ -290,6 +293,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public void Execute(int index)
         {
             
+        }
+        
+        private enum SpeedState
+        {
+            Up,
+            Low,
+            Equal,
+            None,
         }
     }
 

@@ -125,7 +125,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                         Debug.LogWarning($"Not enough strength to perform {inputCommand.CommandAnimationState}.");
                         return;
                     }
-                    var animationCommand = ObjectPoolManager<PropertyClientAnimationCommand>.Instance.Get(100);
+                    var animationCommand = ObjectPoolManager<PropertyClientAnimationCommand>.Instance.Get(50);
                     animationCommand.AnimationState = inputCommand.CommandAnimationState;
                     animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property, CommandAuthority.Client);
                     animationCommand.SkillId = skillConfigData.id;
@@ -137,7 +137,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     cooldownInfo?.Use(); 
                 }
 
-                var inputStateData = ObjectPoolManager<PlayerInputStateData>.Instance.Get(100);
+                var inputStateData = ObjectPoolManager<PlayerInputStateData>.Instance.Get(50);
                 inputStateData.InputMovement = inputCommand.InputMovement.ToVector3();
                 inputStateData.InputAnimations = inputCommand.InputAnimationStates;
                 inputStateData.Command = inputCommand.CommandAnimationState;

@@ -314,7 +314,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
                     if (skillConfigData.id == 0)
                     {
-                        var animationCommand = ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Get(10);
+                        var animationCommand = ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Get();
                         animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property);
                         animationCommand.AnimationState = commandAnimation;
                         animationCommand.SkillId = skillConfigData.id;
@@ -331,7 +331,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 }
                 else if (skillConfigData.id > 0 && skillConfigData.animationState != AnimationState.None)
                 {
-                    var animationCommand = ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Get(100);
+                    var animationCommand = ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Get(50);
                     animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property);
                     animationCommand.AnimationState = skillConfigData.animationState;
                     animationCommand.SkillId = skillConfigData.id;
@@ -352,10 +352,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost} player state {playerGameStateData.AnimationState}");
                 if (inputMovement.magnitude > 0.1f && playerGameStateData.AnimationState == AnimationState.Move || playerGameStateData.AnimationState == AnimationState.Sprint)
                 {
-                    var moveSpeed = playerProperty[PropertyTypeEnum.Speed].CurrentValue;
+                    var moveSpeed = playerSyncSystem.GetMoveSpeed(header.ConnectionId);
                     var hpChangedCheckerParameters = MoveCheckerParameters.CreateParameters(
                         TriggerType.OnHpChange, moveSpeed, moveSpeed * inputMovement.magnitude * GameSyncManager.TickSeconds);
-                    var triggerCommand = ObjectPoolManager<TriggerCommand>.Instance.Get(100);
+                    var triggerCommand = ObjectPoolManager<TriggerCommand>.Instance.Get(50);
                     triggerCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate);
                     triggerCommand.TriggerType = TriggerType.OnHpChange;
                     triggerCommand.TriggerData = NetworkCommandExtensions.SerializeBattleCondition(hpChangedCheckerParameters).buffer;

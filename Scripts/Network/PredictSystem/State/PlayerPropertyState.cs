@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Config.JsonConfig;
 using JetBrains.Annotations;
 using MemoryPack;
 using UnityEngine;
@@ -14,6 +15,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     {
         [MemoryPackOrder(0)] public MemoryDictionary<PropertyTypeEnum, PropertyCalculator> MemoryProperty;
         [MemoryPackOrder(1)] public SubjectedStateType SubjectedState;
+        [MemoryPackOrder(2)] public PlayerPropertyState PlayerState;
         public PlayerSyncStateType GetStateType() => PlayerSyncStateType.PlayerProperty;
 
         // 修改属性访问方式
@@ -51,8 +53,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             return true;
         }
     }
-    
-    
+    [MemoryPackable]
+    public partial struct PlayerPropertyState
+    {
+        // public bool IsSprinting;
+        // public bool IsJumping;
+        // public bool IsInputMovement;
+        // public PlayerEnvironmentState PlayerEnvironmentState; 
+        [MemoryPackOrder(0)]
+        public float CurrentMoveSpeed;
+    }
     
     [MemoryPackable]
     public partial struct PropertyCalculator : IEquatable<PropertyCalculator>
@@ -166,6 +176,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                     if (IsResourceProperty())
                     {
                         _propertyData.CurrentValue = newValue;
+                        Debug.Log($"SetPropertyValue NewValue: {newValue}");
+                        return new PropertyCalculator(_propertyType, _propertyData, _maxValue, _minValue, _isResourceProperty);
                     }
                     break;
                 default:

@@ -26,7 +26,6 @@ using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Popup;
 using MemoryPack;
 using Mirror;
-using Sirenix.OdinInspector;
 using Tool.GameEvent;
 using UI.UIBase;
 using UniRx;
@@ -69,7 +68,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private PropertyPredictionState _propertyPredictionState;
         
         [Header("Subject")]
-        private readonly Subject<PlayerInputStateData> _inputStream = new Subject<PlayerInputStateData>();
+        private readonly ReactiveProperty<PlayerInputStateData> _inputStream = new ReactiveProperty<PlayerInputStateData>();
         private readonly Subject<int> _onAttackPoint = new Subject<int>();
         private readonly Subject<int> _onAttackEnd = new Subject<int>();
         
@@ -236,21 +235,42 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     };
                     var command = GetCurrentAnimationState(playerInputStateData);
                     playerInputStateData.Command = command;
-                    _targetSpeed = _propertyPredictionState.GetProperty(PropertyTypeEnum.Speed);
+                    _targetSpeed = _propertyPredictionState.GetMoveSpeed();
                     _playerAnimationCalculator.UpdateAnimationState();
-                    _inputStream.OnNext(playerInputStateData);
+                    _inputStream.Value = playerInputStateData;
                 })
                 .AddTo(_disposables);
-
+            Observable.EveryUpdate()
+                .Sample(TimeSpan.FromMilliseconds(1 * 1000))
+                .Where(_ => isLocalPlayer && _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) > 0)
+                .Subscribe(_ =>
+                {
+                    var propertyAutoRecoverCommand = ObjectPoolManager<PropertyAutoRecoverCommand>.Instance.Get(10);
+                    propertyAutoRecoverCommand.Header = GameSyncManager.CreateNetworkCommandHeader(
+                        connectionToClient.connectionId,
+                        CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate,
+                        NetworkCommandType.PropertyAutoRecover);
+                    _propertyPredictionState.AddPredictedCommand(propertyAutoRecoverCommand);
+                })
+                .AddTo(this);
             Observable.EveryUpdate()
                 .Sample(TimeSpan.FromMilliseconds(GameSyncManager.TickSeconds * 1000))
                 .Where(_ => isLocalPlayer && _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) > 0)
                 .Subscribe(_ =>
                 {
-                    var propertyAutoRecoverCommand = ObjectPoolManager<PropertyAutoRecoverCommand>.Instance.Get(50);
-                    propertyAutoRecoverCommand.Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
-                        CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate, NetworkCommandType.PropertyAutoRecover);
-                    _propertyPredictionState.AddPredictedCommand(propertyAutoRecoverCommand);
+                    var propertyEnvironmentChangeCommand = ObjectPoolManager<PropertyEnvironmentChangeCommand>.Instance.Get(50);
+                    propertyEnvironmentChangeCommand.Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
+                        CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate, NetworkCommandType.PropertyEnvironmentChange);
+                    propertyEnvironmentChangeCommand.HasInputMovement = _inputStream.Value.InputMovement.magnitude > 0.1f;
+                    propertyEnvironmentChangeCommand.PlayerEnvironmentState = _gameStateStream.Value;
+                    propertyEnvironmentChangeCommand.IsSprinting = _inputStream.Value.Command.HasAnyState(AnimationState.Sprint);
+                    _propertyPredictionState.AddPredictedCommand(propertyEnvironmentChangeCommand);
+                    
+                    for (int i = 0; i < _predictionStates.Count; i++)
+                    {
+                        var state = _predictionStates[i];
+                        state.ExecutePredictedCommands(GameSyncManager.CurrentTick);
+                    }
                 })
                 .AddTo(this);
             
@@ -457,19 +477,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 CommandType.Input, CommandAuthority.Client, CommandExecuteType.Predicate, NetworkCommandType.Input);
             inputCommand.InputAnimationStates = inputData.InputAnimations;
             inputCommand.CommandAnimationState = inputData.Command;
-            var propertyEnvironmentChangeCommand = ObjectPoolManager<PropertyEnvironmentChangeCommand>.Instance.Get(50);
-            propertyEnvironmentChangeCommand.Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
-                CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate, NetworkCommandType.PropertyEnvironmentChange);
-            propertyEnvironmentChangeCommand.HasInputMovement = inputData.InputMovement.magnitude > 0.1f;
-            propertyEnvironmentChangeCommand.PlayerEnvironmentState = _gameStateStream.Value;
-            propertyEnvironmentChangeCommand.IsSprinting = inputData.InputAnimations.HasAnyState(AnimationState.Sprint);
             _inputState.AddPredictedCommand(inputCommand);
-            _propertyPredictionState.AddPredictedCommand(propertyEnvironmentChangeCommand);
-            for (int i = 0; i < _predictionStates.Count; i++)
-            {
-                var state = _predictionStates[i];
-                state.ExecutePredictedCommands(GameSyncManager.CurrentTick);
-            }
         }
 
         private void HandleInputPhysics(PlayerInputStateData inputData)
@@ -482,6 +490,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerAnimationCalculator.SetEnvironmentState(_gameStateStream.Value);
             _playerAnimationCalculator.SetGroundDistance(_groundDistanceStream.Value);
             _playerAnimationCalculator.SetAnimatorParams(inputData.InputMovement.magnitude, _groundDistanceStream.Value, _currentSpeed);
+           
         }
 
         private void HandlePropertyChange(PropertyTypeEnum propertyType, PropertyCalculator value)

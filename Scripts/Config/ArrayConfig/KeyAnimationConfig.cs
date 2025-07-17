@@ -38,7 +38,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                     var isComboKeysPressed = true;
                     foreach (var key in data.animationKeys)
                     {
-                        if (!Input.GetButtonDown(key))
+                        if (!Input.GetButton(key))
                         {
                             isComboKeysPressed = false;
                         }
@@ -50,7 +50,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 }
                 else
                 {
-                    if (Input.GetButtonDown(data.animationKeys[0]))
+                    if (Input.GetButton(data.animationKeys[0]))
                         activeKeys =activeKeys.AddState(data.animationState);
                 }
             }

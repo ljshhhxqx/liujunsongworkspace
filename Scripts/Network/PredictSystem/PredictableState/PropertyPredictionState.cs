@@ -93,6 +93,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             return PlayerPredictablePropertyState.MemoryProperty[propertyType].CurrentValue;
         }
         
+        public float GetMoveSpeed() => PlayerPredictablePropertyState.PlayerState.CurrentMoveSpeed;
+        
         public float GetMaxProperty(PropertyTypeEnum propertyType)
         {
             if (PlayerPredictablePropertyState.MemoryProperty[propertyType].IsResourceProperty())
@@ -151,10 +153,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void HandleEnvironmentChangeCommand(ref PlayerPredictablePropertyState playerState, PropertyEnvironmentChangeCommand environmentChangeCommand)
         {
-            var speed = playerState.MemoryProperty[PropertyTypeEnum.Speed];
-            PlayerPropertyCalculator.UpdateSpeed(ref speed, environmentChangeCommand.IsSprinting, environmentChangeCommand.HasInputMovement,
+            PlayerPropertyCalculator.UpdateSpeed(ref playerState, environmentChangeCommand.IsSprinting, environmentChangeCommand.HasInputMovement,
                 environmentChangeCommand.PlayerEnvironmentState);
-            playerState.MemoryProperty[PropertyTypeEnum.Speed] = speed;
+            CurrentState = playerState;
             PropertyChanged(playerState);
         }
 
