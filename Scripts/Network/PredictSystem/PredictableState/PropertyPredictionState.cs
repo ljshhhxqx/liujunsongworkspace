@@ -11,7 +11,6 @@ using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
-using Mirror;
 using UniRx;
 using VContainer;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;

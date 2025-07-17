@@ -61,9 +61,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                         //Debug.Log($"[PredictableStateBase] Command {header.CommandType} with id {header.CommandId} already exists in buffer.");
                     }
                 }   
-            }
-            CommandBuffer.Add(header.CommandId, buffer.Item1);
-            //Debug.Log($"[PredictableStateBase] Added predicted command {header.CommandType} with id {header.CommandId} to buffer at tick {header.Tick}");
+            }            
+            //Debug.Log($"[PredictableStateBase] start Added predicted command {header.CommandType} with id {header.CommandId} to buffer at tick {header.Tick}");
+
+            CommandBuffer.TryAdd(header.CommandId, buffer.Item1);
+            //Debug.Log($"[PredictableStateBase] finish Added predicted command {header.CommandType} with id {header.CommandId} to buffer at tick {header.Tick}");
             //Debug.Log($"[PredictableStateBase] Added predicted command {header.CommandType} at tick {header.Tick}");
         }
 
@@ -93,10 +95,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             {
                 PlayerComponentController.CmdSendCommand(json);
                 CommandBuffer.Remove(commandId);
-                return;
+                //return;
             }
 
-            Debug.LogError($"[PredictableStateBase] Command {commandId} not found in buffer.");
+            //Debug.LogError($"[PredictableStateBase] Command {commandId} not found in buffer.");
         }
 
         // 清理已确认的命令

@@ -319,6 +319,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         animationCommand.AnimationState = commandAnimation;
                         animationCommand.SkillId = skillConfigData.id;
                         GameSyncManager.EnqueueServerCommand(animationCommand);
+                        ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Return(animationCommand);
                         //Debug.Log($" [playerInputSyncSystem]Player {header.ConnectionId} input animation {commandAnimation} cost {info.cost} strength, now strength is {playerProperty[PropertyTypeEnum.Strength].CurrentValue}.");
                     }
 

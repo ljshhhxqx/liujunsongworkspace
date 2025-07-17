@@ -82,8 +82,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     throw new ArgumentOutOfRangeException(nameof(playerEnvironmentState), playerEnvironmentState, null);
             }
 
+            Debug.Log($"[UpdateSpeed] Current speed * currentFactor: {currentSpeed} * {currentFactor} = {currentSpeed * currentFactor}");
             currentSpeed *= currentFactor;
-            //Debug.Log($"[UpdateSpeed] Current speed * currentFactor: {currentSpeed}");
             state.PlayerState.CurrentMoveSpeed = currentSpeed;
         }
 
@@ -162,12 +162,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             state[PropertyTypeEnum.Health] = health.UpdateCalculator(health, new BuffIncreaseData
             {
                 increaseType = BuffIncreaseType.Current,
-                increaseValue = healthRecover.CurrentValue * _calculatorConstant.TickRate,
+                increaseValue = healthRecover.CurrentValue * 1,
             });
             state[PropertyTypeEnum.Strength] = strength.UpdateCalculator(strength, new BuffIncreaseData
             {
                 increaseType = BuffIncreaseType.Current,
-                increaseValue = strengthRecover.CurrentValue * _calculatorConstant.TickRate,
+                increaseValue = strengthRecover.CurrentValue * 1,
             });
             playerPredictablePropertyState = propertyState;
         }
@@ -199,48 +199,48 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
         public void HandleEnvironmentChange(ref PlayerPredictablePropertyState playerPredictablePropertyState, bool hasInputMovement, PlayerEnvironmentState environmentType, bool isSprinting)
         {
-            var propertyState = playerPredictablePropertyState;
-            var speed = propertyState.MemoryProperty[PropertyTypeEnum.Speed];
-            var sprintRatio = propertyState.MemoryProperty[PropertyTypeEnum.SprintSpeedRatio];
-            var stairsRatio = propertyState.MemoryProperty[PropertyTypeEnum.StairsSpeedRatio];
-            if (!hasInputMovement)
-            {
-                speed = speed.UpdateCalculator(speed, new BuffIncreaseData
-                {
-                    increaseType = BuffIncreaseType.CorrectionFactor,
-                    increaseValue = 0,
-                });
-            }
-            else
-            {
-                switch (environmentType)
-                {
-                    case PlayerEnvironmentState.InAir:
-                        break;
-                    case PlayerEnvironmentState.OnGround:
-                        speed = speed.UpdateCalculator(speed, new BuffIncreaseData
-                        {
-                            increaseType = BuffIncreaseType.CorrectionFactor,
-                            increaseValue = isSprinting ? sprintRatio.CurrentValue : 1,
-                            operationType = BuffOperationType.Multiply,
-                        });
-                        break;
-                    case PlayerEnvironmentState.OnStairs:
-                        speed = speed.UpdateCalculator(speed, new BuffIncreaseData
-                        {
-                            increaseType = BuffIncreaseType.CorrectionFactor,
-                            increaseValue = isSprinting ? sprintRatio.CurrentValue * stairsRatio.CurrentValue : stairsRatio.CurrentValue,
-                            operationType = BuffOperationType.Multiply,
-                        });
-                        break;
-                    case PlayerEnvironmentState.Swimming:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(environmentType), environmentType, null);
-                }
-            }
-            propertyState.MemoryProperty[PropertyTypeEnum.Speed] = speed;
-            playerPredictablePropertyState = propertyState;
+            // var propertyState = playerPredictablePropertyState;
+            // var speed = propertyState.MemoryProperty[PropertyTypeEnum.Speed];
+            // var sprintRatio = propertyState.MemoryProperty[PropertyTypeEnum.SprintSpeedRatio];
+            // var stairsRatio = propertyState.MemoryProperty[PropertyTypeEnum.StairsSpeedRatio];
+            // if (!hasInputMovement)
+            // {
+            //     speed = speed.UpdateCalculator(speed, new BuffIncreaseData
+            //     {
+            //         increaseType = BuffIncreaseType.CorrectionFactor,
+            //         increaseValue = 0,
+            //     });
+            // }
+            // else
+            // {
+            //     switch (environmentType)
+            //     {
+            //         case PlayerEnvironmentState.InAir:
+            //             break;
+            //         case PlayerEnvironmentState.OnGround:
+            //             speed = speed.UpdateCalculator(speed, new BuffIncreaseData
+            //             {
+            //                 increaseType = BuffIncreaseType.CorrectionFactor,
+            //                 increaseValue = isSprinting ? sprintRatio.CurrentValue : 1,
+            //                 operationType = BuffOperationType.Multiply,
+            //             });
+            //             break;
+            //         case PlayerEnvironmentState.OnStairs:
+            //             speed = speed.UpdateCalculator(speed, new BuffIncreaseData
+            //             {
+            //                 increaseType = BuffIncreaseType.CorrectionFactor,
+            //                 increaseValue = isSprinting ? sprintRatio.CurrentValue * stairsRatio.CurrentValue : stairsRatio.CurrentValue,
+            //                 operationType = BuffOperationType.Multiply,
+            //             });
+            //             break;
+            //         case PlayerEnvironmentState.Swimming:
+            //             break;
+            //         default:
+            //             throw new ArgumentOutOfRangeException(nameof(environmentType), environmentType, null);
+            //     }
+            // }
+            // propertyState.MemoryProperty[PropertyTypeEnum.Speed] = speed;
+            // playerPredictablePropertyState = propertyState;
         }
 
         private static PropertyCalculator GetRemainHealth(PropertyCalculator health, float damage)

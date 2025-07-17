@@ -1991,13 +1991,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public static CommandValidationResult ValidateCommand(this INetworkCommand command)
         {
-            var result = ObjectPoolManager<CommandValidationResult>.Instance.Get(100);
+            var result = ObjectPoolManager<CommandValidationResult>.Instance.Get(50);
             var header = command.GetHeader();
 
             // 1. Tick验证
             if (header.Tick <= 0)
             {
-                result.AddError("Invalid tick value");
+                result.AddError($"{command.GetCommandType().ToString()}Invalid tick value {header.Tick}");
             }
 
             // 2. 时间戳验证
