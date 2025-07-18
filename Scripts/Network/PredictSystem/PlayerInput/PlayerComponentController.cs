@@ -215,7 +215,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     {
                         Header = header,
                     };
-                    _gameSyncManager.EnqueueCommand(MemoryPackSerializer.Serialize(playerTouchedBaseCommand));
+                    _gameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(playerTouchedBaseCommand).Item1);
                 }).AddTo(_disposables);
             _capsuleCollider.OnTriggerExitAsObservable()
                 .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
@@ -235,17 +235,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                         InputAnimations = animationStates,
                     };
                     var command = GetCurrentAnimationState(playerInputStateData);
+                    
                     if (!_playerAnimationCalculator.CanPlayAnimation(command))
                     {
+                        //Debug.LogWarning($"[PlayerInputController] Can not play animation {command}");
                         command = AnimationState.None;
                     }
                     playerInputStateData.Command = command;
                     if (_animationCooldownsDict.TryGetValue(command, out var animationCooldown))
                     {
+                        //Debug.LogWarning($"[PlayerInputController] Animation cooldown {animationCooldown.AnimationState} is ready => {animationCooldown.IsReady()}.");
                         playerInputStateData.Command = animationCooldown.IsReady() ? command : AnimationState.None;
                     }
                     _playerInputStateData = playerInputStateData;
-                    _inputStream.OnNext(playerInputStateData);
+                    _inputStream.OnNext(_playerInputStateData);
                     //Debug.Log($"playerInputStateData - {playerInputStateData.InputMovement} {playerInputStateData.InputAnimations} {playerInputStateData.Command}");
                 })
                 .AddTo(_disposables);
@@ -286,7 +289,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .AddTo(this);
             
             //发送网络命令
-            _inputStream.Where(x=> isLocalPlayer && x.InputMovement.magnitude > 0.1f && x.Command != AnimationState.None)
+            _inputStream.Where(x=> isLocalPlayer && x.Command != AnimationState.None && x.Command != AnimationState.Idle)
                 .Subscribe(HandleSendNetworkCommand)
                 .AddTo(_disposables);
             //处理物理信息
@@ -428,7 +431,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Shop, CommandAuthority.Client
                     , CommandExecuteType.Immediate),
                 };
-                _gameSyncManager.EnqueueCommand(MemoryPackSerializer.Serialize(refreshCommand));
+                _gameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(refreshCommand).Item1);
             }).AddTo(shopScreenUI.gameObject);
         }
         
@@ -450,6 +453,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private bool HandleSpecialState()
         {
+            //Debug.Log($"[HandleSpecialState] -> {_playerAnimationCalculator.IsSpecialAction}");
             return _playerAnimationCalculator.IsSpecialAction;
         }
 
@@ -507,6 +511,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcHandlePlayerSpecialAction(AnimationState animationState)
         {
+            if (isLocalPlayer)
+            {
+                return;
+            }
             HandlePlayerSpecialAction(animationState);
         }
 
@@ -524,7 +532,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     _playerPhysicsCalculator.HandlePlayerJump();
                     break;
                 case AnimationState.Roll:
-                    _rigidbody.velocity = Vector3.zero;
+                    //_rigidbody.velocity = Vector3.zero;
                     _playerPhysicsCalculator.HandlePlayerRoll();
                     break;
                 case AnimationState.Dead:
@@ -776,7 +784,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         }
 
         [Server]
-        public void HandleTracedPlayerHp(int connectionId, List<TracedPlayerInfo> tracedInfo)
+        public void HandleTracedPlayerHp(int connectionId, MemoryList<TracedPlayerInfo> tracedInfo)
         {
             var player = NetworkServer.connections[connectionId];
             if (player == null)
@@ -789,7 +797,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [TargetRpc]
         private void TargetRpcHandlePlayerHp(NetworkConnection target, byte[] data)
         {
-            var info = MemoryPackSerializer.Deserialize<List<TracedPlayerInfo>>(data);
+            var info = MemoryPackSerializer.Deserialize<MemoryList<TracedPlayerInfo>>(data);
             var dic = UIPropertyBinder.GetReactiveDictionary<PlayerHpItemData>(_playerTraceOtherPlayerHpBindKey);
             for (int i = 0; i < info.Count; i++)
             {

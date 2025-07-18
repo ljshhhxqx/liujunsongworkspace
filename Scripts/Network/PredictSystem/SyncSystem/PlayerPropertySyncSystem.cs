@@ -473,7 +473,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 };
                 list.Add(tracedPlayerInfo);
             }
-            playerController.HandleTracedPlayerHp(headerConnectionId, list);
+            playerController.HandleTracedPlayerHp(headerConnectionId, (MemoryList<TracedPlayerInfo>)list);
         }
 
         private void HandlePlayerTouchedBase(int headerConnectionId)

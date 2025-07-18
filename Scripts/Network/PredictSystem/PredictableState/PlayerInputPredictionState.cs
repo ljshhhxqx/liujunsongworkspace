@@ -90,7 +90,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         public override void Simulate(INetworkCommand command)
         {
             var header = command.GetHeader();
-            if (header.CommandType.HasAnyState(CommandType) && command is InputCommand inputCommand && IsInSpecialState?.Invoke() == false)
+            if (header.CommandType == CommandType.Input && command is InputCommand inputCommand && IsInSpecialState?.Invoke() == false)
             {
                 //Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
                 var info = _animationConfig.GetAnimationInfo(inputCommand.CommandAnimationState);
@@ -100,9 +100,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 var cost = skillConfigData.id == 0 ? info.cost : skillConfigData.cost;
                 var cooldown = skillConfigData.id == 0 ? info.cooldown : skillConfigData.cooldown;
                 //Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
-                if (health == 0 || actionType != ActionType.Movement)
+                if (health <= 0)
                 {
-                    //Debug.Log($"[PlayerInputPredictionState] - Player is dead or not in movement state.");
+                    Debug.Log($"[PlayerInputPredictionState] - Player is dead.");
+                    return;
+                }
+                if (actionType != ActionType.Movement && actionType != ActionType.Interaction)
+                {
+                    Debug.Log($"[PlayerInputPredictionState] - Not enough strength to perform {inputCommand.CommandAnimationState}.");
                     return;
                 }
 

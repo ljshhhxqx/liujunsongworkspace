@@ -163,7 +163,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     public enum AnimationEvent
     {
         OnRollStart,
-        OnRollEnd,
+        OnRollStop,
         OnAttack,
         OnSkillCastE,
         OnSkillCastQ,

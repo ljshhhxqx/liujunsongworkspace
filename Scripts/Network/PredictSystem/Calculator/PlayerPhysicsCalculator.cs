@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
+using HotUpdate.Scripts.Tool.Coroutine;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
@@ -281,7 +282,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
         public void HandlePlayerRoll()
         {
-            _physicsComponent.Rigidbody.AddForce(_physicsComponent.Rigidbody.transform.forward.normalized * _physicsDetermineConstant.RollForce, ForceMode.Force);
+            DelayInvoker.DelayInvoke(0.2f, () =>
+            {
+                _physicsComponent.Rigidbody.AddForce(_physicsComponent.Rigidbody.transform.forward.normalized * _physicsDetermineConstant.RollForce, ForceMode.Impulse);
+            });
+            
         }
 
         private static readonly RaycastHit[] CachedHits = new RaycastHit[32];

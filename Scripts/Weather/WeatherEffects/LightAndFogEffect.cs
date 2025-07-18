@@ -66,8 +66,8 @@ namespace HotUpdate.Scripts.Weather.WeatherEffects
             }
 
             // 设置光照强度和平滑过渡颜色
-            mainLight.DOIntensity(lightIntensity, 0.99f).SetEase(Ease.Linear);
-            mainLight.DOColor(lightColor, 0.99f).SetEase(Ease.Linear);
+            mainLight.DOIntensity(lightIntensity, 0.9f).SetEase(Ease.Linear);
+            mainLight.DOColor(lightColor, 0.9f).SetEase(Ease.Linear);
             // Debug.Log($"(WeatherManager)(-Target-) Light intensity: {lightIntensity} Color: {lightColor}");
             // Debug.Log($"(WeatherManager)(-Current-) Light intensity: {mainLight.intensity} Color: {mainLight.color}");
             // 调整光照角度

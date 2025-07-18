@@ -165,7 +165,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     .Subscribe(x => HandlePlayerRoll(connectionId, true))
                     .AddTo(_disposables);
                 rollComboCooldown.EventStream
-                    .Where(x => x == AnimationEvent.OnRollEnd)
+                    .Where(x => x == AnimationEvent.OnRollStop)
                     .Subscribe(x => HandlePlayerRoll(connectionId, false))
                     .AddTo(_disposables);
             }
@@ -276,7 +276,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input command {inputCommand.InputMovement} {inputCommand.InputAnimationStates} action type {actionType}");
                 if (actionType != ActionType.Interaction && actionType != ActionType.Movement)
                 {
-                    Debug.LogWarning($"Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} is not supported.");
+                    //Debug.LogWarning($"Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} is not supported.");
                     return playerInputState;
                 }
                 
