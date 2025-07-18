@@ -274,7 +274,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 inputCommand.CommandAnimationState = commandAnimation;
                 var actionType = _animationConfig.GetActionType(inputCommand.CommandAnimationState);
                 //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input command {inputCommand.InputMovement} {inputCommand.InputAnimationStates} action type {actionType}");
-                if (actionType is not ActionType.Movement and ActionType.Interaction)
+                if (actionType != ActionType.Interaction && actionType != ActionType.Movement)
                 {
                     Debug.LogWarning($"Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} is not supported.");
                     return playerInputState;
@@ -296,7 +296,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost}");
                 if (cooldown != 0)
                 {
-                    if (cooldownInfo == null || !cooldownInfo.IsReady())
+                    if (cooldownInfo == null)
+                    {
+                        Debug.LogWarning($"Player {header.ConnectionId} input animation {commandAnimation} is not registered.");
+                        return playerInputState;
+                    }
+
+                    if (!cooldownInfo.IsReady())
                     {
                         Debug.LogWarning($"Player {header.ConnectionId} input animation {commandAnimation} is not ready.");
                         return playerInputState;
@@ -315,7 +321,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     if (skillConfigData.id == 0)
                     {
                         var animationCommand = ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Get();
-                        animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property);
+                        animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property, CommandAuthority.Server, CommandExecuteType.Immediate);
                         animationCommand.AnimationState = commandAnimation;
                         animationCommand.SkillId = skillConfigData.id;
                         GameSyncManager.EnqueueServerCommand(animationCommand);
@@ -350,6 +356,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 //playerInputState.PlayerAnimationCooldownState.AnimationCooldowns = cooldowns;
                 //todo:**必须优化//
                 PropertyStates[header.ConnectionId] = playerInputState;
+                playerController.RpcHandlePlayerSpecialAction(playerGameStateData.AnimationState);
                 //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost} player state {playerGameStateData.AnimationState}");
                 if (inputMovement.magnitude > 0.1f && playerGameStateData.AnimationState == AnimationState.Move || playerGameStateData.AnimationState == AnimationState.Sprint)
                 {

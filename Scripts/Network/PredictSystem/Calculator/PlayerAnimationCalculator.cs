@@ -147,7 +147,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return CurrentAnimationState;
         }
 
-        private bool _currentAnimationCanPlay;
+        private bool _currentAnimationCanPlay = true;
         
         public static bool IsClearVelocity(AnimationState state)
         {

@@ -83,6 +83,27 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return _playerEnvironmentState;
         }
 
+        public void HandlePlayerJump()
+        {
+            if (_playerEnvironmentState == PlayerEnvironmentState.OnGround)
+            {
+                // 清除当前垂直速度
+                var vel = _physicsComponent.Rigidbody.velocity;
+                vel.y = 0f;
+                _physicsComponent.Rigidbody.velocity = vel;
+            
+                // 应用跳跃力
+                var jumpDirection = _isOnSlope ? Vector3.Lerp(Vector3.up, _slopeNormal, 0.5f) : Vector3.up;
+                _physicsComponent.Rigidbody.AddForce(jumpDirection * _physicsDetermineConstant.JumpSpeed, ForceMode.Impulse);
+            }
+            else if (_playerEnvironmentState == PlayerEnvironmentState.OnStairs)
+            {
+                _physicsComponent.Rigidbody.velocity = Vector3.zero;
+                _physicsComponent.Rigidbody.MovePosition(_physicsComponent.Rigidbody.transform.position + _stairsHitNormal.normalized);
+                _physicsComponent.Rigidbody.AddForce(_stairsHitNormal.normalized * _physicsDetermineConstant.JumpSpeed / 5f, ForceMode.Impulse);
+            }
+        }
+
         public float CheckGroundDistance(CheckGroundDistanceParam param)
         {
             if (_physicsComponent.CapsuleCollider)
@@ -258,6 +279,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return (ushort)(yaw % 360f * 65535f / 360f);
         }
 
+        public void HandlePlayerRoll()
+        {
+            _physicsComponent.Rigidbody.AddForce(_physicsComponent.Rigidbody.transform.forward.normalized * _physicsDetermineConstant.RollForce, ForceMode.Force);
+        }
+
         private static readonly RaycastHit[] CachedHits = new RaycastHit[32];
         /// <summary>
         /// 获取屏幕内可见的敌人列表
@@ -370,9 +396,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public float ViewAngle;
         public float ObstructionCheckRadius;
         public bool IsServer;
+        public float RollForce;
+        public float JumpSpeed;
 
         public PhysicsDetermineConstant(float groundMinDistance, float groundMaxDistance, float maxSlopeAngle, float stairsCheckDistance, 
-            LayerMask groundSceneLayer, LayerMask stairsSceneLayer, float rotateSpeed, float maxDetermineDistance, float viewAngle, float obstructionCheckRadius,bool isServer = false)
+            LayerMask groundSceneLayer, LayerMask stairsSceneLayer, float rotateSpeed, float maxDetermineDistance, 
+            float viewAngle, float obstructionCheckRadius, float rollForce, float jumpSpeed, bool isServer = false)
         {
             GroundMinDistance = groundMinDistance;
             GroundMaxDistance = groundMaxDistance;
@@ -385,6 +414,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             MaxDetermineDistance = maxDetermineDistance;
             ViewAngle = viewAngle;
             ObstructionCheckRadius = obstructionCheckRadius;
+            RollForce = rollForce;
+            JumpSpeed = jumpSpeed;
         }
     }
 

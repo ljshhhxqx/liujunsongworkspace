@@ -807,7 +807,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         {
             Header = default;
             AnimationState = default;
-            SkillId = default;
+            SkillId = 0;
         }
     }
     

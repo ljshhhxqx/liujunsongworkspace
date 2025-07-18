@@ -235,10 +235,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                         InputAnimations = animationStates,
                     };
                     var command = GetCurrentAnimationState(playerInputStateData);
+                    if (!_playerAnimationCalculator.CanPlayAnimation(command))
+                    {
+                        command = AnimationState.None;
+                    }
                     playerInputStateData.Command = command;
-                    _playerAnimationCalculator.UpdateAnimationState();
-                    _inputStream.OnNext(playerInputStateData);
+                    if (_animationCooldownsDict.TryGetValue(command, out var animationCooldown))
+                    {
+                        playerInputStateData.Command = animationCooldown.IsReady() ? command : AnimationState.None;
+                    }
                     _playerInputStateData = playerInputStateData;
+                    _inputStream.OnNext(playerInputStateData);
                     //Debug.Log($"playerInputStateData - {playerInputStateData.InputMovement} {playerInputStateData.InputAnimations} {playerInputStateData.Command}");
                 })
                 .AddTo(_disposables);
@@ -493,7 +500,41 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerAnimationCalculator.SetEnvironmentState(_gameStateStream.Value);
             _playerAnimationCalculator.SetGroundDistance(_groundDistanceStream.Value);
             _playerAnimationCalculator.SetAnimatorParams(inputData.InputMovement.magnitude, _groundDistanceStream.Value, _currentSpeed);
+            _playerAnimationCalculator.UpdateAnimationState();
            
+        }
+
+        [ClientRpc]
+        public void RpcHandlePlayerSpecialAction(AnimationState animationState)
+        {
+            HandlePlayerSpecialAction(animationState);
+        }
+
+        public void HandlePlayerSpecialAction(AnimationState animationState)
+        {
+            if (animationState is AnimationState.Move or AnimationState.None or AnimationState.Sprint or AnimationState.Idle)
+            {
+                return;
+            }
+            Debug.Log($"[HandlePlayerSpecialAction] Animation State: {animationState}");
+            switch (animationState)
+            {
+                case AnimationState.Jump:
+                case AnimationState.SprintJump:
+                    _playerPhysicsCalculator.HandlePlayerJump();
+                    break;
+                case AnimationState.Roll:
+                    _rigidbody.velocity = Vector3.zero;
+                    _playerPhysicsCalculator.HandlePlayerRoll();
+                    break;
+                case AnimationState.Dead:
+                case AnimationState.Hit:
+                case AnimationState.SkillE:
+                case AnimationState.SkillQ:
+                case AnimationState.Attack:
+                    _rigidbody.velocity = Vector3.zero;
+                    break;
+            }
         }
 
         private void HandlePropertyChange(PropertyTypeEnum propertyType, PropertyCalculator value)
@@ -522,6 +563,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 MaxDetermineDistance = gameData.maxTraceDistance,
                 ViewAngle = gameData.maxViewAngle,
                 ObstructionCheckRadius = gameData.obstacleCheckRadius,
+                RollForce = playerData.RollForce,
+                JumpSpeed = playerData.JumpSpeed,
             });
             PlayerPropertyCalculator.SetCalculatorConstant(new PropertyCalculatorConstant
             {

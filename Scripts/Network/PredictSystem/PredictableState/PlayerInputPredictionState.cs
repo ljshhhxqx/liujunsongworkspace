@@ -110,7 +110,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 var cooldownInfo = animationCooldowns.GetValueOrDefault(inputCommand.CommandAnimationState);
                 if (cooldown > 0)
                 {
-                    if (cooldownInfo == null || !cooldownInfo.IsReady())
+                    if (cooldownInfo == null)
+                    {
+                        Debug.LogWarning($"Animation {inputCommand.CommandAnimationState} is not registered in cooldown.");
+                        return;
+                    }
+                    if (!cooldownInfo.IsReady())
                     {
                         Debug.LogWarning($"Animation {inputCommand.CommandAnimationState} is on cooldown.");
                         return;
@@ -141,6 +146,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 inputStateData.InputMovement = inputCommand.InputMovement.ToVector3();
                 inputStateData.InputAnimations = inputCommand.InputAnimationStates;
                 inputStateData.Command = inputCommand.CommandAnimationState;
+                PlayerComponentController.HandlePlayerSpecialAction(inputStateData.Command);
                 OnPlayerInputStateChanged?.Invoke(inputStateData);
                 //Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
             }
