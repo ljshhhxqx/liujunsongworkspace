@@ -12,7 +12,9 @@ using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using UniRx;
+using UnityEngine;
 using VContainer;
+using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
 using PropertyCalculator = HotUpdate.Scripts.Network.PredictSystem.State.PropertyCalculator;
 
@@ -37,6 +39,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         protected override CommandType CommandType => CommandType.Property;
 
+        
         [Inject]
         protected void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider, UIManager uiManager)
         {
@@ -45,21 +48,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _animationConfig = configProvider.GetConfig<AnimationConfig>();
             _propertyConfig = configProvider.GetConfig<PropertyConfig>();
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
-        }
-
-        public override void OnStartLocalPlayer()
-        {
-            base.OnStartLocalPlayer();
-            _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
-                UIPropertyBinder.LocalPlayerId);
             if (NetworkIdentity.isLocalPlayer)
             {
+                Debug.Log($"PropertyPredictionState [OnStartLocalPlayer]  ");
+                _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
+                    UIPropertyBinder.LocalPlayerId);
                 _bindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
                 _goldBindKey = new BindingKey(UIPropertyDefine.PlayerBaseData, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
                 _playerDeathTimeBindKey = new BindingKey(UIPropertyDefine.PlayerDeathTime, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
                 _playerControlBindKey = new BindingKey(UIPropertyDefine.PlayerControl, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
                 _uiPropertyData = UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_bindKey);
-                var itemDatas = new Dictionary<int, IUIDatabase>();
+                var itemDatas = new Dictionary<int, PropertyItemData>();
                 var enumValues = Enum.GetValues(typeof(PropertyTypeEnum));
                 for (var i = 0; i < enumValues.Length; i++)
                 {
@@ -82,9 +81,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     });
                 }
                 UIPropertyBinder.OptimizedBatchAdd(_bindKey, itemDatas);
+                var playerPropertiesOverlay = _uiManager.SwitchUI<PlayerPropertiesOverlay>();
+                playerPropertiesOverlay.BindPlayerProperty(UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_propertyBindKey));
             }
-            var playerPropertiesOverlay = _uiManager.SwitchUI<PlayerPropertiesOverlay>();
-            playerPropertiesOverlay.BindPlayerProperty(UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_propertyBindKey));
         }
 
         public float GetProperty(PropertyTypeEnum propertyType)

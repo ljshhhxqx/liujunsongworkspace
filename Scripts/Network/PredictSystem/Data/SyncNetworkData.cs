@@ -1251,7 +1251,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-             return InputMovement.ToVector3().magnitude > 0 && CommandAnimationState >= 0 && CommandAnimationState <= AnimationState.SkillQ;
+             return CommandAnimationState >= 0 && CommandAnimationState <= AnimationState.SkillQ;
         }
         public void Init()
         {

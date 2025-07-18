@@ -5,6 +5,7 @@ using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.GameBase;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
@@ -110,6 +111,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private UIHoleOverlay _uiHoleOverlay;
         private GameEventManager _gameEventManager;
         private List<PredictableStateBase> _predictionStates = new List<PredictableStateBase>();
+        private List<SyncStateBase> _syncStates = new List<SyncStateBase>();
         private Dictionary<AnimationState, IAnimationCooldown> _animationCooldownsDict = new Dictionary<AnimationState, IAnimationCooldown>();
         
         private BindingKey _propertyBindKey;
@@ -196,6 +198,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 _playerTraceOtherPlayerHpBindKey = new BindingKey(UIPropertyDefine.PlayerTraceOtherPlayerHp, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
                 HandleLocalInitCallback();
                 _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter));
+                for (int i = 0; i < _predictionStates.Count; i++)
+                {
+                    //_predictionStates[i].OnStartLocalPlayer();
+                }
             }
             _capsuleCollider.OnTriggerEnterAsObservable()
                 .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
@@ -325,9 +331,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             gameObject.AddComponent<PlayerSkillSyncState>();
             gameObject.AddComponent<PropertyPredictionState>();
             var states = GetComponents<PredictableStateBase>();
-            foreach (var state in states)
+            var syncStates = GetComponents<SyncStateBase>();
+            for (int i = 0; i < states.Length; i++)
             {
-                _predictionStates.Add(state);
+                _predictionStates.Add(states[i]);
+                //ObjectInjectProvider.Instance.InjectMapGameObject(states[i]);
+            }
+
+            for (int i = 0; i < syncStates.Length; i++)
+            {
+                _syncStates.Add(syncStates[i]);
+                //ObjectInjectProvider.Instance.Inject(states[i]);
             }
             _inputState = GetComponent<PlayerInputPredictionState>();
             _propertyPredictionState = GetComponent<PropertyPredictionState>();
@@ -524,7 +538,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             {
                 return;
             }
-            Debug.Log($"[HandlePlayerSpecialAction] Animation State: {animationState}");
+            //Debug.Log($"[HandlePlayerSpecialAction] Animation State: {animationState}");
             switch (animationState)
             {
                 case AnimationState.Jump:

@@ -4,6 +4,7 @@ using System.Linq;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using Sirenix.Utilities;
 using UniRx;
+using UnityEngine;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.UI
 {
@@ -47,7 +48,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
                 return newRp;
             }
 
-            return  ((ReactivePropertyWrapper<T>)property).Property;
+            if (property is ReactivePropertyWrapper<T> reactivePropertyWrapper)
+            {
+                return reactivePropertyWrapper.Property;
+            }
+            Debug.LogError($"GetOrCreateProperty {property.GetType().Name} is not a reactive property wrapper");
+
+            return null;
         }
 
         #endregion
@@ -58,15 +65,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         {
             return KeyDictionaryMap.ContainsKey(key);
         }
-        public static void OptimizedBatchAdd(BindingKey key, Dictionary<int, IUIDatabase> items)
+        public static void OptimizedBatchAdd<T>(BindingKey key, Dictionary<int, T> items) where T : IUIDatabase
         {
-            var tempDict = new Dictionary<int, IUIDatabase>();
+            var tempDict = new Dictionary<int, T>();
             foreach (var item in items)
             {
                 tempDict.Add(item.Key, item.Value);
             }
     
-            var dict = GetOrCreateDictionary<IUIDatabase>(key).Dictionary;
+            var dict = GetOrCreateDictionary<T>(key).Dictionary;
             dict.Clear();
             foreach (var item in tempDict)
             {
@@ -74,19 +81,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
             }
         }
 
-        public static void AddToDictionary(BindingKey dictKey, int itemKey, IUIDatabase value)
+        public static void AddToDictionary<T>(BindingKey dictKey, int itemKey, T value) where T : IUIDatabase
         {
-            GetOrCreateDictionary<IUIDatabase>(dictKey).Dictionary.Add(itemKey, value);
+            GetOrCreateDictionary<T>(dictKey).Dictionary.Add(itemKey, value);
         }
 
-        public static void RemoveFromDictionary(BindingKey dictKey, int itemKey)
+        public static void RemoveFromDictionary<T>(BindingKey dictKey, int itemKey) where T : IUIDatabase
         {
-            GetOrCreateDictionary<IUIDatabase>(dictKey).Dictionary.Remove(itemKey);
+            GetOrCreateDictionary<T>(dictKey).Dictionary.Remove(itemKey);
         }
 
-        public static void BatchAddToDictionary<T>(BindingKey dictKey, IEnumerable<KeyValuePair<int, IUIDatabase>> items)
+        public static void BatchAddToDictionary<T>(BindingKey dictKey, IEnumerable<KeyValuePair<int, T>> items) where T : IUIDatabase
         {
-            var dict = GetOrCreateDictionary<IUIDatabase>(dictKey);
+            var dict = GetOrCreateDictionary<T>(dictKey);
             foreach (var item in items)
             {
                 dict.Dictionary.Add(item.Key, item.Value);
@@ -106,8 +113,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
                 dict = new ReactiveDictionaryWrapper<T>(newRp);
                 KeyDictionaryMap[key] = dict;
             }
-
-            return (ReactiveDictionaryWrapper<T>)dict;
+            if (dict is ReactiveDictionaryWrapper<T> reactiveDictionaryWrapper)
+            {
+                return reactiveDictionaryWrapper;
+            }
+            if (dict is { } existingDict)
+            {
+                var type = existingDict.GetType();
+                var storedType = type.GenericTypeArguments[0];
+                throw new InvalidCastException(
+                    $"Type mismatch for key '{key}'. " +
+                    $"Requested: {typeof(T).Name}, " +
+                    $"Stored: {storedType.Name}");
+            }
+            else
+            {
+                var actualType = dict.GetType().Name;
+                throw new InvalidCastException(
+                    $"Container type mismatch for key '{key}'. " +
+                    $"Requested dictionary, but found: {actualType}");
+            }
         }
 
         #endregion
@@ -119,19 +144,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
             return KeyListMap.ContainsKey(key);
         }
 
-        public static void AddToList(BindingKey listKey, IUIDatabase item)
+        public static void AddToList<T>(BindingKey listKey, T item) where T : IUIDatabase
         {
-            GetOrCreateList<IUIDatabase>(listKey).Add(item);
+            GetOrCreateList<T>(listKey).Add(item);
         }
 
-        public static void RemoveFromList(BindingKey listKey, IUIDatabase item)
+        public static void RemoveFromList<T>(BindingKey listKey, T item) where T : IUIDatabase
         {
-            GetOrCreateList<IUIDatabase>(listKey).Remove(item);
+            GetOrCreateList<T>(listKey).Remove((T)item);
         }
 
-        public static void BatchAddToList(BindingKey listKey, IEnumerable<IUIDatabase> items)
+        public static void BatchAddToList<T>(BindingKey listKey, IEnumerable<T> items) where T : IUIDatabase
         {
-            var list = GetOrCreateList<IUIDatabase>(listKey);
+            var list = GetOrCreateList<T>(listKey);
             list.AddRange(items);
         }
 
@@ -149,7 +174,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
                 KeyListMap[key] = list;
             }
 
-            return ((ReactiveCollectionWrapper<T>)list).Collection;
+            if (list is ReactiveCollectionWrapper<T> reactiveCollectionWrapper)
+            {
+                return reactiveCollectionWrapper.Collection;
+            }
+
+            Debug.LogError($"GetOrCreateList {list.GetType().Name} is not a reactive collection wrapper");
+            return null;
         }
 
         #endregion
