@@ -450,7 +450,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [ClientRpc]
         private void RpcUpdateState()
         {
-            if (isServer)
+            if (isServer && !isClient)
                 return;
             OnBroadcastStateUpdate?.Invoke(); 
         }

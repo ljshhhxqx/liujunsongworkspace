@@ -45,9 +45,11 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             _propertyItemDatas ??= playerPropertyData.Values.ToList();
             contentItemList.SetItemList(_propertyItemDatas.ToArray());
             playerPropertyData.ObserveReplace()
+                .Skip(1)
                 .Subscribe(x =>
                 {
                     var index = _propertyItemDatas.FindIndex(y => (int)y.PropertyType == x.Key);
+                    if (index == -1) return;
                     _propertyItemDatas[index] = x.NewValue;
                     contentItemList.SetItemList(_propertyItemDatas.ToArray());
                 })

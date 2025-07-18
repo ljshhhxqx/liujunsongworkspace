@@ -184,6 +184,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void PropertyChanged(PlayerPredictablePropertyState predictablePropertyState)
         {
+            // foreach (var key in predictablePropertyState.MemoryProperty.Keys)
+            // {
+            //     var property = PlayerPredictablePropertyState.MemoryProperty[key];
+            //     //Debug.Log($"PropertyChanged {key}: {property}");
+            // }
             if (!NetworkIdentity.isLocalPlayer)
             {
                 return;
