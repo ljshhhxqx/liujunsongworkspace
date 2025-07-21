@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using HotUpdate.Scripts.Tool.Static;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
@@ -16,7 +17,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         [SerializeField] 
         private RectTransform canvasRect;
-        private ReactiveDictionary<int, PlayerHpItemData> _playerHpItemDatas;
+        private IDictionary<int, PlayerHpItemData> _playerHpItemDatas;
         private FollowTargetParams _defaultFollowTargetParams;
 
         public void BindPlayersHp(ReactiveDictionary<int, PlayerHpItemData> playerHpItemDatas, FollowTargetParams defaultFollowTargetParams)
@@ -24,27 +25,31 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             _defaultFollowTargetParams = defaultFollowTargetParams; 
             _defaultFollowTargetParams.CanvasRect = canvasRect;
             _playerHpItemDatas = playerHpItemDatas;
-            _playerHpItemDatas.ObserveAdd().Subscribe(x =>
+            playerHpItemDatas.ObserveAdd().Subscribe(x =>
             {
-                SetItemDataAndShow(_playerHpItemDatas.Values.ToArray());
+                _playerHpItemDatas.Add(x.Key, x.Value);
+                SetItemDataAndShow(_playerHpItemDatas);
             }).AddTo(this);
-            _playerHpItemDatas.ObserveRemove().Subscribe(x =>
+            playerHpItemDatas.ObserveRemove().Subscribe(x =>
             {
-                SetItemDataAndShow(_playerHpItemDatas.Values.ToArray());
+                _playerHpItemDatas.Remove(x.Key);
+                SetItemDataAndShow(_playerHpItemDatas);
             }).AddTo(this); 
-            _playerHpItemDatas.ObserveReplace().Subscribe(x =>
+            playerHpItemDatas.ObserveReplace().Subscribe(x =>
             {
+                _playerHpItemDatas[x.Key] = x.NewValue;
                 var item = contentItemList.GetItem<PlayerHpItem>(x.Key);
                 item.DataChanged(x.NewValue);
                 item.Show(_defaultFollowTargetParams);
             }).AddTo(this);
-            _playerHpItemDatas.ObserveReset().Subscribe(_ =>
+            playerHpItemDatas.ObserveReset().Subscribe(_ =>
             {
-                SetItemDataAndShow(Array.Empty<PlayerHpItemData>());
+                _playerHpItemDatas.Clear();
+                SetItemDataAndShow(_playerHpItemDatas);
             }).AddTo(this);
         }
 
-        private void SetItemDataAndShow(PlayerHpItemData[] playerHpItemDatas)
+        private void SetItemDataAndShow(IDictionary<int, PlayerHpItemData> playerHpItemDatas)
         {
             contentItemList.SetItemList(playerHpItemDatas);
             Show();

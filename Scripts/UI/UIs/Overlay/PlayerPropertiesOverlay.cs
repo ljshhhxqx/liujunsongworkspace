@@ -31,7 +31,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         [SerializeField]
         private FieldItem frameCount;
         
-        private List<PropertyItemData> _propertyItemDatas;
+        private IDictionary<int, PropertyItemData> _propertyItemDatas;
         
         [Inject]
         private void Init(IConfigProvider configProvider)
@@ -42,35 +42,34 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         public void BindPlayerProperty(ReactiveDictionary<int, PropertyItemData> playerPropertyData)
         {
-            _propertyItemDatas ??= playerPropertyData.Values.ToList();
-            contentItemList.SetItemList(_propertyItemDatas.ToArray());
+            _propertyItemDatas ??= playerPropertyData;
+            contentItemList.SetItemList(playerPropertyData);
             playerPropertyData.ObserveReplace()
                 .Subscribe(x =>
                 {
-                    var index = _propertyItemDatas.FindIndex(y => (int)y.PropertyType == x.Key);
-                    _propertyItemDatas[index] = x.NewValue;
-                    contentItemList.SetItemList(_propertyItemDatas.ToArray());
+                    _propertyItemDatas[x.Key] = x.NewValue;
+                    contentItemList.SetItemList(_propertyItemDatas);
                 })
                 .AddTo(this);
             playerPropertyData.ObserveAdd()
                 .Subscribe(x =>
                 {
-                    _propertyItemDatas.Add(x.Value);
-                    contentItemList.SetItemList(_propertyItemDatas.ToArray());
+                    _propertyItemDatas.Add(x.Key, x.Value);
+                    contentItemList.SetItemList(_propertyItemDatas);
                 })
                 .AddTo(this);
             playerPropertyData.ObserveRemove()
                 .Subscribe(x =>
                 {
-                    _propertyItemDatas.RemoveAll(y => (int)y.PropertyType == x.Key);
-                    contentItemList.SetItemList(_propertyItemDatas.ToArray());
+                    _propertyItemDatas.Remove(x.Key);
+                    contentItemList.SetItemList(_propertyItemDatas);
                 })
                 .AddTo(this);
             playerPropertyData.ObserveReset()
                 .Subscribe(x =>
                 {
                     _propertyItemDatas.Clear();
-                    contentItemList.SetItemList(_propertyItemDatas.ToArray());
+                    contentItemList.SetItemList(_propertyItemDatas);
                 })
                 .AddTo(this);
         }

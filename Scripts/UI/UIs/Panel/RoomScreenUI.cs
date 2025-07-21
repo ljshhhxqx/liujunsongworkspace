@@ -66,11 +66,12 @@ namespace UI.UIs.Panel
             {
                 var list = playersData.Players.Select(player => new RoomInviteItemData
                 {
+                    Id = player.Id,
                     Name = player.Nickname,
                     PlayerId = player.PlayerId,
                     Level = player.Level,
                     OnInviteClick = playerId => _playFabRoomManager.InvitePlayer(playerId),
-                }).ToArray();
+                }).ToDictionary(x => x.Id, x => x);
                 playerContentListPrefab.SetItemList(list);
                 return;
             }
@@ -86,12 +87,13 @@ namespace UI.UIs.Panel
                 {
                     var list = roomInfo.PlayersInfo.Select(player => new RoomMemberItemData
                     {
+                        Id = player.Id,
                         Name = player.Nickname,
                         PlayerId = player.PlayerId,
                         Level = player.Level,
                         IsFriend = false,
                         IsSelf = player.PlayerId == PlayFabData.PlayFabId.Value,
-                    }).ToArray();
+                    }).ToDictionary(x => x.Id, x => x);
                     roomContentListPrefab.SetItemList(list);
                 }
                 return;

@@ -23,26 +23,59 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         
     }
     
-    public struct RoomMemberItemData : IItemBaseData
+    public struct RoomMemberItemData : IItemBaseData, IEquatable<RoomMemberItemData>
     {
+        public int Id;
         public string PlayerId;
         public string Name;
         public int Level;
         public bool IsFriend;
         public bool IsSelf;
         public Action<string> OnAddFriendClick;
+
+        public bool Equals(RoomMemberItemData other)
+        {
+            return PlayerId == other.PlayerId && Name == other.Name && Level == other.Level && IsFriend == other.IsFriend && IsSelf == other.IsSelf && Equals(OnAddFriendClick, other.OnAddFriendClick);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is RoomMemberItemData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(PlayerId, Name, Level, IsFriend, IsSelf, OnAddFriendClick);
+        }
     }
     
-    public struct RoomInviteItemData : IItemBaseData
+    public struct RoomInviteItemData : IItemBaseData, IEquatable<RoomInviteItemData>
     {
+        public int Id;
         public string PlayerId;
         public string Name;
         public int Level;
         public Action<string> OnInviteClick;
+
+        public bool Equals(RoomInviteItemData other)
+        {
+            return PlayerId == other.PlayerId && Name == other.Name && Level == other.Level && Equals(OnInviteClick, other.OnInviteClick);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is RoomInviteItemData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(PlayerId, Name, Level, OnInviteClick);
+        }
     }
 
-    public struct RoomListItemData : IItemBaseData
+    public struct RoomListItemData : IItemBaseData,IEquatable<RoomListItemData>
     {
+        public int Id;
         public string RoomId;
         public string RoomName;
         public string RoomOwnerName;
@@ -50,15 +83,45 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public string RoomType;
         public string HasPassword;
         public Action<string> OnJoinClick;
+
+        public bool Equals(RoomListItemData other)
+        {
+            return RoomId == other.RoomId && RoomName == other.RoomName && RoomOwnerName == other.RoomOwnerName && RoomStatus == other.RoomStatus && RoomType == other.RoomType && HasPassword == other.HasPassword && Equals(OnJoinClick, other.OnJoinClick);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is RoomListItemData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(RoomId, RoomName, RoomOwnerName, RoomStatus, RoomType, HasPassword, OnJoinClick);
+        }
     }
 
-    public struct PropertyItemData : IItemBaseData
+    public struct PropertyItemData : IItemBaseData, IEquatable<PropertyItemData>
     {
         public PropertyTypeEnum PropertyType;
         public string Name;
         public PropertyConsumeType ConsumeType;
         public float CurrentProperty;
         public float MaxProperty;
+
+        public bool Equals(PropertyItemData other)
+        {
+            return PropertyType == other.PropertyType && Name == other.Name && ConsumeType == other.ConsumeType && CurrentProperty.Equals(other.CurrentProperty) && MaxProperty.Equals(other.MaxProperty);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is PropertyItemData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine((int)PropertyType, Name, (int)ConsumeType, CurrentProperty, MaxProperty);
+        }
     }
     
     public struct BagItemData : IItemBaseData, IEquatable<BagItemData>
@@ -207,7 +270,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         }
     }
 
-    public struct PlayerHpItemData : IItemBaseData
+    public struct PlayerHpItemData : IItemBaseData, IEquatable<PlayerHpItemData>
     {
         public int PlayerId;
         public string Name;
@@ -219,5 +282,31 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public Vector3 PlayerPosition;
         public PropertyTypeEnum PropertyType;
         public float DiffValue;
+
+        public bool Equals(PlayerHpItemData other)
+        {
+            return PlayerId == other.PlayerId && Name == other.Name && CurrentHp.Equals(other.CurrentHp) && MaxHp.Equals(other.MaxHp) && CurrentMp.Equals(other.CurrentMp) && MaxMp.Equals(other.MaxMp) && TargetPosition.Equals(other.TargetPosition) && PlayerPosition.Equals(other.PlayerPosition) && PropertyType == other.PropertyType && DiffValue.Equals(other.DiffValue);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is PlayerHpItemData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(PlayerId);
+            hashCode.Add(Name);
+            hashCode.Add(CurrentHp);
+            hashCode.Add(MaxHp);
+            hashCode.Add(CurrentMp);
+            hashCode.Add(MaxMp);
+            hashCode.Add(TargetPosition);
+            hashCode.Add(PlayerPosition);
+            hashCode.Add((int)PropertyType);
+            hashCode.Add(DiffValue);
+            return hashCode.ToHashCode();
+        }
     }
 }

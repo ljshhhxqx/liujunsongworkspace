@@ -63,6 +63,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 for (var i = 0; i < enumValues.Length; i++)
                 {
                     var propertyType = (PropertyTypeEnum)enumValues.GetValue(i);
+                    if (propertyType == PropertyTypeEnum.None)
+                    {
+                        continue;
+                    }
                     var propertyConfig = _propertyConfig.GetPropertyConfigData(propertyType);
                     if (!propertyConfig.showInHud)
                     {
