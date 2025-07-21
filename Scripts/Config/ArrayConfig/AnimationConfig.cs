@@ -37,13 +37,15 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 data.keyframeData = JsonConvert.DeserializeObject<KeyframeData[]>(row[8]);
                 data.isClearVelocity = bool.Parse(row[9]);
                 data.cooldownType = (CooldownType) Enum.Parse(typeof(CooldownType), row[10]);
+                data.noStrengthState = (AnimationState) Enum.Parse(typeof(AnimationState), row[11]);
                 animationInfos.Add(data);
             }
         }
 
-        public bool IsStrengthEnough(AnimationState state, float strength, float duration = 0f)
+        public bool IsStrengthEnough(AnimationState state, float strength, out AnimationState newState, float duration = 0f)
         {
             var animationInfo = GetAnimationInfo(state);
+            newState = animationInfo.noStrengthState;
             if (animationInfo.animationType == AnimationType.Continuous)
             {
                 return strength * duration >= duration * animationInfo.cost;
@@ -134,6 +136,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public KeyframeData[] keyframeData;
         public bool isClearVelocity;
         public CooldownType cooldownType;
+        //体力不足时，转为此状态
+        public AnimationState noStrengthState;
     }
 
     public enum ActionType

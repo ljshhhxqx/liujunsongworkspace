@@ -312,7 +312,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 if (cost > 0)
                 {
                     //验证是否耐力值足够
-                    if (!_animationConfig.IsStrengthEnough(inputCommand.CommandAnimationState, playerProperty[PropertyTypeEnum.Strength].CurrentValue, GameSyncManager.TickSeconds))
+                    if (!_animationConfig.IsStrengthEnough(inputCommand.CommandAnimationState, playerProperty[PropertyTypeEnum.Strength].CurrentValue, out var newState, GameSyncManager.TickSeconds)&& newState == AnimationState.None)
                     {
                         Debug.LogWarning($"Player {header.ConnectionId} input animation {commandAnimation} cost {info.cost} strength, but strength is {playerProperty[PropertyTypeEnum.Strength].CurrentValue}.");
                         return null;
@@ -322,7 +322,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     {
                         var animationCommand = ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Get();
                         animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property, CommandAuthority.Server, CommandExecuteType.Immediate);
-                        animationCommand.AnimationState = commandAnimation;
+                        animationCommand.AnimationState = newState == AnimationState.None ? commandAnimation : newState;
                         animationCommand.SkillId = skillConfigData.id;
                         GameSyncManager.EnqueueServerCommand(animationCommand);
                         ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Return(animationCommand);

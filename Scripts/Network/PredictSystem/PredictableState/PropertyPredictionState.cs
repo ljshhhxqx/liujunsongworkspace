@@ -50,7 +50,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             if (NetworkIdentity.isLocalPlayer)
             {
-                Debug.Log($"PropertyPredictionState [OnStartLocalPlayer]  ");
+                //Debug.Log($"PropertyPredictionState [OnStartLocalPlayer]  ");
                 _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
                     UIPropertyBinder.LocalPlayerId);
                 _bindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);

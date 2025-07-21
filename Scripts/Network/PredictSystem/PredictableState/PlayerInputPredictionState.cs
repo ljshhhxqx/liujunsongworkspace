@@ -130,13 +130,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 if (cost > 0)
                 {
                     var currentStrength = _propertyPredictionState.GetProperty(PropertyTypeEnum.Strength);
-                    if (!_animationConfig.IsStrengthEnough(inputCommand.CommandAnimationState, currentStrength, GameSyncManager.TickSeconds))
+                    if (!_animationConfig.IsStrengthEnough(inputCommand.CommandAnimationState, currentStrength, out var noStrengthState, GameSyncManager.TickSeconds)
+                        && noStrengthState == AnimationState.None)
                     {
                         Debug.LogWarning($"Not enough strength to perform {inputCommand.CommandAnimationState}.");
                         return;
                     }
                     var animationCommand = ObjectPoolManager<PropertyClientAnimationCommand>.Instance.Get(50);
-                    animationCommand.AnimationState = inputCommand.CommandAnimationState;
+                    animationCommand.AnimationState = noStrengthState == AnimationState.None ? inputCommand.CommandAnimationState : noStrengthState;
                     animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property, CommandAuthority.Client);
                     animationCommand.SkillId = skillConfigData.id;
                     _propertyPredictionState.AddPredictedCommand(animationCommand);

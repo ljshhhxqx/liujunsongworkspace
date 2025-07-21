@@ -293,7 +293,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 MoveCommandsToCurrentTick();
                 // 处理当前tick的所有命令
                 ProcessCurrentTickCommands();
-                if (_syncTimer >= 1f / _serverUpdateStateInterval)
+                if (_syncTimer >= _serverUpdateStateInterval)
                 {
                     // 广播状态更新
                     BroadcastStateUpdates();

@@ -642,10 +642,7 @@ AnimatorTransition:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: 
-  m_Conditions:
-  - m_ConditionMode: 4
-    m_ConditionEvent: GroundDistance
-    m_EventTreshold: 0.05
+  m_Conditions: []
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 0}
   m_Solo: 0
@@ -889,9 +886,6 @@ AnimatorStateTransition:
   - m_ConditionMode: 3
     m_ConditionEvent: InputMagnitude
     m_EventTreshold: 0
-  - m_ConditionMode: 4
-    m_ConditionEvent: GroundDistance
-    m_EventTreshold: 0.1
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 0}
   m_Solo: 0
@@ -1526,12 +1520,12 @@ AnimatorStateMachine:
   m_AnyStateTransitions: []
   m_EntryTransitions: []
   m_StateMachineTransitions:
-  - first: {fileID: 6066411008760222942}
-    second:
-    - {fileID: 5839879483064241212}
   - first: {fileID: 4645398399814081676}
     second:
     - {fileID: -1997679207446845646}
+  - first: {fileID: 6066411008760222942}
+    second:
+    - {fileID: 5839879483064241212}
   m_StateMachineBehaviours: []
   m_AnyStatePosition: {x: 50, y: 20, z: 0}
   m_EntryPosition: {x: 50, y: 120, z: 0}
