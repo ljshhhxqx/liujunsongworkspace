@@ -31,7 +31,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         [SerializeField]
         private FieldItem frameCount;
         
-        private IDictionary<int, PropertyItemData> _propertyItemDatas;
+        private Dictionary<int, PropertyItemData> _propertyItemDatas;
         
         [Inject]
         private void Init(IConfigProvider configProvider)
@@ -42,34 +42,46 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         public void BindPlayerProperty(ReactiveDictionary<int, PropertyItemData> playerPropertyData)
         {
-            _propertyItemDatas ??= playerPropertyData;
+            _propertyItemDatas = new Dictionary<int, PropertyItemData>();
+            foreach (var key in playerPropertyData.Keys)
+            {
+                var slot = playerPropertyData[key];
+                _propertyItemDatas.Add(key, slot);
+            }
+
             contentItemList.SetItemList(playerPropertyData);
             playerPropertyData.ObserveReplace()
                 .Subscribe(x =>
                 {
                     _propertyItemDatas[x.Key] = x.NewValue;
-                    contentItemList.SetItemList(_propertyItemDatas);
+                    contentItemList.ReplaceItem(x.Key, x.NewValue);
                 })
                 .AddTo(this);
             playerPropertyData.ObserveAdd()
                 .Subscribe(x =>
                 {
-                    _propertyItemDatas.Add(x.Key, x.Value);
-                    contentItemList.SetItemList(_propertyItemDatas);
+                    if (!_propertyItemDatas.ContainsKey(x.Key))
+                    {
+                        _propertyItemDatas.Add(x.Key, x.Value);
+                        contentItemList.AddItem(x.Key, x.Value);
+                    }
                 })
                 .AddTo(this);
             playerPropertyData.ObserveRemove()
                 .Subscribe(x =>
                 {
-                    _propertyItemDatas.Remove(x.Key);
-                    contentItemList.SetItemList(_propertyItemDatas);
+                    if (_propertyItemDatas.ContainsKey(x.Key))
+                    {
+                        _propertyItemDatas.Remove(x.Key);
+                        contentItemList.RemoveItem(x.Key);
+                    }
                 })
                 .AddTo(this);
             playerPropertyData.ObserveReset()
                 .Subscribe(x =>
                 {
                     _propertyItemDatas.Clear();
-                    contentItemList.SetItemList(_propertyItemDatas);
+                    contentItemList.Clear();
                 })
                 .AddTo(this);
         }

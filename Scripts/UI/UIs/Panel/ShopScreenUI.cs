@@ -59,22 +59,23 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             shopItemData.ObserveAdd().Subscribe(x =>
             {
                 _shopItemData.Add(x.Key, x.Value);
-                shopItemList.SetItemList(_shopItemData);
+                shopItemList.AddItem(x.Key, x.Value);
+                //shopItemList.SetItemList(_shopItemData);
             }).AddTo(this);
             shopItemData.ObserveRemove().Subscribe(x =>
             {
                 _shopItemData.Remove(x.Key);
-                shopItemList.SetItemList(_shopItemData);
+                shopItemList.RemoveItem(x.Key);
             }).AddTo(this);
             shopItemData.ObserveReplace().Subscribe(x =>
             {
                 _shopItemData[x.Key] = x.NewValue;
-                shopItemList.SetItemList(_shopItemData);
+                shopItemList.ReplaceItem(x.Key, x.NewValue);
             }).AddTo(this);
             shopItemData.ObserveReset().Subscribe(x =>
             {
                 _shopItemData.Clear();
-                shopItemList.SetItemList(_shopItemData);
+                shopItemList.Clear();
             }).AddTo(this);
         }
 
@@ -88,23 +89,31 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             InitBagItems();
             bagItemData.ObserveAdd().Subscribe(x =>
             {
-                _bagItemData.Add(x.Key, x.Value);
-                bagItemList.SetItemList(_bagItemData);
+                if (!_bagItemData.ContainsKey(x.Key))
+                {
+                    _bagItemData.Add(x.Key, x.Value);
+                    bagItemList.AddItem(x.Key, x.Value);
+                }
+                //bagItemList.SetItemList(_bagItemData);
             }).AddTo(this);
             bagItemData.ObserveRemove().Subscribe(x =>
             {
+                if (!_bagItemData.ContainsKey(x.Key))
+                {
+                    return;
+                }
                 _bagItemData.Remove(x.Key);
-                bagItemList.SetItemList(_bagItemData);
+                bagItemList.RemoveItem(x.Key);
             }).AddTo(this);
             bagItemData.ObserveReplace().Subscribe(x =>
             {
                 _bagItemData[x.Key] = x.NewValue;
-                bagItemList.SetItemList(_bagItemData);
+                bagItemList.ReplaceItem(x.Key, x.NewValue);
             }).AddTo(this);
             bagItemData.ObserveReset().Subscribe(x =>
             {
                 _bagItemData.Clear();
-                bagItemList.SetItemList(_bagItemData);
+                bagItemList.Clear();
             }).AddTo(this);
         }
 
