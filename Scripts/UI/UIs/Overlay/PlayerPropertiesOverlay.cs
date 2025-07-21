@@ -53,8 +53,12 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             playerPropertyData.ObserveReplace()
                 .Subscribe(x =>
                 {
-                    _propertyItemDatas[x.Key] = x.NewValue;
-                    contentItemList.ReplaceItem(x.Key, x.NewValue);
+                    if (!x.NewValue.Equals(x.OldValue))
+                    {
+                        _propertyItemDatas[x.Key] = x.NewValue;
+                        contentItemList.ReplaceItem(x.Key, x.NewValue);
+                        Debug.Log($"Replace property {x.Key} {x.NewValue}");
+                    }
                 })
                 .AddTo(this);
             playerPropertyData.ObserveAdd()

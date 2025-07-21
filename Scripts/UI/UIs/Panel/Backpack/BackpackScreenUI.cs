@@ -138,8 +138,11 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             bagItemData.ObserveReplace()
                 .Subscribe(x =>
                 {
-                    _bagItemData[x.Key] = x.NewValue;
-                    bagItemList.ReplaceItem(x.Key, x.NewValue);
+                    if (!x.NewValue.Equals(x.OldValue))
+                    {
+                        _bagItemData[x.Key] = x.NewValue;
+                        bagItemList.ReplaceItem(x.Key, x.NewValue);
+                    }
                 })
                 .AddTo(this);
             bagItemData.ObserveReset()

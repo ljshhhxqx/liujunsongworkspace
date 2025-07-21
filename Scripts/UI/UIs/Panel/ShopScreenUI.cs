@@ -69,6 +69,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             }).AddTo(this);
             shopItemData.ObserveReplace().Subscribe(x =>
             {
+                if (x.OldValue.Equals(x.NewValue))
+                    return;
                 _shopItemData[x.Key] = x.NewValue;
                 shopItemList.ReplaceItem(x.Key, x.NewValue);
             }).AddTo(this);
@@ -107,6 +109,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             }).AddTo(this);
             bagItemData.ObserveReplace().Subscribe(x =>
             {
+                if (x.OldValue.Equals(x.NewValue))
+                    return;
                 _bagItemData[x.Key] = x.NewValue;
                 bagItemList.ReplaceItem(x.Key, x.NewValue);
             }).AddTo(this);

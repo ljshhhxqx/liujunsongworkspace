@@ -45,11 +45,14 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             }).AddTo(this); 
             playerHpItemDatas.ObserveReplace().Subscribe(x =>
             {
-                _playerHpItemDatas[x.Key] = x.NewValue;
-                contentItemList.ReplaceItem(x.Key, x.NewValue);
-                var item = contentItemList.GetItem<PlayerHpItem>(x.Key);
-                item.DataChanged(x.NewValue);
-                item.Show(_defaultFollowTargetParams);
+                if (!x.NewValue.Equals(x.OldValue))
+                {
+                    _playerHpItemDatas[x.Key] = x.NewValue;
+                    contentItemList.ReplaceItem(x.Key, x.NewValue);
+                    var item = contentItemList.GetItem<PlayerHpItem>(x.Key);
+                    item.DataChanged(x.NewValue);
+                    item.Show(_defaultFollowTargetParams);
+                }
             }).AddTo(this);
             playerHpItemDatas.ObserveReset().Subscribe(_ =>
             {

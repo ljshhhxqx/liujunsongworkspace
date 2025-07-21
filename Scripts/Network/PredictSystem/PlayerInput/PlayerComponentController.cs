@@ -403,6 +403,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 var playerHpShowOverlay = _uiManager.SwitchUI<PlayerHpShowOverlay>();
                 playerHpShowOverlay.BindPlayersHp(UIPropertyBinder.GetReactiveDictionary<PlayerHpItemData>(_playerTraceOtherPlayerHpBindKey), followData);
             }
+            _uiHoleOverlay.gameObject.SetActive(false);
         }
 
         public void SwitchBag()

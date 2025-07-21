@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
@@ -209,7 +210,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             }
             _subjectedStateType = predictablePropertyState.SubjectedState;
             OnStateChanged?.Invoke(predictablePropertyState.SubjectedState);
-            var goldData = new ValuePropertyData();
+            var goldData = ObjectPoolManager<ValuePropertyData>.Instance.Get(15);
             foreach (var key in predictablePropertyState.MemoryProperty.Keys)
             {
                 var property = predictablePropertyState.MemoryProperty[key];

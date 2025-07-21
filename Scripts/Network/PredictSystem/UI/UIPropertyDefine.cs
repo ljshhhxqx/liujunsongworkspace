@@ -1,4 +1,5 @@
 ﻿using System;
+using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 
@@ -70,7 +71,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         
     }
 
-    public struct ValuePropertyData : IUIDatabase, IEquatable<ValuePropertyData>
+    public struct ValuePropertyData : IUIDatabase, IEquatable<ValuePropertyData>, IPoolObject
     {
         public float Gold;
         public float Exp;
@@ -110,6 +111,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
             hashCode.Add(Fov);
             hashCode.Add(Alpha);
             return hashCode.ToHashCode();
+        }
+
+        public void Init()
+        {
+            
+        }
+
+        public void Clear()
+        {
+            Gold = 0;
+            Exp = 0;
+            Health = 0;
+            Attack = 0;
+            MaxHealth = 0;
+            Mana = 0;
+            MaxMana = 0;
+            Speed = 0;
+            Score = 0;
+            Fov = 0;
+            Alpha = 0;
         }
     }
     
