@@ -22,4 +22,3 @@ ReduceDamageRatio,0,-0.5,1,Number,False,受到伤害时减少的伤害系数,Non
 ReduceDamage,0,-500,500,Number,False,受到攻击时减少的伤害,None,False,False
 View,1000,15,1000,Number,False,视野,None,False,False
 Alpha,1000,0,1000,Number,False,透明度,None,False,False
-MoveSpeed,0,0,15,Number,False,实际的移动速度,None,False,True
