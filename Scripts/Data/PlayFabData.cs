@@ -26,6 +26,7 @@ namespace Data
         // public int Gems;
         public int ModifyNameCount;
         public string Status; // 玩家状态
+        public int Id;
     }
 
     public enum PlayerStatus
@@ -71,6 +72,7 @@ namespace Data
     //房间自定义信息
     public struct RoomCustomInfo
     {
+        public int Id;
         public string RoomName;
         // 0: public, 1: local
         public int RoomType;
@@ -87,6 +89,7 @@ namespace Data
     [Serializable]
     public struct RoomData
     {
+        public int Id;
         // 房间ID，需要服务器生成
         public string RoomId;
         public string CreatorId;

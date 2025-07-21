@@ -32,6 +32,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private readonly Dictionary<CommandType, BaseSyncSystem> _syncSystems = new Dictionary<CommandType, BaseSyncSystem>();
         private static float _tickRate; 
         private static float _serverInputRate;
+        private static float _serverUpdateStateInterval;
         private float _maxCommandAge; 
         public static float TickSeconds => 1f / _tickRate;
         private float _tickTimer;
@@ -60,6 +61,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _tickRate = _jsonDataConfig.GameConfig.tickRate;
             _serverInputRate = _jsonDataConfig.GameConfig.serverInputRate;
             _maxCommandAge = _jsonDataConfig.GameConfig.maxCommandAge;
+            _serverUpdateStateInterval = _jsonDataConfig.GameConfig.stateUpdateInterval;
             gameEventManager.Subscribe<PlayerConnectEvent>(OnPlayerConnect);
             gameEventManager.Subscribe<PlayerDisconnectEvent>(OnPlayerDisconnect);
             gameEventManager.Subscribe<AddBuffToAllPlayerEvent>(OnAddBuffToAllPlayer);
@@ -291,7 +293,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 MoveCommandsToCurrentTick();
                 // 处理当前tick的所有命令
                 ProcessCurrentTickCommands();
-                if (_syncTimer >= 1f / _tickRate)
+                if (_syncTimer >= _serverUpdateStateInterval)
                 {
                     // 广播状态更新
                     BroadcastStateUpdates();

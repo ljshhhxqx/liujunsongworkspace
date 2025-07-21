@@ -60,6 +60,7 @@ namespace UI.UIs.Panel
             var dataArray = _playFabRoomManager.GetFilteredRooms(searchInputField.text)
                 .Select(room => new RoomListItemData
                 {
+                    Id = room.Id,
                     RoomId = room.RoomId,
                     RoomName = room.RoomCustomInfo.RoomName,
                     RoomType = room.RoomCustomInfo.RoomType == 0 ? "远程" : "本地",
@@ -87,7 +88,7 @@ namespace UI.UIs.Panel
                             });
                         }
                     },
-                }).ToArray();
+                }).ToDictionary(x => x.Id, x => x);
             roomListContent.SetItemList(dataArray);
         }
 

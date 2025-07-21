@@ -50,7 +50,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             if (NetworkIdentity.isLocalPlayer)
             {
-                Debug.Log($"PropertyPredictionState [OnStartLocalPlayer]  ");
+                //Debug.Log($"PropertyPredictionState [OnStartLocalPlayer]  ");
                 _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
                     UIPropertyBinder.LocalPlayerId);
                 _bindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
@@ -63,6 +63,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 for (var i = 0; i < enumValues.Length; i++)
                 {
                     var propertyType = (PropertyTypeEnum)enumValues.GetValue(i);
+                    if (propertyType == PropertyTypeEnum.None)
+                    {
+                        continue;
+                    }
                     var propertyConfig = _propertyConfig.GetPropertyConfigData(propertyType);
                     if (!propertyConfig.showInHud)
                     {

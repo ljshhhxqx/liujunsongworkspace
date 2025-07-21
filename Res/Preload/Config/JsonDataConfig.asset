@@ -89,6 +89,7 @@ MonoBehaviour:
       maxSlopeAngle: 45
       stairsCheckDistance: 0.45
       tickRate: 50
+      stateUpdateInterval: 0.2
       serverInputRate: 0.02
       inputThreshold: 0.1
       maxCommandAge: 1

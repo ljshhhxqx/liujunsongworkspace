@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using UI.UIs.Common;
+using UniRx;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
@@ -12,8 +13,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
         private ItemBase itemPrefab;
         [SerializeField]
         private Transform content;
-        public List<ItemBase> ItemBases { get; } = new List<ItemBase>();
-        public List<IItemBaseData> ItemBaseDatas { get; } = new List<IItemBaseData>();
+        public Dictionary<int, ItemBase> ItemBases { get; } = new Dictionary<int, ItemBase>();
+        public Dictionary<int, IItemBaseData> ItemBaseDatas { get; } = new Dictionary<int, IItemBaseData>();
         
         public T GetItem<T>(int index) where T : ItemBase
         {
@@ -25,27 +26,79 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
             return ItemBases[index] as T;
         }
 
-        public void SetItemList<T>(T[] itemDataList) where T : IItemBaseData, new()
+        public void AddItem<T>(int key, T item) where T : IItemBaseData, new()
         {
-            itemPrefab.gameObject.SetActive(true);
-            ItemBases.ForEach(x => Destroy(x.gameObject));
+            if (!ItemBases.TryGetValue(key, out var itemBase))
+            {
+                itemPrefab.gameObject.SetActive(true);
+                itemBase = GameObjectPoolManger.Instance.GetObject(prefab: itemPrefab.gameObject, parent: content).GetComponent<ItemBase>();
+                itemBase.Clear();
+                itemBase.SetData(item);
+                ItemBases.Add(key, itemBase);
+                ItemBaseDatas.Add(key, item);
+                itemPrefab.gameObject.SetActive(false);
+                return;
+            }
+            Debug.LogWarning($"ItemList: AddItem failed, key --{key}-- already exists.");
+        }
+        
+        public void RemoveItem(int key)
+        {
+            if (!ItemBases.TryGetValue(key, out var itemBase))
+            {
+                Debug.LogWarning($"ItemList: RemoveItem failed, key --{key}-- not exists.");    
+                return;
+            }
+            GameObjectPoolManger.Instance.ReturnObject(itemBase.gameObject);
+            ItemBases.Remove(key);
+            ItemBaseDatas.Remove(key);
+        }
+        
+        public void Clear()
+        {
+            foreach (var key in ItemBaseDatas.Keys)
+            {
+                GameObjectPoolManger.Instance.ReturnObject(ItemBases[key].gameObject);
+            }
             ItemBases.Clear();
             ItemBaseDatas.Clear();
-            if (itemDataList.Length > 0)
+        }
+        
+        public void ReplaceItem<T>(int key, T itemData) where T : IItemBaseData, new()
+        {
+            if (!ItemBases.TryGetValue(key, out var itemBase))
             {
-                foreach (var itemData in itemDataList)
+                AddItem(key, itemData);
+                return;
+            }
+            itemBase.SetData(itemData);
+            ItemBaseDatas[key] = itemData;
+        }
+
+        public void SetItemList<T>(IDictionary<int, T> itemDict) where T : IItemBaseData, new()
+        {
+            itemPrefab.gameObject.SetActive(true);
+            foreach (var key in ItemBases.Keys)
+            {
+                GameObjectPoolManger.Instance.ReturnObject(ItemBases[key].gameObject);
+            }
+            ItemBases.Clear();
+            ItemBaseDatas.Clear();
+            if (itemDict.Count > 0)
+            {
+                foreach (var itemData in itemDict)
                 {
                     var item = GameObjectPoolManger.Instance.GetObject(prefab: itemPrefab.gameObject, parent: content);
                     var itemBase = item.GetComponent<ItemBase>();
                     itemBase.Clear();
-                    itemBase.SetData(itemData);
-                    ItemBases.Add(itemBase);
-                    ItemBaseDatas.Add(itemData);
+                    itemBase.SetData(itemData.Value);
+                    ItemBases.Add(itemData.Key, itemBase);
+                    ItemBaseDatas.Add(itemData.Key, itemData.Value);
                 }
                 itemPrefab.gameObject.SetActive(false);
                 return;
             }
-            Debug.LogWarning($"ItemList: SetItemList failed, itemDataList --{itemDataList.GetType()}-- is null or empty.");
+            Debug.LogWarning($"ItemList: SetItemList failed, itemDict --{itemDict.GetType()}-- is null or empty.");
         }
     }
 }

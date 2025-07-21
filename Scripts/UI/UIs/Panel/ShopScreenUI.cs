@@ -54,27 +54,28 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             {
                 _shopItemData.Add(keyValue.Key, keyValue.Value);
             }
-            shopItemList.SetItemList(_shopItemData.Values.ToArray());
+            shopItemList.SetItemList(_shopItemData);
             InitShopItems();
             shopItemData.ObserveAdd().Subscribe(x =>
             {
                 _shopItemData.Add(x.Key, x.Value);
-                shopItemList.SetItemList(_shopItemData.Values.ToArray());
+                shopItemList.AddItem(x.Key, x.Value);
+                //shopItemList.SetItemList(_shopItemData);
             }).AddTo(this);
             shopItemData.ObserveRemove().Subscribe(x =>
             {
                 _shopItemData.Remove(x.Key);
-                shopItemList.SetItemList(_shopItemData.Values.ToArray());
+                shopItemList.RemoveItem(x.Key);
             }).AddTo(this);
             shopItemData.ObserveReplace().Subscribe(x =>
             {
                 _shopItemData[x.Key] = x.NewValue;
-                shopItemList.SetItemList(_shopItemData.Values.ToArray());
+                shopItemList.ReplaceItem(x.Key, x.NewValue);
             }).AddTo(this);
             shopItemData.ObserveReset().Subscribe(x =>
             {
                 _shopItemData.Clear();
-                shopItemList.SetItemList(Array.Empty<RandomShopItemData>());
+                shopItemList.Clear();
             }).AddTo(this);
         }
 
@@ -84,35 +85,43 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             {
                 _bagItemData.Add(keyValue.Key, keyValue.Value);
             }
-            bagItemList.SetItemList(_bagItemData.Values.ToArray());
+            bagItemList.SetItemList(_bagItemData);
             InitBagItems();
             bagItemData.ObserveAdd().Subscribe(x =>
             {
-                _bagItemData.Add(x.Key, x.Value);
-                bagItemList.SetItemList(_bagItemData.Values.ToArray());
+                if (!_bagItemData.ContainsKey(x.Key))
+                {
+                    _bagItemData.Add(x.Key, x.Value);
+                    bagItemList.AddItem(x.Key, x.Value);
+                }
+                //bagItemList.SetItemList(_bagItemData);
             }).AddTo(this);
             bagItemData.ObserveRemove().Subscribe(x =>
             {
+                if (!_bagItemData.ContainsKey(x.Key))
+                {
+                    return;
+                }
                 _bagItemData.Remove(x.Key);
-                bagItemList.SetItemList(_bagItemData.Values.ToArray());
+                bagItemList.RemoveItem(x.Key);
             }).AddTo(this);
             bagItemData.ObserveReplace().Subscribe(x =>
             {
                 _bagItemData[x.Key] = x.NewValue;
-                bagItemList.SetItemList(_bagItemData.Values.ToArray());
+                bagItemList.ReplaceItem(x.Key, x.NewValue);
             }).AddTo(this);
             bagItemData.ObserveReset().Subscribe(x =>
             {
                 _bagItemData.Clear();
-                bagItemList.SetItemList(Array.Empty<BagItemData>());
+                bagItemList.Clear();
             }).AddTo(this);
         }
 
         private void InitShopItems()
         {
-            foreach (var shopSlotItem in shopItemList.ItemBases)
+            foreach (var key in shopItemList.ItemBases.Keys)
             {
-                var slot = shopSlotItem as ShopSlotItem;
+                var slot = shopItemList.ItemBases[key] as ShopSlotItem;
                 if (!slot) continue;
                 slot.OnBuy.Subscribe(count =>
                 {
@@ -128,9 +137,9 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
 
         private void InitBagItems()
         {
-            foreach (var bagSlotItem in bagItemList.ItemBases)
+            foreach (var key in bagItemList.ItemBases.Keys)
             {
-                var slot = bagSlotItem as ShopBagSlotItem;
+                var slot = bagItemList.ItemBases[key] as ShopBagSlotItem;
                 if (!slot) continue;
                 slot.OnSellObservable.Subscribe(count =>
                 {

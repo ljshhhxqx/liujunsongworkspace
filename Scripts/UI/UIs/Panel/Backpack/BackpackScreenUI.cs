@@ -26,10 +26,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
         private GameObject dragIcon;
         private UIManager _uiManager;
 
-        private List<BagSlotItem> _bagSlotItems; // 存储格子引用
-        private List<EquipmentSlotItem> _slotItems;
-        private List<BagItemData> _bagItemData = new List<BagItemData>();  // 存储物品
-        private List<EquipItemData> _slotEquipItemData = new List<EquipItemData>();
+        private Dictionary<int, BagSlotItem> _bagSlotItems; // 存储格子引用
+        private Dictionary<int, EquipmentSlotItem> _slotItems;
+        private Dictionary<int, BagItemData> _bagItemData;  // 存储物品
+        private Dictionary<int, EquipItemData> _slotEquipItemData;
         
         private BagSlotItem _draggedSlot; // 当前被拖拽的格子
 
@@ -45,50 +45,70 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
 
         public void BindEquipItemData(ReactiveDictionary<int, EquipItemData> slotEquipItemData)
         {
-            _slotEquipItemData ??= slotEquipItemData.Values.ToList();
-            _slotItems = new List<EquipmentSlotItem>();
+            _slotEquipItemData = new Dictionary<int, EquipItemData>();
+            foreach (var key in slotEquipItemData.Keys)
+            {
+                var slot = slotEquipItemData[key];
+                _slotEquipItemData.Add(key, slot);
+            }
+            _slotItems = new Dictionary<int, EquipmentSlotItem>();//<EquipmentSlotItem>();
             slotEquipItemData.ObserveAdd()
                 .Subscribe(x =>
                 {
-                    _slotEquipItemData.Add(x.Value);
-                    equipmentItemList.SetItemList(_slotEquipItemData.ToArray());
+                    if (!_slotEquipItemData.ContainsKey(x.Key))
+                    {
+                        _slotEquipItemData.Add(x.Key, x.Value);
+                        equipmentItemList.AddItem(x.Key, x.Value);
+                    }
+                    //equipmentItemList.SetItemList(_slotEquipItemData);
                 })
                 .AddTo(this);
             slotEquipItemData.ObserveRemove()
                 .Subscribe(x =>
                 {
-                    _slotEquipItemData.RemoveAll(y => (int)y.EquipmentPartType == x.Key);
-                    equipmentItemList.SetItemList(_slotEquipItemData.ToArray());
+                    if (_slotEquipItemData.ContainsKey(x.Key))
+                    {
+
+                        _slotEquipItemData.Remove(x.Key);
+                        equipmentItemList.RemoveItem(x.Key);
+                    }
+                    //equipmentItemList.SetItemList(_slotEquipItemData);
                 })
                 .AddTo(this);
             slotEquipItemData.ObserveReplace()
                 .Subscribe(x =>
                 {
-                    var index = _slotEquipItemData.FindIndex(y => (int)y.EquipmentPartType == x.Key);
-                    _slotEquipItemData[index] = x.NewValue;
-                    equipmentItemList.SetItemList(_slotEquipItemData.ToArray());
+                    _slotEquipItemData[x.Key] = x.NewValue;
+                    equipmentItemList.RemoveItem(x.Key);
+                    //equipmentItemList.SetItemList(_slotEquipItemData);
                 })
                 .AddTo(this);
             slotEquipItemData.ObserveReset()
                 .Subscribe(x =>
                 {
                     _slotEquipItemData.Clear();
-                    equipmentItemList.SetItemList(Array.Empty<EquipItemData>());
+                    equipmentItemList.Clear();
+                    //equipmentItemList.SetItemList(_slotEquipItemData);
                 })
                 .AddTo(this);
             RefreshEquip(_slotEquipItemData);
         }
 
-        private void RefreshEquip(List<EquipItemData> slotEquipItemData)
+        private void RefreshEquip(IDictionary<int, EquipItemData> slotEquipItemData)
         {
-            equipmentItemList.SetItemList(slotEquipItemData.ToArray());
+            equipmentItemList.SetItemList(slotEquipItemData);
             InitializeEquipSlots();
         }
 
         public void BindBagItemData(ReactiveDictionary<int, BagItemData> bagItemData)
         {
-            _bagItemData ??= bagItemData.Values.ToList();
-            _bagSlotItems = new List<BagSlotItem>();
+            _bagSlotItems = new Dictionary<int, BagSlotItem>();
+            _bagItemData = new Dictionary<int, BagItemData>();
+            foreach (var key in bagItemData.Keys)
+            {
+                var slot = bagItemData[key];
+                _bagItemData.Add(key, slot);
+            }
             var dragImage = dragIcon.GetComponent<Image>();
             dragImage.raycastTarget = false;
             dragImage.transform.SetParent(transform.root, false);
@@ -98,28 +118,40 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             bagItemData.ObserveAdd()
                 .Subscribe(x =>
                 {
-                    _bagItemData.Add(x.Value);
-                    bagItemList.SetItemList(_bagItemData.ToArray());
+                    if (!_bagItemData.ContainsKey(x.Key))
+                    {
+                        _bagItemData.Add(x.Key, x.Value);
+                        bagItemList.AddItem(x.Key, x.Value);
+                    }
                 })
                 .AddTo(this);
             bagItemData.ObserveRemove()
                 .Subscribe(x =>
                 {
-                    _bagItemData.RemoveAll(y => y.Index == x.Key);
-                    bagItemList.SetItemList(_bagItemData.ToArray());
+                    if (_bagItemData.ContainsKey(x.Key))
+                    {
+                        _bagItemData.Remove(x.Key);
+                        bagItemList.RemoveItem(x.Key);
+                    }
                 })
                 .AddTo(this);
             bagItemData.ObserveReplace()
                 .Subscribe(x =>
                 {
-                    var index = _bagItemData.FindIndex(y => y.Index == x.Key);
-                    _bagItemData[index] = x.NewValue;
-                    bagItemList.SetItemList(_bagItemData.ToArray());
+                    _bagItemData[x.Key] = x.NewValue;
+                    bagItemList.ReplaceItem(x.Key, x.NewValue);
+                })
+                .AddTo(this);
+            bagItemData.ObserveReset()
+                .Subscribe(x =>
+                {
+                    _bagItemData.Clear();
+                    bagItemList.Clear();
                 })
                 .AddTo(this);
         }
 
-        private void RefreshBag(List<BagItemData> bagItemData)
+        private void RefreshBag(IDictionary<int, BagItemData> bagItemData)
         {
             // for (var i = 0; i < BagCommonData.maxBagCount; i++)
             // {
@@ -127,19 +159,19 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             //     var data = originalData.ItemName != null ? originalData : new BagItemData();
             //     _bagItemData.Add(data);
             // }
-            bagItemList.SetItemList(bagItemData.ToArray());
+            bagItemList.SetItemList(bagItemData);
         }
         
         private void InitializeEquipSlots()
         {
-            foreach (var item in equipmentItemList.ItemBases)
+            foreach (var key in equipmentItemList.ItemBases.Keys)
             {
-                var slot = item as EquipmentSlotItem;
+                var slot = equipmentItemList.ItemBases[key] as EquipmentSlotItem;
                 if (!slot) continue;
                 slot.OnPointerClickObservable
                     .Subscribe(x => OnEquipClick(slot, x))
                     .AddTo(slot.gameObject);
-                _slotItems.Add(slot);
+                _slotItems.Add(key, slot);
             }
         }
 
@@ -154,8 +186,9 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
         // 初始化格子
         private void InitializeSlots()
         {
-            foreach (var item in bagItemList.ItemBases)
+            foreach (var key in bagItemList.ItemBases.Keys)
             {
+                var item = bagItemList.ItemBases[key];
                 var slot = item as BagSlotItem;
                 if (!slot) continue;
                 slot.OnBeginDragObserver
@@ -170,7 +203,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
                 slot.OnPointerClickObserver
                     .Subscribe(x => OnSlotClick(slot, x))
                     .AddTo(slot.gameObject);
-                _bagSlotItems.Add(slot);
+                _bagSlotItems.Add(key, slot);
             }
         }
 
