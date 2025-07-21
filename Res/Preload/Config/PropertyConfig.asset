@@ -241,13 +241,3 @@ MonoBehaviour:
     animationState: 0
     isHundredPercent: 0
     showInHud: 0
-  - propertyType: 22
-    baseValue: 0
-    minValue: 0
-    maxValue: 15
-    consumeType: 2
-    isHandleWithCorrectFactor: 0
-    description: "\u5B9E\u9645\u7684\u79FB\u52A8\u901F\u5EA6"
-    animationState: 0
-    isHundredPercent: 0
-    showInHud: 1
