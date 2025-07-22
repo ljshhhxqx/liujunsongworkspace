@@ -422,8 +422,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [ClientRpc]
         private void RpcProcessCurrentTickCommand(int connectionId, byte[] state, CommandType commandType)
         {
-            if (isServer)
-                return;
+            // if (isServer)
+            //     return;
             OnClientProcessStateUpdate?.Invoke(connectionId, state, commandType);
         }
 
@@ -433,10 +433,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public event Action OnBroadcastStateUpdate;
         private void BroadcastStateUpdates()
         {
-            if (!isServer)
-            {
-                return;
-            }
             foreach (var commandType in _syncSystems.Keys)
             {
                 var system = _syncSystems.GetValueOrDefault(commandType);
@@ -452,8 +448,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [ClientRpc]
         private void RpcUpdateState()
         {
-            if (isServer && !isClient)
-                return;
             OnBroadcastStateUpdate?.Invoke(); 
         }
 

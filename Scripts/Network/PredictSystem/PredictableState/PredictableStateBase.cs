@@ -117,27 +117,32 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         public virtual void ApplyServerState<T>(T state) where T : ISyncPropertyState
         {
-            CleanupConfirmedCommands(GameSyncManager.CurrentTick);
-            
-            if (NetworkIdentity.isLocalPlayer)
-            {
-                if (NeedsReconciliation(state))
-                {
-                    // 重置到服务器状态
-                    InitCurrentState(state);
-                    
-                    var commands = GetUnconfirmedCommands();
-                    // 仅重放未确认的命令
-                    foreach (var command in commands)
-                    {
-                        Simulate(command);
-                    }
-                }
-                return;
-            }
-            
-            // 非本地玩家直接应用状态
+            //CleanupConfirmedCommands(GameSyncManager.CurrentTick);
             InitCurrentState(state);
+            
+            // if (NetworkIdentity.isLocalPlayer)
+            // {
+            //     //Debug.Log($"[PredictableStateBase] ApplyServerState {state.GetType().Name} at tick {GameSyncManager.CurrentTick}");
+            //     // if (NeedsReconciliation(state))
+            //     // {
+            //     //     Debug.Log($"[PredictableStateBase] Reconciliation needed for {state.GetType().Name} at tick {GameSyncManager.CurrentTick}");
+            //     //     // 重置到服务器状态
+            //     //     InitCurrentState(state);
+            //     //     
+            //     //     var commands = GetUnconfirmedCommands();
+            //     //     // 仅重放未确认的命令
+            //     //     foreach (var command in commands)
+            //     //     {
+            //     //         Simulate(command);
+            //     //     }
+            //     // }
+            //     return;
+            // }
+
+            // if (NetworkIdentity.isClient) 
+            // {
+            //     
+            // }
         }
 
         public abstract bool NeedsReconciliation<T>(T state) where T : ISyncPropertyState;
@@ -145,6 +150,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         public virtual void InitCurrentState<T>(T state) where T : ISyncPropertyState
         {
+            //Debug.Log($"[PredictableStateBase] InitCurrentState {state.GetType().Name} at tick {GameSyncManager.CurrentTick}");
             CurrentState = state;
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using JetBrains.Annotations;
@@ -17,6 +18,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         [MemoryPackOrder(1)] public SubjectedStateType SubjectedState;
         [MemoryPackOrder(2)] public PlayerPropertyState PlayerState;
         public PlayerSyncStateType GetStateType() => PlayerSyncStateType.PlayerProperty;
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"SubjectedState: {SubjectedState}");
+            sb.AppendLine($"PlayerState: {PlayerState}");
+            sb.AppendLine($"MemoryProperty:");
+            foreach (var kvp in MemoryProperty)
+            {
+                sb.AppendLine($"  {kvp.Key.ToString()}: {kvp.Value.CurrentValue} ({kvp.Value.MaxCurrentValue})");
+            }
+
+
+            return sb.ToString();
+        }
 
         // 修改属性访问方式
         public PropertyCalculator GetCalculator(PropertyTypeEnum type)

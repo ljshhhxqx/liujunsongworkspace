@@ -89,10 +89,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         protected override void OnClientProcessStateUpdate(int connectionId, byte[] state, CommandType commandType)
         {
-            if (commandType!= CommandType.Property)
+            if (commandType != CommandType.Property)
             {
                 return;
             }
+            //Debug.Log($"Client Process State Update {connectionId} {commandType}");
             //var playerStates = MemoryPackSerializer.Deserialize<PlayerPredictablePropertyState>(state);
             var playerStates = NetworkCommandExtensions.DeserializePlayerState(state);
             
@@ -106,6 +107,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 PropertyStates[connectionId] = playerStates;
             }
+            else
+            {
+                PropertyStates.Add(connectionId, playerStates);
+            }
+            //Debug.Log($"Player {connectionId} property state updated. {playerStates}");
         }
         
         public override byte[] GetPlayerSerializedState(int connectionId)
