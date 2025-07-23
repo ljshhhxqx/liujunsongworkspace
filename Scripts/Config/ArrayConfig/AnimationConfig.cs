@@ -50,7 +50,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             {
                 return strength * duration >= duration * animationInfo.cost;
             }
-            return strength >= duration;
+            return strength >= animationInfo.cost;
         }
 
         public AnimationInfo GetAnimationInfo(AnimationState state)

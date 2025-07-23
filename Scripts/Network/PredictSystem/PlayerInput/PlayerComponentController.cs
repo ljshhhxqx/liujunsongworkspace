@@ -763,7 +763,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerPropertyCalculator.HandlePropertyRecover(ref playerPredictablePropertyState);
         }
 
-        [Server]
         public void HandleAnimationCost(ref PlayerPredictablePropertyState playerPredictablePropertyState, AnimationState animationState, float cost)
         {
             _playerPropertyCalculator.HandleAnimationCommand(ref playerPredictablePropertyState, animationState, cost);

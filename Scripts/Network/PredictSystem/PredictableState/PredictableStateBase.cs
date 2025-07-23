@@ -117,27 +117,29 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         public virtual void ApplyServerState<T>(T state) where T : ISyncPropertyState
         {
-            //CleanupConfirmedCommands(GameSyncManager.CurrentTick);
-            InitCurrentState(state);
+            CleanupConfirmedCommands(GameSyncManager.CurrentTick);
             
-            // if (NetworkIdentity.isLocalPlayer)
-            // {
-            //     //Debug.Log($"[PredictableStateBase] ApplyServerState {state.GetType().Name} at tick {GameSyncManager.CurrentTick}");
-            //     // if (NeedsReconciliation(state))
-            //     // {
-            //     //     Debug.Log($"[PredictableStateBase] Reconciliation needed for {state.GetType().Name} at tick {GameSyncManager.CurrentTick}");
-            //     //     // 重置到服务器状态
-            //     //     InitCurrentState(state);
-            //     //     
-            //     //     var commands = GetUnconfirmedCommands();
-            //     //     // 仅重放未确认的命令
-            //     //     foreach (var command in commands)
-            //     //     {
-            //     //         Simulate(command);
-            //     //     }
-            //     // }
-            //     return;
-            // }
+            if (NetworkIdentity.isLocalPlayer)
+            {
+                //Debug.Log($"[PredictableStateBase] ApplyServerState {state.GetType().Name} at tick {GameSyncManager.CurrentTick}");
+                 if (NeedsReconciliation(state))
+                 {
+                     //Debug.Log($"[PredictableStateBase] Reconciliation needed for {state.GetType().Name} at tick {GameSyncManager.CurrentTick}");
+                     // 重置到服务器状态
+                     InitCurrentState(state);
+                     
+                     var commands = GetUnconfirmedCommands();
+                     // 仅重放未确认的命令
+                     foreach (var command in commands)
+                     {
+                         Simulate(command);
+                     }
+                 }
+            }
+            else
+            {
+                InitCurrentState(state);
+            }
 
             // if (NetworkIdentity.isClient) 
             // {

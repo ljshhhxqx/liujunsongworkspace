@@ -57,7 +57,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                     {
                         _propertyItemDatas[x.Key] = x.NewValue;
                         contentItemList.ReplaceItem(x.Key, x.NewValue);
-                        Debug.Log($"Replace property {x.Key} {x.NewValue}");
+                        //Debug.Log($"Replace property {x.Key} {x.NewValue}");
                     }
                 })
                 .AddTo(this);
