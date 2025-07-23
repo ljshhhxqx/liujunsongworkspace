@@ -235,7 +235,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .Subscribe(_ => {
                     var movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
                     var animationStates = _inputState.GetAnimationStates();
-                    Debug.Log($"movement - {movement} {animationStates.ToString()}");
+                    //Debug.Log($"movement - {movement} {animationStates.ToString()}");
                     var playerInputStateData = new PlayerInputStateData
                     {
                         InputMovement = movement,

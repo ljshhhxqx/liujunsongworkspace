@@ -53,6 +53,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                     if (Input.GetButton(data.animationKeys[0]))
                         activeKeys =activeKeys.AddState(data.animationState);
                 }
+                if (data.animationState == AnimationState.Attack && Input.GetButton(data.animationKeys[0]))
+                    Debug.Log($"[ GetAllActiveActions]Fire1 activeKeys: {activeKeys}");
             }
             return activeKeys;
         }
