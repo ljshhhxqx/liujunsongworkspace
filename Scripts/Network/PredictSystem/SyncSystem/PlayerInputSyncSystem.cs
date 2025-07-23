@@ -247,6 +247,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 return null;
             if (command is InputCommand inputCommand)
             {
+                if (inputCommand.CommandAnimationState == AnimationState.Attack)
+                {
+                    Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
+                }
                 //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input command {inputCommand.InputMovement} {inputCommand.InputAnimationStates}");
                 var playerSyncSystem = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
                 var playerController = GameSyncManager.GetPlayerConnection(header.ConnectionId);
@@ -326,26 +330,27 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         animationCommand.SkillId = skillConfigData.id;
                         GameSyncManager.EnqueueServerCommand(animationCommand);
                         ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Return(animationCommand);
+                        cooldownInfo?.Use(); 
                         //Debug.Log($" [playerInputSyncSystem]Player {header.ConnectionId} input animation {commandAnimation} cost {info.cost} strength, now strength is {playerProperty[PropertyTypeEnum.Strength].CurrentValue}.");
                     }
 
-                }
-
-                if (skillConfigData.id == 0)
-                {
-                    //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost}");
-                    cooldownInfo?.Use();
-                }
-                else if (skillConfigData.id > 0 && skillConfigData.animationState != AnimationState.None)
-                {
-                    var animationCommand = ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Get(50);
-                    animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property);
-                    animationCommand.AnimationState = skillConfigData.animationState;
-                    animationCommand.SkillId = skillConfigData.id;
-                    GameSyncManager.EnqueueServerCommand(animationCommand);
-                    //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input skill {skillConfigData.id} animation {skillConfigData.animationState} cooldown {skillConfigData.cooldown} cost {skillConfigData.cost}");
                     
-                    cooldownInfo?.Use();
+                    else if (skillConfigData.animationState != AnimationState.None)
+                    {
+                        cooldownInfo?.Use(); 
+                    }
+                    // else if (skillConfigData.id > 0 && skillConfigData.animationState != AnimationState.None)
+                    // {
+                    //     var animationCommand = ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Get(50);
+                    //     animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property);
+                    //     animationCommand.AnimationState = skillConfigData.animationState;
+                    //     animationCommand.SkillId = skillConfigData.id;
+                    //     GameSyncManager.EnqueueServerCommand(animationCommand);
+                    //     //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input skill {skillConfigData.id} animation {skillConfigData.animationState} cooldown {skillConfigData.cooldown} cost {skillConfigData.cost}");
+                    //
+                    //     cooldownInfo?.Use();
+                    // }
+
                 }
                 
                 var playerGameStateData = playerController.HandleServerMoveAndAnimation(inputStateData);

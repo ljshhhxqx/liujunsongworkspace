@@ -92,6 +92,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             var header = command.GetHeader();
             if (header.CommandType == CommandType.Input && command is InputCommand inputCommand && IsInSpecialState?.Invoke() == false)
             {
+                if (inputCommand.CommandAnimationState == AnimationState.Attack)
+                {
+                    Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
+                }
                 //Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
                 var info = _animationConfig.GetAnimationInfo(inputCommand.CommandAnimationState);
                 var actionType = info.actionType;

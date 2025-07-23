@@ -235,6 +235,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .Subscribe(_ => {
                     var movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
                     var animationStates = _inputState.GetAnimationStates();
+                    if (animationStates.HasAnyState(AnimationState.Attack))
+                    {
+                        Debug.Log($"[PlayerInputController] Attack");
+                    }
+                    else if (animationStates.HasAnyState(AnimationState.Roll))
+                    {
+                        Debug.Log($"[PlayerInputController] Roll");
+                    }
+                    else if (animationStates.HasAnyState(AnimationState.Jump))
+                    {
+                        Debug.Log($"[PlayerInputController] Jump");
+                    }
                     var playerInputStateData = new PlayerInputStateData
                     {
                         InputMovement = movement,
@@ -252,6 +264,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     {
                         //Debug.LogWarning($"[PlayerInputController] Animation cooldown {animationCooldown.AnimationState} is ready => {animationCooldown.IsReady()}.");
                         playerInputStateData.Command = animationCooldown.IsReady() ? command : AnimationState.None;
+                    }
+                    if (playerInputStateData.Command == AnimationState.Attack)
+                    {
+                        Debug.Log($"[PlayerInputController] Attack");
                     }
                     _playerInputStateData = playerInputStateData;
                     _inputStream.OnNext(_playerInputStateData);

@@ -24,6 +24,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 data.animationState = (AnimationState) Enum.Parse(typeof(AnimationState), key[0]);
                 data.isComboKey = bool.Parse(key[1]);
                 data.animationKeys = JsonConvert.DeserializeObject<string[]>(key[2]);
+                data.isGetButton = bool.Parse(key[3]);
                 keyAnimationConfigData.Add(data);
             }
         }
@@ -38,9 +39,19 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                     var isComboKeysPressed = true;
                     foreach (var key in data.animationKeys)
                     {
-                        if (!Input.GetButton(key))
+                        if (data.isGetButton)
                         {
-                            isComboKeysPressed = false;
+                            if (!Input.GetButton(key))
+                            {
+                                isComboKeysPressed = false;
+                            }
+                        }
+                        else
+                        {
+                            if (!Input.GetButtonDown(key))
+                            {
+                                isComboKeysPressed = false;
+                            }
                         }
                     }
                     if (isComboKeysPressed)
@@ -50,8 +61,17 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 }
                 else
                 {
-                    if (Input.GetButton(data.animationKeys[0]))
-                        activeKeys =activeKeys.AddState(data.animationState);
+                    if (data.isGetButton)
+                    {
+                        if (Input.GetButton(data.animationKeys[0]))
+                            activeKeys = activeKeys.AddState(data.animationState);
+                    }
+                    else
+                    {
+
+                        if (Input.GetButtonDown(data.animationKeys[0]))
+                            activeKeys =activeKeys.AddState(data.animationState);
+                    }
                 }
             }
             return activeKeys;
@@ -64,5 +84,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public AnimationState animationState;
         public bool isComboKey;
         public string[] animationKeys;
+        public bool isGetButton;
     }
 }

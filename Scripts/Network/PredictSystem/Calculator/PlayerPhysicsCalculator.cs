@@ -282,9 +282,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
         public void HandlePlayerRoll()
         {
-            DelayInvoker.DelayInvoke(0.2f, () =>
+            DelayInvoker.DelayInvoke(0.3f, () =>
             {
-                _physicsComponent.Rigidbody.AddForce(_physicsComponent.Rigidbody.transform.forward.normalized * _physicsDetermineConstant.RollForce, ForceMode.Impulse);
+                _physicsComponent.Rigidbody.AddForce(_physicsComponent.Rigidbody.transform.forward.normalized * _physicsDetermineConstant.RollForce, ForceMode.VelocityChange);
             });
             
         }
