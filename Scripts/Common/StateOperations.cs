@@ -11,46 +11,46 @@ namespace HotUpdate.Scripts.Common
         public static T AddState<T>(this T currentState, T statesToAdd) where T : unmanaged, Enum
         {
             ValidateEnumType<T>();
-            byte result = (byte)(currentState.ToByte() | statesToAdd.ToByte());
-            return Unsafe.As<byte, T>(ref result);
+            var result = (currentState.ToInt32() | statesToAdd.ToInt32());
+            return Unsafe.As<int, T>(ref result);
         }
 
         // 移除状态（无装箱）
         public static T RemoveState<T>(this T currentState, T statesToRemove) where T : unmanaged, Enum
         {
             ValidateEnumType<T>();
-            byte result = (byte)(currentState.ToByte() & ~statesToRemove.ToByte());
+            var result = (currentState.ToInt32() & ~statesToRemove.ToInt32());
             
-            return Unsafe.As<byte, T>(ref result);
+            return Unsafe.As<int, T>(ref result);
         }
 
         // 切换状态（无装箱）
         public static T ToggleState<T>(this T currentState, T statesToToggle) where T : unmanaged, Enum
         {
             ValidateEnumType<T>();
-            byte result = (byte)(currentState.ToByte() ^ statesToToggle.ToByte());
-            return Unsafe.As<byte, T>(ref result);
+            var result = (currentState.ToInt32() ^ statesToToggle.ToInt32());
+            return Unsafe.As<int, T>(ref result);
         }
 
         // 检查是否包含所有状态
         public static bool HasAllStates<T>(this T currentState, T requiredStates) where T : unmanaged, Enum
         {
             ValidateEnumType<T>();
-            return (currentState.ToByte() & requiredStates.ToByte()) == requiredStates.ToByte();
+            return (currentState.ToInt32() & requiredStates.ToInt32()) == requiredStates.ToInt32();
         }
 
         // 检查是否包含任意状态
         public static bool HasAnyState<T>(this T currentState, T anyStates) where T : unmanaged, Enum
         {
             ValidateEnumType<T>();
-            return (currentState.ToByte() & anyStates.ToByte()) != 0;
+            return (currentState.ToInt32() & anyStates.ToInt32()) != 0;
         }
         // 新增扩展方法
         public static IEnumerable<T> GetActiveStates<T>(this T currentState) where T : unmanaged, Enum
         {
             ValidateEnumType<T>();
-            byte state = currentState.ToByte();
-            return FlagCache<T>.Flags.Where(flag => (state & flag.ToByte()) != 0);
+            var state = currentState.ToInt32();
+            return FlagCache<T>.Flags.Where(flag => (state & flag.ToInt32()) != 0);
         }
 
         // 新增缓存结构（线程安全且无反射开销）
@@ -60,7 +60,7 @@ namespace HotUpdate.Scripts.Common
 
             private static IReadOnlyList<T> InitFlags()
             {
-                HashSet<byte> seenValues = new();
+                HashSet<int> seenValues = new();
                 List<T> validFlags = new();
 
                 foreach (T value in Enum.GetValues(typeof(T)))
@@ -96,6 +96,12 @@ namespace HotUpdate.Scripts.Common
         private static byte ToByte<T>(this T value) where T : unmanaged, Enum
         {
             return Unsafe.As<T, byte>(ref value);
+        }
+        
+        // 高性能的 ToInt32 转换（避免 IConvertible 接口调用）
+        private static int ToInt32<T>(this T value) where T : unmanaged, Enum
+        {
+            return Unsafe.As<T, int>(ref value);
         }
         
     }
