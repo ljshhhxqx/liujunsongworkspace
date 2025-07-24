@@ -32,13 +32,15 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public AnimationState GetAllActiveActions()
         {
             var activeKeys = AnimationState.None;
-            foreach (var data in keyAnimationConfigData)
+            for (int i = keyAnimationConfigData.Count - 1; i >= 0 ; i--)
             {
+                var data = keyAnimationConfigData[i]; 
                 if (data.isComboKey)
                 {
                     var isComboKeysPressed = true;
-                    foreach (var key in data.animationKeys)
+                    for (int j = 0; j < data.animationKeys.Length; j++)
                     {
+                        var key = data.animationKeys[j];
                         if (data.isGetButton)
                         {
                             if (!Input.GetButton(key))
@@ -73,7 +75,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                             activeKeys =activeKeys.AddState(data.animationState);
                     }
                 }
-                if (data.animationState == AnimationState.Attack && Input.GetButton(data.animationKeys[0]))
+                if (data.animationState == AnimationState.Attack && Input.GetButtonDown(data.animationKeys[0]))
                     Debug.Log($"[ GetAllActiveActions]Fire1 activeKeys: {activeKeys}");
             }
             return activeKeys;

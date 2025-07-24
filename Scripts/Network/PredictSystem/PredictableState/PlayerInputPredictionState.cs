@@ -122,17 +122,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 return;
             }
             
-
             foreach (var kvp in snapshot)
             {
                 if (_animationStateDataDict.TryGetValue((int)kvp.Key, out var animationData))
                 {
-                    if (!Mathf.Approximately(animationData.Timer, kvp.Value.KeyframeCurrentTime))
+                    //Debug.Log($"[UpdateUIAnimation] {animationData.ToString()}");
+                    if (!Mathf.Approximately(animationData.Timer, kvp.Value.CurrentCountdown))
                     {
                         animationData.Timer = kvp.Value.CurrentCountdown;
-                        animationData.Index = kvp.Value.CurrentAttackStage;
-                        _animationStateDataDict[(int)kvp.Key] = animationData;
                     }
+                    animationData.Index = kvp.Value.CurrentAttackStage;
+                    _animationStateDataDict[(int)kvp.Key] = animationData;
                 }
             }
         }
@@ -152,10 +152,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             var header = command.GetHeader();
             if (header.CommandType == CommandType.Input && command is InputCommand inputCommand && IsInSpecialState?.Invoke() == false)
             {
-                if (inputCommand.CommandAnimationState == AnimationState.Attack)
-                {
-                    Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
-                }
+                // if (inputCommand.CommandAnimationState == AnimationState.Attack)
+                // {
+                //     Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
+                // }
                 //Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
                 var info = _animationConfig.GetAnimationInfo(inputCommand.CommandAnimationState);
                 var actionType = info.actionType;
@@ -206,10 +206,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     animationCommand.SkillId = skillConfigData.id;
                     _propertyPredictionState.AddPredictedCommand(animationCommand);
                     cooldownInfo?.Use(); 
+                    Debug.Log($"[Simulate] [Normal] - CommandAnimationState:{inputCommand.CommandAnimationState} - cooldown:{cooldown} - cost:{cost}");
                 }
 
                 if (skillConfigData.animationState != AnimationState.None)
                 {
+                    Debug.Log($"[Simulate] [Skill] - CommandAnimationState:{inputCommand.CommandAnimationState} - cooldown:{cooldown} - cost:{cost}");
+
                     cooldownInfo?.Use(); 
                 }
 

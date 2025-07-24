@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
@@ -54,6 +55,20 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
             Icon = null;
             Frame = null;
             Cost = 0f;
+        }
+
+        public override string ToString()
+        {
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append($"动画{State} 状态：");
+            stringBuilder.AppendFormat("-Index:{0}", Index);
+            stringBuilder.AppendFormat("-Duration:{0}", Duration);
+            stringBuilder.AppendFormat("-Timer:{0}", Timer);
+            stringBuilder.AppendFormat("-Cost:{0}", Cost);
+            stringBuilder.AppendFormat("-Icon:{0}", Icon);
+            stringBuilder.AppendFormat("-Frame:{0}", Frame);
+            stringBuilder.AppendFormat("-Cost:{0}", Cost);
+            return stringBuilder.ToString();
         }
     }
     

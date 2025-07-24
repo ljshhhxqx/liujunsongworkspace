@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using MemoryPack;
 using UniRx;
@@ -159,6 +160,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         }
     }
     
+    //关键帧动画冷却
     public class KeyframeCooldown : IAnimationCooldown
     {
         private float _currentTime;
@@ -204,6 +206,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public void Update(float deltaTime)
         {
+
+            if (_currentTime <= 0)
+            {
+                return;
+            }
             if (_windowCountdown > 0)
             {
                 _windowCountdown = Mathf.Max(0, _windowCountdown - deltaTime);
@@ -211,16 +218,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                     Use();
                 return;
             }
-
-            _currentTime += deltaTime;
+            _currentTime -= deltaTime;
 
             foreach (var kf in _timeline)
             {
                 if (_currentTime >= kf.triggerTime - kf.tolerance && 
                     _currentTime <= kf.triggerTime + kf.tolerance &&
-                    !_triggeredEvents.Contains(kf.eventType))
+                    _triggeredEvents.Add(kf.eventType))
                 {
-                    _triggeredEvents.Add(kf.eventType);
                     _eventStream.OnNext(kf.eventType);
                 
                     if (kf.resetCooldown)
@@ -305,6 +310,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public void Update(float deltaTime)
         {
+            if (_currentCountdown == 0)
+            {
+                return;
+            }
             if (_currentTime > 0)
             {
                 // 全局冷却中
@@ -447,6 +456,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         
         public void Update(float deltaTime)
         {
+            if (_currentCountdown == 0)
+            {
+                return;
+            }
             _currentCountdown = Mathf.Max(0, _currentCountdown - deltaTime);
         }
         
@@ -483,7 +496,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     
     // 快照数据结构优化
     [MemoryPackable]
-    public partial struct CooldownSnapshotData : IEquatable<CooldownSnapshotData>
+    public partial struct CooldownSnapshotData : IEquatable<CooldownSnapshotData>, IPoolObject
     {
         // 通用字段
         [MemoryPackOrder(0)] public AnimationState AnimationState;
@@ -683,6 +696,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             snapshotData.WindowCountdown = 0;
             snapshotData.ResetCooldownWindow = 0;
             return snapshotData;
+        }
+
+        public void Init()
+        {
+            
+        }
+
+        public void Clear()
+        {
+            Reset(this);
         }
     }
 

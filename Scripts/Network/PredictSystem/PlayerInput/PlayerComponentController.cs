@@ -551,7 +551,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             {
                 return;
             }
-            //Debug.Log($"[HandlePlayerSpecialAction] Animation State: {animationState}");
+            Debug.Log($"[HandlePlayerSpecialAction] Animation State: {animationState}");
             switch (animationState)
             {
                 case AnimationState.Jump:
@@ -718,13 +718,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private DetermineAnimationStateParams CreateDetermineAnimationStateParams(PlayerInputStateData inputData)
         {
-            return new DetermineAnimationStateParams
-            {
-                InputMovement = inputData.InputMovement,
-                InputAnimationStates = inputData.InputAnimations,                
-                GroundDistance = _groundDistanceStream.Value,
-                EnvironmentState = _gameStateStream.Value,
-            };            
+            var param = ObjectPoolManager<DetermineAnimationStateParams>.Instance.Get(15);
+            param.InputMovement = inputData.InputMovement;
+            param.InputAnimationStates = inputData.InputAnimations;
+            param.GroundDistance = _groundDistanceStream.Value;
+            param.EnvironmentState = _gameStateStream.Value;
+            ObjectPoolManager<DetermineAnimationStateParams>.Instance.Return(param);
+            return param;    
             
         }
 
@@ -733,14 +733,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
            // Debug.Log($"[HandleMoveAndAnimation]- inputData.InputMovement ->{inputData.InputMovement} inputData.InputAnimations.Count ->{inputData.InputAnimations} inputData.Command->{inputData.Command}");
             var cameraForward = Vector3.Scale(_camera.transform.forward, new Vector3(1, 0, 1)).normalized;
             //移动
-            _playerPhysicsCalculator.HandleMove(new MoveParam
-            {
-                InputMovement = inputData.InputMovement,
-                DeltaTime = FixedDeltaTime,
-                IsMovingState = _playerAnimationCalculator.IsMovingState(),
-                CameraForward = _playerPhysicsCalculator.CompressYaw(cameraForward.y),
-                IsClearVelocity = PlayerAnimationCalculator.IsClearVelocity(inputData.Command),
-            }, isLocalPlayer);
+            var movePara = ObjectPoolManager<MoveParam>.Instance.Get(30);
+            movePara.InputMovement = inputData.InputMovement;
+            movePara.IsMovingState = _playerAnimationCalculator.IsMovingState();
+            movePara.CameraForward = _playerPhysicsCalculator.CompressYaw(cameraForward.y);
+            movePara.IsClearVelocity = PlayerAnimationCalculator.IsClearVelocity(inputData.Command);
+            movePara.DeltaTime = FixedDeltaTime;
+            ObjectPoolManager<MoveParam>.Instance.Return(movePara);
+            _playerPhysicsCalculator.HandleMove(movePara, isLocalPlayer);
             //执行动画
             _playerAnimationCalculator.HandleAnimation(inputData.Command);
             var data = ObjectPoolManager<PlayerGameStateData>.Instance.Get(30);
@@ -909,32 +909,28 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private List<IAnimationCooldown> GetAnimationCooldowns()
         {
             var list = new List<IAnimationCooldown>();
-            var animationStates = Enum.GetValues(typeof(AnimationState)).Cast<AnimationState>();
             var config = _configProvider.GetConfig<AnimationConfig>();
-            foreach (var animationState in animationStates)
+            var animations = config.AnimationInfos;
+            for (int i = 0; i < animations.Count; i++)
             {
-                if (animationState == AnimationState.None)
-                {
-                    continue;
-                }
-                var info = config.GetAnimationInfo(animationState);
-                if (info.cooldown == 0)
+                var info = animations[i];
+                if (!info.showInHud)
                 {
                     continue;
                 }
                 switch (info.cooldownType)
                 {
                     case CooldownType.Normal:
-                        list.Add(new AnimationCooldown(animationState, info.cooldown, 1));
+                        list.Add(new AnimationCooldown(info.state, info.cooldown, 1));
                         break;
                     case CooldownType.KeyFrame:
-                        list.Add(new KeyframeCooldown(animationState, info.cooldown, info.keyframeData.ToList(), 1));
+                        list.Add(new KeyframeCooldown(info.state, info.cooldown, info.keyframeData.ToList(), 1));
                         break;
                     case CooldownType.Combo:
-                        list.Add(new ComboCooldown(animationState, info.keyframeData.Select(x => x.resetCooldownWindowTime).ToList(), info.cooldown, 1));
+                        list.Add(new ComboCooldown(info.state, info.keyframeData.Select(x => x.resetCooldownWindowTime).ToList(), info.cooldown, 1));
                         break;
                     case CooldownType.KeyFrameAndCombo:
-                        list.Add(new KeyframeComboCooldown(animationState, info.cooldown, info.keyframeData.ToList(), 1));
+                        list.Add(new KeyframeComboCooldown(info.state, info.cooldown, info.keyframeData.ToList(), 1));
                         break;
                 }
             }

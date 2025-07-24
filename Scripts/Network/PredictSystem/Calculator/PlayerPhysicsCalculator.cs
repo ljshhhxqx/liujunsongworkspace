@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Tool.Coroutine;
@@ -282,7 +283,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
         public void HandlePlayerRoll()
         {
-            DelayInvoker.DelayInvoke(0.3f, () =>
+            DelayInvoker.DelayInvoke(0.5f, () =>
             {
                 _physicsComponent.Rigidbody.AddForce(_physicsComponent.Rigidbody.transform.forward.normalized * _physicsDetermineConstant.RollForce, ForceMode.VelocityChange);
             });
@@ -424,7 +425,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         }
     }
 
-    public struct MoveParam
+    public struct MoveParam : IPoolObject
     {
         public Vector3 InputMovement;
         public float DeltaTime;
@@ -439,6 +440,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             IsMovingState = isMovingState;
             CameraForward = cameraForward;
             IsClearVelocity = isClearVelocity;
+        }
+
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            InputMovement = Vector3.zero;
+            DeltaTime = 0;
+            IsMovingState = false;
+            CameraForward = 0;
+            IsClearVelocity = false;
         }
     }
     

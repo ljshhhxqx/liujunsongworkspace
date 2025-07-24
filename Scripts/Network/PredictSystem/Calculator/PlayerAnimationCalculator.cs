@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
@@ -128,6 +129,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     }
                     else
                     {
+                       // Debug.Log($"[UpdateAnimationState] {info.state}");
                         newState = info.state;
                     }
                     break;
@@ -418,7 +420,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public Animator Animator;
     }
 
-    public struct DetermineAnimationStateParams
+    public struct DetermineAnimationStateParams : IPoolObject
     {
         public Vector3 InputMovement;
         public PlayerEnvironmentState EnvironmentState;
@@ -431,6 +433,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             EnvironmentState = environmentState;
             GroundDistance = groundDistance;
             InputAnimationStates = inputAnimationStates;
+        }
+
+        public void Init()
+        {
+            
+        }
+
+        public void Clear()
+        {
+            InputMovement = Vector3.zero;
+            EnvironmentState = PlayerEnvironmentState.InAir;
+            GroundDistance = 0f;
+            InputAnimationStates = AnimationState.None;
         }
     }
         

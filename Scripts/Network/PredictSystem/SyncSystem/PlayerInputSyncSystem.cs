@@ -129,11 +129,39 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerPredictableState = player.GetComponent<PlayerInputPredictionState>();
             var playerInputState = new PlayerInputState(new PlayerGameStateData(),
-                new PlayerAnimationCooldownState(new MemoryDictionary<AnimationState, CooldownSnapshotData>()));
+                new PlayerAnimationCooldownState(GetStateAnimationCooldowns()));
             PropertyStates.TryAdd(connectionId, playerInputState);
             _inputPredictionStates.TryAdd(connectionId, playerPredictableState);
             RpcSetPlayerInputState(connectionId, NetworkCommandExtensions.SerializePlayerState(playerInputState).Item1);
             BindAniEvents(connectionId);
+        }
+
+        private MemoryDictionary<AnimationState, CooldownSnapshotData> GetStateAnimationCooldowns()
+        {
+            var dic = new MemoryDictionary<AnimationState, CooldownSnapshotData>(_animationConfig.AnimationInfos.Count);
+            for (int i = 0; i < _animationConfig.AnimationInfos.Count; i++)
+            {
+                var animationInfo = _animationConfig.AnimationInfos[i];
+                if (!animationInfo.showInHud)
+                {
+                    continue;
+                }
+                var data = ObjectPoolManager<CooldownSnapshotData>.Instance.Get(_animationConfig.AnimationInfos.Count);
+                data.AnimationState = animationInfo.state;
+                data.Cooldown = animationInfo.cooldown;
+                data.AnimationSpeed = 1;
+                if (animationInfo.keyframeData == null || animationInfo.keyframeData.Length == 0)
+                {
+                    dic.Add(animationInfo.state, data);
+                    continue;
+                }
+                data.AttackWindow = animationInfo.keyframeData[0].resetCooldownWindowTime;
+                data.ResetCooldownWindow = animationInfo.keyframeData[0].resetCooldownWindowTime;
+                data.MaxAttackCount = animationInfo.keyframeData.Length;
+                dic.Add(animationInfo.state, data);
+            }
+
+            return dic;
         }
 
         [ClientRpc]
@@ -212,6 +240,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private void HandlePlayerAttack(int connectionId)
         {
+            Debug.Log($"[HandlePlayerAttack] player {connectionId} attack");
             var playerController = GameSyncManager.GetPlayerConnection(connectionId);
             var propertySyncSystem = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
             var playerProperty = propertySyncSystem.GetPlayerProperty(connectionId);
@@ -247,10 +276,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 return null;
             if (command is InputCommand inputCommand)
             {
-                if (inputCommand.CommandAnimationState == AnimationState.Attack)
-                {
-                    Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
-                }
+                // if (inputCommand.CommandAnimationState == AnimationState.Attack)
+                // {
+                //     Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
+                // }
                 //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input command {inputCommand.InputMovement} {inputCommand.InputAnimationStates}");
                 var playerSyncSystem = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
                 var playerController = GameSyncManager.GetPlayerConnection(header.ConnectionId);
@@ -331,7 +360,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         GameSyncManager.EnqueueServerCommand(animationCommand);
                         ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Return(animationCommand);
                         cooldownInfo?.Use(); 
-                        //Debug.Log($" [playerInputSyncSystem]Player {header.ConnectionId} input animation {commandAnimation} cost {info.cost} strength, now strength is {playerProperty[PropertyTypeEnum.Strength].CurrentValue}.");
+                        Debug.Log($" [playerInputSyncSystem]Player {header.ConnectionId} input animation {commandAnimation} cost {info.cost} strength, now strength is {playerProperty[PropertyTypeEnum.Strength].CurrentValue}.");
                     }
 
                     
