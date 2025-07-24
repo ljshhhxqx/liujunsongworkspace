@@ -160,7 +160,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         }
     }
     
-    //关键帧动画冷却
     public class KeyframeCooldown : IAnimationCooldown
     {
         private float _currentTime;
@@ -206,11 +205,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public void Update(float deltaTime)
         {
-
-            if (_currentTime <= 0)
+            if (_currentCountdown > 0)
             {
-                return;
+                _currentCountdown = Mathf.Max(0, _currentCountdown - deltaTime);
             }
+
             if (_windowCountdown > 0)
             {
                 _windowCountdown = Mathf.Max(0, _windowCountdown - deltaTime);
@@ -218,14 +217,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                     Use();
                 return;
             }
-            _currentTime -= deltaTime;
+
+            _currentTime += deltaTime;
 
             foreach (var kf in _timeline)
             {
                 if (_currentTime >= kf.triggerTime - kf.tolerance && 
                     _currentTime <= kf.triggerTime + kf.tolerance &&
-                    _triggeredEvents.Add(kf.eventType))
+                    !_triggeredEvents.Contains(kf.eventType))
                 {
+                    _triggeredEvents.Add(kf.eventType);
                     _eventStream.OnNext(kf.eventType);
                 
                     if (kf.resetCooldown)
@@ -310,9 +311,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public void Update(float deltaTime)
         {
-            if (_currentCountdown == 0)
+            if (_currentCountdown > 0)
             {
-                return;
+                _currentCountdown = Mathf.Max(0, _currentCountdown - deltaTime);
             }
             if (_currentTime > 0)
             {
@@ -456,7 +457,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         
         public void Update(float deltaTime)
         {
-            if (_currentCountdown == 0)
+            if (_currentCountdown <= 0)
             {
                 return;
             }
@@ -705,7 +706,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public void Clear()
         {
-            Reset(this);
+            AnimationSpeed = 0;
+            CurrentCountdown = 0;
+            KeyframeCurrentTime = 0;
+            ResetCooldownWindow = 0;
+            CurrentAttackStage = 0;
+            IsInComboWindow = false;
+            WindowCountdown = 0;
+            MaxAttackCount = 0;
+            AttackWindow = 0;
         }
     }
 
