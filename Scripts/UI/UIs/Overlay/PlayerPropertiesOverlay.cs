@@ -49,7 +49,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                 _propertyItemDatas.Add(key, slot);
             }
 
-            contentItemList.SetItemList(playerPropertyData);
+            contentItemList.SetItemList(_propertyItemDatas);
             playerPropertyData.ObserveReplace()
                 .Subscribe(x =>
                 {

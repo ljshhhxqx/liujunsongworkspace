@@ -23,6 +23,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         PlayerTraceOtherPlayerHp,
         [UIPropertyType(typeof(PlayerControlData))]
         PlayerControl,
+        [UIPropertyType(typeof(AnimationStateData))]
+        Animation
     }
 
     // 复合键结构（玩家ID + 数据Key）

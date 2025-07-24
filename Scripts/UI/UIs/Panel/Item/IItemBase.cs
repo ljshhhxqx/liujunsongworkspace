@@ -1,9 +1,9 @@
 using System;
+using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
-using UniRx;
 using UnityEngine;
-using UnityEngine.UI;
+using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.UI.UIs.Panel.Item
 {
@@ -21,6 +21,40 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
     public interface IItemBaseData : IUIDatabase
     {
         
+    }
+
+    public struct AnimationStateData : IItemBaseData, IEquatable<AnimationStateData>, IPoolObject
+    {
+        public AnimationState State;
+        public float Duration;
+        public float Timer;
+        public float Cost;
+        public int Index;
+        public Sprite Icon;
+        public Sprite Frame;
+        
+        public bool Equals(AnimationStateData other)
+        {
+            return this.State == other.State && Mathf.Approximately(this.Duration, other.Duration) && 
+                   this.Index == other.Index && Mathf.Approximately(this.Timer, other.Timer) && 
+                   this.Icon == other.Icon && this.Frame == other.Frame && Mathf.Approximately(this.Cost, other.Cost);
+        }
+
+        public void Init()
+        {
+            
+        }
+
+        public void Clear()
+        {
+            State = AnimationState.None;
+            Duration = 0f;
+            Timer = 0f;
+            Index = 0;
+            Icon = null;
+            Frame = null;
+            Cost = 0f;
+        }
     }
     
     public struct RoomMemberItemData : IItemBaseData, IEquatable<RoomMemberItemData>

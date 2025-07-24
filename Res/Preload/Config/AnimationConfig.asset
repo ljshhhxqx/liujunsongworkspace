@@ -34,6 +34,7 @@ MonoBehaviour:
     isClearVelocity: 0
     cooldownType: 0
     noStrengthState: 0
+    showInHud: 0
   - state: 2
     cost: 0
     cooldown: 0
@@ -47,6 +48,7 @@ MonoBehaviour:
     isClearVelocity: 0
     cooldownType: 0
     noStrengthState: 0
+    showInHud: 0
   - state: 4
     cost: 15
     cooldown: 0
@@ -59,7 +61,8 @@ MonoBehaviour:
     keyframeData: []
     isClearVelocity: 0
     cooldownType: 0
-    noStrengthState: 0
+    noStrengthState: 2
+    showInHud: 0
   - state: 8
     cost: 10
     cooldown: 1
@@ -73,6 +76,7 @@ MonoBehaviour:
     isClearVelocity: 0
     cooldownType: 0
     noStrengthState: 0
+    showInHud: 1
   - state: 16
     cost: 12
     cooldown: 1
@@ -86,6 +90,7 @@ MonoBehaviour:
     isClearVelocity: 0
     cooldownType: 0
     noStrengthState: 0
+    showInHud: 1
   - state: 32
     cost: 20
     cooldown: 2
@@ -111,6 +116,7 @@ MonoBehaviour:
     isClearVelocity: 1
     cooldownType: 1
     noStrengthState: 0
+    showInHud: 1
   - state: 64
     cost: 0
     cooldown: 0
@@ -124,6 +130,7 @@ MonoBehaviour:
     isClearVelocity: 0
     cooldownType: 0
     noStrengthState: 0
+    showInHud: 0
   - state: 128
     cost: 0
     cooldown: 0
@@ -137,6 +144,7 @@ MonoBehaviour:
     isClearVelocity: 0
     cooldownType: 0
     noStrengthState: 0
+    showInHud: 0
   - state: 256
     cost: 10
     cooldown: 2
@@ -170,6 +178,7 @@ MonoBehaviour:
     isClearVelocity: 1
     cooldownType: 3
     noStrengthState: 0
+    showInHud: 1
   - state: 512
     cost: 0
     cooldown: 10
@@ -183,6 +192,7 @@ MonoBehaviour:
     isClearVelocity: 1
     cooldownType: 0
     noStrengthState: 0
+    showInHud: 0
   - state: 1024
     cost: 0
     cooldown: 0
@@ -196,6 +206,7 @@ MonoBehaviour:
     isClearVelocity: 1
     cooldownType: 0
     noStrengthState: 0
+    showInHud: 0
   - state: 2048
     cost: 0
     cooldown: 0
@@ -209,6 +220,7 @@ MonoBehaviour:
     isClearVelocity: 0
     cooldownType: 0
     noStrengthState: 0
+    showInHud: 0
   - state: 4096
     cost: 70
     cooldown: 15
@@ -228,6 +240,7 @@ MonoBehaviour:
     isClearVelocity: 1
     cooldownType: 1
     noStrengthState: 0
+    showInHud: 1
   - state: 8192
     cost: 70
     cooldown: 15
@@ -247,3 +260,4 @@ MonoBehaviour:
     isClearVelocity: 1
     cooldownType: 1
     noStrengthState: 0
+    showInHud: 1

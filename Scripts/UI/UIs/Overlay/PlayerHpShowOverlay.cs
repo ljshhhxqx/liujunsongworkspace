@@ -33,12 +33,18 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
             playerHpItemDatas.ObserveAdd().Subscribe(x =>
             {
+                if (_playerHpItemDatas.ContainsKey(x.Key))
+                {
+                    return;
+                }
                 _playerHpItemDatas.Add(x.Key, x.Value);
                 contentItemList.AddItem(x.Key, x.Value);
                 SetItemDataAndShow(_playerHpItemDatas);
             }).AddTo(this);
             playerHpItemDatas.ObserveRemove().Subscribe(x =>
             {
+                if (!_playerHpItemDatas.ContainsKey(x.Key))
+                    return;
                 _playerHpItemDatas.Remove(x.Key);
                 contentItemList.RemoveItem(x.Key);
                 SetItemDataAndShow(_playerHpItemDatas);

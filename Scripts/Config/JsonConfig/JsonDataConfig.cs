@@ -667,20 +667,35 @@ namespace HotUpdate.Scripts.Config.JsonConfig
     [Flags]
     public enum AnimationState
     {
+        [Header("无")]
         None = 0,
+        [Header("待机")]
         Idle = 1 << 0,
+        [Header("移动")]
         Move = 1 << 1,
+        [Header("奔跑")]
         Sprint = 1 << 2,
+        [Header("跳跃")]
         Jump = 1 << 3,
+        [Header("跑跳")]
         SprintJump = 1 << 4,
+        [Header("翻滚")]
         Roll = 1 << 5,
+        [Header("下落")]
         Falling = 1 << 6,
+        [Header("起跳")]
         Landed = 1 << 7,
+        [Header("攻击")]
         Attack = 1 << 8,
+        [Header("死亡")]
         Dead = 1 << 9,
+        [Header("受击")]
         Hit = 1 << 10,
+        [Header("收集")]
         Collect = 1 << 11,
+        [Header("技能E")]
         SkillE = 1 << 12,
+        [Header("技能Q")]
         SkillQ = 1 << 13,
     }
     

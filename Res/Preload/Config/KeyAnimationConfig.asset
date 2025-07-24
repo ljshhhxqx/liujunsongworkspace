@@ -25,32 +25,40 @@ MonoBehaviour:
     isComboKey: 0
     animationKeys:
     - Running
+    isGetButton: 1
   - animationState: 8
     isComboKey: 0
     animationKeys:
     - Jump
+    isGetButton: 0
   - animationState: 16
     isComboKey: 1
     animationKeys:
     - Running
     - Jump
+    isGetButton: 0
   - animationState: 32
     isComboKey: 0
     animationKeys:
     - Roll
+    isGetButton: 0
   - animationState: 256
     isComboKey: 0
     animationKeys:
     - Fire1
+    isGetButton: 0
   - animationState: 2048
     isComboKey: 0
     animationKeys:
     - Collect
+    isGetButton: 0
   - animationState: 4096
     isComboKey: 0
     animationKeys:
     - SkillE
+    isGetButton: 0
   - animationState: 8192
     isComboKey: 0
     animationKeys:
     - SkillQ
+    isGetButton: 0

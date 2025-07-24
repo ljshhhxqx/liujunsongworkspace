@@ -198,10 +198,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 _playerTraceOtherPlayerHpBindKey = new BindingKey(UIPropertyDefine.PlayerTraceOtherPlayerHp, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
                 HandleLocalInitCallback();
                 _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter));
-                for (int i = 0; i < _predictionStates.Count; i++)
-                {
-                    //_predictionStates[i].OnStartLocalPlayer();
-                }
             }
             _capsuleCollider.OnTriggerEnterAsObservable()
                 .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
@@ -563,11 +559,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     _playerPhysicsCalculator.HandlePlayerJump();
                     break;
                 case AnimationState.Roll:
-                    //_rigidbody.velocity = Vector3.zero;
+                    _rigidbody.velocity = Vector3.zero;
                     _playerPhysicsCalculator.HandlePlayerRoll();
                     break;
-                case AnimationState.Dead:
-                case AnimationState.Hit:
+                // case AnimationState.Dead:
+                // case AnimationState.Hit:
                 case AnimationState.SkillE:
                 case AnimationState.SkillQ:
                 case AnimationState.Attack:
@@ -978,7 +974,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
             for (var i = _animationCooldowns.Count - 1; i >= 0; i--)
             {
-                if (i == snapshotData.Count - 1)
+                if (i == snapshotData.Count)
                 {
                     _animationCooldowns[i].Reset();
                     break;

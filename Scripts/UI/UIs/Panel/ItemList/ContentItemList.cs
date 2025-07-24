@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
@@ -15,7 +16,12 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
         private Transform content;
         public Dictionary<int, ItemBase> ItemBases { get; } = new Dictionary<int, ItemBase>();
         public Dictionary<int, IItemBaseData> ItemBaseDatas { get; } = new Dictionary<int, IItemBaseData>();
-        
+
+        private void Start()
+        {
+            content ??= transform;
+        }
+
         public T GetItem<T>(int index) where T : ItemBase
         {
             if (index < 0 || index >= ItemBases.Count)

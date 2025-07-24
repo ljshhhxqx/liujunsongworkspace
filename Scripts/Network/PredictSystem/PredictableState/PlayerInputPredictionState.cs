@@ -10,7 +10,12 @@ using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.PredictSystem.UI;
+using HotUpdate.Scripts.UI.UIBase;
+using HotUpdate.Scripts.UI.UIs.Overlay;
+using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using Mirror;
+using UniRx;
 using UnityEngine;
 using VContainer;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
@@ -33,10 +38,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private JsonDataConfig _jsonDataConfig;
         private SkillConfig _skillConfig;
         private PlayerSkillSyncState _skillSyncState;
+        private BindingKey _playerAnimationKey;
         
         protected override CommandType CommandType => CommandType.Input;
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private bool _isApplyingState;
+        private ReactiveDictionary<int, AnimationStateData> _animationStateDataDict;
         
         public event Action<PlayerGameStateData> OnPlayerStateChanged; 
         public event Action<PlayerAnimationCooldownState> OnPlayerAnimationCooldownChanged;
@@ -44,7 +51,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         public event Func<bool> IsInSpecialState;
 
         [Inject]
-        protected override void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider)
+        private void InitContainer(GameSyncManager gameSyncManager, IConfigProvider configProvider, UIManager uiManager)
         {
             base.Init(gameSyncManager, configProvider);
             _propertyPredictionState = GetComponent<PropertyPredictionState>();
@@ -55,6 +62,35 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _skillConfig = configProvider.GetConfig<SkillConfig>();
 
             UpdateAnimationCooldowns(_cancellationTokenSource.Token, GameSyncManager.TickSeconds).Forget();
+            if (NetworkIdentity.isLocalPlayer)
+            {                
+                _playerAnimationKey = new BindingKey(UIPropertyDefine.Animation, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
+
+                var dic = new Dictionary<int, AnimationStateData>();
+                var animations = _animationConfig.AnimationInfos;
+                for (int i = 0; i < animations.Count; i++)
+                {
+                    var ani = animations[i];
+                    if (ani.showInHud)
+                    {
+                        var stateData = ObjectPoolManager<AnimationStateData>.Instance.Get(animations.Count);
+                        stateData.State = ani.state;
+                        stateData.Duration = ani.cooldown;
+                        stateData.Cost = ani.cost;
+                        stateData.Timer = 0;
+                        stateData.Icon = null;
+                        stateData.Frame = null;
+                        stateData.Index = 0;
+                        dic.Add((int)ani.state, stateData);
+                        ObjectPoolManager<AnimationStateData>.Instance.Return(stateData);
+                    }
+                }
+                UIPropertyBinder.OptimizedBatchAdd(_playerAnimationKey, dic);
+                var playerAnimationOverlay = uiManager.SwitchUI<PlayerAnimationOverlay>();
+                _animationStateDataDict =
+                    UIPropertyBinder.GetReactiveDictionary<AnimationStateData>(_playerAnimationKey);
+                playerAnimationOverlay.BindPlayerAnimationData(_animationStateDataDict);
+            }
         }
         
         public override bool NeedsReconciliation<T>(T state)
@@ -74,7 +110,31 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             PlayerComponentController.RefreshSnapData(snapshot);
             OnPlayerStateChanged?.Invoke(propertyState.PlayerGameStateData);
             OnPlayerAnimationCooldownChanged?.Invoke(propertyState.PlayerAnimationCooldownState);
+            UpdateUIAnimation(propertyState.PlayerAnimationCooldownState.AnimationCooldowns);
             _isApplyingState = false;
+        }
+
+        [Client]
+        private void UpdateUIAnimation(MemoryDictionary<AnimationState, CooldownSnapshotData> snapshot)
+        {
+            if (!NetworkIdentity.isLocalPlayer)
+            {
+                return;
+            }
+            
+
+            foreach (var kvp in snapshot)
+            {
+                if (_animationStateDataDict.TryGetValue((int)kvp.Key, out var animationData))
+                {
+                    if (!Mathf.Approximately(animationData.Timer, kvp.Value.KeyframeCurrentTime))
+                    {
+                        animationData.Timer = kvp.Value.CurrentCountdown;
+                        animationData.Index = kvp.Value.CurrentAttackStage;
+                        _animationStateDataDict[(int)kvp.Key] = animationData;
+                    }
+                }
+            }
         }
 
         public AnimationState GetAnimationStates()
