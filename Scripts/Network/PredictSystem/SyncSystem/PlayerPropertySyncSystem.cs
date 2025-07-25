@@ -1157,6 +1157,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private void HandleAnimationCommand(int connectionId, AnimationState command, int skillId = 0)
         {
+            //Debug.Log($"[HandleAnimationCommand] {command} [{connectionId}] {skillId}");
             float cost;
             if (skillId != 0)
             {

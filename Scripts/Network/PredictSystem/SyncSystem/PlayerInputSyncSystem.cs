@@ -360,7 +360,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         GameSyncManager.EnqueueServerCommand(animationCommand);
                         //ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Return(animationCommand);
                         cooldownInfo?.Use(); 
-                        Debug.Log($" [playerInputSyncSystem]Player {header.ConnectionId} input animation {commandAnimation} cost {info.cost} strength, now strength is {playerProperty[PropertyTypeEnum.Strength].CurrentValue}.");
+                        //Debug.Log($" [playerInputSyncSystem]Player {header.ConnectionId} input animation {commandAnimation} cost {info.cost} strength, now strength is {playerProperty[PropertyTypeEnum.Strength].CurrentValue}.");
                     }
 
                     

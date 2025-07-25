@@ -158,19 +158,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var strengthRecover = state[PropertyTypeEnum.StrengthRecovery];
             var health = state[PropertyTypeEnum.Health];
             var strength = state[PropertyTypeEnum.Strength];
-            state[PropertyTypeEnum.Health] = health.UpdateCalculator(health, new BuffIncreaseData
+            if (!Mathf.Approximately(health.CurrentValue, health.MaxCurrentValue))
             {
-                increaseType = BuffIncreaseType.Current,
-                increaseValue = healthRecover.CurrentValue * 1,
-            });
-            state[PropertyTypeEnum.Strength] = strength.UpdateCalculator(strength, new BuffIncreaseData
+                state[PropertyTypeEnum.Health] = health.UpdateCalculator(health, new BuffIncreaseData
+                {
+                    increaseType = BuffIncreaseType.Current,
+                    increaseValue = healthRecover.CurrentValue * 0.25f,
+                });
+            }
+
+            if (!Mathf.Approximately(strength.CurrentValue, strength.MaxCurrentValue))
             {
-                increaseType = BuffIncreaseType.Current,
-                increaseValue = strengthRecover.CurrentValue * 1,
-            });
+                state[PropertyTypeEnum.Strength] = strength.UpdateCalculator(strength, new BuffIncreaseData
+                {
+                    increaseType = BuffIncreaseType.Current,
+                    increaseValue = strengthRecover.CurrentValue * 0.25f,
+                });
+            }
             playerPredictablePropertyState = propertyState;
         }
-
+        
         public void HandleAnimationCommand(ref PlayerPredictablePropertyState playerPredictablePropertyState, AnimationState command, float animationCost)
         {
             var cost = animationCost;
@@ -188,12 +195,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 //Debug.LogError($"PlayerPropertySyncSystem: {connectionId} does not have enough strength to perform {command} animation.");
                 return;
             }
-            state[PropertyTypeEnum.Strength] = strength.UpdateCalculator(strength, new BuffIncreaseData
+
+            if (cost > 0)
             {
-                increaseType = BuffIncreaseType.Current,
-                increaseValue = cost,
-                operationType = BuffOperationType.Subtract,
-            });
+                state[PropertyTypeEnum.Strength] = strength.UpdateCalculator(strength, new BuffIncreaseData
+                {
+                    increaseType = BuffIncreaseType.Current,
+                    increaseValue = cost,
+                    operationType = BuffOperationType.Subtract,
+                });
+            }
             playerPredictablePropertyState = propertyState;
         }
 

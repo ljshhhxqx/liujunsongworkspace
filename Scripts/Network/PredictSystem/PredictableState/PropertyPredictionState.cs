@@ -95,7 +95,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             return PlayerPredictablePropertyState.MemoryProperty[propertyType].CurrentValue;
         }
-        
+
+        public PropertyCalculator GetCalculator(PropertyTypeEnum propertyType)
+        {
+            return PlayerPredictablePropertyState.MemoryProperty[propertyType];
+        }
+
         public float GetMoveSpeed() => PlayerPredictablePropertyState.PlayerState.CurrentMoveSpeed;
         
         public float GetMaxProperty(PropertyTypeEnum propertyType)
@@ -117,7 +122,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             if (state is PlayerPredictablePropertyState propertyState)
             {
                 base.ApplyServerState(propertyState);
-                //Debug.Log($"PropertyPredictionState [ApplyServerState] {propertyState.ToString()}");
+                Debug.Log($"PropertyPredictionState [ApplyServerState] {propertyState.ToString()}");
                 PropertyChanged(propertyState);
             }
         }
@@ -128,6 +133,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 return false;
             return !propertyState.IsEqual(currentState);
         }
+        private float _timer;
+        private int _frameCount;
 
         public override void Simulate(INetworkCommand command)
         {
@@ -140,6 +147,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             }
             else if (command is PropertyClientAnimationCommand clientAnimationCommand)
             {
+                if (clientAnimationCommand.AnimationState == AnimationState.Sprint)
+                {
+                    _timer+=Time.fixedDeltaTime;
+                    _frameCount++;
+                    if (_timer >= 1f)
+                    {
+                        Debug.Log($"[PropertyClientAnimationCommand] 理论frameCount => {1/Time.fixedDeltaTime} 实际frameCount => {_frameCount}");
+                        
+                        _timer = 0;
+                        _frameCount = 0;
+                    }
+                }
                 HandleAnimationCommand(ref playerState, clientAnimationCommand);
             }
             else if(command is PropertyEnvironmentChangeCommand environmentChangeCommand)
@@ -170,6 +189,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void HandleAnimationCommand(ref PlayerPredictablePropertyState propertyState, PropertyClientAnimationCommand command)
         {
+            //Debug.Log($"[HandleAnimationCommand] {command} [{connectionId}] {skillId}");
             var cost = _animationConfig.GetPlayerAnimationCost(command.AnimationState);
             
             if (cost <= 0)
@@ -206,7 +226,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             {
                 var countDown = _jsonDataConfig.GameConfig.GetPlayerDeathTime((int)predictablePropertyState.MemoryProperty[PropertyTypeEnum.Score].CurrentValue);
                 OnPlayerDead?.Invoke(countDown);
-                Debug.Log($"OnPlayerDead {countDown}");
+                //Debug.Log($"OnPlayerDead {countDown}");
                 _isDead = true;
                 return;
             }

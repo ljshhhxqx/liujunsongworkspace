@@ -261,27 +261,33 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                         //Debug.LogWarning($"[PlayerInputController] Animation cooldown {animationCooldown.AnimationState} is ready => {animationCooldown.IsReady()}.");
                         playerInputStateData.Command = animationCooldown.IsReady() ? command : AnimationState.None;
                     }
-                    if (playerInputStateData.Command == AnimationState.Attack)
-                    {
-                        Debug.Log($"[PlayerInputController] Attack");
-                    }
+                    // if (playerInputStateData.Command == AnimationState.Attack)
+                    // {
+                    //     Debug.Log($"[PlayerInputController] Attack");
+                    // }
                     _playerInputStateData = playerInputStateData;
                     _inputStream.OnNext(_playerInputStateData);
                     //Debug.Log($"playerInputStateData - {playerInputStateData.InputMovement} {playerInputStateData.InputAnimations} {playerInputStateData.Command}");
                 })
                 .AddTo(_disposables);
-            Observable.EveryUpdate()
-                .Sample(TimeSpan.FromMilliseconds(1f * 1000))
+            Observable.EveryFixedUpdate()
+                .Sample(TimeSpan.FromMilliseconds(0.25f * 1000))
                 .Where(_ => isLocalPlayer && _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) > 0)
                 .Subscribe(_ =>
                 {
-                    var propertyAutoRecoverCommand = ObjectPoolManager<PropertyAutoRecoverCommand>.Instance.Get(10);
+                    var health = _propertyPredictionState.GetCalculator(PropertyTypeEnum.Health);
+                    var strength = _propertyPredictionState.GetCalculator(PropertyTypeEnum.Strength);
+                    if (Mathf.Approximately(health.CurrentValue, health.MaxCurrentValue) && Mathf.Approximately(strength.CurrentValue, strength.MaxCurrentValue))
+                    {
+                        return;
+                    }
+                    var propertyAutoRecoverCommand = ObjectPoolManager<PropertyAutoRecoverCommand>.Instance.Get(50);
                     propertyAutoRecoverCommand.Header = GameSyncManager.CreateNetworkCommandHeader(
                         connectionToClient.connectionId,
                         CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate,
                         NetworkCommandType.PropertyAutoRecover);
                     _propertyPredictionState.AddPredictedCommand(propertyAutoRecoverCommand);
-                    ObjectPoolManager<PropertyAutoRecoverCommand>.Instance.Return(propertyAutoRecoverCommand);
+                    //ObjectPoolManager<PropertyAutoRecoverCommand>.Instance.Return(propertyAutoRecoverCommand);
                 })
                 .AddTo(this);
             Observable.EveryFixedUpdate()
@@ -301,15 +307,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                         var state = _predictionStates[i];
                         state.ExecutePredictedCommands(GameSyncManager.CurrentTick);
                     }
-                    ObjectPoolManager<PropertyEnvironmentChangeCommand>.Instance.Return(propertyEnvironmentChangeCommand);
+                    //ObjectPoolManager<PropertyEnvironmentChangeCommand>.Instance.Return(propertyEnvironmentChangeCommand);
                     HandleInputPhysics(_playerInputStateData);
                 })
                 .AddTo(this);
             
             //发送网络命令
             _inputStream.Where(x=> isLocalPlayer && x.Command != AnimationState.None && x.Command != AnimationState.Idle)
+                .Sample(TimeSpan.FromMilliseconds(Time.fixedDeltaTime * 1000))
                 .Subscribe(HandleSendNetworkCommand)
-                .AddTo(_disposables);
+                .AddTo(this);
             //处理物理信息
             Observable.EveryFixedUpdate().Sample(TimeSpan.FromMilliseconds(FixedDeltaTime * 10 * 1000))
                 .Where(_ => isLocalPlayer)
@@ -318,8 +325,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     var otherPlayers = NetworkServer.connections
                         .Where(x => x.Value.connectionId != connectionToClient.connectionId)
                         .Select(x => x.Value.identity.GetComponent<Transform>());
+                    var potentialTargets = otherPlayers as Transform[] ?? otherPlayers.ToArray();
+                    if (potentialTargets.Length == 0)
+                    {
+                        return;
+                    }
                     var layerMask = _gameConfigData.groundSceneLayer | _gameConfigData.stairSceneLayer | _playerConfigData.PlayerLayer;
-                    if (PlayerPhysicsCalculator.TryGetPlayersInScreen(_camera, otherPlayers, out var playersInScreen, layerMask))
+                    if (PlayerPhysicsCalculator.TryGetPlayersInScreen(_camera, potentialTargets, out var playersInScreen, layerMask))
                     {
                         var header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
                             CommandType.Property, CommandAuthority.Client);
@@ -510,6 +522,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [Client]
         private void HandleSendNetworkCommand(PlayerInputStateData inputData)
         {
+            // _timer+=Time.fixedDeltaTime;
+            // _frameCount++;
+            // if (_timer >= 1f)
+            // {
+            //     Debug.Log($"[HandleSendNetworkCommand] 理论frameCount => {1/Time.fixedDeltaTime} 实际frameCount => {_frameCount}");
+            //     
+            //     _timer = 0;
+            //     _frameCount = 0;
+            // }
             var inputCommand = ObjectPoolManager<InputCommand>.Instance.Get(50);
             inputCommand.InputMovement = CompressedVector3.FromVector3(inputData.InputMovement);
             inputCommand.Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
@@ -517,7 +538,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             inputCommand.InputAnimationStates = inputData.InputAnimations;
             inputCommand.CommandAnimationState = inputData.Command;
             _inputState.AddPredictedCommand(inputCommand);
-            ObjectPoolManager<InputCommand>.Instance.Return(inputCommand);
         }
 
         private void HandleInputPhysics(PlayerInputStateData inputData)

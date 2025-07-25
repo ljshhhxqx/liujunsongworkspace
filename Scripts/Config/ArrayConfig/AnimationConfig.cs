@@ -47,12 +47,17 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public bool IsStrengthEnough(AnimationState state, float strength, out AnimationState newState, float duration = 0f)
         {
             var animationInfo = GetAnimationInfo(state);
-            newState = animationInfo.noStrengthState;
+            bool isStrengthEnough;
+            newState = state;
             if (animationInfo.animationType == AnimationType.Continuous)
             {
-                return strength * duration >= duration * animationInfo.cost;
+                isStrengthEnough = strength * duration >= duration * animationInfo.cost;
+                newState = isStrengthEnough ? newState : animationInfo.noStrengthState;
+                return isStrengthEnough;
             }
-            return strength >= animationInfo.cost;
+            isStrengthEnough = strength >= animationInfo.cost;
+            newState = isStrengthEnough ? newState : animationInfo.noStrengthState;
+            return isStrengthEnough;
         }
 
         public AnimationInfo GetAnimationInfo(AnimationState state)
