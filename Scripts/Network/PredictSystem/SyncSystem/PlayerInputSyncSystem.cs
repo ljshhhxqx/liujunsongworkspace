@@ -186,19 +186,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     .AddTo(_disposables);
             }
             var rollCooldown = animationCooldowns.GetValueOrDefault(AnimationState.Roll);
-            if (rollCooldown is KeyframeComboCooldown rollComboCooldown)
+            if (rollCooldown is KeyframeCooldown cooldown)
             {
-                rollComboCooldown.EventStream
+                cooldown.EventStream
                     .Where(x => x == AnimationEvent.OnRollStart)
                     .Subscribe(x => HandlePlayerRoll(connectionId, true))
                     .AddTo(_disposables);
-                rollComboCooldown.EventStream
+                cooldown.EventStream
                     .Where(x => x == AnimationEvent.OnRollStop)
                     .Subscribe(x => HandlePlayerRoll(connectionId, false))
                     .AddTo(_disposables);
             }
             var skillECooldown = animationCooldowns.GetValueOrDefault(AnimationState.SkillE);
-            if (skillECooldown is KeyframeComboCooldown eCooldown)
+            if (skillECooldown is KeyframeCooldown eCooldown)
             {
                 eCooldown.EventStream
                     .Where(x => x == AnimationEvent.OnSkillCastE)
@@ -206,7 +206,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     .AddTo(_disposables);
             }
             var skillQCooldown = animationCooldowns.GetValueOrDefault(AnimationState.SkillQ);
-            if (skillQCooldown is KeyframeComboCooldown qCooldown)
+            if (skillQCooldown is KeyframeCooldown qCooldown)
             {
                 qCooldown.EventStream
                     .Where(x => x == AnimationEvent.OnSkillCastQ)
@@ -358,7 +358,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         animationCommand.AnimationState = newState == AnimationState.None ? commandAnimation : newState;
                         animationCommand.SkillId = skillConfigData.id;
                         GameSyncManager.EnqueueServerCommand(animationCommand);
-                        ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Return(animationCommand);
+                        //ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Return(animationCommand);
                         cooldownInfo?.Use(); 
                         Debug.Log($" [playerInputSyncSystem]Player {header.ConnectionId} input animation {commandAnimation} cost {info.cost} strength, now strength is {playerProperty[PropertyTypeEnum.Strength].CurrentValue}.");
                     }

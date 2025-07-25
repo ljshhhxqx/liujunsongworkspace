@@ -261,8 +261,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [Server]
         public void EnqueueCommand(byte[] commandJson)
         {
-            if(isServer && !isClient)
-                return;
             var command = NetworkCommandExtensions.DeserializeCommand(commandJson);
             var header = command.GetHeader();
             var validCommand = command.ValidateCommand();
@@ -282,8 +280,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [Server]
         private void ProcessTick()
         {
-            if(!isServer)
-                return;
             _isProcessing = true;
 
             try
@@ -392,8 +388,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [Server]
         public void EnqueueServerCommand<T>(T command) where T : INetworkCommand
         {
-            if(!isServer)
-                return;
             var header = command.GetHeader();
             var validCommand = command.ValidateCommand();
             if (!validCommand.IsValid)

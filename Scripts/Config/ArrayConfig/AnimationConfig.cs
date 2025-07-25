@@ -39,6 +39,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 data.cooldownType = (CooldownType) Enum.Parse(typeof(CooldownType), row[10]);
                 data.noStrengthState = (AnimationState) Enum.Parse(typeof(AnimationState), row[11]);
                 data.showInHud = bool.Parse(row[12]);
+                data.animationSpeed = float.Parse(row[13]);
                 animationInfos.Add(data);
             }
         }
@@ -140,6 +141,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         //体力不足时，转为此状态
         public AnimationState noStrengthState;
         public bool showInHud;
+        public float animationSpeed;
     }
 
     public enum ActionType

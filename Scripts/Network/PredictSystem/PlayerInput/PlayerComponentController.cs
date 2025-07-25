@@ -226,23 +226,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     _canOpenShop = false;
                 }).AddTo(_disposables);
             
-            Observable.EveryFixedUpdate()
+            Observable.EveryUpdate()
                 .Where(_ => isLocalPlayer && GameSyncManager.CurrentTick > 0 && _subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible))
                 .Subscribe(_ => {
                     var movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
                     var animationStates = _inputState.GetAnimationStates();
-                    if (animationStates.HasAnyState(AnimationState.Attack))
-                    {
-                        Debug.Log($"[PlayerInputController] Attack");
-                    }
-                    else if (animationStates.HasAnyState(AnimationState.Roll))
-                    {
-                        Debug.Log($"[PlayerInputController] Roll");
-                    }
-                    else if (animationStates.HasAnyState(AnimationState.Jump))
-                    {
-                        Debug.Log($"[PlayerInputController] Jump");
-                    }
+                    // if (animationStates.HasAnyState(AnimationState.Attack))
+                    // {
+                    //     Debug.Log($"[PlayerInputController] Attack");
+                    // }
+                    // else if (animationStates.HasAnyState(AnimationState.Roll))
+                    // {
+                    //     Debug.Log($"[PlayerInputController] Roll");
+                    // }
+                    // else if (animationStates.HasAnyState(AnimationState.Jump))
+                    // {
+                    //     Debug.Log($"[PlayerInputController] Jump");
+                    // }
                     var playerInputStateData = new PlayerInputStateData
                     {
                         InputMovement = movement,
@@ -551,7 +551,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             {
                 return;
             }
-            Debug.Log($"[HandlePlayerSpecialAction] Animation State: {animationState}");
+            //Debug.Log($"[HandlePlayerSpecialAction] Animation State: {animationState}");
             switch (animationState)
             {
                 case AnimationState.Jump:
@@ -921,16 +921,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 switch (info.cooldownType)
                 {
                     case CooldownType.Normal:
-                        list.Add(new AnimationCooldown(info.state, info.cooldown, 1));
+                        list.Add(new AnimationCooldown(info.state, info.cooldown, info.animationSpeed));
                         break;
                     case CooldownType.KeyFrame:
-                        list.Add(new KeyframeCooldown(info.state, info.cooldown, info.keyframeData.ToList(), 1));
+                        list.Add(new KeyframeCooldown(info.state, info.cooldown, info.keyframeData, info.animationSpeed));
                         break;
                     case CooldownType.Combo:
-                        list.Add(new ComboCooldown(info.state, info.keyframeData.Select(x => x.resetCooldownWindowTime).ToList(), info.cooldown, 1));
+                        list.Add(new ComboCooldown(info.state, info.keyframeData.Select(x => x.resetCooldownWindowTime).ToList(), info.cooldown, info.animationSpeed));
                         break;
                     case CooldownType.KeyFrameAndCombo:
-                        list.Add(new KeyframeComboCooldown(info.state, info.cooldown, info.keyframeData.ToList(), 1));
+                        list.Add(new KeyframeComboCooldown(info.state, info.cooldown, info.keyframeData.ToList(), info.animationSpeed));
                         break;
                 }
             }

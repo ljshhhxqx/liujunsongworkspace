@@ -285,7 +285,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         {
             DelayInvoker.DelayInvoke(0.5f, () =>
             {
-                _physicsComponent.Rigidbody.AddForce(_physicsComponent.Rigidbody.transform.forward.normalized * _physicsDetermineConstant.RollForce, ForceMode.VelocityChange);
+                _physicsComponent.Rigidbody.AddForce(_physicsComponent.Rigidbody.transform.forward.normalized * _physicsDetermineConstant.RollForce, ForceMode.Impulse);
             });
             
         }

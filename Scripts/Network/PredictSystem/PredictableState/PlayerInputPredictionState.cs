@@ -131,7 +131,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     {
                         animationData.Timer = kvp.Value.CurrentCountdown;
                     }
-                    animationData.Index = kvp.Value.CurrentAttackStage;
+                    animationData.Index = kvp.Value.CurrentStage;
                     _animationStateDataDict[(int)kvp.Key] = animationData;
                 }
             }

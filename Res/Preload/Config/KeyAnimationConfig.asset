@@ -36,7 +36,7 @@ MonoBehaviour:
     animationKeys:
     - Running
     - Jump
-    isGetButton: 0
+    isGetButton: 1
   - animationState: 32
     isComboKey: 0
     animationKeys:
