@@ -67,10 +67,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     return NetworkCommandExtensions.SerializePlayerState(playerInputState).Item1;
                 }
 
-                Debug.LogError($"Player {connectionId} equipment state is not PlayerInputState.");
+                Debug.LogError($"Player {connectionId} input state is not PlayerInputState.");
                 return null;
             }
-            Debug.LogError($"Player {connectionId} equipment state not found.");
+            Debug.LogError($"Player {connectionId} input state not found.");
             return null;
         }
 

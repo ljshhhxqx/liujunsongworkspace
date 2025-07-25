@@ -967,7 +967,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     snapshotData.AnimationCooldowns.Add(cooldown.AnimationState, snapshotCoolDown);
                     continue;
                 }
-                //Debug.Log($"[UpdateAnimation] {snapshotCoolDown.AnimationState} = {cooldown.AnimationState}? {cooldown.AnimationState == snapshotCoolDown.AnimationState} {snapshotCoolDown.ToString()}");
+
+                // if (cooldown is KeyframeCooldown keyframeCooldown)
+                // {
+                //     Debug.Log($"[UpdateAnimation] {snapshotCoolDown.AnimationState} = {cooldown.AnimationState} ? {cooldown.AnimationState == snapshotCoolDown.AnimationState} {keyframeCooldown.CurrentCountdown} {snapshotCoolDown.ToString()}");
+                //
+                // }
+                // if (cooldown is KeyframeComboCooldown keyframeComboCooldown)
+                // {
+                //     Debug.Log($"[UpdateAnimation] {snapshotCoolDown.AnimationState} = {cooldown.AnimationState} ? {cooldown.AnimationState == snapshotCoolDown.AnimationState} {keyframeComboCooldown.CurrentCountdown} {snapshotCoolDown.ToString()}");
+                //
+                // }
                 CooldownSnapshotData.CopyTo(cooldown, ref snapshotCoolDown);
                 snapshotData.AnimationCooldowns[cooldown.AnimationState] = snapshotCoolDown;
             }

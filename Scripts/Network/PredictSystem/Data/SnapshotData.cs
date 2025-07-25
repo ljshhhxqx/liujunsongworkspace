@@ -231,6 +231,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                     _currentStage++;
                 }
             }
+            Debug.Log($"[Update] [Animation] Animation-{_state}  _currentCountdown-{_currentCountdown}");
         }
 
         public void Use()
@@ -314,10 +315,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public void Update(float deltaTime)
         {
+            if (_currentCountdown <= 0)
+            {
+                return;
+            }
+            
             if (_currentCountdown > 0)
             {
                 _currentCountdown = Mathf.Max(0, _currentCountdown - deltaTime);
-                return;
+                if (_currentCountdown <= 0)
+                {
+                    Reset();
+                    return;
+                }
             }
 
             // 连招窗口倒计时
@@ -347,6 +357,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 _currentTime = 0;
                 _currentStage++;
             }
+            Debug.Log($"[Update] [Animation] Animation-{_state}  _currentCountdown-{_currentCountdown}");
         }
 
         public void Use()
@@ -461,6 +472,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 return;
             }
             _currentCountdown = Mathf.Max(0, _currentCountdown - deltaTime);
+            Debug.Log($"[Update] [Animation] Animation-{_animationState}  _currentCountdown-{_currentCountdown}");
         }
         
         public void Use()
@@ -470,6 +482,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 return;
             }
             _currentCountdown = Cooldown;
+            Debug.Log($"[Use] [Animation] Animation-{_animationState}  _currentCountdown-{_currentCountdown}");
         }
 
         public bool Refresh(CooldownSnapshotData snapshotData)
