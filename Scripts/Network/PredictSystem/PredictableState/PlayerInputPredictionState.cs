@@ -206,7 +206,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     animationCommand.SkillId = skillConfigData.id;
                     _propertyPredictionState.AddPredictedCommand(animationCommand);
                     cooldownInfo?.Use(); 
-                    Debug.Log($"[Simulate] [Normal] - CommandAnimationState:{inputCommand.CommandAnimationState} - cooldown:{cooldown} - cost:{cost}");
+                    //Debug.Log($"[Simulate] [Normal] - CommandAnimationState:{inputCommand.CommandAnimationState} - cooldown:{cooldown} - cost:{cost}");
                 }
 
                 if (skillConfigData.animationState != AnimationState.None)

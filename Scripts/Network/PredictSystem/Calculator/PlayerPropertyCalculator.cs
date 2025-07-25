@@ -188,7 +188,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var propertyState = playerPredictablePropertyState;
             var state = propertyState.MemoryProperty;
             cost *= command == AnimationState.Sprint ? Time.fixedDeltaTime : 1f;
-            Debug.Log($"playerPropertyCalculator: execute {command} animation, current: {state[PropertyTypeEnum.Strength].CurrentValue}, cost: {cost}");
+            //Debug.Log($"playerPropertyCalculator: execute {command} animation, current: {state[PropertyTypeEnum.Strength].CurrentValue}, cost: {cost}");
             var strength = state[PropertyTypeEnum.Strength];
             if (cost > strength.CurrentValue)
             {

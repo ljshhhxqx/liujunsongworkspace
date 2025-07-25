@@ -122,7 +122,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             if (state is PlayerPredictablePropertyState propertyState)
             {
                 base.ApplyServerState(propertyState);
-                Debug.Log($"PropertyPredictionState [ApplyServerState] {propertyState.ToString()}");
+                //Debug.Log($"PropertyPredictionState [ApplyServerState] {propertyState.ToString()}");
                 PropertyChanged(propertyState);
             }
         }

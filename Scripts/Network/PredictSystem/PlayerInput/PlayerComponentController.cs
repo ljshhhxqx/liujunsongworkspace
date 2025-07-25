@@ -759,7 +759,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             movePara.CameraForward = _playerPhysicsCalculator.CompressYaw(cameraForward.y);
             movePara.IsClearVelocity = PlayerAnimationCalculator.IsClearVelocity(inputData.Command);
             movePara.DeltaTime = FixedDeltaTime;
-            ObjectPoolManager<MoveParam>.Instance.Return(movePara);
             _playerPhysicsCalculator.HandleMove(movePara, isLocalPlayer);
             //执行动画
             _playerAnimationCalculator.HandleAnimation(inputData.Command);
@@ -769,7 +768,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             data.Velocity = _rigidbody.velocity;
             data.PlayerEnvironmentState = _gameStateStream.Value;
             data.AnimationState = inputData.Command;
-            ObjectPoolManager<PlayerGameStateData>.Instance.Return(data);
             return data;
         }
 
@@ -990,11 +988,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
             for (var i = _animationCooldowns.Count - 1; i >= 0; i--)
             {
-                if (i == snapshotData.Count)
-                {
-                    _animationCooldowns[i].Reset();
-                    break;
-                }
                 var animationCooldown = _animationCooldowns[i];
                 if (!snapshotData.TryGetValue(animationCooldown.AnimationState, out var snapshotCoolDown))
                 {
