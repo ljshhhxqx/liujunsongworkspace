@@ -971,14 +971,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 snapshotData.AnimationCooldowns[cooldown.AnimationState] = snapshotCoolDown;
             }
         }
-        public void UpdateAnimation(float deltaTime)
-        {
-            for (int i = _animationCooldowns.Count - 1; i >= 0; i--)
-            {
-                var cooldown = _animationCooldowns[i];
-                cooldown.Update(deltaTime);
-            }
-        }
+        // public void UpdateAnimation(float deltaTime)
+        // {
+        //     for (int i = _animationCooldowns.Count - 1; i >= 0; i--)
+        //     {
+        //         var cooldown = _animationCooldowns[i];
+        //         cooldown.Update(deltaTime);
+        //     }
+        // }
 
         public void RefreshSnapData(Dictionary<AnimationState, CooldownSnapshotData> snapshotData)
         {
@@ -1097,46 +1097,46 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _gameSyncManager.EnqueueCommand(commandJson);
         }
 
-        private void Update()
-        {
-            if (isLocalPlayer)
-            {
-                if (Input.GetKeyDown(KeyCode.F1))
-                {
-                    TestNetworkCommandHeader();
-                }
-                if (Input.GetKeyDown(KeyCode.F2))
-                {
-                    TestInputAnimationStates();
-                }
-            }
-        }
-
-        private void TestNetworkCommandHeader()
-        {
-            var header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Input,
-                CommandAuthority.Client);
-            Debug.Log($"TestNetworkCommandHeader -> {header.CommandType} -> {header.CommandId} ->{header.ConnectionId} {header.Timestamp} {header.Authority} {header.Tick}");
-            var data = MemoryPackSerializer.Serialize(header);
-            var originData = MemoryPackSerializer.Deserialize<NetworkCommandHeader>(data);
-            Debug.Log($"TestNetworkCommandHeader -> {originData.CommandType} -> {originData.CommandId} ->{originData.ConnectionId} {originData.Timestamp} {originData.Authority} {originData.Tick}");
-        }
-
-        private void TestInputAnimationStates()
-        {
-            var inputCommand = new InputCommand();
-            var header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Input,
-                CommandAuthority.Client);
-            var inputMovement = CompressedVector3.FromVector3(new Vector3(0,0,0.125555f));
-            inputCommand.Header = header;
-            inputCommand.InputMovement = inputMovement;
-            inputCommand.InputAnimationStates = AnimationState.None;
-            inputCommand.CommandAnimationState = AnimationState.Move;
-            Debug.Log($"TestInputAnimationStates -> {inputCommand.Header.CommandType} -> {inputCommand.Header.CommandId} ->{inputCommand.Header.ConnectionId} {inputCommand.Header.Timestamp} {inputCommand.Header.Authority} {inputCommand.Header.Tick}");
-            var data = NetworkCommandExtensions.SerializeCommand(inputCommand);
-            var originData = NetworkCommandExtensions.DeserializeCommand(data.Item1);
-            var headerData = originData.GetHeader();
-            Debug.Log($"TestInputAnimationStates -> {headerData.CommandType} -> {headerData.CommandId} ->{headerData.ConnectionId} {headerData.Timestamp} {headerData.Authority} {headerData.Tick}");
-        }
+        // private void Update()
+        // {
+        //     if (isLocalPlayer)
+        //     {
+        //         if (Input.GetKeyDown(KeyCode.F1))
+        //         {
+        //             TestNetworkCommandHeader();
+        //         }
+        //         if (Input.GetKeyDown(KeyCode.F2))
+        //         {
+        //             TestInputAnimationStates();
+        //         }
+        //     }
+        // }
+        //
+        // private void TestNetworkCommandHeader()
+        // {
+        //     var header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Input,
+        //         CommandAuthority.Client);
+        //     Debug.Log($"TestNetworkCommandHeader -> {header.CommandType} -> {header.CommandId} ->{header.ConnectionId} {header.Timestamp} {header.Authority} {header.Tick}");
+        //     var data = MemoryPackSerializer.Serialize(header);
+        //     var originData = MemoryPackSerializer.Deserialize<NetworkCommandHeader>(data);
+        //     Debug.Log($"TestNetworkCommandHeader -> {originData.CommandType} -> {originData.CommandId} ->{originData.ConnectionId} {originData.Timestamp} {originData.Authority} {originData.Tick}");
+        // }
+        //
+        // private void TestInputAnimationStates()
+        // {
+        //     var inputCommand = new InputCommand();
+        //     var header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Input,
+        //         CommandAuthority.Client);
+        //     var inputMovement = CompressedVector3.FromVector3(new Vector3(0,0,0.125555f));
+        //     inputCommand.Header = header;
+        //     inputCommand.InputMovement = inputMovement;
+        //     inputCommand.InputAnimationStates = AnimationState.None;
+        //     inputCommand.CommandAnimationState = AnimationState.Move;
+        //     Debug.Log($"TestInputAnimationStates -> {inputCommand.Header.CommandType} -> {inputCommand.Header.CommandId} ->{inputCommand.Header.ConnectionId} {inputCommand.Header.Timestamp} {inputCommand.Header.Authority} {inputCommand.Header.Tick}");
+        //     var data = NetworkCommandExtensions.SerializeCommand(inputCommand);
+        //     var originData = NetworkCommandExtensions.DeserializeCommand(data.Item1);
+        //     var headerData = originData.GetHeader();
+        //     Debug.Log($"TestInputAnimationStates -> {headerData.CommandType} -> {headerData.CommandId} ->{headerData.ConnectionId} {headerData.Timestamp} {headerData.Authority} {headerData.Tick}");
+        // }
     }
 }

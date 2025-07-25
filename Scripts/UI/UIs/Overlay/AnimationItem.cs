@@ -33,7 +33,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                 var isReady = animationStateData.Timer == 0f;
                 timeText.enabled = !isReady;
                 timeText.text = animationStateData.Timer.ToString("00");
-                Debug.Log($"AnimationItem SetData : {animationStateData}");
+                //Debug.Log($"AnimationItem SetData : {animationStateData}");
                 return;
             }
             Debug.LogError($"{nameof(T)} is not of type {nameof(AnimationStateData)}.");

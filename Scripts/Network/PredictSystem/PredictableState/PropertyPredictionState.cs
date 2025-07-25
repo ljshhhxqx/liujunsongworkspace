@@ -147,18 +147,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             }
             else if (command is PropertyClientAnimationCommand clientAnimationCommand)
             {
-                if (clientAnimationCommand.AnimationState == AnimationState.Sprint)
-                {
-                    _timer+=Time.fixedDeltaTime;
-                    _frameCount++;
-                    if (_timer >= 1f)
-                    {
-                        Debug.Log($"[PropertyClientAnimationCommand] 理论frameCount => {1/Time.fixedDeltaTime} 实际frameCount => {_frameCount}");
-                        
-                        _timer = 0;
-                        _frameCount = 0;
-                    }
-                }
+                // if (clientAnimationCommand.AnimationState == AnimationState.Sprint)
+                // {
+                //     _timer+=Time.fixedDeltaTime;
+                //     _frameCount++;
+                //     if (_timer >= 1f)
+                //     {
+                //         Debug.Log($"[PropertyClientAnimationCommand] 理论frameCount => {1/Time.fixedDeltaTime} 实际frameCount => {_frameCount}");
+                //         
+                //         _timer = 0;
+                //         _frameCount = 0;
+                //     }
+                // }
                 HandleAnimationCommand(ref playerState, clientAnimationCommand);
             }
             else if(command is PropertyEnvironmentChangeCommand environmentChangeCommand)

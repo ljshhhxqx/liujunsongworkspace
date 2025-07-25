@@ -597,6 +597,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 destination.KeyframeCurrentTime = comboKeyframe.CurrentTime;
                 destination.AnimationSpeed = comboKeyframe.AnimationSpeed;
             }
+            else if (source is AnimationCooldown animationCooldown)
+            {
+                destination.AnimationState = animationCooldown.AnimationState;
+                destination.CurrentCountdown = animationCooldown.CurrentCountdown;
+                destination.AnimationSpeed = animationCooldown.AnimationSpeed;
+            }
         }
 
         public static CooldownSnapshotData Create(IAnimationCooldown cooldown)

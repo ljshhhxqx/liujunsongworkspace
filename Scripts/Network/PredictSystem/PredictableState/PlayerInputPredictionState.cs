@@ -61,7 +61,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _keyAnimationConfig = configProvider.GetConfig<KeyAnimationConfig>();
             _skillConfig = configProvider.GetConfig<SkillConfig>();
 
-            UpdateAnimationCooldowns(_cancellationTokenSource.Token, GameSyncManager.TickSeconds).Forget();
+            //UpdateAnimationCooldowns(_cancellationTokenSource.Token, GameSyncManager.TickSeconds).Forget();
             if (NetworkIdentity.isLocalPlayer)
             {                
                 _playerAnimationKey = new BindingKey(UIPropertyDefine.Animation, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
@@ -169,7 +169,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     Debug.Log($"[PlayerInputPredictionState] - Player is dead.");
                     return;
                 }
-                if (actionType != ActionType.Movement && actionType != ActionType.Interaction)
+                if (actionType != ActionType.Movement)
                 {
                     //Debug.Log($"[PlayerInputPredictionState] - Not enough strength to perform {inputCommand.CommandAnimationState}.");
                     return;
@@ -226,13 +226,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             }
         }
 
-        private async UniTaskVoid UpdateAnimationCooldowns(CancellationToken token, float deltaTime)
-        {
-            while (token.IsCancellationRequested == false && !_isApplyingState)
-            {
-                await UniTask.Delay(TimeSpan.FromSeconds(deltaTime), cancellationToken: token);
-                PlayerComponentController.UpdateAnimation(deltaTime);
-            }
-        }
+        // private async UniTaskVoid UpdateAnimationCooldowns(CancellationToken token, float deltaTime)
+        // {
+        //     while (token.IsCancellationRequested == false && !_isApplyingState)
+        //     {
+        //         await UniTask.Delay(TimeSpan.FromSeconds(deltaTime), cancellationToken: token);
+        //         PlayerComponentController.UpdateAnimation(deltaTime);
+        //     }
+        // }
     }
 }

@@ -80,8 +80,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _playerSkillSyncSystem = GameSyncManager.GetSyncSystem<PlayerSkillSyncSystem>(CommandType.Skill);
         }
 
+        private bool _isStartAnimation;
         private async UniTaskVoid UpdatePlayerAnimationAsync(CancellationToken token, float deltaTime)
         {
+            if (_isStartAnimation)
+            {
+                return;
+            }
+
+            _isStartAnimation = true;
             while (!token.IsCancellationRequested)
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(deltaTime), cancellationToken: token);
@@ -271,6 +278,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public override CommandType HandledCommandType => CommandType.Input;
         public override ISyncPropertyState ProcessCommand(INetworkCommand command)
         {
+            UpdatePlayerAnimationAsync(_cts.Token, GameSyncManager.TickSeconds).Forget();
             var header = command.GetHeader();
             if (!PropertyStates.ContainsKey(header.ConnectionId) || PropertyStates[header.ConnectionId] is not PlayerInputState playerInputState)
                 return null;
@@ -337,7 +345,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
                     if (!cooldownInfo.IsReady())
                     {
-                        Debug.LogWarning($"Player {header.ConnectionId} input animation {commandAnimation} is not ready.");
+                        Debug.LogWarning($"Player {header.ConnectionId} input animation {commandAnimation} is not ready");
                         return playerInputState;
                     }
                 }
