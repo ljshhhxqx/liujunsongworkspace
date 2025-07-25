@@ -82,7 +82,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                         stateData.Frame = null;
                         stateData.Index = 0;
                         dic.Add((int)ani.state, stateData);
-                        ObjectPoolManager<AnimationStateData>.Instance.Return(stateData);
                     }
                 }
                 UIPropertyBinder.OptimizedBatchAdd(_playerAnimationKey, dic);
@@ -111,6 +110,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             OnPlayerStateChanged?.Invoke(propertyState.PlayerGameStateData);
             OnPlayerAnimationCooldownChanged?.Invoke(propertyState.PlayerAnimationCooldownState);
             UpdateUIAnimation(propertyState.PlayerAnimationCooldownState.AnimationCooldowns);
+            // foreach (var inputStateData in propertyState.PlayerAnimationCooldownState.AnimationCooldowns)
+            // {
+            //     Debug.Log($"[ApplyServerState] - {inputStateData.Value.ToString()}");
+            // }
+
             _isApplyingState = false;
         }
 
@@ -205,8 +209,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property, CommandAuthority.Client);
                     animationCommand.SkillId = skillConfigData.id;
                     _propertyPredictionState.AddPredictedCommand(animationCommand);
-                    cooldownInfo?.Use(); 
-                    //Debug.Log($"[Simulate] [Normal] - CommandAnimationState:{inputCommand.CommandAnimationState} - cooldown:{cooldown} - cost:{cost}");
+                    cooldownInfo?.Use();
+                    if (cooldownInfo != null)
+                        Debug.Log($"[Simulate] [Normal] - CommandAnimationState:{inputCommand.CommandAnimationState} - cooldownInfo:{cooldownInfo.AnimationState} - cooldown:{cooldown} - cost:{cost}");
                 }
 
                 if (skillConfigData.animationState != AnimationState.None)

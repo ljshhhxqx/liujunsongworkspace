@@ -743,7 +743,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             param.InputAnimationStates = inputData.InputAnimations;
             param.GroundDistance = _groundDistanceStream.Value;
             param.EnvironmentState = _gameStateStream.Value;
-            ObjectPoolManager<DetermineAnimationStateParams>.Instance.Return(param);
+            //ObjectPoolManager<DetermineAnimationStateParams>.Instance.Return(param);
             return param;    
             
         }
@@ -967,6 +967,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     snapshotData.AnimationCooldowns.Add(cooldown.AnimationState, snapshotCoolDown);
                     continue;
                 }
+                //Debug.Log($"[UpdateAnimation] {snapshotCoolDown.AnimationState} = {cooldown.AnimationState}? {cooldown.AnimationState == snapshotCoolDown.AnimationState} {snapshotCoolDown.ToString()}");
                 CooldownSnapshotData.CopyTo(cooldown, ref snapshotCoolDown);
                 snapshotData.AnimationCooldowns[cooldown.AnimationState] = snapshotCoolDown;
             }

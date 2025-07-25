@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using MemoryPack;
@@ -516,6 +517,25 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         private const float EPSILON = 0.001f;
 
+        public override string ToString()
+        {
+            var sb = new StringBuilder(12);
+            sb.Append($"[CooldownSnapshotData]动画 {AnimationState}当前状态");
+            sb.AppendFormat("AnimationState-{0}",AnimationState);
+            sb.AppendFormat("Cooldown-{0}",Cooldown);
+            sb.AppendFormat("CurrentCountdown-{0}",CurrentCountdown);
+            sb.AppendFormat("MaxAttackCount-{0}",MaxAttackCount);
+            sb.AppendFormat("AttackWindow-{0}",AttackWindow);
+            sb.AppendFormat("CurrentStage-{0}",CurrentStage);
+            sb.AppendFormat("IsInComboWindow-{0}",IsInComboWindow);
+            sb.AppendFormat("WindowCountdown-{0}",WindowCountdown);
+            sb.AppendFormat("KeyframeCurrentTime-{0}",KeyframeCurrentTime);
+            sb.AppendFormat("ResetCooldownWindow-{0}",ResetCooldownWindow);
+            sb.AppendFormat("AnimationSpeed-{0}",AnimationSpeed);
+            
+            return sb.ToString();
+        }
+
         public bool Equals(IAnimationCooldown other)
         {
             return other switch
@@ -565,6 +585,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public static void CopyTo(IAnimationCooldown source, ref CooldownSnapshotData destination)
         {
+            if (source.AnimationState != destination.AnimationState)
+            {
+                return;
+            }
             if (source is ComboCooldown combo)
             {
                 

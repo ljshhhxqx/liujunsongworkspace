@@ -109,6 +109,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 }
                 var cooldownState = playerInputState.PlayerAnimationCooldownState;
                 playerController.UpdateAnimation(deltaTime, ref cooldownState);
+                // foreach (var animationState in cooldownState.AnimationCooldowns)
+                // {
+                //     var cooldown = animationState.Value;
+                //     Debug.Log($"[UpdatePlayerAnimationCooldowns] Player {connectionsKey} has cooldown {cooldown.ToString()}.");
+                // }
+
                 playerInputState.PlayerAnimationCooldownState = cooldownState;
                 PropertyStates[connectionsKey] = playerInputState;
             }
@@ -294,14 +300,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 if (playerController.IsInSpecialState())
                 {
                     Debug.LogWarning($"[playerInputSyncSystem]Player {header.ConnectionId} is in special state, cannot input.");
-                    return null;
+                    return playerInputState;
                 }
                 var playerProperty = playerSyncSystem.GetPlayerProperty(header.ConnectionId);
                 //验证玩家是否存在或者是否已死亡
                 if (playerProperty == null || playerProperty[PropertyTypeEnum.Health].CurrentValue <= 0)
                 {
                     Debug.LogWarning($"[playerInputSyncSystem]Player {header.ConnectionId} is not exist or is dead.");
-                    return null;
+                    
+                    return playerInputState;
                 }
 
                 var inputStateData = ObjectPoolManager<PlayerInputStateData>.Instance.Get(50);
@@ -356,7 +363,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     if (!_animationConfig.IsStrengthEnough(inputCommand.CommandAnimationState, playerProperty[PropertyTypeEnum.Strength].CurrentValue, out var newState, GameSyncManager.TickSeconds)&& newState == AnimationState.None)
                     {
                         Debug.LogWarning($"Player {header.ConnectionId} input animation {commandAnimation} cost {info.cost} strength, but strength is {playerProperty[PropertyTypeEnum.Strength].CurrentValue}.");
-                        return null;
+                        return playerInputState;
                     }
 
                     if (skillConfigData.id == 0)
