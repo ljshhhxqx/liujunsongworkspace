@@ -211,13 +211,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 Reset();
                 return;
             }
+            _currentCountdown = Mathf.Max(0, _currentCountdown - deltaTime);
             if (_currentStage >= _timeline.Count)
             {
                 _currentTime = 0;
                 return;
             }
 
-            _currentCountdown = Mathf.Max(0, _currentCountdown - deltaTime);
 
             _currentTime += deltaTime;
 
@@ -231,14 +231,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                     _currentStage++;
                 }
             }
-            Debug.Log($"[Update] [Animation] Animation-{_state}  _currentCountdown-{_currentCountdown}");
+            //Debug.Log($"[Update] [Animation] Animation-{_state}  _currentCountdown-{_currentCountdown} _currentTime-{_currentTime}  _currentStage-{_currentStage}");
         }
 
         public void Use()
         {
             _currentCountdown = _configCooldown;
             _currentStage = 0;
-            Debug.Log($"[Use] [keyframe] Animation-{_state}  _currentStage-{_currentStage} _currentCountdown-{_currentCountdown}");
+            //Debug.Log($"[Use] [keyframe] Animation-{_state}  _currentStage-{_currentStage} _currentCountdown-{_currentCountdown}");
         }
 
         public bool Refresh(CooldownSnapshotData snapshot)

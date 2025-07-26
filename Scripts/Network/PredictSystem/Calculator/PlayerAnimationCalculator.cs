@@ -71,10 +71,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
         private void SetAnimationSpeed(string clipName, float speedFactor)
         {
-            var clip = _animationComponent.Animator.runtimeAnimatorController.animationClips
-                .FirstOrDefault(c => c.name == clipName);
-        
-            clip?.SampleAnimation(_animationComponent.Animator.gameObject, Mathf.Clamp01(Time.time % clip.length) * speedFactor);
+            // var clip = _animationComponent.Animator.runtimeAnimatorController.animationClips
+            //     .FirstOrDefault(c => c.name == clipName);
+            //
+            // clip?.SampleAnimation(_animationComponent.Animator.gameObject, Mathf.Clamp01(Time.time % clip.length) * speedFactor);
         }
 
         public static void SetAnimationConstant(AnimationConstant animationConstant)

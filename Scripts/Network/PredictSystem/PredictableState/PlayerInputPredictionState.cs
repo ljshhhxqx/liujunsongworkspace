@@ -110,10 +110,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             OnPlayerStateChanged?.Invoke(propertyState.PlayerGameStateData);
             OnPlayerAnimationCooldownChanged?.Invoke(propertyState.PlayerAnimationCooldownState);
             UpdateUIAnimation(propertyState.PlayerAnimationCooldownState.AnimationCooldowns);
-            foreach (var inputStateData in propertyState.PlayerAnimationCooldownState.AnimationCooldowns)
-            {
-                Debug.Log($"[ApplyServerState] - {inputStateData.Value.ToString()}");
-            }
+            // foreach (var inputStateData in propertyState.PlayerAnimationCooldownState.AnimationCooldowns)
+            // {
+            //     Debug.Log($"[ApplyServerState] - {inputStateData.Value.ToString()}");
+            // }
 
             _isApplyingState = false;
         }

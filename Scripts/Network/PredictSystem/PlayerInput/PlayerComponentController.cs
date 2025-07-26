@@ -751,15 +751,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private PlayerGameStateData HandleMoveAndAnimation(PlayerInputStateData inputData)
         {
            // Debug.Log($"[HandleMoveAndAnimation]- inputData.InputMovement ->{inputData.InputMovement} inputData.InputAnimations.Count ->{inputData.InputAnimations} inputData.Command->{inputData.Command}");
-            var cameraForward = Vector3.Scale(_camera.transform.forward, new Vector3(1, 0, 1)).normalized;
-            //移动
-            var movePara = ObjectPoolManager<MoveParam>.Instance.Get(30);
-            movePara.InputMovement = inputData.InputMovement;
-            movePara.IsMovingState = _playerAnimationCalculator.IsMovingState();
-            movePara.CameraForward = _playerPhysicsCalculator.CompressYaw(cameraForward.y);
-            movePara.IsClearVelocity = PlayerAnimationCalculator.IsClearVelocity(inputData.Command);
-            movePara.DeltaTime = FixedDeltaTime;
-            _playerPhysicsCalculator.HandleMove(movePara, isLocalPlayer);
+            
+            if (_playerAnimationCalculator.IsMovingState())
+            {
+                var cameraForward = Vector3.Scale(_camera.transform.forward, new Vector3(1, 0, 1)).normalized;
+                //移动
+                var movePara = ObjectPoolManager<MoveParam>.Instance.Get(30);
+                movePara.InputMovement = inputData.InputMovement;
+                movePara.IsMovingState = _playerAnimationCalculator.IsMovingState();
+                movePara.CameraForward = _playerPhysicsCalculator.CompressYaw(cameraForward.y);
+                movePara.IsClearVelocity = PlayerAnimationCalculator.IsClearVelocity(inputData.Command);
+                movePara.DeltaTime = FixedDeltaTime;
+                _playerPhysicsCalculator.HandleMove(movePara, isLocalPlayer);
+            }
             //执行动画
             _playerAnimationCalculator.HandleAnimation(inputData.Command);
             var data = ObjectPoolManager<PlayerGameStateData>.Instance.Get(30);
