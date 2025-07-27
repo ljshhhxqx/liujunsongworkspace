@@ -113,6 +113,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private List<PredictableStateBase> _predictionStates = new List<PredictableStateBase>();
         private List<SyncStateBase> _syncStates = new List<SyncStateBase>();
         private Dictionary<AnimationState, IAnimationCooldown> _animationCooldownsDict = new Dictionary<AnimationState, IAnimationCooldown>();
+        private AnimationState _previousAnimationState;
         
         private BindingKey _propertyBindKey;
         private BindingKey _itemBindKey;
@@ -530,8 +531,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             //     
             //     _timer = 0;
             //     _frameCount = 0;
-            // }
+            // }3
+            if (_previousAnimationState == inputData.Command && 
+                _previousAnimationState!= AnimationState.Idle && 
+                _previousAnimationState!= AnimationState.Move && 
+                _previousAnimationState!= AnimationState.Sprint)
+            {
+                return;
+            }
             var inputCommand = ObjectPoolManager<InputCommand>.Instance.Get(50);
+            
+            _previousAnimationState = inputData.Command;
             inputCommand.InputMovement = CompressedVector3.FromVector3(inputData.InputMovement);
             inputCommand.Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
                 CommandType.Input, CommandAuthority.Client, CommandExecuteType.Predicate, NetworkCommandType.Input);
@@ -584,11 +594,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     break;
                 // case AnimationState.Dead:
                 // case AnimationState.Hit:
-                case AnimationState.SkillE:
-                case AnimationState.SkillQ:
-                case AnimationState.Attack:
-                    _rigidbody.velocity = Vector3.zero;
-                    break;
+                // case AnimationState.SkillE:
+                // case AnimationState.SkillQ:
+                // case AnimationState.Attack:
+                //     _rigidbody.velocity = Vector3.zero;
+                //     break;
             }
         }
 
@@ -752,13 +762,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
            // Debug.Log($"[HandleMoveAndAnimation]- inputData.InputMovement ->{inputData.InputMovement} inputData.InputAnimations.Count ->{inputData.InputAnimations} inputData.Command->{inputData.Command}");
             
-            if (_playerAnimationCalculator.IsMovingState())
+            if (PlayerAnimationCalculator.IsMovingState(inputData.Command))
             {
                 var cameraForward = Vector3.Scale(_camera.transform.forward, new Vector3(1, 0, 1)).normalized;
                 //移动
                 var movePara = ObjectPoolManager<MoveParam>.Instance.Get(30);
                 movePara.InputMovement = inputData.InputMovement;
-                movePara.IsMovingState = _playerAnimationCalculator.IsMovingState();
+                movePara.IsMovingState = PlayerAnimationCalculator.IsMovingState(inputData.Command);
                 movePara.CameraForward = _playerPhysicsCalculator.CompressYaw(cameraForward.y);
                 movePara.IsClearVelocity = PlayerAnimationCalculator.IsClearVelocity(inputData.Command);
                 movePara.DeltaTime = FixedDeltaTime;

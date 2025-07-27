@@ -92,9 +92,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return animationInfo.animationType == AnimationType.Combo ? animationInfo.animationNames[0] : animationInfo.animationNames[index];
         }
         
-        public bool IsMovingState()
+        public static bool IsMovingState(AnimationState currentAnimationState)
         {
-            return CurrentAnimationState is AnimationState.Move or AnimationState.Sprint or AnimationState.Idle;
+            return currentAnimationState is AnimationState.Move or AnimationState.Sprint or AnimationState.Idle;
         }
         
         public string GetAnimationName(AnimationState state, int index = 0) => _animationConstant.AnimationConfig.GetAnimationName(state, index);
@@ -341,7 +341,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         {
             if (_currentComboSync > 0)
             {
-                if (CurrentAnimationState == AnimationState.Attack || IsMovingState())
+                if (CurrentAnimationState == AnimationState.Attack || IsMovingState(CurrentAnimationState))
                 {
                     //Debug.Log($"Request Attack - Combo: {_currentComboSync}, CanCombo: {_canComboSync}, CurrentState: {_currentState}");
                     StartAttack();
@@ -349,7 +349,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
             else
             {
-                if (!IsMovingState()) return;
+                if (!IsMovingState(CurrentAnimationState)) return;
                 //Debug.Log($"Request Attack - Combo: {_currentComboSync}, CanCombo: {_canComboSync}, CurrentState: {_currentState}");
                 StartAttack();
             }

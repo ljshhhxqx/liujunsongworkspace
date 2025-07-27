@@ -96,7 +96,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             
                 // 应用跳跃力
                 var jumpDirection = _isOnSlope ? Vector3.Lerp(Vector3.up, _slopeNormal, 0.5f) : Vector3.up;
-                _physicsComponent.Rigidbody.AddForce(jumpDirection * _physicsDetermineConstant.JumpSpeed, ForceMode.VelocityChange);
+                _physicsComponent.Rigidbody.AddForce(jumpDirection * _physicsDetermineConstant.JumpSpeed, ForceMode.Impulse);
             }
             else if (_playerEnvironmentState == PlayerEnvironmentState.OnStairs)
             {
@@ -172,11 +172,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     _physicsComponent.Rigidbody.AddForce(Physics.gravity * param.FixedDeltaTime, ForceMode.VelocityChange);
                     //_verticalSpeed = _rigidbody.velocity.y;
                 }
-                else
-                {
-                    _physicsComponent.Rigidbody.velocity = hasMovementInput ? _physicsComponent.Rigidbody.velocity : Vector3.zero;
-                    //_verticalSpeed = 0f;
-                }
             }
             return GroundDistance;
         }
@@ -197,7 +192,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
         public void HandleMove(MoveParam moveParam, bool isLocalPlayer = true)
         {
-            //Debug.Log($"[HandleMove] START  moveParam.InputMovement-> {moveParam.InputMovement}  moveParam.IsClearVelocity-> {moveParam.IsClearVelocity} moveParam.IsMovingState-> {moveParam.IsMovingState}  moveParam.CameraForward-> {moveParam.CameraForward}  moveParam.DeltaTime-> {moveParam.DeltaTime} isLocalPlayer-> {isLocalPlayer}");
+           //Debug.Log($"[HandleMove] START  moveParam.InputMovement-> {moveParam.InputMovement}  moveParam.IsClearVelocity-> {moveParam.IsClearVelocity} moveParam.IsMovingState-> {moveParam.IsMovingState}  moveParam.CameraForward-> {moveParam.CameraForward}  moveParam.DeltaTime-> {moveParam.DeltaTime} isLocalPlayer-> {isLocalPlayer}");
             var hasMovementInput = moveParam.InputMovement.magnitude > 0f;
             Vector3 movement;
             if (_playerEnvironmentState == PlayerEnvironmentState.OnStairs)
@@ -283,10 +278,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
         public void HandlePlayerRoll()
         {
-            DelayInvoker.DelayInvoke(0.5f, () =>
-            {
-                _physicsComponent.Rigidbody.AddForce(_physicsComponent.Rigidbody.transform.forward.normalized * _physicsDetermineConstant.RollForce, ForceMode.VelocityChange);
-            });
+            var direction = _physicsComponent.Rigidbody.transform.forward.normalized;
+            var moveDirection = direction.normalized / Mathf.Cos(30/Mathf.PI);
+            _physicsComponent.Rigidbody.AddForce(moveDirection * _physicsDetermineConstant.RollForce, ForceMode.Impulse);
+            // DelayInvoker.DelayInvoke(0.5f, () =>
+            // {
+            // });
             
         }
 

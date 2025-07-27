@@ -472,7 +472,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 return;
             }
             _currentCountdown = Mathf.Max(0, _currentCountdown - deltaTime);
-            Debug.Log($"[Update] [Animation] Animation-{_animationState}  _currentCountdown-{_currentCountdown}");
+            //Debug.Log($"[Update] [Animation] Animation-{_animationState}  _currentCountdown-{_currentCountdown}");
         }
         
         public void Use()
@@ -482,7 +482,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 return;
             }
             _currentCountdown = Cooldown;
-            Debug.Log($"[Use] [Animation] Animation-{_animationState}  _currentCountdown-{_currentCountdown}");
+            //Debug.Log($"[Use] [Animation] Animation-{_animationState}  _currentCountdown-{_currentCountdown}");
         }
 
         public bool Refresh(CooldownSnapshotData snapshotData)
