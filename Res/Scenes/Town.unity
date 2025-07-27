@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731713, g: 0.13414736, b: 0.12107852, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2759,8 +2759,8 @@ Transform:
   m_GameObject: {fileID: 35307434340306289}
   serializedVersion: 2
   m_LocalRotation: {x: -0.03169185, y: -0, z: -0, w: 0.9994977}
-  m_LocalPosition: {x: 15.251106, y: 0, z: 6.7588477}
-  m_LocalScale: {x: 1, y: 1.04, z: 1}
+  m_LocalPosition: {x: 15.251106, y: -0.1147, z: 6.7661}
+  m_LocalScale: {x: 1, y: 1.0728639, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5931363093993730607}
@@ -8956,8 +8956,8 @@ Transform:
   m_GameObject: {fileID: 2752363968917495278}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.99917054, z: 0.040723115, w: 0}
-  m_LocalPosition: {x: 4.062254, y: 0, z: -6.82}
-  m_LocalScale: {x: 1, y: 1.04, z: 1}
+  m_LocalPosition: {x: 4.062254, y: -0.1706, z: -6.8339}
+  m_LocalScale: {x: 1, y: 1.0888801, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5931363093993730607}
@@ -9490,8 +9490,8 @@ Transform:
   m_GameObject: {fileID: 4282498228481238368}
   serializedVersion: 2
   m_LocalRotation: {x: -0.03169185, y: -0, z: -0, w: 0.9994977}
-  m_LocalPosition: {x: -4.0755596, y: 0, z: 6.758847}
-  m_LocalScale: {x: 1, y: 1.04, z: 1}
+  m_LocalPosition: {x: -4.0755596, y: -0.0832, z: 6.7641}
+  m_LocalScale: {x: 1, y: 1.12387, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5931363093993730607}
@@ -16908,8 +16908,8 @@ Transform:
   m_GameObject: {fileID: 6810480500333669693}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.99917054, z: 0.040723115, w: 0}
-  m_LocalPosition: {x: 23.388922, y: 0, z: -6.8200006}
-  m_LocalScale: {x: 1, y: 1.04, z: 1}
+  m_LocalPosition: {x: 23.388922, y: -0.1708, z: -6.834}
+  m_LocalScale: {x: 1, y: 1.0889839, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5931363093993730607}

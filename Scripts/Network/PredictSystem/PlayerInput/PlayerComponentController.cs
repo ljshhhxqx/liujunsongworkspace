@@ -295,6 +295,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .Where(_ => isLocalPlayer && _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) > 0 && GameSyncManager.CurrentTick > 0)
                 .Subscribe(_ =>
                 {
+                    HandleInputPhysics(_playerInputStateData);
                     _targetSpeed = _propertyPredictionState.GetMoveSpeed();
                     var propertyEnvironmentChangeCommand = ObjectPoolManager<PropertyEnvironmentChangeCommand>.Instance.Get(50);
                     propertyEnvironmentChangeCommand.Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
@@ -309,7 +310,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                         state.ExecutePredictedCommands(GameSyncManager.CurrentTick);
                     }
                     //ObjectPoolManager<PropertyEnvironmentChangeCommand>.Instance.Return(propertyEnvironmentChangeCommand);
-                    HandleInputPhysics(_playerInputStateData);
                 })
                 .AddTo(this);
             
@@ -1022,6 +1022,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
                 animationCooldown.Refresh(snapshotCoolDown);
             }
+            _previousAnimationState = AnimationState.None;
         }
 
         [ClientRpc]

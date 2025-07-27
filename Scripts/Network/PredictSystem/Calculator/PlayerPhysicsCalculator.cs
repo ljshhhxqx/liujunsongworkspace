@@ -213,7 +213,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
             else if (_playerEnvironmentState == PlayerEnvironmentState.OnGround)
             {
-                _physicsComponent.Rigidbody.useGravity = true;
+                //_physicsComponent.Rigidbody.useGravity = true;
                 if (isLocalPlayer)
                 {
                     var camForward = Vector3.Scale(_physicsComponent.Camera.transform.forward, new Vector3(1, 0, 1))

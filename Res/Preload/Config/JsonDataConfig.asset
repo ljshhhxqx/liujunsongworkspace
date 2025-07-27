@@ -87,7 +87,7 @@ MonoBehaviour:
       groundMinDistance: 0.1
       groundMaxDistance: 0.25
       maxSlopeAngle: 45
-      stairsCheckDistance: 0.45
+      stairsCheckDistance: 0.75
       tickRate: 50
       stateUpdateInterval: 0.2
       serverInputRate: 0.02
