@@ -114,6 +114,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private List<SyncStateBase> _syncStates = new List<SyncStateBase>();
         private Dictionary<AnimationState, IAnimationCooldown> _animationCooldownsDict = new Dictionary<AnimationState, IAnimationCooldown>();
         private AnimationState _previousAnimationState;
+        private KeyframeComboCooldown _attackAnimationCooldown;
         
         private BindingKey _propertyBindKey;
         private BindingKey _itemBindKey;
@@ -776,7 +777,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 _playerPhysicsCalculator.HandleMove(movePara, isLocalPlayer);
             }
             //执行动画
-            _playerAnimationCalculator.HandleAnimation(inputData.Command);
+            _playerAnimationCalculator.HandleAnimation(inputData.Command, _attackAnimationCooldown.CurrentStage);
             var data = ObjectPoolManager<PlayerGameStateData>.Instance.Get(30);
             data.Position = transform.position;
             data.Quaternion = transform.rotation;
@@ -951,20 +952,27 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 {
                     continue;
                 }
+                IAnimationCooldown cooldown = null;
                 switch (info.cooldownType)
                 {
                     case CooldownType.Normal:
-                        list.Add(new AnimationCooldown(info.state, info.cooldown, info.animationSpeed));
+                        cooldown = new AnimationCooldown(info.state, info.cooldown, info.animationSpeed);
                         break;
                     case CooldownType.KeyFrame:
-                        list.Add(new KeyframeCooldown(info.state, info.cooldown, info.keyframeData, info.animationSpeed));
+                        cooldown = new KeyframeCooldown(info.state, info.cooldown, info.keyframeData, info.animationSpeed);
                         break;
                     case CooldownType.Combo:
-                        list.Add(new ComboCooldown(info.state, info.keyframeData.Select(x => x.resetCooldownWindowTime).ToList(), info.cooldown, info.animationSpeed));
+                        cooldown = new ComboCooldown(info.state, info.keyframeData.Select(x => x.resetCooldownWindowTime).ToList(), info.cooldown, info.animationSpeed);
                         break;
                     case CooldownType.KeyFrameAndCombo:
-                        list.Add(new KeyframeComboCooldown(info.state, info.cooldown, info.keyframeData.ToList(), info.animationSpeed));
+                        cooldown = new KeyframeComboCooldown(info.state, info.cooldown, info.keyframeData.ToList(), info.animationSpeed);
                         break;
+                }
+
+                list.Add(cooldown);
+                if (info.state == AnimationState.Attack && cooldown is KeyframeComboCooldown kcd)
+                {
+                    _attackAnimationCooldown ??= kcd;
                 }
             }
             return list;

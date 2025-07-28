@@ -276,6 +276,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         private int _maxStage;
         private float _configCooldown;
         private float _currentTime;
+        private bool _isComboStart;
         private float _windowCountdown;
         private bool _inComboWindow;
         private AnimationState _state;
@@ -290,7 +291,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public float CurrentCountdown => _currentCountdown;
         public bool IsInComboWindow => _inComboWindow;
         public float CurrentTime => _currentTime;
-        public float AttackWindow => _currentStage == 0 ? 0 : _keyframe[_currentStage-1].resetCooldownWindowTime;
+        public bool IsComboStart => _isComboStart;
+        public float AttackWindow => _currentStage == 0 ? 0 : _currentStage >= _keyframe.Count ? _keyframe.Count-1 : _keyframe[_currentStage - 1].resetCooldownWindowTime;
 
         public KeyframeComboCooldown(AnimationState state, float cooldown, List<KeyframeData> keyframe, float animationSpeed)
         {
@@ -310,54 +312,76 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsReady()
         {
-            return _currentCountdown <= 0 && (_currentStage == 0 || _inComboWindow);
+            if (_windowCountdown > 0)
+            {
+                return _currentStage < _keyframe.Count;
+            }
+            return _currentCountdown <= 0 && _currentStage == 0;
         }
 
         public void Update(float deltaTime)
         {
-            if (_currentCountdown <= 0)
-            {
-                return;
-            }
-            
             if (_currentCountdown > 0)
             {
+                _inComboWindow = false;
+                _isComboStart = false;
                 _currentCountdown = Mathf.Max(0, _currentCountdown - deltaTime);
                 if (_currentCountdown <= 0)
                 {
                     Reset();
-                    return;
                 }
+                return;
             }
-
+            
+            if (!_isComboStart)
+            {
+                return;
+            }
+            
             // 连招窗口倒计时
-            if (_windowCountdown > 0)
+            if (_windowCountdown > 0 && _currentStage < _keyframe.Count)
             {
                 _windowCountdown = Mathf.Max(0, _windowCountdown - deltaTime);
-                if (_windowCountdown <= 0)
+                if (_windowCountdown == 0)
                 {
                     EndComboWindow();
                     return;
                 }
             }
 
-            // 推进动画时间轴
-            _currentTime += deltaTime;
-
             // 检测当前阶段关键帧
             var currentStageConfig = _currentStage < _keyframe.Count ? 
                 _keyframe[_currentStage] : default;
+            if (currentStageConfig.resetCooldownWindowTime == 0)
+            {
+                _isComboStart = false;
+                _currentCountdown = _configCooldown;
+                return;
+            }
+            // 推进动画时间轴
+            _currentTime += deltaTime;
 
             // 关键帧触发检测
             if (_currentTime >= currentStageConfig.triggerTime - currentStageConfig.tolerance && 
                 _currentTime <= currentStageConfig.triggerTime + currentStageConfig.tolerance)
             {
                 _eventStream.OnNext(currentStageConfig.eventType);
+                Debug.Log($"[Update] [KeyframeCombo] 关键帧已通过触发条件 Animation-{_state}  _currentStage-{_currentStage} _windowCountdown-{_windowCountdown} _currentTime-{_currentTime}");
                 _windowCountdown = currentStageConfig.resetCooldownWindowTime;
+                _inComboWindow = true;
                 _currentTime = 0;
                 _currentStage++;
+
+                if (_currentStage >= _keyframe.Count)
+                {
+                    _currentCountdown = _configCooldown;
+                    _inComboWindow = false;
+                    _currentStage = 0;
+                    _isComboStart = false;
+                    return;
+                }
             }
-            Debug.Log($"[Update] [Animation] Animation-{_state}  _currentCountdown-{_currentCountdown}");
+            Debug.Log($"[Update] [Animation] Animation-{_state}  _currentCountdown-{_currentCountdown} _windowCountdown-{_windowCountdown} _currentTime-{_currentTime}  _currentStage-{_currentStage}");
         }
 
         public void Use()
@@ -369,10 +393,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 // 开始新连招
                 StartNewCombo();
             }
-            else if (_windowCountdown > 0)
+            else if (_inComboWindow && _windowCountdown > 0)
             {
                 // 在窗口期内推进连招
                 AdvanceCombo();
+            }
+            else if (_currentStage == _keyframe.Count)
+            {
+                return;
             }
             Debug.Log($"[Use] [keyFrameCombo] Animation-{_state}  _currentStage-{_currentStage} _currentCountdown-{_currentCountdown}" +
                       $"_windowCountdown-{_windowCountdown} _currentTime-{_currentTime} _inComboWindow-{_inComboWindow}");
@@ -380,22 +408,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         private void StartNewCombo()
         {
-            _currentStage = 1;
-            _windowCountdown = _keyframe[_currentStage-1].resetCooldownWindowTime;
-            _inComboWindow = true;
-            _currentCountdown = 0;
+            _isComboStart = true;
+            _windowCountdown = 0;
         }
 
         private void AdvanceCombo()
         {
-            _currentStage = Mathf.Min(_currentStage + 1, _maxStage);
-            _windowCountdown = _keyframe[_currentStage-1].resetCooldownWindowTime;
-            _inComboWindow = true;
+            _windowCountdown = 0;
         }
 
         private void EndComboWindow()
         {
             _inComboWindow = false;
+            _windowCountdown = 0;
+            _isComboStart = false;
             if (_currentStage > 0)
             {
                 _currentCountdown = _configCooldown;
@@ -424,6 +450,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             _windowCountdown = 0;
             _currentTime = 0;
             _inComboWindow = false;
+            _currentCountdown = 0;
         }
 
         public void SkillModifyCooldown(float modifier)
@@ -527,6 +554,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(8)] public float KeyframeCurrentTime;
         [MemoryPackOrder(9)] public float ResetCooldownWindow;
         [MemoryPackOrder(10)] public float AnimationSpeed;
+        [MemoryPackOrder(11)] public bool IsComboStart;
 
         private const float EPSILON = 0.001f;
 
@@ -545,6 +573,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             sb.AppendFormat("KeyframeCurrentTime-{0}",KeyframeCurrentTime);
             sb.AppendFormat("ResetCooldownWindow-{0}",ResetCooldownWindow);
             sb.AppendFormat("AnimationSpeed-{0}",AnimationSpeed);
+            sb.AppendFormat("IsComboStart-{0}",IsComboStart);
             
             return sb.ToString();
         }
@@ -593,7 +622,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                    Mathf.Abs(WindowCountdown - comboKeyframe.WindowRemaining) < EPSILON &&
                    IsInComboWindow == comboKeyframe.IsInComboWindow &&
                    Mathf.Abs(KeyframeCurrentTime - comboKeyframe.CurrentTime) < EPSILON &&
-                   Mathf.Approximately(AnimationSpeed, comboKeyframe.AnimationSpeed);
+                   Mathf.Approximately(AnimationSpeed, comboKeyframe.AnimationSpeed) && 
+                   IsComboStart == comboKeyframe.IsComboStart;
         }
 
         public static void CopyTo(IAnimationCooldown source, ref CooldownSnapshotData destination)
@@ -633,6 +663,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 destination.WindowCountdown = comboKeyframe.WindowRemaining;
                 destination.KeyframeCurrentTime = comboKeyframe.CurrentTime;
                 destination.AnimationSpeed = comboKeyframe.AnimationSpeed;
+                destination.IsComboStart = comboKeyframe.IsComboStart;
             }
             else if (source is AnimationCooldown animationCooldown)
             {
@@ -704,6 +735,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 WindowCountdown = comboKeyframe.WindowRemaining,
                 KeyframeCurrentTime = comboKeyframe.CurrentTime,
                 AnimationSpeed = comboKeyframe.AnimationSpeed,
+                IsComboStart = comboKeyframe.IsComboStart,
             };
         }
 
