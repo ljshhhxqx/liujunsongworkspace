@@ -24,6 +24,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         private PlayerEnvironmentState _playerEnvironmentState;
         private float _currentSpeed;
         private float _verticalSpeed;
+        private bool _isMoving;
         public float GroundDistance { get; private set; }
         
         public float CurrentSpeed
@@ -172,6 +173,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     _physicsComponent.Rigidbody.AddForce(Physics.gravity * param.FixedDeltaTime, ForceMode.VelocityChange);
                     //_verticalSpeed = _rigidbody.velocity.y;
                 }
+                else if (_playerEnvironmentState == PlayerEnvironmentState.OnStairs)
+                {
+                    _physicsComponent.Rigidbody.velocity = _stairsHitNormal.normalized * -2f;
+                }
             }
             return GroundDistance;
         }
@@ -192,24 +197,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
         public void HandleMove(MoveParam moveParam, bool isLocalPlayer = true)
         {
-           //Debug.Log($"[HandleMove] START  moveParam.InputMovement-> {moveParam.InputMovement}  moveParam.IsClearVelocity-> {moveParam.IsClearVelocity} moveParam.IsMovingState-> {moveParam.IsMovingState}  moveParam.CameraForward-> {moveParam.CameraForward}  moveParam.DeltaTime-> {moveParam.DeltaTime} isLocalPlayer-> {isLocalPlayer}");
+            //Debug.Log($"[HandleMove] START  moveParam.InputMovement-> {moveParam.InputMovement}  moveParam.IsClearVelocity-> {moveParam.IsClearVelocity} moveParam.IsMovingState-> {moveParam.IsMovingState}  moveParam.CameraForward-> {moveParam.CameraForward}  moveParam.DeltaTime-> {moveParam.DeltaTime} isLocalPlayer-> {isLocalPlayer}");
             var hasMovementInput = moveParam.InputMovement.magnitude > 0f;
+            _isMoving = hasMovementInput;
             Vector3 movement;
             if (_playerEnvironmentState == PlayerEnvironmentState.OnStairs)
             {
                 _physicsComponent.Rigidbody.useGravity = false;
                 movement = moveParam.InputMovement.z * -_stairsNormal.normalized + _physicsComponent.Transform.right * moveParam.InputMovement.x;
-                if (hasMovementInput)
-                {
-                    var moveDirection = movement.normalized;
-                    var targetVelocity = moveDirection * _currentSpeed;
-                    targetVelocity += _stairsHitNormal.normalized * -2f;
-                    _physicsComponent.Rigidbody.velocity = moveParam.IsClearVelocity ? Vector3.zero : targetVelocity;
-                }
-                else
-                {
-                    _physicsComponent.Rigidbody.velocity = moveParam.IsClearVelocity ? Vector3.zero : _stairsHitNormal.normalized * -2f;
-                }
+                var moveDirection = movement.normalized;
+                var targetVelocity = moveDirection * _currentSpeed;
+                targetVelocity += _stairsHitNormal.normalized * -2f;
+                _physicsComponent.Rigidbody.velocity = moveParam.IsClearVelocity ? Vector3.zero : targetVelocity;
             }
             else if (_playerEnvironmentState == PlayerEnvironmentState.OnGround)
             {
@@ -250,6 +249,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 _physicsComponent.Rigidbody.velocity = hasMovementInput ? targetVelocity : Vector3.zero;
                 HandlePlayerRotation(moveParam, movement);
             }
+
+            _isMoving = false;
         }
 
         private void HandlePlayerRotation(MoveParam param, Vector3 movement)
