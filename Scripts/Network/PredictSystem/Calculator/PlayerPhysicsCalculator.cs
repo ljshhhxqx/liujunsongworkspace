@@ -279,12 +279,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
         public void HandlePlayerRoll()
         {
-            var direction = _physicsComponent.Rigidbody.transform.forward.normalized;
-            var moveDirection = direction.normalized / Mathf.Cos(30/Mathf.PI);
-            _physicsComponent.Rigidbody.AddForce(moveDirection * _physicsDetermineConstant.RollForce, ForceMode.Impulse);
-            // DelayInvoker.DelayInvoke(0.5f, () =>
-            // {
-            // });
+            Debug.Log("HandlePlayerRoll");
+            DelayInvoker.DelayInvoke(0.75f, () =>
+            {
+                var direction = _physicsComponent.Rigidbody.transform.forward.normalized;
+                var moveDirection = direction.normalized / Mathf.Cos(30f/180f*Mathf.PI);
+                _physicsComponent.Rigidbody.AddForce(moveDirection * _physicsDetermineConstant.RollForce, ForceMode.Impulse);
+            });
             
         }
 

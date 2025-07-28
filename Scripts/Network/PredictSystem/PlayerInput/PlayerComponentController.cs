@@ -568,10 +568,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcHandlePlayerSpecialAction(AnimationState animationState)
         {
-            if (isLocalPlayer)
-            {
-                return;
-            }
+            // if (isLocalPlayer)
+            // {
+            //     return;
+            // }
             HandlePlayerSpecialAction(animationState);
         }
 
@@ -579,6 +579,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             if (animationState is AnimationState.Move or AnimationState.None or AnimationState.Sprint or AnimationState.Idle)
             {
+                //Debug.Log($"[HandlePlayerSpecialAction] Animation State: {animationState}");
                 return;
             }
             //Debug.Log($"[HandlePlayerSpecialAction] Animation State: {animationState}");
