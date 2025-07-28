@@ -278,7 +278,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         private float _currentTime;
         private bool _isComboStart;
         private float _windowCountdown;
-        private bool _inComboWindow;
+        private bool _inComboWindow = true;
         private AnimationState _state;
         private Subject<AnimationEvent> _eventStream = new Subject<AnimationEvent>();
         private List<KeyframeData> _keyframe;
@@ -302,6 +302,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             _keyframe = keyframe;
             Reset();
             AnimationSpeed = animationSpeed;
+            _isComboStart =true;
         }
         public float AnimationSpeed { get; private set; }
         public float SetAnimationSpeed(float speed)
@@ -316,7 +317,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             {
                 return _currentStage < _keyframe.Count;
             }
-            return _currentCountdown <= 0 && _currentStage == 0;
+            return _currentCountdown <= 0 && _currentStage == 0 && _inComboWindow;
         }
 
         public void Update(float deltaTime)
@@ -328,6 +329,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 _currentCountdown = Mathf.Max(0, _currentCountdown - deltaTime);
                 if (_currentCountdown <= 0)
                 {
+                    _inComboWindow = true;
                     Reset();
                 }
                 return;
@@ -355,6 +357,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             if (currentStageConfig.resetCooldownWindowTime == 0)
             {
                 _isComboStart = false;
+                _inComboWindow = false;
                 _currentCountdown = _configCooldown;
                 return;
             }
@@ -393,14 +396,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 // 开始新连招
                 StartNewCombo();
             }
-            else if (_inComboWindow && _windowCountdown > 0)
+            
+            else if (_windowCountdown > 0)
             {
-                // 在窗口期内推进连招
+                if (_currentStage == _maxStage)
+                {
+                    // 达到最大连击数时立即进入冷却
+                    _currentCountdown = _configCooldown;
+                    Reset();
+                    return;
+                }
                 AdvanceCombo();
-            }
-            else if (_currentStage == _keyframe.Count)
-            {
-                return;
             }
             Debug.Log($"[Use] [keyFrameCombo] Animation-{_state}  _currentStage-{_currentStage} _currentCountdown-{_currentCountdown}" +
                       $"_windowCountdown-{_windowCountdown} _currentTime-{_currentTime} _inComboWindow-{_inComboWindow}");
@@ -409,6 +415,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         private void StartNewCombo()
         {
             _isComboStart = true;
+            _inComboWindow = false;
             _windowCountdown = 0;
         }
 
@@ -422,11 +429,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             _inComboWindow = false;
             _windowCountdown = 0;
             _isComboStart = false;
-            if (_currentStage > 0)
-            {
-                _currentCountdown = _configCooldown;
-                Reset();
-            }
+            _currentCountdown = _configCooldown;
+            Reset();
         }
 
         public bool Refresh(CooldownSnapshotData snapshot)
@@ -449,7 +453,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             _currentStage = 0;
             _windowCountdown = 0;
             _currentTime = 0;
-            _inComboWindow = false;
             _currentCountdown = 0;
         }
 
@@ -779,7 +782,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public void Init()
         {
-            
+            IsInComboWindow = true;
         }
 
         public void Clear()
