@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using AOTScripts.Tool.ECS;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Network.Server.InGame;
@@ -13,7 +14,7 @@ using VContainer;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 {
-    public class InteractSystem : NetworkBehaviour
+    public class InteractSystem : ServerNetworkComponent
     {
         private ItemsSpawnerManager _itemsSpawnerManager;
         private readonly ConcurrentQueue<IInteractRequest> _commandQueue = new ConcurrentQueue<IInteractRequest>();

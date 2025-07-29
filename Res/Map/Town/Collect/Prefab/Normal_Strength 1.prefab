@@ -143,9 +143,6 @@ MonoBehaviour:
   quality: 0
   collectConfigId: 4
   fillRenderer: {fileID: 23842102848711382}
-  playerLayer:
-    serializedVersion: 2
-    m_Bits: 64
 --- !u!114 &7160878114706890545
 MonoBehaviour:
   m_ObjectHideFlags: 0

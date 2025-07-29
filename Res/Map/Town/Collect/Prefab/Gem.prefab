@@ -266,12 +266,10 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  CollectId: 0
+  collectId: 0
+  quality: 0
   collectConfigId: 3
   fillRenderer: {fileID: 0}
-  playerLayer:
-    serializedVersion: 2
-    m_Bits: 64
 --- !u!114 &-2325120657532671922
 MonoBehaviour:
   m_ObjectHideFlags: 0

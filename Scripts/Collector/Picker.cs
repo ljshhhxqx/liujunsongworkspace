@@ -3,7 +3,12 @@ using AOTScripts.Tool.ECS;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Network.PredictSystem.Data;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
+using MemoryPack;
 using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
@@ -17,19 +22,34 @@ namespace HotUpdate.Scripts.Collector
     {
         public PickerType PickerType { get; set; }
         private GameEventManager _gameEventManager;
+        private InteractSystem _interactSystem;
 
         private readonly List<IPickable> _collects = new List<IPickable>();
     
         [Inject]
-        private void Init(GameEventManager gameEventManager)
+        private void Init(GameEventManager gameEventManager, InteractSystem interactSystem)
         {
             _gameEventManager = gameEventManager;
             _gameEventManager.Subscribe<GameInteractableEffect>(OnInteractionStateChange);
+            _interactSystem = interactSystem;
         }
 
         private void OnDestroy()
         {
             _collects.Clear();   
+        }
+        
+        public void SendCollectRequest(uint pickerId, PickerType pickerType, uint itemId)
+        {
+            var request = new SceneInteractRequest
+            {
+                Header = GameSyncManager.CreateInteractHeader(PlayerInGameManager.Instance.GetPlayerId(pickerId), InteractCategory.PlayerToScene,
+                    transform.position, CommandAuthority.Client),
+                InteractionType = InteractionType.PickupItem,
+                SceneItemId = itemId,
+            };
+            var json = MemoryPackSerializer.Serialize(request);
+            _interactSystem.EnqueueCommand(json);
         }
 
         private void OnInteractionStateChange(GameInteractableEffect interactableObjectEffectEventEvent)
@@ -74,7 +94,7 @@ namespace HotUpdate.Scripts.Collector
 
         private async UniTaskVoid Collect(IPickable collect)
         {
-            if(!isClient) return;
+            if(!isLocalPlayer) return;
             collect.RequestPick(connectionToClient.connectionId);
             await UniTask.DelayFrame(1);
         }

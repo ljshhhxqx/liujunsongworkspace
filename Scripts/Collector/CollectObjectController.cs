@@ -88,7 +88,8 @@ namespace HotUpdate.Scripts.Collector
             _collider = collectCollider.GetComponent<Collider>();
             _collider.enabled = true;
             _disposable = _collider.OnTriggerEnterAsObservable()
-                .Subscribe(OnTriggerEnterObserver);
+                .Subscribe(OnTriggerEnterObserver)
+                .AddTo(this);
         }
 
         private void OnReturnToPool()
@@ -103,32 +104,28 @@ namespace HotUpdate.Scripts.Collector
         
         private void OnTriggerEnterObserver(Collider other)
         {
-            if ((_playerLayer.value & (1 << other.gameObject.layer)) == 0 || !isClient)
+            if ((_playerLayer.value & (1 << other.gameObject.layer)) == 0)
             {
                 return;
             }
             
             if (other.TryGetComponent<Picker>(out var pickerComponent))
             {
-                SendCollectRequest(pickerComponent.netId, pickerComponent.PickerType);
+                pickerComponent.SendCollectRequest(pickerComponent.netId, pickerComponent.PickerType, ItemId);
             }
         }
         
         protected override void SendCollectRequest(uint pickerId, PickerType pickerType)
         {
-            if (isLocalPlayer)
-            {
-                var request = new SceneInteractRequest
-                {
-                    Header = GameSyncManager.CreateInteractHeader(PlayerInGameManager.Instance.GetPlayerId(pickerId), InteractCategory.PlayerToScene,
-                        transform.position, CommandAuthority.Client),
-                    InteractionType = InteractionType.PickupItem,
-                    SceneItemId = ItemId,
-                };
-                var json = MemoryPackSerializer.Serialize(request);
-                _interactSystem.EnqueueCommand(json);
-                //_mirrorNetworkMessageHandler.SendToServer(new MirrorPickerPickUpCollectMessage(pickerId, collectId));
-            }
+            // var request = new SceneInteractRequest
+            // {
+            //     Header = GameSyncManager.CreateInteractHeader(PlayerInGameManager.Instance.GetPlayerId(pickerId), InteractCategory.PlayerToScene,
+            //         transform.position, CommandAuthority.Client),
+            //     InteractionType = InteractionType.PickupItem,
+            //     SceneItemId = ItemId,
+            // };
+            // var json = MemoryPackSerializer.Serialize(request);
+            // _interactSystem.EnqueueCommand(json);
         }
 
         public void CollectSuccess()

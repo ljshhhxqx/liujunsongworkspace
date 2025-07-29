@@ -60,9 +60,6 @@ MonoBehaviour:
   quality: 2
   collectConfigId: 14
   fillRenderer: {fileID: 23753439705546060}
-  playerLayer:
-    serializedVersion: 2
-    m_Bits: 64
 --- !u!114 &7727184122250189628
 MonoBehaviour:
   m_ObjectHideFlags: 0

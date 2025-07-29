@@ -372,6 +372,7 @@ namespace HotUpdate.Scripts.Collector
                         Items = list,
                     });
 
+                    GameObjectPoolManger.Instance.ReturnObject(NetworkServer.spawned[itemData.ItemId].gameObject);
                     // 通知客户端
                     RpcPickupItem(itemId);
             
@@ -491,9 +492,17 @@ namespace HotUpdate.Scripts.Collector
                     spawnedCount += newSpawnInfos.Count;
                     foreach (var item in newSpawnInfos)
                     {
-                        var id = CollectItemMetaData.GenerateItemId(item.Item2);
-                        if (_serverItemMap.TryGetValue(id, out var itemInfo))
+                        // var id = CollectItemMetaData.GenerateItemId(item.Item2);
+                        var go = GameObjectPoolManger.Instance.GetObject(_collectiblePrefabs[item.Item1].gameObject, item.Item2, Quaternion.identity, _spawnedParent,
+                            go => _gameMapInjector.InjectGameObject(go));
+                        //go.transform.position = item.Item2;
+                        NetworkServer.Spawn(go);
+                        var identity = go.GetComponent<NetworkIdentity>();
+                        Debug.Log($"Spawning item at position: {item.Item2} with id: {identity.netId}, real position: {go.transform.position}");
+                        if (_serverItemMap.TryGetValue(identity.netId, out var itemInfo))
                         {
+                            GameObjectPoolManger.Instance.ReturnObject(go);
+                            NetworkServer.Destroy(go);
                             continue;
                         }
 
@@ -506,7 +515,7 @@ namespace HotUpdate.Scripts.Collector
                         };
                         var state = (ItemState)0;
                         state = state.AddState(ItemState.IsActive);
-                        var itemMetaData = new CollectItemMetaData(id, 
+                        var itemMetaData = new CollectItemMetaData(identity.netId, 
                             item.Item2,
                             (byte)state, 
                             item.Item1,
@@ -516,17 +525,17 @@ namespace HotUpdate.Scripts.Collector
                             -1);
                         itemMetaData = itemMetaData.SetCustomData(extraData);
                         itemInfo = MemoryPackSerializer.Serialize(itemMetaData);
-                        _serverItemMap.Add(id, itemInfo);
+                        _serverItemMap.Add(identity.netId, itemInfo);
                     }
                     Debug.Log($"Calculated {spawnedCount} spawn positions");
                     await UniTask.Yield();
                 }
 
-                foreach (var iKey in _serverItemMap.Keys)
-                {
-                    var itemInfo = _serverItemMap[iKey];
-                    SpawnManyItemsClientRpc(itemInfo);
-                }
+                // foreach (var iKey in _serverItemMap.Keys)
+                // {
+                //     var itemInfo = _serverItemMap[iKey];
+                //     SpawnManyItemsClientRpc(itemInfo);
+                // }
             }
             catch (Exception e)
             {
@@ -547,8 +556,11 @@ namespace HotUpdate.Scripts.Collector
             var random = Random.Range(0, 1);
             var chestData = _chestConfig.RandomOne(random);
             var position = GetRandomStartPoint(0.75f);
-            var id = CollectItemMetaData.GenerateItemId(position);
-            var metaData = new CollectItemMetaData(id,
+            var chestGo = GameObjectPoolManger.Instance.GetObject(_treasureChestPrefabs.GetValueOrDefault(chestData.randomItems.quality).gameObject, position, Quaternion.identity, _spawnedParent,
+                go => _gameMapInjector.InjectGameObject(go));
+            var identity = chestGo.GetComponent<NetworkIdentity>();
+            NetworkServer.Spawn(chestGo);
+            var metaData = new CollectItemMetaData(identity.netId,
                 position,
                 0,
                 chestData.chestId,
@@ -566,9 +578,9 @@ namespace HotUpdate.Scripts.Collector
                 ChestUniqueId = chestUniqueId,
                 Quality = chestData.randomItems.quality,
             });
-            var serverTreasureChestMetaDataBytes = MemoryPackSerializer.Serialize(metaData);
+            //var serverTreasureChestMetaDataBytes = MemoryPackSerializer.Serialize(metaData);
             _serverTreasureChestMetaData = metaData;
-            RpcSpawnTreasureChest(serverTreasureChestMetaDataBytes);
+            //RpcSpawnTreasureChest(serverTreasureChestMetaDataBytes);
             GameItemManager.AddChestData(new GameChestData
             {
                 ChestId = chestUniqueId,
@@ -611,51 +623,57 @@ namespace HotUpdate.Scripts.Collector
         private void SpawnItems(CollectItemMetaData data)
         {
             var position = data.Position;
-                Debug.Log($"Client spawning item at position: {position}"); // 添加日志
-                var prefab = GetPrefabByCollectType(data.ItemCollectConfigId);
-                if (!prefab)
-                {
-                    Debug.LogError($"Failed to find prefab for CollectType: {data.ItemCollectConfigId}");
-                    return;
-                }
+            Debug.Log($"Client spawning item at position: {position}"); // 添加日志
+            var prefab = GetPrefabByCollectType(data.ItemCollectConfigId);
+            if (!prefab)
+            {
+                Debug.LogError($"Failed to find prefab for CollectType: {data.ItemCollectConfigId}");
+                return;
+            }
 
-                var go = GameObjectPoolManger.Instance.GetObject(prefab.gameObject, position, Quaternion.identity, _spawnedParent,
-                    go => _gameMapInjector.InjectGameObject(go));
-                if (!go)
+            var go = GameObjectPoolManger.Instance.GetObject(prefab.gameObject, position, Quaternion.identity, _spawnedParent,
+                go => _gameMapInjector.InjectGameObject(go));
+            if (!go)
+            {
+                Debug.LogError("Failed to get object from pool");
+                return;
+            }
+            var configData = _collectObjectDataConfig.GetCollectObjectData(data.ItemCollectConfigId);
+            //var collectItemCustomData = data.GetCustomData<CollectItemCustomData>();
+            var buff = configData.buffExtraData.buffType == BuffType.Random? _randomBuffConfig.GetBuff(configData.buffExtraData):_constantBuffConfig.GetBuffData(configData.buffExtraData.buffId);
+            var component = go.GetComponent<CollectObjectController>();
+            if (go.TryGetComponent(out Collider co))
+            {
+                co.enabled = false;
+            }
+            if (component.CollectObjectData.collectObjectClass == CollectObjectClass.Buff)
+            {
+                if (!_collectibleMaterials.TryGetValue(component.Quality, out var materials))
                 {
-                    Debug.LogError("Failed to get object from pool");
+                    Debug.LogError($"No materials found for quality: {component.Quality}");
                     return;
                 }
-                var configData = _collectObjectDataConfig.GetCollectObjectData(data.ItemCollectConfigId);
-                var collectItemCustomData = data.GetCustomData<CollectItemCustomData>();
-                var buff = configData.buffExtraData.buffType == BuffType.Random? _randomBuffConfig.GetBuff(configData.buffExtraData):_constantBuffConfig.GetBuffData(configData.buffExtraData.buffId);
-                var component = go.GetComponent<CollectObjectController>();
-                if (component.CollectObjectData.collectObjectClass == CollectObjectClass.Buff)
+                if (!materials.TryGetValue(buff.propertyType, out var material))
                 {
-                    if (!_collectibleMaterials.TryGetValue(component.Quality, out var materials))
-                    {
-                        Debug.LogError($"No materials found for quality: {component.Quality}");
-                        return;
-                    }
-                    if (!materials.TryGetValue(buff.propertyType, out var material))
-                    {
-                        Debug.LogError($"No materials found for quality: {component.Quality}");
-                        return;
-                    }   
-                    component.SetMaterial(material);
-                }
-                component.collectId = data.ItemId;
-                component.SetBuffData(new BuffExtraData
-                {
-                    buffId = buff.buffId,
-                    buffType = BuffType.Random,
-                });
-                Debug.Log($"Spawning item at position: {position} with id: {data.ItemId}-{data.OwnerId}-{data.ItemCollectConfigId}-{buff.propertyType}-{buff.buffId}");
-        
-                // 确保位置正确设置
-                go.transform.position = position;
-                component.ItemId = data.ItemId;
-                _clientCollectObjectControllers.Add(data.ItemId, component);
+                    Debug.LogError($"No materials found for quality: {component.Quality}");
+                    return;
+                }   
+                component.SetMaterial(material);
+            }
+            component.collectId = data.ItemId;
+            // var identity = go.GetComponent<NetworkIdentity>();
+            // identity.AssignClientAuthority(connectionToClient);
+            component.SetBuffData(new BuffExtraData
+            {
+                buffId = buff.buffId,
+                buffType = BuffType.Random,
+            });
+            Debug.Log($"Spawning item at position: {position} with id: {data.ItemId}-{data.OwnerId}-{data.ItemCollectConfigId}-{buff.propertyType}-{buff.buffId}");
+    
+            // 确保位置正确设置
+            go.transform.position = position;
+            component.ItemId = data.ItemId;
+            _clientCollectObjectControllers.Add(data.ItemId, component);
         }
 
         private void InitializeGrid()
