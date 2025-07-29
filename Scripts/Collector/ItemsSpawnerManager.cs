@@ -498,7 +498,7 @@ namespace HotUpdate.Scripts.Collector
                         //go.transform.position = item.Item2;
                         NetworkServer.Spawn(go);
                         var identity = go.GetComponent<NetworkIdentity>();
-                        Debug.Log($"Spawning item at position: {item.Item2} with id: {identity.netId}, real position: {go.transform.position}");
+                        //Debug.Log($"Spawning item at position: {item.Item2} with id: {identity.netId}, real position: {go.transform.position}");
                         if (_serverItemMap.TryGetValue(identity.netId, out var itemInfo))
                         {
                             GameObjectPoolManger.Instance.ReturnObject(go);

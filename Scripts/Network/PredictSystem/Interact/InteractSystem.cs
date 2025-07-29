@@ -30,6 +30,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 
         private void OnGameStart(GameStartEvent gameStartEvent)
         {
+            Debug.Log($"InteractSystem start isClient-{isClient} isServer-{isServer} isLocalPlayer-{isLocalPlayer}");
             UpdateInteractRequests(_cts.Token).Forget();
         }
 
@@ -83,8 +84,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             
         }
 
+        [Server]
+        public void EnqueueCommand<T>(T request) where T : IInteractRequest
+        {
+            var header = request.GetHeader();
+            var validCommand = request.CommandValidResult();
+            if (!validCommand.IsValid)
+            {
+                Debug.LogError($"Invalid command: {header}");
+                return;
+            }
+            _commandQueue.Enqueue(request);
+        }
+
         [Command]
-        public void EnqueueCommand(byte[] commandBytes)
+        public void CmdEnqueueCommand(byte[] commandBytes)
         {
             var command = MemoryPackSerializer.Deserialize<IInteractRequest>(commandBytes);
             var header = command.GetHeader();

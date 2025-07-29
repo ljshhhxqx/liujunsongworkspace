@@ -9,6 +9,7 @@ using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
 using MemoryPack;
+using Mirror;
 using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
@@ -48,8 +49,14 @@ namespace HotUpdate.Scripts.Collector
                 InteractionType = InteractionType.PickupItem,
                 SceneItemId = itemId,
             };
-            var json = MemoryPackSerializer.Serialize(request);
-            _interactSystem.EnqueueCommand(json);
+            var commandBytes = MemoryPackSerializer.Serialize(request);
+            CmdCollect(commandBytes);
+        }
+        
+        [Command]
+        private void CmdCollect(byte[] request)
+        {
+            _interactSystem.EnqueueCommand(MemoryPackSerializer.Deserialize<SceneInteractRequest>(request));
         }
 
         private void OnInteractionStateChange(GameInteractableEffect interactableObjectEffectEventEvent)

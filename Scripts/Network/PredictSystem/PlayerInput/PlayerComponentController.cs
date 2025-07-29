@@ -907,12 +907,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                         KillerPlayerId = killerPlayerId,
                         DeadPlayerId = victimPlayerId,
                     };
-                    _interactSystem.EnqueueCommand(MemoryPackSerializer.Serialize(playerChangeUnionCommand));
+                    var changeUnionRequest = MemoryPackSerializer.Serialize(playerChangeUnionCommand);
+                    CmdChangePlayerUnion(changeUnionRequest);
                 }, () =>
                 {
                     _uiManager.CloseUI(UIType.TipsPopup);
                 });
             });
+        }
+        
+        [Command]
+        public void CmdChangePlayerUnion(byte[] data)
+        {
+            var playerChangeUnionCommand = MemoryPackSerializer.Deserialize<PlayerChangeUnionRequest>(data);
+            _interactSystem.EnqueueCommand(playerChangeUnionCommand);
         }
 
         [ClientRpc]

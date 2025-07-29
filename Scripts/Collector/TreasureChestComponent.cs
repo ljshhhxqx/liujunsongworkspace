@@ -147,9 +147,17 @@ namespace HotUpdate.Scripts.Collector
                     SceneItemId = ItemId,
                 };
                 var json = MemoryPackSerializer.Serialize(request);
-                _interactSystem.EnqueueCommand(json);
+                CmdOpenChest(json);
             }
         }
+        
+        [Command]
+        private void CmdOpenChest(byte[] data)
+        {
+            var request = MemoryPackSerializer.Deserialize<SceneInteractRequest>(data);
+            _interactSystem.EnqueueCommand(request);
+        }
+        
 
         public async UniTask PickUpSuccess(Action onFinish)
         {
