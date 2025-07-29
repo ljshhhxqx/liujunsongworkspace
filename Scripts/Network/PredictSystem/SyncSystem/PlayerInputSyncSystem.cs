@@ -168,9 +168,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     dic.Add(animationInfo.state, data);
                     continue;
                 }
-                data.AttackWindow = animationInfo.keyframeData[0].resetCooldownWindowTime;
+                data.AttackWindow = 0;
                 data.ResetCooldownWindow = animationInfo.keyframeData[0].resetCooldownWindowTime;
                 data.MaxAttackCount = animationInfo.keyframeData.Length;
+                data.IsInComboWindow = true;
                 dic.Add(animationInfo.state, data);
             }
 
