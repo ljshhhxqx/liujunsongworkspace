@@ -200,16 +200,21 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             
                     var position = identity.transform.position;
                     var deathCountdown = _playerDeathCountdowns.GetValueOrDefault(uid);
-                    if (deathCountdown < 0)
+                    if (deathCountdown <= 0 && _playerBornCallbacks.TryGetValue(uid, out var callback))
                     {
                         _playerDeathCountdowns.Remove(uid);
-                        _playerBornCallbacks[uid]?.Invoke(uid);
+                        callback.Invoke(uid);
                         _playerBornCallbacks.Remove(uid);
+                        return;
                     }
-                    deathCountdown -= GameSyncManager.TickSeconds;
-                    _playerDeathCountdowns[uid] = deathCountdown;
-                    _playerPositions[uid] = position;
-                    UpdatePlayerGrid(uid, position);
+
+                    if (deathCountdown > 0)
+                    {
+                        deathCountdown -= GameSyncManager.TickSeconds;
+                        _playerDeathCountdowns[uid] = deathCountdown;
+                        _playerPositions[uid] = position;
+                        UpdatePlayerGrid(uid, position);
+                    }
                 }
             }
         }

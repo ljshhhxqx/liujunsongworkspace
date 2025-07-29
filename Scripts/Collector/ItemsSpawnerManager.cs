@@ -521,7 +521,12 @@ namespace HotUpdate.Scripts.Collector
                     Debug.Log($"Calculated {spawnedCount} spawn positions");
                     await UniTask.Yield();
                 }
-                SpawnManyItemsClientRpc(_serverItemMap.Values.ToArray());
+
+                foreach (var iKey in _serverItemMap.Keys)
+                {
+                    var itemInfo = _serverItemMap[iKey];
+                    SpawnManyItemsClientRpc(itemInfo);
+                }
             }
             catch (Exception e)
             {
@@ -597,23 +602,21 @@ namespace HotUpdate.Scripts.Collector
         }
 
         [ClientRpc]
-        private void SpawnManyItemsClientRpc(byte[][] allSpawnedItems)
+        private void SpawnManyItemsClientRpc(byte[] allSpawnedItems)
         {
-            var allItems = MemoryPackSerializer.Deserialize<CollectItemMetaData[]>(allSpawnedItems[0]);
+            var allItems = MemoryPackSerializer.Deserialize<CollectItemMetaData>(allSpawnedItems);
             SpawnItems(allItems);
         }
 
-        private void SpawnItems(CollectItemMetaData[] allSpawnedItems)
+        private void SpawnItems(CollectItemMetaData data)
         {
-            foreach (var data in allSpawnedItems)
-            {
-                var position = data.Position;
+            var position = data.Position;
                 Debug.Log($"Client spawning item at position: {position}"); // 添加日志
                 var prefab = GetPrefabByCollectType(data.ItemCollectConfigId);
                 if (!prefab)
                 {
                     Debug.LogError($"Failed to find prefab for CollectType: {data.ItemCollectConfigId}");
-                    continue;
+                    return;
                 }
 
                 var go = GameObjectPoolManger.Instance.GetObject(prefab.gameObject, position, Quaternion.identity, _spawnedParent,
@@ -621,30 +624,38 @@ namespace HotUpdate.Scripts.Collector
                 if (!go)
                 {
                     Debug.LogError("Failed to get object from pool");
-                    continue;
+                    return;
                 }
                 var configData = _collectObjectDataConfig.GetCollectObjectData(data.ItemCollectConfigId);
                 var collectItemCustomData = data.GetCustomData<CollectItemCustomData>();
-                var buff = _randomBuffConfig.GetRandomBuffData(collectItemCustomData.RandomBuffId);
+                var buff = configData.buffExtraData.buffType == BuffType.Random? _randomBuffConfig.GetBuff(configData.buffExtraData):_constantBuffConfig.GetBuffData(configData.buffExtraData.buffId);
                 var component = go.GetComponent<CollectObjectController>();
-                var material = _collectibleMaterials[component.Quality][buff.propertyType];
-                component.collectId = data.ItemId;
                 if (component.CollectObjectData.collectObjectClass == CollectObjectClass.Buff)
                 {
-                    component.SetBuffData(new BuffExtraData
+                    if (!_collectibleMaterials.TryGetValue(component.Quality, out var materials))
                     {
-                        buffId = buff.buffId,
-                        buffType = BuffType.Random,
-                    });
+                        Debug.LogError($"No materials found for quality: {component.Quality}");
+                        return;
+                    }
+                    if (!materials.TryGetValue(buff.propertyType, out var material))
+                    {
+                        Debug.LogError($"No materials found for quality: {component.Quality}");
+                        return;
+                    }   
                     component.SetMaterial(material);
                 }
-                Debug.Log($"Spawning item at position: {position} with id: {data.ItemId}-{data.OwnerId}-{data.ItemCollectConfigId}-{buff.propertyType}-{buff.buffId}-{material.name}");
+                component.collectId = data.ItemId;
+                component.SetBuffData(new BuffExtraData
+                {
+                    buffId = buff.buffId,
+                    buffType = BuffType.Random,
+                });
+                Debug.Log($"Spawning item at position: {position} with id: {data.ItemId}-{data.OwnerId}-{data.ItemCollectConfigId}-{buff.propertyType}-{buff.buffId}");
         
                 // 确保位置正确设置
                 go.transform.position = position;
                 component.ItemId = data.ItemId;
                 _clientCollectObjectControllers.Add(data.ItemId, component);
-            }
         }
 
         private void InitializeGrid()
@@ -872,7 +883,7 @@ namespace HotUpdate.Scripts.Collector
                     var gridPos = GetGridPosition(position);
                     if (_gridMap.TryGetValue(gridPos, out var grid))
                     {
-                        var list = new List<int>(grid.itemIDs);
+                        var list = new List<int>(grid.itemIDs?? Array.Empty<int>());
                         list.Add(configId);
                         _gridMap[gridPos] = new Grid(list);
                     }

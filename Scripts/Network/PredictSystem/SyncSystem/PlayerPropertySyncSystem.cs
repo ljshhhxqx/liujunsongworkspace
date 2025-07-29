@@ -159,6 +159,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 return;
             }
             var sortedPlayerProperties = GetSortedPlayerProperties(PropertyTypeEnum.Score, true, true);
+            if (sortedPlayerProperties.Count <= 1)
+                return;
             var maxScorePlayer = sortedPlayerProperties.Last().Key;
             sortedPlayerProperties.Remove(maxScorePlayer);
             var player = sortedPlayerProperties.SelectByWeight();

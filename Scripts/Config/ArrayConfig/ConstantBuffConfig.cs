@@ -27,7 +27,18 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         
         public BuffData GetBuffData(int buffId, CollectObjectBuffSize collectObjectBuffSize = CollectObjectBuffSize.Small)
         {
-            var buff = buffDict.GetValueOrDefault(buffId);
+            if (!buffDict.TryGetValue(buffId, out var buff))
+            {
+                for (int i = 0; i < buffs.Count; i++)
+                {
+                    if (buffs[i].buffId == buffId)
+                    {
+                        buff = buffs[i];
+                        buffDict.Add(buffId, buff);
+                        break;
+                    }
+                }
+            }
             for (var i = 0; i < buff.increaseDataList.Count; i++)
             {
                 var buffData = buff.increaseDataList[i];

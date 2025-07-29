@@ -101,7 +101,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 Debug.LogError("AnimationNames not found for state: " + state + " index: " + index);
                 return null;
             }
-            return animationInfo.animationType == AnimationType.Combo ? animationInfo.animationNames[0] : animationInfo.animationNames[index];
+
+            return animationInfo.animationType == AnimationType.Combo ? animationInfo.animationNames[index] : animationInfo.animationNames[0];
         }
         
         public string[] GetAnimationNames(AnimationState state)

@@ -165,13 +165,13 @@ MonoBehaviour:
     - Attack2
     - Attack3
     keyframeData:
-    - triggerTime: 0.66
+    - triggerTime: 0.56
       eventType: 2
       resetCooldown: 1
       resetCooldownWindowTime: 1
       tolerance: 0.04
       serverValidate: 1
-    - triggerTime: 0.5
+    - triggerTime: 0.57
       eventType: 2
       resetCooldown: 1
       resetCooldownWindowTime: 1

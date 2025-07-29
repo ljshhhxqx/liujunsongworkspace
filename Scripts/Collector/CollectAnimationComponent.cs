@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using HotUpdate.Scripts.Tool.Coroutine;
 using Sirenix.OdinInspector;
@@ -64,15 +65,15 @@ namespace HotUpdate.Scripts.Collector
             _scaleSequence = DOTween.Sequence();
             _animationSequence.Append(transform.DORotate(new Vector3(0, 360, 0), 2f, RotateMode.FastBeyond360)
                 .SetEase(Ease.Linear)
-                .SetLoops(-1, LoopType.Incremental));
+                .SetLoops(int.MaxValue, LoopType.Incremental));
             _scaleSequence.Append(transform.DOScale(new Vector3(0.65f, 0.65f, 0.65f), 1f)
                 .SetEase(Ease.Linear));
             _scaleSequence.Append(transform.DOScale(Vector3.one, 1f)
                 .SetEase(Ease.Linear));
             _animationSequence.SetEase(Ease.Linear);
-            _animationSequence.SetLoops(-1);  
+            _animationSequence.SetLoops(int.MaxValue);  
             _scaleSequence.SetEase(Ease.Linear);
-            _scaleSequence.SetLoops(-1);
+            _scaleSequence.SetLoops(int.MaxValue);
         }
 
         [Button("停止所有动画")]

@@ -181,8 +181,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     break;
                 case AnimationState.Attack:
                     IsPlayingSpecialAction = true;
-                    Debug.Log("Attack");            
-                    _animationComponent.Animator.CrossFadeInFixedTime(GetAnimationName(AnimationState.Attack, index), 0.15f);
+                    var attackName = GetAnimationName(AnimationState.Attack, index);
+                    _animationComponent.Animator.CrossFadeInFixedTime(attackName, 0.1f);
                     break;
                 case AnimationState.Hit:
                     IsPlayingSpecialAction = true;
