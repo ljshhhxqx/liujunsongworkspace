@@ -290,9 +290,9 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         Weapon,
     }
 
-    public enum QualityType : byte
+    public enum QualityType
     {
-        Normal,
+        Normal = 1,
         Rare,
         Legendary,
     }

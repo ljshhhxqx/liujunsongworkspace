@@ -113,7 +113,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 Count = count
             };
             var dic = new MemoryDictionary<int, SlotIndexData>(1);
-            dic[slotIndex] = useItem;
+            dic.Add(slotIndex, useItem);
             var useItemCommand = new ItemsUseCommand
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
@@ -161,7 +161,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 Count = count
             };
             var dic = new MemoryDictionary<int, SlotIndexData>(1);
-            dic[0] = dropItem;
+            dic.Add(slotIndex, dropItem);
             var dropItemCommand = new ItemDropCommand
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
@@ -193,7 +193,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 Count = count
             };
             var list = new MemoryList<SlotIndexData>(1);//<int, SlotIndexData>();
-            list[0] = sellItem;
+            list.Add(sellItem);
             var sellItemCommand = new ItemsSellCommand
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),

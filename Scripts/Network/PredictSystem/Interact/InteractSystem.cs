@@ -108,20 +108,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         [Server]
         public void EnqueueCommand<T>(T request) where T : IInteractRequest
         {
-            var header = request.GetHeader();
-            var validCommand = request.CommandValidResult();
-            if (!validCommand.IsValid)
+            if (isServer)
             {
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine($"Invalid command: {header}");
-                foreach (var error in validCommand.Errors)
+                var header = request.GetHeader();
+                var validCommand = request.CommandValidResult();
+                if (!validCommand.IsValid)
                 {
-                    sb.AppendLine(error);
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine($"Invalid command: {header}");
+                    foreach (var error in validCommand.Errors)
+                    {
+                        sb.AppendLine(error);
+                    }
+                    Debug.LogError(sb.ToString());
+                    return;
                 }
-                Debug.LogError(sb.ToString());
-                return;
+                _commandQueue.Enqueue(request);
             }
-            _commandQueue.Enqueue(request);
         }
 
         [Command]

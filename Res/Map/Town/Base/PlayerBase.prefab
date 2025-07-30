@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8586015128230977885}
   - component: {fileID: 1725221129556167491}
   - component: {fileID: 4676443709044415758}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 3118858124847229977}
   - component: {fileID: 3969562844498923819}
   - component: {fileID: -3598459715627392476}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: PlayerBase
   m_TagString: Untagged
   m_Icon: {fileID: 0}

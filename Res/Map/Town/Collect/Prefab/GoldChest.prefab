@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6179101503579111714}
   - component: {fileID: 2738683600175288546}
   - component: {fileID: 8890038341520676885}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Gold Chest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 7345434545127266326}
   - component: {fileID: 5181524394000796870}
   - component: {fileID: 8574990178446388607}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Gold ChestRoof
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -180,7 +180,7 @@ GameObject:
   - component: {fileID: 8320134914155921322}
   - component: {fileID: -2054284666163166625}
   - component: {fileID: -5906470670701222189}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: GoldChest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -224,7 +224,7 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
-  quality: 1
+  quality: 3
   isPicked: 0
 --- !u!114 &8347805051186883820
 MonoBehaviour:
@@ -274,8 +274,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.420331, y: 2.4, z: 2.4}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1.586499, y: 1.086371, z: 1.1969414}
+  m_Center: {x: 0.010517001, y: 0.07659519, z: 0.04172325}
 --- !u!114 &-5906470670701222189
 MonoBehaviour:
   m_ObjectHideFlags: 0

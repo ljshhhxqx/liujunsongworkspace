@@ -42,15 +42,18 @@ namespace HotUpdate.Scripts.Collector
         
         public void SendCollectRequest(uint pickerId, PickerType pickerType, uint itemId)
         {
-            var request = new SceneInteractRequest
+            if (isLocalPlayer)
             {
-                Header = InteractSystem.CreateInteractHeader(PlayerInGameManager.Instance.GetPlayerId(pickerId), InteractCategory.PlayerToScene,
-                    transform.position, CommandAuthority.Client),
-                InteractionType = InteractionType.PickupItem,
-                SceneItemId = itemId,
-            };
-            var commandBytes = MemoryPackSerializer.Serialize(request);
-            CmdCollect(commandBytes);
+                var request = new SceneInteractRequest
+                {
+                    Header = InteractSystem.CreateInteractHeader(PlayerInGameManager.Instance.GetPlayerId(pickerId), InteractCategory.PlayerToScene,
+                        transform.position, CommandAuthority.Client),
+                    InteractionType = InteractionType.PickupItem,
+                    SceneItemId = itemId,
+                };
+                var commandBytes = MemoryPackSerializer.Serialize(request);
+                CmdCollect(commandBytes);
+            }
         }
         
         [Command]

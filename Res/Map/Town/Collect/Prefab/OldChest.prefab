@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5499815553020989041}
   - component: {fileID: 8797745339120970929}
   - component: {fileID: 7791709210608758358}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: OldChest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -58,7 +58,7 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
-  quality: 0
+  quality: 1
   isPicked: 0
 --- !u!114 &3591159907696732241
 MonoBehaviour:
@@ -141,8 +141,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2, y: 2, z: 2}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1.4255552, y: 0.9409678, z: 0.9712179}
+  m_Center: {x: -0.015762568, y: 0.09518826, z: 0.018719971}
 --- !u!1 &2926320452223950100
 GameObject:
   m_ObjectHideFlags: 0
@@ -154,7 +154,7 @@ GameObject:
   - component: {fileID: 3000706842653507860}
   - component: {fileID: 3952425206856803606}
   - component: {fileID: 3940867359665126697}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: 'chest '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -238,7 +238,7 @@ GameObject:
   - component: {fileID: 385783488839557706}
   - component: {fileID: 8246018694727972300}
   - component: {fileID: 174181434836011787}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -304,7 +304,7 @@ GameObject:
   - component: {fileID: 6017392758992207075}
   - component: {fileID: 8187517042728229358}
   - component: {fileID: 1525212474817653984}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: chest cover
   m_TagString: Untagged
   m_Icon: {fileID: 0}

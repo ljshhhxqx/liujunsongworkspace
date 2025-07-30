@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3873828134592506188}
   - component: {fileID: 7627909297532610899}
   - component: {fileID: 3426392434108419949}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: StoneChest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -141,8 +141,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2, y: 2, z: 2}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1.2084607, y: 1.2232878, z: 1.0790037}
+  m_Center: {x: 0.025135577, y: 0.006791264, z: -0.015572846}
 --- !u!1 &6422763027157245655
 GameObject:
   m_ObjectHideFlags: 0
@@ -154,7 +154,7 @@ GameObject:
   - component: {fileID: 708062447458636444}
   - component: {fileID: 8340928965105472913}
   - component: {fileID: 4658014297132087092}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Stone Chest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -237,7 +237,7 @@ GameObject:
   - component: {fileID: 3706541620151657884}
   - component: {fileID: 5704011017861240611}
   - component: {fileID: 6018158968908769267}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -303,7 +303,7 @@ GameObject:
   - component: {fileID: 2288846471223112901}
   - component: {fileID: 79212149909298947}
   - component: {fileID: 5210683457215621969}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Stone Chest.Roof
   m_TagString: Untagged
   m_Icon: {fileID: 0}

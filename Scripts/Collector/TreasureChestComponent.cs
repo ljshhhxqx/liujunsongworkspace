@@ -71,24 +71,23 @@ namespace HotUpdate.Scripts.Collector
             _chestCommonData = _jsonDataConfig.ChestCommonData;
 
             lid.transform.eulerAngles = _chestCommonData.InitEulerAngles;
-            _chestCollider.OnTriggerEnterAsObservable()
-                .Subscribe(OnTriggerEnterObserver)
-                .AddTo(_disposables);
-            _chestCollider.OnTriggerExitAsObservable()
-                .Subscribe(OnTriggerExitObserver)
-                .AddTo(_disposables);
-        }
-
-        private void Start()
-        {            
             var playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
             _gameEventManager?.Publish(new TargetShowEvent(transform, playerTransform));
+        }
 
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            _chestCollider.OnTriggerEnterAsObservable()
+                .Subscribe(OnTriggerEnterObserver)
+                .AddTo(this);
+            _chestCollider.OnTriggerExitAsObservable()
+                .Subscribe(OnTriggerExitObserver)
+                .AddTo(this);
         }
 
         private void OnReturnToPool()
         {
-            
             var player = PlayerInGameManager.Instance.GetPlayerComponent<Transform>(connectionToClient.connectionId);
             _gameEventManager?.Publish(new TargetShowEvent(null, player));
             _gameEventManager = null;
@@ -100,7 +99,7 @@ namespace HotUpdate.Scripts.Collector
 
         private void OnTriggerExitObserver(Collider other)
         {
-            if ((playerLayer.value & (1 << other.gameObject.layer)) != 0)
+            if ((playerLayer.value & (1 << other.gameObject.layer)) != 0 && isClient)
             {
                 _gameEventManager.Publish(new GameInteractableEffect(other.gameObject, this, false));
             }
@@ -108,7 +107,7 @@ namespace HotUpdate.Scripts.Collector
         
         private void OnTriggerEnterObserver(Collider other)
         {
-            if ((playerLayer.value & (1 << other.gameObject.layer)) != 0)
+            if ((playerLayer.value & (1 << other.gameObject.layer)) != 0 && isClient)
             {
                 _gameEventManager.Publish(new GameInteractableEffect(other.gameObject, this, true));
             }

@@ -102,10 +102,10 @@ MonoBehaviour:
         playerBaseHpRecoverRatioPerSec: 25
         playerBaseManaRecoverRatioPerSec: 25
         basePositions:
-        - {x: -12.37, y: 0.5, z: -16.19}
-        - {x: -12.37, y: 0.5, z: 23.63}
-        - {x: 40.6, y: 0.5, z: 23.63}
-        - {x: 40.6, y: 0.5, z: -16.19}
+        - {x: -12.37, y: -0.1, z: -16.19}
+        - {x: -12.37, y: -0.1, z: 23.63}
+        - {x: 40.6, y: -0.1, z: 23.63}
+        - {x: 40.6, y: -0.1, z: -16.19}
         baseCenter: {x: 0, y: 2, z: 0}
         baseRadius: 1.7
         baseHeight: 7

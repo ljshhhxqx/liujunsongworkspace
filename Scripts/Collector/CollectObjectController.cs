@@ -1,13 +1,11 @@
 ﻿using System;
+using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.NetworkMes;
-using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
-using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
-using HotUpdate.Scripts.Network.Server.InGame;
-using MemoryPack;
-using Network.NetworkMes;
+using HotUpdate.Scripts.Tool.Coroutine;
+using Mirror;
 using Sirenix.OdinInspector;
 using UniRx;
 using UniRx.Triggers;
@@ -77,24 +75,48 @@ namespace HotUpdate.Scripts.Collector
             _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
             _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
             _interactSystem = FindObjectOfType<InteractSystem>();
-            _collectAnimationComponent?.Play();
             var collectCollider = GetComponentInChildren<CollectCollider>();
             if (!collectCollider)
             {
                 Debug.LogError("Collider not found");
                 return;
             }
+
+            
+            _collectAnimationComponent?.Play();
             CollectObjectData = collectObjectDataConfig.GetCollectObjectData(collectConfigId);
             _collider = collectCollider.GetComponent<Collider>();
             _collider.enabled = true;
+        }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
             _disposable = _collider.OnTriggerEnterAsObservable()
                 .Subscribe(OnTriggerEnterObserver)
                 .AddTo(this);
         }
 
+        [ClientRpc]
+        public void RpcPickupItem()
+        {
+            if (_collider)
+            {
+                _collider.enabled = false;
+            }
+            ReturnToPool();
+            //_collectParticlePlayer.Play(_collectAnimationComponent.OutlineColorValue);
+            //DelayInvoker.DelayInvoke(0.75f, ReturnToPool);
+        }
+
+        private void ReturnToPool()
+        {
+            GameObjectPoolManger.Instance.ReturnObject(gameObject);
+        }
+
         private void OnReturnToPool()
         {
-            _disposable?.Dispose();
+            DelayInvoker.CancelInvoke(ReturnToPool);
             _collectParticlePlayer = null;
             _collectAnimationComponent = null;
             _mirrorNetworkMessageHandler = null;
@@ -104,6 +126,7 @@ namespace HotUpdate.Scripts.Collector
         
         private void OnTriggerEnterObserver(Collider other)
         {
+            
             if ((_playerLayer.value & (1 << other.gameObject.layer)) == 0)
             {
                 return;
@@ -131,6 +154,11 @@ namespace HotUpdate.Scripts.Collector
         public void CollectSuccess()
         {
             _collectParticlePlayer.Play(_collectAnimationComponent.OutlineColorValue);
+        }
+
+        private void OnDestroy()
+        {
+            DelayInvoker.CancelInvoke(ReturnToPool);
         }
 
         [Button("重置配置数据")]
