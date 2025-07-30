@@ -209,12 +209,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
             var request = new PlayerToSceneRequest
             {
-                Header = GameSyncManager.CreateInteractHeader(connectionId, InteractCategory.PlayerToScene,
+                Header = InteractSystem.CreateInteractHeader(connectionId, InteractCategory.PlayerToScene,
                     playerComponent.transform.position),
                 InteractionType = InteractionType.DropItem,
                 ItemDatas = droppedItemDatas,
             };
-            Constant.InteractSystem.EnqueueServerCommand(request);
+            Constant.InteractSystem.EnqueueCommand(request);
         }
         
         public static void CommandLockItem(ItemLockCommand itemLockCommand, ref PlayerItemState playerItemState)

@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Linq;
 using AOTScripts.Tool.ObjectPool;
-using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
-using HotUpdate.Scripts.Network.PredictSystem.State;
+using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using MemoryPack;
+using UnityEngine;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 {
-    public enum InteractCategory : byte
+    public enum InteractCategory 
     {
         PlayerToScene,    // 玩家与场景交互
         PlayerToPlayer,   // 玩家间交互
@@ -24,11 +24,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         PartiallySuccess // 部分成功
     }
 
-    public enum InteractionType : byte
+    public enum InteractionType
     {
         PickupItem = 0,
         PickupChest,
         DropItem,
+        Count
     }
 
     // 基础交互头
@@ -89,7 +90,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         public InteractHeader GetHeader() => Header;
         public bool IsValid()
         {
-            return Enum.IsDefined(typeof(InteractionType), Header) && ItemDatas.Length > 0 && ItemDatas.All(id => id.ItemConfigId > 0 && id.Count > 0);
+            if (ItemDatas == null || ItemDatas.Length == 0)
+            {
+                Debug.LogError("ItemDatas is null or empty");
+                return false;
+            }
+
+            for (int i = 0; i < ItemDatas.Length; i++)
+            {
+                var itemData = ItemDatas[i];
+                if (itemData.ItemConfigId <= 0 || itemData.Count <= 0)
+                {
+                    Debug.LogError($"ItemDatas[{i}] is invalid, ItemConfigId: {itemData.ItemConfigId}, Count: {itemData.Count}");
+                    return false;
+                }
+            }
+            return InteractionType >= InteractionType.PickupItem && InteractionType < InteractionType.Count && ItemDatas.Length > 0 && ItemDatas.All(id => id.ItemConfigId > 0 && id.Count > 0);
         }
     }
 
@@ -104,7 +120,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         public InteractHeader GetHeader() => Header;
         public bool IsValid()
         {
-            return Enum.IsDefined(typeof(InteractionType), Header) && SceneItemId > 0;
+            return InteractionType >= InteractionType.PickupItem && InteractionType < InteractionType.Count && SceneItemId > 0;
         }
     }
 
@@ -159,13 +175,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         public const long TIMESTAMP_TOLERANCE = 5000; // 5秒时间容差（毫秒）
         public static CommandValidationResult CommandValidResult(this IInteractRequest command)
         {
-            var result = new CommandValidationResult();
+            var result = ObjectPoolManager<CommandValidationResult>.Instance.Get(30);
             var header = command.GetHeader();
 
             // 1. Tick验证
             if (header.Tick <= 0)
             {
-                result.AddError("Invalid tick value");
+                result.AddError($"Invalid tick value, {header.Tick}, now tick is {GameSyncManager.CurrentTick}");
             }
 
             // 2. 时间戳验证
@@ -176,7 +192,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             }
 
             // 3. 命令类型验证
-            if (!Enum.IsDefined(typeof(InteractCategory), header.Category))
+            if (header.Category < 0 || header.Category > InteractCategory.SceneToPlayer)
             {
                 result.AddError($"Unknown command type: {header.Category}");
             }
@@ -184,7 +200,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             // 4. 基础有效性验证
             if (!command.IsValid())
             {
-                result.AddError("Command specific validation failed");
+                result.AddError($"Command specific validation failed, type is {header.Category}");
             }
 
             return result;

@@ -33,7 +33,6 @@ namespace HotUpdate.Scripts.Collector
         //private ChestDataConfig _chestDataConfig;
         private JsonDataConfig _jsonDataConfig;
         private MessageCenter _messageCenter;
-        private MirrorNetworkMessageHandler _mirrorNetworkMessageHandler;
         private ChestCommonData _chestCommonData;
         private GameEventManager _gameEventManager;
         private Collider _positionCollider;
@@ -70,11 +69,7 @@ namespace HotUpdate.Scripts.Collector
             _chestCollider.enabled = true;
             //_chestDataConfig = configProvider.GetConfig<ChestDataConfig>();
             _chestCommonData = _jsonDataConfig.ChestCommonData;
-            _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
-            if (isLocalPlayer)
-            {
-                _gameEventManager?.Publish(new TargetShowEvent(null, null));
-            }
+
             lid.transform.eulerAngles = _chestCommonData.InitEulerAngles;
             _chestCollider.OnTriggerEnterAsObservable()
                 .Subscribe(OnTriggerEnterObserver)
@@ -84,24 +79,28 @@ namespace HotUpdate.Scripts.Collector
                 .AddTo(_disposables);
         }
 
+        private void Start()
+        {            
+            var playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+            _gameEventManager?.Publish(new TargetShowEvent(transform, playerTransform));
+
+        }
+
         private void OnReturnToPool()
         {
-            if (isLocalPlayer)
-            {
-                var player = PlayerInGameManager.Instance.GetPlayerComponent<Transform>(connectionToClient.connectionId);
-                _gameEventManager?.Publish(new TargetShowEvent(null, player));
-            }
+            
+            var player = PlayerInGameManager.Instance.GetPlayerComponent<Transform>(connectionToClient.connectionId);
+            _gameEventManager?.Publish(new TargetShowEvent(null, player));
             _gameEventManager = null;
             //_chestDataConfig = null;
             _chestCommonData = default;
-            _mirrorNetworkMessageHandler = null;
             _disposables?.Clear();
             _pooledObject.OnSelfDespawn -= OnReturnToPool;
         }
 
         private void OnTriggerExitObserver(Collider other)
         {
-            if ((playerLayer.value & (1 << other.gameObject.layer)) != 0 && isClient)
+            if ((playerLayer.value & (1 << other.gameObject.layer)) != 0)
             {
                 _gameEventManager.Publish(new GameInteractableEffect(other.gameObject, this, false));
             }
@@ -109,7 +108,7 @@ namespace HotUpdate.Scripts.Collector
         
         private void OnTriggerEnterObserver(Collider other)
         {
-            if ((playerLayer.value & (1 << other.gameObject.layer)) != 0 && isClient)
+            if ((playerLayer.value & (1 << other.gameObject.layer)) != 0)
             {
                 _gameEventManager.Publish(new GameInteractableEffect(other.gameObject, this, true));
             }
@@ -141,7 +140,7 @@ namespace HotUpdate.Scripts.Collector
             {
                 var request = new SceneInteractRequest
                 {
-                    Header = GameSyncManager.CreateInteractHeader(pickerConnectionId, InteractCategory.PlayerToScene,
+                    Header = InteractSystem.CreateInteractHeader(pickerConnectionId, InteractCategory.PlayerToScene,
                         transform.position, CommandAuthority.Client),
                     InteractionType = InteractionType.PickupChest,
                     SceneItemId = ItemId,

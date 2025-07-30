@@ -295,6 +295,7 @@ GameObject:
   - component: {fileID: -2824128185656848974}
   - component: {fileID: 357046212946333830}
   - component: {fileID: 3873665541507150878}
+  - component: {fileID: -637415862532663475}
   m_Layer: 10
   m_Name: Rare_Strength 2
   m_TagString: Untagged
@@ -403,6 +404,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b58d3fbe62117a40a549cddd4570e9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-637415862532663475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1999239547283070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a553cb17010b2403e8523b558bffbc14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 1
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 4173680155241510}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 0
+  timelineOffset: 1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  bufferResetMultiplier: 3
+  positionSensitivity: 0.01
+  rotationSensitivity: 0.01
+  scaleSensitivity: 0.01
 --- !u!1 &7279650384161456802
 GameObject:
   m_ObjectHideFlags: 0

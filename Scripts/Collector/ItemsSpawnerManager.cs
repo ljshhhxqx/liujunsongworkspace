@@ -14,6 +14,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.Server;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
@@ -319,16 +320,10 @@ namespace HotUpdate.Scripts.Collector
                     }
                 }
             }
-
-            _uiManager.SwitchUI<TargetShowOverlay>();
         }
 
         private void OnDestroy()
         {
-            if (isLocalPlayer)
-            {
-                _uiManager.CloseUI(UIType.TargetShowOverlay);
-            }
             MapBoundDefiner.Instance.Clear();
         }
 
@@ -493,14 +488,20 @@ namespace HotUpdate.Scripts.Collector
                     foreach (var item in newSpawnInfos)
                     {
                         // var id = CollectItemMetaData.GenerateItemId(item.Item2);
+                        // if (!NetworkManager.singleton.spawnPrefabs.Contains(_collectiblePrefabs[item.Item1].gameObject))
+                        // {
+                        //     Debug.LogError($"Prefab not found in spawnPrefabs: {_collectiblePrefabs[item.Item1].gameObject}");
+                        //     continue;
+                        // }
                         var go = GameObjectPoolManger.Instance.GetObject(_collectiblePrefabs[item.Item1].gameObject, item.Item2, Quaternion.identity, _spawnedParent,
-                            go => _gameMapInjector.InjectGameObject(go));
-                        //go.transform.position = item.Item2;
+                            go => _gameMapInjector.InjectGameObject(go), newSpawnInfos.Count);
                         NetworkServer.Spawn(go);
+                        go.transform.position = item.Item2;
                         var identity = go.GetComponent<NetworkIdentity>();
-                        //Debug.Log($"Spawning item at position: {item.Item2} with id: {identity.netId}, real position: {go.transform.position}");
+                        Debug.Log($"Spawning item {item.Item1} at position: {item.Item2} with id: {identity.netId}, real position: {go.transform.position}");
                         if (_serverItemMap.TryGetValue(identity.netId, out var itemInfo))
                         {
+                            Debug.LogError($"Item with id: {identity.netId} already exists in map, destroying it");
                             GameObjectPoolManger.Instance.ReturnObject(go);
                             NetworkServer.Destroy(go);
                             continue;
@@ -560,6 +561,7 @@ namespace HotUpdate.Scripts.Collector
                 go => _gameMapInjector.InjectGameObject(go));
             var identity = chestGo.GetComponent<NetworkIdentity>();
             NetworkServer.Spawn(chestGo);
+            chestGo.transform.position = position;
             var metaData = new CollectItemMetaData(identity.netId,
                 position,
                 0,

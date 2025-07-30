@@ -94,6 +94,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     var playerState = PropertyStates[playerId];
                     if (playerState is PlayerSkillState playerSkillState)
                     {
+                        if (playerSkillState.SkillCheckers == null || playerSkillState.SkillCheckers.Count == 0)
+                        {
+                            return;
+                        }
                         foreach (var key in playerSkillState.SkillCheckers.Keys)
                         {
                             var skillChecker = playerSkillState.SkillCheckers[key];

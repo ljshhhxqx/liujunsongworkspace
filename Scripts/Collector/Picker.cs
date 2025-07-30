@@ -44,7 +44,7 @@ namespace HotUpdate.Scripts.Collector
         {
             var request = new SceneInteractRequest
             {
-                Header = GameSyncManager.CreateInteractHeader(PlayerInGameManager.Instance.GetPlayerId(pickerId), InteractCategory.PlayerToScene,
+                Header = InteractSystem.CreateInteractHeader(PlayerInGameManager.Instance.GetPlayerId(pickerId), InteractCategory.PlayerToScene,
                     transform.position, CommandAuthority.Client),
                 InteractionType = InteractionType.PickupItem,
                 SceneItemId = itemId,
@@ -56,7 +56,8 @@ namespace HotUpdate.Scripts.Collector
         [Command]
         private void CmdCollect(byte[] request)
         {
-            _interactSystem.EnqueueCommand(MemoryPackSerializer.Deserialize<SceneInteractRequest>(request));
+            var data = MemoryPackSerializer.Deserialize<SceneInteractRequest>(request);
+            _interactSystem.EnqueueCommand(data);
         }
 
         private void OnInteractionStateChange(GameInteractableEffect interactableObjectEffectEventEvent)

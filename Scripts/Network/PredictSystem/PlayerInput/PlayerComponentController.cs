@@ -430,6 +430,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 playerHpShowOverlay.BindPlayersHp(UIPropertyBinder.GetReactiveDictionary<PlayerHpItemData>(_playerTraceOtherPlayerHpBindKey), followData);
             }
             _uiHoleOverlay.gameObject.SetActive(false);
+
+            _uiManager.SwitchUI<TargetShowOverlay>();
         }
 
         public void SwitchBag()
@@ -903,7 +905,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 {
                     var playerChangeUnionCommand = new PlayerChangeUnionRequest
                     {
-                        Header = GameSyncManager.CreateInteractHeader(connection.connectionId, InteractCategory.PlayerToPlayer),
+                        Header = InteractSystem.CreateInteractHeader(connection.connectionId, InteractCategory.PlayerToPlayer),
                         KillerPlayerId = killerPlayerId,
                         DeadPlayerId = victimPlayerId,
                     };

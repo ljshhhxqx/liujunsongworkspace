@@ -445,22 +445,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             OnBroadcastStateUpdate?.Invoke(); 
         }
 
-        public static InteractHeader CreateInteractHeader(int? connectionId, InteractCategory category, CompressedVector3 position = default, CommandAuthority authority = CommandAuthority.Server)
-        {
-            int? noSequence = null;
-            var connectionIdValue = connectionId.GetValueOrDefault();
-            var header = ObjectPoolManager<InteractHeader>.Instance.Get();
-            header.Clear();
-            header.CommandId = HybridIdGenerator.GenerateCommandId(authority == CommandAuthority.Server, CommandType.Interact, 0, ref noSequence);
-            header.RequestConnectionId = connectionIdValue;
-            header.Tick = CurrentTick;
-            header.Category = category;
-            header.Position = position;
-            header.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            header.Authority = authority;
-            return header;
-        }
-
         public static NetworkCommandHeader CreateNetworkCommandHeader(int connectionId, CommandType commandType, CommandAuthority authority = CommandAuthority.Server, CommandExecuteType commandExecuteType = CommandExecuteType.Predicate, NetworkCommandType networkCommandType = NetworkCommandType.None)
         {
             var tick = (int?)CurrentTick;
@@ -473,6 +457,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             header.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             header.Authority = authority;
             header.ExecuteType = commandExecuteType;
+            ObjectPoolManager<NetworkCommandHeader>.Instance.Return(header);
             return header;
         }
 

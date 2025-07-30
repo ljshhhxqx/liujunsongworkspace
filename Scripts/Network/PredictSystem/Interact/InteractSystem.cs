@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Text;
 using System.Threading;
 using AOTScripts.Tool.ECS;
+using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Network.PredictSystem.Data;
+using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
 using MemoryPack;
@@ -30,7 +34,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 
         private void OnGameStart(GameStartEvent gameStartEvent)
         {
-            Debug.Log($"InteractSystem start isClient-{isClient} isServer-{isServer} isLocalPlayer-{isLocalPlayer}");
+            //Debug.Log($"InteractSystem start isClient-{isClient} isServer-{isServer} isLocalPlayer-{isLocalPlayer}");
             UpdateInteractRequests(_cts.Token).Forget();
         }
 
@@ -84,6 +88,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             
         }
 
+        public static InteractHeader CreateInteractHeader(int? connectionId, InteractCategory category, CompressedVector3 position = default, CommandAuthority authority = CommandAuthority.Server)
+        {
+            int? noSequence = null;
+            var connectionIdValue = connectionId.GetValueOrDefault();
+            var header = ObjectPoolManager<InteractHeader>.Instance.Get(35);
+            header.Clear();
+            header.CommandId = HybridIdGenerator.GenerateCommandId(authority == CommandAuthority.Server, CommandType.Interact, 0, ref noSequence);
+            header.RequestConnectionId = connectionIdValue;
+            header.Tick = GameSyncManager.CurrentTick;
+            header.Category = category;
+            header.Position = position;
+            header.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            header.Authority = authority;
+            ObjectPoolManager<InteractHeader>.Instance.Return(header);
+            return header;
+        }
+
         [Server]
         public void EnqueueCommand<T>(T request) where T : IInteractRequest
         {
@@ -91,7 +112,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             var validCommand = request.CommandValidResult();
             if (!validCommand.IsValid)
             {
-                Debug.LogError($"Invalid command: {header}");
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine($"Invalid command: {header}");
+                foreach (var error in validCommand.Errors)
+                {
+                    sb.AppendLine(error);
+                }
+                Debug.LogError(sb.ToString());
                 return;
             }
             _commandQueue.Enqueue(request);
@@ -101,19 +128,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         public void CmdEnqueueCommand(byte[] commandBytes)
         {
             var command = MemoryPackSerializer.Deserialize<IInteractRequest>(commandBytes);
-            var header = command.GetHeader();
-            var validCommand = command.CommandValidResult();
-            if (!validCommand.IsValid)
-            {
-                Debug.LogError($"Invalid command: {header}");
-                return;
-            }
-            _commandQueue.Enqueue(command);
-        }
-
-        [Server]
-        public void EnqueueServerCommand(IInteractRequest command)
-        {
             var header = command.GetHeader();
             var validCommand = command.CommandValidResult();
             if (!validCommand.IsValid)
