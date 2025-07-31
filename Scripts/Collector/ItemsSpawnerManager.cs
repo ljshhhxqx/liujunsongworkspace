@@ -264,7 +264,7 @@ namespace HotUpdate.Scripts.Collector
         {
             _gridMap.Clear();
             ObjectInjectProvider.Instance.Inject(MapBoundDefiner.Instance);
-            _gridMap = MapBoundDefiner.Instance.GridMap.ToDictionary(x => x,_ => new Grid());
+            _gridMap = MapBoundDefiner.Instance.GridMap.ToDictionary(x => x,_ => new Grid(new HashSet<int>()));
             var res = ResourceManager.Instance.GetMapCollectObject(sceneName);
             if (_collectiblePrefabs.Count == 0)
             {
@@ -476,9 +476,9 @@ namespace HotUpdate.Scripts.Collector
                 Debug.Log("Starting EndRound");
                 // 清理网格数据
                 _serverTreasureChestMetaData = default;
-                foreach (var grid in _gridMap)
+                foreach (var vector2Int in _gridMap.Keys)
                 {
-                    _gridMap[grid.Key] = new Grid(new List<int>());
+                    _gridMap[vector2Int].ItemIDs.Clear();
                 }
 
                 Debug.Log("EndRound finished on server");
@@ -767,7 +767,7 @@ namespace HotUpdate.Scripts.Collector
                 for (var z = MapBoundDefiner.Instance.MapMinBoundary.z; z <= MapBoundDefiner.Instance.MapMaxBoundary.z; z += _gridSize)
                 {
                     var gridPos = GetGridPosition(new Vector3(x, 0, z));
-                    _gridMap[gridPos] = new Grid(new List<int>());
+                    _gridMap[gridPos] = new Grid(new HashSet<int>());
                 }
             }
         }
@@ -985,9 +985,9 @@ namespace HotUpdate.Scripts.Collector
                     var gridPos = GetGridPosition(position);
                     if (_gridMap.TryGetValue(gridPos, out var grid))
                     {
-                        var list = new List<int>(grid.itemIDs?? Array.Empty<int>());
-                        list.Add(configId);
-                        _gridMap[gridPos] = new Grid(list);
+                        var hashSet = grid.ItemIDs;
+                        hashSet.Add(configId);
+                        _gridMap[gridPos] = new Grid(hashSet);
                     }
             
                     spawnedIDs.Add(new ValueTuple<int, Vector3> {Item1 = configId, Item2 = position});
@@ -1020,7 +1020,7 @@ namespace HotUpdate.Scripts.Collector
                 return false;
 
             // 检查网格内物品数量
-            if (grid.itemIDs != null && grid.itemIDs.Length >= _maxGridItems)
+            if (grid.ItemIDs != null && grid.ItemIDs.Count >= _maxGridItems)
                 return false;
 
             // 从高处发射射线检查地面
@@ -1103,14 +1103,12 @@ namespace HotUpdate.Scripts.Collector
         }
         
         
-        
-        [Serializable]
-        private struct Grid
+        private class Grid
         {
-            public int[] itemIDs;
-            public Grid(IEnumerable<int> ids)
+            public HashSet<int> ItemIDs;
+            public Grid(HashSet<int> ids)
             {
-                itemIDs = ids.ToArray();
+                ItemIDs = ids;
             }
         }
     }
