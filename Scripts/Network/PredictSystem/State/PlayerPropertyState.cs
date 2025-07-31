@@ -283,7 +283,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             }, _maxValue, _minValue, _isResourceProperty);
         }
 
-        public PropertyCalculator UpdateCalculator(List<BuffIncreaseData> data)
+        public PropertyCalculator UpdateCalculator(List<BuffIncreaseData> data, bool isReverse = false)
         {
             if (data == null || data.Count == 0)
                 return this;
@@ -291,13 +291,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             var propertyCalculator = this;
             foreach (var buff in data)
             {
-                propertyCalculator = UpdateCalculator(propertyCalculator, buff);
+                propertyCalculator = UpdateCalculator(propertyCalculator, buff, isReverse);
             }
 
             return propertyCalculator;
         }
 
-        public PropertyCalculator UpdateCalculator(PropertyCalculator calculator, BuffIncreaseData data)
+        public PropertyCalculator UpdateCalculator(PropertyCalculator calculator, BuffIncreaseData data, bool isReverse = false)
         {
             if (_propertyType == PropertyTypeEnum.Score)
             {
@@ -366,14 +366,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             return new PropertyCalculator(_propertyType, propertyData, _maxValue, _minValue, _isResourceProperty);
         }
         
-        private float ApplyOperation(float original, float value, BuffOperationType operation)
+        private float ApplyOperation(float original, float value, BuffOperationType operation, bool isReverse = false)
         {
             return operation switch
             {
-                BuffOperationType.Add => original + value,
-                BuffOperationType.Subtract => original - value,
-                BuffOperationType.Multiply => original * value,
-                BuffOperationType.Divide => value != 0 ? original / value : original,
+                BuffOperationType.Add => isReverse ? original - value :  original + value,
+                BuffOperationType.Subtract => isReverse ? original + value : original - value,
+                BuffOperationType.Multiply => isReverse ? original / value : original * value,
+                BuffOperationType.Divide => isReverse ? original * value : original / value,
                 _ => original + value // 默认加法
             };
         }

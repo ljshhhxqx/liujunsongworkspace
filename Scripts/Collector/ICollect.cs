@@ -41,5 +41,6 @@ namespace HotUpdate.Scripts.Collector
     public interface IPickable
     {
         public void RequestPick(int pickerConnectionId);
+        uint SceneItemId { get; }  
     }
 }

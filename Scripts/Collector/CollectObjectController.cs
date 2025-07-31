@@ -82,7 +82,6 @@ namespace HotUpdate.Scripts.Collector
                 return;
             }
 
-            
             _collectAnimationComponent?.Play();
             CollectObjectData = collectObjectDataConfig.GetCollectObjectData(collectConfigId);
             _collider = collectCollider.GetComponent<Collider>();
@@ -98,25 +97,19 @@ namespace HotUpdate.Scripts.Collector
         }
 
         [ClientRpc]
-        public void RpcPickupItem()
+        public void RpcRecycleItem()
         {
             if (_collider)
             {
                 _collider.enabled = false;
             }
-            ReturnToPool();
+            GameObjectPoolManger.Instance.ReturnObject(gameObject);
             //_collectParticlePlayer.Play(_collectAnimationComponent.OutlineColorValue);
             //DelayInvoker.DelayInvoke(0.75f, ReturnToPool);
         }
 
-        private void ReturnToPool()
-        {
-            GameObjectPoolManger.Instance.ReturnObject(gameObject);
-        }
-
         private void OnReturnToPool()
         {
-            DelayInvoker.CancelInvoke(ReturnToPool);
             _collectParticlePlayer = null;
             _collectAnimationComponent = null;
             _mirrorNetworkMessageHandler = null;
@@ -154,11 +147,6 @@ namespace HotUpdate.Scripts.Collector
         public void CollectSuccess()
         {
             _collectParticlePlayer.Play(_collectAnimationComponent.OutlineColorValue);
-        }
-
-        private void OnDestroy()
-        {
-            DelayInvoker.CancelInvoke(ReturnToPool);
         }
 
         [Button("重置配置数据")]

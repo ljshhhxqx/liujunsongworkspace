@@ -39,11 +39,13 @@ namespace Tool.GameEvent
     {
         public Transform Target { get; private set; }
         public Transform Player { get; private set; }
+        public uint TargetId { get; private set; }
 
-        public TargetShowEvent(Transform target, Transform player)
+        public TargetShowEvent(Transform target, Transform player, uint targetId)
         {
             Target = target;
             Player = player;
+            TargetId = targetId;
         }
     }
 

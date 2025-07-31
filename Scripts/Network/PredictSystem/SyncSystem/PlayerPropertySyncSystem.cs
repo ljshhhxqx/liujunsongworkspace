@@ -295,13 +295,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 _activeBuffs = _activeBuffs.SetItem(i, _activeBuffs[i].Update(deltaTime));
                 if (_activeBuffs[i].BuffData.IsExpired())
                 {
-                    var buffData = _activeBuffs[i].BuffData;
-                    for (int j = 0; j < buffData.BuffData.increaseDataList.Count; j++)
-                    {
-                        var buff = buffData.BuffData.increaseDataList[j];
-                        buff.operationType = BuffOperationType.Subtract;
-                        buffData.BuffData.increaseDataList[j] = buff;
-                    }
                     HandleBuffRemove(_activeBuffs[i].BuffData, i);
                 }
             }
@@ -840,13 +833,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerState = GetState<PlayerPredictablePropertyState>(buff.TargetPlayerId);
             var propertyCalculator = playerState.MemoryProperty[buff.BuffData.propertyType];
-            for (var i = 0; i < buff.BuffData.increaseDataList.Count; i++)
-            {
-                var buffIncreaseData = buff.BuffData.increaseDataList[i];
-                buffIncreaseData.operationType = BuffOperationType.Subtract;
-                buff.BuffData.increaseDataList[i] = buffIncreaseData;
-            }
-            playerState.MemoryProperty[buff.BuffData.propertyType] = HandleBuffInfo(propertyCalculator, buff);
+            playerState.MemoryProperty[buff.BuffData.propertyType] = HandleBuffInfo(propertyCalculator, buff, true);
             _activeBuffs = _activeBuffs.RemoveAt(index);
             PropertyStates[buff.TargetPlayerId] = playerState;
             PropertyChange(buff.TargetPlayerId);
@@ -860,15 +847,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 increaseValue = buff.increaseValue,
             };
-            increaseData.operationType = buff.operationType switch
-            {
-                BuffOperationType.Add => BuffOperationType.Subtract,
-                BuffOperationType.Subtract => BuffOperationType.Add,
-                BuffOperationType.Multiply => BuffOperationType.Divide,
-                BuffOperationType.Divide => BuffOperationType.Multiply,
-                _ => throw new ArgumentOutOfRangeException()
-            };
-            playerState.MemoryProperty[buff.propertyType] = propertyCalculator.UpdateCalculator(propertyCalculator, increaseData);
+            playerState.MemoryProperty[buff.propertyType] = propertyCalculator.UpdateCalculator(propertyCalculator, increaseData, true);
             PropertyStates[buff.targetPlayerId] = playerState;
             PropertyChange(buff.targetPlayerId);
             if (index != -1)
@@ -876,9 +855,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         }
 
 
-        private PropertyCalculator HandleBuffInfo(PropertyCalculator propertyCalculator, BuffBase buffData)
+        private PropertyCalculator HandleBuffInfo(PropertyCalculator propertyCalculator, BuffBase buffData, bool isReverse = false)
         {
-            return propertyCalculator.UpdateCalculator(buffData.BuffData.increaseDataList);
+            return propertyCalculator.UpdateCalculator(buffData.BuffData.increaseDataList, isReverse);
         }
 
         private void HandlePlayerAttack(int attacker, int[] defenderPlayerIds)

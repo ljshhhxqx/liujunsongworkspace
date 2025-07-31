@@ -95,6 +95,7 @@ MonoBehaviour:
       inputThreshold: 0.1
       maxCommandAge: 1
       uiUpdateInterval: 0.5
+      roundInterval: 10
       maxTraceDistance: 10
       maxViewAngle: 180
       obstacleCheckRadius: 0.5

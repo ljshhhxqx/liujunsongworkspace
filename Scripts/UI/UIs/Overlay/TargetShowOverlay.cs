@@ -12,7 +12,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 {
     public class TargetShowOverlay : ScreenUIBase
     {
-        private readonly List<Transform> _targets = new List<Transform>(); // 要追踪的目标物品们
+        private readonly Dictionary<uint, Transform> _targets = new Dictionary<uint,Transform>(); // 要追踪的目标物品们
         private Transform _player; // 玩家角色
         [SerializeField] private RectTransform indicatorUI; // UI指示器
         [SerializeField] private TextMeshProUGUI distanceText; // 显示距离的Text组件
@@ -41,9 +41,13 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         private void OnTargetShow(TargetShowEvent targetShowEvent)
         {
-            if (targetShowEvent.Target)
+            if (!_targets.ContainsKey(targetShowEvent.TargetId) && targetShowEvent.Target)
             {
-                _targets.Add(targetShowEvent.Target);
+                _targets.Add(targetShowEvent.TargetId, targetShowEvent.Target);
+            }
+            else if (_targets.ContainsKey(targetShowEvent.TargetId) && !targetShowEvent.Target)
+            {
+                _targets.Remove(targetShowEvent.TargetId);
             }
             indicatorUI.gameObject.SetActive(IsTargetNotNull);
             _player ??= targetShowEvent.Player;
@@ -56,10 +60,9 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private void LateUpdate()
         {
             if (!IsTargetNotNull || !_player) return;
-
-            for (int i = 0; i < _targets.Count; i++)
+            
+            foreach (var target in _targets.Values)
             {
-                var target = _targets[i];
                 _followTargetParams.Target = target.position;
                 _followTargetParams.Player = _player.position;
                 GameStaticExtensions.FollowTarget(_followTargetParams);

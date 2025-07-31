@@ -74,6 +74,9 @@ namespace HotUpdate.Scripts.Collector
         private readonly Dictionary<QualityType, IColliderConfig> _droppedItemColliderConfigs = new Dictionary<QualityType, IColliderConfig> ();
         private TreasureChestComponent _clientTreasureChest;
 
+        private bool _serverHandler;
+        private bool _clientHandler;
+        
         [Inject]
         private void Init(UIManager uiManager, IConfigProvider configProvider, GameSyncManager gameSyncManager, GameMapInjector gameMapInjector,GameEventManager gameEventManager, MessageCenter messageCenter)
         {
@@ -96,6 +99,18 @@ namespace HotUpdate.Scripts.Collector
             _spawnedParent = transform;
         }
 
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+            _serverHandler = true;
+        }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            _clientHandler = true;
+        }
+
         private void OnGameSceneResourcesLoadedLoaded(GameSceneResourcesLoadedEvent gameSceneResourcesLoadedEvent)
         {
             var collectData = _jsonDataConfig.CollectData;
@@ -112,7 +127,7 @@ namespace HotUpdate.Scripts.Collector
         [Server]
         public void SpawnItemsByDroppedItems(byte[] droppedItemsBytes, Vector3 position)
         {
-            if (!isServer)
+            if (!_serverHandler)
             {
                 return;
             }
@@ -129,7 +144,7 @@ namespace HotUpdate.Scripts.Collector
         [ClientRpc]
         public void SpawnItemsByDroppedItemsClientRpc(byte[] droppedItemsBytes, Vector3 position)
         {
-            if (!isClient)
+            if (!_clientHandler)
             {
                 return;
             }
@@ -146,7 +161,7 @@ namespace HotUpdate.Scripts.Collector
         [Server]
         public void PickerPickUpChest(uint pickerId, uint itemId)
         {
-            if (isServer)
+            if (_serverHandler)
             {
                 var state = (ItemState)_serverTreasureChestMetaData.StateFlags;
                 if (state.HasAnyState(ItemState.IsInteracting) || state.HasAnyState(ItemState.IsInBag)) return;
@@ -182,16 +197,22 @@ namespace HotUpdate.Scripts.Collector
                          var configData = _chestConfig.GetChestConfigData(chestData.ChestConfigId);
                          var extraItems = _shopConfig.GetItemsByShopId(chestData.ShopIds);
                          extraItems.UnionWith(configData.itemIds);
-                         var items = extraItems.Select(x => new ItemsCommandData
+                         var list = new MemoryList<ItemsCommandData>();
+                         foreach (var extraItem in extraItems)
                          {
-                             ItemConfigId = x,
-                             Count = 1,
-                             ItemUniqueId = new int[]{ HybridIdGenerator.GenerateItemId(x, GameSyncManager.CurrentTick) } 
-                         }).ToList();
+                             var commonData = new ItemsCommandData
+                             {
+                                 ItemConfigId = extraItem,
+                                 Count = 1,
+                                 ItemUniqueId = new int[]
+                                     { HybridIdGenerator.GenerateItemId(extraItem, GameSyncManager.CurrentTick) }
+                             };
+                             list.Add(commonData);
+                         }
                          _gameSyncManager.EnqueueServerCommand(new ItemsGetCommand
                          {
                              Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Item),
-                             Items = (MemoryList<ItemsCommandData>)items,
+                             Items = list,
                          });
                          Debug.Log($"Player {player.name} pick up chest {chestData.ChestConfigId}");
                          _serverTreasureChestMetaData = default;
@@ -219,18 +240,20 @@ namespace HotUpdate.Scripts.Collector
         [ClientRpc]
         private void RpcPickupChest(uint pickerId, uint itemId)
         {
-            if (isClient)
+            if (_clientHandler)
             {
-                var item = _clientCollectObjectControllers[itemId];
-                item.CollectSuccess();
-                GameObjectPoolManger.Instance.ReturnObject(item.gameObject);
+                if (NetworkServer.spawned.TryGetValue(itemId, out var item))
+                {
+                    var component = item.GetComponent<TreasureChestComponent>();
+                    component.PickUpSuccess().Forget();
+                }
             }
         }
 
         [Server]
         public void PickerPickupItem(uint pickerId, uint itemId)
         {
-            if (isServer)
+            if (_serverHandler)
             {
                 HandleItemPickup(itemId, pickerId);
                 JudgeEndRound();
@@ -346,6 +369,10 @@ namespace HotUpdate.Scripts.Collector
         [Server]
         private void HandleItemPickup(uint itemId, uint pickerId)
         {
+            if (!_serverHandler)
+            {
+                return;
+            }
             if (_serverItemMap.TryGetValue(itemId, out var itemInfo))
             {
                 if (!_processedItems.Add(itemId))
@@ -385,7 +412,7 @@ namespace HotUpdate.Scripts.Collector
                     var identity = NetworkServer.spawned[itemId];
 
                     var collectObjectController = identity.GetComponent<CollectObjectController>();
-                    collectObjectController.RpcPickupItem();
+                    collectObjectController.RpcRecycleItem();
                     GameObjectPoolManger.Instance.ReturnObject(identity.gameObject);
                     //NetworkServer.Destroy(NetworkServer.spawned[itemData.ItemId].gameObject);
                     // 通知客户端
@@ -440,6 +467,10 @@ namespace HotUpdate.Scripts.Collector
         [Server]
         public async UniTask EndRound()
         {
+            if (!_serverHandler)
+            {
+                return;
+            }
             try
             {
                 Debug.Log("Starting EndRound");
@@ -456,16 +487,16 @@ namespace HotUpdate.Scripts.Collector
                     var go = NetworkServer.spawned[itemId];
                     if (go)
                     {
+                        Debug.Log($"[EndRound] Recycling item with id: {itemId}");
                         var controller = go.GetComponent<CollectObjectController>();
                         GameObjectPoolManger.Instance.ReturnObject(go.gameObject);
-                        controller.RpcPickupItem();
-                        _serverItemMap.Remove(itemId);
+                        controller.RpcRecycleItem();
                     }
                 }
 
                 // 通知客户端清理
                 //RpcEndRound();
-                //_serverItemMap.Clear();
+                _serverItemMap.Clear();
                 await UniTask.Yield();
                 
             }
@@ -478,7 +509,7 @@ namespace HotUpdate.Scripts.Collector
         [ClientRpc]
         private void RpcEndRound()
         {
-            if (isClient)
+            if (_clientHandler)
             {
                 // 清理客户端的生成物
                 foreach (var item in _clientCollectObjectControllers.Values)
@@ -511,6 +542,10 @@ namespace HotUpdate.Scripts.Collector
         [Server]
         public async UniTask SpawnManyItems()
         {
+            if (!_serverHandler)
+            {
+                return;
+            }
             try
             {
                 _serverItemMap.Clear();
@@ -527,17 +562,16 @@ namespace HotUpdate.Scripts.Collector
                     spawnedCount += newSpawnInfos.Count;
                     foreach (var item in newSpawnInfos)
                     {
-                        // var id = CollectItemMetaData.GenerateItemId(item.Item2);
-                        // if (!NetworkManager.singleton.spawnPrefabs.Contains(_collectiblePrefabs[item.Item1].gameObject))
-                        // {
-                        //     Debug.LogError($"Prefab not found in spawnPrefabs: {_collectiblePrefabs[item.Item1].gameObject}");
-                        //     continue;
-                        // }
                         var go = GameObjectPoolManger.Instance.GetObject(_collectiblePrefabs[item.Item1].gameObject, item.Item2, Quaternion.identity, _spawnedParent,
                             go => _gameMapInjector.InjectGameObject(go), newSpawnInfos.Count);
-                        NetworkServer.Spawn(go);
-                        go.transform.position = item.Item2;
                         var identity = go.GetComponent<NetworkIdentity>();
+                        if (!NetworkServer.spawned.ContainsKey(identity.netId))
+                        {
+                            Debug.Log($"[SpawnManyItems] Item exists: {identity.netId}");
+                            NetworkServer.Spawn(go);
+                            //identity = go.GetComponent<NetworkIdentity>();
+                        }
+                        go.transform.position = item.Item2;
                         Debug.Log($"Spawning item {item.Item1} at position: {item.Item2} with id: {identity.netId}, real position: {go.transform.position}");
                         if (_serverItemMap.TryGetValue(identity.netId, out var itemInfo))
                         {
@@ -594,13 +628,21 @@ namespace HotUpdate.Scripts.Collector
         [Server]
         public void SpawnTreasureChestServer()
         {
+            if (!_serverHandler)
+            {
+                return;
+            }
             var random = Random.Range(0f, 1f);
             var chestData = _chestConfig.RandomOne(random);
             var position = GetRandomStartPoint(0.35f);
             var chestGo = GameObjectPoolManger.Instance.GetObject(_treasureChestPrefabs.GetValueOrDefault(chestData.randomItems.quality).gameObject, position, Quaternion.identity, _spawnedParent,
                 go => _gameMapInjector.InjectGameObject(go));
             var identity = chestGo.GetComponent<NetworkIdentity>();
-            NetworkServer.Spawn(chestGo);
+            if (!NetworkServer.spawned.ContainsKey(identity.netId))
+            {
+                NetworkServer.Spawn(chestGo);
+                //identity = chestGo.GetComponent<NetworkIdentity>();
+            }
             //chestGo.transform.position = position;
             var metaData = new CollectItemMetaData(identity.netId,
                 position,

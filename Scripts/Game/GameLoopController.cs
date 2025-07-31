@@ -34,6 +34,7 @@ namespace HotUpdate.Scripts.Game
         private float _mainGameTime;
         private float _warmupTime;
         private float _noUnionTime;
+        private float _roundInterval;
         private CancellationTokenSource _cts;
         private GameEventManager _gameEventManager;
         private GameSyncManager _gameSyncManager;
@@ -46,6 +47,8 @@ namespace HotUpdate.Scripts.Game
         private BuffManager _buffManager;
         private NetworkAudioManager _networkAudioManager;
         private WeatherManager _weatherManager;
+        private bool _serverHandler;
+        private bool _clientHandler;
 
         public bool IsEndGame
         {
@@ -115,9 +118,22 @@ namespace HotUpdate.Scripts.Game
             _networkAudioManager = FindObjectOfType<NetworkAudioManager>();
             _weatherManager = FindObjectOfType<WeatherManager>();
             _gameSyncManager = FindObjectOfType<GameSyncManager>();
+            _roundInterval = _jsonDataConfig.GameConfig.roundInterval;
             RegisterMessage();
         }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            _clientHandler = true;
+        }
         
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+            _serverHandler = true;
+        }
+
         private void RegisterMessage()
         {
             _messageCenter.Register<GameStartMessage>(OnGameStartMessage);
@@ -153,7 +169,7 @@ namespace HotUpdate.Scripts.Game
         {
             _gameInfo = gameReadyEvent.GameInfo;
 
-            if (isServer)
+            if (_serverHandler)
             {
                 _cts = new CancellationTokenSource();
                 PlayerInGameManager.Instance.SpawnAllBases();
@@ -284,7 +300,7 @@ namespace HotUpdate.Scripts.Game
                 Debug.Log($"Starting Round {_currentRound}");
 
                 // 执行回合循环，并传递更新倒计时的Action
-                var subCycle = new SubCycle(30, interval, IsEndRoundFunc, RoundStartAsync, updateRemainingTime, RoundEndAsync);
+                var subCycle = new SubCycle((int)_roundInterval, interval, IsEndRoundFunc, RoundStartAsync, updateRemainingTime, RoundEndAsync);
                 await subCycle.StartAsync(token);
 
                 // 回合结束，增加回合数

@@ -525,7 +525,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public float inputThreshold;
         public float maxCommandAge;
         public float uiUpdateInterval;
-        
+        public float roundInterval;
         public float maxTraceDistance;
         public float maxViewAngle;
         public float obstacleCheckRadius;

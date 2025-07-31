@@ -106,8 +106,24 @@ namespace HotUpdate.Scripts.Collector
         private async UniTaskVoid Collect(IPickable collect)
         {
             if(!isLocalPlayer) return;
-            collect.RequestPick(connectionToClient.connectionId);
+            
+            var request = new SceneInteractRequest
+            {
+                Header = InteractSystem.CreateInteractHeader(connectionToClient.connectionId, InteractCategory.PlayerToScene,
+                    transform.position, CommandAuthority.Client),
+                InteractionType = InteractionType.PickupChest,
+                SceneItemId = collect.SceneItemId,
+            };
+            var json = MemoryPackSerializer.Serialize(request);
+            CmdOpenChest(json);
             await UniTask.DelayFrame(1);
+        }
+        
+        [Command]
+        private void CmdOpenChest(byte[] data)
+        {
+            var request = MemoryPackSerializer.Deserialize<SceneInteractRequest>(data);
+            _interactSystem.EnqueueCommand(request);
         }
     }
 }

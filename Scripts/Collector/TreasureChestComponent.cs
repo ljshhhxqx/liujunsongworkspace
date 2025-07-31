@@ -1,4 +1,5 @@
 using System;
+using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
@@ -38,6 +39,7 @@ namespace HotUpdate.Scripts.Collector
         private Collider _positionCollider;
         private InteractSystem _interactSystem;
         private PooledObject _pooledObject;
+        private Transform _playerTransform;
         public Collider ChestCollider => _chestCollider;
         public QualityType Quality => quality;
         
@@ -71,8 +73,8 @@ namespace HotUpdate.Scripts.Collector
             _chestCommonData = _jsonDataConfig.ChestCommonData;
 
             lid.transform.eulerAngles = _chestCommonData.InitEulerAngles;
-            var playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-            _gameEventManager?.Publish(new TargetShowEvent(transform, playerTransform));
+            _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+            _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId));
         }
 
         public override void OnStartClient()
@@ -88,8 +90,7 @@ namespace HotUpdate.Scripts.Collector
 
         private void OnReturnToPool()
         {
-            var player = PlayerInGameManager.Instance.GetPlayerComponent<Transform>(connectionToClient.connectionId);
-            _gameEventManager?.Publish(new TargetShowEvent(null, player));
+            _gameEventManager?.Publish(new TargetShowEvent(null, null, netId));
             _gameEventManager = null;
             //_chestDataConfig = null;
             _chestCommonData = default;
@@ -135,33 +136,16 @@ namespace HotUpdate.Scripts.Collector
 
         public void RequestPick(int pickerConnectionId)
         {
-            if (!isClient)
-            {
-                return;
-            }
-            var request = new SceneInteractRequest
-            {
-                Header = InteractSystem.CreateInteractHeader(pickerConnectionId, InteractCategory.PlayerToScene,
-                    transform.position, CommandAuthority.Client),
-                InteractionType = InteractionType.PickupChest,
-                SceneItemId = ItemId,
-            };
-            var json = MemoryPackSerializer.Serialize(request);
-            CmdOpenChest(json);
+            
         }
-        
-        [Command]
-        private void CmdOpenChest(byte[] data)
-        {
-            var request = MemoryPackSerializer.Deserialize<SceneInteractRequest>(data);
-            _interactSystem.EnqueueCommand(request);
-        }
-        
 
-        public async UniTask PickUpSuccess(Action onFinish)
+        uint IPickable.SceneItemId => netId;
+
+        public async UniTask PickUpSuccess(Action onFinish = null)
         {
             await OpenLid();
             onFinish?.Invoke();
+            GameObjectPoolManger.Instance.ReturnObject(gameObject);
         }
 
         public uint ItemId { get; set; }
