@@ -701,6 +701,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 BuffData = newBuff,
             };
             var propertyCalculator = playerState.MemoryProperty[newBuff.BuffData.propertyType];
+            var preProperty = playerState.MemoryProperty[newBuff.BuffData.propertyType].CurrentValue;
+            var preMaxProperty = playerState.MemoryProperty[newBuff.BuffData.propertyType].MaxCurrentValue;
             var preHealth = playerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue;
             var preMana = playerState.MemoryProperty[PropertyTypeEnum.Strength].CurrentValue;
             playerState.MemoryProperty[newBuff.BuffData.propertyType] = HandleBuffInfo(propertyCalculator, newBuff);
@@ -713,6 +715,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var maxMana = playerState.MemoryProperty[PropertyTypeEnum.Health].MaxCurrentValue;
             HandlePlayerPropertyDifference(targetId, propertyCalculator, playerState.MemoryProperty[newBuff.BuffData.propertyType], newBuff.BuffData.propertyType);
             PropertyChange(targetId);
+            var nowProperty = playerState.MemoryProperty[newBuff.BuffData.propertyType].CurrentValue;
+            var nowMaxProperty = playerState.MemoryProperty[newBuff.BuffData.propertyType].MaxCurrentValue;
+            Debug.Log(
+                "[AddBuffToPlayer] modify property :" +
+                $"1. [buff] buffType->{buffExtraData.buffType} buffid->{newBuff.BuffData.buffId} buffpropertyType-> {newBuff.BuffData.propertyType} buffincreaseData-> {newBuff.BuffData.increaseDataList[0].ToString()}" +
+                $"2. [property] preProperty-> {preProperty} nowProperty -> {nowProperty} preMaxProperty -> {preMaxProperty} nowMaxProperty -> {nowMaxProperty} ");
             if (changedHp > 0)
             {
                 var hpChangedCheckerParameters = HpChangeCheckerParameters.CreateParameters(

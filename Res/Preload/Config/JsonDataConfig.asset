@@ -36,6 +36,7 @@ MonoBehaviour:
         m_Bits: 64
       NoUnionMoreGoldRatio: 1
       NoUnionMoreScoreRatio: 1
+      SpeedToVelocityRatio: 1.5
       AttackComboWindow: 1
       AttackComboMaxCount: 3
     collectData:

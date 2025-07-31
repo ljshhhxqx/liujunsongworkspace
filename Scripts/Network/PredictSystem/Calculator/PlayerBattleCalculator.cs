@@ -83,8 +83,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return dot >= cosAngle;
         }
         #endregion
-
-        public bool IsClient { get; }
     }
 
     public class PlayerBattleComponent

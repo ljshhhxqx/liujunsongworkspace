@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
@@ -392,7 +393,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var validCommand = command.ValidateCommand();
             if (!validCommand.IsValid)
             {
-                Debug.LogError($"Invalid command: {header.CommandType}");
+                var sb = new StringBuilder();
+                sb.AppendLine($"Invalid command: {header.CommandType}");
+                for (int i = 0; i < validCommand.Errors.Count; i++)
+                {
+                    sb.AppendLine(validCommand.Errors[i]);
+                }
+                Debug.LogError(sb.ToString());
+                ObjectPoolManager<CommandValidationResult>.Instance.Return(validCommand);
                 return;
             }
             _serverCommands.Enqueue(command);

@@ -646,6 +646,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public LayerMask PlayerLayer;
         public float NoUnionMoreGoldRatio;
         public float NoUnionMoreScoreRatio;
+        public float SpeedToVelocityRatio;
         
         #endregion
         #region Animation

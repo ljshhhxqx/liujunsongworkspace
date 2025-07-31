@@ -158,5 +158,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public GameSyncManager GameSyncManager;
         public ItemConfig ItemConfig;
         public bool IsServer;
+        public bool IsClient;
+        public bool IsLocalPlayer;
     }
 }

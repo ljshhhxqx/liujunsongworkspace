@@ -1458,7 +1458,7 @@ MonoBehaviour:
     - increaseType: 5
       increaseValue: 10
       operationType: 0
-    sourceType: 2
+    sourceType: 1
     mainIncreaseType: 5
     playerEffectType: 0
   - buffId: 145
@@ -1468,7 +1468,7 @@ MonoBehaviour:
     - increaseType: 5
       increaseValue: 50
       operationType: 0
-    sourceType: 2
+    sourceType: 1
     mainIncreaseType: 5
     playerEffectType: 0
   - buffId: 146

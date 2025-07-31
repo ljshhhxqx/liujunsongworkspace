@@ -87,6 +87,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private PlayerEquipmentCalculator _playerEquipmentCalculator;
         private PlayerShopCalculator _playerShopCalculator;
         
+        private List<IPlayerStateCalculator> _playerStateCalculators = new List<IPlayerStateCalculator>(8);
+        
         [Header("Parameters")]
         private PlayerInputStateData _playerInputStateData;
         private float _currentSpeed;
@@ -175,9 +177,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _capsuleCollider = GetComponent<CapsuleCollider>();
             _animator = GetComponent<Animator>();
             _camera = Camera.main;
-            GetAllCalculators(configProvider, gameSyncManager);
             _animationCooldowns = GetAnimationCooldowns();
             _gameEventManager = gameEventManager;
+            GetAllCalculators(configProvider, gameSyncManager);
             HandleAllSyncState();
         }
 
@@ -201,6 +203,36 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 HandleLocalInitCallback();
                 _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter));
             }
+            var shopConstant = PlayerShopCalculator.Constant;
+            shopConstant.IsServer = isServer;
+            shopConstant.IsClient = isClient;
+            shopConstant.IsLocalPlayer = isLocalPlayer;
+            PlayerShopCalculator.SetConstant(shopConstant);
+            var equipConstant = PlayerEquipmentCalculator.Constant;
+            equipConstant.IsServer = isServer;
+            equipConstant.IsClient = isClient;
+            equipConstant.IsLocalPlayer = isLocalPlayer;
+            PlayerEquipmentCalculator.SetConstant(equipConstant);
+            var itemConstant = PlayerItemCalculator.Constant;
+            itemConstant.IsServer = isServer;
+            itemConstant.IsClient = isClient;
+            itemConstant.IsLocalPlayer = isLocalPlayer;
+            PlayerItemCalculator.SetConstant(itemConstant);
+            var propertyConstant = PlayerPropertyCalculator.CalculatorConstant;
+            propertyConstant.IsServer = isServer;
+            propertyConstant.IsClient = isClient;
+            propertyConstant.IsLocalPlayer = isLocalPlayer;
+            PlayerPropertyCalculator.SetCalculatorConstant(propertyConstant);
+            var physicsConstant = PlayerPhysicsCalculator.PhysicsDetermineConstant;
+            physicsConstant.IsServer = isServer;
+            physicsConstant.IsClient = isClient;
+            physicsConstant.IsLocalPlayer = isLocalPlayer;
+            PlayerPhysicsCalculator.SetPhysicsDetermineConstant(physicsConstant);
+            var animationConstant = PlayerAnimationCalculator.AnimationConstant;
+            animationConstant.IsServer = isServer;
+            animationConstant.IsClient = isClient;
+            animationConstant.IsLocalPlayer = isLocalPlayer;
+            PlayerAnimationCalculator.SetAnimationConstant(animationConstant);
             _capsuleCollider.OnTriggerEnterAsObservable()
                 .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
                 .Subscribe(c =>
@@ -634,6 +666,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 ObstructionCheckRadius = gameData.obstacleCheckRadius,
                 RollForce = playerData.RollForce,
                 JumpSpeed = playerData.JumpSpeed,
+                SpeedToVelocityRatio = playerData.SpeedToVelocityRatio,
             });
             PlayerPropertyCalculator.SetCalculatorConstant(new PropertyCalculatorConstant
             {
@@ -685,6 +718,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerElementCalculator = new PlayerElementCalculator();
             _playerEquipmentCalculator = new PlayerEquipmentCalculator();
             _playerShopCalculator = new PlayerShopCalculator();
+            _playerStateCalculators.Add(_playerPhysicsCalculator);
+            _playerStateCalculators.Add(_playerPropertyCalculator);
+            _playerStateCalculators.Add(_playerAnimationCalculator);
+            _playerStateCalculators.Add(_playerBattleCalculator);
+            _playerStateCalculators.Add(_playerItemCalculator);
+            _playerStateCalculators.Add(_playerElementCalculator);
+            _playerStateCalculators.Add(_playerEquipmentCalculator);
+            _playerStateCalculators.Add(_playerShopCalculator);
         }
 
         private void OnAttack(int stage)

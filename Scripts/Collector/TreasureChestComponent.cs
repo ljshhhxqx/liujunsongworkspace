@@ -135,18 +135,19 @@ namespace HotUpdate.Scripts.Collector
 
         public void RequestPick(int pickerConnectionId)
         {
-            if (isLocalPlayer)
+            if (!isClient)
             {
-                var request = new SceneInteractRequest
-                {
-                    Header = InteractSystem.CreateInteractHeader(pickerConnectionId, InteractCategory.PlayerToScene,
-                        transform.position, CommandAuthority.Client),
-                    InteractionType = InteractionType.PickupChest,
-                    SceneItemId = ItemId,
-                };
-                var json = MemoryPackSerializer.Serialize(request);
-                CmdOpenChest(json);
+                return;
             }
+            var request = new SceneInteractRequest
+            {
+                Header = InteractSystem.CreateInteractHeader(pickerConnectionId, InteractCategory.PlayerToScene,
+                    transform.position, CommandAuthority.Client),
+                InteractionType = InteractionType.PickupChest,
+                SceneItemId = ItemId,
+            };
+            var json = MemoryPackSerializer.Serialize(request);
+            CmdOpenChest(json);
         }
         
         [Command]

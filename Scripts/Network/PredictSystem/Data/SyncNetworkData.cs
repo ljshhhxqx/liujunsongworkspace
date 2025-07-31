@@ -973,7 +973,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return BuffExtraData.buffType >= 0 && BuffExtraData.buffType <= BuffType.Random && BuffExtraData.buffId > 0 && TargetId > 0 && CasterId.HasValue && BuffExtraData.buffId > 0 && BuffExtraData.buffType != BuffType.None
+            return BuffExtraData.buffType >= 0 && BuffExtraData.buffType <= BuffType.Random && BuffExtraData.buffId > 0 && TargetId >= 0 && BuffExtraData.buffId > 0 && BuffExtraData.buffType != BuffType.None
                     && BuffSourceType <= BuffSourceType.Auto;
         }
         public void Init()

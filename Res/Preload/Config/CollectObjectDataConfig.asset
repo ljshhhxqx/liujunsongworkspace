@@ -49,7 +49,7 @@ MonoBehaviour:
     collectObjectClass: 1
     qualityType: 0
   - id: 4
-    itemId: 2002
+    itemId: 2005
     description: "\u7ACB\u5373\u6062\u590D15%\u4F53\u529B"
     weight: 10
     buffExtraData:
@@ -58,7 +58,7 @@ MonoBehaviour:
     collectObjectClass: 2
     qualityType: 0
   - id: 5
-    itemId: 2003
+    itemId: 2006
     description: "\u7ACB\u5373\u6062\u590D\u83B7\u5F97\u5C11\u91CF\u4F53\u529B"
     weight: 10
     buffExtraData:
@@ -67,7 +67,7 @@ MonoBehaviour:
     collectObjectClass: 2
     qualityType: 0
   - id: 6
-    itemId: 2004
+    itemId: 2007
     description: "\u7ACB\u5373\u6062\u590D35%\u4F53\u529B"
     weight: 30
     buffExtraData:
@@ -76,7 +76,7 @@ MonoBehaviour:
     collectObjectClass: 2
     qualityType: 0
   - id: 7
-    itemId: 2005
+    itemId: 2008
     description: "\u7ACB\u5373\u6062\u590D\u83B7\u5F97\u4E2D\u7B49\u91CF\u4F53\u529B"
     weight: 30
     buffExtraData:
@@ -85,7 +85,7 @@ MonoBehaviour:
     collectObjectClass: 2
     qualityType: 0
   - id: 8
-    itemId: 2006
+    itemId: 2009
     description: "\u7ACB\u5373\u6062\u590D65%\u4F53\u529B"
     weight: 50
     buffExtraData:
@@ -94,7 +94,7 @@ MonoBehaviour:
     collectObjectClass: 2
     qualityType: 0
   - id: 9
-    itemId: 2007
+    itemId: 2010
     description: "\u7ACB\u5373\u6062\u590D\u5927\u91CF\u4F53\u529B"
     weight: 50
     buffExtraData:
@@ -103,7 +103,7 @@ MonoBehaviour:
     collectObjectClass: 2
     qualityType: 0
   - id: 10
-    itemId: 2008
+    itemId: 2011
     description: "\u7ACB\u5373\u6062\u590D15%\u751F\u547D"
     weight: 10
     buffExtraData:
@@ -112,7 +112,7 @@ MonoBehaviour:
     collectObjectClass: 2
     qualityType: 0
   - id: 11
-    itemId: 2009
+    itemId: 2012
     description: "\u7ACB\u5373\u6062\u590D\u83B7\u5F97\u5C11\u91CF\u751F\u547D"
     weight: 10
     buffExtraData:
@@ -121,7 +121,7 @@ MonoBehaviour:
     collectObjectClass: 2
     qualityType: 0
   - id: 12
-    itemId: 2010
+    itemId: 2013
     description: "\u7ACB\u5373\u6062\u590D35%\u751F\u547D"
     weight: 30
     buffExtraData:
@@ -130,7 +130,7 @@ MonoBehaviour:
     collectObjectClass: 2
     qualityType: 0
   - id: 13
-    itemId: 2011
+    itemId: 2014
     description: "\u7ACB\u5373\u6062\u590D\u83B7\u5F97\u4E2D\u7B49\u91CF\u751F\u547D"
     weight: 30
     buffExtraData:
@@ -139,7 +139,7 @@ MonoBehaviour:
     collectObjectClass: 2
     qualityType: 0
   - id: 14
-    itemId: 2012
+    itemId: 2015
     description: "\u7ACB\u5373\u6062\u590D65%\u751F\u547D"
     weight: 50
     buffExtraData:
@@ -148,7 +148,7 @@ MonoBehaviour:
     collectObjectClass: 2
     qualityType: 0
   - id: 15
-    itemId: 2013
+    itemId: 2016
     description: "\u7ACB\u5373\u6062\u590D\u5927\u91CF\u751F\u547D"
     weight: 50
     buffExtraData:

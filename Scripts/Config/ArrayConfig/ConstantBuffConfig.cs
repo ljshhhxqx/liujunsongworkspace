@@ -15,7 +15,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     {
         [ReadOnly]
         [SerializeField]
-        private List<BuffData> buffs = new List<BuffData>();
+        private  List<BuffData> buffs = new List<BuffData>();
 
         public Dictionary<int, BuffData> buffDict { get; } = new Dictionary<int, BuffData>();
 
@@ -39,12 +39,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                     }
                 }
             }
-            for (var i = 0; i < buff.increaseDataList.Count; i++)
-            {
-                var buffData = buff.increaseDataList[i];
-                buffData.increaseValue *= BuffDataReaderWriter.GetBuffRatioBySize(collectObjectBuffSize);
-                buff.increaseDataList[i] = buffData;
-            }
+            
+            Debug.Log($"GetBuffData: {buff.buffId} {buff.propertyType} {buff.duration} {buff.increaseDataList[0].ToString()}");
 
             return buff;
         }

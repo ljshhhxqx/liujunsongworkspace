@@ -17,8 +17,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
     public class PlayerAnimationCalculator : IPlayerStateCalculator
     {
         private AnimationComponent _animationComponent;
-        private static AnimationConstant _animationConstant;
-        
+        public static AnimationConstant AnimationConstant { get; private set; }
+
         private static readonly int Speed = Animator.StringToHash("Speed");
         private static readonly int VerticalSpeed = Animator.StringToHash("VerticalSpeed");
         private static readonly int Hp = Animator.StringToHash("Hp");
@@ -43,7 +43,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         {
             _animationComponent = animationComponent;
             CurrentAnimationState = AnimationState.Idle;
-            _animationInfos = _animationConstant.AnimationConfig.AnimationInfos;
+            _animationInfos = AnimationConstant.AnimationConfig.AnimationInfos;
             IsClient = isClient;
             foreach(var clip in _animationComponent.Animator.runtimeAnimatorController.animationClips) 
             {
@@ -55,7 +55,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         {
             if (state == AnimationState.Attack)
             {
-                var clipNames = _animationConstant.AnimationConfig.GetAnimationNames(state);
+                var clipNames = AnimationConstant.AnimationConfig.GetAnimationNames(state);
 
                 foreach (var clipName in clipNames)
                 {
@@ -79,7 +79,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
         public static void SetAnimationConstant(AnimationConstant animationConstant)
         {
-            _animationConstant = animationConstant;
+            AnimationConstant = animationConstant;
         }
 
         private string GetAnimationName(AnimationInfo animationInfo, int index = 0)
@@ -97,7 +97,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return currentAnimationState is AnimationState.Move or AnimationState.Sprint or AnimationState.Idle;
         }
         
-        public string GetAnimationName(AnimationState state, int index = 0) => _animationConstant.AnimationConfig.GetAnimationName(state, index);
+        public string GetAnimationName(AnimationState state, int index = 0) => AnimationConstant.AnimationConfig.GetAnimationName(state, index);
 
         public AnimationState UpdateAnimationState()
         {
@@ -153,7 +153,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         
         public static bool IsClearVelocity(AnimationState state)
         {
-            var animationInfo = _animationConstant.AnimationConfig.GetAnimationInfo(state);
+            var animationInfo = AnimationConstant.AnimationConfig.GetAnimationInfo(state);
             return animationInfo.isClearVelocity;
         }
         
@@ -210,8 +210,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             if (CurrentAnimationState == AnimationState.Dead)
                 return _currentAnimationCanPlay;
             
-            var currentInfo = _animationConstant.AnimationConfig.GetAnimationInfo(CurrentAnimationState);
-            var newInfo = _animationConstant.AnimationConfig.GetAnimationInfo(newState);
+            var currentInfo = AnimationConstant.AnimationConfig.GetAnimationInfo(CurrentAnimationState);
+            var newInfo = AnimationConstant.AnimationConfig.GetAnimationInfo(newState);
 
             switch (currentInfo.animationType)
             {
@@ -234,7 +234,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 return AnimationState.Dead;
             }
 
-            if (_currentEnvironmentState == PlayerEnvironmentState.InAir && parameters.GroundDistance >= _animationConstant.MaxGroundDistance)
+            if (_currentEnvironmentState == PlayerEnvironmentState.InAir && parameters.GroundDistance >= AnimationConstant.MaxGroundDistance)
             {
                 return AnimationState.Falling;
             }
@@ -283,7 +283,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         private AnimationState DetermineAnimationStateByInput(Vector3 inputMovement, AnimationState inputStates)
         {
             // 处理移动状态
-            if (inputMovement.magnitude >= _animationConstant.InputThreshold)
+            if (inputMovement.magnitude >= AnimationConstant.InputThreshold)
             {
                 return inputStates.HasAnyState(AnimationState.Sprint) ? AnimationState.Sprint : AnimationState.Move;
             }
@@ -366,7 +366,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             // 触发对应段数的攻击动画
 
             // 如果是最后一击，直接进入冷却
-            if (_currentComboSync >= _animationConstant.AttackComboMaxCount)
+            if (_currentComboSync >= AnimationConstant.AttackComboMaxCount)
             {
                 // 重置所有状态
                 _comboWindowCts?.Cancel();
@@ -456,14 +456,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public int AttackComboMaxCount;
         public AnimationConfig AnimationConfig;
         public bool IsServer;
+        public bool IsClient;
+        public bool IsLocalPlayer;
 
-        public AnimationConstant(float maxGroundDistance, float inputThreshold, int attackComboMaxCount, AnimationConfig animationConfig, bool isServer)
+        public AnimationConstant(float maxGroundDistance, float inputThreshold, int attackComboMaxCount, AnimationConfig animationConfig, bool isServer, bool isLocalPlayer, bool isClient)
         {
             MaxGroundDistance = maxGroundDistance;
             InputThreshold = inputThreshold;
             AttackComboMaxCount = attackComboMaxCount;
             AnimationConfig = animationConfig;
             IsServer = isServer;
+            IsLocalPlayer = isLocalPlayer;
+            IsClient = isClient;
         }
     }
 }

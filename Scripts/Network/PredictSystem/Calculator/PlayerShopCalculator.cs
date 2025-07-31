@@ -11,7 +11,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {
     public class PlayerShopCalculator : IPlayerStateCalculator
     {
-        private static ShopCalculatorConstant Constant;
+        public static ShopCalculatorConstant Constant { get; private set; }
 
         public static void SetConstant(ShopCalculatorConstant constant)
         {
@@ -199,5 +199,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public ShopConfig ShopConfig;
         public ItemConfig ItemConfig;
         public bool IsServer;
+        public bool IsClient;
+        public bool IsLocalPlayer;
     }
 }

@@ -12,9 +12,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
     {
         [Header("Components")]
         private readonly PhysicsComponent _physicsComponent;
-        [Header("ConfigData")]
-        private static PhysicsDetermineConstant _physicsDetermineConstant;
-        
+
+        public static PhysicsDetermineConstant PhysicsDetermineConstant { get; private set; }
+
         [Header("Params")]
         private bool _isOnSlope;
         private Vector3 _slopeNormal;
@@ -41,7 +41,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         
         public static void SetPhysicsDetermineConstant(PhysicsDetermineConstant constant)
         {
-            _physicsDetermineConstant = constant;
+            PhysicsDetermineConstant = constant;
         }
         
         public PlayerEnvironmentState CheckPlayerState(CheckGroundDistanceParam param)
@@ -55,7 +55,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 newEnvironmentState = PlayerEnvironmentState.OnStairs;
             }
             // 如果不在楼梯上，检查是否在地面
-            else if (GroundDistance <= _physicsDetermineConstant.GroundMinDistance)
+            else if (GroundDistance <= PhysicsDetermineConstant.GroundMinDistance)
             {
                 newEnvironmentState = PlayerEnvironmentState.OnGround;
             }
@@ -97,13 +97,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             
                 // 应用跳跃力
                 var jumpDirection = _isOnSlope ? Vector3.Lerp(Vector3.up, _slopeNormal, 0.5f) : Vector3.up;
-                _physicsComponent.Rigidbody.AddForce(jumpDirection * _physicsDetermineConstant.JumpSpeed, ForceMode.Impulse);
+                _physicsComponent.Rigidbody.AddForce(jumpDirection * PhysicsDetermineConstant.JumpSpeed, ForceMode.Impulse);
             }
             else if (_playerEnvironmentState == PlayerEnvironmentState.OnStairs)
             {
                 _physicsComponent.Rigidbody.velocity = Vector3.zero;
                 _physicsComponent.Rigidbody.MovePosition(_physicsComponent.Rigidbody.transform.position + _stairsHitNormal.normalized);
-                _physicsComponent.Rigidbody.AddForce(_stairsHitNormal.normalized * _physicsDetermineConstant.JumpSpeed / 5f, ForceMode.Impulse);
+                _physicsComponent.Rigidbody.AddForce(_stairsHitNormal.normalized * PhysicsDetermineConstant.JumpSpeed / 5f, ForceMode.Impulse);
             }
         }
 
@@ -118,28 +118,28 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 // 向下的射线检测
                 var ray2 = new Ray(_physicsComponent.Transform.position + new Vector3(0, _physicsComponent.CapsuleCollider.height / 2, 0), Vector3.down);
                 if (Physics.Raycast(ray2, out var groundHit, _physicsComponent.CapsuleCollider.height / 2 + dist,
-                        _physicsDetermineConstant.GroundSceneLayer) && !groundHit.collider.isTrigger)
+                        PhysicsDetermineConstant.GroundSceneLayer) && !groundHit.collider.isTrigger)
                 {
                     dist = _physicsComponent.Transform.position.y - groundHit.point.y;
 
                     // 检查斜坡
                     _slopeNormal = groundHit.normal;
                     _slopeAngle = Vector3.Angle(Vector3.up, _slopeNormal);
-                    _isOnSlope = _slopeAngle != 0f && _slopeAngle <= _physicsDetermineConstant.MaxSlopeAngle;
+                    _isOnSlope = _slopeAngle != 0f && _slopeAngle <= PhysicsDetermineConstant.MaxSlopeAngle;
                 }
 
                 // 球形检测
-                if (dist >= _physicsDetermineConstant.GroundMinDistance)
+                if (dist >= PhysicsDetermineConstant.GroundMinDistance)
                 {
                     var forwardOffset = param.InputMovement.magnitude > 0f ? (param.InputMovement.normalized * (radius * 0.5f)) : Vector3.zero;
                     var pos = _physicsComponent.Transform.position + Vector3.up * (_physicsComponent.CapsuleCollider.radius) + forwardOffset;
                     var ray = new Ray(pos, -Vector3.up);
 
-                    if (Physics.SphereCast(ray, radius, out groundHit, _physicsComponent.CapsuleCollider.radius + _physicsDetermineConstant.GroundMaxDistance,
-                            _physicsDetermineConstant.GroundSceneLayer) && !groundHit.collider.isTrigger)
+                    if (Physics.SphereCast(ray, radius, out groundHit, _physicsComponent.CapsuleCollider.radius + PhysicsDetermineConstant.GroundMaxDistance,
+                            PhysicsDetermineConstant.GroundSceneLayer) && !groundHit.collider.isTrigger)
                     {
                         Physics.Linecast(groundHit.point + (Vector3.up * 0.1f), groundHit.point + Vector3.down * 0.15f,
-                            out groundHit, _physicsDetermineConstant.GroundSceneLayer);
+                            out groundHit, PhysicsDetermineConstant.GroundSceneLayer);
                         var newDist = _physicsComponent.Transform.position.y - groundHit.point.y;
                         if (dist > newDist)
                         {
@@ -147,12 +147,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                             // 更新斜坡信息
                             _slopeNormal = groundHit.normal;
                             _slopeAngle = Vector3.Angle(Vector3.up, _slopeNormal);
-                            _isOnSlope = _slopeAngle != 0f && _slopeAngle <= _physicsDetermineConstant.MaxSlopeAngle;
+                            _isOnSlope = _slopeAngle != 0f && _slopeAngle <= PhysicsDetermineConstant.MaxSlopeAngle;
                         }
                     }
                 }
 
-                GroundDistance = Mathf.Clamp((float)Math.Round(dist, 2), 0f, _physicsDetermineConstant.GroundMaxDistance);
+                GroundDistance = Mathf.Clamp((float)Math.Round(dist, 2), 0f, PhysicsDetermineConstant.GroundMaxDistance);
                 var hasMovementInput = param.InputMovement.magnitude > 0f;
                 //_playerAnimationComponent.SetGroundDistance(_groundDistance);
 
@@ -186,7 +186,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             direction = Vector3.zero;
             hitNormal = Vector3.zero;
 
-            if (Physics.Raycast(_physicsComponent.CheckStairsTransform.position, _physicsComponent.CheckStairsTransform.forward, out var hit, _physicsDetermineConstant.StairsCheckDistance, _physicsDetermineConstant.StairsSceneLayer))
+            if (Physics.Raycast(_physicsComponent.CheckStairsTransform.position, _physicsComponent.CheckStairsTransform.forward, out var hit, PhysicsDetermineConstant.StairsCheckDistance, PhysicsDetermineConstant.StairsSceneLayer))
             {
                 hitNormal = hit.normal;
                 direction = Vector3.Cross(hit.normal, _physicsComponent.CheckStairsTransform.right).normalized;
@@ -208,7 +208,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 var moveDirection = movement.normalized;
                 var targetVelocity = moveDirection * _currentSpeed;
                 targetVelocity += _stairsHitNormal.normalized * -2f;
-                _physicsComponent.Rigidbody.velocity = moveParam.IsClearVelocity ? Vector3.zero : targetVelocity;
+                _physicsComponent.Rigidbody.velocity = moveParam.IsClearVelocity ? Vector3.zero : targetVelocity * PhysicsDetermineConstant.SpeedToVelocityRatio;
             }
             else if (_playerEnvironmentState == PlayerEnvironmentState.OnGround)
             {
@@ -230,14 +230,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
                 movement.y = 0f;
                 // 计算目标位置和速度
-                var targetVelocity = moveParam.IsClearVelocity ? Vector3.zero : movement.normalized * _currentSpeed;
+                var targetVelocity = moveParam.IsClearVelocity ? Vector3.zero : movement.normalized * (_currentSpeed * PhysicsDetermineConstant.SpeedToVelocityRatio);
                 // 保持垂直速度
                 targetVelocity.y = _physicsComponent.Rigidbody.velocity.y;
                 if (_isOnSlope)
                 {
                     // 在斜坡上时，调整移动方向
                     var slopeMovementDirection = Vector3.ProjectOnPlane(movement, _slopeNormal).normalized;
-                    targetVelocity = slopeMovementDirection * _currentSpeed;
+                    targetVelocity = slopeMovementDirection * (_currentSpeed * PhysicsDetermineConstant.SpeedToVelocityRatio);
                     targetVelocity.y = _physicsComponent.Rigidbody.velocity.y;
 
                     if (hasMovementInput)
@@ -263,7 +263,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 var movementDirection = movement.normalized;
                 var targetRotation = Quaternion.LookRotation(movementDirection);
                 targetRotation = Quaternion.Euler(0f, targetRotation.eulerAngles.y, 0f);
-                _physicsComponent.Transform.rotation = Quaternion.Slerp( _physicsComponent.Transform.rotation, targetRotation, param.DeltaTime * _physicsDetermineConstant.RotateSpeed);
+                _physicsComponent.Transform.rotation = Quaternion.Slerp( _physicsComponent.Transform.rotation, targetRotation, param.DeltaTime * PhysicsDetermineConstant.RotateSpeed);
             }
         }
         
@@ -284,7 +284,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             {
                 var direction = _physicsComponent.Rigidbody.transform.forward.normalized;
                 var moveDirection = direction.normalized / Mathf.Cos(30f/180f*Mathf.PI);
-                _physicsComponent.Rigidbody.AddForce(moveDirection * _physicsDetermineConstant.RollForce, ForceMode.Impulse);
+                _physicsComponent.Rigidbody.AddForce(moveDirection * PhysicsDetermineConstant.RollForce, ForceMode.Impulse);
             });
             
         }
@@ -319,11 +319,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 var distanceToTarget = directionToTarget.magnitude;
 
                 // 1. 距离检查
-                if (distanceToTarget > _physicsDetermineConstant.MaxDetermineDistance)  continue;
+                if (distanceToTarget > PhysicsDetermineConstant.MaxDetermineDistance)  continue;
 
                 // 2. 视角检查
                 var dot = Vector3.Dot(cameraForward, directionToTarget.normalized);
-                if (dot < _physicsDetermineConstant.ViewAngle) continue;
+                if (dot < PhysicsDetermineConstant.ViewAngle) continue;
 
                 // 3. 视锥检查
                 var viewportPos = camera.WorldToViewportPoint(targetPos);
@@ -337,7 +337,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 // 4. 遮挡检查（使用 SphereCastNonAlloc）
                 var hitCount = Physics.SphereCastNonAlloc(
                     cameraPos,
-                    _physicsDetermineConstant.ObstructionCheckRadius,
+                    PhysicsDetermineConstant.ObstructionCheckRadius,
                     directionToTarget.normalized,
                     CachedHits,
                     distanceToTarget,
@@ -349,8 +349,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     var hit = CachedHits[i];
                     if (hit.transform == target) continue;
                     var layer = hit.collider.gameObject.layer;
-                    if (layer == _physicsDetermineConstant.StairsSceneLayer || 
-                        layer == _physicsDetermineConstant.GroundSceneLayer)
+                    if (layer == PhysicsDetermineConstant.StairsSceneLayer || 
+                        layer == PhysicsDetermineConstant.GroundSceneLayer)
                     {
                         isObstructed = true;
                         break;
@@ -403,10 +403,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public bool IsServer;
         public float RollForce;
         public float JumpSpeed;
+        public float SpeedToVelocityRatio;
+        public bool IsClient;
+        public bool IsLocalPlayer;
 
         public PhysicsDetermineConstant(float groundMinDistance, float groundMaxDistance, float maxSlopeAngle, float stairsCheckDistance, 
             LayerMask groundSceneLayer, LayerMask stairsSceneLayer, float rotateSpeed, float maxDetermineDistance, 
-            float viewAngle, float obstructionCheckRadius, float rollForce, float jumpSpeed, bool isServer = false)
+            float viewAngle, float obstructionCheckRadius, float rollForce, float jumpSpeed, float speedToVelocityRatio, bool isLocalPlayer, bool isClient, bool isServer = false)
         {
             GroundMinDistance = groundMinDistance;
             GroundMaxDistance = groundMaxDistance;
@@ -421,6 +424,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             ObstructionCheckRadius = obstructionCheckRadius;
             RollForce = rollForce;
             JumpSpeed = jumpSpeed;
+            SpeedToVelocityRatio = speedToVelocityRatio;
+            IsLocalPlayer = isLocalPlayer;
+            IsClient = isClient;
         }
     }
 

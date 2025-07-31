@@ -189,6 +189,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                     duration = randomBuff.duration.GetRandomByWeight(weight),
                     increaseDataList = buffIncreaseData
                 };
+                Debug.Log($"GetRandomBuffData: {buff.buffId} {buff.propertyType} {buff.duration} {buff.increaseDataList[0].ToString()}");
                 return buff;
             }
             return new BuffData();

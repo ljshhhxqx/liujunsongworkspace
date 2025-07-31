@@ -143,6 +143,6 @@ int,PropertyTypeEnum,float,BuffIncreaseData[],BuffSourceType,BuffIncreaseType,Pl
 141,Score,15,"[{"increaseType":"CorrectionFactor","increaseValue":0.15,"operationType":"Add"}]",Consume,CorrectionFactor,DefenseBuff
 142,Score,30,"[{"increaseType":"CorrectionFactor","increaseValue":0.25,"operationType":"Add"}]",Consume,CorrectionFactor,DefenseBuff
 143,Score,60,"[{"increaseType":"CorrectionFactor","increaseValue":0.5,"operationType":"Add"}]",Consume,CorrectionFactor,DefenseBuff
-144,Gold,0,"[{"increaseType":"Current","increaseValue":10,"operationType":"Add"}]",Consume,Current,DefenseBuff
-145,Gold,0,"[{"increaseType":"Current","increaseValue":50,"operationType":"Add"}]",Consume,Current,DefenseBuff
+144,Gold,0,"[{"increaseType":"Current","increaseValue":10,"operationType":"Add"}]",Collect,Current,DefenseBuff
+145,Gold,0,"[{"increaseType":"Current","increaseValue":50,"operationType":"Add"}]",Collect,Current,DefenseBuff
 146,Score,-1,"[{"increaseType":"CorrectionFactor","increaseValue":1,"operationType":"Add"}]",NoUnion,CorrectionFactor,DefenseBuff

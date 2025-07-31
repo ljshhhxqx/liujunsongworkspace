@@ -289,7 +289,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     AddPlayerItems(itemsData, header, ref playerItemState);
                     break;
                 case PlayerItemType.Collect:
-                    if (header.ConnectionId == 0 || !Constant.IsServer)
+                    if (header.ConnectionId < 0 || !Constant.IsServer)
                     {
                         break;
                     }
@@ -505,5 +505,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public ConstantBuffConfig ConstantBuffConfig;
         public RandomBuffConfig RandomBuffConfig;
         public bool IsServer;
+        public bool IsClient;
+        public bool IsLocalPlayer;
     }
 }

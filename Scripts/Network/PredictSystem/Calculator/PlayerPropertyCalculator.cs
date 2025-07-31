@@ -13,7 +13,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {
     public class PlayerPropertyCalculator : IPlayerStateCalculator
     {
-        private static PropertyCalculatorConstant _calculatorConstant;
+        public static PropertyCalculatorConstant CalculatorConstant { get; private set; }
         public static Dictionary<PropertyTypeEnum, float> ConfigPlayerMinProperties { get; private set; }
         public static Dictionary<PropertyTypeEnum, float> ConfigPlayerMaxProperties { get; private set; }
         public static Dictionary<PropertyTypeEnum, float> ConfigPlayerBaseProperties { get; private set; }
@@ -30,10 +30,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         
         public static void SetCalculatorConstant(PropertyCalculatorConstant constant)
         {
-            _calculatorConstant = constant;
-            ConfigPlayerMinProperties = _calculatorConstant.PropertyConfig.GetPlayerMinProperties();
-            ConfigPlayerMaxProperties = _calculatorConstant.PropertyConfig.GetPlayerMaxProperties();
-            ConfigPlayerBaseProperties = _calculatorConstant.PropertyConfig.GetPlayerBaseProperties();
+            CalculatorConstant = constant;
+            ConfigPlayerMinProperties = CalculatorConstant.PropertyConfig.GetPlayerMinProperties();
+            ConfigPlayerMaxProperties = CalculatorConstant.PropertyConfig.GetPlayerMaxProperties();
+            ConfigPlayerBaseProperties = CalculatorConstant.PropertyConfig.GetPlayerBaseProperties();
         }
         
         public static Dictionary<PropertyTypeEnum, PropertyCalculator> GetPropertyCalculators()
@@ -47,7 +47,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     continue;
                 }
                 var propertyData = new PropertyCalculator.PropertyData();
-                var propertyConfig = _calculatorConstant.PropertyConfig.GetPropertyConfigData(propertyType);
+                var propertyConfig = CalculatorConstant.PropertyConfig.GetPropertyConfigData(propertyType);
                 propertyData.BaseValue = ConfigPlayerBaseProperties[propertyType];
                 propertyData.Additive = 0;
                 propertyData.Multiplier = 1;
@@ -321,5 +321,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public bool IsServer;
         public PropertyConfig PropertyConfig;
         public PlayerConfigData PlayerConfig;
+        public bool IsClient;
+        public bool IsLocalPlayer;
     }
 }
