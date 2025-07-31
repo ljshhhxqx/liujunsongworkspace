@@ -373,6 +373,7 @@ namespace HotUpdate.Scripts.Collector
             {
                 return;
             }
+            Debug.Log($"Handling item pickup with id: {itemId} by picker: {pickerId}");
             if (_serverItemMap.TryGetValue(itemId, out var itemInfo))
             {
                 if (!_processedItems.Add(itemId))
@@ -420,6 +421,7 @@ namespace HotUpdate.Scripts.Collector
             
                     _processedItems.Remove(itemId);
                     _serverItemMap.Remove(itemId);
+                    Debug.Log($"Player {player.name} pick up item {itemId}");
                 }
             }
             else
@@ -565,7 +567,7 @@ namespace HotUpdate.Scripts.Collector
                         var go = GameObjectPoolManger.Instance.GetObject(_collectiblePrefabs[item.Item1].gameObject, item.Item2, Quaternion.identity, _spawnedParent,
                             go => _gameMapInjector.InjectGameObject(go), newSpawnInfos.Count);
                         var identity = go.GetComponent<NetworkIdentity>();
-                        if (!NetworkServer.spawned.ContainsKey(identity.netId))
+                        if (identity.netId == 0 || !NetworkServer.spawned.ContainsKey(identity.netId))
                         {
                             Debug.Log($"[SpawnManyItems] Item exists: {identity.netId}");
                             NetworkServer.Spawn(go);
@@ -578,6 +580,7 @@ namespace HotUpdate.Scripts.Collector
                             Debug.LogError($"Item with id: {identity.netId} already exists in map, destroying it");
                             GameObjectPoolManger.Instance.ReturnObject(go);
                             NetworkServer.Destroy(go);
+                            _serverItemMap.Remove(identity.netId);
                             continue;
                         }
 
