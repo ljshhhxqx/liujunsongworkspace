@@ -58,6 +58,7 @@ namespace HotUpdate.Scripts.Collector
             if (_pooledObject)
             {
                 _pooledObject.OnSelfDespawn += OnReturnToPool;
+                _pooledObject.OnSelfSpawn += OnSpawn;
             }
 
             _gameEventManager = gameEventManager;
@@ -74,6 +75,14 @@ namespace HotUpdate.Scripts.Collector
 
             lid.transform.eulerAngles = _chestCommonData.InitEulerAngles;
             _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        }
+
+        private void OnSpawn()
+        {
+            if (netId == 0)
+            {
+                return;
+            }
             _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId));
         }
 
@@ -86,7 +95,9 @@ namespace HotUpdate.Scripts.Collector
             _chestCollider.OnTriggerExitAsObservable()
                 .Subscribe(OnTriggerExitObserver)
                 .AddTo(this);
+            _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId));
         }
+        
 
         private void OnReturnToPool()
         {
@@ -149,6 +160,12 @@ namespace HotUpdate.Scripts.Collector
         }
 
         public uint ItemId { get; set; }
+
+        [ClientRpc]
+        public void RpcRecycleItem()
+        {
+            GameObjectPoolManger.Instance.ReturnObject(gameObject);
+        }
     }
 
     [Serializable]

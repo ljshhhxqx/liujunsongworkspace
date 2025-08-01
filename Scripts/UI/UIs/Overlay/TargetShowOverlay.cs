@@ -49,7 +49,11 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             {
                 _targets.Remove(targetShowEvent.TargetId);
             }
-            indicatorUI.gameObject.SetActive(IsTargetNotNull);
+            indicatorUI.gameObject.SetActive(_targets != null && _targets.Count > 0);
+            if (!targetShowEvent.Player)
+            {
+                return;
+            }
             _player ??= targetShowEvent.Player;
             if (!_player)
             {
