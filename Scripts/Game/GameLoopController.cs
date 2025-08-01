@@ -125,6 +125,7 @@ namespace HotUpdate.Scripts.Game
         public override void OnStartClient()
         {
             base.OnStartClient();
+            _serverHandler = false;
             _clientHandler = true;
         }
         
@@ -132,6 +133,7 @@ namespace HotUpdate.Scripts.Game
         {
             base.OnStartServer();
             _serverHandler = true;
+            _clientHandler = false;
         }
 
         private void RegisterMessage()

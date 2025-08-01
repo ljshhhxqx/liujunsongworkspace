@@ -486,14 +486,13 @@ namespace HotUpdate.Scripts.Collector
                 Debug.Log("EndRound finished on server");
                 foreach (var itemId in _serverItemMap.Keys)
                 {
-                    var go = NetworkServer.spawned[itemId];
-                    if (go)
+                    if (NetworkServer.spawned.TryGetValue(itemId, out var item))
                     {
-                        Debug.Log($"[EndRound] Recycling item with id: {itemId}");
-                        var controller = go.GetComponent<CollectObjectController>();
-                        GameObjectPoolManger.Instance.ReturnObject(go.gameObject);
+                        var controller = item.GetComponent<CollectObjectController>();
+                        GameObjectPoolManger.Instance.ReturnObject(item.gameObject);
                         controller.RpcRecycleItem();
                     }
+                    Debug.Log($"Item with id: {itemId} is not found in spawned objects");
                 }
 
                 // 通知客户端清理
@@ -567,6 +566,14 @@ namespace HotUpdate.Scripts.Collector
                         var go = GameObjectPoolManger.Instance.GetObject(_collectiblePrefabs[item.Item1].gameObject, item.Item2, Quaternion.identity, _spawnedParent,
                             go => _gameMapInjector.InjectGameObject(go), newSpawnInfos.Count);
                         var identity = go.GetComponent<NetworkIdentity>();
+                        if (_serverItemMap.TryGetValue(identity.netId, out var itemInfo))
+                        {
+                            //Debug.LogError($"Item with id: {identity.netId} already exists in map, destroying it");
+                            GameObjectPoolManger.Instance.ReturnObject(go);
+                            NetworkServer.Destroy(go);
+                            _serverItemMap.Remove(identity.netId);
+                            continue;
+                        }
                         if (identity.netId == 0 || !NetworkServer.spawned.ContainsKey(identity.netId))
                         {
                             Debug.Log($"[SpawnManyItems] Item exists: {identity.netId}");
@@ -575,14 +582,6 @@ namespace HotUpdate.Scripts.Collector
                         }
                         go.transform.position = item.Item2;
                         Debug.Log($"Spawning item {item.Item1} at position: {item.Item2} with id: {identity.netId}, real position: {go.transform.position}");
-                        if (_serverItemMap.TryGetValue(identity.netId, out var itemInfo))
-                        {
-                            Debug.LogError($"Item with id: {identity.netId} already exists in map, destroying it");
-                            GameObjectPoolManger.Instance.ReturnObject(go);
-                            NetworkServer.Destroy(go);
-                            _serverItemMap.Remove(identity.netId);
-                            continue;
-                        }
 
                         var buffData = GetBuffExtraData(item.Item1);
                         var buff = _randomBuffConfig.GetRandomBuffData(buffData.buffId);
@@ -604,9 +603,10 @@ namespace HotUpdate.Scripts.Collector
                         itemMetaData = itemMetaData.SetCustomData(extraData);
                         itemInfo = MemoryPackSerializer.Serialize(itemMetaData);
                         _serverItemMap.Add(identity.netId, itemInfo);
+                        Debug.Log($"[SpawnManyItems] Adding item to map with id: {identity.netId}");
+                        await UniTask.Yield();
                     }
                     Debug.Log($"Calculated {spawnedCount} spawn positions");
-                    await UniTask.Yield();
                 }
 
                 // foreach (var iKey in _serverItemMap.Keys)
