@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Globalization;
+using HotUpdate.Scripts.Network.PredictSystem.Calculator;
+using HotUpdate.Scripts.Network.Server.InGame;
+using Mirror;
 using TMPro;
 using UniRx;
 using UniRx.Triggers;
@@ -57,6 +60,13 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                    } )
                    .AddTo(_disposable);
             }
+        }
+
+        private void Update()
+        {
+            var canUseShop = PlayerShopCalculator.CanUseShop(PlayerInGameManager.LocalPlayerId);
+            buyButton.interactable = canUseShop;
+            
         }
 
         public override void Clear()

@@ -647,6 +647,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public float NoUnionMoreGoldRatio;
         public float NoUnionMoreScoreRatio;
         public float SpeedToVelocityRatio;
+        public float MaxShopBuyDistance;
         
         #endregion
         #region Animation

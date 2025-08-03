@@ -30,7 +30,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             keyFunction = KeyFunction.None;
             for (int i = 0; i < keyFunctionData.Count; i++)
             {
-                if (Input.GetKeyDown(keyFunctionData[i].key))
+                if (Input.GetButtonDown(keyFunctionData[i].key))
                 {
                     keyFunction = keyFunctionData[i].keyFunction;
                     return true;

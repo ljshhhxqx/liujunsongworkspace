@@ -65,6 +65,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     PlayerShopCalculator.CommandSellItem(header.ConnectionId, sellCommand.ItemSlotIndex, sellCommand.Count);
                     break;
             }
+            OnPlayerShopStateChanged(playerShopState);
         }
 
         private void OnPlayerShopStateChanged(PlayerShopState playerShopState)

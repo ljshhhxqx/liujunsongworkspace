@@ -8,7 +8,6 @@ using Data;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.GameBase;
-using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Tool.Static;
 using Mirror;
@@ -47,6 +46,19 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         
         [SyncVar(hook = nameof(OnIsGameStartedChanged))]
         public bool isGameStarted;
+        private static int _localPlayerId;
+
+        public static int LocalPlayerId
+        {
+            get
+            {
+                if (_localPlayerId == 0)
+                {
+                    _localPlayerId = NetworkClient.localPlayer.connectionToClient.connectionId;
+                }
+                return _localPlayerId;
+            }
+        }
 
         [Inject]
         private void Init(IConfigProvider configProvider)
@@ -162,6 +174,11 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 }
             }
             return default;
+        }
+
+        public Vector3 GetPlayerBasePositionById(int id)
+        {
+            return GetPlayerBasePositionByNetId(_playerNetIds.GetValueOrDefault(id));
         }
 
         public IColliderConfig PlayerPhysicsData

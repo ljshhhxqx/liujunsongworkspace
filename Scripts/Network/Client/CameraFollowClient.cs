@@ -1,6 +1,7 @@
 ﻿using Game.Map;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.UI.UIBase;
 using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
@@ -16,12 +17,14 @@ namespace HotUpdate.Scripts.Network.Client
         private float _lastHorizontal;
         private bool _isControlling = true;
         private LayerMask _groundSceneLayer;
+        private UIManager _uiManager;
 
         [Inject]
-        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)
+        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager, UIManager uiManager)
         {
             _gameEventManager = gameEventManager;
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
+            _uiManager = uiManager;
             _gameEventManager.Subscribe<PlayerSpawnedEvent>(OnPlayerSpawned);
             Debug.Log("CameraFollowClient init");
         }
@@ -48,6 +51,13 @@ namespace HotUpdate.Scripts.Network.Client
                 Cursor.lockState = _isControlling ? CursorLockMode.Locked : CursorLockMode.None;
                 Cursor.visible = !_isControlling;
             }
+
+            if (_uiManager == null)
+            {
+                return;
+            }
+            Cursor.lockState = _uiManager.IsUnlockMouse() ? CursorLockMode.None : (_isControlling ? CursorLockMode.Locked : CursorLockMode.None);
+            Cursor.visible = _uiManager.IsUnlockMouse() || !_isControlling;
         }
 
         private void LateUpdate()

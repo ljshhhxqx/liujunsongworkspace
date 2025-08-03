@@ -117,7 +117,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private List<SyncStateBase> _syncStates = new List<SyncStateBase>();
         private Dictionary<AnimationState, IAnimationCooldown> _animationCooldownsDict = new Dictionary<AnimationState, IAnimationCooldown>();
         private AnimationState _previousAnimationState;
-        private KeyframeComboCooldown _attackAnimationCooldown;
+        private KeyframeComboCooldown _attackAnimationCooldown;       
+        private PlayerInGameManager _playerInGameManager;
         
         private BindingKey _propertyBindKey;
         private BindingKey _itemBindKey;
@@ -181,6 +182,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _animator = GetComponent<Animator>();
             _camera = Camera.main;
             _animationCooldowns = GetAnimationCooldowns();
+            _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
             _gameEventManager = gameEventManager;
             GetAllCalculators(configProvider, gameSyncManager);
             HandleAllSyncState();
@@ -699,7 +701,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             PlayerPropertyCalculator.SetCalculatorConstant(new PropertyCalculatorConstant
             {
                 TickRate = GameSyncManager.TickSeconds,
-                IsServer = isServer,
                 PropertyConfig =   configProvider.GetConfig<PropertyConfig>(),
                 PlayerConfig = configProvider.GetConfig<JsonDataConfig>().PlayerConfig,
             });
@@ -709,7 +710,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 InputThreshold = gameData.inputThreshold,
                 AttackComboMaxCount = playerData.AttackComboMaxCount,
                 AnimationConfig = configProvider.GetConfig<AnimationConfig>(),
-                IsServer = isServer,
             });
             PlayerBattleCalculator.SetAttackConfigData(noneWeapon);
             PlayerItemCalculator.SetConstant(new PlayerItemConstant
@@ -721,7 +721,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 ConditionConfig = configProvider.GetConfig<BattleEffectConditionConfig>(),
                 GameSyncManager = gameSyncManager,
                 InteractSystem = _interactSystem,
-                IsServer = isServer,
                 ConstantBuffConfig = configProvider.GetConfig<ConstantBuffConfig>(),
                 RandomBuffConfig = configProvider.GetConfig<RandomBuffConfig>(),
             });
@@ -729,14 +728,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             {
                 GameSyncManager = gameSyncManager,
                 ItemConfig = configProvider.GetConfig<ItemConfig>(),
-                IsServer = isServer,
             });
             PlayerShopCalculator.SetConstant(new ShopCalculatorConstant
             {
                 GameSyncManager = gameSyncManager,
                 ShopConfig = configProvider.GetConfig<ShopConfig>(),
                 ItemConfig = configProvider.GetConfig<ItemConfig>(),
-                IsServer = isServer,
+                PlayerInGameManager = _playerInGameManager,
+                PlayerConfigData = _playerConfigData,
             });
             _playerPhysicsCalculator = new PlayerPhysicsCalculator(new PhysicsComponent(_rigidbody, transform, _checkStairTransform, _capsuleCollider, _camera));
             _playerPropertyCalculator = new PlayerPropertyCalculator(PlayerPropertyCalculator.GetPropertyCalculators());
@@ -1176,6 +1175,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         
         private readonly Dictionary<PlayerEffectType, GameObject> _effectPool = new Dictionary<PlayerEffectType, GameObject>();
         private readonly Dictionary<PlayerEffectType, PlayerEffectContainer> _effectContainer = new Dictionary<PlayerEffectType, PlayerEffectContainer>();
+
 
         [ClientRpc]
         public void RpcPlayEffect(PlayerEffectType effectType)

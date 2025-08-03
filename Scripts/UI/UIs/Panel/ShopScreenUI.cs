@@ -15,7 +15,7 @@ using VContainer;
 
 namespace HotUpdate.Scripts.UI.UIs.Panel
 {
-    public class ShopScreenUI : ScreenUIBase
+    public class ShopScreenUI : ScreenUIBase, IUnlockMouse
     {
         [SerializeField]
         private ContentItemList shopItemList;
@@ -42,7 +42,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                 _refreshSubject.OnNext(Unit.Default);
             });
         }
-
+        
         public void BindPlayerGold(IObservable<ValuePropertyData> playerGold)
         {
             _goldObservable = playerGold;

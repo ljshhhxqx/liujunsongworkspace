@@ -15,7 +15,7 @@ using VContainer;
 
 namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
 {
-    public class BackpackScreenUI : ScreenUIBase
+    public class BackpackScreenUI : ScreenUIBase, IUnlockMouse
     {
         [SerializeField]
         private ContentItemList equipmentItemList;
@@ -41,6 +41,15 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             var jsonConfig = configProvider.GetConfig<JsonDataConfig>();
             _uiManager = uiManager;
             BagCommonData = jsonConfig.BagCommonData;
+            dragIcon.SetActive(false);
+            if (_bagSlotItems == null || _bagSlotItems.Count == 0)
+            {
+                equipmentItemList.gameObject.SetActive(false);
+            }
+            if (_slotItems == null || _slotItems.Count == 0)
+            {
+                bagItemList.gameObject.SetActive(false);
+            }
         }
 
         public void BindEquipItemData(ReactiveDictionary<int, EquipItemData> slotEquipItemData)

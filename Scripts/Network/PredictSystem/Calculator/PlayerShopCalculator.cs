@@ -2,9 +2,11 @@
 using System.Linq;
 using Codice.CM.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.Server.InGame;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
@@ -61,6 +63,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 index++;
             }
             return shopData;
+        }
+
+        public static bool CanUseShop(int connectionId)
+        {
+            var playerPos = Constant.PlayerInGameManager.GetPlayerPosition(connectionId);
+            var playerBase = Constant.PlayerInGameManager.GetPlayerBasePositionById(connectionId);
+            var distance = Vector3.Distance(playerPos, playerBase);
+            return distance <= Constant.PlayerConfigData.MaxShopBuyDistance;
         }
 
         public static void CommandBuyItem(ref PlayerShopState state, int connectionId, int shopId, int count, bool isServer = false)
@@ -198,6 +208,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public GameSyncManager GameSyncManager;
         public ShopConfig ShopConfig;
         public ItemConfig ItemConfig;
+        public PlayerInGameManager PlayerInGameManager;
+        public PlayerConfigData PlayerConfigData;
         public bool IsServer;
         public bool IsClient;
         public bool IsLocalPlayer;

@@ -19,12 +19,14 @@ namespace HotUpdate.Scripts.UI.UIBase
     public class UIManager
     {
         private List<ScreenUIBase> _uIPrefabs = new List<ScreenUIBase>();
-        private ScreenUIBase _currentActiveScreenUI1;
-        private ScreenUIBase _currentActiveScreenUI2;
-        private ScreenUIBase _currentActiveScreenUI3;
         private UICanvasRoot[] _roots;
         private IObjectInjector _injector;
         private readonly Dictionary<UIType, ScreenUIBase> _uiDict = new Dictionary<UIType, ScreenUIBase>();
+        public ScreenUIBase CurrentActiveScreenUI1 { get; private set; }
+
+        public ScreenUIBase CurrentActiveScreenUI2 { get; private set; }
+
+        public ScreenUIBase CurrentActiveScreenUI3 { get; private set; }
 
         [Inject]
         private void Init(IObjectInjector injector)
@@ -138,11 +140,41 @@ namespace HotUpdate.Scripts.UI.UIBase
             {
                 var uIType = ui.Type;
                 var root = _roots.FirstOrDefault(t => t.CanvasType == ui.CanvasType)?.transform;
+                if (CurrentActiveScreenUI1 && CurrentActiveScreenUI1.Type == ui.Type)
+                {
+                    Object.Destroy(CurrentActiveScreenUI1.gameObject);
+                    CurrentActiveScreenUI1 = null;
+                    return null;
+                }
+                if ( CurrentActiveScreenUI2 && CurrentActiveScreenUI2.Type != ui.Type)
+                {
+                    Object.Destroy(CurrentActiveScreenUI2.gameObject);
+                    CurrentActiveScreenUI2 = null;
+                    return null;
+                }
+                if (CurrentActiveScreenUI3 &&  CurrentActiveScreenUI3.Type != ui.Type)
+                {
+                    Object.Destroy(CurrentActiveScreenUI3.gameObject);
+                    CurrentActiveScreenUI3 = null;
+                    return null;
+                }
                 var go = Object.Instantiate(ui.gameObject, root);
                 ui = go.GetComponent<T>();
                 if (!ui)
                 {
                     throw new Exception($"UI对象{uIType}没有{typeof(T).Name}组件");
+                }
+                if (ui.CanvasType == UICanvasType.Panel)
+                {
+                    CurrentActiveScreenUI1 = ui;
+                }
+                else if (ui.CanvasType == UICanvasType.SecondPanel)
+                {
+                    CurrentActiveScreenUI2 = ui;
+                }
+                else if (ui.CanvasType == UICanvasType.ThirdPanel)
+                {
+                    CurrentActiveScreenUI3 = ui;
                 }
 
                 if (ui.TryGetComponent<BlockUIComponent>(out var resourceComponent))
@@ -152,30 +184,6 @@ namespace HotUpdate.Scripts.UI.UIBase
                 }
                 _injector.Inject(ui);
                 _uiDict.TryAdd(uIType, ui);
-                if (ui.CanvasType == UICanvasType.Panel)
-                {
-                    if (_currentActiveScreenUI1 != ui && _currentActiveScreenUI1)
-                    {
-                        Object.Destroy(_currentActiveScreenUI2.gameObject);
-                        _currentActiveScreenUI1 = ui;
-                    }
-                }
-                else if (ui.CanvasType == UICanvasType.SecondPanel)
-                {
-                    if (_currentActiveScreenUI2 != ui && _currentActiveScreenUI2)
-                    {
-                        Object.Destroy(_currentActiveScreenUI2.gameObject);
-                        _currentActiveScreenUI2 = ui;
-                    }
-                }
-                else if (ui.CanvasType == UICanvasType.ThirdPanel)
-                {
-                    if (_currentActiveScreenUI3 != ui && _currentActiveScreenUI3)
-                    {
-                        Object.Destroy(_currentActiveScreenUI3.gameObject);
-                    }
-                    _currentActiveScreenUI3 = ui;
-                }
                 onShow?.Invoke(ui);
             }
 
@@ -251,6 +259,15 @@ namespace HotUpdate.Scripts.UI.UIBase
             {
                 tipsUI.ShowTips(message);
             }
+        }
+
+        public static bool IsUnlockMouse(this UIManager uiManager)
+        {
+            if (uiManager.CurrentActiveScreenUI1 && uiManager.CurrentActiveScreenUI1 is IUnlockMouse)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
