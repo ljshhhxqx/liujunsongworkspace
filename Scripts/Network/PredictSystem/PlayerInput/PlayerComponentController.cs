@@ -107,6 +107,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private GameSyncManager _gameSyncManager;
         private IConfigProvider _configProvider;
         private GameConfigData _gameConfigData;
+        private KeyFunctionConfig _keyFunctionConfig;
         private PlayerConfigData _playerConfigData;
         private UIManager _uiManager;
         private InteractSystem _interactSystem;
@@ -125,6 +126,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private BindingKey _goldBindKey;
         private BindingKey _playerDeathTimeBindKey;
         private BindingKey _playerTraceOtherPlayerHpBindKey;
+        private bool _localPlayerHandler;
         
         private Dictionary<Type, bool> _reactivePropertyBinds = new Dictionary<Type, bool>();
         
@@ -170,6 +172,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             var jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
             _gameConfigData = jsonDataConfig.GameConfig;
             _playerConfigData = jsonDataConfig.PlayerConfig;
+            _keyFunctionConfig = _configProvider.GetConfig<KeyFunctionConfig>();
             _gameSyncManager = gameSyncManager;
             _interactSystem = FindObjectOfType<InteractSystem>();
             _uiManager = uiManager;
@@ -186,6 +189,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public override void OnStartLocalPlayer()
         {
             base.OnStartLocalPlayer();
+            _localPlayerHandler = true;
             if (isLocalPlayer)
             {
                 _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
@@ -261,7 +265,31 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 }).AddTo(_disposables);
             
             Observable.EveryUpdate()
-                .Where(_ => isLocalPlayer && GameSyncManager.CurrentTick > 0 && _subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible))
+                .Where(_ => _localPlayerHandler)
+                .Subscribe(_ =>
+                {
+                    if (_keyFunctionConfig.IsKeyFunction(out var keyFunction))
+                    {
+                        var uiType = keyFunction.GetUIType();
+                        switch (uiType)
+                        {
+                            case UIType.None:
+                                break;
+                            case UIType.Backpack:
+                                _uiManager.SwitchUI<BackpackScreenUI>();
+                                break;
+                            case UIType.Shop:
+                                _uiManager.SwitchUI<ShopScreenUI>();
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                    }
+                })
+                .AddTo(_disposables);
+            
+            Observable.EveryUpdate()
+                .Where(_ => _localPlayerHandler && GameSyncManager.CurrentTick > 0 && _subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible))
                 .Subscribe(_ => {
                     var movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
                     var animationStates = _inputState.GetAnimationStates();
@@ -306,7 +334,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .AddTo(_disposables);
             Observable.EveryFixedUpdate()
                 .Sample(TimeSpan.FromMilliseconds(0.25f * 1000))
-                .Where(_ => isLocalPlayer && _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) > 0)
+                .Where(_ => _localPlayerHandler && _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) > 0)
                 .Subscribe(_ =>
                 {
                     var health = _propertyPredictionState.GetCalculator(PropertyTypeEnum.Health);
@@ -325,7 +353,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 })
                 .AddTo(this);
             Observable.EveryFixedUpdate()
-                .Where(_ => isLocalPlayer && _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) > 0 && GameSyncManager.CurrentTick > 0)
+                .Where(_ => _localPlayerHandler && _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) > 0 && GameSyncManager.CurrentTick > 0)
                 .Subscribe(_ =>
                 {
                     HandleInputPhysics(_playerInputStateData);
@@ -347,13 +375,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .AddTo(this);
             
             //发送网络命令
-            _inputStream.Where(x=> isLocalPlayer && x.Command != AnimationState.None && x.Command != AnimationState.Idle)
+            _inputStream.Where(x=> _localPlayerHandler && x.Command != AnimationState.None && x.Command != AnimationState.Idle)
                 .Sample(TimeSpan.FromMilliseconds(Time.fixedDeltaTime * 1000))
                 .Subscribe(HandleSendNetworkCommand)
                 .AddTo(this);
             //处理物理信息
             Observable.EveryFixedUpdate().Sample(TimeSpan.FromMilliseconds(FixedDeltaTime * 10 * 1000))
-                .Where(_ => isLocalPlayer)
+                .Where(_ => _localPlayerHandler)
                 .Subscribe(_ =>
                 {
                     var otherPlayers = NetworkServer.connections
@@ -798,7 +826,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             param.InputAnimationStates = inputData.InputAnimations;
             param.GroundDistance = _groundDistanceStream.Value;
             param.EnvironmentState = _gameStateStream.Value;
-            //ObjectPoolManager<DetermineAnimationStateParams>.Instance.Return(param);
+            ObjectPoolManager<DetermineAnimationStateParams>.Instance.Return(param);
             return param;    
             
         }
@@ -817,6 +845,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 movePara.CameraForward = _playerPhysicsCalculator.CompressYaw(cameraForward.y);
                 movePara.IsClearVelocity = PlayerAnimationCalculator.IsClearVelocity(inputData.Command);
                 movePara.DeltaTime = FixedDeltaTime;
+                ObjectPoolManager<MoveParam>.Instance.Return(movePara);
                 _playerPhysicsCalculator.HandleMove(movePara, isLocalPlayer);
             }
             //执行动画
@@ -827,6 +856,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             data.Velocity = _rigidbody.velocity;
             data.PlayerEnvironmentState = _gameStateStream.Value;
             data.AnimationState = inputData.Command;
+            ObjectPoolManager<PlayerGameStateData>.Instance.Return(data);
             return data;
         }
 
@@ -965,6 +995,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             var playerChangeUnionCommand = MemoryPackSerializer.Deserialize<PlayerChangeUnionRequest>(data);
             _interactSystem.EnqueueCommand(playerChangeUnionCommand);
         }
+        
 
         [ClientRpc]
         public void RpcSetPlayerAlpha(float alpha)
@@ -1183,20 +1214,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _gameSyncManager.EnqueueCommand(commandJson);
         }
 
-        // private void Update()
-        // {
-        //     if (isLocalPlayer)
-        //     {
-        //         if (Input.GetKeyDown(KeyCode.F1))
-        //         {
-        //             TestNetworkCommandHeader();
-        //         }
-        //         if (Input.GetKeyDown(KeyCode.F2))
-        //         {
-        //             TestInputAnimationStates();
-        //         }
-        //     }
-        // }
+        private void Update()
+        {
+            if (_localPlayerHandler)
+            {
+            }
+        }
         //
         // private void TestNetworkCommandHeader()
         // {
