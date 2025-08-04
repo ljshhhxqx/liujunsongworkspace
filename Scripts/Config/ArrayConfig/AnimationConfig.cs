@@ -40,6 +40,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 data.noStrengthState = (AnimationState) Enum.Parse(typeof(AnimationState), row[11]);
                 data.showInHud = bool.Parse(row[12]);
                 data.animationSpeed = float.Parse(row[13]);
+                data.icon = row[14];
+                data.frame = (QualityType) Enum.Parse(typeof(QualityType), row[15]);
                 animationInfos.Add(data);
             }
         }
@@ -148,6 +150,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public AnimationState noStrengthState;
         public bool showInHud;
         public float animationSpeed;
+        public string icon;
+        public QualityType frame;
     }
 
     public enum ActionType

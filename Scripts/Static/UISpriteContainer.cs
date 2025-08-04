@@ -6,13 +6,13 @@ namespace HotUpdate.Scripts.Static
 {
     public static class UISpriteContainer
     {
-        private static readonly Dictionary<string, SpriteInfo> Sprites = new Dictionary<string, SpriteInfo>();
+        private static readonly Dictionary<string, Sprite> Sprites = new Dictionary<string, Sprite>();
 
         public static Sprite GetSprite(string name)
         {
             if (Sprites.TryGetValue(name, out var sprite))
             {
-                return sprite.Sprite;
+                return sprite;
             }
 
             Debug.LogWarning($"UISpriteContainer: {name} not found in the container.");
@@ -23,18 +23,19 @@ namespace HotUpdate.Scripts.Static
         {
             if (Sprites.TryGetValue(quality.ToString(), out var sprite))
             {
-                return sprite.Sprite;
+                return sprite;
             }
 
             Debug.LogWarning($"UISpriteContainer: {quality} not found in the container.");
             return null;
         }
 
-        public static void InitUISprites(SpriteInfo[] sprites)
+        public static void InitUISprites(Dictionary<string, Sprite> spriteInfos)
         {
-            for (int i = 0; i < sprites.Length; i++)
+            Sprites.Clear();
+            foreach (var spriteInfo in spriteInfos)
             {
-                Sprites.TryAdd(sprites[i].Name, sprites[i]);
+                Sprites.Add(spriteInfo.Key, spriteInfo.Value);
             }
         }
 

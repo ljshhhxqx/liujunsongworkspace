@@ -65,16 +65,7 @@ namespace HotUpdate.Scripts.UI.UIBase
         public void InitMapSprites(string mapName)
         {
             var mapSprites = ResourceManager.Instance.GetMapSprite(mapName);
-            var spriteInfo = new SpriteInfo[mapSprites.Count];
-            for (int i = 0; i < mapSprites.Count; i++)
-            {
-                spriteInfo[i] = new SpriteInfo
-                {
-                    Sprite = mapSprites[i],
-                    Name = mapSprites[i].name
-                };  
-            }
-            UISpriteContainer.InitUISprites(spriteInfo);
+            UISpriteContainer.InitUISprites(mapSprites);
         }
 
         private void GetUIResources(IReadOnlyCollection<GameObject> uiObjects)

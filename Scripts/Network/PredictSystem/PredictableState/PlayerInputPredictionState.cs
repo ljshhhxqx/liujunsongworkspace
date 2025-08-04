@@ -11,6 +11,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
+using HotUpdate.Scripts.Static;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
@@ -78,17 +79,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                         stateData.Duration = ani.cooldown;
                         stateData.Cost = ani.cost;
                         stateData.Timer = 0;
-                        stateData.Icon = null;
-                        stateData.Frame = null;
+                        stateData.Icon = UISpriteContainer.GetSprite(ani.icon);
+                        stateData.Frame = UISpriteContainer.GetQualitySprite(ani.frame);
                         stateData.Index = 0;
                         dic.Add((int)ani.state, stateData);
                     }
                 }
                 UIPropertyBinder.OptimizedBatchAdd(_playerAnimationKey, dic);
                 var playerAnimationOverlay = uiManager.SwitchUI<PlayerAnimationOverlay>();
-                _animationStateDataDict =
+                var animationStateDataDict =
                     UIPropertyBinder.GetReactiveDictionary<AnimationStateData>(_playerAnimationKey);
-                playerAnimationOverlay.BindPlayerAnimationData(_animationStateDataDict);
+                playerAnimationOverlay.BindPlayerAnimationData(animationStateDataDict);
             }
         }
         
@@ -125,10 +126,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             {
                 return;
             }
+            var animationStateDataDict =
+                UIPropertyBinder.GetReactiveDictionary<AnimationStateData>(_playerAnimationKey);
             
             foreach (var kvp in snapshot)
             {
-                if (_animationStateDataDict.TryGetValue((int)kvp.Key, out var animationData))
+                if (animationStateDataDict.TryGetValue((int)kvp.Key, out var animationData))
                 {
                     //Debug.Log($"[UpdateUIAnimation] {animationData.ToString()}");
                     if (!Mathf.Approximately(animationData.Timer, kvp.Value.CurrentCountdown))
@@ -136,7 +139,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                         animationData.Timer = kvp.Value.CurrentCountdown;
                     }
                     animationData.Index = kvp.Value.CurrentStage;
-                    _animationStateDataDict[(int)kvp.Key] = animationData;
+                    animationStateDataDict[(int)kvp.Key] = animationData;
                 }
             }
         }

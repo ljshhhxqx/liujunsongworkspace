@@ -36,6 +36,8 @@ MonoBehaviour:
     noStrengthState: 0
     showInHud: 0
     animationSpeed: 1
+    icon: 0
+    frame: 1
   - state: 2
     cost: 0
     cooldown: 0
@@ -51,6 +53,8 @@ MonoBehaviour:
     noStrengthState: 0
     showInHud: 0
     animationSpeed: 1
+    icon: 0
+    frame: 1
   - state: 4
     cost: 15
     cooldown: 0
@@ -66,6 +70,8 @@ MonoBehaviour:
     noStrengthState: 2
     showInHud: 0
     animationSpeed: 1
+    icon: 0
+    frame: 1
   - state: 8
     cost: 10
     cooldown: 1
@@ -81,6 +87,8 @@ MonoBehaviour:
     noStrengthState: 0
     showInHud: 1
     animationSpeed: 1
+    icon: Jump
+    frame: 1
   - state: 16
     cost: 12
     cooldown: 1
@@ -96,6 +104,8 @@ MonoBehaviour:
     noStrengthState: 0
     showInHud: 1
     animationSpeed: 1
+    icon: SprintJump
+    frame: 1
   - state: 32
     cost: 20
     cooldown: 2
@@ -123,6 +133,8 @@ MonoBehaviour:
     noStrengthState: 0
     showInHud: 1
     animationSpeed: 1
+    icon: Roll
+    frame: 2
   - state: 64
     cost: 0
     cooldown: 0
@@ -138,6 +150,8 @@ MonoBehaviour:
     noStrengthState: 0
     showInHud: 0
     animationSpeed: 1
+    icon: 0
+    frame: 1
   - state: 128
     cost: 0
     cooldown: 0
@@ -153,6 +167,8 @@ MonoBehaviour:
     noStrengthState: 0
     showInHud: 0
     animationSpeed: 1
+    icon: 0
+    frame: 1
   - state: 256
     cost: 10
     cooldown: 2
@@ -188,6 +204,8 @@ MonoBehaviour:
     noStrengthState: 0
     showInHud: 1
     animationSpeed: 1
+    icon: Attack
+    frame: 2
   - state: 512
     cost: 0
     cooldown: 10
@@ -203,6 +221,8 @@ MonoBehaviour:
     noStrengthState: 0
     showInHud: 0
     animationSpeed: 1
+    icon: 0
+    frame: 1
   - state: 1024
     cost: 0
     cooldown: 0
@@ -218,6 +238,8 @@ MonoBehaviour:
     noStrengthState: 0
     showInHud: 0
     animationSpeed: 1
+    icon: 0
+    frame: 1
   - state: 2048
     cost: 0
     cooldown: 0
@@ -233,6 +255,8 @@ MonoBehaviour:
     noStrengthState: 0
     showInHud: 0
     animationSpeed: 1
+    icon: 0
+    frame: 1
   - state: 4096
     cost: 70
     cooldown: 15
@@ -254,6 +278,8 @@ MonoBehaviour:
     noStrengthState: 0
     showInHud: 1
     animationSpeed: 1.5
+    icon: SkillE
+    frame: 2
   - state: 8192
     cost: 70
     cooldown: 15
@@ -275,3 +301,5 @@ MonoBehaviour:
     noStrengthState: 0
     showInHud: 1
     animationSpeed: 1
+    icon: SkillQ
+    frame: 3
