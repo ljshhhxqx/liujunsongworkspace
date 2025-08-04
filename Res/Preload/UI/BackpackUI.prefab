@@ -725,10 +725,10 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1398911316507665447}
-  - {fileID: 2428331156228327699}
   - {fileID: 1650285457992269653}
   - {fileID: 6057217095557411640}
   - {fileID: 1704581219879446780}
+  - {fileID: 2428331156228327699}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -789,6 +789,7 @@ MonoBehaviour:
   equipmentItemList: {fileID: 6581322764763814511}
   bagItemList: {fileID: 5100325917955307492}
   dragIcon: {fileID: 1523368798596713610}
+  closeBtn: {fileID: 680391834951931741}
 --- !u!1 &4274876729361634646
 GameObject:
   m_ObjectHideFlags: 0
@@ -1612,7 +1613,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 4.060425, y: 0.00091552734}
+  m_AnchoredPosition: {x: 4.060425, y: 0.0009765625}
   m_SizeDelta: {x: 694.7341, y: 535.2351}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5167654159479357684

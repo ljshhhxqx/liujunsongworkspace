@@ -27,6 +27,8 @@ namespace HotUpdate.Scripts.UI.UIBase
         public ScreenUIBase CurrentActiveScreenUI2 { get; private set; }
 
         public ScreenUIBase CurrentActiveScreenUI3 { get; private set; }
+        
+        public event Action<bool> IsUnlockMouse;
 
         [Inject]
         private void Init(IObjectInjector injector)
@@ -110,6 +112,10 @@ namespace HotUpdate.Scripts.UI.UIBase
             if (_uiDict.Remove(uIType, out var ui))
             {
                 Object.Destroy(ui.gameObject);
+                if (ui is IUnlockMouse unlockMouse)
+                {
+                    IsUnlockMouse?.Invoke(false);
+                }
                 return;
             }
             Debug.Log($"UI名有误{uIType}");
@@ -144,18 +150,31 @@ namespace HotUpdate.Scripts.UI.UIBase
                 {
                     Object.Destroy(CurrentActiveScreenUI1.gameObject);
                     CurrentActiveScreenUI1 = null;
+                    if (ui is IUnlockMouse unlockMouse)
+                    {
+                        IsUnlockMouse?.Invoke(false);
+                    }
+
                     return null;
                 }
                 if ( CurrentActiveScreenUI2 && CurrentActiveScreenUI2.Type != ui.Type)
                 {
                     Object.Destroy(CurrentActiveScreenUI2.gameObject);
                     CurrentActiveScreenUI2 = null;
+                    if (ui is IUnlockMouse unlockMouse)
+                    {
+                        IsUnlockMouse?.Invoke(false);
+                    }
                     return null;
                 }
                 if (CurrentActiveScreenUI3 &&  CurrentActiveScreenUI3.Type != ui.Type)
                 {
                     Object.Destroy(CurrentActiveScreenUI3.gameObject);
                     CurrentActiveScreenUI3 = null;
+                    if (ui is IUnlockMouse)
+                    {
+                        IsUnlockMouse?.Invoke(false);
+                    }
                     return null;
                 }
                 var go = Object.Instantiate(ui.gameObject, root);
@@ -185,6 +204,10 @@ namespace HotUpdate.Scripts.UI.UIBase
                 _injector.Inject(ui);
                 _uiDict.TryAdd(uIType, ui);
                 onShow?.Invoke(ui);
+                if (ui is IUnlockMouse)
+                {
+                    IsUnlockMouse?.Invoke(true);
+                }
             }
 
             return ui;
@@ -259,15 +282,6 @@ namespace HotUpdate.Scripts.UI.UIBase
             {
                 tipsUI.ShowTips(message);
             }
-        }
-
-        public static bool IsUnlockMouse(this UIManager uiManager)
-        {
-            if (uiManager.CurrentActiveScreenUI1 && uiManager.CurrentActiveScreenUI1 is IUnlockMouse)
-            {
-                return true;
-            }
-            return false;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Game.Map;
+﻿using System;
+using Game.Map;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
@@ -25,10 +26,17 @@ namespace HotUpdate.Scripts.Network.Client
             _gameEventManager = gameEventManager;
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _uiManager = uiManager;
+            _uiManager.IsUnlockMouse+= OnUnlockMouse;
             _gameEventManager.Subscribe<PlayerSpawnedEvent>(OnPlayerSpawned);
             Debug.Log("CameraFollowClient init");
         }
-        
+
+        private void OnUnlockMouse(bool isUnlock)
+        {
+            Cursor.lockState = isUnlock ? CursorLockMode.None : CursorLockMode.Locked;
+            Cursor.visible = isUnlock;
+        }
+
         private void OnPlayerSpawned(PlayerSpawnedEvent playerSpawnedEvent)
         {
             if (!playerSpawnedEvent.Target)
@@ -51,18 +59,11 @@ namespace HotUpdate.Scripts.Network.Client
                 Cursor.lockState = _isControlling ? CursorLockMode.Locked : CursorLockMode.None;
                 Cursor.visible = !_isControlling;
             }
-
-            if (_uiManager == null)
-            {
-                return;
-            }
-            Cursor.lockState = _uiManager.IsUnlockMouse() ? CursorLockMode.None : (_isControlling ? CursorLockMode.Locked : CursorLockMode.None);
-            Cursor.visible = _uiManager.IsUnlockMouse() || !_isControlling;
         }
 
         private void LateUpdate()
         {
-            if (!_target || !_isControlling) return;
+            if (!_target || !_isControlling || Cursor.visible) return;
 
 #if UNITY_ANDROID || UNITY_IOS
             // 手机平台的输入逻辑
@@ -112,5 +113,9 @@ namespace HotUpdate.Scripts.Network.Client
             transform.LookAt(_target);
         }
 
+        private void OnDestroy()
+        {
+            _uiManager.IsUnlockMouse -= OnUnlockMouse;
+        }
     }
 }

@@ -20,6 +20,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
         private void Start()
         {
             content ??= transform;
+            itemPrefab.gameObject.SetActive(false);
         }
 
         public T GetItem<T>(int index) where T : ItemBase

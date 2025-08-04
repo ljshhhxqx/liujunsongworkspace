@@ -24,6 +24,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
         [SerializeField]
         [Header("拖拽临时图标")]
         private GameObject dragIcon;
+        [SerializeField]
+        private Button closeBtn;
         private UIManager _uiManager;
 
         private Dictionary<int, BagSlotItem> _bagSlotItems; // 存储格子引用
@@ -41,15 +43,19 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             var jsonConfig = configProvider.GetConfig<JsonDataConfig>();
             _uiManager = uiManager;
             BagCommonData = jsonConfig.BagCommonData;
+            closeBtn.OnClickAsObservable()
+                .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
+                .Subscribe(_ => _uiManager.CloseUI(Type))
+                .AddTo(this);
             dragIcon.SetActive(false);
-            if (_bagSlotItems == null || _bagSlotItems.Count == 0)
-            {
-                equipmentItemList.gameObject.SetActive(false);
-            }
-            if (_slotItems == null || _slotItems.Count == 0)
-            {
-                bagItemList.gameObject.SetActive(false);
-            }
+            // if (_bagSlotItems == null || _bagSlotItems.Count == 0)
+            // {
+            //     equipmentItemList.gameObject.SetActive(false);
+            // }
+            // if (_slotItems == null || _slotItems.Count == 0)
+            // {
+            //     bagItemList.gameObject.SetActive(false);
+            // }
         }
 
         public void BindEquipItemData(ReactiveDictionary<int, EquipItemData> slotEquipItemData)

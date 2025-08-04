@@ -97,7 +97,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private float _speedSmoothVelocity;
         private float _sprintSpeedRatio;
         private float _stairsSpeedRatio;
-        private bool _canOpenShop;
+        private bool _isControlled = true;
         private SubjectedStateType _subjectedStateType;
         private List<IAnimationCooldown> _animationCooldowns = new List<IAnimationCooldown>();
         
@@ -191,24 +191,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public override void OnStartLocalPlayer()
         {
             base.OnStartLocalPlayer();
+            _uiManager.IsUnlockMouse += OnIsUnlockMouse;
             _localPlayerHandler = true;
-            if (isLocalPlayer)
-            {
-                _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
-                    UIPropertyBinder.LocalPlayerId);
-                _itemBindKey = new BindingKey(UIPropertyDefine.BagItem, DataScope.LocalPlayer,
-                    UIPropertyBinder.LocalPlayerId);
-                _shopBindKey = new BindingKey(UIPropertyDefine.ShopItem, DataScope.LocalPlayer,
-                    UIPropertyBinder.LocalPlayerId);
-                _goldBindKey = new BindingKey(UIPropertyDefine.PlayerBaseData, DataScope.LocalPlayer,
-                    UIPropertyBinder.LocalPlayerId);
-                _equipBindKey = new BindingKey(UIPropertyDefine.EquipmentItem, DataScope.LocalPlayer,
-                    UIPropertyBinder.LocalPlayerId);
-                _playerDeathTimeBindKey = new BindingKey(UIPropertyDefine.PlayerDeathTime, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
-                _playerTraceOtherPlayerHpBindKey = new BindingKey(UIPropertyDefine.PlayerTraceOtherPlayerHp, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
-                HandleLocalInitCallback();
-                _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter));
-            }
+            
+            _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
+                UIPropertyBinder.LocalPlayerId);
+            _itemBindKey = new BindingKey(UIPropertyDefine.BagItem, DataScope.LocalPlayer,
+                UIPropertyBinder.LocalPlayerId);
+            _shopBindKey = new BindingKey(UIPropertyDefine.ShopItem, DataScope.LocalPlayer,
+                UIPropertyBinder.LocalPlayerId);
+            _goldBindKey = new BindingKey(UIPropertyDefine.PlayerBaseData, DataScope.LocalPlayer,
+                UIPropertyBinder.LocalPlayerId);
+            _equipBindKey = new BindingKey(UIPropertyDefine.EquipmentItem, DataScope.LocalPlayer,
+                UIPropertyBinder.LocalPlayerId);
+            _playerDeathTimeBindKey = new BindingKey(UIPropertyDefine.PlayerDeathTime, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
+            _playerTraceOtherPlayerHpBindKey = new BindingKey(UIPropertyDefine.PlayerTraceOtherPlayerHp, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
+            HandleLocalInitCallback();
+            _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter));
             var shopConstant = PlayerShopCalculator.Constant;
             shopConstant.IsServer = isServer;
             shopConstant.IsClient = isClient;
@@ -239,13 +238,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             animationConstant.IsClient = isClient;
             animationConstant.IsLocalPlayer = isLocalPlayer;
             PlayerAnimationCalculator.SetAnimationConstant(animationConstant);
-            _capsuleCollider.OnTriggerEnterAsObservable()
-                .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
-                .Subscribe(c =>
-                {
-                    _canOpenShop = PlayerInGameManager.Instance.IsPlayerInHisBase(netId, out _);
-                })
-                .AddTo(this);
+            // _capsuleCollider.OnTriggerEnterAsObservable()
+            //     .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
+            //     .Subscribe(c =>
+            //     {
+            //         _canOpenShop = PlayerInGameManager.Instance.IsPlayerInHisBase(netId, out _);
+            //     })
+            //     .AddTo(this);
             _capsuleCollider.OnTriggerStayAsObservable()
                 .Sample(TimeSpan.FromMilliseconds(GameSyncManager.TickSeconds * 1000))
                 .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
@@ -259,12 +258,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     };
                     _gameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(playerTouchedBaseCommand).Item1);
                 }).AddTo(_disposables);
-            _capsuleCollider.OnTriggerExitAsObservable()
-                .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
-                .Subscribe(_ =>
-                {
-                    _canOpenShop = false;
-                }).AddTo(_disposables);
+            // _capsuleCollider.OnTriggerExitAsObservable()
+            //     .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
+            //     .Subscribe(_ =>
+            //     {
+            //         _canOpenShop = false;
+            //     }).AddTo(_disposables);
             
             Observable.EveryUpdate()
                 .Where(_ => _localPlayerHandler)
@@ -278,10 +277,43 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                             case UIType.None:
                                 break;
                             case UIType.Backpack:
-                                _uiManager.SwitchUI<BackpackScreenUI>();
+                                var bagItemOverlay = _uiManager.SwitchUI<BackpackScreenUI>();
+                                if (!bagItemOverlay)
+                                {
+                                    return;
+                                }
+
+                                if (_reactivePropertyBinds.TryGetValue(typeof(BagItemData), out var isBagBind) && isBagBind)
+                                {
+                                    return;
+                                }
+                                
+                                bagItemOverlay.BindBagItemData(UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey));
+                                bagItemOverlay.BindEquipItemData(UIPropertyBinder.GetReactiveDictionary<EquipItemData>(_equipBindKey));
                                 break;
                             case UIType.Shop:
-                                _uiManager.SwitchUI<ShopScreenUI>();
+                                var shopScreenUI = _uiManager.SwitchUI<ShopScreenUI>();
+                                if (!shopScreenUI)
+                                {
+                                    return;
+                                }
+
+                                if (_reactivePropertyBinds.TryGetValue(typeof(ValuePropertyData), out var isShopBind) && isShopBind)
+                                {
+                                    return;
+                                }
+                                shopScreenUI.BindShopItemData(UIPropertyBinder.GetReactiveDictionary<RandomShopItemData>(_shopBindKey));
+                                shopScreenUI.BindBagItemData(UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey));
+                                shopScreenUI.BindPlayerGold(UIPropertyBinder.ObserveProperty<ValuePropertyData>(_propertyBindKey));
+                                shopScreenUI.OnRefresh.Subscribe(_ =>
+                                {
+                                    var refreshCommand = new RefreshShopCommand
+                                    {
+                                        Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Shop, CommandAuthority.Client
+                                            , CommandExecuteType.Immediate),
+                                    };
+                                    _gameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(refreshCommand).Item1);
+                                }).AddTo(shopScreenUI.gameObject);
                                 break;
                             default:
                                 throw new ArgumentOutOfRangeException();
@@ -291,7 +323,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .AddTo(_disposables);
             
             Observable.EveryUpdate()
-                .Where(_ => _localPlayerHandler && GameSyncManager.CurrentTick > 0 && _subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible))
+                .Where(_ => _localPlayerHandler && _isControlled && GameSyncManager.CurrentTick > 0 
+                                                && _subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible))
                 .Subscribe(_ => {
                     var movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
                     var animationStates = _inputState.GetAnimationStates();
@@ -508,9 +541,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 _uiManager.CloseUI(UIType.Backpack);
                 return;
             }
-            var bagItemOverlay = _uiManager.SwitchUI<BackpackScreenUI>();
-            bagItemOverlay.BindBagItemData(UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey));
-            bagItemOverlay.BindEquipItemData(UIPropertyBinder.GetReactiveDictionary<EquipItemData>(_equipBindKey));
         }
 
         public void SwitchShop()
@@ -519,25 +549,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             {
                 return;
             }
-            
-            if (_uiManager.IsUIOpen(UIType.Shop))
-            {
-                _uiManager.CloseUI(UIType.Shop);
-                return;
-            }
-            var shopScreenUI = _uiManager.SwitchUI<ShopScreenUI>();
-            shopScreenUI.BindShopItemData(UIPropertyBinder.GetReactiveDictionary<RandomShopItemData>(_shopBindKey));
-            shopScreenUI.BindBagItemData(UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey));
-            shopScreenUI.BindPlayerGold(UIPropertyBinder.ObserveProperty<ValuePropertyData>(_propertyBindKey));
-            shopScreenUI.OnRefresh.Subscribe(_ =>
-            {
-                var refreshCommand = new RefreshShopCommand
-                {
-                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Shop, CommandAuthority.Client
-                    , CommandExecuteType.Immediate),
-                };
-                _gameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(refreshCommand).Item1);
-            }).AddTo(shopScreenUI.gameObject);
         }
         
         // public void SwitchPlayerDeathTime()
@@ -779,11 +790,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _inputState.OnPlayerAnimationCooldownChanged -= HandlePlayerAnimationCooldownChanged;
             _inputState.OnPlayerInputStateChanged -= HandlePlayerInputStateChanged;
             _inputState.IsInSpecialState -= HandleSpecialState;
+            _uiManager.IsUnlockMouse -= OnIsUnlockMouse;
             _animationCooldowns.Clear();
             _inputStream.Dispose();
             _effectContainer.Clear();
             playerEffectPlayer.StopAllEffect(container => GameObjectPoolManger.Instance.ReturnObject(container.gameObject));
             _effectPool.Clear();
+        }
+
+        private void OnIsUnlockMouse(bool isUnlock)
+        {
+            Debug.Log($"[OnIsUnlockMouse] isUnlock ->{isUnlock}");
+            _isControlled = !isUnlock;
         }
 
         private void HandlePlayerDeadClient(float countdownTime)

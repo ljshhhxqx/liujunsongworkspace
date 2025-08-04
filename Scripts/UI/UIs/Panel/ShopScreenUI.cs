@@ -23,6 +23,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         private ContentItemList bagItemList;
         [SerializeField]
         private Button refreshButton;
+        [SerializeField]
+        private Button closeButton;
         private UIManager _uiManager;
         private readonly List<ShopSlotItem> _shopSlotItems = new List<ShopSlotItem>();
         private readonly List<ShopBagSlotItem> _bagSlotItems = new List<ShopBagSlotItem>();
@@ -36,11 +38,15 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         private void Init(UIManager uiManager)
         {
             _uiManager = uiManager;
-            refreshButton.onClick.RemoveAllListeners();
-            refreshButton.BindDebouncedListener(() =>
-            {
-                _refreshSubject.OnNext(Unit.Default);
-            });
+            closeButton.OnClickAsObservable()
+                .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
+                .Subscribe(_ => _uiManager.CloseUI(Type))
+                .AddTo(this);
+            refreshButton.OnClickAsObservable()
+                .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
+                .Subscribe(_ => _refreshSubject.OnNext(Unit.Default))
+                .AddTo(this);
+            
         }
         
         public void BindPlayerGold(IObservable<ValuePropertyData> playerGold)

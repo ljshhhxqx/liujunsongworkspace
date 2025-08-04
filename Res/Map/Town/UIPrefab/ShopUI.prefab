@@ -232,10 +232,10 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7000695249490813980}
-  - {fileID: 5008218138693008913}
   - {fileID: 6139532583351715554}
-  - {fileID: 8313350812826793073}
   - {fileID: 6576585574756759902}
+  - {fileID: 8313350812826793073}
+  - {fileID: 5008218138693008913}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -296,6 +296,7 @@ MonoBehaviour:
   shopItemList: {fileID: 7088818442544254366}
   bagItemList: {fileID: 2445176080166010061}
   refreshButton: {fileID: 2480922113805243931}
+  closeButton: {fileID: 8734217763747196386}
 --- !u!1 &1273157513735120772
 GameObject:
   m_ObjectHideFlags: 0
@@ -2103,7 +2104,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1237154ea1595cb4f991209ff6ad0e04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemPrefab: {fileID: 0}
+  itemPrefab: {fileID: 8369035726682536654}
   content: {fileID: 6139532583351715554}
 --- !u!1 &6767778348327199321
 GameObject:
@@ -3056,7 +3057,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 120540765360509279}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.99991995
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3098,7 +3099,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 4.0365906, y: 0.0005187988}
+  m_AnchoredPosition: {x: 4.0365906, y: 0.0009460449}
   m_SizeDelta: {x: 610.7341, y: 592.1074}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9176825489644218961
@@ -3175,7 +3176,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1237154ea1595cb4f991209ff6ad0e04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemPrefab: {fileID: 0}
+  itemPrefab: {fileID: 3180374975518301273}
   content: {fileID: 8789074570726141726}
 --- !u!1 &8636777550230441259
 GameObject:
