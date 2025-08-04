@@ -160,6 +160,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
         }
 
+        public static void RefreshShopFree(ref PlayerShopState state)
+        {
+            var shopConfigIds = state.RandomShopItems.Values.Select(x => x.ShopConfigId).ToHashSet();
+            var newShopData = GetRandomShopItemData(shopConfigIds);
+            var dic = newShopData.ToDictionary(x => x.ShopId, x => x);
+            state.RandomShopItems = new MemoryDictionary<int, ShopItemData>(dic);
+        }
+
         public static void CommandRefreshItem(ref PlayerShopState state, int connectionId, bool isServer = false)
         {
             var propertySystem = Constant.GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
@@ -179,7 +187,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 return;
             var command = new GoldChangedCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Item,
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Shop,
                     CommandAuthority.Server, CommandExecuteType.Immediate),
                 Gold = -costGold
             };
