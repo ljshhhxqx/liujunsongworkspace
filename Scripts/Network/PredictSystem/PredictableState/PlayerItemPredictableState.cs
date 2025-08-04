@@ -20,7 +20,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
     {
         protected override ISyncPropertyState CurrentState { get; set; }
         protected override CommandType CommandType => CommandType.Item;
-        private ReactiveDictionary<int, BagItemData> _bagItems;
         private ItemConfig _itemConfig;
         private BindingKey _bindKey;
 
@@ -207,7 +206,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             if (!NetworkIdentity.isLocalPlayer)
                 return;
             CurrentState = playerItemState;
-            _bagItems ??= UIPropertyBinder.GetReactiveDictionary<BagItemData>(_bindKey);
+            var bagItems = UIPropertyBinder.GetReactiveDictionary<BagItemData>(_bindKey);
             foreach (var item in playerItemState.PlayerItemConfigIdSlotDictionary.Keys)
             {
                 var playerBagSlotItem = playerItemState.PlayerItemConfigIdSlotDictionary[item];
@@ -238,7 +237,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     OnExchangeItem = OnExchangeItem,
                     OnSellItem = OnSellItem,
                 };
-                _bagItems[item] = bagItem;
+                bagItems[item] = bagItem;
             }
         }
     }

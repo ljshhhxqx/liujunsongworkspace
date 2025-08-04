@@ -16,8 +16,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {
     public class PlayerShopPredictableState : PredictableStateBase
     {
-        private ReactiveDictionary<int, RandomShopItemData> _shopItems;
-        private ReactiveDictionary<int, BagItemData> _bagItems;
         private ShopConfig _shopConfig;
         private ItemConfig _itemConfig;
         private BindingKey _bindKey;
@@ -70,11 +68,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void OnPlayerShopStateChanged(PlayerShopState playerShopState)
         {
-            if(!isLocalPlayer)
+            if(!NetworkIdentity.isLocalPlayer)
                return;
             CurrentState = playerShopState;
-            _shopItems ??= UIPropertyBinder.GetReactiveDictionary<RandomShopItemData>(_bindKey);
-            //_bagItems ??= UIPropertyBinder.GetReactiveDictionary<BagItemData>(_bagBindKey);
+            var shopItems = UIPropertyBinder.GetReactiveDictionary<RandomShopItemData>(_bindKey);
             foreach (var key in playerShopState.RandomShopItems.Keys)
             {
                 var item = playerShopState.RandomShopItems[key];
@@ -101,7 +98,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     ? _shopConfig.GetShopConstantData().shopEquipPassiveDescription
                     : ""; 
                 randomShopData.OnBuyItem = OnBuyItem;
-                _shopItems[key] = randomShopData;
+                shopItems[key] = randomShopData;
             }
         }
 
