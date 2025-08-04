@@ -36,15 +36,12 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         private void Init(UIManager uiManager)
         {
             _uiManager = uiManager;
-            
-        }
-
-        private void Start()
-        {
             closeButton.OnClickAsObservable()
+                .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
                 .Subscribe(_ => _uiManager.CloseUI(Type))
                 .AddTo(this);
             refreshButton.OnClickAsObservable()
+                .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
                 .Subscribe(_ => _refreshSubject.OnNext(Unit.Default))
                 .AddTo(this);
         }

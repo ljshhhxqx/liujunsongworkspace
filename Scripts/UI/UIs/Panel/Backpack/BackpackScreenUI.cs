@@ -43,6 +43,11 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             var jsonConfig = configProvider.GetConfig<JsonDataConfig>();
             _uiManager = uiManager;
             BagCommonData = jsonConfig.BagCommonData;
+            
+            closeBtn.OnClickAsObservable()
+                .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
+                .Subscribe(_ => _uiManager.CloseUI(Type))
+                .AddTo(this);
             dragIcon.SetActive(false);
             // if (_bagSlotItems == null || _bagSlotItems.Count == 0)
             // {
@@ -52,14 +57,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             // {
             //     bagItemList.gameObject.SetActive(false);
             // }
-        }
-
-        private void Start()
-        {
-            
-            closeBtn.OnClickAsObservable()
-                .Subscribe(_ => _uiManager.CloseUI(Type))
-                .AddTo(this);
         }
 
         public void BindEquipItemData(ReactiveDictionary<int, EquipItemData> slotEquipItemData)

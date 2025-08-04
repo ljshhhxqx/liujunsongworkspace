@@ -105,7 +105,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
                 itemPrefab.gameObject.SetActive(false);
                 return;
             }
-            Debug.LogWarning($"ItemList: SetItemList failed, itemDict --{itemDict.GetType()}-- is null or empty.");
+            Debug.LogWarning($"ItemList: SetItemList failed, itemDict --{itemDict.GetType().Name}-- is null or empty.");
         }
     }
 }

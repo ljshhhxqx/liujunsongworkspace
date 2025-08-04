@@ -288,6 +288,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                                     return;
                                 }
                                 
+                                _reactivePropertyBinds.Add(typeof(BagItemData), true);
                                 bagItemOverlay.BindBagItemData(UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey));
                                 bagItemOverlay.BindEquipItemData(UIPropertyBinder.GetReactiveDictionary<EquipItemData>(_equipBindKey));
                                 break;
@@ -298,7 +299,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                                     return;
                                 }
 
-                                if (_reactivePropertyBinds.TryGetValue(typeof(ValuePropertyData), out var isShopBind) && isShopBind)
+                                if (_reactivePropertyBinds.TryGetValue(typeof(RandomShopItemData), out var isShopBind) && isShopBind)
                                 {
                                     return;
                                 }
@@ -310,10 +311,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                                     var refreshCommand = new RefreshShopCommand
                                     {
                                         Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Shop, CommandAuthority.Client
-                                            , CommandExecuteType.Immediate),
+                                            ),
                                     };
                                     _gameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(refreshCommand).Item1);
                                 }).AddTo(shopScreenUI.gameObject);
+                                _reactivePropertyBinds.Add(typeof(RandomShopItemData), true);
                                 break;
                             default:
                                 throw new ArgumentOutOfRangeException();
