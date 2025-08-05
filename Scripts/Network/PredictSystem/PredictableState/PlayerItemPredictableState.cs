@@ -206,7 +206,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             if (!NetworkIdentity.isLocalPlayer)
                 return;
-            Debug.Log("OnPlayerItemUpdate");
+            //Debug.Log("OnPlayerItemUpdate");
             CurrentState = playerItemState;
             var bagItems = UIPropertyBinder.GetReactiveDictionary<BagItemData>(_bindKey);
             foreach (var kvp in playerItemState.PlayerItemConfigIdSlotDictionary)

@@ -315,11 +315,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         {
             if (_currentStage <= 0)
             {
-                //Debug.Log($"[IsReady] [keyFrameCombo] _currentStage <= 0  _currentStage-{_currentStage} _inComboWindow-{_inComboWindow}");
+                // Debug.Log($"[IsReady] [keyFrameCombo] _currentStage <= 0  _currentStage-{_currentStage} _inComboWindow-{_inComboWindow}");
                 return _currentCountdown <= 0 && _inComboWindow;
             }
             
-            //Debug.Log($"[IsReady] [keyFrameCombo] _currentStage > 0  _windowCountdown-{_windowCountdown} _currentStage-{_currentStage} _inComboWindow-{_inComboWindow}");
+            // Debug.Log($"[IsReady] [keyFrameCombo] _currentStage > 0  _windowCountdown-{_windowCountdown} _currentStage-{_currentStage} _inComboWindow-{_inComboWindow}");
             return _windowCountdown > 0 && _inComboWindow && _currentStage < _keyframe.Count;
         }
 
@@ -347,7 +347,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             if (_windowCountdown > 0 && _currentStage < _keyframe.Count)
             {
                 _windowCountdown = Mathf.Max(0, _windowCountdown - deltaTime);
-                if (_windowCountdown == 0)
+                Debug.Log($"[Update] [KeyframeCombo] 连招窗口倒计时 Animation-{_state}  _currentStage-{_currentStage} _windowCountdown-{_windowCountdown} _currentTime-{_currentTime}");
+                if (_windowCountdown <= 0)
                 {
                     EndComboWindow();
                 }
@@ -364,8 +365,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 _currentCountdown = _configCooldown;
                 return;
             }
-            // 推进动画时间轴
-            _currentTime += deltaTime;
 
             // 关键帧触发检测
             if (_currentTime >= currentStageConfig.triggerTime - currentStageConfig.tolerance && 
@@ -373,7 +372,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             {
                 _currentTime = 0;
                 _eventStream.OnNext(currentStageConfig.eventType);
-                //Debug.Log($"[Update] [KeyframeCombo] 关键帧已通过触发条件 Animation-{_state}  _currentStage-{_currentStage} _windowCountdown-{_windowCountdown} _currentTime-{_currentTime}");
+                // Debug.Log($"[Update] [KeyframeCombo] 关键帧已通过触发条件 Animation-{_state}  _currentStage-{_currentStage} _windowCountdown-{_windowCountdown} _currentTime-{_currentTime}");
                 _windowCountdown = currentStageConfig.resetCooldownWindowTime;
                 _inComboWindow = true;
                 _currentStage = Mathf.Min(_currentStage + 1, _maxStage);
@@ -387,7 +386,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                     return;
                 }
             }
-            //Debug.Log($"[Update] [Animation] Animation-{_state}  _currentCountdown-{_currentCountdown} _windowCountdown-{_windowCountdown} _currentTime-{_currentTime}  _currentStage-{_currentStage}");
+            // 推进动画时间轴
+            _currentTime += deltaTime;
+            Debug.Log($"[Update] [Animation] Animation-{_state}  _currentCountdown-{_currentCountdown} _windowCountdown-{_windowCountdown} _currentTime-{_currentTime}  _currentStage-{_currentStage}");
         }
 
         public void Use()
@@ -398,37 +399,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
             if (!_isComboStart && _currentStage == 0)
             {
-                // 开始新连招
-                StartNewCombo();
+                _isComboStart = true;
             }
-            
-            // else if (_currentStage > 0)
-            // {
-            //     if (_currentStage == _maxStage)
-            //     {
-            //         // 达到最大连击数时立即进入冷却
-            //         _currentCountdown = _configCooldown;
-            //         Reset();
-            //         return;
-            //     }
-            //     AdvanceCombo();
-            // }
-            //Debug.Log($"[Use] [keyFrameCombo] Animation-{_state}  _currentStage-{_currentStage} _currentCountdown-{_currentCountdown}" +
-                      //$"_windowCountdown-{_windowCountdown} _currentTime-{_currentTime} _inComboWindow-{_inComboWindow}");
-        }
-
-        private void StartNewCombo()
-        {
-            _isComboStart = true;
-            //Debug.Log($"[StartNewCombo] [keyFrameCombo] Animation-{_state}  _currentStage-{_currentStage} _currentCountdown-{_currentCountdown}" +
-                      //$"_windowCountdown-{_windowCountdown} _currentTime-{_currentTime} _inComboWindow-{_inComboWindow}");
-        }
-
-        private void AdvanceCombo()
-        {
-            //_currentStage = Mathf.Min(_currentStage + 1, _maxStage);
-            //Debug.Log($"[AdvanceCombo] [keyFrameCombo] Animation-{_state}  _currentStage-{_currentStage} _currentCountdown-{_currentCountdown}" +
-                      //$"_windowCountdown-{_windowCountdown} _currentTime-{_currentTime} _inComboWindow-{_inComboWindow}");
         }
 
         private void EndComboWindow()
@@ -436,8 +408,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             _inComboWindow = false;
             _windowCountdown = 0;
             _isComboStart = false;
+            _currentStage = 0;
+            _currentTime = 0;
             _currentCountdown = _configCooldown;
-            Reset();
+            // Debug.Log($"[EndComboWindow] [KeyframeCombo] Animation-{_state}  _currentStage-{_currentStage} _windowCountdown-{_windowCountdown} _currentTime-{_currentTime} _inComboWindow-{_inComboWindow} _isComboStart-{_isComboStart}");
         }
 
         public bool Refresh(CooldownSnapshotData snapshot)
@@ -450,8 +424,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             //_inComboWindow = snapshot.IsInComboWindow;
             _currentCountdown = snapshot.CurrentCountdown;
             _currentTime = snapshot.KeyframeCurrentTime;
-            //Debug.Log($"[Refresh] [KeyframeCombo] Animation-{_state}  _currentStage-{_currentStage} _currentCountdown-{_currentCountdown}" +
-                      //$" _windowCountdown-{_windowCountdown} _currentTime-{_currentTime} _inComboWindow-{_inComboWindow} _isComboStart-{_isComboStart}");
+            // Debug.Log($"[Refresh] [KeyframeCombo] Animation-{_state}  _currentStage-{_currentStage} _currentCountdown-{_currentCountdown}" +
+            //           $" _windowCountdown-{_windowCountdown} _currentTime-{_currentTime} _inComboWindow-{_inComboWindow} _isComboStart-{_isComboStart}");
             return true;
         }
 
