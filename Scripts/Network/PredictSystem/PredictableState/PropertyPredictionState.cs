@@ -279,7 +279,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 if (property.IsResourceProperty())
                 {
                     OnPropertyChanged?.Invoke(kvp.Key, property);
-                    if (data.PropertyType != PropertyTypeEnum.None)
+                    if (data.ConsumeType!= PropertyConsumeType.None)
                     {
                         data.CurrentProperty = property.CurrentValue;
                         data.MaxProperty = property.MaxCurrentValue;
@@ -290,7 +290,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 }
                 
                 OnPropertyChanged?.Invoke(kvp.Key, property);
-                if (data.PropertyType != PropertyTypeEnum.None)
+                if (data.ConsumeType!= PropertyConsumeType.None)
                 {
                     data.CurrentProperty = property.CurrentValue;
                     uiPropertyData[(int)kvp.Key] = data;

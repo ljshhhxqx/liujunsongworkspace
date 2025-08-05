@@ -225,6 +225,21 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
             hashCode.Add(MaxStack);
             return hashCode.ToHashCode();
         }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormat("物品名称：{0}\n", ItemName);
+            sb.AppendFormat("物品描述：{0}\n", Description);
+            sb.AppendFormat("物品属性：{0}\n", PropertyDescription);
+            sb.AppendFormat("物品类型：{0}\n", PlayerItemType);
+            sb.AppendFormat("物品堆叠：{0}\n", Stack);
+            sb.AppendFormat("物品最大堆叠：{0}\n", MaxStack);
+            sb.AppendFormat("物品价格：{0}\n", Price);
+            sb.AppendFormat("物品售价：{0}\n", SellRatio);
+            sb.AppendFormat("物品品质：{0}\n", QualityIcon);
+            return sb.ToString();
+        }
     }
 
     public struct EquipItemData : IItemBaseData, IEquatable<EquipItemData>

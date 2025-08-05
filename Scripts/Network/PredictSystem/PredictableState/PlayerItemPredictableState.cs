@@ -12,6 +12,7 @@ using HotUpdate.Scripts.Tool.Static;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using MemoryPack;
 using UniRx;
+using UnityEngine;
 using VContainer;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
@@ -205,11 +206,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             if (!NetworkIdentity.isLocalPlayer)
                 return;
+            Debug.Log("OnPlayerItemUpdate");
             CurrentState = playerItemState;
             var bagItems = UIPropertyBinder.GetReactiveDictionary<BagItemData>(_bindKey);
-            foreach (var item in playerItemState.PlayerItemConfigIdSlotDictionary.Keys)
+            foreach (var kvp in playerItemState.PlayerItemConfigIdSlotDictionary)
             {
-                var playerBagSlotItem = playerItemState.PlayerItemConfigIdSlotDictionary[item];
+                var playerBagSlotItem = kvp.Value;
                 var itemConfig = _itemConfig.GetGameItemData(playerBagSlotItem.ConfigId);
                 var mainProperty = GameStaticExtensions.GetBuffEffectDesc(playerBagSlotItem.MainIncreaseDatas.Items);
                 var randomBuffEffectDesc = GameStaticExtensions.GetRandomBuffEffectDesc(playerBagSlotItem.RandomIncreaseDatas.Items);
@@ -237,7 +239,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     OnExchangeItem = OnExchangeItem,
                     OnSellItem = OnSellItem,
                 };
-                bagItems[item] = bagItem;
+                Debug.Log(bagItem.ToString());
+                bagItems.TryAdd(kvp.Key, bagItem);
             }
         }
     }

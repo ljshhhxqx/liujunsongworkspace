@@ -1191,6 +1191,186 @@
             "Address": "/Map/Town/Frame/Rare.png"
         },
         {
+            "UID": 4000003,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "AttackPotion-Large",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Potions/AttackPotion-Large.png"
+        },
+        {
+            "UID": 4000004,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "AttackPotion-Medium",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Potions/AttackPotion-Medium.png"
+        },
+        {
+            "UID": 4000005,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "AttackPotion-Small",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Potions/AttackPotion-Small.png"
+        },
+        {
+            "UID": 4000006,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "DefensePotion-Large",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Potions/DefensePotion-Large.png"
+        },
+        {
+            "UID": 4000007,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "DefensePotion-Medium",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Potions/DefensePotion-Medium.png"
+        },
+        {
+            "UID": 4000008,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "DefensePotion-Small",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Potions/DefensePotion-Small.png"
+        },
+        {
+            "UID": 4000009,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "ScorePotion-Large",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Potions/ScorePotion-Large.png"
+        },
+        {
+            "UID": 4000010,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "ScorePotion-Medium",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Potions/ScorePotion-Medium.png"
+        },
+        {
+            "UID": 4000011,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "ScorePotion-Small",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Potions/ScorePotion-Small.png"
+        },
+        {
+            "UID": 4000012,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "SpeedPotion-Large",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Potions/SpeedPotion-Large.png"
+        },
+        {
+            "UID": 4000013,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "SpeedPotion-Medium",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Potions/SpeedPotion-Medium.png"
+        },
+        {
+            "UID": 4000014,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "SpeedPotion-Small",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Potions/SpeedPotion-Small.png"
+        },
+        {
+            "UID": 4000015,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "StrengthPotion-Large",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Potions/StrengthPotion-Large.png"
+        },
+        {
+            "UID": 4000016,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "StrengthPotion-Medium",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Potions/StrengthPotion-Medium.png"
+        },
+        {
+            "UID": 4000017,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "StrengthPotion-Small",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Potions/StrengthPotion-Small.png"
+        },
+        {
+            "UID": 4000018,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "TreasurePotion-Large",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Potions/TreasurePotion-Large.png"
+        },
+        {
+            "UID": 4000019,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "TreasurePotion-Medium",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Potions/TreasurePotion-Medium.png"
+        },
+        {
+            "UID": 4000020,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "TreasurePotion-Small",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Potions/TreasurePotion-Small.png"
+        },
+        {
             "UID": 4100000,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,

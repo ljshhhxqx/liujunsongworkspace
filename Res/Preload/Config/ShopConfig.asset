@@ -23,7 +23,7 @@ MonoBehaviour:
   shopConfigData:
   - id: 1
     itemId: 2017
-    name: "\u5927\u529B\u836F\u5242\u2160\uFF08\u5C0F\uFF09"
+    name: "\u5927\u529B\u836F\u5242\u2160(\u5C0F)"
     price: 20
     sellPrice: 15
     qualityType: 1
@@ -31,7 +31,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 2
     itemId: 2018
-    name: "\u5927\u529B\u836F\u5242\u2161\uFF08\u5C0F\uFF09"
+    name: "\u5927\u529B\u836F\u5242\u2161(\u5C0F)"
     price: 30
     sellPrice: 22.5
     qualityType: 1
@@ -39,7 +39,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 3
     itemId: 2019
-    name: "\u5927\u529B\u836F\u5242\u2160\uFF08\u4E2D\uFF09"
+    name: "\u5927\u529B\u836F\u5242\u2160(\u4E2D)"
     price: 40
     sellPrice: 30
     qualityType: 2
@@ -47,7 +47,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 4
     itemId: 2020
-    name: "\u5927\u529B\u836F\u5242\u2161\uFF08\u4E2D\uFF09"
+    name: "\u5927\u529B\u836F\u5242\u2161(\u4E2D)"
     price: 50
     sellPrice: 37.5
     qualityType: 2
@@ -55,7 +55,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 5
     itemId: 2021
-    name: "\u5927\u529B\u836F\u5242\u2160\uFF08\u5927\uFF09"
+    name: "\u5927\u529B\u836F\u5242\u2160(\u5927)"
     price: 70
     sellPrice: 52.5
     qualityType: 3
@@ -63,7 +63,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 6
     itemId: 2022
-    name: "\u5927\u529B\u836F\u5242\u2161\uFF08\u5927\uFF09"
+    name: "\u5927\u529B\u836F\u5242\u2161(\u5927)"
     price: 100
     sellPrice: 75
     qualityType: 3
@@ -71,7 +71,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 7
     itemId: 2023
-    name: "\u8F7B\u76C8\u836F\u5242\u2160\uFF08\u5C0F\uFF09"
+    name: "\u8F7B\u76C8\u836F\u5242\u2160(\u5C0F)"
     price: 20
     sellPrice: 15
     qualityType: 1
@@ -79,7 +79,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 8
     itemId: 2024
-    name: "\u8F7B\u76C8\u836F\u5242\u2161\uFF08\u5C0F\uFF09"
+    name: "\u8F7B\u76C8\u836F\u5242\u2161(\u5C0F)"
     price: 30
     sellPrice: 22.5
     qualityType: 1
@@ -87,7 +87,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 9
     itemId: 2025
-    name: "\u8F7B\u76C8\u836F\u5242\u2160\uFF08\u4E2D\uFF09"
+    name: "\u8F7B\u76C8\u836F\u5242\u2160(\u4E2D)"
     price: 40
     sellPrice: 30
     qualityType: 2
@@ -95,7 +95,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 10
     itemId: 2026
-    name: "\u8F7B\u76C8\u836F\u5242\u2161\uFF08\u4E2D\uFF09"
+    name: "\u8F7B\u76C8\u836F\u5242\u2161(\u4E2D)"
     price: 50
     sellPrice: 37.5
     qualityType: 2
@@ -103,7 +103,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 11
     itemId: 2027
-    name: "\u8F7B\u76C8\u836F\u5242\u2160\uFF08\u5927\uFF09"
+    name: "\u8F7B\u76C8\u836F\u5242\u2160(\u5927)"
     price: 70
     sellPrice: 52.5
     qualityType: 3
@@ -111,7 +111,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 12
     itemId: 2028
-    name: "\u8F7B\u76C8\u836F\u5242\u2161\uFF08\u5927\uFF09"
+    name: "\u8F7B\u76C8\u836F\u5242\u2161(\u5927)"
     price: 100
     sellPrice: 75
     qualityType: 3
@@ -119,7 +119,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 13
     itemId: 2029
-    name: "\u575A\u97E7\u836F\u5242\u2160\uFF08\u5C0F\uFF09"
+    name: "\u575A\u97E7\u836F\u5242\u2160(\u5C0F)"
     price: 20
     sellPrice: 15
     qualityType: 1
@@ -127,7 +127,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 14
     itemId: 2030
-    name: "\u575A\u97E7\u836F\u5242\u2161\uFF08\u5C0F\uFF09"
+    name: "\u575A\u97E7\u836F\u5242\u2161(\u5C0F)"
     price: 30
     sellPrice: 22.5
     qualityType: 1
@@ -135,7 +135,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 15
     itemId: 2031
-    name: "\u575A\u97E7\u836F\u5242\u2160\uFF08\u4E2D\uFF09"
+    name: "\u575A\u97E7\u836F\u5242\u2160(\u4E2D)"
     price: 40
     sellPrice: 30
     qualityType: 2
@@ -143,7 +143,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 16
     itemId: 2032
-    name: "\u575A\u97E7\u836F\u5242\u2161\uFF08\u4E2D\uFF09"
+    name: "\u575A\u97E7\u836F\u5242\u2161(\u4E2D)"
     price: 50
     sellPrice: 37.5
     qualityType: 2
@@ -151,7 +151,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 17
     itemId: 2033
-    name: "\u575A\u97E7\u836F\u5242\u2160\uFF08\u5927\uFF09"
+    name: "\u575A\u97E7\u836F\u5242\u2160(\u5927)"
     price: 70
     sellPrice: 52.5
     qualityType: 3
@@ -159,7 +159,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 18
     itemId: 2034
-    name: "\u575A\u97E7\u836F\u5242\u2161\uFF08\u5927\uFF09"
+    name: "\u575A\u97E7\u836F\u5242\u2161(\u5927)"
     price: 100
     sellPrice: 75
     qualityType: 3
@@ -167,7 +167,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 19
     itemId: 2035
-    name: "\u7EED\u822A\u836F\u5242\u2160\uFF08\u5C0F\uFF09"
+    name: "\u7EED\u822A\u836F\u5242\u2160(\u5C0F)"
     price: 20
     sellPrice: 15
     qualityType: 1
@@ -175,7 +175,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 20
     itemId: 2036
-    name: "\u7EED\u822A\u836F\u5242\u2161\uFF08\u5C0F\uFF09"
+    name: "\u7EED\u822A\u836F\u5242\u2161(\u5C0F)"
     price: 30
     sellPrice: 22.5
     qualityType: 1
@@ -183,7 +183,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 21
     itemId: 2037
-    name: "\u7EED\u822A\u836F\u5242\u2160\uFF08\u4E2D\uFF09"
+    name: "\u7EED\u822A\u836F\u5242\u2160(\u4E2D)"
     price: 40
     sellPrice: 30
     qualityType: 2
@@ -191,7 +191,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 22
     itemId: 2038
-    name: "\u7EED\u822A\u836F\u5242\u2161\uFF08\u4E2D\uFF09"
+    name: "\u7EED\u822A\u836F\u5242\u2161(\u4E2D)"
     price: 50
     sellPrice: 37.5
     qualityType: 2
@@ -199,7 +199,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 23
     itemId: 2039
-    name: "\u7EED\u822A\u836F\u5242\u2160\uFF08\u5927\uFF09"
+    name: "\u7EED\u822A\u836F\u5242\u2160(\u5927)"
     price: 70
     sellPrice: 52.5
     qualityType: 3
@@ -207,7 +207,7 @@ MonoBehaviour:
     maxCount: 5
   - id: 24
     itemId: 2040
-    name: "\u7EED\u822A\u836F\u5242\u2161\uFF08\u5927\uFF09"
+    name: "\u7EED\u822A\u836F\u5242\u2161(\u5927)"
     price: 100
     sellPrice: 75
     qualityType: 3
@@ -1104,4 +1104,4 @@ MonoBehaviour:
   shopConstantData:
     onceEachTypeCount: 2
     onceCostGold: 25
-    shopEquipPassiveDescription: 
+    shopEquipPassiveDescription: "\u8D2D\u4E70\u540E\uFF0C\u968F\u673A\u83B7\u5F97\u5C5E\u6027"

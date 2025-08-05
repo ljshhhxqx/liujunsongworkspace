@@ -60,8 +60,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
 
                 if (currentDiff > tolerance || maxDiff > tolerance)
                 {
-                    Debug.Log($"Property {kvp.Key} difference detected: " +
-                              $"Current={currentDiff}, Max={maxDiff}, Tolerance={tolerance}");
+                    // Debug.Log($"Property {kvp.Key} difference detected: " +
+                    //           $"Current={currentDiff}, Max={maxDiff}, Tolerance={tolerance}");
                     return false;
                 }
             }

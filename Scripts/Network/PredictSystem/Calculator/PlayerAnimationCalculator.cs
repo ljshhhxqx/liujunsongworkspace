@@ -138,7 +138,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
             if (newState == CurrentAnimationState) 
                 return CurrentAnimationState;
-            Debug.Log($"Animation State Changed from {CurrentAnimationState} to {newState}");
+//            Debug.Log($"Animation State Changed from {CurrentAnimationState} to {newState}");
             CurrentAnimationState = newState;
             IsPlayingSpecialAction = IsSpecialActionState(newState);
             _animationComponent.Animator.SetBool(SpecialAction, IsPlayingSpecialAction);
