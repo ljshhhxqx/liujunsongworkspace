@@ -29,19 +29,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             {
                 var shopConfigData = Constant.ShopConfig.GetShopConfigData(shopConfigId);
                 var itemConfigData = Constant.ItemConfig.GetGameItemData(shopConfigData.itemId);
+                Debug.Log($"shopConfigId: {shopConfigId}, itemConfigId: {shopConfigData.itemId}, itemName: {itemConfigData.name}");
                 var attributeData = PlayerItemCalculator.GetAttributeIncreaseDatas(itemConfigData.buffExtraData);
-                var mainAttributeData = new AttributeIncreaseData[itemConfigData.buffExtraData.Length];
-                var passiveAttributeData = new RandomAttributeIncreaseData[itemConfigData.buffExtraData.Length];
+                var mainAttributeData = new MemoryList<AttributeIncreaseData>(itemConfigData.buffExtraData.Length);
+                var passiveAttributeData = new MemoryList<RandomAttributeIncreaseData>(itemConfigData.buffExtraData.Length);
                 for (int i = 0; i < attributeData.Length; i++)
                 {
                     var expr = attributeData[i];
                     if (expr is AttributeIncreaseData passiveAttributeIncreaseData)
                     {
-                        mainAttributeData[i] = passiveAttributeIncreaseData;
+                        mainAttributeData.Add(passiveAttributeIncreaseData);
                     }
                     else if (expr is RandomAttributeIncreaseData passiveAttributeIncreaseData2)
                     {
-                        passiveAttributeData[i] = passiveAttributeIncreaseData2;
+                        passiveAttributeData.Add(passiveAttributeIncreaseData2);
                     }
                 }
 
@@ -56,8 +57,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     Price = shopConfigData.price,
                     SellPrice = shopConfigData.sellPrice,
                     Quality = shopConfigData.qualityType,
-                    MainIncreaseDatas = new MemoryList<AttributeIncreaseData>(mainAttributeData),
-                    PassiveIncreaseDatas = new MemoryList<RandomAttributeIncreaseData>(passiveAttributeData),
+                    MainIncreaseDatas = mainAttributeData,
+                    PassiveIncreaseDatas = passiveAttributeData,
                 };
                 shopData[index] = randomShopData;
                 index++;
@@ -187,7 +188,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 return;
             var command = new GoldChangedCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Shop,
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Item,
                     CommandAuthority.Server, CommandExecuteType.Immediate),
                 Gold = -costGold
             };

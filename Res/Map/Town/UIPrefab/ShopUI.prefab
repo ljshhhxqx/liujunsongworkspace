@@ -99,6 +99,7 @@ MonoBehaviour:
   priceText: {fileID: 6454948015238942397}
   quantitySlider: {fileID: 2814490276558899581}
   quantityText: {fileID: 3466746225665533495}
+  nameText: {fileID: 3660766637847213284}
   buyButton: {fileID: 276938974142987623}
 --- !u!1 &499436034858907206
 GameObject:
@@ -3057,7 +3058,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 120540765360509279}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.99999815
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3099,7 +3100,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 4.0365906, y: 0.0009460449}
+  m_AnchoredPosition: {x: 4.0365906, y: 0.000030517578}
   m_SizeDelta: {x: 610.7341, y: 592.1074}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9176825489644218961

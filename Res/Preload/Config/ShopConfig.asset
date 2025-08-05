@@ -26,7 +26,7 @@ MonoBehaviour:
     name: "\u5927\u529B\u836F\u5242\u2160\uFF08\u5C0F\uFF09"
     price: 20
     sellPrice: 15
-    qualityType: 0
+    qualityType: 1
     playerItemType: 3
     maxCount: 5
   - id: 2
@@ -34,7 +34,7 @@ MonoBehaviour:
     name: "\u5927\u529B\u836F\u5242\u2161\uFF08\u5C0F\uFF09"
     price: 30
     sellPrice: 22.5
-    qualityType: 0
+    qualityType: 1
     playerItemType: 3
     maxCount: 5
   - id: 3
@@ -42,7 +42,7 @@ MonoBehaviour:
     name: "\u5927\u529B\u836F\u5242\u2160\uFF08\u4E2D\uFF09"
     price: 40
     sellPrice: 30
-    qualityType: 1
+    qualityType: 2
     playerItemType: 3
     maxCount: 5
   - id: 4
@@ -50,7 +50,7 @@ MonoBehaviour:
     name: "\u5927\u529B\u836F\u5242\u2161\uFF08\u4E2D\uFF09"
     price: 50
     sellPrice: 37.5
-    qualityType: 1
+    qualityType: 2
     playerItemType: 3
     maxCount: 5
   - id: 5
@@ -58,7 +58,7 @@ MonoBehaviour:
     name: "\u5927\u529B\u836F\u5242\u2160\uFF08\u5927\uFF09"
     price: 70
     sellPrice: 52.5
-    qualityType: 2
+    qualityType: 3
     playerItemType: 3
     maxCount: 5
   - id: 6
@@ -66,7 +66,7 @@ MonoBehaviour:
     name: "\u5927\u529B\u836F\u5242\u2161\uFF08\u5927\uFF09"
     price: 100
     sellPrice: 75
-    qualityType: 2
+    qualityType: 3
     playerItemType: 3
     maxCount: 5
   - id: 7
@@ -74,7 +74,7 @@ MonoBehaviour:
     name: "\u8F7B\u76C8\u836F\u5242\u2160\uFF08\u5C0F\uFF09"
     price: 20
     sellPrice: 15
-    qualityType: 0
+    qualityType: 1
     playerItemType: 3
     maxCount: 5
   - id: 8
@@ -82,7 +82,7 @@ MonoBehaviour:
     name: "\u8F7B\u76C8\u836F\u5242\u2161\uFF08\u5C0F\uFF09"
     price: 30
     sellPrice: 22.5
-    qualityType: 0
+    qualityType: 1
     playerItemType: 3
     maxCount: 5
   - id: 9
@@ -90,7 +90,7 @@ MonoBehaviour:
     name: "\u8F7B\u76C8\u836F\u5242\u2160\uFF08\u4E2D\uFF09"
     price: 40
     sellPrice: 30
-    qualityType: 1
+    qualityType: 2
     playerItemType: 3
     maxCount: 5
   - id: 10
@@ -98,7 +98,7 @@ MonoBehaviour:
     name: "\u8F7B\u76C8\u836F\u5242\u2161\uFF08\u4E2D\uFF09"
     price: 50
     sellPrice: 37.5
-    qualityType: 1
+    qualityType: 2
     playerItemType: 3
     maxCount: 5
   - id: 11
@@ -106,7 +106,7 @@ MonoBehaviour:
     name: "\u8F7B\u76C8\u836F\u5242\u2160\uFF08\u5927\uFF09"
     price: 70
     sellPrice: 52.5
-    qualityType: 2
+    qualityType: 3
     playerItemType: 3
     maxCount: 5
   - id: 12
@@ -114,7 +114,7 @@ MonoBehaviour:
     name: "\u8F7B\u76C8\u836F\u5242\u2161\uFF08\u5927\uFF09"
     price: 100
     sellPrice: 75
-    qualityType: 2
+    qualityType: 3
     playerItemType: 3
     maxCount: 5
   - id: 13
@@ -122,7 +122,7 @@ MonoBehaviour:
     name: "\u575A\u97E7\u836F\u5242\u2160\uFF08\u5C0F\uFF09"
     price: 20
     sellPrice: 15
-    qualityType: 0
+    qualityType: 1
     playerItemType: 3
     maxCount: 5
   - id: 14
@@ -130,7 +130,7 @@ MonoBehaviour:
     name: "\u575A\u97E7\u836F\u5242\u2161\uFF08\u5C0F\uFF09"
     price: 30
     sellPrice: 22.5
-    qualityType: 0
+    qualityType: 1
     playerItemType: 3
     maxCount: 5
   - id: 15
@@ -138,7 +138,7 @@ MonoBehaviour:
     name: "\u575A\u97E7\u836F\u5242\u2160\uFF08\u4E2D\uFF09"
     price: 40
     sellPrice: 30
-    qualityType: 1
+    qualityType: 2
     playerItemType: 3
     maxCount: 5
   - id: 16
@@ -146,7 +146,7 @@ MonoBehaviour:
     name: "\u575A\u97E7\u836F\u5242\u2161\uFF08\u4E2D\uFF09"
     price: 50
     sellPrice: 37.5
-    qualityType: 1
+    qualityType: 2
     playerItemType: 3
     maxCount: 5
   - id: 17
@@ -154,7 +154,7 @@ MonoBehaviour:
     name: "\u575A\u97E7\u836F\u5242\u2160\uFF08\u5927\uFF09"
     price: 70
     sellPrice: 52.5
-    qualityType: 2
+    qualityType: 3
     playerItemType: 3
     maxCount: 5
   - id: 18
@@ -162,7 +162,7 @@ MonoBehaviour:
     name: "\u575A\u97E7\u836F\u5242\u2161\uFF08\u5927\uFF09"
     price: 100
     sellPrice: 75
-    qualityType: 2
+    qualityType: 3
     playerItemType: 3
     maxCount: 5
   - id: 19
@@ -170,7 +170,7 @@ MonoBehaviour:
     name: "\u7EED\u822A\u836F\u5242\u2160\uFF08\u5C0F\uFF09"
     price: 20
     sellPrice: 15
-    qualityType: 0
+    qualityType: 1
     playerItemType: 3
     maxCount: 5
   - id: 20
@@ -178,7 +178,7 @@ MonoBehaviour:
     name: "\u7EED\u822A\u836F\u5242\u2161\uFF08\u5C0F\uFF09"
     price: 30
     sellPrice: 22.5
-    qualityType: 0
+    qualityType: 1
     playerItemType: 3
     maxCount: 5
   - id: 21
@@ -186,7 +186,7 @@ MonoBehaviour:
     name: "\u7EED\u822A\u836F\u5242\u2160\uFF08\u4E2D\uFF09"
     price: 40
     sellPrice: 30
-    qualityType: 1
+    qualityType: 2
     playerItemType: 3
     maxCount: 5
   - id: 22
@@ -194,7 +194,7 @@ MonoBehaviour:
     name: "\u7EED\u822A\u836F\u5242\u2161\uFF08\u4E2D\uFF09"
     price: 50
     sellPrice: 37.5
-    qualityType: 1
+    qualityType: 2
     playerItemType: 3
     maxCount: 5
   - id: 23
@@ -202,7 +202,7 @@ MonoBehaviour:
     name: "\u7EED\u822A\u836F\u5242\u2160\uFF08\u5927\uFF09"
     price: 70
     sellPrice: 52.5
-    qualityType: 2
+    qualityType: 3
     playerItemType: 3
     maxCount: 5
   - id: 24
@@ -210,7 +210,7 @@ MonoBehaviour:
     name: "\u7EED\u822A\u836F\u5242\u2161\uFF08\u5927\uFF09"
     price: 100
     sellPrice: 75
-    qualityType: 2
+    qualityType: 3
     playerItemType: 3
     maxCount: 5
   - id: 25
@@ -218,7 +218,7 @@ MonoBehaviour:
     name: "\u8D2A\u8D22\u836F\u5242(\u5C0F)"
     price: 25
     sellPrice: 18.75
-    qualityType: 0
+    qualityType: 1
     playerItemType: 3
     maxCount: 5
   - id: 26
@@ -226,7 +226,7 @@ MonoBehaviour:
     name: "\u8D2A\u8D22\u836F\u5242(\u4E2D)"
     price: 60
     sellPrice: 45
-    qualityType: 1
+    qualityType: 2
     playerItemType: 3
     maxCount: 5
   - id: 27
@@ -234,7 +234,7 @@ MonoBehaviour:
     name: "\u8D2A\u8D22\u836F\u5242(\u5927)"
     price: 150
     sellPrice: 112.5
-    qualityType: 2
+    qualityType: 3
     playerItemType: 3
     maxCount: 5
   - id: 28
@@ -242,7 +242,7 @@ MonoBehaviour:
     name: "\u98DE\u5347\u836F\u5242(\u5C0F)"
     price: 25
     sellPrice: 18.75
-    qualityType: 0
+    qualityType: 1
     playerItemType: 3
     maxCount: 5
   - id: 29
@@ -250,7 +250,7 @@ MonoBehaviour:
     name: "\u98DE\u5347\u836F\u5242(\u4E2D)"
     price: 60
     sellPrice: 45
-    qualityType: 1
+    qualityType: 2
     playerItemType: 3
     maxCount: 5
   - id: 30
@@ -258,7 +258,7 @@ MonoBehaviour:
     name: "\u98DE\u5347\u836F\u5242(\u5927)"
     price: 150
     sellPrice: 112.5
-    qualityType: 2
+    qualityType: 3
     playerItemType: 3
     maxCount: 5
   - id: 31
@@ -266,7 +266,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52511"
     price: 50
     sellPrice: 30
-    qualityType: 0
+    qualityType: 1
     playerItemType: 1
     maxCount: 1
   - id: 32
@@ -274,7 +274,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52511"
     price: 100
     sellPrice: 60
-    qualityType: 1
+    qualityType: 2
     playerItemType: 1
     maxCount: 1
   - id: 33
@@ -282,7 +282,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52511"
     price: 300
     sellPrice: 180
-    qualityType: 2
+    qualityType: 3
     playerItemType: 1
     maxCount: 1
   - id: 34
@@ -290,7 +290,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52512"
     price: 50
     sellPrice: 30
-    qualityType: 0
+    qualityType: 1
     playerItemType: 1
     maxCount: 1
   - id: 35
@@ -298,7 +298,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52512"
     price: 100
     sellPrice: 60
-    qualityType: 1
+    qualityType: 2
     playerItemType: 1
     maxCount: 1
   - id: 36
@@ -306,7 +306,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52512"
     price: 300
     sellPrice: 180
-    qualityType: 2
+    qualityType: 3
     playerItemType: 1
     maxCount: 1
   - id: 37
@@ -314,7 +314,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52513"
     price: 50
     sellPrice: 30
-    qualityType: 0
+    qualityType: 1
     playerItemType: 1
     maxCount: 1
   - id: 38
@@ -322,7 +322,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52513"
     price: 100
     sellPrice: 60
-    qualityType: 1
+    qualityType: 2
     playerItemType: 1
     maxCount: 1
   - id: 39
@@ -330,7 +330,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52513"
     price: 300
     sellPrice: 180
-    qualityType: 2
+    qualityType: 3
     playerItemType: 1
     maxCount: 1
   - id: 40
@@ -338,7 +338,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52514"
     price: 50
     sellPrice: 30
-    qualityType: 0
+    qualityType: 1
     playerItemType: 1
     maxCount: 1
   - id: 41
@@ -346,7 +346,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52514"
     price: 100
     sellPrice: 60
-    qualityType: 1
+    qualityType: 2
     playerItemType: 1
     maxCount: 1
   - id: 42
@@ -354,7 +354,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52514"
     price: 300
     sellPrice: 180
-    qualityType: 2
+    qualityType: 3
     playerItemType: 1
     maxCount: 1
   - id: 43
@@ -362,7 +362,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52515"
     price: 50
     sellPrice: 30
-    qualityType: 0
+    qualityType: 1
     playerItemType: 1
     maxCount: 1
   - id: 44
@@ -370,7 +370,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52515"
     price: 100
     sellPrice: 60
-    qualityType: 1
+    qualityType: 2
     playerItemType: 1
     maxCount: 1
   - id: 45
@@ -378,7 +378,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52515"
     price: 300
     sellPrice: 180
-    qualityType: 2
+    qualityType: 3
     playerItemType: 1
     maxCount: 1
   - id: 46
@@ -386,7 +386,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52515"
     price: 300
     sellPrice: 180
-    qualityType: 2
+    qualityType: 3
     playerItemType: 1
     maxCount: 1
   - id: 47
@@ -394,7 +394,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52516"
     price: 50
     sellPrice: 30
-    qualityType: 0
+    qualityType: 1
     playerItemType: 1
     maxCount: 1
   - id: 48
@@ -402,7 +402,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52516"
     price: 100
     sellPrice: 60
-    qualityType: 1
+    qualityType: 2
     playerItemType: 1
     maxCount: 1
   - id: 49
@@ -410,7 +410,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52516"
     price: 300
     sellPrice: 180
-    qualityType: 2
+    qualityType: 3
     playerItemType: 1
     maxCount: 1
   - id: 50
@@ -418,7 +418,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52517"
     price: 50
     sellPrice: 30
-    qualityType: 0
+    qualityType: 1
     playerItemType: 1
     maxCount: 1
   - id: 51
@@ -426,7 +426,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52517"
     price: 100
     sellPrice: 60
-    qualityType: 1
+    qualityType: 2
     playerItemType: 1
     maxCount: 1
   - id: 52
@@ -434,7 +434,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52517"
     price: 300
     sellPrice: 180
-    qualityType: 2
+    qualityType: 3
     playerItemType: 1
     maxCount: 1
   - id: 53
@@ -442,7 +442,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52518"
     price: 50
     sellPrice: 30
-    qualityType: 0
+    qualityType: 1
     playerItemType: 1
     maxCount: 1
   - id: 54
@@ -450,7 +450,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52518"
     price: 100
     sellPrice: 60
-    qualityType: 1
+    qualityType: 2
     playerItemType: 1
     maxCount: 1
   - id: 55
@@ -458,7 +458,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52518"
     price: 300
     sellPrice: 180
-    qualityType: 2
+    qualityType: 3
     playerItemType: 1
     maxCount: 1
   - id: 56
@@ -466,7 +466,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52519"
     price: 50
     sellPrice: 30
-    qualityType: 0
+    qualityType: 1
     playerItemType: 1
     maxCount: 1
   - id: 57
@@ -474,7 +474,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52519"
     price: 100
     sellPrice: 60
-    qualityType: 1
+    qualityType: 2
     playerItemType: 1
     maxCount: 1
   - id: 58
@@ -482,7 +482,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52519"
     price: 100
     sellPrice: 60
-    qualityType: 1
+    qualityType: 2
     playerItemType: 1
     maxCount: 1
   - id: 59
@@ -490,7 +490,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52519"
     price: 300
     sellPrice: 180
-    qualityType: 2
+    qualityType: 3
     playerItemType: 1
     maxCount: 1
   - id: 60
@@ -498,7 +498,7 @@ MonoBehaviour:
     name: "\u5355\u624B\u52519"
     price: 300
     sellPrice: 180
-    qualityType: 2
+    qualityType: 3
     playerItemType: 1
     maxCount: 1
   - id: 61
@@ -506,7 +506,7 @@ MonoBehaviour:
     name: "\u4E0A\u88631"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 62
@@ -514,7 +514,7 @@ MonoBehaviour:
     name: "\u4E0A\u88632"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 63
@@ -522,7 +522,7 @@ MonoBehaviour:
     name: "\u4E0A\u88633"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 64
@@ -530,7 +530,7 @@ MonoBehaviour:
     name: "\u4E0A\u88634"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 65
@@ -538,7 +538,7 @@ MonoBehaviour:
     name: "\u4E0A\u88635"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 66
@@ -546,7 +546,7 @@ MonoBehaviour:
     name: "\u4E0A\u88631"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 67
@@ -554,7 +554,7 @@ MonoBehaviour:
     name: "\u4E0A\u88632"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 68
@@ -562,7 +562,7 @@ MonoBehaviour:
     name: "\u4E0A\u88633"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 69
@@ -570,7 +570,7 @@ MonoBehaviour:
     name: "\u4E0A\u88634"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 70
@@ -578,7 +578,7 @@ MonoBehaviour:
     name: "\u4E0A\u88635"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 71
@@ -586,7 +586,7 @@ MonoBehaviour:
     name: "\u4E0A\u88631"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 72
@@ -594,7 +594,7 @@ MonoBehaviour:
     name: "\u4E0A\u88632"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 73
@@ -602,7 +602,7 @@ MonoBehaviour:
     name: "\u4E0A\u88633"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 74
@@ -610,7 +610,7 @@ MonoBehaviour:
     name: "\u4E0A\u88634"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 75
@@ -618,7 +618,7 @@ MonoBehaviour:
     name: "\u4E0A\u88635"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 76
@@ -626,7 +626,7 @@ MonoBehaviour:
     name: "\u978B\u5B501"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 77
@@ -634,7 +634,7 @@ MonoBehaviour:
     name: "\u978B\u5B502"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 78
@@ -642,7 +642,7 @@ MonoBehaviour:
     name: "\u978B\u5B503"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 79
@@ -650,7 +650,7 @@ MonoBehaviour:
     name: "\u978B\u5B504"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 80
@@ -658,7 +658,7 @@ MonoBehaviour:
     name: "\u978B\u5B505"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 81
@@ -666,7 +666,7 @@ MonoBehaviour:
     name: "\u978B\u5B501"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 82
@@ -674,7 +674,7 @@ MonoBehaviour:
     name: "\u978B\u5B502"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 83
@@ -682,7 +682,7 @@ MonoBehaviour:
     name: "\u978B\u5B503"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 84
@@ -690,7 +690,7 @@ MonoBehaviour:
     name: "\u978B\u5B504"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 85
@@ -698,7 +698,7 @@ MonoBehaviour:
     name: "\u978B\u5B505"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 86
@@ -706,7 +706,7 @@ MonoBehaviour:
     name: "\u978B\u5B501"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 87
@@ -714,7 +714,7 @@ MonoBehaviour:
     name: "\u978B\u5B502"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 88
@@ -722,7 +722,7 @@ MonoBehaviour:
     name: "\u978B\u5B503"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 89
@@ -730,7 +730,7 @@ MonoBehaviour:
     name: "\u978B\u5B504"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 90
@@ -738,7 +738,7 @@ MonoBehaviour:
     name: "\u978B\u5B505"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 91
@@ -746,7 +746,7 @@ MonoBehaviour:
     name: "\u88E4\u5B501"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 92
@@ -754,7 +754,7 @@ MonoBehaviour:
     name: "\u88E4\u5B502"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 93
@@ -762,7 +762,7 @@ MonoBehaviour:
     name: "\u88E4\u5B503"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 94
@@ -770,7 +770,7 @@ MonoBehaviour:
     name: "\u88E4\u5B504"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 95
@@ -778,7 +778,7 @@ MonoBehaviour:
     name: "\u88E4\u5B505"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 96
@@ -786,7 +786,7 @@ MonoBehaviour:
     name: "\u88E4\u5B501"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 97
@@ -794,7 +794,7 @@ MonoBehaviour:
     name: "\u88E4\u5B502"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 98
@@ -802,7 +802,7 @@ MonoBehaviour:
     name: "\u88E4\u5B503"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 99
@@ -810,7 +810,7 @@ MonoBehaviour:
     name: "\u88E4\u5B504"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 100
@@ -818,7 +818,7 @@ MonoBehaviour:
     name: "\u88E4\u5B505"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 101
@@ -826,7 +826,7 @@ MonoBehaviour:
     name: "\u88E4\u5B501"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 102
@@ -834,7 +834,7 @@ MonoBehaviour:
     name: "\u88E4\u5B502"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 103
@@ -842,7 +842,7 @@ MonoBehaviour:
     name: "\u88E4\u5B503"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 104
@@ -850,7 +850,7 @@ MonoBehaviour:
     name: "\u88E4\u5B504"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 105
@@ -858,7 +858,7 @@ MonoBehaviour:
     name: "\u88E4\u5B505"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 106
@@ -866,7 +866,7 @@ MonoBehaviour:
     name: "\u5934\u76D41"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 107
@@ -874,7 +874,7 @@ MonoBehaviour:
     name: "\u5934\u76D42"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 108
@@ -882,7 +882,7 @@ MonoBehaviour:
     name: "\u5934\u76D43"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 109
@@ -890,7 +890,7 @@ MonoBehaviour:
     name: "\u5934\u76D44"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 110
@@ -898,7 +898,7 @@ MonoBehaviour:
     name: "\u5934\u76D45"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 111
@@ -906,7 +906,7 @@ MonoBehaviour:
     name: "\u5934\u76D41"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 112
@@ -914,7 +914,7 @@ MonoBehaviour:
     name: "\u5934\u76D42"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 113
@@ -922,7 +922,7 @@ MonoBehaviour:
     name: "\u5934\u76D43"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 114
@@ -930,7 +930,7 @@ MonoBehaviour:
     name: "\u5934\u76D44"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 115
@@ -938,7 +938,7 @@ MonoBehaviour:
     name: "\u5934\u76D45"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 116
@@ -946,7 +946,7 @@ MonoBehaviour:
     name: "\u5934\u76D41"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 117
@@ -954,7 +954,7 @@ MonoBehaviour:
     name: "\u5934\u76D42"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 118
@@ -962,7 +962,7 @@ MonoBehaviour:
     name: "\u5934\u76D43"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 119
@@ -970,7 +970,7 @@ MonoBehaviour:
     name: "\u5934\u76D44"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 120
@@ -978,7 +978,7 @@ MonoBehaviour:
     name: "\u5934\u76D45"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 121
@@ -986,7 +986,7 @@ MonoBehaviour:
     name: "\u8170\u5E261"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 122
@@ -994,7 +994,7 @@ MonoBehaviour:
     name: "\u8170\u5E262"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 123
@@ -1002,7 +1002,7 @@ MonoBehaviour:
     name: "\u8170\u5E263"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 124
@@ -1010,7 +1010,7 @@ MonoBehaviour:
     name: "\u8170\u5E264"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 125
@@ -1018,7 +1018,7 @@ MonoBehaviour:
     name: "\u8170\u5E265"
     price: 10
     sellPrice: 6
-    qualityType: 0
+    qualityType: 1
     playerItemType: 2
     maxCount: 1
   - id: 126
@@ -1026,7 +1026,7 @@ MonoBehaviour:
     name: "\u8170\u5E261"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 127
@@ -1034,7 +1034,7 @@ MonoBehaviour:
     name: "\u8170\u5E262"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 128
@@ -1042,7 +1042,7 @@ MonoBehaviour:
     name: "\u8170\u5E263"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 129
@@ -1050,7 +1050,7 @@ MonoBehaviour:
     name: "\u8170\u5E264"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 130
@@ -1058,7 +1058,7 @@ MonoBehaviour:
     name: "\u8170\u5E265"
     price: 25
     sellPrice: 15
-    qualityType: 1
+    qualityType: 2
     playerItemType: 2
     maxCount: 1
   - id: 131
@@ -1066,7 +1066,7 @@ MonoBehaviour:
     name: "\u8170\u5E261"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 132
@@ -1074,7 +1074,7 @@ MonoBehaviour:
     name: "\u8170\u5E262"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 133
@@ -1082,7 +1082,7 @@ MonoBehaviour:
     name: "\u8170\u5E263"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 134
@@ -1090,7 +1090,7 @@ MonoBehaviour:
     name: "\u8170\u5E264"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   - id: 135
@@ -1098,10 +1098,10 @@ MonoBehaviour:
     name: "\u8170\u5E265"
     price: 100
     sellPrice: 60
-    qualityType: 2
+    qualityType: 3
     playerItemType: 2
     maxCount: 1
   shopConstantData:
     onceEachTypeCount: 2
-    onceCostGold: 0
+    onceCostGold: 25
     shopEquipPassiveDescription: 

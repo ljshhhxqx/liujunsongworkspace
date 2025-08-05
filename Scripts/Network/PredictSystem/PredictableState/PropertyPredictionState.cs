@@ -237,15 +237,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _subjectedStateType = predictablePropertyState.SubjectedState;
             OnStateChanged?.Invoke(predictablePropertyState.SubjectedState);
             var goldData = ObjectPoolManager<ValuePropertyData>.Instance.Get(15);
+            var uiPropertyData = UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_propertyBindKey);
             foreach (var kvp in predictablePropertyState.MemoryProperty)
             {
                 var property = kvp.Value;
                 //Debug.Log($"PropertyChanged {kvp}: {property.CurrentValue} {property.MaxCurrentValue}");
-                if (!_uiPropertyData.ContainsKey((int)kvp.Key))
-                {
-                    _uiPropertyData.Add((int)kvp.Key, new PropertyItemData());
-                }
-                var data = _uiPropertyData[(int)kvp.Key];
+                uiPropertyData.TryGetValue((int)kvp.Key, out var data);
                 switch (kvp.Key)
                 {
                     case PropertyTypeEnum.Gold:
@@ -282,15 +279,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 if (property.IsResourceProperty())
                 {
                     OnPropertyChanged?.Invoke(kvp.Key, property);
-                    data.CurrentProperty = property.CurrentValue;
-                    data.MaxProperty = property.MaxCurrentValue;
-                    _uiPropertyData[(int)kvp.Key] = data;
+                    if (data.PropertyType != PropertyTypeEnum.None)
+                    {
+                        data.CurrentProperty = property.CurrentValue;
+                        data.MaxProperty = property.MaxCurrentValue;
+                    
+                        uiPropertyData[(int)kvp.Key] = data;
+                    }
                     continue;
                 }
                 
                 OnPropertyChanged?.Invoke(kvp.Key, property);
-                data.CurrentProperty = property.CurrentValue;
-                _uiPropertyData[(int)kvp.Key] = data;
+                if (data.PropertyType != PropertyTypeEnum.None)
+                {
+                    data.CurrentProperty = property.CurrentValue;
+                    uiPropertyData[(int)kvp.Key] = data;
+                }
                 if (kvp.Key == PropertyTypeEnum.AttackSpeed)
                 {
                     PlayerComponentController.SetAnimatorSpeed(AnimationState.Attack, property.CurrentValue);

@@ -1,4 +1,5 @@
-﻿using HotUpdate.Scripts.Common;
+﻿using System.Collections.Generic;
+using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
@@ -10,6 +11,7 @@ using HotUpdate.Scripts.Tool.Static;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using MemoryPack;
 using UniRx;
+using UnityEngine;
 using VContainer;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
@@ -31,6 +33,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _itemConfig = configProvider.GetConfig<ItemConfig>();
             _bindKey = new BindingKey(UIPropertyDefine.ShopItem);
             _bagBindKey = new BindingKey(UIPropertyDefine.BagItem);
+            if (CurrentState is not PlayerShopState playerShopState)
+            {
+                return;
+            }
+            OnPlayerShopStateChanged(playerShopState);
         }
         
         public void SetPlayerShopState(PlayerShopState state)
@@ -72,9 +79,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                return;
             CurrentState = playerShopState;
             var shopItems = UIPropertyBinder.GetReactiveDictionary<RandomShopItemData>(_bindKey);
-            foreach (var key in playerShopState.RandomShopItems.Keys)
+            foreach (var kvp in playerShopState.RandomShopItems)
             {
-                var item = playerShopState.RandomShopItems[key];
+                var item = kvp.Value;
                 var shopConfigData = _shopConfig.GetShopConfigData(item.ShopConfigId);
                 var itemConfigData = _itemConfig.GetGameItemData(item.ItemConfigId);
                 var mainProperty = GameStaticExtensions.GetBuffEffectDesc(item.MainIncreaseDatas.Items);
@@ -98,7 +105,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     ? _shopConfig.GetShopConstantData().shopEquipPassiveDescription
                     : ""; 
                 randomShopData.OnBuyItem = OnBuyItem;
-                shopItems[key] = randomShopData;
+                Debug.Log($"Add item {item.ItemConfigId} {item.ShopConfigId} {shopConfigData.name} {item.ItemType} to shop");
+                shopItems.TryAdd(kvp.Key, randomShopData);
             }
         }
 

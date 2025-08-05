@@ -88,6 +88,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     header.buffOperationType = BuffOperationType.Add;
                     var data = new AttributeIncreaseData();
                     data.header = header;
+                    if (constantBuff.increaseDataList == null || constantBuff.increaseDataList.Count == 0)
+                    {
+                        Debug.LogError($"Constant buff {buffExtraData.buffId} increase data list is null or empty");
+                        return data;
+                    }
                     data.increaseValue = constantBuff.increaseDataList[0].increaseValue;
                     return data;
                 case BuffType.Random:
@@ -98,6 +103,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     header2.buffOperationType = BuffOperationType.Add;
                     var data2 = new RandomAttributeIncreaseData();
                     data2.header = header2;
+                    if (randomBuff.increaseDataList == null || randomBuff.increaseDataList.Count == 0)
+                    {
+                        Debug.LogError($"randomBuff buff {buffExtraData.buffId}  increase data list is null or empty");
+                        return data2;
+                    }
                     data2.increaseValueRange = randomBuff.increaseDataList[0].increaseValueRange;
                     return data2;
                 default:

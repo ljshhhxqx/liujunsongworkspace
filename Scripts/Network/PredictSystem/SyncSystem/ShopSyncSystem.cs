@@ -43,7 +43,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             state.RandomShopItems = new MemoryDictionary<int, ShopItemData>();
             for (int i = 0; i < randomItems.Length; i++)
             {
-                state.RandomShopItems.Add(i, randomItems[i]);
+                state.RandomShopItems.Add(randomItems[i].ShopId, randomItems[i]);
             }
             playerPredictableState.SetPlayerShopState(state);
             PropertyStates[connectionId] = state;

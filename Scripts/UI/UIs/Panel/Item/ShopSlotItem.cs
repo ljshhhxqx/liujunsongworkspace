@@ -19,6 +19,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         [SerializeField] private TextMeshProUGUI priceText;
         [SerializeField] private Slider quantitySlider;
         [SerializeField] private TextMeshProUGUI quantityText;
+        [SerializeField] private TextMeshProUGUI nameText;
         [SerializeField] private Button buyButton;
         private RandomShopItemData _shopItemData;
         private Subject<int> _onBuySubject = new Subject<int>();
@@ -46,6 +47,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                     .AddTo(_disposable);
         
                 icon.sprite = shopItemData.Icon;
+                nameText.text = shopItemData.Name;
+                Debug.Log($"[ShopSlotItem] SetData {_shopItemData.Name}");
                 qualityFrame.sprite = shopItemData.QualityIcon;
                 quantitySlider.maxValue = shopItemData.RemainingCount;
                 quantitySlider.minValue = 1;

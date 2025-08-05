@@ -234,13 +234,13 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             if (preShopIds != null)
             {
                 items = shopConfigData
-                    .Where(d => source.Contains(d.itemId) && d.playerItemType == type && preShopIds.Contains(d.itemId))
+                    .Where(d => source.Contains(d.id) && d.playerItemType == type && !preShopIds.Contains(d.id))
                     .ToList();
             }
             else
             {
                 items = shopConfigData
-                    .Where(d => source.Contains(d.itemId) && d.playerItemType == type)
+                    .Where(d => source.Contains(d.id) && d.playerItemType == type)
                     .ToList();
             }
 

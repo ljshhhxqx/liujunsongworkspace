@@ -283,12 +283,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                                     return;
                                 }
 
-                                if (_reactivePropertyBinds.TryGetValue(typeof(BagItemData), out var isBagBind) && isBagBind)
-                                {
-                                    return;
-                                }
+                                // if (_reactivePropertyBinds.TryGetValue(typeof(BagItemData), out var isBagBind) && isBagBind)
+                                // {
+                                //     return;
+                                // }
                                 
-                                _reactivePropertyBinds.Add(typeof(BagItemData), true);
+                                //_reactivePropertyBinds.Add(typeof(BagItemData), true);
                                 bagItemOverlay.BindBagItemData(UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey));
                                 bagItemOverlay.BindEquipItemData(UIPropertyBinder.GetReactiveDictionary<EquipItemData>(_equipBindKey));
                                 break;
@@ -299,10 +299,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                                     return;
                                 }
 
-                                if (_reactivePropertyBinds.TryGetValue(typeof(RandomShopItemData), out var isShopBind) && isShopBind)
-                                {
-                                    return;
-                                }
+                                // if (_reactivePropertyBinds.TryGetValue(typeof(RandomShopItemData), out var isShopBind) && isShopBind)
+                                // {
+                                //     return;
+                                // }
                                 shopScreenUI.BindShopItemData(UIPropertyBinder.GetReactiveDictionary<RandomShopItemData>(_shopBindKey));
                                 shopScreenUI.BindBagItemData(UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey));
                                 shopScreenUI.BindPlayerGold(UIPropertyBinder.ObserveProperty<ValuePropertyData>(_propertyBindKey));
@@ -315,13 +315,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                                     };
                                     _gameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(refreshCommand).Item1);
                                 }).AddTo(shopScreenUI.gameObject);
-                                _reactivePropertyBinds.Add(typeof(RandomShopItemData), true);
-                                var refreshCommand = new RefreshShopCommand
-                                {
-                                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Shop, CommandAuthority.Client
-                                    ),
-                                };
-                                _gameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(refreshCommand).Item1);
+                                //_reactivePropertyBinds.Add(typeof(RandomShopItemData), true);
+                                // var refreshCommand = new RefreshShopCommand
+                                // {
+                                //     Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Shop, CommandAuthority.Client
+                                //     ),
+                                // };
+                                // _gameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(refreshCommand).Item1);
                                 break;
                             default:
                                 throw new ArgumentOutOfRangeException();
