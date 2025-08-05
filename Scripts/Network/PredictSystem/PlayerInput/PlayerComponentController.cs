@@ -316,6 +316,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                                     _gameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(refreshCommand).Item1);
                                 }).AddTo(shopScreenUI.gameObject);
                                 _reactivePropertyBinds.Add(typeof(RandomShopItemData), true);
+                                var refreshCommand = new RefreshShopCommand
+                                {
+                                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Shop, CommandAuthority.Client
+                                    ),
+                                };
+                                _gameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(refreshCommand).Item1);
                                 break;
                             default:
                                 throw new ArgumentOutOfRangeException();
