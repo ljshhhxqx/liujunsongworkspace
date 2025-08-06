@@ -141,6 +141,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             for (int i = 0; i < playerEquipmentState.EquipmentDatas.Count; i++)
             {
                 var data = playerEquipmentState.EquipmentDatas[i];
+                Debug.Log($"Start DeserializeBattleChecker for trigger {triggerType}");
                 var checker = NetworkCommandExtensions.DeserializeBattleChecker(data.ConditionCheckerBytes.Items);
                 if (checker.GetConditionCheckerHeader().TriggerType != triggerType)
                 {

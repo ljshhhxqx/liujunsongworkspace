@@ -148,6 +148,20 @@ namespace HotUpdate.Scripts.Tool.Static
             attributeIncreaseData.header = header;
             return GetBuffEffectDesc(attributeIncreaseData);
         }
+        public static string GetBuffEffectDesc(List<AttributeIncreaseData> extraDatas)
+        {
+            if (extraDatas == null || extraDatas.Count == 0)
+            {
+                return null;
+            }
+            var str = new StringBuilder();
+            foreach (var data in extraDatas)
+            {
+                str.Append(GetBuffEffectDesc(data));
+                str.Append("\\n");
+            }
+            return str.ToString().TrimEnd('\n');
+        }
 
         public static string GetBuffEffectDesc(AttributeIncreaseData[] extraDatas)
         {
@@ -176,6 +190,21 @@ namespace HotUpdate.Scripts.Tool.Static
                 str.Append(GetRandomBuffEffectDesc(data));
                 str.Append("\\n");
             }   
+            return str.ToString().TrimEnd('\n');
+        }
+        
+        public static string GetRandomBuffEffectDesc(List<RandomAttributeIncreaseData> extraDatas)
+        {
+            if (extraDatas == null || extraDatas.Count == 0)
+            {
+                return null;
+            }
+            var str = new StringBuilder();
+            foreach (var data in extraDatas)
+            {
+                str.Append(GetRandomBuffEffectDesc(data));
+                str.Append("\\n");
+            }
             return str.ToString().TrimEnd('\n');
         }
 

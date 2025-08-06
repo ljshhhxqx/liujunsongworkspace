@@ -58,6 +58,7 @@ namespace HotUpdate.Scripts.Collector
         private ConstantBuffConfig _constantBuffConfig;
         private RandomBuffConfig _randomBuffConfig;
         private ShopConfig _shopConfig;
+        private ItemConfig _itemConfig;
         private GameLoopController _gameLoopController;
         private GameSyncManager _gameSyncManager;
         
@@ -85,6 +86,7 @@ namespace HotUpdate.Scripts.Collector
             _jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
             _gameMapInjector = gameMapInjector;
             _gameSyncManager = gameSyncManager;
+            _itemConfig = _configProvider.GetConfig<ItemConfig>();
             _messageCenter = messageCenter;
             gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnGameSceneResourcesLoadedLoaded);
             _collectObjectDataConfig = _configProvider.GetConfig<CollectObjectDataConfig>();
@@ -214,7 +216,14 @@ namespace HotUpdate.Scripts.Collector
                              Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Item),
                              Items = list,
                          });
-                         Debug.Log($"Player {player.name} pick up chest {chestData.ChestConfigId}");
+                         StringBuilder sb = new StringBuilder();
+                         sb.AppendLine($"Player {player.name} pick up chest {chestData.ChestConfigId}");
+                         foreach (var item in extraItems)
+                         {
+                             var itemConfig = _itemConfig.GetGameItemData(item);
+                             sb.AppendLine($"Get item config id {item}-{itemConfig.name}-{itemConfig.desc}");
+                         }
+                         Debug.Log(sb.ToString());
                          RpcPickupChest(pickerId, itemId);
                     }
                     else
@@ -589,7 +598,7 @@ namespace HotUpdate.Scripts.Collector
                             identity = go.GetComponent<NetworkIdentity>();
                         }
                         go.transform.position = item.Item2;
-                        Debug.Log($"Spawning item {item.Item1} at position: {item.Item2} with id: {identity.netId}, real position: {go.transform.position}");
+                        //Debug.Log($"Spawning item {item.Item1} at position: {item.Item2} with id: {identity.netId}, real position: {go.transform.position}");
 
                         var buffData = GetBuffExtraData(item.Item1);
                         var buff = _randomBuffConfig.GetRandomBuffData(buffData.buffId);
@@ -611,10 +620,10 @@ namespace HotUpdate.Scripts.Collector
                         itemMetaData = itemMetaData.SetCustomData(extraData);
                         itemInfo = MemoryPackSerializer.Serialize(itemMetaData);
                         _serverItemMap.Add(identity.netId, itemInfo);
-                        Debug.Log($"[SpawnManyItems] Adding item to map with id: {identity.netId}");
+                        //Debug.Log($"[SpawnManyItems] Adding item to map with id: {identity.netId}");
                         await UniTask.Yield();
                     }
-                    Debug.Log($"Calculated {spawnedCount} spawn positions");
+                    //Debug.Log($"Calculated {spawnedCount} spawn positions");
                 }
 
                 // foreach (var iKey in _serverItemMap.Keys)

@@ -324,6 +324,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public static void AddPlayerItems(ItemsCommandData itemsData, NetworkCommandHeader header,
             ref PlayerItemState playerItemState)
         {
+            if (!Constant.IsServer)
+                return;
             var itemConfigData = Constant.ItemConfig.GetGameItemData(itemsData.ItemConfigId);
             var bagItem = ObjectPool<PlayerBagItem>.Get();
             try
@@ -337,8 +339,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 bagItem.IndexSlot = -1;
                 bagItem.EquipmentPart = itemConfigData.equipmentPart;
                 PlayerItemState.TryAddAndEquipItem(ref playerItemState, bagItem, out var isEquipped, out var indexSlot);
-                if (!Constant.IsServer)
-                    return;
                 var gameItemData = new GameItemData
                 {
                     ItemId = itemsData.ItemUniqueId[0],
@@ -380,25 +380,70 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
         }
 
+        private static bool NeedCheck(PlayerBagSlotItem playerBagSlotItem, GameItemConfigData itemConfigData)
+        {
+            if (playerBagSlotItem.PlayerItemType == PlayerItemType.Consume)
+            {
+                if (itemConfigData.buffExtraData.All(b => b.buffType == BuffType.Random) && (playerBagSlotItem.RandomIncreaseDatas == null || playerBagSlotItem.RandomIncreaseDatas.Count == 0))
+                {
+                    return true;
+                }
+
+                if (itemConfigData.buffExtraData.All(b => b.buffType == BuffType.Constant) && (playerBagSlotItem.MainIncreaseDatas == null || playerBagSlotItem.MainIncreaseDatas.Count == 0))
+                {
+                    return true;
+                }
+            }
+
+            if (playerBagSlotItem.PlayerItemType.IsEquipment())
+            {
+                if (playerBagSlotItem.MainIncreaseDatas == null || playerBagSlotItem.MainIncreaseDatas.Count == 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private static void CheckAndAddBagAttributes(ref PlayerItemState playerItemState, GameItemConfigData itemConfigData)
         {
             foreach (var kvp in playerItemState.PlayerItemConfigIdSlotDictionary)
             {
                 var bagItem = kvp.Value;
-                var attributeData = GetAttributeIncreaseDatas(itemConfigData.buffExtraData);
-                var mainAttributeData = new AttributeIncreaseData[attributeData.Length];
-                var passiveAttributeData = new RandomAttributeIncreaseData[attributeData.Length];
-                if (bagItem.MainIncreaseDatas == null || bagItem.MainIncreaseDatas.Count == 0)
+                if (!NeedCheck(bagItem, itemConfigData))
                 {
-                    bagItem.MainIncreaseDatas = new MemoryList<AttributeIncreaseData>(mainAttributeData);
+                    continue;
+                }
+                var attributeData = GetAttributeIncreaseDatas(itemConfigData.buffExtraData);
+                if (itemConfigData.itemType.IsEquipment() && (bagItem.MainIncreaseDatas == null || bagItem.MainIncreaseDatas.Count == 0))
+                {
+                    var memoryList = new MemoryList<AttributeIncreaseData>(attributeData.Length);
+                    for (int i = 0; i < attributeData.Length; i++)
+                    {
+                        var attribute = attributeData[i];
+                        if (attribute is AttributeIncreaseData attributeIncreaseData)
+                        {
+                            memoryList.Add(attributeIncreaseData);
+                        }
+                    }
+                    bagItem.MainIncreaseDatas = memoryList;
                 }
                 
                 if (itemConfigData.itemType == PlayerItemType.Consume && (bagItem.RandomIncreaseDatas == null || bagItem.RandomIncreaseDatas.Count == 0))
                 {
-                    bagItem.RandomIncreaseDatas = new MemoryList<RandomAttributeIncreaseData>(passiveAttributeData);
+                    var memoryList = new MemoryList<RandomAttributeIncreaseData>(attributeData.Length);
+                    for (int i = 0; i < attributeData.Length; i++)
+                    {
+                        var attribute = attributeData[i];
+                        if (attribute is RandomAttributeIncreaseData randomAttributeIncreaseData)
+                        {
+                            memoryList.Add(randomAttributeIncreaseData);
+                        }
+                    }
+                    bagItem.RandomIncreaseDatas = memoryList;
                 }
 
-                if (itemConfigData.itemType.IsEquipment() && (bagItem.PassiveAttributeIncreaseDatas == null || bagItem.PassiveAttributeIncreaseDatas.Count == 0))
+                if (bagItem.PassiveAttributeIncreaseDatas == null || bagItem.PassiveAttributeIncreaseDatas.Count == 0)
                 {
                     var configId = GetEquipmentConfigId(bagItem.PlayerItemType, bagItem.ConfigId);
                     int battleEffectConfigId;
@@ -416,16 +461,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     var conditionConfig = Constant.ConditionConfig.GetConditionData(battleEffectConfigId);
                     var buffIncreaseTypes = Enum.GetValues(typeof(BuffIncreaseType)).Cast<BuffIncreaseType>().ToArray();
                     var increaseType = buffIncreaseTypes.RandomSelect();
-                    while (increaseType == BuffIncreaseType.None || increaseType == BuffIncreaseType.Current || increaseType == BuffIncreaseType.Max)
+                    while (increaseType is BuffIncreaseType.None or BuffIncreaseType.Current or BuffIncreaseType.Max)
                     {
                         increaseType = buffIncreaseTypes.RandomSelect();
                     }
                     var equipmentBuff = Constant.RandomBuffConfig.GetEquipmentBuff(increaseType);
                     var attribute = Constant.RandomBuffConfig.GetBuff(equipmentBuff, conditionConfig.buffWeight);
+                    var memoryList = new MemoryList<AttributeIncreaseData>(attribute.increaseDataList.Count);
                     bagItem.PassiveAttributeIncreaseDatas = new MemoryList<AttributeIncreaseData>(attribute.increaseDataList.Count);
                     for (int i = 0; i < attribute.increaseDataList.Count; i++)
                     {
-                        bagItem.PassiveAttributeIncreaseDatas.Add(new AttributeIncreaseData
+                        memoryList.Add(new AttributeIncreaseData
                         {
                             header = new AttributeIncreaseDataHeader
                             {
@@ -436,6 +482,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                             increaseValue = attribute.increaseDataList[i].increaseValue
                         });
                     }
+                    bagItem.PassiveAttributeIncreaseDatas = memoryList;
                 }
             }
         }
@@ -455,17 +502,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
         public static void CommandUseItems(ItemsUseCommand itemsUseCommand, ref PlayerItemState playerItemState)
         {
+
+            if (!Constant.IsServer)
+            {
+                return;
+            }
             foreach (var index in itemsUseCommand.Slots.Keys)
             {
                 var itemData = itemsUseCommand.Slots[index];
                 if (!PlayerItemState.TryGetSlotItemBySlotIndex(playerItemState, itemData.SlotIndex, out var bagItem))
                 {
                     Debug.LogError($"Failed to use item {itemData.SlotIndex}");
-                    return;
-                }
-
-                if (!Constant.IsServer)
-                {
                     return;
                 }
 

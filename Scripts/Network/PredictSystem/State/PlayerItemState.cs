@@ -194,8 +194,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                         SkillId = PlayerItemCalculator.GetEquipSkillId(bagItem.PlayerItemType, bagItem.ConfigId),
                     });
                     isEquipped = true;
+                    Debug.Log($"{bagItem.ConfigId}-{bagItem.PlayerItemType}-{slotIndex} 已经装备，存入背包");
                 }
-                Debug.Log($"{equipPart}已经装备，存入背包");
                 return true;
             }
             isEquipped = false;

@@ -24,6 +24,7 @@ namespace HotUpdate.Scripts.Network.Battle
     [MemoryPackUnion(12, typeof(DodgeChecker))]
     [MemoryPackUnion(13, typeof(DeathChecker))]
     [MemoryPackUnion(5, typeof(MoveChecker))]
+    [MemoryPackUnion(14, typeof(NoConditionChecker))]
     public partial interface IConditionChecker
     {
         ConditionCheckerHeader GetConditionCheckerHeader();
@@ -147,8 +148,10 @@ namespace HotUpdate.Scripts.Network.Battle
                     return new CriticalHitChecker { Header = header };
                 case TriggerType.OnDodge:
                     return new DodgeChecker { Header = header };
+                case TriggerType.OnMove:
+                    return new MoveChecker { Header = header };
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(nameof(header.TriggerType), header.TriggerType, null);
             }
         }
     }

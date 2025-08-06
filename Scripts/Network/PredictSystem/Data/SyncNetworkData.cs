@@ -499,6 +499,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 TriggerType.OnCriticalHit => MemoryPackSerializer.Deserialize<CriticalHitChecker>(data),
                 TriggerType.OnDodge => MemoryPackSerializer.Deserialize<DodgeChecker>(data),
                 TriggerType.OnDeath => MemoryPackSerializer.Deserialize<DeathChecker>(data),
+                TriggerType.None => MemoryPackSerializer.Deserialize<NoConditionChecker>(data),
                 _ => throw new ArgumentOutOfRangeException(nameof(typeId), typeId, null)
             };
         }
