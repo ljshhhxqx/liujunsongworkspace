@@ -409,7 +409,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         {
             foreach (var kvp in playerItemState.PlayerItemConfigIdSlotDictionary)
             {
-                var bagItem = kvp.Value;
+                var bagItem = playerItemState.PlayerItemConfigIdSlotDictionary[kvp.Key];
                 if (!NeedCheck(bagItem, itemConfigData))
                 {
                     continue;
