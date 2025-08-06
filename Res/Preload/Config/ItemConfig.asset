@@ -3084,7 +3084,7 @@ MonoBehaviour:
     propertyDesc: null
     isDealWithBuffExtraData: 1
   itemOtherData:
-    maxBagSize: 0
+    maxBagSize: 8
   propertyConfig: {fileID: 11400000, guid: a73d25488f1c5ab45b0ebe0d7b2b8773, type: 2}
   constantBuffConfig: {fileID: 11400000, guid: 35e3c4f0b7f37c746b61bfdd3070e326, type: 2}
   equipmentConfig: {fileID: 11400000, guid: 13c80828bdc532049a897fa41da6dd89, type: 2}

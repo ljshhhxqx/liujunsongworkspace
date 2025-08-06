@@ -104,7 +104,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             state.SlotCount = maxSlotCount;
         }
 
-        public static bool AddItem(ref PlayerItemState state, PlayerBagItem item)
+        public static bool AddItem(ref PlayerItemState state, PlayerBagItem item, out int slotIndex)
         {
             // 检查是否是可堆叠物品
             if (TryGetSlotItemByConfigId( state, item.ConfigId, out var slotItem) && slotItem.MaxStack > 1)
@@ -116,6 +116,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                     slotItem.Count += 1;
                     slotItem.ItemIds.Add(item.ItemId);
                     UpdateSlotItem(ref state,slotItem);
+                    slotIndex = slotItem.IndexSlot;
                     return true;
                 }
 
@@ -128,6 +129,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 if (state.PlayerItemConfigIdSlotDictionary.Count >= state.SlotCount) 
                 {
                     Debug.LogWarning("背包已满");
+                    slotIndex = -1;
                     return false;
                 }
 
@@ -158,9 +160,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
 
                 state.PlayerItems.Add(item.ItemId, newItem);
                 state.PlayerItemConfigIdSlotDictionary.Add(freeSlot, newSlotItem);
-
+                slotIndex = freeSlot;
                 return true;
             }
+            slotIndex = -1;
             return false;
         }
 
@@ -170,9 +173,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             return state.PlayerEquipSlotItems.TryGetValue(equipPart, out bagItem);
         }
 
-        public static bool TryAddAndEquipItem(ref PlayerItemState state, PlayerBagItem bagItem, out bool isEquipped)
+        public static bool TryAddAndEquipItem(ref PlayerItemState state, PlayerBagItem bagItem, out bool isEquipped, out int slotIndex)
         {
-            if (!AddItem(ref state, bagItem))
+            if (!AddItem(ref state, bagItem, out slotIndex))
             {
                 isEquipped = false;
                 return false;
@@ -183,13 +186,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 var equipPart = bagItem.EquipmentPart;
                 if (!state.PlayerEquipSlotItems.ContainsKey(equipPart))
                 {
-                    state.PlayerEquipSlotItems[equipPart] = new PlayerEquipSlotItem
+                    state.PlayerEquipSlotItems.Add(equipPart, new PlayerEquipSlotItem
                     {
                         EquipmentPart = equipPart,
                         ItemId = bagItem.ItemId,
                         ConfigId = bagItem.ConfigId,
-                        SkillId = PlayerItemCalculator.GetEquipSkillId(bagItem.PlayerItemType, bagItem.ItemId),
-                    };
+                        SkillId = PlayerItemCalculator.GetEquipSkillId(bagItem.PlayerItemType, bagItem.ConfigId),
+                    });
                     isEquipped = true;
                 }
                 Debug.Log($"{equipPart}已经装备，存入背包");

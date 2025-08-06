@@ -24,7 +24,7 @@ MonoBehaviour:
   - weaponID: 1
     weaponName: "\u5355\u624B\u52511"
     itemID: 3001
-    quality: 0
+    quality: 1
     weaponType: 1
     skillID: 0
     battleEffectConditionId: 0
@@ -32,7 +32,7 @@ MonoBehaviour:
   - weaponID: 2
     weaponName: "\u5355\u624B\u52511"
     itemID: 3002
-    quality: 1
+    quality: 2
     weaponType: 1
     skillID: 0
     battleEffectConditionId: 51
@@ -40,7 +40,7 @@ MonoBehaviour:
   - weaponID: 3
     weaponName: "\u5355\u624B\u52511"
     itemID: 3003
-    quality: 2
+    quality: 3
     weaponType: 1
     skillID: 1
     battleEffectConditionId: 52
@@ -48,7 +48,7 @@ MonoBehaviour:
   - weaponID: 4
     weaponName: "\u5355\u624B\u52512"
     itemID: 3004
-    quality: 0
+    quality: 1
     weaponType: 2
     skillID: 0
     battleEffectConditionId: 0
@@ -56,7 +56,7 @@ MonoBehaviour:
   - weaponID: 5
     weaponName: "\u5355\u624B\u52512"
     itemID: 3005
-    quality: 1
+    quality: 2
     weaponType: 2
     skillID: 0
     battleEffectConditionId: 53
@@ -64,7 +64,7 @@ MonoBehaviour:
   - weaponID: 6
     weaponName: "\u5355\u624B\u52512"
     itemID: 3006
-    quality: 2
+    quality: 3
     weaponType: 2
     skillID: 2
     battleEffectConditionId: 54
@@ -72,7 +72,7 @@ MonoBehaviour:
   - weaponID: 7
     weaponName: "\u5355\u624B\u52513"
     itemID: 3007
-    quality: 0
+    quality: 1
     weaponType: 3
     skillID: 0
     battleEffectConditionId: 0
@@ -80,7 +80,7 @@ MonoBehaviour:
   - weaponID: 8
     weaponName: "\u5355\u624B\u52513"
     itemID: 3008
-    quality: 1
+    quality: 2
     weaponType: 3
     skillID: 0
     battleEffectConditionId: 55
@@ -88,7 +88,7 @@ MonoBehaviour:
   - weaponID: 9
     weaponName: "\u5355\u624B\u52513"
     itemID: 3009
-    quality: 2
+    quality: 3
     weaponType: 3
     skillID: 3
     battleEffectConditionId: 56
@@ -96,7 +96,7 @@ MonoBehaviour:
   - weaponID: 10
     weaponName: "\u5355\u624B\u52514"
     itemID: 3010
-    quality: 0
+    quality: 1
     weaponType: 4
     skillID: 0
     battleEffectConditionId: 0
@@ -104,7 +104,7 @@ MonoBehaviour:
   - weaponID: 11
     weaponName: "\u5355\u624B\u52514"
     itemID: 3011
-    quality: 1
+    quality: 2
     weaponType: 4
     skillID: 0
     battleEffectConditionId: 57
@@ -112,7 +112,7 @@ MonoBehaviour:
   - weaponID: 12
     weaponName: "\u5355\u624B\u52514"
     itemID: 3012
-    quality: 2
+    quality: 3
     weaponType: 4
     skillID: 4
     battleEffectConditionId: 58
@@ -120,7 +120,7 @@ MonoBehaviour:
   - weaponID: 13
     weaponName: "\u5355\u624B\u52515"
     itemID: 3013
-    quality: 0
+    quality: 1
     weaponType: 5
     skillID: 0
     battleEffectConditionId: 0
@@ -128,7 +128,7 @@ MonoBehaviour:
   - weaponID: 14
     weaponName: "\u5355\u624B\u52515"
     itemID: 3014
-    quality: 1
+    quality: 2
     weaponType: 5
     skillID: 0
     battleEffectConditionId: 59
@@ -136,7 +136,7 @@ MonoBehaviour:
   - weaponID: 15
     weaponName: "\u5355\u624B\u52515"
     itemID: 3015
-    quality: 2
+    quality: 3
     weaponType: 5
     skillID: 5
     battleEffectConditionId: 60
@@ -144,7 +144,7 @@ MonoBehaviour:
   - weaponID: 16
     weaponName: "\u5355\u624B\u52515"
     itemID: 3016
-    quality: 2
+    quality: 3
     weaponType: 5
     skillID: 5
     battleEffectConditionId: 61
@@ -152,7 +152,7 @@ MonoBehaviour:
   - weaponID: 17
     weaponName: "\u5355\u624B\u52516"
     itemID: 3017
-    quality: 0
+    quality: 1
     weaponType: 6
     skillID: 0
     battleEffectConditionId: 0
@@ -160,7 +160,7 @@ MonoBehaviour:
   - weaponID: 18
     weaponName: "\u5355\u624B\u52516"
     itemID: 3018
-    quality: 1
+    quality: 2
     weaponType: 6
     skillID: 0
     battleEffectConditionId: 62
@@ -168,7 +168,7 @@ MonoBehaviour:
   - weaponID: 19
     weaponName: "\u5355\u624B\u52516"
     itemID: 3019
-    quality: 2
+    quality: 3
     weaponType: 6
     skillID: 6
     battleEffectConditionId: 63
@@ -176,7 +176,7 @@ MonoBehaviour:
   - weaponID: 20
     weaponName: "\u5355\u624B\u52517"
     itemID: 3020
-    quality: 0
+    quality: 1
     weaponType: 7
     skillID: 0
     battleEffectConditionId: 0
@@ -184,7 +184,7 @@ MonoBehaviour:
   - weaponID: 21
     weaponName: "\u5355\u624B\u52517"
     itemID: 3021
-    quality: 1
+    quality: 2
     weaponType: 7
     skillID: 0
     battleEffectConditionId: 64
@@ -192,7 +192,7 @@ MonoBehaviour:
   - weaponID: 22
     weaponName: "\u5355\u624B\u52517"
     itemID: 3022
-    quality: 2
+    quality: 3
     weaponType: 7
     skillID: 7
     battleEffectConditionId: 65
@@ -200,7 +200,7 @@ MonoBehaviour:
   - weaponID: 23
     weaponName: "\u5355\u624B\u52518"
     itemID: 3023
-    quality: 0
+    quality: 1
     weaponType: 8
     skillID: 0
     battleEffectConditionId: 0
@@ -208,7 +208,7 @@ MonoBehaviour:
   - weaponID: 24
     weaponName: "\u5355\u624B\u52518"
     itemID: 3024
-    quality: 1
+    quality: 2
     weaponType: 8
     skillID: 0
     battleEffectConditionId: 66
@@ -216,7 +216,7 @@ MonoBehaviour:
   - weaponID: 25
     weaponName: "\u5355\u624B\u52518"
     itemID: 3025
-    quality: 2
+    quality: 3
     weaponType: 8
     skillID: 8
     battleEffectConditionId: 67
@@ -224,7 +224,7 @@ MonoBehaviour:
   - weaponID: 26
     weaponName: "\u5355\u624B\u52519"
     itemID: 3026
-    quality: 0
+    quality: 1
     weaponType: 9
     skillID: 0
     battleEffectConditionId: 0
@@ -232,7 +232,7 @@ MonoBehaviour:
   - weaponID: 27
     weaponName: "\u5355\u624B\u52519"
     itemID: 3027
-    quality: 1
+    quality: 2
     weaponType: 9
     skillID: 0
     battleEffectConditionId: 68
@@ -240,7 +240,7 @@ MonoBehaviour:
   - weaponID: 28
     weaponName: "\u5355\u624B\u52519"
     itemID: 3028
-    quality: 1
+    quality: 2
     weaponType: 9
     skillID: 0
     battleEffectConditionId: 69
@@ -248,7 +248,7 @@ MonoBehaviour:
   - weaponID: 29
     weaponName: "\u5355\u624B\u52519"
     itemID: 3029
-    quality: 2
+    quality: 3
     weaponType: 9
     skillID: 9
     battleEffectConditionId: 70
@@ -256,7 +256,7 @@ MonoBehaviour:
   - weaponID: 30
     weaponName: "\u5355\u624B\u52519"
     itemID: 3030
-    quality: 2
+    quality: 3
     weaponType: 9
     skillID: 9
     battleEffectConditionId: 71
@@ -264,7 +264,7 @@ MonoBehaviour:
   - weaponID: 31
     weaponName: "\u5355\u624B\u525110"
     itemID: 3031
-    quality: 0
+    quality: 1
     weaponType: 10
     skillID: 0
     battleEffectConditionId: 0
@@ -272,7 +272,7 @@ MonoBehaviour:
   - weaponID: 32
     weaponName: "\u5355\u624B\u525110"
     itemID: 3032
-    quality: 1
+    quality: 2
     weaponType: 10
     skillID: 0
     battleEffectConditionId: 72
@@ -280,7 +280,7 @@ MonoBehaviour:
   - weaponID: 33
     weaponName: "\u5355\u624B\u525110"
     itemID: 3033
-    quality: 2
+    quality: 3
     weaponType: 10
     skillID: 10
     battleEffectConditionId: 73

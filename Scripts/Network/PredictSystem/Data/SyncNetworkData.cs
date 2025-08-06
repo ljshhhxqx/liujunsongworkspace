@@ -1698,8 +1698,32 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return EquipmentConfigId > 0 && EquipmentPart > 0 && EquipmentPart <= EquipmentPart.Weapon 
-                && ItemId > 0 && !string.IsNullOrEmpty(EquipmentPassiveEffectData) && !string.IsNullOrEmpty(EquipmentMainEffectData);
+            if (EquipmentConfigId < 0)
+            {
+                Debug.LogError($"EquipmentCommand EquipmentConfigId is invalid {EquipmentConfigId}");
+                return false;
+            }
+            if (EquipmentPart > EquipmentPart.Weapon)
+            {
+                Debug.LogError($"EquipmentCommand EquipmentPart is invalid {EquipmentPart}");
+                return false;
+            }
+            if (ItemId <= 0)
+            {
+                Debug.LogError($"EquipmentCommand ItemId is invalid {ItemId}");
+                return false;
+            }
+            if (string.IsNullOrEmpty(EquipmentPassiveEffectData))
+            {
+                Debug.LogError($"EquipmentCommand EquipmentPassiveEffectData is invalid {EquipmentPassiveEffectData}");
+                return false;
+            }
+            if (string.IsNullOrEmpty(EquipmentMainEffectData))
+            {
+                Debug.LogError($"EquipmentCommand EquipmentMainEffectData is invalid {EquipmentMainEffectData}");
+                return false;
+            }
+            return true;
         }
         public void Init()
         {

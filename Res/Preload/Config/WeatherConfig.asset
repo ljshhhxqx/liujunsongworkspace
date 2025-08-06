@@ -22,7 +22,7 @@ MonoBehaviour:
   isArray: 1
   weatherData:
   - weatherType: 1
-    weatherRatio: 0.35
+    weatherRatio: 0.3
     cloudDensityRange:
       isPercent: 0
       min: 1.6
@@ -50,7 +50,7 @@ MonoBehaviour:
       min: 0
       max: 0
   - weatherType: 2
-    weatherRatio: 0.35
+    weatherRatio: 0.25
     cloudDensityRange:
       isPercent: 0
       min: 0.1
@@ -106,7 +106,7 @@ MonoBehaviour:
       min: 0
       max: 0
   - weatherType: 4
-    weatherRatio: 0.05
+    weatherRatio: 0.2
     cloudDensityRange:
       isPercent: 0
       min: 0

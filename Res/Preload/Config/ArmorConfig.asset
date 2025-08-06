@@ -25,7 +25,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u4E0A\u88631"
     equipmentPart: 2
     itemID: 3031
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -33,7 +33,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u4E0A\u88632"
     equipmentPart: 2
     itemID: 3032
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -41,7 +41,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u4E0A\u88633"
     equipmentPart: 2
     itemID: 3033
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -49,7 +49,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u4E0A\u88634"
     equipmentPart: 2
     itemID: 3034
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -57,7 +57,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u4E0A\u88635"
     equipmentPart: 2
     itemID: 3035
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -65,7 +65,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u4E0A\u88631"
     equipmentPart: 2
     itemID: 3036
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 1
     battleEffectConditionDescription: "[PassiveEffect]None\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53740\u79D2\u3001\u6301\u7EED\u65F6\u95F4-1\u79D2\u3001Buff\u6743\u91CD0.2\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -73,7 +73,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u4E0A\u88632"
     equipmentPart: 2
     itemID: 3037
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 2
     battleEffectConditionDescription: "[PassiveEffect]OnTakeDamage\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u53D7\u5230\u4F24\u5BB3\u7C7B\u578B:None\u3001\u53D7\u5230\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u53D7\u5230\u4F24\u5BB3:[0,0]\u3001\u4F24\u5BB3\u6765\u6E90:None\u3001Buff\u6743\u91CD0.3\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -81,7 +81,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u4E0A\u88633"
     equipmentPart: 2
     itemID: 3038
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 3
     battleEffectConditionDescription: "[PassiveEffect]OnHpChange\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u751F\u547D\u503C\u767E\u5206\u6BD4:[0,0]\u3001Buff\u6743\u91CD0.3\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -89,7 +89,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u4E0A\u88634"
     equipmentPart: 2
     itemID: 3039
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 4
     battleEffectConditionDescription: "[PassiveEffect]OnAttack\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53748\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u653B\u51FB\u529B:0\u3001\u653B\u51FB\u8303\u56F4:None\u3001Buff\u6743\u91CD0.4\u3001Buff\u589E\u76CA\u7C7B\u578BBase"
@@ -97,7 +97,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u4E0A\u88635"
     equipmentPart: 2
     itemID: 3040
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 5
     battleEffectConditionDescription: "[PassiveEffect]OnMove\u3001\u6982\u73875%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001Buff\u6743\u91CD0.5\u3001Buff\u589E\u76CA\u7C7B\u578BExtra"
@@ -105,7 +105,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u4E0A\u88631"
     equipmentPart: 2
     itemID: 3041
-    quality: 2
+    quality: 3
     skillID: 1001
     battleEffectConditionId: 6
     battleEffectConditionDescription: "[PassiveEffect]None\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53740\u79D2\u3001\u6301\u7EED\u65F6\u95F4-1\u79D2\u3001Buff\u6743\u91CD0.6\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -113,7 +113,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u4E0A\u88632"
     equipmentPart: 2
     itemID: 3042
-    quality: 2
+    quality: 3
     skillID: 1002
     battleEffectConditionId: 7
     battleEffectConditionDescription: "[PassiveEffect]OnTakeDamage\u3001\u6982\u738780%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53745\u79D2\u3001\u6301\u7EED\u65F6\u95F47\u79D2\u3001\u53D7\u5230\u4F24\u5BB3\u7C7B\u578B:None\u3001\u53D7\u5230\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u53D7\u5230\u4F24\u5BB3:[0,0]\u3001\u4F24\u5BB3\u6765\u6E90:None\u3001Buff\u6743\u91CD0.9\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -121,7 +121,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u4E0A\u88633"
     equipmentPart: 2
     itemID: 3043
-    quality: 2
+    quality: 3
     skillID: 1003
     battleEffectConditionId: 8
     battleEffectConditionDescription: "[PassiveEffect]OnHpChange\u3001\u6982\u738780%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53747\u79D2\u3001\u6301\u7EED\u65F6\u95F47\u79D2\u3001\u751F\u547D\u503C\u767E\u5206\u6BD4:[0,0]\u3001Buff\u6743\u91CD0.9\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -129,7 +129,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u4E0A\u88634"
     equipmentPart: 2
     itemID: 3044
-    quality: 2
+    quality: 3
     skillID: 1004
     battleEffectConditionId: 9
     battleEffectConditionDescription: "[PassiveEffect]OnAttack\u3001\u6982\u738780%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53748\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u653B\u51FB\u529B:0\u3001\u653B\u51FB\u8303\u56F4:None\u3001Buff\u6743\u91CD0.9\u3001Buff\u589E\u76CA\u7C7B\u578BBase"
@@ -137,7 +137,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u4E0A\u88635"
     equipmentPart: 2
     itemID: 3045
-    quality: 2
+    quality: 3
     skillID: 1005
     battleEffectConditionId: 10
     battleEffectConditionDescription: "[PassiveEffect]OnMove\u3001\u6982\u738715%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53745\u79D2\u3001\u6301\u7EED\u65F6\u95F47\u79D2\u3001Buff\u6743\u91CD0.9\u3001Buff\u589E\u76CA\u7C7B\u578BExtra"
@@ -145,7 +145,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u978B\u5B501"
     equipmentPart: 4
     itemID: 3046
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -153,7 +153,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u978B\u5B502"
     equipmentPart: 4
     itemID: 3047
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -161,7 +161,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u978B\u5B503"
     equipmentPart: 4
     itemID: 3048
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -169,7 +169,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u978B\u5B504"
     equipmentPart: 4
     itemID: 3049
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -177,7 +177,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u978B\u5B505"
     equipmentPart: 4
     itemID: 3050
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -185,7 +185,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u978B\u5B501"
     equipmentPart: 4
     itemID: 3051
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 11
     battleEffectConditionDescription: "[PassiveEffect]None\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53740\u79D2\u3001\u6301\u7EED\u65F6\u95F4-1\u79D2\u3001Buff\u6743\u91CD0.6\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -193,7 +193,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u978B\u5B502"
     equipmentPart: 4
     itemID: 3052
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 12
     battleEffectConditionDescription: "[PassiveEffect]OnTakeDamage\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u53D7\u5230\u4F24\u5BB3\u7C7B\u578B:None\u3001\u53D7\u5230\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u53D7\u5230\u4F24\u5BB3:[0,0]\u3001\u4F24\u5BB3\u6765\u6E90:None\u3001Buff\u6743\u91CD0.35\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -201,7 +201,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u978B\u5B503"
     equipmentPart: 4
     itemID: 3053
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 13
     battleEffectConditionDescription: "[PassiveEffect]OnAttack\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53748\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u653B\u51FB\u529B:0\u3001\u653B\u51FB\u8303\u56F4:None\u3001Buff\u6743\u91CD0.9\u3001Buff\u589E\u76CA\u7C7B\u578BBase"
@@ -209,7 +209,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u978B\u5B504"
     equipmentPart: 4
     itemID: 3054
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 14
     battleEffectConditionDescription: "[PassiveEffect]OnMove\u3001\u6982\u73875%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001Buff\u6743\u91CD0.9\u3001Buff\u589E\u76CA\u7C7B\u578BExtra"
@@ -217,7 +217,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u978B\u5B505"
     equipmentPart: 4
     itemID: 3055
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 15
     battleEffectConditionDescription: "[PassiveEffect]OnManaChange\u3001\u6982\u738720%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u9B54\u6CD5\u503C\u767E\u5206\u6BD4:[0,0]\u3001Buff\u6743\u91CD0.75\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -225,7 +225,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u978B\u5B501"
     equipmentPart: 4
     itemID: 3056
-    quality: 2
+    quality: 3
     skillID: 1006
     battleEffectConditionId: 16
     battleEffectConditionDescription: "[PassiveEffect]None\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53740\u79D2\u3001\u6301\u7EED\u65F6\u95F4-1\u79D2\u3001Buff\u6743\u91CD0.75\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -233,7 +233,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u978B\u5B502"
     equipmentPart: 4
     itemID: 3057
-    quality: 2
+    quality: 3
     skillID: 1007
     battleEffectConditionId: 17
     battleEffectConditionDescription: "[PassiveEffect]OnTakeDamage\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u53D7\u5230\u4F24\u5BB3\u7C7B\u578B:None\u3001\u53D7\u5230\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u53D7\u5230\u4F24\u5BB3:[0,0]\u3001\u4F24\u5BB3\u6765\u6E90:None\u3001Buff\u6743\u91CD0.8\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -241,7 +241,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u978B\u5B503"
     equipmentPart: 4
     itemID: 3058
-    quality: 2
+    quality: 3
     skillID: 1008
     battleEffectConditionId: 18
     battleEffectConditionDescription: "[PassiveEffect]OnAttack\u3001\u6982\u738780%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53745\u79D2\u3001\u6301\u7EED\u65F6\u95F410\u79D2\u3001\u653B\u51FB\u529B:0\u3001\u653B\u51FB\u8303\u56F4:None\u3001Buff\u6743\u91CD1\u3001Buff\u589E\u76CA\u7C7B\u578BBase"
@@ -249,7 +249,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u978B\u5B504"
     equipmentPart: 4
     itemID: 3059
-    quality: 2
+    quality: 3
     skillID: 1009
     battleEffectConditionId: 19
     battleEffectConditionDescription: "[PassiveEffect]OnMove\u3001\u6982\u738715%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F410\u79D2\u3001Buff\u6743\u91CD1\u3001Buff\u589E\u76CA\u7C7B\u578BExtra"
@@ -257,7 +257,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u978B\u5B505"
     equipmentPart: 4
     itemID: 3060
-    quality: 2
+    quality: 3
     skillID: 1010
     battleEffectConditionId: 20
     battleEffectConditionDescription: "[PassiveEffect]OnManaChange\u3001\u6982\u738730%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F47\u79D2\u3001\u9B54\u6CD5\u503C\u767E\u5206\u6BD4:[0,0]\u3001Buff\u6743\u91CD0.75\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -265,7 +265,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u88E4\u5B501"
     equipmentPart: 3
     itemID: 3061
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -273,7 +273,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u88E4\u5B502"
     equipmentPart: 3
     itemID: 3062
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -281,7 +281,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u88E4\u5B503"
     equipmentPart: 3
     itemID: 3063
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -289,7 +289,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u88E4\u5B504"
     equipmentPart: 3
     itemID: 3064
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -297,7 +297,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u88E4\u5B505"
     equipmentPart: 3
     itemID: 3065
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -305,7 +305,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u88E4\u5B501"
     equipmentPart: 3
     itemID: 3066
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 21
     battleEffectConditionDescription: "[PassiveEffect]None\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53740\u79D2\u3001\u6301\u7EED\u65F6\u95F4-1\u79D2\u3001Buff\u6743\u91CD0.2\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -313,7 +313,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u88E4\u5B502"
     equipmentPart: 3
     itemID: 3067
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 22
     battleEffectConditionDescription: "[PassiveEffect]OnHpChange\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u751F\u547D\u503C\u767E\u5206\u6BD4:[0,0]\u3001Buff\u6743\u91CD0.3\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -321,7 +321,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u88E4\u5B503"
     equipmentPart: 3
     itemID: 3068
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 23
     battleEffectConditionDescription: "[PassiveEffect]OnMove\u3001\u6982\u73875%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001Buff\u6743\u91CD0.5\u3001Buff\u589E\u76CA\u7C7B\u578BExtra"
@@ -329,7 +329,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u88E4\u5B504"
     equipmentPart: 3
     itemID: 3069
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 24
     battleEffectConditionDescription: "[PassiveEffect]OnAttack\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53748\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u653B\u51FB\u529B:0\u3001\u653B\u51FB\u8303\u56F4:None\u3001Buff\u6743\u91CD0.9\u3001Buff\u589E\u76CA\u7C7B\u578BBase"
@@ -337,7 +337,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u88E4\u5B505"
     equipmentPart: 3
     itemID: 3070
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 25
     battleEffectConditionDescription: "[PassiveEffect]OnManaChange\u3001\u6982\u738720%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u9B54\u6CD5\u503C\u767E\u5206\u6BD4:[0,0]\u3001Buff\u6743\u91CD0.75\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -345,7 +345,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u88E4\u5B501"
     equipmentPart: 3
     itemID: 3071
-    quality: 2
+    quality: 3
     skillID: 1011
     battleEffectConditionId: 26
     battleEffectConditionDescription: "[PassiveEffect]None\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53740\u79D2\u3001\u6301\u7EED\u65F6\u95F4-1\u79D2\u3001Buff\u6743\u91CD0.6\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -353,7 +353,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u88E4\u5B502"
     equipmentPart: 3
     itemID: 3072
-    quality: 2
+    quality: 3
     skillID: 1012
     battleEffectConditionId: 27
     battleEffectConditionDescription: "[PassiveEffect]OnHpChange\u3001\u6982\u738780%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53747\u79D2\u3001\u6301\u7EED\u65F6\u95F47\u79D2\u3001\u751F\u547D\u503C\u767E\u5206\u6BD4:[0,0]\u3001Buff\u6743\u91CD0.8\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -361,7 +361,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u88E4\u5B503"
     equipmentPart: 3
     itemID: 3073
-    quality: 2
+    quality: 3
     skillID: 1013
     battleEffectConditionId: 28
     battleEffectConditionDescription: "[PassiveEffect]OnMove\u3001\u6982\u738710%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53747\u79D2\u3001\u6301\u7EED\u65F6\u95F47\u79D2\u3001Buff\u6743\u91CD1\u3001Buff\u589E\u76CA\u7C7B\u578BExtra"
@@ -369,7 +369,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u88E4\u5B504"
     equipmentPart: 3
     itemID: 3074
-    quality: 2
+    quality: 3
     skillID: 1014
     battleEffectConditionId: 29
     battleEffectConditionDescription: "[PassiveEffect]OnAttack\u3001\u6982\u738780%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53745\u79D2\u3001\u6301\u7EED\u65F6\u95F410\u79D2\u3001\u653B\u51FB\u529B:0\u3001\u653B\u51FB\u8303\u56F4:None\u3001Buff\u6743\u91CD1\u3001Buff\u589E\u76CA\u7C7B\u578BBase"
@@ -377,7 +377,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u88E4\u5B505"
     equipmentPart: 3
     itemID: 3075
-    quality: 2
+    quality: 3
     skillID: 1015
     battleEffectConditionId: 30
     battleEffectConditionDescription: "[PassiveEffect]OnManaChange\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53747\u79D2\u3001\u6301\u7EED\u65F6\u95F47\u79D2\u3001\u9B54\u6CD5\u503C\u767E\u5206\u6BD4:[0,0]\u3001Buff\u6743\u91CD0.9\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -385,7 +385,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u5934\u76D41"
     equipmentPart: 1
     itemID: 3076
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -393,7 +393,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u5934\u76D42"
     equipmentPart: 1
     itemID: 3077
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -401,7 +401,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u5934\u76D43"
     equipmentPart: 1
     itemID: 3078
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -409,7 +409,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u5934\u76D44"
     equipmentPart: 1
     itemID: 3079
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -417,7 +417,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u5934\u76D45"
     equipmentPart: 1
     itemID: 3080
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -425,7 +425,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u5934\u76D41"
     equipmentPart: 1
     itemID: 3081
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 31
     battleEffectConditionDescription: "[PassiveEffect]None\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53740\u79D2\u3001\u6301\u7EED\u65F6\u95F4-1\u79D2\u3001Buff\u6743\u91CD0.2\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -433,7 +433,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u5934\u76D42"
     equipmentPart: 1
     itemID: 3082
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 32
     battleEffectConditionDescription: "[PassiveEffect]OnAttack\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53748\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u653B\u51FB\u529B:0\u3001\u653B\u51FB\u8303\u56F4:None\u3001Buff\u6743\u91CD0.3\u3001Buff\u589E\u76CA\u7C7B\u578BBase"
@@ -441,7 +441,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u5934\u76D43"
     equipmentPart: 1
     itemID: 3083
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 33
     battleEffectConditionDescription: "[PassiveEffect]OnAttackHit\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F47\u79D2\u3001\u76EE\u6807\u7C7B\u578B:Enemy\u3001\u9020\u6210\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u9020\u6210\u4F24\u5BB3:[0,0]\u3001\u653B\u51FB\u8303\u56F4:None\u3001Buff\u6743\u91CD0.25\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -449,7 +449,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u5934\u76D44"
     equipmentPart: 1
     itemID: 3084
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 34
     battleEffectConditionDescription: "[PassiveEffect]OnCriticalHit\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u76EE\u6807\u7C7B\u578B:Enemy\u3001\u9020\u6210\u4F24\u5BB3\u7C7B\u578B:None\u3001\u9020\u6210\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u9020\u6210\u4F24\u5BB3:[0,0]\u3001\u4F24\u5BB3\u6765\u6E90:None\u3001Buff\u6743\u91CD0.35\u3001Buff\u589E\u76CA\u7C7B\u578BBase"
@@ -457,7 +457,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u5934\u76D45"
     equipmentPart: 1
     itemID: 3085
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 35
     battleEffectConditionDescription: "[PassiveEffect]OnSkillHit\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F47.5\u79D2\u3001\u76EE\u6807\u7C7B\u578B:Enemy\u3001\u6280\u80FD\u7C7B\u578B:None\u3001\u6D88\u8017MP\u767E\u5206\u6BD4:[0,0]\u3001\u9020\u6210\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u9020\u6210\u4F24\u5BB3:[0,0]\u3001Buff\u6743\u91CD0.35\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -465,7 +465,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u5934\u76D41"
     equipmentPart: 1
     itemID: 3086
-    quality: 2
+    quality: 3
     skillID: 1016
     battleEffectConditionId: 36
     battleEffectConditionDescription: "[PassiveEffect]None\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53740\u79D2\u3001\u6301\u7EED\u65F6\u95F4-1\u79D2\u3001Buff\u6743\u91CD0.6\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -473,7 +473,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u5934\u76D42"
     equipmentPart: 1
     itemID: 3087
-    quality: 2
+    quality: 3
     skillID: 1017
     battleEffectConditionId: 37
     battleEffectConditionDescription: "[PassiveEffect]OnAttack\u3001\u6982\u738780%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53747\u79D2\u3001\u6301\u7EED\u65F6\u95F47\u79D2\u3001\u653B\u51FB\u529B:0\u3001\u653B\u51FB\u8303\u56F4:None\u3001Buff\u6743\u91CD0.8\u3001Buff\u589E\u76CA\u7C7B\u578BBase"
@@ -481,7 +481,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u5934\u76D43"
     equipmentPart: 1
     itemID: 3088
-    quality: 2
+    quality: 3
     skillID: 1018
     battleEffectConditionId: 38
     battleEffectConditionDescription: "[PassiveEffect]OnAttackHit\u3001\u6982\u738780%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F410\u79D2\u3001\u76EE\u6807\u7C7B\u578B:Enemy\u3001\u9020\u6210\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u9020\u6210\u4F24\u5BB3:[0,0]\u3001\u653B\u51FB\u8303\u56F4:None\u3001Buff\u6743\u91CD0.9\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -489,7 +489,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u5934\u76D44"
     equipmentPart: 1
     itemID: 3089
-    quality: 2
+    quality: 3
     skillID: 1019
     battleEffectConditionId: 39
     battleEffectConditionDescription: "[PassiveEffect]OnCriticalHit\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53745\u79D2\u3001\u6301\u7EED\u65F6\u95F410\u79D2\u3001\u76EE\u6807\u7C7B\u578B:Enemy\u3001\u9020\u6210\u4F24\u5BB3\u7C7B\u578B:None\u3001\u9020\u6210\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u9020\u6210\u4F24\u5BB3:[0,0]\u3001\u4F24\u5BB3\u6765\u6E90:None\u3001Buff\u6743\u91CD1\u3001Buff\u589E\u76CA\u7C7B\u578BBase"
@@ -497,7 +497,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u5934\u76D45"
     equipmentPart: 1
     itemID: 3090
-    quality: 2
+    quality: 3
     skillID: 1020
     battleEffectConditionId: 40
     battleEffectConditionDescription: "[PassiveEffect]OnSkillHit\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F47.5\u79D2\u3001\u76EE\u6807\u7C7B\u578B:Enemy\u3001\u6280\u80FD\u7C7B\u578B:None\u3001\u6D88\u8017MP\u767E\u5206\u6BD4:[0,0]\u3001\u9020\u6210\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u9020\u6210\u4F24\u5BB3:[0,0]\u3001Buff\u6743\u91CD1\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -505,7 +505,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u8170\u5E261"
     equipmentPart: 5
     itemID: 3091
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -513,7 +513,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u8170\u5E262"
     equipmentPart: 5
     itemID: 3092
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -521,7 +521,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u8170\u5E263"
     equipmentPart: 5
     itemID: 3093
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -529,7 +529,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u8170\u5E264"
     equipmentPart: 5
     itemID: 3094
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -537,7 +537,7 @@ MonoBehaviour:
     armorName: "\u666E\u901A\u8170\u5E265"
     equipmentPart: 5
     itemID: 3095
-    quality: 0
+    quality: 1
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
@@ -545,7 +545,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u8170\u5E261"
     equipmentPart: 5
     itemID: 3096
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 41
     battleEffectConditionDescription: "[PassiveEffect]None\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53740\u79D2\u3001\u6301\u7EED\u65F6\u95F4-1\u79D2\u3001Buff\u6743\u91CD0.2\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -553,7 +553,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u8170\u5E262"
     equipmentPart: 5
     itemID: 3097
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 42
     battleEffectConditionDescription: "[PassiveEffect]OnAttack\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53748\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u653B\u51FB\u529B:0\u3001\u653B\u51FB\u8303\u56F4:None\u3001Buff\u6743\u91CD0.3\u3001Buff\u589E\u76CA\u7C7B\u578BBase"
@@ -561,7 +561,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u8170\u5E263"
     equipmentPart: 5
     itemID: 3098
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 43
     battleEffectConditionDescription: "[PassiveEffect]OnHpChange\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u751F\u547D\u503C\u767E\u5206\u6BD4:[0,0]\u3001Buff\u6743\u91CD0.25\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -569,7 +569,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u8170\u5E264"
     equipmentPart: 5
     itemID: 3099
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 44
     battleEffectConditionDescription: "[PassiveEffect]OnTakeDamage\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u53D7\u5230\u4F24\u5BB3\u7C7B\u578B:None\u3001\u53D7\u5230\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u53D7\u5230\u4F24\u5BB3:[0,0]\u3001\u4F24\u5BB3\u6765\u6E90:None\u3001Buff\u6743\u91CD0.25\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -577,7 +577,7 @@ MonoBehaviour:
     armorName: "\u7A00\u6709\u8170\u5E265"
     equipmentPart: 5
     itemID: 3100
-    quality: 1
+    quality: 2
     skillID: 0
     battleEffectConditionId: 45
     battleEffectConditionDescription: "[PassiveEffect]OnDeath\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C612\u4E2AAllyPlayer\u3001\u51B7\u537430\u79D2\u3001\u6301\u7EED\u65F6\u95F415\u79D2\u3001Buff\u6743\u91CD0.15\u3001Buff\u589E\u76CA\u7C7B\u578BCorrectionFactor"
@@ -585,7 +585,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u8170\u5E261"
     equipmentPart: 5
     itemID: 3101
-    quality: 2
+    quality: 3
     skillID: 1021
     battleEffectConditionId: 46
     battleEffectConditionDescription: "[PassiveEffect]None\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53740\u79D2\u3001\u6301\u7EED\u65F6\u95F4-1\u79D2\u3001Buff\u6743\u91CD0.6\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -593,7 +593,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u8170\u5E262"
     equipmentPart: 5
     itemID: 3102
-    quality: 2
+    quality: 3
     skillID: 1022
     battleEffectConditionId: 47
     battleEffectConditionDescription: "[PassiveEffect]OnAttack\u3001\u6982\u738770%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53747\u79D2\u3001\u6301\u7EED\u65F6\u95F47\u79D2\u3001\u653B\u51FB\u529B:0\u3001\u653B\u51FB\u8303\u56F4:None\u3001Buff\u6743\u91CD0.9\u3001Buff\u589E\u76CA\u7C7B\u578BBase"
@@ -601,7 +601,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u8170\u5E263"
     equipmentPart: 5
     itemID: 3103
-    quality: 2
+    quality: 3
     skillID: 1023
     battleEffectConditionId: 48
     battleEffectConditionDescription: "[PassiveEffect]OnHpChange\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F410\u79D2\u3001\u751F\u547D\u503C\u767E\u5206\u6BD4:[0,0]\u3001Buff\u6743\u91CD0.9\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -609,7 +609,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u8170\u5E264"
     equipmentPart: 5
     itemID: 3104
-    quality: 2
+    quality: 3
     skillID: 1024
     battleEffectConditionId: 49
     battleEffectConditionDescription: "[PassiveEffect]OnTakeDamage\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F410\u79D2\u3001\u53D7\u5230\u4F24\u5BB3\u7C7B\u578B:None\u3001\u53D7\u5230\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u53D7\u5230\u4F24\u5BB3:[0,0]\u3001\u4F24\u5BB3\u6765\u6E90:None\u3001Buff\u6743\u91CD0.9\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
@@ -617,7 +617,7 @@ MonoBehaviour:
     armorName: "\u4F20\u5947\u8170\u5E265"
     equipmentPart: 5
     itemID: 3105
-    quality: 2
+    quality: 3
     skillID: 1025
     battleEffectConditionId: 50
     battleEffectConditionDescription: "[PassiveEffect]OnDeath\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C612\u4E2AAllyPlayer\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F410\u79D2\u3001Buff\u6743\u91CD0.4\u3001Buff\u589E\u76CA\u7C7B\u578BCorrectionFactor"

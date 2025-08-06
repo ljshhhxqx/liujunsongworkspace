@@ -55,7 +55,7 @@ namespace HotUpdate.Scripts.Game
             get => _isEndGame;
             set
             {
-                if (isServer)
+                if (_serverHandler)
                 {
                     _isEndGame = value;
                     _weatherManager.StartWeatherLoop(!value);
@@ -65,10 +65,6 @@ namespace HotUpdate.Scripts.Game
                         _cts?.Cancel();
                     }
                 }
-                else
-                {
-                    Debug.LogError("Client cannot set IsEndGame");
-                }
             }
         }
         
@@ -77,7 +73,7 @@ namespace HotUpdate.Scripts.Game
             get => _isEndRound;
             set
             {
-                if (isServer)
+                if (_serverHandler)
                 {
                     if (IsEndGame) return;
                     _isEndRound = value;
@@ -85,10 +81,6 @@ namespace HotUpdate.Scripts.Game
                     {
                         Debug.Log("End Round!");
                     }
-                }
-                else
-                {
-                    Debug.LogError("Client cannot set IsEndRound");
                 }
             }
         }
@@ -125,7 +117,6 @@ namespace HotUpdate.Scripts.Game
         public override void OnStartClient()
         {
             base.OnStartClient();
-            _serverHandler = false;
             _clientHandler = true;
         }
         
@@ -133,7 +124,6 @@ namespace HotUpdate.Scripts.Game
         {
             base.OnStartServer();
             _serverHandler = true;
-            _clientHandler = false;
         }
 
         private void RegisterMessage()

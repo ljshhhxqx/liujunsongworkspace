@@ -49,6 +49,7 @@ namespace HotUpdate.Scripts.Weather
         private IObjectResolver _objectResolver;
         private UIManager _uiManager;
         private IDisposable _enableLightning;
+        private bool _serverHandled;
         private readonly Dictionary<Type, WeatherEffects.WeatherEffects> _weatherEffectsDict = new Dictionary<Type, WeatherEffects.WeatherEffects>();
         private readonly Dictionary<WeatherType, WeatherSetting> _weatherSettingDict = new Dictionary<WeatherType, WeatherSetting>();
 
@@ -78,6 +79,12 @@ namespace HotUpdate.Scripts.Weather
         {
             WeatherDataModel.weatherInfo.Value = newWeather;
             //Debug.Log($"OnWeatherChanged: {oldWeather}, {newWeather}");
+        }
+
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+            _serverHandled=true;
         }
 
         [Inject]
@@ -117,6 +124,8 @@ namespace HotUpdate.Scripts.Weather
         [Server]
         public void StartWeatherLoop(bool isStart)
         {
+            if (!_serverHandled)
+                return;
             _isDayNightCycle = isStart;
             if (isStart)
             {
@@ -167,10 +176,10 @@ namespace HotUpdate.Scripts.Weather
                     _ => 0f
                 }
             };
-            SetWeather(weatherLoadData);
+            //SetWeather(weatherLoadData);
             RpcSetWeather(weatherLoadData);
             RpcSetWeatherEffect(weatherEffectData);
-            ChangeWeatherEffects(weatherEffectData);
+            //ChangeWeatherEffects(weatherEffectData);
             Debug.Log("<WeatherManager>---- Random Weather: " + randomWeather.weatherType);
             Debug.Log("<WeatherManager>---- Random time: " + DayNightCycleTime.ToHMSStr());
         }
@@ -179,7 +188,7 @@ namespace HotUpdate.Scripts.Weather
         private void RpcEnableLightning(Vector3 start, Vector3 end)
         {
             var effect = _weatherEffectsDict[typeof(LightningEffect)] as LightningEffect;
-            if (effect != null)
+            if (effect)
             {
                 effect.UpdateLightning(start, end);
                 effect.UpdateLight();
@@ -217,12 +226,13 @@ namespace HotUpdate.Scripts.Weather
             
                 var instance = Instantiate(prefab.gameObject);
                 var settingComponent = instance.GetComponent<WeatherSetting>();
-                _objectResolver.Inject(settingComponent);
+                //instance.gameObject.SetActive(false);
+                //_objectResolver.Inject(settingComponent);
                 _weatherSettingDict.Add(loadData.weatherType, settingComponent);
                 _currentWeatherSetting = settingComponent;
             }
-            _currentWeatherSetting.gameObject.SetActive(true);
             _currentWeatherSetting.LoadWeather(loadData);
+            _currentWeatherSetting.gameObject.SetActive(true);
             
             if (!_uiManager.IsUIOpen(UIType.Weather))
             {
@@ -277,13 +287,13 @@ namespace HotUpdate.Scripts.Weather
             {
                 var go = Instantiate(effect);
                 var component = go.GetComponent<WeatherEffects.WeatherEffects>();
-                if (component != null)
+                if (component)
                 {
-                    if (component.GetType() == typeof(LightAndFogEffect) && _lightAndFogEffect == null)
+                    if (component.GetType() == typeof(LightAndFogEffect) && !_lightAndFogEffect)
                     {
                         _lightAndFogEffect = component.GetComponent<LightAndFogEffect>();
                     }
-                    else if (component.GetType() == typeof(Clouds) && _clouds == null)
+                    else if (component.GetType() == typeof(Clouds) && !_clouds)
                     {
                         _clouds = component.GetComponent<Clouds>();
                     }

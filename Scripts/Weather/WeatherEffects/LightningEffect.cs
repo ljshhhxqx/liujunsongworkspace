@@ -50,7 +50,7 @@ namespace HotUpdate.Scripts.Weather.WeatherEffects
             _lightTween?.Kill();
             _lightTween = DOTween.To(() => lightningLight.intensity, 
                     x => lightningLight.intensity = x, 
-                    2f, 0.5f) 
+                    2f, 0.2f) 
                 .SetLoops(4, LoopType.Yoyo)
                 .SetEase(Ease.Linear)
                 .OnComplete(() => 

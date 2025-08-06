@@ -91,6 +91,7 @@ namespace HotUpdate.Scripts.Collector
         private void OnDestroy()
         {
             KillAll();
+            _outline.sharedMaterials[0].SetColor(OutlineColor, _originalColor);
         }
     }
 }

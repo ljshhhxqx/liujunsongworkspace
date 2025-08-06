@@ -122,21 +122,24 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public BuffExtraData GetEquipmentBuffNoType()
         {
             var types = EquipmentBuffTypes.RandomSelect();
+            while (types == BuffIncreaseType.None || types == BuffIncreaseType.Current || types == BuffIncreaseType.Max)
+            {
+                types = EquipmentBuffTypes.RandomSelect();
+            }
             return GetEquipmentBuff(types);
         }
 
         public BuffExtraData GetEquipmentBuff(BuffIncreaseType buffIncreaseType)
         {
-            var equipmentBuff = EquipmentBuffs[buffIncreaseType];
-            var randomId = Random.Range(0, equipmentBuff.Count);
-            if (!equipmentBuff.TryGetValue(randomId, out var buffId))
+            if (!EquipmentBuffs.TryGetValue(buffIncreaseType, out HashSet<int> equipmentBuff))
             {
-                Debug.LogError($"Buff Id {randomId} not found");
+                Debug.LogError($"Buff Increase Type {buffIncreaseType} not found in EquipmentBuffs");
                 return default;
             }
+            var randomId = equipmentBuff.RandomSelect();
             return new BuffExtraData
             {
-                buffId = buffId,
+                buffId = randomId,
                 buffType = BuffType.Random,
             };
         }
