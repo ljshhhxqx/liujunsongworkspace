@@ -37,6 +37,7 @@ MonoBehaviour:
       NoUnionMoreGoldRatio: 1
       NoUnionMoreScoreRatio: 1
       SpeedToVelocityRatio: 1.1
+      MaxShopBuyDistance: 0
       AttackComboWindow: 1
       AttackComboMaxCount: 3
     collectData:
@@ -95,7 +96,7 @@ MonoBehaviour:
       inputThreshold: 0.1
       maxCommandAge: 1
       uiUpdateInterval: 0.5
-      roundInterval: 25
+      roundInterval: 30
       maxTraceDistance: 10
       maxViewAngle: 180
       obstacleCheckRadius: 0.5

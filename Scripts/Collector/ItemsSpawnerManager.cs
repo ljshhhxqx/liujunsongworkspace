@@ -420,8 +420,9 @@ namespace HotUpdate.Scripts.Collector
                     var identity = NetworkServer.spawned[itemId];
 
                     var collectObjectController = identity.GetComponent<CollectObjectController>();
-                    collectObjectController.RpcRecycleItem();
                     GameObjectPoolManger.Instance.ReturnObject(identity.gameObject);
+                    collectObjectController.RpcRecycleItem();
+                    Debug.Log($"Recycle item with id: {itemId} itemConfigid {collectObjectController.CollectConfigId}");
                     //NetworkServer.Destroy(NetworkServer.spawned[itemData.ItemId].gameObject);
                     // 通知客户端
                     //RpcPickupItem(itemId);
@@ -488,6 +489,7 @@ namespace HotUpdate.Scripts.Collector
                     var controller = chest.GetComponent<TreasureChestComponent>();
                     GameObjectPoolManger.Instance.ReturnObject(chest.gameObject);
                     controller.RpcRecycleItem();
+                    Debug.Log($"Recycle chest with id: {_serverTreasureChestMetaData.ItemId}");
                 }
                 // 清理网格数据
                 
@@ -503,6 +505,7 @@ namespace HotUpdate.Scripts.Collector
                         var controller = item.GetComponent<CollectObjectController>();
                         GameObjectPoolManger.Instance.ReturnObject(item.gameObject);
                         controller.RpcRecycleItem();
+                        Debug.Log($"Recycle item with id: {itemId} itemConfigid {controller.CollectConfigId}");
                     }
                     else
                     {
@@ -583,19 +586,21 @@ namespace HotUpdate.Scripts.Collector
                         var go = GameObjectPoolManger.Instance.GetObject(_collectiblePrefabs[item.Item1].gameObject, item.Item2, Quaternion.identity, _spawnedParent,
                             go => _gameMapInjector.InjectGameObject(go), newSpawnInfos.Count);
                         var identity = go.GetComponent<NetworkIdentity>();
-                        if (_serverItemMap.TryGetValue(identity.netId, out var itemInfo))
-                        {
-                            //Debug.LogError($"Item with id: {identity.netId} already exists in map, destroying it");
-                            GameObjectPoolManger.Instance.ReturnObject(go);
-                            NetworkServer.Destroy(go);
-                            _serverItemMap.Remove(identity.netId);
-                            continue;
-                        }
+                        // if (_serverItemMap.TryGetValue(identity.netId, out var itemInfo))
+                        // {
+                        //     //Debug.LogError($"Item with id: {identity.netId} already exists in map, destroying it");
+                        //     GameObjectPoolManger.Instance.ReturnObject(go);
+                        //     NetworkServer.Destroy(go);
+                        //     _serverItemMap.Remove(identity.netId);
+                        //     continue;
+                        // }
+                        Debug.Log($"Get Object with id: {identity.netId} itemConfigid {item.Item1}");
                         if (identity.netId == 0 || !NetworkServer.spawned.TryGetValue(identity.netId, out identity))
                         {
-                            //Debug.Log($"[SpawnManyItems] Item exists: {identity.netId}");
+                            Debug.Log($"[SpawnManyItems] Item not or is 0, netId: {identity?.netId}");
                             NetworkServer.Spawn(go);
                             identity = go.GetComponent<NetworkIdentity>();
+                            Debug.Log($"[SpawnManyItems] Spawned item with id: {identity.netId}");
                         }
                         go.transform.position = item.Item2;
                         //Debug.Log($"Spawning item {item.Item1} at position: {item.Item2} with id: {identity.netId}, real position: {go.transform.position}");
@@ -618,9 +623,9 @@ namespace HotUpdate.Scripts.Collector
                             (ushort)Random.Range(0, 65535),
                             -1);
                         itemMetaData = itemMetaData.SetCustomData(extraData);
-                        itemInfo = MemoryPackSerializer.Serialize(itemMetaData);
+                        var itemInfo = MemoryPackSerializer.Serialize(itemMetaData);
+                        Debug.Log($"[SpawnManyItems] Adding item to map with id: {identity.netId} itemConfigid {item.Item1}");
                         _serverItemMap.Add(identity.netId, itemInfo);
-                        //Debug.Log($"[SpawnManyItems] Adding item to map with id: {identity.netId}");
                         await UniTask.Yield();
                     }
                     //Debug.Log($"Calculated {spawnedCount} spawn positions");

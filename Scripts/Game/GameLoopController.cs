@@ -308,9 +308,11 @@ namespace HotUpdate.Scripts.Game
                     {
                         IsEndGame = true;
                         endGameFlag = true;
+                        await UniTask.Yield();
                         break;
                     }
                 }
+                await UniTask.Yield();
             }
 
             _cts?.Cancel();

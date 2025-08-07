@@ -67,10 +67,10 @@ namespace HotUpdate.Scripts.Collector
             _playerLayer = playerConfig.PlayerLayer;
             var collectObjectDataConfig = configProvider.GetConfig<CollectObjectDataConfig>();
             _pooledObject = GetComponent<PooledObject>();
-            if (_pooledObject)
-            {
-                _pooledObject.OnSelfDespawn += OnReturnToPool;
-            }
+            // if (_pooledObject)
+            // {
+            //     _pooledObject.OnSelfDespawn += OnReturnToPool;
+            // }
             _collectParticlePlayer = GetComponentInChildren<CollectParticlePlayer>();
             _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
             _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
@@ -103,18 +103,14 @@ namespace HotUpdate.Scripts.Collector
             {
                 _collider.enabled = false;
             }
+
+            if (isServer)
+            {
+                return;
+            }
             GameObjectPoolManger.Instance.ReturnObject(gameObject);
             //_collectParticlePlayer.Play(_collectAnimationComponent.OutlineColorValue);
             //DelayInvoker.DelayInvoke(0.75f, ReturnToPool);
-        }
-
-        private void OnReturnToPool()
-        {
-            _collectParticlePlayer = null;
-            _collectAnimationComponent = null;
-            _mirrorNetworkMessageHandler = null;
-            _collider = null;
-            _pooledObject.OnSelfDespawn -= OnReturnToPool;
         }
         
         private void OnTriggerEnterObserver(Collider other)
