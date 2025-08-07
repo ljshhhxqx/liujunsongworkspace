@@ -201,6 +201,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             };
             GameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(sellItemCommand).Item1);
         }
+        private int count = 0;
 
         private void OnPlayerItemUpdate(PlayerItemState playerItemState)
         {
@@ -209,6 +210,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             //Debug.Log("OnPlayerItemUpdate");
             CurrentState = playerItemState;
             var bagItems = UIPropertyBinder.GetReactiveDictionary<BagItemData>(_bindKey);
+            var isDebug = count != bagItems.Count;
+            count = bagItems.Count;
             foreach (var kvp in playerItemState.PlayerItemConfigIdSlotDictionary)
             {
                 var playerBagSlotItem = kvp.Value;
@@ -232,6 +235,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     IsEquip = playerBagSlotItem.State == ItemState.IsEquipped,
                     IsLock = playerBagSlotItem.State == ItemState.IsLocked,
                     MaxStack = itemConfig.maxStack,
+                    Price = itemConfig.price,
+                    SellRatio = itemConfig.sellPriceRatio,
                     OnUseItem = OnUseItem,
                     OnDropItem = OnDropItem,
                     OnLockItem = OnLockItem,
@@ -239,7 +244,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     OnExchangeItem = OnExchangeItem,
                     OnSellItem = OnSellItem,
                 };
-                Debug.Log(bagItem.ToString());
+                if (isDebug)
+                {
+                    Debug.Log(bagItem.ToString());
+                    // foreach (var increaseData in playerBagSlotItem.MainIncreaseDatas)
+                    // {
+                    //     Debug.Log(increaseData.ToString());
+                    // }
+                    // foreach (var increaseData in playerBagSlotItem.RandomIncreaseDatas)
+                    // {
+                    //     Debug.Log(increaseData.ToString());
+                    // }
+                    // foreach (var increaseData in playerBagSlotItem.PassiveAttributeIncreaseDatas)
+                    // {
+                    //     Debug.Log(increaseData.ToString());
+                    // }
+                }
                 bagItems.TryAdd(kvp.Key, bagItem);
             }
         }

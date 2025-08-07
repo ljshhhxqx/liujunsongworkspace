@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using AOTScripts.Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
@@ -79,8 +80,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var conditionChecker = GetConditionChecker(itemConfig.itemType, configId);
             if (conditionChecker == null)
             {
-                Debug.LogWarning($"Can't find condition checker for item {itemId}");
-                return null;
+                return playerEquipmentState;
             }
             if (conditionChecker.GetConditionCheckerHeader().TriggerType == TriggerType.None)
             {
@@ -142,8 +142,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             {
                 var data = playerEquipmentState.EquipmentDatas[i];
                 Debug.Log($"Start DeserializeBattleChecker for trigger {triggerType}");
-                var checker = NetworkCommandExtensions.DeserializeBattleChecker(data.ConditionCheckerBytes.Items);
-                if (checker.GetConditionCheckerHeader().TriggerType != triggerType)
+                var checker = NetworkCommandExtensions.DeserializeBattleCondition(data.ConditionCheckerBytes.Items);
+                if (checker.GetCommonParameters().TriggerType != triggerType)
                 {
                     continue;
                 }
@@ -151,6 +151,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
 
             return default;
+        }
+
+        public static bool TryGetEquipmentTrigger(PlayerEquipmentState playerEquipmentState, TriggerType triggerType, out List<IConditionChecker> conditionCheckers)
+        {
+            conditionCheckers = new List<IConditionChecker>(playerEquipmentState.EquipmentDatas.Count);
+            bool hasConditions = false;
+            for (int i = 0; i < playerEquipmentState.EquipmentDatas.Count; i++)
+            {
+                var data = playerEquipmentState.EquipmentDatas[i];
+                if (data.ConditionChecker != null)
+                {
+                    if (data.ConditionChecker.GetConditionCheckerHeader().TriggerType == triggerType)
+                    {
+                        conditionCheckers.Add(data.ConditionChecker);
+                        hasConditions = true;
+                    }
+                }
+            }
+
+            return hasConditions;
         }
     }
 

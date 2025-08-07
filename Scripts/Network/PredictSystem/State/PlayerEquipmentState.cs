@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Battle;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
@@ -12,7 +11,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     /// 玩家装备状态
     /// </summary>
     [MemoryPackable]
-    public partial struct PlayerEquipmentState : ISyncPropertyState
+    public partial class PlayerEquipmentState : ISyncPropertyState
     {
         [MemoryPackOrder(0)]
         public MemoryList<EquipmentData> EquipmentDatas;
@@ -40,9 +39,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 Debug.LogError($"EquipmentId {itemId} already exists in EquipmentDatas");
                 return false;
             }
+            var memories = new MemoryList<byte>();
+            var buffer = NetworkCommandExtensions.SerializeBattleChecker(conditionChecker).buffer;
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                memories.Add(buffer[i]);
+            }
             var equipmentData = new EquipmentData(itemId, equipConfigId, equipmentPartType);
             equipmentData.ConditionChecker = conditionChecker;
-            equipmentData.ConditionCheckerBytes = new MemoryList<byte>(NetworkCommandExtensions.SerializeBattleChecker(conditionChecker).buffer);
+            equipmentData.ConditionCheckerBytes = memories;
             //该部位有装备，则卸下原装备
             for (int i = 0; i < equipmentState.EquipmentDatas.Count; i++)
             {
@@ -103,7 +108,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     }
      
     [MemoryPackable]
-    public partial struct EquipmentData
+    public partial class EquipmentData
     {
         [MemoryPackOrder(0)]
         public int ItemId;

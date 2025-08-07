@@ -28,6 +28,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         [Header("Interaction Buttons")]
         [SerializeField] private Button equipButton;
         [SerializeField] private Button lockButton;
+        [SerializeField] private Button quitButton;
         
         [Header("Count Slider")]
         [SerializeField] private CountSliderButtonGroup useCountSlider;
@@ -45,10 +46,18 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         {
             _uiManager = uiManager;
 
-            equipButton.onClick.RemoveAllListeners();
-            lockButton.onClick.RemoveAllListeners();
-            equipButton.BindDebouncedListener(OnEquipClicked);
-            lockButton.BindDebouncedListener(OnLockClicked);
+            equipButton.OnClickAsObservable()
+                .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
+                .Subscribe(_ => OnEquipClicked())
+                .AddTo(this);
+            lockButton.OnClickAsObservable()
+                .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
+                .Subscribe(_ => OnLockClicked())
+                .AddTo(this);
+            quitButton.OnClickAsObservable()
+                .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
+                .Subscribe(_ => _uiManager.CloseUI(Type))
+                .AddTo(this);
         }
 
         public void BindPlayerGold(IObservable<ValuePropertyData> playerGold)
@@ -162,7 +171,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             itemNameText.text = bagItemData.ItemName;
             
             // 堆叠显示
-            stackText.text = $"{bagItemData.Stack}/{bagItemData.MaxStack}";
+            stackText.text = $"当前{bagItemData.Stack}个/最大{bagItemData.MaxStack}个";
             stackText.gameObject.SetActive(bagItemData.MaxStack > 1);
 
             // 描述信息

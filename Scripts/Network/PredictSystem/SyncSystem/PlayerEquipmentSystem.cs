@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
+using AOTScripts.Data;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Common;
+using HotUpdate.Scripts.Network.Battle;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
@@ -29,6 +31,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
             //游戏开始才能开始倒计时
             UpdateEquipmentCd(_tokenSource.Token).Forget();
+        }
+
+        public bool TryGetPlayerConditionChecker(int connectionId, TriggerType triggerType, out List<IConditionChecker> conditionCheckers)
+        {
+            var state = GetState<PlayerEquipmentState>(connectionId);
+            return PlayerEquipmentCalculator.TryGetEquipmentTrigger(state, triggerType, out conditionCheckers);
         }
 
         private async UniTaskVoid UpdateEquipmentCd(CancellationToken token)
@@ -92,13 +100,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 return null;
             if (command is EquipmentCommand equipmentCommand)
             {
-                var equipmentData = PlayerEquipmentCalculator.CommandEquipment(equipmentCommand, ref playerEquipmentState);
-                PropertyStates[header.ConnectionId] = playerEquipmentState;
+                PlayerEquipmentCalculator.CommandEquipment(equipmentCommand, ref playerEquipmentState);
                 return PropertyStates[header.ConnectionId];
             }
             if (command is TriggerCommand triggerCommand)
             {
                 //todo: 根据触发类型查阅是否有触发效果，没有则忽略，有则获取相关装备数据，并根据配置计算触发效果
+                Debug.Log($"TriggerCommand {triggerCommand.TriggerType} received, {triggerCommand.TriggerData}.");
                 var data = PlayerEquipmentCalculator.GetDataByTriggerType(playerEquipmentState, triggerCommand.TriggerType);
                 var battleConfigData = PlayerItemCalculator.GetBattleEffectConditionConfigData(data.Item2, data.Item3);
                 if (battleConfigData.id == 0)
@@ -106,7 +114,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 var targetIds = PlayerInGameManager.Instance.GetPlayerIdsByTargetType(header.ConnectionId,
                     battleConfigData.targetCount, battleConfigData.targetType);
                 PlayerEquipmentCalculator.CommandTrigger(triggerCommand, ref playerEquipmentState, targetIds, data.Item3, data.Item2, data.Item1);
-                PropertyStates[header.ConnectionId] = playerEquipmentState;
+                // PropertyStates[header.ConnectionId] = playerEquipmentState;
             }
 
             return PropertyStates[header.ConnectionId];

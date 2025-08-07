@@ -421,12 +421,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             PropertyStates[headerConnectionId] = playerState;
             PropertyChange(headerConnectionId);
             
+            var equipmentSyncSystem = GameSyncManager.GetSyncSystem<PlayerEquipmentSystem>(CommandType.Equipment);
+            if (!equipmentSyncSystem.TryGetPlayerConditionChecker(headerConnectionId, TriggerType.OnSkillCast, out _))
+            {
+                return;
+            }
             var hpChangedCheckerParameters = SkillCastCheckerParameters.CreateParameters(
                 TriggerType.OnSkillCast, cost/calculator.MaxCurrentValue, skillConfigData.skillType);
             GameSyncManager.EnqueueServerCommand(new TriggerCommand
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(headerConnectionId, CommandType.Equipment),
-                TriggerType = TriggerType.OnHpChange,
+                TriggerType = TriggerType.OnSkillCast,
                 TriggerData = NetworkCommandExtensions.SerializeBattleCondition(hpChangedCheckerParameters).buffer,
             });
         }
@@ -716,6 +721,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 $"2. [property] preProperty-> {preProperty} nowProperty -> {nowProperty} preMaxProperty -> {preMaxProperty} nowMaxProperty -> {nowMaxProperty} ");
             if (changedHp > 0)
             {
+                var equipmentSyncSystem = GameSyncManager.GetSyncSystem<PlayerEquipmentSystem>(CommandType.Equipment);
+                if (!equipmentSyncSystem.TryGetPlayerConditionChecker(targetId, TriggerType.OnHpChange, out _))
+                {
+                    return (newBuff, index);
+                }
                 var hpChangedCheckerParameters = HpChangeCheckerParameters.CreateParameters(
                     TriggerType.OnHpChange, changedHp / maxHp);
                 GameSyncManager.EnqueueServerCommand(new TriggerCommand
@@ -728,6 +738,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
             if (changedMp > 0)
             {
+                var equipmentSyncSystem = GameSyncManager.GetSyncSystem<PlayerEquipmentSystem>(CommandType.Equipment);
+                if (!equipmentSyncSystem.TryGetPlayerConditionChecker(targetId, TriggerType.OnManaChange, out _))
+                {
+                    return (newBuff, index);
+                }
                 var mpChangedCheckerParameters = MpChangeCheckerParameters.CreateParameters(
                     TriggerType.OnManaChange, changedMp / maxMana);
                 GameSyncManager.EnqueueServerCommand(new TriggerCommand
@@ -885,15 +900,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
             foreach (var damageData in damageDatas)
             {
-                var attackHitCheckerParameters = AttackHitCheckerParameters.CreateParameters(TriggerType.OnAttackHit,
-                    damageData.DamageRatio, damageData.DamageCalculateResult.Damage, AttackRangeType.None);
-                GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                
+                var equipmentSyncSystem = GameSyncManager.GetSyncSystem<PlayerEquipmentSystem>(CommandType.Equipment);
+                if (equipmentSyncSystem.TryGetPlayerConditionChecker(attacker, TriggerType.OnAttackHit, out _))
                 {
-                    Header = GameSyncManager.CreateNetworkCommandHeader(attacker, CommandType.Equipment),
-                    TriggerType = TriggerType.OnAttackHit,
-                    TriggerData = NetworkCommandExtensions.SerializeBattleCondition(attackHitCheckerParameters).buffer,
-                });
-                if (damageData.DamageCalculateResult.IsCritical)
+                    var attackHitCheckerParameters = AttackHitCheckerParameters.CreateParameters(TriggerType.OnAttackHit,
+                        damageData.DamageRatio, damageData.DamageCalculateResult.Damage, AttackRangeType.None);
+                    GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                    {
+                        Header = GameSyncManager.CreateNetworkCommandHeader(attacker, CommandType.Equipment),
+                        TriggerType = TriggerType.OnAttackHit,
+                        TriggerData = NetworkCommandExtensions.SerializeBattleCondition(attackHitCheckerParameters).buffer,
+                    });
+                }
+                if (damageData.DamageCalculateResult.IsCritical && equipmentSyncSystem.TryGetPlayerConditionChecker(attacker, TriggerType.OnCriticalHit, out _))
                 {
                     var criticalHitCheckerParameters = CriticalHitCheckerParameters.CreateParameters(
                         TriggerType.OnCriticalHit,
@@ -911,58 +931,73 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 if (damageData.IsDead)
                 {
                     var deadManId = damageData.Defender;
-                    var hitterPlayerId = damageData.Hitter;
-                    var killCheckerParameters = KillCheckerParameters.CreateParameters(TriggerType.OnKill);
-                    var deathCheckerParameters = DeathCheckerParameters.CreateParameters(TriggerType.OnDeath);
+                    if (equipmentSyncSystem.TryGetPlayerConditionChecker(damageData.Defender, TriggerType.OnDeath, out _))
+                    {
+                        var deathCheckerParameters = DeathCheckerParameters.CreateParameters(TriggerType.OnDeath);
                     
-                    GameSyncManager.EnqueueServerCommand(new TriggerCommand
-                    {
-                        Header = GameSyncManager.CreateNetworkCommandHeader(deadManId, CommandType.Equipment),
-                        TriggerType = TriggerType.OnDeath,
-                        TriggerData = NetworkCommandExtensions.SerializeBattleCondition(deathCheckerParameters).buffer,
-                    });
+                        GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                        {
+                            Header = GameSyncManager.CreateNetworkCommandHeader(deadManId, CommandType.Equipment),
+                            TriggerType = TriggerType.OnDeath,
+                            TriggerData = NetworkCommandExtensions.SerializeBattleCondition(deathCheckerParameters).buffer,
+                        });
+                    }
 
-                    GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                    if (equipmentSyncSystem.TryGetPlayerConditionChecker(damageData.Hitter, TriggerType.OnKill, out _))
                     {
-                        Header = GameSyncManager.CreateNetworkCommandHeader(hitterPlayerId, CommandType.Equipment),
-                        TriggerType = TriggerType.OnKill,
-                        TriggerData = NetworkCommandExtensions.SerializeBattleCondition(killCheckerParameters).buffer,
-                    });
+                        var hitterPlayerId = damageData.Hitter;
+                        var killCheckerParameters = KillCheckerParameters.CreateParameters(TriggerType.OnKill);
+                        GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                        {
+                            Header = GameSyncManager.CreateNetworkCommandHeader(hitterPlayerId, CommandType.Equipment),
+                            TriggerType = TriggerType.OnKill,
+                            TriggerData = NetworkCommandExtensions.SerializeBattleCondition(killCheckerParameters).buffer,
+                        });
+                    }
                 }
 
                 if (damageData.DamageCalculateResult.Damage > 0 && !damageData.IsDead)
                 {
-                    var takeDamageCheckerParameters = TakeDamageCheckerParameters.CreateParameters(
-                        TriggerType.OnTakeDamage, DamageType.Physical, 
-                        damageData.HpRemainRatio, damageData.DamageRatio);
-                    
-                    var hpChangedCheckerParameters = HpChangeCheckerParameters.CreateParameters(
-                        TriggerType.OnHpChange, damageData.DamageRatio);
-                    
-                    GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                    if (equipmentSyncSystem.TryGetPlayerConditionChecker(attacker, TriggerType.OnHpChange, out _))
                     {
-                        Header = GameSyncManager.CreateNetworkCommandHeader(damageData.Defender, CommandType.Equipment),
-                        TriggerType = TriggerType.OnHpChange,
-                        TriggerData = NetworkCommandExtensions.SerializeBattleCondition(hpChangedCheckerParameters).buffer,
-                    });
+                        var hpChangedCheckerParameters = HpChangeCheckerParameters.CreateParameters(
+                            TriggerType.OnHpChange, damageData.DamageRatio);
                     
-                    GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                        GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                        {
+                            Header = GameSyncManager.CreateNetworkCommandHeader(damageData.Defender, CommandType.Equipment),
+                            TriggerType = TriggerType.OnHpChange,
+                            TriggerData = NetworkCommandExtensions.SerializeBattleCondition(hpChangedCheckerParameters).buffer,
+                        });
+
+                    }
+
+                    if (equipmentSyncSystem.TryGetPlayerConditionChecker(attacker, TriggerType.OnTakeDamage, out _))
                     {
-                        Header = GameSyncManager.CreateNetworkCommandHeader(damageData.Defender, CommandType.Equipment),
-                        TriggerType = TriggerType.OnTakeDamage,
-                        TriggerData = NetworkCommandExtensions.SerializeBattleCondition(takeDamageCheckerParameters).buffer,
-                    });
+                        var takeDamageCheckerParameters = TakeDamageCheckerParameters.CreateParameters(
+                            TriggerType.OnTakeDamage, DamageType.Physical, 
+                            damageData.HpRemainRatio, damageData.DamageRatio);
+                        GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                        {
+                            Header = GameSyncManager.CreateNetworkCommandHeader(damageData.Defender, CommandType.Equipment),
+                            TriggerType = TriggerType.OnTakeDamage,
+                            TriggerData = NetworkCommandExtensions.SerializeBattleCondition(takeDamageCheckerParameters).buffer,
+                        });
+                    }
                 }
 
                 if (damageData.IsDodged)
                 {
-                    var dodgeCheckerParameters = DodgeCheckerParameters.CreateParameters(TriggerType.OnDodge);
-                    GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                    if (equipmentSyncSystem.TryGetPlayerConditionChecker(attacker, TriggerType.OnDodge, out _))
                     {
-                        Header = GameSyncManager.CreateNetworkCommandHeader(damageData.Defender, CommandType.Equipment),
-                        TriggerType = TriggerType.OnDodge,
-                        TriggerData = NetworkCommandExtensions.SerializeBattleCondition(dodgeCheckerParameters).buffer,
-                    });
+                        var dodgeCheckerParameters = DodgeCheckerParameters.CreateParameters(TriggerType.OnDodge);
+                        GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                        {
+                            Header = GameSyncManager.CreateNetworkCommandHeader(damageData.Defender, CommandType.Equipment),
+                            TriggerType = TriggerType.OnDodge,
+                            TriggerData = NetworkCommandExtensions.SerializeBattleCondition(dodgeCheckerParameters).buffer,
+                        });
+                    }
                 }
             }
             PropertyStates[attacker] = propertyState;   
@@ -1023,6 +1058,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 }
                 else if (skillData.conditionTarget == ConditionTargetType.Enemy && !isAlly)
                 {
+                    var equipmentSystem = GameSyncManager.GetSyncSystem<PlayerEquipmentSystem>(CommandType.Equipment);
                     for (int j = 0; j < effectData.Length; j++)
                     {
                         var hitPlayerState = GetState<PlayerPredictablePropertyState>(hitPlayerId);
@@ -1031,17 +1067,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         HandleSkillHit(attacker, effect, hitPlayerId, false);
                         if (effect.effectProperty == PropertyTypeEnum.Health)
                         {
-                            var changedHp = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue - preHealth;
-                            var maxHp = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].MaxCurrentValue;
-                            var currentHp = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue;
-                            var skillHitData = SkillHitCheckerParameters.CreateParameters(TriggerType.OnSkillHit,
-                                changedHp, skillData.skillType, currentHp / maxHp);
-                            GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                            if (equipmentSystem.TryGetPlayerConditionChecker(attacker, TriggerType.OnSkillHit, out var conditionChecker))
                             {
-                                Header = GameSyncManager.CreateNetworkCommandHeader(attacker, CommandType.Equipment),
-                                TriggerType = TriggerType.OnSkillHit,
-                                TriggerData = NetworkCommandExtensions.SerializeBattleCondition(skillHitData).buffer,
-                            });
+                                var changedHp = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue - preHealth;
+                                var maxHp = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].MaxCurrentValue;
+                                var currentHp = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue;
+                                var skillHitData = SkillHitCheckerParameters.CreateParameters(TriggerType.OnSkillHit,
+                                    changedHp, skillData.skillType, currentHp / maxHp);
+                                GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                                {
+                                    Header = GameSyncManager.CreateNetworkCommandHeader(attacker, CommandType.Equipment),
+                                    TriggerType = TriggerType.OnSkillHit,
+                                    TriggerData = NetworkCommandExtensions.SerializeBattleCondition(skillHitData).buffer,
+                                });
+                            }
                         }
                     }
                 }

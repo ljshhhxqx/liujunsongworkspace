@@ -237,7 +237,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
             sb.AppendFormat("物品最大堆叠：{0}\n", MaxStack);
             sb.AppendFormat("物品价格：{0}\n", Price);
             sb.AppendFormat("物品售价：{0}\n", SellRatio);
-            sb.AppendFormat("物品品质：{0}\n", QualityIcon);
             return sb.ToString();
         }
     }

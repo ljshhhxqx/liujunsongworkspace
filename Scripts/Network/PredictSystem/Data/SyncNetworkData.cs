@@ -1920,7 +1920,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         {
             Header = default;
             TriggerType = default;
-            TriggerData = default;
+            TriggerData = null;
         }
     }
 

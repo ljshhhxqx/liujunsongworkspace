@@ -125,7 +125,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            PropertyStates[header.ConnectionId] = playerItemState;
+            //PropertyStates[header.ConnectionId] = playerItemState;
             return playerItemState;
         }
 

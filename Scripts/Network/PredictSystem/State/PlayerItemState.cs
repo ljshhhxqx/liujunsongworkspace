@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
@@ -11,7 +12,7 @@ using UnityEngine;
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
     [MemoryPackable(GenerateType.VersionTolerant)]
-    public partial struct PlayerItemState : ISyncPropertyState
+    public partial class PlayerItemState : ISyncPropertyState
     {
         [MemoryPackOrder(0)]
         private PlayerBagItem[] _items;
@@ -371,7 +372,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         {
             slotItem = state.PlayerItemConfigIdSlotDictionary.Values
                 .FirstOrDefault(x => x.ConfigId == configId);
-            return !slotItem.Equals(default);
+            return slotItem != null;
         }
 
         public static bool TryGetSlotItemBySlotIndex(PlayerItemState state, int slotIndex, out PlayerBagSlotItem slotItem)
@@ -386,7 +387,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             {
                 return state.PlayerItems.TryGetValue(slotItem.ItemIds.First(), out bagItem);
             }
-            bagItem = default(PlayerBagItem);
+            bagItem = null;
             return false;
         }
 
@@ -573,7 +574,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     }
 
     [MemoryPackable]
-    public partial struct PlayerBagItem : IEquatable<PlayerBagItem>
+    public partial class PlayerBagItem : IEquatable<PlayerBagItem>, IPoolObject
     {
         // 服务器唯一生成的id
         [MemoryPackOrder(0)]
@@ -593,22 +594,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         [MemoryPackOrder(6)]
         public EquipmentPart EquipmentPart;
         
-        
-        public PlayerBagItem(int itemId, int configId, 
-            PlayerItemType playerItemType, int maxStack, EquipmentPart equipmentPart = EquipmentPart.None, ItemState state = ItemState.IsInBag, int indexSlot = -1)
-        {
-            ItemId = itemId;
-            ConfigId = configId;
-            PlayerItemType = playerItemType;
-            State = state;
-            IndexSlot = indexSlot;
-            MaxStack = maxStack;
-            EquipmentPart = equipmentPart;
-        }
 
         public bool Equals(PlayerBagItem other)
         {
-            return ItemId == other.ItemId && EquipmentPart == other.EquipmentPart && ConfigId == other.ConfigId && PlayerItemType == other.PlayerItemType && State == other.State && IndexSlot == other.IndexSlot && MaxStack == other.MaxStack;
+            return other != null && ItemId == other.ItemId && EquipmentPart == other.EquipmentPart && ConfigId == other.ConfigId && PlayerItemType == other.PlayerItemType && State == other.State && IndexSlot == other.IndexSlot && MaxStack == other.MaxStack;
         }
 
         public override bool Equals(object obj)
@@ -620,10 +609,25 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         {
             return HashCode.Combine(ItemId, ConfigId, (int)PlayerItemType, (int)State, IndexSlot, MaxStack);
         }
+
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            ItemId = 0;
+            ConfigId = 0;
+            PlayerItemType = PlayerItemType.None;
+            State = ItemState.IsInBag;
+            IndexSlot = -1;
+            MaxStack = 0;
+            EquipmentPart = EquipmentPart.None;
+        }
     }
     
     [MemoryPackable]
-    public partial struct PlayerEquipSlotItem : IEquatable<PlayerEquipSlotItem>
+    public partial class PlayerEquipSlotItem : IEquatable<PlayerEquipSlotItem>
     {
         [MemoryPackOrder(0)]
         public EquipmentPart EquipmentPart;
@@ -642,7 +646,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
 
         public bool Equals(PlayerEquipSlotItem other)
         {
-            return EquipmentPart == other.EquipmentPart && ConfigId == other.ConfigId && ItemId == other.ItemId;
+            return other != null && EquipmentPart == other.EquipmentPart && ConfigId == other.ConfigId && ItemId == other.ItemId;
         }
 
         public override bool Equals(object obj)
@@ -657,7 +661,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     }
     
     [MemoryPackable]
-    public partial struct PlayerBagSlotItem : IEquatable<PlayerBagSlotItem>
+    public partial class PlayerBagSlotItem : IEquatable<PlayerBagSlotItem>
     {
         [MemoryPackOrder(0)]
         public int IndexSlot;
@@ -687,7 +691,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
 
         public bool Equals(PlayerBagSlotItem other)
         {
-            return IndexSlot == other.IndexSlot && ConfigId == other.ConfigId && Count == other.Count && MaxStack == other.MaxStack;
+            return other != null && IndexSlot == other.IndexSlot && ConfigId == other.ConfigId && Count == other.Count && MaxStack == other.MaxStack;
         }
 
         public override bool Equals(object obj)

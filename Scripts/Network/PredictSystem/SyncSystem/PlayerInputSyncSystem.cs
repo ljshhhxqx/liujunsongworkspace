@@ -411,12 +411,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 if (inputMovement.magnitude > 0.1f && playerGameStateData.AnimationState == AnimationState.Move || playerGameStateData.AnimationState == AnimationState.Sprint)
                 {
                     var moveSpeed = playerSyncSystem.GetMoveSpeed(header.ConnectionId);
-                    var hpChangedCheckerParameters = MoveCheckerParameters.CreateParameters(
-                        TriggerType.OnHpChange, moveSpeed, moveSpeed * inputMovement.magnitude * GameSyncManager.TickSeconds);
+                    var equipmentSyncSystem = GameSyncManager.GetSyncSystem<PlayerEquipmentSystem>(CommandType.Equipment);
+                    if (!equipmentSyncSystem.TryGetPlayerConditionChecker(header.ConnectionId, TriggerType.OnMove, out var moveConditionChecker))
+                    {
+                        return playerInputState;
+                    }
+                    var moveCheckerParameters = MoveCheckerParameters.CreateParameters(
+                        TriggerType.OnMove, moveSpeed, moveSpeed * inputMovement.magnitude * GameSyncManager.TickSeconds);
                     var triggerCommand = ObjectPoolManager<TriggerCommand>.Instance.Get(50);
                     triggerCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate);
-                    triggerCommand.TriggerType = TriggerType.OnHpChange;
-                    triggerCommand.TriggerData = NetworkCommandExtensions.SerializeBattleCondition(hpChangedCheckerParameters).buffer;
+                    triggerCommand.TriggerType = TriggerType.OnMove;
+                    triggerCommand.TriggerData = NetworkCommandExtensions.SerializeBattleCondition(moveCheckerParameters).buffer;
                     GameSyncManager.EnqueueServerCommand(triggerCommand);
                     //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input move {inputCommand.InputMovement} speed {moveSpeed} player state {playerGameStateData.AnimationState}");
                 }
