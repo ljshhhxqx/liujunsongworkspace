@@ -381,64 +381,82 @@ namespace HotUpdate.Scripts.Collector
             {
                 return;
             }
-            Debug.Log($"Handling item pickup with id: {itemId} by picker: {pickerId}");
-            if (_serverItemMap.TryGetValue(itemId, out var itemInfo))
-            {
-                if (!_processedItems.Add(itemId))
-                {
-                    return;
-                }
-                var itemData = MemoryPackSerializer.Deserialize<CollectItemMetaData>(itemInfo);
-                var itemColliderData = _colliderConfigs.GetValueOrDefault(itemData.ItemCollectConfigId);
-                var itemConfigId = _collectObjectDataConfig.GetCollectObjectData(itemData.ItemCollectConfigId).itemId;
-                var itemPos = itemData.Position;
-                var player =  NetworkServer.spawned[pickerId];
-                var playerConnectionId = PlayerInGameManager.Instance.GetPlayerId(pickerId);
-                var playerColliderConfig = PlayerInGameManager.Instance.PlayerPhysicsData;
-                if (!player)
-                {
-                    Debug.LogError($"Cannot find player with netId: {pickerId}");
-                    return;
-                }
-                
-                // 验证位置和碰撞
-                if (ValidatePickup(itemPos.ToVector3(), player.transform.position, itemColliderData, playerColliderConfig))
-                {
-                    var list = new MemoryList<ItemsCommandData>(2);
-                    list.Add(new ItemsCommandData()
-                    {
-                        ItemConfigId = itemConfigId,
-                        Count = 1,
-                        ItemUniqueId = new int[]{ HybridIdGenerator.GenerateItemId(itemConfigId, GameSyncManager.CurrentTick) } 
-                    });
-                    // 处理拾取逻辑
-                    _gameSyncManager.EnqueueServerCommand(new ItemsGetCommand
-                    {
-                        Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Item),
-                        Items = list,
-                    });
-                    var identity = NetworkServer.spawned[itemId];
 
-                    var collectObjectController = identity.GetComponent<CollectObjectController>();
-                    GameObjectPoolManger.Instance.ReturnObject(identity.gameObject);
-                    collectObjectController.RpcRecycleItem();
-                    Debug.Log($"Recycle item with id: {itemId} itemConfigid {collectObjectController.CollectConfigId}");
-                    //NetworkServer.Destroy(NetworkServer.spawned[itemData.ItemId].gameObject);
-                    // 通知客户端
-                    //RpcPickupItem(itemId);
-            
-                    _processedItems.Remove(itemId);
-                    _serverItemMap.Remove(itemId);
-                    Debug.Log($"Player {player.name} pick up item {itemId}");
+            try
+            {
+                Debug.Log($"Handling item pickup with id: {itemId} by picker: {pickerId}");
+                if (_serverItemMap.TryGetValue(itemId, out var itemInfo))
+                {
+                    if (!_processedItems.Add(itemId))
+                    {
+                        return;
+                    }
+
+                    var itemData = MemoryPackSerializer.Deserialize<CollectItemMetaData>(itemInfo);
+                    var itemColliderData = _colliderConfigs.GetValueOrDefault(itemData.ItemCollectConfigId);
+                    var itemConfigId = _collectObjectDataConfig.GetCollectObjectData(itemData.ItemCollectConfigId)
+                        .itemId;
+                    var itemPos = itemData.Position;
+                    var player = NetworkServer.spawned[pickerId];
+                    var playerConnectionId = PlayerInGameManager.Instance.GetPlayerId(pickerId);
+                    var playerColliderConfig = PlayerInGameManager.Instance.PlayerPhysicsData;
+                    if (!player)
+                    {
+                        Debug.LogError($"Cannot find player with netId: {pickerId}");
+                        return;
+                    }
+
+                    // 验证位置和碰撞
+                    if (ValidatePickup(itemPos.ToVector3(), player.transform.position, itemColliderData,
+                            playerColliderConfig))
+                    {
+                        var list = new MemoryList<ItemsCommandData>(2);
+                        list.Add(new ItemsCommandData()
+                        {
+                            ItemConfigId = itemConfigId,
+                            Count = 1,
+                            ItemUniqueId = new int[]
+                                { HybridIdGenerator.GenerateItemId(itemConfigId, GameSyncManager.CurrentTick) }
+                        });
+                        // 处理拾取逻辑
+                        _gameSyncManager.EnqueueServerCommand(new ItemsGetCommand
+                        {
+                            Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Item),
+                            Items = list,
+                        });
+                        var identity = NetworkServer.spawned[itemId];
+
+                        var collectObjectController = identity.GetComponent<CollectObjectController>();
+                        GameObjectPoolManger.Instance.ReturnObject(identity.gameObject);
+                        collectObjectController.RpcRecycleItem();
+                        Debug.Log(
+                            $"Recycle item with id: {itemId} itemConfigid {collectObjectController.CollectConfigId}");
+                        //NetworkServer.Destroy(NetworkServer.spawned[itemData.ItemId].gameObject);
+                        // 通知客户端
+                        //RpcPickupItem(itemId);
+
+                        _processedItems.Remove(itemId);
+                        _serverItemMap.Remove(itemId);
+                        Debug.Log($"Player {player.name} pick up item {itemId}");
+                    }
+                }
+                else
+                {
+                    var sb = new StringBuilder();
+                    sb.AppendLine($"Cannot find item with id: {itemId}");
+                    foreach (var item in _serverItemMap.Keys)
+                        sb.AppendLine($"Existing item id: {item}");
+                    Debug.LogError(sb.ToString());
                 }
             }
-            else
+            catch (Exception e)
             {
-                var sb = new StringBuilder();
-                sb.AppendLine($"Cannot find item with id: {itemId}");
-                foreach (var item in _serverItemMap.Keys)
-                    sb.AppendLine($"Existing item id: {item}");
-                Debug.LogError(sb.ToString());
+                Console.WriteLine(e);
+                throw;
+            }
+            finally
+            {
+                _processedItems.Clear();
             }
         }
         

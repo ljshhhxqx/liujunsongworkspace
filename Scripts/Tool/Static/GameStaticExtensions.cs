@@ -230,7 +230,12 @@ namespace HotUpdate.Scripts.Tool.Static
                 _ => "数值"
             };
 
-            return $"{operation}{{[{GetDynamicValueDesc(extraData)}]的[{increaseDesc}][{propName}]}}";
+            return $"{operation}[{GetDynamicValueDesc(extraData)}]的[{increaseDesc}][{propName}]";
+        }
+
+        private static bool IsPercentProperty(PropertyTypeEnum propertyType)
+        {
+            return propertyType is PropertyTypeEnum.CriticalRate or PropertyTypeEnum.CriticalDamageRatio;
         }
 
         public static string GetBuffEffectDesc(AttributeIncreaseData effect)
@@ -256,16 +261,16 @@ namespace HotUpdate.Scripts.Tool.Static
                 _ => "数值"
             };
 
-            return $"{operation}{{[{GetDynamicValueDesc(effect)}]的[{increaseDesc}][{propName}]}}";
+            return $"{operation}[{GetDynamicValueDesc(effect)}]的[{increaseDesc}][{propName}]";
         }
 
         public static string GetDynamicValueDesc(AttributeIncreaseData effect)
         {
             return effect.header.buffIncreaseType switch
             {
-                BuffIncreaseType.Multiplier => $"{effect.increaseValue:P0}",
-                BuffIncreaseType.CorrectionFactor => $"{effect.increaseValue:P0}",
-                _ => $"{effect.increaseValue:F1}"
+                BuffIncreaseType.Multiplier => IsPercentProperty(effect.header.propertyType) ? $"{effect.increaseValue*100:P1}" : $"{effect.increaseValue*100:F1}",
+                BuffIncreaseType.CorrectionFactor => $"{effect.increaseValue:P1}",
+                _ => IsPercentProperty(effect.header.propertyType) ? $"{effect.increaseValue:P1}" : $"{effect.increaseValue:F1}"
             };
         }
         
@@ -273,9 +278,9 @@ namespace HotUpdate.Scripts.Tool.Static
         {
             return effect.header.buffIncreaseType switch
             {
-                BuffIncreaseType.Multiplier => $"{effect.increaseValueRange.min:P0}~{effect.increaseValueRange.max:P0}",
-                BuffIncreaseType.CorrectionFactor => $"{effect.increaseValueRange.min:P0}~{effect.increaseValueRange.max:P0}",
-                _ => $"{effect.increaseValueRange.min:F1}~{effect.increaseValueRange.max:F1}"
+                BuffIncreaseType.Multiplier =>IsPercentProperty(effect.header.propertyType) ? $"{effect.increaseValueRange.min:P1}~{effect.increaseValueRange.max:P1}" : $"{effect.increaseValueRange.min:F1}~{effect.increaseValueRange.max:F1}",
+                BuffIncreaseType.CorrectionFactor => $"{effect.increaseValueRange.min:P1}~{effect.increaseValueRange.max:P1}",
+                _ => IsPercentProperty(effect.header.propertyType) ? $"{effect.increaseValueRange.min:P1}~{effect.increaseValueRange.max:P1}" : $"{effect.increaseValueRange.min:F1}~{effect.increaseValueRange.max:F1}"
             };
         }
         
