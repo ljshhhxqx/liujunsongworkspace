@@ -243,7 +243,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             _minValue = minValue;
             _isResourceProperty = isResourceProperty;
         }
-        
+
         public bool IsResourceProperty()
         {
             return _isResourceProperty;
@@ -299,7 +299,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
 
         public PropertyCalculator UpdateCalculator(PropertyCalculator calculator, BuffIncreaseData data, bool isReverse = false)
         {
-            if (_propertyType == PropertyTypeEnum.Score)
+            if (_propertyType == PropertyTypeEnum.Gold || _propertyType == PropertyTypeEnum.Score)
             {
                 return HandleScoreUpdate(calculator, data);
             }

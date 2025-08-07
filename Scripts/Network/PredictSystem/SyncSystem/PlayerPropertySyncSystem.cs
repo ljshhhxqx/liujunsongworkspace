@@ -716,8 +716,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var nowProperty = playerState.MemoryProperty[newBuff.BuffData.propertyType].CurrentValue;
             var nowMaxProperty = playerState.MemoryProperty[newBuff.BuffData.propertyType].MaxCurrentValue;
             Debug.Log(
-                "[AddBuffToPlayer] modify property :" +
-                $"1. [buff] buffType->{buffExtraData.buffType} buffid->{newBuff.BuffData.buffId} buffpropertyType-> {newBuff.BuffData.propertyType} buffincreaseData-> {newBuff.BuffData.increaseDataList[0].ToString()}" +
+                "[AddBuffToPlayer] modify property :\n" +
+                $"1. [buff] buffType->{buffExtraData.buffType} buffid->{newBuff.BuffData.buffId} buffpropertyType-> {newBuff.BuffData.propertyType} buffincreaseData-> {newBuff.BuffData.increaseDataList[0].ToString()}\n" +
                 $"2. [property] preProperty-> {preProperty} nowProperty -> {nowProperty} preMaxProperty -> {preMaxProperty} nowMaxProperty -> {nowMaxProperty} ");
             if (changedHp > 0)
             {
