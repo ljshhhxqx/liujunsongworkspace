@@ -173,7 +173,7 @@ namespace HotUpdate.Scripts.Tool.Static
             foreach (var data in extraDatas)
             {
                 str.Append(GetBuffEffectDesc(data));
-                str.Append("\\n");
+                str.Append("\n");
             }
             return str.ToString().TrimEnd('\n');
         }
@@ -188,7 +188,7 @@ namespace HotUpdate.Scripts.Tool.Static
             foreach (var data in extraDatas)
             {
                 str.Append(GetRandomBuffEffectDesc(data));
-                str.Append("\\n");
+                str.Append("\n");
             }   
             return str.ToString().TrimEnd('\n');
         }
@@ -203,7 +203,7 @@ namespace HotUpdate.Scripts.Tool.Static
             foreach (var data in extraDatas)
             {
                 str.Append(GetRandomBuffEffectDesc(data));
-                str.Append("\\n");
+                str.Append("\n");
             }
             return str.ToString().TrimEnd('\n');
         }
@@ -230,7 +230,7 @@ namespace HotUpdate.Scripts.Tool.Static
                 _ => "数值"
             };
 
-            return $"{operation}{{{GetDynamicValueDesc(extraData)}的{increaseDesc}{propName}}}";
+            return $"{operation}{{[{GetDynamicValueDesc(extraData)}]的[{increaseDesc}][{propName}]}}";
         }
 
         public static string GetBuffEffectDesc(AttributeIncreaseData effect)
@@ -256,7 +256,7 @@ namespace HotUpdate.Scripts.Tool.Static
                 _ => "数值"
             };
 
-            return $"{operation}{{[GetDynamicValueDesc(effect)]的{increaseDesc}{propName}}}";
+            return $"{operation}{{[{GetDynamicValueDesc(effect)}]的[{increaseDesc}][{propName}]}}";
         }
 
         public static string GetDynamicValueDesc(AttributeIncreaseData effect)
