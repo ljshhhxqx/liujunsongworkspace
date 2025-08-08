@@ -49,14 +49,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
                 .Subscribe(_ => _uiManager.CloseUI(Type))
                 .AddTo(this);
             dragIcon.SetActive(false);
-            // if (_bagSlotItems == null || _bagSlotItems.Count == 0)
-            // {
-            //     equipmentItemList.gameObject.SetActive(false);
-            // }
-            // if (_slotItems == null || _slotItems.Count == 0)
-            // {
-            //     bagItemList.gameObject.SetActive(false);
-            // }
         }
 
         public void BindEquipItemData(ReactiveDictionary<int, EquipItemData> slotEquipItemData)

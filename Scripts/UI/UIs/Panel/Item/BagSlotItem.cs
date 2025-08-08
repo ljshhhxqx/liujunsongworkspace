@@ -14,6 +14,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         [SerializeField]
         private Image qualityImage;        // 显示物品图标的Image组件
         [SerializeField]
+        private GameObject equipFlag;        // 显示是否装备的GameObject组件
+        [SerializeField]
         private TextMeshProUGUI stackText;         // 显示堆叠数量的Text组件
         [SerializeField]
         private GameObject lockIcon;    // 锁定图标的GameObject组件
@@ -68,11 +70,12 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         // 更新格子UI
         private void UpdateSlotUI()
         {
-            var itemIsNull = _currentItem.Equals(default(BagItemData));
+            var itemIsNull = _currentItem.Equals(default);
             itemImage.sprite = itemIsNull ? null : _currentItem.Icon;
             itemImage.enabled = !itemIsNull;
             stackText.text = !itemIsNull && _stackCount > 1 ? _stackCount.ToString() : "";
             qualityImage.sprite = _currentItem.QualityIcon;
+            equipFlag.SetActive(_currentItem.IsEquip);
             lockIcon.SetActive(_currentItem.IsLock);
         }
 

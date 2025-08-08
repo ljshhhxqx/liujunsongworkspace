@@ -116,7 +116,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             dic.Add(slotIndex, useItem);
             var useItemCommand = new ItemsUseCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
+                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
                 Slots = dic
             };
             GameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(useItemCommand).Item1);
@@ -130,7 +130,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             var playerItemType = state.PlayerItemConfigIdSlotDictionary[slotIndex].PlayerItemType;
             var equipItemCommand = new ItemEquipCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
+                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
                 SlotIndex = slotIndex,
                 PlayerItemType = playerItemType,
                 IsEquip = isEquip
@@ -144,7 +144,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 return;
             var lockItemCommand = new ItemLockCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
+                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
                 SlotIndex = slotIndex,
                 IsLocked = isLock
             };
@@ -164,7 +164,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             dic.Add(slotIndex, dropItem);
             var dropItemCommand = new ItemDropCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
+                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
                 Slots = dic
             };
             GameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(dropItemCommand).Item1);
@@ -176,7 +176,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 return;
             var exchangeItemCommand = new ItemExchangeCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
+                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
                 FromSlotIndex = fromSlotIndex,
                 ToSlotIndex = toSlotIndex
             };

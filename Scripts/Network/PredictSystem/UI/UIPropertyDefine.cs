@@ -38,7 +38,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.UI
         {
             PropertyKey = key;
             Scope = scope;
-            PlayerId = scope == DataScope.Global ? -1 : playerId;
+            PlayerId = scope switch
+            {
+                DataScope.LocalPlayer => UIPropertyBinder.LocalPlayerId,
+                DataScope.SpecificPlayer => playerId,
+                DataScope.Global => -1,
+                _ => 0
+            };
         }
 
         public bool Equals(BindingKey other) => 

@@ -1,5 +1,4 @@
 ﻿using System;
-using AOTScripts.Tool;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.UI.UIBase;
@@ -40,6 +39,9 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         private IItemBaseData _currentItemData;
         private ItemDetailsType _currentItemDetailsType;
         private ValuePropertyData _currentValuePropertyData;
+        
+        private ReactiveProperty<RandomShopItemData> _currentRandomShopItemData = new ReactiveProperty<RandomShopItemData>();
+        private ReactiveProperty<BagItemData> _currentBagItemData = new ReactiveProperty<BagItemData>();
 
         [Inject]
         private void Init(UIManager uiManager)
@@ -58,6 +60,15 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
                 .Subscribe(_ => _uiManager.CloseUI(Type))
                 .AddTo(this);
+            _currentRandomShopItemData.Subscribe(data =>
+            {
+                OpenShop(data);
+            }).AddTo(this);
+            _currentBagItemData.Subscribe(data =>
+            {
+                _currentItemData = data;
+                OpenBag(data);
+            }).AddTo(this);
         }
 
         public void BindPlayerGold(IObservable<ValuePropertyData> playerGold)
@@ -117,6 +128,11 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
 
         private void UpdateShopItemUI(RandomShopItemData randomShopItemData)
         {
+            if (randomShopItemData.RemainingCount <= 0)
+            {
+                _uiManager.CloseUI(Type);
+                return;
+            }
             itemIcon.sprite = randomShopItemData.Icon;
             qualityBorder.sprite = randomShopItemData.QualityIcon;
             itemNameText.text = randomShopItemData.Name;
@@ -155,6 +171,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 ButtonType = ButtonType.Buy
             };
             buyCountSlider.Init(countSliderButtonGroupData);
+            countSliderButtonGroupData.PlayerItemType = randomShopItemData.ItemType;
             buyCountSlider.OnSliderChanged.Subscribe(x =>
             {
                 var newPrice = randomShopItemData.Price * x;
@@ -211,6 +228,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             countSliderButtonGroupData.ShowPrice = true;
             countSliderButtonGroupData.Callback = x => bagItemData.OnSellItem?.Invoke(bagItemData.Index, x);
             countSliderButtonGroupData.ButtonType = ButtonType.Sell;
+            countSliderButtonGroupData.PlayerItemType = bagItemData.PlayerItemType;
             sellCountSlider.Init(countSliderButtonGroupData);
         }
 
@@ -386,6 +404,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         public bool ShowPrice;
         public float CurrentGold;
         public ButtonType ButtonType;
+        public PlayerItemType PlayerItemType;
     }
 
     public enum ItemDetailsType

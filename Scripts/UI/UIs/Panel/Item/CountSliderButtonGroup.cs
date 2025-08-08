@@ -1,6 +1,7 @@
 ﻿using System;
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.UI.UIs.SecondPanel;
 using TMPro;
 using UniRx;
@@ -34,12 +35,13 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public void Init(CountSliderButtonGroupData countSliderButtonGroupData)
         {
             _countSliderButtonGroupData = countSliderButtonGroupData;
+            slider.onValueChanged.RemoveAllListeners();
             buttonText.text = EnumHeaderParser.GetHeader(_countSliderButtonGroupData.ButtonType);
-            button.onClick.RemoveAllListeners();
-            button.BindDebouncedListener(() =>
-            {
-                _countSliderButtonGroupData.Callback?.Invoke((int)slider.value);
-            });
+            
+            button.OnClickAsObservable()
+                .ThrottleFirst(TimeSpan.FromMilliseconds(0.5f))
+                .Subscribe(_ => _countSliderButtonGroupData.Callback?.Invoke((int)slider.value))
+                .AddTo(this);
             slider.minValue = Mathf.Min(_countSliderButtonGroupData.MinCount, 1);
             slider.maxValue = _countSliderButtonGroupData.MaxCount;
             slider.onValueChanged.AddListener(x =>
@@ -56,7 +58,18 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
             countText.text = $"{count}/{maxCount}";
             priceText.text = _countSliderButtonGroupData.ShowPrice ? 
                 $"价格: {totalPrice}G (当前金币: {_countSliderButtonGroupData.CurrentGold}G)" : "";
-            button.interactable = count > 0 && _countSliderButtonGroupData.CurrentGold >= totalPrice;
+            switch (_countSliderButtonGroupData.ButtonType)
+            {
+                case ButtonType.Use:
+                case ButtonType.Drop:
+                case ButtonType.Sell:
+                    button.interactable = count > 0;
+                    break;
+                case ButtonType.Buy:
+                    button.interactable = count > 0 && _countSliderButtonGroupData.CurrentGold >= totalPrice;
+                    break;
+            }
+            slider.gameObject.SetActive(_countSliderButtonGroupData.PlayerItemType == PlayerItemType.Consume || _countSliderButtonGroupData.PlayerItemType == PlayerItemType.Item);
         }
     }
 }

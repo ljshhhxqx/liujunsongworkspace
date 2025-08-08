@@ -74,7 +74,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             {
                 Constant.GameSyncManager.EnqueueServerCommand(propertyEquipmentChangedCommand);
                 Constant.GameSyncManager.EnqueueServerCommand(propertyEquipPassiveCommand);
-                //todo: 
                 return playerEquipmentState;
             }
             var conditionChecker = GetConditionChecker(itemConfig.itemType, configId);

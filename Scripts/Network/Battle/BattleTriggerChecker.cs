@@ -125,6 +125,10 @@ namespace HotUpdate.Scripts.Network.Battle
         public static IConditionChecker CreateChecker(ConditionCheckerHeader header)
         {
             Debug.Log($"CreateChecker for trigger {header.TriggerType}");
+            if (header.TriggerType == TriggerType.Default)
+            {
+                return null;
+            }
             switch (header.TriggerType)
             {
                 case TriggerType.None:

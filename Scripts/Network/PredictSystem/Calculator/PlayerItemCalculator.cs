@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Config.ArrayConfig;
@@ -199,22 +200,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         
         public static void CommandDropItem(ItemDropCommand itemDropCommand, ref PlayerItemState playerItemState, int connectionId)
         {
-            var droppedItemDatas = new DroppedItemData[itemDropCommand.Slots.Count];
-            for (int i = 0; i < itemDropCommand.Slots.Count; i++)
+            var droppedItemDatas = new List<DroppedItemData>(itemDropCommand.Slots.Count);
+            foreach (var kvp in itemDropCommand.Slots)
             {
-                var item = itemDropCommand.Slots[i];
+                var item = kvp.Value;
                 if (!PlayerItemState.RemoveItem(ref playerItemState, item.SlotIndex, item.Count, out var bagSlotItem, out var removedItemIds))
                 {
                     Debug.LogError($"Failed to remove item {item.SlotIndex}");
                     return;
                 }
 
-                droppedItemDatas[i] = new DroppedItemData
+                droppedItemDatas.Add(new DroppedItemData
                 {
                     Count = bagSlotItem.Count,
                     ItemConfigId = bagSlotItem.ConfigId,
                     ItemIds = Constant.IsServer ? removedItemIds : Array.Empty<int>(),
-                };
+                }); 
             }
             if (!Constant.IsServer)
             {
@@ -228,7 +229,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 Header = InteractSystem.CreateInteractHeader(connectionId, InteractCategory.PlayerToScene,
                     playerComponent.transform.position),
                 InteractionType = InteractionType.DropItem,
-                ItemDatas = droppedItemDatas,
+                ItemDatas = droppedItemDatas.ToArray(),
             };
             Constant.InteractSystem.EnqueueCommand(request);
         }
@@ -360,6 +361,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 
                 if (isEquipped)
                 {
+                    Debug.Log($"[AddPlayerItems] Item {bagItem.ConfigId} {itemConfigData.equipmentPart} equipped in slot {indexSlot}");
                     if (!playerItemState.PlayerItemConfigIdSlotDictionary.TryGetValue(indexSlot, out var equipSlotItem))
                     {
                         Debug.LogError($"Failed to find equip slot item {indexSlot}");
