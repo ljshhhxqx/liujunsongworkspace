@@ -40,14 +40,15 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         private ItemDetailsType _currentItemDetailsType;
         private ValuePropertyData _currentValuePropertyData;
         
-        private ReactiveProperty<RandomShopItemData> _currentRandomShopItemData = new ReactiveProperty<RandomShopItemData>();
-        private ReactiveProperty<BagItemData> _currentBagItemData = new ReactiveProperty<BagItemData>();
+        private BindingKey _itemDetailsBagBindingKey;
+        private BindingKey _itemDetailsShopBindingKey;
 
         [Inject]
         private void Init(UIManager uiManager)
         {
             _uiManager = uiManager;
-
+            _itemDetailsBagBindingKey = new BindingKey(UIPropertyDefine.BagItem);
+            _itemDetailsShopBindingKey = new BindingKey(UIPropertyDefine.ShopItem);
             equipButton.OnClickAsObservable()
                 .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
                 .Subscribe(_ => OnEquipClicked())
@@ -60,15 +61,60 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
                 .Subscribe(_ => _uiManager.CloseUI(Type))
                 .AddTo(this);
-            _currentRandomShopItemData.Subscribe(data =>
-            {
-                OpenShop(data);
-            }).AddTo(this);
-            _currentBagItemData.Subscribe(data =>
-            {
-                _currentItemData = data;
-                OpenBag(data);
-            }).AddTo(this);
+            var shopItem = UIPropertyBinder.GetReactiveDictionary<RandomShopItemData>(_itemDetailsShopBindingKey);
+            var bagItem = UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemDetailsBagBindingKey);
+            shopItem.ObserveRemove()
+                .Subscribe(x =>
+                {
+                    if (_currentItemData is RandomShopItemData randomShopItemData && randomShopItemData.ShopId == x.Value.ShopId)
+                    {
+                        _uiManager.CloseUI(Type);
+                    }
+                })
+                .AddTo(this);
+            shopItem.ObserveReplace()
+                .Subscribe(x =>
+                {
+                    if (_currentItemData is RandomShopItemData randomShopItemData && randomShopItemData.ShopId == x.NewValue.ShopId)
+                    {
+                        OpenShop(x.NewValue);
+                    }
+                })
+                .AddTo(this);
+            shopItem.ObserveReset()
+                .Subscribe(_ =>
+                {
+                    if (_currentItemData is RandomShopItemData randomShopItemData)
+                    {
+                        _uiManager.CloseUI(Type);
+                    }
+                })
+                .AddTo(this);
+            bagItem.ObserveRemove()
+                .Subscribe(x =>
+                {
+                    if (_currentItemData is BagItemData bagItemData && x.Value.ConfigId == bagItemData.ConfigId)
+                    {
+                        _uiManager.CloseUI(Type);
+                    }
+                })
+                .AddTo(this);
+            bagItem.ObserveReplace()
+                .Subscribe(x =>
+                {
+                    if (_currentItemData is BagItemData bagItemData && x.NewValue.ConfigId == bagItemData.ConfigId)
+                    {
+                        OpenBag(x.NewValue);
+                    }
+                })
+                .AddTo(this);
+            bagItem.ObserveReset()
+                .Subscribe(_ =>
+                {
+                    if (_currentItemData is BagItemData bagItemData)
+                        _uiManager.CloseUI(Type);
+                })
+                .AddTo(this);
         }
 
         public void BindPlayerGold(IObservable<ValuePropertyData> playerGold)

@@ -110,14 +110,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             }
         }
 
-        private void OnSellItem()
-        {
-            
-        }
-
         private void OnBuyItem(int shopId, int count)
         {
-            if(!isLocalPlayer)
+            if(!NetworkIdentity.isLocalPlayer)
                 return;
             var command = new BuyCommand
             {
@@ -127,12 +122,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 Count = count
             };
             
-            GameSyncManager.EnqueueCommand(MemoryPackSerializer.Serialize(command));
-        }
-
-        private void OnRefreshItem()
-        {
-            
+            GameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(command).Item1);
         }
     }
 }

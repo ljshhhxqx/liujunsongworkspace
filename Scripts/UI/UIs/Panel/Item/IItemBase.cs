@@ -179,6 +179,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public Sprite Icon;
         public int Index;
         public int Stack;
+        public int ConfigId;
         //简要描述(非属性类的物品的描述)
         public string Description;
         //属性描述

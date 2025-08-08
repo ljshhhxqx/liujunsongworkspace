@@ -201,7 +201,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             };
             GameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(sellItemCommand).Item1);
         }
-        private int count = 0;
+        private int nowCount = 0;
 
         private void OnPlayerItemUpdate(PlayerItemState playerItemState)
         {
@@ -210,8 +210,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             //Debug.Log("OnPlayerItemUpdate");
             CurrentState = playerItemState;
             var bagItems = UIPropertyBinder.GetReactiveDictionary<BagItemData>(_bindKey);
-            var isDebug = count != bagItems.Count;
-            count = bagItems.Count;
+            var isDebug = nowCount != bagItems.Count;
+            nowCount = bagItems.Count;
             foreach (var kvp in playerItemState.PlayerItemConfigIdSlotDictionary)
             {
                 var playerBagSlotItem = kvp.Value;
@@ -225,6 +225,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     ItemName = itemConfig.name,
                     Index = playerBagSlotItem.IndexSlot,
                     Stack = playerBagSlotItem.Count,
+                    ConfigId = playerBagSlotItem.ConfigId,
                     Icon = UISpriteContainer.GetSprite(itemConfig.iconName),
                     QualityIcon = UISpriteContainer.GetQualitySprite(itemConfig.quality),
                     Description = itemConfig.desc,
