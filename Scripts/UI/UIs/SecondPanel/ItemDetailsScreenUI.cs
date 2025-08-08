@@ -209,8 +209,12 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             var countSliderButtonGroupData = new CountSliderButtonGroupData
             {
                 MinCount = Mathf.Min(1, randomShopItemData.RemainingCount),
-                MaxCount = randomShopItemData.MaxCount,
-                Callback = x => randomShopItemData.OnBuyItem?.Invoke(randomShopItemData.ShopId, x),
+                MaxCount = randomShopItemData.RemainingCount,
+                Callback = x =>
+                {
+                    CountHandler(x);
+                    randomShopItemData.OnBuyItem?.Invoke(randomShopItemData.ShopId, x);
+                },
                 PricePerItem = randomShopItemData.Price,
                 ShowPrice = true,
                 CurrentGold = _currentValuePropertyData.Gold,
@@ -224,6 +228,17 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 priceText.text = $"价格: {newPrice}G 当前金币: {_currentValuePropertyData.Gold}G";
                 priceText.color = newPrice <= _currentValuePropertyData.Gold ? Color.green : Color.red;
             }).AddTo(this);
+            void CountHandler(int count)
+            {
+                if (count > randomShopItemData.RemainingCount)
+                {
+                    Debug.LogError($"Now Count is Over the max stack {count}-{randomShopItemData.RemainingCount}");
+                }
+
+                randomShopItemData.RemainingCount -= Mathf.Clamp(count, 0, randomShopItemData.RemainingCount);
+                UpdateShopItemUI(randomShopItemData);
+                UpdateButtonStates();
+            }
         }
 
         private void UpdateBagItemUI(BagItemData bagItemData)
@@ -261,21 +276,46 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             {
                 MinCount = Mathf.Min(1, bagItemData.Stack),
                 MaxCount = bagItemData.Stack,
-                Callback = x => bagItemData.OnUseItem?.Invoke(bagItemData.Index, x),
+                Callback = x =>
+                {
+                    CountHandler(x);
+                    bagItemData.OnUseItem?.Invoke(bagItemData.Index, x);
+                },
                 PricePerItem = bagItemData.Price * bagItemData.SellRatio,
                 ShowPrice = false,
                 CurrentGold = _currentValuePropertyData.Gold,
                 ButtonType = ButtonType.Use
             };
             useCountSlider.Init(countSliderButtonGroupData);
-            countSliderButtonGroupData.Callback = x => bagItemData.OnDropItem?.Invoke(bagItemData.Index, x);
+            countSliderButtonGroupData.Callback = x =>
+            {
+                CountHandler(x);
+                bagItemData.OnDropItem?.Invoke(bagItemData.Index, x);
+            };
             countSliderButtonGroupData.ButtonType = ButtonType.Drop;
             dropCountSlider.Init(countSliderButtonGroupData);
             countSliderButtonGroupData.ShowPrice = true;
-            countSliderButtonGroupData.Callback = x => bagItemData.OnSellItem?.Invoke(bagItemData.Index, x);
+            countSliderButtonGroupData.Callback = x =>
+            {
+                CountHandler(x);
+                bagItemData.OnSellItem?.Invoke(bagItemData.Index, x);
+            };
             countSliderButtonGroupData.ButtonType = ButtonType.Sell;
             countSliderButtonGroupData.PlayerItemType = bagItemData.PlayerItemType;
             sellCountSlider.Init(countSliderButtonGroupData);
+
+            void CountHandler(int count)
+            {
+                if (count > bagItemData.Stack)
+                {
+                    Debug.LogError($"Now Count is Over the max stack {count}-{bagItemData.MaxStack}");
+                }
+
+                bagItemData.Stack -= Mathf.Clamp(count, 0, bagItemData.Stack);
+                _currentItemData = bagItemData;
+                UpdateBagItemUI(bagItemData);
+                UpdateButtonStates();
+            }
         }
 
         private void UpdateButtonStates()
@@ -371,6 +411,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                     var newEquipState = !bagItemData.IsEquip;
                     bagItemData.OnEquipItem?.Invoke(bagItemData.Index, newEquipState);
                     bagItemData.IsEquip = newEquipState;
+                    _currentItemData = bagItemData;
                     UpdateButtonStates();
                     break;
                 default:
@@ -386,6 +427,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                     bool newLockState = !bagItemData.IsLock;
                     bagItemData.OnLockItem?.Invoke(bagItemData.Index, newLockState);
                     bagItemData.IsLock = newLockState;
+                    _currentItemData = bagItemData;
                     UpdateButtonStates();
                     break;
                 default:

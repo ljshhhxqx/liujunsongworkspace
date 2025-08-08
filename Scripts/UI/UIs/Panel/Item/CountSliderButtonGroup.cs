@@ -40,7 +40,11 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
             
             button.OnClickAsObservable()
                 .ThrottleFirst(TimeSpan.FromMilliseconds(0.5f))
-                .Subscribe(_ => _countSliderButtonGroupData.Callback?.Invoke((int)slider.value))
+                .Subscribe(_ =>
+                {
+                    countSliderButtonGroupData.MaxCount -= (int)slider.value;
+                    _countSliderButtonGroupData.Callback?.Invoke((int)slider.value);
+                })
                 .AddTo(this);
             slider.minValue = Mathf.Min(_countSliderButtonGroupData.MinCount, 1);
             slider.maxValue = _countSliderButtonGroupData.MaxCount;
