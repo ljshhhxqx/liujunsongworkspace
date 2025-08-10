@@ -1256,7 +1256,7 @@ MonoBehaviour:
     duration: 0
     increaseDataList:
     - increaseType: 5
-      increaseValue: 0.15
+      increaseValue: 15
       operationType: 0
     sourceType: 1
     mainIncreaseType: 5
@@ -1266,7 +1266,7 @@ MonoBehaviour:
     duration: 0
     increaseDataList:
     - increaseType: 5
-      increaseValue: 0.35
+      increaseValue: 35
       operationType: 0
     sourceType: 1
     mainIncreaseType: 5
@@ -1276,7 +1276,7 @@ MonoBehaviour:
     duration: 0
     increaseDataList:
     - increaseType: 5
-      increaseValue: 0.65
+      increaseValue: 65
       operationType: 0
     sourceType: 1
     mainIncreaseType: 5
@@ -1286,7 +1286,7 @@ MonoBehaviour:
     duration: 0
     increaseDataList:
     - increaseType: 5
-      increaseValue: 0.15
+      increaseValue: 15
       operationType: 0
     sourceType: 1
     mainIncreaseType: 5
@@ -1296,7 +1296,7 @@ MonoBehaviour:
     duration: 0
     increaseDataList:
     - increaseType: 5
-      increaseValue: 0.35
+      increaseValue: 35
       operationType: 0
     sourceType: 1
     mainIncreaseType: 5
@@ -1306,7 +1306,7 @@ MonoBehaviour:
     duration: 0
     increaseDataList:
     - increaseType: 5
-      increaseValue: 0.65
+      increaseValue: 65
       operationType: 0
     sourceType: 1
     mainIncreaseType: 5

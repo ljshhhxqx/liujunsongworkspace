@@ -101,6 +101,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             if (command is EquipmentCommand equipmentCommand)
             {
                 PlayerEquipmentCalculator.CommandEquipment(equipmentCommand, ref playerEquipmentState);
+                PropertyStates[header.ConnectionId] = playerEquipmentState;
                 return PropertyStates[header.ConnectionId];
             }
             if (command is TriggerCommand triggerCommand)
@@ -114,7 +115,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 var targetIds = PlayerInGameManager.Instance.GetPlayerIdsByTargetType(header.ConnectionId,
                     battleConfigData.targetCount, battleConfigData.targetType);
                 PlayerEquipmentCalculator.CommandTrigger(triggerCommand, ref playerEquipmentState, targetIds, data.Item3, data.Item2, data.Item1);
-                // PropertyStates[header.ConnectionId] = playerEquipmentState;
+                PropertyStates[header.ConnectionId] = playerEquipmentState;
             }
 
             return PropertyStates[header.ConnectionId];

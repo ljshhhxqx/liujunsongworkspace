@@ -212,6 +212,31 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             var bagItems = UIPropertyBinder.GetReactiveDictionary<BagItemData>(_bindKey);
             var isDebug = nowCount != bagItems.Count;
             nowCount = bagItems.Count;
+            if (playerItemState.PlayerItemConfigIdSlotDictionary.Count == 0)
+            {
+                if (bagItems.Count > 0)
+                {
+                    bagItems.Clear();
+                }
+                return;
+            }
+            if (bagItems.Count > playerItemState.PlayerItemConfigIdSlotDictionary.Count)
+            {
+                var removeKey = 0;
+                foreach (var kvp in bagItems)
+                {
+                    if (!playerItemState.PlayerItemConfigIdSlotDictionary.ContainsKey(kvp.Key))
+                    {
+                        removeKey = kvp.Key;
+                    }
+                }
+
+                if (removeKey != 0)
+                {
+                    bagItems.Remove(removeKey);
+                }
+            }
+
             foreach (var kvp in playerItemState.PlayerItemConfigIdSlotDictionary)
             {
                 var playerBagSlotItem = kvp.Value;
