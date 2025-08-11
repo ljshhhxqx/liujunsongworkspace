@@ -285,6 +285,10 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                     {
                         CountHandler(x);
                         bagItemData.OnUseItem?.Invoke(bagItemData.Index, x);
+                        if (x == bagItemData.Stack)
+                        {
+                            _uiManager.CloseUI(Type);
+                        }
                     });
                 },
                 PricePerItem = bagItemData.Price * bagItemData.SellRatio,
@@ -299,6 +303,10 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 {
                     CountHandler(x);
                     bagItemData.OnDropItem?.Invoke(bagItemData.Index, x);
+                    if (x == bagItemData.Stack)
+                    {
+                        _uiManager.CloseUI(Type);
+                    }
                 });
             };
             countSliderButtonGroupData.ButtonType = ButtonType.Drop;
@@ -310,6 +318,10 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 {
                     CountHandler(x);
                     bagItemData.OnSellItem?.Invoke(bagItemData.Index, x);
+                    if (x == bagItemData.Stack)
+                    {
+                        _uiManager.CloseUI(Type);
+                    }
                 });
             };
             countSliderButtonGroupData.ButtonType = ButtonType.Sell;

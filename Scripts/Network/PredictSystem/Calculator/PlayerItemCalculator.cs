@@ -513,9 +513,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             {
                 return;
             }
-            foreach (var index in itemsUseCommand.Slots.Keys)
+            if (itemsUseCommand.Slots.Count == 0)
             {
-                var itemData = itemsUseCommand.Slots[index];
+                return;
+            }
+            
+            foreach (var kvp in itemsUseCommand.Slots)
+            {
+                var itemData = kvp.Value;
                 if (!PlayerItemState.TryGetSlotItemBySlotIndex(playerItemState, itemData.SlotIndex, out var bagItem))
                 {
                     Debug.LogError($"Failed to use item {itemData.SlotIndex}");
@@ -523,8 +528,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 }
 
                 var itemIds = bagItem.ItemIds;
+                
                 foreach (var itemId in itemIds)
                 {
+                    if (!PlayerItemState.RemoveItem(ref playerItemState, bagItem.IndexSlot, 1, out var bagSlotItem, out var removedItemIds))
+                    {
+                        Debug.LogWarning($"Failed to remove item {bagItem.IndexSlot} 1 from bag");
+                        break;
+                    }
                     var item = GameItemManager.GetGameItemData(itemId);
                     if (item.ItemId != itemId)
                     {
