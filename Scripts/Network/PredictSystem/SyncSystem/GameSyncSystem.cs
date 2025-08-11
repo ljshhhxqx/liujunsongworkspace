@@ -394,7 +394,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             if (!validCommand.IsValid)
             {
                 var sb = new StringBuilder();
-                sb.AppendLine($"Invalid command: {header.CommandType}");
+                sb.AppendLine($"Invalid command: {command.GetType().Name}");
                 for (int i = 0; i < validCommand.Errors.Count; i++)
                 {
                     sb.AppendLine(validCommand.Errors[i]);

@@ -14,6 +14,7 @@ using HotUpdate.Scripts.Tool.Static;
 using Mirror;
 using Newtonsoft.Json;
 using UnityEngine;
+using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {
@@ -273,19 +274,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 EquipmentMainEffectData = JsonConvert.SerializeObject(equipSlotItem.PassiveIncreaseDatas),
             });
             var animationState = SkillConfig.GetAnimationState(bagItem.PlayerItemType);
-            Constant.GameSyncManager.EnqueueServerCommand(new SkillLoadCommand
+            if (equipSlotItem.SkillId != 0 && animationState != AnimationState.None)
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill, CommandAuthority.Server, CommandExecuteType.Immediate),
-                SkillConfigId = equipSlotItem.SkillId,
-                IsLoad = true,
-                KeyCode = animationState  
-            });
-            Constant.GameSyncManager.EnqueueServerCommand(new SkillChangedCommand
-            {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Input, CommandAuthority.Server, CommandExecuteType.Immediate),
-                SkillId = equipSlotItem.SkillId,
-                AnimationState = animationState
-            });
+                Constant.GameSyncManager.EnqueueServerCommand(new SkillLoadCommand
+                {
+                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill, CommandAuthority.Server, CommandExecuteType.Immediate),
+                    SkillConfigId = equipSlotItem.SkillId,
+                    IsLoad = true,
+                    KeyCode = animationState  
+                });
+                Constant.GameSyncManager.EnqueueServerCommand(new SkillChangedCommand
+                {
+                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Input, CommandAuthority.Server, CommandExecuteType.Immediate),
+                    SkillId = equipSlotItem.SkillId,
+                    AnimationState = animationState
+                });
+            }
         }
 
         public static void CommandGetItem(ref PlayerItemState playerItemState, ItemsCommandData itemsData, NetworkCommandHeader header = default)

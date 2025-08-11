@@ -324,7 +324,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                             EquipmentPart = equipPart,
                             ItemId = item.ItemId,
                             ConfigId = item.ConfigId,
-                            SkillId = PlayerItemCalculator.GetEquipSkillId(item.PlayerItemType, item.ItemId),
+                            SkillId = PlayerItemCalculator.GetEquipSkillId(item.PlayerItemType, item.ConfigId),
                         };
                     }
                     item.State = newState;

@@ -148,7 +148,7 @@ namespace HotUpdate.Scripts.UI.UIBase
 
                     return null;
                 }
-                if ( CurrentActiveScreenUI2 && CurrentActiveScreenUI2.Type != ui.Type)
+                if ( CurrentActiveScreenUI2 && CurrentActiveScreenUI2.Type == ui.Type)
                 {
                     Object.Destroy(CurrentActiveScreenUI2.gameObject);
                     CurrentActiveScreenUI2 = null;
@@ -158,7 +158,7 @@ namespace HotUpdate.Scripts.UI.UIBase
                     }
                     return null;
                 }
-                if (CurrentActiveScreenUI3 &&  CurrentActiveScreenUI3.Type != ui.Type)
+                if (CurrentActiveScreenUI3 &&  CurrentActiveScreenUI3.Type == ui.Type)
                 {
                     Object.Destroy(CurrentActiveScreenUI3.gameObject);
                     CurrentActiveScreenUI3 = null;

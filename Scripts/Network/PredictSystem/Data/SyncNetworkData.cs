@@ -1844,7 +1844,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return SkillConfigId > 0 && DirectionNormalized.ToVector3() != Vector3.zero;
+            return SkillConfigId > 0;
         }
 
         

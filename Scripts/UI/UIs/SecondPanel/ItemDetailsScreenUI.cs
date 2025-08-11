@@ -212,8 +212,11 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 MaxCount = randomShopItemData.RemainingCount,
                 Callback = x =>
                 {
-                    CountHandler(x);
-                    randomShopItemData.OnBuyItem?.Invoke(randomShopItemData.ShopId, x);
+                    _uiManager.ShowTips($"是否购买{x}个{randomShopItemData.Name}？", () =>
+                    {
+                        CountHandler(x);
+                        randomShopItemData.OnBuyItem?.Invoke(randomShopItemData.ShopId, x);
+                    });
                 },
                 PricePerItem = randomShopItemData.Price,
                 ShowPrice = true,
@@ -278,8 +281,11 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 MaxCount = bagItemData.Stack,
                 Callback = x =>
                 {
-                    CountHandler(x);
-                    bagItemData.OnUseItem?.Invoke(bagItemData.Index, x);
+                    _uiManager.ShowTips($"是否使用{x}个{bagItemData.ItemName}？", () =>
+                    {
+                        CountHandler(x);
+                        bagItemData.OnUseItem?.Invoke(bagItemData.Index, x);
+                    });
                 },
                 PricePerItem = bagItemData.Price * bagItemData.SellRatio,
                 ShowPrice = false,
@@ -289,16 +295,22 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             useCountSlider.Init(countSliderButtonGroupData);
             countSliderButtonGroupData.Callback = x =>
             {
-                CountHandler(x);
-                bagItemData.OnDropItem?.Invoke(bagItemData.Index, x);
+                _uiManager.ShowTips($"是否丢弃{x}个{bagItemData.ItemName}？", () =>
+                {
+                    CountHandler(x);
+                    bagItemData.OnDropItem?.Invoke(bagItemData.Index, x);
+                });
             };
             countSliderButtonGroupData.ButtonType = ButtonType.Drop;
             dropCountSlider.Init(countSliderButtonGroupData);
             countSliderButtonGroupData.ShowPrice = true;
             countSliderButtonGroupData.Callback = x =>
             {
-                CountHandler(x);
-                bagItemData.OnSellItem?.Invoke(bagItemData.Index, x);
+                _uiManager.ShowTips($"是否售出{x}个{bagItemData.ItemName}？", () =>
+                {
+                    CountHandler(x);
+                    bagItemData.OnSellItem?.Invoke(bagItemData.Index, x);
+                });
             };
             countSliderButtonGroupData.ButtonType = ButtonType.Sell;
             countSliderButtonGroupData.PlayerItemType = bagItemData.PlayerItemType;
