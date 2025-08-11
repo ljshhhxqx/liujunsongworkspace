@@ -103,14 +103,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 return;
             }
 
-            if (PropertyStates.ContainsKey(connectionId))
-            {
-                PropertyStates[connectionId] = playerStates;
-            }
-            else
-            {
-                PropertyStates.Add(connectionId, playerStates);
-            }
+            PropertyStates[connectionId] = playerStates;
             //Debug.Log($"Player {connectionId} property state updated. {playerStates}");
         }
         
@@ -292,9 +285,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 return;
             for (var i = _activeBuffs.Count - 1; i >= 0; i--)
             {
-                _activeBuffs = _activeBuffs.SetItem(i, _activeBuffs[i].Update(deltaTime));
+                var nowBuff = _activeBuffs[i].Update(deltaTime);
+                _activeBuffs = _activeBuffs.SetItem(i, nowBuff);
+                Debug.Log($"[UpdateBuffs] Buff {_activeBuffs[i].BuffData.BuffData.buffId} {_activeBuffs[i].BuffData.BuffData.propertyType} {_activeBuffs[i].BuffData.BuffData.sourceType} current {_activeBuffs[i].BuffData.ElapsedTime}");
                 if (_activeBuffs[i].BuffData.IsExpired())
                 {
+                    Debug.Log($"[UpdateBuffs] Buff {_activeBuffs[i].BuffData.BuffData.buffId} {_activeBuffs[i].BuffData.BuffData.propertyType} {_activeBuffs[i].BuffData.BuffData.sourceType} expired");
                     HandleBuffRemove(_activeBuffs[i].BuffData, i);
                 }
             }
@@ -704,7 +700,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var preHealth = playerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue;
             var preMana = playerState.MemoryProperty[PropertyTypeEnum.Strength].CurrentValue;
             playerState.MemoryProperty[newBuff.BuffData.propertyType] = HandleBuffInfo(propertyCalculator, newBuff);
-            _activeBuffs = _activeBuffs.Add(buffManagerData);
+            if (buffManagerData.BuffData.BuffData.duration > 0)
+            {
+                _activeBuffs = _activeBuffs.Add(buffManagerData);
+            }
             var index = _activeBuffs.Count - 1;
             PropertyStates[targetId] = playerState;
             var changedHp = playerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue - preHealth;

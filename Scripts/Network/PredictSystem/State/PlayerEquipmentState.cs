@@ -34,7 +34,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         public static bool TryAddEquipmentData<T>(ref PlayerEquipmentState equipmentState, int itemId, int equipConfigId,
             EquipmentPart equipmentPartType, T conditionChecker) where T : IConditionChecker
         {
-            if (equipmentState.EquipmentDatas.Count >0 && equipmentState.EquipmentDatas.Any(x => x.ItemId == itemId))
+            if (equipmentState.EquipmentDatas.Count > 0 && equipmentState.EquipmentDatas.Any(x => x.ItemId == itemId))
             {
                 Debug.LogError($"EquipmentId {itemId} already exists in EquipmentDatas");
                 return false;
