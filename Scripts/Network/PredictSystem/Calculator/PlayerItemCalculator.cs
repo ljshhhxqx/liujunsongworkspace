@@ -348,7 +348,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 bagItem.MaxStack = itemConfigData.maxStack;
                 bagItem.IndexSlot = -1;
                 bagItem.EquipmentPart = itemConfigData.equipmentPart;
-                PlayerItemState.TryAddAndEquipItem(ref playerItemState, bagItem, out var isEquipped, out var indexSlot);
+                PlayerItemState.TryAddAndEquipItem(ref playerItemState, ref bagItem, out var isEquipped, out var indexSlot);
                 var gameItemData = new GameItemData
                 {
                     ItemId = itemsData.ItemUniqueId[0],
@@ -438,7 +438,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     }
                     bagItem.MainIncreaseDatas = mainIncreaseDatas;
                     var configId = GetEquipmentConfigId(bagItem.PlayerItemType, bagItem.ConfigId);
-                    int battleEffectConfigId;
+                    int battleEffectConfigId = 0;
                     switch (bagItem.PlayerItemType)
                     {
                         case PlayerItemType.Weapon:
@@ -447,8 +447,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                         case PlayerItemType.Armor:
                             battleEffectConfigId = Constant.ArmorConfig.GetArmorConfigData(configId).battleEffectConditionId;
                             break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
                     }
                     var conditionConfig = Constant.ConditionConfig.GetConditionData(battleEffectConfigId);
                     var buffIncreaseTypes = Enum.GetValues(typeof(BuffIncreaseType)).Cast<BuffIncreaseType>().ToArray();

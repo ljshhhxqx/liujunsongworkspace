@@ -39,9 +39,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         {
             if (data is BagItemData bagItemData)
             {
-                _currentItem = bagItemData;
-                _slotIndex = _currentItem.Index;
-                UpdateSlotUI();
+                SetItem(bagItemData, bagItemData.Stack);
             }
             
         }

@@ -223,13 +223,20 @@ namespace Data
 
         public void CheckDevelopers(string code)
         {
+            int developValue;
+#if UNITY_EDITOR
+            developValue = 1;
+            PlayerPrefs.SetInt(_jsonDataConfig.GameConfig.developKeyValue, developValue);
+            _uiManager.ShowTips($"密钥设置成功，当前模式为：开发模式");
+            return;
+#endif
             if (string.IsNullOrWhiteSpace(code))
             {
                 _uiManager.ShowTips("请输入密钥");
                 return;
             }
 
-            var developValue = code.Equals(_jsonDataConfig.GameConfig.developKeyValue) ? 1 : 0;
+            developValue = code.Equals(_jsonDataConfig.GameConfig.developKeyValue) ? 1 : 0;
             PlayerPrefs.SetInt(_jsonDataConfig.GameConfig.developKey, developValue);
             var mode = developValue == 1 ? "开发模式" : "正式模式";
             _uiManager.ShowTips($"密钥设置成功，当前模式为：{mode}");

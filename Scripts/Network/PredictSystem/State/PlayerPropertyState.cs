@@ -313,28 +313,28 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                     propertyData.BaseValue = Mathf.Max(0, ApplyOperation(
                         propertyData.BaseValue, 
                         data.increaseValue, 
-                        data.operationType));
+                        data.operationType, isReverse));
                     break;
                     
                 case BuffIncreaseType.Multiplier:
                     propertyData.Multiplier = Mathf.Max(0, ApplyOperation(
                         propertyData.Multiplier, 
                         data.increaseValue, 
-                        data.operationType));
+                        data.operationType, isReverse));
                     break;
                     
                 case BuffIncreaseType.Extra:
                     propertyData.Additive = ApplyOperation(
                         propertyData.Additive, 
                         data.increaseValue, 
-                        data.operationType);
+                        data.operationType, isReverse);
                     break;
                     
                 case BuffIncreaseType.CorrectionFactor:
                     propertyData.Correction = Mathf.Max(0, ApplyOperation(
                         propertyData.Correction, 
                         data.increaseValue, 
-                        data.operationType));
+                        data.operationType, isReverse));
                     break;
                     
                 case BuffIncreaseType.Current:
@@ -343,7 +343,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                         propertyData.CurrentValue = ApplyOperation(
                             propertyData.CurrentValue, 
                             data.increaseValue, 
-                            data.operationType);
+                            data.operationType, isReverse);
                     }
                     break;
             }

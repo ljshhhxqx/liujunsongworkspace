@@ -105,9 +105,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             state.SlotCount = maxSlotCount;
         }
 
-        public static bool AddItem(ref PlayerItemState state, PlayerBagItem item, out int slotIndex)
+        public static bool AddItem(ref PlayerItemState state, PlayerBagItem item, out int slotIndex, out bool isEquipped)
         {
             // 检查是否是可堆叠物品
+            isEquipped = false;
             if (TryGetSlotItemByConfigId( state, item.ConfigId, out var slotItem) && slotItem.MaxStack > 1)
             {
                 // 可堆叠物品 - 增加数量
@@ -162,6 +163,24 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 state.PlayerItems.Add(item.ItemId, newItem);
                 state.PlayerItemConfigIdSlotDictionary.Add(freeSlot, newSlotItem);
                 slotIndex = freeSlot;
+                if (newItem.PlayerItemType.IsEquipment())
+                {
+                    var equipPart = newItem.EquipmentPart;
+                    newItem.State = ItemState.IsEquipped;
+                    if (!state.PlayerEquipSlotItems.ContainsKey(equipPart))
+                    {
+                        state.PlayerEquipSlotItems.Add(equipPart, new PlayerEquipSlotItem
+                        {
+                            EquipmentPart = equipPart,
+                            ItemId = newItem.ItemId,
+                            ConfigId = newItem.ConfigId,
+                            SkillId = PlayerItemCalculator.GetEquipSkillId(newItem.PlayerItemType, newItem.ConfigId),
+                        });
+                        isEquipped = true;
+                        Debug.Log($"{newItem.ConfigId}-{newItem.PlayerItemType}-{slotIndex} 已经装备，存入背包");
+                    }
+                    return true;
+                }
                 return true;
             }
             slotIndex = -1;
@@ -174,34 +193,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             return state.PlayerEquipSlotItems.TryGetValue(equipPart, out bagItem);
         }
 
-        public static bool TryAddAndEquipItem(ref PlayerItemState state, PlayerBagItem bagItem, out bool isEquipped, out int slotIndex)
+        public static bool TryAddAndEquipItem(ref PlayerItemState state, ref PlayerBagItem bagItem, out bool isEquipped, out int slotIndex)
         {
-            if (!AddItem(ref state, bagItem, out slotIndex))
-            {
-                isEquipped = false;
-                return false;
-            }
-            if (bagItem.PlayerItemType.IsEquipment())
-            {
-                isEquipped = false;
-                var equipPart = bagItem.EquipmentPart;
-                if (!state.PlayerEquipSlotItems.ContainsKey(equipPart))
-                {
-                    state.PlayerEquipSlotItems.Add(equipPart, new PlayerEquipSlotItem
-                    {
-                        EquipmentPart = equipPart,
-                        ItemId = bagItem.ItemId,
-                        ConfigId = bagItem.ConfigId,
-                        SkillId = PlayerItemCalculator.GetEquipSkillId(bagItem.PlayerItemType, bagItem.ConfigId),
-                    });
-                    isEquipped = true;
-                    Debug.Log($"{bagItem.ConfigId}-{bagItem.PlayerItemType}-{slotIndex} 已经装备，存入背包");
-                }
-                return true;
-            }
             isEquipped = false;
-            return false;
-        
+            slotIndex = -1;
+            return AddItem(ref state, bagItem, out slotIndex, out isEquipped);
         }
 
         public static bool RemoveItems(ref PlayerItemState state, int[] itemIds)
@@ -370,9 +366,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
 
         public static bool TryGetSlotItemByConfigId(PlayerItemState state, int configId, out PlayerBagSlotItem slotItem)
         {
-            slotItem = state.PlayerItemConfigIdSlotDictionary.Values
-                .FirstOrDefault(x => x.ConfigId == configId);
-            return slotItem != null;
+            slotItem = null;
+            foreach (var kvp in state.PlayerItemConfigIdSlotDictionary)
+            {
+                if (kvp.Value.ConfigId == configId)
+                {
+                    slotItem = kvp.Value;
+                    return true;
+                }
+            }
+            return false;
         }
 
         public static bool TryGetSlotItemBySlotIndex(PlayerItemState state, int slotIndex, out PlayerBagSlotItem slotItem)
@@ -643,6 +646,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         public MemoryList<AttributeIncreaseData> PassiveIncreaseDatas;
         [MemoryPackOrder(5)]
         public int SkillId;
+        // [MemoryPackOrder(6)]
+        // public ItemState State;
 
         public bool Equals(PlayerEquipSlotItem other)
         {

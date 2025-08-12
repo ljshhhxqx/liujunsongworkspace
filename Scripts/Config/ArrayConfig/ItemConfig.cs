@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using HotUpdate.Scripts.Tool.Static;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEditor;
@@ -22,8 +23,46 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         
         public Dictionary<int, GameItemConfigData> GameItemDatasDict { get; } = new Dictionary<int, GameItemConfigData>();
         
-        public int MaxBagSize => itemOtherData.maxBagSize;
+        private HashSet<int> _equipmentIds = new HashSet<int>();
+        private HashSet<int> _consumeIds = new HashSet<int>();
         
+        public int MaxBagSize => itemOtherData.maxBagSize;
+
+        public int GetRandomItemId()
+        {
+            return GameItemDatasDict.Keys.RandomSelect();
+        }
+
+        public int RandomEquipItemId()
+        {
+            if (_equipmentIds.Count == 0)
+            {
+                foreach (var data in gameItemDatas)
+                {
+                    if (data.itemType.IsEquipment())
+                    {
+                        _equipmentIds.Add(data.id);
+                    }
+                }
+            }
+            return _equipmentIds.RandomSelect();
+        }
+        
+        public int RandomConsumeItemId()
+        {
+            if (_consumeIds.Count == 0)
+            {
+                foreach (var data in gameItemDatas)
+                {   
+                    if (data.itemType == PlayerItemType.Consume)
+                    {
+                        _consumeIds.Add(data.id);
+                    }
+                }
+            }
+            return _consumeIds.RandomSelect();
+        }
+
         public GameItemConfigData GetGameItemData(int configId)
         {
             if (GameItemDatasDict.TryGetValue(configId, out GameItemConfigData gameItemConfigData))

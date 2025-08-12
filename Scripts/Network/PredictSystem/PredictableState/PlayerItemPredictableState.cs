@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
@@ -22,14 +23,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         protected override ISyncPropertyState CurrentState { get; set; }
         protected override CommandType CommandType => CommandType.Item;
         private ItemConfig _itemConfig;
-        private BindingKey _bindKey;
+        private BindingKey _itemBindKey;
+        private BindingKey _equipBindKey;
 
         [Inject]
         protected override void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider)
         {
             base.Init(gameSyncManager, configProvider);
             _itemConfig = configProvider.GetConfig<ItemConfig>();
-            _bindKey = new BindingKey(UIPropertyDefine.BagItem);
+            _itemBindKey = new BindingKey(UIPropertyDefine.BagItem);
+            _equipBindKey = new BindingKey(UIPropertyDefine.EquipmentItem);
         }
 
         public override bool NeedsReconciliation<T>(T state)
@@ -209,7 +212,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 return;
             //Debug.Log("OnPlayerItemUpdate");
             CurrentState = playerItemState;
-            var bagItems = UIPropertyBinder.GetReactiveDictionary<BagItemData>(_bindKey);
+            var bagItems = UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey);
+            var equipItems = UIPropertyBinder.GetReactiveDictionary<EquipItemData>(_equipBindKey);
             var isDebug = nowCount != bagItems.Count;
             nowCount = bagItems.Count;
             if (playerItemState.PlayerItemConfigIdSlotDictionary.Count == 0)
@@ -217,6 +221,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 if (bagItems.Count > 0)
                 {
                     bagItems.Clear();
+                }
+                return;
+            }
+
+            if (playerItemState.PlayerEquipSlotItems.Count == 0)
+            {
+                if (equipItems.Count > 0)
+                {
+                    equipItems.Clear();
                 }
                 return;
             }
@@ -234,6 +247,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 if (removeKey != 0)
                 {
                     bagItems.Remove(removeKey);
+                }
+            }
+            if (equipItems.Count > playerItemState.PlayerEquipSlotItems.Count)
+            {
+                var removeKey = 0;
+                foreach (var kvp in equipItems)
+                {
+                    if (!playerItemState.PlayerEquipSlotItems.ContainsKey((EquipmentPart)kvp.Key))
+                    {
+                        removeKey = kvp.Key;
+                    }
+                }
+
+                if (removeKey != 0)
+                {
+                    equipItems.Remove(removeKey);
                 }
             }
 
@@ -286,7 +315,38 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     //     Debug.Log(increaseData.ToString());
                     // }
                 }
-                bagItems.TryAdd(kvp.Key, bagItem);
+
+                if (!bagItems.TryGetValue(kvp.Key, out var item))
+                {
+                    bagItems.Add(kvp.Key, bagItem);
+                }
+                bagItems[kvp.Key] = bagItem;
+            }
+
+            foreach (var kvp in playerItemState.PlayerEquipSlotItems)
+            {
+                var playerEquipSlotItem = kvp.Value;
+                var itemConfig = _itemConfig.GetGameItemData(playerEquipSlotItem.ConfigId);
+                var itemSlot = bagItems.First(x => x.Value.ConfigId == playerEquipSlotItem.ConfigId);
+                var equipItem = new EquipItemData
+                {
+                    ItemName = itemConfig.name,
+                    Description = itemConfig.desc,
+                    IsLock = itemSlot.Value.IsLock,
+                    Icon = UISpriteContainer.GetSprite(itemConfig.iconName),
+                    QualityIcon = UISpriteContainer.GetQualitySprite(itemConfig.quality),
+                    EquipmentPartType = playerEquipSlotItem.EquipmentPart,
+                    PlayerItemType = itemConfig.itemType,
+                    OnLockItem = OnLockItem,
+                    OnEquipItem = OnEquipItem,
+                    OnDropItem = OnDropItem,
+                };
+                if (!equipItems.ContainsKey((int)kvp.Key))
+                {
+                    equipItems.Add((int)kvp.Key, equipItem);
+                }
+
+                equipItems[(int)kvp.Key] = equipItem;
             }
         }
     }

@@ -36,6 +36,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private static float _serverUpdateStateInterval;
         private float _maxCommandAge; 
         public static float TickSeconds => 1f / _tickRate;
+        public static float ServerUpdateInterval => _serverUpdateStateInterval;
         private float _tickTimer;
         private float _syncTimer;
         private JsonDataConfig _jsonDataConfig;

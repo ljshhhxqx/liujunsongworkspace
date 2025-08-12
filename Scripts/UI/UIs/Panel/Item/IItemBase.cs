@@ -253,7 +253,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public PlayerItemType PlayerItemType;
         public Action<int, bool> OnLockItem;
         public Action<int, bool> OnEquipItem;
-        public Action<int> OnDropItem;
+        public Action<int, int> OnDropItem;
 
         public bool Equals(EquipItemData other)
         {

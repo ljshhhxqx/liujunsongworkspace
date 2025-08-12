@@ -1575,13 +1575,23 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
+            "Name": "DevelopFunctionUI",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/UIPrefab/DevelopFunctionUI.prefab"
+        },
+        {
+            "UID": 4100021,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "Hole",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/UIPrefab/Hole.prefab"
         },
         {
-            "UID": 4100021,
+            "UID": 4100022,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1591,7 +1601,7 @@
             "Address": "/Map/Town/UIPrefab/ItemDetailUI.prefab"
         },
         {
-            "UID": 4100022,
+            "UID": 4100023,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1601,7 +1611,7 @@
             "Address": "/Map/Town/UIPrefab/PlayerAnimationOverlay.prefab"
         },
         {
-            "UID": 4100023,
+            "UID": 4100024,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1611,7 +1621,7 @@
             "Address": "/Map/Town/UIPrefab/PlayerDamageDeathTimeOverlay.prefab"
         },
         {
-            "UID": 4100024,
+            "UID": 4100025,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1621,7 +1631,7 @@
             "Address": "/Map/Town/UIPrefab/PlayerHpShowOverlay.prefab"
         },
         {
-            "UID": 4100025,
+            "UID": 4100026,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1631,7 +1641,7 @@
             "Address": "/Map/Town/UIPrefab/PlayerPropertyOverlay.prefab"
         },
         {
-            "UID": 4100026,
+            "UID": 4100027,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1641,7 +1651,7 @@
             "Address": "/Map/Town/UIPrefab/ShopUI.prefab"
         },
         {
-            "UID": 4100027,
+            "UID": 4100028,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1651,7 +1661,7 @@
             "Address": "/Map/Town/UIPrefab/TargetShowOverlay.prefab"
         },
         {
-            "UID": 4100028,
+            "UID": 4100029,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",

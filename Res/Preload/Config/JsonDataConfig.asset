@@ -28,8 +28,8 @@ MonoBehaviour:
       SprintSpeedFactor: 2
       RotateSpeed: 7
       OnStairsSpeedRatioFactor: 0.75
-      JumpSpeed: 45
-      RollForce: 40
+      JumpSpeed: 10
+      RollForce: 10
       InputBufferTick: 2
       PlayerLayer:
         serializedVersion: 2

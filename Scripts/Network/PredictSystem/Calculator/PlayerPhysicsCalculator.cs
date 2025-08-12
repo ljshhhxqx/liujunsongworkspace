@@ -97,7 +97,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             
                 // 应用跳跃力
                 var jumpDirection = _isOnSlope ? Vector3.Lerp(Vector3.up, _slopeNormal, 0.5f) : Vector3.up;
-                _physicsComponent.Rigidbody.AddForce(jumpDirection * PhysicsDetermineConstant.JumpSpeed, ForceMode.Impulse);
+                _physicsComponent.Rigidbody.AddForce(jumpDirection * PhysicsDetermineConstant.JumpSpeed, ForceMode.VelocityChange);
             }
             else if (_playerEnvironmentState == PlayerEnvironmentState.OnStairs)
             {
@@ -284,7 +284,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             {
                 var direction = _physicsComponent.Rigidbody.transform.forward.normalized;
                 var moveDirection = direction.normalized / Mathf.Cos(30f/180f*Mathf.PI);
-                _physicsComponent.Rigidbody.AddForce(moveDirection * PhysicsDetermineConstant.RollForce, ForceMode.Impulse);
+                _physicsComponent.Rigidbody.AddForce(moveDirection * PhysicsDetermineConstant.RollForce, ForceMode.VelocityChange);
             });
             
         }

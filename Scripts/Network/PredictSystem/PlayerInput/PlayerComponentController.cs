@@ -331,7 +331,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .AddTo(_disposables);
             
             Observable.EveryUpdate()
-                .Where(_ => _localPlayerHandler && _isControlled && GameSyncManager.CurrentTick > 0 
+                .Where(_ => _localPlayerHandler && Cursor.lockState == CursorLockMode.Locked && _isControlled && GameSyncManager.CurrentTick > 0 
                                                 && _subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible))
                 .Subscribe(_ => {
                     var movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
@@ -1245,6 +1245,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             if (_localPlayerHandler)
             {
             }
+
         }
         //
         // private void TestNetworkCommandHeader()

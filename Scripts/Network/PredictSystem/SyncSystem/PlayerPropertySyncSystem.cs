@@ -847,7 +847,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerState = GetState<PlayerPredictablePropertyState>(buff.TargetPlayerId);
             var propertyCalculator = playerState.MemoryProperty[buff.BuffData.propertyType];
-            playerState.MemoryProperty[buff.BuffData.propertyType] = HandleBuffInfo(propertyCalculator, buff, true);
+            propertyCalculator = HandleBuffInfo(propertyCalculator, buff, true);
+            playerState.MemoryProperty[buff.BuffData.propertyType] = propertyCalculator;
             _activeBuffs = _activeBuffs.RemoveAt(index);
             PropertyStates[buff.TargetPlayerId] = playerState;
             PropertyChange(buff.TargetPlayerId);
@@ -1138,13 +1139,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         protected override void OnBroadcastStateUpdate()
         {
-            UpdateBuffs(GameSyncManager.TickSeconds);
-            UpdateSkillBuffs(GameSyncManager.TickSeconds);
-            _timeBuffTimer += GameSyncManager.TickSeconds;
+            UpdateBuffs(GameSyncManager.ServerUpdateInterval);
+            UpdateSkillBuffs(GameSyncManager.ServerUpdateInterval);
+            _timeBuffTimer += GameSyncManager.ServerUpdateInterval;
             if (_timeBuffTimer >= 0.3f)
             {
                 _timeBuffTimer = 0;
-                UpdateTimedBuffs(GameSyncManager.TickSeconds);
+                UpdateTimedBuffs(GameSyncManager.ServerUpdateInterval);
             }
 
             base.OnBroadcastStateUpdate();
