@@ -10,6 +10,7 @@ using UI.UIBase;
 using UniRx;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using VContainer;
 
@@ -22,8 +23,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
         [SerializeField]
         private ContentItemList bagItemList;
         [SerializeField]
-        [Header("拖拽临时图标")]
-        private GameObject dragIcon;
+        private GridLayoutGroup gridLayoutGroup;
         [SerializeField]
         private Button closeBtn;
         private UIManager _uiManager;
@@ -48,7 +48,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
                 .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
                 .Subscribe(_ => _uiManager.CloseUI(Type))
                 .AddTo(this);
-            dragIcon.SetActive(false);
         }
 
         public void BindEquipItemData(ReactiveDictionary<int, EquipItemData> slotEquipItemData)
@@ -86,8 +85,11 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             slotEquipItemData.ObserveReplace()
                 .Subscribe(x =>
                 {
-                    _slotEquipItemData[x.Key] = x.NewValue;
-                    equipmentItemList.RemoveItem(x.Key);
+                    if (!x.NewValue.Equals(x.OldValue))
+                    {
+                        _slotEquipItemData[x.Key] = x.NewValue;
+                        equipmentItemList.ReplaceItem(x.Key, x.NewValue);
+                    }
                     //equipmentItemList.SetItemList(_slotEquipItemData);
                 })
                 .AddTo(this);
@@ -117,10 +119,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
                 var slot = bagItemData[key];
                 _bagItemData.Add(key, slot);
             }
-            var dragImage = dragIcon.GetComponent<Image>();
-            dragImage.raycastTarget = false;
-            dragImage.transform.SetParent(transform.root, false);
-            dragImage.gameObject.SetActive(false);
             RefreshBag(_bagItemData);
             InitializeSlots();
             bagItemData.ObserveAdd()
@@ -212,42 +210,49 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
                     .Subscribe(x => OnSlotEndDrag(slot, x))
                     .AddTo(slot.gameObject);
                 slot.OnPointerClickObserver
+                    .Where(x => _isDragging == false)
                     .Subscribe(x => OnSlotClick(slot, x))
                     .AddTo(slot.gameObject);
                 _bagSlotItems.Add(key, slot);
             }
         }
+        private bool _isDragging;
 
         private void OnSlotDrag(BagSlotItem slot, PointerEventData pointerEventData)
         {
-            dragIcon.transform.position = pointerEventData.position; 
+            _draggedSlot.transform.position = Input.mousePosition; 
         }
 
         // 处理拖拽开始
         private void OnSlotBeginDrag(BagSlotItem slot, PointerEventData eventData)
         {
             if (!slot.HasItem()) return;
-
+            _isDragging = true;
             // 创建拖拽图标（由Inventory统一管理）
             _draggedSlot = slot;
-            _draggedSlot.gameObject.SetActive(true);
-            var dragImage = dragIcon.GetComponent<Image>();
-            dragImage.sprite = slot.CurrentItem.Icon;
-            dragIcon.SetActive(true);
-            dragIcon.transform.position = eventData.position;
+            //_draggedSlot.gameObject.SetActive(true);
+            _draggedSlot.transform.position = eventData.position;
         }
 
         // 处理拖拽结束
         private void OnSlotEndDrag(BagSlotItem sourceSlot, PointerEventData eventData)
         {
             //Destroy(_draggedSlot.gameObject);
-            _draggedSlot.gameObject.SetActive(false);
+            //_draggedSlot.gameObject.SetActive(false);
+            _isDragging = false;
             // 获取目标格子
             var targetSlot = eventData.pointerEnter?.GetComponent<BagSlotItem>();
             if (targetSlot && targetSlot != sourceSlot)
             {
+                Debug.Log($"拖拽结束: {sourceSlot.name} -> {targetSlot.name}");
                 SwapItemsBetweenSlots(sourceSlot, targetSlot);
+                var sourceIndex = sourceSlot.transform.GetSiblingIndex();
+                var targetIndex = targetSlot.transform.GetSiblingIndex();
+                sourceSlot.transform.SetSiblingIndex(targetIndex);
+                targetSlot.transform.SetSiblingIndex(sourceIndex);
             }
+            gridLayoutGroup.enabled = false;
+            gridLayoutGroup.enabled = true;
         }
 
         private void SwapItemsBetweenSlots(BagSlotItem source, BagSlotItem target)
@@ -319,3 +324,69 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
         // }
     }
 }
+// using UnityEngine;
+// using UnityEngine.EventSystems;
+// using UnityEngine.UI;
+//
+// public class DragSwapItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+// {
+//     public Canvas canvas; // 主Canvas
+//     private Transform originalParent;
+//     private int originalIndex;
+//     private RectTransform rectTransform;
+//     private CanvasGroup canvasGroup;
+//
+//     void Awake()
+//     {
+//         rectTransform = GetComponent<RectTransform>();
+//         canvasGroup = gameObject.AddComponent<CanvasGroup>();
+//     }
+//
+//     public void OnBeginDrag(PointerEventData eventData)
+//     {
+//         originalParent = transform.parent;
+//         originalIndex = transform.GetSiblingIndex();
+//
+//         // 提到最上层，防止被其他 UI 遮挡
+//         transform.SetParent(canvas.transform);
+//         canvasGroup.blocksRaycasts = false; // 让射线透过自己
+//     }
+//
+//     public void OnDrag(PointerEventData eventData)
+//     {
+//         rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+//     }
+//
+//     public void OnEndDrag(PointerEventData eventData)
+//     {
+//         // 射线检测 UI
+//         var results = new System.Collections.Generic.List<RaycastResult>();
+//         EventSystem.current.RaycastAll(eventData, results);
+//
+//         bool swapped = false;
+//         foreach (var r in results)
+//         {
+//             if (r.gameObject != gameObject && r.gameObject.transform.parent == originalParent)
+//             {
+//                 int targetIndex = r.gameObject.transform.GetSiblingIndex();
+//
+//                 // 把目标移到原位置
+//                 r.gameObject.transform.SetSiblingIndex(originalIndex);
+//                 // 把自己插到目标原位置
+//                 transform.SetParent(originalParent);
+//                 transform.SetSiblingIndex(targetIndex);
+//                 swapped = true;
+//                 break;
+//             }
+//         }
+//
+//         if (!swapped)
+//         {
+//             // 回到原位置
+//             transform.SetParent(originalParent);
+//             transform.SetSiblingIndex(originalIndex);
+//         }
+//
+//         canvasGroup.blocksRaycasts = true;
+//     }
+// }
