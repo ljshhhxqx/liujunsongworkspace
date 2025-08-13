@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace HotUpdate.Scripts.UI.UIs.Panel.Item
 {
-    public class BagSlotItem : ItemBase, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
+    public class BagSlotItem : ItemBase, IPointerClickHandler//, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         [SerializeField]
         private Image itemImage;        // 显示物品图标的Image组件
@@ -56,6 +56,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         {
             _currentItem = newItem;
             _stackCount = count;
+            _slotIndex = newItem.Index;
             UpdateSlotUI();
         }
 
@@ -75,6 +76,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
             qualityImage.sprite = _currentItem.QualityIcon;
             equipFlag.SetActive(_currentItem.IsEquip);
             lockIcon.SetActive(_currentItem.IsLock);
+            Debug.Log($"UpdateSlotUI {_currentItem.ItemName}-{_stackCount}-{_slotIndex}-{_currentItem.IsEquip}-{_currentItem.IsLock}");
         }
 
         // 拖拽开始

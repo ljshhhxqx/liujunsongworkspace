@@ -20,14 +20,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         [MemoryPackOrder(1)] 
         public int SlotCount;
 
-        [MemoryPackOrder(2)] public MemoryDictionary<EquipmentPart, PlayerEquipSlotItem> PlayerEquipSlotItems;
+        [MemoryPackOrder(2)] public MemoryDictionary<int, PlayerBagItem> PlayerItems;
 
-        [MemoryPackOrder(3)] public MemoryDictionary<int, PlayerBagItem> PlayerItems;
-
-        [MemoryPackOrder(4)] public MemoryDictionary<int, PlayerBagSlotItem> PlayerItemConfigIdSlotDictionary;
+        [MemoryPackOrder(3)] public MemoryDictionary<int, PlayerBagSlotItem> PlayerItemConfigIdSlotDictionary;
         public PlayerSyncStateType GetStateType() => PlayerSyncStateType.PlayerItem;
         
-        public static bool AddItems(ref PlayerItemState state, int[] itemIds, int configId, int maxStack, PlayerItemType itemType, ItemState itemState = ItemState.IsInBag, int count = 1)
+        public static bool AddItems(ref PlayerItemState state, int[] itemIds, int configId, int maxStack, PlayerItemType itemType, EquipmentPart part, int skillId, ItemState itemState = ItemState.IsInBag, int count = 1)
         {
             if (TryGetSlotItemByConfigId( state, configId, out var slotItem) && slotItem.MaxStack > 1)
             {
@@ -82,6 +80,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                     MaxStack = maxStack,
                     PlayerItemType = itemType,
                     State = itemState,
+                    EquipmentPart = part,
+                    SkillId = skillId
                 };
 
                 for (int i = 0; i < itemIds.Length; i++)
@@ -101,7 +101,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         {
             state.PlayerItems = new MemoryDictionary<int, PlayerBagItem>();
             state.PlayerItemConfigIdSlotDictionary = new MemoryDictionary<int, PlayerBagSlotItem>();
-            state.PlayerEquipSlotItems = new MemoryDictionary<EquipmentPart, PlayerEquipSlotItem>();
             state.SlotCount = maxSlotCount;
         }
 
@@ -157,40 +156,24 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                     MaxStack = item.MaxStack,
                     PlayerItemType = item.PlayerItemType,
                     State = item.State,
-                    
+                    EquipmentPart = item.EquipmentPart,
+                    SkillId = item.SkillId
                 };
-
-                state.PlayerItems.Add(item.ItemId, newItem);
-                state.PlayerItemConfigIdSlotDictionary.Add(freeSlot, newSlotItem);
                 slotIndex = freeSlot;
+
                 if (newItem.PlayerItemType.IsEquipment())
                 {
                     var equipPart = newItem.EquipmentPart;
                     newItem.State = ItemState.IsEquipped;
-                    if (!state.PlayerEquipSlotItems.ContainsKey(equipPart))
-                    {
-                        state.PlayerEquipSlotItems.Add(equipPart, new PlayerEquipSlotItem
-                        {
-                            EquipmentPart = equipPart,
-                            ItemId = newItem.ItemId,
-                            ConfigId = newItem.ConfigId,
-                            SkillId = PlayerItemCalculator.GetEquipSkillId(newItem.PlayerItemType, newItem.ConfigId),
-                        });
-                        isEquipped = true;
-                        Debug.Log($"{newItem.ConfigId}-{newItem.PlayerItemType}-{slotIndex} 已经装备，存入背包");
-                    }
-                    return true;
+                    newSlotItem.State = ItemState.IsEquipped;
+                    isEquipped = true;
                 }
+                state.PlayerItems.Add(item.ItemId, newItem);
+                state.PlayerItemConfigIdSlotDictionary.Add(freeSlot, newSlotItem);
                 return true;
             }
             slotIndex = -1;
             return false;
-        }
-
-        public static bool TryGetPlayerEquipItemByEquipPart(PlayerItemState state, EquipmentPart equipPart,
-            out PlayerEquipSlotItem bagItem)
-        {
-            return state.PlayerEquipSlotItems.TryGetValue(equipPart, out bagItem);
         }
 
         public static bool TryAddAndEquipItem(ref PlayerItemState state, ref PlayerBagItem bagItem, out bool isEquipped, out int slotIndex)
@@ -214,7 +197,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 if (item.State == ItemState.IsEquipped)
                 {
                     var equipPart = item.EquipmentPart;
-                    state.PlayerEquipSlotItems.Remove(equipPart);
                 }
                 var slotItem = state.PlayerItemConfigIdSlotDictionary[item.ConfigId];
                 slotItem.Count -= 1;
@@ -309,19 +291,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                             Debug.LogWarning($"非装备物品不能装备: {item}");
                             return false;
                         }
-
-                        var equipPart = item.EquipmentPart;
-                        if (state.PlayerEquipSlotItems.ContainsKey(equipPart))
-                        {
-                            state.PlayerEquipSlotItems.Remove(equipPart);
-                        }
-                        state.PlayerEquipSlotItems[equipPart] = new PlayerEquipSlotItem
-                        {
-                            EquipmentPart = equipPart,
-                            ItemId = item.ItemId,
-                            ConfigId = item.ConfigId,
-                            SkillId = PlayerItemCalculator.GetEquipSkillId(item.PlayerItemType, item.ConfigId),
-                        };
                     }
                     item.State = newState;
                     state.PlayerItems[itemId] = item;
@@ -596,7 +565,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         public int MaxStack;
         [MemoryPackOrder(6)]
         public EquipmentPart EquipmentPart;
-        
+        [MemoryPackOrder(7)]
+        public int SkillId;
+
 
         public bool Equals(PlayerBagItem other)
         {
@@ -630,42 +601,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     }
     
     [MemoryPackable]
-    public partial class PlayerEquipSlotItem : IEquatable<PlayerEquipSlotItem>
-    {
-        [MemoryPackOrder(0)]
-        public EquipmentPart EquipmentPart;
-        [MemoryPackOrder(1)]
-        public int ConfigId;
-        [MemoryPackOrder(2)]
-        public int ItemId;
-        //必须赋值具体的主属性
-        [MemoryPackOrder(3)]
-        public MemoryList<AttributeIncreaseData> MainIncreaseDatas;
-        //必须赋值具体的被动属性(由随机值计算出来的具体的值)
-        [MemoryPackOrder(4)]
-        public MemoryList<AttributeIncreaseData> PassiveIncreaseDatas;
-        [MemoryPackOrder(5)]
-        public int SkillId;
-        // [MemoryPackOrder(6)]
-        // public ItemState State;
-
-        public bool Equals(PlayerEquipSlotItem other)
-        {
-            return other != null && EquipmentPart == other.EquipmentPart && ConfigId == other.ConfigId && ItemId == other.ItemId;
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj is PlayerEquipSlotItem other && Equals(other);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine((int)EquipmentPart, ConfigId, ItemId);
-        }
-    }
-    
-    [MemoryPackable]
     public partial class PlayerBagSlotItem : IEquatable<PlayerBagSlotItem>
     {
         [MemoryPackOrder(0)]
@@ -693,6 +628,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         //装备：显示被动属性增益
         [MemoryPackOrder(9)]
         public MemoryList<AttributeIncreaseData> PassiveAttributeIncreaseDatas;
+        [MemoryPackOrder(10)]
+        public EquipmentPart EquipmentPart;
+        [MemoryPackOrder(11)]
+        public int SkillId;
+        [MemoryPackOrder(12)]
+        public bool IsEnable;
+
 
         public bool Equals(PlayerBagSlotItem other)
         {

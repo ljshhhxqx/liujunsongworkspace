@@ -251,7 +251,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     case PropertyTypeEnum.Attack:
                         goldData.Attack = property.CurrentValue;
                         break;
-                    case PropertyTypeEnum.Defense:
+                    case PropertyTypeEnum.Health:
                         goldData.Health = property.CurrentValue;
                         goldData.MaxHealth = property.MaxCurrentValue;
                         break;
@@ -283,7 +283,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     {
                         data.CurrentProperty = property.CurrentValue;
                         data.MaxProperty = property.MaxCurrentValue;
-                    
+                        data.IsPercentage = property.IsPercentage();
                         uiPropertyData[(int)kvp.Key] = data;
                     }
                     continue;
@@ -293,6 +293,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 if (data.ConsumeType!= PropertyConsumeType.None)
                 {
                     data.CurrentProperty = property.CurrentValue;
+                    data.IsPercentage = property.IsPercentage();
                     uiPropertyData[(int)kvp.Key] = data;
                 }
                 if (kvp.Key == PropertyTypeEnum.AttackSpeed)

@@ -266,15 +266,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var command = NetworkCommandExtensions.DeserializeCommand(commandJson);
             var header = command.GetHeader();
             var validCommand = command.ValidateCommand();
-            if (!validCommand.IsValid)
-            {
-                foreach (var str in validCommand.Errors)
-                {
-                    Debug.LogError($"Invalid command: CommandType-{command.GetType().Name} -> CommandId-{header.CommandId} -> Error-{str}");
-                }
-                ObjectPoolManager<CommandValidationResult>.Instance.Return(validCommand);
-                return;
-            }
+            // if (!validCommand.IsValid)
+            // {
+            //     foreach (var str in validCommand.Errors)
+            //     {
+            //         Debug.LogError($"Invalid command: CommandType-{command.GetType().Name} -> CommandId-{header.CommandId} -> Error-{str}");
+            //     }
+            //     ObjectPoolManager<CommandValidationResult>.Instance.Return(validCommand);
+            //     return;
+            // }
             ObjectPoolManager<CommandValidationResult>.Instance.Return(validCommand);
             _clientCommands.Enqueue(command);
         }
@@ -392,18 +392,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var header = command.GetHeader();
             var validCommand = command.ValidateCommand();
-            if (!validCommand.IsValid)
-            {
-                var sb = new StringBuilder();
-                sb.AppendLine($"Invalid command: {command.GetType().Name}");
-                for (int i = 0; i < validCommand.Errors.Count; i++)
-                {
-                    sb.AppendLine(validCommand.Errors[i]);
-                }
-                Debug.LogError(sb.ToString());
-                ObjectPoolManager<CommandValidationResult>.Instance.Return(validCommand);
-                return;
-            }
+            ObjectPoolManager<CommandValidationResult>.Instance.Return(validCommand);
+            // if (!validCommand.IsValid)
+            // {
+            //     var sb = new StringBuilder();
+            //     sb.AppendLine($"Invalid command: {command.GetType().Name}");
+            //     for (int i = 0; i < validCommand.Errors.Count; i++)
+            //     {
+            //         sb.AppendLine(validCommand.Errors[i]);
+            //     }
+            //     Debug.LogError(sb.ToString());
+            //     return;
+            // }
             _serverCommands.Enqueue(command);
         }
         

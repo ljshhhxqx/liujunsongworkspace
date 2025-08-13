@@ -180,20 +180,25 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                         continue;
                     }
                     var configId = GetEquipmentConfigId(config.itemType, bagSlotItem.ConfigId);
+                    var skillId = GetEquipSkillId(config.itemType, bagSlotItem.ConfigId);
                     if (configId != 0 && Constant.IsServer)
                     {
                         for (int i = 0; i < removedItemIds.Length; i++)
                         {
                             GameItemManager.RemoveGameItemData(removedItemIds[i], Constant.GameSyncManager.netIdentity);
                         }
-                        Constant.GameSyncManager.EnqueueServerCommand(new EquipmentCommand
+
+                        if (skillId != 0)
                         {
-                            Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
-                            EquipmentConfigId = configId,
-                            EquipmentPart = config.equipmentPart,
-                            IsEquip = false,
-                            ItemId = bagSlotItem.ItemIds.First(),
-                        });
+                            Constant.GameSyncManager.EnqueueServerCommand(new EquipmentCommand
+                            {
+                                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
+                                EquipmentConfigId = configId,
+                                EquipmentPart = config.equipmentPart,
+                                IsEquip = false,
+                                ItemId = bagSlotItem.ItemIds.First(),
+                            });
+                        }
                     }
                 }
             }
@@ -252,44 +257,41 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 return;
             }
             Debug.Log($"Item {itemEquipCommand.SlotIndex} equipped");
-            if (!PlayerItemState.TryGetEquipItemBySlotIndex(playerItemState, itemEquipCommand.SlotIndex, out var bagItem)
+            if (!PlayerItemState.TryGetSlotItemBySlotIndex(playerItemState, itemEquipCommand.SlotIndex, out var bagItem)
                 || bagItem.PlayerItemType == PlayerItemType.None || !Constant.IsServer)
             {
                 return;
             }
 
             var configId = GetEquipmentConfigId(bagItem.PlayerItemType, bagItem.ConfigId);
-            if (!PlayerItemState.TryGetPlayerEquipItemByEquipPart(playerItemState, bagItem.EquipmentPart, out var equipSlotItem))
-            {
-                return;
-            }
+            var skillId = GetEquipSkillId(bagItem.PlayerItemType, bagItem.ConfigId);
             Constant.GameSyncManager.EnqueueServerCommand(new EquipmentCommand
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
                 EquipmentConfigId = configId,
                 EquipmentPart = bagItem.EquipmentPart,
                 IsEquip = itemEquipCommand.IsEquip,
-                ItemId = bagItem.ItemId,
-                EquipmentPassiveEffectData = JsonConvert.SerializeObject(equipSlotItem.MainIncreaseDatas),
-                EquipmentMainEffectData = JsonConvert.SerializeObject(equipSlotItem.PassiveIncreaseDatas),
+                ItemId = bagItem.ItemIds.First(),
+                EquipmentPassiveEffectData = JsonConvert.SerializeObject(bagItem.MainIncreaseDatas),
+                EquipmentMainEffectData = JsonConvert.SerializeObject(bagItem.PassiveAttributeIncreaseDatas),
             });
-            var animationState = SkillConfig.GetAnimationState(bagItem.PlayerItemType);
-            if (equipSlotItem.SkillId != 0 && animationState != AnimationState.None)
-            {
-                Constant.GameSyncManager.EnqueueServerCommand(new SkillLoadCommand
-                {
-                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill, CommandAuthority.Server, CommandExecuteType.Immediate),
-                    SkillConfigId = equipSlotItem.SkillId,
-                    IsLoad = true,
-                    KeyCode = animationState  
-                });
-                Constant.GameSyncManager.EnqueueServerCommand(new SkillChangedCommand
-                {
-                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Input, CommandAuthority.Server, CommandExecuteType.Immediate),
-                    SkillId = equipSlotItem.SkillId,
-                    AnimationState = animationState
-                });
-            }
+            //var animationState = SkillConfig.GetAnimationState(bagItem.PlayerItemType);
+            // if (bagItem.SkillId != 0 && animationState != AnimationState.None)
+            // {
+            //     Constant.GameSyncManager.EnqueueServerCommand(new SkillLoadCommand
+            //     {
+            //         Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill, CommandAuthority.Server, CommandExecuteType.Immediate),
+            //         SkillConfigId = bagItem.SkillId,
+            //         IsLoad = true,
+            //         KeyCode = animationState  
+            //     });
+            //     Constant.GameSyncManager.EnqueueServerCommand(new SkillChangedCommand
+            //     {
+            //         Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Input, CommandAuthority.Server, CommandExecuteType.Immediate),
+            //         SkillId = bagItem.SkillId,
+            //         AnimationState = animationState
+            //     });
+            // }
         }
 
         public static void CommandGetItem(ref PlayerItemState playerItemState, ItemsCommandData itemsData, NetworkCommandHeader header = default)
@@ -331,13 +333,43 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     throw new ArgumentOutOfRangeException();
             }
         }
-        
+
+        public static void CommandEnablePlayerSkill(ref PlayerItemState playerItemState, int skillId, int slotIndex, bool isEnable, int connectionId)
+        {
+            if (!Constant.IsServer)
+                return;
+            if (!PlayerItemState.TryGetSlotItemBySlotIndex(playerItemState, slotIndex, out var bagItem))
+            {
+                Debug.LogError($"Failed to enable skill {skillId}, no slotIndex {slotIndex}");
+                return;
+            }
+
+            if (bagItem.SkillId != skillId)
+            {
+                Debug.LogError($"Slot {slotIndex} is skill id is {bagItem.SkillId}, not {slotIndex}");
+                return;
+            }
+
+            var skillConfig = Constant.SkillConfig.GetSkillData(skillId);
+            bagItem.IsEnable = isEnable;
+            playerItemState.PlayerItemConfigIdSlotDictionary[slotIndex] = bagItem;
+            var skillEnableCommand = new SkillLoadCommand
+            {
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
+                SkillConfigId = skillId,
+                IsLoad = isEnable,
+                KeyCode = skillConfig.animationState
+            };
+            Constant.GameSyncManager.EnqueueServerCommand(skillEnableCommand);
+        }
+
         public static void AddPlayerItems(ItemsCommandData itemsData, NetworkCommandHeader header,
             ref PlayerItemState playerItemState)
         {
             if (!Constant.IsServer)
                 return;
             var itemConfigData = Constant.ItemConfig.GetGameItemData(itemsData.ItemConfigId);
+            var skillId = GetEquipSkillId(itemConfigData.itemType, itemsData.ItemConfigId);
             var bagItem = new PlayerBagItem();
             try
             {
@@ -348,6 +380,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 bagItem.MaxStack = itemConfigData.maxStack;
                 bagItem.IndexSlot = -1;
                 bagItem.EquipmentPart = itemConfigData.equipmentPart;
+                bagItem.SkillId = skillId;
                 PlayerItemState.TryAddAndEquipItem(ref playerItemState, ref bagItem, out var isEquipped, out var indexSlot);
                 var gameItemData = new GameItemData
                 {
@@ -592,5 +625,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public bool IsServer;
         public bool IsClient;
         public bool IsLocalPlayer;
+        public SkillConfig SkillConfig;
     }
 }

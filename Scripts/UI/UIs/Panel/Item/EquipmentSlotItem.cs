@@ -15,19 +15,19 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         private GameObject lockIcon;    // 锁定图标的GameObject组件
         [SerializeField]
         private Image qualityImage;        // 显示物品图标的Image组件
-        private EquipItemData _currentItem;              
+        private BagItemData _currentItem;              
         private EquipmentPart _equipmentPart;
         private readonly Subject<PointerEventData> _pointerClickObservable = new Subject<PointerEventData>();
         public IObservable<PointerEventData> OnPointerClickObservable => _pointerClickObservable;
         public EquipmentPart EquipmentPart => _equipmentPart;
-        public EquipItemData CurrentItem => _currentItem;
+        public BagItemData CurrentItem => _currentItem;
         
         public override void SetData<T>(T data)
         {
-            if (data is EquipItemData equipmentItem)
+            if (data is BagItemData bagItem)
             {
-                _currentItem = equipmentItem;
-                _equipmentPart = equipmentItem.EquipmentPartType;
+                _currentItem = bagItem;
+                _equipmentPart = bagItem.EquipmentPart;
                 UpdateSlotUI();
             }
         }
@@ -43,7 +43,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         {
             var itemIsNull = _currentItem.Equals(default);
             itemImage.sprite = itemIsNull ? null : _currentItem.Icon;
-            qualityImage.sprite = itemIsNull? null : _currentItem.QualityIcon;
+            qualityImage.sprite = itemIsNull ? null : _currentItem.QualityIcon;
             itemImage.enabled = !itemIsNull;
             lockIcon.SetActive(_currentItem.IsLock);
         }

@@ -156,10 +156,11 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public PropertyConsumeType ConsumeType;
         public float CurrentProperty;
         public float MaxProperty;
+        public bool IsPercentage;
 
         public bool Equals(PropertyItemData other)
         {
-            return PropertyType == other.PropertyType && Name == other.Name && ConsumeType == other.ConsumeType && CurrentProperty.Equals(other.CurrentProperty) && MaxProperty.Equals(other.MaxProperty);
+            return PropertyType == other.PropertyType&& IsPercentage == other.IsPercentage && Name == other.Name && ConsumeType == other.ConsumeType && CurrentProperty.Equals(other.CurrentProperty) && MaxProperty.Equals(other.MaxProperty);
         }
 
         public override bool Equals(object obj)
@@ -169,7 +170,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
 
         public override int GetHashCode()
         {
-            return HashCode.Combine((int)PropertyType, Name, (int)ConsumeType, CurrentProperty, MaxProperty);
+            return HashCode.Combine((int)PropertyType, Name, (int)ConsumeType, CurrentProperty, MaxProperty, IsPercentage);
         }
     }
     
@@ -204,9 +205,13 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public Action<int, bool> OnLockItem;
         //<格子, 是否装备>
         public Action<int, bool> OnEquipItem;
+        public Action<int, int, bool> OnEnableSkill;
         //<格子, 数量>
         public Action<int, int> OnSellItem;
         public Sprite QualityIcon;
+        public bool IsEnable;
+        public int SkillId;
+        public EquipmentPart EquipmentPart;
 
         public bool Equals(BagItemData other)
         {

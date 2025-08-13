@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Battle;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Skill;
@@ -60,7 +61,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                     CurrentSkillTime = skillEffectData.CurrentTime,
                     SkillCooldownTimer = cooldownData.CurrentTime,
                     SkillCooldown = cooldownData.Cooldown,
-                    SkillPosition = skillEffectData.CurrentPosition
+                    SkillPosition = skillEffectData.CurrentPosition,
                 };
                 i++;
             }
@@ -85,6 +86,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         [MemoryPackOrder(5)]
         public float SkillCooldown;
         [MemoryPackOrder(6)]
-        public CompressedVector3 SkillPosition;
+        public CompressedVector3 SkillPosition; 
     }
 }

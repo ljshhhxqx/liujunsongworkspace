@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
@@ -10,7 +10,6 @@ using UI.UIBase;
 using UniRx;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using VContainer;
 
@@ -31,7 +30,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
         private Dictionary<int, BagSlotItem> _bagSlotItems; // 存储格子引用
         private Dictionary<int, EquipmentSlotItem> _slotItems;
         private Dictionary<int, BagItemData> _bagItemData;  // 存储物品
-        private Dictionary<int, EquipItemData> _slotEquipItemData;
         
         private BagSlotItem _draggedSlot; // 当前被拖拽的格子
 
@@ -50,69 +48,69 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
                 .AddTo(this);
         }
 
-        public void BindEquipItemData(ReactiveDictionary<int, EquipItemData> slotEquipItemData)
-        {
-            _slotEquipItemData = new Dictionary<int, EquipItemData>();
-            foreach (var key in slotEquipItemData.Keys)
-            {
-                var slot = slotEquipItemData[key];
-                _slotEquipItemData.Add(key, slot);
-            }
-            _slotItems = new Dictionary<int, EquipmentSlotItem>();//<EquipmentSlotItem>();
-            slotEquipItemData.ObserveAdd()
-                .Subscribe(x =>
-                {
-                    if (!_slotEquipItemData.ContainsKey(x.Key))
-                    {
-                        _slotEquipItemData.Add(x.Key, x.Value);
-                        equipmentItemList.AddItem(x.Key, x.Value);
-                    }
-                    //equipmentItemList.SetItemList(_slotEquipItemData);
-                })
-                .AddTo(this);
-            slotEquipItemData.ObserveRemove()
-                .Subscribe(x =>
-                {
-                    if (_slotEquipItemData.ContainsKey(x.Key))
-                    {
-
-                        _slotEquipItemData.Remove(x.Key);
-                        equipmentItemList.RemoveItem(x.Key);
-                    }
-                    //equipmentItemList.SetItemList(_slotEquipItemData);
-                })
-                .AddTo(this);
-            slotEquipItemData.ObserveReplace()
-                .Subscribe(x =>
-                {
-                    if (!x.NewValue.Equals(x.OldValue))
-                    {
-                        _slotEquipItemData[x.Key] = x.NewValue;
-                        equipmentItemList.ReplaceItem(x.Key, x.NewValue);
-                    }
-                    //equipmentItemList.SetItemList(_slotEquipItemData);
-                })
-                .AddTo(this);
-            slotEquipItemData.ObserveReset()
-                .Subscribe(x =>
-                {
-                    _slotEquipItemData.Clear();
-                    equipmentItemList.Clear();
-                    //equipmentItemList.SetItemList(_slotEquipItemData);
-                })
-                .AddTo(this);
-            RefreshEquip(_slotEquipItemData);
-        }
+        // public void BindEquipItemData(ReactiveDictionary<int, EquipItemData> slotEquipItemData)
+        // {
+        //     _slotEquipItemData = new Dictionary<int, EquipItemData>();
+        //     foreach (var key in slotEquipItemData.Keys)
+        //     {
+        //         var slot = slotEquipItemData[key];
+        //         _slotEquipItemData.Add(key, slot);
+        //     }
+        //     _slotItems = new Dictionary<int, EquipmentSlotItem>();
+        //     slotEquipItemData.ObserveAdd()
+        //         .Subscribe(x =>
+        //         {
+        //             if (!_slotEquipItemData.ContainsKey(x.Key))
+        //             {
+        //                 _slotEquipItemData.Add(x.Key, x.Value);
+        //                 equipmentItemList.AddItem(x.Key, x.Value);
+        //             }
+        //             //equipmentItemList.SetItemList(_slotEquipItemData);
+        //         })
+        //         .AddTo(this);
+        //     slotEquipItemData.ObserveRemove()
+        //         .Subscribe(x =>
+        //         {
+        //             if (_slotEquipItemData.ContainsKey(x.Key))
+        //             {
+        //
+        //                 _slotEquipItemData.Remove(x.Key);
+        //                 equipmentItemList.RemoveItem(x.Key);
+        //             }
+        //             //equipmentItemList.SetItemList(_slotEquipItemData);
+        //         })
+        //         .AddTo(this);
+        //     slotEquipItemData.ObserveReplace()
+        //         .Subscribe(x =>
+        //         {
+        //             if (!x.NewValue.Equals(x.OldValue))
+        //             {
+        //                 _slotEquipItemData[x.Key] = x.NewValue;
+        //                 equipmentItemList.ReplaceItem(x.Key, x.NewValue);
+        //             }
+        //             //equipmentItemList.SetItemList(_slotEquipItemData);
+        //         })
+        //         .AddTo(this);
+        //     slotEquipItemData.ObserveReset()
+        //         .Subscribe(x =>
+        //         {
+        //             _slotEquipItemData.Clear();
+        //             equipmentItemList.Clear();
+        //             //equipmentItemList.SetItemList(_slotEquipItemData);
+        //         })
+        //         .AddTo(this);
+        //     RefreshEquip(_slotEquipItemData);
+        // }
 
         private void RefreshEquip(IDictionary<int, EquipItemData> slotEquipItemData)
         {
             equipmentItemList.SetItemList(slotEquipItemData);
-            InitializeEquipSlots();
         }
 
         public void BindBagItemData(ReactiveDictionary<int, BagItemData> bagItemData)
         {
             _bagSlotItems = new Dictionary<int, BagSlotItem>();
+            _slotItems = new Dictionary<int, EquipmentSlotItem>();
             _bagItemData = new Dictionary<int, BagItemData>();
             foreach (var key in bagItemData.Keys)
             {
@@ -121,12 +119,17 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             }
             RefreshBag(_bagItemData);
             InitializeSlots();
+            InitializeEquipSlots();
             bagItemData.ObserveAdd()
                 .Subscribe(x =>
                 {
                     if (!_bagItemData.ContainsKey(x.Key))
                     {
                         _bagItemData.Add(x.Key, x.Value);
+                        if (x.Value.PlayerItemType.IsEquipment() && x.Value.IsEquip)
+                        {
+                            equipmentItemList.AddItem(x.Key, x.Value);
+                        }
                         bagItemList.AddItem(x.Key, x.Value);
                     }
                 })
@@ -138,6 +141,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
                     {
                         _bagItemData.Remove(x.Key);
                         bagItemList.RemoveItem(x.Key);
+                        if (x.Value.PlayerItemType.IsEquipment() && !x.Value.IsEquip)
+                        {
+                            equipmentItemList.RemoveItem(x.Key);
+                        }
                     }
                 })
                 .AddTo(this);
@@ -148,6 +155,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
                     {
                         _bagItemData[x.Key] = x.NewValue;
                         bagItemList.ReplaceItem(x.Key, x.NewValue);
+                        if (x.NewValue.PlayerItemType.IsEquipment() && x.NewValue.IsEquip)
+                        {
+                            equipmentItemList.ReplaceItem(x.Key, x.NewValue);
+                        }
                     }
                 })
                 .AddTo(this);
@@ -156,6 +167,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
                 {
                     _bagItemData.Clear();
                     bagItemList.Clear();
+                    equipmentItemList.Clear();
                 })
                 .AddTo(this);
         }
@@ -169,6 +181,15 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             //     _bagItemData.Add(data);
             // }
             bagItemList.SetItemList(bagItemData);
+            var equippedItems = new Dictionary<int, BagItemData>();
+            foreach (var kvp in bagItemData)
+            {
+                if (kvp.Value.IsEquip)
+                {
+                    equippedItems.Add(kvp.Key, kvp.Value);
+                }
+            }
+            equipmentItemList.SetItemList(equippedItems);
         }
         
         private void InitializeEquipSlots()
@@ -189,7 +210,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             if (slot.IsEmpty()) return;
             // 这里可以弹出物品详情面板
             Debug.Log($"显示物品详情: {slot.name}");
-            _uiManager.SwitchUI<ItemDetailsScreenUI>(ui => ui.OpenBag(slot.CurrentItem.ToBagItemData(), ItemDetailsType.Equipment));
+            _uiManager.SwitchUI<ItemDetailsScreenUI>(ui => ui.OpenBag(slot.CurrentItem, ItemDetailsType.Equipment));
         }
 
         // 初始化格子
@@ -200,15 +221,15 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
                 var item = bagItemList.ItemBases[key];
                 var slot = item as BagSlotItem;
                 if (!slot) continue;
-                slot.OnBeginDragObserver
-                    .Subscribe(x => OnSlotBeginDrag(slot, x))
-                    .AddTo(slot.gameObject);
-                slot.OnDragObserver
-                    .Subscribe(x => OnSlotDrag(slot, x))
-                    .AddTo(slot.gameObject);
-                slot.OnEndDragObserver
-                    .Subscribe(x => OnSlotEndDrag(slot, x))
-                    .AddTo(slot.gameObject);
+                // slot.OnBeginDragObserver
+                //     .Subscribe(x => OnSlotBeginDrag(slot, x))
+                //     .AddTo(slot.gameObject);
+                // slot.OnDragObserver
+                //     .Subscribe(x => OnSlotDrag(slot, x))
+                //     .AddTo(slot.gameObject);
+                // slot.OnEndDragObserver
+                //     .Subscribe(x => OnSlotEndDrag(slot, x))
+                //     .AddTo(slot.gameObject);
                 slot.OnPointerClickObserver
                     .Where(x => _isDragging == false)
                     .Subscribe(x => OnSlotClick(slot, x))
@@ -232,6 +253,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             _draggedSlot = slot;
             //_draggedSlot.gameObject.SetActive(true);
             _draggedSlot.transform.position = eventData.position;
+            _draggedSlot.GetComponent<Image>().raycastTarget = false;
         }
 
         // 处理拖拽结束
@@ -239,20 +261,21 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
         {
             //Destroy(_draggedSlot.gameObject);
             //_draggedSlot.gameObject.SetActive(false);
-            _isDragging = false;
             // 获取目标格子
-            var targetSlot = eventData.pointerEnter?.GetComponent<BagSlotItem>();
+            var targetSlot = eventData.pointerEnter?.GetComponentInParent<BagSlotItem>();
             if (targetSlot && targetSlot != sourceSlot)
             {
                 Debug.Log($"拖拽结束: {sourceSlot.name} -> {targetSlot.name}");
-                SwapItemsBetweenSlots(sourceSlot, targetSlot);
                 var sourceIndex = sourceSlot.transform.GetSiblingIndex();
                 var targetIndex = targetSlot.transform.GetSiblingIndex();
                 sourceSlot.transform.SetSiblingIndex(targetIndex);
                 targetSlot.transform.SetSiblingIndex(sourceIndex);
+                SwapItemsBetweenSlots(sourceSlot, targetSlot);
             }
             gridLayoutGroup.enabled = false;
             gridLayoutGroup.enabled = true;
+            _isDragging = false;
+            _draggedSlot.GetComponent<Image>().raycastTarget = true;
         }
 
         private void SwapItemsBetweenSlots(BagSlotItem source, BagSlotItem target)

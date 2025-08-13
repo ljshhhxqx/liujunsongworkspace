@@ -57,6 +57,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     [MemoryPackUnion(33, typeof(TriggerCommand))]
     [MemoryPackUnion(34, typeof(SkillChangedCommand))]
     [MemoryPackUnion(35, typeof(PropertyUseSkillCommand))]
+    [MemoryPackUnion(36, typeof(ItemSkillEnableCommand))]
     public partial interface INetworkCommand
     {
         NetworkCommandHeader GetHeader();
@@ -1385,7 +1386,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public MemoryList< SlotIndexData> Slots;
+        public MemoryList<SlotIndexData> Slots;
         public NetworkCommandHeader GetHeader() => Header;
         public NetworkCommandType GetCommandType() => NetworkCommandType.ItemsSell;
 
@@ -1416,6 +1417,35 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         {
             Header = default;
             Slots.Clear();
+        }
+    }
+    
+    [MemoryPackable]
+    public partial struct ItemSkillEnableCommand : INetworkCommand, IPoolObject
+    {
+        [MemoryPackOrder(0)]
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public int SkillConfigId;
+        [MemoryPackOrder(2)]
+        public bool IsEnable;
+        [MemoryPackOrder(3)]
+        public int SlotIndex;
+        public NetworkCommandHeader GetHeader() => Header;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.ItemsSell;
+
+        public bool IsValid()
+        {
+            return SkillConfigId > 0 && SlotIndex > 0;
+        }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            
         }
     }
     

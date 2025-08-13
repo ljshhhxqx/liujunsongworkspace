@@ -18,6 +18,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         [SerializeField]
         private GameObject lockIcon;    // 锁定图标的GameObject组件
         [SerializeField]
+        private GameObject equipIcon;    // 锁定图标的GameObject组件
+        [SerializeField]
         private Button sellBtn;        // 出售按钮
         [SerializeField]
         private Button lockBtn;        // 锁定按钮
@@ -34,21 +36,24 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         {
             if (data is BagItemData itemData)
             {
-                lockBtn.onClick.RemoveAllListeners();
-                sellBtn.onClick.RemoveAllListeners();
-                lockBtn.onClick.AddListener(() =>
-                {
-                    _onLockSubject.OnNext(!itemData.IsLock);
-                });
-                sellBtn.onClick.AddListener(() =>
-                {
-                    _onSellSubject.OnNext(itemData.Index);
-                });
+                lockBtn.OnClickAsObservable()
+                    .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
+                    .Subscribe(_ =>
+                    {
+                        _onLockSubject.OnNext(!itemData.IsLock);
+                    });
+                sellBtn.OnClickAsObservable()
+                    .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
+                    .Subscribe(_ =>
+                    {
+                        _onSellSubject.OnNext(itemData.Index);
+                    });
                 _currentItem = itemData;
                 itemImage.sprite = itemData.Icon;
                 qualityImage.sprite = itemData.QualityIcon;
                 stackText.text = itemData.Stack.ToString();
                 lockIcon.SetActive(itemData.IsLock);
+                equipIcon.SetActive(itemData.IsEquip);
             }
         }
 

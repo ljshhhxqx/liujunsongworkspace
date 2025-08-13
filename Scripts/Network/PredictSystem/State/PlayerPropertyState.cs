@@ -255,6 +255,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 or PropertyTypeEnum.Gold or PropertyTypeEnum.Experience;
         }
 
+        public bool IsPercentage()
+        {
+            return _propertyType is PropertyTypeEnum.AttackSpeed or PropertyTypeEnum.CriticalRate
+                or PropertyTypeEnum.CriticalDamageRatio;
+        }
+
         public PropertyCalculator UpdateCurrentValue(float value)
         {
             return new PropertyCalculator(_propertyType, new PropertyData

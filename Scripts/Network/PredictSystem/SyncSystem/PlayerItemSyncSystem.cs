@@ -122,6 +122,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 case ItemExchangeCommand itemExchangeCommand:
                     PlayerItemCalculator.CommandExchangeItem(itemExchangeCommand, ref playerItemState);
                     break;
+                case ItemSkillEnableCommand itemSkillEnableCommand:
+                    PlayerItemCalculator.CommandEnablePlayerSkill(ref playerItemState, itemSkillEnableCommand.SkillConfigId, itemSkillEnableCommand.SlotIndex, itemSkillEnableCommand.IsEnable, header.ConnectionId);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

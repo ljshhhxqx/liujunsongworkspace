@@ -90,6 +90,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 case ItemExchangeCommand itemExchangeCommand:
                     PlayerItemCalculator.CommandExchangeItem(itemExchangeCommand, ref playerItemState);
                     break;
+                case ItemSkillEnableCommand itemSkillEnableCommand:
+                    PlayerItemCalculator.CommandEnablePlayerSkill(ref playerItemState, itemSkillEnableCommand.SkillConfigId, itemSkillEnableCommand.SlotIndex, itemSkillEnableCommand.IsEnable, header.ConnectionId);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -199,11 +202,27 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             list.Add(sellItem);
             var sellItemCommand = new ItemsSellCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
+                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
                 Slots = list
             };
             GameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(sellItemCommand).Item1);
         }
+
+        private void OnEnableSkill(int slotIndex, int skillId, bool isEnable)
+        {
+            if(!NetworkIdentity.isLocalPlayer)
+                return;
+            var enableCommand = new ItemSkillEnableCommand
+            {
+                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Item,
+                    CommandAuthority.Client),
+                SlotIndex = slotIndex,
+                IsEnable = isEnable,
+                SkillConfigId = skillId
+            };
+            GameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(enableCommand).Item1);
+        }
+        
         private int nowCount = 0;
 
         private void OnPlayerItemUpdate(PlayerItemState playerItemState)
@@ -213,7 +232,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             //Debug.Log("OnPlayerItemUpdate");
             CurrentState = playerItemState;
             var bagItems = UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey);
-            var equipItems = UIPropertyBinder.GetReactiveDictionary<EquipItemData>(_equipBindKey);
             var isDebug = nowCount != bagItems.Count;
             nowCount = bagItems.Count;
             if (playerItemState.PlayerItemConfigIdSlotDictionary.Count == 0)
@@ -221,15 +239,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 if (bagItems.Count > 0)
                 {
                     bagItems.Clear();
-                }
-                return;
-            }
-
-            if (playerItemState.PlayerEquipSlotItems.Count == 0)
-            {
-                if (equipItems.Count > 0)
-                {
-                    equipItems.Clear();
                 }
                 return;
             }
@@ -247,22 +256,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 if (removeKey != 0)
                 {
                     bagItems.Remove(removeKey);
-                }
-            }
-            if (equipItems.Count > playerItemState.PlayerEquipSlotItems.Count)
-            {
-                var removeKey = 0;
-                foreach (var kvp in equipItems)
-                {
-                    if (!playerItemState.PlayerEquipSlotItems.ContainsKey((EquipmentPart)kvp.Key))
-                    {
-                        removeKey = kvp.Key;
-                    }
-                }
-
-                if (removeKey != 0)
-                {
-                    equipItems.Remove(removeKey);
                 }
             }
 
@@ -292,12 +285,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     MaxStack = itemConfig.maxStack,
                     Price = itemConfig.price,
                     SellRatio = itemConfig.sellPriceRatio,
+                    SkillId = playerBagSlotItem.SkillId,
+                    IsEnable = playerBagSlotItem.IsEnable,
+                    EquipmentPart = playerBagSlotItem.EquipmentPart,
                     OnUseItem = OnUseItem,
                     OnDropItem = OnDropItem,
                     OnLockItem = OnLockItem,
                     OnEquipItem = OnEquipItem,
                     OnExchangeItem = OnExchangeItem,
                     OnSellItem = OnSellItem,
+                    OnEnableSkill = OnEnableSkill,
                 };
                 if (isDebug)
                 {
@@ -316,37 +313,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     // }
                 }
 
-                if (!bagItems.TryGetValue(kvp.Key, out var item))
+                if (!bagItems.ContainsKey(kvp.Key))
                 {
                     bagItems.Add(kvp.Key, bagItem);
                 }
                 bagItems[kvp.Key] = bagItem;
-            }
-
-            foreach (var kvp in playerItemState.PlayerEquipSlotItems)
-            {
-                var playerEquipSlotItem = kvp.Value;
-                var itemConfig = _itemConfig.GetGameItemData(playerEquipSlotItem.ConfigId);
-                var itemSlot = bagItems.First(x => x.Value.ConfigId == playerEquipSlotItem.ConfigId);
-                var equipItem = new EquipItemData
-                {
-                    ItemName = itemConfig.name,
-                    Description = itemConfig.desc,
-                    IsLock = itemSlot.Value.IsLock,
-                    Icon = UISpriteContainer.GetSprite(itemConfig.iconName),
-                    QualityIcon = UISpriteContainer.GetQualitySprite(itemConfig.quality),
-                    EquipmentPartType = playerEquipSlotItem.EquipmentPart,
-                    PlayerItemType = itemConfig.itemType,
-                    OnLockItem = OnLockItem,
-                    OnEquipItem = OnEquipItem,
-                    OnDropItem = OnDropItem,
-                };
-                if (!equipItems.ContainsKey((int)kvp.Key))
-                {
-                    equipItems.Add((int)kvp.Key, equipItem);
-                }
-
-                equipItems[(int)kvp.Key] = equipItem;
             }
         }
     }

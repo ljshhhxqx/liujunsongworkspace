@@ -851,6 +851,7 @@ MonoBehaviour:
   frameImage: {fileID: 358357662473036115}
   keyText: {fileID: 8920551017726097234}
   indexText: {fileID: 83044646796586870}
+  costText: {fileID: 5825154455998802546}
   countdownImage: {fileID: 3933255153761444469}
 --- !u!1 &8347593492196783205
 GameObject:

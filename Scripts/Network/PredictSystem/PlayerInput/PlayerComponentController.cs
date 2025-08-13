@@ -290,7 +290,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                                 
                                 //_reactivePropertyBinds.Add(typeof(BagItemData), true);
                                 bagItemOverlay.BindBagItemData(UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey));
-                                bagItemOverlay.BindEquipItemData(UIPropertyBinder.GetReactiveDictionary<EquipItemData>(_equipBindKey));
+                                //bagItemOverlay.BindEquipItemData(UIPropertyBinder.GetReactiveDictionary<EquipItemData>(_equipBindKey));
                                 break;
                             case UIType.Shop:
                                 var shopScreenUI = _uiManager.SwitchUI<ShopScreenUI>();
@@ -305,7 +305,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                                 // }
                                 shopScreenUI.BindShopItemData(UIPropertyBinder.GetReactiveDictionary<RandomShopItemData>(_shopBindKey));
                                 shopScreenUI.BindBagItemData(UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey));
-                                shopScreenUI.BindPlayerGold(UIPropertyBinder.ObserveProperty<ValuePropertyData>(_propertyBindKey));
+                                shopScreenUI.BindPlayerGold(UIPropertyBinder.ObserveProperty<ValuePropertyData>(_goldBindKey));
                                 shopScreenUI.OnRefresh.Subscribe(_ =>
                                 {
                                     var refreshCommand = new RefreshShopCommand
@@ -742,6 +742,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 InteractSystem = _interactSystem,
                 ConstantBuffConfig = configProvider.GetConfig<ConstantBuffConfig>(),
                 RandomBuffConfig = configProvider.GetConfig<RandomBuffConfig>(),
+                SkillConfig = configProvider.GetConfig<SkillConfig>(),
             });
             PlayerEquipmentCalculator.SetConstant(new PlayerEquipmentConstant
             {

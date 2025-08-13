@@ -150,7 +150,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
             if (command is SkillCommand skillCommand)
             {
-                var checker = GetSkillChecker(skillCommand, playerSkillState);
+                var checker = GetSkillChecker(skillCommand.KeyCode, playerSkillState);
                 var skillCommonHeader = checker.GetCommonSkillCheckerHeader();
                 //释放的技能与当前技能不一致
                 if (skillCommand.SkillConfigId != skillCommonHeader.ConfigId)
@@ -181,7 +181,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
             if (command is SkillLoadCommand skillLoadCommand)
             {
-                var checker = GetSkillChecker(skillLoadCommand, playerSkillState);
+                Debug.Log($"[SkillLoadCommand] Player {header.ConnectionId} skill {skillLoadCommand.SkillConfigId} start load");
+                var checker = GetSkillChecker(skillLoadCommand.KeyCode, playerSkillState);
                 var skillCommonHeader = checker.GetCommonSkillCheckerHeader();
                 var skillData = _skillConfig.GetSkillData(skillLoadCommand.SkillConfigId);
                 if (!skillLoadCommand.IsLoad)
@@ -206,29 +207,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             return playerSkillState;
         }
 
-        private ISkillChecker GetSkillChecker(INetworkCommand command, PlayerSkillState playerSkillState)
+        private ISkillChecker GetSkillChecker(AnimationState keyCode, PlayerSkillState playerSkillState)
         {
-            var header = command.GetHeader();
-            if (command is SkillCommand skillCommand)
+            var checker = playerSkillState.SkillCheckers[keyCode];
+            if (checker == null)
             {
-                var checker = playerSkillState.SkillCheckers[skillCommand.KeyCode];
-                if (checker == null)
-                {
-                    Debug.LogError($"Player {header.ConnectionId} has no skill checker");
-                    return null;
-                }
-                return checker;
-            } 
-            if (command is SkillLoadCommand skillLoadCommand)
-            {
-                var checker = playerSkillState.SkillCheckers[skillLoadCommand.KeyCode];
-                if (checker == null)
-                {
-                    Debug.LogError($"Player {header.ConnectionId} has no skill checker");
-                    return null;
-                }
-                return checker;
+                Debug.LogError($"Player {keyCode} has no skill checker");
+                return null;
             }
+            return checker;
             return null;
         }
 

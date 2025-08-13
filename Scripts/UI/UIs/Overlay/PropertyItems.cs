@@ -1,8 +1,5 @@
-﻿using System;
-using HotUpdate.Scripts.UI.UIs.Panel.Item;
+﻿using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using TMPro;
-using UI.UIs.Common;
-using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,11 +13,13 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private TextMeshProUGUI valueText;
         [SerializeField]
         private Image iconImage;
+        private PropertyItemData _propertyData;
         
         public override void SetData<T>(T data)
         {
             if (data is PropertyItemData propertyData)
             {
+                _propertyData = propertyData;
                 nameText.text = propertyData.Name;
                 SetValue(propertyData.ConsumeType, propertyData.CurrentProperty, propertyData.MaxProperty);
             }
@@ -37,7 +36,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             {
                 case PropertyConsumeType.Number:
                     var currentValueInt = Mathf.RoundToInt(currentValue);
-                    valueText.text = currentValueInt.ToString("0");
+                    valueText.text = _propertyData.IsPercentage ? $"{currentValue * 100:0}%" : currentValueInt.ToString("0");
                     iconImage.transform.parent.gameObject.SetActive(false);
                     break;
                 case PropertyConsumeType.Consume:

@@ -19,6 +19,8 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         [SerializeField]
         private TextMeshProUGUI indexText;
         [SerializeField]
+        private TextMeshProUGUI costText;
+        [SerializeField]
         private Image countdownImage;
         
         public override void SetData<T>(T data)
@@ -30,6 +32,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                 countdownImage.fillAmount = animationStateData.Timer / animationStateData.Duration;
                 indexText.text = animationStateData.Index == 0 ? string.Empty : animationStateData.Index.ToString();
                 keyText.text = EnumHeaderParser.GetHeader(animationStateData.State);
+                costText.text = animationStateData.Cost.ToString("0");
                 var isReady = animationStateData.Timer == 0f;
                 timeText.enabled = !isReady;
                 timeText.text = animationStateData.Timer.ToString("00");

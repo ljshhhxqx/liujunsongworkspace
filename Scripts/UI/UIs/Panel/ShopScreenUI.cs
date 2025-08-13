@@ -5,6 +5,7 @@ using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
 using HotUpdate.Scripts.UI.UIs.SecondPanel;
+using TMPro;
 using UI.UIBase;
 using UniRx;
 using UnityEngine;
@@ -23,6 +24,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         private Button refreshButton;
         [SerializeField]
         private Button closeButton;
+        [SerializeField]
+        private TextMeshProUGUI goldText;
+
+        private string _goldDesc;
         private UIManager _uiManager;
         private readonly List<ShopSlotItem> _shopSlotItems = new List<ShopSlotItem>();
         private readonly List<ShopBagSlotItem> _bagSlotItems = new List<ShopBagSlotItem>();
@@ -36,6 +41,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         private void Init(UIManager uiManager)
         {
             _uiManager = uiManager;
+            _goldDesc = goldText.text;
             closeButton.OnClickAsObservable()
                 .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
                 .Subscribe(_ => _uiManager.CloseUI(Type))
@@ -49,6 +55,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         public void BindPlayerGold(IObservable<ValuePropertyData> playerGold)
         {
             _goldObservable = playerGold;
+            _goldObservable.Subscribe(x =>
+            {
+                goldText.text = _goldDesc + x.Gold.ToString("0");
+            }).AddTo(this);
         }
 
         public void BindShopItemData(ReactiveDictionary<int, RandomShopItemData> shopItemData)
@@ -61,14 +71,20 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             InitShopItems();
             shopItemData.ObserveAdd().Subscribe(x =>
             {
-                _shopItemData.Add(x.Key, x.Value);
-                shopItemList.AddItem(x.Key, x.Value);
+                if (!_shopItemData.ContainsKey(x.Key))
+                {
+                    _shopItemData.Add(x.Key, x.Value);
+                    shopItemList.AddItem(x.Key, x.Value);
+                }
                 //shopItemList.SetItemList(_shopItemData);
             }).AddTo(this);
             shopItemData.ObserveRemove().Subscribe(x =>
             {
-                _shopItemData.Remove(x.Key);
-                shopItemList.RemoveItem(x.Key);
+                if (_shopItemData.ContainsKey(x.Key))
+                {
+                    _shopItemData.Remove(x.Key);
+                    shopItemList.RemoveItem(x.Key);
+                }
             }).AddTo(this);
             shopItemData.ObserveReplace().Subscribe(x =>
             {

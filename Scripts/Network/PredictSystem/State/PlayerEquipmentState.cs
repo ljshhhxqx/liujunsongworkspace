@@ -83,6 +83,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             for (int i = 0; i < equipmentState.EquipmentDatas.Count; i++)
             {
                 var equipment = equipmentState.EquipmentDatas[i];
+                if (equipment.ConditionChecker == null)
+                {
+                    continue;
+                }
                 var cooldownHeader = equipment.ConditionChecker.GetCooldownHeader();
                 var newHeader = cooldownHeader.Update(deltaTime);
                 equipment.ConditionChecker.SetCooldownHeader(newHeader);
@@ -125,6 +129,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         public MemoryList<int> TargetIds;
         [MemoryPackOrder(6)]
         public MemoryList<byte> ConditionCheckerBytes;
+        [MemoryPackOrder(7)]
+        public int SkillId;
+        [MemoryPackOrder(8)]
+        public bool IsSkillLoad;
         [MemoryPackIgnore]
         public IConditionChecker ConditionChecker;
         

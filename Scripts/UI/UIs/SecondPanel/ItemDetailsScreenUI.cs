@@ -28,6 +28,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         [SerializeField] private Button equipButton;
         [SerializeField] private Button lockButton;
         [SerializeField] private Button quitButton;
+        [SerializeField] private Button enableButton;
         
         [Header("Count Slider")]
         [SerializeField] private CountSliderButtonGroup useCountSlider;
@@ -60,6 +61,10 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             quitButton.OnClickAsObservable()
                 .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
                 .Subscribe(_ => _uiManager.CloseUI(Type))
+                .AddTo(this);
+            enableButton.OnClickAsObservable()
+                .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
+                .Subscribe(_ => OnEnableClicked())
                 .AddTo(this);
             var shopItem = UIPropertyBinder.GetReactiveDictionary<RandomShopItemData>(_itemDetailsShopBindingKey);
             var bagItem = UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemDetailsBagBindingKey);
@@ -328,6 +333,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             countSliderButtonGroupData.PlayerItemType = bagItemData.PlayerItemType;
             sellCountSlider.Init(countSliderButtonGroupData);
 
+            return;
             void CountHandler(int count)
             {
                 if (count > bagItemData.Stack)
@@ -357,6 +363,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                             equipButton.gameObject.SetActive(!isLocked && bagItemData.PlayerItemType.IsEquipment());
                             lockButton.gameObject.SetActive(true);
                             sellCountSlider.gameObject.SetActive(false);
+                            enableButton.gameObject.SetActive(true);
                             break;
                         case ItemDetailsType.Equipment:
                             useCountSlider.gameObject.SetActive(false);
@@ -364,6 +371,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                             equipButton.gameObject.SetActive(!isLocked && bagItemData.PlayerItemType.IsEquipment());
                             lockButton.gameObject.SetActive(true);
                             sellCountSlider.gameObject.SetActive(false);
+                            enableButton.gameObject.SetActive(true);
                             break;
                         case ItemDetailsType.Shop:
                             useCountSlider.gameObject.SetActive(false);
@@ -371,6 +379,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                             equipButton.gameObject.SetActive(false);
                             lockButton.gameObject.SetActive(false);
                             sellCountSlider.gameObject.SetActive(true);
+                            enableButton.gameObject.SetActive(false);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -381,6 +390,8 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                         bagItemData.IsLock ? "解锁" : "锁定";
                     equipButton.GetComponentInChildren<TextMeshProUGUI>().text = 
                         bagItemData.IsEquip ? "卸下" : "装备";
+                    enableButton.GetComponentInChildren<TextMeshProUGUI>().text =
+                        bagItemData.IsEnable ? "技能关" : "技能开";
                     break;
                 case RandomShopItemData randomShopItemData:
                     buyCountSlider.gameObject.SetActive(true);
@@ -389,6 +400,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                     equipButton.gameObject.SetActive(false);
                     lockButton.gameObject.SetActive(false);
                     sellCountSlider.gameObject.SetActive(false);
+                    enableButton.gameObject.SetActive(false);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(_currentItemData));
@@ -397,35 +409,6 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         }
 
         #region Button Handlers
-        // private void OnUseClicked()
-        // {
-        //     switch (_currentItemData)
-        //     {
-        //         case BagItemData bagItemData:
-        //
-        //             if(bagItemData.Stack > 1)
-        //             {
-        //                 _uiManager.SwitchUI<QuantitySelectionPanel>(ui =>
-        //                 {
-        //                     ui.Show(max: bagItemData.Stack, onConfirm: (amount) =>
-        //                     {
-        //                         bagItemData.OnUseItem?.Invoke(bagItemData.Index, amount);
-        //                         Close();
-        //                     });
-        //                 });
-        //             }
-        //             else
-        //             {
-        //                 bagItemData.OnUseItem?.Invoke(bagItemData.Index, 1);
-        //                 Close();
-        //             }
-        //             break;
-        //         case RandomShopItemData randomShopItemData:
-        //             break;
-        //         default:
-        //             throw new ArgumentOutOfRangeException();
-        //     }
-        // }
 
         private void OnEquipClicked()
         {
@@ -459,43 +442,17 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             }
         }
 
-        // private void OnSellClicked()
-        // {
-        //     switch (_currentItemData)
-        //     {
-        //         case BagItemData bagItemData:
-        //             var quantityPanel = _uiManager.SwitchUI<QuantitySelectionPanel>();
-        //             quantityPanel.Show(max: bagItemData.Stack, onConfirm: (amount) => 
-        //             {
-        //                 bagItemData.OnSellItem?.Invoke(bagItemData.Index, amount);
-        //                 Close();
-        //             });
-        //             break;
-        //         case RandomShopItemData randomShopItemData:
-        //             break;
-        //         default:
-        //             throw new ArgumentOutOfRangeException(nameof(_currentItemData));
-        //     }
-        // }
-        //
-        // private void OnDropClicked()
-        // {
-        //     switch (_currentItemData)
-        //     {
-        //         case BagItemData bagItemData:
-        //             var quantityPanel = _uiManager.SwitchUI<QuantitySelectionPanel>();
-        //             quantityPanel.Show(max: bagItemData.Stack, onConfirm: (amount) => 
-        //             {
-        //                 bagItemData.OnDropItem?.Invoke(bagItemData.Index, amount);
-        //                 Close();
-        //             });
-        //             break;
-        //         case RandomShopItemData randomShopItemData:
-        //             break;
-        //         default:
-        //             throw new ArgumentOutOfRangeException(nameof(_currentItemData));
-        //     }
-        // }
+        private void OnEnableClicked()
+        {
+            if (_currentItemData is BagItemData bagItemData && bagItemData.SkillId > 0)
+            {
+                bool newState = !bagItemData.IsEnable;
+                bagItemData.OnEnableSkill?.Invoke(bagItemData.Index, bagItemData.SkillId, newState);
+                bagItemData.IsEnable = newState;
+                _currentItemData = bagItemData;
+                UpdateButtonStates();
+            }
+        }
         #endregion
 
         private void Close()
