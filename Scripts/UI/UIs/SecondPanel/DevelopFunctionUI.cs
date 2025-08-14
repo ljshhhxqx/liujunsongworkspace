@@ -20,14 +20,31 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         [SerializeField] private Button consumeButton;
         [SerializeField] private Button itemButton;
         [SerializeField] private Button confirmButton;
+        [SerializeField] private Button giveMoneyButton;
+        [SerializeField] private Button giveScoreButton;
         [SerializeField] private TMP_InputField inputField;
         private ItemConfig _itemConfig;
-        private const string Equipment = "Equipment";
 
         [Inject]
         private void Initialize(IConfigProvider configProvider, UIManager uiManager)
         {
             _itemConfig = configProvider.GetConfig<ItemConfig>();
+            giveMoneyButton.OnClickAsObservable()
+                .Subscribe(_ =>
+                {
+                    var goldId = _itemConfig.GetGoldItemId();
+                    var count = UnityEngine.Random.Range(1, 1000);
+                    inputField.text = $"{goldId} {count}";
+                })
+                .AddTo(this);
+            giveScoreButton.OnClickAsObservable()
+                .Subscribe(_ =>
+                {
+                    var score = _itemConfig.GetScoreItemId();
+                    var count = UnityEngine.Random.Range(1, 1000);
+                    inputField.text = $"{score} {count}";
+                })
+                .AddTo(this);
             equipmentButton.OnClickAsObservable()
                 .Subscribe(_ =>
                 {
@@ -98,23 +115,42 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             {
                 isEquip = strs[2] == "1";
             }
-            
-            for (int i = 0; i < count; i++)
+
+            if (itemData.itemType == PlayerItemType.Gold || itemData.itemType == PlayerItemType.Score)
             {
-                var itemIds = new int[1];
-                itemIds[0] = HybridIdGenerator.GenerateItemId(itemId, GameSyncManager.CurrentTick);
                 var items = new MemoryList<ItemsCommandData>();
                 items.Add(new ItemsCommandData
                 {
-                    ItemUniqueId = itemIds,
                     ItemConfigId = itemId,
-                    ItemType = itemData.itemType
+                    ItemType = itemData.itemType,
+                    Count = count,
                 });
                 var itemGetCommand = new ItemsGetCommand();
                 itemGetCommand.Header =
                     GameSyncManager.CreateNetworkCommandHeader(NetworkClient.connection.connectionId, CommandType.Item);
                 itemGetCommand.Items = items;
                 gameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(itemGetCommand).Item1);
+            }
+            else
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    var itemIds = new int[1];
+                    itemIds[0] = HybridIdGenerator.GenerateItemId(itemId, GameSyncManager.CurrentTick);
+                    var items = new MemoryList<ItemsCommandData>();
+                    items.Add(new ItemsCommandData
+                    {
+                        ItemUniqueId = itemIds,
+                        ItemConfigId = itemId,
+                        ItemType = itemData.itemType,
+                        Count = 1,
+                    });
+                    var itemGetCommand = new ItemsGetCommand();
+                    itemGetCommand.Header =
+                        GameSyncManager.CreateNetworkCommandHeader(NetworkClient.connection.connectionId, CommandType.Item);
+                    itemGetCommand.Items = items;
+                    gameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(itemGetCommand).Item1);
+                }
             }
 
         }

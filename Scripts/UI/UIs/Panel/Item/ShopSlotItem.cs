@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
+using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
 using TMPro;
@@ -21,15 +22,37 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         [SerializeField] private TextMeshProUGUI quantityText;
         [SerializeField] private TextMeshProUGUI nameText;
         [SerializeField] private Button buyButton;
+        private float _currentGold;
         private RandomShopItemData _shopItemData;
         private Subject<int> _onBuySubject = new Subject<int>();
         private Subject<PointerEventData> _onClickSubject = new Subject<PointerEventData>();
-        private CompositeDisposable _disposable = new CompositeDisposable();
 
         public IObservable<PointerEventData> OnClick => _onClickSubject;
         public IObservable<int> OnBuy => _onBuySubject;
         public RandomShopItemData ShopItemData => _shopItemData;
-        
+
+        private void Start()
+        {
+            buyButton.interactable = false;
+            var valueGold =
+                UIPropertyBinder.ObserveProperty<ValuePropertyData>(new BindingKey(UIPropertyDefine.PlayerBaseData));
+            valueGold
+                .Subscribe(x =>
+            {
+                _currentGold = x.Gold;
+            }).AddTo(this);
+            Observable.EveryUpdate().Sample(TimeSpan.FromSeconds(0.2f))
+                .Subscribe(_ =>
+                {
+                    var goldIsEnough = _currentGold >= (quantitySlider.value * _shopItemData.Price);
+                    //Debug.Log($"goldIsEnough = {goldIsEnough}, _currentGold = {_currentGold}, quantitySlider.value = {quantitySlider.value} _shopItemData.Price = {_shopItemData.Price}");
+                    var canUseShop = PlayerShopCalculator.CanUseShop(PlayerInGameManager.LocalPlayerId);
+                    //Debug.Log($"CanUseShop: {canUseShop}");
+                    buyButton.interactable = canUseShop && goldIsEnough;
+                })
+                .AddTo(this);
+        }
+
         public override void SetData<T>(T data)
         {
             if (data is RandomShopItemData shopItemData)
@@ -37,19 +60,21 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                 _shopItemData = shopItemData;
                 icon.OnPointerClickAsObservable()
                     .Subscribe(p => _onClickSubject.OnNext(p))
-                    .AddTo(_disposable);
+                    .AddTo(this);
                 buyButton.OnClickAsObservable()
                     .Subscribe(_ =>
                     {
                         var count = (int) quantitySlider.value;
                         _onBuySubject.OnNext(count);
                     })
-                    .AddTo(_disposable);
+                    .AddTo(this);
         
                 icon.sprite = shopItemData.Icon;
                 nameText.text = shopItemData.Name;
-                Debug.Log($"[ShopSlotItem] SetData {_shopItemData.Name}");
+                //Debug.Log($"[ShopSlotItem] SetData {_shopItemData.Name}");
                 qualityFrame.sprite = shopItemData.QualityIcon;
+                quantityText.gameObject.SetActive(shopItemData.RemainingCount > 1);
+                quantitySlider.gameObject.SetActive(shopItemData.RemainingCount > 1);
                 quantitySlider.maxValue = shopItemData.RemainingCount;
                 quantitySlider.minValue = 1;
                 quantitySlider.wholeNumbers = true;
@@ -57,30 +82,17 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                    .Subscribe(value =>
                    {
                        var quantity = (int) value;
-                       quantityText.text = quantity.ToString(CultureInfo.InvariantCulture);
+                       quantityText.text = quantity.ToString();
                        var total = quantity * shopItemData.Price;
                        priceText.text = $"{total}G";
                    } )
-                   .AddTo(_disposable);
+                   .AddTo(this);
+                quantitySlider.value = 1;
             }
-        }
-
-        private void Update()
-        {
-            var canUseShop = PlayerShopCalculator.CanUseShop(PlayerInGameManager.LocalPlayerId);
-            buyButton.interactable = canUseShop;
-            
         }
 
         public override void Clear()
         {
-            icon.sprite = null;
-            qualityFrame.sprite = null;
-            priceText.text = "";
-            quantitySlider.value = 0;
-            _shopItemData = default;
-            _disposable.Dispose();
-            _disposable.Clear();
         }
     }
 }

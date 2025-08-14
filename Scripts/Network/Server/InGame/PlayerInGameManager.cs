@@ -217,6 +217,8 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             
                     var position = identity.transform.position;
                     var deathCountdown = _playerDeathCountdowns.GetValueOrDefault(uid);
+                    UpdatePlayerGrid(uid, position);
+                    _playerPositions[uid] = position;
                     if (deathCountdown <= 0 && _playerBornCallbacks.TryGetValue(uid, out var callback))
                     {
                         _playerDeathCountdowns.Remove(uid);
@@ -230,7 +232,6 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                         deathCountdown -= GameSyncManager.TickSeconds;
                         _playerDeathCountdowns[uid] = deathCountdown;
                         _playerPositions[uid] = position;
-                        UpdatePlayerGrid(uid, position);
                     }
                 }
             }

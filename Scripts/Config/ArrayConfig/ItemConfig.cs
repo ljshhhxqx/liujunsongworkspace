@@ -30,7 +30,17 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
         public int GetRandomItemId()
         {
-            return GameItemDatasDict.Keys.RandomSelect();
+            return gameItemDatas.RandomSelect().id;
+        }
+        
+        public int GetGoldItemId()
+        {
+            return gameItemDatas.First(data => data.itemType == PlayerItemType.Gold).id;
+        }
+        
+        public int GetScoreItemId()
+        {
+            return gameItemDatas.First(data => data.itemType == PlayerItemType.Score).id;
         }
 
         public int RandomEquipItemId()

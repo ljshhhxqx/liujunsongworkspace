@@ -310,8 +310,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                                 {
                                     var refreshCommand = new RefreshShopCommand
                                     {
-                                        Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Shop, CommandAuthority.Client
-                                            ),
+                                        Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Shop, CommandAuthority.Client),
                                     };
                                     _gameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(refreshCommand).Item1);
                                 }).AddTo(shopScreenUI.gameObject);

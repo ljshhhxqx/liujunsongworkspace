@@ -329,6 +329,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                         Constant.GameSyncManager.EnqueueServerCommand(buffCommand);
                     }
                     break;
+                case PlayerItemType.Gold:
+                case PlayerItemType.Score:
+                    if (header.ConnectionId < 0 || !Constant.IsServer)
+                    {
+                        break;
+                    }
+
+                    var getScoreGoldCommand = new PropertyGetScoreGoldCommand()
+                    {
+                        Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property),
+                        Gold = itemsData.ItemType == PlayerItemType.Gold ? itemsData.Count : 0,
+                        Score = itemsData.ItemType == PlayerItemType.Score ? itemsData.Count : 0,
+                    };
+                    Constant.GameSyncManager.EnqueueServerCommand(getScoreGoldCommand);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

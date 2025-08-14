@@ -336,6 +336,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 HandleBuff(header.ConnectionId, buffCommand.BuffExtraData, buffCommand.CasterId, buffCommand.BuffSourceType);
             }
+            else if (command is PropertyGetScoreGoldCommand getScoreGoldCommand)
+            {
+                HandleGetScoreGold(header.ConnectionId, getScoreGoldCommand.Score, getScoreGoldCommand.Gold);
+            }
             else if (command is PropertyAttackCommand attackCommand)
             {
                 var playerNetId = _playerInGameManager.GetPlayerNetId(header.ConnectionId);
@@ -399,6 +403,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 Debug.LogError($"PlayerPropertySyncSystem: Unknown command type {command.GetType().Name}");
             }
             return null;
+        }
+
+        private void HandleGetScoreGold(int headerConnectionId, int score, int gold)
+        {
+            var playerState = GetState<PlayerPredictablePropertyState>(headerConnectionId);
+            var goldProperty = playerState.MemoryProperty[PropertyTypeEnum.Gold];
+            var scoreProperty = playerState.MemoryProperty[PropertyTypeEnum.Score];
+            goldProperty = goldProperty.UpdateCurrentValue(gold);
+            scoreProperty = scoreProperty.UpdateCurrentValue(score);
+            playerState.MemoryProperty[PropertyTypeEnum.Gold] = goldProperty;
+            playerState.MemoryProperty[PropertyTypeEnum.Score] = scoreProperty;
+            PropertyStates[headerConnectionId] = playerState;
+            PropertyChange(headerConnectionId);
         }
 
         private void HandleUseSkill(int headerConnectionId, int skillConfigId)

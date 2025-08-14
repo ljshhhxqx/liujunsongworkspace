@@ -37,7 +37,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             }
             OnPlayerShopStateChanged(playerShopState);
         }
-        
+
+        public override void ApplyServerState<T>(T state)
+        {
+            if (state is not PlayerShopState playerShopState)
+            {
+                return;
+            }
+            base.ApplyServerState(state);
+            OnPlayerShopStateChanged(playerShopState);
+        }
+
         public void SetPlayerShopState(PlayerShopState state)
         {
             //OnPlayerShopStateChanged(state);
@@ -103,8 +113,28 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     ? _shopConfig.GetShopConstantData().shopEquipPassiveDescription
                     : ""; 
                 randomShopData.OnBuyItem = OnBuyItem;
-                Debug.Log($"Add item {item.ItemConfigId} {item.ShopConfigId} {shopConfigData.name} {item.ItemType} to shop");
-                shopItems.TryAdd(kvp.Key, randomShopData);
+                //Debug.Log($"Add item {item.ItemConfigId} {item.ShopConfigId} {shopConfigData.name} {item.ItemType} to shop");
+                if (!shopItems.ContainsKey(kvp.Key))
+                {
+                    shopItems.Add(kvp.Key, randomShopData);
+                    var removeKey = 0;
+                    foreach (var shopItem in shopItems)
+                    {
+                        if (!playerShopState.RandomShopItems.ContainsKey(shopItem.Key))
+                        {
+                            removeKey = shopItem.Key;
+                        }
+                    }
+
+                    if (removeKey != 0)
+                    {
+                        shopItems.Remove(removeKey);
+                    }
+                }
+                else
+                {
+                    shopItems[kvp.Key] = randomShopData;
+                }
             }
         }
 
@@ -114,7 +144,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 return;
             var command = new BuyCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Shop,
+                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Shop,
                     CommandAuthority.Client),
                 ShopId = shopId,
                 Count = count

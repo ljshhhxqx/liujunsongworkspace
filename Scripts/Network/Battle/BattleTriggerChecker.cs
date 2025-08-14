@@ -24,7 +24,7 @@ namespace HotUpdate.Scripts.Network.Battle
     [MemoryPackUnion(12, typeof(DodgeChecker))]
     [MemoryPackUnion(13, typeof(DeathChecker))]
     [MemoryPackUnion(5, typeof(MoveChecker))]
-    [MemoryPackUnion(14, typeof(NoConditionChecker))]
+    [MemoryPackUnion(1, typeof(NoConditionChecker))]
     public partial interface IConditionChecker
     {
         ConditionCheckerHeader GetConditionCheckerHeader();
@@ -129,32 +129,33 @@ namespace HotUpdate.Scripts.Network.Battle
             {
                 return null;
             }
+            var cooldown = new CooldownHeader(header.Interval);
             switch (header.TriggerType)
             {
                 case TriggerType.None:
-                    return new NoConditionChecker { Header = header };
+                    return new NoConditionChecker { Header = header, CooldownHeader = cooldown };
                 case TriggerType.OnAttack:
-                    return new AttackChecker { Header = header,  };
+                    return new AttackChecker { Header = header, CooldownHeader = cooldown  };
                 case TriggerType.OnAttackHit:
-                    return new AttackHitChecker { Header = header };
+                    return new AttackHitChecker { Header = header, CooldownHeader = cooldown };
                 case TriggerType.OnSkillCast:
-                    return new SkillCastChecker { Header = header };
+                    return new SkillCastChecker { Header = header, CooldownHeader = cooldown };
                 case TriggerType.OnSkillHit:
-                    return new SkillHitChecker { Header = header };
+                    return new SkillHitChecker { Header = header, CooldownHeader = cooldown };
                 case TriggerType.OnTakeDamage:
-                    return new TakeDamageChecker { Header = header };
+                    return new TakeDamageChecker { Header = header, CooldownHeader = cooldown };
                 case TriggerType.OnKill:
-                    return new KillChecker { Header = header };
+                    return new KillChecker { Header = header, CooldownHeader = cooldown };
                 case TriggerType.OnHpChange:
-                    return new HpChangeChecker { Header = header };
+                    return new HpChangeChecker { Header = header, CooldownHeader = cooldown };
                 case TriggerType.OnManaChange:
-                    return new MpChangeChecker { Header = header };
+                    return new MpChangeChecker { Header = header, CooldownHeader = cooldown };
                 case TriggerType.OnCriticalHit:
-                    return new CriticalHitChecker { Header = header };
+                    return new CriticalHitChecker { Header = header, CooldownHeader = cooldown };
                 case TriggerType.OnDodge:
-                    return new DodgeChecker { Header = header };
+                    return new DodgeChecker { Header = header, CooldownHeader = cooldown };
                 case TriggerType.OnMove:
-                    return new MoveChecker { Header = header };
+                    return new MoveChecker { Header = header, CooldownHeader = cooldown };
                 default:
                     throw new ArgumentOutOfRangeException(nameof(header.TriggerType), header.TriggerType, null);
             }

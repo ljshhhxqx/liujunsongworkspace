@@ -4,6 +4,7 @@ using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
+using HotUpdate.Scripts.UI.UIs.Popup;
 using HotUpdate.Scripts.UI.UIs.SecondPanel;
 using TMPro;
 using UI.UIBase;
@@ -148,7 +149,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                 if (!slot) continue;
                 slot.OnBuy.Subscribe(count =>
                 {
-                    OnBuyItem(slot, count);
+                    _uiManager.ShowTips($"确定购买{count}个{slot.ShopItemData.Name}吗？", () =>
+                    {
+                        OnBuyItem(slot, count);
+                    });
                 }).AddTo(slot.gameObject);
                 slot.OnClick.Subscribe(_ =>
                 {

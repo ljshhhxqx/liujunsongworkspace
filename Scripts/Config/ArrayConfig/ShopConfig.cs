@@ -191,7 +191,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             ShopConfigData data = default;
 
             var id = -1;
-            while (id == preShopId || data.qualityType == otherShopConfig.qualityType)
+            do 
             {
                 id = playerItemType switch
                 {
@@ -201,7 +201,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                     _ => -1
                 };
                 data = GetShopConfigData(id);
-            }
+            } while (data.id == preShopId || data.id == otherShopId || data.qualityType == otherShopConfig.qualityType);
+
             return id;
         }
 

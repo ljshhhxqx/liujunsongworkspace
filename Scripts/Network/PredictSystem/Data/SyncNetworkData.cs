@@ -57,7 +57,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     [MemoryPackUnion(33, typeof(TriggerCommand))]
     [MemoryPackUnion(34, typeof(SkillChangedCommand))]
     [MemoryPackUnion(35, typeof(PropertyUseSkillCommand))]
-    [MemoryPackUnion(36, typeof(ItemSkillEnableCommand))]
+    [MemoryPackUnion(37, typeof(ItemSkillEnableCommand))]
+    [MemoryPackUnion(36, typeof(PropertyGetScoreGoldCommand))]
     public partial interface INetworkCommand
     {
         NetworkCommandHeader GetHeader();
@@ -68,6 +69,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     
     public enum NetworkCommandType
     {
+        None = -1,
         PropertyAutoRecover,
         PropertyClientAnimation,
         PropertyServerAnimation,
@@ -104,8 +106,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         Trigger,
         SkillChanged,
         PropertyUseSkill,
-        SpeedChangedByInput,
-        None = -1
+        PropertyGetScoreGold,
+        ItemSkillEnable,
     }
 
     public static class NetworkCommandExtensions
@@ -751,38 +753,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             IsInvincible = default;
         }
     }
-    
-    [MemoryPackable]
-    public partial struct SpeedChangedByInputCommand : INetworkCommand, IPoolObject
-    {
-        [MemoryPackOrder(0)] 
-        public NetworkCommandHeader Header;
-        [MemoryPackOrder(1)]
-        public bool IsSprinting;
-        [MemoryPackOrder(2)]
-        public bool HasInputMovement;
-        [MemoryPackOrder(2)]
-        public PlayerEnvironmentState PlayerEnvironmentState;
-        
-        public NetworkCommandHeader GetHeader() => Header;
-
-        public bool IsValid()
-        {
-            return PlayerEnvironmentState >= 0 && PlayerEnvironmentState <= PlayerEnvironmentState.Swimming;
-        }
-        public NetworkCommandType GetCommandType() => NetworkCommandType.SpeedChangedByInput;
-        public void Init()
-        {
-        }
-
-        public void Clear()
-        {
-            Header = default;
-            IsSprinting = default;
-            HasInputMovement = default;
-            PlayerEnvironmentState = default;
-        }
-    }
 
     [MemoryPackable]
     public partial struct PropertyClientAnimationCommand : INetworkCommand, IPoolObject
@@ -954,6 +924,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             Header = default;
             PreNoUnionPlayer = default;
         }
+    }
+    
+    [MemoryPackable]
+    public partial struct PropertyGetScoreGoldCommand : INetworkCommand
+    {
+        [MemoryPackOrder(0)] 
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public int Score;
+        [MemoryPackOrder(2)]
+        public int Gold;
+
+        public NetworkCommandHeader GetHeader() => Header;
+
+        public bool IsValid()
+        {
+            return true; 
+        }
+
+        public NetworkCommandType GetCommandType() => NetworkCommandType.PropertyGetScoreGold;
     }
     
     [MemoryPackable]
@@ -1432,7 +1422,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(3)]
         public int SlotIndex;
         public NetworkCommandHeader GetHeader() => Header;
-        public NetworkCommandType GetCommandType() => NetworkCommandType.ItemsSell;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.ItemSkillEnable;
 
         public bool IsValid()
         {

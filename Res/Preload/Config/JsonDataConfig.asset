@@ -37,7 +37,7 @@ MonoBehaviour:
       NoUnionMoreGoldRatio: 1
       NoUnionMoreScoreRatio: 1
       SpeedToVelocityRatio: 1.1
-      MaxShopBuyDistance: 0
+      MaxShopBuyDistance: 2.5
       AttackComboWindow: 1
       AttackComboMaxCount: 3
     collectData:
@@ -75,7 +75,7 @@ MonoBehaviour:
         serializedVersion: 2
         m_Bits: 128
       syncTime: 0.016
-      gridSize: 5
+      gridSize: 4
       safetyMargin: 5
       fixedSpacing: 1
       warmupTime: 3

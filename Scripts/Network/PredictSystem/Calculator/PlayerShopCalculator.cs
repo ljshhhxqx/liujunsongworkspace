@@ -19,6 +19,43 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         {
             Constant = constant;
         }
+        
+        private static ShopItemData CreateShopItemData(int shopConfigId)
+        {
+            var shopConfigData = Constant.ShopConfig.GetShopConfigData(shopConfigId);
+            var itemConfigData = Constant.ItemConfig.GetGameItemData(shopConfigData.itemId);
+            var attributeData = PlayerItemCalculator.GetAttributeIncreaseDatas(itemConfigData.buffExtraData);
+            var mainAttributeData = new MemoryList<AttributeIncreaseData>(itemConfigData.buffExtraData.Length);
+            var passiveAttributeData = new MemoryList<RandomAttributeIncreaseData>(itemConfigData.buffExtraData.Length);
+            for (int i = 0; i < attributeData.Length; i++)
+            {
+                var expr = attributeData[i];
+                if (expr is AttributeIncreaseData passiveAttributeIncreaseData)
+                {
+                    mainAttributeData.Add(passiveAttributeIncreaseData);
+                }
+                else if (expr is RandomAttributeIncreaseData passiveAttributeIncreaseData2)
+                {
+                    passiveAttributeData.Add(passiveAttributeIncreaseData2);
+                }
+            }
+
+            var shopData = new ShopItemData
+            {
+                ShopId = HybridIdGenerator.GenerateChestId(shopConfigId, GameSyncManager.CurrentTick),
+                ShopConfigId = shopConfigId,
+                RemainingCount = shopConfigData.maxCount,
+                ItemType = shopConfigData.playerItemType,
+                MaxCount = shopConfigData.maxCount,
+                ItemConfigId = shopConfigData.itemId,
+                Price = shopConfigData.price,
+                SellPrice = shopConfigData.sellPrice,
+                Quality = shopConfigData.qualityType,
+                MainIncreaseDatas = mainAttributeData,
+                PassiveIncreaseDatas = passiveAttributeData,
+            };
+            return shopData;
+        }
 
         public static ShopItemData[] GetRandomShopItemData(HashSet<int> preShopConfigIds = null)
         {
@@ -27,39 +64,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var index = 0;
             foreach (var shopConfigId in shopConfigIds)
             {
-                var shopConfigData = Constant.ShopConfig.GetShopConfigData(shopConfigId);
-                var itemConfigData = Constant.ItemConfig.GetGameItemData(shopConfigData.itemId);
-                Debug.Log($"shopConfigId: {shopConfigId}, itemConfigId: {shopConfigData.itemId}, itemName: {itemConfigData.name}");
-                var attributeData = PlayerItemCalculator.GetAttributeIncreaseDatas(itemConfigData.buffExtraData);
-                var mainAttributeData = new MemoryList<AttributeIncreaseData>(itemConfigData.buffExtraData.Length);
-                var passiveAttributeData = new MemoryList<RandomAttributeIncreaseData>(itemConfigData.buffExtraData.Length);
-                for (int i = 0; i < attributeData.Length; i++)
-                {
-                    var expr = attributeData[i];
-                    if (expr is AttributeIncreaseData passiveAttributeIncreaseData)
-                    {
-                        mainAttributeData.Add(passiveAttributeIncreaseData);
-                    }
-                    else if (expr is RandomAttributeIncreaseData passiveAttributeIncreaseData2)
-                    {
-                        passiveAttributeData.Add(passiveAttributeIncreaseData2);
-                    }
-                }
-
-                var randomShopData = new ShopItemData
-                {
-                    ShopId = HybridIdGenerator.GenerateChestId(shopConfigId, GameSyncManager.CurrentTick),
-                    ShopConfigId = shopConfigId,
-                    RemainingCount = shopConfigData.maxCount,
-                    ItemType = shopConfigData.playerItemType,
-                    MaxCount = shopConfigData.maxCount,
-                    ItemConfigId = shopConfigData.itemId,
-                    Price = shopConfigData.price,
-                    SellPrice = shopConfigData.sellPrice,
-                    Quality = shopConfigData.qualityType,
-                    MainIncreaseDatas = mainAttributeData,
-                    PassiveIncreaseDatas = passiveAttributeData,
-                };
+                var randomShopData = CreateShopItemData(shopConfigId);
                 shopData[index] = randomShopData;
                 index++;
             }
@@ -71,54 +76,64 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var playerPos = Constant.PlayerInGameManager.GetPlayerPosition(connectionId);
             var playerBase = Constant.PlayerInGameManager.GetPlayerBasePositionById(connectionId);
             var distance = Vector3.Distance(playerPos, playerBase);
+            //Debug.Log($"[CanUseShop] Player {connectionId} distance to base is {distance}, playerPos: {playerPos}, playerBase: {playerBase}");
             return distance <= Constant.PlayerConfigData.MaxShopBuyDistance;
         }
 
         public static void CommandBuyItem(ref PlayerShopState state, int connectionId, int shopId, int count, bool isServer = false)
         {
-            var shopData = state.RandomShopItems.Values;
-            var randomShopData = shopData.First(x => x.ShopId == shopId);
+            if (!state.RandomShopItems.TryGetValue(shopId, out var randomShopData))
+            {
+                Debug.LogError($"ShopId {shopId} does not exist in shop data");
+                return;
+            }
             var randomShopConfigData = Constant.ShopConfig.GetShopConfigData(randomShopData.ShopConfigId);
-            var otherShopData = shopData.First(x => x.ItemType == randomShopData.ItemType);
+            var otherShopData = state.RandomShopItems.Last(x => x.Value.ItemType == randomShopData.ItemType && x.Key != randomShopData.ShopId);
             if (randomShopData.Equals(default) || randomShopData.RemainingCount < count)
                 return;
             randomShopData.RemainingCount -= count;
-            
+            state.RandomShopItems[randomShopData.ShopId] = randomShopData;
+            var randomShopItems = state.RandomShopItems;
             if (randomShopData.RemainingCount == 0)
             {
-                RefreshShopItems(ref shopData, randomShopData, otherShopData);
+                RefreshShopItems(ref randomShopItems, randomShopData, otherShopData.Value);
             }
-
-            foreach (var data in shopData)
-            {
-                state.RandomShopItems[data.ShopId] = data;
-            }
-            if (!isServer)
+            state.RandomShopItems = randomShopItems;
+            if (!Constant.IsServer)
                 return;
 
             
             var itemsCommandData = new MemoryList<ItemsCommandData>(count);
             for (var i = 0; i < count; i++)
             {
-                itemsCommandData[i] = new ItemsCommandData
+                itemsCommandData.Add(new ItemsCommandData
                 {
-                    Count = count,
+                    Count = 1,
                     ItemShopId = shopId,
                     ItemType = randomShopData.ItemType,
                     ItemConfigId = randomShopConfigData.itemId,
-                };
+                    ItemUniqueId = new []{HybridIdGenerator.GenerateItemId(randomShopConfigData.itemId, GameSyncManager.CurrentTick)},
+                });
             }
             var itemBuyCommand = new ItemsBuyCommand
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Item, CommandAuthority.Server, CommandExecuteType.Immediate),
                 Items = itemsCommandData,
             };
+            var totalPrice = randomShopConfigData.price * count;
+            var goldScoreChangedCommand = new PropertyGetScoreGoldCommand
+            {
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property, CommandAuthority.Server, CommandExecuteType.Immediate),
+                Gold = -(int)totalPrice,
+            };
+            
             Constant.GameSyncManager.EnqueueServerCommand(itemBuyCommand);
+            Constant.GameSyncManager.EnqueueServerCommand(goldScoreChangedCommand);
         }
 
         public static void CommandSellItem(int connectionId, int slotIndex, int count, bool isServer = false)
         {
-            if (!isServer)
+            if (!Constant.IsServer)
             {
                 return;
             }
@@ -184,7 +199,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var newShopData = GetRandomShopItemData(shopConfigIds);
             var dic = newShopData.ToDictionary(x => x.ShopId, x => x);
             state.RandomShopItems = new MemoryDictionary<int, ShopItemData>(dic);
-            if (!isServer)
+            if (!Constant.IsServer)
                 return;
             var command = new GoldChangedCommand
             {
@@ -195,20 +210,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             Constant.GameSyncManager.EnqueueServerCommand(command);
         }
         
-        private static void RefreshShopItems(ref ShopItemData[] playerShopData, ShopItemData randomShopItemData, ShopItemData otherShopItemData)
+        private static void RefreshShopItems(ref MemoryDictionary<int, ShopItemData> playerShopData, ShopItemData randomShopItemData, ShopItemData otherShopItemData)
         {
             var newConfigId = Constant.ShopConfig.GetRandomItem(randomShopItemData.ShopConfigId, otherShopItemData.ShopConfigId, randomShopItemData.ItemType);
-            var newRandomConfigData = Constant.ShopConfig.GetShopConfigData(newConfigId);
-            var hashSet = playerShopData.ToHashSet();
-            hashSet.Remove(randomShopItemData);
-            hashSet.Add(new ShopItemData
-            {
-                ShopId = HybridIdGenerator.GenerateChestId(newConfigId, GameSyncManager.CurrentTick),
-                ShopConfigId = newConfigId,
-                RemainingCount = newRandomConfigData.maxCount,
-                ItemType = newRandomConfigData.playerItemType
-            });
-            playerShopData = hashSet.ToArray();
+            playerShopData.Remove(randomShopItemData.ShopId);
+            var newShopId = HybridIdGenerator.GenerateChestId(newConfigId, GameSyncManager.CurrentTick);
+            var shopData = CreateShopItemData(newConfigId);
+            playerShopData.Add(newShopId, shopData);
         }
     }
 
