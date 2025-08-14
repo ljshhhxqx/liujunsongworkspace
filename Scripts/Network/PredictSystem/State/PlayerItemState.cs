@@ -164,9 +164,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 if (newItem.PlayerItemType.IsEquipment())
                 {
                     var equipPart = newItem.EquipmentPart;
-                    newItem.State = ItemState.IsEquipped;
-                    newSlotItem.State = ItemState.IsEquipped;
                     isEquipped = true;
+                    foreach (var bagSlotItem in state.PlayerItemConfigIdSlotDictionary)
+                    {
+                        if (equipPart == bagSlotItem.Value.EquipmentPart && bagSlotItem.Value.State == ItemState.IsEquipped)
+                        {
+                            isEquipped = false;
+                            break;
+                        }
+                    }
+
+                    if (isEquipped)
+                    {
+                        newItem.State = ItemState.IsEquipped;
+                        newSlotItem.State = ItemState.IsEquipped;
+                    }
                 }
                 state.PlayerItems.Add(item.ItemId, newItem);
                 state.PlayerItemConfigIdSlotDictionary.Add(freeSlot, newSlotItem);

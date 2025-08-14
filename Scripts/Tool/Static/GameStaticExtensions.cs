@@ -223,7 +223,7 @@ namespace HotUpdate.Scripts.Tool.Static
             var increaseDesc = header.buffIncreaseType switch
             {
                 BuffIncreaseType.Base => "基础",
-                BuffIncreaseType.Multiplier => "",
+                BuffIncreaseType.Multiplier => "倍",
                 BuffIncreaseType.Extra => "额外",
                 BuffIncreaseType.CorrectionFactor => "总",
                 BuffIncreaseType.Current => "当前",

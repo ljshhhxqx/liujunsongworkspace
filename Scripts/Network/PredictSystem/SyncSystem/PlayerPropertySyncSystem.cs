@@ -428,7 +428,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(headerConnectionId, CommandType.Equipment),
                 TriggerType = TriggerType.OnSkillCast,
-                TriggerData = NetworkCommandExtensions.SerializeBattleCondition(hpChangedCheckerParameters).buffer,
+                TriggerData = MemoryPackSerializer.Serialize(hpChangedCheckerParameters),
             });
         }
 
@@ -731,7 +731,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 {
                     Header = GameSyncManager.CreateNetworkCommandHeader(targetId, CommandType.Equipment),
                     TriggerType = TriggerType.OnHpChange,
-                    TriggerData = NetworkCommandExtensions.SerializeBattleCondition(hpChangedCheckerParameters).buffer,
+                    TriggerData = MemoryPackSerializer.Serialize(hpChangedCheckerParameters),
                 });
             }
 
@@ -748,7 +748,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 {
                     Header = GameSyncManager.CreateNetworkCommandHeader(targetId, CommandType.Equipment),
                     TriggerType = TriggerType.OnManaChange,
-                    TriggerData = NetworkCommandExtensions.SerializeBattleCondition(mpChangedCheckerParameters).buffer,
+                    TriggerData = MemoryPackSerializer.Serialize(mpChangedCheckerParameters),
                 });
             }
             var playerConnection = GameSyncManager.GetPlayerConnection(targetId);
@@ -910,7 +910,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     {
                         Header = GameSyncManager.CreateNetworkCommandHeader(attacker, CommandType.Equipment),
                         TriggerType = TriggerType.OnAttackHit,
-                        TriggerData = NetworkCommandExtensions.SerializeBattleCondition(attackHitCheckerParameters).buffer,
+                        TriggerData = MemoryPackSerializer.Serialize(attackHitCheckerParameters),
                     });
                 }
                 if (damageData.DamageCalculateResult.IsCritical && equipmentSyncSystem.TryGetPlayerConditionChecker(attacker, TriggerType.OnCriticalHit, out _))
@@ -923,7 +923,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     {
                         Header = GameSyncManager.CreateNetworkCommandHeader(attacker, CommandType.Equipment),
                         TriggerType = TriggerType.OnCriticalHit,
-                        TriggerData = NetworkCommandExtensions.SerializeBattleCondition(criticalHitCheckerParameters).buffer,
+                        TriggerData = MemoryPackSerializer.Serialize(criticalHitCheckerParameters),
                     });
 
                 }
@@ -939,7 +939,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         {
                             Header = GameSyncManager.CreateNetworkCommandHeader(deadManId, CommandType.Equipment),
                             TriggerType = TriggerType.OnDeath,
-                            TriggerData = NetworkCommandExtensions.SerializeBattleCondition(deathCheckerParameters).buffer,
+                            TriggerData = MemoryPackSerializer.Serialize(deathCheckerParameters),
                         });
                     }
 
@@ -951,7 +951,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         {
                             Header = GameSyncManager.CreateNetworkCommandHeader(hitterPlayerId, CommandType.Equipment),
                             TriggerType = TriggerType.OnKill,
-                            TriggerData = NetworkCommandExtensions.SerializeBattleCondition(killCheckerParameters).buffer,
+                            TriggerData = MemoryPackSerializer.Serialize(killCheckerParameters),
                         });
                     }
                 }
@@ -967,7 +967,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         {
                             Header = GameSyncManager.CreateNetworkCommandHeader(damageData.Defender, CommandType.Equipment),
                             TriggerType = TriggerType.OnHpChange,
-                            TriggerData = NetworkCommandExtensions.SerializeBattleCondition(hpChangedCheckerParameters).buffer,
+                            TriggerData = MemoryPackSerializer.Serialize(hpChangedCheckerParameters),
                         });
 
                     }
@@ -981,7 +981,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         {
                             Header = GameSyncManager.CreateNetworkCommandHeader(damageData.Defender, CommandType.Equipment),
                             TriggerType = TriggerType.OnTakeDamage,
-                            TriggerData = NetworkCommandExtensions.SerializeBattleCondition(takeDamageCheckerParameters).buffer,
+                            TriggerData =MemoryPackSerializer.Serialize(takeDamageCheckerParameters),
                         });
                     }
                 }
@@ -995,7 +995,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         {
                             Header = GameSyncManager.CreateNetworkCommandHeader(damageData.Defender, CommandType.Equipment),
                             TriggerType = TriggerType.OnDodge,
-                            TriggerData = NetworkCommandExtensions.SerializeBattleCondition(dodgeCheckerParameters).buffer,
+                            TriggerData = MemoryPackSerializer.Serialize(dodgeCheckerParameters),
                         });
                     }
                 }
@@ -1078,7 +1078,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                                 {
                                     Header = GameSyncManager.CreateNetworkCommandHeader(attacker, CommandType.Equipment),
                                     TriggerType = TriggerType.OnSkillHit,
-                                    TriggerData = NetworkCommandExtensions.SerializeBattleCondition(skillHitData).buffer,
+                                    TriggerData = MemoryPackSerializer.Serialize(skillHitData),
                                 });
                             }
                         }

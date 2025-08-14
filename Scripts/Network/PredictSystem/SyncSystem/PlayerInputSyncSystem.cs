@@ -11,6 +11,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.PredictSystem.State;
+using MemoryPack;
 using Mirror;
 using UniRx;
 using UnityEngine;
@@ -278,7 +279,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
                 TriggerType = TriggerType.OnAttack,
-                TriggerData = NetworkCommandExtensions.SerializeBattleCondition(triggerParams).buffer,
+                TriggerData = MemoryPackSerializer.Serialize(triggerParams),
             });
         }
 
@@ -421,7 +422,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     var triggerCommand = ObjectPoolManager<TriggerCommand>.Instance.Get(50);
                     triggerCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate);
                     triggerCommand.TriggerType = TriggerType.OnMove;
-                    triggerCommand.TriggerData = NetworkCommandExtensions.SerializeBattleCondition(moveCheckerParameters).buffer;
+                    triggerCommand.TriggerData = MemoryPackSerializer.Serialize(moveCheckerParameters);
                     GameSyncManager.EnqueueServerCommand(triggerCommand);
                     //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input move {inputCommand.InputMovement} speed {moveSpeed} player state {playerGameStateData.AnimationState}");
                 }
