@@ -56,7 +56,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                     if (!x.NewValue.Equals(x.OldValue))
                     {
                         _propertyItemDatas[x.Key] = x.NewValue;
-                        contentItemList.ReplaceItem(x.Key, x.NewValue);
+                        contentItemList.ReplaceItem<PropertyItemData, PropertyItems>(x.Key, x.NewValue);
                         //Debug.Log($"Replace property {x.Key} {x.NewValue}");
                     }
                 })
@@ -67,7 +67,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                     if (!_propertyItemDatas.ContainsKey(x.Key))
                     {
                         _propertyItemDatas.Add(x.Key, x.Value);
-                        contentItemList.AddItem(x.Key, x.Value);
+                        contentItemList.AddItem<PropertyItemData, PropertyItems>(x.Key, x.Value);
                     }
                 })
                 .AddTo(this);

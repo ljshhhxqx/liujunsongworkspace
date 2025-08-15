@@ -75,7 +75,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                 if (!_shopItemData.ContainsKey(x.Key))
                 {
                     _shopItemData.Add(x.Key, x.Value);
-                    shopItemList.AddItem(x.Key, x.Value);
+                    shopItemList.AddItem<RandomShopItemData, ShopSlotItem>(x.Key, x.Value, OnSpawnShopItem);
                 }
                 //shopItemList.SetItemList(_shopItemData);
             }).AddTo(this);
@@ -92,7 +92,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                 if (x.OldValue.Equals(x.NewValue))
                     return;
                 _shopItemData[x.Key] = x.NewValue;
-                shopItemList.ReplaceItem(x.Key, x.NewValue);
+                shopItemList.ReplaceItem<RandomShopItemData, ShopSlotItem>(x.Key, x.NewValue, OnSpawnShopItem);
             }).AddTo(this);
             shopItemData.ObserveReset().Subscribe(x =>
             {
@@ -114,7 +114,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                 if (!_bagItemData.ContainsKey(x.Key))
                 {
                     _bagItemData.Add(x.Key, x.Value);
-                    bagItemList.AddItem(x.Key, x.Value);
+                    bagItemList.AddItem<BagItemData, ShopBagSlotItem>(x.Key, x.Value, OnSpawnBagItem);
                 }
                 //bagItemList.SetItemList(_bagItemData);
             }).AddTo(this);
@@ -132,7 +132,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                 if (x.OldValue.Equals(x.NewValue))
                     return;
                 _bagItemData[x.Key] = x.NewValue;
-                bagItemList.ReplaceItem(x.Key, x.NewValue);
+                bagItemList.ReplaceItem<BagItemData, ShopBagSlotItem>(x.Key, x.NewValue, OnSpawnBagItem);
             }).AddTo(this);
             bagItemData.ObserveReset().Subscribe(x =>
             {
@@ -141,23 +141,44 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             }).AddTo(this);
         }
 
+        private void OnSpawnShopItem(RandomShopItemData shopItem, ShopSlotItem slot)
+        {
+            slot.OnBuy.Subscribe(count =>
+            {
+                _uiManager.ShowTips($"确定购买{count}个{slot.ShopItemData.Name}吗？", () =>
+                {
+                    OnBuyItem(slot, count);
+                });
+            }).AddTo(slot.gameObject);
+            slot.OnClick.Subscribe(_ =>
+            {
+                OnShowItemInfo(slot);
+            }).AddTo(slot.gameObject);
+        }
+
+        private void OnSpawnBagItem(BagItemData bagItem, ShopBagSlotItem slot)
+        {
+            slot.OnSellObservable.Subscribe(count =>
+            {
+                OnSellItem(slot, count);
+            }).AddTo(slot.gameObject);
+            slot.OnClickObservable.Subscribe(_ =>
+            {
+                OnShowItemInfo(slot);
+            }).AddTo(slot.gameObject);
+            slot.OnLockObservable.Subscribe(locked =>
+            {
+                OnLockItem(slot, locked);
+            }).AddTo(slot.gameObject);
+        }
+
         private void InitShopItems()
         {
             foreach (var key in shopItemList.ItemBases.Keys)
             {
                 var slot = shopItemList.ItemBases[key] as ShopSlotItem;
                 if (!slot) continue;
-                slot.OnBuy.Subscribe(count =>
-                {
-                    _uiManager.ShowTips($"确定购买{count}个{slot.ShopItemData.Name}吗？", () =>
-                    {
-                        OnBuyItem(slot, count);
-                    });
-                }).AddTo(slot.gameObject);
-                slot.OnClick.Subscribe(_ =>
-                {
-                    OnShowItemInfo(slot);
-                }).AddTo(slot.gameObject);
+                OnSpawnShopItem(slot.ShopItemData, slot);
                 _shopSlotItems.Add(slot);
             }
         }

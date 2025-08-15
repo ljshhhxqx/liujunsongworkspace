@@ -31,7 +31,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                     }
 
                     _playerAnimiationDatas.Add(addEvent.Key, addEvent.Value);
-                    contentItemList.AddItem(addEvent.Key, addEvent.Value);
+                    contentItemList.AddItem<AnimationStateData, AnimationItem>(addEvent.Key, addEvent.Value);
                 })
                 .AddTo(this);
             playerAnimationDatas.ObserveReplace()
@@ -42,7 +42,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                         if (_playerAnimiationDatas.ContainsKey(replaceEvent.Key))
                         {
                             _playerAnimiationDatas[replaceEvent.Key] = replaceEvent.NewValue;
-                            contentItemList.ReplaceItem(replaceEvent.Key, replaceEvent.NewValue);
+                            contentItemList.ReplaceItem<AnimationStateData, AnimationItem>(replaceEvent.Key, replaceEvent.NewValue);
                         }
                     }
                 })

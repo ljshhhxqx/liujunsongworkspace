@@ -38,7 +38,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                     return;
                 }
                 _playerHpItemDatas.Add(x.Key, x.Value);
-                contentItemList.AddItem(x.Key, x.Value);
+                contentItemList.AddItem<PlayerHpItemData, PlayerHpItem>(x.Key, x.Value);
                 SetItemDataAndShow(_playerHpItemDatas);
             }).AddTo(this);
             playerHpItemDatas.ObserveRemove().Subscribe(x =>
@@ -54,7 +54,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                 if (!x.NewValue.Equals(x.OldValue))
                 {
                     _playerHpItemDatas[x.Key] = x.NewValue;
-                    contentItemList.ReplaceItem(x.Key, x.NewValue);
+                    contentItemList.ReplaceItem<PlayerHpItemData, PlayerHpItem>(x.Key, x.NewValue);
                     var item = contentItemList.GetItem<PlayerHpItem>(x.Key);
                     item.DataChanged(x.NewValue);
                     item.Show(_defaultFollowTargetParams);

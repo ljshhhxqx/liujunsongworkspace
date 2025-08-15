@@ -31,28 +31,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public IObservable<int> OnBuy => _onBuySubject;
         public RandomShopItemData ShopItemData => _shopItemData;
 
-        private void Start()
-        {
-            buyButton.interactable = false;
-            var valueGold =
-                UIPropertyBinder.ObserveProperty<ValuePropertyData>(new BindingKey(UIPropertyDefine.PlayerBaseData));
-            valueGold
-                .Subscribe(x =>
-            {
-                _currentGold = x.Gold;
-            }).AddTo(this);
-            Observable.EveryUpdate().Sample(TimeSpan.FromSeconds(0.2f))
-                .Subscribe(_ =>
-                {
-                    var goldIsEnough = _currentGold >= (quantitySlider.value * _shopItemData.Price);
-                    //Debug.Log($"goldIsEnough = {goldIsEnough}, _currentGold = {_currentGold}, quantitySlider.value = {quantitySlider.value} _shopItemData.Price = {_shopItemData.Price}");
-                    var canUseShop = PlayerShopCalculator.CanUseShop(PlayerInGameManager.LocalPlayerId);
-                    //Debug.Log($"CanUseShop: {canUseShop}");
-                    buyButton.interactable = canUseShop && goldIsEnough;
-                })
-                .AddTo(this);
-        }
-
         public override void SetData<T>(T data)
         {
             if (data is RandomShopItemData shopItemData)
@@ -88,6 +66,24 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                    } )
                    .AddTo(this);
                 quantitySlider.value = 1;
+                buyButton.interactable = false;
+                var valueGold =
+                    UIPropertyBinder.ObserveProperty<ValuePropertyData>(new BindingKey(UIPropertyDefine.PlayerBaseData));
+                valueGold
+                    .Subscribe(x =>
+                    {
+                        _currentGold = x.Gold;
+                    }).AddTo(this);
+                Observable.EveryUpdate().Sample(TimeSpan.FromSeconds(0.2f))
+                    .Subscribe(_ =>
+                    {
+                        var goldIsEnough = _currentGold >= (quantitySlider.value * _shopItemData.Price);
+                        //Debug.Log($"goldIsEnough = {goldIsEnough}, _currentGold = {_currentGold}, quantitySlider.value = {quantitySlider.value} _shopItemData.Price = {_shopItemData.Price}");
+                        var canUseShop = PlayerShopCalculator.CanUseShop(PlayerInGameManager.LocalPlayerId);
+                        //Debug.Log($"CanUseShop: {canUseShop}");
+                        buyButton.interactable = canUseShop && goldIsEnough;
+                    })
+                    .AddTo(this);
             }
         }
 

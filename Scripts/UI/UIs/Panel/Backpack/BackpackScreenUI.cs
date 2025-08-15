@@ -128,9 +128,9 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
                         _bagItemData.Add(x.Key, x.Value);
                         if (x.Value.PlayerItemType.IsEquipment() && x.Value.IsEquip)
                         {
-                            equipmentItemList.AddItem(x.Key, x.Value);
+                            equipmentItemList.AddItem<BagItemData, EquipmentSlotItem>(x.Key, x.Value);
                         }
-                        bagItemList.AddItem(x.Key, x.Value);
+                        bagItemList.AddItem<BagItemData, BagSlotItem>(x.Key, x.Value);
                     }
                 })
                 .AddTo(this);
@@ -154,10 +154,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
                     if (!x.NewValue.Equals(x.OldValue))
                     {
                         _bagItemData[x.Key] = x.NewValue;
-                        bagItemList.ReplaceItem(x.Key, x.NewValue);
+                        bagItemList.ReplaceItem<BagItemData, BagSlotItem>(x.Key, x.NewValue);
                         if (x.NewValue.PlayerItemType.IsEquipment() && x.NewValue.IsEquip)
                         {
-                            equipmentItemList.ReplaceItem(x.Key, x.NewValue);
+                            equipmentItemList.ReplaceItem<BagItemData, EquipmentSlotItem>(x.Key, x.NewValue);
                         }
                     }
                 })
@@ -198,9 +198,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             {
                 var slot = equipmentItemList.ItemBases[key] as EquipmentSlotItem;
                 if (!slot) continue;
-                slot.OnPointerClickObservable
-                    .Subscribe(x => OnEquipClick(slot, x))
-                    .AddTo(slot.gameObject);
+                OnSpawnEquipSlot(slot.CurrentItem, slot);
                 _slotItems.Add(key, slot);
             }
         }
@@ -211,6 +209,21 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             // 这里可以弹出物品详情面板
             Debug.Log($"显示物品详情: {slot.name}");
             _uiManager.SwitchUI<ItemDetailsScreenUI>(ui => ui.OpenBag(slot.CurrentItem, ItemDetailsType.Equipment));
+        }
+
+        private void OnSpawnEquipSlot(BagItemData equipItemData, EquipmentSlotItem slot)
+        {
+            slot.OnPointerClickObservable
+                .Subscribe(x => OnEquipClick(slot, x))
+                .AddTo(slot.gameObject);
+        }
+
+        private void OnSpawnBagSlot(BagItemData bagItemData, BagSlotItem slot)
+        {
+            slot.OnPointerClickObserver
+                .Where(x => _isDragging == false)
+                .Subscribe(x => OnSlotClick(slot, x))
+                .AddTo(slot.gameObject);
         }
 
         // 初始化格子
@@ -230,10 +243,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
                 // slot.OnEndDragObserver
                 //     .Subscribe(x => OnSlotEndDrag(slot, x))
                 //     .AddTo(slot.gameObject);
-                slot.OnPointerClickObserver
-                    .Where(x => _isDragging == false)
-                    .Subscribe(x => OnSlotClick(slot, x))
-                    .AddTo(slot.gameObject);
+                OnSpawnBagSlot(slot.CurrentItem, slot);
                 _bagSlotItems.Add(key, slot);
             }
         }

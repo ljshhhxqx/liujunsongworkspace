@@ -33,7 +33,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
             return ItemBases[index] as T;
         }
 
-        public void AddItem<T>(int key, T item) where T : IItemBaseData, new()
+        public TItem AddItem<T, TItem>(int key, T item, Action<T, TItem> onSpawn = null) where T : IItemBaseData, new() where TItem : ItemBase, new()
         {
             if (!ItemBases.TryGetValue(key, out var itemBase))
             {
@@ -44,9 +44,11 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
                 ItemBases.Add(key, itemBase);
                 ItemBaseDatas.Add(key, item);
                 itemPrefab.gameObject.SetActive(false);
-                return;
+                onSpawn?.Invoke(item, (TItem)itemBase);
+                return (TItem)itemBase;
             }
             Debug.LogWarning($"ItemList: AddItem failed, key --{key}-- already exists.");
+            return null;
         }
         
         public void RemoveItem(int key)
@@ -71,15 +73,17 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
             ItemBaseDatas.Clear();
         }
         
-        public void ReplaceItem<T>(int key, T itemData) where T : IItemBaseData, new()
+        public void ReplaceItem<T, TItem>(int key, T itemData, Action<T, TItem> onSpawn = null) where T : IItemBaseData, new() where TItem : ItemBase, new()
         {
             if (!ItemBases.TryGetValue(key, out var itemBase))
             {
-                AddItem(key, itemData);
+                itemBase = AddItem<T, TItem>(key, itemData);
+                onSpawn?.Invoke(itemData, (TItem)itemBase);
                 return;
             }
             itemBase.SetData(itemData);
             ItemBaseDatas[key] = itemData;
+            onSpawn?.Invoke(itemData, (TItem)itemBase);
         }
 
         public void SetItemList<T>(IDictionary<int, T> itemDict) where T : IItemBaseData, new()
