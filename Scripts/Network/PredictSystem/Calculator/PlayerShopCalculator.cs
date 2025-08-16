@@ -101,7 +101,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 RefreshShopItems(ref randomShopItems, randomShopData, otherShopData.Value);
             }
             state.RandomShopItems = randomShopItems;
-
             
             var itemsCommandData = new MemoryList<ItemsCommandData>(count);
             for (var i = 0; i < count; i++)
@@ -153,19 +152,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 return;
             }
             //计算价值，给玩家涨金币
-            var value = count * data.price * data.sellPrice;
-            var goldCommand = new GoldChangedCommand
+            var value = count * data.sellPrice;
+            Debug.Log($"Player {connectionId} sell {count} item(s) from slot {slotIndex} for {value} gold");
+            
+            var command = new PropertyGetScoreGoldCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Item, CommandAuthority.Server, CommandExecuteType.Immediate),
-                Gold = value
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property,
+                    CommandAuthority.Server, CommandExecuteType.Immediate),
+                Gold = (int)value
             };
-            Constant.GameSyncManager.EnqueueServerCommand(goldCommand);
+            Constant.GameSyncManager.EnqueueServerCommand(command);
             var list = new MemoryList<SlotIndexData>(1);
-            list[0] = new SlotIndexData
+            list.Add(new SlotIndexData
             {
                 SlotIndex = slotIndex,
                 Count = count
-            };
+            });
             
             //从玩家背包中扣除物品
             var itemSelleCommand = new ItemsSellCommand
@@ -202,9 +204,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var newShopData = GetRandomShopItemData(shopConfigIds);
             var dic = newShopData.ToDictionary(x => x.ShopId, x => x);
             state.RandomShopItems = new MemoryDictionary<int, ShopItemData>(dic);
-            var command = new GoldChangedCommand
+            var command = new PropertyGetScoreGoldCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Item,
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property,
                     CommandAuthority.Server, CommandExecuteType.Immediate),
                 Gold = -costGold
             };

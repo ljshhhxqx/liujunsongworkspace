@@ -93,7 +93,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
             if (!ValidateCommand(command))
             {
-                Debug.LogError($"{GetType().ToString()} not valid command type {command.GetHeader().CommandType} for {CommandType} or Command is not Valid");
+                Debug.LogError($"{GetType().Name} not valid command type {command.GetHeader().CommandType} for {CommandType} or Command is not Valid");
                 return;
             }
             ProcessCommand(command);
@@ -102,7 +102,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         protected virtual bool ValidateCommand(INetworkCommand command)
         {
             var header = command.GetHeader();
-            return PropertyStates.ContainsKey(header.ConnectionId) && command.IsValid();
+            if (!PropertyStates.ContainsKey(header.ConnectionId))
+            {
+                Debug.LogError($"{GetType().Name} not valid command playerId {header.ConnectionId}");
+                return false;
+            }
+
+            if (!command.IsValid())
+            {
+                Debug.LogError($"{GetType().Name} not valid command {command.GetHeader().CommandType}");
+                return false;
+            }
+
+            return true;
         }
 
         public abstract CommandType HandledCommandType { get; }

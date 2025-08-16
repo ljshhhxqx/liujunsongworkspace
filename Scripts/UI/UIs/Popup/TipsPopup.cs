@@ -17,7 +17,7 @@ namespace HotUpdate.Scripts.UI.UIs.Popup
         {
             _commonTipsPopup = GetComponent<CommonTipsPopup>();
             _uiManager = uiManager;
-            _commonTipsPopup.onClose = () => _uiManager.CloseUI(UIType.TipsPopup);
+            _commonTipsPopup.onClose = () => Destroy(gameObject);
             print("TipsPopup Init");
         }
 

@@ -160,7 +160,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         {
             slot.OnSellObservable.Subscribe(count =>
             {
-                OnSellItem(slot, count);
+                _uiManager.ShowTips($"确定出售{count}个{bagItem.ItemName}吗？", () =>
+                {
+                    OnSellItem(slot, count);
+                });
             }).AddTo(slot.gameObject);
             slot.OnClickObservable.Subscribe(_ =>
             {
@@ -189,18 +192,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             {
                 var slot = bagItemList.ItemBases[key] as ShopBagSlotItem;
                 if (!slot) continue;
-                slot.OnSellObservable.Subscribe(count =>
-                {
-                    OnSellItem(slot, count);
-                }).AddTo(slot.gameObject);
-                slot.OnClickObservable.Subscribe(_ =>
-                {
-                    OnShowItemInfo(slot);
-                }).AddTo(slot.gameObject);
-                slot.OnLockObservable.Subscribe(locked =>
-                {
-                    OnLockItem(slot, locked);
-                }).AddTo(slot.gameObject);
+                OnSpawnBagItem(slot.CurrentItem, slot);
                 _bagSlotItems.Add(slot);
             }
         }

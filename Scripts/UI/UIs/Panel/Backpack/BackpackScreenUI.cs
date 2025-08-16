@@ -311,7 +311,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
         {
             if (slot.HasItem())
             {
-                //Debug.Log($"显示物品详情: {slot.CurrentItem.ItemName}");
+                Debug.Log($"显示物品详情: {slot.CurrentItem.ItemName}");
                 // 这里可以在Inventory中统一控制UI面板
                 _uiManager.SwitchUI<ItemDetailsScreenUI>(ui => ui.OpenBag(slot.CurrentItem));
             }

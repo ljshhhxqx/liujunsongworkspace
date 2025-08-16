@@ -193,17 +193,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             if(!NetworkIdentity.isLocalPlayer)
                 return;
-            var sellItem = new SlotIndexData
+            var sellItemCommand = new SellCommand
             {
-                SlotIndex = slotIndex,
+                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Shop, CommandAuthority.Client),
+                ItemSlotIndex = slotIndex,
                 Count = count
-            };
-            var list = new MemoryList<SlotIndexData>(1);//<int, SlotIndexData>();
-            list.Add(sellItem);
-            var sellItemCommand = new ItemsSellCommand
-            {
-                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
-                Slots = list
             };
             GameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(sellItemCommand).Item1);
         }

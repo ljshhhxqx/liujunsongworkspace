@@ -21,11 +21,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public IObservable<int> OnSliderChanged => _sliderSubject;
 
         private CountSliderButtonGroupData _countSliderButtonGroupData;
-        private void Start()
-        {
-            slider.wholeNumbers = true;
-        }
-
+        
         public void SetPlayerGold(float gold)
         {
             _countSliderButtonGroupData.CurrentGold = gold;
@@ -48,12 +44,13 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                 .AddTo(this);
             slider.minValue = Mathf.Min(_countSliderButtonGroupData.MinCount, 1);
             slider.maxValue = _countSliderButtonGroupData.MaxCount;
+            slider.wholeNumbers = true;
             slider.onValueChanged.AddListener(x =>
             {
                 _sliderSubject.OnNext((int)x);
                 SetCount((int)x, _countSliderButtonGroupData.MaxCount);
             });
-            SetCount(1, _countSliderButtonGroupData.MaxCount);
+            slider.value = 1;
         }
 
         private void SetCount(int count, int maxCount)

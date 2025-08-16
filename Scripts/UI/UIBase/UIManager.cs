@@ -102,7 +102,8 @@ namespace HotUpdate.Scripts.UI.UIBase
         {
             if (_uiDict.Remove(uIType, out var ui))
             {
-                Object.Destroy(ui.gameObject);
+                if(ui)
+                    Object.Destroy(ui.gameObject);
                 if (ui is IUnlockMouse unlockMouse)
                 {
                     IsUnlockMouse?.Invoke(false);

@@ -43,6 +43,8 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         
         private BindingKey _itemDetailsBagBindingKey;
         private BindingKey _itemDetailsShopBindingKey;
+        
+        private CompositeDisposable _disposables = new CompositeDisposable();
 
         [Inject]
         private void Init(UIManager uiManager)
@@ -53,19 +55,19 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             equipButton.OnClickAsObservable()
                 .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
                 .Subscribe(_ => OnEquipClicked())
-                .AddTo(this);
+                .AddTo(_disposables);
             lockButton.OnClickAsObservable()
                 .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
                 .Subscribe(_ => OnLockClicked())
-                .AddTo(this);
+                .AddTo(_disposables);
             quitButton.OnClickAsObservable()
                 .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
                 .Subscribe(_ => _uiManager.CloseUI(Type))
-                .AddTo(this);
+                .AddTo(_disposables);
             enableButton.OnClickAsObservable()
                 .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
                 .Subscribe(_ => OnEnableClicked())
-                .AddTo(this);
+                .AddTo(_disposables);
             var shopItem = UIPropertyBinder.GetReactiveDictionary<RandomShopItemData>(_itemDetailsShopBindingKey);
             var bagItem = UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemDetailsBagBindingKey);
             shopItem.ObserveRemove()
@@ -76,16 +78,16 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                         _uiManager.CloseUI(Type);
                     }
                 })
-                .AddTo(this);
+                .AddTo(_disposables);
             shopItem.ObserveReplace()
                 .Subscribe(x =>
                 {
-                    if (_currentItemData is RandomShopItemData randomShopItemData && randomShopItemData.ShopId == x.NewValue.ShopId)
+                    if (_currentItemData is RandomShopItemData randomShopItemData && randomShopItemData.ShopId == x.NewValue.ShopId && !randomShopItemData.Equals(x.NewValue))
                     {
                         OpenShop(x.NewValue);
                     }
                 })
-                .AddTo(this);
+                .AddTo(_disposables);
             shopItem.ObserveReset()
                 .Subscribe(_ =>
                 {
@@ -94,7 +96,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                         _uiManager.CloseUI(Type);
                     }
                 })
-                .AddTo(this);
+                .AddTo(_disposables);
             bagItem.ObserveRemove()
                 .Subscribe(x =>
                 {
@@ -103,36 +105,39 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                         _uiManager.CloseUI(Type);
                     }
                 })
-                .AddTo(this);
+                .AddTo(_disposables);
             bagItem.ObserveReplace()
                 .Subscribe(x =>
                 {
-                    if (_currentItemData is BagItemData bagItemData && x.NewValue.ConfigId == bagItemData.ConfigId)
+                    if (_currentItemData is BagItemData bagItemData && x.NewValue.ConfigId == bagItemData.ConfigId && !bagItemData.Equals(x.NewValue))
                     {
                         OpenBag(x.NewValue);
                     }
                 })
-                .AddTo(this);
+                .AddTo(_disposables);
             bagItem.ObserveReset()
                 .Subscribe(_ =>
                 {
                     if (_currentItemData is BagItemData bagItemData)
                         _uiManager.CloseUI(Type);
                 })
-                .AddTo(this);
+                .AddTo(_disposables);
         }
 
         public void BindPlayerGold(IObservable<ValuePropertyData> playerGold)
         {
             playerGold.Subscribe(data =>
             {
+                if (Mathf.Approximately(_currentValuePropertyData.Gold, data.Gold))
+                {
+                    return;
+                }
                 _currentValuePropertyData = data;
                 useCountSlider.SetPlayerGold(data.Gold);
                 dropCountSlider.SetPlayerGold(data.Gold);
                 sellCountSlider.SetPlayerGold(data.Gold);
                 buyCountSlider.SetPlayerGold(data.Gold);
-                UpdateUI();
-            }).AddTo(this);
+            }).AddTo(_disposables);
         }
 
         // private void OnBuyClicked()
@@ -158,6 +163,8 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
 
         public void OpenShop(RandomShopItemData itemData)
         {
+            _currentItemData = itemData;
+            _currentItemDetailsType = ItemDetailsType.Shop;
             UpdateShopItemUI(itemData);
             UpdateButtonStates();
         }
@@ -226,7 +233,8 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 PricePerItem = randomShopItemData.Price,
                 ShowPrice = true,
                 CurrentGold = _currentValuePropertyData.Gold,
-                ButtonType = ButtonType.Buy
+                ButtonType = ButtonType.Buy,
+                PlayerItemType = randomShopItemData.ItemType
             };
             buyCountSlider.Init(countSliderButtonGroupData);
             countSliderButtonGroupData.PlayerItemType = randomShopItemData.ItemType;
@@ -299,7 +307,8 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 PricePerItem = bagItemData.Price * bagItemData.SellRatio,
                 ShowPrice = false,
                 CurrentGold = _currentValuePropertyData.Gold,
-                ButtonType = ButtonType.Use
+                ButtonType = ButtonType.Use,
+                PlayerItemType = bagItemData.PlayerItemType
             };
             useCountSlider.Init(countSliderButtonGroupData);
             countSliderButtonGroupData.Callback = x =>
@@ -363,7 +372,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                             equipButton.gameObject.SetActive(!isLocked && bagItemData.PlayerItemType.IsEquipment());
                             lockButton.gameObject.SetActive(true);
                             sellCountSlider.gameObject.SetActive(false);
-                            enableButton.gameObject.SetActive(true);
+                            enableButton.gameObject.SetActive(bagItemData.PlayerItemType.IsEquipment());
                             break;
                         case ItemDetailsType.Equipment:
                             useCountSlider.gameObject.SetActive(false);
@@ -371,7 +380,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                             equipButton.gameObject.SetActive(!isLocked && bagItemData.PlayerItemType.IsEquipment());
                             lockButton.gameObject.SetActive(true);
                             sellCountSlider.gameObject.SetActive(false);
-                            enableButton.gameObject.SetActive(true);
+                            enableButton.gameObject.SetActive(bagItemData.PlayerItemType.IsEquipment());
                             break;
                         case ItemDetailsType.Shop:
                             useCountSlider.gameObject.SetActive(false);
@@ -454,6 +463,11 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             }
         }
         #endregion
+
+        private void OnDestroy()
+        {
+            _disposables?.Dispose();
+        }
 
         private void Close()
         {
