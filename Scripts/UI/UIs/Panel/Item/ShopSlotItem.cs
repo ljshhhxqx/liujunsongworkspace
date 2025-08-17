@@ -30,22 +30,25 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public IObservable<PointerEventData> OnClick => _onClickSubject;
         public IObservable<int> OnBuy => _onBuySubject;
         public RandomShopItemData ShopItemData => _shopItemData;
+        private CompositeDisposable _disposable;
 
         public override void SetData<T>(T data)
         {
             if (data is RandomShopItemData shopItemData)
             {
+                _disposable?.Dispose();
+                _disposable = new CompositeDisposable();
                 _shopItemData = shopItemData;
                 icon.OnPointerClickAsObservable()
                     .Subscribe(p => _onClickSubject.OnNext(p))
-                    .AddTo(this);
+                    .AddTo(_disposable);
                 buyButton.OnClickAsObservable()
                     .Subscribe(_ =>
                     {
                         var count = (int) quantitySlider.value;
                         _onBuySubject.OnNext(count);
                     })
-                    .AddTo(this);
+                    .AddTo(_disposable);
         
                 icon.sprite = shopItemData.Icon;
                 nameText.text = shopItemData.Name;
@@ -64,7 +67,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                        var total = quantity * shopItemData.Price;
                        priceText.text = $"{total}G";
                    } )
-                   .AddTo(this);
+                   .AddTo(_disposable);
                 quantitySlider.value = 1;
                 buyButton.interactable = false;
                 var valueGold =
@@ -73,7 +76,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                     .Subscribe(x =>
                     {
                         _currentGold = x.Gold;
-                    }).AddTo(this);
+                    }).AddTo(_disposable);
                 Observable.EveryUpdate().Sample(TimeSpan.FromSeconds(0.2f))
                     .Subscribe(_ =>
                     {
@@ -81,9 +84,12 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                         //Debug.Log($"goldIsEnough = {goldIsEnough}, _currentGold = {_currentGold}, quantitySlider.value = {quantitySlider.value} _shopItemData.Price = {_shopItemData.Price}");
                         var canUseShop = PlayerShopCalculator.CanUseShop(PlayerInGameManager.LocalPlayerId);
                         //Debug.Log($"CanUseShop: {canUseShop}");
-                        buyButton.interactable = canUseShop && goldIsEnough;
+                        if (buyButton)
+                        {
+                            buyButton.interactable = canUseShop && goldIsEnough;
+                        }
                     })
-                    .AddTo(this);
+                    .AddTo(_disposable);
             }
         }
 

@@ -221,6 +221,10 @@ namespace HotUpdate.Scripts.UI.UIBase
     {
         public static void ShowTips(this UIManager uiManager, string message, Action confirmCallback = null, Action cancelCallback = null)
         {
+            if (uiManager.IsUIOpen(UIType.TipsPopup))
+            {
+                uiManager.CloseUI(UIType.TipsPopup);
+            }
             var tipsUI = uiManager.SwitchUI<TipsPopup>();
             if (tipsUI)
             {

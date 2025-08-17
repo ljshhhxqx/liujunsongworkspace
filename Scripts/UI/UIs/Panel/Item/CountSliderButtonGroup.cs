@@ -21,7 +21,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public IObservable<int> OnSliderChanged => _sliderSubject;
 
         private CountSliderButtonGroupData _countSliderButtonGroupData;
-        
+        private CompositeDisposable _disposables;
+
         public void SetPlayerGold(float gold)
         {
             _countSliderButtonGroupData.CurrentGold = gold;
@@ -30,6 +31,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
 
         public void Init(CountSliderButtonGroupData countSliderButtonGroupData)
         {
+            _disposables?.Dispose();
+            _disposables = new CompositeDisposable();
             _countSliderButtonGroupData = countSliderButtonGroupData;
             slider.onValueChanged.RemoveAllListeners();
             buttonText.text = EnumHeaderParser.GetHeader(_countSliderButtonGroupData.ButtonType);
@@ -41,7 +44,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                     countSliderButtonGroupData.MaxCount -= (int)slider.value;
                     _countSliderButtonGroupData.Callback?.Invoke((int)slider.value);
                 })
-                .AddTo(this);
+                .AddTo(_disposables);
             slider.minValue = Mathf.Min(_countSliderButtonGroupData.MinCount, 1);
             slider.maxValue = _countSliderButtonGroupData.MaxCount;
             slider.wholeNumbers = true;

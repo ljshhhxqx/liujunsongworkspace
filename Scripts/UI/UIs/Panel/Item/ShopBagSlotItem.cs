@@ -2,6 +2,7 @@
 using Cysharp.Threading.Tasks;
 using TMPro;
 using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -36,29 +37,40 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         private Subject<int> _onSellSubject = new Subject<int>();
         private Subject<bool> _onLockSubject = new Subject<bool>();
         private Subject<PointerEventData> _onClickSubject = new Subject<PointerEventData>();
+        private CompositeDisposable _disposable = new CompositeDisposable();
         public IObservable<int> OnSellObservable => _onSellSubject;
         public IObservable<bool> OnLockObservable => _onLockSubject;
         public IObservable<PointerEventData> OnClickObservable => _onClickSubject;
         public BagItemData CurrentItem => _currentItem;
         public override void SetData<T>(T data)
         {
-            _priceString??= sellPriceText.text;
             if (data is BagItemData itemData)
             {
+                _disposable?.Dispose();
+                _disposable = new CompositeDisposable();
+                _priceString??= sellPriceText.text;
                 lockBtn.OnClickAsObservable()
                     .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
                     .Subscribe(_ =>
                     {
                         _onLockSubject.OnNext(!itemData.IsLock);
-                    });
+                    })
+                    .AddTo(_disposable);
                 sellBtn.OnClickAsObservable()
                     .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
                     .Subscribe(_ =>
                     {
                         _onSellSubject.OnNext((int)qualitySlider.value);
-                    });
+                    })
+                    .AddTo(_disposable);
                 _currentItem = itemData;
                 itemImage.sprite = itemData.Icon;
+                itemImage.OnPointerClickAsObservable()
+                    .Subscribe(x =>
+                     {
+                         _onClickSubject.OnNext(x);
+                     })
+                    .AddTo(_disposable);
                 qualityImage.sprite = itemData.QualityIcon;
                 stackText.text = itemData.Stack.ToString();
                 lockIcon.SetActive(itemData.IsLock);
@@ -73,7 +85,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                         sellCountText.text = value.ToString("0");
                         sellPriceText.text = _priceString + (itemData.Price *itemData.SellRatio * value).ToString("0") + "G";
                     })
-                    .AddTo(this);
+                    .AddTo(_disposable);
             }
         }
 

@@ -52,6 +52,8 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             _uiManager = uiManager;
             _itemDetailsBagBindingKey = new BindingKey(UIPropertyDefine.BagItem);
             _itemDetailsShopBindingKey = new BindingKey(UIPropertyDefine.ShopItem);
+            _disposables?.Dispose();
+            _disposables = new CompositeDisposable();
             equipButton.OnClickAsObservable()
                 .ThrottleFirst(TimeSpan.FromSeconds(0.5f))
                 .Subscribe(_ => OnEquipClicked())

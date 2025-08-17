@@ -92,7 +92,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                 if (x.OldValue.Equals(x.NewValue))
                     return;
                 _shopItemData[x.Key] = x.NewValue;
-                shopItemList.ReplaceItem<RandomShopItemData, ShopSlotItem>(x.Key, x.NewValue, OnSpawnShopItem);
+                shopItemList.ReplaceItem<RandomShopItemData, ShopSlotItem>(x.Key, x.NewValue);
             }).AddTo(this);
             shopItemData.ObserveReset().Subscribe(x =>
             {
@@ -132,7 +132,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                 if (x.OldValue.Equals(x.NewValue))
                     return;
                 _bagItemData[x.Key] = x.NewValue;
-                bagItemList.ReplaceItem<BagItemData, ShopBagSlotItem>(x.Key, x.NewValue, OnSpawnBagItem);
+                bagItemList.ReplaceItem<BagItemData, ShopBagSlotItem>(x.Key, x.NewValue);
             }).AddTo(this);
             bagItemData.ObserveReset().Subscribe(x =>
             {
