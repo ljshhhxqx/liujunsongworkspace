@@ -55,7 +55,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         
         public override bool NeedsReconciliation<T>(T state)
         {
-            return state is not null && state is PlayerShopState;
+            if (state is not null && state is PlayerShopState playerShopState)
+            {
+                return !playerShopState.Equals(CurrentState);
+            }
+            return true;
         }
 
         public override void Simulate(INetworkCommand command)

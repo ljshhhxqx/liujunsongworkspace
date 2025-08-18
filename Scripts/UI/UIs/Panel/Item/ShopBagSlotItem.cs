@@ -78,6 +78,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                 qualitySlider.value = 1;
                 qualitySlider.minValue = 1;
                 qualitySlider.maxValue = itemData.Stack;
+                qualitySlider.gameObject.SetActive(itemData.Stack > 1);
+                sellCountText.gameObject.SetActive(itemData.Stack > 1);
                 qualitySlider.wholeNumbers = true;
                 qualitySlider.OnValueChangedAsObservable()
                     .Subscribe(value =>

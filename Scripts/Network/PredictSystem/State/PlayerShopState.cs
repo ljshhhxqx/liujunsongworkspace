@@ -8,15 +8,50 @@ using MemoryPack;
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
     [MemoryPackable]
-    public partial struct PlayerShopState : ISyncPropertyState
+    public partial struct PlayerShopState : ISyncPropertyState, IEquatable<PlayerShopState>
     {
         [MemoryPackOrder(0)]
         public MemoryDictionary<int, ShopItemData> RandomShopItems;
         public PlayerSyncStateType GetStateType() => PlayerSyncStateType.PlayerShop;
-        
-        public bool IsEqual(ISyncPropertyState other, float tolerance = 0.01f)
+
+        public bool Equals(PlayerShopState other)
         {
+            return Equals(RandomShopItems, other.RandomShopItems);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+            if (obj is not PlayerShopState other)
+            {
+                return false;
+            }
+            foreach (var item in RandomShopItems)
+            {
+                if (!item.Value.Equals(obj))
+                {
+                    return false;
+                }
+            }
             return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return (RandomShopItems != null ? RandomShopItems.GetHashCode() : 0);
+        }
+
+        public static bool operator ==(PlayerShopState left, PlayerShopState right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(PlayerShopState left, PlayerShopState right)
+        {
+            return !left.Equals(right);
         }
     }
 
@@ -52,7 +87,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
 
         public bool Equals(ShopItemData other)
         {
-            return ShopId == other.ShopId && ItemConfigId == other.ItemConfigId && Price.Equals(other.Price) && Quality == other.Quality && RemainingCount == other.RemainingCount && MaxCount == other.MaxCount && ShopConfigId == other.ShopConfigId && ItemType == other.ItemType && SellPrice.Equals(other.SellPrice);
+            return ShopId == other.ShopId && ItemConfigId == other.ItemConfigId && Price.Equals(other.Price) && Quality == other.Quality && RemainingCount == other.RemainingCount && MaxCount == other.MaxCount && ShopConfigId == other.ShopConfigId && ItemType == other.ItemType && SellPrice.Equals(other.SellPrice)
+                && MainIncreaseDatas.Count == other.MainIncreaseDatas.Count && PassiveIncreaseDatas.Count == other.PassiveIncreaseDatas.Count;
         }
 
         public override bool Equals(object obj)

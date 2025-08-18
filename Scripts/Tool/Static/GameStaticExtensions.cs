@@ -148,13 +148,17 @@ namespace HotUpdate.Scripts.Tool.Static
             attributeIncreaseData.header = header;
             return GetBuffEffectDesc(attributeIncreaseData);
         }
-        public static string GetBuffEffectDesc(List<AttributeIncreaseData> extraDatas)
+        public static string GetBuffEffectDesc(List<AttributeIncreaseData> extraDatas, bool showHeader = false)
         {
             if (extraDatas == null || extraDatas.Count == 0)
             {
                 return null;
             }
             var str = new StringBuilder();
+            if (showHeader)
+            {
+                str.Append("主要属性:");
+            }
             foreach (var data in extraDatas)
             {
                 str.Append(GetBuffEffectDesc(data));
@@ -163,13 +167,17 @@ namespace HotUpdate.Scripts.Tool.Static
             return str.ToString().TrimEnd('\n');
         }
 
-        public static string GetBuffEffectDesc(AttributeIncreaseData[] extraDatas)
+        public static string GetBuffEffectDesc(AttributeIncreaseData[] extraDatas, bool showHeader = false)
         {
             if (extraDatas == null || extraDatas.Length == 0)
             {
                 return null;
             }
             var str = new StringBuilder();
+            if (showHeader)
+            {
+                str.Append("主要属性:");
+            }
             foreach (var data in extraDatas)
             {
                 str.Append(GetBuffEffectDesc(data));
@@ -178,13 +186,17 @@ namespace HotUpdate.Scripts.Tool.Static
             return str.ToString().TrimEnd('\n');
         }
 
-        public static string GetRandomBuffEffectDesc(RandomAttributeIncreaseData[] extraDatas)
+        public static string GetRandomBuffEffectDesc(RandomAttributeIncreaseData[] extraDatas, bool showHeader = false)
         {
             if (extraDatas == null || extraDatas.Length == 0)
             {
                 return null;
             }
             var str = new StringBuilder();
+            if (showHeader)
+            {
+                str.Append("附加属性:");
+            }
             foreach (var data in extraDatas)
             {
                 str.Append(GetRandomBuffEffectDesc(data));
@@ -193,13 +205,17 @@ namespace HotUpdate.Scripts.Tool.Static
             return str.ToString().TrimEnd('\n');
         }
         
-        public static string GetRandomBuffEffectDesc(List<RandomAttributeIncreaseData> extraDatas)
+        public static string GetRandomBuffEffectDesc(List<RandomAttributeIncreaseData> extraDatas, bool showHeader = false)
         {
             if (extraDatas == null || extraDatas.Count == 0)
             {
                 return null;
             }
             var str = new StringBuilder();
+            if (showHeader)
+            {
+                str.Append("附加属性(需要特定条件触发):");
+            }
             foreach (var data in extraDatas)
             {
                 str.Append(GetRandomBuffEffectDesc(data));
@@ -223,7 +239,7 @@ namespace HotUpdate.Scripts.Tool.Static
             var increaseDesc = header.buffIncreaseType switch
             {
                 BuffIncreaseType.Base => "基础",
-                BuffIncreaseType.Multiplier => "倍",
+                BuffIncreaseType.Multiplier => "%",
                 BuffIncreaseType.Extra => "额外",
                 BuffIncreaseType.CorrectionFactor => "总",
                 BuffIncreaseType.Current => "当前",
@@ -254,7 +270,7 @@ namespace HotUpdate.Scripts.Tool.Static
             var increaseDesc = header.buffIncreaseType switch
             {
                 BuffIncreaseType.Base => "基础",
-                BuffIncreaseType.Multiplier => "",
+                BuffIncreaseType.Multiplier => "%",
                 BuffIncreaseType.Extra => "额外",
                 BuffIncreaseType.CorrectionFactor => "总",
                 BuffIncreaseType.Current => "当前",

@@ -12,7 +12,7 @@ using UnityEngine;
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
     [MemoryPackable(GenerateType.VersionTolerant)]
-    public partial class PlayerItemState : ISyncPropertyState
+    public partial class PlayerItemState : ISyncPropertyState, IEquatable<PlayerItemState>
     {
         [MemoryPackOrder(0)]
         private PlayerBagItem[] _items;
@@ -555,6 +555,42 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             }
             return -1;
         }
+
+        public bool Equals(PlayerItemState other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            if (SlotCount != other.SlotCount || _items.Length != other._items.Length || PlayerItems.Count != other.PlayerItems.Count || PlayerItemConfigIdSlotDictionary.Count != other.PlayerItemConfigIdSlotDictionary.Count)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < PlayerItems.Count; i++)
+            {
+                if (!_items[i].Equals(other._items[i]))
+                {
+                    return false;
+                }
+            }
+
+            foreach (var item in PlayerItems)
+            {
+                if (!PlayerItems[item.Key].Equals(other.PlayerItems[item.Key]))
+                {
+                    return false;
+                }
+            }
+
+            foreach (var item in PlayerItemConfigIdSlotDictionary)
+            {
+                if (!PlayerItemConfigIdSlotDictionary[item.Key].Equals(other.PlayerItemConfigIdSlotDictionary[item.Key]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
 
     [MemoryPackable]
@@ -583,7 +619,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
 
         public bool Equals(PlayerBagItem other)
         {
-            return other != null && ItemId == other.ItemId && EquipmentPart == other.EquipmentPart && ConfigId == other.ConfigId && PlayerItemType == other.PlayerItemType && State == other.State && IndexSlot == other.IndexSlot && MaxStack == other.MaxStack;
+            return other != null && ItemId == other.ItemId && EquipmentPart == other.EquipmentPart && ConfigId == other.ConfigId && PlayerItemType == other.PlayerItemType && State == other.State && IndexSlot == other.IndexSlot && MaxStack == other.MaxStack
+                && SkillId == other.SkillId ;
         }
 
         public override bool Equals(object obj)
@@ -650,7 +687,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
 
         public bool Equals(PlayerBagSlotItem other)
         {
-            return other != null && IndexSlot == other.IndexSlot && ConfigId == other.ConfigId && Count == other.Count && MaxStack == other.MaxStack;
+            return other != null && IndexSlot == other.IndexSlot && ConfigId == other.ConfigId && Count == other.Count && MaxStack == other.MaxStack
+                && ItemIds.SetEquals(other.ItemIds) && State == other.State && PlayerItemType == other.PlayerItemType && EquipmentPart == other.EquipmentPart && SkillId == other.SkillId && IsEnable == other.IsEnable;
         }
 
         public override bool Equals(object obj)

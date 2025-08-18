@@ -77,6 +77,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             return playerItemState;
         }
         
+        public bool IsPlayerBagFull(int connectionId)
+        {
+            var playerItemState = GetState<PlayerItemState>(connectionId);
+            return playerItemState.SlotCount == playerItemState.PlayerItemConfigIdSlotDictionary.Count;
+        }
+        
         public Dictionary<int, PlayerBagSlotItem> GetPlayerBagSlotItems(int connectionId)
         {
             var playerItemState = GetState<PlayerItemState>(connectionId);

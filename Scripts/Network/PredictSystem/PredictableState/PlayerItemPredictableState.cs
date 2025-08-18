@@ -37,7 +37,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         public override bool NeedsReconciliation<T>(T state)
         {
-            return state is not null && state is PlayerItemState;
+            if (state is not null && state is PlayerItemState playerItemState)
+            {
+                return !playerItemState.Equals(CurrentState);
+            }
+            return true;
         }
 
         public void RegisterState(PlayerItemState state)
@@ -257,10 +261,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             {
                 var playerBagSlotItem = kvp.Value;
                 var itemConfig = _itemConfig.GetGameItemData(playerBagSlotItem.ConfigId);
-                var mainProperty = GameStaticExtensions.GetBuffEffectDesc(playerBagSlotItem.MainIncreaseDatas);
-                var randomBuffEffectDesc = GameStaticExtensions.GetRandomBuffEffectDesc(playerBagSlotItem.RandomIncreaseDatas);
+                var mainProperty = GameStaticExtensions.GetBuffEffectDesc(playerBagSlotItem.MainIncreaseDatas, true);
+                var randomBuffEffectDesc = GameStaticExtensions.GetRandomBuffEffectDesc(playerBagSlotItem.RandomIncreaseDatas, true);
                 var passiveProperty =
-                    GameStaticExtensions.GetBuffEffectDesc(playerBagSlotItem.PassiveAttributeIncreaseDatas);
+                    GameStaticExtensions.GetBuffEffectDesc(playerBagSlotItem.PassiveAttributeIncreaseDatas, true);
                 var bagItem = new BagItemData
                 {
                     ItemName = itemConfig.name,

@@ -222,7 +222,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             
             var countSliderButtonGroupData = new CountSliderButtonGroupData
             {
-                MinCount = Mathf.Min(1, randomShopItemData.RemainingCount),
+                MinCount = Mathf.Max(1, randomShopItemData.RemainingCount),
                 MaxCount = randomShopItemData.RemainingCount,
                 Callback = x =>
                 {
@@ -292,7 +292,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             priceText.text = $"价格: {bagItemData.Price * bagItemData.SellRatio}G";
             var countSliderButtonGroupData = new CountSliderButtonGroupData
             {
-                MinCount = Mathf.Min(1, bagItemData.Stack),
+                MinCount = Mathf.Max(1, bagItemData.Stack),
                 MaxCount = bagItemData.Stack,
                 Callback = x =>
                 {
@@ -374,7 +374,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                             equipButton.gameObject.SetActive(!isLocked && bagItemData.PlayerItemType.IsEquipment());
                             lockButton.gameObject.SetActive(true);
                             sellCountSlider.gameObject.SetActive(false);
-                            enableButton.gameObject.SetActive(bagItemData.PlayerItemType.IsEquipment());
+                            enableButton.gameObject.SetActive(bagItemData.PlayerItemType.IsEquipment() && bagItemData.SkillId != 0);
                             break;
                         case ItemDetailsType.Equipment:
                             useCountSlider.gameObject.SetActive(false);

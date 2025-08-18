@@ -54,6 +54,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                 SetCount((int)x, _countSliderButtonGroupData.MaxCount);
             });
             slider.value = 1;
+            slider.gameObject.SetActive(_countSliderButtonGroupData.MinCount > 1);
         }
 
         private void SetCount(int count, int maxCount)
@@ -73,7 +74,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                     button.interactable = count > 0 && _countSliderButtonGroupData.CurrentGold >= totalPrice;
                     break;
             }
-            slider.gameObject.SetActive(_countSliderButtonGroupData.PlayerItemType == PlayerItemType.Consume || _countSliderButtonGroupData.PlayerItemType == PlayerItemType.Item);
+            priceText.gameObject.SetActive(_countSliderButtonGroupData.ShowPrice);
         }
     }
 }

@@ -84,6 +84,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         {
             if (!Constant.IsServer)
                 return;
+            var itemSyncSystem = Constant.GameSyncManager.GetSyncSystem<PlayerItemSyncSystem>(CommandType.Item);
+            var playerBagFull = itemSyncSystem.IsPlayerBagFull(connectionId);
+            if (playerBagFull)
+            {
+                return;
+            }
             if (!state.RandomShopItems.TryGetValue(shopId, out var randomShopData))
             {
                 Debug.LogError($"ShopId {shopId} does not exist in shop data");
