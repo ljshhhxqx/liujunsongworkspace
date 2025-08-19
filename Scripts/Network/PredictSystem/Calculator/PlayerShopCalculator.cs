@@ -7,6 +7,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.UI.UIBase;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
@@ -88,6 +89,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var playerBagFull = itemSyncSystem.IsPlayerBagFull(connectionId);
             if (playerBagFull)
             {
+                Constant.UIManager.ShowTips("背包已满，无法购买");
                 return;
             }
             if (!state.RandomShopItems.TryGetValue(shopId, out var randomShopData))
@@ -238,5 +240,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public bool IsServer;
         public bool IsClient;
         public bool IsLocalPlayer;
+        public UIManager UIManager;
     }
 }

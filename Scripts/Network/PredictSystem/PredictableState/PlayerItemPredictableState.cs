@@ -264,7 +264,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 var mainProperty = GameStaticExtensions.GetBuffEffectDesc(playerBagSlotItem.MainIncreaseDatas, true);
                 var randomBuffEffectDesc = GameStaticExtensions.GetRandomBuffEffectDesc(playerBagSlotItem.RandomIncreaseDatas, true);
                 var passiveProperty =
-                    GameStaticExtensions.GetBuffEffectDesc(playerBagSlotItem.PassiveAttributeIncreaseDatas, true);
+                    GameStaticExtensions.GetBuffEffectDesc(playerBagSlotItem.PassiveAttributeIncreaseDatas, false, true);
                 var bagItem = new BagItemData
                 {
                     ItemName = itemConfig.name,

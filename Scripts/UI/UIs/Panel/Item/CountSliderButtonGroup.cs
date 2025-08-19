@@ -54,7 +54,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                 SetCount((int)x, _countSliderButtonGroupData.MaxCount);
             });
             slider.value = 1;
-            slider.gameObject.SetActive(_countSliderButtonGroupData.MinCount > 1);
+            slider.gameObject.SetActive(_countSliderButtonGroupData.MinCount > 1 && _countSliderButtonGroupData.ButtonType != ButtonType.Use);
         }
 
         private void SetCount(int count, int maxCount)

@@ -148,16 +148,20 @@ namespace HotUpdate.Scripts.Tool.Static
             attributeIncreaseData.header = header;
             return GetBuffEffectDesc(attributeIncreaseData);
         }
-        public static string GetBuffEffectDesc(List<AttributeIncreaseData> extraDatas, bool showHeader = false)
+        public static string GetBuffEffectDesc(List<AttributeIncreaseData> extraDatas, bool showMainHeader = false, bool passiveHeader = false)
         {
             if (extraDatas == null || extraDatas.Count == 0)
             {
                 return null;
             }
             var str = new StringBuilder();
-            if (showHeader)
+            if (showMainHeader)
             {
                 str.Append("主要属性:");
+            }
+            if (passiveHeader)
+            {
+                str.Append("附加属性:");
             }
             foreach (var data in extraDatas)
             {
@@ -214,7 +218,7 @@ namespace HotUpdate.Scripts.Tool.Static
             var str = new StringBuilder();
             if (showHeader)
             {
-                str.Append("附加属性(需要特定条件触发):");
+                str.Append("附加属性:");
             }
             foreach (var data in extraDatas)
             {
@@ -239,7 +243,7 @@ namespace HotUpdate.Scripts.Tool.Static
             var increaseDesc = header.buffIncreaseType switch
             {
                 BuffIncreaseType.Base => "基础",
-                BuffIncreaseType.Multiplier => "%",
+                BuffIncreaseType.Multiplier => "百分比",
                 BuffIncreaseType.Extra => "额外",
                 BuffIncreaseType.CorrectionFactor => "总",
                 BuffIncreaseType.Current => "当前",
@@ -270,7 +274,7 @@ namespace HotUpdate.Scripts.Tool.Static
             var increaseDesc = header.buffIncreaseType switch
             {
                 BuffIncreaseType.Base => "基础",
-                BuffIncreaseType.Multiplier => "%",
+                BuffIncreaseType.Multiplier => "百分比",
                 BuffIncreaseType.Extra => "额外",
                 BuffIncreaseType.CorrectionFactor => "总",
                 BuffIncreaseType.Current => "当前",

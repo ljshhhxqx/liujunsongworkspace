@@ -211,6 +211,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             var shopConstant = PlayerShopCalculator.Constant;
             shopConstant.IsServer = isServer;
             shopConstant.IsClient = isClient;
+            shopConstant.UIManager = _uiManager;
             shopConstant.IsLocalPlayer = isLocalPlayer;
             PlayerShopCalculator.SetConstant(shopConstant);
             var equipConstant = PlayerEquipmentCalculator.Constant;

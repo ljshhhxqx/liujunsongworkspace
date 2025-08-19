@@ -190,7 +190,7 @@ namespace HotUpdate.Scripts.UI.UIBase
 
                 if (ui.TryGetComponent<BlockUIComponent>(out var resourceComponent))
                 {
-                    resourceComponent.SetUIType(uIType);
+                    resourceComponent.SetUIType(uIType, ui.CanvasType);
                     _injector.Inject(resourceComponent);
                 }
                 _injector.Inject(ui);

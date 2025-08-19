@@ -11,6 +11,7 @@ namespace UI.UIBase
     public class BlockUIComponent : MonoBehaviour
     {
         private UIType _uIType;
+        private UICanvasType _uiCanvasType;
         private UIManager _uiManager;
         private Image _blockImage;
         private RectTransform _panelRectTransform;
@@ -80,10 +81,11 @@ namespace UI.UIBase
             _uiManager.CloseUI(_uIType); // 或者使用其他方式隐藏/销毁面板
         }
         
-        public void SetUIType(UIType uiType)
+        public void SetUIType(UIType uiType, UICanvasType uiCanvasType)
         {
             if (_uIType != UIType.None) return;
             _uIType = uiType;
+            _uiCanvasType = uiCanvasType;
         }
     }
 }
