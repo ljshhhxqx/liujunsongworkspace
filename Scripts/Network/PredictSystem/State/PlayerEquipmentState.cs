@@ -104,7 +104,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             for (int i = 0; i < equipmentState.EquipmentDatas.Count; i++)
             {
                 var equipment = equipmentState.EquipmentDatas[i];
-                if (equipment.ConditionChecker == null)
+                if (equipment.ConditionChecker == null || !equipment.ConditionChecker.GetCooldownHeader().IsCooldown())
                 {
                     continue;
                 }
@@ -115,8 +115,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             }
         }
 
-        public static bool CheckConditions<T>(ref PlayerEquipmentState equipmentState, T checkerParameter) where T : IConditionCheckerParameters
+        public static bool CheckConditions<T>(ref PlayerEquipmentState equipmentState, T checkerParameter, out IConditionChecker conditionChecker) where T : IConditionCheckerParameters
         {
+            conditionChecker = null;
             for (int i = 0; i < equipmentState.EquipmentDatas.Count; i++)
             {
                 var checker = equipmentState.EquipmentDatas[i].ConditionChecker;
@@ -125,6 +126,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 if (checkerParameterHeader.TriggerType == conditionConfigData.TriggerType)
                 {
                     var checkOver = checker.Check(ref checker, checkerParameter);
+                    conditionChecker = checker;
                     return checkOver;
                 }
             }

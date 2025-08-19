@@ -115,7 +115,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var data = triggerCommand.TriggerData;
             var configId = PlayerItemCalculator.GetItemConfigId(equipmentPart, equipmentConfigId);
             var checkParams = NetworkCommandExtensions.DeserializeBattleCondition(data);
-            var isCheckPassed = PlayerEquipmentState.CheckConditions(ref playerEquipmentState, checkParams);
+            var isCheckPassed = PlayerEquipmentState.CheckConditions(ref playerEquipmentState, checkParams, out var conditionChecker);
             if (isCheckPassed)
             {
                 var itemData = GameItemManager.GetGameItemData(itemId);
@@ -128,6 +128,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     PlayerItemType = itemData.ItemType,
                     IsEquipped = true,
                     TargetIds = playerIds,
+                    CountDownTime = conditionChecker.GetConditionCheckerHeader().Interval,
                 };
                 Constant.GameSyncManager.EnqueueServerCommand(propertyEquipPassiveCommand);
             }

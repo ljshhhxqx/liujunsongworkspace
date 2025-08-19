@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AOTScripts.Data;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
@@ -23,6 +24,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         protected override ISyncPropertyState CurrentState { get; set; }
         protected override CommandType CommandType => CommandType.Item;
         private ItemConfig _itemConfig;
+        private BattleEffectConditionConfig _battleEffectConditionConfig;
         private BindingKey _itemBindKey;
         private BindingKey _equipBindKey;
 
@@ -31,6 +33,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             base.Init(gameSyncManager, configProvider);
             _itemConfig = configProvider.GetConfig<ItemConfig>();
+            _battleEffectConditionConfig = configProvider.GetConfig<BattleEffectConditionConfig>();
             _itemBindKey = new BindingKey(UIPropertyDefine.BagItem);
             _equipBindKey = new BindingKey(UIPropertyDefine.EquipmentItem);
         }
@@ -261,10 +264,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             {
                 var playerBagSlotItem = kvp.Value;
                 var itemConfig = _itemConfig.GetGameItemData(playerBagSlotItem.ConfigId);
+                var battleCondition = PlayerItemCalculator.GetBattleEffectConditionConfigData(itemConfig.id);
                 var mainProperty = GameStaticExtensions.GetBuffEffectDesc(playerBagSlotItem.MainIncreaseDatas, true);
                 var randomBuffEffectDesc = GameStaticExtensions.GetRandomBuffEffectDesc(playerBagSlotItem.RandomIncreaseDatas, true);
-                var passiveProperty =
-                    GameStaticExtensions.GetBuffEffectDesc(playerBagSlotItem.PassiveAttributeIncreaseDatas, false, true);
+                var passiveProperty = GameStaticExtensions.GetBuffEffectDesc(playerBagSlotItem.PassiveAttributeIncreaseDatas, false, true);
+                var conditionStr = "";
+                if (itemConfig.itemType.IsEquipment() && !string.IsNullOrEmpty(passiveProperty) && battleCondition.targetType != ConditionTargetType.None)
+                {
+                    var increaseData = playerBagSlotItem.PassiveAttributeIncreaseDatas[0];
+                    conditionStr = _battleEffectConditionConfig.ToLocalizedString(battleCondition,
+                        new EquipmentPropertyData
+                        {
+                            propertyType = increaseData.header.propertyType,
+                            increaseData = increaseData
+                        });
+                }
+
                 var bagItem = new BagItemData
                 {
                     ItemName = itemConfig.name,
@@ -276,6 +291,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     Description = itemConfig.desc,
                     PropertyDescription = mainProperty ?? "",
                     RandomDescription = randomBuffEffectDesc ?? "",
+                    ConditionDescription = conditionStr,
                     PassiveDescription = passiveProperty,
                     PlayerItemType = itemConfig.itemType,
                     IsEquip = playerBagSlotItem.State == ItemState.IsEquipped,
@@ -284,7 +300,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     Price = itemConfig.price,
                     SellRatio = itemConfig.sellPriceRatio,
                     SkillId = playerBagSlotItem.SkillId,
-                    IsEnable = playerBagSlotItem.IsEnable,
+                    IsEnable = playerBagSlotItem.IsEnableSkill,
                     EquipmentPart = playerBagSlotItem.EquipmentPart,
                     OnUseItem = OnUseItem,
                     OnDropItem = OnDropItem,

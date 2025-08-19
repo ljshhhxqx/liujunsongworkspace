@@ -185,8 +185,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public string Description;
         //属性描述
         public string PropertyDescription;
-        //装备被动描述
+        //消耗品随机效果描述
         public string RandomDescription;
+        //装备被动触发条件描述
+        public string ConditionDescription;
         //装备被动属性
         public string PassiveDescription;
         public PlayerItemType PlayerItemType;

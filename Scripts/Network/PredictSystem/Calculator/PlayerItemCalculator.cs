@@ -118,6 +118,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
         }
 
+        public static BattleEffectConditionConfigData GetBattleEffectConditionConfigData(int itemConfigId)
+        {
+            var itemConfigData = Constant.ItemConfig.GetGameItemData(itemConfigId);
+            var equipId = GetEquipmentConfigId(itemConfigData.itemType, itemConfigId);
+            return GetBattleEffectConditionConfigData(equipId, itemConfigData.equipmentPart);
+        }
+
         public static BattleEffectConditionConfigData GetBattleEffectConditionConfigData(int equipConfigId,
             EquipmentPart part)
         {
@@ -366,7 +373,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
 
             var skillConfig = Constant.SkillConfig.GetSkillData(skillId);
-            bagItem.IsEnable = isEnable;
+            bagItem.IsEnableSkill = isEnable;
             playerItemState.PlayerItemConfigIdSlotDictionary[slotIndex] = bagItem;
             var skillEnableCommand = new SkillLoadCommand
             {

@@ -682,13 +682,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         [MemoryPackOrder(11)]
         public int SkillId;
         [MemoryPackOrder(12)]
-        public bool IsEnable;
+        public bool IsEnableSkill;
 
 
         public bool Equals(PlayerBagSlotItem other)
         {
             return other != null && IndexSlot == other.IndexSlot && ConfigId == other.ConfigId && Count == other.Count && MaxStack == other.MaxStack
-                && ItemIds.SetEquals(other.ItemIds) && State == other.State && PlayerItemType == other.PlayerItemType && EquipmentPart == other.EquipmentPart && SkillId == other.SkillId && IsEnable == other.IsEnable;
+                && ItemIds.SetEquals(other.ItemIds) && State == other.State && PlayerItemType == other.PlayerItemType && EquipmentPart == other.EquipmentPart && SkillId == other.SkillId && IsEnableSkill == other.IsEnableSkill;
         }
 
         public override bool Equals(object obj)

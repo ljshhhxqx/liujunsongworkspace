@@ -21,6 +21,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         [SerializeField] private TextMeshProUGUI stackText;
         [SerializeField] private TextMeshProUGUI descriptionText;
         [SerializeField] private TextMeshProUGUI propertyText;
+        [SerializeField] private TextMeshProUGUI conditionText;
         [SerializeField] private TextMeshProUGUI passiveEffectText;
         [SerializeField] private TextMeshProUGUI priceText;
         
@@ -282,10 +283,16 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             {
                 propertyText.text = bagItemData.RandomDescription;
             }
+
+            conditionText.gameObject.SetActive(!string.IsNullOrEmpty(bagItemData.ConditionDescription));
+            if (conditionText.gameObject.activeSelf)
+            {
+                conditionText.text = bagItemData.ConditionDescription;
+            }
             
             // 被动效果（仅装备类显示）
             var showPassive = bagItemData.PlayerItemType.IsEquipment();
-            passiveEffectText.gameObject.SetActive(showPassive);
+            passiveEffectText.gameObject.SetActive(showPassive && !conditionText.gameObject.activeSelf);
             passiveEffectText.text = showPassive ? bagItemData.PassiveDescription : "";
 
             // 价格信息

@@ -434,14 +434,14 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             }
             
             // 基础条件描述
-            sb.Append($"在{{{GetTriggerTypeDesc(data.triggerType)}}}时，");
+            sb.Append($"在{GetTriggerTypeDesc(data.triggerType)}时，");
     
             // 条件参数描述（过滤无效条件）
             var conditionDesc = GetConditionDesc(data.conditionParam);
             if (!string.IsNullOrEmpty(conditionDesc)) sb.Append(conditionDesc);
     
             // 概率和冷却
-            sb.Append($"有{{{data.probability}%}}的概率为");
+            sb.Append($"有{data.probability}%的概率为");
     
             // 目标描述
             sb.Append(GetTargetDesc(data.targetCount, data.targetType));
@@ -450,7 +450,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             sb.Append(GetBuffEffectDesc(effect));
     
             // 冷却和持续时间
-            sb.Append($"，冷却{{{data.interval}秒}}");
+            sb.Append($"持续{data.interval}秒，冷却{data.interval}秒");
 
             return sb.ToString();
         }
@@ -513,7 +513,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         {
             var propName = EnumHeaderParser.GetHeader(effect.propertyType);
 
-            var operation = effect.increaseData.operationType switch
+            var operation = effect.increaseData.header.buffOperationType switch
             {
                 BuffOperationType.Add => "增加",
                 BuffOperationType.Subtract => "减少", 
@@ -521,10 +521,10 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 BuffOperationType.Divide => "降低",
                 _ => "调整"
             };
-            var increaseDesc = effect.increaseData.increaseType switch
+            var increaseDesc = effect.increaseData.header.buffIncreaseType switch
             {
                 BuffIncreaseType.Base => "基础",
-                BuffIncreaseType.Multiplier => "",
+                BuffIncreaseType.Multiplier => "百分比",
                 BuffIncreaseType.Extra => "额外",
                 BuffIncreaseType.CorrectionFactor => "总",
                 BuffIncreaseType.Current => "当前",
@@ -536,7 +536,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
         private string GetDynamicValueDesc(EquipmentPropertyData effect)
         {
-            return effect.increaseData.increaseType switch
+            return effect.increaseData.header.buffIncreaseType switch
             {
                 BuffIncreaseType.Multiplier => $"{effect.increaseData.increaseValue:P0}",
                 BuffIncreaseType.CorrectionFactor => $"{effect.increaseData.increaseValue:P0}",

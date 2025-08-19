@@ -534,6 +534,7 @@ MonoBehaviour:
   stackText: {fileID: 1804705449834785352}
   descriptionText: {fileID: 2163803819925497792}
   propertyText: {fileID: 2460324343238978002}
+  conditionText: {fileID: 359584396336055412}
   passiveEffectText: {fileID: 1093880623957102740}
   priceText: {fileID: 7580304199429844410}
   equipButton: {fileID: 6629593518271627234}
@@ -5843,8 +5844,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 32.98, y: -299.98163}
-  m_SizeDelta: {x: 65.96, y: 10.529253}
+  m_AnchoredPosition: {x: 353.41364, y: -344.777}
+  m_SizeDelta: {x: 706.8276, y: 100.12}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3813230538344311833
 CanvasRenderer:
@@ -5874,7 +5875,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u89E6\u53D1\u6761\u4EF6:"
+  m_text: 1111
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b26dee8243b06ad40ba9783c8053fd26, type: 2}
   m_sharedMaterial: {fileID: 608136171549705014, guid: b26dee8243b06ad40ba9783c8053fd26, type: 2}
@@ -5883,8 +5884,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4278501016
+  m_fontColor: {r: 0.59607846, g: 0.74509805, b: 0.015686275, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -5909,7 +5910,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 512
+  m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -5917,7 +5918,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 0
+  m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}

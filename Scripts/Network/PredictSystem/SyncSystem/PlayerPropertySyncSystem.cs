@@ -569,18 +569,30 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
         }
 
-        private void HandleEquipPropertyUnload(int targetId, int equipConfigId, int equipItemId)
+        private void HandleEquipPropertyUnload(int targetId, int equipConfigId, int equipItemId, int index = 0)
         {
             var playerState = GetState<PlayerPredictablePropertyState>(targetId);
             var changed = false;
-            for (int i = 0; i < _activeEquipments.Count; i++)
+            if (index == 0)
             {
-                var equipment = _activeEquipments[i];
+                for (int i = 0; i < _activeEquipments.Count; i++)
+                {
+                    var equipment = _activeEquipments[i];
+                    if (equipment.equipItemConfigId == equipConfigId && equipment.equipItemId == equipItemId)
+                    {
+                        _activeEquipments = _activeEquipments.RemoveAt(i);
+                        changed = true;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                var equipment = _activeEquipments[index];
                 if (equipment.equipItemConfigId == equipConfigId && equipment.equipItemId == equipItemId)
                 {
-                    _activeEquipments = _activeEquipments.RemoveAt(i);
+                    _activeEquipments = _activeEquipments.SetItem(index, new EquipmentData());
                     changed = true;
-                    break;
                 }
             }
 
@@ -841,7 +853,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             Debug.Log($"PlayerPropertySyncSystem: Equipment {equipItemConfigId} {equipItemId} not found in passive buffs list");
         }
 
-        private void HandleEquipPassiveProperty(int targetId, BuffExtraData buffExtraData, int equipItemConfigId, int equipItemId, PlayerItemType playerItemType, float weight = 1)
+        private void HandleEquipPassiveProperty(int targetId, BuffExtraData buffExtraData, int equipItemConfigId, int equipItemId, PlayerItemType playerItemType, float weight = 1, float interval = 0)
         {
             var playerState = GetState<PlayerPredictablePropertyState>(targetId);
             var buff = buffExtraData.buffType == BuffType.Constant ? _constantBuffConfig.GetBuff(buffExtraData) : _randomBuffConfig.GetBuff(buffExtraData, weight);
@@ -852,6 +864,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 playerItemType = playerItemType,
                 equipConfigId = equipItemConfigId,
                 equipItemId = equipItemId,
+                Interval = interval
             };
             var propertyCalculator = playerState.MemoryProperty[newBuff.BuffData.propertyType];
             playerState.MemoryProperty[newBuff.BuffData.propertyType] = HandleBuffInfo(propertyCalculator, newBuff);
@@ -1158,6 +1171,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             UpdateBuffs(GameSyncManager.ServerUpdateInterval);
             UpdateSkillBuffs(GameSyncManager.ServerUpdateInterval);
+            UpdatePassiveBuffs(GameSyncManager.ServerUpdateInterval);
             _timeBuffTimer += GameSyncManager.ServerUpdateInterval;
             if (_timeBuffTimer >= 0.3f)
             {
@@ -1166,6 +1180,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
 
             base.OnBroadcastStateUpdate();
+        }
+
+        private void UpdatePassiveBuffs(float serverUpdateInterval)
+        {
+            if (_passiveBuffs.Count <= 0)
+            {
+                return;
+            }
+
+            for (var i = _passiveBuffs.Count - 1; i >= 0; i--)
+            {
+                if(_passiveBuffs[i].IsPermanent)
+                    continue;
+                if (!_passiveBuffs[i].IsActive)
+                {
+                    HandleEquipPropertyUnload(_passiveBuffs[i].BuffData.TargetPlayerId, _passiveBuffs[i].equipConfigId, _passiveBuffs[i].equipItemId, i);
+                    continue;
+                }
+                _passiveBuffs = _passiveBuffs.SetItem(i, _passiveBuffs[i].Update(serverUpdateInterval));
+            }
         }
 
         private void UpdateSkillBuffs(float deltaTime)
@@ -1404,6 +1438,25 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             public int equipConfigId;
             public int equipItemId;
             public BuffBase BuffData;
+            public float Interval;
+            public float Timer;
+            
+            public bool IsPermanent => Interval == 0;
+            
+            public bool IsActive => Timer < Interval;
+
+            public EquipmentPassiveData Update(float serverUpdateInterval)
+            {
+                return new EquipmentPassiveData()
+                {
+                    playerItemType = playerItemType,
+                    equipConfigId = equipConfigId,
+                    equipItemId = equipItemId,
+                    BuffData = BuffData.Update(serverUpdateInterval),
+                    Interval = Interval,
+                    Timer = Timer + serverUpdateInterval
+                };
+            }
         }
     }
 

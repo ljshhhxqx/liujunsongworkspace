@@ -829,6 +829,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         public string EquipProperty;
         [MemoryPackOrder(6)]
         public int[] TargetIds;
+
+        [MemoryPackOrder(7)]
+        public float CountDownTime;
         public NetworkCommandType GetCommandType() => NetworkCommandType.PropertyEquipmentPassive;
         
         public NetworkCommandHeader GetHeader()
@@ -838,7 +841,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return EquipItemConfigId > 0 && EquipItemId > 0 && PlayerItemType >= 0 && PlayerItemType <= PlayerItemType.Score && !string.IsNullOrEmpty(EquipProperty);
+            return EquipItemConfigId > 0 && EquipItemId > 0 && PlayerItemType <= PlayerItemType.Score && !string.IsNullOrEmpty(EquipProperty) && EquipProperty.Length > 0 && TargetIds!= null && TargetIds.Length > 0;
         }
 
         public void Init()
