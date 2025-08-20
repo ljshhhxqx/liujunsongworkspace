@@ -327,15 +327,21 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     {
         None,
         //暴击率、暴击伤害
+        [Header("头肩")]
         Head,
         //生命值、防御力
+        [Header("上衣")]
         Body,
         //体力值、体力恢复速度
+        [Header("下装")]
         Leg,
         //移动速度、攻击速度
+        [Header("鞋")]
         Feet,
         //额外攻击力、生命恢复
+        [Header("腰带")]
         Waist,
+        [Header("武器")]
         Weapon,
     }
 

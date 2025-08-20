@@ -1,5 +1,7 @@
 ﻿using System;
+using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using TMPro;
 using UniRx;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -15,6 +17,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         private GameObject lockIcon;    // 锁定图标的GameObject组件
         [SerializeField]
         private Image qualityImage;        // 显示物品图标的Image组件
+
+        [SerializeField] private TextMeshProUGUI equipPart;
         private BagItemData _currentItem;              
         private EquipmentPart _equipmentPart;
         private readonly Subject<PointerEventData> _pointerClickObservable = new Subject<PointerEventData>();
@@ -43,8 +47,13 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         {
             var itemIsNull = _currentItem.Equals(default);
             itemImage.sprite = itemIsNull ? null : _currentItem.Icon;
-            qualityImage.sprite = itemIsNull ? null : _currentItem.QualityIcon;
+            if (!itemIsNull)
+            {
+                qualityImage.sprite = _currentItem.QualityIcon;
+            }
             itemImage.enabled = !itemIsNull;
+            equipPart.text = EnumHeaderParser.GetHeader(_currentItem.EquipmentPart);
+            equipPart.enabled = itemIsNull;
             lockIcon.SetActive(_currentItem.IsLock);
         }
 

@@ -1104,4 +1104,4 @@ MonoBehaviour:
   shopConstantData:
     onceEachTypeCount: 2
     onceCostGold: 25
-    shopEquipPassiveDescription: "\u8D2D\u4E70\u540E\uFF0C\u968F\u673A\u83B7\u5F97\u5C5E\u6027"
+    shopEquipPassiveDescription: "\u8D2D\u4E70\u540E\uFF0C\u968F\u673A\u83B7\u5F97\u9644\u52A0\u5C5E\u6027"

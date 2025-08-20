@@ -845,7 +845,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return EquipItemConfigId > 0 && EquipItemId > 0 && PlayerItemType <= PlayerItemType.Score && !string.IsNullOrEmpty(EquipProperty) && EquipProperty.Length > 0 && TargetIds!= null && TargetIds.Length > 0;
+            return EquipItemConfigId > 0 && EquipItemId > 0 && PlayerItemType <= PlayerItemType.Score;
         }
 
         public void Init()
@@ -889,7 +889,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsValid()
         {
-            return EquipConfigId > 0 && EquipItemId > 0 && ItemConfigId > 0 && EquipmentPart >= 0 && EquipmentPart <= EquipmentPart.Weapon;
+            return EquipConfigId > 0 && EquipItemId > 0 && ItemConfigId > 0 && EquipmentPart <= EquipmentPart.Weapon;
         }
         public void Init()
         {

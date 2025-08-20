@@ -43,13 +43,63 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 conditionData.interval = float.Parse(text[3]);
                 conditionData.targetType = (ConditionTargetType)Enum.Parse(typeof(ConditionTargetType), text[4]);
                 conditionData.targetCount = int.Parse(text[5]);
-                conditionData.conditionParam = JsonConvert.DeserializeObject<IConditionParam>(text[6]);
-                conditionData.buffWeight = float.Parse(text[7]);
-                conditionData.buffIncreaseType = (BuffIncreaseType)Enum.Parse(typeof(BuffIncreaseType), text[8]);
+                conditionData.buffWeight = float.Parse(text[6]);
+                conditionData.buffIncreaseType = (BuffIncreaseType)Enum.Parse(typeof(BuffIncreaseType), text[7]);
+                if (text[8] == "null")
+                {
+                    conditionData.conditionParam = null;
+                }
+                else
+                {
+                    switch (conditionData.triggerType)
+                    {
+                        case TriggerType.Default:
+                        case TriggerType.None:
+                            conditionData.conditionParam = null;
+                            break;
+                        case TriggerType.OnAttackHit:
+                            conditionData.conditionParam = JsonConvert.DeserializeObject<AttackHitConditionParam>(text[8]);
+                            break;
+                        case TriggerType.OnAttack:
+                            conditionData.conditionParam = JsonConvert.DeserializeObject<AttackConditionParam>(text[8]);
+                            break;
+                        case TriggerType.OnSkillHit:
+                            conditionData.conditionParam = JsonConvert.DeserializeObject<SkillHitConditionParam>(text[8]);
+                            break;
+                        case TriggerType.OnMove:
+                            conditionData.conditionParam = JsonConvert.DeserializeObject<MoveConditionParam>(text[8]);
+                            break;
+                        case TriggerType.OnSkillCast:
+                            conditionData.conditionParam = JsonConvert.DeserializeObject<SkillCastConditionParam>(text[8]);
+                            break;
+                        case TriggerType.OnTakeDamage:
+                            conditionData.conditionParam = JsonConvert.DeserializeObject<TakeDamageConditionParam>(text[8]);
+                            break;
+                        case TriggerType.OnKill:
+                            conditionData.conditionParam = JsonConvert.DeserializeObject<KillConditionParam>(text[8]);
+                            break;
+                        case TriggerType.OnHpChange:
+                            conditionData.conditionParam = JsonConvert.DeserializeObject<HpChangeConditionParam>(text[8]);
+                            break;
+                        case TriggerType.OnManaChange:
+                            conditionData.conditionParam = JsonConvert.DeserializeObject<MpChangeConditionParam>(text[8]);
+                            break;
+                        case TriggerType.OnCriticalHit:
+                            conditionData.conditionParam = JsonConvert.DeserializeObject<CriticalHitConditionParam>(text[8]);
+                            break;
+                        case TriggerType.OnDodge:
+                            conditionData.conditionParam = JsonConvert.DeserializeObject<DodgeConditionParam>(text[8]);
+                            break;
+                        case TriggerType.OnDeath:
+                            conditionData.conditionParam = JsonConvert.DeserializeObject<DeathConditionParam>(text[8]);
+                            break;
+                    }
+                }
+                
                 conditionList.Add(conditionData);
             }
         }
-        
+
         public BattleEffectConditionConfigData GetConditionData(int id)
         {
             if (ConditionConfigDatas.TryGetValue(id, out var data))
@@ -441,7 +491,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             if (!string.IsNullOrEmpty(conditionDesc)) sb.Append(conditionDesc);
     
             // 概率和冷却
-            sb.Append($"有{data.probability}%的概率为");
+            sb.Append( Mathf.Approximately(data.probability, 100f) ? "为" : $"有{data.probability}%的概率为");
     
             // 目标描述
             sb.Append(GetTargetDesc(data.targetCount, data.targetType));
@@ -450,7 +500,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             sb.Append(GetBuffEffectDesc(effect));
     
             // 冷却和持续时间
-            sb.Append($"持续{data.interval}秒，冷却{data.interval}秒");
+            sb.Append($",持续{data.interval}秒,冷却{data.interval}秒");
 
             return sb.ToString();
         }
@@ -467,26 +517,41 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             return param switch
             {
                 AttackHitConditionParam p => FormatCondition(
-                    (p.hpRange.min > 0 || p.hpRange.max < 1, $"生命百分比在{p.hpRange}"),
-                    (p.damageRange.min > 0 || p.damageRange.max < 1, $"伤害值在{p.damageRange}"),
-                    (p.attackRangeType != default, $"攻击范围：{EnumHeaderParser.GetHeader(p.attackRangeType)}")),
+                    (p.hpRange.min > 0 && p.hpRange.max < 1,  $"生命百分比在{p.hpRange.ToString()}"),
+                    (p.damageRange.min > 0 && p.damageRange.max < 1, $"伤害值在{p.damageRange.ToString()}"),
+                    (p.attackRangeType != default && p.attackRangeType != AttackRangeType.None, $"攻击范围：{EnumHeaderParser.GetHeader(p.attackRangeType)}")),
+                
+                AttackConditionParam p => FormatCondition(
+                    (p.attackRangeType != default && p.attackRangeType != AttackRangeType.None, p.attackRangeType == AttackRangeType.None ? "" : $"攻击范围：{EnumHeaderParser.GetHeader(p.attackRangeType)}"),
+                    (p.attack > 0, $"攻击力{p.attack}")),
             
                 SkillCastConditionParam p => FormatCondition(
-                    (p.mpRange.min > 0 || p.mpRange.max < 1, $"消耗MP在{p.mpRange}"),
-                    (p.skillType != default, $"使用{EnumHeaderParser.GetHeader(p.skillType)}技能")),
+                    (p.mpRange.min > 0 && p.mpRange.max < 1, $"消耗MP在{p.mpRange.ToString()}"),
+                    (p.skillType != default && p.skillType != SkillType.None, $"使用{EnumHeaderParser.GetHeader(p.skillType)}技能")),
+                
+                SkillHitConditionParam p => FormatCondition(
+                    (p.damageRange.min > 0 && p.damageRange.max < 1, $"伤害值在{p.damageRange.ToString()}"),
+                    (p.hpRange.min > 0 && p.hpRange.max < 1, $"生命百分比在{p.hpRange.ToString()}")),
+                
+                HpChangeConditionParam p => FormatCondition(
+                    (p.hpRange.min > 0 && p.hpRange.max < 1, $"生命值百分比在{p.hpRange.ToString()}")),
+                
+                MpChangeConditionParam p => FormatCondition(
+                    (p.mpRange.min > 0 && p.mpRange.max < 1, $"MP百分比在{p.mpRange.ToString()}")),   
+                
             
                 TakeDamageConditionParam p => FormatCondition(
-                    (p.damageType != default, $"伤害类型：{EnumHeaderParser.GetHeader(p.damageType)}"),
-                    (p.damageRange.min > 0 || p.damageRange.max < 1, $"伤害值在{p.damageRange}"),
-                    (p.damageCastType != default, $"来自{EnumHeaderParser.GetHeader(p.damageCastType)}")),
+                    (p.damageType != default && p.damageType != DamageType.None, $"伤害类型：{EnumHeaderParser.GetHeader(p.damageType)}"),
+                    (p.damageRange.min > 0 && p.damageRange.max < 1, $"伤害值在{p.damageRange.ToString()}"),
+                    (p.damageCastType != default && p.damageCastType != DamageCastType.None, $"来自{EnumHeaderParser.GetHeader(p.damageCastType)}")),
             
                 KillConditionParam p => FormatCondition(
                     (p.targetCount > 0, $"击杀{p.targetCount}个目标"),
                     (p.timeWindow > 0, $"{p.timeWindow}秒内")),
             
                 CriticalHitConditionParam p => FormatCondition(
-                    (p.damageRange.min > 0 || p.damageRange.max < 1, $"暴击伤害在{p.damageRange}"),
-                    (p.hpRange.min > 0 || p.hpRange.max < 1, $"生命百分比在{p.hpRange}")),
+                    (p.damageRange.min > 0 && p.damageRange.max < 1, $"暴击伤害在{p.damageRange.ToString()}"),
+                    (p.hpRange.min > 0 && p.hpRange.max < 1, $"生命百分比在{p.hpRange.ToString()}")),
             
                 DodgeConditionParam p => FormatCondition(
                     (p.dodgeCount > 0, $"闪避{p.dodgeCount}次"),
@@ -500,12 +565,16 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         {
             var validConditions = conditions.Where(c => c.valid).Select(c => c.desc);
             var enumerable = validConditions as string[] ?? validConditions.ToArray();
-            return enumerable.Any() ? $"若{string.Join("且", enumerable)}" : "";
+            return enumerable.Any(x => !string.IsNullOrEmpty(x)) ? $"若{string.Join("且", enumerable)}" : "";
         }
 
         private string GetTargetDesc(int count, ConditionTargetType targetType)
         {
             var targetDesc = EnumHeaderParser.GetHeader(targetType) ?? targetType.ToString();
+            if (targetType == ConditionTargetType.Self)
+            {
+                return targetDesc;
+            }
             return $"{count}个{targetDesc}";
         }
 
@@ -523,15 +592,15 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             };
             var increaseDesc = effect.increaseData.header.buffIncreaseType switch
             {
-                BuffIncreaseType.Base => "基础",
-                BuffIncreaseType.Multiplier => "百分比",
-                BuffIncreaseType.Extra => "额外",
-                BuffIncreaseType.CorrectionFactor => "总",
-                BuffIncreaseType.Current => "当前",
+                BuffIncreaseType.Base => "[基础]",
+                BuffIncreaseType.Multiplier => "",
+                BuffIncreaseType.Extra => "[额外]",
+                BuffIncreaseType.CorrectionFactor => "[总]",
+                BuffIncreaseType.Current => "[当前]",
                 _ => "数值"
             };
 
-            return $"{operation}{{{GetDynamicValueDesc(effect)}的{increaseDesc}{propName}}}";
+            return $"{operation}[{GetDynamicValueDesc(effect)}]的{increaseDesc}[{propName}]";
         }
 
         private string GetDynamicValueDesc(EquipmentPropertyData effect)

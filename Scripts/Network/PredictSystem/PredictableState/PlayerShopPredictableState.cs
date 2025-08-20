@@ -18,6 +18,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
     {
         private ShopConfig _shopConfig;
         private ItemConfig _itemConfig;
+        private ConstantBuffConfig _constantBuffConfig;
+        private RandomBuffConfig _randomBuffConfig;
         private BindingKey _bindKey;
         private BindingKey _bagBindKey;
         protected override ISyncPropertyState CurrentState { get; set; }
@@ -29,6 +31,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             base.Init(gameSyncManager, configProvider);
             _shopConfig = configProvider.GetConfig<ShopConfig>();
             _itemConfig = configProvider.GetConfig<ItemConfig>();
+            _constantBuffConfig = configProvider.GetConfig<ConstantBuffConfig>();
+            _randomBuffConfig = configProvider.GetConfig<RandomBuffConfig>();
             _bindKey = new BindingKey(UIPropertyDefine.ShopItem);
             _bagBindKey = new BindingKey(UIPropertyDefine.BagItem);
             if (CurrentState is not PlayerShopState playerShopState)
@@ -96,8 +100,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 var item = kvp.Value;
                 var shopConfigData = _shopConfig.GetShopConfigData(item.ShopConfigId);
                 var itemConfigData = _itemConfig.GetGameItemData(item.ItemConfigId);
-                var mainProperty = GameStaticExtensions.GetBuffEffectDesc(item.MainIncreaseDatas.Items);
-                var randomBuffEffectDesc = GameStaticExtensions.GetRandomBuffEffectDesc(item.PassiveIncreaseDatas.Items);
+                var equipConfigData = PlayerItemCalculator.GetBattleEffectConditionConfigData(itemConfigData.id);
+
+                string mainProperty = "";
+                if (itemConfigData.itemType.IsEquipment())
+                {
+                    for (int i = 0; i < itemConfigData.buffExtraData.Length; i++)
+                    {
+                        var buff = _constantBuffConfig.GetBuffData(itemConfigData.buffExtraData[i].buffId);
+                        mainProperty += GameStaticExtensions.GetPropertyDesc(buff);
+                    }
+                }
+                else if (itemConfigData.itemType == PlayerItemType.Consume)
+                {
+                    mainProperty = itemConfigData.desc;
+                }
+                var randomBuffEffectDesc = "";
                 var randomShopData = new RandomShopItemData();
                 randomShopData.ShopConfigId = item.ShopConfigId;
                 randomShopData.ShopId = item.ShopId;
@@ -113,7 +131,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 randomShopData.SellPrice = item.SellPrice;
                 randomShopData.MainProperty = mainProperty ?? "";
                 randomShopData.RandomProperty = randomBuffEffectDesc ?? "";
-                randomShopData.PassiveDescription = item.ItemType.IsEquipment()
+                randomShopData.PassiveDescription = item.ItemType.IsEquipment() && equipConfigData.id != 0
                     ? _shopConfig.GetShopConstantData().shopEquipPassiveDescription
                     : ""; 
                 randomShopData.OnBuyItem = OnBuyItem;

@@ -40,7 +40,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 }
             }
             
-            Debug.Log($"GetBuffData: {buff.buffId} {buff.propertyType} {buff.duration} {buff.increaseDataList[0].ToString()}");
+            //Debug.Log($"GetBuffData: {buff.buffId} {buff.propertyType} {buff.duration} {buff.increaseDataList[0].ToString()}");
 
             return buff;
         }

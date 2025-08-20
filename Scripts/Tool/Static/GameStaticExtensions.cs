@@ -242,15 +242,15 @@ namespace HotUpdate.Scripts.Tool.Static
             };
             var increaseDesc = header.buffIncreaseType switch
             {
-                BuffIncreaseType.Base => "基础",
-                BuffIncreaseType.Multiplier => "百分比",
-                BuffIncreaseType.Extra => "额外",
-                BuffIncreaseType.CorrectionFactor => "总",
-                BuffIncreaseType.Current => "当前",
+                BuffIncreaseType.Base => "[基础]",
+                BuffIncreaseType.Multiplier => "",
+                BuffIncreaseType.Extra => "[额外]",
+                BuffIncreaseType.CorrectionFactor => "[总]",
+                BuffIncreaseType.Current => "[当前]",
                 _ => "数值"
             };
 
-            return $"{operation}[{GetDynamicValueDesc(extraData)}]的[{increaseDesc}][{propName}]";
+            return $"{operation}[{GetDynamicValueDesc(extraData)}]的{increaseDesc}[{propName}]";
         }
 
         private static bool IsPercentProperty(PropertyTypeEnum propertyType)
@@ -273,15 +273,15 @@ namespace HotUpdate.Scripts.Tool.Static
             };
             var increaseDesc = header.buffIncreaseType switch
             {
-                BuffIncreaseType.Base => "基础",
-                BuffIncreaseType.Multiplier => "百分比",
-                BuffIncreaseType.Extra => "额外",
-                BuffIncreaseType.CorrectionFactor => "总",
-                BuffIncreaseType.Current => "当前",
+                BuffIncreaseType.Base => "[基础]",
+                BuffIncreaseType.Multiplier => "",
+                BuffIncreaseType.Extra => "[额外]",
+                BuffIncreaseType.CorrectionFactor => "[总]",
+                BuffIncreaseType.Current => "[当前]",
                 _ => "数值"
             };
 
-            return $"{operation}[{GetDynamicValueDesc(effect)}]的[{increaseDesc}][{propName}]";
+            return $"{operation}[{GetDynamicValueDesc(effect)}]的{increaseDesc}[{propName}]";
         }
 
         public static string GetDynamicValueDesc(AttributeIncreaseData effect)

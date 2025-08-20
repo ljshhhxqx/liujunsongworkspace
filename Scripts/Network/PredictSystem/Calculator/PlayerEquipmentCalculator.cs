@@ -44,6 +44,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var configId = PlayerItemCalculator.GetItemConfigId(equipmentCommand.EquipmentPart, equipmentCommand.EquipmentConfigId);
             var itemConfig = Constant.ItemConfig.GetGameItemData(configId); 
             var itemId = equipmentCommand.ItemId;
+            var equipConfigId = equipmentCommand.EquipmentConfigId;
             if (itemId == 0 || !GameItemManager.HasGameItemData(itemId))
             {
                 Debug.LogWarning($"Can't find item data {itemId}"); 
@@ -54,7 +55,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property,
                     CommandAuthority.Server, CommandExecuteType.Immediate),
-                EquipConfigId = configId,
+                EquipConfigId = itemConfig.id,
                 EquipItemId = itemId,
                 IsEquipped = equipmentCommand.IsEquip,
                 ItemConfigId = itemConfig.id,
@@ -64,8 +65,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property,
                     CommandAuthority.Server, CommandExecuteType.Immediate),
-                EquipItemConfigId = configId,
-                EquipItemId = itemConfig.id,
+                EquipItemConfigId = equipConfigId,
+                EquipItemId = itemId,
                 PlayerItemType = itemConfig.itemType,
                 IsEquipped = equipmentCommand.IsEquip,
             };

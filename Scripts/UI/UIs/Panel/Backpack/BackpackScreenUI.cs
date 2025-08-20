@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.UI.UIBase;
@@ -182,11 +183,25 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             // }
             bagItemList.SetItemList(bagItemData);
             var equippedItems = new Dictionary<int, BagItemData>();
-            foreach (var kvp in bagItemData)
+            var equipParts = Enum.GetValues(typeof(EquipmentPart)).Cast<EquipmentPart>().ToArray();
+            for (int i = 0; i < equipParts.Length; i++)
             {
-                if (kvp.Value.IsEquip)
+                var equipPart = equipParts[i];
+                if (equipPart == EquipmentPart.None)
                 {
-                    equippedItems.Add(kvp.Key, kvp.Value);
+                    continue;
+                }
+                var bagItem = bagItemData.FirstOrDefault(x => x.Value.EquipmentPart == equipPart);
+                if (!bagItem.Value.Equals(default(BagItemData)))
+                {
+                    equippedItems.Add((int)bagItem.Value.EquipmentPart, bagItem.Value);
+                }
+                else
+                {
+                    equippedItems.Add((int)equipPart, new BagItemData
+                    {
+                        EquipmentPart = equipPart,
+                    });
                 }
             }
             equipmentItemList.SetItemList(equippedItems);

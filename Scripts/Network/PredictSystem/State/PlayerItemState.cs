@@ -279,12 +279,40 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
     
             return RemoveItem(ref state, slotItem.IndexSlot, count, out slotItem, out _);
         }
-        public static bool UpdateItemState(ref PlayerItemState state, int slotIndex, ItemState newState)
+
+        private static bool TryExchangeEquipPart(ref PlayerItemState state, PlayerBagSlotItem slotItem, out PlayerBagSlotItem changeSlotItem)
         {
+            changeSlotItem = null;
+            foreach (var bagSlotItem in state.PlayerItemConfigIdSlotDictionary)
+            {
+                if (bagSlotItem.Value.State == ItemState.IsEquipped && bagSlotItem.Value.EquipmentPart == slotItem.EquipmentPart && bagSlotItem.Value.IndexSlot != slotItem.IndexSlot)
+                {
+                    changeSlotItem = bagSlotItem.Value;
+                    changeSlotItem.State = ItemState.IsInBag;
+                    break;
+                }
+            }
+            if (changeSlotItem == null)
+            {
+                return false;
+            }
+            state.PlayerItemConfigIdSlotDictionary[changeSlotItem.IndexSlot] = changeSlotItem;
+            return true;
+        }
+
+        public static bool UpdateItemState(ref PlayerItemState state, int slotIndex, ItemState newState, out PlayerBagSlotItem changeSlotItem)
+        {
+            changeSlotItem = null;
+            
             if ( !state.PlayerItemConfigIdSlotDictionary.TryGetValue(slotIndex, out var slotItem))
             {
                 Debug.LogWarning($"物品槽位不存在: {slotIndex}");
                 return false;
+            }
+
+            if (slotItem.PlayerItemType.IsEquipment())
+            {
+                TryExchangeEquipPart(ref state, slotItem, out changeSlotItem);
             }
             foreach (var itemId in slotItem.ItemIds)
             {
@@ -293,7 +321,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                     if (item.State == newState)
                     {
                         Debug.LogWarning($"物品状态未改变: {item}");
-                        return false;
                     }
                     if (newState == ItemState.IsEquipped )
                     {

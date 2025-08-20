@@ -249,7 +249,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         
         public static void CommandLockItem(ItemLockCommand itemLockCommand, ref PlayerItemState playerItemState)
         {
-            if (!PlayerItemState.UpdateItemState(ref playerItemState, itemLockCommand.SlotIndex, itemLockCommand.IsLocked ? ItemState.IsLocked : ItemState.IsInBag))
+            if (!PlayerItemState.UpdateItemState(ref playerItemState, itemLockCommand.SlotIndex, itemLockCommand.IsLocked ? ItemState.IsLocked : ItemState.IsInBag, out _))
             {
                 Debug.LogError($"Failed to lock item {itemLockCommand.SlotIndex}");
                 return;
@@ -258,7 +258,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         }
         public static void CommandEquipItem(ItemEquipCommand itemEquipCommand, ref PlayerItemState playerItemState, int connectionId)
         {
-            if (!PlayerItemState.UpdateItemState(ref playerItemState, itemEquipCommand.SlotIndex, itemEquipCommand.IsEquip ? ItemState.IsEquipped : ItemState.IsInBag))
+            if (!PlayerItemState.UpdateItemState(ref playerItemState, itemEquipCommand.SlotIndex, itemEquipCommand.IsEquip ? ItemState.IsEquipped : ItemState.IsInBag, out var exchangedItem))
             {
                 Debug.LogError($"Failed to equip item {itemEquipCommand.SlotIndex}");
                 return;
@@ -272,6 +272,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
             var configId = GetEquipmentConfigId(bagItem.PlayerItemType, bagItem.ConfigId);
             var skillId = GetEquipSkillId(bagItem.PlayerItemType, bagItem.ConfigId);
+            if (exchangedItem!= null)
+            {
+                var exchangedConfigId = GetEquipmentConfigId(exchangedItem.PlayerItemType, exchangedItem.ConfigId);
+                Constant.GameSyncManager.EnqueueServerCommand(new EquipmentCommand
+                {
+                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
+                    EquipmentConfigId = exchangedConfigId,
+                    EquipmentPart = exchangedItem.EquipmentPart,
+                    IsEquip = false,
+                    ItemId = exchangedItem.ItemIds.First(),
+                    EquipmentPassiveEffectData = JsonConvert.SerializeObject(exchangedItem.MainIncreaseDatas),
+                    EquipmentMainEffectData = JsonConvert.SerializeObject(exchangedItem.PassiveAttributeIncreaseDatas),
+                });
+            }
             Constant.GameSyncManager.EnqueueServerCommand(new EquipmentCommand
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),

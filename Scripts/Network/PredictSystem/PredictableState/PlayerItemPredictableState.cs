@@ -269,7 +269,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 var randomBuffEffectDesc = GameStaticExtensions.GetRandomBuffEffectDesc(playerBagSlotItem.RandomIncreaseDatas, true);
                 var passiveProperty = GameStaticExtensions.GetBuffEffectDesc(playerBagSlotItem.PassiveAttributeIncreaseDatas, false, true);
                 var conditionStr = "";
-                if (itemConfig.itemType.IsEquipment() && !string.IsNullOrEmpty(passiveProperty) && battleCondition.targetType != ConditionTargetType.None)
+                if (itemConfig.itemType.IsEquipment() && !string.IsNullOrEmpty(passiveProperty) && battleCondition.triggerType != TriggerType.None && battleCondition.triggerType != TriggerType.Default)
                 {
                     var increaseData = playerBagSlotItem.PassiveAttributeIncreaseDatas[0];
                     conditionStr = _battleEffectConditionConfig.ToLocalizedString(battleCondition,

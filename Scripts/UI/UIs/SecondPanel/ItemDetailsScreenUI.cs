@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.UI.UIBase;
@@ -24,6 +25,9 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         [SerializeField] private TextMeshProUGUI conditionText;
         [SerializeField] private TextMeshProUGUI passiveEffectText;
         [SerializeField] private TextMeshProUGUI priceText;
+        [SerializeField] private Transform propertyContent;
+        [SerializeField] private VerticalLayoutGroup propertyVerticalLayoutGroup;
+        private List<TextMeshProUGUI> _texts = new List<TextMeshProUGUI>();
         
         [Header("Interaction Buttons")]
         [SerializeField] private Button equipButton;
@@ -125,6 +129,11 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                         _uiManager.CloseUI(Type);
                 })
                 .AddTo(_disposables);
+            var texts = propertyContent.GetComponentsInChildren<TextMeshProUGUI>();
+            foreach (var text in texts)
+            {
+                _texts.Add(text);
+            }
         }
 
         public void BindPlayerGold(IObservable<ValuePropertyData> playerGold)
@@ -197,13 +206,14 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             itemIcon.sprite = randomShopItemData.Icon;
             qualityBorder.sprite = randomShopItemData.QualityIcon;
             itemNameText.text = randomShopItemData.Name;
-            stackText.text = $"剩余：{randomShopItemData.RemainingCount}个，总量：{randomShopItemData.MaxCount}个";
+            itemNameText.enabled = !string.IsNullOrWhiteSpace(itemNameText.text);
+            stackText.text = randomShopItemData.RemainingCount > 1 ? $"剩余：{randomShopItemData.RemainingCount}个，总量：{randomShopItemData.MaxCount}个" : "";
             stackText.color = randomShopItemData.RemainingCount > 0 ? Color.green : Color.red;
             
             // 描述信息
             descriptionText.text = randomShopItemData.Description;
+            descriptionText.enabled = (!string.IsNullOrWhiteSpace(descriptionText.text));
             var showProperty = randomShopItemData.ItemType.ShowProperty();
-            propertyText.gameObject.SetActive(showProperty);
             if (!string.IsNullOrEmpty(randomShopItemData.MainProperty))
             {
                 propertyText.text = randomShopItemData.MainProperty;
@@ -215,7 +225,6 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             
             // 被动效果（仅装备类显示）
             var showPassive = randomShopItemData.ItemType.IsEquipment();
-            passiveEffectText.gameObject.SetActive(showPassive);
             passiveEffectText.text = showPassive ? randomShopItemData.PassiveDescription : "";
             // 价格信息
             priceText.text = $"价格: {randomShopItemData.Price}G 当前金币: {_currentValuePropertyData.Gold}G";
@@ -274,7 +283,6 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             // 描述信息
             descriptionText.text = bagItemData.Description;
             var showProperty = bagItemData.PlayerItemType.ShowProperty();
-            propertyText.gameObject.SetActive(showProperty);
             if (!string.IsNullOrEmpty(bagItemData.PropertyDescription))
             {
                 propertyText.text = bagItemData.PropertyDescription;
@@ -284,7 +292,6 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 propertyText.text = bagItemData.RandomDescription;
             }
 
-            conditionText.gameObject.SetActive(!string.IsNullOrEmpty(bagItemData.ConditionDescription));
             if (conditionText.gameObject.activeSelf)
             {
                 conditionText.text = bagItemData.ConditionDescription;
@@ -381,7 +388,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                             equipButton.gameObject.SetActive(!isLocked && bagItemData.PlayerItemType.IsEquipment());
                             lockButton.gameObject.SetActive(true);
                             sellCountSlider.gameObject.SetActive(false);
-                            enableButton.gameObject.SetActive(bagItemData.PlayerItemType.IsEquipment() && bagItemData.SkillId != 0);
+                            enableButton.gameObject.SetActive(bagItemData.IsEquip && bagItemData.SkillId != 0);
                             break;
                         case ItemDetailsType.Equipment:
                             useCountSlider.gameObject.SetActive(false);
@@ -423,7 +430,12 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 default:
                     throw new ArgumentOutOfRangeException(nameof(_currentItemData));
             }
-            
+
+            for (int i = 0; i < _texts.Count; i++)
+            {
+                var text = _texts[i];
+                text.gameObject.SetActive(!string.IsNullOrEmpty(_texts[i].text) && !string.IsNullOrWhiteSpace(_texts[i].text));
+            }
         }
 
         #region Button Handlers

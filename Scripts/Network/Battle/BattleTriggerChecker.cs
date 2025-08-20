@@ -156,6 +156,8 @@ namespace HotUpdate.Scripts.Network.Battle
                     return new DodgeChecker { Header = header, CooldownHeader = cooldown };
                 case TriggerType.OnMove:
                     return new MoveChecker { Header = header, CooldownHeader = cooldown };
+                case TriggerType.OnDeath:
+                    return new DeathChecker { Header = header, CooldownHeader = cooldown };
                 default:
                     throw new ArgumentOutOfRangeException(nameof(header.TriggerType), header.TriggerType, null);
             }
