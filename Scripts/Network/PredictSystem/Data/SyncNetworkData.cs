@@ -592,6 +592,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 NetworkCommandType.SkillChanged => (INetworkCommand)MemoryPackSerializer
                     .Deserialize<SkillChangedCommand>(data),
                 NetworkCommandType.PropertyUseSkill => MemoryPackSerializer.Deserialize<PropertyUseSkillCommand>(data),
+                NetworkCommandType.ItemSkillEnable => (INetworkCommand)MemoryPackSerializer
+                    .Deserialize<ItemSkillEnableCommand>(data),
+                NetworkCommandType.PropertyGetScoreGold => (INetworkCommand)MemoryPackSerializer
+                    .Deserialize<PropertyGetScoreGoldCommand>(data),
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
