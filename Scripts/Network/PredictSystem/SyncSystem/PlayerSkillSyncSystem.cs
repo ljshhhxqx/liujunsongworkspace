@@ -182,11 +182,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             if (command is SkillLoadCommand skillLoadCommand)
             {
                 Debug.Log($"[SkillLoadCommand] Player {header.ConnectionId} skill {skillLoadCommand.SkillConfigId} start load");
-                var checker = GetSkillChecker(skillLoadCommand.KeyCode, playerSkillState);
-                var skillCommonHeader = checker.GetCommonSkillCheckerHeader();
+                ISkillChecker checker;
                 var skillData = _skillConfig.GetSkillData(skillLoadCommand.SkillConfigId);
                 if (!skillLoadCommand.IsLoad)
                 {
+                    checker = GetSkillChecker(skillLoadCommand.KeyCode, playerSkillState);
+                    var skillCommonHeader = checker.GetCommonSkillCheckerHeader();
                     if (skillLoadCommand.SkillConfigId != skillCommonHeader.ConfigId)
                     {
                         Debug.LogError($"Player {header.ConnectionId} skill checker has different config ID {skillCommonHeader.ConfigId} for player {header.ConnectionId}");
@@ -198,6 +199,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 else
                 {
                     checker = PlayerSkillCalculator.CreateSkillChecker(skillData);
+                    playerSkillState.SkillCheckers??=new Dictionary<AnimationState, ISkillChecker>();
                     playerSkillState.SkillCheckers.Add(skillLoadCommand.KeyCode, checker);
                 }
 

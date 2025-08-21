@@ -260,6 +260,20 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             }
         }
 #endif
+        public int RandomLegendaryEquipmentId()
+        {
+            var list = new List<int>(_equipmentIds.Count);
+            for (int i = 0; i < gameItemDatas.Count; i++)
+            {
+                var gameItemData = gameItemDatas[i];
+                if (gameItemData.itemType.IsEquipment() && gameItemData.quality == QualityType.Legendary)
+                {
+                    list.Add(gameItemData.id);
+                }
+            }
+
+            return list.RandomSelect();
+        }
     }
 
     [Serializable]

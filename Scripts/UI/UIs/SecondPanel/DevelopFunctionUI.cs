@@ -17,6 +17,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
     public class DevelopFunctionUI: ScreenUIBase
     {
         [SerializeField] private Button equipmentButton;
+        [SerializeField] private Button legendaryButton;
         [SerializeField] private Button consumeButton;
         [SerializeField] private Button itemButton;
         [SerializeField] private Button confirmButton;
@@ -43,6 +44,13 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                     var score = _itemConfig.GetScoreItemId();
                     var count = UnityEngine.Random.Range(1, 1000);
                     inputField.text = $"{score} {count}";
+                })
+                .AddTo(this);
+            legendaryButton.OnClickAsObservable()
+                .Subscribe(_ =>
+                {
+                    var legendary = _itemConfig.RandomLegendaryEquipmentId();
+                    inputField.text = $"{legendary} 1 0";
                 })
                 .AddTo(this);
             equipmentButton.OnClickAsObservable()

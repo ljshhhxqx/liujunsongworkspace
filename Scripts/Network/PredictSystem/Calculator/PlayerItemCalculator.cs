@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Battle;
 using HotUpdate.Scripts.Network.Item;
@@ -9,12 +8,10 @@ using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
-using HotUpdate.Scripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Tool.Static;
 using Mirror;
 using Newtonsoft.Json;
 using UnityEngine;
-using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {
@@ -98,7 +95,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             {
                 var extraEffect = skillConfigData.extraEffects[i];
                 var value = extraEffect.baseValue;
-                var buffedProperty = buffProperty[extraEffect.buffProperty];
+                if (!buffProperty.TryGetValue(extraEffect.buffProperty, out var buffedProperty))
+                {
+                    //Debug.LogError($"{extraEffect.buffProperty} not found in buffProperty in skill {skillConfigId}");
+                    continue;
+                }
                 switch (extraEffect.buffIncreaseType)
                 {
                     case BuffIncreaseType.Current:
@@ -451,7 +452,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             playerItemState.PlayerItemConfigIdSlotDictionary[slotIndex] = bagItem;
             var skillEnableCommand = new SkillLoadCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill, CommandAuthority.Server, CommandExecuteType.Immediate),
                 SkillConfigId = skillId,
                 IsLoad = isEnable,
                 KeyCode = skillConfig.animationState

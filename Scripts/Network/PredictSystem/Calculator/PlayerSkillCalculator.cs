@@ -38,28 +38,28 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         {
             var commonParams = CreateSkillCheckerCommon(skillConfigData);
             ISkillChecker skillChecker = null;
+            SkillEffectLifeCycle skillEffectLifeCycle = null;
             switch (skillConfigData.skillType)
             {
                 case SkillType.SingleFly:
-                    skillChecker = new SingleTargetFlyEffectSkillChecker(commonParams.Item1, commonParams.Item2, null);
-                    break;
-                case SkillType.Single:
-                    //skillChecker = new SingleTargetSkillChecker(commonParams.Item1, commonParams.Item2, commonParams.Item3);
+                    skillEffectLifeCycle = new SkillEffectLifeCycle(Constant.SkillConfig.SingleFlyEffectPrefab, skillConfigData.duration)
+                    skillChecker = new SingleTargetFlyEffectSkillChecker(commonParams.Item1, commonParams.Item2, skillEffectLifeCycle);
                     break;
                 case SkillType.AreaRanged:
-                    skillChecker = new AreaOfRangedSkillChecker(commonParams.Item1, commonParams.Item2, null);
+                    skillChecker = new AreaOfRangedSkillChecker(commonParams.Item1, commonParams.Item2, skillEffectLifeCycle);
                     break;
                 case SkillType.AreaFly:
-                    skillChecker = new AreaOfRangedFlySkillChecker(commonParams.Item1, commonParams.Item2, null);
+                    skillChecker = new AreaOfRangedFlySkillChecker(commonParams.Item1, commonParams.Item2, skillEffectLifeCycle);
                     break;
                 case SkillType.Dash:
-                    skillChecker = new DashSkillChecker(commonParams.Item1, commonParams.Item2, null);
+                    skillChecker = new DashSkillChecker(commonParams.Item1, commonParams.Item2, skillEffectLifeCycle);
                     break;
                 case SkillType.DelayedAreaRanged:
-                    skillChecker = new AreaOfRangedDelayedSkillChecker(commonParams.Item1, commonParams.Item2, null);
+                    skillChecker = new AreaOfRangedDelayedSkillChecker(commonParams.Item1, commonParams.Item2, skillEffectLifeCycle);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    Debug.LogError($"Skill Checker {skillConfigData.id} {skillConfigData.skillType} not found");
+                    break;
             }
             return skillChecker;
         }
