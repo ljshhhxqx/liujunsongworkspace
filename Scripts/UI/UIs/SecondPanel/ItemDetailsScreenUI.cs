@@ -25,7 +25,9 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         [SerializeField] private TextMeshProUGUI conditionText;
         [SerializeField] private TextMeshProUGUI passiveEffectText;
         [SerializeField] private TextMeshProUGUI priceText;
+        [SerializeField] private TextMeshProUGUI skillText;
         [SerializeField] private Transform propertyContent;
+        [SerializeField] private Transform groupContent;
         [SerializeField] private VerticalLayoutGroup propertyVerticalLayoutGroup;
         private List<TextMeshProUGUI> _texts = new List<TextMeshProUGUI>();
         
@@ -203,6 +205,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 _uiManager.CloseUI(Type);
                 return;
             }
+            skillText.text = randomShopItemData.SkillDescription;
             itemIcon.sprite = randomShopItemData.Icon;
             qualityBorder.sprite = randomShopItemData.QualityIcon;
             itemNameText.text = randomShopItemData.Name;
@@ -275,7 +278,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             itemIcon.sprite = bagItemData.Icon;
             qualityBorder.sprite = bagItemData.QualityIcon;
             itemNameText.text = bagItemData.ItemName;
-            
+            skillText.text = bagItemData.SkillDescription;
             // 堆叠显示
             stackText.text = $"当前{bagItemData.Stack}个/最大{bagItemData.MaxStack}个";
             stackText.gameObject.SetActive(bagItemData.MaxStack > 1);
@@ -397,6 +400,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                             lockButton.gameObject.SetActive(true);
                             sellCountSlider.gameObject.SetActive(false);
                             enableButton.gameObject.SetActive(bagItemData.PlayerItemType.IsEquipment());
+                            groupContent.gameObject.SetActive(true);
                             break;
                         case ItemDetailsType.Shop:
                             useCountSlider.gameObject.SetActive(false);
@@ -405,12 +409,14 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                             lockButton.gameObject.SetActive(false);
                             sellCountSlider.gameObject.SetActive(true);
                             enableButton.gameObject.SetActive(false);
+                            groupContent.gameObject.SetActive(false);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
 
-            
+
+
                     lockButton.GetComponentInChildren<TextMeshProUGUI>().text = 
                         bagItemData.IsLock ? "解锁" : "锁定";
                     equipButton.GetComponentInChildren<TextMeshProUGUI>().text = 
@@ -426,10 +432,12 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                     lockButton.gameObject.SetActive(false);
                     sellCountSlider.gameObject.SetActive(false);
                     enableButton.gameObject.SetActive(false);
+                    groupContent.gameObject.SetActive(false);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(_currentItemData));
             }
+            skillText.gameObject.SetActive(!string.IsNullOrEmpty(skillText.text));
 
             for (int i = 0; i < _texts.Count; i++)
             {

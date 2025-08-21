@@ -17,14 +17,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         public MemoryList<EquipmentData> EquipmentDatas;
         public PlayerSyncStateType GetStateType() => PlayerSyncStateType.PlayerEquipment;
 
-        public static bool TryUnequipped(ref PlayerEquipmentState equipmentState, int itemId, EquipmentPart equipmentPartType)
+        public static bool TryUnequipped(ref PlayerEquipmentState equipmentState, int itemId, EquipmentPart equipmentPartType, out EquipmentData equipData)
         {
+            equipData = null;
             for (int i = 0; i < equipmentState.EquipmentDatas.Count; i++)
             {
                 var equipmentData = equipmentState.EquipmentDatas[i];
-                if (equipmentData.ItemId == itemId || equipmentData.EquipmentPartType == equipmentPartType)
+                if (equipmentData.ItemId == itemId && equipmentData.EquipmentPartType == equipmentPartType)
                 {
                     equipmentState.EquipmentDatas.RemoveAt(i);
+                    equipData = equipmentData;
                     return true;
                 }
             }

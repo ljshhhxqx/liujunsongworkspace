@@ -302,6 +302,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     SkillId = playerBagSlotItem.SkillId,
                     IsEnable = playerBagSlotItem.IsEnableSkill,
                     EquipmentPart = playerBagSlotItem.EquipmentPart,
+                    SkillDescription = PlayerItemCalculator.GetSkillDescription(playerBagSlotItem.SkillId, NetworkIdentity.connectionToClient.connectionId),
                     OnUseItem = OnUseItem,
                     OnDropItem = OnDropItem,
                     OnLockItem = OnLockItem,

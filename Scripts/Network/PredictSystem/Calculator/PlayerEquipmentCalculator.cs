@@ -71,7 +71,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 IsEquipped = equipmentCommand.IsEquip,
             };
 
-            if (!equipmentCommand.IsEquip && PlayerEquipmentState.TryUnequipped(ref playerEquipmentState, itemId, itemConfig.equipmentPart))
+            if (!equipmentCommand.IsEquip && PlayerEquipmentState.TryUnequipped(ref playerEquipmentState, itemId, itemConfig.equipmentPart, out var unequippedEquipment))
             {
                 Constant.GameSyncManager.EnqueueServerCommand(propertyEquipmentChangedCommand);
                 Constant.GameSyncManager.EnqueueServerCommand(propertyEquipPassiveCommand);
@@ -182,5 +182,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public bool IsServer;
         public bool IsClient;
         public bool IsLocalPlayer;
+        public SkillConfig SkillConfig;
     }
 }

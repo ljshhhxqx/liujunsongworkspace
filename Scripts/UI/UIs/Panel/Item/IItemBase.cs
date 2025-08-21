@@ -191,6 +191,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public string ConditionDescription;
         //装备被动属性
         public string PassiveDescription;
+        //技能描述
+        public string SkillDescription;
         public PlayerItemType PlayerItemType;
         public bool IsEquip;
         public bool IsLock;
@@ -324,6 +326,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public string PassiveDescription;
         public PlayerItemType ItemType;
         public Action<int, int> OnBuyItem;
+        public string SkillDescription;
 
         public bool Equals(RandomShopItemData other)
         {

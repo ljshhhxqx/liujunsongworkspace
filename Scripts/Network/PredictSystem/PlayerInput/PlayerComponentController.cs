@@ -748,6 +748,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             {
                 GameSyncManager = gameSyncManager,
                 ItemConfig = configProvider.GetConfig<ItemConfig>(),
+                SkillConfig = _configProvider.GetConfig<SkillConfig>(),
+                
             });
             PlayerShopCalculator.SetConstant(new ShopCalculatorConstant
             {

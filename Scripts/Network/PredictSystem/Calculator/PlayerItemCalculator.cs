@@ -79,6 +79,40 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return attributeIncreaseDatas;
         }
 
+        public static string GetSkillDescription(int skillConfigId, int connectionId,bool includeName = true)
+        {
+            if (skillConfigId == 0)
+            {
+                return string.Empty;
+            }
+            var skillConfigData = Constant.SkillConfig.GetSkillData(skillConfigId);
+            if (skillConfigData.id == 0)
+            {
+                Debug.LogError($"skillConfigId {skillConfigId} not found");
+                return string.Empty;
+            }
+            var propertySystem = Constant.GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
+            var buffProperty = propertySystem.GetPlayerProperty(connectionId);
+            var skillDescription = skillConfigData.description;
+            for (int i = 0; i < skillConfigData.extraEffects.Length; i++)
+            {
+                var extraEffect = skillConfigData.extraEffects[i];
+                var value = extraEffect.baseValue;
+                var buffedProperty = buffProperty[extraEffect.buffProperty];
+                switch (extraEffect.buffIncreaseType)
+                {
+                    case BuffIncreaseType.Current:
+                        value += buffedProperty.CurrentValue * extraEffect.extraRatio;
+                        break;
+                    case BuffIncreaseType.Max:
+                        value += buffedProperty.MaxValue * extraEffect.extraRatio;
+                        break;
+                }
+                skillDescription = skillDescription.Replace("{value}", value.ToString("F0"));
+            }
+            return includeName ? skillConfigData.name + ":" + skillDescription : skillDescription;
+        }
+
         public static IAttributeIncreaseData GetAttributeIncreaseData(BuffExtraData buffExtraData)
         {
             switch (buffExtraData.buffType)
@@ -197,6 +231,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
                         if (skillId != 0)
                         {
+                            
+                            var skillLoadCommand = new SkillLoadCommand
+                            {
+                                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill,
+                                    CommandAuthority.Server, CommandExecuteType.Immediate),
+                                SkillConfigId = skillId,
+                                IsLoad = false,
+                                KeyCode = SkillConfig.GetAnimationState(bagSlotItem.PlayerItemType),
+                            };
+                            Constant.GameSyncManager.EnqueueServerCommand(skillLoadCommand);
                             Constant.GameSyncManager.EnqueueServerCommand(new EquipmentCommand
                             {
                                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
@@ -285,6 +329,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     EquipmentPassiveEffectData = JsonConvert.SerializeObject(exchangedItem.MainIncreaseDatas),
                     EquipmentMainEffectData = JsonConvert.SerializeObject(exchangedItem.PassiveAttributeIncreaseDatas),
                 });
+                
+                var skillLoadCommand = new SkillLoadCommand
+                {
+                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill,
+                        CommandAuthority.Server, CommandExecuteType.Immediate),
+                    SkillConfigId = exchangedItem.SkillId,
+                    IsLoad = false,
+                    KeyCode = SkillConfig.GetAnimationState(exchangedItem.PlayerItemType),
+                };
+                Constant.GameSyncManager.EnqueueServerCommand(skillLoadCommand);
             }
             Constant.GameSyncManager.EnqueueServerCommand(new EquipmentCommand
             {
@@ -357,7 +411,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                         break;
                     }
 
-                    var getScoreGoldCommand = new PropertyGetScoreGoldCommand()
+                    var getScoreGoldCommand = new PropertyGetScoreGoldCommand
                     {
                         Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property),
                         Gold = itemsData.ItemType == PlayerItemType.Gold ? itemsData.Count : 0,
@@ -380,6 +434,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 return;
             }
 
+            if (TryUnloadSkill(ref playerItemState, connectionId, slotIndex, out var unloadedItem))
+            {
+                Debug.Log($"Skill {skillId} unloaded from slot {slotIndex}");
+                
+            }
+
             if (bagItem.SkillId != skillId)
             {
                 Debug.LogError($"Slot {slotIndex} is skill id is {bagItem.SkillId}, not {slotIndex}");
@@ -397,6 +457,33 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 KeyCode = skillConfig.animationState
             };
             Constant.GameSyncManager.EnqueueServerCommand(skillEnableCommand);
+        }
+
+        public static bool TryUnloadSkill(ref PlayerItemState playerItemState, int connectionId, int slotIndex, out PlayerBagSlotItem unloadedItem)
+        {
+            unloadedItem = null;
+            if (!PlayerItemState.TryGetSlotItemBySlotIndex(playerItemState, slotIndex, out var bagItem))
+            {
+                Debug.LogError($"Failed to unload skill, no slotIndex {slotIndex}");
+                return false;
+            }
+            var loadedSkillItem = playerItemState.PlayerItemConfigIdSlotDictionary.FirstOrDefault(x => x.Value.IsEnableSkill && x.Value.PlayerItemType == bagItem.PlayerItemType);
+            if (loadedSkillItem.Value!=null)
+            {
+                unloadedItem = loadedSkillItem.Value;
+                unloadedItem.IsEnableSkill = false;
+                var skillEnableCommand = new SkillLoadCommand
+                {
+                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
+                    SkillConfigId = unloadedItem.SkillId,
+                    IsLoad = false,
+                    KeyCode = SkillConfig.GetAnimationState(unloadedItem.PlayerItemType)
+                };
+                Constant.GameSyncManager.EnqueueServerCommand(skillEnableCommand);
+                playerItemState.PlayerItemConfigIdSlotDictionary[unloadedItem.IndexSlot] = unloadedItem;
+                return true;
+            }
+            return false;
         }
 
         public static void AddPlayerItems(ItemsCommandData itemsData, NetworkCommandHeader header,

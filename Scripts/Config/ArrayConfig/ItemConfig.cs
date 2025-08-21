@@ -378,5 +378,10 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         {
             return itemType == PlayerItemType.Weapon || itemType == PlayerItemType.Armor || itemType == PlayerItemType.Consume;
         }
+        
+        public static bool IsArmor(this PlayerItemType itemType)
+        {
+            return itemType == PlayerItemType.Weapon;
+        }
     }   
 }

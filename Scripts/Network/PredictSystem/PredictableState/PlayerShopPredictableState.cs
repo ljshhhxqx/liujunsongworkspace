@@ -100,7 +100,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 var item = kvp.Value;
                 var shopConfigData = _shopConfig.GetShopConfigData(item.ShopConfigId);
                 var itemConfigData = _itemConfig.GetGameItemData(item.ItemConfigId);
-                var equipConfigData = PlayerItemCalculator.GetBattleEffectConditionConfigData(itemConfigData.id);
+                var skillId = PlayerItemCalculator.GetEquipSkillId(itemConfigData.itemType, itemConfigData.id);
+                var equipBattleConfigData = PlayerItemCalculator.GetBattleEffectConditionConfigData(itemConfigData.id);
 
                 string mainProperty = "";
                 if (itemConfigData.itemType.IsEquipment())
@@ -131,7 +132,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 randomShopData.SellPrice = item.SellPrice;
                 randomShopData.MainProperty = mainProperty ?? "";
                 randomShopData.RandomProperty = randomBuffEffectDesc ?? "";
-                randomShopData.PassiveDescription = item.ItemType.IsEquipment() && equipConfigData.id != 0
+                randomShopData.SkillDescription =
+                    PlayerItemCalculator.GetSkillDescription(skillId, NetworkIdentity.connectionToClient.connectionId);
+                randomShopData.PassiveDescription = item.ItemType.IsEquipment() && equipBattleConfigData.id != 0
                     ? _shopConfig.GetShopConstantData().shopEquipPassiveDescription
                     : ""; 
                 randomShopData.OnBuyItem = OnBuyItem;
