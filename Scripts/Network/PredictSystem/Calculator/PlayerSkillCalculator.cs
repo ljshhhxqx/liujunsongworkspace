@@ -42,7 +42,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             switch (skillConfigData.skillType)
             {
                 case SkillType.SingleFly:
-                    skillEffectLifeCycle = new SkillEffectLifeCycle(Constant.SkillConfig.SingleFlyEffectPrefab, skillConfigData.duration)
                     skillChecker = new SingleTargetFlyEffectSkillChecker(commonParams.Item1, commonParams.Item2, skillEffectLifeCycle);
                     break;
                 case SkillType.AreaRanged:

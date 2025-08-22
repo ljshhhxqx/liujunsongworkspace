@@ -177,7 +177,10 @@ namespace HotUpdate.Scripts.Skill
             CooldownHeader = cooldownHeader;
             CommonSkillCheckerHeader = commonSkillCheckerHeader;
             SkillEffectLifeCycle = skillEffectLifeCycle;
-            SkillEffectLifeCycle.OnDestroy += Destroy;
+            if (SkillEffectLifeCycle != null)
+            {
+                SkillEffectLifeCycle.OnDestroy += Destroy;
+            }
         }
 
         public CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader)
@@ -241,7 +244,10 @@ namespace HotUpdate.Scripts.Skill
             CooldownHeader = cooldownHeader;
             CommonSkillCheckerHeader = commonSkillCheckerHeader;
             SkillEffectLifeCycle = skillEffectLifeCycle;
-            SkillEffectLifeCycle.OnDestroy += Destroy;
+            if (SkillEffectLifeCycle != null)
+            {
+                SkillEffectLifeCycle.OnDestroy += Destroy;
+            }
         }
 
         public CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader)
@@ -309,7 +315,10 @@ namespace HotUpdate.Scripts.Skill
             CooldownHeader = cooldownHeader;
             CommonSkillCheckerHeader = commonSkillCheckerHeader;
             SkillEffectLifeCycle = skillEffectLifeCycle;
-            SkillEffectLifeCycle.OnDestroy += Destroy;
+            if (SkillEffectLifeCycle != null)
+            {
+                SkillEffectLifeCycle.OnDestroy += Destroy;
+            }
         }
 
         public float GetFlyDistance() => FlyDistance;
@@ -383,7 +392,10 @@ namespace HotUpdate.Scripts.Skill
             CooldownHeader = cooldownHeader;
             CommonSkillCheckerHeader = commonSkillCheckerHeader;
             SkillEffectLifeCycle = skillEffectLifeCycle;
-            SkillEffectLifeCycle.OnDestroy += Destroy;
+            if (SkillEffectLifeCycle != null)
+            {
+                SkillEffectLifeCycle.OnDestroy += Destroy;
+            }
         }
 
         public float GetFlyDistance() => FlyDistance;
@@ -459,7 +471,10 @@ namespace HotUpdate.Scripts.Skill
             CooldownHeader = cooldownHeader;
             CommonSkillCheckerHeader = commonSkillCheckerHeader;
             SkillEffectLifeCycle = skillEffectLifeCycle;
-            SkillEffectLifeCycle.OnDestroy += Destroy;
+            if (SkillEffectLifeCycle != null)
+            {
+                SkillEffectLifeCycle.OnDestroy += Destroy;
+            }
         }
 
         public float GetFlyDistance() => FlyDistance;

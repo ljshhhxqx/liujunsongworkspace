@@ -218,7 +218,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 return null;
             }
             return checker;
-            return null;
         }
 
         public override void SetState<T>(int connectionId, T state)
