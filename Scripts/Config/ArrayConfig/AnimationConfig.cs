@@ -42,6 +42,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 data.animationSpeed = float.Parse(row[13]);
                 data.icon = row[14];
                 data.frame = (QualityType) Enum.Parse(typeof(QualityType), row[15]);
+                data.isOverrideCost = bool.Parse(row[16]);
+                data.isOverrideCooldown = bool.Parse(row[17]);
                 animationInfos.Add(data);
             }
         }
@@ -152,6 +154,10 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public float animationSpeed;
         public string icon;
         public QualityType frame;
+        public bool isOverrideCost;
+        public bool isOverrideCooldown;
+        public bool isOverridePriority;
+        public bool isOverrideAnimationSpeed;
     }
 
     public enum ActionType

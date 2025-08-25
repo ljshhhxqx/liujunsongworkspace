@@ -202,6 +202,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     playerSkillState.SkillCheckers??=new Dictionary<AnimationState, ISkillChecker>();
                     playerSkillState.SkillCheckers.Add(skillLoadCommand.KeyCode, checker);
                 }
+                var skillLoadOverrideAnimation = new SkillLoadOverloadAnimationCommand
+                {
+                    Header = new NetworkCommandHeader
+                    {
+                        ConnectionId = header.ConnectionId,
+                        CommandType = CommandType.Input,
+                        ExecuteType = CommandExecuteType.Immediate,
+                        Authority = CommandAuthority.Server,
+                    },
+                    KeyCode = skillLoadCommand.KeyCode,
+                    Cooldowntime = skillData.cooldown,
+                    IsLoad = skillLoadCommand.IsLoad,
+                    Cost = skillData.cost,
+                };
+                GameSyncManager.EnqueueServerCommand(skillLoadOverrideAnimation);
 
                 PropertyStates[header.ConnectionId] = playerSkillState;
                 return PropertyStates[header.ConnectionId];

@@ -43,6 +43,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             SetState(state);
         }
 
+        public bool IsSkillExist(AnimationState animationState)
+        {
+            if (CurrentState is PlayerSkillState playerSkillState)
+            {
+                return playerSkillState.SkillCheckers.ContainsKey(animationState);
+            }
+            return false;
+        }
+
         protected override void ProcessCommand(INetworkCommand networkCommand)
         {
             

@@ -59,6 +59,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     [MemoryPackUnion(35, typeof(PropertyUseSkillCommand))]
     [MemoryPackUnion(37, typeof(ItemSkillEnableCommand))]
     [MemoryPackUnion(36, typeof(PropertyGetScoreGoldCommand))]
+    [MemoryPackUnion(38, typeof(SkillLoadOverloadAnimationCommand))]
     public partial interface INetworkCommand
     {
         NetworkCommandHeader GetHeader();
@@ -108,6 +109,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         PropertyUseSkill,
         PropertyGetScoreGold,
         ItemSkillEnable,
+        SkillOverride
     }
 
     public static class NetworkCommandExtensions
@@ -1885,6 +1887,37 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             SkillConfigId = default;
             DirectionNormalized = default;
             IsAutoSelectTarget = default;
+            KeyCode = default;
+        }
+    }
+    [MemoryPackable]
+    public partial struct SkillLoadOverloadAnimationCommand : INetworkCommand, IPoolObject
+    {
+        [MemoryPackOrder(0)] public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)] public float Cost;
+        [MemoryPackOrder(2)] public float Cooldowntime;
+        [MemoryPackOrder(3)] public AnimationState KeyCode;
+        [MemoryPackOrder(4)] public bool IsLoad;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.SkillOverride;
+        
+        public NetworkCommandHeader GetHeader() => Header;
+
+        public bool IsValid()
+        {
+            return KeyCode == AnimationState.SkillE || KeyCode == AnimationState.SkillQ;
+        }
+
+        
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            Cost = 0;
+            Cooldowntime = 0;
+            IsLoad = false;
             KeyCode = default;
         }
     }

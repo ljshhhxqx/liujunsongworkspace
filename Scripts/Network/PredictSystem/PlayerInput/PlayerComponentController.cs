@@ -67,6 +67,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [Header("States-NetworkBehaviour")]
         private PlayerInputPredictionState _inputState;
         private PropertyPredictionState _propertyPredictionState;
+        private PlayerSkillSyncState _skillSyncState;
         
         [Header("Subject")]
         private readonly Subject<PlayerInputStateData> _inputStream = new Subject<PlayerInputStateData>();
@@ -474,6 +475,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
             _inputState = GetComponent<PlayerInputPredictionState>();
             _propertyPredictionState = GetComponent<PropertyPredictionState>();
+            _skillSyncState = GetComponent<PlayerSkillSyncState>();
             _propertyPredictionState.OnPropertyChanged += HandlePropertyChange;
             _propertyPredictionState.OnStateChanged += HandlePropertyStateChanged;
             _propertyPredictionState.OnPlayerDead += HandlePlayerDeadClient;
@@ -623,6 +625,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             {
                 return;
             }
+
+            if (inputData.Command == AnimationState.SkillE || inputData.Command == AnimationState.SkillQ)
+            {
+                if (!_skillSyncState.IsSkillExist(inputData.Command))
+                {
+                    return;
+                }
+            }
+
             var inputCommand = ObjectPoolManager<InputCommand>.Instance.Get(50);
             
             _previousAnimationState = inputData.Command;

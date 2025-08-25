@@ -429,6 +429,24 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 return PropertyStates[header.ConnectionId];
             }
 
+            if (command is SkillLoadOverloadAnimationCommand skillLoadOverloadAnimationCommand)
+            {
+                var playerController = GameSyncManager.GetPlayerConnection(header.ConnectionId);
+                var playerAnimationCooldowns = playerController.GetNowAnimationCooldownsDict();
+                if (playerAnimationCooldowns.Count == 0)
+                {
+                    Debug.LogWarning($"[playerInputSyncSystem]Player {header.ConnectionId} input animation {skillLoadOverloadAnimationCommand.KeyCode} is not exist.");
+                    return playerInputState;
+                }
+                var cooldownInfo = playerAnimationCooldowns.GetValueOrDefault(skillLoadOverloadAnimationCommand.KeyCode);
+                if (cooldownInfo == null)
+                {
+                    Debug.LogWarning($"Player {header.ConnectionId} input animation {skillLoadOverloadAnimationCommand.KeyCode} is not registered.");
+                    return playerInputState;
+                }
+                cooldownInfo.SkillModifyCooldown(skillLoadOverloadAnimationCommand.Cooldowntime);
+            }
+
             if (command is PlayerDeathCommand)
             {
                 playerInputState.PlayerGameStateData.Velocity = CompressedVector3.FromVector3( Vector3.zero);
