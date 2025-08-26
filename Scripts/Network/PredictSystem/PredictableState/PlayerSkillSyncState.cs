@@ -1,16 +1,18 @@
 ﻿using System.Collections.Generic;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Skill;
 using Mirror;
 using UnityEngine;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {
-    public class PlayerSkillSyncState : SyncStateBase
+    public class PlayerSkillSyncState : PredictableStateBase
     {
         private SkillConfig _skillConfig;
         private SkillConfigData _currentSkillConfigData;
@@ -18,18 +20,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private Transform _spawnTransform;
         protected override ISyncPropertyState CurrentState { get; set; }
         protected override CommandType CommandType => CommandType.Skill;
-        protected override void SetState<T>(T state)
-        {
-            if (state is PlayerSkillState playerSkillState)
-            {
-                playerSkillState.SetSkillCheckerState();
-                CurrentState = playerSkillState;
-                foreach (var key in _skillObjects.Keys)
-                {
-                    _skillObjects[key].transform.position = playerSkillState.SkillCheckers[key].GetSkillEffectPosition();
-                }
-            }
-        }
 
         protected override void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider)
         {
@@ -38,9 +28,63 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _spawnTransform = GameObject.FindGameObjectWithTag("SpawnedObjects").transform;
         }
 
+        public override bool NeedsReconciliation<T>(T state)
+        {
+            return true;
+        }
+
+        public override void Simulate(INetworkCommand command)
+        {
+            if (CurrentState is not PlayerSkillState playerSkillState)
+            {
+                return;
+            }
+            if (command is SkillLoadCommand skillLoadCommand)
+            {
+                Debug.Log($"[SkillLoadCommand] Player {NetworkClient.localPlayer.connectionToClient.connectionId} skill {skillLoadCommand.SkillConfigId} start load");
+                ISkillChecker checker;
+                var skillData = _skillConfig.GetSkillData(skillLoadCommand.SkillConfigId);
+                if (!skillLoadCommand.IsLoad)
+                {
+                    checker = playerSkillState.SkillCheckers[skillLoadCommand.KeyCode];
+                    var skillCommonHeader = checker.GetCommonSkillCheckerHeader();
+                    if (skillLoadCommand.SkillConfigId != skillCommonHeader.ConfigId)
+                    {
+                        return;
+                    }
+
+                    playerSkillState.SkillCheckers.Remove(skillLoadCommand.KeyCode);
+                }
+                else
+                {
+                    checker = PlayerSkillCalculator.CreateSkillChecker(skillData);
+                    playerSkillState.SkillCheckers??=new Dictionary<AnimationState, ISkillChecker>();
+                    playerSkillState.SkillCheckers.Add(skillLoadCommand.KeyCode, checker);
+                }
+                CurrentState = playerSkillState;
+            }
+        }
+
         public void ApplyState<T>(T state) where T : ISyncPropertyState
         {
-            SetState(state);
+            if (state is PlayerSkillState playerSkillState)
+            {
+                for (int i = 0; i < playerSkillState.SkillCheckerDatas.Count; i++)
+                {
+                    var skillData = playerSkillState.SkillCheckerDatas[i];
+                    if (!playerSkillState.SkillCheckers.TryGetValue(skillData.AnimationState, out var skillChecker))
+                    {
+                        Debug.LogError($"SkillCheckerData {skillData.AnimationState} not found");
+                        continue;
+                    }
+                    skillChecker.SetSkillData(skillData);
+                    playerSkillState.SkillCheckers[skillData.AnimationState] = skillChecker;
+                }
+                foreach (var key in _skillObjects.Keys)
+                {
+                    _skillObjects[key].transform.position = playerSkillState.SkillCheckers[key].GetSkillEffectPosition();
+                }
+            }
         }
 
         public bool IsSkillExist(AnimationState animationState)
@@ -55,11 +99,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 return playerSkillState.SkillCheckers.ContainsKey(animationState);
             }
             return false;
-        }
-
-        protected override void ProcessCommand(INetworkCommand networkCommand)
-        {
-            
         }
 
         public SkillConfigData GetSkillConfigData(AnimationState animationState)

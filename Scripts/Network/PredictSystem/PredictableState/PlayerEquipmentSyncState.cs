@@ -13,7 +13,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             if (state is not PlayerEquipmentState equipmentState)
                 return;
-            CurrentState = equipmentState;
+
+            for (int i = 0; i < equipmentState.EquipmentDatas.Count; i++)
+            {
+                var data = equipmentState.EquipmentDatas[i];
+                if (data == null)
+                    continue;
+                equipmentState.EquipmentDatas[i] = data;
+            }
         }
 
         protected override void ProcessCommand(INetworkCommand networkCommand)

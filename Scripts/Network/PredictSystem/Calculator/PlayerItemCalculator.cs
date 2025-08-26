@@ -237,7 +237,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                                 var skillLoadCommand = new SkillLoadCommand
                                 {
                                     Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill,
-                                        CommandAuthority.Server, CommandExecuteType.Immediate),
+                                        CommandAuthority.Client, CommandExecuteType.Immediate),
                                     SkillConfigId = skillId,
                                     IsLoad = false,
                                     KeyCode = SkillConfig.GetAnimationState(bagSlotItem.PlayerItemType),
@@ -339,7 +339,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     var skillLoadCommand = new SkillLoadCommand
                     {
                         Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill,
-                            CommandAuthority.Server, CommandExecuteType.Immediate),
+                            CommandAuthority.Client, CommandExecuteType.Immediate),
                         SkillConfigId = exchangedItem.SkillId,
                         IsLoad = false,
                         KeyCode = SkillConfig.GetAnimationState(exchangedItem.PlayerItemType),
@@ -458,7 +458,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             playerItemState.PlayerItemConfigIdSlotDictionary[slotIndex] = bagItem;
             var skillEnableCommand = new SkillLoadCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill, CommandAuthority.Server, CommandExecuteType.Immediate),
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill, CommandAuthority.Client),
                 SkillConfigId = skillId,
                 IsLoad = isEnable,
                 KeyCode = skillConfig.animationState
@@ -483,7 +483,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 {
                     var skillEnableCommand = new SkillLoadCommand
                     {
-                        Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
+                        Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Client, CommandExecuteType.Immediate),
                         SkillConfigId = unloadedItem.SkillId,
                         IsLoad = false,
                         KeyCode = SkillConfig.GetAnimationState(unloadedItem.PlayerItemType)
