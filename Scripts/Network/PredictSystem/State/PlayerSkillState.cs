@@ -10,7 +10,7 @@ using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {
     [MemoryPackable]
-    public partial struct PlayerSkillState : ISyncPropertyState
+    public partial class PlayerSkillState : ISyncPropertyState
     {
         [MemoryPackOrder(0)]
         public MemoryList<SkillCheckerData> SkillCheckerDatas;
@@ -26,9 +26,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 //Debug.LogWarning("SkillCheckers or SkillCheckerDatas is null");
                 return;
             }
+
+            if (SkillCheckers == null || SkillCheckers.Count == 0)
+            {
+                SkillCheckers = new Dictionary<AnimationState, ISkillChecker>();
+            }
             for (var i = 0; i < SkillCheckerDatas.Count; i++)
             {
                 var skillCheckerData = SkillCheckerDatas[i];
+                if (skillCheckerData.AnimationState == AnimationState.None)
+                {
+                    continue;
+                }
                 if (!SkillCheckers.TryGetValue(skillCheckerData.AnimationState, out var skillChecker))
                 {
                     Debug.LogError($"SkillChecker {skillCheckerData.AnimationState} not found");
@@ -43,29 +52,40 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             if (SkillCheckers == null || SkillCheckers.Count == 0)
             {
                 //Debug.LogWarning("SkillCheckers is null or empty");
-                return null;
+                SkillCheckers = new Dictionary<AnimationState, ISkillChecker>();
             }
-            var skillCheckerDatas = new SkillCheckerData[SkillCheckers.Count];
-            var i = 0;
+            if (SkillCheckerDatas == null || SkillCheckerDatas.Count == 0)
+            {
+                SkillCheckerDatas = new MemoryList<SkillCheckerData>();
+            }
             foreach (var animationState in SkillCheckers.Keys)
             {
                 var skillCheckerData = SkillCheckers[animationState];
                 var commonSkillData = skillCheckerData.GetCommonSkillCheckerHeader();
                 var skillEffectData = skillCheckerData.GetSkillEffectLifeCycle();
                 var cooldownData = skillCheckerData.GetCooldownHeader();
-                skillCheckerDatas[i] = new SkillCheckerData
+                SkillCheckerData data = new SkillCheckerData();
+                data.AnimationState = animationState;
+                data.AnimationState = animationState;
+                data.SkillId = commonSkillData.ConfigId;
+                data.MaxSkillTime = commonSkillData.ExistTime;
+                data.SkillCooldownTimer = cooldownData.CurrentTime;
+                data.SkillCooldown = cooldownData.Cooldown;
+                if (skillEffectData!= null)
                 {
-                    AnimationState = animationState,
-                    SkillId = commonSkillData.ConfigId,
-                    MaxSkillTime = commonSkillData.ExistTime,
-                    CurrentSkillTime = skillEffectData.CurrentTime,
-                    SkillCooldownTimer = cooldownData.CurrentTime,
-                    SkillCooldown = cooldownData.Cooldown,
-                    SkillPosition = skillEffectData.CurrentPosition,
-                };
-                i++;
+                    data.CurrentSkillTime = skillEffectData.CurrentTime;
+                    data.SkillPosition = skillEffectData.CurrentPosition;
+                }
+                var index = SkillCheckerDatas.FindIndex(x => x.AnimationState == animationState);
+                if (index == -1)
+                {
+                    SkillCheckerDatas.Add(data);
+                }
+                else
+                {
+                    SkillCheckerDatas[index] = data;
+                }
             }
-            SkillCheckerDatas = new MemoryList<SkillCheckerData>(skillCheckerDatas);
             return SkillCheckerDatas;
         }
     }

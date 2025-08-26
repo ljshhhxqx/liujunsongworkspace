@@ -1743,6 +1743,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
                 Debug.LogError($"EquipmentCommand ItemId is invalid {ItemId}");
                 return false;
             }
+
+            if (!IsEquip)
+            {
+                return true;
+            }
             if (string.IsNullOrEmpty(EquipmentPassiveEffectData))
             {
                 Debug.LogError($"EquipmentCommand EquipmentPassiveEffectData is invalid {EquipmentPassiveEffectData}");

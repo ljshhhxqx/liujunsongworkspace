@@ -126,6 +126,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerPredictableState = player.GetComponent<PlayerSkillSyncState>();
             var skillState = new PlayerSkillState();
             skillState.SkillCheckers = new Dictionary<AnimationState, ISkillChecker>();
+            skillState.SkillCheckerDatas = new MemoryList<SkillCheckerData>();//)<SkillCheckerData>();
             PropertyStates.TryAdd(connectionId, skillState);
             _playerSkillSyncStates.TryAdd(connectionId, playerPredictableState);
             RpcSetPlayerSkillState(connectionId, NetworkCommandExtensions.SerializePlayerState(skillState).Item1);
@@ -224,8 +225,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             return playerSkillState;
         }
 
-        private ISkillChecker GetSkillChecker(AnimationState keyCode, PlayerSkillState playerSkillState)
+        private static ISkillChecker GetSkillChecker(AnimationState keyCode, PlayerSkillState playerSkillState)
         {
+            if (playerSkillState.SkillCheckers == null || playerSkillState.SkillCheckers.Count == 0)
+            {
+                return null;
+            }
+
             var checker = playerSkillState.SkillCheckers[keyCode];
             if (checker == null)
             {

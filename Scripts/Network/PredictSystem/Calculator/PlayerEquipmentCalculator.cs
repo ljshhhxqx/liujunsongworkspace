@@ -24,7 +24,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             Constant = constant;
         }
         
-        private static IConditionChecker GetConditionChecker(PlayerItemType itemType, int itemConfigId)
+        public static IConditionChecker GetConditionChecker(PlayerItemType itemType, int itemConfigId)
         {
             var header = PlayerItemCalculator.GetConditionCheckerHeader(itemType, itemConfigId);
             if (header.CheckParams == null)
@@ -143,7 +143,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             {
                 var data = playerEquipmentState.EquipmentDatas[i];
                 Debug.Log($"Start DeserializeBattleChecker for trigger {triggerType}");
-                var checker = NetworkCommandExtensions.DeserializeBattleCondition(data.ConditionCheckerBytes.Items);
+                var checker = NetworkCommandExtensions.DeserializeBattleCondition(data.ConditionCheckerBytes);
                 if (checker.GetCommonParameters().TriggerType != triggerType)
                 {
                     continue;

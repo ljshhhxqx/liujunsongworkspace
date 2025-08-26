@@ -232,19 +232,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
                         if (skillId != 0)
                         {
-                            
-                            var skillLoadCommand = new SkillLoadCommand
+                            if (bagSlotItem.IsEnableSkill)
                             {
-                                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill,
-                                    CommandAuthority.Server, CommandExecuteType.Immediate),
-                                SkillConfigId = skillId,
-                                IsLoad = false,
-                                KeyCode = SkillConfig.GetAnimationState(bagSlotItem.PlayerItemType),
-                            };
-                            Constant.GameSyncManager.EnqueueServerCommand(skillLoadCommand);
+                                var skillLoadCommand = new SkillLoadCommand
+                                {
+                                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill,
+                                        CommandAuthority.Server, CommandExecuteType.Immediate),
+                                    SkillConfigId = skillId,
+                                    IsLoad = false,
+                                    KeyCode = SkillConfig.GetAnimationState(bagSlotItem.PlayerItemType),
+                                };
+                                Constant.GameSyncManager.EnqueueServerCommand(skillLoadCommand);
+                            }   
                             Constant.GameSyncManager.EnqueueServerCommand(new EquipmentCommand
                             {
-                                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
+                                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Client, CommandExecuteType.Immediate),
                                 EquipmentConfigId = configId,
                                 EquipmentPart = config.equipmentPart,
                                 IsEquip = false,
@@ -322,7 +324,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 var exchangedConfigId = GetEquipmentConfigId(exchangedItem.PlayerItemType, exchangedItem.ConfigId);
                 Constant.GameSyncManager.EnqueueServerCommand(new EquipmentCommand
                 {
-                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
+                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Client, CommandExecuteType.Immediate),
                     EquipmentConfigId = exchangedConfigId,
                     EquipmentPart = exchangedItem.EquipmentPart,
                     IsEquip = false,
@@ -330,20 +332,24 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     EquipmentPassiveEffectData = JsonConvert.SerializeObject(exchangedItem.MainIncreaseDatas),
                     EquipmentMainEffectData = JsonConvert.SerializeObject(exchangedItem.PassiveAttributeIncreaseDatas),
                 });
-                
-                var skillLoadCommand = new SkillLoadCommand
+
+                if (bagItem.IsEnableSkill)
                 {
-                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill,
-                        CommandAuthority.Server, CommandExecuteType.Immediate),
-                    SkillConfigId = exchangedItem.SkillId,
-                    IsLoad = false,
-                    KeyCode = SkillConfig.GetAnimationState(exchangedItem.PlayerItemType),
-                };
-                Constant.GameSyncManager.EnqueueServerCommand(skillLoadCommand);
+
+                    var skillLoadCommand = new SkillLoadCommand
+                    {
+                        Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill,
+                            CommandAuthority.Server, CommandExecuteType.Immediate),
+                        SkillConfigId = exchangedItem.SkillId,
+                        IsLoad = false,
+                        KeyCode = SkillConfig.GetAnimationState(exchangedItem.PlayerItemType),
+                    };
+                    Constant.GameSyncManager.EnqueueServerCommand(skillLoadCommand);
+                }
             }
             Constant.GameSyncManager.EnqueueServerCommand(new EquipmentCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Client, CommandExecuteType.Immediate),
                 EquipmentConfigId = configId,
                 EquipmentPart = bagItem.EquipmentPart,
                 IsEquip = itemEquipCommand.IsEquip,
@@ -473,14 +479,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             {
                 unloadedItem = loadedSkillItem.Value;
                 unloadedItem.IsEnableSkill = false;
-                var skillEnableCommand = new SkillLoadCommand
+                if (bagItem.IsEnableSkill)
                 {
-                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
-                    SkillConfigId = unloadedItem.SkillId,
-                    IsLoad = false,
-                    KeyCode = SkillConfig.GetAnimationState(unloadedItem.PlayerItemType)
-                };
-                Constant.GameSyncManager.EnqueueServerCommand(skillEnableCommand);
+                    var skillEnableCommand = new SkillLoadCommand
+                    {
+                        Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
+                        SkillConfigId = unloadedItem.SkillId,
+                        IsLoad = false,
+                        KeyCode = SkillConfig.GetAnimationState(unloadedItem.PlayerItemType)
+                    };
+                    Constant.GameSyncManager.EnqueueServerCommand(skillEnableCommand);
+                }
                 playerItemState.PlayerItemConfigIdSlotDictionary[unloadedItem.IndexSlot] = unloadedItem;
                 return true;
             }
@@ -529,7 +538,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                         return;
                     }
                     var equipmentCommand = new EquipmentCommand();
-                    equipmentCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate);
+                    equipmentCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Equipment, CommandAuthority.Client, CommandExecuteType.Immediate);
                     equipmentCommand.EquipmentPart = itemConfigData.equipmentPart;
                     equipmentCommand.IsEquip = true;
                     equipmentCommand.EquipmentConfigId = GetEquipmentConfigId(itemConfigData.itemType, itemsData.ItemConfigId);

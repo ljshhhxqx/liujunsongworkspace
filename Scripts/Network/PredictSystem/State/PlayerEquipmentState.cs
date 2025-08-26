@@ -41,12 +41,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                 Debug.LogError($"EquipmentId {itemId} already exists in EquipmentDatas");
                 return false;
             }
-            var memories = new MemoryList<byte>();
             var buffer = NetworkCommandExtensions.SerializeBattleChecker(conditionChecker).buffer;
-            for (int i = 0; i < buffer.Length; i++)
-            {
-                memories.Add(buffer[i]);
-            }
             var equipmentData = new EquipmentData();
             equipmentData.ItemId = itemId;
             equipmentData.EquipConfigId = equipConfigId;
@@ -57,7 +52,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             equipmentData.SkillId = 0;
             equipmentData.IsSkillLoad = false;
             equipmentData.ConditionChecker = conditionChecker;
-            equipmentData.ConditionCheckerBytes = memories;
+            equipmentData.ConditionCheckerBytes = buffer;
             //该部位有装备，则卸下原装备
             for (int i = 0; i < equipmentState.EquipmentDatas.Count; i++)
             {
@@ -84,17 +79,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                     var equipmentPassiveEffectData = new MemoryList<AttributeIncreaseData>();
                     mainData.AddRange(mainIncreaseData);
                     equipmentPassiveEffectData.AddRange(passiveIncreaseData);
-                    var equipData = new EquipmentData();
-                    equipData.ItemId = itemId;
-                    equipData.EquipConfigId = equipConfigId;
-                    equipData.EquipmentPartType = equipmentPartType;
-                    equipData.EquipmentPassiveEffectData = mainData;
-                    equipData.EquipmentConstantPropertyData = equipmentPassiveEffectData;
-                    equipData.TargetIds = equipment.TargetIds;
-                    equipData.SkillId = equipment.SkillId;
-                    equipData.IsSkillLoad = equipment.IsSkillLoad;
-                    equipData.ConditionChecker = equipment.ConditionChecker;
-                    equipmentData.EquipmentDatas[i] = equipData;
+                    equipmentData.EquipmentDatas[i].ItemId = itemId;
+                    equipmentData.EquipmentDatas[i].EquipConfigId = equipConfigId;
+                    equipmentData.EquipmentDatas[i].EquipmentPartType = equipmentPartType;
+                    equipmentData.EquipmentDatas[i].EquipmentPassiveEffectData = mainData;
+                    equipmentData.EquipmentDatas[i].EquipmentConstantPropertyData = equipmentPassiveEffectData;
                     return true;
                 }
             }
@@ -152,7 +141,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         [MemoryPackOrder(5)]
         public MemoryList<int> TargetIds;
         [MemoryPackOrder(6)]
-        public MemoryList<byte> ConditionCheckerBytes;
+        public byte[] ConditionCheckerBytes;
         [MemoryPackOrder(7)]
         public int SkillId;
         [MemoryPackOrder(8)]

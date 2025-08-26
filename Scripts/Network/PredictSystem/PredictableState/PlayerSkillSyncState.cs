@@ -47,6 +47,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             if (CurrentState is PlayerSkillState playerSkillState)
             {
+                if (playerSkillState.SkillCheckers == null || playerSkillState.SkillCheckers.Count == 0)
+                {
+                    //Debug.LogWarning("SkillCheckers is null or empty");
+                    return false;
+                }
                 return playerSkillState.SkillCheckers.ContainsKey(animationState);
             }
             return false;
