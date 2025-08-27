@@ -192,7 +192,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerController = GameSyncManager.GetPlayerConnection(connectionId);
             var animationCooldowns = playerController.GetNowAnimationCooldownsDict();
-            var attackCooldown = animationCooldowns.GetValueOrDefault( AnimationState.Attack);
+            var attackCooldown = animationCooldowns.GetValueOrDefault(AnimationState.Attack);
             if (attackCooldown is KeyframeComboCooldown attackComboCooldown)
             {
                 attackComboCooldown.EventStream

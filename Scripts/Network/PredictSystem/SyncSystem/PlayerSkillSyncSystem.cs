@@ -73,7 +73,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 if (playerState is PlayerSkillState playerSkillState)
                 {
-                    playerSkillState.SetSkillCheckerDatas();
+                    //playerSkillState.SetSkillCheckerDatas();
                     return NetworkCommandExtensions.SerializePlayerState(playerSkillState).Item1;
                 }
 
@@ -92,15 +92,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 foreach (var playerId in PropertyStates.Keys)
                 {
                     var playerState = PropertyStates[playerId];
+                    var playerConnection = GameSyncManager.GetPlayerConnection(playerId);
+                    var skillDic = playerConnection.GetSkillCheckerDict();
                     if (playerState is PlayerSkillState playerSkillState)
                     {
-                        if (playerSkillState.SkillCheckers == null || playerSkillState.SkillCheckers.Count == 0)
+                        if (skillDic == null || skillDic.Count == 0)
                         {
                             return;
                         }
-                        foreach (var key in playerSkillState.SkillCheckers.Keys)
+                        foreach (var key in skillDic.Keys)
                         {
-                            var skillChecker = playerSkillState.SkillCheckers[key];
+                            var skillChecker = skillDic[key];
                             if (skillChecker.IsSkillEffect())
                             {
                                 PlayerSkillCalculator.UpdateSkillFlyEffect(playerId, GameSyncManager.TickSeconds, skillChecker, _playerInGameManager.GetHitPlayers);
@@ -112,7 +114,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                                 cooldown = cooldown.Update(GameSyncManager.TickSeconds);
                                 skillChecker.SetCooldownHeader(cooldown);
                             }
-                            playerSkillState.SkillCheckers[key] = skillChecker;
+                            skillDic[key] = skillChecker;
                         }
                         
                     }
@@ -125,8 +127,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerPredictableState = player.GetComponent<PlayerSkillSyncState>();
             var skillState = new PlayerSkillState();
-            skillState.SkillCheckers = new Dictionary<AnimationState, ISkillChecker>();
-            skillState.SkillCheckerDatas = new MemoryList<SkillCheckerData>();//)<SkillCheckerData>();
+            skillState.SkillCheckerDatas = new MemoryList<SkillCheckerData>();
             PropertyStates.TryAdd(connectionId, skillState);
             _playerSkillSyncStates.TryAdd(connectionId, playerPredictableState);
             RpcSetPlayerSkillState(connectionId, NetworkCommandExtensions.SerializePlayerState(skillState).Item1);
@@ -138,7 +139,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PlayerSkillSyncState>();
             var playerState = NetworkCommandExtensions.DeserializePlayerState(playerSkillState);
-            syncState.ApplyState(playerState);
+            syncState.InitializeState(playerState);
         }
         
         public override CommandType HandledCommandType => CommandType.Skill;
@@ -151,7 +152,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
             if (command is SkillCommand skillCommand)
             {
-                var checker = GetSkillChecker(skillCommand.KeyCode, playerSkillState);
+                var checker = GetSkillChecker(skillCommand.KeyCode, header.ConnectionId);
                 var skillCommonHeader = checker.GetCommonSkillCheckerHeader();
                 //释放的技能与当前技能不一致
                 if (skillCommand.SkillConfigId != skillCommonHeader.ConfigId)
@@ -159,10 +160,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     Debug.LogError($"Player {header.ConnectionId} skill checker has different config ID {skillCommonHeader.ConfigId} for player {header.ConnectionId}");
                     return PropertyStates[header.ConnectionId];
                 }
+                var playerConnection = GameSyncManager.GetPlayerConnection(skillCommand.Header.ConnectionId);
+                var skillCheckers = playerConnection.GetNowAnimationCooldownsDict();
                 var skillData = _skillConfig.GetSkillData(skillCommand.SkillConfigId);
                 var propertySync = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
                 var playerProperty = propertySync.GetPropertyCalculator(header.ConnectionId, skillData.costProperty);
-                if (!PlayerSkillCalculator.ExecuteSkill(playerSkillState, skillData, playerProperty, skillCommand,
+                var playerComponent = GameSyncManager.GetPlayerConnection(header.ConnectionId);
+                if (!PlayerSkillCalculator.ExecuteSkill(playerComponent, skillData, playerProperty, skillCommand,
                         skillCommand.KeyCode, _playerInGameManager.GetHitPlayers, out var position))
                 {
                     Debug.LogError($"Player {header.ConnectionId} execute skill failed");
@@ -185,23 +189,24 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 Debug.Log($"[SkillLoadCommand] Player {header.ConnectionId} skill {skillLoadCommand.SkillConfigId} start load");
                 ISkillChecker checker;
                 var skillData = _skillConfig.GetSkillData(skillLoadCommand.SkillConfigId);
+                var playerConnection = GameSyncManager.GetPlayerConnection(skillLoadCommand.Header.ConnectionId);
+
+                var skillCheckers = playerConnection.GetSkillCheckerDict();
                 if (!skillLoadCommand.IsLoad)
                 {
-                    checker = GetSkillChecker(skillLoadCommand.KeyCode, playerSkillState);
+                    checker = skillCheckers[skillLoadCommand.KeyCode];
                     var skillCommonHeader = checker.GetCommonSkillCheckerHeader();
                     if (skillLoadCommand.SkillConfigId != skillCommonHeader.ConfigId)
                     {
                         Debug.LogError($"Player {header.ConnectionId} skill checker has different config ID {skillCommonHeader.ConfigId} for player {header.ConnectionId}");
                         return PropertyStates[header.ConnectionId];
                     }
-
-                    playerSkillState.SkillCheckers.Remove(skillLoadCommand.KeyCode);
+                    skillCheckers.Remove(skillLoadCommand.KeyCode);
                 }
                 else
                 {
-                    checker = PlayerSkillCalculator.CreateSkillChecker(skillData);
-                    playerSkillState.SkillCheckers??=new Dictionary<AnimationState, ISkillChecker>();
-                    playerSkillState.SkillCheckers.Add(skillLoadCommand.KeyCode, checker);
+                    checker = PlayerSkillCalculator.CreateSkillChecker(skillData, skillLoadCommand.KeyCode);
+                    skillCheckers.Add(skillLoadCommand.KeyCode, checker);
                 }
                 var skillLoadOverrideAnimation = new SkillLoadOverloadAnimationCommand
                 {
@@ -220,19 +225,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 GameSyncManager.EnqueueServerCommand(skillLoadOverrideAnimation);
 
                 PropertyStates[header.ConnectionId] = playerSkillState;
-                return PropertyStates[header.ConnectionId];
+                return playerSkillState;
             }
             return playerSkillState;
         }
 
-        private static ISkillChecker GetSkillChecker(AnimationState keyCode, PlayerSkillState playerSkillState)
+        private ISkillChecker GetSkillChecker(AnimationState keyCode, int connectionId)
         {
-            if (playerSkillState.SkillCheckers == null || playerSkillState.SkillCheckers.Count == 0)
-            {
-                return null;
-            }
+            var playerConnection = GameSyncManager.GetPlayerConnection(connectionId);
 
-            var checker = playerSkillState.SkillCheckers[keyCode];
+            var skillCheckers = playerConnection.GetSkillCheckerDict();
+            var checker = skillCheckers[keyCode];
             if (checker == null)
             {
                 Debug.LogError($"Player {keyCode} has no skill checker");
@@ -261,20 +264,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         public SkillConfigData GetSkillConfigData(AnimationState animationState, int headerConnectionId)
         {
-            var currentState = PropertyStates[headerConnectionId];
-            if (currentState is PlayerSkillState playerSkillState)
+            var playerConnection = GameSyncManager.GetPlayerConnection(headerConnectionId);
+            var skillCheckers = playerConnection.GetSkillCheckerDict();
+            if (skillCheckers == null || skillCheckers.Count == 0)
             {
-                if (playerSkillState.SkillCheckers == null || playerSkillState.SkillCheckers.Count == 0)
-                {
-                    return default;
-                }
+                return default;
+            }
 
-                if (!playerSkillState.SkillCheckers.TryGetValue(animationState, out var skillChecker))
-                {
-                    return default;
-                }
-
-                var skillConfigData = _skillConfig.GetSkillData(skillChecker.GetCommonSkillCheckerHeader().ConfigId);
+            if (skillCheckers.TryGetValue(animationState, out var checker))
+            {
+                var skillConfigData = _skillConfig.GetSkillData(checker.GetCommonSkillCheckerHeader().ConfigId);
                 return skillConfigData;
             }
             return default;

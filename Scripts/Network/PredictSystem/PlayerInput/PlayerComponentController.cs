@@ -16,6 +16,7 @@ using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Player;
+using HotUpdate.Scripts.Skill;
 using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Static;
@@ -87,6 +88,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private PlayerElementCalculator _playerElementCalculator;
         private PlayerEquipmentCalculator _playerEquipmentCalculator;
         private PlayerShopCalculator _playerShopCalculator;
+        private PlayerSkillCalculator _playerSkillCalculator;
         
         private List<IPlayerStateCalculator> _playerStateCalculators = new List<IPlayerStateCalculator>(8);
         
@@ -101,6 +103,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private bool _isControlled = true;
         private SubjectedStateType _subjectedStateType;
         private List<IAnimationCooldown> _animationCooldowns = new List<IAnimationCooldown>();
+        private List<ISkillChecker> _skillCheckers = new List<ISkillChecker>();
         
         private static float FixedDeltaTime => Time.fixedDeltaTime;
         private static float DeltaTime => Time.deltaTime;
@@ -116,6 +119,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private GameEventManager _gameEventManager;
         private List<PredictableStateBase> _predictionStates = new List<PredictableStateBase>();
         private List<SyncStateBase> _syncStates = new List<SyncStateBase>();
+        private Dictionary<AnimationState, ISkillChecker> _skillCheckersDic = new Dictionary<AnimationState, ISkillChecker>();
         private Dictionary<AnimationState, IAnimationCooldown> _animationCooldownsDict = new Dictionary<AnimationState, IAnimationCooldown>();
         private AnimationState _previousAnimationState;
         private KeyframeComboCooldown _attackAnimationCooldown;       
@@ -160,6 +164,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 throw new Exception("Animation cooldowns is empty.");
             }
             return _animationCooldownsDict;
+        }
+        
+        public Dictionary<AnimationState, ISkillChecker> GetSkillCheckerDict()
+        {
+            if (_skillCheckersDic.Count == 0)
+            {
+                if (_skillCheckers.Count > 0)
+                {
+                    _skillCheckersDic = _skillCheckers.ToDictionary(x => x.GetCommonSkillCheckerHeader().AnimationState, x => x);
+                    return _skillCheckersDic;
+                }
+            }
+            return _skillCheckersDic;
         }
         
         public List<IAnimationCooldown> GetNowAnimationCooldowns() => _animationCooldowns;
@@ -240,6 +257,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             animationConstant.IsClient = isClient;
             animationConstant.IsLocalPlayer = isLocalPlayer;
             PlayerAnimationCalculator.SetAnimationConstant(animationConstant);
+            var constant = PlayerSkillCalculator.Constant;
+            constant.IsServer = isServer;
+            PlayerSkillCalculator.SetConstant(constant);
             // _capsuleCollider.OnTriggerEnterAsObservable()
             //     .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
             //     .Subscribe(c =>
@@ -645,6 +665,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _inputState.AddPredictedCommand(inputCommand);
         }
 
+        public void PlayerAddCommand<T>(CommandType commandType, T command) where T : INetworkCommand
+        {
+            switch (commandType)
+            {
+                case CommandType.Property:
+                    _propertyPredictionState.AddPredictedCommand(command);
+                    break;
+                case CommandType.Input:
+                    _inputState.AddPredictedCommand(command);
+                    break;
+                case CommandType.Skill:
+                    _skillSyncState.AddPredictedCommand(command);
+                    break;
+            }
+        }
+
+
         private void HandleInputPhysics(PlayerInputStateData inputData)
         {
             _currentSpeed = Mathf.SmoothDamp(_currentSpeed, _targetSpeed, ref _speedSmoothVelocity, _speedSmoothTime);
@@ -754,6 +791,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 ConstantBuffConfig = configProvider.GetConfig<ConstantBuffConfig>(),
                 RandomBuffConfig = configProvider.GetConfig<RandomBuffConfig>(),
                 SkillConfig = configProvider.GetConfig<SkillConfig>(),
+                PlayerComponentController = this,
             });
             PlayerEquipmentCalculator.SetConstant(new PlayerEquipmentConstant
             {
@@ -770,6 +808,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 PlayerInGameManager = _playerInGameManager,
                 PlayerConfigData = _playerConfigData,
             });
+            PlayerSkillCalculator.SetConstant(new SkillCalculatorConstant
+            {
+                GameSyncManager = gameSyncManager,
+                SkillConfig = configProvider.GetConfig<SkillConfig>(),
+                SceneLayerMask = gameData.stairSceneLayer,
+            });
             _playerPhysicsCalculator = new PlayerPhysicsCalculator(new PhysicsComponent(_rigidbody, transform, _checkStairTransform, _capsuleCollider, _camera));
             _playerPropertyCalculator = new PlayerPropertyCalculator(PlayerPropertyCalculator.GetPropertyCalculators());
             _playerAnimationCalculator = new PlayerAnimationCalculator(new AnimationComponent{ Animator = _animator});
@@ -778,6 +822,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerElementCalculator = new PlayerElementCalculator();
             _playerEquipmentCalculator = new PlayerEquipmentCalculator();
             _playerShopCalculator = new PlayerShopCalculator();
+            _playerSkillCalculator = new PlayerSkillCalculator();
             _playerStateCalculators.Add(_playerPhysicsCalculator);
             _playerStateCalculators.Add(_playerPropertyCalculator);
             _playerStateCalculators.Add(_playerAnimationCalculator);
@@ -786,6 +831,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerStateCalculators.Add(_playerElementCalculator);
             _playerStateCalculators.Add(_playerEquipmentCalculator);
             _playerStateCalculators.Add(_playerShopCalculator);
+            _playerStateCalculators.Add(_playerSkillCalculator);
         }
 
         private void OnAttack(int stage)

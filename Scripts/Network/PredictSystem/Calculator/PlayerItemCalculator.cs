@@ -6,6 +6,7 @@ using HotUpdate.Scripts.Network.Battle;
 using HotUpdate.Scripts.Network.Item;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Tool.Static;
@@ -433,8 +434,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
         public static void CommandEnablePlayerSkill(ref PlayerItemState playerItemState, int skillId, int slotIndex, bool isEnable, int connectionId)
         {
-            if (!Constant.IsServer)
-                return;
             if (!PlayerItemState.TryGetSlotItemBySlotIndex(playerItemState, slotIndex, out var bagItem))
             {
                 Debug.LogError($"Failed to enable skill {skillId}, no slotIndex {slotIndex}");
@@ -456,14 +455,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var skillConfig = Constant.SkillConfig.GetSkillData(skillId);
             bagItem.IsEnableSkill = isEnable;
             playerItemState.PlayerItemConfigIdSlotDictionary[slotIndex] = bagItem;
-            var skillEnableCommand = new SkillLoadCommand
+            if (Constant.IsLocalPlayer)
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill, CommandAuthority.Client),
-                SkillConfigId = skillId,
-                IsLoad = isEnable,
-                KeyCode = skillConfig.animationState
-            };
-            Constant.GameSyncManager.EnqueueServerCommand(skillEnableCommand);
+                var skillEnableCommand = new SkillLoadCommand
+                {
+                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill, CommandAuthority.Client),
+                    SkillConfigId = skillId,
+                    IsLoad = isEnable,
+                    KeyCode = skillConfig.animationState
+                };
+                Constant.PlayerComponentController.PlayerAddCommand(CommandType.Skill, skillEnableCommand);
+            }
         }
 
         public static bool TryUnloadSkill(ref PlayerItemState playerItemState, int connectionId, int slotIndex, out PlayerBagSlotItem unloadedItem)
@@ -755,6 +757,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public InteractSystem InteractSystem;
         public ConstantBuffConfig ConstantBuffConfig;
         public RandomBuffConfig RandomBuffConfig;
+        public PlayerComponentController PlayerComponentController;
         public bool IsServer;
         public bool IsClient;
         public bool IsLocalPlayer;

@@ -4,6 +4,7 @@ using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Battle;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
+using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
@@ -13,10 +14,10 @@ using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {
-    public class PlayerSkillCalculator
+    public class PlayerSkillCalculator : IPlayerStateCalculator
     {
-        private static SkillCalculatorConstant Constant;
-        
+        public static SkillCalculatorConstant Constant { get; private set; }
+
         public static void SetConstant(SkillCalculatorConstant constant)
         {
             Constant = constant;
@@ -34,9 +35,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return SkillConfig.IsSkillCostEnough(skillConfigData, propertyCalculator) && skillChecker.IsSkillNotCd();
         }
 
-        public static ISkillChecker CreateSkillChecker(SkillConfigData skillConfigData)
+        public static ISkillChecker CreateSkillChecker(SkillConfigData skillConfigData, AnimationState key)
         {
-            var commonParams = CreateSkillCheckerCommon(skillConfigData);
+            var commonParams = CreateSkillCheckerCommon(skillConfigData, key);
             ISkillChecker skillChecker = null;
             SkillEffectLifeCycle skillEffectLifeCycle = null;
             switch (skillConfigData.skillType)
@@ -64,7 +65,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         }
 
         private static (CooldownHeader, CommonSkillCheckerHeader) CreateSkillCheckerCommon(
-            SkillConfigData skillConfigData)
+            SkillConfigData skillConfigData, AnimationState key)
         {
             var cooldownHeader = new CooldownHeader
             {
@@ -79,14 +80,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 CooldownTime = skillConfigData.cooldown,
                 SkillEffectPrefabName = skillConfigData.particleName,
                 ExistTime = skillConfigData.duration,
+                AnimationState = key
             };
             return (cooldownHeader, commonSkillCheckerHeader);
         }
 
-        public static bool ExecuteSkill(PlayerSkillState skillState, SkillConfigData skillConfigData, PropertyCalculator propertyCalculator, 
+        public static bool ExecuteSkill(PlayerComponentController playerController, SkillConfigData skillConfigData, PropertyCalculator propertyCalculator, 
             SkillCommand skillCommand, AnimationState key, Func<Vector3, IColliderConfig, int[]> isHitFunc, out Vector3 position)
         {
-            var skillChecker = skillState.SkillCheckers[key];
+            var checkers = playerController.GetSkillCheckerDict();
+            var skillChecker = checkers[key];
             position = Vector3.zero;
             if (!CheckSkillCdAndCost(skillChecker, skillConfigData, propertyCalculator, key))
             {

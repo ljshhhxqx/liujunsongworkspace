@@ -6,6 +6,7 @@ using HotUpdate.Scripts.Network.Battle;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using MemoryPack;
 using UnityEngine;
+using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 
 namespace HotUpdate.Scripts.Skill
 {
@@ -44,6 +45,7 @@ namespace HotUpdate.Scripts.Skill
         public float ExistTime;
         public float Radius;
         public bool IsAreaOfRanged;
+        public AnimationState AnimationState;
     }
 
     public struct SkillCheckerParams
