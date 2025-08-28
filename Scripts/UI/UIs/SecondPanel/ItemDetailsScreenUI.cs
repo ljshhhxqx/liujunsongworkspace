@@ -383,6 +383,12 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 case BagItemData bagItemData:
                     var isLocked = bagItemData.IsLock;
                     buyCountSlider.gameObject.SetActive(false);
+                    lockButton.GetComponentInChildren<TextMeshProUGUI>().text = 
+                        bagItemData.IsLock ? "解锁" : "锁定";
+                    equipButton.GetComponentInChildren<TextMeshProUGUI>().text = 
+                        bagItemData.IsEquip ? "卸下" : "装备";
+                    enableButton.GetComponentInChildren<TextMeshProUGUI>().text =
+                        bagItemData.IsEnable ? "技能关" : "技能开";
                     switch (_currentItemDetailsType)
                     {
                         case ItemDetailsType.Bag:
@@ -414,15 +420,6 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
-
-
-
-                    lockButton.GetComponentInChildren<TextMeshProUGUI>().text = 
-                        bagItemData.IsLock ? "解锁" : "锁定";
-                    equipButton.GetComponentInChildren<TextMeshProUGUI>().text = 
-                        bagItemData.IsEquip ? "卸下" : "装备";
-                    enableButton.GetComponentInChildren<TextMeshProUGUI>().text =
-                        bagItemData.IsEnable ? "技能关" : "技能开";
                     break;
                 case RandomShopItemData randomShopItemData:
                     buyCountSlider.gameObject.SetActive(true);

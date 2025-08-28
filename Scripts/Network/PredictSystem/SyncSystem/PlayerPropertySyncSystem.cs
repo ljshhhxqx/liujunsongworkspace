@@ -747,7 +747,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 "[AddBuffToPlayer] modify property :\n" +
                 $"1. [buff] buffType->{buffExtraData.buffType} buffid->{newBuff.BuffData.buffId} buffpropertyType-> {newBuff.BuffData.propertyType} buffincreaseData-> {newBuff.BuffData.increaseDataList[0].ToString()}\n" +
                 $"2. [property] preProperty-> {preProperty} nowProperty -> {nowProperty} preMaxProperty -> {preMaxProperty} nowMaxProperty -> {nowMaxProperty} ");
-            if (changedHp > 0)
+            if (Mathf.Abs(changedHp) > 0)
             {
                 var equipmentSyncSystem = GameSyncManager.GetSyncSystem<PlayerEquipmentSystem>(CommandType.Equipment);
                 if (!equipmentSyncSystem.TryGetPlayerConditionChecker(targetId, TriggerType.OnHpChange, out _))
@@ -764,7 +764,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 });
             }
 
-            if (changedMp > 0)
+            if (Mathf.Abs(changedMp) > 0)
             {
                 var equipmentSyncSystem = GameSyncManager.GetSyncSystem<PlayerEquipmentSystem>(CommandType.Equipment);
                 if (!equipmentSyncSystem.TryGetPlayerConditionChecker(targetId, TriggerType.OnManaChange, out _))

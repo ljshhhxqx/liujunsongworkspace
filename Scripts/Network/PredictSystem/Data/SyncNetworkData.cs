@@ -263,9 +263,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
             // 2. 检查协议版本
             byte version = data[0];
-            if (version != CONDITIONCHECKER_PROTOCOL_VERSION)
+            if (version != BATTLECONDITION_PROTOCOL_VERSION)
             {
-                throw new InvalidOperationException($"Unsupported protocol version: {version}. Expected: {CONDITIONCHECKER_PROTOCOL_VERSION}");
+                throw new InvalidOperationException($"Unsupported protocol version: {version}. Expected: {BATTLECONDITION_PROTOCOL_VERSION}");
             }
 
             // 3. 提取类型ID
@@ -471,6 +471,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public static IConditionCheckerParameters GetConditionCheckerParameters(this ReadOnlySpan<byte> data, int typeId)
         {
+            Debug.Log($"GetConditionCheckerParameters: {typeId}");
             return (TriggerType)typeId switch
             {
                 TriggerType.OnAttackHit => MemoryPackSerializer.Deserialize<AttackHitCheckerParameters>(data),

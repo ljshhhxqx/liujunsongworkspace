@@ -252,6 +252,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                                 EquipmentPart = config.equipmentPart,
                                 IsEquip = false,
                                 ItemId = bagSlotItem.ItemIds.First(),
+                                
                             });
                         }
                     }
@@ -443,7 +444,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             if (TryUnloadSkill(ref playerItemState, connectionId, slotIndex, out var unloadedItem))
             {
                 Debug.Log($"Skill {skillId} unloaded from slot {slotIndex}");
-                
+                unloadedItem.IsEnableSkill = false;
+                playerItemState.PlayerItemConfigIdSlotDictionary[unloadedItem.IndexSlot] = unloadedItem;
             }
 
             if (bagItem.SkillId != skillId)
@@ -462,7 +464,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill, CommandAuthority.Client),
                     SkillConfigId = skillId,
                     IsLoad = isEnable,
-                    KeyCode = skillConfig.animationState
+                    KeyCode = SkillConfig.GetAnimationState(bagItem.PlayerItemType),
                 };
                 Constant.PlayerComponentController.PlayerAddCommand(CommandType.Skill, skillEnableCommand);
             }

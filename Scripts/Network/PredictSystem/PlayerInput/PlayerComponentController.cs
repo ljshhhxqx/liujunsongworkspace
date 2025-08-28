@@ -112,6 +112,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private IConfigProvider _configProvider;
         private GameConfigData _gameConfigData;
         private KeyFunctionConfig _keyFunctionConfig;
+        private SkillConfig _skillConfig;
         private PlayerConfigData _playerConfigData;
         private UIManager _uiManager;
         private InteractSystem _interactSystem;
@@ -166,20 +167,27 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             return _animationCooldownsDict;
         }
         
-        public Dictionary<AnimationState, ISkillChecker> GetSkillCheckerDict()
+        public Dictionary<AnimationState, ISkillChecker> SkillCheckerDict
         {
-            if (_skillCheckersDic.Count == 0)
+            get
             {
-                if (_skillCheckers.Count > 0)
+                if (_skillCheckersDic.Count == 0)
                 {
-                    _skillCheckersDic = _skillCheckers.ToDictionary(x => x.GetCommonSkillCheckerHeader().AnimationState, x => x);
-                    return _skillCheckersDic;
+                    if (_skillCheckers.Count > 0)
+                    {
+                        _skillCheckersDic =
+                            _skillCheckers.ToDictionary(x => x.GetCommonSkillCheckerHeader().AnimationState, x => x);
+                        return _skillCheckersDic;
+                    }
                 }
+                return _skillCheckersDic;
             }
-            return _skillCheckersDic;
+            set
+            {
+                _skillCheckersDic = value;
+                _skillCheckers = value.Values.ToList();
+            }
         }
-        
-        public List<IAnimationCooldown> GetNowAnimationCooldowns() => _animationCooldowns;
 
         [Inject]
         private void Init(IConfigProvider configProvider, 
@@ -198,6 +206,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _rigidbody = GetComponent<Rigidbody>();
             _capsuleCollider = GetComponent<CapsuleCollider>();
             _animator = GetComponent<Animator>();
+            _skillConfig = _configProvider.GetConfig<SkillConfig>();
             _camera = Camera.main;
             _animationCooldowns = GetAnimationCooldowns();
             _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
@@ -1334,5 +1343,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         //     var headerData = originData.GetHeader();
         //     Debug.Log($"TestInputAnimationStates -> {headerData.CommandType} -> {headerData.CommandId} ->{headerData.ConnectionId} {headerData.Timestamp} {headerData.Authority} {headerData.Tick}");
         // }
+        [ClientRpc]
+        public void RpcSpawnSkillEffect(int skillConfigId, Vector3 position, AnimationState code)
+        {
+            _skillSyncState.SpawnSkillEffect(skillConfigId, position, code);
+           
+        }
     }
 }

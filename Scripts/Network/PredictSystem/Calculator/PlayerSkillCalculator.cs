@@ -88,7 +88,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public static bool ExecuteSkill(PlayerComponentController playerController, SkillConfigData skillConfigData, PropertyCalculator propertyCalculator, 
             SkillCommand skillCommand, AnimationState key, Func<Vector3, IColliderConfig, int[]> isHitFunc, out Vector3 position)
         {
-            var checkers = playerController.GetSkillCheckerDict();
+            var checkers = playerController.SkillCheckerDict;
             var skillChecker = checkers[key];
             position = Vector3.zero;
             if (!CheckSkillCdAndCost(skillChecker, skillConfigData, propertyCalculator, key))

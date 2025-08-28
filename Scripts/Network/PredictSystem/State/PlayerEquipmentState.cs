@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using AOTScripts.Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Battle;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
@@ -53,6 +54,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             equipmentData.IsSkillLoad = false;
             equipmentData.ConditionChecker = conditionChecker;
             equipmentData.ConditionCheckerBytes = buffer;
+            equipmentData.TriggerType = conditionChecker.GetConditionCheckerHeader().TriggerType;
             //该部位有装备，则卸下原装备
             for (int i = 0; i < equipmentState.EquipmentDatas.Count; i++)
             {
@@ -146,6 +148,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         public int SkillId;
         [MemoryPackOrder(8)]
         public bool IsSkillLoad;
+        [MemoryPackOrder(9)]
+        public TriggerType TriggerType;
         [MemoryPackIgnore]
         public IConditionChecker ConditionChecker;
         

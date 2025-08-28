@@ -219,7 +219,9 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
 
         public bool Equals(BagItemData other)
         {
-            return ItemName == other.ItemName && Index == other.Index && Stack == other.Stack && Description == other.Description && PlayerItemType == other.PlayerItemType && IsEquip == other.IsEquip && IsLock == other.IsLock && MaxStack == other.MaxStack;
+            return ItemName == other.ItemName && Index == other.Index && Stack == other.Stack 
+                   && Description == other.Description && PlayerItemType == other.PlayerItemType 
+                   && IsEquip == other.IsEquip && IsLock == other.IsLock && MaxStack == other.MaxStack && IsEnable == other.IsEnable && ConditionDescription == other.ConditionDescription && PassiveDescription == other.PassiveDescription && SkillDescription == other.SkillDescription;// && Equals(OnUseItem, other.OnUseItem) && Equals(OnDropItem, other.OnDropItem) && Equals(OnExchangeItem, other.OnExchangeItem) && Equals(OnLockItem, other.OnLockItem) && Equals(OnEquipItem, other.OnEquipItem) && Equals(OnEnableSkill, other.OnEnableSkill) && Equals(OnSellItem, other.OnSellItem) && QualityIcon == other.QualityIcon && QualityIcon == other.QualityIcon && SkillId == other.SkillId && EquipmentPart == other.EquipmentPart;
         }
 
         public override int GetHashCode()
@@ -266,7 +268,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
 
         public bool Equals(EquipItemData other)
         {
-            return ItemName == other.ItemName && Description == other.Description && IsLock == other.IsLock && EquipmentPartType == other.EquipmentPartType;
+            return ItemName == other.ItemName && Description == other.Description && IsLock == other.IsLock 
+                   && EquipmentPartType == other.EquipmentPartType && PlayerItemType == other.PlayerItemType;// && Equals(OnLockItem, other.OnLockItem) && Equals(OnEquipItem, other.OnEquipItem) && Equals(OnDropItem, other.OnDropItem) && Icon == other.Icon && QualityIcon == other.QualityIcon;
         }
 
         public override int GetHashCode()

@@ -47,7 +47,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 Debug.Log($"[SkillLoadCommand] Player {NetworkClient.localPlayer.connectionToClient.connectionId} skill {skillLoadCommand.SkillConfigId} start load");
                 ISkillChecker checker;
                 var skillData = _skillConfig.GetSkillData(skillLoadCommand.SkillConfigId);
-                var skillCheckers = _playerComponentController.GetSkillCheckerDict();
+                var skillCheckers = _playerComponentController.SkillCheckerDict;
                 if (!skillLoadCommand.IsLoad)
                 {
                     checker = skillCheckers[skillLoadCommand.KeyCode];
@@ -80,7 +80,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             if (state is PlayerSkillState appliedState && CurrentState is PlayerSkillState playerSkillState)
             {
-                var skillCheckers = _playerComponentController.GetSkillCheckerDict();
+                var skillCheckers = _playerComponentController.SkillCheckerDict;
                 if (appliedState.SkillCheckerDatas.Count == 0 && skillCheckers.Count == 0)
                 {
                     return;
@@ -107,7 +107,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             if (CurrentState is PlayerSkillState playerSkillState)
             {
-                var skillCheckers = _playerComponentController.GetSkillCheckerDict();
+                var skillCheckers = _playerComponentController.SkillCheckerDict;
                 if (skillCheckers == null || skillCheckers.Count == 0)
                 {
                     //Debug.LogWarning("SkillCheckers is null or empty");
@@ -122,7 +122,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             if (CurrentState is PlayerSkillState playerSkillState)
             {
-                var skillCheckers = _playerComponentController.GetSkillCheckerDict();
+                var skillCheckers = _playerComponentController.SkillCheckerDict;
                 if (skillCheckers == null || skillCheckers.Count == 0)
                 {
                     //Debug.LogWarning("SkillCheckers is null or empty");
@@ -140,9 +140,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             return default;
         }
 
-        [ClientRpc]
-        public void RpcSpawnSkillEffect(int skillConfigId, Vector3 position, AnimationState code)
-        {
+        public void SpawnSkillEffect(int skillConfigId, Vector3 position, AnimationState code)
+        { 
             _currentSkillConfigData = _skillConfig.GetSkillData(skillConfigId);
             var effectName = _currentSkillConfigData.particleName;
             var resource = ResourceManager.Instance.GetResource<GameObject>(effectName);

@@ -104,7 +104,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 PropertyStates[header.ConnectionId] = playerEquipmentState;
                 return PropertyStates[header.ConnectionId];
             }
-            if (command is TriggerCommand triggerCommand)
+            if (command is TriggerCommand triggerCommand && triggerCommand.TriggerType!= TriggerType.None)
             {
                 //todo: 根据触发类型查阅是否有触发效果，没有则忽略，有则获取相关装备数据，并根据配置计算触发效果
                 Debug.Log($"TriggerCommand {triggerCommand.TriggerType} received, {triggerCommand.TriggerData}.");

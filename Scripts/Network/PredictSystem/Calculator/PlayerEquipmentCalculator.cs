@@ -112,6 +112,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         {
             if (!Constant.IsServer)
                 return false;
+            return false;
+            
+            Debug.Log($"Start handle trigger {triggerCommand.TriggerType}");
             var header = triggerCommand.Header;
             var data = triggerCommand.TriggerData;
             var configId = PlayerItemCalculator.GetItemConfigId(equipmentPart, equipmentConfigId);
@@ -143,8 +146,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             {
                 var data = playerEquipmentState.EquipmentDatas[i];
                 Debug.Log($"Start DeserializeBattleChecker for trigger {triggerType}");
-                var checker = NetworkCommandExtensions.DeserializeBattleCondition(data.ConditionCheckerBytes);
-                if (checker.GetCommonParameters().TriggerType != triggerType)
+                if (data.TriggerType != triggerType)
                 {
                     continue;
                 }

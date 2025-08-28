@@ -93,7 +93,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 {
                     var playerState = PropertyStates[playerId];
                     var playerConnection = GameSyncManager.GetPlayerConnection(playerId);
-                    var skillDic = playerConnection.GetSkillCheckerDict();
+                    var skillDic = playerConnection.SkillCheckerDict;
                     if (playerState is PlayerSkillState playerSkillState)
                     {
                         if (skillDic == null || skillDic.Count == 0)
@@ -174,7 +174,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 }
                 PropertyStates[header.ConnectionId] = playerSkillState;
                 var playerSkillSyncState = _playerSkillSyncStates[header.ConnectionId];
-                playerSkillSyncState.RpcSpawnSkillEffect(skillCommand.SkillConfigId, position, skillCommand.KeyCode);
+                playerSkillSyncState.SpawnSkillEffect(skillCommand.SkillConfigId, position, skillCommand.KeyCode);
                 var skillHeader = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property,
                     CommandAuthority.Server, CommandExecuteType.Immediate);
                 GameSyncManager.EnqueueServerCommand(new PropertyUseSkillCommand
@@ -187,13 +187,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             if (command is SkillLoadCommand skillLoadCommand)
             {
                 Debug.Log($"[SkillLoadCommand] Player {header.ConnectionId} skill {skillLoadCommand.SkillConfigId} start load");
+                
                 ISkillChecker checker;
-                var skillData = _skillConfig.GetSkillData(skillLoadCommand.SkillConfigId);
                 var playerConnection = GameSyncManager.GetPlayerConnection(skillLoadCommand.Header.ConnectionId);
-
-                var skillCheckers = playerConnection.GetSkillCheckerDict();
+                var skillCheckers = playerConnection.SkillCheckerDict;
+                if (skillCheckers.ContainsKey(skillLoadCommand.KeyCode))
+                {
+                    return PropertyStates[header.ConnectionId];
+                }
+                var skillData = _skillConfig.GetSkillData(skillLoadCommand.SkillConfigId);
                 if (!skillLoadCommand.IsLoad)
                 {
+                    Debug.Log($"[SkillLoadCommand] Player {header.ConnectionId} skill {skillLoadCommand.SkillConfigId}-{skillLoadCommand.KeyCode} unload");
                     checker = skillCheckers[skillLoadCommand.KeyCode];
                     var skillCommonHeader = checker.GetCommonSkillCheckerHeader();
                     if (skillLoadCommand.SkillConfigId != skillCommonHeader.ConfigId)
@@ -205,6 +210,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 }
                 else
                 {
+                    if (skillCheckers.ContainsKey(skillLoadCommand.KeyCode))
+                    {
+                        skillCheckers.Remove(skillLoadCommand.KeyCode);
+                    }
+                    Debug.Log($"[SkillLoadCommand] Player {header.ConnectionId} skill {skillLoadCommand.SkillConfigId}-{skillLoadCommand.KeyCode} load");
                     checker = PlayerSkillCalculator.CreateSkillChecker(skillData, skillLoadCommand.KeyCode);
                     skillCheckers.Add(skillLoadCommand.KeyCode, checker);
                 }
@@ -234,7 +244,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerConnection = GameSyncManager.GetPlayerConnection(connectionId);
 
-            var skillCheckers = playerConnection.GetSkillCheckerDict();
+            var skillCheckers = playerConnection.SkillCheckerDict;
             var checker = skillCheckers[keyCode];
             if (checker == null)
             {
@@ -265,7 +275,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public SkillConfigData GetSkillConfigData(AnimationState animationState, int headerConnectionId)
         {
             var playerConnection = GameSyncManager.GetPlayerConnection(headerConnectionId);
-            var skillCheckers = playerConnection.GetSkillCheckerDict();
+            var skillCheckers = playerConnection.SkillCheckerDict;
             if (skillCheckers == null || skillCheckers.Count == 0)
             {
                 return default;
