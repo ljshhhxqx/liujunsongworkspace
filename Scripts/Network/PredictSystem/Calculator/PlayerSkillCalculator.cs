@@ -152,6 +152,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             command.Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property, CommandAuthority.Server, CommandExecuteType.Immediate);
             command.SkillId = commonSkillCheckerHeader.ConfigId;
             command.HitPlayerIds = commonSkillCheckerHeader.IsAreaOfRanged ? hitPlayers : new int[] { hitPlayers[0] };
+            foreach (var playerId in command.HitPlayerIds)
+            {
+                Debug.Log($"技能命中玩家{playerId}");
+                
+            }
             Constant.GameSyncManager.EnqueueServerCommand(command);
             return hitPlayers;
         }

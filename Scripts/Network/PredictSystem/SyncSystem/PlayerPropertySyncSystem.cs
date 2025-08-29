@@ -1077,8 +1077,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 var hitPlayerId = hitPlayerIds[i];
                 var otherPlayerNetId = _playerInGameManager.GetPlayerNetId(attacker);
-                var isAlly = _playerInGameManager.IsOtherPlayerAlly(playerNetId, otherPlayerNetId);
-                if (skillData.conditionTarget == ConditionTargetType.Ally && isAlly)
+                //var isAlly = _playerInGameManager.IsOtherPlayerAlly(playerNetId, otherPlayerNetId);
+                if (skillData.conditionTarget == ConditionTargetType.Ally)
                 {
                     for (int j = 0; j < effectData.Length; j++)
                     {
@@ -1086,7 +1086,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         HandleSkillHit(attacker, effect, hitPlayerId, true);
                     }
                 }
-                else if (skillData.conditionTarget == ConditionTargetType.Enemy && !isAlly)
+                else if (skillData.conditionTarget == ConditionTargetType.Enemy)
                 {
                     var equipmentSystem = GameSyncManager.GetSyncSystem<PlayerEquipmentSystem>(CommandType.Equipment);
                     for (int j = 0; j < effectData.Length; j++)
