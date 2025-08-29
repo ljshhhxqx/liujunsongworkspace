@@ -90,6 +90,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         {
             var checkers = playerController.SkillCheckerDict;
             var skillChecker = checkers[key];
+            var skillLifeCycle = skillChecker.GetSkillEffectLifeCycle();
             position = Vector3.zero;
             if (!CheckSkillCdAndCost(skillChecker, skillConfigData, propertyCalculator, key))
             {
@@ -122,6 +123,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 TargetPosition = position,
                 Radius = skillConfigData.radius,
             };
+            if (skillLifeCycle == null)
+            {
+                var skillEffectLifeCycle = new SkillEffectLifeCycle(commonParam.PlayerPosition, commonParam.TargetPosition, skillConfigData.radius,  skillConfigData.flySpeed, skillConfigData.duration);
+                skillChecker.SetSkillEffectLifeCycle(skillEffectLifeCycle);
+                checkers[key] = skillChecker;
+            }
 
             if (!skillChecker.Execute(ref skillChecker, commonParam, isHitFunc))
             {
@@ -134,7 +141,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public static int[] UpdateSkillFlyEffect(int connectionId, float deltaTime, ISkillChecker skillChecker, Func<Vector3, IColliderConfig, int[]> isHitFunc)
         {
             var hitPlayers = skillChecker.UpdateFly(deltaTime, isHitFunc);
-            if (hitPlayers.Length == 0)
+            if (hitPlayers == null || hitPlayers.Length == 0)
             {
                 Debug.Log("没有命中任何玩家");
                 return Array.Empty<int>();

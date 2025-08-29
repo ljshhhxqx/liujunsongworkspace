@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Common;
@@ -100,9 +101,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         {
                             return;
                         }
-                        foreach (var key in skillDic.Keys)
+                        var keys = skillDic.Keys.ToArray();
+                        for (int i = 0; i < keys.Length; i++)
                         {
-                            var skillChecker = skillDic[key];
+                            var skillChecker = skillDic[keys[i]];
                             if (skillChecker.IsSkillEffect())
                             {
                                 PlayerSkillCalculator.UpdateSkillFlyEffect(playerId, GameSyncManager.TickSeconds, skillChecker, _playerInGameManager.GetHitPlayers);
@@ -114,9 +116,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                                 cooldown = cooldown.Update(GameSyncManager.TickSeconds);
                                 skillChecker.SetCooldownHeader(cooldown);
                             }
-                            skillDic[key] = skillChecker;
+                            skillDic[keys[i]] = skillChecker;
                         }
-                        
                     }
                     PropertyStates[playerId] = playerState;
                 }
@@ -173,8 +174,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     return PropertyStates[header.ConnectionId];
                 }
                 PropertyStates[header.ConnectionId] = playerSkillState;
-                var playerSkillSyncState = _playerSkillSyncStates[header.ConnectionId];
-                playerSkillSyncState.SpawnSkillEffect(skillCommand.SkillConfigId, position, skillCommand.KeyCode);
+                playerComponent.RpcSpawnSkillEffect(skillCommand.SkillConfigId, position, skillCommand.KeyCode);
                 var skillHeader = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property,
                     CommandAuthority.Server, CommandExecuteType.Immediate);
                 GameSyncManager.EnqueueServerCommand(new PropertyUseSkillCommand
@@ -214,7 +214,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     {
                         skillCheckers.Remove(skillLoadCommand.KeyCode);
                     }
-                    Debug.Log($"[SkillLoadCommand] Player {header.ConnectionId} skill {skillLoadCommand.SkillConfigId}-{skillLoadCommand.KeyCode} load");
+                    Debug.Log($"[SkillLoadCommand] Player {header.ConnectionId} skill {skillLoadCommand.SkillConfigId}-{skillLoadCommand.KeyCode.ToString()} load");
                     checker = PlayerSkillCalculator.CreateSkillChecker(skillData, skillLoadCommand.KeyCode);
                     skillCheckers.Add(skillLoadCommand.KeyCode, checker);
                 }

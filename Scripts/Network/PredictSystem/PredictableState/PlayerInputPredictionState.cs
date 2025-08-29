@@ -167,7 +167,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 var info = _animationConfig.GetAnimationInfo(inputCommand.CommandAnimationState);
                 var actionType = info.actionType;
                 var health = _propertyPredictionState.GetProperty(PropertyTypeEnum.Health);
-                var skillConfigData = _skillSyncState.GetSkillConfigData(inputCommand.CommandAnimationState);
+                SkillConfigData skillConfigData = default;
+                if (inputCommand.CommandAnimationState == AnimationState.SkillE || inputCommand.CommandAnimationState == AnimationState.SkillQ)
+                { 
+                    skillConfigData = _skillSyncState.GetSkillConfigData(inputCommand.CommandAnimationState);
+                }
                 var cost = skillConfigData.id == 0 ? info.cost : skillConfigData.cost;
                 var cooldown = skillConfigData.id == 0 ? info.cooldown : skillConfigData.cooldown;
                 //Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");

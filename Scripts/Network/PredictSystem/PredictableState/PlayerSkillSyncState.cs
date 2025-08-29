@@ -150,7 +150,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             effect.transform.rotation = Quaternion.identity;
             effect.transform.localScale = Vector3.one;
             effect.transform.parent = _spawnTransform;
-            _skillObjects.Add(code, effect);
+            //_skillObjects.Add(code, effect);
         }
     }
 }

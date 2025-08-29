@@ -24,6 +24,7 @@ namespace HotUpdate.Scripts.Skill
         int[] UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc);
         Vector3 GetSkillEffectPosition();
         SkillEffectLifeCycle GetSkillEffectLifeCycle();
+        void SetSkillEffectLifeCycle(SkillEffectLifeCycle skillEffectLifeCycle);
         void SetSkillData(SkillCheckerData skillCheckerData);
     }
 
@@ -91,6 +92,10 @@ namespace HotUpdate.Scripts.Skill
 
         public SkillEventType RemoveSkillEvent(float currentTime)
         {
+            if (SkillEventData==null || SkillEventData.Count == 0)
+            {
+                return SkillEventType.None;
+            }
             for (int i = 0; i < SkillEventData.Count; i++)
             {
                  var skillEvent = SkillEventData[i];
@@ -144,6 +149,11 @@ namespace HotUpdate.Scripts.Skill
             return this.IsSkillNotCd();
         }
         public SkillEffectLifeCycle GetSkillEffectLifeCycle() => SkillEffectLifeCycle;
+        public void SetSkillEffectLifeCycle(SkillEffectLifeCycle skillEffectLifeCycle)
+        {
+            SkillEffectLifeCycle = skillEffectLifeCycle;
+        }
+
         public void SetSkillData(SkillCheckerData skillCheckerData)
         {
             SkillEffectLifeCycle.CurrentPosition = skillCheckerData.SkillPosition.ToVector3();
@@ -221,6 +231,12 @@ namespace HotUpdate.Scripts.Skill
         {
             return this.IsSkillNotCd();
         }
+
+        public void SetSkillEffectLifeCycle(SkillEffectLifeCycle skillEffectLifeCycle)
+        {
+            SkillEffectLifeCycle = skillEffectLifeCycle;
+        }
+
         public void SetSkillData(SkillCheckerData skillCheckerData)
         {
             SkillEffectLifeCycle.CurrentPosition = skillCheckerData.SkillPosition.ToVector3();
@@ -300,6 +316,10 @@ namespace HotUpdate.Scripts.Skill
         public SkillEffectLifeCycle SkillEffectLifeCycle;
         public float FlyDistance;
         public SkillEffectLifeCycle GetSkillEffectLifeCycle() => SkillEffectLifeCycle;
+        public void SetSkillEffectLifeCycle(SkillEffectLifeCycle skillEffectLifeCycle)
+        {
+            SkillEffectLifeCycle = skillEffectLifeCycle;
+        }
 
         public void SetSkillData(SkillCheckerData skillCheckerData)
         {
@@ -378,6 +398,10 @@ namespace HotUpdate.Scripts.Skill
         public SkillEffectLifeCycle SkillEffectLifeCycle;
         public float FlyDistance;
         public SkillEffectLifeCycle GetSkillEffectLifeCycle() => SkillEffectLifeCycle;
+        public void SetSkillEffectLifeCycle(SkillEffectLifeCycle skillEffectLifeCycle)
+        {
+            SkillEffectLifeCycle = skillEffectLifeCycle;
+        }
 
         public void SetSkillData(SkillCheckerData skillCheckerData)
         {
@@ -457,7 +481,11 @@ namespace HotUpdate.Scripts.Skill
         public float FlyDistance;
         public Vector3 GetSkillEffectPosition() => SkillEffectLifeCycle.CurrentPosition;
         public SkillEffectLifeCycle GetSkillEffectLifeCycle() => SkillEffectLifeCycle;
-        
+        public void SetSkillEffectLifeCycle(SkillEffectLifeCycle skillEffectLifeCycle)
+        {
+            SkillEffectLifeCycle = skillEffectLifeCycle;
+        }
+
         public void SetSkillData(SkillCheckerData skillCheckerData)
         {
             SkillEffectLifeCycle.CurrentPosition = skillCheckerData.SkillPosition.ToVector3();
