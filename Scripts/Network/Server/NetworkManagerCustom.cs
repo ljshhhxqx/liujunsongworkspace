@@ -6,6 +6,7 @@ using Game.Map;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
+using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
@@ -13,6 +14,7 @@ using HotUpdate.Scripts.UI.UIBase;
 using Mirror;
 using Network.NetworkMes;
 using Tool.GameEvent;
+using Tool.Message;
 using UI.UIBase;
 using UnityEngine;
 using VContainer;
@@ -34,6 +36,7 @@ namespace HotUpdate.Scripts.Network.Server
         private PlayerInGameManager _playerInGameManager;
         private MapType _mapName;
         private GameConfigData _gameConfigData;
+        private MirrorNetworkMessageHandler _mirrorNetworkMessageHandler;
 
         [Inject]
         private void Init(GameEventManager gameEventManager, UIManager uIManager, IObjectResolver objectResolver,
@@ -48,9 +51,16 @@ namespace HotUpdate.Scripts.Network.Server
             _gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnSceneResourcesLoaded);
             _objectResolver = objectResolver;
             _playerDataManager = playerDataManager;
+            _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
             _gameConfigData = configProvider.GetConfig<JsonDataConfig>().GameConfig;
+            _mirrorNetworkMessageHandler.RegisterLocalMessageHandler<PlayerConnectedMessage>(OnPlayerConnectedAndSpawn);
         }
-        
+
+        private void OnPlayerConnectedAndSpawn(PlayerConnectedMessage message)
+        {
+            SpawnPlayer(message.ConnectionId, message.SpawnIndex);
+        }
+
         // 服务器端有玩家连接时调用
         public override void OnServerConnect(NetworkConnectionToClient conn)
         {
@@ -83,26 +93,33 @@ namespace HotUpdate.Scripts.Network.Server
             UIPropertyBinder.LocalPlayerId = -1;
         }
 
-        public override void OnServerAddPlayer(NetworkConnectionToClient conn)
+        private GameObject SpawnPlayer(int connectionId, int spawnIndex)
         {
+            var spawnPoint = _spawnPoints[spawnIndex];
             var res = DataJsonManager.Instance.GetResourceData(_gameConfigData.playerPrefabName);
             var resInfo = ResourceManager.Instance.GetResource<GameObject>(res);
-            if (resInfo)
-            {
-                //currentPlayer = resInfo.gameObject;
-                var spawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Count)];
-                var playerGo = Instantiate(resInfo.gameObject, spawnPoint.transform);
-                playerGo.transform.parent = spawnPoint.transform;
-                playerGo.transform.localPosition = Vector3.zero;
-                playerGo.transform.localRotation = Quaternion.identity;
-                playerGo.name = playerGo.name.Replace("(Clone)", conn.connectionId.ToString());
-                playerGo.gameObject.SetActive(false);
-                ObjectInjectProvider.Instance.InjectMapGameObject(_mapName, playerGo);
-                playerGo.gameObject.SetActive(true);
-                Debug.Log("Spawned player: " + playerGo.name);
-                _spawnPoints.Remove(spawnPoint);
-                NetworkServer.AddPlayerForConnection(conn, playerGo);
-            }
+            var playerGo = Instantiate(resInfo.gameObject, spawnPoint.transform);
+            playerGo.transform.parent = spawnPoint.transform;
+            playerGo.transform.localPosition = Vector3.zero;
+            playerGo.transform.localRotation = Quaternion.identity;
+            playerGo.name = playerGo.name.Replace("(Clone)", connectionId.ToString());
+            playerGo.gameObject.SetActive(false);
+            ObjectInjectProvider.Instance.InjectMapGameObject(_mapName, playerGo);
+            playerGo.gameObject.SetActive(true);
+            Debug.Log("Spawned player: " + playerGo.name);
+            return playerGo;
+        }
+
+        public override void OnServerAddPlayer(NetworkConnectionToClient conn)
+        {
+            var spawnIndex = Random.Range(0, _spawnPoints.Count);
+            var res = DataJsonManager.Instance.GetResourceData(_gameConfigData.playerPrefabName);
+            var spawnPoint = _spawnPoints[spawnIndex];
+            _mirrorNetworkMessageHandler.SendToAllClients(new MirrorPlayerConnectMessage(res.Name, conn.connectionId, "asdw"));
+            var playerGo = SpawnPlayer(conn.connectionId, spawnIndex);
+            //currentPlayer = resInfo.gameObject;
+            _spawnPoints.Remove(spawnPoint);
+            NetworkServer.AddPlayerForConnection(conn, playerGo);
         }
 
         private void OnSceneResourcesLoaded(GameSceneResourcesLoadedEvent sceneResourcesLoadedEvent)

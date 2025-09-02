@@ -18,6 +18,8 @@ namespace HotUpdate.Scripts.Network.NetworkMes
         private readonly Dictionary<Type, Delegate> _serverHandlers = new Dictionary<Type, Delegate>();
         private readonly Dictionary<Type, Delegate> _clientHandlers = new Dictionary<Type, Delegate>();
         private readonly ConcurrentDictionary<(string type, long id), DateTime> _lastMessageSent = new ConcurrentDictionary<(string type, long id), DateTime>();
+        private bool _serverHandler;
+        private bool _clientHandler;
         
         private readonly TimeSpan MESSAGE_EXPIRATION = TimeSpan.FromSeconds(2);
         
@@ -30,7 +32,7 @@ namespace HotUpdate.Scripts.Network.NetworkMes
 
         public void SendToServer<T>(T msg) where T : struct, NetworkMessage
         {
-            if (isClient)
+            if (_clientHandler)
             {
                 NetworkClient.Send(msg);
             }
@@ -38,7 +40,7 @@ namespace HotUpdate.Scripts.Network.NetworkMes
 
         public void SendToAllClients<T>(T msg) where T : struct, NetworkMessage
         {
-            if (isServer)
+            if (_serverHandler)
             {
                 NetworkServer.SendToAll(msg);
             }
@@ -47,12 +49,14 @@ namespace HotUpdate.Scripts.Network.NetworkMes
         public override void OnStartServer()
         {
             base.OnStartServer();
+            _serverHandler = true;
             RegisterServerHandlers();
         }
 
         public override void OnStartClient()
         {
             base.OnStartClient();
+            _clientHandler = true;
             RegisterClientHandlers();
         }
 
@@ -73,6 +77,7 @@ namespace HotUpdate.Scripts.Network.NetworkMes
             RegisterClientHandler<MirrorGameWarmupMessage>();
             RegisterClientHandler<MirrorFrameUpdateMessage>();
             RegisterClientHandler<MirrorFrameAttackResultMessage>();
+            RegisterClientHandler<MirrorPlayerConnectedMessage>();
             // 注册更多客户端消息处理程序...
         }
 
@@ -177,6 +182,11 @@ namespace HotUpdate.Scripts.Network.NetworkMes
             if (networkMessage is MirrorPlayerInputInfoMessage playerInputInfoMessage)
             {
                 return new PlayerInputInfoMessage(playerInputInfoMessage.connectionID, playerInputInfoMessage.input);
+            }
+
+            if (networkMessage is MirrorPlayerConnectedMessage playerConnectedMessage)
+            {
+                return new PlayerConnectedMessage(playerConnectedMessage.connectionID, playerConnectedMessage.spawnIndex);
             }
             
             // 添加更多消息类型的处理...

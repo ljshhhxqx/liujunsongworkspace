@@ -210,13 +210,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             if (!_playerComponentControllers.TryGetValue(connectionId, out var playerConnection))
             {
-                if (NetworkClient.connection.connectionId == connectionId)
+                if (NetworkClient.connection != null && NetworkClient.connection.connectionId == connectionId)
                 {
                     playerConnection = NetworkClient.connection.identity.GetComponent<PlayerComponentController>();
                     _playerComponentControllers.Add(connectionId, playerConnection);
                 }
 
-                else if (NetworkServer.connections.TryGetValue(connectionId, out var connection))
+                else if (NetworkServer.connections != null && NetworkServer.connections.TryGetValue(connectionId, out var connection))
                 {
                     playerConnection = connection.identity.GetComponent<PlayerComponentController>();
                     _playerComponentControllers.Add(connectionId, playerConnection);

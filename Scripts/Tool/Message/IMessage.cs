@@ -204,8 +204,19 @@ namespace Tool.Message
             this.Input = input;
             this.ConnectionId = connectionId;
         }
-    }   
-    
+    }
+
+    public struct PlayerConnectedMessage : IMessage
+    {
+        public int ConnectionId;
+        public int SpawnIndex;
+        public PlayerConnectedMessage(int connectionId, int spawnIndex)
+        {
+            this.ConnectionId = connectionId;
+            this.SpawnIndex = spawnIndex;
+        }
+    }
+
     public struct PlayerStateMessage : IMessage
     {
         public ServerState State;

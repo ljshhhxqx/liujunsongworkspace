@@ -7,6 +7,7 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.GameBase;
+using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
@@ -44,7 +45,7 @@ using PropertyEnvironmentChangeCommand = HotUpdate.Scripts.Network.PredictSystem
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 {
-    public class PlayerComponentController : NetworkBehaviour, IAttackAnimationEvent
+    public class PlayerComponentController : NetworkAutoInjectComponent, IAttackAnimationEvent
     {
         [Header("Components")]
         [SerializeField]
@@ -188,6 +189,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 _skillCheckers = value.Values.ToList();
             }
         }
+        
+        private bool _isInit;
 
         [Inject]
         private void Init(IConfigProvider configProvider, 
@@ -195,6 +198,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             UIManager uiManager,
             GameEventManager gameEventManager)
         {
+            if (_isInit)
+            {
+                return;
+            }
+            _isInit = true;
             _configProvider = configProvider;
             var jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
             _gameConfigData = jsonDataConfig.GameConfig;

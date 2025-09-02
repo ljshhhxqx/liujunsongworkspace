@@ -21,7 +21,7 @@ namespace HotUpdate.Scripts.Network.Inject
         public int ConnectionID => netIdentity.connectionToClient.connectionId;
         public string PlayerId { get;set; }
 
-        private void Start()
+        private void Awake()
         {
             if (autoInject && isForClient)
             {

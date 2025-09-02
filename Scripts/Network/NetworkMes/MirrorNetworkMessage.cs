@@ -181,6 +181,19 @@ namespace Network.NetworkMes
     }
 
     [Serializable]
+    public struct MirrorPlayerConnectedMessage : NetworkMessage
+    {
+        public int connectionID;
+        public int spawnIndex;
+        
+        public MirrorPlayerConnectedMessage(int connectionID, int spawnIndex)
+        {
+            this.connectionID = connectionID;
+            this.spawnIndex = spawnIndex;
+        }
+    }
+
+    [Serializable]
     public struct MirrorPlayerInputMessage : NetworkMessage
     {
         public PlayerInputInfo playerInputInfo;
