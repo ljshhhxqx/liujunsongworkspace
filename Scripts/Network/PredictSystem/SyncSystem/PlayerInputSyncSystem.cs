@@ -32,7 +32,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
     public class PlayerInputSyncSystem : BaseSyncSystem
     {
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
-        private readonly Dictionary<int, PlayerInputPredictionState> _inputPredictionStates = new Dictionary<int, PlayerInputPredictionState>();
+        private readonly Dictionary<uint, PlayerInputPredictionState> _inputPredictionStates = new Dictionary<uint, PlayerInputPredictionState>();
         private AnimationConfig _animationConfig;
         private JsonDataConfig _jsonDataConfig;
         private PlayerPropertySyncSystem _playerPropertySyncSystem;
@@ -59,7 +59,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             UpdatePlayerAnimationAsync(_cts.Token, GameSyncManager.TickSeconds).Forget();
         }
 
-        public override byte[] GetPlayerSerializedState(int connectionId)
+        public override byte[] GetPlayerSerializedState(uint connectionId)
         {
             if (PropertyStates.TryGetValue(connectionId, out var playerState))
             {
@@ -99,13 +99,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private void UpdatePlayerAnimationCooldowns(float deltaTime)
         {
-            foreach (var connectionsKey in NetworkServer.connections.Keys)
+            foreach (var kvp in NetworkServer.connections)
             {
-                var playerController = GameSyncManager.GetPlayerConnection(connectionsKey);
-                var inputState = PropertyStates[connectionsKey];
+                var networkConnection = kvp.Value;
+                var playerController = GameSyncManager.GetPlayerConnection(networkConnection.identity.netId);
+                var inputState = PropertyStates[networkConnection.identity.netId];
                 if (inputState is not PlayerInputState playerInputState)
                 {
-                    Debug.LogError($"Player {connectionsKey} has no input state.");
+                    Debug.LogError($"Player {kvp} has no input state.");
                     continue;
                 }
                 var cooldownState = playerInputState.PlayerAnimationCooldownState;
@@ -117,11 +118,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 // }
 
                 playerInputState.PlayerAnimationCooldownState = cooldownState;
-                PropertyStates[connectionsKey] = playerInputState;
+                PropertyStates[networkConnection.identity.netId] = playerInputState;
             }
         }
 
-        protected override void OnClientProcessStateUpdate(int connectionId, byte[] state, CommandType commandType)
+        protected override void OnClientProcessStateUpdate(uint connectionId, byte[] state, CommandType commandType)
         {
             if (commandType!= CommandType.Input)
             {
@@ -139,7 +140,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
         }
 
-        protected override void RegisterState(int connectionId, NetworkIdentity player)
+        protected override void RegisterState(uint connectionId, NetworkIdentity player)
         {
             var playerPredictableState = player.GetComponent<PlayerInputPredictionState>();
             var playerInputState = new PlayerInputState(new PlayerGameStateData(),
@@ -180,15 +181,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         }
 
         [ClientRpc]
-        private void RpcSetPlayerInputState(int connectionId, byte[] playerInputState)
+        private void RpcSetPlayerInputState(uint connectionId, byte[] playerInputState)
         {
-            var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PlayerInputPredictionState>();
+            var playerController = GameSyncManager.GetPlayerConnection(connectionId);
+            var syncState = playerController.GetComponent<PlayerInputPredictionState>();
             var playerState = NetworkCommandExtensions.DeserializePlayerState(playerInputState);
             syncState.InitCurrentState(playerState);
         }
 
         [Server]
-        private void BindAniEvents(int connectionId)
+        private void BindAniEvents(uint connectionId)
         {
             var playerController = GameSyncManager.GetPlayerConnection(connectionId);
             var animationCooldowns = playerController.GetNowAnimationCooldownsDict();
@@ -244,7 +246,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             });
         }
 
-        private void HandlePlayerRoll(int connectionId, bool isRollStart)
+        private void HandlePlayerRoll(uint connectionId, bool isRollStart)
         {
             GameSyncManager.EnqueueServerCommand(new PropertyInvincibleChangedCommand
             {
@@ -253,7 +255,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             });
         }
 
-        private void HandlePlayerAttack(int connectionId)
+        private void HandlePlayerAttack(uint connectionId)
         {
             Debug.Log($"[HandlePlayerAttack] player {connectionId} attack");
             var playerController = GameSyncManager.GetPlayerConnection(connectionId);

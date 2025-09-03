@@ -53,7 +53,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
             var propertyEquipmentChangedCommand = new PropertyEquipmentChangedCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property,
+                Header = GameSyncManager.CreateNetworkCommandHeader(header.NetId, CommandType.Property,
                     CommandAuthority.Client, CommandExecuteType.Immediate),
                 EquipConfigId = itemConfig.id,
                 EquipItemId = itemId,
@@ -63,7 +63,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             };
             var propertyEquipPassiveCommand = new PropertyEquipmentPassiveCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property,
+                Header = GameSyncManager.CreateNetworkCommandHeader(header.NetId, CommandType.Property,
                     CommandAuthority.Client, CommandExecuteType.Immediate),
                 EquipItemConfigId = equipConfigId,
                 EquipItemId = itemId,
@@ -125,7 +125,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 var itemData = GameItemManager.GetGameItemData(itemId);
                 var propertyEquipPassiveCommand = new PropertyEquipmentPassiveCommand
                 {
-                    Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property,
+                    Header = GameSyncManager.CreateNetworkCommandHeader(header.NetId, CommandType.Property,
                         CommandAuthority.Server, CommandExecuteType.Immediate),
                     EquipItemConfigId = configId,
                     EquipItemId = itemId,

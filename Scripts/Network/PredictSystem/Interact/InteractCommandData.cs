@@ -39,7 +39,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         [MemoryPackOrder(0)] 
         public uint CommandId;              // 命令唯一ID（时间戳+序列号）
         [MemoryPackOrder(1)] 
-        public int RequestConnectionId;               // 发起者connectionId
+        public uint RequestConnectionId;               // 发起者connectionId
         [MemoryPackOrder(2)]
         public int Tick;
         [MemoryPackOrder(3)] 

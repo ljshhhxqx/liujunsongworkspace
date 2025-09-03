@@ -88,7 +88,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             
         }
 
-        public static InteractHeader CreateInteractHeader(int? connectionId, InteractCategory category, CompressedVector3 position = default, CommandAuthority authority = CommandAuthority.Server)
+        public static InteractHeader CreateInteractHeader(uint? connectionId, InteractCategory category, CompressedVector3 position = default, CommandAuthority authority = CommandAuthority.Server)
         {
             int? noSequence = null;
             var connectionIdValue = connectionId.GetValueOrDefault();
@@ -144,7 +144,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         private void HandleSceneInteractRequest(SceneInteractRequest request)
         {
             var header = request.GetHeader();
-            var playerNetId = PlayerInGameManager.Instance.GetPlayerNetId(header.RequestConnectionId);
+            var playerNetId = header.RequestConnectionId;
             switch (request.InteractionType)
             {
                 case InteractionType.PickupItem:

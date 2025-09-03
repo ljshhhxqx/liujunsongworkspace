@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
@@ -12,14 +11,12 @@ using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
-using HotUpdate.Scripts.Tool.ObjectPool;
 using Mirror;
 using Tool.GameEvent;
 using UniRx;
 using UnityEngine;
 using VContainer;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
-using InteractHeader = HotUpdate.Scripts.Network.PredictSystem.Interact.InteractHeader;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
@@ -43,7 +40,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private PlayerPropertySyncSystem _playerPropertySyncSystem;
         private bool _isProcessing; // 防止重入
         private CancellationTokenSource _cts;
-        private readonly Dictionary<int, PlayerComponentController> _playerComponentControllers = new Dictionary<int, PlayerComponentController>();
+        private readonly Dictionary<uint, PlayerComponentController> _playerComponentControllers = new Dictionary<uint, PlayerComponentController>();
         
         private InteractSystem _interactSystem;
 
@@ -155,9 +152,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             if(!isServer)
                 return;
-            PlayerInGameManager.Instance.RemovePlayer(disconnectEvent.ConnectionId);
-            OnPlayerDisconnected?.Invoke(disconnectEvent.ConnectionId);
-            RpcPlayerDisconnect(disconnectEvent.ConnectionId);
+            PlayerInGameManager.Instance.RemovePlayer(disconnectEvent.NetworkId);
+            OnPlayerDisconnected?.Invoke(disconnectEvent.NetworkId);
+            RpcPlayerDisconnect(disconnectEvent.NetworkId);
         }
 
         private void OnPlayerConnect(PlayerConnectEvent connectEvent)
@@ -165,26 +162,32 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             if(!isServer)
                 return;
             var networkIdentity = NetworkServer.connections[connectEvent.ConnectionId].identity;
-            connectEvent = new PlayerConnectEvent(connectEvent.ConnectionId, networkIdentity, connectEvent.ReadOnlyData);
+            connectEvent = new PlayerConnectEvent(connectEvent.ConnectionId, networkIdentity, connectEvent.ReadOnlyData, connectEvent.NetworkId);
             PlayerInGameManager.Instance.AddPlayer(connectEvent.ConnectionId, new PlayerInGameData
             {
                 player = connectEvent.ReadOnlyData,
                 networkIdentity = networkIdentity
             });
-            OnPlayerConnected?.Invoke(connectEvent.ConnectionId, connectEvent.Identity);
-            RpcPlayerConnect(connectEvent);
+            OnPlayerConnected?.Invoke(connectEvent.NetworkId, connectEvent.Identity);
+            RpcPlayerConnect(networkIdentity.netId);
         }
         
         [ClientRpc]
-        private void RpcPlayerConnect(PlayerConnectEvent connectEvent)
+        private void RpcPlayerConnect(uint playerNetId)
         {
             if(isServer)
                 return;
-            OnPlayerConnected?.Invoke(connectEvent.ConnectionId, NetworkServer.connections[connectEvent.ConnectionId].identity);
+            var player = PlayerInGameManager.Instance.ClientGetNetworkIdentity(playerNetId);
+            if (!player)
+            {
+                Debug.LogError($"Player {playerNetId} not found");
+                return;
+            }
+            OnPlayerConnected?.Invoke(playerNetId, player);
         }
         
         [ClientRpc]
-        private void RpcPlayerDisconnect(int connectionId)
+        private void RpcPlayerDisconnect(uint connectionId)
         {
             if(isServer)
                 return;
@@ -192,8 +195,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             OnPlayerDisconnected?.Invoke(connectionId);
         }
         
-        public event Action<int, NetworkIdentity> OnPlayerConnected;
-        public event Action<int> OnPlayerDisconnected;
+        public event Action<uint, NetworkIdentity> OnPlayerConnected;
+        public event Action<uint> OnPlayerDisconnected;
         
         public T GetSyncSystem<T>(CommandType commandType) where T : BaseSyncSystem
         {
@@ -206,19 +209,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             return null;
         }
         
-        public PlayerComponentController GetPlayerConnection(int connectionId)
+        public PlayerComponentController GetPlayerConnection(uint connectionId)
         {
             if (!_playerComponentControllers.TryGetValue(connectionId, out var playerConnection))
             {
-                if (NetworkClient.connection != null && NetworkClient.connection.connectionId == connectionId)
+                if (NetworkClient.connection != null && NetworkClient.localPlayer.netId == connectionId)
                 {
                     playerConnection = NetworkClient.connection.identity.GetComponent<PlayerComponentController>();
                     _playerComponentControllers.Add(connectionId, playerConnection);
                 }
 
-                else if (NetworkServer.connections != null && NetworkServer.connections.TryGetValue(connectionId, out var connection))
+                else if (NetworkServer.connections != null && NetworkServer.spawned.TryGetValue(connectionId, out var connection))
                 {
-                    playerConnection = connection.identity.GetComponent<PlayerComponentController>();
+                    playerConnection = connection.GetComponent<PlayerComponentController>();
                     _playerComponentControllers.Add(connectionId, playerConnection);
                 }
             }
@@ -421,9 +424,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         /// <summary>
         /// 强制更新每个BaseSyncSystem的客户端状态
         /// </summary>
-        public event Action<int, byte[], CommandType> OnClientProcessStateUpdate;
+        public event Action<uint, byte[], CommandType> OnClientProcessStateUpdate;
         [ClientRpc]
-        private void RpcProcessCurrentTickCommand(int connectionId, byte[] state, CommandType commandType)
+        private void RpcProcessCurrentTickCommand(uint connectionId, byte[] state, CommandType commandType)
         {
             // if (isServer)
             //     return;
@@ -454,13 +457,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             OnBroadcastStateUpdate?.Invoke(); 
         }
 
-        public static NetworkCommandHeader CreateNetworkCommandHeader(int connectionId, CommandType commandType, CommandAuthority authority = CommandAuthority.Server, CommandExecuteType commandExecuteType = CommandExecuteType.Predicate, NetworkCommandType networkCommandType = NetworkCommandType.None)
+        public static NetworkCommandHeader CreateNetworkCommandHeader(uint connectionId, CommandType commandType, CommandAuthority authority = CommandAuthority.Server, CommandExecuteType commandExecuteType = CommandExecuteType.Predicate, NetworkCommandType networkCommandType = NetworkCommandType.None)
         {
             var tick = (int?)CurrentTick;
             var header = ObjectPoolManager<NetworkCommandHeader>.Instance.Get(50);
             header.Clear();
             header.CommandId = HybridIdGenerator.GenerateCommandId(authority == CommandAuthority.Server, commandType, networkCommandType, ref tick);
-            header.ConnectionId = connectionId;
+            header.NetId = connectionId;
             header.CommandType = commandType;
             header.Tick = tick.GetValueOrDefault();
             header.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();

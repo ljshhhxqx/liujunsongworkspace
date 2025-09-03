@@ -8,9 +8,9 @@ namespace HotUpdate.Scripts.Network.UISync
 {
     public class UIDataBroker
     {
-        public int ConnectionId { get; private set; }
+        public uint ConnectionId { get; private set; }
         
-        public UIDataBroker(int connectionId)
+        public UIDataBroker(uint connectionId)
         {
             ConnectionId = connectionId;
         }

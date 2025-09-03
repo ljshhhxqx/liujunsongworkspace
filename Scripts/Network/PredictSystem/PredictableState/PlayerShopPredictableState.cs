@@ -133,7 +133,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 randomShopData.MainProperty = mainProperty ?? "";
                 randomShopData.RandomProperty = randomBuffEffectDesc ?? "";
                 randomShopData.SkillDescription =
-                    PlayerItemCalculator.GetSkillDescription(skillId, NetworkIdentity.connectionToClient.connectionId);
+                    PlayerItemCalculator.GetSkillDescription(skillId, NetworkIdentity.netId);
                 randomShopData.PassiveDescription = item.ItemType.IsEquipment() && equipBattleConfigData.id != 0
                     ? _shopConfig.GetShopConstantData().shopEquipPassiveDescription
                     : ""; 

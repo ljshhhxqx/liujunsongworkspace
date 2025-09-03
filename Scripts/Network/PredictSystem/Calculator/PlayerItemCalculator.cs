@@ -77,7 +77,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return attributeIncreaseDatas;
         }
 
-        public static string GetSkillDescription(int skillConfigId, int connectionId,bool includeName = true)
+        public static string GetSkillDescription(int skillConfigId, uint connectionId,bool includeName = true)
         {
             if (skillConfigId == 0)
             {
@@ -211,7 +211,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
         }
         
-        public static void CommandSellItem(ItemsSellCommand itemSellCommand, ref PlayerItemState playerItemState, int connectionId)
+        public static void CommandSellItem(ItemsSellCommand itemSellCommand, ref PlayerItemState playerItemState, uint connectionId)
         {
             foreach (var item in itemSellCommand.Slots)
             {
@@ -260,7 +260,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
         }
         
-        public static void CommandDropItem(ItemDropCommand itemDropCommand, ref PlayerItemState playerItemState, int connectionId)
+        public static void CommandDropItem(ItemDropCommand itemDropCommand, ref PlayerItemState playerItemState, uint connectionId)
         {
             var droppedItemDatas = new List<DroppedItemData>(itemDropCommand.Slots.Count);
             foreach (var kvp in itemDropCommand.Slots)
@@ -283,8 +283,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             {
                 return;
             }
-            var player = NetworkServer.connections[connectionId].identity.netId;
-            var playerComponent = NetworkServer.spawned[player];
+            var playerComponent = NetworkServer.spawned[connectionId];
 
             var request = new PlayerToSceneRequest
             {
@@ -305,7 +304,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
             Debug.Log($"Item {itemLockCommand.SlotIndex} locked");
         }
-        public static void CommandEquipItem(ItemEquipCommand itemEquipCommand, ref PlayerItemState playerItemState, int connectionId)
+        public static void CommandEquipItem(ItemEquipCommand itemEquipCommand, ref PlayerItemState playerItemState, uint connectionId)
         {
             if (!PlayerItemState.UpdateItemState(ref playerItemState, itemEquipCommand.SlotIndex, itemEquipCommand.IsEquip ? ItemState.IsEquipped : ItemState.IsInBag, out var exchangedItem))
             {
@@ -433,7 +432,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
         }
 
-        public static void CommandEnablePlayerSkill(ref PlayerItemState playerItemState, int skillId, int slotIndex, bool isEnable, int connectionId)
+        public static void CommandEnablePlayerSkill(ref PlayerItemState playerItemState, int skillId, int slotIndex, bool isEnable, uint connectionId)
         {
             if (!PlayerItemState.TryGetSlotItemBySlotIndex(playerItemState, slotIndex, out var bagItem))
             {
@@ -470,7 +469,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
         }
 
-        public static bool TryUnloadSkill(ref PlayerItemState playerItemState, int connectionId, int slotIndex, out PlayerBagSlotItem unloadedItem)
+        public static bool TryUnloadSkill(ref PlayerItemState playerItemState, uint connectionId, int slotIndex, out PlayerBagSlotItem unloadedItem)
         {
             unloadedItem = null;
             if (!PlayerItemState.TryGetSlotItemBySlotIndex(playerItemState, slotIndex, out var bagItem))

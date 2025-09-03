@@ -609,7 +609,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
     public partial struct NetworkCommandHeader : IPoolObject
     {
         [MemoryPackOrder(0)]
-        public int ConnectionId;
+        public uint ConnectionId;
         [MemoryPackOrder(1)]
         public int Tick;
         [MemoryPackOrder(2)]
@@ -962,9 +962,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         [MemoryPackOrder(0)] 
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public int? CasterId;
+        public uint? CasterId;
         [MemoryPackOrder(2)]
-        public int TargetId;
+        public uint TargetId;
         [MemoryPackOrder(3)]
         public BuffExtraData BuffExtraData;
         [MemoryPackOrder(4)]
@@ -2072,7 +2072,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         {
             return new NetworkCommandHeader
             {
-                ConnectionId = NetworkServer.localConnection.connectionId,
+                ConnectionId = NetworkServer.localConnection.identity.netId,
                 Tick = tick,
                 CommandType = commandType,
                 Timestamp = timeStamp,
@@ -2253,7 +2253,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             var header = command.GetHeader();
             return header.Authority switch
             {
-                CommandAuthority.Client => NetworkServer.connections.ContainsKey(header.ConnectionId),
+                CommandAuthority.Client => NetworkServer.spawned.ContainsKey(header.ConnectionId),
                 CommandAuthority.Server => NetworkServer.active,
                 CommandAuthority.System => true,
                 _ => false

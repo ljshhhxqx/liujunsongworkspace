@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.State;
-using MemoryPack;
 using Mirror;
 using UnityEngine;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
@@ -12,7 +11,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
     public abstract class BaseSyncSystem
     {
-        public Dictionary<int, ISyncPropertyState> PropertyStates { get; } = new Dictionary<int, ISyncPropertyState>();
+        public Dictionary<uint, ISyncPropertyState> PropertyStates { get; } = new Dictionary<uint, ISyncPropertyState>();
         //存储若干个字典，字典的key为客户端的connectionId，value为客户端具体重写的IPredictableState
         protected GameSyncManager GameSyncManager { get; private set; }
         protected abstract CommandType CommandType { get; }
@@ -43,19 +42,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             
         }
 
-        public PlayerComponentController GetPlayerComponentController(int connectionId)
+        public PlayerComponentController GetPlayerComponentController(uint connectionId)
         {
             return GameSyncManager.GetPlayerConnection(connectionId);
         }
 
-        private void OnPlayerDisconnected(int connectionId)
+        private void OnPlayerDisconnected(uint connectionId)
         {
             UnregisterState(connectionId);
         }
 
-        private void OnPlayerConnected(int connectionId, NetworkIdentity identity)
+        private void OnPlayerConnected(uint playerNetId, NetworkIdentity identity)
         {
-            RegisterState(connectionId, identity);
+            RegisterState(playerNetId, identity);
             //todo: 获取PlayerComponentController，注册
         }
 
@@ -65,7 +64,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         /// <param name="state"></param>
         /// <param name="connectionId"></param>
         /// <param name="commandType"></param>
-        protected abstract void OnClientProcessStateUpdate(int connectionId, byte[] state, CommandType commandType);
+        protected abstract void OnClientProcessStateUpdate(uint connectionId, byte[] state, CommandType commandType);
 
         /// <summary>
         /// For Client(更新每个客户端PredictableStateBase的CurrentState)
@@ -78,9 +77,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
         }
 
-        protected abstract void RegisterState(int connectionId, NetworkIdentity player); 
+        protected abstract void RegisterState(uint playerNetId, NetworkIdentity player); 
         
-        protected virtual void UnregisterState(int connectionId)
+        protected virtual void UnregisterState(uint connectionId)
         {
             PropertyStates.Remove(connectionId);
         }
@@ -102,7 +101,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         protected virtual bool ValidateCommand(INetworkCommand command)
         {
             var header = command.GetHeader();
-            if (!PropertyStates.ContainsKey(header.ConnectionId))
+            if (!PropertyStates.ContainsKey(header.NetId))
             {
                 Debug.LogError($"{GetType().Name} not valid command playerId {header.ConnectionId}");
                 return false;
@@ -120,7 +119,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public abstract CommandType HandledCommandType { get; }
         public abstract ISyncPropertyState ProcessCommand(INetworkCommand command);
 
-        public virtual T GetState<T>(int connectionId) where T : ISyncPropertyState
+        public virtual T GetState<T>(uint connectionId) where T : ISyncPropertyState
         {
             if (PropertyStates.TryGetValue(connectionId, out var state))
             {
@@ -129,9 +128,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             return default;
         }
 
-        public abstract byte[] GetPlayerSerializedState(int connectionId);
+        public abstract byte[] GetPlayerSerializedState(uint connectionId);
 
-        public abstract void SetState<T>(int connectionId, T state) where T : ISyncPropertyState;
+        public abstract void SetState<T>(uint connectionId, T state) where T : ISyncPropertyState;
         public abstract bool HasStateChanged(ISyncPropertyState oldState, ISyncPropertyState newState);
 
         public virtual void Clear()

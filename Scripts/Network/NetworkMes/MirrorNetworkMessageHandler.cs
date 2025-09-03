@@ -32,7 +32,7 @@ namespace HotUpdate.Scripts.Network.NetworkMes
 
         public void SendToServer<T>(T msg) where T : struct, NetworkMessage
         {
-            if (_clientHandler)
+            if (_clientHandler && NetworkClient.active)
             {
                 NetworkClient.Send(msg);
             }
@@ -40,7 +40,7 @@ namespace HotUpdate.Scripts.Network.NetworkMes
 
         public void SendToAllClients<T>(T msg) where T : struct, NetworkMessage
         {
-            if (_serverHandler)
+            if (_serverHandler && NetworkServer.active)
             {
                 NetworkServer.SendToAll(msg);
             }

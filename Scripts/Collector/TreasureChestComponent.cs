@@ -74,6 +74,11 @@ namespace HotUpdate.Scripts.Collector
             _chestCommonData = _jsonDataConfig.ChestCommonData;
 
             lid.transform.eulerAngles = _chestCommonData.InitEulerAngles;
+        }
+
+        public override void OnStartLocalPlayer()
+        {
+            base.OnStartLocalPlayer();
             _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         }
 

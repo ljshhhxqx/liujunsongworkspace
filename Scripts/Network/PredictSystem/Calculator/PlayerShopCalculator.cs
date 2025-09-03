@@ -81,7 +81,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return distance <= Constant.PlayerConfigData.MaxShopBuyDistance;
         }
 
-        public static void CommandBuyItem(ref PlayerShopState state, int connectionId, int shopId, int count, bool isServer = false)
+        public static void CommandBuyItem(ref PlayerShopState state, uint connectionId, int shopId, int count, bool isServer = false)
         {
             if (!Constant.IsServer)
                 return;

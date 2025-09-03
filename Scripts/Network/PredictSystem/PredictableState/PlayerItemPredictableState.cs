@@ -80,19 +80,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     PlayerItemCalculator.CommandUseItems(itemUseCommand, ref playerItemState);
                     break;
                 case ItemEquipCommand itemEquipCommand:
-                    PlayerItemCalculator.CommandEquipItem(itemEquipCommand, ref playerItemState, header.ConnectionId);
+                    PlayerItemCalculator.CommandEquipItem(itemEquipCommand, ref playerItemState, netId);
                     break;
                 case ItemLockCommand itemLockCommand:
                     PlayerItemCalculator.CommandLockItem(itemLockCommand, ref playerItemState);
                     break;
                 case ItemDropCommand itemDropCommand:
-                    PlayerItemCalculator.CommandDropItem(itemDropCommand, ref playerItemState , header.ConnectionId);
+                    PlayerItemCalculator.CommandDropItem(itemDropCommand, ref playerItemState , netId);
                     break;
                 case ItemsBuyCommand itemBuyCommand:
                     PlayerItemCalculator.CommandBuyItem(itemBuyCommand, ref playerItemState);
                     break;
                 case ItemsSellCommand itemSellCommand:
-                    PlayerItemCalculator.CommandSellItem(itemSellCommand, ref playerItemState, header.ConnectionId);
+                    PlayerItemCalculator.CommandSellItem(itemSellCommand, ref playerItemState, netId);
                     break;
                 case ItemExchangeCommand itemExchangeCommand:
                     PlayerItemCalculator.CommandExchangeItem(itemExchangeCommand, ref playerItemState);
@@ -129,7 +129,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             dic.Add(slotIndex, useItem);
             var useItemCommand = new ItemsUseCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
+                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.netId, CommandType.Item, CommandAuthority.Client),
                 Slots = dic
             };
             GameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(useItemCommand).Item1);
@@ -143,7 +143,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             var playerItemType = state.PlayerItemConfigIdSlotDictionary[slotIndex].PlayerItemType;
             var equipItemCommand = new ItemEquipCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
+                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.netId, CommandType.Item, CommandAuthority.Client),
                 SlotIndex = slotIndex,
                 PlayerItemType = playerItemType,
                 IsEquip = isEquip
@@ -157,7 +157,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 return;
             var lockItemCommand = new ItemLockCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
+                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.netId, CommandType.Item, CommandAuthority.Client),
                 SlotIndex = slotIndex,
                 IsLocked = isLock
             };
@@ -177,7 +177,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             dic.Add(slotIndex, dropItem);
             var dropItemCommand = new ItemDropCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
+                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.netId, CommandType.Item, CommandAuthority.Client),
                 Slots = dic
             };
             GameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(dropItemCommand).Item1);
@@ -189,7 +189,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 return;
             var exchangeItemCommand = new ItemExchangeCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
+                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.netId, CommandType.Item, CommandAuthority.Client),
                 FromSlotIndex = fromSlotIndex,
                 ToSlotIndex = toSlotIndex
             };
@@ -202,7 +202,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 return;
             var sellItemCommand = new SellCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Shop, CommandAuthority.Client),
+                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.netId, CommandType.Shop, CommandAuthority.Client),
                 ItemSlotIndex = slotIndex,
                 Count = count
             };
@@ -215,7 +215,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 return;
             var enableCommand = new ItemSkillEnableCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Item,
+                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.netId, CommandType.Item,
                     CommandAuthority.Client),
                 SlotIndex = slotIndex,
                 IsEnable = isEnable,
@@ -302,7 +302,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     SkillId = playerBagSlotItem.SkillId,
                     IsEnable = playerBagSlotItem.IsEnableSkill,
                     EquipmentPart = playerBagSlotItem.EquipmentPart,
-                    SkillDescription = PlayerItemCalculator.GetSkillDescription(playerBagSlotItem.SkillId, NetworkIdentity.connectionToClient.connectionId),
+                    SkillDescription = PlayerItemCalculator.GetSkillDescription(playerBagSlotItem.SkillId, NetworkIdentity.netId),
                     OnUseItem = OnUseItem,
                     OnDropItem = OnDropItem,
                     OnLockItem = OnLockItem,

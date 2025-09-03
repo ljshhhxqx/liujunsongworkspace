@@ -198,11 +198,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             UIManager uiManager,
             GameEventManager gameEventManager)
         {
-            if (_isInit)
-            {
-                return;
-            }
-            _isInit = true;
+            // if (_isInit)
+            // {
+            //     return;
+            // }
+            // _isInit = true;
             _configProvider = configProvider;
             var jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
             _gameConfigData = jsonDataConfig.GameConfig;
@@ -219,6 +219,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _animationCooldowns = GetAnimationCooldowns();
             _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
             _gameEventManager = gameEventManager;
+            if (_localPlayerHandler)
+            {
+                HandleLocalInitCallback();
+                _uiManager.IsUnlockMouse += OnIsUnlockMouse;
+            }
             GetAllCalculators(configProvider, gameSyncManager);
             HandleAllSyncState();
         }
@@ -226,7 +231,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public override void OnStartLocalPlayer()
         {
             base.OnStartLocalPlayer();
-            _uiManager.IsUnlockMouse += OnIsUnlockMouse;
             _localPlayerHandler = true;
             
             _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
@@ -241,42 +245,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 UIPropertyBinder.LocalPlayerId);
             _playerDeathTimeBindKey = new BindingKey(UIPropertyDefine.PlayerDeathTime, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
             _playerTraceOtherPlayerHpBindKey = new BindingKey(UIPropertyDefine.PlayerTraceOtherPlayerHp, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
-            HandleLocalInitCallback();
-            _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter));
-            var shopConstant = PlayerShopCalculator.Constant;
-            shopConstant.IsServer = isServer;
-            shopConstant.IsClient = isClient;
-            shopConstant.UIManager = _uiManager;
-            shopConstant.IsLocalPlayer = isLocalPlayer;
-            PlayerShopCalculator.SetConstant(shopConstant);
-            var equipConstant = PlayerEquipmentCalculator.Constant;
-            equipConstant.IsServer = isServer;
-            equipConstant.IsClient = isClient;
-            equipConstant.IsLocalPlayer = isLocalPlayer;
-            PlayerEquipmentCalculator.SetConstant(equipConstant);
-            var itemConstant = PlayerItemCalculator.Constant;
-            itemConstant.IsServer = isServer;
-            itemConstant.IsClient = isClient;
-            itemConstant.IsLocalPlayer = isLocalPlayer;
-            PlayerItemCalculator.SetConstant(itemConstant);
-            var propertyConstant = PlayerPropertyCalculator.CalculatorConstant;
-            propertyConstant.IsServer = isServer;
-            propertyConstant.IsClient = isClient;
-            propertyConstant.IsLocalPlayer = isLocalPlayer;
-            PlayerPropertyCalculator.SetCalculatorConstant(propertyConstant);
-            var physicsConstant = PlayerPhysicsCalculator.PhysicsDetermineConstant;
-            physicsConstant.IsServer = isServer;
-            physicsConstant.IsClient = isClient;
-            physicsConstant.IsLocalPlayer = isLocalPlayer;
-            PlayerPhysicsCalculator.SetPhysicsDetermineConstant(physicsConstant);
-            var animationConstant = PlayerAnimationCalculator.AnimationConstant;
-            animationConstant.IsServer = isServer;
-            animationConstant.IsClient = isClient;
-            animationConstant.IsLocalPlayer = isLocalPlayer;
-            PlayerAnimationCalculator.SetAnimationConstant(animationConstant);
-            var constant = PlayerSkillCalculator.Constant;
-            constant.IsServer = isServer;
-            PlayerSkillCalculator.SetConstant(constant);
+            
             // _capsuleCollider.OnTriggerEnterAsObservable()
             //     .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
             //     .Subscribe(c =>
@@ -289,7 +258,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
                 .Subscribe(c =>
                 {
-                    var header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
+                    var header = GameSyncManager.CreateNetworkCommandHeader(netId,
                         CommandType.Property, CommandAuthority.Client);
                     var playerTouchedBaseCommand = new PlayerTouchedBaseCommand
                     {
@@ -349,7 +318,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                                 {
                                     var refreshCommand = new RefreshShopCommand
                                     {
-                                        Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Shop, CommandAuthority.Client),
+                                        Header = GameSyncManager.CreateNetworkCommandHeader(netId, CommandType.Shop, CommandAuthority.Client),
                                     };
                                     _gameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(refreshCommand).Item1);
                                 }).AddTo(shopScreenUI.gameObject);
@@ -426,7 +395,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     }
                     var propertyAutoRecoverCommand = ObjectPoolManager<PropertyAutoRecoverCommand>.Instance.Get(50);
                     propertyAutoRecoverCommand.Header = GameSyncManager.CreateNetworkCommandHeader(
-                        connectionToClient.connectionId,
+                        netId,
                         CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate,
                         NetworkCommandType.PropertyAutoRecover);
                     _propertyPredictionState.AddPredictedCommand(propertyAutoRecoverCommand);
@@ -440,7 +409,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     HandleInputPhysics(_playerInputStateData);
                     _targetSpeed = _propertyPredictionState.GetMoveSpeed();
                     var propertyEnvironmentChangeCommand = ObjectPoolManager<PropertyEnvironmentChangeCommand>.Instance.Get(50);
-                    propertyEnvironmentChangeCommand.Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
+                    propertyEnvironmentChangeCommand.Header = GameSyncManager.CreateNetworkCommandHeader(netId,
                         CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate, NetworkCommandType.PropertyEnvironmentChange);
                     propertyEnvironmentChangeCommand.HasInputMovement = _playerInputStateData.InputMovement.magnitude > 0.1f;
                     propertyEnvironmentChangeCommand.PlayerEnvironmentState = _gameStateStream.Value;
@@ -476,7 +445,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     var layerMask = _gameConfigData.groundSceneLayer | _gameConfigData.stairSceneLayer | _playerConfigData.PlayerLayer;
                     if (PlayerPhysicsCalculator.TryGetPlayersInScreen(_camera, potentialTargets, out var playersInScreen, layerMask))
                     {
-                        var header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
+                        var header = GameSyncManager.CreateNetworkCommandHeader(netId,
                             CommandType.Property, CommandAuthority.Client);
                         var playerInScreenCommand = new PlayerTraceOtherPlayerHpCommand
                         {
@@ -553,6 +522,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private void HandleLocalInitCallback()
         {
             _uiHoleOverlay = _uiManager.SwitchUI<UIHoleOverlay>();
+            _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter));
 
             if (!_reactivePropertyBinds.ContainsKey(typeof(ValuePropertyData)))
             {
@@ -675,7 +645,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             
             _previousAnimationState = inputData.Command;
             inputCommand.InputMovement = CompressedVector3.FromVector3(inputData.InputMovement);
-            inputCommand.Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
+            inputCommand.Header = GameSyncManager.CreateNetworkCommandHeader(netId,
                 CommandType.Input, CommandAuthority.Client, CommandExecuteType.Predicate, NetworkCommandType.Input);
             inputCommand.InputAnimationStates = inputData.InputAnimations;
             inputCommand.CommandAnimationState = inputData.Command;
@@ -849,6 +819,40 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerStateCalculators.Add(_playerEquipmentCalculator);
             _playerStateCalculators.Add(_playerShopCalculator);
             _playerStateCalculators.Add(_playerSkillCalculator);
+            var shopConstant = PlayerShopCalculator.Constant;
+            shopConstant.IsServer = isServer;
+            shopConstant.IsClient = isClient;
+            shopConstant.UIManager = _uiManager;
+            shopConstant.IsLocalPlayer = isLocalPlayer;
+            PlayerShopCalculator.SetConstant(shopConstant);
+            var equipConstant = PlayerEquipmentCalculator.Constant;
+            equipConstant.IsServer = isServer;
+            equipConstant.IsClient = isClient;
+            equipConstant.IsLocalPlayer = isLocalPlayer;
+            PlayerEquipmentCalculator.SetConstant(equipConstant);
+            var itemConstant = PlayerItemCalculator.Constant;
+            itemConstant.IsServer = isServer;
+            itemConstant.IsClient = isClient;
+            itemConstant.IsLocalPlayer = isLocalPlayer;
+            PlayerItemCalculator.SetConstant(itemConstant);
+            var propertyConstant = PlayerPropertyCalculator.CalculatorConstant;
+            propertyConstant.IsServer = isServer;
+            propertyConstant.IsClient = isClient;
+            propertyConstant.IsLocalPlayer = isLocalPlayer;
+            PlayerPropertyCalculator.SetCalculatorConstant(propertyConstant);
+            var physicsConstant = PlayerPhysicsCalculator.PhysicsDetermineConstant;
+            physicsConstant.IsServer = isServer;
+            physicsConstant.IsClient = isClient;
+            physicsConstant.IsLocalPlayer = isLocalPlayer;
+            PlayerPhysicsCalculator.SetPhysicsDetermineConstant(physicsConstant);
+            var animationConstant = PlayerAnimationCalculator.AnimationConstant;
+            animationConstant.IsServer = isServer;
+            animationConstant.IsClient = isClient;
+            animationConstant.IsLocalPlayer = isLocalPlayer;
+            PlayerAnimationCalculator.SetAnimationConstant(animationConstant);
+            var constant = PlayerSkillCalculator.Constant;
+            constant.IsServer = isServer;
+            PlayerSkillCalculator.SetConstant(constant);
         }
 
         private void OnAttack(int stage)
@@ -1078,7 +1082,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 {
                     var playerChangeUnionCommand = new PlayerChangeUnionRequest
                     {
-                        Header = InteractSystem.CreateInteractHeader(connection.connectionId, InteractCategory.PlayerToPlayer),
+                        Header = InteractSystem.CreateInteractHeader(netId, InteractCategory.PlayerToPlayer),
                         KillerPlayerId = killerPlayerId,
                         DeadPlayerId = victimPlayerId,
                     };

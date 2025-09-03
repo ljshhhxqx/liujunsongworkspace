@@ -213,7 +213,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     }
                     var animationCommand = ObjectPoolManager<PropertyClientAnimationCommand>.Instance.Get(50);
                     animationCommand.AnimationState = noStrengthState == AnimationState.None ? inputCommand.CommandAnimationState : noStrengthState;
-                    animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property, CommandAuthority.Client);
+                    animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(netId, CommandType.Property, CommandAuthority.Client);
                     animationCommand.SkillId = skillConfigData.id;
                     _propertyPredictionState.AddPredictedCommand(animationCommand);
                     cooldownInfo?.Use();

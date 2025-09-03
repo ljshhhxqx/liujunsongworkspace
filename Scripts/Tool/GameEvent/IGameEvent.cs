@@ -109,22 +109,26 @@ namespace Tool.GameEvent
         public int ConnectionId { get; private set; }
         public NetworkIdentity Identity { get; private set; }
         public PlayerReadOnlyData ReadOnlyData { get; private set; }
+        public uint NetworkId { get; private set; }
 
-        public PlayerConnectEvent(int connectionId, NetworkIdentity identity, PlayerReadOnlyData readOnlyData)
+        public PlayerConnectEvent(int connectionId, NetworkIdentity identity, PlayerReadOnlyData readOnlyData, uint networkId)
         {
             ConnectionId = connectionId;
             Identity = identity;
             ReadOnlyData = readOnlyData;
+            NetworkId = networkId;
         }
     }
     
     public struct PlayerDisconnectEvent : IGameEvent
     {
         public int ConnectionId { get; private set; }
+        public uint NetworkId { get; private set; }
 
-        public PlayerDisconnectEvent(int connectionId)
+        public PlayerDisconnectEvent(int connectionId, uint networkId)
         {
             ConnectionId = connectionId;
+            NetworkId = networkId;
         }
     }
 

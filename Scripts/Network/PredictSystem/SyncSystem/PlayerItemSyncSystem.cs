@@ -6,6 +6,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.PredictSystem.State;
+using HotUpdate.Scripts.Network.Server.InGame;
 using MemoryPack;
 using Mirror;
 using UnityEngine;
@@ -16,7 +17,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
     public class PlayerItemSyncSystem : BaseSyncSystem
     {
-        private readonly Dictionary<int, PlayerItemPredictableState> _playerItemSyncStates = new Dictionary<int, PlayerItemPredictableState>();
+        private readonly Dictionary<uint, PlayerItemPredictableState> _playerItemSyncStates = new Dictionary<uint, PlayerItemPredictableState>();
         private ItemConfig _itemConfig;
         private WeaponConfig _weaponConfig;
         private ArmorConfig _armorConfig;
@@ -32,7 +33,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _interactSystem = Object.FindObjectOfType<InteractSystem>();
         }
 
-        protected override void OnClientProcessStateUpdate(int connectionId, byte[] state, CommandType commandType)
+        protected override void OnClientProcessStateUpdate(uint connectionId, byte[] state, CommandType commandType)
         {
             if (commandType != CommandType.Item)
             {
@@ -51,7 +52,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
         }
 
-        protected override void RegisterState(int connectionId, NetworkIdentity player)
+        protected override void RegisterState(uint connectionId, NetworkIdentity player)
         {
             var playerPredictableState = player.GetComponent<PlayerItemPredictableState>();
             var state = GetPlayerItemState();
@@ -63,9 +64,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         }
 
         [ClientRpc]
-        private void RpcSetPlayerItemState(int connectionId, byte[] playerItemState)
+        private void RpcSetPlayerItemState(uint connectionId, byte[] playerItemState)
         {
-            var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PlayerItemPredictableState>();
+            var player = PlayerInGameManager.Instance.ClientGetNetworkIdentity(connectionId);
+            var syncState = player.GetComponent<PlayerItemPredictableState>();
             var playerState = NetworkCommandExtensions.DeserializePlayerState(playerItemState);
             syncState.InitCurrentState(playerState);
         }
@@ -77,13 +79,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             return playerItemState;
         }
         
-        public bool IsPlayerBagFull(int connectionId)
+        public bool IsPlayerBagFull(uint connectionId)
         {
             var playerItemState = GetState<PlayerItemState>(connectionId);
             return playerItemState.SlotCount == playerItemState.PlayerItemConfigIdSlotDictionary.Count;
         }
         
-        public Dictionary<int, PlayerBagSlotItem> GetPlayerBagSlotItems(int connectionId)
+        public Dictionary<int, PlayerBagSlotItem> GetPlayerBagSlotItems(uint connectionId)
         {
             var playerItemState = GetState<PlayerItemState>(connectionId);
             return playerItemState.PlayerItemConfigIdSlotDictionary;
@@ -139,7 +141,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         }
 
 
-        public override byte[] GetPlayerSerializedState(int connectionId)
+        public override byte[] GetPlayerSerializedState(uint connectionId)
         {
             if (PropertyStates.TryGetValue(connectionId, out var playerState))
             {
@@ -155,7 +157,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             return null;
         }
 
-        public override void SetState<T>(int connectionId, T state)
+        public override void SetState<T>(uint connectionId, T state)
         {
             var playerPredictableState = _playerItemSyncStates[connectionId];
             playerPredictableState.ApplyServerState(state);

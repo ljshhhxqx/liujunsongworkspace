@@ -21,7 +21,7 @@ namespace HotUpdate.Scripts.Network.UISync
         // UniTask取消令牌
         private CancellationTokenSource _cts;
         private GameConfigData _gameConfigData;
-        public Dictionary<int, UIDataBroker> UIDataBroker { get; } = new Dictionary<int, UIDataBroker>();
+        public Dictionary<uint, UIDataBroker> UIDataBroker { get; } = new Dictionary<uint, UIDataBroker>();
 
         [Inject]
         private void Init(IConfigProvider configProvider, GameSyncManager gameSyncManager)
@@ -40,12 +40,12 @@ namespace HotUpdate.Scripts.Network.UISync
             RegisterNetworkReaderWriter();
         }
 
-        private void OnPlayerDisconnect(int connectionId)
+        private void OnPlayerDisconnect(uint connectionId)
         {
             UIDataBroker.Remove(connectionId);
         }
 
-        private void OnPlayerConnect(int connectionId, NetworkIdentity connection)
+        private void OnPlayerConnect(uint connectionId, NetworkIdentity connection)
         {
             UIDataBroker.Add(connectionId, new UIDataBroker(connectionId));
         }
@@ -126,14 +126,14 @@ namespace HotUpdate.Scripts.Network.UISync
         }
 
         [ClientRpc]
-        private void RpcSyncUI(int connectionId, byte[] data)
+        private void RpcSyncUI(uint connectionId, byte[] data)
         {
             var command = MemoryPackSerializer.Deserialize<UISyncCommand>(data);
             UpdateData(connectionId, command);
         }
 
         [Client]
-        public void UpdateData(int connectionId, UISyncCommand command)
+        public void UpdateData(uint connectionId, UISyncCommand command)
         {
             var uiBroker = UIDataBroker[connectionId];
             uiBroker?.UpdateData(command);
@@ -145,11 +145,11 @@ namespace HotUpdate.Scripts.Network.UISync
             foreach (var data in batch)
             {
                 var command = MemoryPackSerializer.Deserialize<UISyncCommand>(data);
-                UpdateData(command.Header.CommandHeader.ConnectionId, command);
+                UpdateData(command.Header.CommandHeader.NetId, command);
             }
         }
 
-        public IObservable<T> RegisterUIEvent<T>(int connectionId, UISyncDataType key) where T : IUIData
+        public IObservable<T> RegisterUIEvent<T>(uint connectionId, UISyncDataType key) where T : IUIData
         {
             return UIDataBroker[connectionId]?.GetObservable<T>(key);
         }
@@ -157,7 +157,7 @@ namespace HotUpdate.Scripts.Network.UISync
         public void SetLocalData(UISyncDataHeader header, byte[] data, UISyncDataType type)
         {
             if (isLocalPlayer)
-                UIDataBroker[header.CommandHeader.ConnectionId]?.SetLocalData(header, data, type);
+                UIDataBroker[header.CommandHeader.NetId]?.SetLocalData(header, data, type);
         }
 
         public static UISyncCommand CreateUISyncCommand(UISyncDataHeader header, IUISyncCommandData commandData,

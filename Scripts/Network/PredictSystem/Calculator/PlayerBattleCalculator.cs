@@ -100,7 +100,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
     {
         public Vector3 attackPos;
         public Vector3 attackDir;
-        public int attackerId;
         public uint attackerNetId;
         public AttackConfigData AttackConfigData;
         
@@ -108,7 +107,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         {
             this.attackPos = attackPos;
             this.attackDir = attackDir;
-            this.attackerId = attackerId;
             this.attackerNetId = attackerNetId;
             AttackConfigData = attackConfigData;
         }

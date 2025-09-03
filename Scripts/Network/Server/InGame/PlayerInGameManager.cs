@@ -60,6 +60,23 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             }
         }
 
+        [Client]
+        public NetworkIdentity ClientGetNetworkIdentity(uint playerNetId)
+        {
+            foreach (var kvp in NetworkClient.spawned)
+            {
+                if (kvp.Value && kvp.Value.netId == playerNetId) 
+                {
+                    return kvp.Value;
+                }
+            }
+
+            return null;
+        }
+        
+        [Client]
+        public NetworkIdentity ClientGetLocalNetworkIdentity() => NetworkClient.localPlayer;
+
         [Inject]
         private void Init(IConfigProvider configProvider)
         {
@@ -362,14 +379,15 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             }
         }
 
-        public void RemovePlayer(int connectId)
+        public void RemovePlayer(uint connectId)
         {
-            _playerIds.Remove(connectId);
-            _playerNetIds.Remove(connectId);
-            _playerIdsByNetId.Remove(_playerNetIds.GetValueOrDefault(connectId));
-            _playerInGameData.Remove(connectId);
-            _playerGrids.Remove(_playerNetIds.GetValueOrDefault(connectId));
-            _playerPositions.Remove(_playerNetIds.GetValueOrDefault(connectId));
+            var playerId = _playerIdsByNetId.GetValueOrDefault(connectId);
+            _playerIds.Remove(playerId);
+            _playerNetIds.Remove(playerId);
+            _playerIdsByNetId.Remove(_playerNetIds.GetValueOrDefault(playerId));
+            _playerInGameData.Remove(playerId);
+            _playerGrids.Remove(_playerNetIds.GetValueOrDefault(playerId));
+            _playerPositions.Remove(_playerNetIds.GetValueOrDefault(playerId));
         }
         
         public IEnumerable<uint> GetAllPlayers()

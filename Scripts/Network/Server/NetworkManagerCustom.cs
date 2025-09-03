@@ -53,7 +53,6 @@ namespace HotUpdate.Scripts.Network.Server
             _playerDataManager = playerDataManager;
             _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
             _gameConfigData = configProvider.GetConfig<JsonDataConfig>().GameConfig;
-            _mirrorNetworkMessageHandler.RegisterLocalMessageHandler<PlayerConnectedMessage>(OnPlayerConnectedAndSpawn);
         }
 
         private void OnPlayerConnectedAndSpawn(PlayerConnectedMessage message)
@@ -73,7 +72,7 @@ namespace HotUpdate.Scripts.Network.Server
         public override void OnServerDisconnect(NetworkConnectionToClient conn)
         {
             base.OnServerDisconnect(conn);
-            _playerInGameManager.RemovePlayer(conn.connectionId);
+            _playerInGameManager.RemovePlayer(conn.identity.netId);
             Debug.Log($"玩家 【{conn.connectionId}】 已断开连接。");
         }
         
@@ -120,6 +119,7 @@ namespace HotUpdate.Scripts.Network.Server
             //currentPlayer = resInfo.gameObject;
             _spawnPoints.Remove(spawnPoint);
             NetworkServer.AddPlayerForConnection(conn, playerGo);
+            _mirrorNetworkMessageHandler.SendToAllClients(new MirrorPlayerConnectedMessage(conn.connectionId, spawnIndex));
         }
 
         private void OnSceneResourcesLoaded(GameSceneResourcesLoadedEvent sceneResourcesLoadedEvent)
@@ -174,7 +174,7 @@ namespace HotUpdate.Scripts.Network.Server
                     GameScore = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameScore,
                     PlayerCount = playerCount
                 };
-                _gameEventManager.Publish(new PlayerConnectEvent(conn.connectionId, conn.identity, playerInGameData.player));
+                _gameEventManager.Publish(new PlayerConnectEvent(conn.connectionId, conn.identity, playerInGameData.player, conn.identity.netId));
                 _gameEventManager.Publish(new GameReadyEvent(gameInfo));
                 // }
                 // if (_playerAccountIdMap.Count == playerCount)
@@ -208,6 +208,7 @@ namespace HotUpdate.Scripts.Network.Server
             NetworkClient.RegisterHandler<MirrorPlayerConnectMessage>(OnPlayerConnectedMessage);
             // NetworkClient.RegisterHandler<PlayerDisconnectMessage>(OnPlayerDisconnectedMessage);
             NetworkClient.OnConnectedEvent += OnClientConnectToServer;
+            _mirrorNetworkMessageHandler.RegisterLocalMessageHandler<PlayerConnectedMessage>(OnPlayerConnectedAndSpawn);
         }
 
         private void OnClientConnectToServer()

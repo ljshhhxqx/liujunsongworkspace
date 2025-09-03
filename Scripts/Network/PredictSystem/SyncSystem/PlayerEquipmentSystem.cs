@@ -19,7 +19,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
     public class PlayerEquipmentSystem : BaseSyncSystem
     {
-        private readonly Dictionary<int, PlayerEquipmentSyncState> _playerEquipmentSyncStates = new Dictionary<int, PlayerEquipmentSyncState>();
+        private readonly Dictionary<uint, PlayerEquipmentSyncState> _playerEquipmentSyncStates = new Dictionary<uint, PlayerEquipmentSyncState>();
         private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
         protected override CommandType CommandType => CommandType.Equipment;
         
@@ -33,7 +33,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             UpdateEquipmentCd(_tokenSource.Token).Forget();
         }
 
-        public bool TryGetPlayerConditionChecker(int connectionId, TriggerType triggerType, out List<IConditionChecker> conditionCheckers)
+        public bool TryGetPlayerConditionChecker(uint connectionId, TriggerType triggerType, out List<IConditionChecker> conditionCheckers)
         {
             var state = GetState<PlayerEquipmentState>(connectionId);
             return PlayerEquipmentCalculator.TryGetEquipmentTrigger(state, triggerType, out conditionCheckers);
@@ -55,7 +55,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
         }
 
-        protected override void OnClientProcessStateUpdate(int connectionId, byte[] state, CommandType commandType)
+        protected override void OnClientProcessStateUpdate(uint connectionId, byte[] state, CommandType commandType)
         {
             if (commandType!= CommandType.Equipment)
             {
@@ -73,7 +73,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
         }
 
-        protected override void RegisterState(int connectionId, NetworkIdentity player)
+        protected override void RegisterState(uint connectionId, NetworkIdentity player)
         {
             var playerPredictableState = player.GetComponent<PlayerEquipmentSyncState>();
             var playerEquipmentState = new PlayerEquipmentState();
@@ -84,9 +84,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         }
 
         [ClientRpc]
-        private void RpcSetPlayerEquipmentState(int connectionId, byte[] playerEquipmentState)
+        private void RpcSetPlayerEquipmentState(uint connectionId, byte[] playerEquipmentState)
         {
-            var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PlayerEquipmentSyncState>();
+            var player = PlayerInGameManager.Instance.ClientGetNetworkIdentity(connectionId);
+            var syncState = player.GetComponent<PlayerEquipmentSyncState>();
             var playerState = NetworkCommandExtensions.DeserializePlayerState(playerEquipmentState);
             syncState.ApplyState(playerState);
         }
@@ -95,14 +96,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public override ISyncPropertyState ProcessCommand(INetworkCommand command)
         {
             var header = command.GetHeader();
-            var playerState = PropertyStates[header.ConnectionId];
+            var playerState = PropertyStates[header.NetId];
             if (!header.CommandType.HasAnyState(CommandType.Equipment) || playerState is not PlayerEquipmentState playerEquipmentState)
                 return null;
             if (command is EquipmentCommand equipmentCommand)
             {
                 PlayerEquipmentCalculator.CommandEquipment(equipmentCommand, ref playerEquipmentState);
-                PropertyStates[header.ConnectionId] = playerEquipmentState;
-                return PropertyStates[header.ConnectionId];
+                PropertyStates[header.NetId] = playerEquipmentState;
+                return PropertyStates[header.NetId];
             }
             if (command is TriggerCommand triggerCommand && triggerCommand.TriggerType!= TriggerType.None)
             {
@@ -111,17 +112,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 var data = PlayerEquipmentCalculator.GetDataByTriggerType(playerEquipmentState, triggerCommand.TriggerType);
                 var battleConfigData = PlayerItemCalculator.GetBattleEffectConditionConfigData(data.Item2, data.Item3);
                 if (battleConfigData.id == 0)
-                    return PropertyStates[header.ConnectionId];
+                    return PropertyStates[header.NetId];
                 var targetIds = PlayerInGameManager.Instance.GetPlayerIdsByTargetType(header.ConnectionId,
                     battleConfigData.targetCount, battleConfigData.targetType);
                 PlayerEquipmentCalculator.CommandTrigger(triggerCommand, ref playerEquipmentState, targetIds, data.Item3, data.Item2, data.Item1);
-                PropertyStates[header.ConnectionId] = playerEquipmentState;
+                PropertyStates[header.NetId] = playerEquipmentState;
             }
 
-            return PropertyStates[header.ConnectionId];
+            return PropertyStates[header.NetId];
         }
 
-        public override byte[] GetPlayerSerializedState(int connectionId)
+        public override byte[] GetPlayerSerializedState(uint connectionId)
         {
             if (PropertyStates.TryGetValue(connectionId, out var playerState))
             {
@@ -137,7 +138,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             return null;
         }
 
-        public override void SetState<T>(int connectionId, T state)
+        public override void SetState<T>(uint connectionId, T state)
         {
             var playerPredictableState = _playerEquipmentSyncStates[connectionId];
             playerPredictableState.ApplyState(state);
