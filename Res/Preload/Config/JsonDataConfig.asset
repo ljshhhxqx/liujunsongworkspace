@@ -94,7 +94,7 @@ MonoBehaviour:
       stateUpdateInterval: 0.2
       serverInputRate: 0.02
       inputThreshold: 0.1
-      maxCommandAge: 1
+      maxCommandAge: 5
       uiUpdateInterval: 0.5
       roundInterval: 30
       maxTraceDistance: 10
