@@ -286,7 +286,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public override CommandType HandledCommandType => CommandType.Input;
         public override ISyncPropertyState ProcessCommand(INetworkCommand command)
         {
-            UpdatePlayerAnimationAsync(_cts.Token, GameSyncManager.TickSeconds).Forget();
+            //UpdatePlayerAnimationAsync(_cts.Token, GameSyncManager.TickSeconds).Forget();
             var header = command.GetHeader();
             if (!PropertyStates.ContainsKey(header.ConnectionId) || PropertyStates[header.ConnectionId] is not PlayerInputState playerInputState)
                 return null;
@@ -376,15 +376,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         animationCommand.SkillId = skillConfigData.id;
                         GameSyncManager.EnqueueServerCommand(animationCommand);
                         //ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Return(animationCommand);
-                        cooldownInfo?.Use(); 
                         //Debug.Log($" [playerInputSyncSystem]Player {header.ConnectionId} input animation {commandAnimation} cost {info.cost} strength, now strength is {playerProperty[PropertyTypeEnum.Strength].CurrentValue}.");
                     }
 
-                    
-                    else if (skillConfigData.animationState != AnimationState.None)
-                    {
-                        cooldownInfo?.Use(); 
-                    }
+
+                    // if (skillConfigData.animationState != AnimationState.None)
+                    cooldownInfo?.Use();
                     // else if (skillConfigData.id > 0 && skillConfigData.animationState != AnimationState.None)
                     // {
                     //     var animationCommand = ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Get(50);

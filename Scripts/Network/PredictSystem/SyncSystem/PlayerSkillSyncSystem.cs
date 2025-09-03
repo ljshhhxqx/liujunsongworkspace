@@ -90,8 +90,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             while (!token.IsCancellationRequested)
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(1 / GameSyncManager.TickSeconds), cancellationToken: token);
-                foreach (var playerId in PropertyStates.Keys)
+                var players = _playerSkillSyncStates.Keys.ToArray();
+                for (int i = 0; i < players.Length; i++)
                 {
+                    var playerId = players[i];
                     var playerState = PropertyStates[playerId];
                     var playerConnection = GameSyncManager.GetPlayerConnection(playerId);
                     var skillDic = playerConnection.SkillCheckerDict;
@@ -102,9 +104,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                             return;
                         }
                         var keys = skillDic.Keys.ToArray();
-                        for (int i = 0; i < keys.Length; i++)
+                        for (int j = 0; j < keys.Length; j++)
                         {
-                            var skillChecker = skillDic[keys[i]];
+                            var skillChecker = skillDic[keys[j]];
                             if (skillChecker.IsSkillEffect())
                             {
                                 PlayerSkillCalculator.UpdateSkillFlyEffect(playerId, GameSyncManager.TickSeconds, skillChecker, _playerInGameManager.GetHitPlayers);
@@ -116,7 +118,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                                 cooldown = cooldown.Update(GameSyncManager.TickSeconds);
                                 skillChecker.SetCooldownHeader(cooldown);
                             }
-                            skillDic[keys[i]] = skillChecker;
+                            skillDic[keys[j]] = skillChecker;
                         }
                     }
                     PropertyStates[playerId] = playerState;
@@ -191,22 +193,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 ISkillChecker checker;
                 var playerConnection = GameSyncManager.GetPlayerConnection(skillLoadCommand.Header.ConnectionId);
                 var skillCheckers = playerConnection.SkillCheckerDict;
-                if (skillCheckers.ContainsKey(skillLoadCommand.KeyCode))
-                {
-                    return PropertyStates[header.ConnectionId];
-                }
                 var skillData = _skillConfig.GetSkillData(skillLoadCommand.SkillConfigId);
                 if (!skillLoadCommand.IsLoad)
                 {
                     Debug.Log($"[SkillLoadCommand] Player {header.ConnectionId} skill {skillLoadCommand.SkillConfigId}-{skillLoadCommand.KeyCode} unload");
                     checker = skillCheckers[skillLoadCommand.KeyCode];
+                    if (skillCheckers.ContainsKey(skillLoadCommand.KeyCode))
+                    {
+                        skillCheckers.Remove(skillLoadCommand.KeyCode);
+                    }
                     var skillCommonHeader = checker.GetCommonSkillCheckerHeader();
                     if (skillLoadCommand.SkillConfigId != skillCommonHeader.ConfigId)
                     {
                         Debug.LogError($"Player {header.ConnectionId} skill checker has different config ID {skillCommonHeader.ConfigId} for player {header.ConnectionId}");
                         return PropertyStates[header.ConnectionId];
                     }
-                    skillCheckers.Remove(skillLoadCommand.KeyCode);
                 }
                 else
                 {
