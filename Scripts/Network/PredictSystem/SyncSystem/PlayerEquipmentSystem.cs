@@ -14,6 +14,7 @@ using HotUpdate.Scripts.Network.Server.InGame;
 using MemoryPack;
 using Mirror;
 using UnityEngine;
+using VContainer;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
@@ -21,8 +22,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
     {
         private readonly Dictionary<int, PlayerEquipmentSyncState> _playerEquipmentSyncStates = new Dictionary<int, PlayerEquipmentSyncState>();
         private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
+        private PlayerInGameManager _playerInGameManager;
         protected override CommandType CommandType => CommandType.Equipment;
-        
+
+        [Inject]
+        private void Init()
+        {
+            _playerInGameManager = PlayerInGameManager.Instance;
+        }
+
         protected override void OnGameStart(bool isGameStarted)
         {
             if (!isGameStarted)
@@ -86,7 +94,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [ClientRpc]
         private void RpcSetPlayerEquipmentState(int connectionId, byte[] playerEquipmentState)
         {
-            var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PlayerEquipmentSyncState>();
+            
+            var player = GameSyncManager.GetPlayerConnection(connectionId);
+            var syncState = player.GetComponent<PlayerEquipmentSyncState>();
             var playerState = NetworkCommandExtensions.DeserializePlayerState(playerEquipmentState);
             syncState.ApplyState(playerState);
         }

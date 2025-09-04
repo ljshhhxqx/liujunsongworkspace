@@ -82,7 +82,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                     {
                         var goldIsEnough = _currentGold >= (quantitySlider.value * _shopItemData.Price);
                         //Debug.Log($"goldIsEnough = {goldIsEnough}, _currentGold = {_currentGold}, quantitySlider.value = {quantitySlider.value} _shopItemData.Price = {_shopItemData.Price}");
-                        var canUseShop = PlayerShopCalculator.CanUseShop(PlayerInGameManager.LocalPlayerId);
+                        var canUseShop = PlayerShopCalculator.CanUseShop(_shopItemData.PlayerId);
                         //Debug.Log($"CanUseShop: {canUseShop}");
                         if (buyButton)
                         {

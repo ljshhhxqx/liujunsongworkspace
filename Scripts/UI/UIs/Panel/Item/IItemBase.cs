@@ -313,6 +313,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
     public struct RandomShopItemData : IItemBaseData, IEquatable<RandomShopItemData>
     {
         public int ShopId;
+        public int PlayerId;
         public int ItemConfigId;
         public int ShopConfigId;
         public int RemainingCount;

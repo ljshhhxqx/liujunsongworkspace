@@ -43,21 +43,29 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         private IColliderConfig _playerBaseColliderData;
         private IColliderConfig _playerPhysicsData;
         private uint _baseId;
+        // 同步给所有客户端的映射信息列表
+        // 使用 SyncList 会自动将变化同步给所有客户端
         
         [SyncVar(hook = nameof(OnIsGameStartedChanged))]
         public bool isGameStarted;
-        private static int _localPlayerId;
+        private int _localPlayerId;
 
-        public static int LocalPlayerId
+        public int LocalPlayerId
         {
             get
             {
                 if (_localPlayerId == 0)
                 {
-                    _localPlayerId = NetworkClient.localPlayer.connectionToClient.connectionId;
+                    if (!_playerIdsByNetId.TryGetValue(NetworkClient.localPlayer.netId, out var id))
+                    {
+                        Debug.LogError($"LocalPlayerId: {NetworkClient.localPlayer.netId} not found");
+                        return 0;
+                    }
+                    _localPlayerId = id;
                 }
                 return _localPlayerId;
             }
+            set => _localPlayerId = value;
         }
 
         [Inject]
@@ -333,11 +341,11 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             _playerSpawnPoints[nearestBase] = playerInGameData.networkIdentity.netId;
             _playerPositions.TryAdd(playerInGameData.networkIdentity.netId, pos);
             _playerGrids.TryAdd(playerInGameData.networkIdentity.netId,  MapBoundDefiner.Instance.GetGridPosition(pos));
-            RpcAddPlayer(connectId, playerInGameData);
+            RpcAddPlayer(connectId, playerInGameData, playerInGameData.networkIdentity.netId);
         }
 
         [ClientRpc]
-        private void RpcAddPlayer(int connectId, PlayerInGameData playerInGameData)
+        private void RpcAddPlayer(int connectId, PlayerInGameData playerInGameData, uint playerNetId)
         {
             var playerIdentity = playerInGameData.networkIdentity;
             if (_playerPhysicsData == null)

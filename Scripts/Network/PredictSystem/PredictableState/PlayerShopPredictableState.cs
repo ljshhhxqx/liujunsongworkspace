@@ -6,6 +6,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
+using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Static;
 using HotUpdate.Scripts.Tool.Static;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
@@ -22,6 +23,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private RandomBuffConfig _randomBuffConfig;
         private BindingKey _bindKey;
         private BindingKey _bagBindKey;
+        private PlayerInGameManager _playerInGameManager;
         protected override ISyncPropertyState CurrentState { get; set; }
         protected override CommandType CommandType => CommandType.Shop;
         
@@ -33,6 +35,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _itemConfig = configProvider.GetConfig<ItemConfig>();
             _constantBuffConfig = configProvider.GetConfig<ConstantBuffConfig>();
             _randomBuffConfig = configProvider.GetConfig<RandomBuffConfig>();
+            _playerInGameManager = PlayerInGameManager.Instance;
             _bindKey = new BindingKey(UIPropertyDefine.ShopItem);
             _bagBindKey = new BindingKey(UIPropertyDefine.BagItem);
             if (CurrentState is not PlayerShopState playerShopState)
@@ -121,6 +124,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 randomShopData.ShopConfigId = item.ShopConfigId;
                 randomShopData.ShopId = item.ShopId;
                 randomShopData.ItemConfigId = item.ItemConfigId;
+                randomShopData.PlayerId = _playerInGameManager.LocalPlayerId;
                 randomShopData.ItemType = item.ItemType;
                 randomShopData.Price = item.Price;
                 randomShopData.Icon = UISpriteContainer.GetSprite(itemConfigData.iconName);

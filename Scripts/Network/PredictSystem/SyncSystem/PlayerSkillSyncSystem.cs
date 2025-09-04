@@ -140,7 +140,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [ClientRpc]
         private void RpcSetPlayerSkillState(int connectionId, byte[] playerSkillState)
         {
-            var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PlayerSkillSyncState>();
+            var player = GameSyncManager.GetPlayerConnection(connectionId);
+            var syncState = player.GetComponent<PlayerSkillSyncState>();
             var playerState = NetworkCommandExtensions.DeserializePlayerState(playerSkillState);
             syncState.InitializeState(playerState);
         }

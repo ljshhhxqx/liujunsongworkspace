@@ -11,6 +11,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.PredictSystem.State;
+using HotUpdate.Scripts.Network.Server.InGame;
 using MemoryPack;
 using Mirror;
 using UniRx;
@@ -38,6 +39,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private PlayerPropertySyncSystem _playerPropertySyncSystem;
         private SkillConfig _skillConfig;
         private PlayerSkillSyncSystem _playerSkillSyncSystem;
+        private PlayerInGameManager _playerInGameManager;
         private List<IAnimationCooldown> _animationCooldownConfig;
         private CancellationTokenSource _cts = new CancellationTokenSource();
         protected override CommandType CommandType => CommandType.Input;
@@ -48,6 +50,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _animationConfig = configProvider.GetConfig<AnimationConfig>();
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _skillConfig = configProvider.GetConfig<SkillConfig>();
+            _playerInGameManager = PlayerInGameManager.Instance;
         }
         protected override void OnGameStart(bool isGameStarted)
         {
@@ -182,7 +185,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [ClientRpc]
         private void RpcSetPlayerInputState(int connectionId, byte[] playerInputState)
         {
-            var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PlayerInputPredictionState>();
+            var player = GameSyncManager.GetPlayerConnection(connectionId);
+            var syncState = player.GetComponent<PlayerInputPredictionState>();
             var playerState = NetworkCommandExtensions.DeserializePlayerState(playerInputState);
             syncState.InitCurrentState(playerState);
         }

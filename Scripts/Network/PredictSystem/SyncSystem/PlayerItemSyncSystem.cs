@@ -6,6 +6,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.PredictSystem.State;
+using HotUpdate.Scripts.Network.Server.InGame;
 using MemoryPack;
 using Mirror;
 using UnityEngine;
@@ -21,6 +22,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private WeaponConfig _weaponConfig;
         private ArmorConfig _armorConfig;
         private InteractSystem _interactSystem;
+        private PlayerInGameManager _playerInGameManager;
         protected override CommandType CommandType => CommandType.Item;
 
         [Inject]
@@ -30,6 +32,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _weaponConfig = configProvider.GetConfig<WeaponConfig>();
             _armorConfig = configProvider.GetConfig<ArmorConfig>();
             _interactSystem = Object.FindObjectOfType<InteractSystem>();
+            _playerInGameManager = PlayerInGameManager.Instance;
         }
 
         protected override void OnClientProcessStateUpdate(int connectionId, byte[] state, CommandType commandType)
@@ -65,7 +68,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [ClientRpc]
         private void RpcSetPlayerItemState(int connectionId, byte[] playerItemState)
         {
-            var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PlayerItemPredictableState>();
+            var player = GameSyncManager.GetPlayerConnection(connectionId);
+            var syncState = player.GetComponent<PlayerItemPredictableState>();
             var playerState = NetworkCommandExtensions.DeserializePlayerState(playerItemState);
             syncState.InitCurrentState(playerState);
         }

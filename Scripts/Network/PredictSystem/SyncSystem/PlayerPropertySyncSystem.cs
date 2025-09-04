@@ -274,7 +274,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [ClientRpc]
         private void RpcSetPlayerPropertyState(int connectionId, byte[] playerPropertyState)
         {
-            var syncState = NetworkServer.connections[connectionId].identity.GetComponent<PropertyPredictionState>();
+            var player = GameSyncManager.GetPlayerConnection(connectionId);
+            var syncState = player.GetComponent<PropertyPredictionState>();
             var playerState = NetworkCommandExtensions.DeserializePlayerState(playerPropertyState);
             syncState.InitCurrentState(playerState);
         }

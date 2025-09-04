@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
@@ -12,14 +11,12 @@ using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
-using HotUpdate.Scripts.Tool.ObjectPool;
 using Mirror;
 using Tool.GameEvent;
 using UniRx;
 using UnityEngine;
 using VContainer;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
-using InteractHeader = HotUpdate.Scripts.Network.PredictSystem.Interact.InteractHeader;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
@@ -42,6 +39,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private JsonDataConfig _jsonDataConfig;
         private PlayerPropertySyncSystem _playerPropertySyncSystem;
         private bool _isProcessing; // 防止重入
+        private bool _serverHandler;
         private CancellationTokenSource _cts;
         private readonly Dictionary<int, PlayerComponentController> _playerComponentControllers = new Dictionary<int, PlayerComponentController>();
         
@@ -93,6 +91,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public override void OnStartServer()
         {
             base.OnStartServer();
+            _serverHandler = true;
             if (!isServer)
             {
                 _syncSystems.Clear();
@@ -145,7 +144,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void OnGameStartChanged(bool oldValue, bool newValue)
         {
             OnGameStart?.Invoke(newValue);
-            if (isServer)
+            if (_serverHandler)
             {
                 PlayerInGameManager.Instance.isGameStarted = newValue;
             }
@@ -153,7 +152,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private void OnPlayerDisconnect(PlayerDisconnectEvent disconnectEvent)
         {
-            if(!isServer)
+            if(!_serverHandler)
                 return;
             PlayerInGameManager.Instance.RemovePlayer(disconnectEvent.ConnectionId);
             OnPlayerDisconnected?.Invoke(disconnectEvent.ConnectionId);
@@ -162,7 +161,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private void OnPlayerConnect(PlayerConnectEvent connectEvent)
         {
-            if(!isServer)
+            if(!_serverHandler)
                 return;
             var networkIdentity = NetworkServer.connections[connectEvent.ConnectionId].identity;
             connectEvent = new PlayerConnectEvent(connectEvent.ConnectionId, networkIdentity, connectEvent.ReadOnlyData);
@@ -178,7 +177,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [ClientRpc]
         private void RpcPlayerConnect(PlayerConnectEvent connectEvent)
         {
-            if(isServer)
+            if(_serverHandler)
                 return;
             OnPlayerConnected?.Invoke(connectEvent.ConnectionId, NetworkServer.connections[connectEvent.ConnectionId].identity);
         }
@@ -186,7 +185,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [ClientRpc]
         private void RpcPlayerDisconnect(int connectionId)
         {
-            if(isServer)
+            if(_serverHandler)
                 return;
             PlayerInGameManager.Instance.RemovePlayer(connectionId);
             OnPlayerDisconnected?.Invoke(connectionId);
@@ -210,13 +209,29 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             if (!_playerComponentControllers.TryGetValue(connectionId, out var playerConnection))
             {
-                if (NetworkClient.connection != null && NetworkClient.connection.connectionId == connectionId)
+                if (!_serverHandler && NetworkClient.connection != null)
                 {
-                    playerConnection = NetworkClient.connection.identity.GetComponent<PlayerComponentController>();
-                    _playerComponentControllers.Add(connectionId, playerConnection);
+                    if (NetworkClient.connection.connectionId == connectionId)
+                    {
+                        playerConnection = NetworkClient.connection.identity.GetComponent<PlayerComponentController>();
+                        _playerComponentControllers.Add(connectionId, playerConnection);
+                    }
+                    else
+                    {
+                        var playerNetId = PlayerInGameManager.Instance.GetPlayerNetId(connectionId);
+                        foreach (var identity in NetworkClient.spawned.Values)
+                        {
+                            if (playerNetId == identity.netId)
+                            {
+                                playerConnection = identity.GetComponent<PlayerComponentController>();
+                                _playerComponentControllers.Add(connectionId, playerConnection);
+                                break;
+                            }
+                        }
+                    }
                 }
 
-                else if (NetworkServer.connections != null && NetworkServer.connections.TryGetValue(connectionId, out var connection))
+                else if (_serverHandler && NetworkServer.connections != null && NetworkServer.connections.TryGetValue(connectionId, out var connection))
                 {
                     playerConnection = connection.identity.GetComponent<PlayerComponentController>();
                     _playerComponentControllers.Add(connectionId, playerConnection);

@@ -198,11 +198,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             UIManager uiManager,
             GameEventManager gameEventManager)
         {
-            if (_isInit)
-            {
-                return;
-            }
-            _isInit = true;
             _configProvider = configProvider;
             var jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
             _gameConfigData = jsonDataConfig.GameConfig;
@@ -226,8 +221,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public override void OnStartLocalPlayer()
         {
             base.OnStartLocalPlayer();
-            _uiManager.IsUnlockMouse += OnIsUnlockMouse;
             _localPlayerHandler = true;
+            _uiManager.IsUnlockMouse += OnIsUnlockMouse;
             
             _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
                 UIPropertyBinder.LocalPlayerId);
