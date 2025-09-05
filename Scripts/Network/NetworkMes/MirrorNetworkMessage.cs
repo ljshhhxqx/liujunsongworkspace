@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.PredictSystem.Data;
 using Mirror;
 using Tool.GameEvent;
 using UnityEngine;
@@ -17,12 +18,14 @@ namespace Network.NetworkMes
         public string UID;
         public int ConnectionID;
         public string Name;
+        public CompressedVector3 position;
 
-        public MirrorPlayerConnectMessage(string uid, int connectionID, string name)
+        public MirrorPlayerConnectMessage(string uid, int connectionID, string name, CompressedVector3 position)
         {            
             UID = uid;
             ConnectionID = connectionID;
             Name = name;
+            this.position = position;
         }
     }
     
@@ -185,11 +188,13 @@ namespace Network.NetworkMes
     {
         public int connectionID;
         public int spawnIndex;
+        public string playerName;
         
-        public MirrorPlayerConnectedMessage(int connectionID, int spawnIndex)
+        public MirrorPlayerConnectedMessage(int connectionID, int spawnIndex, string playerName)
         {
             this.connectionID = connectionID;
             this.spawnIndex = spawnIndex;
+            this.playerName = playerName;
         }
     }
 

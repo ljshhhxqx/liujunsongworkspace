@@ -210,10 +210,12 @@ namespace Tool.Message
     {
         public int ConnectionId;
         public int SpawnIndex;
-        public PlayerConnectedMessage(int connectionId, int spawnIndex)
+        public string PlayerName;
+        public PlayerConnectedMessage(int connectionId, int spawnIndex, string playerName)
         {
             this.ConnectionId = connectionId;
             this.SpawnIndex = spawnIndex;
+            this.PlayerName = playerName;
         }
     }
 

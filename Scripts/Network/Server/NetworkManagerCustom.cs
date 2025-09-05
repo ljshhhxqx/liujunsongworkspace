@@ -7,6 +7,7 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.NetworkMes;
+using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
@@ -53,12 +54,6 @@ namespace HotUpdate.Scripts.Network.Server
             _playerDataManager = playerDataManager;
             _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
             _gameConfigData = configProvider.GetConfig<JsonDataConfig>().GameConfig;
-            _mirrorNetworkMessageHandler.RegisterLocalMessageHandler<PlayerConnectedMessage>(OnPlayerConnectedAndSpawn);
-        }
-
-        private void OnPlayerConnectedAndSpawn(PlayerConnectedMessage message)
-        {
-            SpawnPlayer(message.ConnectionId, message.SpawnIndex);
         }
 
         // 服务器端有玩家连接时调用
@@ -103,9 +98,6 @@ namespace HotUpdate.Scripts.Network.Server
             playerGo.transform.localPosition = Vector3.zero;
             playerGo.transform.localRotation = Quaternion.identity;
             playerGo.name = playerGo.name.Replace("(Clone)", connectionId.ToString());
-            playerGo.gameObject.SetActive(false);
-            ObjectInjectProvider.Instance.InjectMapGameObject(_mapName, playerGo);
-            playerGo.gameObject.SetActive(true);
             Debug.Log("Spawned player: " + playerGo.name);
             return playerGo;
         }
@@ -115,10 +107,17 @@ namespace HotUpdate.Scripts.Network.Server
             var spawnIndex = Random.Range(0, _spawnPoints.Count);
             var res = DataJsonManager.Instance.GetResourceData(_gameConfigData.playerPrefabName);
             var spawnPoint = _spawnPoints[spawnIndex];
-            _mirrorNetworkMessageHandler.SendToAllClients(new MirrorPlayerConnectMessage(res.Name, conn.connectionId, "asdw"));
+            
             var playerGo = SpawnPlayer(conn.connectionId, spawnIndex);
             //currentPlayer = resInfo.gameObject;
-            _spawnPoints.Remove(spawnPoint);
+            playerGo.gameObject.SetActive(false);
+            ObjectInjectProvider.Instance.InjectMapGameObject(_mapName, playerGo);
+            playerGo.gameObject.SetActive(true);
+            _mirrorNetworkMessageHandler.SendToAllClients(new MirrorPlayerConnectMessage(res.Name, conn.connectionId, playerGo.name, playerGo.transform.position));
+
+            _spawnPoints.Remove(spawnPoint);            
+
+            //_mirrorNetworkMessageHandler.SendToAllClients(new MirrorPlayerConnectedMessage(conn.connectionId, spawnIndex, playerGo.name));
             NetworkServer.AddPlayerForConnection(conn, playerGo);
         }
 
@@ -215,7 +214,7 @@ namespace HotUpdate.Scripts.Network.Server
             // 获取当前连接
             NetworkConnection conn = NetworkClient.connection;
 
-            var msg = new MirrorPlayerConnectMessage("Creator1", conn.connectionId, "asdw");
+            var msg = new MirrorPlayerConnectMessage("Creator1", conn.connectionId, "asdw", new CompressedVector3());
             conn.Send(msg);
             // 发送 PlayerAccountId 给服务器
             // TODO: 取消注释
@@ -225,7 +224,18 @@ namespace HotUpdate.Scripts.Network.Server
 
         private void OnPlayerConnectedMessage(MirrorPlayerConnectMessage message)
         {
-            Debug.Log($"Received PlayerAccountId: {message.UID} - {message.Name} - {message.ConnectionID.ToString()}");
+            Debug.Log($"Received PlayerAccountId: {message.UID} - {message.Name} - {message.ConnectionID.ToString()} - {message.position.ToString()}");
+            
+            var spawnPoint = message.position.ToVector3();
+            var playerGo = GameObject.Find(message.Name);
+            if (!playerGo)
+            {
+                Debug.LogError("Player not found: " + message.Name);
+                return;
+            }
+            playerGo.transform.position = spawnPoint;
+            playerGo.transform.rotation = Quaternion.identity;
+            Debug.Log("Spawned player: " + playerGo.name);
         }
         
 

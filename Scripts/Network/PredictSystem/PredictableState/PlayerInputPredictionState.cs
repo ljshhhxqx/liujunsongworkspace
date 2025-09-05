@@ -216,9 +216,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property, CommandAuthority.Client);
                     animationCommand.SkillId = skillConfigData.id;
                     _propertyPredictionState.AddPredictedCommand(animationCommand);
-                    cooldownInfo?.Use();
                     if (cooldownInfo != null)
+                    {
+                        cooldownInfo.Use();
                         Debug.Log($"[Simulate] [Normal] - CommandAnimationState:{inputCommand.CommandAnimationState} - cooldownInfo:{cooldownInfo.AnimationState} - cooldown:{cooldown} - cost:{cost}");
+
+                    }
+
                 }
 
                 if (skillConfigData.animationState != AnimationState.None)

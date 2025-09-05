@@ -186,7 +186,7 @@ namespace HotUpdate.Scripts.Network.NetworkMes
 
             if (networkMessage is MirrorPlayerConnectedMessage playerConnectedMessage)
             {
-                return new PlayerConnectedMessage(playerConnectedMessage.connectionID, playerConnectedMessage.spawnIndex);
+                return new PlayerConnectedMessage(playerConnectedMessage.connectionID, playerConnectedMessage.spawnIndex, playerConnectedMessage.playerName);
             }
             
             // 添加更多消息类型的处理...
