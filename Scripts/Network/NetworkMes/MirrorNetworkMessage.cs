@@ -19,13 +19,15 @@ namespace Network.NetworkMes
         public int ConnectionID;
         public string Name;
         public CompressedVector3 position;
+        public uint playerUid;
 
-        public MirrorPlayerConnectMessage(string uid, int connectionID, string name, CompressedVector3 position)
+        public MirrorPlayerConnectMessage(string uid, int connectionID, string name, CompressedVector3 position, uint playerUid)
         {            
             UID = uid;
             ConnectionID = connectionID;
             Name = name;
             this.position = position;
+            this.playerUid = playerUid;
         }
     }
     

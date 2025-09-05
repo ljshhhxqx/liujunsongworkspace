@@ -54,11 +54,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 //Debug.Log($"PropertyPredictionState [OnStartLocalPlayer]  ");
                 _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
                     UIPropertyBinder.LocalPlayerId);
-                _bindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
                 _goldBindKey = new BindingKey(UIPropertyDefine.PlayerBaseData, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
                 _playerDeathTimeBindKey = new BindingKey(UIPropertyDefine.PlayerDeathTime, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
                 _playerControlBindKey = new BindingKey(UIPropertyDefine.PlayerControl, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
-                _uiPropertyData = UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_bindKey);
+                _uiPropertyData = UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_propertyBindKey);
                 var itemDatas = new Dictionary<int, PropertyItemData>();
                 var enumValues = Enum.GetValues(typeof(PropertyTypeEnum));
                 for (var i = 0; i < enumValues.Length; i++)

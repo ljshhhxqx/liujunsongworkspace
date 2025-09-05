@@ -186,7 +186,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     return;
                 }
 
-                var animationCooldowns = PlayerComponentController.GetNowAnimationCooldownsDict();
+                var animationCooldowns = PlayerComponentController.AnimationCooldownsDict;
                 var cooldownInfo = animationCooldowns.GetValueOrDefault(inputCommand.CommandAnimationState);
                 if (cooldown > 0)
                 {

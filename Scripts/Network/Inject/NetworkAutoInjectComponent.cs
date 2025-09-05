@@ -23,7 +23,7 @@ namespace HotUpdate.Scripts.Network.Inject
 
         private void Start()
         {
-            if (autoInject && isForClient)
+            if (autoInject && isForLocalPlayer)
             {
                 ObjectInjectProvider.Instance.InjectMap(mapType, this);
                 

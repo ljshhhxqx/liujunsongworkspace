@@ -195,7 +195,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void BindAniEvents(int connectionId)
         {
             var playerController = GameSyncManager.GetPlayerConnection(connectionId);
-            var animationCooldowns = playerController.GetNowAnimationCooldownsDict();
+            var animationCooldowns = playerController.AnimationCooldownsDict;
             var attackCooldown = animationCooldowns.GetValueOrDefault(AnimationState.Attack);
             if (attackCooldown is KeyframeComboCooldown attackComboCooldown)
             {
@@ -308,6 +308,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     Debug.LogWarning($"[playerInputSyncSystem]Player {header.ConnectionId} is in special state, cannot input.");
                     return playerInputState;
                 }
+                //游戏未开始不能执行有cd的动画
+                if (playerController.AnimationCooldownsDict.ContainsKey(inputCommand.CommandAnimationState) && !GameSyncManager.isGameStart)
+                {
+                    return playerInputState;
+                }
                 var playerProperty = playerSyncSystem.GetPlayerProperty(header.ConnectionId);
                 //验证玩家是否存在或者是否已死亡
                 if (playerProperty == null || playerProperty[PropertyTypeEnum.Health].CurrentValue <= 0)
@@ -334,7 +339,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     return playerInputState;
                 }
                 
-                var playerAnimationCooldowns = playerController.GetNowAnimationCooldownsDict();
+                var playerAnimationCooldowns = playerController.AnimationCooldownsDict;
                 if (playerAnimationCooldowns.Count == 0)
                 {
                     Debug.LogWarning($"[playerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} is not exist.");
@@ -379,24 +384,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         animationCommand.AnimationState = newState == AnimationState.None ? commandAnimation : newState;
                         animationCommand.SkillId = skillConfigData.id;
                         GameSyncManager.EnqueueServerCommand(animationCommand);
-                        //ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Return(animationCommand);
-                        //Debug.Log($" [playerInputSyncSystem]Player {header.ConnectionId} input animation {commandAnimation} cost {info.cost} strength, now strength is {playerProperty[PropertyTypeEnum.Strength].CurrentValue}.");
                     }
 
 
-                    // if (skillConfigData.animationState != AnimationState.None)
                     cooldownInfo?.Use();
-                    // else if (skillConfigData.id > 0 && skillConfigData.animationState != AnimationState.None)
-                    // {
-                    //     var animationCommand = ObjectPoolManager<PropertyServerAnimationCommand>.Instance.Get(50);
-                    //     animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property);
-                    //     animationCommand.AnimationState = skillConfigData.animationState;
-                    //     animationCommand.SkillId = skillConfigData.id;
-                    //     GameSyncManager.EnqueueServerCommand(animationCommand);
-                    //     //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input skill {skillConfigData.id} animation {skillConfigData.animationState} cooldown {skillConfigData.cooldown} cost {skillConfigData.cost}");
-                    //
-                    //     cooldownInfo?.Use();
-                    // }
+                    if (playerAnimationCooldowns.ContainsKey(commandAnimation))
+                    {
+                        playerAnimationCooldowns[commandAnimation] = cooldownInfo;
+                        playerController.AnimationCooldownsDict= playerAnimationCooldowns;
+                    }
 
                 }
                 
@@ -433,7 +429,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             if (command is SkillLoadOverloadAnimationCommand skillLoadOverloadAnimationCommand)
             {
                 var playerController = GameSyncManager.GetPlayerConnection(header.ConnectionId);
-                var playerAnimationCooldowns = playerController.GetNowAnimationCooldownsDict();
+                var playerAnimationCooldowns = playerController.AnimationCooldownsDict;
                 if (playerAnimationCooldowns.Count == 0)
                 {
                     Debug.LogWarning($"[playerInputSyncSystem]Player {header.ConnectionId} input animation {skillLoadOverloadAnimationCommand.KeyCode} is not exist.");
@@ -469,7 +465,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             if (command is SkillChangedCommand skillChangedCommand)
             {
                 var playerController = GameSyncManager.GetPlayerConnection(header.ConnectionId);
-                var playerAnimationCooldowns = playerController.GetNowAnimationCooldownsDict();
+                var playerAnimationCooldowns = playerController.AnimationCooldownsDict;
                 var animation = playerAnimationCooldowns.GetValueOrDefault(skillChangedCommand.AnimationState);
                 var skillConfigData = _playerSkillSyncSystem.GetSkillConfigData(skillChangedCommand.AnimationState, header.ConnectionId);
                 animation?.SkillModifyCooldown(skillConfigData.cooldown);

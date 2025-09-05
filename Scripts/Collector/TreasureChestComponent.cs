@@ -74,7 +74,6 @@ namespace HotUpdate.Scripts.Collector
             _chestCommonData = _jsonDataConfig.ChestCommonData;
 
             lid.transform.eulerAngles = _chestCommonData.InitEulerAngles;
-            _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         }
 
         private void OnSpawn()
@@ -95,6 +94,7 @@ namespace HotUpdate.Scripts.Collector
             _chestCollider.OnTriggerExitAsObservable()
                 .Subscribe(OnTriggerExitObserver)
                 .AddTo(this);
+            _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
             _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId));
         }
         

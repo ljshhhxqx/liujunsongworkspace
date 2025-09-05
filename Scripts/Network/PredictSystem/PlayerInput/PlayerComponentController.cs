@@ -154,18 +154,25 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public IObservable<int> AttackPointReached => _onAttackPoint;
         public IObservable<int> AttackEnded => _onAttackEnd;
         
-        public Dictionary<AnimationState, IAnimationCooldown> GetNowAnimationCooldownsDict()
+        public Dictionary<AnimationState, IAnimationCooldown> AnimationCooldownsDict
         {
-            if (_animationCooldownsDict.Count == 0)
+            get
             {
-                if (_animationCooldowns.Count > 0)
+                if (_animationCooldownsDict.Count == 0)
                 {
-                    _animationCooldownsDict = _animationCooldowns.ToDictionary(x => x.AnimationState, x => x);
-                    return _animationCooldownsDict;
+                    if (_animationCooldowns.Count > 0)
+                    {
+                        _animationCooldownsDict = _animationCooldowns.ToDictionary(x => x.AnimationState, x => x);
+                    }
                 }
-                throw new Exception("Animation cooldowns is empty.");
+
+                return _animationCooldownsDict;
             }
-            return _animationCooldownsDict;
+            set
+            {
+                _animationCooldownsDict = value;
+                _animationCooldowns = value.Values.ToList();
+            }
         }
         
         public Dictionary<AnimationState, ISkillChecker> SkillCheckerDict
@@ -216,10 +223,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _gameEventManager = gameEventManager;
             GetAllCalculators(configProvider, gameSyncManager);
             HandleAllSyncState();
-            if (_localPlayerHandler)
-            {
-                HandleLocalInitCallback();
-            }
+            HandleLocalInitCallback();
 
         }
 
@@ -789,6 +793,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 ItemConfig = configProvider.GetConfig<ItemConfig>(),
                 PlayerInGameManager = _playerInGameManager,
                 PlayerConfigData = _playerConfigData,
+                UIManager = _uiManager,
             });
             PlayerSkillCalculator.SetConstant(new SkillCalculatorConstant
             {

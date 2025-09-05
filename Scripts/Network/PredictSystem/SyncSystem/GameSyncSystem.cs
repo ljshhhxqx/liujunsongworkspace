@@ -179,7 +179,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             if(_serverHandler)
                 return;
-            OnPlayerConnected?.Invoke(connectEvent.ConnectionId, NetworkServer.connections[connectEvent.ConnectionId].identity);
+            var player = GetPlayerConnection(connectEvent.ConnectionId);
+            OnPlayerConnected?.Invoke(connectEvent.ConnectionId, player.netIdentity);
         }
         
         [ClientRpc]

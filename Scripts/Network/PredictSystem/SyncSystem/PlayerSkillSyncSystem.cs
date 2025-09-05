@@ -165,7 +165,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     return PropertyStates[header.ConnectionId];
                 }
                 var playerConnection = GameSyncManager.GetPlayerConnection(skillCommand.Header.ConnectionId);
-                var skillCheckers = playerConnection.GetNowAnimationCooldownsDict();
+                var skillCheckers = playerConnection.AnimationCooldownsDict;
                 var skillData = _skillConfig.GetSkillData(skillCommand.SkillConfigId);
                 var propertySync = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
                 var playerProperty = propertySync.GetPropertyCalculator(header.ConnectionId, skillData.costProperty);

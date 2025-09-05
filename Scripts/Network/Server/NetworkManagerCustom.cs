@@ -110,10 +110,11 @@ namespace HotUpdate.Scripts.Network.Server
             
             var playerGo = SpawnPlayer(conn.connectionId, spawnIndex);
             //currentPlayer = resInfo.gameObject;
-            playerGo.gameObject.SetActive(false);
-            ObjectInjectProvider.Instance.InjectMapGameObject(_mapName, playerGo);
-            playerGo.gameObject.SetActive(true);
-            _mirrorNetworkMessageHandler.SendToAllClients(new MirrorPlayerConnectMessage(res.Name, conn.connectionId, playerGo.name, playerGo.transform.position));
+            // playerGo.gameObject.SetActive(false);
+            // ObjectInjectProvider.Instance.InjectMapGameObject(_mapName, playerGo);
+            // playerGo.gameObject.SetActive(true);
+            var identity = playerGo.GetComponent<NetworkIdentity>();
+            _mirrorNetworkMessageHandler.SendToAllClients(new MirrorPlayerConnectMessage(res.Name, conn.connectionId, playerGo.name, playerGo.transform.position, identity.netId));
 
             _spawnPoints.Remove(spawnPoint);            
 
@@ -214,7 +215,7 @@ namespace HotUpdate.Scripts.Network.Server
             // 获取当前连接
             NetworkConnection conn = NetworkClient.connection;
 
-            var msg = new MirrorPlayerConnectMessage("Creator1", conn.connectionId, "asdw", new CompressedVector3());
+            var msg = new MirrorPlayerConnectMessage("Creator1", conn.connectionId, "asdw", new CompressedVector3(), 0);
             conn.Send(msg);
             // 发送 PlayerAccountId 给服务器
             // TODO: 取消注释
@@ -224,18 +225,18 @@ namespace HotUpdate.Scripts.Network.Server
 
         private void OnPlayerConnectedMessage(MirrorPlayerConnectMessage message)
         {
-            Debug.Log($"Received PlayerAccountId: {message.UID} - {message.Name} - {message.ConnectionID.ToString()} - {message.position.ToString()}");
-            
-            var spawnPoint = message.position.ToVector3();
-            var playerGo = GameObject.Find(message.Name);
-            if (!playerGo)
-            {
-                Debug.LogError("Player not found: " + message.Name);
-                return;
-            }
-            playerGo.transform.position = spawnPoint;
-            playerGo.transform.rotation = Quaternion.identity;
-            Debug.Log("Spawned player: " + playerGo.name);
+            // Debug.Log($"Received PlayerAccountId: {message.UID} - {message.Name} - {message.ConnectionID.ToString()} - {message.position.ToString()}");
+            //
+            // var spawnPoint = message.position.ToVector3();
+            // var playerGo = NetworkClient.spawned.FirstOrDefault(x => x.Value.netId == message.playerUid);
+            // if (!playerGo.Value)
+            // {
+            //     Debug.LogError("Player not found: " + message.Name);
+            //     return;
+            // }
+            // playerGo.Value.transform.position = spawnPoint;
+            // playerGo.Value.transform.rotation = Quaternion.identity;
+            // Debug.Log("Spawned player: " + playerGo.Value.name);
         }
         
 
