@@ -216,13 +216,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _gameEventManager = gameEventManager;
             GetAllCalculators(configProvider, gameSyncManager);
             HandleAllSyncState();
+            if (_localPlayerHandler)
+            {
+                HandleLocalInitCallback();
+            }
+
         }
 
         public override void OnStartLocalPlayer()
         {
             base.OnStartLocalPlayer();
             _localPlayerHandler = true;
-            _uiManager.IsUnlockMouse += OnIsUnlockMouse;
             
             _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
                 UIPropertyBinder.LocalPlayerId);
@@ -236,42 +240,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 UIPropertyBinder.LocalPlayerId);
             _playerDeathTimeBindKey = new BindingKey(UIPropertyDefine.PlayerDeathTime, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
             _playerTraceOtherPlayerHpBindKey = new BindingKey(UIPropertyDefine.PlayerTraceOtherPlayerHp, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
-            HandleLocalInitCallback();
-            _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter));
-            var shopConstant = PlayerShopCalculator.Constant;
-            shopConstant.IsServer = isServer;
-            shopConstant.IsClient = isClient;
-            shopConstant.UIManager = _uiManager;
-            shopConstant.IsLocalPlayer = isLocalPlayer;
-            PlayerShopCalculator.SetConstant(shopConstant);
-            var equipConstant = PlayerEquipmentCalculator.Constant;
-            equipConstant.IsServer = isServer;
-            equipConstant.IsClient = isClient;
-            equipConstant.IsLocalPlayer = isLocalPlayer;
-            PlayerEquipmentCalculator.SetConstant(equipConstant);
-            var itemConstant = PlayerItemCalculator.Constant;
-            itemConstant.IsServer = isServer;
-            itemConstant.IsClient = isClient;
-            itemConstant.IsLocalPlayer = isLocalPlayer;
-            PlayerItemCalculator.SetConstant(itemConstant);
-            var propertyConstant = PlayerPropertyCalculator.CalculatorConstant;
-            propertyConstant.IsServer = isServer;
-            propertyConstant.IsClient = isClient;
-            propertyConstant.IsLocalPlayer = isLocalPlayer;
-            PlayerPropertyCalculator.SetCalculatorConstant(propertyConstant);
-            var physicsConstant = PlayerPhysicsCalculator.PhysicsDetermineConstant;
-            physicsConstant.IsServer = isServer;
-            physicsConstant.IsClient = isClient;
-            physicsConstant.IsLocalPlayer = isLocalPlayer;
-            PlayerPhysicsCalculator.SetPhysicsDetermineConstant(physicsConstant);
-            var animationConstant = PlayerAnimationCalculator.AnimationConstant;
-            animationConstant.IsServer = isServer;
-            animationConstant.IsClient = isClient;
-            animationConstant.IsLocalPlayer = isLocalPlayer;
-            PlayerAnimationCalculator.SetAnimationConstant(animationConstant);
-            var constant = PlayerSkillCalculator.Constant;
-            constant.IsServer = isServer;
-            PlayerSkillCalculator.SetConstant(constant);
+            
             // _capsuleCollider.OnTriggerEnterAsObservable()
             //     .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
             //     .Subscribe(c =>
@@ -516,6 +485,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _inputState.OnPlayerAnimationCooldownChanged += HandlePlayerAnimationCooldownChanged;
             _inputState.OnPlayerInputStateChanged += HandlePlayerInputStateChanged;
             _inputState.IsInSpecialState += HandleSpecialState;
+            _uiManager.IsUnlockMouse += OnIsUnlockMouse;
         }
 
         private void HandlePropertyStateChanged(SubjectedStateType subjectedStateType)
@@ -844,6 +814,41 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerStateCalculators.Add(_playerEquipmentCalculator);
             _playerStateCalculators.Add(_playerShopCalculator);
             _playerStateCalculators.Add(_playerSkillCalculator);
+            _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter));
+            var shopConstant = PlayerShopCalculator.Constant;
+            shopConstant.IsServer = isServer;
+            shopConstant.IsClient = isClient;
+            shopConstant.UIManager = _uiManager;
+            shopConstant.IsLocalPlayer = isLocalPlayer;
+            PlayerShopCalculator.SetConstant(shopConstant);
+            var equipConstant = PlayerEquipmentCalculator.Constant;
+            equipConstant.IsServer = isServer;
+            equipConstant.IsClient = isClient;
+            equipConstant.IsLocalPlayer = isLocalPlayer;
+            PlayerEquipmentCalculator.SetConstant(equipConstant);
+            var itemConstant = PlayerItemCalculator.Constant;
+            itemConstant.IsServer = isServer;
+            itemConstant.IsClient = isClient;
+            itemConstant.IsLocalPlayer = isLocalPlayer;
+            PlayerItemCalculator.SetConstant(itemConstant);
+            var propertyConstant = PlayerPropertyCalculator.CalculatorConstant;
+            propertyConstant.IsServer = isServer;
+            propertyConstant.IsClient = isClient;
+            propertyConstant.IsLocalPlayer = isLocalPlayer;
+            PlayerPropertyCalculator.SetCalculatorConstant(propertyConstant);
+            var physicsConstant = PlayerPhysicsCalculator.PhysicsDetermineConstant;
+            physicsConstant.IsServer = isServer;
+            physicsConstant.IsClient = isClient;
+            physicsConstant.IsLocalPlayer = isLocalPlayer;
+            PlayerPhysicsCalculator.SetPhysicsDetermineConstant(physicsConstant);
+            var animationConstant = PlayerAnimationCalculator.AnimationConstant;
+            animationConstant.IsServer = isServer;
+            animationConstant.IsClient = isClient;
+            animationConstant.IsLocalPlayer = isLocalPlayer;
+            PlayerAnimationCalculator.SetAnimationConstant(animationConstant);
+            var constant = PlayerSkillCalculator.Constant;
+            constant.IsServer = isServer;
+            PlayerSkillCalculator.SetConstant(constant);
         }
 
         private void OnAttack(int stage)
@@ -1312,13 +1317,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _gameSyncManager.EnqueueCommand(commandJson);
         }
 
-        private void Update()
-        {
-            if (_localPlayerHandler)
-            {
-            }
-
-        }
+        // private void Update()
+        // {
+        //     if (_localPlayerHandler)
+        //     {
+        //     }
+        //
+        // }
         //
         // private void TestNetworkCommandHeader()
         // {
