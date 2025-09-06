@@ -144,6 +144,7 @@ namespace HotUpdate.Scripts.Network.Server
 
             NetworkServer.RegisterHandler<MirrorPlayerConnectMessage>(OnServerPlayerAccountIdMessage);
         }
+        //public override void On
 
         private void OnServerPlayerAccountIdMessage(NetworkConnectionToClient conn, MirrorPlayerConnectMessage message)
         { 

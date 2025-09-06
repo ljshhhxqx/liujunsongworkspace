@@ -262,12 +262,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerPredictableState = player.GetComponent<PropertyPredictionState>();
             var playerPropertyState = new PlayerPredictablePropertyState();
-            if (PlayerPropertyCalculator.CalculatorConstant.PropertyConfig == null)
-            {
-                var constant = PlayerPropertyCalculator.CalculatorConstant;
-                constant.PropertyConfig = _propertyConfig;
-                PlayerPropertyCalculator.SetCalculatorConstant(constant);
-            }
             var calculators = PlayerPropertyCalculator.GetPropertyCalculators();
             playerPropertyState.MemoryProperty = new MemoryDictionary<PropertyTypeEnum, PropertyCalculator>(calculators);
             playerPredictableState?.RegisterProperties(playerPropertyState);

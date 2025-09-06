@@ -7895,6 +7895,12 @@ GameObject:
   - component: {fileID: 8677930179464285273}
   - component: {fileID: 168169212319342474}
   - component: {fileID: 8481695034306105822}
+  - component: {fileID: 566814416672649618}
+  - component: {fileID: 20022805378543967}
+  - component: {fileID: 831702219284656130}
+  - component: {fileID: 8964604139083830497}
+  - component: {fileID: 4368536235485642478}
+  - component: {fileID: 991941666967559954}
   m_Layer: 6
   m_Name: MPlayer
   m_TagString: Player
@@ -8071,6 +8077,10 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  autoInject: 1
+  isForClient: 1
+  isForLocalPlayer: 1
+  mapType: 0
   _rigidbody: {fileID: 1007857405232916623}
   _capsuleCollider: {fileID: 5839059580005103042}
   _animator: {fileID: 7780707582190085363}
@@ -8224,6 +8234,120 @@ MonoBehaviour:
   syncInterval: 0
   clientAuthority: 0
   animator: {fileID: 7780707582190085363}
+--- !u!114 &566814416672649618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8351228888613827031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ee7e3eac19e4a25b16f177b33e4a988, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  autoInject: 1
+  isForClient: 1
+  isForLocalPlayer: 1
+  mapType: 0
+--- !u!114 &20022805378543967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8351228888613827031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fe5ee381c60496ca0918f9974f73acf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  autoInject: 1
+  isForClient: 1
+  isForLocalPlayer: 1
+  mapType: 0
+--- !u!114 &831702219284656130
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8351228888613827031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e8650bcfd3d41a9b0ff94ae853a02ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  autoInject: 1
+  isForClient: 1
+  isForLocalPlayer: 1
+  mapType: 0
+--- !u!114 &8964604139083830497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8351228888613827031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8b48b5b53554024b2b86deb97821b4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  autoInject: 1
+  isForClient: 1
+  isForLocalPlayer: 1
+  mapType: 0
+--- !u!114 &4368536235485642478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8351228888613827031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 670f6575892a47eb8f21e9ed2d5605c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  autoInject: 1
+  isForClient: 1
+  isForLocalPlayer: 1
+  mapType: 0
+--- !u!114 &991941666967559954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8351228888613827031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a30072b7fe994f0f9bfb4f5e652e64cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  autoInject: 1
+  isForClient: 1
+  isForLocalPlayer: 1
+  mapType: 0
 --- !u!1 &8357527339398811249
 GameObject:
   m_ObjectHideFlags: 0

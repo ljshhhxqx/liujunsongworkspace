@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
@@ -14,14 +15,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
     public class ShopSyncSystem : BaseSyncSystem
     {
+        private ShopConfig _shopConfig;
+        private ItemConfig _itemConfig;
         private readonly Dictionary<int, PlayerShopPredictableState> _playerShopSyncStates = new Dictionary<int, PlayerShopPredictableState>();
         protected override CommandType CommandType => CommandType.Shop;
         private PlayerInGameManager _playerInGameManager;
         
         [Inject]
-        private void Init()
+        private void Init(IConfigProvider configProvider)
         {
             _playerInGameManager = PlayerInGameManager.Instance;
+            _shopConfig = configProvider.GetConfig<ShopConfig>();
+            _itemConfig = configProvider.GetConfig<ItemConfig>();
         }
         
 

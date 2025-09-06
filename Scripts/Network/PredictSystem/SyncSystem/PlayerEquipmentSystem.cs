@@ -5,6 +5,7 @@ using System.Threading;
 using AOTScripts.Data;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Common;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Battle;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
@@ -22,13 +23,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
     {
         private readonly Dictionary<int, PlayerEquipmentSyncState> _playerEquipmentSyncStates = new Dictionary<int, PlayerEquipmentSyncState>();
         private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
+        private IConfigProvider _configProvider;
         private PlayerInGameManager _playerInGameManager;
         protected override CommandType CommandType => CommandType.Equipment;
 
         [Inject]
-        private void Init()
+        private void Init(IConfigProvider configProvider)
         {
             _playerInGameManager = PlayerInGameManager.Instance;
+            _configProvider = configProvider;
         }
 
         protected override void OnGameStart(bool isGameStarted)
@@ -85,7 +88,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerPredictableState = player.GetComponent<PlayerEquipmentSyncState>();
             var playerEquipmentState = new PlayerEquipmentState();
-            playerEquipmentState.EquipmentDatas = new MemoryList<EquipmentData>();//<EquipmentData>();
+            playerEquipmentState.EquipmentDatas = new MemoryList<EquipmentData>();
             PropertyStates.TryAdd(connectionId, playerEquipmentState);
             _playerEquipmentSyncStates.TryAdd(connectionId, playerPredictableState);
             RpcSetPlayerEquipmentState(connectionId, NetworkCommandExtensions.SerializePlayerState(playerEquipmentState).Item1);

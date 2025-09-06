@@ -6,8 +6,10 @@ using AOTScripts.Data;
 using Cysharp.Threading.Tasks;
 using Data;
 using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.GameBase;
+using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Tool.Static;
 using Mirror;
@@ -342,6 +344,66 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             _playerPositions.TryAdd(playerInGameData.networkIdentity.netId, pos);
             _playerGrids.TryAdd(playerInGameData.networkIdentity.netId,  MapBoundDefiner.Instance.GetGridPosition(pos));
             RpcAddPlayer(connectId, playerInGameData, playerInGameData.networkIdentity.netId);
+            var gameData = _configProvider.GetConfig<JsonDataConfig>().GameConfig;
+            var playerData = _configProvider.GetConfig<JsonDataConfig>().PlayerConfig;
+            PlayerElementCalculator.SetPlayerElementComponent(_configProvider.GetConfig<ElementAffinityConfig>(), _configProvider.GetConfig<TransitionLevelBaseDamageConfig>(), _configProvider.GetConfig<ElementConfig>());
+            PlayerPhysicsCalculator.SetPhysicsDetermineConstant(new PhysicsDetermineConstant
+            {
+                GroundMinDistance = gameData.groundMinDistance,
+                GroundMaxDistance = gameData.groundMaxDistance,
+                MaxSlopeAngle = gameData.maxSlopeAngle,
+                StairsCheckDistance = gameData.stairsCheckDistance,
+                GroundSceneLayer = gameData.groundSceneLayer,
+                StairsSceneLayer = gameData.stairSceneLayer,
+                RotateSpeed = playerData.RotateSpeed,
+                IsServer = isServer,
+                MaxDetermineDistance = gameData.maxTraceDistance,
+                ViewAngle = gameData.maxViewAngle,
+                ObstructionCheckRadius = gameData.obstacleCheckRadius,
+                RollForce = playerData.RollForce,
+                JumpSpeed = playerData.JumpSpeed,
+                SpeedToVelocityRatio = playerData.SpeedToVelocityRatio,
+            });
+            PlayerPropertyCalculator.SetCalculatorConstant(new PropertyCalculatorConstant
+            {
+                TickRate = GameSyncManager.TickSeconds,
+                PropertyConfig =  _configProvider.GetConfig<PropertyConfig>(),
+                PlayerConfig = _configProvider.GetConfig<JsonDataConfig>().PlayerConfig,
+            });
+            PlayerAnimationCalculator.SetAnimationConstant(new AnimationConstant
+            {
+                MaxGroundDistance = gameData.groundMaxDistance,
+                InputThreshold = gameData.inputThreshold,
+                AttackComboMaxCount = playerData.AttackComboMaxCount,
+                AnimationConfig = _configProvider.GetConfig<AnimationConfig>(),
+            });
+            PlayerItemCalculator.SetConstant(new PlayerItemConstant
+            {
+                ItemConfig = _configProvider.GetConfig<ItemConfig>(),
+                WeaponConfig = _configProvider.GetConfig<WeaponConfig>(),
+                ArmorConfig = _configProvider.GetConfig<ArmorConfig>(),
+                PropertyConfig = _configProvider.GetConfig<PropertyConfig>(),
+                ConditionConfig = _configProvider.GetConfig<BattleEffectConditionConfig>(),
+                ConstantBuffConfig = _configProvider.GetConfig<ConstantBuffConfig>(),
+                RandomBuffConfig = _configProvider.GetConfig<RandomBuffConfig>(),
+                SkillConfig = _configProvider.GetConfig<SkillConfig>(),
+            });
+            PlayerEquipmentCalculator.SetConstant(new PlayerEquipmentConstant
+            {
+                ItemConfig = _configProvider.GetConfig<ItemConfig>(),
+                SkillConfig = _configProvider.GetConfig<SkillConfig>(),
+            });
+            PlayerShopCalculator.SetConstant(new ShopCalculatorConstant
+            {
+                ShopConfig = _configProvider.GetConfig<ShopConfig>(),
+                ItemConfig = _configProvider.GetConfig<ItemConfig>(),
+                PlayerConfigData = playerData,
+            });
+            PlayerSkillCalculator.SetConstant(new SkillCalculatorConstant
+            {
+                SkillConfig = _configProvider.GetConfig<SkillConfig>(),
+                SceneLayerMask = gameData.stairSceneLayer,
+            });
         }
 
         [ClientRpc]

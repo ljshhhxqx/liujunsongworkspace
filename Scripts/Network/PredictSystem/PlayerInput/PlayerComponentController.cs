@@ -459,12 +459,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void HandleAllSyncState()
         {
-            gameObject.AddComponent<PlayerEquipmentSyncState>();
-            gameObject.AddComponent<PlayerInputPredictionState>();
-            gameObject.AddComponent<PlayerItemPredictableState>();
-            gameObject.AddComponent<PlayerShopPredictableState>();
-            gameObject.AddComponent<PlayerSkillSyncState>();
-            gameObject.AddComponent<PropertyPredictionState>();
+            // gameObject.AddComponent<PlayerEquipmentSyncState>();
+            // gameObject.AddComponent<PlayerInputPredictionState>();
+            // gameObject.AddComponent<PlayerItemPredictableState>();
+            // gameObject.AddComponent<PlayerShopPredictableState>();
+            // gameObject.AddComponent<PlayerSkillSyncState>();
+            // gameObject.AddComponent<PropertyPredictionState>();
             var states = GetComponents<PredictableStateBase>();
             var syncStates = GetComponents<SyncStateBase>();
             for (int i = 0; i < states.Length; i++)
@@ -823,7 +823,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             var shopConstant = PlayerShopCalculator.Constant;
             shopConstant.IsServer = isServer;
             shopConstant.IsClient = isClient;
-            shopConstant.UIManager = _uiManager;
             shopConstant.IsLocalPlayer = isLocalPlayer;
             PlayerShopCalculator.SetConstant(shopConstant);
             var equipConstant = PlayerEquipmentCalculator.Constant;
