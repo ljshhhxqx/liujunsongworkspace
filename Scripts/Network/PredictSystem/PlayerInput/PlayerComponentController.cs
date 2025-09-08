@@ -231,7 +231,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             base.OnStartLocalPlayer();
             _localPlayerHandler = true;
-            
+            Debug.Log($"[PlayerInputController] OnStartLocalPlayer");
             _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
                 UIPropertyBinder.LocalPlayerId);
             _itemBindKey = new BindingKey(UIPropertyDefine.BagItem, DataScope.LocalPlayer,
@@ -257,7 +257,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
                 .Subscribe(c =>
                 {
-                    var header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
+                    var header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
                         CommandType.Property, CommandAuthority.Client);
                     var playerTouchedBaseCommand = new PlayerTouchedBaseCommand
                     {
@@ -317,7 +317,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                                 {
                                     var refreshCommand = new RefreshShopCommand
                                     {
-                                        Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Shop, CommandAuthority.Client),
+                                        Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId, CommandType.Shop, CommandAuthority.Client),
                                     };
                                     _gameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(refreshCommand).Item1);
                                 }).AddTo(shopScreenUI.gameObject);
@@ -337,8 +337,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .AddTo(_disposables);
             
             Observable.EveryUpdate()
-                .Where(_ => _localPlayerHandler && Cursor.lockState == CursorLockMode.Locked && _isControlled && GameSyncManager.CurrentTick > 0 
-                                                && _subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible))
+                .Where(_ => _localPlayerHandler && Cursor.lockState == CursorLockMode.Locked && _isControlled 
+                                                && (_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)))
                 .Subscribe(_ => {
                     var movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
                     var animationStates = _inputState.GetAnimationStates();
@@ -394,7 +394,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     }
                     var propertyAutoRecoverCommand = ObjectPoolManager<PropertyAutoRecoverCommand>.Instance.Get(50);
                     propertyAutoRecoverCommand.Header = GameSyncManager.CreateNetworkCommandHeader(
-                        connectionToClient.connectionId,
+                        _playerInGameManager.LocalPlayerId,
                         CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate,
                         NetworkCommandType.PropertyAutoRecover);
                     _propertyPredictionState.AddPredictedCommand(propertyAutoRecoverCommand);
@@ -408,7 +408,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     HandleInputPhysics(_playerInputStateData);
                     _targetSpeed = _propertyPredictionState.GetMoveSpeed();
                     var propertyEnvironmentChangeCommand = ObjectPoolManager<PropertyEnvironmentChangeCommand>.Instance.Get(50);
-                    propertyEnvironmentChangeCommand.Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
+                    propertyEnvironmentChangeCommand.Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
                         CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate, NetworkCommandType.PropertyEnvironmentChange);
                     propertyEnvironmentChangeCommand.HasInputMovement = _playerInputStateData.InputMovement.magnitude > 0.1f;
                     propertyEnvironmentChangeCommand.PlayerEnvironmentState = _gameStateStream.Value;
@@ -434,7 +434,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .Subscribe(_ =>
                 {
                     var otherPlayers = NetworkServer.connections
-                        .Where(x => x.Value.connectionId != connectionToClient.connectionId)
+                        .Where(x => x.Value.connectionId != _playerInGameManager.LocalPlayerId)
                         .Select(x => x.Value.identity.GetComponent<Transform>());
                     var potentialTargets = otherPlayers as Transform[] ?? otherPlayers.ToArray();
                     if (potentialTargets.Length == 0)
@@ -444,7 +444,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     var layerMask = _gameConfigData.groundSceneLayer | _gameConfigData.stairSceneLayer | _playerConfigData.PlayerLayer;
                     if (PlayerPhysicsCalculator.TryGetPlayersInScreen(_camera, potentialTargets, out var playersInScreen, layerMask))
                     {
-                        var header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
+                        var header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
                             CommandType.Property, CommandAuthority.Client);
                         var playerInScreenCommand = new PlayerTraceOtherPlayerHpCommand
                         {
@@ -644,7 +644,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             
             _previousAnimationState = inputData.Command;
             inputCommand.InputMovement = CompressedVector3.FromVector3(inputData.InputMovement);
-            inputCommand.Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId,
+            inputCommand.Header = GameSyncManager.CreateNetworkCommandHeader( _playerInGameManager.LocalPlayerId,
                 CommandType.Input, CommandAuthority.Client, CommandExecuteType.Predicate, NetworkCommandType.Input);
             inputCommand.InputAnimationStates = inputData.InputAnimations;
             inputCommand.CommandAnimationState = inputData.Command;
@@ -1082,7 +1082,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 {
                     var playerChangeUnionCommand = new PlayerChangeUnionRequest
                     {
-                        Header = InteractSystem.CreateInteractHeader(connection.connectionId, InteractCategory.PlayerToPlayer),
+                        Header = InteractSystem.CreateInteractHeader(_playerInGameManager.LocalPlayerId, InteractCategory.PlayerToPlayer),
                         KillerPlayerId = killerPlayerId,
                         DeadPlayerId = victimPlayerId,
                     };
@@ -1238,7 +1238,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
             else
             {
-                var otherPlayer = NetworkServer.connections[tracedInfo.PlayerId].identity.transform;
+                var otherPlayer = _gameSyncManager.GetPlayerConnection(tracedInfo.PlayerId).transform;
                 playerComponent = otherPlayer.GetComponent<PlayerComponentController>();
                 
                 var transforms = new List<Transform> { otherPlayer };
