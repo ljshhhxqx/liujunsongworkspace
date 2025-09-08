@@ -24,6 +24,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private BindingKey _bindKey;
         private BindingKey _bagBindKey;
         private PlayerInGameManager _playerInGameManager;
+        private PropertyPredictionState _propertyPredictionState;
         protected override ISyncPropertyState CurrentState { get; set; }
         protected override CommandType CommandType => CommandType.Shop;
         
@@ -33,6 +34,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             base.Init(gameSyncManager, configProvider);
             _shopConfig = configProvider.GetConfig<ShopConfig>();
             _itemConfig = configProvider.GetConfig<ItemConfig>();
+            _propertyPredictionState = GetComponent<PropertyPredictionState>();
             _constantBuffConfig = configProvider.GetConfig<ConstantBuffConfig>();
             _randomBuffConfig = configProvider.GetConfig<RandomBuffConfig>();
             _playerInGameManager = PlayerInGameManager.Instance;
@@ -94,7 +96,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void OnPlayerShopStateChanged(PlayerShopState playerShopState)
         {
-            if(!NetworkIdentity.isLocalPlayer)
+            if(!isLocalPlayer)
                return;
             CurrentState = playerShopState;
             var shopItems = UIPropertyBinder.GetReactiveDictionary<RandomShopItemData>(_bindKey);
@@ -136,8 +138,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 randomShopData.SellPrice = item.SellPrice;
                 randomShopData.MainProperty = mainProperty ?? "";
                 randomShopData.RandomProperty = randomBuffEffectDesc ?? "";
-                randomShopData.SkillDescription =
-                    PlayerItemCalculator.GetSkillDescription(skillId, NetworkIdentity.connectionToClient.connectionId);
+                randomShopData.SkillDescription = PlayerItemCalculator.GetSkillDescription(skillId, _propertyPredictionState.PlayerPredictablePropertyState.MemoryProperty);
                 randomShopData.PassiveDescription = item.ItemType.IsEquipment() && equipBattleConfigData.id != 0
                     ? _shopConfig.GetShopConstantData().shopEquipPassiveDescription
                     : ""; 
@@ -169,7 +170,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void OnBuyItem(int shopId, int count)
         {
-            if(!NetworkIdentity.isLocalPlayer)
+            if(!isLocalPlayer)
                 return;
             var command = new BuyCommand
             {

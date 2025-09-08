@@ -164,23 +164,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             if(!_serverHandler)
                 return;
             var networkIdentity = NetworkServer.connections[connectEvent.ConnectionId].identity;
-            connectEvent = new PlayerConnectEvent(connectEvent.ConnectionId, networkIdentity, connectEvent.ReadOnlyData);
-            PlayerInGameManager.Instance.AddPlayer(connectEvent.ConnectionId, new PlayerInGameData
-            {
-                player = connectEvent.ReadOnlyData,
-                networkIdentity = networkIdentity
-            });
-            OnPlayerConnected?.Invoke(connectEvent.ConnectionId, connectEvent.Identity);
-            RpcPlayerConnect(connectEvent);
+            connectEvent = new PlayerConnectEvent(connectEvent.ConnectionId);
+            OnPlayerConnected?.Invoke(connectEvent.ConnectionId, networkIdentity);
+            RpcPlayerConnect(connectEvent.ConnectionId);
         }
         
         [ClientRpc]
-        private void RpcPlayerConnect(PlayerConnectEvent connectEvent)
+        private void RpcPlayerConnect(int connectionId)
         {
             if(_serverHandler)
                 return;
-            var player = GetPlayerConnection(connectEvent.ConnectionId);
-            OnPlayerConnected?.Invoke(connectEvent.ConnectionId, player.netIdentity);
+            var player = GetPlayerConnection(connectionId);
+            OnPlayerConnected?.Invoke(connectionId, player.netIdentity);
         }
         
         [ClientRpc]

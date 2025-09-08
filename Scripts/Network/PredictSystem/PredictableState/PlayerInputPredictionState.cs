@@ -122,7 +122,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         [Client]
         private void UpdateUIAnimation(MemoryDictionary<AnimationState, CooldownSnapshotData> snapshot)
         {
-            if (!NetworkIdentity.isLocalPlayer)
+            if (!isLocalPlayer)
             {
                 return;
             }

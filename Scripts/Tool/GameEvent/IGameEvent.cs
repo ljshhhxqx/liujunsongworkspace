@@ -107,14 +107,10 @@ namespace Tool.GameEvent
     public struct PlayerConnectEvent : IGameEvent
     {
         public int ConnectionId { get; private set; }
-        public NetworkIdentity Identity { get; private set; }
-        public PlayerReadOnlyData ReadOnlyData { get; private set; }
 
-        public PlayerConnectEvent(int connectionId, NetworkIdentity identity, PlayerReadOnlyData readOnlyData)
+        public PlayerConnectEvent(int connectionId)
         {
             ConnectionId = connectionId;
-            Identity = identity;
-            ReadOnlyData = readOnlyData;
         }
     }
     

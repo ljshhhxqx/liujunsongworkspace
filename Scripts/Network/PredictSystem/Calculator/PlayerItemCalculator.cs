@@ -9,6 +9,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.Static;
 using Mirror;
 using Newtonsoft.Json;
@@ -77,7 +78,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return attributeIncreaseDatas;
         }
 
-        public static string GetSkillDescription(int skillConfigId, int connectionId,bool includeName = true)
+        public static string GetSkillDescription(int skillConfigId, Dictionary<PropertyTypeEnum, PropertyCalculator> propertyCalculators, bool includeName = true)
         {
             if (skillConfigId == 0)
             {
@@ -89,14 +90,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 Debug.LogError($"skillConfigId {skillConfigId} not found");
                 return string.Empty;
             }
-            var propertySystem = Constant.GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
-            var buffProperty = propertySystem.GetPlayerProperty(connectionId);
+
             var skillDescription = skillConfigData.description;
             for (int i = 0; i < skillConfigData.extraEffects.Length; i++)
             {
                 var extraEffect = skillConfigData.extraEffects[i];
                 var value = extraEffect.baseValue;
-                if (!buffProperty.TryGetValue(extraEffect.buffProperty, out var buffedProperty))
+                if (!propertyCalculators.TryGetValue(extraEffect.buffProperty, out var buffedProperty))
                 {
                     //Debug.LogError($"{extraEffect.buffProperty} not found in buffProperty in skill {skillConfigId}");
                     continue;

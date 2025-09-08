@@ -216,7 +216,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             //     //Debug.Log($"PropertyChanged {key}: {property}");
             // }
             //Debug.Log($"[PropertyChanged] {predictablePropertyState.ToString()}");
-            if (!NetworkIdentity.isLocalPlayer || _isDead)
+            if (!isLocalPlayer || _isDead)
             {
                 Debug.LogError($"PropertyChanged {predictablePropertyState.ToString()} {!NetworkIdentity.isLocalPlayer} is not a player or is dead {_isDead}");
                 return;

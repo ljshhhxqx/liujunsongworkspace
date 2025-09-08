@@ -43,7 +43,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         // 添加预测命令（不立即执行）
         public void AddPredictedCommand<T>(T command) where T : INetworkCommand
         {
-            if (NetworkIdentity.isServer && !NetworkIdentity.isLocalPlayer)
+            if (isServer && !isLocalPlayer)
             {
                 return;
             }
@@ -119,7 +119,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             CleanupConfirmedCommands(GameSyncManager.CurrentTick);
             
-            if (NetworkIdentity.isLocalPlayer)
+            if (isLocalPlayer)
             {
                 //Debug.Log($"[PredictableStateBase] ApplyServerState {state.GetType().Name} at tick {GameSyncManager.CurrentTick}");
                  if (NeedsReconciliation(state))

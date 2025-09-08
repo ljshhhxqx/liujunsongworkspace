@@ -343,7 +343,13 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             _playerSpawnPoints[nearestBase] = playerInGameData.networkIdentity.netId;
             _playerPositions.TryAdd(playerInGameData.networkIdentity.netId, pos);
             _playerGrids.TryAdd(playerInGameData.networkIdentity.netId,  MapBoundDefiner.Instance.GetGridPosition(pos));
+            SetCalculatorConstants();
             RpcAddPlayer(connectId, playerInGameData, playerInGameData.networkIdentity.netId);
+            RpcAddPlayer(playerInGameData.networkIdentity.connectionToClient);
+        }
+
+        private void SetCalculatorConstants()
+        {
             var gameData = _configProvider.GetConfig<JsonDataConfig>().GameConfig;
             var playerData = _configProvider.GetConfig<JsonDataConfig>().PlayerConfig;
             PlayerElementCalculator.SetPlayerElementComponent(_configProvider.GetConfig<ElementAffinityConfig>(), _configProvider.GetConfig<TransitionLevelBaseDamageConfig>(), _configProvider.GetConfig<ElementConfig>());
@@ -404,6 +410,12 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 SkillConfig = _configProvider.GetConfig<SkillConfig>(),
                 SceneLayerMask = gameData.stairSceneLayer,
             });
+        }
+
+        [TargetRpc]
+        public void RpcAddPlayer(NetworkConnectionToClient client)
+        {
+            SetCalculatorConstants();
         }
 
         [ClientRpc]

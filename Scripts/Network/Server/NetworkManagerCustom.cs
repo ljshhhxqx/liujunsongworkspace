@@ -175,7 +175,12 @@ namespace HotUpdate.Scripts.Network.Server
                     GameScore = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameScore,
                     PlayerCount = playerCount
                 };
-                _gameEventManager.Publish(new PlayerConnectEvent(conn.connectionId, conn.identity, playerInGameData.player));
+                PlayerInGameManager.Instance.AddPlayer(conn.connectionId, new PlayerInGameData
+                {
+                    player = playerInGameData.player,
+                    networkIdentity = conn.identity,
+                });
+                _gameEventManager.Publish(new PlayerConnectEvent(conn.connectionId));
                 _gameEventManager.Publish(new GameReadyEvent(gameInfo));
                 // }
                 // if (_playerAccountIdMap.Count == playerCount)

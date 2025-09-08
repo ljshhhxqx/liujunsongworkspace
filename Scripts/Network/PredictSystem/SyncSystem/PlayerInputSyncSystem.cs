@@ -150,6 +150,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             PropertyStates.TryAdd(connectionId, playerInputState);
             _inputPredictionStates.TryAdd(connectionId, playerPredictableState);
             RpcSetPlayerInputState(connectionId, NetworkCommandExtensions.SerializePlayerState(playerInputState).Item1);
+            if(!NetworkServer.active)
+                return;
             BindAniEvents(connectionId);
         }
 

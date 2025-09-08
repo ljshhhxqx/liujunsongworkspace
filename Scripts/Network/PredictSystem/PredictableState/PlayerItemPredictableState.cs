@@ -9,6 +9,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
+using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Static;
 using HotUpdate.Scripts.Tool.Static;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
@@ -27,12 +28,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private BattleEffectConditionConfig _battleEffectConditionConfig;
         private BindingKey _itemBindKey;
         private BindingKey _equipBindKey;
+        private PropertyPredictionState _propertyPredictionState;
 
         [Inject]
         protected override void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider)
         {
             base.Init(gameSyncManager, configProvider);
             _itemConfig = configProvider.GetConfig<ItemConfig>();
+            _propertyPredictionState = GetComponent<PropertyPredictionState>();
             _battleEffectConditionConfig = configProvider.GetConfig<BattleEffectConditionConfig>();
             _itemBindKey = new BindingKey(UIPropertyDefine.BagItem);
             _equipBindKey = new BindingKey(UIPropertyDefine.EquipmentItem);
@@ -118,7 +121,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void OnUseItem(int slotIndex, int count)
         {
-            if(!NetworkIdentity.isLocalPlayer)
+            if(!isLocalPlayer)
                 return;
             var useItem = new SlotIndexData
             {
@@ -137,7 +140,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void OnEquipItem(int slotIndex, bool isEquip)
         {
-            if(!NetworkIdentity.isLocalPlayer)
+            if(!isLocalPlayer)
                 return;
             var state = GetPlayerItemState();
             var playerItemType = state.PlayerItemConfigIdSlotDictionary[slotIndex].PlayerItemType;
@@ -153,7 +156,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void OnLockItem(int slotIndex, bool isLock)
         {
-            if(!NetworkIdentity.isLocalPlayer)
+            if(!isLocalPlayer)
                 return;
             var lockItemCommand = new ItemLockCommand
             {
@@ -166,7 +169,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void OnDropItem(int slotIndex, int count)
         {
-            if(!NetworkIdentity.isLocalPlayer)
+            if(!isLocalPlayer)
                 return;
             var dropItem = new SlotIndexData
             {
@@ -185,7 +188,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void OnExchangeItem(int fromSlotIndex, int toSlotIndex)
         {
-            if(!NetworkIdentity.isLocalPlayer)
+            if(!isLocalPlayer)
                 return;
             var exchangeItemCommand = new ItemExchangeCommand
             {
@@ -198,7 +201,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void OnSellItem(int slotIndex, int count)
         {
-            if(!NetworkIdentity.isLocalPlayer)
+            if(!isLocalPlayer)
                 return;
             var sellItemCommand = new SellCommand
             {
@@ -211,7 +214,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void OnEnableSkill(int slotIndex, int skillId, bool isEnable)
         {
-            if(!NetworkIdentity.isLocalPlayer)
+            if(!isLocalPlayer)
                 return;
             var enableCommand = new ItemSkillEnableCommand
             {
@@ -228,7 +231,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void OnPlayerItemUpdate(PlayerItemState playerItemState)
         {
-            if (!NetworkIdentity.isLocalPlayer)
+            if (!isLocalPlayer)
                 return;
             //Debug.Log("OnPlayerItemUpdate");
             CurrentState = playerItemState;
@@ -302,7 +305,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     SkillId = playerBagSlotItem.SkillId,
                     IsEnable = playerBagSlotItem.IsEnableSkill,
                     EquipmentPart = playerBagSlotItem.EquipmentPart,
-                    SkillDescription = PlayerItemCalculator.GetSkillDescription(playerBagSlotItem.SkillId, NetworkIdentity.connectionToClient.connectionId),
+                    SkillDescription = PlayerItemCalculator.GetSkillDescription(playerBagSlotItem.SkillId, _propertyPredictionState.PlayerPredictablePropertyState.MemoryProperty),
                     OnUseItem = OnUseItem,
                     OnDropItem = OnDropItem,
                     OnLockItem = OnLockItem,
