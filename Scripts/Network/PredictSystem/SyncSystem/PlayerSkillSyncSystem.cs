@@ -126,21 +126,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
         }
 
-        protected override void RegisterState(int connectionId, NetworkIdentity player)
+        protected override void RegisterState(int connectionId, uint netId, NetworkIdentity player)
         {
             var playerPredictableState = player.GetComponent<PlayerSkillSyncState>();
             var skillState = new PlayerSkillState();
             skillState.SkillCheckerDatas = new MemoryList<SkillCheckerData>();
             PropertyStates.TryAdd(connectionId, skillState);
             _playerSkillSyncStates.TryAdd(connectionId, playerPredictableState);
-            RpcSetPlayerSkillState(connectionId, NetworkCommandExtensions.SerializePlayerState(skillState).Item1);
+            RpcSetPlayerSkillState(connectionId, netId, NetworkCommandExtensions.SerializePlayerState(skillState).Item1);
         }
 
 
         [ClientRpc]
-        private void RpcSetPlayerSkillState(int connectionId, byte[] playerSkillState)
+        private void RpcSetPlayerSkillState(int connectionId,uint netId, byte[] playerSkillState)
         {
-            var player = GameSyncManager.GetPlayerConnection(connectionId);
+            var player = GameSyncManager.GetPlayerConnection(netId);
             var syncState = player.GetComponent<PlayerSkillSyncState>();
             var playerState = NetworkCommandExtensions.DeserializePlayerState(playerSkillState);
             syncState.InitializeState(playerState);

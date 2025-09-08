@@ -52,9 +52,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             UnregisterState(connectionId);
         }
 
-        private void OnPlayerConnected(int connectionId, NetworkIdentity identity)
+        private void OnPlayerConnected(int connectionId, uint playerNetId, NetworkIdentity identity)
         {
-            RegisterState(connectionId, identity);
+            RegisterState(connectionId, playerNetId, identity);
             //todo: 获取PlayerComponentController，注册
         }
 
@@ -77,7 +77,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
         }
 
-        protected abstract void RegisterState(int connectionId, NetworkIdentity player); 
+        protected abstract void RegisterState(int connectionId, uint playerNetId, NetworkIdentity player); 
         
         protected virtual void UnregisterState(int connectionId)
         {

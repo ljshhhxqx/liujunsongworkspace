@@ -883,6 +883,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
     {
         public PlayerReadOnlyData player;
         public NetworkIdentity networkIdentity;
+        public uint playerNetId;
     }
 
     [Serializable]

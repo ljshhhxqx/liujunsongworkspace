@@ -142,14 +142,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
         }
 
-        protected override void RegisterState(int connectionId, NetworkIdentity player)
+        protected override void RegisterState(int connectionId, uint netId, NetworkIdentity player)
         {
             var playerPredictableState = player.GetComponent<PlayerInputPredictionState>();
             var playerInputState = new PlayerInputState(new PlayerGameStateData(),
                 new PlayerAnimationCooldownState(GetStateAnimationCooldowns()));
             PropertyStates.TryAdd(connectionId, playerInputState);
             _inputPredictionStates.TryAdd(connectionId, playerPredictableState);
-            RpcSetPlayerInputState(connectionId, NetworkCommandExtensions.SerializePlayerState(playerInputState).Item1);
+            RpcSetPlayerInputState(connectionId, netId, NetworkCommandExtensions.SerializePlayerState(playerInputState).Item1);
             if(!NetworkServer.active)
                 return;
             BindAniEvents(connectionId);
@@ -185,9 +185,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         }
 
         [ClientRpc]
-        private void RpcSetPlayerInputState(int connectionId, byte[] playerInputState)
+        private void RpcSetPlayerInputState(int connectionId, uint netId, byte[] playerInputState)
         {
-            var player = GameSyncManager.GetPlayerConnection(connectionId);
+            var player = GameSyncManager.GetPlayerConnection(netId);
             var syncState = player.GetComponent<PlayerInputPredictionState>();
             var playerState = NetworkCommandExtensions.DeserializePlayerState(playerInputState);
             syncState.InitCurrentState(playerState);

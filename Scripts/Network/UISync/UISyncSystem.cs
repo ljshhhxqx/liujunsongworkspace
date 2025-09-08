@@ -45,7 +45,7 @@ namespace HotUpdate.Scripts.Network.UISync
             UIDataBroker.Remove(connectionId);
         }
 
-        private void OnPlayerConnect(int connectionId, NetworkIdentity connection)
+        private void OnPlayerConnect(int connectionId, uint playerNetId, NetworkIdentity connection)
         {
             UIDataBroker.Add(connectionId, new UIDataBroker(connectionId));
         }

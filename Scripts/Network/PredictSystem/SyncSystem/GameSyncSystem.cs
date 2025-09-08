@@ -40,9 +40,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private PlayerPropertySyncSystem _playerPropertySyncSystem;
         private bool _isProcessing; // 防止重入
         private bool _serverHandler;
+        private GameEventManager _gameEventManager;
         private CancellationTokenSource _cts;
         private readonly Dictionary<int, PlayerComponentController> _playerComponentControllers = new Dictionary<int, PlayerComponentController>();
-        
+        private readonly Dictionary<uint, PlayerComponentController> _playerNetComponentControllers = new Dictionary<uint, PlayerComponentController>();
         private InteractSystem _interactSystem;
 
         [SyncVar(hook = nameof(OnIsRandomUnionStartChanged))] 
@@ -62,11 +63,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _serverInputRate = _jsonDataConfig.GameConfig.serverInputRate;
             _maxCommandAge = _jsonDataConfig.GameConfig.maxCommandAge;
             _serverUpdateStateInterval = _jsonDataConfig.GameConfig.stateUpdateInterval;
-            gameEventManager.Subscribe<PlayerConnectEvent>(OnPlayerConnect);
-            gameEventManager.Subscribe<PlayerDisconnectEvent>(OnPlayerDisconnect);
-            gameEventManager.Subscribe<AddBuffToAllPlayerEvent>(OnAddBuffToAllPlayer);
-            gameEventManager.Subscribe<AddDeBuffToLowScorePlayerEvent>(OnAddDeBuffToLowScorePlayer);
-            gameEventManager.Subscribe<AllPlayerGetSpeedEvent>(OnAllPlayerGetSpeed);
+            _gameEventManager = gameEventManager;
             var commandTypes = Enum.GetValues(typeof(CommandType));
             foreach (CommandType commandType in commandTypes)
             {
@@ -88,6 +85,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             ProcessImmediateCommands(_cts.Token);
         }
 
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            // _gameEventManager.Subscribe<PlayerConnectEvent>(OnPlayerConnect);
+            // _gameEventManager.Subscribe<PlayerDisconnectEvent>(OnPlayerDisconnect);
+        }
+
         public override void OnStartServer()
         {
             base.OnStartServer();
@@ -98,6 +102,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 _clientCommands.Clear();
                 _currentTickCommands.Clear();
             }
+            _gameEventManager.Subscribe<PlayerConnectEvent>(OnPlayerConnect);
+            _gameEventManager.Subscribe<PlayerDisconnectEvent>(OnPlayerDisconnect);
+            _gameEventManager.Subscribe<AddBuffToAllPlayerEvent>(OnAddBuffToAllPlayer);
+            _gameEventManager.Subscribe<AddDeBuffToLowScorePlayerEvent>(OnAddDeBuffToLowScorePlayer);
+            _gameEventManager.Subscribe<AllPlayerGetSpeedEvent>(OnAllPlayerGetSpeed);
             Time.fixedDeltaTime = _serverInputRate;
             Observable.EveryUpdate()
                 .Where(_ => isServer && !_isProcessing)
@@ -164,18 +173,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             if(!_serverHandler)
                 return;
             var networkIdentity = NetworkServer.connections[connectEvent.ConnectionId].identity;
-            connectEvent = new PlayerConnectEvent(connectEvent.ConnectionId);
-            OnPlayerConnected?.Invoke(connectEvent.ConnectionId, networkIdentity);
-            RpcPlayerConnect(connectEvent.ConnectionId);
+            connectEvent = new PlayerConnectEvent(connectEvent.ConnectionId, connectEvent.PlayerNetId);
+            OnPlayerConnected?.Invoke(connectEvent.ConnectionId, connectEvent.PlayerNetId, networkIdentity);
+            RpcPlayerConnect(connectEvent.ConnectionId, connectEvent.PlayerNetId);
         }
         
         [ClientRpc]
-        private void RpcPlayerConnect(int connectionId)
+        private void RpcPlayerConnect(int connectionId, uint playerNetId)
         {
             if(_serverHandler)
                 return;
-            var player = GetPlayerConnection(connectionId);
-            OnPlayerConnected?.Invoke(connectionId, player.netIdentity);
+            var player = GetPlayerConnection(playerNetId);
+            OnPlayerConnected?.Invoke(connectionId, playerNetId, player.netIdentity);
         }
         
         [ClientRpc]
@@ -187,7 +196,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             OnPlayerDisconnected?.Invoke(connectionId);
         }
         
-        public event Action<int, NetworkIdentity> OnPlayerConnected;
+        public event Action<int, uint, NetworkIdentity> OnPlayerConnected;
         public event Action<int> OnPlayerDisconnected;
         
         public T GetSyncSystem<T>(CommandType commandType) where T : BaseSyncSystem
@@ -200,14 +209,47 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             Debug.LogError($"No sync system found for {commandType}");
             return null;
         }
-        
+
+        public PlayerComponentController GetPlayerConnection(uint playerNetId)
+        {
+            if (!_playerNetComponentControllers.TryGetValue(playerNetId, out var playerConnection))
+            {
+                if (!_serverHandler)
+                {
+
+                    foreach (var identity in NetworkClient.spawned.Values)
+                    {
+                        if (playerNetId == identity.netId)
+                        {
+                            playerConnection = identity.GetComponent<PlayerComponentController>();
+                            _playerNetComponentControllers.Add(playerNetId, playerConnection);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var connection in NetworkServer.connections.Values)
+                    {
+                        if (playerNetId == connection.identity.netId)
+                        {
+                            playerConnection = connection.identity.GetComponent<PlayerComponentController>();
+                            _playerNetComponentControllers.Add(playerNetId, playerConnection);
+                            break;
+                        }
+                    }
+                }
+            }
+            return playerConnection;
+        }
+
         public PlayerComponentController GetPlayerConnection(int connectionId)
         {
             if (!_playerComponentControllers.TryGetValue(connectionId, out var playerConnection))
             {
-                if (!_serverHandler && NetworkClient.connection != null)
+                if (!_serverHandler)
                 {
-                    if (NetworkClient.connection.connectionId == connectionId)
+                    if (PlayerInGameManager.Instance.LocalPlayerId == connectionId)
                     {
                         playerConnection = NetworkClient.connection.identity.GetComponent<PlayerComponentController>();
                         _playerComponentControllers.Add(connectionId, playerConnection);

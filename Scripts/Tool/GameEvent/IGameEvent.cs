@@ -107,20 +107,25 @@ namespace Tool.GameEvent
     public struct PlayerConnectEvent : IGameEvent
     {
         public int ConnectionId { get; private set; }
+        public uint PlayerNetId { get; private set; }
 
-        public PlayerConnectEvent(int connectionId)
+        public PlayerConnectEvent(int connectionId, uint playerNetId)
         {
             ConnectionId = connectionId;
+            PlayerNetId = playerNetId;
         }
     }
     
     public struct PlayerDisconnectEvent : IGameEvent
     {
         public int ConnectionId { get; private set; }
+        public uint PlayerNetId { get; private set; }
 
-        public PlayerDisconnectEvent(int connectionId)
+        public PlayerDisconnectEvent(int connectionId, uint playerNetId)
         {
             ConnectionId = connectionId;
+            PlayerNetId = playerNetId;
+        
         }
     }
 
