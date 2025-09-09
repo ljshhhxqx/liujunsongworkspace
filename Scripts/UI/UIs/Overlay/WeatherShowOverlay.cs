@@ -35,10 +35,10 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         [Inject]
         private void Init()
         {
-            //todo: 使用UIPropertyBinder来绑定数据
             GameLoopDataModel.WarmupRemainingTime.Subscribe(x => SetWarmupRemainingTime(x.ToHMSStr())).AddTo(this);
             GameLoopDataModel.GameLoopData.Subscribe(x =>
             {
+                Debug.Log($"Game Loop Data: {x.GameMode} + {x.TargetScore} + {x.TimeLimit}");
                 _gameLoopData = x;
                 warmupText.transform.parent.gameObject.SetActive(false);
                 targetScore.SetActive(_gameLoopData.GameMode == GameMode.Score);
@@ -65,6 +65,11 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         private void SetCountDown(string countDown)
         {
+            //Debug.Log($"SetCountDown: {countDown}");
+            // if (warmupText.transform.parent.gameObject.activeSelf)
+            // {
+            //     warmupText.transform.parent.gameObject.SetActive(false);
+            // }
             countDownText.text = countDown;
         }
 

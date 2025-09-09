@@ -52,11 +52,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public bool isGameStart;
         
         public static int CurrentTick { get; private set; }
+        
+        [SyncVar(hook = nameof(OnCurrentTickChanged))]
+        private int _currentTick;
+        
+        private void OnCurrentTickChanged(int oldValue, int newValue)
+        {
+            CurrentTick = newValue;
+        }
 
         [Inject]
         private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)
         {
-            CurrentTick = 0;
+            _currentTick = 0;
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _cts = new CancellationTokenSource();
             _tickRate = _jsonDataConfig.GameConfig.tickRate;
@@ -114,7 +122,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 {
                     _tickTimer = 0;
                     ProcessTick();
-                    CurrentTick++;
+                    _currentTick++;
                 })
                 .AddTo(this);
         }
@@ -153,6 +161,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void OnGameStartChanged(bool oldValue, bool newValue)
         {
             OnGameStart?.Invoke(newValue);
+            Debug.Log("Game Start");
             if (_serverHandler)
             {
                 PlayerInGameManager.Instance.isGameStarted = newValue;
@@ -309,11 +318,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
         }
 
+        [Command]
+        public void CmdEnqueueCommand(byte[] commandJson)
+        {
+            EnqueueCommand(commandJson);
+        }
+
         /// <summary>
         /// 客户端发送命令(不能给服务器使用)
         /// </summary>
         /// <param name="commandJson"></param>
-        [Server]
         public void EnqueueCommand(byte[] commandJson)
         {
             var command = NetworkCommandExtensions.DeserializeCommand(commandJson);

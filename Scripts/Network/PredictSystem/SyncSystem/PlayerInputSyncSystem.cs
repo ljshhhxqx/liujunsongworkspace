@@ -58,6 +58,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 return;
             }
+            Debug.Log("PlayerInputSyncSystem OnGameStart");
             //游戏开始才能开始倒计时
             UpdatePlayerAnimationAsync(_cts.Token, GameSyncManager.TickSeconds).Forget();
         }
@@ -150,9 +151,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             PropertyStates.TryAdd(connectionId, playerInputState);
             _inputPredictionStates.TryAdd(connectionId, playerPredictableState);
             RpcSetPlayerInputState(connectionId, netId, NetworkCommandExtensions.SerializePlayerState(playerInputState).Item1);
-            if(!NetworkServer.active)
-                return;
-            BindAniEvents(connectionId);
+            BindAniEvents(connectionId, netId);
         }
 
         private MemoryDictionary<AnimationState, CooldownSnapshotData> GetStateAnimationCooldowns()
@@ -193,10 +192,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             syncState.InitCurrentState(playerState);
         }
 
-        [Server]
-        private void BindAniEvents(int connectionId)
+        private void BindAniEvents(int connectionId, uint netId)
         {
-            var playerController = GameSyncManager.GetPlayerConnection(connectionId);
+            var playerController = GameSyncManager.GetPlayerConnection(netId);
             var animationCooldowns = playerController.AnimationCooldownsDict;
             var attackCooldown = animationCooldowns.GetValueOrDefault(AnimationState.Attack);
             if (attackCooldown is KeyframeComboCooldown attackComboCooldown)

@@ -40,6 +40,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
            // Debug.Log($"[PredictableStateBase] Initialized with input buffer tick {InputBufferTick}");
         }
 
+        [Command]
+        protected void CmdSendCommand(byte[] commandJson)
+        {
+            GameSyncManager.EnqueueCommand(commandJson);
+        }
+
         // 添加预测命令（不立即执行）
         public void AddPredictedCommand<T>(T command) where T : INetworkCommand
         {

@@ -5,7 +5,6 @@ using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.GameBase;
 using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
@@ -263,7 +262,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     {
                         Header = header,
                     };
-                    _gameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(playerTouchedBaseCommand).Item1);
+                    CmdSendCommand(NetworkCommandExtensions.SerializeCommand(playerTouchedBaseCommand).Item1);
                 }).AddTo(_disposables);
             // _capsuleCollider.OnTriggerExitAsObservable()
             //     .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
@@ -319,7 +318,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                                     {
                                         Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId, CommandType.Shop, CommandAuthority.Client),
                                     };
-                                    _gameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(refreshCommand).Item1);
+                                    CmdSendCommand(NetworkCommandExtensions.SerializeCommand(refreshCommand).Item1);
                                 }).AddTo(shopScreenUI.gameObject);
                                 //_reactivePropertyBinds.Add(typeof(RandomShopItemData), true);
                                 // var refreshCommand = new RefreshShopCommand
@@ -451,7 +450,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                             Header = header,
                             TargetConnectionIds = playersInScreen.ToArray(),
                         };
-                        _gameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(playerInScreenCommand).Item1);
+                        CmdSendCommand(NetworkCommandExtensions.SerializeCommand(playerInScreenCommand).Item1);
                     }
                 })
                 .AddTo(_disposables);
@@ -623,7 +622,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             //     
             //     _timer = 0;
             //     _frameCount = 0;
-            // }3
+            // }
+            //Debug.Log($"[HandleSendNetworkCommand] {inputData.Command}");
             if (_previousAnimationState == inputData.Command && 
                 _previousAnimationState!= AnimationState.Idle && 
                 _previousAnimationState!= AnimationState.Move && 
@@ -974,7 +974,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         }
 
         //这一行开始，写对外接口
-        [Server]
         public PlayerGameStateData HandleServerMoveAndAnimation(PlayerInputStateData inputData)
         {
             //Debug.Log($"[HandleServerMoveAndAnimation] start");
@@ -982,7 +981,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             return HandleMoveAndAnimation(inputData);
         }
 
-        [Server]
         public void HandlePropertyRecover(ref PlayerPredictablePropertyState playerPredictablePropertyState)
         {
             _playerPropertyCalculator.HandlePropertyRecover(ref playerPredictablePropertyState);
@@ -993,19 +991,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerPropertyCalculator.HandleAnimationCommand(ref playerPredictablePropertyState, animationState, cost);
         }
 
-        [Server]
         public void HandleEnvironmentChange(ref PlayerPredictablePropertyState playerPredictablePropertyState, bool hasInputMovement, PlayerEnvironmentState environmentType, bool isSprinting)
         {
             _playerPropertyCalculator.HandleEnvironmentChange(ref playerPredictablePropertyState, hasInputMovement, environmentType, isSprinting);
         }
 
-        [Server]
         public uint[] HandleAttack(AttackParams attackParams)
         {
             return _playerBattleCalculator.IsInAttackRange(attackParams);
         }
 
-        [Server]
         public PlayerPredictablePropertyState HandlePlayerDie(PlayerPredictablePropertyState playerPredictablePropertyState, float countdownTime)
         {
             var diePlayerState = _playerPropertyCalculator.HandlePlayerDeath(playerPredictablePropertyState);
@@ -1013,7 +1008,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             return diePlayerState;
         }
 
-        [Server]
         public PlayerPredictablePropertyState HandlePlayerRespawn(
             PlayerPredictablePropertyState playerPredictablePropertyState)
         {
@@ -1022,7 +1016,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             return playerState;
         }
 
-        [Server]
         public void HandleTracedPlayerHp(int connectionId, MemoryList<TracedPlayerInfo> tracedInfo)
         {
             var player = NetworkServer.connections[connectionId];
@@ -1055,7 +1048,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
         }
 
-        [Server]
         public void ShowPlayerCanChangeUnionUI(int connectionId, uint killerPlayerId, uint victimPlayerId)
         {
             var connection = NetworkServer.connections[connectionId];

@@ -1,4 +1,5 @@
-﻿using Data;
+﻿using System;
+using Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using UniRx;
 
@@ -12,10 +13,12 @@ namespace HotUpdate.Scripts.Data
         public static readonly ReactiveProperty<MapType> GameSceneName = new ReactiveProperty<MapType>();
     }
 
+    [Serializable]
     public struct GameLoopData
     {
         public GameMode GameMode;
         public int TargetScore;
         public float TimeLimit;
+        public bool IsStartGame;
     }
 }

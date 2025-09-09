@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
@@ -56,6 +57,7 @@ namespace Network.NetworkMes
         
         public MirrorCountdownMessage(float remainingTime)
         {
+            //Debug.Log("MirrorCountdownMessage: " + remainingTime);
             RemainingTime = remainingTime;
         }
     }
@@ -72,10 +74,19 @@ namespace Network.NetworkMes
     [Serializable]
     public struct MirrorGameStartMessage : NetworkMessage
     {
-        public GameInfo GameInfo;
-        public MirrorGameStartMessage(GameInfo gameInfo)
+        public MapType mapType;
+        public GameMode gameMode;
+        public int gameScore;
+        public int gameTime;
+        public int playerCount;
+        public MirrorGameStartMessage(MapType mapType, GameMode gameMode, int gameScore, int gameTime, int playerCount)
         {
-            GameInfo = gameInfo;
+            this.mapType = mapType;
+            this.gameMode = gameMode;
+            this.gameScore = gameScore;
+            this.gameTime = gameTime;
+            this.playerCount = playerCount;
+        
         }
     }
 

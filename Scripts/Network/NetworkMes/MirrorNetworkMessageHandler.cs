@@ -136,7 +136,7 @@ namespace HotUpdate.Scripts.Network.NetworkMes
             // 这里实现网络消息到本地消息的转换逻辑
             if (networkMessage is MirrorGameStartMessage gameStartMessage)
             {
-                return new GameStartMessage(gameStartMessage.GameInfo);
+                return new GameStartMessage(gameStartMessage.mapType, gameStartMessage.gameMode, gameStartMessage.gameScore, gameStartMessage.gameTime, gameStartMessage.playerCount);
             }
             
             if (networkMessage is MirrorCountdownMessage countdownMessage)

@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using Data;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using Network.NetworkMes;
 using Tool.GameEvent;
 using UnityEngine;
@@ -156,10 +158,18 @@ namespace Tool.Message
     
     public struct GameStartMessage : IMessage
     {
-        public GameInfo GameInfo;
-        public GameStartMessage(GameInfo gameInfo)
+        public MapType mapType;
+        public GameMode gameMode;
+        public int gameScore;
+        public int gameTime;
+        public int playerCount;
+        public GameStartMessage(MapType mapType, GameMode gameMode, int gameScore, int gameTime, int playerCount)
         {
-            GameInfo = gameInfo;
+            this.mapType = mapType;
+            this.gameMode = gameMode;
+            this.gameScore = gameScore;
+            this.gameTime = gameTime;
+            this.playerCount = playerCount;
         }
     }
     

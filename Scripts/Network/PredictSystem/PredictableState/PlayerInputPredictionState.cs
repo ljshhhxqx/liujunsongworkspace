@@ -111,6 +111,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             OnPlayerStateChanged?.Invoke(propertyState.PlayerGameStateData);
             OnPlayerAnimationCooldownChanged?.Invoke(propertyState.PlayerAnimationCooldownState);
             UpdateUIAnimation(propertyState.PlayerAnimationCooldownState.AnimationCooldowns);
+            if (isClient)
+            {
+                if (!isLocalPlayer)
+                {
+                    transform.position = propertyState.PlayerGameStateData.Position;
+                }
+                // else if (Vector3.Distance(transform.position, propertyState.PlayerGameStateData.Position) > 0.2f)
+                // {
+                //     transform.position = propertyState.PlayerGameStateData.Position;
+                // }
+            }
             // foreach (var inputStateData in propertyState.PlayerAnimationCooldownState.AnimationCooldowns)
             // {
             //     Debug.Log($"[ApplyServerState] - {inputStateData.Value.ToString()}");
@@ -153,7 +164,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         /// 计算玩家控制逻辑、动画状态
         /// </summary>
         /// <param name="command"></param>
-        [Client]
         public override void Simulate(INetworkCommand command)
         {
             var header = command.GetHeader();

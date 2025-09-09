@@ -49,6 +49,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
             InputAnimations = AnimationState.None;
             Command = AnimationState.None;
         }
+        
+        public override string ToString()
+        {
+            return $"InputMovement: {InputMovement}, InputAnimations: {InputAnimations}, Command: {Command}";
+        }
     }
 
     [MemoryPackable]

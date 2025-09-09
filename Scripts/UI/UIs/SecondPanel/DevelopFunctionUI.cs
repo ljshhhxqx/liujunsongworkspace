@@ -137,7 +137,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 itemGetCommand.Header =
                     GameSyncManager.CreateNetworkCommandHeader(NetworkClient.connection.connectionId, CommandType.Item);
                 itemGetCommand.Items = items;
-                gameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(itemGetCommand).Item1);
+                gameSyncManager.CmdEnqueueCommand(NetworkCommandExtensions.SerializeCommand(itemGetCommand).Item1);
             }
             else
             {
@@ -157,7 +157,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                     itemGetCommand.Header =
                         GameSyncManager.CreateNetworkCommandHeader(NetworkClient.connection.connectionId, CommandType.Item);
                     itemGetCommand.Items = items;
-                    gameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(itemGetCommand).Item1);
+                    gameSyncManager.CmdEnqueueCommand(NetworkCommandExtensions.SerializeCommand(itemGetCommand).Item1);
                 }
             }
 

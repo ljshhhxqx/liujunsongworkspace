@@ -54,7 +54,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         }
 
         [Command]
-        private void CmdSendCommand(byte[] commandJson)
+        protected void CmdSendCommand(byte[] commandJson)
         {
             GameSyncManager.EnqueueCommand(commandJson);
         }

@@ -180,7 +180,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 Count = count
             };
             
-            GameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(command).Item1);
+            CmdSendCommand(NetworkCommandExtensions.SerializeCommand(command).Item1);
         }
     }
 }

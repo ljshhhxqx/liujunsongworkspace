@@ -31,7 +31,9 @@ namespace HotUpdate.Scripts.Game
         private bool _isEndGame;
         [SyncVar(hook = nameof(OnIsEndRoundChanged))] 
         private bool _isEndRound;
+        [SyncVar]
         private float _mainGameTime;
+        [SyncVar]
         private float _warmupTime;
         private float _noUnionTime;
         private float _roundInterval;
@@ -111,6 +113,7 @@ namespace HotUpdate.Scripts.Game
             _weatherManager = FindObjectOfType<WeatherManager>();
             _gameSyncManager = FindObjectOfType<GameSyncManager>();
             _roundInterval = _jsonDataConfig.GameConfig.roundInterval;
+            Debug.Log($"GameLoopController Init");
             RegisterMessage();
         }
 
@@ -147,13 +150,14 @@ namespace HotUpdate.Scripts.Game
         
         private void OnGameStartMessage(GameStartMessage message)
         {
-            //Debug.Log($"Game Start! Scene: {message.GameInfo.SceneName} | Mode: {_gameInfo.GameMode} | Time: {_gameInfo.GameTime} | Score: {_gameInfo.GameScore}");
-            GameLoopDataModel.GameSceneName.Value = message.GameInfo.SceneName;
+            //Debug.Log($"Game Start! Scene: {message.mapType} | Mode: {_gameInfo.GameMode} | Time: {_gameInfo.GameTime} | Score: {_gameInfo.GameScore}");
+            GameLoopDataModel.GameSceneName.Value = message.mapType;
             GameLoopDataModel.GameLoopData.Value = new GameLoopData
             {
-                GameMode = _gameInfo.GameMode,
+                GameMode = GameMode.Time,
                 TargetScore = _gameInfo.GameTime,
                 TimeLimit = _gameInfo.GameScore,
+                IsStartGame = true
             };
         }
 
@@ -168,7 +172,8 @@ namespace HotUpdate.Scripts.Game
                 IsEndGame = false;
                 _warmupTime = _jsonDataConfig.GameConfig.warmupTime;
                 _noUnionTime = _jsonDataConfig.GameConfig.noUnionTime;
-                _mainGameTime = _gameInfo.GameMode == GameMode.Time ? _gameInfo.GameTime : 0;
+                _mainGameTime = _gameInfo.GameTime;
+                Debug.Log($"OnGameReady called {_gameInfo.GameMode}- {_gameInfo.GameTime} seconds");
                 StartGameLoop(_cts).Forget();
             }
         }
@@ -181,7 +186,7 @@ namespace HotUpdate.Scripts.Game
             Debug.Log("Warmup Complete. Game Start!");
 
             Debug.Log("Main game timer starts now!");
-            _messageHandler.SendToAllClients(new MirrorGameStartMessage(_gameInfo));
+            _messageHandler.SendToAllClients(new MirrorGameStartMessage(_gameInfo.SceneName, _gameInfo.GameMode, _gameInfo.GameScore, _gameInfo.GameTime, _gameInfo.PlayerCount));
             _gameEventManager.Publish(new GameStartEvent());
             await StartMainGameTimerAsync(cts.Token);
 
