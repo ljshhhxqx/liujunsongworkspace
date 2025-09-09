@@ -194,6 +194,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private void BindAniEvents(int connectionId, uint netId)
         {
+            Debug.Log($"[BindAniEvents] player {connectionId} bind ani events");
             var playerController = GameSyncManager.GetPlayerConnection(netId);
             var animationCooldowns = playerController.AnimationCooldownsDict;
             var attackCooldown = animationCooldowns.GetValueOrDefault(AnimationState.Attack);

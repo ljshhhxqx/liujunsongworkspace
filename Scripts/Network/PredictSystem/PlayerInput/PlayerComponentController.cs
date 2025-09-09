@@ -104,6 +104,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private SubjectedStateType _subjectedStateType;
         private List<IAnimationCooldown> _animationCooldowns = new List<IAnimationCooldown>();
         private List<ISkillChecker> _skillCheckers = new List<ISkillChecker>();
+        private SyncDictionary<AnimationState, float> _currentAnimationCooldowns = new SyncDictionary<AnimationState, float>();
         
         private static float FixedDeltaTime => Time.fixedDeltaTime;
         private static float DeltaTime => Time.deltaTime;
@@ -220,11 +221,25 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _animationCooldowns = GetAnimationCooldowns();
             _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
             _gameEventManager = gameEventManager;
+            //_currentAnimationCooldowns.OnChange += OnAnimationCooldownChanged;
             GetAllCalculators(configProvider, gameSyncManager);
             HandleAllSyncState();
             HandleLocalInitCallback();
 
         }
+
+        // private void OnAnimationCooldownChanged(SyncIDictionary<AnimationState, float>.Operation changeType, AnimationState key, float value)
+        // {
+        //     switch (changeType)
+        //     {
+        //         case SyncIDictionary<AnimationState, float>.Operation.OP_SET:
+        //             var animationCooldown = _animationCooldownsDict[key];
+        //             animationCooldown.SkillModifyCooldown(value);
+        //             break;
+        //         default:
+        //             throw new ArgumentOutOfRangeException(nameof(changeType), changeType, null);
+        //     }
+        // }
 
         public override void OnStartLocalPlayer()
         {
@@ -1203,6 +1218,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             for (var i = _animationCooldowns.Count - 1; i >= 0; i--)
             {
                 var animationCooldown = _animationCooldowns[i];
+                // Debug.Log($"RefreshSnapData {animationCooldown}");
                 if (!snapshotData.TryGetValue(animationCooldown.AnimationState, out var snapshotCoolDown))
                 {
                     Debug.LogError($"snapshotData not contain animationState {animationCooldown.AnimationState}");
