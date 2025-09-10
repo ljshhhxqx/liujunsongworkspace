@@ -447,6 +447,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             GroundDistance = 0f;
             InputAnimationStates = AnimationState.None;
         }
+        
+        public override string ToString()
+        {
+            return $"InputMovement: {InputMovement}, EnvironmentState: {EnvironmentState}, GroundDistance: {GroundDistance}, InputAnimationStates: {InputAnimationStates}";
+        }
     }
         
     public struct AnimationConstant

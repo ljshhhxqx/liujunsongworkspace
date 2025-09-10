@@ -927,6 +927,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         public AnimationState GetCurrentAnimationState(PlayerInputStateData inputData)
         {
+            var stateParams = CreateDetermineAnimationStateParams(inputData);
+            Debug.Log($"[GetCurrentAnimationState] stateParams.InputMovement ->{stateParams.InputMovement} stateParams.InputAnimationStates.Count ->{stateParams.InputAnimationStates} stateParams.GroundDistance->{stateParams.GroundDistance} stateParams.EnvironmentState->{stateParams.EnvironmentState}");
             return _playerAnimationCalculator.DetermineAnimationState(CreateDetermineAnimationStateParams(inputData));
         }
         
@@ -948,6 +950,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             param.GroundDistance = _groundDistanceStream.Value;
             param.EnvironmentState = _gameStateStream.Value;
             ObjectPoolManager<DetermineAnimationStateParams>.Instance.Return(param);
+            
             return param;    
             
         }
