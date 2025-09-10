@@ -297,10 +297,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 return null;
             if (command is InputCommand inputCommand)
             {
-                // if (inputCommand.CommandAnimationState == AnimationState.Attack)
-                // {
-                //     Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
-                // }
+                if (inputCommand.CommandAnimationState == AnimationState.Attack)
+                {
+                    Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
+                }
                 //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input command {inputCommand.InputMovement} {inputCommand.InputAnimationStates}");
                 var playerSyncSystem = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
                 var playerController = GameSyncManager.GetPlayerConnection(header.ConnectionId);
@@ -312,6 +312,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 //游戏未开始不能执行有cd的动画
                 if (playerController.AnimationCooldownsDict.ContainsKey(inputCommand.CommandAnimationState) && !GameSyncManager.isGameStart)
                 {
+                    Debug.LogWarning($"[playerInputSyncSystem]Game not start, cannot input animation {inputCommand.CommandAnimationState}.");
                     return playerInputState;
                 }
                 var playerProperty = playerSyncSystem.GetPlayerProperty(header.ConnectionId);
@@ -353,7 +354,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 //验证冷却时间是否已到
                 var cooldownInfo = playerAnimationCooldowns.GetValueOrDefault(commandAnimation);
 
-                //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost}");
+                Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost}");
                 if (cooldown != 0)
                 {
                     if (cooldownInfo == null)
@@ -389,6 +390,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
 
                     cooldownInfo?.Use();
+                    Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost} player state {inputCommand.CommandAnimationState}");
                     if (playerAnimationCooldowns.ContainsKey(commandAnimation))
                     {
                         playerAnimationCooldowns[commandAnimation] = cooldownInfo;

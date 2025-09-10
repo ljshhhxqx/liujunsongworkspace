@@ -16,6 +16,7 @@ using Tool.GameEvent;
 using UniRx;
 using UnityEngine;
 using VContainer;
+using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
@@ -58,6 +59,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         
         private void OnCurrentTickChanged(int oldValue, int newValue)
         {
+            //Debug.Log($"CurrentTick changed from {oldValue} to {newValue}");
             CurrentTick = newValue;
         }
 
@@ -65,6 +67,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)
         {
             _currentTick = 0;
+            Debug.Log("GameSyncManager Init");
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _cts = new CancellationTokenSource();
             _tickRate = _jsonDataConfig.GameConfig.tickRate;
@@ -103,6 +106,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public override void OnStartServer()
         {
             base.OnStartServer();
+            Debug.Log("GameSyncManager Start Server");
             _serverHandler = true;
             if (!isServer)
             {
@@ -110,6 +114,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 _clientCommands.Clear();
                 _currentTickCommands.Clear();
             }
+            _gameEventManager.Subscribe<GameStartEvent>(OnGameStartEvent);
             _gameEventManager.Subscribe<PlayerConnectEvent>(OnPlayerConnect);
             _gameEventManager.Subscribe<PlayerDisconnectEvent>(OnPlayerDisconnect);
             _gameEventManager.Subscribe<AddBuffToAllPlayerEvent>(OnAddBuffToAllPlayer);
@@ -117,7 +122,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _gameEventManager.Subscribe<AllPlayerGetSpeedEvent>(OnAllPlayerGetSpeed);
             Time.fixedDeltaTime = _serverInputRate;
             Observable.EveryUpdate()
-                .Where(_ => isServer && !_isProcessing)
+                .Where(_ => isServer && !_isProcessing && NetworkServer.connections.Count > 0)
                 .Subscribe(_ =>
                 {
                     _tickTimer = 0;
@@ -125,6 +130,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     _currentTick++;
                 })
                 .AddTo(this);
+        }
+
+        private void OnGameStartEvent(GameStartEvent gameStartEvent)
+        {
+            Debug.Log("GameSyncManager OnGameStartEvent");
+            isGameStart = true;
         }
 
         private void OnAllPlayerGetSpeed(AllPlayerGetSpeedEvent allPlayerGetSpeedEvent)
@@ -341,6 +352,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             //     }
             //     ObjectPoolManager<CommandValidationResult>.Instance.Return(validCommand);
             //     return;
+            // // }
+            // if (command is InputCommand inputCommand && (inputCommand.CommandAnimationState is AnimationState.Attack or AnimationState.Jump or AnimationState.SkillE or AnimationState.SkillQ or AnimationState.SprintJump))
+            // {
+            //     Debug.Log($"[GameSyncManager] EnqueueCommand predicted command {header.CommandId} {inputCommand.CommandAnimationState} at tick {header.Tick}");
             // }
             ObjectPoolManager<CommandValidationResult>.Instance.Return(validCommand);
             _clientCommands.Enqueue(command);
@@ -351,6 +366,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             _isProcessing = true;
 
+            //Debug.Log($"GameSyncManager ProcessTick in tick-{_currentTick}");
             try
             {
                 _syncTimer += Time.fixedDeltaTime;
@@ -380,6 +396,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 {
                     continue;
                 }
+                //Debug.Log($"MoveCommandsToCurrentTick Client: {command.GetHeader().CommandType}-{command.GetHeader().Tick}-{command.GetHeader().ConnectionId}");
 
                 var header = command.GetHeader();
 
@@ -392,7 +409,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 // }
 
                 // 如果命令属于未来的tick，停止处理
-                if (header.Tick > CurrentTick)
+                if (header.Tick > _currentTick)
                 {
                     break;
                 }
@@ -406,6 +423,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     continue;
                 }
                 var header = command.GetHeader();
+                //Debug.Log($"MoveCommandsToCurrentTick Server: {command.GetHeader().CommandType}-{command.GetHeader().Tick}-{command.GetHeader().ConnectionId}");
 
                 // 检查命令是否过期
                 // var commandAge = (CurrentTick - header.Tick) * Time.fixedDeltaTime;
@@ -416,7 +434,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 // }
 
                 // 如果命令属于未来的tick，停止处理
-                if (header.Tick > CurrentTick)
+                if (header.Tick > _currentTick)
                 {
                     break;
                 }
@@ -436,6 +454,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 {
                     continue;
                 }
+                //Debug.Log($"ProcessCurrentTickCommands: {command.GetHeader().CommandType}-{command.GetHeader().Tick}-{command.GetHeader().ConnectionId}");
                 //var header = command.GetHeader();
                 OnServerProcessCurrentTickCommand?.Invoke(command);
                 //var syncSystem = GetSyncSystem(header.CommandType);

@@ -1218,12 +1218,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             for (var i = _animationCooldowns.Count - 1; i >= 0; i--)
             {
                 var animationCooldown = _animationCooldowns[i];
-                // Debug.Log($"RefreshSnapData {animationCooldown}");
                 if (!snapshotData.TryGetValue(animationCooldown.AnimationState, out var snapshotCoolDown))
                 {
                     Debug.LogError($"snapshotData not contain animationState {animationCooldown.AnimationState}");
                     continue;
                 }
+
+                if (snapshotCoolDown.CurrentCountdown != 0)
+                {
+                    Debug.Log($"RefreshSnapData {snapshotCoolDown}");
+                }
+
 
                 animationCooldown.Refresh(snapshotCoolDown);
             }

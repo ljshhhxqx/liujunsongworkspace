@@ -173,12 +173,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 // {
                 //     Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
                 // }
-                //Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
+                Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
                 var info = _animationConfig.GetAnimationInfo(inputCommand.CommandAnimationState);
                 var actionType = info.actionType;
+                if (actionType != ActionType.Movement)
+                {
+                    //Debug.Log($"[PlayerInputPredictionState] - Not enough strength to perform {inputCommand.CommandAnimationState}.");
+                    return;
+                }
                 var health = _propertyPredictionState.GetProperty(PropertyTypeEnum.Health);
                 SkillConfigData skillConfigData = default;
-                if (inputCommand.CommandAnimationState == AnimationState.SkillE || inputCommand.CommandAnimationState == AnimationState.SkillQ)
+                if (inputCommand.CommandAnimationState is AnimationState.SkillE or AnimationState.SkillQ)
                 { 
                     skillConfigData = _skillSyncState.GetSkillConfigData(inputCommand.CommandAnimationState);
                 }
@@ -188,11 +193,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 if (health <= 0)
                 {
                     Debug.Log($"[PlayerInputPredictionState] - Player is dead.");
-                    return;
-                }
-                if (actionType != ActionType.Movement)
-                {
-                    //Debug.Log($"[PlayerInputPredictionState] - Not enough strength to perform {inputCommand.CommandAnimationState}.");
                     return;
                 }
 
@@ -251,14 +251,5 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 //Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
             }
         }
-
-        // private async UniTaskVoid UpdateAnimationCooldowns(CancellationToken token, float deltaTime)
-        // {
-        //     while (token.IsCancellationRequested == false && !_isApplyingState)
-        //     {
-        //         await UniTask.Delay(TimeSpan.FromSeconds(deltaTime), cancellationToken: token);
-        //         PlayerComponentController.UpdateAnimation(deltaTime);
-        //     }
-        // }
     }
 }

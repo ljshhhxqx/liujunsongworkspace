@@ -12,6 +12,7 @@ using MemoryPack;
 using Mirror;
 using UnityEngine;
 using VContainer;
+using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
@@ -91,7 +92,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 CommandQueue.TryDequeue(out command);
                 Simulate(command);
                 SendCommandToServer(header.CommandId);
-                //Debug.Log($"[PredictableStateBase] Executed predicted command {header.CommandId} at tick {header.Tick}");
+                // if (command is InputCommand inputCommand && (inputCommand.CommandAnimationState is AnimationState.Attack or AnimationState.Jump or AnimationState.SkillE or AnimationState.SkillQ or AnimationState.SprintJump))
+                // {
+                //     Debug.Log($"[PredictableStateBase] Executed predicted command {header.CommandId} {inputCommand.CommandAnimationState} at tick {header.Tick}");
+                // }
             }
         }
         
