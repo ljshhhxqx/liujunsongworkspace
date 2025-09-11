@@ -329,10 +329,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 inputStateData.InputAnimations = inputCommand.InputAnimationStates;
                 
                 //获取可以执行的动画
-                var commandAnimation = playerController.GetCurrentAnimationState(inputStateData);
+                var commandAnimation = inputCommand.CommandAnimationState;//playerController.GetCurrentAnimationState(inputStateData);
                 inputStateData.Command = commandAnimation;
 
-                inputCommand.CommandAnimationState = commandAnimation;
+                //inputCommand.CommandAnimationState = commandAnimation;
                 var actionType = _animationConfig.GetActionType(inputCommand.CommandAnimationState);
                 //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input command {inputCommand.InputMovement} {inputCommand.InputAnimationStates} action type {actionType}");
                 if (actionType != ActionType.Interaction && actionType != ActionType.Movement)
@@ -354,7 +354,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 //验证冷却时间是否已到
                 var cooldownInfo = playerAnimationCooldowns.GetValueOrDefault(commandAnimation);
 
-                Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost}");
+                //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost}");
                 if (cooldown != 0)
                 {
                     if (cooldownInfo == null)
@@ -398,18 +398,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     }
 
                 }
+                //playerController.UpdatePlayerInputState(inputStateData);
                 
-                var playerGameStateData = playerController.HandleServerMoveAndAnimation(inputStateData);
+                //var playerGameStateData = playerController.HandleServerMoveAndAnimation(inputStateData);
                 var inputMovement = inputCommand.InputMovement.ToVector3();
                 // var cooldowns = playerInputState.PlayerAnimationCooldownState.AnimationCooldowns;
                 // GetCooldownSnapshotData(header.ConnectionId, cooldowns);
-                playerInputState.PlayerGameStateData = playerGameStateData;
+                //playerInputState.PlayerGameStateData = playerGameStateData;
                 //playerInputState.PlayerAnimationCooldownState.AnimationCooldowns = cooldowns;
                 //todo:**必须优化//
                 PropertyStates[header.ConnectionId] = playerInputState;
-                playerController.RpcHandlePlayerSpecialAction(playerGameStateData.AnimationState);
+                playerController.HandlePlayerSpecialAction(inputStateData.Command);
+                //playerController.RpcHandlePlayerSpecialAction(playerGameStateData.AnimationState);
                 //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost} player state {playerGameStateData.AnimationState}");
-                if (inputMovement.magnitude > 0.1f && playerGameStateData.AnimationState == AnimationState.Move || playerGameStateData.AnimationState == AnimationState.Sprint)
+                if (inputMovement.magnitude > 0.1f && inputStateData.Command == AnimationState.Move || inputStateData.Command == AnimationState.Sprint)
                 {
                     var moveSpeed = playerSyncSystem.GetMoveSpeed(header.ConnectionId);
                     var equipmentSyncSystem = GameSyncManager.GetSyncSystem<PlayerEquipmentSystem>(CommandType.Equipment);

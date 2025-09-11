@@ -135,6 +135,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private BindingKey _playerDeathTimeBindKey;
         private BindingKey _playerTraceOtherPlayerHpBindKey;
         private bool _localPlayerHandler;
+        private bool _serverHandler;
         
         private Dictionary<Type, bool> _reactivePropertyBinds = new Dictionary<Type, bool>();
         
@@ -198,6 +199,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         }
         
         private bool _isInit;
+        
+        public void SetPlayerVelocity(Vector3 velocity)
+        {
+            Debug.Log($"SetPlayerVelocity: {velocity}");
+            _rigidbody.velocity = velocity;
+        }
 
         [Inject]
         private void Init(IConfigProvider configProvider, 
@@ -225,7 +232,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             GetAllCalculators(configProvider, gameSyncManager);
             HandleAllSyncState();
             HandleLocalInitCallback();
-
         }
 
         // private void OnAnimationCooldownChanged(SyncIDictionary<AnimationState, float>.Operation changeType, AnimationState key, float value)
@@ -240,6 +246,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         //             throw new ArgumentOutOfRangeException(nameof(changeType), changeType, null);
         //     }
         // }
+
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+            _serverHandler = true;
+            Debug.Log($"[PlayerInputController] OnStartServer");
+        }
 
         public override void OnStartLocalPlayer()
         {
@@ -268,7 +281,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             //     .AddTo(this);
             _capsuleCollider.OnTriggerStayAsObservable()
                 .Sample(TimeSpan.FromMilliseconds(GameSyncManager.TickSeconds * 1000))
-                .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
+                .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer && _gameSyncManager.isGameStart)
                 .Subscribe(c =>
                 {
                     var header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
@@ -687,7 +700,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             _currentSpeed = Mathf.SmoothDamp(_currentSpeed, _targetSpeed, ref _speedSmoothVelocity, _speedSmoothTime);
             _playerPhysicsCalculator.CurrentSpeed = _currentSpeed;
-            //Debug.Log($"[HandleInputPhysics]- _currentSpeed > {_currentSpeed} _targetSpeed ->{_targetSpeed}");
             _gameStateStream.Value = _playerPhysicsCalculator.CheckPlayerState(new CheckGroundDistanceParam(inputData.InputMovement, FixedDeltaTime));
             _groundDistanceStream.Value = _playerPhysicsCalculator.GroundDistance;
             _isSpecialActionStream.Value = _playerAnimationCalculator.IsSpecialAction;
@@ -695,6 +707,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerAnimationCalculator.SetGroundDistance(_groundDistanceStream.Value);
             _playerAnimationCalculator.SetAnimatorParams(inputData.InputMovement.magnitude, _groundDistanceStream.Value, _currentSpeed);
             _playerAnimationCalculator.UpdateAnimationState();
+            Debug.Log($"[HandleInputPhysics]- _currentSpeed > {_currentSpeed} _targetSpeed ->{_targetSpeed} _speedSmoothVelocity -> {_speedSmoothVelocity} _speedSmoothTime -> {_speedSmoothTime}");
            
         }
 
@@ -928,8 +941,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public AnimationState GetCurrentAnimationState(PlayerInputStateData inputData)
         {
             var stateParams = CreateDetermineAnimationStateParams(inputData);
-            Debug.Log($"[GetCurrentAnimationState] stateParams.InputMovement ->{stateParams.InputMovement} stateParams.InputAnimationStates.Count ->{stateParams.InputAnimationStates} stateParams.GroundDistance->{stateParams.GroundDistance} stateParams.EnvironmentState->{stateParams.EnvironmentState}");
-            return _playerAnimationCalculator.DetermineAnimationState(CreateDetermineAnimationStateParams(inputData));
+            //Debug.Log($"[GetCurrentAnimationState] stateParams.InputMovement ->{stateParams.InputMovement} stateParams.InputAnimationStates.Count ->{stateParams.InputAnimationStates} stateParams.GroundDistance->{stateParams.GroundDistance} stateParams.EnvironmentState->{stateParams.EnvironmentState}");
+            return _playerAnimationCalculator.DetermineAnimationState(stateParams);
         }
         
         public bool IsInSpecialState()
@@ -1299,6 +1312,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private readonly Dictionary<PlayerEffectType, GameObject> _effectPool = new Dictionary<PlayerEffectType, GameObject>();
         private readonly Dictionary<PlayerEffectType, PlayerEffectContainer> _effectContainer = new Dictionary<PlayerEffectType, PlayerEffectContainer>();
 
+        public void UpdatePlayerInputState(PlayerInputStateData data)
+        {
+            HandleInputPhysics(data);
+        }
 
         [ClientRpc]
         public void RpcPlayEffect(PlayerEffectType effectType)

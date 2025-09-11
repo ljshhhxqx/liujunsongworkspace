@@ -158,7 +158,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
                 if (_playerEnvironmentState == PlayerEnvironmentState.InAir)
                 {
-                    _physicsComponent.Rigidbody.useGravity = true;
+                    //_physicsComponent.Rigidbody.useGravity = true;
                     var inputSmooth = Vector3.zero;
                     inputSmooth = Vector3.Lerp(inputSmooth, param.InputMovement, 6f * param.FixedDeltaTime);
         
@@ -246,6 +246,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     }
                 }
                 // 应用速度
+                //Debug.Log($"[HandleMove] _physicsComponent.Rigidbody.isKinematic -{_physicsComponent.Rigidbody.isKinematic} targetVelocity-> {targetVelocity}  hasMovementInput-> {hasMovementInput}");
                 _physicsComponent.Rigidbody.velocity = hasMovementInput ? targetVelocity : Vector3.zero;
                 HandlePlayerRotation(moveParam, movement);
             }

@@ -74,6 +74,8 @@ namespace HotUpdate.Scripts.Collector
         }
         private static Bounds GetWorldBounds(Vector3 position, IColliderConfig config)
         {
+            if (config == null)
+                return new Bounds();
             return config.ColliderType switch
             {
                 ColliderType.Box => new Bounds(position, config.Size),

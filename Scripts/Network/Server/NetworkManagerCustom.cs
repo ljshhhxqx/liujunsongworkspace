@@ -93,9 +93,8 @@ namespace HotUpdate.Scripts.Network.Server
             var spawnPoint = _spawnPoints[spawnIndex];
             var res = DataJsonManager.Instance.GetResourceData(_gameConfigData.playerPrefabName);
             var resInfo = ResourceManager.Instance.GetResource<GameObject>(res);
-            var playerGo = Instantiate(resInfo.gameObject, spawnPoint.transform);
-            playerGo.transform.parent = spawnPoint.transform;
-            playerGo.transform.localPosition = Vector3.zero;
+            var playerGo = Instantiate(resInfo.gameObject);
+            playerGo.transform.position =spawnPoint.transform.position;
             playerGo.transform.localRotation = Quaternion.identity;
             playerGo.name = playerGo.name.Replace("(Clone)", connectionId.ToString());
             Debug.Log("Spawned player: " + playerGo.name);

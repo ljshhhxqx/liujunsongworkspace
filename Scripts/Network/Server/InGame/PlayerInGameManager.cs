@@ -207,9 +207,10 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         {
             get
             {
-                if (_playerBaseColliderData == null)
+                if (_playerBaseColliderData == null && _playerBasePrefab)
                 {
-                    _playerBaseColliderData = GamePhysicsSystem.CreateColliderConfig(_playerBasePrefab.GetComponent<Collider>());
+                    var playerCollider = _playerBasePrefab.GetComponent<Collider>();
+                    _playerBaseColliderData = GamePhysicsSystem.CreateColliderConfig(playerCollider);
                 }
                 return _playerBaseColliderData;
             }

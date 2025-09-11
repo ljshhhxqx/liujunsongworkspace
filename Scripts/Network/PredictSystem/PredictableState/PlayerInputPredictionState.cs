@@ -40,6 +40,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private SkillConfig _skillConfig;
         private PlayerSkillSyncState _skillSyncState;
         private BindingKey _playerAnimationKey;
+
+        private float _updatePositionTimer;
         
         protected override CommandType CommandType => CommandType.Input;
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
@@ -117,6 +119,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 {
                     transform.position = propertyState.PlayerGameStateData.Position;
                 }
+                else
+                {
+                    // _updatePositionTimer += GameSyncManager.ServerUpdateInterval;
+                    // if (_updatePositionTimer >= 5f)
+                    // {
+                    //     _updatePositionTimer = 0f;
+                    //     if (Vector3.Distance(transform.position, propertyState.PlayerGameStateData.Position) > 0.1f)
+                    //     {
+                    //         Debug.Log($"[ApplyServerState] - UpdatePosition {propertyState.PlayerGameStateData.Position}");
+                    //         //transform.position = propertyState.PlayerGameStateData.Position;
+                    //     }
+                    // }
+                }
                 // else if (Vector3.Distance(transform.position, propertyState.PlayerGameStateData.Position) > 0.2f)
                 // {
                 //     transform.position = propertyState.PlayerGameStateData.Position;
@@ -173,7 +188,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 // {
                 //     Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
                 // }
-                Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
+                //Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
                 var info = _animationConfig.GetAnimationInfo(inputCommand.CommandAnimationState);
                 var actionType = info.actionType;
                 if (actionType != ActionType.Movement)
