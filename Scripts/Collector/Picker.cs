@@ -3,6 +3,7 @@ using AOTScripts.Tool.ECS;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
@@ -33,6 +34,12 @@ namespace HotUpdate.Scripts.Collector
             _gameEventManager = gameEventManager;
             _gameEventManager.Subscribe<GameInteractableEffect>(OnInteractionStateChange);
             _interactSystem = interactSystem;
+        }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            ObjectInjectProvider.Instance.Inject(this);
         }
 
         private void OnDestroy()

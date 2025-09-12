@@ -653,7 +653,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             //     _timer = 0;
             //     _frameCount = 0;
             // }
-            Debug.Log($"[HandleSendNetworkCommand] {inputData.Command} {_previousAnimationState}");
+            //Debug.Log($"[HandleSendNetworkCommand] {inputData.Command} {_previousAnimationState}");
             if (_previousAnimationState == inputData.Command && 
                 _previousAnimationState!= AnimationState.Idle && 
                 _previousAnimationState!= AnimationState.Move && 

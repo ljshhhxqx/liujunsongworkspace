@@ -2,6 +2,7 @@
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Tool.Coroutine;
@@ -82,18 +83,24 @@ namespace HotUpdate.Scripts.Collector
                 return;
             }
 
-            _collectAnimationComponent?.Play();
+
+            if (isClient)
+            {
+                _collectAnimationComponent?.Play();
+                Debug.Log("Local player animation");
+                _collider = collectCollider.GetComponent<Collider>();
+                _collider.enabled = true;
+                _disposable = _collider.OnTriggerEnterAsObservable()
+                    .Subscribe(OnTriggerEnterObserver)
+                    .AddTo(this);
+            }
             CollectObjectData = collectObjectDataConfig.GetCollectObjectData(collectConfigId);
-            _collider = collectCollider.GetComponent<Collider>();
-            _collider.enabled = true;
         }
 
         public override void OnStartClient()
         {
             base.OnStartClient();
-            _disposable = _collider.OnTriggerEnterAsObservable()
-                .Subscribe(OnTriggerEnterObserver)
-                .AddTo(this);
+            ObjectInjectProvider.Instance.Inject(this);
         }
 
         [ClientRpc]

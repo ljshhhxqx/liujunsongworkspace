@@ -3,6 +3,7 @@ using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
@@ -88,6 +89,7 @@ namespace HotUpdate.Scripts.Collector
         public override void OnStartClient()
         {
             base.OnStartClient();
+            ObjectInjectProvider.Instance.Inject(this);
             _chestCollider.OnTriggerEnterAsObservable()
                 .Subscribe(OnTriggerEnterObserver)
                 .AddTo(this);
