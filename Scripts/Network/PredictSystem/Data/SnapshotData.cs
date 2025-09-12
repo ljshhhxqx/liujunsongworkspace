@@ -191,10 +191,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public bool IsReady()
         {
-            if (_timeline.Count == 0 || _configCooldown <= 0)
+            if (_timeline.Count == 0 && _configCooldown <= 0)
             {
+                Debug.Log($"[IsReady] [Keyframe] _timeline.Count == 0 && _configCooldown <= 0  _currentCountdown-{_currentCountdown} _configCooldown-{_configCooldown}");
                 return true;
             }
+            Debug.Log($"[IsReady] [Keyframe] _currentCountdown-{_currentCountdown} _configCooldown-{_configCooldown}");
             return _currentCountdown <= 0;
         }
         public float AnimationSpeed { get; private set; }
@@ -208,7 +210,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         {
             if (_currentCountdown <= 0)
             {
-                Reset();
+                //Reset();
                 return;
             }
             _currentCountdown = Mathf.Max(0, _currentCountdown - deltaTime);
@@ -236,9 +238,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
         public void Use()
         {
+            if (!IsReady()) return;
             _currentCountdown = _configCooldown;
             _currentStage = 0;
-            //Debug.Log($"[Use] [keyframe] Animation-{_state}  _currentStage-{_currentStage} _currentCountdown-{_currentCountdown}");
+            Debug.Log($"[Use] [keyframe] Animation-{_state}  _currentStage-{_currentStage} _currentCountdown-{_currentCountdown}");
         }
 
         public bool Refresh(CooldownSnapshotData snapshot)

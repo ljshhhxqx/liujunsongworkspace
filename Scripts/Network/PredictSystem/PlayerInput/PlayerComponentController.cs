@@ -71,7 +71,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private PlayerSkillSyncState _skillSyncState;
         
         [Header("Subject")]
-        private readonly Subject<PlayerInputStateData> _inputStream = new Subject<PlayerInputStateData>();
+        private readonly ReactiveProperty<PlayerInputStateData> _inputStream = new ReactiveProperty<PlayerInputStateData>();
         private readonly Subject<int> _onAttackPoint = new Subject<int>();
         private readonly Subject<int> _onAttackEnd = new Subject<int>();
         
@@ -404,7 +404,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     //     Debug.Log($"[PlayerInputController] Attack");
                     // }
                     _playerInputStateData = playerInputStateData;
-                    _inputStream.OnNext(_playerInputStateData);
+                    _inputStream.Value = playerInputStateData;
                     //Debug.Log($"playerInputStateData - {playerInputStateData.InputMovement} {playerInputStateData.InputAnimations} {playerInputStateData.Command}");
                 })
                 .AddTo(_disposables);
@@ -433,6 +433,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .Subscribe(_ =>
                 {
                     HandleInputPhysics(_playerInputStateData);
+                    if (_inputStream.Value.Command != AnimationState.None && _inputStream.Value.Command != AnimationState.Idle)
+                    {
+                        HandleSendNetworkCommand(_inputStream.Value);
+                    }
                     _targetSpeed = _propertyPredictionState.GetMoveSpeed();
                     var propertyEnvironmentChangeCommand = ObjectPoolManager<PropertyEnvironmentChangeCommand>.Instance.Get(50);
                     propertyEnvironmentChangeCommand.Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
@@ -446,14 +450,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                         var state = _predictionStates[i];
                         state.ExecutePredictedCommands(GameSyncManager.CurrentTick);
                     }
-                    //ObjectPoolManager<PropertyEnvironmentChangeCommand>.Instance.Return(propertyEnvironmentChangeCommand);
                 })
                 .AddTo(this);
             
             //发送网络命令
             _inputStream.Where(x=> _localPlayerHandler && x.Command != AnimationState.None && x.Command != AnimationState.Idle)
                 .Sample(TimeSpan.FromMilliseconds(Time.fixedDeltaTime * 1000))
-                .Subscribe(HandleSendNetworkCommand)
+                .Subscribe()
                 .AddTo(this);
             //处理物理信息
             Observable.EveryFixedUpdate().Sample(TimeSpan.FromMilliseconds(FixedDeltaTime * 10 * 1000))
@@ -639,7 +642,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             // _playerAnimationCalculator.SetEnvironmentState(newState.PlayerEnvironmentState);
         }
 
-        [Client]
         private void HandleSendNetworkCommand(PlayerInputStateData inputData)
         {
             // _timer+=Time.fixedDeltaTime;
@@ -651,7 +653,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             //     _timer = 0;
             //     _frameCount = 0;
             // }
-            //Debug.Log($"[HandleSendNetworkCommand] {inputData.Command}");
+            Debug.Log($"[HandleSendNetworkCommand] {inputData.Command} {_previousAnimationState}");
             if (_previousAnimationState == inputData.Command && 
                 _previousAnimationState!= AnimationState.Idle && 
                 _previousAnimationState!= AnimationState.Move && 
@@ -707,7 +709,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerAnimationCalculator.SetGroundDistance(_groundDistanceStream.Value);
             _playerAnimationCalculator.SetAnimatorParams(inputData.InputMovement.magnitude, _groundDistanceStream.Value, _currentSpeed);
             _playerAnimationCalculator.UpdateAnimationState();
-            Debug.Log($"[HandleInputPhysics]- _currentSpeed > {_currentSpeed} _targetSpeed ->{_targetSpeed} _speedSmoothVelocity -> {_speedSmoothVelocity} _speedSmoothTime -> {_speedSmoothTime}");
+            //Debug.Log($"[HandleInputPhysics]- _currentSpeed > {_currentSpeed} _targetSpeed ->{_targetSpeed} _speedSmoothVelocity -> {_speedSmoothVelocity} _speedSmoothTime -> {_speedSmoothTime}");
            
         }
 
@@ -1189,6 +1191,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             return list;
         }
 
+        public void UpdateAnimation(float deltaTime)
+        {
+            for (int i = _animationCooldowns.Count - 1; i >= 0; i--)
+            {
+                var cooldown = _animationCooldowns[i];
+                cooldown.Update(deltaTime);
+            }
+        }
+
         public void UpdateAnimation(float deltaTime, ref PlayerAnimationCooldownState snapshotData)
         {
             for (int i = _animationCooldowns.Count - 1; i >= 0; i--)
@@ -1202,28 +1213,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     continue;
                 }
 
-                // if (cooldown is KeyframeCooldown keyframeCooldown)
-                // {
-                //     Debug.Log($"[UpdateAnimation] {snapshotCoolDown.AnimationState} = {cooldown.AnimationState} ? {cooldown.AnimationState == snapshotCoolDown.AnimationState} {keyframeCooldown.CurrentCountdown} {snapshotCoolDown.ToString()}");
-                //
-                // }
-                // if (cooldown is KeyframeComboCooldown keyframeComboCooldown)
-                // {
-                //     Debug.Log($"[UpdateAnimation] {snapshotCoolDown.AnimationState} = {cooldown.AnimationState} ? {cooldown.AnimationState == snapshotCoolDown.AnimationState} {keyframeComboCooldown.CurrentCountdown} {snapshotCoolDown.ToString()}");
-                //
-                // }
                 CooldownSnapshotData.CopyTo(cooldown, ref snapshotCoolDown);
                 snapshotData.AnimationCooldowns[cooldown.AnimationState] = snapshotCoolDown;
             }
         }
-        // public void UpdateAnimation(float deltaTime)
-        // {
-        //     for (int i = _animationCooldowns.Count - 1; i >= 0; i--)
-        //     {
-        //         var cooldown = _animationCooldowns[i];
-        //         cooldown.Update(deltaTime);
-        //     }
-        // }
 
         public void RefreshSnapData(Dictionary<AnimationState, CooldownSnapshotData> snapshotData)
         {

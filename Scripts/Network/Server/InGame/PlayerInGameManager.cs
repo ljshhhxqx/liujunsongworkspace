@@ -91,7 +91,14 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 _playerSpawnPoints.Add(spawnPoint, 0);
             }
             var bases = _playerSpawnPoints.Keys.ToArray();
-            SpawnAllBasesRpc(bases);
+            _playerBasePrefab ??= ResourceManager.Instance.GetResource<PlayerBase>(_gameConfigData.basePrefabName);
+            for (int i = 0; i < bases.Length; i++)
+            {
+                var spawnPoint = bases[i];
+                var playerBase = Instantiate(_playerBasePrefab.gameObject, spawnPoint, Quaternion.identity);
+                NetworkServer.Spawn(playerBase);
+                _playerBases.Add(i, playerBase.GetComponent<PlayerBase>());
+            }
         }
 
         [Server]
@@ -156,24 +163,6 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             }
             return allyIds.Take(count).ToArray();
         }
-
-        [ClientRpc]
-        public void SpawnAllBasesRpc(Vector3[] spawnPoints)
-        {
-            SpawnPlayerBases(spawnPoints);
-        }
-
-        private void SpawnPlayerBases(Vector3[] spawnPoints)
-        {
-            _playerBasePrefab ??= ResourceManager.Instance.GetResource<PlayerBase>(_gameConfigData.basePrefabName);
-            for (int i = 0; i < spawnPoints.Length; i++)
-            {
-                var spawnPoint = spawnPoints[i];
-                var playerBase = Instantiate(_playerBasePrefab, spawnPoint, Quaternion.identity);
-                _playerBases.Add(i, playerBase);
-            }
-        }
-
         private Vector3 GetPlayerBasePositionByNetId(uint id)
         {
             foreach (var vKey in _playerSpawnPoints.Keys)

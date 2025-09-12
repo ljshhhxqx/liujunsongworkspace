@@ -49,7 +49,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         [SyncVar(hook = nameof(OnIsRandomUnionStartChanged))] 
         public bool isRandomUnionStart;
-        [SyncVar(hook = nameof(OnGameStartChanged))] 
+        [SyncVar] 
         public bool isGameStart;
         
         public static int CurrentTick { get; private set; }
@@ -136,6 +136,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             Debug.Log("GameSyncManager OnGameStartEvent");
             isGameStart = true;
+            OnGameStart?.Invoke(true);
+            PlayerInGameManager.Instance.isGameStarted = true;
         }
 
         private void OnAllPlayerGetSpeed(AllPlayerGetSpeedEvent allPlayerGetSpeedEvent)
@@ -166,16 +168,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     };
                     EnqueueServerCommand(command);
                 }
-            }
-        }
-        
-        private void OnGameStartChanged(bool oldValue, bool newValue)
-        {
-            OnGameStart?.Invoke(newValue);
-            Debug.Log("Game Start");
-            if (_serverHandler)
-            {
-                PlayerInGameManager.Instance.isGameStarted = newValue;
             }
         }
 

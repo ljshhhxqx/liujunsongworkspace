@@ -1905,13 +1905,23 @@
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
+            "Name": "KeyAnimationConfig",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/ConfigAsset/Json/KeyAnimationConfig.json"
+        },
+        {
+            "UID": 4200024,
+            "ResourceType": "UnityEngine.TextAsset",
+            "AssetType": 5,
+            "Extension": ".json",
             "Name": "MapConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/ConfigAsset/Json/MapConfig.json"
         },
         {
-            "UID": 4200024,
+            "UID": 4200025,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -1921,7 +1931,7 @@
             "Address": "/Preload/ConfigAsset/Json/PropertyConfig.json"
         },
         {
-            "UID": 4200025,
+            "UID": 4200026,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -1931,7 +1941,7 @@
             "Address": "/Preload/ConfigAsset/Json/RandomBuffConfig.json"
         },
         {
-            "UID": 4200026,
+            "UID": 4200027,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",

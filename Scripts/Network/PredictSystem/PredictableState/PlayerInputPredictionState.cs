@@ -40,6 +40,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private SkillConfig _skillConfig;
         private PlayerSkillSyncState _skillSyncState;
         private BindingKey _playerAnimationKey;
+        private bool _isSimulating;
 
         private float _updatePositionTimer;
         
@@ -94,7 +95,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 playerAnimationOverlay.BindPlayerAnimationData(animationStateDataDict);
             }
         }
-        
+
+        public override void OnStartLocalPlayer()
+        {
+            base.OnStartLocalPlayer();
+            UpdateAnimationCooldowns(_cancellationTokenSource.Token, GameSyncManager.ServerUpdateInterval).Forget();
+        }
+
         public override bool NeedsReconciliation<T>(T state)
         {
             if (state is null || state is not PlayerInputState inputState || CurrentState is not PlayerInputState propertyState)
@@ -182,88 +189,117 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         public override void Simulate(INetworkCommand command)
         {
             var header = command.GetHeader();
-            if (header.CommandType == CommandType.Input && command is InputCommand inputCommand && IsInSpecialState?.Invoke() == false)
+            try
             {
-                // if (inputCommand.CommandAnimationState == AnimationState.Attack)
-                // {
-                //     Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
-                // }
-                //Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
-                var info = _animationConfig.GetAnimationInfo(inputCommand.CommandAnimationState);
-                var actionType = info.actionType;
-                if (actionType != ActionType.Movement)
-                {
-                    //Debug.Log($"[PlayerInputPredictionState] - Not enough strength to perform {inputCommand.CommandAnimationState}.");
+                if (_isSimulating || _isApplyingState || IsInSpecialState?.Invoke() == true)
                     return;
-                }
-                var health = _propertyPredictionState.GetProperty(PropertyTypeEnum.Health);
-                SkillConfigData skillConfigData = default;
-                if (inputCommand.CommandAnimationState is AnimationState.SkillE or AnimationState.SkillQ)
-                { 
-                    skillConfigData = _skillSyncState.GetSkillConfigData(inputCommand.CommandAnimationState);
-                }
-                var cost = skillConfigData.id == 0 ? info.cost : skillConfigData.cost;
-                var cooldown = skillConfigData.id == 0 ? info.cooldown : skillConfigData.cooldown;
-                //Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
-                if (health <= 0)
+                _isSimulating = true;
+                if (header.CommandType == CommandType.Input && command is InputCommand inputCommand)
                 {
-                    Debug.Log($"[PlayerInputPredictionState] - Player is dead.");
-                    return;
-                }
-
-                var animationCooldowns = PlayerComponentController.AnimationCooldownsDict;
-                var cooldownInfo = animationCooldowns.GetValueOrDefault(inputCommand.CommandAnimationState);
-                if (cooldown > 0)
-                {
-                    if (cooldownInfo == null)
+                    if (inputCommand.CommandAnimationState is AnimationState.Attack or AnimationState.Jump or AnimationState.SprintJump or AnimationState.Roll or AnimationState.SkillE or AnimationState.SkillQ)
                     {
-                        Debug.LogWarning($"Animation {inputCommand.CommandAnimationState} is not registered in cooldown.");
+                        Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
+                    }
+                    var info = _animationConfig.GetAnimationInfo(inputCommand.CommandAnimationState);
+                    //Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
+                    var actionType = info.actionType;
+                    if (actionType != ActionType.Movement && actionType != ActionType.Interaction)
+                    {
+                        //Debug.Log($"[PlayerInputPredictionState] - Not enough strength to perform {inputCommand.CommandAnimationState}.");
                         return;
                     }
-                    if (!cooldownInfo.IsReady())
+                    var health = _propertyPredictionState.GetProperty(PropertyTypeEnum.Health);
+                    //Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
+                    if (health <= 0)
                     {
-                        Debug.LogWarning($"Animation {inputCommand.CommandAnimationState} is on cooldown.");
+                        Debug.Log($"[PlayerInputPredictionState] - Player is dead.");
                         return;
                     }
-                }
+                    SkillConfigData skillConfigData = default;
+                    if (inputCommand.CommandAnimationState is AnimationState.SkillE or AnimationState.SkillQ)
+                    { 
+                        skillConfigData = _skillSyncState.GetSkillConfigData(inputCommand.CommandAnimationState);
+                    }                
+                    var cost = skillConfigData.id == 0 ? info.cost : skillConfigData.cost;
+                    var cooldown = skillConfigData.id == 0 ? info.cooldown : skillConfigData.cooldown;
 
-                if (cost > 0)
-                {
-                    var currentStrength = _propertyPredictionState.GetProperty(PropertyTypeEnum.Strength);
-                    if (!_animationConfig.IsStrengthEnough(inputCommand.CommandAnimationState, currentStrength, out var noStrengthState, GameSyncManager.TickSeconds)
-                        && noStrengthState == AnimationState.None)
+                    var animationCooldowns = PlayerComponentController.AnimationCooldownsDict;
+                    var cooldownInfo = animationCooldowns.GetValueOrDefault(inputCommand.CommandAnimationState);
+                    if (cooldown > 0)
                     {
-                        Debug.LogWarning($"Not enough strength to perform {inputCommand.CommandAnimationState}.");
-                        return;
+                        if (cooldownInfo == null)
+                        {
+                            Debug.LogWarning($"Animation {inputCommand.CommandAnimationState} is not registered in cooldown.");
+                            return;
+                        }
                     }
-                    var animationCommand = ObjectPoolManager<PropertyClientAnimationCommand>.Instance.Get(50);
-                    animationCommand.AnimationState = noStrengthState == AnimationState.None ? inputCommand.CommandAnimationState : noStrengthState;
-                    animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property, CommandAuthority.Client);
-                    animationCommand.SkillId = skillConfigData.id;
-                    _propertyPredictionState.AddPredictedCommand(animationCommand);
-                    if (cooldownInfo != null)
+                    if (cost > 0)
                     {
-                        cooldownInfo.Use();
-                        Debug.Log($"[Simulate] [Normal] - CommandAnimationState:{inputCommand.CommandAnimationState} - cooldownInfo:{cooldownInfo.AnimationState} - cooldown:{cooldown} - cost:{cost}");
+                        var currentStrength = _propertyPredictionState.GetProperty(PropertyTypeEnum.Strength);
+                        if (!_animationConfig.IsStrengthEnough(inputCommand.CommandAnimationState, currentStrength, out var noStrengthState, GameSyncManager.TickSeconds)
+                            && noStrengthState == AnimationState.None)
+                        {
+                            Debug.LogWarning($"Not enough strength to perform {inputCommand.CommandAnimationState}.");
+                            return;
+                        }
 
+                        if (cooldownInfo != null)
+                        {
+                            if (!cooldownInfo.IsReady())
+                            {
+                                Debug.LogWarning($"Animation {inputCommand.CommandAnimationState} is on cooldown.");
+                                return;
+                            }
+
+                            cooldownInfo.Use();
+                            Debug.Log($"[Simulate] [Normal] - CommandAnimationState:{inputCommand.CommandAnimationState}- cooldownInfo:{cooldownInfo.AnimationState} - cooldown:{cooldown} - cost:{cost}");
+                            if (animationCooldowns.ContainsKey(inputCommand.CommandAnimationState))
+                            {
+                                animationCooldowns[inputCommand.CommandAnimationState] = cooldownInfo;
+                                PlayerComponentController.AnimationCooldownsDict = animationCooldowns;
+                            }
+                        }
+                        var animationCommand = ObjectPoolManager<PropertyClientAnimationCommand>.Instance.Get(50);
+                        animationCommand.AnimationState = noStrengthState == AnimationState.None ? inputCommand.CommandAnimationState : noStrengthState;
+                        animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property, CommandAuthority.Client);
+                        animationCommand.SkillId = skillConfigData.id;
+                        _propertyPredictionState.AddPredictedCommand(animationCommand);
                     }
 
+                    if (skillConfigData.animationState != AnimationState.None)
+                    {
+                        Debug.Log($"[Simulate] [Skill] - CommandAnimationState:{inputCommand.CommandAnimationState} - cooldown:{cooldown} - cost:{cost}");
+
+                        cooldownInfo?.Use(); 
+                    }
+
+                    var inputStateData = ObjectPoolManager<PlayerInputStateData>.Instance.Get(50);
+                    inputStateData.InputMovement = inputCommand.InputMovement.ToVector3();
+                    inputStateData.InputAnimations = inputCommand.InputAnimationStates;
+                    inputStateData.Command = inputCommand.CommandAnimationState;
+                    PlayerComponentController.HandlePlayerSpecialAction(inputStateData.Command);
+                    OnPlayerInputStateChanged?.Invoke(inputStateData);
+                    //Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
                 }
-
-                if (skillConfigData.animationState != AnimationState.None)
-                {
-                    Debug.Log($"[Simulate] [Skill] - CommandAnimationState:{inputCommand.CommandAnimationState} - cooldown:{cooldown} - cost:{cost}");
-
-                    cooldownInfo?.Use(); 
-                }
-
-                var inputStateData = ObjectPoolManager<PlayerInputStateData>.Instance.Get(50);
-                inputStateData.InputMovement = inputCommand.InputMovement.ToVector3();
-                inputStateData.InputAnimations = inputCommand.InputAnimationStates;
-                inputStateData.Command = inputCommand.CommandAnimationState;
-                PlayerComponentController.HandlePlayerSpecialAction(inputStateData.Command);
-                OnPlayerInputStateChanged?.Invoke(inputStateData);
-                //Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            finally
+            {
+                _isSimulating = false;
+            }
+            
+        }
+        
+        private async UniTaskVoid UpdateAnimationCooldowns(CancellationToken token, float deltaTime)
+        {
+            while (!token.IsCancellationRequested && !_isApplyingState && !_isSimulating)
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(deltaTime), cancellationToken: token);
+                PlayerComponentController.UpdateAnimation(deltaTime);
             }
         }
     }
