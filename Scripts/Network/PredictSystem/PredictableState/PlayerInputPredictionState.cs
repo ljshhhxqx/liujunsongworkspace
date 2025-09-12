@@ -99,6 +99,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         public override void OnStartLocalPlayer()
         {
             base.OnStartLocalPlayer();
+            if (isClient && isServer)
+                return;
             UpdateAnimationCooldowns(_cancellationTokenSource.Token, GameSyncManager.ServerUpdateInterval).Forget();
         }
 

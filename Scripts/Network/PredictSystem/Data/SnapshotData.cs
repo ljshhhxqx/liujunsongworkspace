@@ -318,11 +318,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
         {
             if (_currentStage <= 0)
             {
-                // Debug.Log($"[IsReady] [keyFrameCombo] _currentStage <= 0  _currentStage-{_currentStage} _inComboWindow-{_inComboWindow}");
+                //Debug.Log($"[IsReady] [keyFrameCombo] _currentStage <= 0  _currentStage-{_currentStage} _inComboWindow-{_inComboWindow}");
                 return _currentCountdown <= 0 && _inComboWindow;
             }
             
-            // Debug.Log($"[IsReady] [keyFrameCombo] _currentStage > 0  _windowCountdown-{_windowCountdown} _currentStage-{_currentStage} _inComboWindow-{_inComboWindow}");
+            //Debug.Log($"[IsReady] [keyFrameCombo] _currentStage > 0  _windowCountdown-{_windowCountdown} _currentStage-{_currentStage} _inComboWindow-{_inComboWindow}");
             return _windowCountdown > 0 && _inComboWindow && _currentStage < _keyframe.Count;
         }
 
@@ -350,7 +350,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             if (_windowCountdown > 0 && _currentStage < _keyframe.Count)
             {
                 _windowCountdown = Mathf.Max(0, _windowCountdown - deltaTime);
-                Debug.Log($"[Update] [KeyframeCombo] 连招窗口倒计时 Animation-{_state}  _currentStage-{_currentStage} _windowCountdown-{_windowCountdown} _currentTime-{_currentTime}");
+                //Debug.Log($"[Update] [KeyframeCombo] 连招窗口倒计时 Animation-{_state}  _currentStage-{_currentStage} _windowCountdown-{_windowCountdown} _currentTime-{_currentTime}");
                 if (_windowCountdown <= 0)
                 {
                     EndComboWindow();
@@ -375,7 +375,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
             {
                 _currentTime = 0;
                 _eventStream.OnNext(currentStageConfig.eventType);
-                // Debug.Log($"[Update] [KeyframeCombo] 关键帧已通过触发条件 Animation-{_state}  _currentStage-{_currentStage} _windowCountdown-{_windowCountdown} _currentTime-{_currentTime}");
+                Debug.Log($"[Update] [KeyframeCombo] 关键帧已通过触发条件 Animation-{_state}  _currentStage-{_currentStage} _windowCountdown-{_windowCountdown} _currentTime-{_currentTime}");
                 _windowCountdown = currentStageConfig.resetCooldownWindowTime;
                 _inComboWindow = true;
                 _currentStage = Mathf.Min(_currentStage + 1, _maxStage);
@@ -424,7 +424,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Data
 
             _currentStage = snapshot.CurrentStage;
             _windowCountdown = snapshot.WindowCountdown;
-            //_inComboWindow = snapshot.IsInComboWindow;
+            _inComboWindow = snapshot.IsInComboWindow;
             _currentCountdown = snapshot.CurrentCountdown;
             _currentTime = snapshot.KeyframeCurrentTime;
             // Debug.Log($"[Refresh] [KeyframeCombo] Animation-{_state}  _currentStage-{_currentStage} _currentCountdown-{_currentCountdown}" +
