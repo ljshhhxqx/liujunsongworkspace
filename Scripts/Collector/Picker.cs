@@ -29,16 +29,16 @@ namespace HotUpdate.Scripts.Collector
         private readonly List<IPickable> _collects = new List<IPickable>();
     
         [Inject]
-        private void Init(GameEventManager gameEventManager, InteractSystem interactSystem)
+        private void Init(GameEventManager gameEventManager)
         {
             _gameEventManager = gameEventManager;
             _gameEventManager.Subscribe<GameInteractableEffect>(OnInteractionStateChange);
-            _interactSystem = interactSystem;
+            _interactSystem = FindObjectOfType<InteractSystem>();
+            Debug.Log($"Picker Init----{_interactSystem}");
         }
 
-        public override void OnStartClient()
+        public void Start()
         {
-            base.OnStartClient();
             ObjectInjectProvider.Instance.Inject(this);
         }
 

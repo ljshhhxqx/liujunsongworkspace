@@ -70,7 +70,8 @@ namespace HotUpdate.Scripts.Collector
             var bBounds = GetWorldBounds(b, bConfig);
         
             aBounds.Expand(margin);
-            return aBounds.Intersects(bBounds);
+            var isIntersects = aBounds.Intersects(bBounds);
+            return isIntersects;
         }
         private static Bounds GetWorldBounds(Vector3 position, IColliderConfig config)
         {

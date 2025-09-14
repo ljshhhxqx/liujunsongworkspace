@@ -105,7 +105,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             return header;
         }
 
-        [Server]
         public void EnqueueCommand<T>(T request) where T : IInteractRequest
         {
             if (isServer)

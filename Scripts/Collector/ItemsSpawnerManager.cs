@@ -138,7 +138,7 @@ namespace HotUpdate.Scripts.Collector
             {
                 var item = items[i];
                 var go = GameObjectPoolManger.Instance.GetObject(_droppedItemPrefabs[item.Quality].gameObject, position, Quaternion.identity
-                , _spawnedParent);
+                );
                 var droppedItem = go.GetComponent<DroppedItem>();
             }
         }
@@ -155,7 +155,7 @@ namespace HotUpdate.Scripts.Collector
             {
                 var item = items[i];
                 var go = GameObjectPoolManger.Instance.GetObject(_droppedItemPrefabs[item.Quality].gameObject, position, Quaternion.identity
-                , _spawnedParent);
+                );
                 var droppedItem = go.GetComponent<DroppedItem>();
             }
         }
@@ -601,7 +601,7 @@ namespace HotUpdate.Scripts.Collector
                     spawnedCount += newSpawnInfos.Count;
                     foreach (var item in newSpawnInfos)
                     {
-                        var go = GameObjectPoolManger.Instance.GetObject(_collectiblePrefabs[item.Item1].gameObject, item.Item2, Quaternion.identity, _spawnedParent,
+                        var go = GameObjectPoolManger.Instance.GetObject(_collectiblePrefabs[item.Item1].gameObject, item.Item2, Quaternion.identity, null,
                             go => _gameMapInjector.InjectGameObject(go), newSpawnInfos.Count);
                         var identity = go.GetComponent<NetworkIdentity>();
                         // if (_serverItemMap.TryGetValue(identity.netId, out var itemInfo))
@@ -678,7 +678,7 @@ namespace HotUpdate.Scripts.Collector
             var random = Random.Range(0f, 1f);
             var chestData = _chestConfig.RandomOne(random);
             var position = GetRandomStartPoint(0.5f);
-            var chestGo = GameObjectPoolManger.Instance.GetObject(_treasureChestPrefabs.GetValueOrDefault(chestData.randomItems.quality).gameObject, position, Quaternion.identity, _spawnedParent,
+            var chestGo = GameObjectPoolManger.Instance.GetObject(_treasureChestPrefabs.GetValueOrDefault(chestData.randomItems.quality).gameObject, position, Quaternion.identity, null,
                 go => _gameMapInjector.InjectGameObject(go));
             var identity = chestGo.GetComponent<NetworkIdentity>();
             if (identity.netId == 0 || !NetworkServer.spawned.TryGetValue(identity.netId, out var itemInfo))
@@ -732,7 +732,7 @@ namespace HotUpdate.Scripts.Collector
                 treasureChestPrefab.gameObject,
                 position,
                 Quaternion.identity,
-                _spawnedParent,
+                null,
                 go => _gameMapInjector.InjectGameObject(go)
             );
             _clientTreasureChest = spawnedChest.GetComponent<TreasureChestComponent>();
@@ -759,7 +759,7 @@ namespace HotUpdate.Scripts.Collector
                 return;
             }
 
-            var go = GameObjectPoolManger.Instance.GetObject(prefab.gameObject, position, Quaternion.identity, _spawnedParent,
+            var go = GameObjectPoolManger.Instance.GetObject(prefab.gameObject, position, Quaternion.identity, null,
                 go => _gameMapInjector.InjectGameObject(go));
             if (!go)
             {

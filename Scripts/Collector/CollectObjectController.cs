@@ -122,7 +122,6 @@ namespace HotUpdate.Scripts.Collector
         
         private void OnTriggerEnterObserver(Collider other)
         {
-            
             if ((_playerLayer.value & (1 << other.gameObject.layer)) == 0)
             {
                 return;
