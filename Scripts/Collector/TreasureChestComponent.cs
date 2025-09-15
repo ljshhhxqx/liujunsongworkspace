@@ -3,15 +3,9 @@ using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Game.Inject;
-using HotUpdate.Scripts.Network.NetworkMes;
-using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
-using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
-using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
-using MemoryPack;
 using Mirror;
 using Sirenix.OdinInspector;
 using Tool.GameEvent;
@@ -19,7 +13,6 @@ using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
 using VContainer;
-using SceneInteractRequest = HotUpdate.Scripts.Network.PredictSystem.Interact.SceneInteractRequest;
 
 namespace HotUpdate.Scripts.Collector
 {
@@ -64,22 +57,23 @@ namespace HotUpdate.Scripts.Collector
                 return;
             }
             _chestCollider = collectCollider.GetComponent<Collider>();
-            _chestCollider.enabled = true;
             //_chestDataConfig = configProvider.GetConfig<ChestDataConfig>();
             _chestCommonData = _jsonDataConfig.ChestCommonData;
 
             lid.transform.eulerAngles = _chestCommonData.InitEulerAngles;
-            if (isClient)
-            {
-                _chestCollider.OnTriggerEnterAsObservable()
-                    .Subscribe(OnTriggerEnterObserver)
-                    .AddTo(this);
-                _chestCollider.OnTriggerExitAsObservable()
-                    .Subscribe(OnTriggerExitObserver)
-                    .AddTo(this);
-                _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-                _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId));
-            }
+        }
+        
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+            _chestCollider.OnTriggerEnterAsObservable()
+                .Subscribe(OnTriggerEnterObserver)
+                .AddTo(_disposables);
+            _chestCollider.OnTriggerExitAsObservable()
+                .Subscribe(OnTriggerExitObserver)
+                .AddTo(_disposables);
+            _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId));
         }
 
         private void OnTriggerExitObserver(Collider other)
@@ -136,15 +130,26 @@ namespace HotUpdate.Scripts.Collector
 
         public void OnSelfSpawn()
         {
-            
+            if (isClient)
+            {
+                _chestCollider.OnTriggerEnterAsObservable()
+                    .Subscribe(OnTriggerEnterObserver)
+                    .AddTo(_disposables);
+                _chestCollider.OnTriggerExitAsObservable()
+                    .Subscribe(OnTriggerExitObserver)
+                    .AddTo(_disposables);
+                _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId));
+            }
         }
 
         public void OnSelfDespawn()
         {
+            if (isClient && _chestCollider)
+            {
+                _chestCollider.enabled = true;
+            }
             _gameEventManager?.Publish(new TargetShowEvent(null, null, netId));
-            _gameEventManager = null;
             //_chestDataConfig = null;
-            _chestCommonData = default;
             _disposables?.Clear();
         }
     }

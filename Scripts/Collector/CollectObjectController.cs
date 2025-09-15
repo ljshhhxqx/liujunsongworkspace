@@ -67,44 +67,60 @@ namespace HotUpdate.Scripts.Collector
             var playerConfig = configProvider.GetConfig<JsonDataConfig>().PlayerConfig;
             _playerLayer = playerConfig.PlayerLayer;
             var collectObjectDataConfig = configProvider.GetConfig<CollectObjectDataConfig>();
-            _pooledObject = GetComponent<PooledObject>();
             // if (_pooledObject)
             // {
             //     _pooledObject.OnSelfDespawn += OnReturnToPool;
             // }
-            _collectParticlePlayer = GetComponentInChildren<CollectParticlePlayer>();
-            _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
-            _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
-            _interactSystem = FindObjectOfType<InteractSystem>();
 
             CollectObjectData = collectObjectDataConfig.GetCollectObjectData(collectConfigId);
-        }
-
-        public override void OnSelfSpawn()
-        {
-            base.OnSelfSpawn();
-
             if (isClient)
             {
-                var collectCollider = GetComponentInChildren<CollectCollider>();
-                if (!collectCollider)
-                {
-                    Debug.LogError("Collider not found");
-                    return;
-                }
-                _collectAnimationComponent?.Play();
-                Debug.Log("Local player animation");
-                _collider = collectCollider.GetComponent<Collider>();
-                _collider.enabled = true;
+                Debug.Log($"CollectObjectController::Init");
                 _disposable = _collider.OnTriggerEnterAsObservable()
                     .Subscribe(OnTriggerEnterObserver)
                     .AddTo(this);
             }
         }
 
+        public override void OnSelfSpawn()
+        {
+            base.OnSelfSpawn();
+            if (isClient && _collider)
+            {
+                Debug.Log("Local player collider enabled");
+                _collider.enabled = true;
+                _disposable = _collider.OnTriggerEnterAsObservable()
+                    .Subscribe(OnTriggerEnterObserver)
+                    .AddTo(this);
+                _collectAnimationComponent?.Play();
+            }
+        }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            Debug.Log("Local player collider started");
+            _collectParticlePlayer = GetComponentInChildren<CollectParticlePlayer>();
+            _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
+            _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
+            _interactSystem = FindObjectOfType<InteractSystem>();
+            var collectCollider = GetComponentInChildren<CollectCollider>();
+            if (!collectCollider)
+            {
+                Debug.LogError("Collider not found");
+                return;
+            }
+            _collectAnimationComponent?.Play();
+            Debug.Log("Local player animation");
+            _collider = collectCollider.GetComponent<Collider>();
+            _collider.enabled = true;
+            _collectAnimationComponent?.Play();
+        }
+
         public override void OnSelfDespawn()
         {
             base.OnSelfDespawn();
+            Debug.Log("Local player collider disabled");
             if (_collider)
             {
                 _collider.enabled = false;
@@ -116,11 +132,13 @@ namespace HotUpdate.Scripts.Collector
         {
             if ((_playerLayer.value & (1 << other.gameObject.layer)) == 0)
             {
+                Debug.Log($"OnTriggerEnterObserver -- Not player layer, ignore");
                 return;
             }
             
             if (other.TryGetComponent<Picker>(out var pickerComponent))
             {
+                Debug.Log($"OnTriggerEnterObserver -- Picker component");
                 pickerComponent.SendCollectRequest(pickerComponent.netId, pickerComponent.PickerType, netId);
             }
         }

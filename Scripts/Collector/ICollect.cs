@@ -38,9 +38,15 @@ namespace HotUpdate.Scripts.Collector
         //     ObjectInjectProvider.Instance.Inject(this);
         // }
         public uint ItemId { get; set; }
+        
+        protected bool IsInjected { get; private set; }
         public virtual void OnSelfSpawn()
         {
-            ObjectInjectProvider.Instance.InjectMapGameObject(GameSceneManager.CurrentMapType, gameObject);
+            if (!IsInjected)
+            {
+                ObjectInjectProvider.Instance.InjectMapGameObject(GameSceneManager.CurrentMapType, gameObject);
+                IsInjected = true;
+            }
         }
 
         public virtual void OnSelfDespawn()
