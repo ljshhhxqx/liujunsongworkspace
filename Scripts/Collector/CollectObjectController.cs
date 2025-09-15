@@ -76,16 +76,22 @@ namespace HotUpdate.Scripts.Collector
             _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
             _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
             _interactSystem = FindObjectOfType<InteractSystem>();
-            var collectCollider = GetComponentInChildren<CollectCollider>();
-            if (!collectCollider)
-            {
-                Debug.LogError("Collider not found");
-                return;
-            }
 
+            CollectObjectData = collectObjectDataConfig.GetCollectObjectData(collectConfigId);
+        }
+
+        public override void OnSelfSpawn()
+        {
+            base.OnSelfSpawn();
 
             if (isClient)
             {
+                var collectCollider = GetComponentInChildren<CollectCollider>();
+                if (!collectCollider)
+                {
+                    Debug.LogError("Collider not found");
+                    return;
+                }
                 _collectAnimationComponent?.Play();
                 Debug.Log("Local player animation");
                 _collider = collectCollider.GetComponent<Collider>();
@@ -94,30 +100,16 @@ namespace HotUpdate.Scripts.Collector
                     .Subscribe(OnTriggerEnterObserver)
                     .AddTo(this);
             }
-            CollectObjectData = collectObjectDataConfig.GetCollectObjectData(collectConfigId);
         }
 
-        public override void OnStartClient()
+        public override void OnSelfDespawn()
         {
-            base.OnStartClient();
-            ObjectInjectProvider.Instance.Inject(this);
-        }
-
-        [ClientRpc]
-        public void RpcRecycleItem()
-        {
+            base.OnSelfDespawn();
             if (_collider)
             {
                 _collider.enabled = false;
             }
-
-            if (isServer)
-            {
-                return;
-            }
-            GameObjectPoolManger.Instance.ReturnObject(gameObject);
-            //_collectParticlePlayer.Play(_collectAnimationComponent.OutlineColorValue);
-            //DelayInvoker.DelayInvoke(0.75f, ReturnToPool);
+            _disposable?.Dispose();
         }
         
         private void OnTriggerEnterObserver(Collider other)
