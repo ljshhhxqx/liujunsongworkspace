@@ -25,6 +25,7 @@ namespace HotUpdate.Scripts.Collector
         public PickerType PickerType { get; set; }
         private GameEventManager _gameEventManager;
         private InteractSystem _interactSystem;
+        private PlayerInGameManager _playerInGameManager;
 
         private readonly List<IPickable> _collects = new List<IPickable>();
     
@@ -34,6 +35,7 @@ namespace HotUpdate.Scripts.Collector
             _gameEventManager = gameEventManager;
             _gameEventManager.Subscribe<GameInteractableEffect>(OnInteractionStateChange);
             _interactSystem = FindObjectOfType<InteractSystem>();
+            _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
             Debug.Log($"Picker Init----{_interactSystem}");
         }
 
@@ -116,7 +118,7 @@ namespace HotUpdate.Scripts.Collector
             
             var request = new SceneInteractRequest
             {
-                Header = InteractSystem.CreateInteractHeader(connectionToClient.connectionId, InteractCategory.PlayerToScene,
+                Header = InteractSystem.CreateInteractHeader(_playerInGameManager.LocalPlayerId, InteractCategory.PlayerToScene,
                     transform.position, CommandAuthority.Client),
                 InteractionType = InteractionType.PickupChest,
                 SceneItemId = collect.SceneItemId,

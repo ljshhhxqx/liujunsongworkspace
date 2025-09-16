@@ -248,13 +248,10 @@ namespace HotUpdate.Scripts.Collector
         [ClientRpc]
         private void RpcPickupChest(uint pickerId, uint itemId)
         {
-            if (_clientHandler)
+            if (NetworkClient.spawned.TryGetValue(itemId, out var item))
             {
-                if (NetworkServer.spawned.TryGetValue(itemId, out var item))
-                {
-                    var component = item.GetComponent<TreasureChestComponent>();
-                    component.PickUpSuccess().Forget();
-                }
+                var component = item.GetComponent<TreasureChestComponent>();
+                component.PickUpSuccess().Forget();
             }
         }
 

@@ -159,18 +159,23 @@ namespace HotUpdate.Scripts.Collector
         {
             await OpenLid();
             onFinish?.Invoke();
-            GameObjectPoolManger.Instance.ReturnObject(gameObject);
+            RecycleItem();
         }
 
         public uint ItemId { get; set; }
 
-        [ClientRpc]
-        public void RpcRecycleItem()
+        private void RecycleItem()
         {
             IsInUse = false;
             _gameEventManager?.Publish(new TargetShowEvent(null, null, netId));
             _disposables?.Clear();
             gameObject.SetActive(false);
+        }
+
+        [ClientRpc]
+        public void RpcRecycleItem()
+        {
+            RecycleItem();
         }
 
         public bool IsInUse { get; private set; }
