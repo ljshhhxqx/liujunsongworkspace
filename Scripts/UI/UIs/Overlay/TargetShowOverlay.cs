@@ -67,6 +67,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             
             foreach (var target in _targets.Values)
             {
+                if (!target) continue;
                 _followTargetParams.Target = target.position;
                 _followTargetParams.Player = _player.position;
                 GameStaticExtensions.FollowTarget(_followTargetParams);

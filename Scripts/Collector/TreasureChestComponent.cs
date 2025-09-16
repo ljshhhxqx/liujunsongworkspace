@@ -23,7 +23,7 @@ using SceneInteractRequest = HotUpdate.Scripts.Network.PredictSystem.Interact.Sc
 
 namespace HotUpdate.Scripts.Collector
 {
-    public class TreasureChestComponent : NetworkBehaviour, IPickable, IItem
+    public class TreasureChestComponent : NetworkBehaviour, IPickable, IItem, IPooledObject
     {
         [SerializeField] 
         private GameObject lid; // 宝箱盖子
@@ -41,6 +41,7 @@ namespace HotUpdate.Scripts.Collector
         private InteractSystem _interactSystem;
         private PooledObject _pooledObject;
         private Transform _playerTransform;
+        private Quaternion _initRotation;
         public Collider ChestCollider => _chestCollider;
         public QualityType Quality => quality;
         
@@ -55,12 +56,6 @@ namespace HotUpdate.Scripts.Collector
         private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)
         {
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
-            _pooledObject = GetComponent<PooledObject>();
-            if (_pooledObject)
-            {
-                _pooledObject.OnSelfDespawn += OnReturnToPool;
-                _pooledObject.OnSelfSpawn += OnSpawn;
-            }
 
             _gameEventManager = gameEventManager;
             var collectCollider = GetComponentInChildren<CollectCollider>();
@@ -75,13 +70,37 @@ namespace HotUpdate.Scripts.Collector
             _chestCommonData = _jsonDataConfig.ChestCommonData;
 
             lid.transform.eulerAngles = _chestCommonData.InitEulerAngles;
+            if (isClient)
+            {
+                _chestCollider.OnTriggerEnterAsObservable()
+                    .Subscribe(OnTriggerEnterObserver)
+                    .AddTo(_disposables);
+                _chestCollider.OnTriggerExitAsObservable()
+                    .Subscribe(OnTriggerExitObserver)
+                    .AddTo(_disposables);
+                _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+                _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId));
+            }
         }
 
-        private void OnSpawn()
+        private void OnEnable()
         {
             if (netId == 0)
             {
                 return;
+            }
+
+            transform.rotation = _initRotation;
+            if (!IsInUse && isClient)
+            {
+                IsInUse = true;
+                _chestCollider.OnTriggerEnterAsObservable()
+                    .Subscribe(OnTriggerEnterObserver)
+                    .AddTo(_disposables);
+                _chestCollider.OnTriggerExitAsObservable()
+                    .Subscribe(OnTriggerExitObserver)
+                    .AddTo(_disposables);
+                _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId));
             }
             _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId));
         }
@@ -89,26 +108,8 @@ namespace HotUpdate.Scripts.Collector
         public override void OnStartClient()
         {
             base.OnStartClient();
+            _initRotation = transform.rotation;
             ObjectInjectProvider.Instance.Inject(this);
-            _chestCollider.OnTriggerEnterAsObservable()
-                .Subscribe(OnTriggerEnterObserver)
-                .AddTo(this);
-            _chestCollider.OnTriggerExitAsObservable()
-                .Subscribe(OnTriggerExitObserver)
-                .AddTo(this);
-            _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-            _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId));
-        }
-        
-
-        private void OnReturnToPool()
-        {
-            _gameEventManager?.Publish(new TargetShowEvent(null, null, netId));
-            _gameEventManager = null;
-            //_chestDataConfig = null;
-            _chestCommonData = default;
-            _disposables?.Clear();
-            _pooledObject.OnSelfDespawn -= OnReturnToPool;
         }
 
         private void OnTriggerExitObserver(Collider other)
@@ -166,8 +167,13 @@ namespace HotUpdate.Scripts.Collector
         [ClientRpc]
         public void RpcRecycleItem()
         {
-            GameObjectPoolManger.Instance.ReturnObject(gameObject);
+            IsInUse = false;
+            _gameEventManager?.Publish(new TargetShowEvent(null, null, netId));
+            _disposables?.Clear();
+            gameObject.SetActive(false);
         }
+
+        public bool IsInUse { get; private set; }
     }
 
     [Serializable]

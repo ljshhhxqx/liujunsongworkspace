@@ -1254,7 +1254,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             var tracedInfo = MemoryPackSerializer.Deserialize<TracedPlayerInfo>(data);
 
             PlayerComponentController playerComponent;
-            if (tracedInfo.PlayerId == connectionToClient.connectionId)
+            if (tracedInfo.PlayerId == _playerInGameManager.LocalPlayerId)
             {
                 playerComponent = this;
             }

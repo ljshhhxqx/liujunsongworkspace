@@ -25,7 +25,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
 
         public T GetItem<T>(int index) where T : ItemBase
         {
-            if (index < 0 || index >= ItemBases.Count)
+            if (index < 0)
             {
                 Debug.LogWarning($"ItemList: GetItem failed, index --{index}-- out of range.");
                 return null;

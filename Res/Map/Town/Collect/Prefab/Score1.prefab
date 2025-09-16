@@ -317,7 +317,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   collectId: 0
-  quality: 0
+  quality: 1
   collectConfigId: 16
   fillRenderer: {fileID: 0}
 --- !u!114 &1512672863881429098

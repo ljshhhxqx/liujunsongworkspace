@@ -51,7 +51,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             }).AddTo(this); 
             playerHpItemDatas.ObserveReplace().Subscribe(x =>
             {
-                if (!x.NewValue.Equals(x.OldValue))
+                if (!x.NewValue.Equals(default) && !x.NewValue.Equals(x.OldValue))
                 {
                     _playerHpItemDatas[x.Key] = x.NewValue;
                     contentItemList.ReplaceItem<PlayerHpItemData, PlayerHpItem>(x.Key, x.NewValue);
@@ -76,12 +76,11 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         public void Show()
         {
-            for (int i = 0; i < contentItemList.ItemBases.Count; i++)
+            foreach (var keyValuePair in contentItemList.ItemBases)
             {
-                var item = contentItemList.ItemBases[i];
-                if (item is not PlayerHpItem playerHpItem)
+                if (keyValuePair.Value is not PlayerHpItem playerHpItem)
                 {
-                    Debug.LogError($"PlayerHpItem {item.name} is not a PlayerHpItem");
+                    Debug.LogError($"PlayerHpItem {keyValuePair.Value.name} is not a PlayerHpItem");
                     continue;
                 }
                 playerHpItem.Show(_defaultFollowTargetParams);

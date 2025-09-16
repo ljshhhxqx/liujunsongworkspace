@@ -387,10 +387,10 @@ namespace HotUpdate.Scripts.Collector
                 Debug.Log($"Handling item pickup with id: {itemId} by picker: {pickerId}");
                 if (_serverItemMap.TryGetValue(itemId, out var itemInfo))
                 {
-                    if (!_processedItems.Add(itemId))
-                    {
-                        return;
-                    }
+                    // if (!_processedItems.Add(itemId))
+                    // {
+                    //     return;
+                    // }
 
                     var itemData = MemoryPackSerializer.Deserialize<CollectItemMetaData>(itemInfo);
                     var itemColliderData = _colliderConfigs.GetValueOrDefault(itemData.ItemCollectConfigId);
@@ -428,7 +428,6 @@ namespace HotUpdate.Scripts.Collector
 
                         var collectObjectController = identity.GetComponent<CollectObjectController>();
                         GameObjectPoolManger.Instance.ReturnObject(identity.gameObject);
-                        collectObjectController.RpcRecycleItem();
                         Debug.Log(
                             $"Recycle item with id: {itemId} itemConfigid {collectObjectController.CollectConfigId}");
                         //NetworkServer.Destroy(NetworkServer.spawned[itemData.ItemId].gameObject);
@@ -437,6 +436,7 @@ namespace HotUpdate.Scripts.Collector
 
                         _processedItems.Remove(itemId);
                         _serverItemMap.Remove(itemId);
+                        collectObjectController.RpcRecycleItem();
                         Debug.Log($"Player {player.name} pick up item {itemId}");
                     }
                 }
@@ -454,10 +454,10 @@ namespace HotUpdate.Scripts.Collector
                 Console.WriteLine(e);
                 throw;
             }
-            finally
-            {
-                _processedItems.Clear();
-            }
+            // finally
+            // {
+            //     _processedItems.Clear();
+            // }
         }
         
         [ClientRpc]
@@ -646,14 +646,15 @@ namespace HotUpdate.Scripts.Collector
                         _serverItemMap.Add(identity.netId, itemInfo);
                         await UniTask.Yield();
                     }
+                    
                     //Debug.Log($"Calculated {spawnedCount} spawn positions");
                 }
 
-                // foreach (var iKey in _serverItemMap.Keys)
-                // {
-                //     var itemInfo = _serverItemMap[iKey];
-                //     SpawnManyItemsClientRpc(itemInfo);
-                // }
+                foreach (var iKey in _serverItemMap.Keys)
+                {
+                    var itemInfo = _serverItemMap[iKey];
+                    SpawnManyItemsClientRpc(itemInfo);
+                }
             }
             catch (Exception e)
             {
@@ -706,7 +707,7 @@ namespace HotUpdate.Scripts.Collector
                 ChestUniqueId = chestUniqueId,
                 Quality = chestData.randomItems.quality,
             });
-            //var serverTreasureChestMetaDataBytes = MemoryPackSerializer.Serialize(metaData);
+            var serverTreasureChestMetaDataBytes = MemoryPackSerializer.Serialize(metaData);
             _serverTreasureChestMetaData = metaData;
             //RpcSpawnTreasureChest(serverTreasureChestMetaDataBytes);
             GameItemManager.AddChestData(new GameChestData
@@ -714,6 +715,7 @@ namespace HotUpdate.Scripts.Collector
                 ChestId = chestUniqueId,
                 ChestConfigId = chestData.chestId,
             }, netIdentity);
+            RpcSpawnTreasureChest(serverTreasureChestMetaDataBytes);
         }
 
         [ClientRpc]
@@ -728,16 +730,12 @@ namespace HotUpdate.Scripts.Collector
                 Debug.LogError($"No treasure chest prefab found for quality: {quality}");
                 return;
             }
-            var spawnedChest = GameObjectPoolManger.Instance.GetObject(
-                treasureChestPrefab.gameObject,
-                position,
-                Quaternion.identity,
-                null,
-                go => _gameMapInjector.InjectGameObject(go)
-            );
-            _clientTreasureChest = spawnedChest.GetComponent<TreasureChestComponent>();
-            _clientTreasureChest.ItemId = metaData.ItemId;
-            //_clientTreasureChest.chestType = chestType;
+            if (NetworkClient.spawned.TryGetValue(metaData.ItemId, out var chest))
+            {
+                chest.gameObject.SetActive(true);
+                chest.transform.position = position;
+                chest.transform.rotation = Quaternion.identity;
+            }
             Debug.Log($"Client spawning treasure chest at position: {position} with id: {metaData.ItemId}");
         }
 
@@ -759,13 +757,12 @@ namespace HotUpdate.Scripts.Collector
                 return;
             }
 
-            var go = GameObjectPoolManger.Instance.GetObject(prefab.gameObject, position, Quaternion.identity, null,
-                go => _gameMapInjector.InjectGameObject(go));
-            if (!go)
+            if (!NetworkClient.spawned.TryGetValue(data.ItemId, out var go))
             {
-                Debug.LogError("Failed to get object from pool");
+                Debug.LogError($"Failed to find client spawned item with id: {data.ItemId}");
                 return;
             }
+            go.transform.rotation = Quaternion.identity;
             var configData = _collectObjectDataConfig.GetCollectObjectData(data.ItemCollectConfigId);
             //var collectItemCustomData = data.GetCustomData<CollectItemCustomData>();
             var buff = configData.buffExtraData.buffType == BuffType.Random? _randomBuffConfig.GetBuff(configData.buffExtraData):_constantBuffConfig.GetBuffData(configData.buffExtraData.buffId);
@@ -801,7 +798,8 @@ namespace HotUpdate.Scripts.Collector
             // 确保位置正确设置
             go.transform.position = position;
             component.ItemId = data.ItemId;
-            _clientCollectObjectControllers.Add(data.ItemId, component);
+            go.gameObject.SetActive(true);
+            _clientCollectObjectControllers.TryAdd(data.ItemId, component);
         }
 
         private void InitializeGrid()

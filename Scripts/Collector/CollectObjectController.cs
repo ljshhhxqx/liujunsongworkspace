@@ -15,7 +15,7 @@ using VContainer;
 
 namespace HotUpdate.Scripts.Collector
 {
-    public class CollectObjectController : CollectObject
+    public class CollectObjectController : CollectObject, IPooledObject
     {
         private PooledObject _pooledObject;
         private CollectParticlePlayer _collectParticlePlayer;
@@ -28,7 +28,7 @@ namespace HotUpdate.Scripts.Collector
         [SerializeField]
         private Renderer fillRenderer;
         private LayerMask _playerLayer;  
-        
+        private CollectCollider _collectCollider;
         
         public int CollectConfigId => collectConfigId;
         public override Collider Collider => _collider;
@@ -76,25 +76,39 @@ namespace HotUpdate.Scripts.Collector
             _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
             _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
             _interactSystem = FindObjectOfType<InteractSystem>();
-            var collectCollider = GetComponentInChildren<CollectCollider>();
-            if (!collectCollider)
+            _collectCollider = GetComponentInChildren<CollectCollider>();
+            if (!_collectCollider)
             {
                 Debug.LogError("Collider not found");
                 return;
             }
 
-
             if (isClient)
             {
                 _collectAnimationComponent?.Play();
                 Debug.Log("Local player animation");
-                _collider = collectCollider.GetComponent<Collider>();
+                _collider = _collectCollider.GetComponent<Collider>();
                 _collider.enabled = true;
                 _disposable = _collider.OnTriggerEnterAsObservable()
                     .Subscribe(OnTriggerEnterObserver)
                     .AddTo(this);
             }
             CollectObjectData = collectObjectDataConfig.GetCollectObjectData(collectConfigId);
+        }
+
+        private void OnEnable()
+        {
+            if (isClient && !IsInUse)
+            {
+                IsInUse = true;
+                _collectAnimationComponent?.Play();
+                Debug.Log("Local player animation");
+                _collider = _collectCollider.GetComponent<Collider>();
+                _collider.enabled = true;
+                _disposable = _collider.OnTriggerEnterAsObservable()
+                    .Subscribe(OnTriggerEnterObserver)
+                    .AddTo(this);
+            }
         }
 
         public override void OnStartClient()
@@ -106,18 +120,14 @@ namespace HotUpdate.Scripts.Collector
         [ClientRpc]
         public void RpcRecycleItem()
         {
+            IsInUse = false;
+            Debug.Log($"Recycle item ---- {gameObject.name} --- {netId}");
             if (_collider)
             {
                 _collider.enabled = false;
             }
-
-            if (isServer)
-            {
-                return;
-            }
-            GameObjectPoolManger.Instance.ReturnObject(gameObject);
-            //_collectParticlePlayer.Play(_collectAnimationComponent.OutlineColorValue);
-            //DelayInvoker.DelayInvoke(0.75f, ReturnToPool);
+            _disposable?.Dispose();
+            gameObject.SetActive(false);
         }
         
         private void OnTriggerEnterObserver(Collider other)
@@ -187,5 +197,12 @@ namespace HotUpdate.Scripts.Collector
             // }
 #endif
         }
+
+        public bool IsInUse { get; private set; } = true;
+    }
+
+    public interface IPooledObject
+    {
+        bool IsInUse { get; }
     }
 }
