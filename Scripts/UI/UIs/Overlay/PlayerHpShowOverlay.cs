@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using HotUpdate.Scripts.Tool.Static;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;

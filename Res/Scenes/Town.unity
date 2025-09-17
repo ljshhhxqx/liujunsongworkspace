@@ -7709,8 +7709,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43c52680fce632a4cb16f5fae6b9a592, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dontDestroyOnLoad: 0
-  runInBackground: 0
+  dontDestroyOnLoad: 1
+  runInBackground: 1
   headlessStartMode: 1
   editorAutoStart: 0
   sendRate: 60
@@ -7735,7 +7735,6 @@ MonoBehaviour:
   - {fileID: 1021588353636906, guid: cdbe4e1d8050a324a9abd6b8fb0d5cc0, type: 3}
   - {fileID: 1021588353636906, guid: 9eb3b7c5a90756040a64840247a26390, type: 3}
   - {fileID: 1021588353636906, guid: 2d712160526d36a4fa9a8a6141ed9754, type: 3}
-  - {fileID: 8351228888613827031, guid: 391df4eaddd698147855bc9b2f48dc89, type: 3}
   - {fileID: 1305883699301654, guid: 0d16df38063ecd84d80bb0599ca421e9, type: 3}
   - {fileID: 1305883699301654, guid: 77fd66157e9e6df418a49b2fb83ea553, type: 3}
   - {fileID: 1305883699301654, guid: 2a63eabf160c4a04a90462ff5e149102, type: 3}

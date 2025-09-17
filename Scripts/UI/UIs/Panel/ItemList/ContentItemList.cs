@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
-using UI.UIs.Common;
-using UniRx;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
