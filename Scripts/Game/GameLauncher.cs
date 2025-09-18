@@ -8,6 +8,7 @@ using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.SecondPanel;
@@ -21,6 +22,7 @@ using PlayFab.CloudScriptModels;
 using Sirenix.OdinInspector;
 using Tool.GameEvent;
 using UI.UIBase;
+using UI.UIs;
 using UI.UIs.Exception;
 using UI.UIs.SecondPanel;
 using UnityEngine;
@@ -58,12 +60,10 @@ namespace HotUpdate.Scripts.Game
         private async UniTask ResourcesLoadedCallback()
         {
             _gameEventManager.Publish(new GameResourceLoadedEvent());
-            await _gameSceneManager.LoadScene("Town");
-            _playerDataManager.TestInitRoomPlayer();
+            // await _gameSceneManager.LoadScene("Town");
+            // _playerDataManager.TestInitRoomPlayer();
             // async UniTask
-            // var prefab = await _resourceManager.GetGameMap();
-            // Instantiate(prefab);
-            //_uiManager.SwitchUI<LoginScreenUI>();
+            _uiManager.SwitchUI<LoginScreenUI>();
         }
         
 

@@ -75,14 +75,18 @@ namespace HotUpdate.Scripts.UI.UIBase
                 foreach (var t in uiObjects)
                 {
                     var ui = t.GetComponent<ScreenUIBase>();
-                    if (ui && _uIPrefabs.All(t1 => t1.Type != ui.Type))
-                    {
-                        _uIPrefabs.Add(ui);
-                    }
-                    else
+                    if (ui == null)
                     {
                         Debug.Log($"UI对象{t.gameObject.name}没有ScreenUIBase组件");
+                        continue;
                     }
+                    var otherUI = _uIPrefabs.Find(t1 => t1.Type == ui.Type);
+                    if (otherUI)
+                    {
+                        Debug.Log($"UI对象{otherUI.Type}已经存在");
+                        continue;
+                    }
+                    _uIPrefabs.Add(ui);
                 }
                 return;
             }

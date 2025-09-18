@@ -3658,7 +3658,7 @@ GameObject:
   - component: {fileID: 6960134930786872299}
   - component: {fileID: 2994284043663008271}
   m_Layer: 5
-  m_Name: RoomUI
+  m_Name: RoomScreenUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

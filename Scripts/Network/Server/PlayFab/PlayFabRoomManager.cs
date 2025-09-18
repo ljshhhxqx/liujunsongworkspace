@@ -6,7 +6,9 @@ using Data;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.UI.UIBase;
+using HotUpdate.Scripts.UI.UIs.Panel;
 using Network.Data;
+using Network.Server.PlayFab;
 using PlayFab;
 using PlayFab.CloudScriptModels;
 using PlayFab.MultiplayerModels;
@@ -14,9 +16,8 @@ using UI.UIBase;
 using UI.UIs.Panel;
 using UnityEngine;
 using VContainer;
-using EntityKey = PlayFab.CloudScriptModels.EntityKey;
 
-namespace Network.Server.PlayFab
+namespace HotUpdate.Scripts.Network.Server.PlayFab
 {
     public class PlayFabRoomManager
     {
@@ -210,7 +211,7 @@ namespace Network.Server.PlayFab
                     _currentRoomData = roomData;
                     OnCreateRoom?.Invoke(roomData);
                 });
-                Debug.Log("房间创建成功");
+                Debug.Log($"房间创建成功，房间ID: {CurrentRoomId}");
             }
         }
 

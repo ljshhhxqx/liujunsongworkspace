@@ -3,6 +3,7 @@ using Game;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
 using HotUpdate.Scripts.UI.UIBase;

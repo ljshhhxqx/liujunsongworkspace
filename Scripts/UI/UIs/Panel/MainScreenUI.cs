@@ -1,6 +1,7 @@
 ﻿using System;
 using AOTScripts.Tool;
 using Data;
+using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.SecondPanel;
@@ -45,11 +46,11 @@ namespace UI.UIs.Panel
         public override UICanvasType CanvasType => UICanvasType.Panel;
 
         [Inject]
-        private void Init(UIManager uiManager, PlayFabRoomManager playFabRoomManager, RepeatedTask repeatedTask, PlayFabAccountManager playFabAccountManager)
+        private void Init(UIManager uiManager, PlayFabRoomManager playFabRoomManager, PlayFabAccountManager playFabAccountManager)
         {
             _uiManager = uiManager;
             _playFabRoomManager = playFabRoomManager;
-            _repeatedTask = repeatedTask;
+            _repeatedTask = RepeatedTask.Instance;
             _playFabAccountManager = playFabAccountManager;
             _playFabRoomManager.OnMatchmakingChanged += OnMatchmakingChanged;
             matchButton.BindDebouncedListener(OnMatchButtonClick);
@@ -63,6 +64,8 @@ namespace UI.UIs.Panel
 
         private void OnInfoButtonClick()
         {
+            _uiManager.ShowTips("敬请期待！");
+            return;
             _uiManager.SwitchUI<PlayerInfoScreenUI>();
         }
 
@@ -114,6 +117,7 @@ namespace UI.UIs.Panel
 
         private void OnMatchButtonClick()
         {
+            _uiManager.ShowTips("敬请期待！");
             return;
             if (!_playFabRoomManager.IsMatchmaking)
             {
@@ -131,11 +135,6 @@ namespace UI.UIs.Panel
             timerText.text = _timeSpan.ToString(@"mm\\:ss");
             _timer += 1f;
             Debug.Log($"Matchmaking: {_timer}");
-        }
-        
-        private void OnDestroy()
-        {
-            _playFabRoomManager.OnMatchmakingChanged -= OnMatchmakingChanged;
         }
     }
 }

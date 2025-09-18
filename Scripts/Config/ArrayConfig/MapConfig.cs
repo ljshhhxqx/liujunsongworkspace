@@ -34,10 +34,15 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             return new MapConfigData();
         }
 
-        public IEnumerable<MapConfigData> GetMapConfigDatas(Func<MapConfigData, bool> predicate)
+        public IEnumerable<MapConfigData> GetMapConfigDatas(Func<MapConfigData, bool> predicate = null)
         {
             foreach (var data in mapConfigData)
             {
+                if (predicate == null)
+                {
+                    yield return data;
+                    continue;
+                }
                 if (predicate(data))
                 {
                     yield return data;

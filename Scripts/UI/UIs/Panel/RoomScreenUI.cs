@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using AOTScripts.Tool;
 using Data;
+using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
@@ -10,12 +10,11 @@ using Network.Data;
 using Network.Server.PlayFab;
 using TMPro;
 using UI.UIBase;
-using UI.UIs.Common;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
 
-namespace UI.UIs.Panel
+namespace HotUpdate.Scripts.UI.UIs.Panel
 {
     public class RoomScreenUI : ScreenUIBase
     {
@@ -37,16 +36,16 @@ namespace UI.UIs.Panel
         private ContentItemList roomContentListPrefab;
         
         public override UIType Type => UIType.RoomScreen;
-        public override UICanvasType CanvasType => UICanvasType.Panel;
+        public override UICanvasType CanvasType => UICanvasType.SecondPanel;
 
         [Inject]
-        private void Init(UIManager uiManager, PlayFabRoomManager playFabRoomManager, PlayFabAccountManager playFabAccountManager, RepeatedTask repeatedTask)
+        private void Init(UIManager uiManager, PlayFabRoomManager playFabRoomManager, PlayFabAccountManager playFabAccountManager)
         {
             // TODO: Implement RoomScreenUI
             _uiManager = uiManager;
             _playFabAccountManager = playFabAccountManager;
             _playFabRoomManager = playFabRoomManager;
-            _refreshTask = repeatedTask;
+            _refreshTask = RepeatedTask.Instance;
             _playFabRoomManager.OnPlayerJoined += OnSetRoomInfo;
             _playFabRoomManager.OnRefreshPlayers += OnRefreshPlayers;
             quitButton.BindDebouncedListener(() => _playFabRoomManager.LeaveRoom());

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Tool;
 using Data;
+using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
@@ -28,7 +29,7 @@ namespace UI.UIs.Panel
         [SerializeField]
         private TMP_InputField searchInputField;
         private List<RoomData> _roomList;
-        public override UIType Type => UIType.RoomScreen;
+        public override UIType Type => UIType.RoomList;
         public override UICanvasType CanvasType => UICanvasType.Panel;
         
         [Inject]

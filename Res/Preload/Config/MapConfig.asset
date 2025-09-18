@@ -25,7 +25,3 @@ MonoBehaviour:
     maxPlayer: 4
     minPlayer: 1
     availableWeather: 01000000020000000300000004000000
-  - mapType: 1
-    maxPlayer: 8
-    minPlayer: 1
-    availableWeather: 01000000020000000300000004000000

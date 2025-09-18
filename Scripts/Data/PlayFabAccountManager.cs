@@ -46,7 +46,7 @@ namespace Data
         private void OnGameResourceLoaded(GameResourceLoadedEvent gameResourceLoadedEvent)
         {
             _jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
-            PlayFabData.IsDevelopMode.Value = PlayerPrefs.GetInt(_jsonDataConfig.GameConfig.developKey, 0) == 1;
+            PlayFabData.IsDevelopMode.Value = PlayerPrefs.GetInt(_jsonDataConfig.GameConfig.developKey) == 1;
         }
 
         public void Register(RegisterData data)
@@ -95,7 +95,7 @@ namespace Data
         public void Login(AccountData data)
         {
             PlayFabData.IsLoggedIn.Value = false;
-            var isDevelop = PlayerPrefs.GetInt(_jsonDataConfig.GameConfig.developKey, 0) == 1;
+            var isDevelop = PlayerPrefs.GetInt(_jsonDataConfig.GameConfig.developKey) == 1;
             _uiManager.SwitchLoadingPanel(true);
             if (!isDevelop)
             {
@@ -226,7 +226,7 @@ namespace Data
             int developValue;
 #if UNITY_EDITOR
             developValue = 1;
-            PlayerPrefs.SetInt(_jsonDataConfig.GameConfig.developKeyValue, developValue);
+            PlayerPrefs.SetInt(_jsonDataConfig.GameConfig.developKey, developValue);
             _uiManager.ShowTips($"密钥设置成功，当前模式为：开发模式");
             return;
 #endif

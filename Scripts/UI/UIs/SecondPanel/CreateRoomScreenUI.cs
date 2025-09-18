@@ -5,6 +5,7 @@ using Data;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.UI.UIBase;
 using Network.Server.PlayFab;
 using TMPro;
@@ -40,7 +41,9 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         private TMP_Dropdown mapTime;
         [SerializeField]
         private TMP_Dropdown mapScore;
-        
+
+        [SerializeField] private GameObject timeGo;
+        [SerializeField] private GameObject scoreGo;
         public override UIType Type => UIType.CreateRoom;
         public override UICanvasType CanvasType => UICanvasType.SecondPanel;
 
@@ -55,7 +58,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             });
             var jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             var config = configProvider.GetConfig<MapConfig>();
-            var mapConfigDatas = config.GetMapConfigDatas(_ => true).ToList();
+            var mapConfigDatas = config.GetMapConfigDatas().ToList();
             var gameModeData = jsonDataConfig.GameModeData;
             var options = new List<TMP_Dropdown.OptionData>();
             foreach (var configData in mapConfigDatas)
@@ -66,11 +69,14 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             mapDropdown.AddOptions(options);
             mapDropdown.onValueChanged.AddListener(value =>
             {
-                maxPlayersDropdown.gameObject.SetActive(value > 0);
                 var configMap = config.GetMapConfigData((MapType)value);
                 maxPlayersDropdown.ClearOptions();
                 maxPlayersDropdown.AddOptions(GetDropdownOptions(configMap.maxPlayer, configMap.minPlayer));
             });
+            mapDropdown.value = 0;
+            var configMap = config.GetMapConfigData(MapType.Town);
+            maxPlayersDropdown.ClearOptions();
+            maxPlayersDropdown.AddOptions(GetDropdownOptions(configMap.maxPlayer, configMap.minPlayer));
             
             mapTime.ClearOptions();
             var optionsTime = new List<TMP_Dropdown.OptionData>();
@@ -88,28 +94,34 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             }
             mapScore.AddOptions(optionsScore);
 
+            mapMode.ClearOptions();
+            var optionsMode = new List<TMP_Dropdown.OptionData>();
+            optionsMode.Add(new TMP_Dropdown.OptionData(GameMode.Time.ToString()));
+            optionsMode.Add(new TMP_Dropdown.OptionData(GameMode.Score.ToString()));
+            mapMode.AddOptions(optionsMode);
             mapMode.onValueChanged.AddListener(value =>
             {
-                mapScore.gameObject.SetActive(value == (int)GameMode.Score);
-                mapTime.gameObject.SetActive(value == (int)GameMode.Time);
+                scoreGo.SetActive(value == (int)GameMode.Score);
+                timeGo.SetActive(value == (int)GameMode.Time);
             });
+            scoreGo.SetActive(false);
+            timeGo.SetActive(true);
             createRoomButton.BindDebouncedListener(() =>
             {
                 var time = int.Parse(mapTime.options[mapTime.value].text);
                 var score = int.Parse(mapScore.options[mapScore.value].text);
-                _playFabRoomManager.CreateRoom(new RoomCustomInfo
-                {
-                    RoomName = string.IsNullOrEmpty(roomNameInputField.text)
-                        ? roomNameInputField.placeholder.GetComponent<TextMeshProUGUI>().text
-                        : roomNameInputField.text,
-                    RoomPassword = roomPasswordInputField.text,
-                    RoomType = publicToggle.isOn ? 0 : 1,
-                    MaxPlayers = int.Parse(maxPlayersDropdown.options[maxPlayersDropdown.value].text),
-                    MapType = int.Parse(mapDropdown.options[mapDropdown.value].text),
-                    GameMode = int.Parse(mapMode.options[mapMode.value].text),
-                    GameTime = time,
-                    GameScore = score
-                });
+                var customInfo = new RoomCustomInfo();
+                customInfo.RoomName = string.IsNullOrEmpty(roomNameInputField.text)
+                    ? roomNameInputField.placeholder.GetComponent<TextMeshProUGUI>().text
+                    : roomNameInputField.text;
+                customInfo.RoomPassword = string.IsNullOrEmpty(roomPasswordInputField.text) ? "" : roomPasswordInputField.text;
+                customInfo.RoomType = publicToggle.isOn ? 0 : 1;
+                customInfo.MaxPlayers = int.Parse(maxPlayersDropdown.options[maxPlayersDropdown.value].text);
+                customInfo.MapType = mapDropdown.value;
+                customInfo.GameMode = mapMode.value;
+                customInfo.GameTime = time;
+                customInfo.GameScore = score;
+                _playFabRoomManager.CreateRoom(customInfo);
             });
         }
 
@@ -125,6 +137,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         
         private void OnDestroy()
         {
+            mapMode.onValueChanged.RemoveAllListeners();
             mapDropdown.onValueChanged.RemoveAllListeners();
         }
     }
