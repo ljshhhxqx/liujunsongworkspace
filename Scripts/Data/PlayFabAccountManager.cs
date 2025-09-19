@@ -1,18 +1,16 @@
 using System;
 using AOTScripts.Tool;
-using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
+using HotUpdate.Scripts.UI.UIs.Panel;
 using Network.Data;
 using Network.Server.PlayFab;
 using PlayFab;
 using PlayFab.ClientModels;
 using PlayFab.CloudScriptModels;
 using Tool.GameEvent;
-using UI.UIBase;
 using UI.UIs;
-using UI.UIs.Panel;
 using UnityEngine;
 using VContainer;
 using EntityKey = PlayFab.CloudScriptModels.EntityKey;
@@ -176,17 +174,18 @@ namespace Data
 
         private void OnPlayerDataSuccess(ExecuteCloudScriptResult result)
         {
-            
             var data = result.FunctionResult.ParseCloudScriptResultToDic();
             foreach (var key in data.Keys)
             {
                 if (key == "internalData")
                 {
                     PlayFabData.PlayerInternalData.Value = JsonUtility.FromJson<PlayerInternalData>(data[key].ToString());
+                    Debug.Log("Player Internal Data Success" + PlayFabData.PlayerInternalData.Value.ToString());
                 }
                 else if (key == "readOnlyData")
                 {
                     PlayFabData.PlayerReadOnlyData.Value = JsonUtility.FromJson<PlayerReadOnlyData>(data[key].ToString());
+                    Debug.Log("Player ReadOnly Data Success" + PlayFabData.PlayerReadOnlyData.Value.ToString());
                 }
             }
             Debug.Log("Player Data Success");

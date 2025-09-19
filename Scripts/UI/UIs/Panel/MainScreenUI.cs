@@ -1,19 +1,22 @@
 ﻿using System;
 using AOTScripts.Tool;
+using Cysharp.Threading.Tasks;
 using Data;
 using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.SecondPanel;
-using Network.Server.PlayFab;
+using Network.Data;
 using TMPro;
 using UI.UIBase;
+using UI.UIs;
 using UI.UIs.SecondPanel;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
 
-namespace UI.UIs.Panel
+namespace HotUpdate.Scripts.UI.UIs.Panel
 {
     public class MainScreenUI : ScreenUIBase
     {
@@ -38,16 +41,23 @@ namespace UI.UIs.Panel
         private TextMeshProUGUI timerText;
         [SerializeField] 
         private TextMeshProUGUI infoText;
+        [SerializeField] 
+        private TextMeshProUGUI idText;
+        [SerializeField] 
+        private TextMeshProUGUI nameText;
         private float _timer;
         private RepeatedTask _repeatedTask;
         private TimeSpan _timeSpan;
-        
+        private string _idTitle;
+        private string _nameTitle;
         public override UIType Type => UIType.Main;
         public override UICanvasType CanvasType => UICanvasType.Panel;
 
         [Inject]
         private void Init(UIManager uiManager, PlayFabRoomManager playFabRoomManager, PlayFabAccountManager playFabAccountManager)
         {
+            _idTitle =idText.text;
+            _nameTitle = nameText.text;
             _uiManager = uiManager;
             _playFabRoomManager = playFabRoomManager;
             _repeatedTask = RepeatedTask.Instance;
@@ -60,6 +70,12 @@ namespace UI.UIs.Panel
             infoButton.BindDebouncedListener(OnInfoButtonClick);
             logoutButton.BindDebouncedListener(OnLogoutButtonClick);
             quitButton.BindDebouncedListener(OnQuitButtonClick);
+            PlayFabData.PlayerReadOnlyData.Subscribe(value =>
+                {
+                    idText.text = _idTitle + value.PlayerId;
+                    nameText.text = _nameTitle + value.Nickname;
+                })
+                .AddTo(this);
         }
 
         private void OnInfoButtonClick()

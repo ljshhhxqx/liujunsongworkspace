@@ -23,7 +23,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
             addFriendBtn.onClick.RemoveAllListeners();
             if (data is RoomMemberItemData roomMemberItemData)
             {
-                nameText.text = roomMemberItemData.Name;
+                Debug.Log($"SetData: {roomMemberItemData}");
+                nameText.text = string.IsNullOrEmpty(roomMemberItemData.Name) ? "" : roomMemberItemData.PlayerId;
                 levelText.text = $"Lv{roomMemberItemData.Level}";
                 addFriend.SetActive(roomMemberItemData.IsFriend && !roomMemberItemData.IsSelf);
                 friend.SetActive(roomMemberItemData.IsFriend);

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using AOTScripts.Tool;
 using Data;
 using HotUpdate.Scripts.Network.Server.PlayFab;
@@ -51,7 +52,12 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             quitButton.BindDebouncedListener(() => _playFabRoomManager.LeaveRoom());
             startButton.BindDebouncedListener(() => _playFabRoomManager.StartGame());
             refreshButton.BindDebouncedListener(() => _playFabRoomManager.GetInvitablePlayers());
-            _refreshTask.StartRepeatingTask(AutoRefresh, 2.5f);
+            _refreshTask.StartRepeatingTask(AutoRefresh, 3f);
+            
+            playFabRoomManager.OnCreateRoom += OnSetRoomInfo;
+            playFabRoomManager.OnJoinRoom += OnSetRoomInfo;
+            playFabRoomManager.OnRefreshPlayers += OnRefreshPlayers;
+            playFabRoomManager.OnPlayerJoined += OnSetRoomInfo;
         }
         
         private void AutoRefresh()
@@ -82,18 +88,23 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             if (roomInfo.PlayersInfo != null)
             {
                 roomNameText.text = roomInfo.RoomCustomInfo.RoomName;
-                if (roomInfo.PlayersInfo is { Count: > 0 })
+                if (roomInfo.PlayersInfo is { Length: > 0 })
                 {
-                    var list = roomInfo.PlayersInfo.Select(player => new RoomMemberItemData
+                    var dic = new Dictionary<int, RoomMemberItemData>();
+                    for (int i = 0; i < roomInfo.PlayersInfo.Length; i++)
                     {
-                        Id = player.Id,
-                        Name = player.Nickname,
-                        PlayerId = player.PlayerId,
-                        Level = player.Level,
-                        IsFriend = false,
-                        IsSelf = player.PlayerId == PlayFabData.PlayFabId.Value,
-                    }).ToDictionary(x => x.Id, x => x);
-                    roomContentListPrefab.SetItemList(list);
+                        var player = roomInfo.PlayersInfo[i];
+                        var playerInfo = JsonUtility.FromJson<PlayerReadOnlyData>(player);
+                        var itemData = new RoomMemberItemData();
+                        itemData.Id = playerInfo.Id;
+                        itemData.Name = playerInfo.Nickname;
+                        itemData.PlayerId = playerInfo.PlayerId;
+                        itemData.Level = playerInfo.Level;
+                        itemData.IsFriend = false;
+                        itemData.IsSelf = playerInfo.PlayerId == PlayFabData.PlayFabId.Value;
+                        dic.Add(itemData.Id, itemData);
+                    }
+                    roomContentListPrefab.SetItemList(dic);
                 }
                 return;
             }
@@ -105,6 +116,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         {
             _playFabRoomManager.OnPlayerJoined -= OnSetRoomInfo;
             _playFabRoomManager.OnRefreshPlayers -= OnRefreshPlayers;
+            _playFabRoomManager.OnCreateRoom -= OnSetRoomInfo;
+            _playFabRoomManager.OnJoinRoom -= OnSetRoomInfo;
             _refreshTask.StopRepeatingTask(AutoRefresh);
         }
     }

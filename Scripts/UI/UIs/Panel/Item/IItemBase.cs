@@ -96,6 +96,17 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         {
             return HashCode.Combine(PlayerId, Name, Level, IsFriend, IsSelf, OnAddFriendClick);
         }
+        
+        public override string ToString()
+        {
+            var stringBuilder = new StringBuilder();
+            stringBuilder.AppendFormat("玩家ID：{0}\n", PlayerId);
+            stringBuilder.AppendFormat("玩家昵称：{0}\n", Name);
+            stringBuilder.AppendFormat("玩家等级：{0}\n", Level);
+            stringBuilder.AppendFormat("是否为好友：{0}\n", IsFriend);
+            stringBuilder.AppendFormat("是否为自己：{0}\n", IsSelf);
+            return stringBuilder.ToString();
+        }
     }
     
     public struct RoomInviteItemData : IItemBaseData, IEquatable<RoomInviteItemData>

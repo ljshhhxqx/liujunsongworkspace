@@ -11,6 +11,11 @@ namespace Data
         public int TotalPlayTime; // 以分钟为单位
         public string AccountCreationDate;
         public string CurrentRoomId; // 如果玩家在房间中，存储房间ID
+        
+        public override string ToString()
+        {
+            return  $"PlayerId: {PlayerId}, LastLoginTime: {LastLoginTime}, TotalPlayTime: {TotalPlayTime}, AccountCreationDate: {AccountCreationDate}, CurrentRoomId: {CurrentRoomId}";
+        }
     }
 
     [Serializable]
@@ -21,12 +26,17 @@ namespace Data
         public string Email;
         public int Level;
         public int Score;
-        // public int Experience;
-        // public int Coins;
-        // public int Gems;
+        public int Experience;
+        public int Coins;
+        public int Gems;
         public int ModifyNameCount;
         public string Status; // 玩家状态
         public int Id;
+        
+        public override string ToString()
+        {
+            return  $"PlayerId: {PlayerId}, Nickname: {Nickname}, Email: {Email}, Level: {Level}, Score: {Score}, ModifyNameCount: {ModifyNameCount}, Status: {Status}, Gems: {Gems}, Coins: {Coins}, Experience: {Experience} Id: {Id}";
+        }
     }
 
     public enum PlayerStatus
@@ -65,7 +75,7 @@ namespace Data
     [Serializable]
     public struct RoomsData 
     {
-        public List<RoomData> AllRooms;
+        public RoomData[] AllRooms;
     }
 
     [Serializable]
@@ -97,7 +107,23 @@ namespace Data
         public RoomCustomInfo RoomCustomInfo;
         // 0: waiting, 1: gaming
         public int RoomStatus;
-        public List<PlayerReadOnlyData> PlayersInfo;
+        public string[] PlayersInfo;
+        
+        public override string ToString()
+        {
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine($"Id: {Id}");
+            sb.AppendLine($"RoomId: {RoomId}");
+            sb.AppendLine($"CreatorId: {CreatorId}");
+            sb.AppendLine($"CreatorName: {CreatorName}");
+            sb.AppendLine($"RoomCustomInfo: {RoomCustomInfo}");
+            sb.AppendLine($"RoomStatus: {RoomStatus}");
+            foreach (var p in PlayersInfo)
+            {
+                sb.AppendLine(p.ToString());
+            }
+            return sb.ToString();
+        }
     }
     
     public enum GameMode

@@ -13,7 +13,6 @@ using PlayFab;
 using PlayFab.CloudScriptModels;
 using PlayFab.MultiplayerModels;
 using UI.UIBase;
-using UI.UIs.Panel;
 using UnityEngine;
 using VContainer;
 
@@ -30,7 +29,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         private const int MaxPollAttempts = 12; // 最大轮询次数
         private RoomData _currentRoomData;
         public RoomsData RoomsData { get; private set; }
-        public string CurrentRoomId { get; private set; }
+        public static string CurrentRoomId { get; private set; }
         public bool IsMatchmaking {
             get => _isMatchmaking;
 
@@ -40,7 +39,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                 OnMatchmakingChanged?.Invoke(_isMatchmaking);
             }
         } 
-        public event Action<List<RoomData>> OnRefreshRoomData;
+        public event Action<RoomData[]> OnRefreshRoomData;
         public event Action<RoomData> OnCreateRoom;
         public event Action<RoomData> OnPlayerJoined;
         public event Action<RoomData> OnJoinRoom;
@@ -211,7 +210,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                     _currentRoomData = roomData;
                     OnCreateRoom?.Invoke(roomData);
                 });
-                Debug.Log($"房间创建成功，房间ID: {CurrentRoomId}");
+                Debug.Log($"房间创建成功，房间信息 -- {roomData}");
             }
         }
 
@@ -280,6 +279,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                     FunctionParameter = new { roomId = CurrentRoomId, playerId = PlayFabData.PlayFabId.Value },
                     GeneratePlayStreamEvent = true
                 };
+                Debug.Log($"{PlayFabData.PlayFabId.Value}离开房间");
                 _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnLeaveRoomSuccess, OnError);
             }
             else
@@ -297,9 +297,10 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                 var roomData = JsonUtility.FromJson<RoomData>(value.ToString());
                 _currentRoomData = roomData;
                 OnPlayerJoined?.Invoke(roomData);
-                CurrentRoomId = null;
+                _uiManager.CloseUI(UIType.RoomScreen);
                 _uiManager.SwitchUI<MainScreenUI>();
                 Debug.Log("退出房间成功");
+                CurrentRoomId = null;
             }
         }
         
@@ -364,6 +365,10 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
 
         public void RefreshRoomData()
         {
+            if (CurrentRoomId == null)
+            {
+                return;
+            }
             var request = new ExecuteEntityCloudScriptRequest
             {
                 FunctionName = "CheckPlayerOnline",
@@ -371,7 +376,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                 FunctionParameter = new { roomId = CurrentRoomId },
                 Entity = PlayFabData.EntityKey.Value,
             };
-            _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnRefreshRoomDataSuccess, OnError);
+            _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnRefreshRoomDataSuccess, OnError, false);
         }
 
         private void OnRefreshRoomDataSuccess(ExecuteCloudScriptResult result)

@@ -13,12 +13,15 @@ namespace Network.Server.PlayFab
 
         public void ExecuteCloudScript(ExecuteEntityCloudScriptRequest request,
             Action<ExecuteCloudScriptResult> successCallback,
-            Action<PlayFabError> errorCallback)
+            Action<PlayFabError> errorCallback,
+            bool showUI = true)
         {
-            _uiManager.SwitchLoadingPanel(true);
+            if (showUI)
+                _uiManager.SwitchLoadingPanel(true);
             PlayFabCloudScriptAPI.ExecuteEntityCloudScript(request, success =>
             {
-                _uiManager.SwitchLoadingPanel(false);
+                if (showUI)
+                    _uiManager.SwitchLoadingPanel(false);
                 if (success.Error != null)
                 {
                     throw new Exception($"{success.Error.Error}-${success.Error.Message}-${success.Error.StackTrace}");
@@ -26,7 +29,8 @@ namespace Network.Server.PlayFab
                 successCallback?.Invoke(success);
             }, error =>
             {
-                _uiManager.SwitchLoadingPanel(false);
+                if (showUI)
+                    _uiManager.SwitchLoadingPanel(false);
                 errorCallback?.Invoke(error);
             });
         }
@@ -36,6 +40,6 @@ namespace Network.Server.PlayFab
     {
         void ExecuteCloudScript(ExecuteEntityCloudScriptRequest request,
             Action<ExecuteCloudScriptResult> successCallback,
-            Action<PlayFabError> errorCallback);
+            Action<PlayFabError> errorCallback, bool showUI = true);
     }
 }

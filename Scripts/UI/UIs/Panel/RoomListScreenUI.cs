@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Tool;
 using Data;
@@ -7,15 +6,13 @@ using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
-using Network.Server.PlayFab;
 using TMPro;
 using UI.UIBase;
-using UI.UIs.Common;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
 
-namespace UI.UIs.Panel
+namespace HotUpdate.Scripts.UI.UIs.Panel
 {
     public class RoomListScreenUI : ScreenUIBase
     {
@@ -28,7 +25,7 @@ namespace UI.UIs.Panel
         private ContentItemList roomListContent;
         [SerializeField]
         private TMP_InputField searchInputField;
-        private List<RoomData> _roomList;
+        private RoomData[] _roomList;
         public override UIType Type => UIType.RoomList;
         public override UICanvasType CanvasType => UICanvasType.Panel;
         
@@ -55,7 +52,7 @@ namespace UI.UIs.Panel
             _playFabRoomManager.GetAllRooms();
         }
 
-        private void OnRefreshRoomList(List<RoomData> roomList)
+        private void OnRefreshRoomList(RoomData[] roomList)
         {
             _roomList = roomList;
             var dataArray = _playFabRoomManager.GetFilteredRooms(searchInputField.text)
@@ -66,7 +63,7 @@ namespace UI.UIs.Panel
                     RoomName = room.RoomCustomInfo.RoomName,
                     RoomType = room.RoomCustomInfo.RoomType == 0 ? "远程" : "本地",
                     RoomOwnerName = room.CreatorId,
-                    RoomStatus = $"{room.PlayersInfo.Count}/{room.RoomCustomInfo.MaxPlayers}({(room.RoomStatus == 0 ? "等待中" : "游戏中")})",
+                    RoomStatus = $"{room.PlayersInfo.Length}/{room.RoomCustomInfo.MaxPlayers}({(room.RoomStatus == 0 ? "等待中" : "游戏中")})",
                     HasPassword = string.IsNullOrEmpty(room.RoomCustomInfo.RoomPassword) ? "无" : "有",
                     OnJoinClick = roomId =>
                     {
