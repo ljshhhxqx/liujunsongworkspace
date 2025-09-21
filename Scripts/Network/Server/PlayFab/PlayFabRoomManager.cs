@@ -355,6 +355,12 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             var data = result.FunctionResult.ParseCloudScriptResultToDic();
             if (data.TryGetValue("players", out var value))
             {
+                var str = value.ToString();
+                if (str == "[]")
+                {
+                    _uiManager.ShowTips("当前没有可邀请的玩家");
+                    return;
+                }
                 var players = JsonUtility.FromJson<InvitablePlayersData>(value.ToString());
                 if (_uiManager.IsUIOpen(UIType.Room))
                 {

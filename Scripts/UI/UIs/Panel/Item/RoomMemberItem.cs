@@ -24,7 +24,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
             if (data is RoomMemberItemData roomMemberItemData)
             {
                 Debug.Log($"SetData: {roomMemberItemData}");
-                nameText.text = string.IsNullOrEmpty(roomMemberItemData.Name) ? "" : roomMemberItemData.PlayerId;
+                nameText.text = !string.IsNullOrEmpty(roomMemberItemData.Name) ? roomMemberItemData.Name : roomMemberItemData.PlayerId;
                 levelText.text = $"Lv{roomMemberItemData.Level}";
                 addFriend.SetActive(roomMemberItemData.IsFriend && !roomMemberItemData.IsSelf);
                 friend.SetActive(roomMemberItemData.IsFriend);
