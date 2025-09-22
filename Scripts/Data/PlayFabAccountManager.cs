@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Tool.GameEvent;
@@ -174,7 +175,7 @@ namespace Data
 
         private void OnPlayerDataSuccess(ExecuteCloudScriptResult result)
         {
-            var data = result.FunctionResult.ParseCloudScriptResultToDic();
+            var data = result.ParseCloudScriptResultToDic();
             foreach (var key in data.Keys)
             {
                 if (key == "internalData")
@@ -271,7 +272,7 @@ namespace Data
             {
                 throw new Exception($"{result.Error.Error}-${result.Error.Message}-${result.Error.StackTrace}");
             }
-            var data = result.FunctionResult.ParseCloudScriptResultToDic();
+            var data = result.ParseCloudScriptResultToDic();
             foreach (var value in data)
             {
                 if (value.Key == "readOnlyData")
@@ -280,6 +281,138 @@ namespace Data
                 }
             }
             Debug.Log("Modify NickName Success");
+        }
+        private List<FriendData> _friendDatas = new List<FriendData>();
+    
+        // 更改好友状态
+        public void ChangeFriendStatus(string friendId, FriendStatus status, Action<bool, string> callback = null)
+        {
+            ExecuteCloudScriptRequest request = new ExecuteCloudScriptRequest
+            {
+                FunctionName = "ChangeFriendStatus",
+                FunctionParameter = new { 
+                    friendId = friendId,
+                    status = status.ToString()
+                }
+            };
+            
+            PlayFabClientAPI.ExecuteCloudScript(request, result =>
+            {
+                Debug.Log("好友状态更改成功: " + result.FunctionResult.ToString());
+                RefreshFriendList(); // 刷新好友列表
+
+                callback?.Invoke(true, result.FunctionResult.ToString());
+            }, error =>
+            {
+                Debug.LogError("更改好友状态失败: " + error.ErrorMessage);
+
+                callback?.Invoke(false, error.ErrorMessage);
+            });
+        }
+        
+        // 同意好友请求
+        public void AcceptFriendRequest(string friendId)
+        {
+            ChangeFriendStatus(friendId, FriendStatus.Friends, (success, message) =>
+            {
+                if (success)
+                {
+                    // 更新UI或显示通知
+                    Debug.Log("已接受好友请求");
+                }
+            });
+        }
+        
+        // 拒绝好友请求
+        public void RejectFriendRequest(string friendId)
+        {
+            ChangeFriendStatus(friendId, FriendStatus.Blocked, (success, message) =>
+            {
+                if (success)
+                {
+                    // 更新UI或显示通知
+                    Debug.Log("已拒绝好友请求");
+                }
+            });
+        }
+        
+        // 删除好友
+        public void RemoveFriend(string friendId)
+        {
+            ChangeFriendStatus(friendId, FriendStatus.Blocked, (success, message) =>
+            {
+                if (success)
+                {
+                    // 更新UI或显示通知
+                    Debug.Log("已删除好友");
+                }
+            });
+        }
+        
+        public event Action<List<FriendData>> OnRefreshFriendList;
+        
+        // 获取好友列表
+        public void RefreshFriendList()
+        {
+            ExecuteCloudScriptRequest request = new ExecuteCloudScriptRequest
+            {
+                FunctionName = "GetFriendList"
+            };
+            
+            PlayFabClientAPI.ExecuteCloudScript(request, result =>
+            {
+                try
+                {
+                    // 解析好友列表
+                    var json = result.FunctionResult.ToString();
+                    var friendList = JsonUtility.FromJson<FriendList>(json);
+                    _friendDatas = friendList.Friends;
+                    
+                    // 更新UI或处理好友列表
+                    UpdateFriendUI();
+
+                    OnRefreshFriendList?.Invoke(_friendDatas);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("解析好友列表失败: " + e.Message);
+                    
+                    OnRefreshFriendList?.Invoke(_friendDatas);
+                }
+            }, error =>
+            {
+                Debug.LogError("获取好友列表失败: " + error.ErrorMessage);
+                
+                OnRefreshFriendList?.Invoke(_friendDatas);
+            });
+        }
+        
+        // 更新好友UI
+        private void UpdateFriendUI()
+        {
+            // 这里可以更新UI显示好友列表
+            // 例如：根据好友状态显示不同的UI元素
+            foreach (var friend in _friendDatas)
+            {
+                Debug.Log($"好友: {friend.Username}, 状态: {friend.Status}, 在线: {friend.PlayerStatus == PlayerStatus.Online}");
+            }
+        }
+        // 发送好友请求
+        public void SendFriendRequest(string playFabId)
+        {
+            ExecuteCloudScriptRequest request = new ExecuteCloudScriptRequest
+            {
+                FunctionName = "SendFriendRequest",
+                FunctionParameter = new { recipientId = playFabId }
+            };
+        
+            PlayFabClientAPI.ExecuteCloudScript(request, result =>
+            {
+                Debug.Log("好友请求发送成功");
+            }, error =>
+            {
+                Debug.LogError("发送好友请求失败: " + error.ErrorMessage);
+            });
         }
     }
 }

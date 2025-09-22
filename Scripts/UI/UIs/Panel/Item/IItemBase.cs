@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using AOTScripts.Tool.ObjectPool;
+using Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using UnityEngine;
@@ -81,10 +82,11 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public bool IsFriend;
         public bool IsSelf;
         public Action<string> OnAddFriendClick;
+        public Action<string> OnInviteClick;
 
         public bool Equals(RoomMemberItemData other)
         {
-            return PlayerId == other.PlayerId && Name == other.Name && Level == other.Level && IsFriend == other.IsFriend && IsSelf == other.IsSelf && Equals(OnAddFriendClick, other.OnAddFriendClick);
+            return PlayerId == other.PlayerId && Name == other.Name && Level == other.Level && IsFriend == other.IsFriend && IsSelf == other.IsSelf && Equals(OnAddFriendClick, other.OnAddFriendClick) && Equals(OnInviteClick, other.OnInviteClick);
         }
 
         public override bool Equals(object obj)
@@ -94,7 +96,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(PlayerId, Name, Level, IsFriend, IsSelf, OnAddFriendClick);
+            return HashCode.Combine(PlayerId, Name, Level, IsFriend, IsSelf, OnAddFriendClick, OnInviteClick);
         }
         
         public override string ToString()
@@ -116,10 +118,11 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public string Name;
         public int Level;
         public Action<string> OnInviteClick;
+        public Action<string> OnAddFriendClick;
 
         public bool Equals(RoomInviteItemData other)
         {
-            return PlayerId == other.PlayerId && Name == other.Name && Level == other.Level && Equals(OnInviteClick, other.OnInviteClick);
+            return PlayerId == other.PlayerId && Name == other.Name && Level == other.Level && Equals(OnInviteClick, other.OnInviteClick) && Equals(OnAddFriendClick, other.OnAddFriendClick);
         }
 
         public override bool Equals(object obj)
@@ -129,7 +132,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(PlayerId, Name, Level, OnInviteClick);
+            return HashCode.Combine(PlayerId, Name, Level, OnInviteClick, OnAddFriendClick);
         }
     }
 
@@ -396,6 +399,75 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
             hashCode.Add((int)PropertyType);
             hashCode.Add(DiffValue);
             return hashCode.ToHashCode();
+        }
+    }
+
+    public struct FriendItemData : IItemBaseData, IEquatable<FriendItemData>
+    {
+        public int Id;
+        public string PlayerId;
+        public string Name;
+        public int Level;
+        public PlayerStatus Status;
+        public bool IsBlackList;
+        public bool IsFriend;
+
+        public Action<string> OnReject;
+        public Action<string> OnAddFriend;
+        public Action<string> OnRemove;
+        public string IconUrl;
+        public string LastLoginTime;
+        public Action<string> OnAccept;
+
+        public bool Equals(FriendItemData other)
+        {
+            return Id == other.Id && PlayerId == other.PlayerId && Name == other.Name && Level == other.Level && Status == other.Status && IsFriend == other.IsFriend 
+                   && IsBlackList == other.IsBlackList && LastLoginTime == other.LastLoginTime && IconUrl == other.IconUrl && Equals(OnAccept, other.OnAccept) && Equals(OnReject, other.OnReject) && Equals(OnAddFriend, other.OnAddFriend) && OnRemove == other.OnRemove;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is FriendItemData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(Id);
+            hashCode.Add(PlayerId);
+            hashCode.Add(Name);
+            hashCode.Add(Level);
+            hashCode.Add(Status);
+            hashCode.Add(IsBlackList);
+            hashCode.Add(IsFriend);
+            hashCode.Add(IconUrl);
+            hashCode.Add(LastLoginTime);
+            return hashCode.ToHashCode();
+        }
+
+        public static bool operator ==(FriendItemData left, FriendItemData right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(FriendItemData left, FriendItemData right)
+        {
+            return !left.Equals(right);
+        }
+        
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormat("玩家ID：{0}\n", Id);
+            sb.AppendFormat("玩家Playfab ID：{0}\n", PlayerId);
+            sb.AppendFormat("玩家昵称：{0}\n", Name);
+            sb.AppendFormat("玩家等级：{0}\n", Level);
+            sb.AppendFormat("是否在线：{0}\n", Status);
+            sb.AppendFormat("是否黑名单：{0}\n", IsBlackList);
+            sb.AppendFormat("是否为好友：{0}\n", IsFriend);
+            sb.AppendFormat("头像地址：{0}\n", IconUrl);
+            sb.AppendFormat("最后登录时间：{0}\n", LastLoginTime);
+            return sb.ToString();
         }
     }
 }

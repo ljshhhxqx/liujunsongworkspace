@@ -38,19 +38,53 @@ namespace Data
             return  $"PlayerId: {PlayerId}, Nickname: {Nickname}, Email: {Email}, Level: {Level}, Score: {Score}, ModifyNameCount: {ModifyNameCount}, Status: {Status}, Gems: {Gems}, Coins: {Coins}, Experience: {Experience} Id: {Id}";
         }
     }
+    
+    // 好友关系状态
+    public enum FriendStatus
+    {
+        None = 0,       // 无关系
+        Friends = 1,    // 已是好友
+        Blocked = 2     // 已拒绝或删除
+    }
+    
+    // 好友数据
+    [Serializable]
+    public struct FriendData
+    {
+        public int Id;
+        public string PlayFabId;
+        public string Username;
+        public FriendStatus Status;
+        public DateTime LastOnline;
+        public PlayerStatus PlayerStatus;
+        public string IconUrl;
+        public int Level;
+
+        public FriendData(int id, string playFabId, string username, FriendStatus status, string iconUrl, int level, DateTime lastOnline, PlayerStatus playerStatus = PlayerStatus.Offline)
+        {
+            Id = id;
+            PlayFabId = playFabId;
+            Username = username;
+            Status = status;
+            LastOnline = lastOnline;
+            PlayerStatus = playerStatus;
+            IconUrl = iconUrl;
+            Level = level;
+        }
+    }
+
+    // 好友列表
+    [Serializable]
+    public struct FriendList
+    {
+        public List<FriendData> Friends;
+    }
 
     public enum PlayerStatus
     {
         Offline,
         Online,
         InGame
-    }
-
-    [Serializable]
-    //获取所有可邀请玩家信息
-    public struct InvitablePlayersData 
-    {
-         public List<PlayerReadOnlyData> Players;
     }
 
     [Serializable]

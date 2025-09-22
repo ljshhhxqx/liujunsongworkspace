@@ -87,7 +87,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
         public void SetItemList<T>(IDictionary<int, T> itemDict) where T : IItemBaseData, new()
         {
             itemPrefab.gameObject.SetActive(true);
-            foreach (var key in ItemBases.Keys)
+            foreach (var key in ItemBaseDatas.Keys)
             {
                 GameObjectPoolManger.Instance.ReturnObject(ItemBases[key].gameObject);
             }

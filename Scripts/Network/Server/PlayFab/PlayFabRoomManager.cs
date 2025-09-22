@@ -9,6 +9,7 @@ using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel;
 using Network.Data;
 using Network.Server.PlayFab;
+using Newtonsoft.Json;
 using PlayFab;
 using PlayFab.CloudScriptModels;
 using PlayFab.MultiplayerModels;
@@ -45,7 +46,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         public event Action<RoomData> OnJoinRoom;
         public event Action<RoomData> OnRefreshRoom;
         public event Action<bool> OnMatchmakingChanged;
-        public event Action<InvitablePlayersData> OnRefreshPlayers;
+        public event Action<PlayerReadOnlyData[]> OnRefreshPlayers;
         
         
         [Inject]
@@ -199,7 +200,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
 
         private void OnCreateRoomSuccess(ExecuteCloudScriptResult result)
         {
-            var data = result.FunctionResult.ParseCloudScriptResultToDic();
+            var data = result.ParseCloudScriptResultToDic();
 
             if (data.TryGetValue("roomData", out var value))
             {
@@ -291,7 +292,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
 
         private void OnLeaveRoomSuccess(ExecuteCloudScriptResult result)
         {
-            var data = result.FunctionResult.ParseCloudScriptResultToDic();
+            var data = result.ParseCloudScriptResultToDic();
             if (data.TryGetValue("roomData", out var value))
             {
                 var roomData = JsonUtility.FromJson<RoomData>(value.ToString());
@@ -318,7 +319,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
 
         private void OnGetAllRoomsSuccess(ExecuteCloudScriptResult result)
         {
-            var data = result.FunctionResult.ParseCloudScriptResultToDic();
+            var data = result.ParseCloudScriptResultToDic();
             if (data.TryGetValue("allRooms", out var value))
             {
                 var roomData = JsonUtility.FromJson<RoomsData>(value.ToString());
@@ -352,7 +353,8 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
 
         private void OnGetInvitablePlayersSuccess(ExecuteCloudScriptResult result)
         {
-            var data = result.FunctionResult.ParseCloudScriptResultToDic();
+            var data = result.ParseCloudScriptResultToDic();
+           
             if (data.TryGetValue("players", out var value))
             {
                 var str = value.ToString();
@@ -361,12 +363,14 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                     _uiManager.ShowTips("当前没有可邀请的玩家");
                     return;
                 }
-                var players = JsonUtility.FromJson<InvitablePlayersData>(value.ToString());
-                if (_uiManager.IsUIOpen(UIType.Room))
+                var players = JsonConvert.DeserializeObject<PlayerReadOnlyData[]>(value.ToString());
+                if (_uiManager.IsUIOpen(UIType.RoomScreen))
                 {
+                    players = players.Where(p => p.PlayerId != PlayFabData.PlayFabId.Value).ToArray();
                     OnRefreshPlayers?.Invoke(players);
                 }
             }
+            
         }
 
         public void RefreshRoomData()
@@ -387,7 +391,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
 
         private void OnRefreshRoomDataSuccess(ExecuteCloudScriptResult result)
         {
-            var data = result.FunctionResult.ParseCloudScriptResultToDic();
+            var data = result.ParseCloudScriptResultToDic();
             if (data.TryGetValue("roomData", out var value))
             {
                 var roomData = JsonUtility.FromJson<RoomData>(value.ToString());

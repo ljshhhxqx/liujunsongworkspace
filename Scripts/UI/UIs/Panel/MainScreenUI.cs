@@ -1,6 +1,5 @@
 ﻿using System;
 using AOTScripts.Tool;
-using Cysharp.Threading.Tasks;
 using Data;
 using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Tool.Coroutine;
@@ -37,6 +36,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         private Button quitButton;
         [SerializeField]
         private Button infoButton;
+        [SerializeField]
+        private Button friendButton;
         [SerializeField] 
         private TextMeshProUGUI timerText;
         [SerializeField] 
@@ -70,6 +71,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             infoButton.BindDebouncedListener(OnInfoButtonClick);
             logoutButton.BindDebouncedListener(OnLogoutButtonClick);
             quitButton.BindDebouncedListener(OnQuitButtonClick);
+            friendButton.BindDebouncedListener(OnFriendButtonClick);
             PlayFabData.PlayerReadOnlyData.Subscribe(value =>
                 {
                     idText.text = _idTitle + value.PlayerId;
@@ -78,10 +80,13 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                 .AddTo(this);
         }
 
+        private void OnFriendButtonClick()
+        {
+            _uiManager.SwitchUI<FriendScreenUI>();
+        }
+
         private void OnInfoButtonClick()
         {
-            _uiManager.ShowTips("敬请期待！");
-            return;
             _uiManager.SwitchUI<PlayerInfoScreenUI>();
         }
 

@@ -206,7 +206,7 @@ namespace HotUpdate.Scripts.Game
         {
             PlayerInternalData internalData;
             PlayerReadOnlyData readOnlyData;
-            var data = result.FunctionResult.ParseCloudScriptResultToDic();
+            var data = result.ParseCloudScriptResultToDic();
             foreach (var key in data.Keys)
             {
                 if (key == "internalData")

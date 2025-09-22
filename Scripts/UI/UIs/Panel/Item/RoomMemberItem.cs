@@ -1,5 +1,4 @@
 using TMPro;
-using UI.UIs.Common;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,20 +16,29 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         private GameObject friend;
         [SerializeField]
         private Button addFriendBtn;
+        [SerializeField]
+        private Button inviteBtn;
 
         public override void SetData<T>(T data)
         {
-            addFriendBtn.onClick.RemoveAllListeners();
+            addFriendBtn?.onClick.RemoveAllListeners();
+            inviteBtn?.onClick.RemoveAllListeners();
             if (data is RoomMemberItemData roomMemberItemData)
             {
                 Debug.Log($"SetData: {roomMemberItemData}");
                 nameText.text = !string.IsNullOrEmpty(roomMemberItemData.Name) ? roomMemberItemData.Name : roomMemberItemData.PlayerId;
                 levelText.text = $"Lv{roomMemberItemData.Level}";
-                addFriend.SetActive(roomMemberItemData.IsFriend && !roomMemberItemData.IsSelf);
-                friend.SetActive(roomMemberItemData.IsFriend);
-                addFriendBtn.onClick.AddListener(() => 
+                addFriend?.SetActive(roomMemberItemData.IsFriend && !roomMemberItemData.IsSelf);
+                friend?.SetActive(roomMemberItemData.IsFriend);
+                addFriendBtn?.onClick.AddListener(() => 
                 { 
                     // TODO: add friend logic
+                    roomMemberItemData.OnAddFriendClick?.Invoke(roomMemberItemData.PlayerId);
+                });
+                inviteBtn?.onClick.AddListener(() => 
+                { 
+                    // TODO: invite friend logic
+                    roomMemberItemData.OnInviteClick?.Invoke(roomMemberItemData.PlayerId);
                     
                 });
                 return;

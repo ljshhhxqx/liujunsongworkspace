@@ -30,11 +30,11 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         public override UICanvasType CanvasType => UICanvasType.Panel;
         
         [Inject]
-        private void Init(PlayFabRoomManager playFabRoomManager, UIManager uiManager, RepeatedTask repeatedTask)
+        private void Init(PlayFabRoomManager playFabRoomManager, UIManager uiManager)
         {
             _playFabRoomManager = playFabRoomManager;
             _uiManager = uiManager;
-            _repeatedTask = repeatedTask;
+            _repeatedTask = RepeatedTask.Instance;
             _playFabRoomManager.OnRefreshRoomData += OnRefreshRoomList;
             _repeatedTask.StartRepeatingTask(AutoRefresh, 5);
             refreshButton.BindDebouncedListener(() =>

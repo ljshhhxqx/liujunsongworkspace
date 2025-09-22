@@ -49,15 +49,13 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             _refreshTask = RepeatedTask.Instance;
             _playFabRoomManager.OnPlayerJoined += OnSetRoomInfo;
             _playFabRoomManager.OnRefreshPlayers += OnRefreshPlayers;
+            _playFabRoomManager.OnCreateRoom += OnSetRoomInfo;
+            _playFabRoomManager.OnJoinRoom += OnSetRoomInfo;
             quitButton.BindDebouncedListener(() => _playFabRoomManager.LeaveRoom());
             startButton.BindDebouncedListener(() => _playFabRoomManager.StartGame());
             refreshButton.BindDebouncedListener(() => _playFabRoomManager.GetInvitablePlayers());
             _refreshTask.StartRepeatingTask(AutoRefresh, 3f);
             
-            playFabRoomManager.OnCreateRoom += OnSetRoomInfo;
-            playFabRoomManager.OnJoinRoom += OnSetRoomInfo;
-            playFabRoomManager.OnRefreshPlayers += OnRefreshPlayers;
-            playFabRoomManager.OnPlayerJoined += OnSetRoomInfo;
         }
         
         private void AutoRefresh()
@@ -65,17 +63,20 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             _playFabRoomManager.RefreshRoomData();
         }
 
-        private void OnRefreshPlayers(InvitablePlayersData playersData)
+        private void OnRefreshPlayers(PlayerReadOnlyData[] playersData)
         {
-            if (playersData is { Players: { Count: > 0 } })
+            if (playersData is { Length: > 0 })
             {
-                var list = playersData.Players.Select(player => new RoomInviteItemData
+                var list = playersData.Select(player => new RoomMemberItemData
                 {
                     Id = player.Id,
                     Name = player.Nickname,
                     PlayerId = player.PlayerId,
                     Level = player.Level,
+                    IsFriend = false,
+                    IsSelf = player.PlayerId == PlayFabData.PlayFabId.Value,
                     OnInviteClick = playerId => _playFabRoomManager.InvitePlayer(playerId),
+                    OnAddFriendClick = playerId => _playFabAccountManager.SendFriendRequest(playerId),
                 }).ToDictionary(x => x.Id, x => x);
                 playerContentListPrefab.SetItemList(list);
                 return;
@@ -102,6 +103,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                         itemData.Level = playerInfo.Level;
                         itemData.IsFriend = false;
                         itemData.IsSelf = playerInfo.PlayerId == PlayFabData.PlayFabId.Value;
+                        itemData.OnInviteClick = playerId => _playFabRoomManager.InvitePlayer(playerId);
+                        itemData.OnAddFriendClick = playerId => _playFabAccountManager.SendFriendRequest(playerId);
                         dic.Add(itemData.Id, itemData);
                     }
                     roomContentListPrefab.SetItemList(dic);
