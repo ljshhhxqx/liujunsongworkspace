@@ -76,7 +76,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                     IsFriend = false,
                     IsSelf = player.PlayerId == PlayFabData.PlayFabId.Value,
                     OnInviteClick = playerId => _playFabRoomManager.InvitePlayer(playerId),
-                    OnAddFriendClick = playerId => _playFabAccountManager.SendFriendRequest(playerId),
+                    OnAddFriendClick = playerId => _playFabAccountManager.SendFriendRequest(player.Id,playerId),
                 }).ToDictionary(x => x.Id, x => x);
                 playerContentListPrefab.SetItemList(list);
                 return;
@@ -104,7 +104,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                         itemData.IsFriend = false;
                         itemData.IsSelf = playerInfo.PlayerId == PlayFabData.PlayFabId.Value;
                         itemData.OnInviteClick = playerId => _playFabRoomManager.InvitePlayer(playerId);
-                        itemData.OnAddFriendClick = playerId => _playFabAccountManager.SendFriendRequest(playerId);
+                        itemData.OnAddFriendClick = playerId => _playFabAccountManager.SendFriendRequest(playerInfo.Id,playerId);
                         dic.Add(itemData.Id, itemData);
                     }
                     roomContentListPrefab.SetItemList(dic);

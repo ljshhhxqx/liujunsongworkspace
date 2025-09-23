@@ -409,20 +409,20 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public string Name;
         public int Level;
         public PlayerStatus Status;
-        public bool IsBlackList;
-        public bool IsFriend;
+        public FriendStatus FriendStatus;
 
-        public Action<string> OnReject;
-        public Action<string> OnAddFriend;
-        public Action<string> OnRemove;
+        public Action<int, string> OnReject;
+        public Action<int, string> OnAddFriend;
+        public Action<int, string> OnRemove;
         public string IconUrl;
         public string LastLoginTime;
-        public Action<string> OnAccept;
+        public Action<int, string> OnAccept;
 
         public bool Equals(FriendItemData other)
         {
-            return Id == other.Id && PlayerId == other.PlayerId && Name == other.Name && Level == other.Level && Status == other.Status && IsFriend == other.IsFriend 
-                   && IsBlackList == other.IsBlackList && LastLoginTime == other.LastLoginTime && IconUrl == other.IconUrl && Equals(OnAccept, other.OnAccept) && Equals(OnReject, other.OnReject) && Equals(OnAddFriend, other.OnAddFriend) && OnRemove == other.OnRemove;
+            return Id == other.Id && PlayerId == other.PlayerId && Name == other.Name && Level == other.Level && Status == other.Status
+                   && LastLoginTime == other.LastLoginTime && IconUrl == other.IconUrl && Equals(OnAccept, other.OnAccept)
+                   && Equals(OnReject, other.OnReject) && Equals(OnAddFriend, other.OnAddFriend) && OnRemove == other.OnRemove;
         }
 
         public override bool Equals(object obj)
@@ -438,8 +438,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
             hashCode.Add(Name);
             hashCode.Add(Level);
             hashCode.Add(Status);
-            hashCode.Add(IsBlackList);
-            hashCode.Add(IsFriend);
+            hashCode.Add(FriendStatus);
             hashCode.Add(IconUrl);
             hashCode.Add(LastLoginTime);
             return hashCode.ToHashCode();
@@ -463,8 +462,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
             sb.AppendFormat("玩家昵称：{0}\n", Name);
             sb.AppendFormat("玩家等级：{0}\n", Level);
             sb.AppendFormat("是否在线：{0}\n", Status);
-            sb.AppendFormat("是否黑名单：{0}\n", IsBlackList);
-            sb.AppendFormat("是否为好友：{0}\n", IsFriend);
+            sb.AppendFormat("好友状态：{0}\n", FriendStatus);
             sb.AppendFormat("头像地址：{0}\n", IconUrl);
             sb.AppendFormat("最后登录时间：{0}\n", LastLoginTime);
             return sb.ToString();

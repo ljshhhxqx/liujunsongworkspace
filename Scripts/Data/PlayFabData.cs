@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine.Serialization;
 
 namespace Data
 {
@@ -43,8 +44,20 @@ namespace Data
     public enum FriendStatus
     {
         None = 0,       // 无关系
-        Friends = 1,    // 已是好友
-        Blocked = 2     // 已拒绝或删除
+        RequestSent = 1, // 已发出邀请
+        RequestReceived = 2,  // 收到邀请
+        Friends = 3,    // 已是好友
+        Removed = 4,    // 已删除
+        Rejected = 5,   // 已拒绝
+    }
+    
+    [Serializable]
+    public struct NonFriendOnlinePlayersResult
+    {
+        public List<PlayerReadOnlyData> players;
+        public int count;
+        public int totalOnline;
+        public string error;
     }
     
     // 好友数据
@@ -54,18 +67,18 @@ namespace Data
         public int Id;
         public string PlayFabId;
         public string Username;
-        public FriendStatus Status;
-        public DateTime LastOnline;
+        public FriendStatus FriendStatus;
+        public string LastOnline;
         public PlayerStatus PlayerStatus;
         public string IconUrl;
         public int Level;
 
-        public FriendData(int id, string playFabId, string username, FriendStatus status, string iconUrl, int level, DateTime lastOnline, PlayerStatus playerStatus = PlayerStatus.Offline)
+        public FriendData(int id, string playFabId, string username, FriendStatus friendStatus, string iconUrl, int level, string lastOnline, PlayerStatus playerStatus = PlayerStatus.Offline)
         {
             Id = id;
             PlayFabId = playFabId;
             Username = username;
-            Status = status;
+            FriendStatus = friendStatus;
             LastOnline = lastOnline;
             PlayerStatus = playerStatus;
             IconUrl = iconUrl;

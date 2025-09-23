@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Tool.GameEvent;
@@ -7,6 +8,7 @@ using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel;
 using Network.Data;
 using Network.Server.PlayFab;
+using Newtonsoft.Json;
 using PlayFab;
 using PlayFab.ClientModels;
 using PlayFab.CloudScriptModels;
@@ -283,9 +285,10 @@ namespace Data
             Debug.Log("Modify NickName Success");
         }
         private List<FriendData> _friendDatas = new List<FriendData>();
+        private Action<int, FriendStatus> OnFriendStatusChanged;
     
         // 更改好友状态
-        public void ChangeFriendStatus(string friendId, FriendStatus status, Action<bool, string> callback = null)
+        public void ChangeFriendStatus(int id, string friendId, FriendStatus status)
         {
             ExecuteCloudScriptRequest request = new ExecuteCloudScriptRequest
             {
@@ -300,53 +303,29 @@ namespace Data
             {
                 Debug.Log("好友状态更改成功: " + result.FunctionResult.ToString());
                 RefreshFriendList(); // 刷新好友列表
-
-                callback?.Invoke(true, result.FunctionResult.ToString());
+                OnFriendStatusChanged?.Invoke(id, status);
             }, error =>
             {
                 Debug.LogError("更改好友状态失败: " + error.ErrorMessage);
-
-                callback?.Invoke(false, error.ErrorMessage);
             });
         }
         
         // 同意好友请求
-        public void AcceptFriendRequest(string friendId)
+        public void AcceptFriendRequest(int id, string friendId)
         {
-            ChangeFriendStatus(friendId, FriendStatus.Friends, (success, message) =>
-            {
-                if (success)
-                {
-                    // 更新UI或显示通知
-                    Debug.Log("已接受好友请求");
-                }
-            });
+            ChangeFriendStatus(id, friendId, FriendStatus.Friends);
         }
         
         // 拒绝好友请求
-        public void RejectFriendRequest(string friendId)
+        public void RejectFriendRequest(int id, string friendId)
         {
-            ChangeFriendStatus(friendId, FriendStatus.Blocked, (success, message) =>
-            {
-                if (success)
-                {
-                    // 更新UI或显示通知
-                    Debug.Log("已拒绝好友请求");
-                }
-            });
+            ChangeFriendStatus(id, friendId, FriendStatus.Rejected);
         }
         
         // 删除好友
-        public void RemoveFriend(string friendId)
+        public void RemoveFriend(int id, string friendId)
         {
-            ChangeFriendStatus(friendId, FriendStatus.Blocked, (success, message) =>
-            {
-                if (success)
-                {
-                    // 更新UI或显示通知
-                    Debug.Log("已删除好友");
-                }
-            });
+            ChangeFriendStatus(id, friendId, FriendStatus.Removed);
         }
         
         public event Action<List<FriendData>> OnRefreshFriendList;
@@ -365,7 +344,7 @@ namespace Data
                 {
                     // 解析好友列表
                     var json = result.FunctionResult.ToString();
-                    var friendList = JsonUtility.FromJson<FriendList>(json);
+                    var friendList = JsonConvert.DeserializeObject<FriendList>(json);
                     _friendDatas = friendList.Friends;
                     
                     // 更新UI或处理好友列表
@@ -394,11 +373,11 @@ namespace Data
             // 例如：根据好友状态显示不同的UI元素
             foreach (var friend in _friendDatas)
             {
-                Debug.Log($"好友: {friend.Username}, 状态: {friend.Status}, 在线: {friend.PlayerStatus == PlayerStatus.Online}");
+                Debug.Log($"好友: {friend.Username}, 状态: {friend.FriendStatus}, 在线: {friend.PlayerStatus == PlayerStatus.Online}");
             }
         }
         // 发送好友请求
-        public void SendFriendRequest(string playFabId)
+        public void SendFriendRequest(int id, string playFabId)
         {
             ExecuteCloudScriptRequest request = new ExecuteCloudScriptRequest
             {
@@ -409,10 +388,69 @@ namespace Data
             PlayFabClientAPI.ExecuteCloudScript(request, result =>
             {
                 Debug.Log("好友请求发送成功");
+                OnFriendStatusChanged?.Invoke(id, FriendStatus.RequestSent);
             }, error =>
             {
                 Debug.LogError("发送好友请求失败: " + error.ErrorMessage);
             });
+        }
+        
+        private List<PlayerReadOnlyData> _nonFriendData = new List<PlayerReadOnlyData>();
+        
+        public event Action<List<PlayerReadOnlyData>> OnGetNonFriendList;
+        
+        public void GetNonFriendOnlinePlayers(int maxResults = 50)
+        {
+            ExecuteCloudScriptRequest request = new ExecuteCloudScriptRequest
+            {
+                FunctionName = "GetNonFriendOnlinePlayers",
+                FunctionParameter = new { maxResults = maxResults }
+            };
+        
+            PlayFabClientAPI.ExecuteCloudScript(request, result =>
+            {
+                try
+                {
+                    // 解析结果
+                    var json = result.FunctionResult.ToString();
+                    var apiResult = JsonConvert.DeserializeObject<NonFriendOnlinePlayersResult>(json);
+                
+                    if (!string.IsNullOrEmpty(apiResult.error))
+                    {
+                        _uiManager.ShowTips("获取非好友在线玩家失败: " + apiResult.error);
+                        return;
+                    }
+                    Debug.Log($"获取到: {apiResult.count}个可以添加的好友");
+                    _nonFriendData = apiResult.players;
+                    OnGetNonFriendList?.Invoke(_nonFriendData);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("解析非好友在线玩家结果失败: " + e.Message);
+                }
+            }, error =>
+            {
+                _uiManager.ShowTips("获取非好友在线玩家失败: " + error.ErrorMessage);
+            });
+        }
+        public IEnumerable<FriendData> GetFilteredFriend(string inputText)
+        {
+            return _friendDatas.Where(room => FilterByIdOrName(room.PlayFabId, room.Username, inputText));
+        }
+        
+        public IEnumerable<PlayerReadOnlyData> GetFilteredPlayer(string inputText)
+        {
+            return _nonFriendData.Where(room => FilterByIdOrName(room.PlayerId, room.Nickname, inputText));
+        }
+
+        private bool FilterByIdOrName(string id, string name, string inputText)
+        {
+            if (string.IsNullOrEmpty(inputText))
+            {
+                return true;
+            }
+            var isNumeric = int.TryParse(inputText, out _);
+            return isNumeric ? id.Contains(inputText) : name.Contains(inputText);
         }
     }
 }
