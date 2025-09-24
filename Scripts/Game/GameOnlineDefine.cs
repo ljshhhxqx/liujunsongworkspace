@@ -14,7 +14,7 @@ namespace Game
 {
     public class GameOnlineDefine : MonoBehaviour
     {
-        private const float HEARTBEAT_INTERVAL = 30f; // 30秒发送一次心跳
+        private const float HEARTBEAT_INTERVAL = 10f; // 10秒发送一次心跳
         private const string HEARTBEAT_FUNCTION = "UpdatePlayerHeartbeat";
         private const int MAX_RETRY_ATTEMPTS = 3;
         private const float RETRY_DELAY = 5f;

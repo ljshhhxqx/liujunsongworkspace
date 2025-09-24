@@ -1,12 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
+using AOTScripts.Tool;
 using Data;
 using HotUpdate.Scripts.Tool.Coroutine;
+using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
 using TMPro;
 using UI.UIBase;
 using UnityEngine;
+using UnityEngine.UI;
 using VContainer;
 
 namespace HotUpdate.Scripts.UI.UIs.SecondPanel
@@ -25,20 +28,48 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         private TMP_InputField searchFriendsInputField;
         [SerializeField]
         private TMP_InputField addFriendInputField;
-        private List<FriendData> _friendList = new List<FriendData>();
-        private List<PlayerReadOnlyData> _searchList = new List<PlayerReadOnlyData>();
+        [SerializeField]
+        private Button refreshFriendsButton;
+        [SerializeField]
+        private Button quitButton;
+        private Dictionary<int, FriendItemData> _friendDic = new Dictionary<int, FriendItemData>();
+        private Dictionary<int, FriendItemData> _searchDic = new Dictionary<int, FriendItemData>();
 
         [Inject]
-        private void Init(PlayFabAccountManager accountManager)
+        private void Init(PlayFabAccountManager accountManager, UIManager uiManager)
         {
             _accountManager = accountManager;
             _accountManager.OnRefreshFriendList += OnAutoRefreshFriendList;
             _accountManager.OnGetNonFriendList += OnAutoRefreshNonFriendList;
+            _accountManager.OnFriendStatusChanged += OnFriendStatusChanged;
             searchFriendsInputField.onValueChanged.RemoveAllListeners();
+            refreshFriendsButton.onClick.RemoveAllListeners();
+            quitButton.onClick.RemoveAllListeners();
             addFriendInputField.onValueChanged.RemoveAllListeners();
             searchFriendsInputField.onValueChanged.AddListener(OnSearchFriends);
             addFriendInputField.onValueChanged.AddListener(OnSearchNoFriends);
+            refreshFriendsButton.BindDebouncedListener(RefreshFriendList);
+            quitButton.BindDebouncedListener(() =>
+            {
+                uiManager.CloseUI(Type);
+            });
             RepeatedTask.Instance.StartRepeatingTask(RefreshFriendList, 3);
+        }
+
+        private void OnFriendStatusChanged(int id, FriendStatus status)
+        {
+            if (_friendDic.TryGetValue(id, out var itemData))
+            {
+                itemData.FriendStatus = status;
+                _friendDic[id] = itemData;
+                friendContentList.ReplaceItem<FriendItemData, FriendItem>(id, itemData);
+            }
+            else if (_searchDic.TryGetValue(id, out itemData))
+            {
+                itemData.FriendStatus = status;
+                _searchDic[id] = itemData;
+                searchContentList.ReplaceItem<FriendItemData, FriendItem>(id, itemData);
+            }
         }
 
         private void OnAutoRefreshNonFriendList(List<PlayerReadOnlyData> list)
@@ -67,6 +98,10 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         {
             _accountManager.OnRefreshFriendList -= OnAutoRefreshFriendList;
             _accountManager.OnGetNonFriendList -= OnAutoRefreshNonFriendList;
+            searchFriendsInputField.onValueChanged.RemoveAllListeners();
+            refreshFriendsButton.onClick.RemoveAllListeners();
+            quitButton.onClick.RemoveAllListeners();
+            addFriendInputField.onValueChanged.RemoveAllListeners();
             RepeatedTask.Instance.StopRepeatingTask(RefreshFriendList);
         }
 
@@ -78,32 +113,29 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
 
         private void OnRefreshPlayers(List<PlayerReadOnlyData> players)
         {
-            _searchList.Clear();
+            _searchDic.Clear();
             if (players != null && players.Count > 0)
             {
-                var dic = new Dictionary<int, FriendItemData>();
                 for (int i = 0; i < players.Count; i++)
                 {
                     var player = players[i];
-                    _searchList.Add(player);
                     var itemData = new FriendItemData();
                     itemData.Name = player.Nickname;
                     itemData.Id = player.Id;
                     itemData.PlayerId = player.PlayerId;
                     itemData.Level = player.Level;
                     itemData.OnAddFriend = AddFriend;
-                    dic.Add(player.Id, itemData);
+                    _searchDic.Add(player.Id, itemData);
                 }
-                searchContentList.SetItemList(dic);
+                searchContentList.SetItemList(_searchDic);
             }
         }
 
         private void OnRefreshFriendList(List<FriendData> friendList)
         {
-            _friendList = friendList;
+            _friendDic.Clear();
             if (friendList != null && friendList.Count > 0)
             {
-                var dic = new Dictionary<int, FriendItemData>();
                 for (int i = 0; i < friendList.Count; i++)
                 {
                     var friend = friendList[i]; 
@@ -119,10 +151,9 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                     itemData.OnRemove = RemoveFriend;
                     itemData.OnReject = RejectFriend;
                     itemData.OnAccept = AcceptFriend;
-                    dic.Add(i, itemData);
-                    _friendList.Add(friend);
+                    _friendDic.Add(friend.Id, itemData);
                 }
-                friendContentList.SetItemList(dic);
+                friendContentList.SetItemList(_friendDic);
             }
         }
         

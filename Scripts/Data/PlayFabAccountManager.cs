@@ -304,6 +304,7 @@ namespace Data
             _playFabClientCloudScriptCaller.ExecuteCloudScript(request, result =>
             {
                 Debug.Log("好友状态更改成功: " + result.FunctionResult.ToString());
+                var dic = result.ParseCloudScriptResultToDic();
                 RefreshFriendList(); // 刷新好友列表
                 GetNonFriendOnlinePlayers();// 刷新非好友列表
                 OnFriendStatusChanged?.Invoke(id, status);
@@ -390,6 +391,7 @@ namespace Data
         
             _playFabClientCloudScriptCaller.ExecuteCloudScript(request, result =>
             {
+                var json = result.ParseCloudScriptResultToDic();
                 Debug.Log("好友请求发送成功");
                 OnFriendStatusChanged?.Invoke(id, FriendStatus.RequestSent);
             }, error =>
@@ -416,6 +418,7 @@ namespace Data
                 try
                 {
                     // 解析结果
+                    var dic = result.ParseCloudScriptResultToDic();
                     var json = result.FunctionResult.ToString();
                     var apiResult = JsonConvert.DeserializeObject<NonFriendOnlinePlayersResult>(json);
                 
