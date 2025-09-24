@@ -91,6 +91,18 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                 {
                     itemData.OnRemove?.Invoke(itemData.Id, itemData.PlayerId);
                 });
+                acceptFriendButton.onClick.AddListener(() =>
+                {
+                    itemData.OnAccept?.Invoke(itemData.Id, itemData.PlayerId);
+                });
+                rejectFriendButton.onClick.AddListener(() =>
+                {
+                    itemData.OnReject?.Invoke(itemData.Id, itemData.PlayerId);
+                });
+                addFriendButton.onClick.AddListener(() =>
+                {
+                    itemData.OnAddFriend?.Invoke(itemData.Id, itemData.PlayerId);
+                });
             }
         }
 

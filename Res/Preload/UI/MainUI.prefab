@@ -764,6 +764,7 @@ MonoBehaviour:
   logoutButton: {fileID: 6427558452380768702}
   quitButton: {fileID: 5279895535333222741}
   infoButton: {fileID: 1429793207426478813}
+  friendButton: {fileID: 948976685016213087}
   timerText: {fileID: 5981512160553075219}
   infoText: {fileID: 5705291654141928918}
   idText: {fileID: 237060484761128718}

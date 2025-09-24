@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Data;
-using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
@@ -17,7 +16,6 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         public override UIType Type => UIType.FriendScreen;
         public override UICanvasType CanvasType => UICanvasType.SecondPanel;
         private PlayFabAccountManager _accountManager;
-        private PlayFabRoomManager _roomManager;
         
         [SerializeField]
         private ContentItemList friendContentList;
@@ -31,10 +29,9 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         private List<PlayerReadOnlyData> _searchList = new List<PlayerReadOnlyData>();
 
         [Inject]
-        private void Init(PlayFabAccountManager accountManager, PlayFabRoomManager roomManager)
+        private void Init(PlayFabAccountManager accountManager)
         {
             _accountManager = accountManager;
-            _roomManager = roomManager;
             _accountManager.OnRefreshFriendList += OnAutoRefreshFriendList;
             _accountManager.OnGetNonFriendList += OnAutoRefreshNonFriendList;
             searchFriendsInputField.onValueChanged.RemoveAllListeners();
@@ -75,8 +72,8 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
 
         private void RefreshFriendList()
         {
-            _roomManager.GetInvitablePlayers();
-            _accountManager.GetNonFriendOnlinePlayers();
+            _accountManager.RefreshFriendList(false);
+            _accountManager.GetNonFriendOnlinePlayers(showLoading:false);
         }
 
         private void OnRefreshPlayers(List<PlayerReadOnlyData> players)

@@ -2,10 +2,10 @@
 using HotUpdate.Scripts.UI.UIBase;
 using PlayFab;
 using PlayFab.CloudScriptModels;
-using UI.UIBase;
 using VContainer;
+using ExecuteCloudScriptResult = PlayFab.CloudScriptModels.ExecuteCloudScriptResult;
 
-namespace Network.Server.PlayFab
+namespace HotUpdate.Scripts.Network.Server.PlayFab
 {
     public class PlayFabClientCloudScriptCaller: IPlayFabClientCloudScriptCaller
     {
