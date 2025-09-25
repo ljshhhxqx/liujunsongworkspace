@@ -264,6 +264,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         private void OnInvitePlayerSuccess(ExecuteCloudScriptResult executeCloudScriptResult)
         {
             Debug.Log("邀请玩家成功");
+            var data = executeCloudScriptResult.ParseCloudScriptResultToDic();
         }
         
         /// <summary>
