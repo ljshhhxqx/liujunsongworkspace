@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Data;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Network.Server.InGame
@@ -60,7 +61,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             _players.Clear();
             foreach (var str in roomData.PlayersInfo)
             {
-                var player = JsonUtility.FromJson<PlayerReadOnlyData>(str);
+                var player = str;
                 _players.Add(new PlayerInitData
                 {
                     player = player,

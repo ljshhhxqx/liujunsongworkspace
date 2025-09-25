@@ -303,10 +303,8 @@ namespace Data
             };
             _playFabClientCloudScriptCaller.ExecuteCloudScript(request, result =>
             {
-                Debug.Log("好友状态更改成功: " + result.FunctionResult.ToString());
+                Debug.Log("好友状态更改成功: " + result.FunctionResult);
                 var dic = result.ParseCloudScriptResultToDic();
-                RefreshFriendList(); // 刷新好友列表
-                GetNonFriendOnlinePlayers();// 刷新非好友列表
                 OnFriendStatusChanged?.Invoke(id, status);
             }, error =>
             {

@@ -154,7 +154,7 @@ namespace Data
         public RoomCustomInfo RoomCustomInfo;
         // 0: waiting, 1: gaming
         public int RoomStatus;
-        public string[] PlayersInfo;
+        public PlayerReadOnlyData[] PlayersInfo;
         
         public override string ToString()
         {

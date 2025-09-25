@@ -28,13 +28,13 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
                 Debug.Log($"SetData: {roomMemberItemData}");
                 nameText.text = !string.IsNullOrEmpty(roomMemberItemData.Name) ? roomMemberItemData.Name : roomMemberItemData.PlayerId;
                 levelText.text = $"Lv{roomMemberItemData.Level}";
-                addFriend?.SetActive(roomMemberItemData.IsFriend && !roomMemberItemData.IsSelf);
+                //addFriend?.SetActive(roomMemberItemData.IsFriend && !roomMemberItemData.IsSelf);
                 friend?.SetActive(roomMemberItemData.IsFriend);
-                addFriendBtn?.onClick.AddListener(() => 
-                { 
-                    // TODO: add friend logic
-                    roomMemberItemData.OnAddFriendClick?.Invoke(roomMemberItemData.PlayerId);
-                });
+                // addFriendBtn?.onClick.AddListener(() => 
+                // { 
+                //     // TODO: add friend logic
+                //     roomMemberItemData.OnAddFriendClick?.Invoke(roomMemberItemData.PlayerId);
+                // });
                 inviteBtn?.onClick.AddListener(() => 
                 { 
                     // TODO: invite friend logic

@@ -53,22 +53,44 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             {
                 uiManager.CloseUI(Type);
             });
-            RepeatedTask.Instance.StartRepeatingTask(RefreshFriendList, 3);
+            RepeatedTask.Instance.StartRepeatingTask(RefreshFriendList, 5);
         }
 
         private void OnFriendStatusChanged(int id, FriendStatus status)
         {
             if (_friendDic.TryGetValue(id, out var itemData))
             {
-                itemData.FriendStatus = status;
-                _friendDic[id] = itemData;
-                friendContentList.ReplaceItem<FriendItemData, FriendItem>(id, itemData);
+                if (itemData.FriendStatus == FriendStatus.Friends && status == FriendStatus.None)
+                {
+                    _friendDic.Remove(id);
+                    friendContentList.RemoveItem(id);
+                    itemData.FriendStatus = status;
+                    _searchDic.Add(id, itemData);
+                    searchContentList.AddItem<FriendItemData, FriendItem>(id, itemData);
+                }
+                else
+                {
+                    itemData.FriendStatus = status;
+                    _friendDic[id] = itemData;
+                    friendContentList.SetItemList(_friendDic);
+                }
             }
             else if (_searchDic.TryGetValue(id, out itemData))
             {
-                itemData.FriendStatus = status;
-                _searchDic[id] = itemData;
-                searchContentList.ReplaceItem<FriendItemData, FriendItem>(id, itemData);
+                if (itemData.FriendStatus == FriendStatus.None && status != FriendStatus.None)
+                {
+                    _searchDic.Remove(id);
+                    searchContentList.RemoveItem(id);
+                    itemData.FriendStatus = status;
+                    _friendDic.Add(id, itemData);
+                    friendContentList.AddItem<FriendItemData, FriendItem>(id, itemData);
+                }
+                else
+                {
+                    itemData.FriendStatus = status;
+                    _searchDic[id] = itemData;
+                    searchContentList.SetItemList(_searchDic);
+                }
             }
         }
 
@@ -98,6 +120,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         {
             _accountManager.OnRefreshFriendList -= OnAutoRefreshFriendList;
             _accountManager.OnGetNonFriendList -= OnAutoRefreshNonFriendList;
+            _accountManager.OnFriendStatusChanged -= OnFriendStatusChanged;
             searchFriendsInputField.onValueChanged.RemoveAllListeners();
             refreshFriendsButton.onClick.RemoveAllListeners();
             quitButton.onClick.RemoveAllListeners();
@@ -176,5 +199,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         {
             _accountManager.SendFriendRequest(id,playFabId);
         }
+        
+        
     }
 }

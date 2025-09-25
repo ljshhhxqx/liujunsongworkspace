@@ -22,6 +22,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         [SerializeField]
         private Button refreshButton;
         [SerializeField]
+        private Button quitButton;
+        [SerializeField]
         private ContentItemList roomListContent;
         [SerializeField]
         private TMP_InputField searchInputField;
@@ -44,6 +46,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             searchInputField.onValueChanged.AddListener(text =>
             {
                 OnRefreshRoomList(_roomList);
+            });
+            quitButton.BindDebouncedListener(() =>
+            {
+                _uiManager.CloseUI(Type);
             });
         }
         

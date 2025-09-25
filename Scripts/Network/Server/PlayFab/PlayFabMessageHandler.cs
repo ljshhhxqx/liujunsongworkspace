@@ -53,7 +53,7 @@ namespace Network.Server.PlayFab
 
         private void OnLoginEvent(PlayerLoginEvent playerLoginEvent)
         {
-            RepeatedTask.Instance.StartRepeatingTask(GetNewMessages, 2);
+            RepeatedTask.Instance.StartRepeatingTask(GetNewMessages, 4);
         }
 
         public void SendMessage(Message message)
@@ -138,6 +138,8 @@ namespace Network.Server.PlayFab
                 Debug.Log("No new messages");
                 return;
             }
+            
+            var dict = result.ParseCloudScriptResultToDic();
             
             var json = result.FunctionResult.ToString();
             var messages = JsonConvert.DeserializeObject<GetNewMessagesResponse>(json).messages;

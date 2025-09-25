@@ -38,6 +38,9 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         
         public override UIType Type => UIType.RoomScreen;
         public override UICanvasType CanvasType => UICanvasType.SecondPanel;
+        
+        private readonly Dictionary<int, RoomMemberItemData> _roomInevitablePlayers = new Dictionary<int, RoomMemberItemData>();
+        private readonly Dictionary<int, RoomMemberItemData> _roomPlayers = new Dictionary<int, RoomMemberItemData>();
 
         [Inject]
         private void Init(UIManager uiManager, PlayFabRoomManager playFabRoomManager, PlayFabAccountManager playFabAccountManager)
@@ -51,13 +54,14 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             _playFabRoomManager.OnRefreshPlayers += OnRefreshPlayers;
             _playFabRoomManager.OnCreateRoom += OnSetRoomInfo;
             _playFabRoomManager.OnJoinRoom += OnSetRoomInfo;
+            // _playFabAccountManager.OnFriendStatusChanged += OnFriendStatusChanged;
             quitButton.BindDebouncedListener(() => _playFabRoomManager.LeaveRoom());
             startButton.BindDebouncedListener(() => _playFabRoomManager.StartGame());
             refreshButton.BindDebouncedListener(() => _playFabRoomManager.GetInvitablePlayers());
             _refreshTask.StartRepeatingTask(AutoRefresh, 3f);
             
         }
-        
+
         private void AutoRefresh()
         {
             _playFabRoomManager.RefreshRoomData();
@@ -65,23 +69,21 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
 
         private void OnRefreshPlayers(PlayerReadOnlyData[] playersData)
         {
-            if (playersData is { Length: > 0 })
+            _roomInevitablePlayers.Clear();
+            for (int i = 0; i < playersData.Length; i++)
             {
-                var list = playersData.Select(player => new RoomMemberItemData
-                {
-                    Id = player.Id,
-                    Name = player.Nickname,
-                    PlayerId = player.PlayerId,
-                    Level = player.Level,
-                    IsFriend = false,
-                    IsSelf = player.PlayerId == PlayFabData.PlayFabId.Value,
-                    OnInviteClick = playerId => _playFabRoomManager.InvitePlayer(playerId),
-                    OnAddFriendClick = playerId => _playFabAccountManager.SendFriendRequest(player.Id,playerId),
-                }).ToDictionary(x => x.Id, x => x);
-                playerContentListPrefab.SetItemList(list);
-                return;
+                var player = playersData[i];
+                var data = new RoomMemberItemData();
+                data.Id = player.Id;
+                data.Name = player.Nickname;
+                data.PlayerId = player.PlayerId;
+                data.Level = player.Level;
+                data.IsFriend = false;
+                data.IsSelf = player.PlayerId == PlayFabData.PlayFabId.Value;
+                data.OnInviteClick = playerId => _playFabRoomManager.InvitePlayer(playerId);
+                _roomInevitablePlayers.Add(data.Id, data);
+                playerContentListPrefab.SetItemList(_roomInevitablePlayers);
             }
-            Debug.LogError("Failed to set players data");
         }
 
         private void OnSetRoomInfo(RoomData roomInfo)
@@ -89,30 +91,22 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             if (roomInfo.PlayersInfo != null)
             {
                 roomNameText.text = roomInfo.RoomCustomInfo.RoomName;
-                if (roomInfo.PlayersInfo is { Length: > 0 })
+                _roomPlayers.Clear();
+                for (int i = 0; i < roomInfo.PlayersInfo.Length; i++)
                 {
-                    var dic = new Dictionary<int, RoomMemberItemData>();
-                    for (int i = 0; i < roomInfo.PlayersInfo.Length; i++)
-                    {
-                        var player = roomInfo.PlayersInfo[i];
-                        var playerInfo = JsonUtility.FromJson<PlayerReadOnlyData>(player);
-                        var itemData = new RoomMemberItemData();
-                        itemData.Id = playerInfo.Id;
-                        itemData.Name = playerInfo.Nickname;
-                        itemData.PlayerId = playerInfo.PlayerId;
-                        itemData.Level = playerInfo.Level;
-                        itemData.IsFriend = false;
-                        itemData.IsSelf = playerInfo.PlayerId == PlayFabData.PlayFabId.Value;
-                        itemData.OnInviteClick = playerId => _playFabRoomManager.InvitePlayer(playerId);
-                        itemData.OnAddFriendClick = playerId => _playFabAccountManager.SendFriendRequest(playerInfo.Id,playerId);
-                        dic.Add(itemData.Id, itemData);
-                    }
-                    roomContentListPrefab.SetItemList(dic);
+                    var player = roomInfo.PlayersInfo[i];
+                    var playerInfo = player;
+                    var itemData = new RoomMemberItemData();
+                    itemData.Id = playerInfo.Id;
+                    itemData.Name = playerInfo.Nickname;
+                    itemData.PlayerId = playerInfo.PlayerId;
+                    itemData.Level = playerInfo.Level;
+                    itemData.IsFriend = false;
+                    itemData.IsSelf = playerInfo.PlayerId == PlayFabData.PlayFabId.Value;
+                    _roomPlayers.Add(itemData.Id, itemData);
                 }
-                return;
+                roomContentListPrefab.SetItemList(_roomPlayers);
             }
-            
-            Debug.LogError("Failed to set RoomInfo data");
         }
 
         private void OnDestroy()
