@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AOTScripts.Tool;
+using Data;
 using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.Tool.GameEvent;
@@ -11,10 +12,12 @@ using Network.Data;
 using Newtonsoft.Json;
 using PlayFab;
 using PlayFab.CloudScriptModels;
+using PlayFab.DataModels;
 using Tool.GameEvent;
 using UI.UIBase;
 using UnityEngine;
 using VContainer;
+using EntityKey = PlayFab.CloudScriptModels.EntityKey;
 
 namespace Network.Server.PlayFab
 {
@@ -25,6 +28,8 @@ namespace Network.Server.PlayFab
         private readonly GameEventManager _gameEventManager;
         private bool _isProcessingPopup;
         private bool _isProcessingTest;
+        private PlayFabAccountManager _playFabAccountManager;
+        private PlayFabRoomManager _playFabRoomManager;
         private readonly Dictionary<int, string> _lastMessageIds = new Dictionary<int, string>
         {
             { (int)MessageScope.System, "0-0" },
@@ -37,8 +42,10 @@ namespace Network.Server.PlayFab
         // private readonly Dictionary<string, List<PlayerEventData>> _cachedEvents = new Dictionary<string, List<PlayerEventData>>();
         
         [Inject]
-        private PlayFabMessageHandler( UIManager uiManager, GameEventManager gameEventManager)
+        private PlayFabMessageHandler( UIManager uiManager, GameEventManager gameEventManager, PlayFabAccountManager playFabAccountManager, PlayFabRoomManager playFabRoomManager )
         {
+            _playFabAccountManager = playFabAccountManager;
+            _playFabRoomManager = playFabRoomManager;
             // UIManager是用来显示弹窗的
             _uiManager = uiManager;
             _gameEventManager = gameEventManager;
@@ -140,14 +147,20 @@ namespace Network.Server.PlayFab
             }
             
             var dict = result.ParseCloudScriptResultToDic();
-            
-            var json = result.FunctionResult.ToString();
-            var messages = JsonConvert.DeserializeObject<GetNewMessagesResponse>(json).messages;
-            Debug.Log($"Received {messages.Count} new messages");
-            ProcessMessages(messages);
+            if (dict.TryGetValue("messages", out object value))
+            {
+                if (value.ToString()== "[]")
+                {
+                    Debug.Log($"Received 0 new messages");
+                    return;
+                }
+                var messages = JsonUtility.FromJson<GetNewMessagesResponse>(result.FunctionResult.ToString()).messages;
+                Debug.Log($"Received {messages.Length} new messages");
+                ProcessMessages(messages);
+            }
         }
 
-        private void ProcessMessages(List<Message> messages)
+        private void ProcessMessages(Message[] messages)
         {
             foreach (var message in messages)
             {
@@ -190,15 +203,35 @@ namespace Network.Server.PlayFab
         {
             switch (message.messageType)
             {
+                //邀请加入房间
                 case (int)MessageType.Invitation:
-
+                    var invitationMessage = ConvertToMessageContent<InvitationMessage>(message.content);
+                    _uiManager.ShowTips($"{invitationMessage.inviterName}邀请你加入房间{invitationMessage.roomName}",() =>
+                    {
+                        _playFabRoomManager.ApplyJoinRoom(invitationMessage.roomId);
+                    });
                     break;
+                //请求加入房间
                 case (int)MessageType.RequestJoinRoom:
+                    var requestJoinRoomMessage = ConvertToMessageContent<RequestJoinRoomMessage>(message.content);
+                    _uiManager.ShowTips($"{requestJoinRoomMessage.requesterName}请求加入你的房间", () =>
+                    {
+                        _playFabRoomManager.RequestJoinRoom(requestJoinRoomMessage.roomId, requestJoinRoomMessage.roomPassword);
+                    });
 
                     break;
-                case (int)MessageType.SystemNotification:
+                //告诉房主邀请的玩家已经加入房间(同时也通知自己刷新房间列表)
+                case (int)MessageType.ApplyJoinRoom:
+                    var  applyJoinRoomMessage = ConvertToMessageContent<ApplyJoinRoomMessage>(message.content);
+                    _uiManager.ShowTips($"同意了{applyJoinRoomMessage.playerName}申请加入房间");
+                    _playFabRoomManager.ApproveJoinRequest(applyJoinRoomMessage.roomData);
+
                     break;
+                //同意邀请加入房间
                 case (int)MessageType.ApproveJoinRoom:
+                    var approveJoinRoomMessage = ConvertToMessageContent<ApproveJoinRoomMessage>(message.content);
+                    _uiManager.ShowTips($"{approveJoinRoomMessage.roomData.CreatorName}同意你加入房间{approveJoinRoomMessage.roomData.RoomCustomInfo.RoomName}");
+                    _playFabRoomManager.ApproveJoinRequest(approveJoinRoomMessage.roomData);
                     break;
                 case (int)MessageType.DownloadFile:
                     var downloadFileMes = ConvertToMessageContent<DownloadFileMessage>(message.content);
@@ -208,6 +241,8 @@ namespace Network.Server.PlayFab
                     break;
                 case (int)MessageType.Test:
                     Test(message.content);
+                    break;
+                case (int)MessageType.SystemNotification:
                     break;
                 default:
                     break;
@@ -347,6 +382,10 @@ namespace Network.Server.PlayFab
             var messageContent = JsonUtility.FromJson<T>(content);
             return messageContent;
             // 这里你需要将服务器返回的消息内容转换为Message对象并处理
+        }
+
+        private void TestObject()
+        {
         }
     }
 }

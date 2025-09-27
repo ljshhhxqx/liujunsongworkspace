@@ -137,6 +137,7 @@ namespace Data
                 {
                     _uiManager.SwitchLoadingPanel(false);
                     OnLoginSuccess(s);
+                    //_uiManager.SwitchUI<EntityObjectTest>();
                 }, f => 
                 { 
                     _uiManager.SwitchLoadingPanel(false);

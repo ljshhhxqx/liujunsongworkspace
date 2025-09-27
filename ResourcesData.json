@@ -875,13 +875,23 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
+            "Name": "TestObjectPanel",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/TestObjectPanel.prefab"
+        },
+        {
+            "UID": 3300015,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "TipPopup",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/TipPopup.prefab"
         },
         {
-            "UID": 3300015,
+            "UID": 3300016,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",

@@ -58,7 +58,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             quitButton.BindDebouncedListener(() => _playFabRoomManager.LeaveRoom());
             startButton.BindDebouncedListener(() => _playFabRoomManager.StartGame());
             refreshButton.BindDebouncedListener(() => _playFabRoomManager.GetInvitablePlayers());
-            _refreshTask.StartRepeatingTask(AutoRefresh, 3f);
+            _refreshTask.StartRepeatingTask(AutoRefresh, 2.5f);
             
         }
 

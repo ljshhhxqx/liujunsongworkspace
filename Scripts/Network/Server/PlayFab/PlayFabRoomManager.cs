@@ -219,7 +219,36 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         {
             Debug.LogError($"Failed to create room: {error.GenerateErrorReport()}");
         }
-        
+
+        public void ApplyJoinRoom(string roomId)
+        {
+            var request = new ExecuteEntityCloudScriptRequest
+            {
+                FunctionName = "ApplyJoinRoom",
+                FunctionParameter = new { roomId = roomId, playerId = PlayFabData.PlayFabId.Value, },
+                GeneratePlayStreamEvent = true,
+                Entity = PlayFabData.EntityKey.Value,
+            };
+
+            _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnApplyJoinRoomSuccess, OnError);
+        }
+
+        private void OnApplyJoinRoomSuccess(ExecuteCloudScriptResult result)
+        {
+            var data = result.ParseCloudScriptResultToDic();
+            if (data.TryGetValue("roomData", out var value))
+            {
+                var roomData = JsonUtility.FromJson<RoomData>(value.ToString());
+                CurrentRoomId = roomData.RoomId;
+                _uiManager.SwitchUI<RoomScreenUI>(ui =>
+                {
+                    _currentRoomData = roomData;
+                    OnJoinRoom?.Invoke(roomData);
+                });
+                Debug.Log($"加入房间成功，房间信息 -- {roomData}");
+            }
+        }
+
         public void RequestJoinRoom(string roomId, string roomPassword)
         {
             var request = new ExecuteEntityCloudScriptRequest
@@ -236,6 +265,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         private void OnRequestJoinRoomSuccess(ExecuteCloudScriptResult executeCloudScriptResult)
         {
             Debug.Log("申请加入房间成功");
+            var data = executeCloudScriptResult.ParseCloudScriptResultToDic();
         }
         
         public void ApproveJoinRequest(RoomData roomData)

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Data;
 
 namespace HotUpdate.Scripts.Network.Server.PlayFab
@@ -11,6 +10,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         ApproveJoinRoom,
         DownloadFile,
         Chat,
+        ApplyJoinRoom,
         SystemNotification = -1,
         Test = -2,
         // 可以根据需要添加更多类型
@@ -105,7 +105,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
     [Serializable]
     public struct GetNewMessagesResponse
     {
-        public List<Message> messages;
+        public Message[] messages;
     }
 
     public interface IMessageContent
@@ -121,6 +121,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         public string roomName;
         public string requesterId;
         public string requesterName;
+        public string roomPassword;
     }
     
     [Serializable]
@@ -130,11 +131,19 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         public string inviterName;
         public string roomId;
         public string roomName;
+        public string roomPassword;
     }
     
     [Serializable]
     public struct ApproveJoinRoomMessage : IMessageContent
     {
+        public RoomData roomData;
+    }
+    [Serializable]
+    public struct ApplyJoinRoomMessage : IMessageContent
+    {
+        public string playerId;
+        public string playerName;
         public RoomData roomData;
     }
 
