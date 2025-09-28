@@ -383,6 +383,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   refreshButton: {fileID: 6762419345795731179}
+  quitButton: {fileID: 8058704707881388567}
   roomListContent: {fileID: 4953662311525039614}
   searchInputField: {fileID: 5614017590055138652}
 --- !u!1 &480668047378753402

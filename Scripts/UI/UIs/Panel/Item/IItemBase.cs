@@ -81,6 +81,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
         public int Level;
         public bool IsFriend;
         public bool IsSelf;
+        public bool IsOwner;
         public Action<string> OnAddFriendClick;
         public Action<string> OnInviteClick;
 

@@ -168,11 +168,7 @@ namespace Network.Server.PlayFab
                 switch (message.displayType)
                 {
                     case (int)DisplayType.Popup:
-                        if (!_isProcessingPopup)
-                        {
-                            HandleMessageType(message);
-                            _isProcessingPopup = true;
-                        }
+                        HandleMessageType(message);
                         break;
                     case (int)DisplayType.Chat:
                         //_roomManager.AddToChatWindow(message);
@@ -201,52 +197,65 @@ namespace Network.Server.PlayFab
 
         private void HandleMessageType(Message message)
         {
-            switch (message.messageType)
+            try
             {
-                //邀请加入房间
-                case (int)MessageType.Invitation:
-                    var invitationMessage = ConvertToMessageContent<InvitationMessage>(message.content);
-                    _uiManager.ShowTips($"{invitationMessage.inviterName}邀请你加入房间{invitationMessage.roomName}",() =>
-                    {
-                        _playFabRoomManager.ApplyJoinRoom(invitationMessage.roomId);
-                    });
-                    break;
-                //请求加入房间
-                case (int)MessageType.RequestJoinRoom:
-                    var requestJoinRoomMessage = ConvertToMessageContent<RequestJoinRoomMessage>(message.content);
-                    _uiManager.ShowTips($"{requestJoinRoomMessage.requesterName}请求加入你的房间", () =>
-                    {
-                        _playFabRoomManager.RequestJoinRoom(requestJoinRoomMessage.roomId, requestJoinRoomMessage.roomPassword);
-                    });
+                switch (message.messageType)
+                {
+                    //邀请加入房间
+                    case (int)MessageType.Invitation:
+                        var invitationMessage = ConvertToMessageContent<InvitationMessage>(message.content);
+                        _uiManager.ShowTips($"{invitationMessage.inviterName}邀请你加入房间{invitationMessage.roomName}",() =>
+                        {
+                            _playFabRoomManager.ApplyJoinRoom(invitationMessage.roomId);
+                        });
+                        break;
+                    //请求加入房间
+                    case (int)MessageType.RequestJoinRoom:
+                        var requestJoinRoomMessage = ConvertToMessageContent<RequestJoinRoomMessage>(message.content);
+                        _uiManager.ShowTips($"{requestJoinRoomMessage.requesterName}请求加入你的房间", () =>
+                        {
+                            _playFabRoomManager.RequestJoinRoom(requestJoinRoomMessage.roomId, requestJoinRoomMessage.roomPassword);
+                        });
 
-                    break;
-                //告诉房主邀请的玩家已经加入房间(同时也通知自己刷新房间列表)
-                case (int)MessageType.ApplyJoinRoom:
-                    var  applyJoinRoomMessage = ConvertToMessageContent<ApplyJoinRoomMessage>(message.content);
-                    _uiManager.ShowTips($"同意了{applyJoinRoomMessage.playerName}申请加入房间");
-                    _playFabRoomManager.ApproveJoinRequest(applyJoinRoomMessage.roomData);
+                        break;
+                    //告诉房主邀请的玩家已经加入房间(同时也通知自己刷新房间列表)
+                    case (int)MessageType.ApplyJoinRoom:
+                        var  applyJoinRoomMessage = ConvertToMessageContent<ApplyJoinRoomMessage>(message.content);
+                        _uiManager.ShowTips($"同意了{applyJoinRoomMessage.playerName}申请加入房间");
+                        _playFabRoomManager.ApproveJoinRequest(applyJoinRoomMessage.roomData);
 
-                    break;
-                //同意邀请加入房间
-                case (int)MessageType.ApproveJoinRoom:
-                    var approveJoinRoomMessage = ConvertToMessageContent<ApproveJoinRoomMessage>(message.content);
-                    _uiManager.ShowTips($"{approveJoinRoomMessage.roomData.CreatorName}同意你加入房间{approveJoinRoomMessage.roomData.RoomCustomInfo.RoomName}");
-                    _playFabRoomManager.ApproveJoinRequest(approveJoinRoomMessage.roomData);
-                    break;
-                case (int)MessageType.DownloadFile:
-                    var downloadFileMes = ConvertToMessageContent<DownloadFileMessage>(message.content);
-                    DownloadFile(downloadFileMes.fileName);
-                    break;
-                case (int)MessageType.Chat:
-                    break;
-                case (int)MessageType.Test:
-                    Test(message.content);
-                    break;
-                case (int)MessageType.SystemNotification:
-                    break;
-                default:
-                    break;
+                        break;
+                    //同意邀请加入房间
+                    case (int)MessageType.ApproveJoinRoom:
+                        var approveJoinRoomMessage = ConvertToMessageContent<ApproveJoinRoomMessage>(message.content);
+                        _uiManager.ShowTips($"{approveJoinRoomMessage.roomData.CreatorName}同意你加入房间{approveJoinRoomMessage.roomData.RoomCustomInfo.RoomName}");
+                        _playFabRoomManager.ApproveJoinRequest(approveJoinRoomMessage.roomData);
+                        break;
+                    case (int)MessageType.DownloadFile:
+                        var downloadFileMes = ConvertToMessageContent<DownloadFileMessage>(message.content);
+                        DownloadFile(downloadFileMes.fileName);
+                        break;
+                    case (int)MessageType.Chat:
+                        break;
+                    case (int)MessageType.Test:
+                        Test(message.content);
+                        break;
+                    case (int)MessageType.SystemNotification:
+                        break;
+                    default:
+                        break;
+                }
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            finally
+            {
+                MarkAsProcessed(message.id, (MessageScope)message.messageScope);
+            }
+            
         }
 
         private int CompareIds(string idA, string idB)
@@ -379,7 +388,7 @@ namespace Network.Server.PlayFab
         
         private T ConvertToMessageContent<T>(string content) where T : IMessageContent, new()
         {
-            var messageContent = JsonUtility.FromJson<T>(content);
+            var messageContent = JsonConvert.DeserializeObject<T>(content);
             return messageContent;
             // 这里你需要将服务器返回的消息内容转换为Message对象并处理
         }

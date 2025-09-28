@@ -29,7 +29,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         private bool _isMatchmaking;  
         private const int MaxPollAttempts = 12; // 最大轮询次数
         private RoomData _currentRoomData;
-        public RoomsData RoomsData { get; private set; }
+        public RoomData[] RoomsData { get; private set; } = Array.Empty<RoomData>();
         public static string CurrentRoomId { get; private set; }
         public bool IsMatchmaking {
             get => _isMatchmaking;
@@ -233,6 +233,11 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnApplyJoinRoomSuccess, OnError);
         }
 
+        public void RoomCreatorApplyJoinRoom(RoomData roomData)
+        {
+            
+        }
+
         private void OnApplyJoinRoomSuccess(ExecuteCloudScriptResult result)
         {
             var data = result.ParseCloudScriptResultToDic();
@@ -353,16 +358,16 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             var data = result.ParseCloudScriptResultToDic();
             if (data.TryGetValue("allRooms", out var value))
             {
-                var roomData = JsonUtility.FromJson<RoomsData>(value.ToString());
-                if (_uiManager.IsUIOpen(UIType.Room))
+                var roomData = JsonConvert.DeserializeObject<RoomData[]>(value.ToString());
+                if (_uiManager.IsUIOpen(UIType.RoomList))
                 {
-                    OnRefreshRoomData?.Invoke(roomData.AllRooms);
+                    OnRefreshRoomData?.Invoke(roomData);
                 }
                 else
                 {
                     _uiManager.SwitchUI<RoomListScreenUI>( ui =>
                     {
-                        OnRefreshRoomData?.Invoke(roomData.AllRooms);
+                        OnRefreshRoomData?.Invoke(roomData);
                     });
                 }
                 RoomsData = roomData;
@@ -442,7 +447,11 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
 
         public IEnumerable<RoomData> GetFilteredRooms(string inputText)
         {
-            return RoomsData.AllRooms.Where(room => FilterByIdOrName(room.RoomId, room.RoomCustomInfo.RoomName, inputText));
+            if (string.IsNullOrWhiteSpace(inputText))
+            {
+                return RoomsData;
+            }
+            return RoomsData.Where(room => FilterByIdOrName(room.RoomId, room.RoomCustomInfo.RoomName, inputText));
         }
 
         private bool FilterByIdOrName(string id, string name, string inputText)

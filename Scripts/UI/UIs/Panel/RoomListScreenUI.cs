@@ -37,6 +37,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             _playFabRoomManager = playFabRoomManager;
             _uiManager = uiManager;
             _repeatedTask = RepeatedTask.Instance;
+            quitButton.onClick.RemoveAllListeners();
             _playFabRoomManager.OnRefreshRoomData += OnRefreshRoomList;
             _repeatedTask.StartRepeatingTask(AutoRefresh, 5);
             refreshButton.BindDebouncedListener(() =>
@@ -60,6 +61,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
 
         private void OnRefreshRoomList(RoomData[] roomList)
         {
+            if (roomList == null || roomList.Length == 0)
+            {
+                return;
+            }
             _roomList = roomList;
             var dataArray = _playFabRoomManager.GetFilteredRooms(searchInputField.text)
                 .Select(room => new RoomListItemData

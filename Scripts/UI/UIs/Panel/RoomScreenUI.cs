@@ -57,9 +57,15 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             // _playFabAccountManager.OnFriendStatusChanged += OnFriendStatusChanged;
             quitButton.BindDebouncedListener(() => _playFabRoomManager.LeaveRoom());
             startButton.BindDebouncedListener(() => _playFabRoomManager.StartGame());
-            refreshButton.BindDebouncedListener(() => _playFabRoomManager.GetInvitablePlayers());
+            refreshButton.BindDebouncedListener(AutoGetInvitablePlayers);
             _refreshTask.StartRepeatingTask(AutoRefresh, 2.5f);
+            _refreshTask.StartRepeatingTask(AutoGetInvitablePlayers, 3f);
             
+        }
+
+        private void AutoGetInvitablePlayers()
+        {
+            _playFabRoomManager.GetInvitablePlayers();
         }
 
         private void AutoRefresh()
@@ -103,8 +109,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                     itemData.Level = playerInfo.Level;
                     itemData.IsFriend = false;
                     itemData.IsSelf = playerInfo.PlayerId == PlayFabData.PlayFabId.Value;
+                    itemData.IsOwner = playerInfo.PlayerId == PlayFabData.PlayFabId.Value;
                     _roomPlayers.Add(itemData.Id, itemData);
                 }
+                startButton.interactable = roomInfo.CreatorId == PlayFabData.PlayFabId.Value;
                 roomContentListPrefab.SetItemList(_roomPlayers);
             }
         }
