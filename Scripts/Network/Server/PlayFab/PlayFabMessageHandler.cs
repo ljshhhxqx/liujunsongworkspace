@@ -242,6 +242,10 @@ namespace Network.Server.PlayFab
                         break;
                     case (int)MessageType.SystemNotification:
                         break;
+                    case (int)MessageType.LeaveRoom:
+                        var leaveRoomMessage = ConvertToMessageContent<LeaveRoomMessage>(message.content);
+                        _playFabRoomManager.OnLeaveRoom(leaveRoomMessage.roomData);
+                        break;
                     default:
                         break;
                 }

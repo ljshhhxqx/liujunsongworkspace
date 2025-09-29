@@ -65,7 +65,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
 
         private void AutoGetInvitablePlayers()
         {
-            _playFabRoomManager.GetInvitablePlayers();
+            _playFabRoomManager.GetInvitablePlayers(false);
         }
 
         private void AutoRefresh()
@@ -124,6 +124,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             _playFabRoomManager.OnCreateRoom -= OnSetRoomInfo;
             _playFabRoomManager.OnJoinRoom -= OnSetRoomInfo;
             _refreshTask.StopRepeatingTask(AutoRefresh);
+            _refreshTask.StopRepeatingTask(AutoGetInvitablePlayers);
         }
     }
 }

@@ -301,7 +301,16 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             Debug.Log("邀请玩家成功");
             var data = executeCloudScriptResult.ParseCloudScriptResultToDic();
         }
-        
+
+        public void OnLeaveRoom(RoomData roomData = default)
+        {
+            if (roomData.RoomId == null)
+            {
+                OnPlayerJoined?.Invoke(roomData);
+                Debug.Log("有人退出了房间");
+            }
+        }
+
         /// <summary>
         /// 离开房间
         /// </summary>
@@ -375,7 +384,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             }
         }
 
-        public void GetInvitablePlayers()
+        public void GetInvitablePlayers(bool isShowLoading = true)
         {
             var request = new ExecuteEntityCloudScriptRequest
             {
@@ -384,7 +393,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                 FunctionParameter = new { status = "Online" },
                 Entity = PlayFabData.EntityKey.Value,
             };
-            _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnGetInvitablePlayersSuccess, OnError);
+            _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnGetInvitablePlayersSuccess, OnError, isShowLoading);
         }
 
         private void OnGetInvitablePlayersSuccess(ExecuteCloudScriptResult result)
@@ -396,7 +405,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                 var str = value.ToString();
                 if (str == "[]")
                 {
-                    _uiManager.ShowTips("当前没有可邀请的玩家");
+                    //_uiManager.ShowTips("当前没有可邀请的玩家");
                     return;
                 }
                 var players = JsonConvert.DeserializeObject<PlayerReadOnlyData[]>(value.ToString());

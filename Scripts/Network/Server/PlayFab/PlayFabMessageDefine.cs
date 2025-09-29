@@ -11,6 +11,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         DownloadFile,
         Chat,
         ApplyJoinRoom,
+        LeaveRoom,
         SystemNotification = -1,
         Test = -2,
         // 可以根据需要添加更多类型
@@ -153,6 +154,11 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         public string fileContents;
         public string fileName;
         public string errorMessage;
+    }
+    [Serializable]
+    public struct LeaveRoomMessage : IMessageContent
+    {
+        public RoomData roomData;
     }
 
     [Serializable]

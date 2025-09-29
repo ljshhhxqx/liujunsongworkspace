@@ -97,6 +97,7 @@ namespace Data
     {
         Offline,
         Online,
+        InRoom,
         InGame
     }
 
