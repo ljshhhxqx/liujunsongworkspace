@@ -58,12 +58,14 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             {
                 if (_localPlayerId == 0)
                 {
-                    if (!_playerIdsByNetId.TryGetValue(NetworkClient.localPlayer.netId, out var id))
+                    if (NetworkServer.active)
                     {
-                        Debug.LogError($"LocalPlayerId: {NetworkClient.localPlayer.netId} not found");
-                        return 0;
+                        _localPlayerId = connectionToClient.connectionId;
                     }
-                    _localPlayerId = id;
+                    else if (_playerIdsByNetId.TryGetValue(NetworkClient.localPlayer.netId, out var id))
+                    {
+                        _localPlayerId = id;
+                    }
                 }
                 return _localPlayerId;
             }

@@ -10,50 +10,50 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         private readonly List<PlayerInitData> _players = new List<PlayerInitData>();
         public RoomData CurrentRoomData { get; private set; }
 
-        // public void TestInitRoomPlayer()
-        // {
-        //     InitRoomPlayer(new RoomData
-        //     {
-        //         RoomId = "1",
-        //         CreatorName = "Creator1",
-        //         CreatorId =      "1",
-        //         PlayersInfo = new PlayerReadOnlyData[]
-        //         {
-        //             new PlayerReadOnlyData
-        //             {
-        //                 PlayerId = "Creator1", 
-        //                 Email = "Email1",
-        //                 Level = 1,
-        //                 Score = 0,
-        //                 Status = PlayerStatus.InGame.ToString(),
-        //                 Nickname = "Player1",
-        //             },
-        //         },
-        //         RoomStatus = 1,
-        //         RoomCustomInfo = new RoomCustomInfo()
-        //         {
-        //             RoomName = "Room1",
-        //             RoomType = 2,
-        //             MaxPlayers = 4,
-        //             RoomPassword = null,
-        //             MapType = 0,
-        //             GameMode = 0,
-        //             GameTime = 180,
-        //             GameScore = 0,
-        //         }
-        //         // PlayersInfo = new List<PlayerInfo>
-        //         // {
-        //         //     new PlayerInfo
-        //         //     {
-        //         //         PlayerId = "1", 
-        //         //         PlayerName = "Player1",
-        //         //         PlayerIcon = "Player1Icon",
-        //         //         PlayerPosition = new Vector3(0, 0, 0),
-        //         //         PlayerRotation = new Quaternion(0, 0, 0, 0),
-        //         //     },
-        //         // }
-        //     });
-        // }
+        public void TestInitRoomPlayer()
+        {
+            InitRoomPlayer(new RoomData
+            {
+                RoomId = "1",
+                CreatorName = "Creator1",
+                CreatorId =      "1",
+                PlayersInfo = new PlayerReadOnlyData[]
+                {
+                    new PlayerReadOnlyData
+                    {
+                        PlayerId = "Creator1", 
+                        Email = "Email1",
+                        Level = 1,
+                        Score = 0,
+                        Status = PlayerStatus.InGame.ToString(),
+                        Nickname = "Player1",
+                    },
+                },
+                RoomStatus = 1,
+                RoomCustomInfo = new RoomCustomInfo()
+                {
+                    RoomName = "Room1",
+                    RoomType = 2,
+                    MaxPlayers = 4,
+                    RoomPassword = null,
+                    MapType = 0,
+                    GameMode = 0,
+                    GameTime = 180,
+                    GameScore = 0,
+                }
+                // PlayersInfo = new List<PlayerInfo>
+                // {
+                //     new PlayerInfo
+                //     {
+                //         PlayerId = "1", 
+                //         PlayerName = "Player1",
+                //         PlayerIcon = "Player1Icon",
+                //         PlayerPosition = new Vector3(0, 0, 0),
+                //         PlayerRotation = new Quaternion(0, 0, 0, 0),
+                //     },
+                // }
+            });
+        }
 
         public void InitRoomPlayer(RoomData roomData)
         {

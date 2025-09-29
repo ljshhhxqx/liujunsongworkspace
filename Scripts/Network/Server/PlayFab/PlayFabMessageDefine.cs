@@ -12,6 +12,8 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         Chat,
         ApplyJoinRoom,
         LeaveRoom,
+        
+        StartGame,
         SystemNotification = -1,
         Test = -2,
         // 可以根据需要添加更多类型
@@ -157,6 +159,12 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
     }
     [Serializable]
     public struct LeaveRoomMessage : IMessageContent
+    {
+        public RoomData roomData;
+    }
+
+    [Serializable]
+    public struct StartGameMessage : IMessageContent
     {
         public RoomData roomData;
     }

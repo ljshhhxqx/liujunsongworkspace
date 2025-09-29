@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Tool;
+using Cysharp.Threading.Tasks;
 using Data;
+using Game;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.UI.UIBase;
@@ -24,6 +27,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         private readonly UIManager _uiManager;
         private readonly IPlayFabClientCloudScriptCaller _playFabClientCloudScriptCaller;
         private readonly PlayerDataManager _playerDataManager;
+        private readonly GameSceneManager _gameSceneManager;
         
         private int _pollCount = 0;
         private bool _isMatchmaking;  
@@ -50,8 +54,9 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         
         
         [Inject]
-        private PlayFabRoomManager(UIManager uiManager, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller, PlayerDataManager playerDataManager)
+        private PlayFabRoomManager(UIManager uiManager, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller, PlayerDataManager playerDataManager, GameSceneManager gameSceneManager)
         {
+            _gameSceneManager = gameSceneManager;
             _uiManager = uiManager;
             _playerDataManager = playerDataManager;
             _playFabClientCloudScriptCaller = playFabClientCloudScriptCaller;
@@ -471,6 +476,12 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             }
             var isNumeric = int.TryParse(inputText, out _);
             return isNumeric ? id.Contains(inputText) : name.Contains(inputText);
+        }
+
+        public void OnStartGame(RoomData roomData)
+        {
+            _currentRoomData = roomData;
+            StartGame();
         }
     }
 }
