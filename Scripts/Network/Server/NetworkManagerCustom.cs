@@ -6,6 +6,7 @@ using Game.Map;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
+using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
@@ -38,6 +39,8 @@ namespace HotUpdate.Scripts.Network.Server
         private MapType _mapName;
         private GameConfigData _gameConfigData;
         private MirrorNetworkMessageHandler _mirrorNetworkMessageHandler;
+        
+        private Dictionary<int, NetworkConnectionToClient> _connectionToClients = new Dictionary<int, NetworkConnectionToClient>();
 
         [Inject]
         private void Init(GameEventManager gameEventManager, UIManager uIManager, IObjectResolver objectResolver,
@@ -52,6 +55,7 @@ namespace HotUpdate.Scripts.Network.Server
             _gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnSceneResourcesLoaded);
             _objectResolver = objectResolver;
             _playerDataManager = playerDataManager;
+            _uiManager = uIManager;
             _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
             _gameConfigData = configProvider.GetConfig<JsonDataConfig>().GameConfig;
         }
@@ -60,14 +64,23 @@ namespace HotUpdate.Scripts.Network.Server
         public override void OnServerConnect(NetworkConnectionToClient conn)
         {
             base.OnServerConnect(conn);
+            _connectionToClients.Add(conn.connectionId, conn);
             Debug.Log($"玩家 【{conn.connectionId}】 已连接到服务器。");
-            
+            if (_connectionToClients.Count == PlayFabData.PlayFabId.Value.Length)
+            {
+                Debug.Log("所有玩家已连接到服务器。");
+                foreach (var connection in _connectionToClients.Values)
+                {
+                    SpawnPlayer(connection);
+                }
+            }
         }
         
         // 服务器端有玩家断开时调用
         public override void OnServerDisconnect(NetworkConnectionToClient conn)
         {
             base.OnServerDisconnect(conn);
+            _connectionToClients.Remove(conn.connectionId);
             _playerInGameManager.RemovePlayer(conn.connectionId);
             Debug.Log($"玩家 【{conn.connectionId}】 已断开连接。");
         }
@@ -101,7 +114,7 @@ namespace HotUpdate.Scripts.Network.Server
             return playerGo;
         }
 
-        public override void OnServerAddPlayer(NetworkConnectionToClient conn)
+        private void SpawnPlayer(NetworkConnectionToClient conn)
         {
             var spawnIndex = Random.Range(0, _spawnPoints.Count);
             var res = DataJsonManager.Instance.GetResourceData(_gameConfigData.playerPrefabName);
@@ -119,6 +132,12 @@ namespace HotUpdate.Scripts.Network.Server
 
             //_mirrorNetworkMessageHandler.SendToAllClients(new MirrorPlayerConnectedMessage(conn.connectionId, spawnIndex, playerGo.name));
             NetworkServer.AddPlayerForConnection(conn, playerGo);
+        }
+
+
+        public override void OnServerAddPlayer(NetworkConnectionToClient conn)
+        {
+            Debug.Log("OnServerAddPlayer");
         }
 
         private void OnSceneResourcesLoaded(GameSceneResourcesLoadedEvent sceneResourcesLoadedEvent)

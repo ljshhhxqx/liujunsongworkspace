@@ -7,6 +7,7 @@ using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Game.Inject;
+using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Tool.GameEvent;

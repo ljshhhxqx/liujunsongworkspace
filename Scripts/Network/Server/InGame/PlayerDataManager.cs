@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Data;
+using HotUpdate.Scripts.Network.Data;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -66,6 +67,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 {
                     player = player,
                 });
+                PlayFabData.PlayerList.Add(player.PlayerId);
             }
         }
         

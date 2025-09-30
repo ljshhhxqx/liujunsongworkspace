@@ -58,13 +58,13 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             {
                 if (_localPlayerId == 0)
                 {
-                    if (NetworkServer.active)
-                    {
-                        _localPlayerId = connectionToClient.connectionId;
-                    }
-                    else if (_playerIdsByNetId.TryGetValue(NetworkClient.localPlayer.netId, out var id))
+                    if (_playerIdsByNetId.TryGetValue(NetworkClient.localPlayer.netId, out var id))
                     {
                         _localPlayerId = id;
+                    }
+                    else if (NetworkServer.active)
+                    {
+                        _localPlayerId = connectionToClient.connectionId;
                     }
                 }
                 return _localPlayerId;
@@ -78,6 +78,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             RegisterReaderWriter();
             _configProvider = configProvider;
         }
+        
 
         [Server]
         public void SpawnAllBases()
@@ -421,18 +422,13 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             }
             var pos = playerInGameData.networkIdentity.transform.position;
             var nearestBase = _gameConfigData.GetNearestBase(pos);
-            var index = 0;
-            foreach (var key in _playerBases.Keys)
+            var basePosition = _playerBases.FirstOrDefault(x => x.Value.transform.position == nearestBase);
+            if (basePosition.Key != 0)
             {
-                var basePosition = _playerBases[key].transform.position;
-                if (nearestBase == basePosition)
-                {
-                    var value  = _playerBases[key];
-                    value.PlayerId = GetPlayerNetId(connectId);
-                    _playerBases[connectId] = value;
-                    _playerBases.Remove(index);
-                }
-                index++;
+                var value  = _playerBases[basePosition.Key];
+                value.PlayerId = GetPlayerNetId(connectId);
+                _playerBases[connectId] = value;
+                _playerBases.Remove(basePosition.Key);
             }
         }
 

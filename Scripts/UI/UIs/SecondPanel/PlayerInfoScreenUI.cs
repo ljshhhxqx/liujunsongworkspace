@@ -1,5 +1,6 @@
 using AOTScripts.Tool;
 using Data;
+using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.UI.UIBase;
 using Network.Data;
 using TMPro;

@@ -2,7 +2,7 @@
 using PlayFab.CloudScriptModels;
 using UniRx;
 
-namespace Network.Data
+namespace HotUpdate.Scripts.Network.Data
 {
     public static class PlayFabData
     {
@@ -12,6 +12,7 @@ namespace Network.Data
         public static ReactiveProperty<PlayerReadOnlyData> PlayerReadOnlyData { get; private set; } = new ReactiveProperty<PlayerReadOnlyData>();
         public static ReactiveProperty<bool> IsDevelopMode { get; private set; }    = new ReactiveProperty<bool>();
         public static ReactiveProperty<EntityKey> EntityKey { get; private set; } = new ReactiveProperty<EntityKey>();
+        public static ReactiveCollection<string> PlayerList { get; private set; } = new ReactiveCollection<string>(); 
 
         public static void Initialize()
         {
