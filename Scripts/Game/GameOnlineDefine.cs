@@ -104,6 +104,11 @@ namespace Game
             SendLogoutRequest();
         }
 
+        private void OnDestroy()
+        {
+            SendLogoutRequest();
+        }
+
         private void OnApplicationPause(bool pauseStatus)
         {
             if (pauseStatus)

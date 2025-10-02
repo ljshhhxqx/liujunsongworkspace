@@ -845,13 +845,23 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
+            "Name": "PlayerConnectUI",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/PlayerConnectUI.prefab"
+        },
+        {
+            "UID": 3300012,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "RegistPanel",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/RegistPanel.prefab"
         },
         {
-            "UID": 3300012,
+            "UID": 3300013,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -861,7 +871,7 @@
             "Address": "/Preload/UI/RoomListUI.prefab"
         },
         {
-            "UID": 3300013,
+            "UID": 3300014,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -871,7 +881,7 @@
             "Address": "/Preload/UI/RoomScreenUI.prefab"
         },
         {
-            "UID": 3300014,
+            "UID": 3300015,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -881,7 +891,7 @@
             "Address": "/Preload/UI/TestObjectPanel.prefab"
         },
         {
-            "UID": 3300015,
+            "UID": 3300016,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -891,7 +901,7 @@
             "Address": "/Preload/UI/TipPopup.prefab"
         },
         {
-            "UID": 3300016,
+            "UID": 3300017,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",

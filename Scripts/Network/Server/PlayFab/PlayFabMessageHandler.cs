@@ -249,7 +249,11 @@ namespace Network.Server.PlayFab
                         break;
                     case (int)MessageType.StartGame:
                         var startGameMessage = ConvertToMessageContent<StartGameMessage>(message.content);
-                        _playFabRoomManager.OnStartGame(startGameMessage.roomData);
+                        _playFabRoomManager.OnStartGame(startGameMessage);
+                        break;
+                    case (int)MessageType.ChangeGameInfo:
+                        var changeGameInfoMessage = ConvertToMessageContent<ChangeGameInfoMessage>(message.content);
+                        _playFabRoomManager.OnChangeGameInfo(changeGameInfoMessage);
                         break;
                     default:
                         break;

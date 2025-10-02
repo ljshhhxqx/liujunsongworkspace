@@ -34,6 +34,8 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         private bool _isMatchmaking;  
         private const int MaxPollAttempts = 12; // 最大轮询次数
         private RoomData _currentRoomData;
+        private MainGameInfo _currentMainGameInfo;
+        private GamePlayerInfo _currentGamePlayerInfo;
         public RoomData[] RoomsData { get; private set; } = Array.Empty<RoomData>();
         public static string CurrentRoomId { get; private set; }
         public bool IsMatchmaking {
@@ -52,7 +54,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         public event Action<RoomData> OnRefreshRoom;
         public event Action<bool> OnMatchmakingChanged;
         public event Action<PlayerReadOnlyData[]> OnRefreshPlayers;
-        
+        public event Action<string, GamePlayerInfo>  OnPlayerInfoChanged;
         
         [Inject]
         private PlayFabRoomManager(UIManager uiManager, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller, PlayerDataManager playerDataManager, GameSceneManager gameSceneManager)
@@ -452,12 +454,26 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
 
         public void StartGame()
         {
-            // TODO: 根据房间性质，开启一个云服务器或者本地服务器进行游戏
-            var operation = ResourceManager.Instance.LoadSceneAsync(_currentRoomData.RoomCustomInfo.MapType.ToString());
-            operation.Completed += (op) =>
+            if (_currentRoomData.CreatorId != PlayFabData.PlayFabId.Value)
             {
-                _playerDataManager.InitRoomPlayer(_currentRoomData);
+                _uiManager.ShowTips("只有房主才能开始游戏");
+                return;
+            }
+            
+            var request = new ExecuteEntityCloudScriptRequest
+            {
+                FunctionName = "StartGame",
+                GeneratePlayStreamEvent = true,
+                FunctionParameter = new { ipAddress = "127.0.0.1", port = 7777, roomId = CurrentRoomId },
+                Entity = PlayFabData.EntityKey.Value,
             };
+            _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnStartGameSuccess, OnError, false);
+        }
+
+        private void OnStartGameSuccess(ExecuteCloudScriptResult result)
+        {
+            Debug.Log("开始游戏成功");
+            var data = result.ParseCloudScriptResultToDic();
         }
 
         public IEnumerable<RoomData> GetFilteredRooms(string inputText)
@@ -479,10 +495,82 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             return isNumeric ? id.Contains(inputText) : name.Contains(inputText);
         }
 
-        public void OnStartGame(RoomData roomData)
+        public void OnStartGame(StartGameMessage message)
         {
-            _currentRoomData = roomData;
-            StartGame();
+            // TODO: 根据房间性质，开启一个云服务器或者本地服务器进行游戏
+            _currentMainGameInfo = message.mainGameInfo;
+            for (int i = 0; i < _currentMainGameInfo.playersInfo.Length; i++)
+            {
+                var playerInfo = _currentMainGameInfo.playersInfo[i];
+                if (playerInfo.playerId == PlayFabData.PlayFabId.Value)
+                {
+                    _currentGamePlayerInfo = playerInfo;
+                    break;
+                }
+            }
+            var operation = ResourceManager.Instance.LoadSceneAsync(message.mainGameInfo.mapType);
+            operation.Completed += (op) =>
+            {
+                _playerDataManager.InitRoomPlayer(_currentRoomData);
+                PlayFabData.ConnectionAddress.Value = message.mainGameInfo.ipAddress;
+                PlayFabData.ConnectionPort.Value = message.mainGameInfo.port;
+            };
+        }
+
+        public void TryChangePlayerGameInfo(PlayerGameDuty duty = PlayerGameDuty.None, PlayerGameStatus status = PlayerGameStatus.None)
+        {
+            var dutyEnum = Enum.Parse<PlayerGameDuty>(_currentGamePlayerInfo.playerDuty);
+            if (dutyEnum == duty)
+            {
+                _uiManager.ShowTips("已经是该职位了");
+                return;
+            }
+            if (duty == PlayerGameDuty.None && status == PlayerGameStatus.None)
+            {
+                _uiManager.ShowTips("请改变职位或状态的至少一个");
+                return;
+            }
+            _currentGamePlayerInfo.playerDuty = duty == PlayerGameDuty.None ? _currentGamePlayerInfo.playerDuty : duty.ToString();
+            _currentGamePlayerInfo.playerStatus = status == PlayerGameStatus.None ? _currentGamePlayerInfo.playerStatus : status.ToString();
+            
+            var request = new ExecuteEntityCloudScriptRequest
+            {
+                FunctionName = "SetPlayerGameInfo",
+                GeneratePlayStreamEvent = true,
+                FunctionParameter = new { playerId = PlayFabData.PlayFabId.Value, gameInfo = JsonUtility.ToJson(_currentGamePlayerInfo), gameId = _currentMainGameInfo.gameId },
+                Entity = PlayFabData.EntityKey.Value,
+            };
+            _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnChangePlayerDutySuccess, OnError);
+        }
+
+        private void OnChangePlayerDutySuccess(ExecuteCloudScriptResult result)
+        {
+            var data = result.ParseCloudScriptResultToDic();
+            // if (data.TryGetValue("gameInfo", out var value))
+            // {
+            //     var gameInfo = JsonUtility.FromJson<GamePlayerInfo>(value.ToString());
+            //     _currentGamePlayerInfo = gameInfo;
+            //     _uiManager.ShowTips("职位或状态修改成功");
+            // }
+        }
+
+        public void OnChangeGameInfo(ChangeGameInfoMessage changeGameInfoMessage)
+        {
+            if (_currentGamePlayerInfo.playerId == changeGameInfoMessage.gamePlayerInfo.playerId)
+            {
+                _currentGamePlayerInfo = changeGameInfoMessage.gamePlayerInfo;
+                _uiManager.ShowTips("玩家信息更新成功");
+            }
+            for (int i = 0; i < _currentMainGameInfo.playersInfo.Length; i++)
+            {
+                if (changeGameInfoMessage.gamePlayerInfo.playerId == _currentMainGameInfo.playersInfo[i].playerId)
+                {
+                    _currentMainGameInfo.playersInfo[i] = changeGameInfoMessage.gamePlayerInfo;
+                    OnPlayerInfoChanged?.Invoke(_currentGamePlayerInfo.playerId, _currentMainGameInfo.playersInfo[i]);
+                    _uiManager.ShowTips("玩家信息更新成功");
+                    break;
+                }
+            }
         }
     }
 }

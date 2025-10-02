@@ -143,7 +143,45 @@ namespace Data
         public int GameTime;
         public int GameScore;
     }
-    
+
+    public enum PlayerGameStatus
+    {
+        None,
+        Waiting,
+        Connecting,
+        Connected,
+        Gaming,
+        End
+    }
+    public enum PlayerGameDuty
+    {
+        None,
+        Host,
+        Server,
+        Client
+    }
+
+    [Serializable]
+    public struct MainGameInfo
+    {
+        public string roomId;
+        public string gameId;
+        public string ipAddress;
+        public string mapType;
+        public int port;
+        public GamePlayerInfo[] playersInfo;
+    }
+
+    [Serializable]
+    public struct GamePlayerInfo
+    {
+        public string playerId;
+        public string playerName;
+        public int playerLevel;
+        public string playerDuty;
+        public string playerStatus;
+    }
+
     [Serializable]
     public struct RoomData
     {

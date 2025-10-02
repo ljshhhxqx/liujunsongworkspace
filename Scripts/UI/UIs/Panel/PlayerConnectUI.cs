@@ -1,5 +1,8 @@
 using System;
+using AOTScripts.Tool;
+using Data;
 using HotUpdate.Scripts.Network.Server;
+using HotUpdate.Scripts.Network.Server.PlayFab;
 using UI.UIBase;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,11 +22,11 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         public override UICanvasType CanvasType => UICanvasType.Panel;
 
         [Inject]
-        private void Init(NetworkManagerCustom networkManager)
+        private void Init(PlayFabRoomManager playFabRoomManager)
         {
-            hostBtn.onClick.AddListener(networkManager.StartHost);
-            serverBtn.onClick.AddListener(networkManager.StartServer);
-            clientBtn.onClick.AddListener(networkManager.StartClient);
+            hostBtn.BindDebouncedListener(() => playFabRoomManager.TryChangePlayerGameInfo(PlayerGameDuty.Host), 2f);
+            serverBtn.BindDebouncedListener(() => playFabRoomManager.TryChangePlayerGameInfo(PlayerGameDuty.Server), 2f);
+            clientBtn.BindDebouncedListener(() => playFabRoomManager.TryChangePlayerGameInfo(PlayerGameDuty.Client), 2f);
         }
 
         private void OnDestroy()

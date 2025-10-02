@@ -13,14 +13,17 @@ using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
+using kcp2k;
 using Mirror;
 using Network.NetworkMes;
 using Tool.GameEvent;
 using Tool.Message;
 using UI.UIBase;
+using UniRx;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+using GameInfo = Tool.GameEvent.GameInfo;
 using PlayerInGameData = HotUpdate.Scripts.Network.Server.InGame.PlayerInGameData;
 using Random = UnityEngine.Random;
 
@@ -38,14 +41,24 @@ namespace HotUpdate.Scripts.Network.Server
         private PlayerInGameManager _playerInGameManager;
         private MapType _mapName;
         private GameConfigData _gameConfigData;
+        private KcpTransport _transport;
         private MirrorNetworkMessageHandler _mirrorNetworkMessageHandler;
         
-        private Dictionary<int, NetworkConnectionToClient> _connectionToClients = new Dictionary<int, NetworkConnectionToClient>();
+        private readonly Dictionary<int, NetworkConnectionToClient> _connectionToClients = new Dictionary<int, NetworkConnectionToClient>();
 
         [Inject]
         private void Init(GameEventManager gameEventManager, UIManager uIManager, IObjectResolver objectResolver,
             PlayerDataManager playerDataManager, IConfigProvider configProvider)
         {
+            _transport = GetComponent<KcpTransport>();
+            PlayFabData.ConnectionAddress.Subscribe(address =>
+            {
+                networkAddress = address.Trim();
+            }).AddTo(this);
+            PlayFabData.ConnectionPort.Subscribe(port =>
+            {
+                _transport.port = (ushort)port;
+            }).AddTo(this);
             PropertyTypeReaderWriter.RegisterReaderWriter();
             _gameEventManager = gameEventManager;
             _spawnPoints = FindObjectsByType<NetworkStartPosition>(FindObjectsSortMode.None).ToList();
