@@ -15,6 +15,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         
         StartGame,
         ChangeGameInfo,
+        LeaveGame,
         SystemNotification = -1,
         Test = -2,
         // 可以根据需要添加更多类型
@@ -180,6 +181,12 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
     public struct ChangeGameInfoMessage : IMessageContent
     {
         public GamePlayerInfo gamePlayerInfo;
+    }
+    
+    [Serializable]
+    public struct LeaveGameMessage : IMessageContent
+    {
+        public MainGameInfo mainGameInfo;
     }
 
     [Serializable]

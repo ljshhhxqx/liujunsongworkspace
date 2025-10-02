@@ -255,6 +255,10 @@ namespace Network.Server.PlayFab
                         var changeGameInfoMessage = ConvertToMessageContent<ChangeGameInfoMessage>(message.content);
                         _playFabRoomManager.OnChangeGameInfo(changeGameInfoMessage);
                         break;
+                    case (int) MessageType.LeaveGame:
+                        var leaveGameMessage = ConvertToMessageContent<LeaveGameMessage>(message.content);
+                        _playFabRoomManager.OnLeaveGame(leaveGameMessage);
+                        break;
                     default:
                         break;
                 }

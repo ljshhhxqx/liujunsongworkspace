@@ -3,6 +3,8 @@ using AOTScripts.Tool;
 using Data;
 using HotUpdate.Scripts.Network.Server;
 using HotUpdate.Scripts.Network.Server.PlayFab;
+using HotUpdate.Scripts.UI.UIBase;
+using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
 using UI.UIBase;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,15 +20,38 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         private Button serverBtn;
         [SerializeField]
         private Button clientBtn;
+        [SerializeField]
+        private Button quitBtn;
+        [SerializeField]
+        private ContentItemList contentItemList;
+        private PlayFabRoomManager _playFabRoomManager;
         public override UIType Type => UIType.PlayerConnect;
         public override UICanvasType CanvasType => UICanvasType.Panel;
 
         [Inject]
-        private void Init(PlayFabRoomManager playFabRoomManager)
+        private void Init(PlayFabRoomManager playFabRoomManager,UIManager uiManager)
         {
-            hostBtn.BindDebouncedListener(() => playFabRoomManager.TryChangePlayerGameInfo(PlayerGameDuty.Host), 2f);
-            serverBtn.BindDebouncedListener(() => playFabRoomManager.TryChangePlayerGameInfo(PlayerGameDuty.Server), 2f);
-            clientBtn.BindDebouncedListener(() => playFabRoomManager.TryChangePlayerGameInfo(PlayerGameDuty.Client), 2f);
+            _playFabRoomManager = playFabRoomManager;
+            _playFabRoomManager.OnGameInfoChanged += OnGameInfoChanged;
+            _playFabRoomManager.OnPlayerInfoChanged += OnPlayerInfoChanged;
+            quitBtn.BindDebouncedListener(() =>
+            {
+                uiManager.CloseUI(UIType.PlayerConnect);
+                _playFabRoomManager.LeaveGame();
+            }, 2f);
+            hostBtn.BindDebouncedListener(() => _playFabRoomManager.TryChangePlayerGameInfo(PlayerGameDuty.Host), 2f);
+            serverBtn.BindDebouncedListener(() => _playFabRoomManager.TryChangePlayerGameInfo(PlayerGameDuty.Server), 2f);
+            clientBtn.BindDebouncedListener(() => _playFabRoomManager.TryChangePlayerGameInfo(PlayerGameDuty.Client), 2f);
+        }
+
+        private void OnGameInfoChanged(MainGameInfo info)
+        {
+            
+        }
+
+        private void OnPlayerInfoChanged(string player, GamePlayerInfo arg2)
+        {
+            
         }
 
         private void OnDestroy()
@@ -34,6 +59,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             hostBtn.onClick.RemoveAllListeners();
             serverBtn.onClick.RemoveAllListeners();
             clientBtn.onClick.RemoveAllListeners();
+            quitBtn.onClick.RemoveAllListeners();
         }
     }
 }

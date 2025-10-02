@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Serialization;
 
 namespace Data
@@ -146,18 +147,28 @@ namespace Data
 
     public enum PlayerGameStatus
     {
+        [Header("未知状态")]
         None,
+        [Header("等待连接")]
         Waiting,
+        [Header("连接中")]
         Connecting,
+        [Header("连接完毕")]
         Connected,
+        [Header("游戏中")]
         Gaming,
+        [Header("已结束")]
         End
     }
     public enum PlayerGameDuty
     {
+        [Header("无职位")]
         None,
+        [Header("主机(客户端+服务器)")]
         Host,
+        [Header("服务器")]
         Server,
+        [Header("客户端")]
         Client
     }
 

@@ -24,6 +24,41 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
     {
         
     }
+    
+    public struct PlayerConnectionData : IItemBaseData, IEquatable<PlayerConnectionData>
+    {
+        public string PlayerId;
+        public string Name;
+        public int Level;
+        public PlayerGameStatus Status;
+        public PlayerGameDuty Duty;
+
+        public bool Equals(PlayerConnectionData other)
+        {
+            return PlayerId == other.PlayerId && Name == other.Name && Level == other.Level && Status == other.Status && Duty == other.Duty;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is PlayerConnectionData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(PlayerId, Name, Level, Status);
+        }
+        
+        public override string ToString()
+        {
+            var stringBuilder = new StringBuilder();
+            stringBuilder.AppendFormat("玩家ID：{0}\n", PlayerId);
+            stringBuilder.AppendFormat("玩家昵称：{0}\n", Name);
+            stringBuilder.AppendFormat("玩家等级：{0}\n", Level);
+            stringBuilder.AppendFormat("玩家状态：{0}\n", Status);
+            stringBuilder.AppendFormat("玩家职务：{0}\n", Duty);
+            return stringBuilder.ToString();
+        }
+    }
 
     public struct AnimationStateData : IItemBaseData, IEquatable<AnimationStateData>, IPoolObject
     {

@@ -55,6 +55,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         public event Action<bool> OnMatchmakingChanged;
         public event Action<PlayerReadOnlyData[]> OnRefreshPlayers;
         public event Action<string, GamePlayerInfo>  OnPlayerInfoChanged;
+        public event Action<MainGameInfo>  OnGameInfoChanged;
         
         [Inject]
         private PlayFabRoomManager(UIManager uiManager, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller, PlayerDataManager playerDataManager, GameSceneManager gameSceneManager)
@@ -319,6 +320,28 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             }
         }
 
+        public void LeaveGame()
+        {
+            if (_currentMainGameInfo.gameId != null)
+            {
+                var request = new ExecuteEntityCloudScriptRequest()
+                {
+                    FunctionName = "LeaveGame",
+                    FunctionParameter = new { roomId = CurrentRoomId, playerId = PlayFabData.PlayFabId.Value },
+                    GeneratePlayStreamEvent = true,
+                    Entity = PlayFabData.EntityKey.Value,
+                };
+                _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnLeaveGameSuccess, OnError);
+                Debug.Log($"{PlayFabData.PlayerReadOnlyData.Value.Nickname}离开游戏");
+            }
+        }
+
+        private void OnLeaveGameSuccess(ExecuteCloudScriptResult result)
+        {
+            Debug.Log("离开游戏成功");
+            var data = result.ParseCloudScriptResultToDic();
+        }
+
         /// <summary>
         /// 离开房间
         /// </summary>
@@ -556,13 +579,13 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
 
         public void OnChangeGameInfo(ChangeGameInfoMessage changeGameInfoMessage)
         {
-            if (_currentGamePlayerInfo.playerId == changeGameInfoMessage.gamePlayerInfo.playerId)
-            {
-                _currentGamePlayerInfo = changeGameInfoMessage.gamePlayerInfo;
-                _uiManager.ShowTips("玩家信息更新成功");
-            }
             for (int i = 0; i < _currentMainGameInfo.playersInfo.Length; i++)
             {
+                var playerInfo = _currentMainGameInfo.playersInfo[i];
+                if (_currentGamePlayerInfo.playerId == playerInfo.playerId)
+                {
+                    _currentGamePlayerInfo = changeGameInfoMessage.gamePlayerInfo;
+                }
                 if (changeGameInfoMessage.gamePlayerInfo.playerId == _currentMainGameInfo.playersInfo[i].playerId)
                 {
                     _currentMainGameInfo.playersInfo[i] = changeGameInfoMessage.gamePlayerInfo;
@@ -571,6 +594,17 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                     break;
                 }
             }
+        }
+
+        public void OnLeaveGame(LeaveGameMessage leaveGameMessage)
+        {
+            if (leaveGameMessage.mainGameInfo.gameId != _currentMainGameInfo.gameId)
+            {
+                Debug.LogError($"不属于该房间的玩家，跳过");
+                return;
+            }
+            _currentMainGameInfo = leaveGameMessage.mainGameInfo;
+            OnGameInfoChanged?.Invoke(_currentMainGameInfo);
         }
     }
 }
