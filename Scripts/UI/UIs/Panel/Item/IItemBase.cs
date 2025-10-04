@@ -11,18 +11,17 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
 {
     public interface IItemBase
     {
-        void SetData<T>(T data) where T : IItemBaseData, new();
+        void SetData<T>(T data) where T : IItemBaseData;
     }
     
     public abstract class ItemBase : MonoBehaviour, IItemBase
     {
-        public abstract void SetData<T>(T data) where T : IItemBaseData, new();
+        public abstract void SetData<T>(T data) where T : IItemBaseData;
         public abstract void Clear();
     }
 
     public interface IItemBaseData : IUIDatabase
     {
-        
     }
     
     public struct PlayerConnectionData : IItemBaseData, IEquatable<PlayerConnectionData>

@@ -1,9 +1,13 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using AOTScripts.Tool;
 using Data;
+using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.Server;
 using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.UI.UIBase;
+using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
 using UI.UIBase;
 using UnityEngine;
@@ -46,12 +50,64 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
 
         private void OnGameInfoChanged(MainGameInfo info)
         {
-            
+            var dict = new Dictionary<int, PlayerConnectionData>();
+            for (int i = 0; i < info.playersInfo.Length; i++)
+            {
+                var playerInfo = info.playersInfo[i];
+                if (playerInfo.playerId == PlayFabData.PlayFabId.Value)
+                {
+                    hostBtn.interactable = playerInfo.playerDuty == PlayerGameDuty.Host.ToString();
+                    serverBtn.interactable = playerInfo.playerDuty == PlayerGameDuty.Server.ToString();
+                    clientBtn.interactable = playerInfo.playerDuty == PlayerGameDuty.Client.ToString();
+                }
+                else
+                {
+                    var data = new PlayerConnectionData
+                    {
+                        PlayerId = playerInfo.playerId,
+                        Name = playerInfo.playerName,
+                        Duty = Enum.Parse<PlayerGameDuty>(playerInfo.playerDuty),
+                        Level = playerInfo.playerLevel,
+                        Status = Enum.Parse<PlayerGameStatus>(playerInfo.playerStatus),
+                    };
+                    dict.Add(playerInfo.id, data);
+                }
+            }
+            contentItemList.SetItemList(dict);
         }
 
-        private void OnPlayerInfoChanged(string player, GamePlayerInfo arg2)
+        private void OnPlayerInfoChanged(string player, GamePlayerInfo playerInfo)
         {
-            
+            if (player == PlayFabData.PlayFabId.Value)
+            {
+                hostBtn.interactable = playerInfo.playerDuty == PlayerGameDuty.Host.ToString();
+                serverBtn.interactable = playerInfo.playerDuty == PlayerGameDuty.Server.ToString();
+                clientBtn.interactable = playerInfo.playerDuty == PlayerGameDuty.Client.ToString();
+            }
+
+            var key = 0;
+            foreach (var kvp in contentItemList.ItemBaseDatas)
+            {
+                if (kvp.Value is PlayerConnectionData connectionData && connectionData.PlayerId == player)
+                {
+                    key = kvp.Key;
+                    break;
+                }
+            }
+            if (key == 0)
+            {
+                return;
+            }
+            var dict = contentItemList.ItemBaseDatas;
+            dict[key] = new PlayerConnectionData
+            {
+                PlayerId = player,
+                Name = playerInfo.playerName,
+                Duty = Enum.Parse<PlayerGameDuty>(playerInfo.playerDuty),
+                Level = playerInfo.playerLevel,
+                Status = Enum.Parse<PlayerGameStatus>(playerInfo.playerStatus),
+            };
+            contentItemList.SetItemList(dict);
         }
 
         private void OnDestroy()

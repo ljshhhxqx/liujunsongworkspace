@@ -327,7 +327,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                 var request = new ExecuteEntityCloudScriptRequest()
                 {
                     FunctionName = "LeaveGame",
-                    FunctionParameter = new { roomId = CurrentRoomId, playerId = PlayFabData.PlayFabId.Value },
+                    FunctionParameter = new { gameId = _currentMainGameInfo.gameId, playerId = PlayFabData.PlayFabId.Value },
                     GeneratePlayStreamEvent = true,
                     Entity = PlayFabData.EntityKey.Value,
                 };
@@ -605,6 +605,11 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             }
             _currentMainGameInfo = leaveGameMessage.mainGameInfo;
             OnGameInfoChanged?.Invoke(_currentMainGameInfo);
+        }
+
+        public void OnStartConnection(GameStartConnectionMessage gameStartConnectionMessage)
+        {
+            
         }
     }
 }

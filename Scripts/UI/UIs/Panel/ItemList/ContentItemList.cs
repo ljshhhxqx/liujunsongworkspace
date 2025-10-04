@@ -84,7 +84,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
             onSpawn?.Invoke(itemData, (TItem)itemBase);
         }
 
-        public void SetItemList<T>(IDictionary<int, T> itemDict) where T : IItemBaseData, new()
+        public void SetItemList<T>(IDictionary<int, T> itemDict) where T : IItemBaseData
         {
             itemPrefab.gameObject.SetActive(true);
             foreach (var key in ItemBaseDatas.Keys)

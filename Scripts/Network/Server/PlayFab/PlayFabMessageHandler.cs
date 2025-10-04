@@ -259,6 +259,10 @@ namespace Network.Server.PlayFab
                         var leaveGameMessage = ConvertToMessageContent<LeaveGameMessage>(message.content);
                         _playFabRoomManager.OnLeaveGame(leaveGameMessage);
                         break;
+                    case (int) MessageType.GameStartConnection:
+                        var gameStartConnectionMessage = ConvertToMessageContent<GameStartConnectionMessage>(message.content);
+                        _playFabRoomManager.OnStartConnection(gameStartConnectionMessage);
+                        break;
                     default:
                         break;
                 }

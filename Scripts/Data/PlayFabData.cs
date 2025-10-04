@@ -186,6 +186,7 @@ namespace Data
     [Serializable]
     public struct GamePlayerInfo
     {
+        public int id;
         public string playerId;
         public string playerName;
         public int playerLevel;

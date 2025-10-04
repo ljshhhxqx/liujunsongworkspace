@@ -11,6 +11,7 @@ using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
 using kcp2k;
@@ -43,12 +44,13 @@ namespace HotUpdate.Scripts.Network.Server
         private GameConfigData _gameConfigData;
         private KcpTransport _transport;
         private MirrorNetworkMessageHandler _mirrorNetworkMessageHandler;
+        private PlayFabRoomManager _playFabRoomManager;
         
         private readonly Dictionary<int, NetworkConnectionToClient> _connectionToClients = new Dictionary<int, NetworkConnectionToClient>();
 
         [Inject]
         private void Init(GameEventManager gameEventManager, UIManager uIManager, IObjectResolver objectResolver,
-            PlayerDataManager playerDataManager, IConfigProvider configProvider)
+            PlayerDataManager playerDataManager, IConfigProvider configProvider, PlayFabRoomManager playFabRoomManager)
         {
             _transport = GetComponent<KcpTransport>();
             PlayFabData.ConnectionAddress.Subscribe(address =>
@@ -59,6 +61,7 @@ namespace HotUpdate.Scripts.Network.Server
             {
                 _transport.port = (ushort)port;
             }).AddTo(this);
+            _playFabRoomManager = playFabRoomManager;
             PropertyTypeReaderWriter.RegisterReaderWriter();
             _gameEventManager = gameEventManager;
             _spawnPoints = FindObjectsByType<NetworkStartPosition>(FindObjectsSortMode.None).ToList();
