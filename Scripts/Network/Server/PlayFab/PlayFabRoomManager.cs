@@ -607,9 +607,21 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             OnGameInfoChanged?.Invoke(_currentMainGameInfo);
         }
 
-        public void OnStartConnection(GameStartConnectionMessage gameStartConnectionMessage)
+        public void StartServerSuccess()
         {
-            
+            var request = new ExecuteEntityCloudScriptRequest
+            {
+                FunctionName = "ServerIsReady",
+                GeneratePlayStreamEvent = true,
+                FunctionParameter = new { gameId = _currentMainGameInfo.gameId, playerId = PlayFabData.PlayFabId.Value },// gameId = _currentMainGameInfo.gameId },
+                Entity = PlayFabData.EntityKey.Value,
+            };
+            _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnServerIsReadySuccess, OnError);
+        }
+
+        private void OnServerIsReadySuccess(ExecuteCloudScriptResult result)
+        {
+            var data = result.ParseCloudScriptResultToDic();
         }
     }
 }
