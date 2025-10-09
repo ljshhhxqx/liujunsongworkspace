@@ -97,9 +97,14 @@ namespace HotUpdate.Scripts.UI.UIBase
         {
             foreach (var t in _uiDict.Values)
             {
-                Object.Destroy(t.gameObject);
-                _uiDict.Remove(t.Type);
+                if(t)
+                    Object.Destroy(t.gameObject);
+                if (t is IUnlockMouse unlockMouse)
+                {
+                    IsUnlockMouse?.Invoke(false);
+                }
             }
+            _uiDict.Clear();
         }
         
         public void CloseUI(UIType uIType)

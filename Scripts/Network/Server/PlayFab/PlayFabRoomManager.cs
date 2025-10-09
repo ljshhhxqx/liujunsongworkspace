@@ -18,7 +18,9 @@ using PlayFab;
 using PlayFab.CloudScriptModels;
 using PlayFab.MultiplayerModels;
 using UI.UIBase;
+using UI.UIs.Exception;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using VContainer;
 
 namespace HotUpdate.Scripts.Network.Server.PlayFab
@@ -531,12 +533,15 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                     break;
                 }
             }
-            var operation = ResourceManager.Instance.LoadSceneAsync(message.mainGameInfo.mapType);
+            var operation = ResourceManager.Instance.LoadSceneAsync(((MapType)message.mainGameInfo.mapType).ToString(), LoadSceneMode.Additive);
+            PlayFabData.ConnectionAddress.Value = message.mainGameInfo.ipAddress;
+            PlayFabData.ConnectionPort.Value = message.mainGameInfo.port;
             operation.Completed += (op) =>
             {
                 _playerDataManager.InitRoomPlayer(_currentRoomData);
-                PlayFabData.ConnectionAddress.Value = message.mainGameInfo.ipAddress;
-                PlayFabData.ConnectionPort.Value = message.mainGameInfo.port;
+                _uiManager.CloseAll();
+                _uiManager.SwitchUI<PlayerConnectUI>();
+                OnGameInfoChanged?.Invoke(_currentMainGameInfo);
             };
         }
 
@@ -622,6 +627,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         private void OnServerIsReadySuccess(ExecuteCloudScriptResult result)
         {
             var data = result.ParseCloudScriptResultToDic();
+            _uiManager.SwitchUI<LoadingScreenUI>();
         }
     }
 }

@@ -178,7 +178,7 @@ namespace Data
         public string roomId;
         public string gameId;
         public string ipAddress;
-        public string mapType;
+        public int mapType;
         public int port;
         public GamePlayerInfo[] playersInfo;
     }

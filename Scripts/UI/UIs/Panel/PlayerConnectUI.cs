@@ -56,22 +56,19 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                 var playerInfo = info.playersInfo[i];
                 if (playerInfo.playerId == PlayFabData.PlayFabId.Value)
                 {
-                    hostBtn.interactable = playerInfo.playerDuty == PlayerGameDuty.Host.ToString();
-                    serverBtn.interactable = playerInfo.playerDuty == PlayerGameDuty.Server.ToString();
-                    clientBtn.interactable = playerInfo.playerDuty == PlayerGameDuty.Client.ToString();
+                    hostBtn.interactable = playerInfo.playerDuty == PlayerGameDuty.Host.ToString() || playerInfo.playerDuty == PlayerGameDuty.None.ToString();// || playerInfo.playerDuty == ..ToString();
+                    serverBtn.interactable = playerInfo.playerDuty == PlayerGameDuty.Server.ToString()|| playerInfo.playerDuty == PlayerGameDuty.None.ToString();
+                    clientBtn.interactable = playerInfo.playerDuty == PlayerGameDuty.Client.ToString()|| playerInfo.playerDuty == PlayerGameDuty.None.ToString();
                 }
-                else
+                var data = new PlayerConnectionData
                 {
-                    var data = new PlayerConnectionData
-                    {
-                        PlayerId = playerInfo.playerId,
-                        Name = playerInfo.playerName,
-                        Duty = Enum.Parse<PlayerGameDuty>(playerInfo.playerDuty),
-                        Level = playerInfo.playerLevel,
-                        Status = Enum.Parse<PlayerGameStatus>(playerInfo.playerStatus),
-                    };
-                    dict.Add(playerInfo.id, data);
-                }
+                    PlayerId = playerInfo.playerId,
+                    Name = playerInfo.playerName,
+                    Duty = Enum.Parse<PlayerGameDuty>(playerInfo.playerDuty),
+                    Level = playerInfo.playerLevel,
+                    Status = Enum.Parse<PlayerGameStatus>(playerInfo.playerStatus),
+                };
+                dict.Add(playerInfo.id, data);
             }
             contentItemList.SetItemList(dict);
         }
@@ -80,9 +77,9 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         {
             if (player == PlayFabData.PlayFabId.Value)
             {
-                hostBtn.interactable = playerInfo.playerDuty == PlayerGameDuty.Host.ToString();
-                serverBtn.interactable = playerInfo.playerDuty == PlayerGameDuty.Server.ToString();
-                clientBtn.interactable = playerInfo.playerDuty == PlayerGameDuty.Client.ToString();
+                hostBtn.interactable = playerInfo.playerDuty == PlayerGameDuty.Host.ToString()|| playerInfo.playerDuty == PlayerGameDuty.None.ToString();
+                serverBtn.interactable = playerInfo.playerDuty == PlayerGameDuty.Server.ToString()|| playerInfo.playerDuty == PlayerGameDuty.None.ToString();
+                clientBtn.interactable = playerInfo.playerDuty == PlayerGameDuty.Client.ToString()|| playerInfo.playerDuty == PlayerGameDuty.None.ToString();
             }
 
             var key = 0;
