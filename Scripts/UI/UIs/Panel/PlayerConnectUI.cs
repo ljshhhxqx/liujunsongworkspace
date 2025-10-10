@@ -50,6 +50,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
 
         private void OnGameInfoChanged(MainGameInfo info)
         {
+            Debug.Log($"OnGameInfoChanged {info}");
             var dict = new Dictionary<int, PlayerConnectionData>();
             for (int i = 0; i < info.playersInfo.Length; i++)
             {

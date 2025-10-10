@@ -492,7 +492,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                 FunctionParameter = new { ipAddress = "127.0.0.1", port = 7777, roomId = CurrentRoomId },
                 Entity = PlayFabData.EntityKey.Value,
             };
-            _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnStartGameSuccess, OnError, false);
+            _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnStartGameSuccess, OnError);
         }
 
         private void OnStartGameSuccess(ExecuteCloudScriptResult result)

@@ -181,6 +181,21 @@ namespace Data
         public int mapType;
         public int port;
         public GamePlayerInfo[] playersInfo;
+        
+        public override string ToString()
+        {
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine($"roomId: {roomId}");
+            sb.AppendLine($"gameId: {gameId}");
+            sb.AppendLine($"ipAddress: {ipAddress}");
+            sb.AppendLine($"mapType: {mapType}");            
+            sb.AppendLine($"port: {port}");
+            foreach (var p in playersInfo)
+            {
+                sb.AppendLine(p.ToString());
+            }
+            return sb.ToString();
+        }
     }
 
     [Serializable]
@@ -192,6 +207,11 @@ namespace Data
         public int playerLevel;
         public string playerDuty;
         public string playerStatus;
+        
+        public override string ToString()
+        {
+            return  $"id: {id}, playerId: {playerId}, playerName: {playerName}, playerLevel: {playerLevel}, playerDuty: {playerDuty}, playerStatus: {playerStatus}";
+        }
     }
 
     [Serializable]
