@@ -7,6 +7,8 @@ using HotUpdate.Scripts.UI.UIBase;
 using Mirror;
 using Sirenix.OdinInspector;
 using Tool.GameEvent;
+using UI.UIBase;
+using UI.UIs.Exception;
 using UnityEngine;
 using VContainer;
 
@@ -19,12 +21,14 @@ namespace HotUpdate.Scripts.Game.Map
         [Inject]
         private async void Init(GameEventManager gameEventManager, UIManager uiManager)
         {
+            uiManager.SwitchUI<LoadingScreenUI>();
             mapName ??= gameObject.scene.name;
             InjectGameObjects();
             await LoadGameResources();
             gameEventManager.Publish(new GameSceneResourcesLoadedEvent(mapName));
             uiManager.InitMapSprites(mapName);
             uiManager.InitMapUIs(mapName);
+            uiManager.CloseUI(UIType.Loading);
             //InitMapStaticObjects();
             Debug.Log("game map init complete!!!!!!!!!!");
         }

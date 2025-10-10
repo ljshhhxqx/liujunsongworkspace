@@ -599,6 +599,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                     break;
                 }
             }
+            OnGameInfoChanged?.Invoke(_currentMainGameInfo);
         }
 
         public void OnLeaveGame(LeaveGameMessage leaveGameMessage)
