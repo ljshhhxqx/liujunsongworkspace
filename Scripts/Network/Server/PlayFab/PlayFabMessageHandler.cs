@@ -263,25 +263,31 @@ namespace Network.Server.PlayFab
                         _playFabRoomManager.OnLeaveGame(leaveGameMessage);
                         break;
                     case (int) MessageType.GameStartConnection:
+                        Debug.Log("GameStartConnection message received");
                         var gameStartConnectionMessage = ConvertToMessageContent<GameStartConnectionMessage>(message.content);
                         var networkManager = Object.FindObjectOfType<NetworkManagerCustom>();
                         if (networkManager && gameStartConnectionMessage.targetPlayerInfo.playerId == PlayFabData.PlayFabId.Value)
                         {
+                            Debug.Log($"Start game connection with {gameStartConnectionMessage.targetPlayerInfo.playerName}--{gameStartConnectionMessage.targetPlayerInfo.playerDuty}");
                             var duty = Enum.Parse<PlayerGameDuty>(gameStartConnectionMessage.targetPlayerInfo.playerDuty);
                             switch (duty)
                             {
                                 case PlayerGameDuty.Host:
                                     networkManager.StartHost();
                                     _playFabRoomManager.StartServerSuccess();
+                                    Debug.Log("Start host");
                                     break;
                                 case PlayerGameDuty.Client:
                                     networkManager.StartClient();
+                                    Debug.Log("Start client");
                                     break;
                                 case PlayerGameDuty.Server:
                                     networkManager.StartServer();
                                     _playFabRoomManager.StartServerSuccess();
+                                    Debug.Log("Start server");
                                     break;
                             }
+                            _uiManager.CloseUI(UIType.PlayerConnect);
                         }
                         break;
                     default:
@@ -427,10 +433,11 @@ namespace Network.Server.PlayFab
             var messageContent = JsonUtility.FromJson<TestMessage>(content);
             Debug.Log($"Test message received {messageContent.testContent}");
         }
+
         
         private T ConvertToMessageContent<T>(string content) where T : IMessageContent, new()
         {
-            var messageContent = JsonConvert.DeserializeObject<T>(content);
+            var messageContent = JsonUtility.FromJson<T>(content);
             return messageContent;
             // 这里你需要将服务器返回的消息内容转换为Message对象并处理
         }

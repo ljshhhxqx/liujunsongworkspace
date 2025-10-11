@@ -57,9 +57,9 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                 var playerInfo = info.playersInfo[i];
                 if (playerInfo.playerId == PlayFabData.PlayFabId.Value)
                 {
-                    hostBtn.interactable = playerInfo.playerDuty == PlayerGameDuty.Host.ToString() || playerInfo.playerDuty == PlayerGameDuty.None.ToString();// || playerInfo.playerDuty == ..ToString();
-                    serverBtn.interactable = playerInfo.playerDuty == PlayerGameDuty.Server.ToString()|| playerInfo.playerDuty == PlayerGameDuty.None.ToString();
-                    clientBtn.interactable = playerInfo.playerDuty == PlayerGameDuty.Client.ToString()|| playerInfo.playerDuty == PlayerGameDuty.None.ToString();
+                    hostBtn.interactable = playerInfo.playerDuty != PlayerGameDuty.Host.ToString() || playerInfo.playerDuty == PlayerGameDuty.None.ToString();// || playerInfo.playerDuty == ..ToString();
+                    serverBtn.interactable = playerInfo.playerDuty != PlayerGameDuty.Server.ToString()|| playerInfo.playerDuty == PlayerGameDuty.None.ToString();
+                    clientBtn.interactable = playerInfo.playerDuty != PlayerGameDuty.Client.ToString()|| playerInfo.playerDuty == PlayerGameDuty.None.ToString();
                 }
                 var data = new PlayerConnectionData
                 {

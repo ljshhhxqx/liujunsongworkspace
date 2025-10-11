@@ -523,6 +523,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         public void OnStartGame(StartGameMessage message)
         {
             // TODO: 根据房间性质，开启一个云服务器或者本地服务器进行游戏
+            _uiManager.SwitchUI<LoadingScreenUI>();
             _currentMainGameInfo = message.mainGameInfo;
             for (int i = 0; i < _currentMainGameInfo.playersInfo.Length; i++)
             {
@@ -539,7 +540,8 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             operation.Completed += (op) =>
             {
                 _playerDataManager.InitRoomPlayer(_currentRoomData);
-                _uiManager.CloseAll();
+                _uiManager.CloseUI(UIType.CreateRoom);
+                _uiManager.CloseUI(UIType.RoomScreen);
                 _uiManager.SwitchUI<PlayerConnectUI>();
                 OnGameInfoChanged?.Invoke(_currentMainGameInfo);
             };
@@ -574,12 +576,10 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         private void OnChangePlayerDutySuccess(ExecuteCloudScriptResult result)
         {
             var data = result.ParseCloudScriptResultToDic();
-            // if (data.TryGetValue("gameInfo", out var value))
-            // {
-            //     var gameInfo = JsonUtility.FromJson<GamePlayerInfo>(value.ToString());
-            //     _currentGamePlayerInfo = gameInfo;
-            //     _uiManager.ShowTips("职位或状态修改成功");
-            // }
+            if (data.TryGetValue("log", out var value))
+            {
+                _uiManager.ShowTips(value.ToString());
+            }
         }
 
         public void OnChangeGameInfo(ChangeGameInfoMessage changeGameInfoMessage)
@@ -622,13 +622,18 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                 FunctionParameter = new { gameId = _currentMainGameInfo.gameId, playerId = PlayFabData.PlayFabId.Value },// gameId = _currentMainGameInfo.gameId },
                 Entity = PlayFabData.EntityKey.Value,
             };
-            _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnServerIsReadySuccess, OnError);
+            _uiManager.SwitchUI<LoadingScreenUI>();
+            _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnServerIsReadySuccess, e =>
+            {
+                OnError(e);
+                _uiManager.CloseUI(UIType.Loading);
+            }, false);
         }
 
         private void OnServerIsReadySuccess(ExecuteCloudScriptResult result)
         {
             var data = result.ParseCloudScriptResultToDic();
-            _uiManager.SwitchUI<LoadingScreenUI>();
+            _uiManager.CloseUI(UIType.Loading);
         }
     }
 }

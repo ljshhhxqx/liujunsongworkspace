@@ -21,7 +21,7 @@ namespace HotUpdate.Scripts.Game.Map
         [Inject]
         private async void Init(GameEventManager gameEventManager, UIManager uiManager)
         {
-            uiManager.SwitchUI<LoadingScreenUI>();
+            //uiManager.SwitchUI<LoadingScreenUI>();
             mapName ??= gameObject.scene.name;
             InjectGameObjects();
             await LoadGameResources();
