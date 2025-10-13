@@ -158,6 +158,14 @@ namespace Tool.GameEvent
             PlayerId = playerId;
         }
     }
+    
+    public struct PlayerListenMessageEvent : IGameEvent
+    {
+    }
+    
+    public struct PlayerUnListenMessageEvent : IGameEvent
+    {
+    }
 
     public struct PlayerSpawnedEvent : IGameEvent
     {

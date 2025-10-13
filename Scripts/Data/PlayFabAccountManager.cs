@@ -168,6 +168,7 @@ namespace Data
             _uiManager.ShowTips("登录成功！");
             _uiManager.SwitchUI<MainScreenUI>();
             _gameEventManager.Publish(new PlayerLoginEvent(PlayFabData.PlayFabId.Value));
+            _gameEventManager.Publish(new PlayerListenMessageEvent());
             _playFabClientCloudScriptCaller.ExecuteCloudScript(new ExecuteEntityCloudScriptRequest
             {
                 FunctionName = isDevelop ? "LoginWithCustomIDRegister" : "LoginWithPlayFabRegister",
@@ -224,6 +225,7 @@ namespace Data
             }
             PlayFabData.IsLoggedIn.Value = false;
             _gameEventManager.Publish(new PlayerLogoutEvent(PlayFabData.PlayFabId.Value));
+            _gameEventManager.Publish(new PlayerUnListenMessageEvent());
             Debug.Log("Logout Success");
         }
 

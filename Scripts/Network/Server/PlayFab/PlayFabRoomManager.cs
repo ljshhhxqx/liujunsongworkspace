@@ -9,6 +9,7 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.Coroutine;
+using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel;
 using Network.Data;
@@ -17,6 +18,7 @@ using Newtonsoft.Json;
 using PlayFab;
 using PlayFab.CloudScriptModels;
 using PlayFab.MultiplayerModels;
+using Tool.GameEvent;
 using UI.UIBase;
 using UI.UIs.Exception;
 using UnityEngine;
@@ -38,6 +40,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         private RoomData _currentRoomData;
         private MainGameInfo _currentMainGameInfo;
         private GamePlayerInfo _currentGamePlayerInfo;
+        private GameEventManager _gameEventManager;
         public RoomData[] RoomsData { get; private set; } = Array.Empty<RoomData>();
         public static string CurrentRoomId { get; private set; }
         public bool IsMatchmaking {
@@ -60,8 +63,10 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         public event Action<MainGameInfo>  OnGameInfoChanged;
         
         [Inject]
-        private PlayFabRoomManager(UIManager uiManager, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller, PlayerDataManager playerDataManager, GameSceneManager gameSceneManager)
+        private PlayFabRoomManager(UIManager uiManager, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller, 
+            PlayerDataManager playerDataManager, GameSceneManager gameSceneManager, GameEventManager gameEventManager)
         {
+            _gameEventManager = gameEventManager;
             _gameSceneManager = gameSceneManager;
             _uiManager = uiManager;
             _playerDataManager = playerDataManager;
@@ -544,6 +549,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                 _uiManager.CloseUI(UIType.RoomScreen);
                 _uiManager.SwitchUI<PlayerConnectUI>();
                 OnGameInfoChanged?.Invoke(_currentMainGameInfo);
+                _gameEventManager.Publish(new PlayerUnListenMessageEvent());
             };
         }
 

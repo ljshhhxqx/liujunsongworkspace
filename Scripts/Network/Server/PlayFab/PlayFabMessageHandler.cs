@@ -46,25 +46,25 @@ namespace Network.Server.PlayFab
         // private readonly Dictionary<string, List<PlayerEventData>> _cachedEvents = new Dictionary<string, List<PlayerEventData>>();
         
         [Inject]
-        private PlayFabMessageHandler( UIManager uiManager, GameEventManager gameEventManager, PlayFabAccountManager playFabAccountManager, PlayFabRoomManager playFabRoomManager )
+        private PlayFabMessageHandler(UIManager uiManager, GameEventManager gameEventManager, PlayFabAccountManager playFabAccountManager, PlayFabRoomManager playFabRoomManager )
         {
             _playFabAccountManager = playFabAccountManager;
             _playFabRoomManager = playFabRoomManager;
             // UIManager是用来显示弹窗的
             _uiManager = uiManager;
             _gameEventManager = gameEventManager;
-            _gameEventManager.Subscribe<PlayerLoginEvent>(OnLoginEvent);
-            _gameEventManager.Subscribe<PlayerLogoutEvent>(OnLogoutEvent);
+            _gameEventManager.Subscribe<PlayerListenMessageEvent>(OnLoginEvent);
+            _gameEventManager.Subscribe<PlayerUnListenMessageEvent>(OnLogoutEvent);
         }
 
-        private void OnLogoutEvent(PlayerLogoutEvent playerLogoutEvent)
+        private void OnLogoutEvent(PlayerUnListenMessageEvent playerUnListenMessageEvent)
         {
             RepeatedTask.Instance.StopRepeatingTask(GetNewMessages);
         }
 
-        private void OnLoginEvent(PlayerLoginEvent playerLoginEvent)
+        private void OnLoginEvent(PlayerListenMessageEvent playerListenMessageEvent)
         {
-            RepeatedTask.Instance.StartRepeatingTask(GetNewMessages, 4);
+            RepeatedTask.Instance.StartRepeatingTask(GetNewMessages, 2.5f);
         }
 
         public void SendMessage(Message message)

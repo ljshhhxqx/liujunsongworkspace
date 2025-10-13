@@ -23,7 +23,40 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
     public interface IItemBaseData : IUIDatabase
     {
     }
-    
+
+    public struct PlayerGameResultItemData : IItemBaseData, IEquatable<PlayerGameResultItemData>
+    {
+        public string PlayerName;
+        public int Score;
+        public int Rank;
+        public bool IsWin;
+        
+        public bool Equals(PlayerGameResultItemData other)
+        {
+            return PlayerName == other.PlayerName && Score == other.Score && Rank == other.Rank;
+        }
+        
+        public override bool Equals(object obj)
+        {
+            return obj is PlayerGameResultItemData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(PlayerName, Score, Rank);
+        }
+        
+        public override string ToString()
+        {
+            var stringBuilder = new StringBuilder();
+            stringBuilder.AppendFormat("玩家名字：{0}\n", PlayerName);
+            stringBuilder.AppendFormat("得分：{0}\n", Score);
+            stringBuilder.AppendFormat("排名：{0}\n", Rank);
+            stringBuilder.AppendFormat("是否获胜：{0}\n", IsWin);
+            return stringBuilder.ToString();
+        }
+    }
+
     public struct PlayerConnectionData : IItemBaseData, IEquatable<PlayerConnectionData>
     {
         public string PlayerId;

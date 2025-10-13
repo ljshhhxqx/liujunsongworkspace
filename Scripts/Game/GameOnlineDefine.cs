@@ -137,6 +137,7 @@ namespace Game
                 }
                 Debug.Log("Logout request sent successfully");
                 _gameEventManager.Publish(new PlayerLogoutEvent(PlayFabData.PlayFabId.Value));
+                _gameEventManager.Publish(new PlayerUnListenMessageEvent());
                 PlayFabData.Dispose();
             }, e =>
             {
