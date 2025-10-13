@@ -8,18 +8,25 @@ using HotUpdate.Scripts.Buff;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Data;
+using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.NetworkMes;
+using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
 using HotUpdate.Scripts.Weather;
 using Mirror;
 using Network.NetworkMes;
+using PlayFab;
+using PlayFab.ClientModels;
+using PlayFab.CloudScriptModels;
 using Tool.GameEvent;
 using Tool.Message;
 using UnityEngine;
 using VContainer;
+using ExecuteCloudScriptResult = PlayFab.CloudScriptModels.ExecuteCloudScriptResult;
 
 namespace HotUpdate.Scripts.Game
 {
@@ -45,6 +52,7 @@ namespace HotUpdate.Scripts.Game
         private GameInfo _gameInfo;
         private MessageCenter _messageCenter;
         private MirrorNetworkMessageHandler _messageHandler;
+        private IPlayFabClientCloudScriptCaller _playFabClientCloudScriptCaller;
         
         private BuffManager _buffManager;
         private NetworkAudioManager _networkAudioManager;
@@ -101,8 +109,9 @@ namespace HotUpdate.Scripts.Game
 
         [Inject]
         private void Init(MessageCenter messageCenter, GameEventManager gameEventManager, IObjectResolver objectResolver, IConfigProvider configProvider,
-            MirrorNetworkMessageHandler messageHandler)
+            MirrorNetworkMessageHandler messageHandler, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller)
         {
+            _playFabClientCloudScriptCaller = playFabClientCloudScriptCaller;
             _gameEventManager = gameEventManager;
             _messageCenter = messageCenter;
             _messageHandler = messageHandler;
@@ -321,7 +330,49 @@ namespace HotUpdate.Scripts.Game
             }
 
             _cts?.Cancel();
+            IsEndGame = true;
+            _gameSyncManager.isGameStart = false;
+            _gameEventManager.Publish(new PlayerListenMessageEvent());
+            SaveGameResult();
             Debug.Log("Main game timer ended.");
+        }
+
+        private void SaveGameResult()
+        {
+            Debug.Log("Save game result");
+            var playerPropertySyncSystem = _gameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
+            if (playerPropertySyncSystem == null)
+            {
+                Debug.LogError("PlayerPropertySyncSystem not found.");
+                return;
+            }
+
+            var playerScores = playerPropertySyncSystem.GetSortedPlayerProperties(PropertyTypeEnum.Score, false);
+            foreach (var playerScore in playerScores)
+            {
+                Debug.Log($"{playerScore.Key} - {playerScore.Value}");
+            }
+            var request = new ExecuteEntityCloudScriptRequest();
+            request.FunctionName = "SaveGameResult";
+            request.FunctionParameter = new
+            {
+                playerId = PlayFabData.PlayFabId.Value,
+                gameMode = _gameInfo.GameMode,
+                score = _gameInfo.GameScore,
+                time = _gameInfo.GameTime,
+                isWin = IsEndGame
+            };
+            _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnSaveGameResult, OnError);
+        }
+
+        private void OnSaveGameResult(ExecuteCloudScriptResult result)
+        {
+            
+        }
+
+        private void OnError(PlayFabError error)
+        {
+            Debug.LogError($"Failed to Save Game Result: {error.GenerateErrorReport()}");
         }
 
         private void OnDestroy()

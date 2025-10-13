@@ -19,6 +19,21 @@ namespace Data
             return  $"PlayerId: {PlayerId}, LastLoginTime: {LastLoginTime}, TotalPlayTime: {TotalPlayTime}, AccountCreationDate: {AccountCreationDate}, CurrentRoomId: {CurrentRoomId}";
         }
     }
+    [Serializable]
+    public struct GameResultData
+    {
+        public PlayerGameResultData[] playersResultData;
+        public bool isWinner;
+    }
+
+    [Serializable]
+    public struct PlayerGameResultData
+    {
+        public string playerName;
+        public int score;
+        public int rank;
+        public bool isWinner;
+    }
 
     [Serializable]
     public struct PlayerReadOnlyData

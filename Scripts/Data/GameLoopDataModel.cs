@@ -23,21 +23,6 @@ namespace HotUpdate.Scripts.Data
         public bool IsStartGame;
     }
 
-    [Serializable]
-    public struct GameResultData
-    {
-        public PlayerGameResultData[] playersResultData;
-        public bool isWinner;
-    }
-
-    [Serializable]
-    public struct PlayerGameResultData
-    {
-        public string playerName;
-        public int score;
-        public int rank;
-    }
-
     public enum GameResult
     {
         None,

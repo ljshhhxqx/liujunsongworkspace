@@ -85,8 +85,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             BuffDataReaderWriter.RegisterReaderWriter();
         }
 
-        
-
         protected override void OnClientProcessStateUpdate(int connectionId, byte[] state, CommandType commandType)
         {
             if (commandType != CommandType.Property)
@@ -209,7 +207,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             return playerProperties.GetValueOrDefault(playerId, 0);
         }
 
-        private Dictionary<int, float> GetSortedPlayerProperties(PropertyTypeEnum propertyType, bool isAscending = true, bool isMaxValue = false)
+        public Dictionary<int, float> GetSortedPlayerProperties(PropertyTypeEnum propertyType, bool isAscending = true, bool isMaxValue = false)
         {
             var playerProperties = GetAllPlayerProperties(propertyType, isMaxValue);
             if (isAscending)

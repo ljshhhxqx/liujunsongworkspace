@@ -35,6 +35,7 @@ namespace HotUpdate.Scripts.Game.Inject
             builder.Register<PlayersGameModelManager>(Lifetime.Singleton);
             builder.Register<ConfigProvider>(Lifetime.Scoped).AsImplementedInterfaces();
             builder.Register<PlayFabClientCloudScriptCaller>(Lifetime.Scoped).AsImplementedInterfaces();
+            builder.Register<PlayfabObjectManager>(Lifetime.Scoped).AsImplementedInterfaces();
             builder.Register<GameModelManager>(Lifetime.Scoped).AsImplementedInterfaces();
             builder.Register<DependencyInjectionManager>(Lifetime.Scoped).AsImplementedInterfaces();
             builder.Register<MessageCenter>(Lifetime.Singleton);

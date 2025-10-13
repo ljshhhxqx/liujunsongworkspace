@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Data;
 using DG.Tweening;
 using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
@@ -274,7 +275,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                     PlayerName = playerData.playerName,
                     Score = playerData.score,
                     Rank = playerData.rank,
-                    IsWin = playerData.rank is 1 or 2,
+                    IsWin = playerData.isWinner,
                 });
             }
 
