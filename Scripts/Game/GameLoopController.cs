@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using System.Threading;
+using AOTScripts.Tool;
 using AOTScripts.Tool.ECS;
 using Cysharp.Threading.Tasks;
 using Data;
@@ -60,21 +62,29 @@ namespace HotUpdate.Scripts.Game
         private bool _serverHandler;
         private bool _clientHandler;
 
+        [SyncVar(hook = nameof(OnEndGameChanged))] 
+        public bool isEndGameSync;
+        
+        public void OnEndGameChanged(bool oldValue, bool newValue)
+        {
+            IsEndGame = newValue;
+        }
+
         public bool IsEndGame
         {
             get => _isEndGame;
             set
             {
-                if (_serverHandler)
+                _isEndGame = value;
+                _gameSyncManager.isGameStart = value;
+                _weatherManager.StartWeatherLoop(!value);
+                if (value)
                 {
-                    _isEndGame = value;
-                    _weatherManager.StartWeatherLoop(!value);
-                    if (value)
-                    {
-                        Debug.Log("Game Over!");
-                        _cts?.Cancel();
-                    }
+                    Debug.Log("Game Over!");
+                    _gameEventManager.Publish(new PlayerListenMessageEvent());
+                    _cts?.Cancel();
                 }
+
             }
         }
         
@@ -178,7 +188,8 @@ namespace HotUpdate.Scripts.Game
             {
                 _cts = new CancellationTokenSource();
                 PlayerInGameManager.Instance.SpawnAllBases();
-                IsEndGame = false;
+                isEndGameSync = false;
+                
                 _warmupTime = _jsonDataConfig.GameConfig.warmupTime;
                 _noUnionTime = _jsonDataConfig.GameConfig.noUnionTime;
                 _mainGameTime = _gameInfo.GameTime;
@@ -224,12 +235,12 @@ namespace HotUpdate.Scripts.Game
         
         private bool IsEndRoundFunc()
         {
-            var isEndRound = IsEndRound && !IsEndGame;
+            var isEndRound = IsEndRound && !isEndGameSync;
             if (isEndRound)
             {
                 Debug.Log("End Round!");
             }
-            return IsEndRound && !IsEndGame; //_itemsSpawnerManager.SpawnedItems.Count == 0;
+            return IsEndRound && !isEndGameSync; //_itemsSpawnerManager.SpawnedItems.Count == 0;
         }
 
         private async UniTask RoundStartAsync()
@@ -285,14 +296,18 @@ namespace HotUpdate.Scripts.Game
                     // 检查是否满足结束游戏的条件
                     if (IsEndGameWithCountDown(remainingTime))
                     {
-                        IsEndGame = true;
+                        isEndGameSync = true;
+                        _gameEventManager.Publish(new PlayerListenMessageEvent());
+                        SaveGameResult();
                         endGameFlag = true;
                     }
                 }
                 catch (Exception ex)
                 {
                     Debug.LogError($"Error updating remaining time: {ex.Message}");
-                    IsEndGame = true;
+                    isEndGameSync = true;
+                    _gameEventManager.Publish(new PlayerListenMessageEvent());
+                    SaveGameResult();
                     endGameFlag = true;
                 }
             };
@@ -320,18 +335,23 @@ namespace HotUpdate.Scripts.Game
                 {
                     if (PlayerInGameManager.Instance.IsPlayerGetTargetScore(_gameInfo.GameScore))
                     {
-                        IsEndGame = true;
+                        isEndGameSync = true;
+                        _gameEventManager.Publish(new PlayerListenMessageEvent());
+                        SaveGameResult();
                         endGameFlag = true;
                         await UniTask.Yield();
-                        break;
+                        return;
                     }
                 }
                 await UniTask.Yield();
             }
 
+            if (isEndGameSync)
+            {
+                return;
+            }
             _cts?.Cancel();
-            IsEndGame = true;
-            _gameSyncManager.isGameStart = false;
+            isEndGameSync = true;
             _gameEventManager.Publish(new PlayerListenMessageEvent());
             SaveGameResult();
             Debug.Log("Main game timer ended.");
@@ -348,26 +368,36 @@ namespace HotUpdate.Scripts.Game
             }
 
             var playerScores = playerPropertySyncSystem.GetSortedPlayerProperties(PropertyTypeEnum.Score, false);
-            foreach (var playerScore in playerScores)
+            var data = new GameResultData();
+            data.playersResultData = new PlayerGameResultData[playerScores.Count];
+            var index = 0;
+            foreach (var kvp in playerScores)
             {
-                Debug.Log($"{playerScore.Key} - {playerScore.Value}");
+                Debug.Log($"{kvp.Key} - {kvp.Value}");
+                var playerData = PlayerInGameManager.Instance.GetPlayer(kvp.Key);
+                var rank = index + 1;
+                data.playersResultData[index] = new PlayerGameResultData
+                {
+                    playerName = playerData.player.Nickname,
+                    score = (int)kvp.Value,
+                    rank = rank,
+                    isWinner = rank == 1 || rank == 2
+                };
+                index++;
             }
             var request = new ExecuteEntityCloudScriptRequest();
             request.FunctionName = "SaveGameResult";
             request.FunctionParameter = new
             {
                 playerId = PlayFabData.PlayFabId.Value,
-                gameMode = _gameInfo.GameMode,
-                score = _gameInfo.GameScore,
-                time = _gameInfo.GameTime,
-                isWin = IsEndGame
+                gameResult = JsonUtility.ToJson(data)
             };
             _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnSaveGameResult, OnError);
         }
 
         private void OnSaveGameResult(ExecuteCloudScriptResult result)
         {
-            
+            var dic = result.ParseCloudScriptResultToDic();
         }
 
         private void OnError(PlayFabError error)

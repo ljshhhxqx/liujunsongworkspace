@@ -6,11 +6,12 @@ namespace HotUpdate.Scripts.Static
 {
     public static class UISpriteContainer
     {
-        private static readonly Dictionary<string, Sprite> Sprites = new Dictionary<string, Sprite>();
+        private static readonly Dictionary<string, Sprite> CurrentSprites = new Dictionary<string, Sprite>();
+        private static readonly Dictionary<string, Dictionary<string, Sprite>> SpritesByName = new Dictionary<string, Dictionary<string, Sprite>>();
 
         public static Sprite GetSprite(string name)
         {
-            if (Sprites.TryGetValue(name, out var sprite))
+            if (CurrentSprites.TryGetValue(name, out var sprite))
             {
                 return sprite;
             }
@@ -21,7 +22,7 @@ namespace HotUpdate.Scripts.Static
 
         public static Sprite GetQualitySprite(QualityType quality)
         {
-            if (Sprites.TryGetValue(quality.ToString(), out var sprite))
+            if (CurrentSprites.TryGetValue(quality.ToString(), out var sprite))
             {
                 return sprite;
             }
@@ -30,28 +31,34 @@ namespace HotUpdate.Scripts.Static
             return null;
         }
 
-        public static void InitUISprites(Dictionary<string, Sprite> spriteInfos)
+        public static void InitUISprites(string path, Dictionary<string, Sprite> spriteInfos)
         {
-            Sprites.Clear();
+            CurrentSprites.Clear();
+            SpritesByName.Clear();
             foreach (var spriteInfo in spriteInfos)
             {
-                Sprites.Add(spriteInfo.Key, spriteInfo.Value);
+                CurrentSprites.Add(spriteInfo.Key, spriteInfo.Value);
             }
+            SpritesByName.Add(path, spriteInfos);
         }
 
         public static bool RemoveSprite(string name)
         {
-            return Sprites.Remove(name);
+            return CurrentSprites.Remove(name);
         }
         
         public static bool ContainsSprite(string name)
         {
-            return Sprites.ContainsKey(name);   
+            return CurrentSprites.ContainsKey(name);   
         }
         
-        public static void Clear()
+        public static void Clear(string path)
         {
-            Sprites.Clear();
+            if (SpritesByName.ContainsKey(path))
+            {
+                SpritesByName.Remove(path);
+            }
+            CurrentSprites.Clear();
         }
     }
 

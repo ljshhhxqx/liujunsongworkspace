@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Data
 {
@@ -23,7 +23,6 @@ namespace Data
     public struct GameResultData
     {
         public PlayerGameResultData[] playersResultData;
-        public bool isWinner;
     }
 
     [Serializable]
@@ -199,7 +198,7 @@ namespace Data
         
         public override string ToString()
         {
-            var sb = new System.Text.StringBuilder();
+            var sb = new StringBuilder();
             sb.AppendLine($"roomId: {roomId}");
             sb.AppendLine($"gameId: {gameId}");
             sb.AppendLine($"ipAddress: {ipAddress}");
@@ -244,7 +243,7 @@ namespace Data
         
         public override string ToString()
         {
-            var sb = new System.Text.StringBuilder();
+            var sb = new StringBuilder();
             sb.AppendLine($"Id: {Id}");
             sb.AppendLine($"RoomId: {RoomId}");
             sb.AppendLine($"CreatorId: {CreatorId}");

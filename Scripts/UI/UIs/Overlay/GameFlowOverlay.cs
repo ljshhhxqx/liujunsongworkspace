@@ -1,10 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using AOTScripts.Tool;
 using Cysharp.Threading.Tasks;
 using Data;
 using DG.Tweening;
+using Game;
 using HotUpdate.Scripts.Data;
+using HotUpdate.Scripts.Network.Data;
+using HotUpdate.Scripts.Static;
+using HotUpdate.Scripts.UI.UIBase;
+using HotUpdate.Scripts.UI.UIs.Panel;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
 using TMPro;
@@ -74,7 +81,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private GameResult _gameResult;
 
         [Inject]
-        private void Init()
+        private void Init(GameSceneManager gameSceneManager, UIManager uiManager)
         {
             InitializeUI();
             DOTween.Init();
@@ -90,12 +97,19 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                 .Subscribe(_ => StartGameTimer(warningThreshold))
                 .AddTo(this);
             GameLoopDataModel.GameResult
-                .Subscribe(result =>
-                {
-                    ShowGameOver(result);
-                    // ShowGameOver("游戏结束", $"获胜者：{result.winnerName}", result.score, result.gameResult == GameResult.Win);
-                })
+                .Subscribe(ShowGameOver)
                 .AddTo(this);
+            
+            goOnButton.BindDebouncedListener(() =>
+            {
+                UISpriteContainer.Clear(ResourceManager.Instance.CurrentLoadingSceneName);
+                var op = ResourceManager.Instance.UnloadCurrentScene();
+                op.Completed += _ =>
+                {
+                    uiManager.SwitchUI<MainScreenUI>();
+                    uiManager.CloseUI(Type);
+                };
+            });
         }
         
         private void InitializeUI()
@@ -286,9 +300,10 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         {
             var playerGameResults = GetPlayerGameResults(data);
             gameOverItemList.SetItemList(playerGameResults);
-            messageText.text = data.isWinner ? "胜利" : "失败";
+            var playerData = data.playersResultData.FirstOrDefault(x => x.isWinner && x.playerName == PlayFabData.PlayerReadOnlyData.Value.Nickname);
+            messageText.text = playerData.playerName != null ? "胜利" : "失败";
             // 设置颜色
-            var titleColor = data.isWinner ? victoryColor : defeatColor;
+            var titleColor = playerData.playerName != null ? victoryColor : defeatColor;
             messageText.color = titleColor;
             
             gameOverPanel.gameObject.SetActive(true);

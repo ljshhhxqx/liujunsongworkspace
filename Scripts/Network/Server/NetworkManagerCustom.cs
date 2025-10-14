@@ -53,14 +53,6 @@ namespace HotUpdate.Scripts.Network.Server
             PlayerDataManager playerDataManager, IConfigProvider configProvider, PlayFabRoomManager playFabRoomManager)
         {
             _transport = GetComponent<KcpTransport>();
-            PlayFabData.ConnectionAddress.Subscribe(address =>
-            {
-                networkAddress = address.Trim();
-            }).AddTo(this);
-            PlayFabData.ConnectionPort.Subscribe(port =>
-            {
-                _transport.port = (ushort)port;
-            }).AddTo(this);
             _playFabRoomManager = playFabRoomManager;
             PropertyTypeReaderWriter.RegisterReaderWriter();
             _gameEventManager = gameEventManager;
@@ -175,6 +167,17 @@ namespace HotUpdate.Scripts.Network.Server
             // 监听服务器上的连接和断开事件
             NetworkServer.OnConnectedEvent += HandleServerConnected;
             NetworkServer.OnDisconnectedEvent += HandleServerDisconnected;
+            PlayFabData.ConnectionAddress
+                .Where(address => !string.IsNullOrEmpty(address))
+                .Subscribe(address =>
+            {
+                networkAddress = address.Trim();
+            }).AddTo(this);
+            PlayFabData.ConnectionPort
+                .Where(port => port > 0).Subscribe(port =>
+            {
+                _transport.port = (ushort)port;
+            }).AddTo(this);
 
             NetworkServer.RegisterHandler<MirrorPlayerConnectMessage>(OnServerPlayerAccountIdMessage);
         }

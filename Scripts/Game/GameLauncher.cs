@@ -61,12 +61,12 @@ namespace HotUpdate.Scripts.Game
         private async UniTask ResourcesLoadedCallback()
         {
             _gameEventManager.Publish(new GameResourceLoadedEvent());
-            // await _gameSceneManager.LoadScene("Town");
-            // _playerDataManager.TestInitRoomPlayer();
-            
             
             
             _uiManager.SwitchUI<LoginScreenUI>();
+            // await _gameSceneManager.LoadScene("Town");
+            // _playerDataManager.TestInitRoomPlayer();
+            
         }
         
 
