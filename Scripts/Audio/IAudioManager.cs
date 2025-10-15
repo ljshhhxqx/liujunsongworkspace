@@ -6,7 +6,7 @@ namespace HotUpdate.Scripts.Audio
     {
         AudioManagerType AudioManagerType { get; }
         void PlayMusic(AudioMusicType musicType);
-        public void PlaySFXRpc(AudioEffectType clipType, Vector3 position, Transform parent);
+        public void PlaySFX(AudioEffectType clipType, Vector3 position, Transform parent);
         void StopMusic();
         void SetMusicVolume(float volume);
         void SetSFXVolume(float volume);
@@ -35,5 +35,14 @@ namespace HotUpdate.Scripts.Audio
         Thunder2,
         Thunder3,
         Thunder4,
+    }
+
+    public enum UIAudioEffectType
+    {
+        Click,
+        Drag,
+        Drop,
+        Hover,
+        Press,
     }
 }

@@ -359,6 +359,10 @@ namespace HotUpdate.Scripts.Game
 
         private void SaveGameResult()
         {
+            if (!_serverHandler)
+            {
+                return;
+            }
             Debug.Log("Save game result");
             var playerPropertySyncSystem = _gameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
             if (playerPropertySyncSystem == null)
@@ -389,7 +393,7 @@ namespace HotUpdate.Scripts.Game
             request.FunctionName = "SaveGameResult";
             request.FunctionParameter = new
             {
-                playerId = PlayFabData.PlayFabId.Value,
+                gameId = PlayFabData.CurrentGameId.Value,
                 gameResult = JsonUtility.ToJson(data)
             };
             _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnSaveGameResult, OnError);

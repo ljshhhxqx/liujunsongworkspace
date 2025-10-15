@@ -8,7 +8,7 @@ using Object = UnityEngine.Object;
 
 namespace HotUpdate.Scripts.Audio
 {
-    public class UIAudioManager : IAudioManager
+    public class UIAudioManager : Singleton<UIAudioManager>, IAudioManager
     {
         private AudioSource _musicAudioSource;
         private AudioSource _effectAudioSource;
@@ -16,6 +16,7 @@ namespace HotUpdate.Scripts.Audio
         
         private readonly Dictionary<AudioMusicType, AudioClip> _audioClips = new Dictionary<AudioMusicType, AudioClip>();
         private readonly Dictionary<AudioEffectType, AudioClip> _effectAudioClips = new Dictionary<AudioEffectType, AudioClip>();
+        private readonly Dictionary<UIAudioEffectType, AudioClip> _uiAudioClips = new Dictionary<UIAudioEffectType, AudioClip>();
         private readonly List<AudioSource> _activeAudioSources = new List<AudioSource>();
         public AudioManagerType AudioManagerType => AudioManagerType.UI;
         
@@ -32,6 +33,10 @@ namespace HotUpdate.Scripts.Audio
                 else if (Enum.TryParse(clip.name, out AudioEffectType audioEffectType))
                 {
                     _effectAudioClips.Add(audioEffectType, clip);
+                }
+                else if (Enum.TryParse(clip.name, out UIAudioEffectType uiAudioEffectType))
+                {
+                    _uiAudioClips.Add(uiAudioEffectType, clip);
                 }
                 else
                 {
@@ -65,7 +70,24 @@ namespace HotUpdate.Scripts.Audio
             }
         }
 
-        public void PlaySFXRpc(AudioEffectType clipType, Vector3 position, Transform parent)
+        public void PlayUIEffect(UIAudioEffectType effectType)
+        {
+            if (_uiAudioClips.TryGetValue(effectType, out var clip))
+            {
+                var audioSourceObj = GameObjectPoolManger.Instance.GetObject(_audioSourcePrefab);
+                var audioSource = audioSourceObj.GetComponent<AudioSource>();
+                audioSource.clip = clip;
+                audioSource.Play();
+                _activeAudioSources.Add(audioSource);
+                ReturnAudioSourceToPool(audioSourceObj, clip.length).Forget();
+            }
+            else
+            {
+                Debug.LogWarning("Effect clip not found: " + effectType);
+            }
+        }
+
+        public void PlaySFX(AudioEffectType clipType, Vector3 position, Transform parent)
         {
             if (_effectAudioClips.TryGetValue(clipType, out var clip))
             {

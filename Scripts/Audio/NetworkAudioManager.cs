@@ -82,11 +82,11 @@ namespace HotUpdate.Scripts.Audio
         [Command]
         public void CmdPlaySFX(AudioEffectType clipType, Vector3 position, Transform parent)
         {
-            PlaySFXRpc(clipType, position, parent);
+            PlaySFX(clipType, position, parent);
         }
         
         [ClientRpc]
-        public void PlaySFXRpc(AudioEffectType clipType, Vector3 position, Transform parent)
+        public void PlaySFX(AudioEffectType clipType, Vector3 position, Transform parent)
         {
             if (_effectAudioClips.TryGetValue(clipType, out var clip))
             {

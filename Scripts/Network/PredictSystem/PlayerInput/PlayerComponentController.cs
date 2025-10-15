@@ -232,6 +232,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             GetAllCalculators(configProvider, gameSyncManager);
             HandleAllSyncState();
             HandleLocalInitCallback();
+            _uiManager.CloseUI(UIType.Main);
+            _gameEventManager.Publish(new PlayerUnListenMessageEvent());
         }
 
         // private void OnAnimationCooldownChanged(SyncIDictionary<AnimationState, float>.Operation changeType, AnimationState key, float value)

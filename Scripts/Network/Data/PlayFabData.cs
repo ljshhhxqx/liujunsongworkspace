@@ -15,6 +15,7 @@ namespace HotUpdate.Scripts.Network.Data
         public static ReactiveCollection<string> PlayerList { get; private set; } = new ReactiveCollection<string>(); 
         public static ReactiveProperty<string> ConnectionAddress { get; private set; } = new ReactiveProperty<string>();
         public static ReactiveProperty<int> ConnectionPort { get; private set; } = new ReactiveProperty<int>();
+        public static ReactiveProperty<string> CurrentGameId { get; private set; } = new ReactiveProperty<string>();
 
         public static void Initialize()
         {

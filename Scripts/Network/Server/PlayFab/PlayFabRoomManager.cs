@@ -542,6 +542,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             var operation = ResourceManager.Instance.LoadSceneAsync(((MapType)message.mainGameInfo.mapType).ToString(), LoadSceneMode.Additive);
             PlayFabData.ConnectionAddress.Value = message.mainGameInfo.ipAddress;
             PlayFabData.ConnectionPort.Value = message.mainGameInfo.port;
+            PlayFabData.CurrentGameId.Value = message.mainGameInfo.gameId;
             operation.Completed += (op) =>
             {
                 _playerDataManager.InitRoomPlayer(_currentRoomData);
@@ -549,7 +550,6 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                 _uiManager.CloseUI(UIType.RoomScreen);
                 _uiManager.SwitchUI<PlayerConnectUI>();
                 OnGameInfoChanged?.Invoke(_currentMainGameInfo);
-                _gameEventManager.Publish(new PlayerUnListenMessageEvent());
             };
         }
 
