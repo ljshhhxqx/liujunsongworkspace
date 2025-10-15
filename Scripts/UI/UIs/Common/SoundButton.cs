@@ -8,14 +8,14 @@ namespace HotUpdate.Scripts.UI.UIs.Common
     [RequireComponent(typeof(Button))]
     public class SoundButton : MonoBehaviour
     {
-        [SerializeField]
-        private Button button;
+        private Button _button;
         [SerializeField]
         private UIAudioEffectType soundName;
 
         private void Start()
         {
-            button.onClick.AddListener(OnClick);
+            _button = GetComponent<Button>();
+            _button.onClick.AddListener(OnClick);
         }
 
         private void OnClick()
@@ -25,7 +25,7 @@ namespace HotUpdate.Scripts.UI.UIs.Common
 
         private void OnDestroy()
         {
-            button.onClick.RemoveListener(OnClick);
+            _button.onClick.RemoveListener(OnClick);
         }
     }
 }
