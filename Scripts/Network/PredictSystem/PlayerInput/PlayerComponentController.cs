@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Tool.ObjectPool;
+using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
@@ -325,6 +326,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                                 // }
                                 
                                 //_reactivePropertyBinds.Add(typeof(BagItemData), true);
+                                UIAudioManager.Instance.PlayUIEffect(UIAudioEffectType.Bag);
                                 bagItemOverlay.BindBagItemData(UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey));
                                 //bagItemOverlay.BindEquipItemData(UIPropertyBinder.GetReactiveDictionary<EquipItemData>(_equipBindKey));
                                 break;
@@ -371,6 +373,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .Subscribe(_ => {
                     var movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
                     var animationStates = _inputState.GetAnimationStates();
+                    if (movement.magnitude > 0.1f)
+                    {
+                        NetworkAudioManager.Instance.PlaySFX(AudioEffectType.FootStep, transform.position, transform);
+                    }
+
                     // if (animationStates.HasAnyState(AnimationState.Attack))
                     // {
                     //     Debug.Log($"[PlayerInputController] Attack");

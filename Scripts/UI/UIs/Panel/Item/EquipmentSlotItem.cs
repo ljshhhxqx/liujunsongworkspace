@@ -1,4 +1,5 @@
 ﻿using System;
+using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using TMPro;
@@ -64,6 +65,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
 
         public void OnPointerClick(PointerEventData eventData)
         {
+            UIAudioManager.Instance.PlayUIEffect(UIAudioEffectType.Click);
             _pointerClickObservable.OnNext(eventData);
         }
     }

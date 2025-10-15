@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using AOTScripts.Tool;
 using Data;
+using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.Server;
 using HotUpdate.Scripts.Network.Server.PlayFab;
@@ -203,6 +204,7 @@ namespace Network.Server.PlayFab
         {
             try
             {
+                UIAudioManager.Instance.PlayUIEffect(UIAudioEffectType.Notification);
                 switch (message.messageType)
                 {
                     //邀请加入房间

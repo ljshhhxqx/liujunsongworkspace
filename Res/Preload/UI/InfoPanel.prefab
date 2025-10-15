@@ -329,6 +329,7 @@ GameObject:
   - component: {fileID: 2072023548718465220}
   - component: {fileID: 3379733707849905589}
   - component: {fileID: 390365604028790523}
+  - component: {fileID: 2534932425714875718}
   m_Layer: 5
   m_Name: Close
   m_TagString: Untagged
@@ -438,6 +439,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2534932425714875718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1341782751493646436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 463c1d7af330b1449b0408811e601c4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundName: 2
 --- !u!1 &1494982472193431875
 GameObject:
   m_ObjectHideFlags: 0
@@ -1342,6 +1356,7 @@ GameObject:
   - component: {fileID: 3872386104367815651}
   - component: {fileID: 4770702468953593652}
   - component: {fileID: 6429166794665867877}
+  - component: {fileID: 7333485060143429303}
   m_Layer: 5
   m_Name: Copy
   m_TagString: Untagged
@@ -1451,6 +1466,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7333485060143429303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2204492399564678950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 463c1d7af330b1449b0408811e601c4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundName: 0
 --- !u!1 &2250211353961862703
 GameObject:
   m_ObjectHideFlags: 0
@@ -2176,6 +2204,7 @@ GameObject:
   - component: {fileID: 5211447560701296295}
   - component: {fileID: 4852243287527522531}
   - component: {fileID: 1362686084226873146}
+  - component: {fileID: 8931883906350847608}
   m_Layer: 5
   m_Name: ModifyNickName
   m_TagString: Untagged
@@ -2285,6 +2314,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8931883906350847608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4326199509128153830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 463c1d7af330b1449b0408811e601c4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundName: 0
 --- !u!1 &4840506840138140299
 GameObject:
   m_ObjectHideFlags: 0
@@ -2795,6 +2837,7 @@ GameObject:
   - component: {fileID: 4739242610508109903}
   - component: {fileID: 8371909358243563195}
   - component: {fileID: 1562072287507878882}
+  - component: {fileID: 7045606686123455394}
   m_Layer: 5
   m_Name: Copy
   m_TagString: Untagged
@@ -2904,6 +2947,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7045606686123455394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7234229865979116672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 463c1d7af330b1449b0408811e601c4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundName: 0
 --- !u!1 &8366230414403106342
 GameObject:
   m_ObjectHideFlags: 0
@@ -2916,6 +2972,7 @@ GameObject:
   - component: {fileID: 4948944808109396064}
   - component: {fileID: 6277534928881439016}
   - component: {fileID: 4068581254834985638}
+  - component: {fileID: 334312825041499950}
   m_Layer: 5
   m_Name: Copy
   m_TagString: Untagged
@@ -3025,6 +3082,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &334312825041499950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8366230414403106342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 463c1d7af330b1449b0408811e601c4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundName: 0
 --- !u!1 &8613472680678310244
 GameObject:
   m_ObjectHideFlags: 0

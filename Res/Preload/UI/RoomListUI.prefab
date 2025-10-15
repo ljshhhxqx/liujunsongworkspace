@@ -1109,6 +1109,7 @@ GameObject:
   - component: {fileID: 6088249283939218884}
   - component: {fileID: 6198140374421219217}
   - component: {fileID: 8058704707881388567}
+  - component: {fileID: 8310762482541589522}
   m_Layer: 5
   m_Name: Quit
   m_TagString: Untagged
@@ -1218,6 +1219,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8310762482541589522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1339410171244544092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 463c1d7af330b1449b0408811e601c4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundName: 2
 --- !u!1 &2095307219226954863
 GameObject:
   m_ObjectHideFlags: 0
@@ -1230,6 +1244,7 @@ GameObject:
   - component: {fileID: 7992232880358146611}
   - component: {fileID: 4967527259639455665}
   - component: {fileID: 314878336624166607}
+  - component: {fileID: 9010534785556572499}
   m_Layer: 5
   m_Name: JoinBtn
   m_TagString: Untagged
@@ -1339,6 +1354,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &9010534785556572499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2095307219226954863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 463c1d7af330b1449b0408811e601c4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundName: 0
 --- !u!1 &2578227999243632561
 GameObject:
   m_ObjectHideFlags: 0
@@ -3131,6 +3159,7 @@ GameObject:
   - component: {fileID: 7061214397544309490}
   - component: {fileID: 6314216832626335419}
   - component: {fileID: 6762419345795731179}
+  - component: {fileID: 6405073114110656739}
   m_Layer: 5
   m_Name: Refresh
   m_TagString: Untagged
@@ -3240,6 +3269,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6405073114110656739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6828191611809570872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 463c1d7af330b1449b0408811e601c4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundName: 0
 --- !u!1 &7565316568263894166
 GameObject:
   m_ObjectHideFlags: 0

@@ -888,6 +888,7 @@ GameObject:
   - component: {fileID: 7212670152494652611}
   - component: {fileID: 6209783674632452304}
   - component: {fileID: 5345220840824041482}
+  - component: {fileID: 5419069860370453616}
   m_Layer: 5
   m_Name: Confirm
   m_TagString: Untagged
@@ -997,6 +998,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5419069860370453616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8172009486981478763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 463c1d7af330b1449b0408811e601c4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundName: 1
 --- !u!1 &8530807869279704247
 GameObject:
   m_ObjectHideFlags: 0

@@ -735,23 +735,13 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
-            "Name": "BackpackUI",
-            "IsPermanent": false,
-            "IsPreload": true,
-            "Address": "/Preload/UI/BackpackUI.prefab"
-        },
-        {
-            "UID": 3300001,
-            "ResourceType": "UnityEngine.GameObject",
-            "AssetType": 2,
-            "Extension": ".prefab",
             "Name": "CreateRoomUI",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/CreateRoomUI.prefab"
         },
         {
-            "UID": 3300002,
+            "UID": 3300001,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -761,7 +751,7 @@
             "Address": "/Preload/UI/DevelopFunctionUI.prefab"
         },
         {
-            "UID": 3300003,
+            "UID": 3300002,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -771,7 +761,7 @@
             "Address": "/Preload/UI/DevelopUI.prefab"
         },
         {
-            "UID": 3300004,
+            "UID": 3300003,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -781,7 +771,7 @@
             "Address": "/Preload/UI/FriendScreenUI.prefab"
         },
         {
-            "UID": 3300005,
+            "UID": 3300004,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -791,7 +781,7 @@
             "Address": "/Preload/UI/GameFlowOverlay.prefab"
         },
         {
-            "UID": 3300006,
+            "UID": 3300005,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -801,7 +791,7 @@
             "Address": "/Preload/UI/HelpPopup.prefab"
         },
         {
-            "UID": 3300007,
+            "UID": 3300006,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -811,7 +801,7 @@
             "Address": "/Preload/UI/InfoPanel.prefab"
         },
         {
-            "UID": 3300008,
+            "UID": 3300007,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -821,7 +811,7 @@
             "Address": "/Preload/UI/LoginPanel.prefab"
         },
         {
-            "UID": 3300009,
+            "UID": 3300008,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -831,7 +821,7 @@
             "Address": "/Preload/UI/MainUI.prefab"
         },
         {
-            "UID": 3300010,
+            "UID": 3300009,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -841,7 +831,7 @@
             "Address": "/Preload/UI/ModifyNameUI.prefab"
         },
         {
-            "UID": 3300011,
+            "UID": 3300010,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -851,7 +841,7 @@
             "Address": "/Preload/UI/PasswordUI.prefab"
         },
         {
-            "UID": 3300012,
+            "UID": 3300011,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -861,7 +851,7 @@
             "Address": "/Preload/UI/PlayerConnectUI.prefab"
         },
         {
-            "UID": 3300013,
+            "UID": 3300012,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -871,7 +861,7 @@
             "Address": "/Preload/UI/RegistPanel.prefab"
         },
         {
-            "UID": 3300014,
+            "UID": 3300013,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -881,7 +871,7 @@
             "Address": "/Preload/UI/RoomListUI.prefab"
         },
         {
-            "UID": 3300015,
+            "UID": 3300014,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -891,17 +881,7 @@
             "Address": "/Preload/UI/RoomScreenUI.prefab"
         },
         {
-            "UID": 3300016,
-            "ResourceType": "UnityEngine.GameObject",
-            "AssetType": 2,
-            "Extension": ".prefab",
-            "Name": "TestObjectPanel",
-            "IsPermanent": false,
-            "IsPreload": true,
-            "Address": "/Preload/UI/TestObjectPanel.prefab"
-        },
-        {
-            "UID": 3300017,
+            "UID": 3300015,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -911,7 +891,7 @@
             "Address": "/Preload/UI/TipPopup.prefab"
         },
         {
-            "UID": 3300018,
+            "UID": 3300016,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1054,6 +1034,66 @@
             "UID": 3700000,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
+            "Extension": ".wav",
+            "Name": "Attack",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Effect/Attack.wav"
+        },
+        {
+            "UID": 3700001,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".wav",
+            "Name": "Buff",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Effect/Buff.wav"
+        },
+        {
+            "UID": 3700002,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".wav",
+            "Name": "Chest",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Effect/Chest.wav"
+        },
+        {
+            "UID": 3700003,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".wav",
+            "Name": "Debuff",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Effect/Debuff.wav"
+        },
+        {
+            "UID": 3700004,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".mp3",
+            "Name": "Die",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Effect/Die.mp3"
+        },
+        {
+            "UID": 3700005,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".wav",
+            "Name": "Drug",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Effect/Drug.wav"
+        },
+        {
+            "UID": 3700006,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
             "Extension": ".mp3",
             "Name": "Explode",
             "IsPermanent": false,
@@ -1061,7 +1101,7 @@
             "Address": "/Audio/Game/Effect/Explode.mp3"
         },
         {
-            "UID": 3700001,
+            "UID": 3700007,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".wav",
@@ -1071,7 +1111,7 @@
             "Address": "/Audio/Game/Effect/FootStep.WAV"
         },
         {
-            "UID": 3700002,
+            "UID": 3700008,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".mp3",
@@ -1081,7 +1121,7 @@
             "Address": "/Audio/Game/Effect/Gem.mp3"
         },
         {
-            "UID": 3700003,
+            "UID": 3700009,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".mp3",
@@ -1091,7 +1131,37 @@
             "Address": "/Audio/Game/Effect/Gold.mp3"
         },
         {
-            "UID": 3700004,
+            "UID": 3700010,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 15,
+            "Extension": ".aif",
+            "Name": "Heal",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Effect/Heal.aif"
+        },
+        {
+            "UID": 3700011,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".mp3",
+            "Name": "Hurt",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Effect/Hurt.mp3"
+        },
+        {
+            "UID": 3700012,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".ogg",
+            "Name": "Jump",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Effect/Jump.ogg"
+        },
+        {
+            "UID": 3700013,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".mp3",
@@ -1101,17 +1171,27 @@
             "Address": "/Audio/Game/Effect/Lighten.mp3"
         },
         {
-            "UID": 3700005,
+            "UID": 3700014,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
-            "Extension": ".mp3",
-            "Name": "Rain",
+            "Extension": ".ogg",
+            "Name": "Roll",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Audio/Game/Effect/Rain.mp3"
+            "Address": "/Audio/Game/Effect/Roll.ogg"
         },
         {
-            "UID": 3700006,
+            "UID": 3700015,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".wav",
+            "Name": "Start",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Effect/Start.wav"
+        },
+        {
+            "UID": 3700016,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".wav",
@@ -1121,24 +1201,164 @@
             "Address": "/Audio/Game/Effect/Thunder2.wav"
         },
         {
-            "UID": 3700007,
+            "UID": 3700017,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
-            "Extension": ".wav",
-            "Name": "Thunder3",
+            "Extension": ".mp3",
+            "Name": "Cloudy",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Audio/Game/Effect/Thunder3.wav"
+            "Address": "/Audio/Game/Music/Cloudy.mp3"
         },
         {
-            "UID": 3700008,
+            "UID": 3700018,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".mp3",
+            "Name": "Game",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Music/Game.mp3"
+        },
+        {
+            "UID": 3700019,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".ogg",
+            "Name": "Main",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Music/Main.ogg"
+        },
+        {
+            "UID": 3700020,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".mp3",
+            "Name": "Rain",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Music/Rain.mp3"
+        },
+        {
+            "UID": 3700021,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".mp3",
+            "Name": "Rainy",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Music/Rainy.mp3"
+        },
+        {
+            "UID": 3700022,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".mp3",
+            "Name": "Snowy",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Music/Snowy.mp3"
+        },
+        {
+            "UID": 3700023,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".mp3",
+            "Name": "Sunny",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Music/Sunny.mp3"
+        },
+        {
+            "UID": 3700024,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".wav",
-            "Name": "Thunder4",
+            "Name": "Bag",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Audio/Game/Effect/Thunder4.wav"
+            "Address": "/Audio/UI/Effect/Bag.wav"
+        },
+        {
+            "UID": 3700025,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".ogg",
+            "Name": "Cancel",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/UI/Effect/Cancel.ogg"
+        },
+        {
+            "UID": 3700026,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".ogg",
+            "Name": "Click",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/UI/Effect/Click.ogg"
+        },
+        {
+            "UID": 3700027,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".wav",
+            "Name": "Confirm",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/UI/Effect/Confirm.wav"
+        },
+        {
+            "UID": 3700028,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".wav",
+            "Name": "Error",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/UI/Effect/Error.wav"
+        },
+        {
+            "UID": 3700029,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".wav",
+            "Name": "Lose",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/UI/Effect/Lose.wav"
+        },
+        {
+            "UID": 3700030,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 15,
+            "Extension": ".flac",
+            "Name": "Notifacation",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/UI/Effect/Notifacation.flac"
+        },
+        {
+            "UID": 3700031,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".ogg",
+            "Name": "Warning",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/UI/Effect/Warning.ogg"
+        },
+        {
+            "UID": 3700032,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
+            "Extension": ".wav",
+            "Name": "Win",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/UI/Effect/Win.wav"
         },
         {
             "UID": 3800000,
@@ -1625,13 +1845,23 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
+            "Name": "BackpackUI",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/UIPrefab/BackpackUI.prefab"
+        },
+        {
+            "UID": 4100021,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "Hole",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/UIPrefab/Hole.prefab"
         },
         {
-            "UID": 4100021,
+            "UID": 4100022,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1641,7 +1871,7 @@
             "Address": "/Map/Town/UIPrefab/ItemDetailUI.prefab"
         },
         {
-            "UID": 4100022,
+            "UID": 4100023,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1651,7 +1881,7 @@
             "Address": "/Map/Town/UIPrefab/PlayerAnimationOverlay.prefab"
         },
         {
-            "UID": 4100023,
+            "UID": 4100024,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1661,7 +1891,7 @@
             "Address": "/Map/Town/UIPrefab/PlayerDamageDeathTimeOverlay.prefab"
         },
         {
-            "UID": 4100024,
+            "UID": 4100025,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1671,7 +1901,7 @@
             "Address": "/Map/Town/UIPrefab/PlayerHpShowOverlay.prefab"
         },
         {
-            "UID": 4100025,
+            "UID": 4100026,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1681,7 +1911,7 @@
             "Address": "/Map/Town/UIPrefab/PlayerPropertyOverlay.prefab"
         },
         {
-            "UID": 4100026,
+            "UID": 4100027,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1691,7 +1921,7 @@
             "Address": "/Map/Town/UIPrefab/ShopUI.prefab"
         },
         {
-            "UID": 4100027,
+            "UID": 4100028,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1701,7 +1931,7 @@
             "Address": "/Map/Town/UIPrefab/TargetShowOverlay.prefab"
         },
         {
-            "UID": 4100028,
+            "UID": 4100029,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",

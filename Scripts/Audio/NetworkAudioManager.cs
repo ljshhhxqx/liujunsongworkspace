@@ -10,7 +10,7 @@ using Object = UnityEngine.Object;
 
 namespace HotUpdate.Scripts.Audio
 {
-    public class NetworkAudioManager : ServerNetworkComponent, IAudioManager
+    public class NetworkAudioManager : SingletonAutoNetMono<NetworkAudioManager>, IAudioManager
     {
         private AudioSource _musicAudioSource;
         private AudioSource _effectAudioSource;

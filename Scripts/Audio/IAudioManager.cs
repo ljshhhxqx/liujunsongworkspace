@@ -21,7 +21,8 @@ namespace HotUpdate.Scripts.Audio
     public enum AudioMusicType
     {
         Main,
-        Menu,
+        Game,
+        Rain,
         Rainy,
         Sunny,
         Cloudy,
@@ -36,8 +37,10 @@ namespace HotUpdate.Scripts.Audio
         Chest,
         
         Attack,
-        Skill1,
-        Skill2,
+        Heal,
+        Damage,
+        Buff,
+        Debuff,
         Roll,
         FootStep,
         Jump,
@@ -48,8 +51,7 @@ namespace HotUpdate.Scripts.Audio
         Lighten,
         Thunder,
         
-        Win,
-        Lose,
+        Start,
     }
 
     public enum UIAudioEffectType
@@ -59,5 +61,10 @@ namespace HotUpdate.Scripts.Audio
         Cancel,
         Error,
         Notification,
+        Bag,
+        Warning,
+        
+        Win,
+        Lose,
     }
 }

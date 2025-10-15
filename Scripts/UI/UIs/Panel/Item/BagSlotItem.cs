@@ -1,4 +1,5 @@
 ﻿using System;
+using HotUpdate.Scripts.Audio;
 using TMPro;
 using UniRx;
 using UnityEngine;
@@ -118,6 +119,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
 
         public void OnPointerClick(PointerEventData eventData)
         {
+            UIAudioManager.Instance.PlayUIEffect(UIAudioEffectType.Click);
             _pointerClickObservable.OnNext(eventData);
         }
     }
