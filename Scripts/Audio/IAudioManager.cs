@@ -22,27 +22,42 @@ namespace HotUpdate.Scripts.Audio
     {
         Main,
         Menu,
+        Rainy,
+        Sunny,
+        Cloudy,
+        Snowy,
     }
 
     public enum AudioEffectType
     {
-        Explode,
-        FootStep,
         Gem,
         Gold,
+        Drug,
+        Chest,
+        
+        Attack,
+        Skill1,
+        Skill2,
+        Roll,
+        FootStep,
+        Jump,
+        Die,
+        Hurt,
+        
+        Explode,
         Lighten,
-        Rain,
-        Thunder2,
-        Thunder3,
-        Thunder4,
+        Thunder,
+        
+        Win,
+        Lose,
     }
 
     public enum UIAudioEffectType
     {
         Click,
-        Drag,
-        Drop,
-        Hover,
-        Press,
+        Confirm,
+        Cancel,
+        Error,
+        Notification,
     }
 }
