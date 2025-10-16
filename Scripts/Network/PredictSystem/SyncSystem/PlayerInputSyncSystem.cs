@@ -4,6 +4,7 @@ using System.Threading;
 using AOTScripts.Data;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
+using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Battle;
@@ -239,6 +240,25 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var skillConfigData = _playerSkillSyncSystem.GetSkillConfigData(animState, connectionId);
             var playerController = GameSyncManager.GetPlayerConnection(connectionId);
+            switch (skillConfigData.skillType)
+            {
+                case SkillType.None:
+                    break;
+                case SkillType.SingleFly:
+                    break;
+                case SkillType.Single:
+                    break;
+                case SkillType.AreaRanged:
+                    break;
+                case SkillType.AreaFly:
+                    break;
+                case SkillType.Dash:
+                    break;
+                case SkillType.DelayedAreaRanged:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
             GameSyncManager.EnqueueServerCommand(new SkillCommand
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill, CommandAuthority.Server, CommandExecuteType.Immediate),
@@ -251,6 +271,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private void HandlePlayerRoll(int connectionId, bool isRollStart)
         {
+            var playerController = GameSyncManager.GetPlayerConnection(connectionId);
+            GameAudioManager.Instance.PlaySFX(AudioEffectType.Roll, playerController.transform.position, playerController.transform);
             GameSyncManager.EnqueueServerCommand(new PropertyInvincibleChangedCommand
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property, CommandAuthority.Server, CommandExecuteType.Immediate),
@@ -263,6 +285,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             Debug.Log($"[HandlePlayerAttack] player {connectionId} attack");
             var playerController = GameSyncManager.GetPlayerConnection(connectionId);
             var propertySyncSystem = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
+            GameAudioManager.Instance.PlaySFX(AudioEffectType.Attack, playerController.transform.position, playerController.transform);
             var playerProperty = propertySyncSystem.GetPlayerProperty(connectionId);
             var attackConfigData = new AttackConfigData(playerProperty[PropertyTypeEnum.AttackRadius].CurrentValue, playerProperty[PropertyTypeEnum.AttackAngle].CurrentValue, playerProperty[PropertyTypeEnum.AttackHeight].CurrentValue);
             var defenders = playerController.HandleAttack(new AttackParams(playerController.transform.position,

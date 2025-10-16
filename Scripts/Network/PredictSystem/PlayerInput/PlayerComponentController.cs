@@ -1029,12 +1029,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 case AnimationState.SprintJump:
                     GameAudioManager.Instance.PlaySFX(AudioEffectType.Jump, transform.position, transform);
                     break;
-                case AnimationState.Roll:
-                    GameAudioManager.Instance.PlaySFX(AudioEffectType.Roll, transform.position, transform);
-                    break;
-                case AnimationState.Attack:
-                    GameAudioManager.Instance.PlaySFX(AudioEffectType.Attack, transform.position, transform);
-                    break;
                 case AnimationState.Dead:
                     GameAudioManager.Instance.PlaySFX(AudioEffectType.Die, transform.position, transform);
                     break;
