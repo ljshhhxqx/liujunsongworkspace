@@ -10,7 +10,7 @@ using Object = UnityEngine.Object;
 
 namespace HotUpdate.Scripts.Audio
 {
-    public class NetworkAudioManager : SingletonAutoNetMono<NetworkAudioManager>, IAudioManager
+    public class GameAudioManager : SingletonAutoNetMono<GameAudioManager>, IAudioManager
     {
         private AudioSource _musicAudioSource;
         private AudioSource _effectAudioSource;
@@ -20,6 +20,7 @@ namespace HotUpdate.Scripts.Audio
         private readonly Dictionary<AudioMusicType, AudioClip> _audioClips = new Dictionary<AudioMusicType, AudioClip>();
         private readonly Dictionary<AudioEffectType, AudioClip> _effectAudioClips = new Dictionary<AudioEffectType, AudioClip>();
         private readonly List<AudioSource> _activeAudioSources = new List<AudioSource>();
+        private readonly Dictionary<AudioEffectType, AudioSource> _activeLoopingAudioSources = new Dictionary<AudioEffectType, AudioSource>();
         public AudioManagerType AudioManagerType => AudioManagerType.Game;
 
         [Inject]
@@ -73,19 +74,45 @@ namespace HotUpdate.Scripts.Audio
             }
         }
 
-        [Command]
-        public void CmdPlayMusic(AudioMusicType musicType)
+        public void PlayLoopingMusic(AudioEffectType effectType, Vector3 position, Transform parent)
         {
-            PlayMusic(musicType);
+            if (_activeLoopingAudioSources.TryGetValue(effectType, out var source))
+            {
+                if (source.isPlaying)
+                {
+                    return;
+                }
+                source.transform.position = position;
+                source.Play();
+                return;
+            }
+            if (_effectAudioClips.TryGetValue(effectType, out var clip))
+            {
+                var audioSourceObj = GameObjectPoolManger.Instance.GetObject(_audioSourcePrefab, position, Quaternion.identity, parent);
+                var audioSource = audioSourceObj.GetComponent<AudioSource>();
+                audioSource.clip = clip;
+                audioSource.loop = true;
+                audioSource.Play();
+                _activeLoopingAudioSources[effectType] = audioSource;
+                ReturnAudioSourceToPool(audioSourceObj, clip.length).Forget();
+            }
+            else
+            {
+                Debug.LogWarning("Looping music clip not found: " + effectType);
+            }
         }
 
-        [Command]
-        public void CmdPlaySFX(AudioEffectType clipType, Vector3 position, Transform parent)
+        public void StopLoopingMusic(AudioEffectType effectType)
         {
-            PlaySFX(clipType, position, parent);
+            if (_activeLoopingAudioSources.TryGetValue(effectType, out var source))
+            {
+                if (source.isPlaying)
+                {
+                    source.Stop();
+                }
+            }
         }
-        
-        [ClientRpc]
+
         public void PlaySFX(AudioEffectType clipType, Vector3 position, Transform parent)
         {
             if (_effectAudioClips.TryGetValue(clipType, out var clip))
@@ -106,7 +133,7 @@ namespace HotUpdate.Scripts.Audio
         private async UniTask ReturnAudioSourceToPool(GameObject audioSourceObj, float delay)
         {
             await UniTask.Delay(TimeSpan.FromSeconds(delay));//new WaitForSeconds(delay);
-            if (audioSourceObj != null && audioSourceObj.activeInHierarchy)
+            if (audioSourceObj && audioSourceObj.activeInHierarchy)
             {
                 GameObjectPoolManger.Instance.ReturnObject(audioSourceObj);
                 _activeAudioSources.Remove(audioSourceObj.GetComponent<AudioSource>());

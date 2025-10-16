@@ -20,9 +20,9 @@ namespace HotUpdate.Scripts.Audio
 
     public enum AudioMusicType
     {
+        None,
         Main,
         Game,
-        Rain,
         Rainy,
         Sunny,
         Cloudy,
@@ -31,6 +31,7 @@ namespace HotUpdate.Scripts.Audio
 
     public enum AudioEffectType
     {
+        None,
         Gem,
         Gold,
         Drug,
@@ -43,6 +44,7 @@ namespace HotUpdate.Scripts.Audio
         Debuff,
         Roll,
         FootStep,
+        Sprint,
         Jump,
         Die,
         Hurt,
@@ -50,6 +52,7 @@ namespace HotUpdate.Scripts.Audio
         Explode,
         Lighten,
         Thunder,
+        Rain,
         
         Start,
     }

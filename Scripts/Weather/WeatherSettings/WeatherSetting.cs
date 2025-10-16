@@ -1,4 +1,5 @@
 using System;
+using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
@@ -17,6 +18,10 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
     {
         [SerializeField]
         private WeatherType weatherType;
+        [SerializeField]
+        private AudioMusicType musicType;
+        [SerializeField]
+        private AudioEffectType subMusicType;
         public WeatherType WeatherType => weatherType;
 
         private WeatherLoadData _weatherLoadData;
@@ -30,12 +35,20 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
             {
                 throw new ArgumentException("WeatherType is not set.");
             }
+
+            if (subMusicType != AudioEffectType.None)
+            {
+                GameAudioManager.Instance.PlayLoopingMusic(subMusicType, transform.position, transform);
+            }
+            GameAudioManager.Instance.PlayMusic(musicType);
         }
 
         public virtual void ClearWeather()
         {
             if (gameObject)
                 gameObject.SetActive(false);
+            GameAudioManager.Instance.StopMusic();
+            GameAudioManager.Instance.StopLoopingMusic(subMusicType);
         }
     }
     

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
+using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
@@ -126,7 +127,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             {
                 if (!isLocalPlayer)
                 {
-                    transform.position = propertyState.PlayerGameStateData.Position;
+                    transform.position = Vector3.Lerp(transform.position, propertyState.PlayerGameStateData.Position, 0.1f);
                 }
                 else
                 {
@@ -201,6 +202,27 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     if (inputCommand.CommandAnimationState is AnimationState.Attack or AnimationState.Jump or AnimationState.SprintJump or AnimationState.Roll or AnimationState.SkillE or AnimationState.SkillQ)
                     {
                         Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
+                    }
+
+                    if (inputCommand.CommandAnimationState is AnimationState.Move)
+                    {
+                        GameAudioManager.Instance.PlayLoopingMusic(AudioEffectType.FootStep, transform.position, transform);
+                    }
+                    else if (inputCommand.CommandAnimationState is AnimationState.Sprint)
+                    {
+                        GameAudioManager.Instance.PlayLoopingMusic(AudioEffectType.Sprint, transform.position, transform);
+                    }
+                    else if (inputCommand.CommandAnimationState is AnimationState.Jump || inputCommand.CommandAnimationState is AnimationState.SprintJump)
+                    {
+                        GameAudioManager.Instance.PlaySFX(AudioEffectType.Jump, transform.position, transform);
+                    }
+                    else if (inputCommand.CommandAnimationState is AnimationState.Roll)
+                    {
+                        GameAudioManager.Instance.PlaySFX(AudioEffectType.Roll, transform.position, transform);
+                    }
+                    else if (inputCommand.CommandAnimationState is AnimationState.Attack)
+                    {
+                        GameAudioManager.Instance.PlaySFX(AudioEffectType.Attack, transform.position, transform);
                     }
                     var info = _animationConfig.GetAnimationInfo(inputCommand.CommandAnimationState);
                     //Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");

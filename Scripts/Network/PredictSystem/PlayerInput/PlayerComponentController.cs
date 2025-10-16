@@ -372,11 +372,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                                                 && (_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)))
                 .Subscribe(_ => {
                     var movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-                    var animationStates = _inputState.GetAnimationStates();
-                    if (movement.magnitude > 0.1f)
+                    if (movement.magnitude == 0)
                     {
-                        NetworkAudioManager.Instance.PlaySFX(AudioEffectType.FootStep, transform.position, transform);
+                        GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.FootStep);
                     }
+                    var animationStates = _inputState.GetAnimationStates();
 
                     // if (animationStates.HasAnyState(AnimationState.Attack))
                     // {

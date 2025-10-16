@@ -1174,6 +1174,16 @@
             "UID": 3700014,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
+            "Extension": ".mp3",
+            "Name": "Rain",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Effect/Rain.mp3"
+        },
+        {
+            "UID": 3700015,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
             "Extension": ".ogg",
             "Name": "Roll",
             "IsPermanent": false,
@@ -1181,7 +1191,7 @@
             "Address": "/Audio/Game/Effect/Roll.ogg"
         },
         {
-            "UID": 3700015,
+            "UID": 3700016,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".wav",
@@ -1191,7 +1201,7 @@
             "Address": "/Audio/Game/Effect/Start.wav"
         },
         {
-            "UID": 3700016,
+            "UID": 3700017,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".wav",
@@ -1201,7 +1211,7 @@
             "Address": "/Audio/Game/Effect/Thunder2.wav"
         },
         {
-            "UID": 3700017,
+            "UID": 3700018,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".mp3",
@@ -1211,7 +1221,7 @@
             "Address": "/Audio/Game/Music/Cloudy.mp3"
         },
         {
-            "UID": 3700018,
+            "UID": 3700019,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".mp3",
@@ -1221,7 +1231,7 @@
             "Address": "/Audio/Game/Music/Game.mp3"
         },
         {
-            "UID": 3700019,
+            "UID": 3700020,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".ogg",
@@ -1229,16 +1239,6 @@
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Audio/Game/Music/Main.ogg"
-        },
-        {
-            "UID": 3700020,
-            "ResourceType": "UnityEngine.AudioClip",
-            "AssetType": 4,
-            "Extension": ".mp3",
-            "Name": "Rain",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Audio/Game/Music/Rain.mp3"
         },
         {
             "UID": 3700021,

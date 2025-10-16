@@ -57,7 +57,7 @@ namespace HotUpdate.Scripts.Game
         private IPlayFabClientCloudScriptCaller _playFabClientCloudScriptCaller;
         
         private BuffManager _buffManager;
-        private NetworkAudioManager _networkAudioManager;
+        private GameAudioManager _gameAudioManager;
         private WeatherManager _weatherManager;
         private bool _serverHandler;
         private bool _clientHandler;
@@ -128,7 +128,7 @@ namespace HotUpdate.Scripts.Game
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _gameEventManager.Subscribe<GameReadyEvent>(OnGameReady);
             _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
-            _networkAudioManager = FindObjectOfType<NetworkAudioManager>();
+            _gameAudioManager = FindObjectOfType<GameAudioManager>();
             _weatherManager = FindObjectOfType<WeatherManager>();
             _gameSyncManager = FindObjectOfType<GameSyncManager>();
             _roundInterval = _jsonDataConfig.GameConfig.roundInterval;
