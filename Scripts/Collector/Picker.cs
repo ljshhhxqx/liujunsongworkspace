@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using AOTScripts.Tool.ECS;
 using Cysharp.Threading.Tasks;
+using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
@@ -47,7 +49,7 @@ namespace HotUpdate.Scripts.Collector
             _collects.Clear();   
         }
         
-        public void SendCollectRequest(uint pickerId, PickerType pickerType, uint itemId)
+        public void SendCollectRequest(uint pickerId, PickerType pickerType, uint itemId, CollectObjectClass itemClass)
         {
             if (isLocalPlayer)
             {
@@ -58,16 +60,44 @@ namespace HotUpdate.Scripts.Collector
                     InteractionType = InteractionType.PickupItem,
                     SceneItemId = itemId,
                 };
+                PlayAudio(itemClass);
                 var commandBytes = MemoryPackSerializer.Serialize(request);
-                CmdCollect(commandBytes);
+                CmdCollect(commandBytes, (int)itemClass);
+            }
+        }
+
+        private void PlayAudio(CollectObjectClass itemClass)
+        {
+            switch (itemClass)
+            {
+                case CollectObjectClass.Score:
+                    GameAudioManager.Instance.PlaySFX(AudioEffectType.Gem, transform.position, transform);
+                    break;
+                case CollectObjectClass.Gold:
+                    GameAudioManager.Instance.PlaySFX(AudioEffectType.Gold, transform.position, transform);
+                    break;
+                case CollectObjectClass.Buff:
+                    GameAudioManager.Instance.PlaySFX(AudioEffectType.Drug, transform.position, transform);
+                    break;
             }
         }
         
         [Command]
-        private void CmdCollect(byte[] request)
+        private void CmdCollect(byte[] request, int itemClass)
         {
             var data = MemoryPackSerializer.Deserialize<SceneInteractRequest>(request);
             _interactSystem.EnqueueCommand(data);
+            RpcPlayEffect(itemClass);
+        }
+
+        [ClientRpc]
+        private void RpcPlayEffect(int itemClass)
+        {
+            if (isLocalPlayer)
+            {
+                return;
+            }
+            PlayAudio((CollectObjectClass)itemClass);
         }
 
         private void OnInteractionStateChange(GameInteractableEffect interactableObjectEffectEventEvent)
@@ -123,6 +153,7 @@ namespace HotUpdate.Scripts.Collector
             };
             var json = MemoryPackSerializer.Serialize(request);
             CmdOpenChest(json);
+            GameAudioManager.Instance.PlaySFX(AudioEffectType.Chest, transform.position, transform);
             await UniTask.DelayFrame(1);
         }
         
@@ -131,6 +162,14 @@ namespace HotUpdate.Scripts.Collector
         {
             var request = MemoryPackSerializer.Deserialize<SceneInteractRequest>(data);
             _interactSystem.EnqueueCommand(request);
+            RpcPlayChest();
+        }
+        
+        [ClientRpc]
+        private void RpcPlayChest()
+        {
+            if (isLocalPlayer) return;
+            GameAudioManager.Instance.PlaySFX(AudioEffectType.Chest, transform.position, transform);
         }
     }
 }

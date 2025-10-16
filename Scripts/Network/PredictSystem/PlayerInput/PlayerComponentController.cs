@@ -1007,11 +1007,47 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             ObjectPoolManager<PlayerGameStateData>.Instance.Return(data);
             return data;
         }
+        
+        [ClientRpc]
+        public void RpcPlayAudioEffect(AnimationState command)
+        {
+            if (_localPlayerHandler) return;
+            PlayEffect(command);
+        }
 
-        [Client]
+        private void PlayEffect(AnimationState command)
+        {
+            switch (command)
+            {
+                case AnimationState.Move:
+                    GameAudioManager.Instance.PlayLoopingMusic(AudioEffectType.FootStep, transform.position, transform);
+                    break;
+                case AnimationState.Sprint:
+                    GameAudioManager.Instance.PlayLoopingMusic(AudioEffectType.Sprint, transform.position, transform);
+                    break;
+                case AnimationState.Jump:
+                case AnimationState.SprintJump:
+                    GameAudioManager.Instance.PlaySFX(AudioEffectType.Jump, transform.position, transform);
+                    break;
+                case AnimationState.Roll:
+                    GameAudioManager.Instance.PlaySFX(AudioEffectType.Roll, transform.position, transform);
+                    break;
+                case AnimationState.Attack:
+                    GameAudioManager.Instance.PlaySFX(AudioEffectType.Attack, transform.position, transform);
+                    break;
+                case AnimationState.Dead:
+                    GameAudioManager.Instance.PlaySFX(AudioEffectType.Die, transform.position, transform);
+                    break;
+                case AnimationState.Hit:
+                    GameAudioManager.Instance.PlaySFX(AudioEffectType.Hurt, transform.position, transform);
+                    break;
+            }
+        }
+
         public PlayerGameStateData HandleClientMoveAndAnimation(PlayerInputStateData inputData)
         {
             //Debug.Log($"[HandleClientMoveAndAnimation] start");
+            PlayEffect(inputData.Command);
             return HandleMoveAndAnimation(inputData);
         }
 

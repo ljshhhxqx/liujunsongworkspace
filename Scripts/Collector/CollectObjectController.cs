@@ -137,7 +137,7 @@ namespace HotUpdate.Scripts.Collector
             
             if (other.TryGetComponent<Picker>(out var pickerComponent))
             {
-                pickerComponent.SendCollectRequest(pickerComponent.netId, pickerComponent.PickerType, netId);
+                pickerComponent.SendCollectRequest(pickerComponent.netId, pickerComponent.PickerType, netId, CollectObjectData.collectObjectClass);
             }
         }
         

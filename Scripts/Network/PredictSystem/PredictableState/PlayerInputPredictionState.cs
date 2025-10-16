@@ -203,27 +203,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     {
                         Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
                     }
-
-                    if (inputCommand.CommandAnimationState is AnimationState.Move)
-                    {
-                        GameAudioManager.Instance.PlayLoopingMusic(AudioEffectType.FootStep, transform.position, transform);
-                    }
-                    else if (inputCommand.CommandAnimationState is AnimationState.Sprint)
-                    {
-                        GameAudioManager.Instance.PlayLoopingMusic(AudioEffectType.Sprint, transform.position, transform);
-                    }
-                    else if (inputCommand.CommandAnimationState is AnimationState.Jump || inputCommand.CommandAnimationState is AnimationState.SprintJump)
-                    {
-                        GameAudioManager.Instance.PlaySFX(AudioEffectType.Jump, transform.position, transform);
-                    }
-                    else if (inputCommand.CommandAnimationState is AnimationState.Roll)
-                    {
-                        GameAudioManager.Instance.PlaySFX(AudioEffectType.Roll, transform.position, transform);
-                    }
-                    else if (inputCommand.CommandAnimationState is AnimationState.Attack)
-                    {
-                        GameAudioManager.Instance.PlaySFX(AudioEffectType.Attack, transform.position, transform);
-                    }
                     var info = _animationConfig.GetAnimationInfo(inputCommand.CommandAnimationState);
                     //Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
                     var actionType = info.actionType;

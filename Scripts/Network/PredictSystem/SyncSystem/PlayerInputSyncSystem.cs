@@ -406,12 +406,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 //todo:**必须优化//
                 PropertyStates[header.ConnectionId] = playerInputState;
                 playerController.HandlePlayerSpecialAction(inputStateData.Command);
+                playerController.RpcPlayAudioEffect(inputStateData.Command);
                 //playerController.RpcHandlePlayerSpecialAction(playerGameStateData.AnimationState);
                 if (inputCommand.CommandAnimationState is AnimationState.Attack or AnimationState.Jump or AnimationState.SprintJump or AnimationState.Roll or AnimationState.SkillE or AnimationState.SkillQ)
                 {
                     Debug.Log($"[PlayerInputSyncSystem] Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost} player state {inputCommand.CommandAnimationState}");
 
                 }
+                
                 if (inputMovement.magnitude > 0.1f && inputStateData.Command == AnimationState.Move || inputStateData.Command == AnimationState.Sprint)
                 {
                     var moveSpeed = playerSyncSystem.GetMoveSpeed(header.ConnectionId);
