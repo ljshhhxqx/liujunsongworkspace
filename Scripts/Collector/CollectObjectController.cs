@@ -1,9 +1,11 @@
 ﻿using System;
+using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using HotUpdate.Scripts.Tool.Coroutine;
 using Mirror;
 using Sirenix.OdinInspector;
 using UniRx;
@@ -13,7 +15,7 @@ using VContainer;
 
 namespace HotUpdate.Scripts.Collector
 {
-    public class CollectObjectController : CollectObject, IPooledObject
+    public class CollectObjectController : CollectObject
     {
         private PooledObject _pooledObject;
         private CollectParticlePlayer _collectParticlePlayer;
@@ -26,7 +28,7 @@ namespace HotUpdate.Scripts.Collector
         [SerializeField]
         private Renderer fillRenderer;
         private LayerMask _playerLayer;  
-        private CollectCollider _collectCollider;
+        
         
         public int CollectConfigId => collectConfigId;
         public override Collider Collider => _collider;
@@ -65,79 +67,79 @@ namespace HotUpdate.Scripts.Collector
             var playerConfig = configProvider.GetConfig<JsonDataConfig>().PlayerConfig;
             _playerLayer = playerConfig.PlayerLayer;
             var collectObjectDataConfig = configProvider.GetConfig<CollectObjectDataConfig>();
-            _pooledObject = GetComponent<PooledObject>();
             // if (_pooledObject)
             // {
             //     _pooledObject.OnSelfDespawn += OnReturnToPool;
             // }
-            _collectParticlePlayer = GetComponentInChildren<CollectParticlePlayer>();
-            _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
-            _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
-            _interactSystem = FindObjectOfType<InteractSystem>();
-            _collectCollider = GetComponentInChildren<CollectCollider>();
-            if (!_collectCollider)
-            {
-                Debug.LogError("Collider not found");
-                return;
-            }
 
+            CollectObjectData = collectObjectDataConfig.GetCollectObjectData(collectConfigId);
             if (isClient)
             {
-                _collectAnimationComponent?.Play();
-                Debug.Log("Local player animation");
-                _collider = _collectCollider.GetComponent<Collider>();
-                _collider.enabled = true;
+                Debug.Log($"CollectObjectController::Init");
                 _disposable = _collider.OnTriggerEnterAsObservable()
                     .Subscribe(OnTriggerEnterObserver)
                     .AddTo(this);
             }
-            CollectObjectData = collectObjectDataConfig.GetCollectObjectData(collectConfigId);
         }
 
-        private void OnEnable()
+        public override void OnSelfSpawn()
         {
-            if (isClient && !IsInUse)
+            base.OnSelfSpawn();
+            if (isClient && _collider)
             {
-                IsInUse = true;
-                _collectAnimationComponent?.Play();
-                Debug.Log("Local player animation");
-                _collider = _collectCollider.GetComponent<Collider>();
+                Debug.Log("Local player collider enabled");
                 _collider.enabled = true;
                 _disposable = _collider.OnTriggerEnterAsObservable()
                     .Subscribe(OnTriggerEnterObserver)
                     .AddTo(this);
+                _collectAnimationComponent?.Play();
             }
         }
 
         public override void OnStartClient()
         {
             base.OnStartClient();
-            ObjectInjectProvider.Instance.Inject(this);
+            Debug.Log("Local player collider started");
+            _collectParticlePlayer = GetComponentInChildren<CollectParticlePlayer>();
+            _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
+            _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
+            _interactSystem = FindObjectOfType<InteractSystem>();
+            var collectCollider = GetComponentInChildren<CollectCollider>();
+            if (!collectCollider)
+            {
+                Debug.LogError("Collider not found");
+                return;
+            }
+            _collectAnimationComponent?.Play();
+            Debug.Log("Local player animation");
+            _collider = collectCollider.GetComponent<Collider>();
+            _collider.enabled = true;
+            _collectAnimationComponent?.Play();
         }
 
-        [ClientRpc]
-        public void RpcRecycleItem()
+        public override void OnSelfDespawn()
         {
-            IsInUse = false;
-            Debug.Log($"Recycle item ---- {gameObject.name} --- {netId}");
+            base.OnSelfDespawn();
+            Debug.Log("Local player collider disabled");
             if (_collider)
             {
                 _collider.enabled = false;
             }
             _disposable?.Dispose();
-            gameObject.SetActive(false);
         }
         
         private void OnTriggerEnterObserver(Collider other)
         {
             if ((_playerLayer.value & (1 << other.gameObject.layer)) == 0)
             {
+                Debug.Log($"OnTriggerEnterObserver -- Not player layer, ignore");
                 return;
             }
             
             if (other.TryGetComponent<Picker>(out var pickerComponent))
             {
-                pickerComponent.SendCollectRequest(pickerComponent.netId, pickerComponent.PickerType, netId, CollectObjectData.collectObjectClass);
+                Debug.Log($"OnTriggerEnterObserver -- Picker component");
+                pickerComponent.SendCollectRequest(pickerComponent.netId, pickerComponent.PickerType, netId);
             }
         }
         
@@ -195,12 +197,5 @@ namespace HotUpdate.Scripts.Collector
             // }
 #endif
         }
-
-        public bool IsInUse { get; private set; } = true;
-    }
-
-    public interface IPooledObject
-    {
-        bool IsInUse { get; }
     }
 }

@@ -1,8 +1,8 @@
 using System;
+using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
@@ -16,7 +16,7 @@ using VContainer;
 
 namespace HotUpdate.Scripts.Collector
 {
-    public class TreasureChestComponent : NetworkBehaviour, IPickable, IItem, IPooledObject
+    public class TreasureChestComponent : NetworkBehaviour, IPickable, IItem, IPoolable
     {
         [SerializeField] 
         private GameObject lid; // 宝箱盖子
@@ -34,7 +34,6 @@ namespace HotUpdate.Scripts.Collector
         private InteractSystem _interactSystem;
         private PooledObject _pooledObject;
         private Transform _playerTransform;
-        private Quaternion _initRotation;
         public Collider ChestCollider => _chestCollider;
         public QualityType Quality => quality;
         
@@ -58,51 +57,23 @@ namespace HotUpdate.Scripts.Collector
                 return;
             }
             _chestCollider = collectCollider.GetComponent<Collider>();
-            _chestCollider.enabled = true;
             //_chestDataConfig = configProvider.GetConfig<ChestDataConfig>();
             _chestCommonData = _jsonDataConfig.ChestCommonData;
 
             lid.transform.eulerAngles = _chestCommonData.InitEulerAngles;
-            if (isClient)
-            {
-                _chestCollider.OnTriggerEnterAsObservable()
-                    .Subscribe(OnTriggerEnterObserver)
-                    .AddTo(_disposables);
-                _chestCollider.OnTriggerExitAsObservable()
-                    .Subscribe(OnTriggerExitObserver)
-                    .AddTo(_disposables);
-                _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-                _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId));
-            }
         }
-
-        private void OnEnable()
-        {
-            if (netId == 0)
-            {
-                return;
-            }
-
-            transform.rotation = _initRotation;
-            if (!IsInUse && isClient)
-            {
-                IsInUse = true;
-                _chestCollider.OnTriggerEnterAsObservable()
-                    .Subscribe(OnTriggerEnterObserver)
-                    .AddTo(_disposables);
-                _chestCollider.OnTriggerExitAsObservable()
-                    .Subscribe(OnTriggerExitObserver)
-                    .AddTo(_disposables);
-                _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId));
-            }
-            _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId));
-        }
-
+        
         public override void OnStartClient()
         {
             base.OnStartClient();
-            _initRotation = transform.rotation;
-            ObjectInjectProvider.Instance.Inject(this);
+            _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+            _chestCollider.OnTriggerEnterAsObservable()
+                .Subscribe(OnTriggerEnterObserver)
+                .AddTo(_disposables);
+            _chestCollider.OnTriggerExitAsObservable()
+                .Subscribe(OnTriggerExitObserver)
+                .AddTo(_disposables);
+            _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId));
         }
 
         private void OnTriggerExitObserver(Collider other)
@@ -152,26 +123,35 @@ namespace HotUpdate.Scripts.Collector
         {
             await OpenLid();
             onFinish?.Invoke();
-            RecycleItem();
+            GameObjectPoolManger.Instance.ReturnObject(gameObject);
         }
 
         public uint ItemId { get; set; }
 
-        private void RecycleItem()
+        public void OnSelfSpawn()
         {
-            IsInUse = false;
+            if (isClient)
+            {
+                _chestCollider.OnTriggerEnterAsObservable()
+                    .Subscribe(OnTriggerEnterObserver)
+                    .AddTo(_disposables);
+                _chestCollider.OnTriggerExitAsObservable()
+                    .Subscribe(OnTriggerExitObserver)
+                    .AddTo(_disposables);
+                _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId));
+            }
+        }
+
+        public void OnSelfDespawn()
+        {
+            if (isClient && _chestCollider)
+            {
+                _chestCollider.enabled = true;
+            }
             _gameEventManager?.Publish(new TargetShowEvent(null, null, netId));
+            //_chestDataConfig = null;
             _disposables?.Clear();
-            gameObject.SetActive(false);
         }
-
-        [ClientRpc]
-        public void RpcRecycleItem()
-        {
-            RecycleItem();
-        }
-
-        public bool IsInUse { get; private set; }
     }
 
     [Serializable]

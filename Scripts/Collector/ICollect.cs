@@ -1,6 +1,8 @@
 using AOTScripts.Tool.ECS;
+using Game;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Game.Inject;
 using Mirror;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -20,7 +22,7 @@ namespace HotUpdate.Scripts.Collector
         public uint ItemId { get; }
     }
 
-    public abstract class CollectObject : NetworkMonoController, ICollect, IItem
+    public abstract class CollectObject : NetworkMonoController, ICollect, IItem, IPoolable
     {
         [HideInInspector]
         [SyncVar] 
@@ -36,6 +38,21 @@ namespace HotUpdate.Scripts.Collector
         //     ObjectInjectProvider.Instance.Inject(this);
         // }
         public uint ItemId { get; set; }
+        
+        protected bool IsInjected { get; private set; }
+        public virtual void OnSelfSpawn()
+        {
+            if (!IsInjected)
+            {
+                ObjectInjectProvider.Instance.InjectMapGameObject(GameSceneManager.CurrentMapType, gameObject);
+                IsInjected = true;
+            }
+        }
+
+        public virtual void OnSelfDespawn()
+        {
+            
+        }
     }
 
     public interface IPickable

@@ -1,5 +1,7 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System;
+using Cysharp.Threading.Tasks;
 using Game.Inject;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
 using Tool.GameEvent;
@@ -17,6 +19,9 @@ namespace Game
         private IGameMapLifeScope _currentMapLifeScope;
         private readonly UIManager _uiManager;
         private readonly GameEventManager _gameEventManager;
+        private MapConfig _mapConfig;
+        
+        public static MapType CurrentMapType { get; private set; }
 
         [Inject]
         private GameSceneManager(UIManager uiManager, GameEventManager gameEventManager)
@@ -41,6 +46,7 @@ namespace Game
                     _uiManager.CloseUI(UIType.Loading);
                     Debug.Log($"Map {mapName} loaded");
                     _gameEventManager.Publish(new GameSceneLoadedEvent(mapName));
+                    CurrentMapType = Enum.Parse<MapType>(mapName);
                     break;
                 }
                 // second += Time.deltaTime;
