@@ -25,7 +25,7 @@ namespace HotUpdate.Scripts.UI.UIs.Common
 
         private void OnDestroy()
         {
-            _button.onClick.RemoveListener(OnClick);
+            _button?.onClick.RemoveListener(OnClick);
         }
     }
 }

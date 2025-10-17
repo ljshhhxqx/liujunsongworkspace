@@ -139,7 +139,7 @@ namespace HotUpdate.Scripts.Collector
             if (other.TryGetComponent<Picker>(out var pickerComponent))
             {
                 Debug.Log($"OnTriggerEnterObserver -- Picker component");
-                pickerComponent.SendCollectRequest(pickerComponent.netId, pickerComponent.PickerType, netId);
+                pickerComponent.SendCollectRequest(pickerComponent.netId, pickerComponent.PickerType, netId, CollectObjectData.collectObjectClass);
             }
         }
         
