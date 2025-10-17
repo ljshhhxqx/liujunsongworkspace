@@ -73,8 +73,9 @@ namespace HotUpdate.Scripts.Network.Server
         {
             base.OnServerConnect(conn);
             _connectionToClients.Add(conn.connectionId, conn);
+            var hasHost = PlayFabData.PlayerList.Any(player => Enum.Parse<PlayerGameDuty>(player.playerDuty) == PlayerGameDuty.Host);
             Debug.Log($"玩家 【{conn.connectionId}】 已连接到服务器。");
-            if (_connectionToClients.Count == PlayFabData.PlayerList.Count - 1)
+            if (_connectionToClients.Count == PlayFabData.PlayerList.Count - (hasHost ? 0 : 1))
             {
                 Debug.Log("所有玩家已连接到服务器。");
                 foreach (var connection in _connectionToClients.Values)

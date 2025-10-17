@@ -12,7 +12,7 @@ namespace HotUpdate.Scripts.Network.Data
         public static ReactiveProperty<PlayerReadOnlyData> PlayerReadOnlyData { get; private set; } = new ReactiveProperty<PlayerReadOnlyData>();
         public static ReactiveProperty<bool> IsDevelopMode { get; private set; }    = new ReactiveProperty<bool>();
         public static ReactiveProperty<EntityKey> EntityKey { get; private set; } = new ReactiveProperty<EntityKey>();
-        public static ReactiveCollection<string> PlayerList { get; private set; } = new ReactiveCollection<string>(); 
+        public static ReactiveCollection<GamePlayerInfo> PlayerList { get; private set; } = new ReactiveCollection<GamePlayerInfo>(); 
         public static ReactiveProperty<string> ConnectionAddress { get; private set; } = new ReactiveProperty<string>();
         public static ReactiveProperty<int> ConnectionPort { get; private set; } = new ReactiveProperty<int>();
         public static ReactiveProperty<string> CurrentGameId { get; private set; } = new ReactiveProperty<string>();
@@ -27,7 +27,7 @@ namespace HotUpdate.Scripts.Network.Data
             EntityKey ??= new ReactiveProperty<EntityKey>();
             ConnectionAddress ??= new ReactiveProperty<string>();
             ConnectionPort ??= new ReactiveProperty<int>();
-            PlayerList ??= new ReactiveCollection<string>();
+            PlayerList ??= new ReactiveCollection<GamePlayerInfo>();
         }
         
         public static void Dispose()

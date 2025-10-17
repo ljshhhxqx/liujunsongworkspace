@@ -42,6 +42,7 @@ namespace HotUpdate.Scripts.Audio
         Damage,
         Buff,
         Debuff,
+        Control,
         Roll,
         FootStep,
         Sprint,

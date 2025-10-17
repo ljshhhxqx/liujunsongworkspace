@@ -69,6 +69,42 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
         }
 
+        public void PlayAnimationWithNoCondition(AnimationState newState, int index)
+        {
+            switch (newState)
+            {
+                case AnimationState.Jump:
+                    _animationComponent.Animator.CrossFadeInFixedTime(GetAnimationName(AnimationState.Jump), 0.1f);
+                    break;
+                case AnimationState.SprintJump:
+                    _animationComponent.Animator.CrossFadeInFixedTime(GetAnimationName(AnimationState.SprintJump), 0.1f);
+                    break;
+                case AnimationState.Roll:
+                    _animationComponent.Animator.CrossFadeInFixedTime(GetAnimationName(AnimationState.Roll), 0.1f);
+                    break;
+                case AnimationState.Attack:
+                    var attackName = GetAnimationName(AnimationState.Attack, index);
+                    _animationComponent.Animator.CrossFadeInFixedTime(attackName, 0.1f);
+                    break;
+                case AnimationState.Hit:
+                    IsPlayingSpecialAction = true;
+                    _animationComponent.Animator.CrossFade(GetAnimationName(AnimationState.Hit), 0.01f);
+                    break;
+                case AnimationState.Dead:
+                    IsPlayingSpecialAction = true;
+                    _animationComponent.Animator.CrossFade(GetAnimationName(AnimationState.Dead), 0.01f);
+                    break;
+                case AnimationState.SkillQ:
+                    IsPlayingSpecialAction = true;
+                    _animationComponent.Animator.CrossFade(GetAnimationName(AnimationState.SkillQ), 0.01f);
+                    break;
+                case AnimationState.SkillE:
+                    IsPlayingSpecialAction = true;
+                    _animationComponent.Animator.CrossFade(GetAnimationName(AnimationState.SkillE), 0.01f);
+                    break;
+            }
+        }
+
         private void SetAnimationSpeed(string clipName, float speedFactor)
         {
             // var clip = _animationComponent.Animator.runtimeAnimatorController.animationClips

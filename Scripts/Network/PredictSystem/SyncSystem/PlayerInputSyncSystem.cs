@@ -240,21 +240,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var skillConfigData = _playerSkillSyncSystem.GetSkillConfigData(animState, connectionId);
             var playerController = GameSyncManager.GetPlayerConnection(connectionId);
-            switch (skillConfigData.skillType)
+            switch (skillConfigData.controlSkillType)
             {
-                case SkillType.None:
+                case SkillAudioType.Buff:
+                    GameAudioManager.Instance.PlaySFX(AudioEffectType.Buff, playerController.transform.position, playerController.transform);
                     break;
-                case SkillType.SingleFly:
+                case SkillAudioType.Debuff:
+                    GameAudioManager.Instance.PlaySFX(AudioEffectType.Debuff, playerController.transform.position, playerController.transform);
                     break;
-                case SkillType.Single:
+                case SkillAudioType.Damage:
+                    GameAudioManager.Instance.PlaySFX(AudioEffectType.Damage, playerController.transform.position, playerController.transform);
                     break;
-                case SkillType.AreaRanged:
+                case SkillAudioType.Control:
+                    GameAudioManager.Instance.PlaySFX(AudioEffectType.Control, playerController.transform.position, playerController.transform);
                     break;
-                case SkillType.AreaFly:
-                    break;
-                case SkillType.Dash:
-                    break;
-                case SkillType.DelayedAreaRanged:
+                case SkillAudioType.Heal:
+                    GameAudioManager.Instance.PlaySFX(AudioEffectType.Heal, playerController.transform.position, playerController.transform);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

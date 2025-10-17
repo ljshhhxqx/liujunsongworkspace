@@ -649,6 +649,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             // _rigidbody.velocity = newState.Velocity;
             // _gameStateStream.Value = newState.PlayerEnvironmentState;
             // _playerAnimationCalculator.SetEnvironmentState(newState.PlayerEnvironmentState);
+            if(_localPlayerHandler)
+                return;
+            
+            _playerAnimationCalculator.PlayAnimationWithNoCondition(newState.AnimationState, newState.Index);
         }
 
         private void HandleSendNetworkCommand(PlayerInputStateData inputData)
@@ -1004,6 +1008,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             data.Velocity = _rigidbody.velocity;
             data.PlayerEnvironmentState = _gameStateStream.Value;
             data.AnimationState = inputData.Command;
+            data.Index = _attackAnimationCooldown.CurrentStage;
             ObjectPoolManager<PlayerGameStateData>.Instance.Return(data);
             return data;
         }

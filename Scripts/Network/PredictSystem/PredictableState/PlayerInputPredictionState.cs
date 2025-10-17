@@ -127,7 +127,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             {
                 if (!isLocalPlayer)
                 {
-                    transform.position = Vector3.Lerp(transform.position, propertyState.PlayerGameStateData.Position, 0.1f);
+                    //transform.position = Vector3.Lerp(transform.position, propertyState.PlayerGameStateData.Position, 0.1f);
                 }
                 else
                 {

@@ -546,6 +546,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             operation.Completed += (op) =>
             {
                 _playerDataManager.InitRoomPlayer(_currentRoomData);
+                _playerDataManager.InitGamePlayer(_currentMainGameInfo);
                 _uiManager.CloseUI(UIType.CreateRoom);
                 _uiManager.CloseUI(UIType.RoomScreen);
                 _uiManager.SwitchUI<PlayerConnectUI>();

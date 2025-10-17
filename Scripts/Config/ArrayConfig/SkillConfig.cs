@@ -149,8 +149,19 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         //技能附加效果
         public SkillHitExtraEffectData[] extraEffects;
         public SkillType skillType;
+        public SkillAudioType controlSkillType;
     }
-    
+
+    public enum SkillAudioType
+    {
+        Buff,
+        Debuff,
+        Damage,
+        Control,
+        Heal,
+        
+    }
+
     [Serializable]
     [JsonSerializable]
     public struct SkillConfigEventData

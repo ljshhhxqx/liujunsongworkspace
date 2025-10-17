@@ -9,7 +9,9 @@ namespace HotUpdate.Scripts.Network.Server.InGame
     public class PlayerDataManager 
     {
         private readonly List<PlayerInitData> _players = new List<PlayerInitData>();
+        private readonly List<PlayerInGameInfo> _savedPlayers = new List<PlayerInGameInfo>();
         public RoomData CurrentRoomData { get; private set; }
+        public MainGameInfo MainGameInfo { get; private set; }
 
         public void TestInitRoomPlayer()
         {
@@ -54,6 +56,38 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 //     },
                 // }
             });
+            InitGamePlayer(new MainGameInfo
+            {
+                roomId = "",
+                mapType = 0,
+                
+                playersInfo = new GamePlayerInfo[]
+                {
+                    new GamePlayerInfo
+                    {
+                        id = 0,
+                        playerId = "1",
+                        playerName = "Player1",
+                       playerLevel = 1,
+                       playerDuty = "Host",
+                       playerStatus = ""
+                    }
+                }
+            });
+        }
+
+        public void InitGamePlayer(MainGameInfo mainGameInfo)
+        {
+            MainGameInfo = mainGameInfo;
+            _savedPlayers.Clear();
+            foreach (var player in MainGameInfo.playersInfo)
+            {
+                _savedPlayers.Add(new PlayerInGameInfo
+                {
+                    player = player
+                });
+                PlayFabData.PlayerList.Add(player);
+            }
         }
 
         public void InitRoomPlayer(RoomData roomData)
@@ -67,7 +101,6 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 {
                     player = player,
                 });
-                PlayFabData.PlayerList.Add(player.PlayerId);
             }
         }
         
@@ -96,7 +129,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         public void UnregisterPlayer(int connectionId)
         {
             var player = GetPlayer(connectionId);
-            if (player != null)
+            if (player.player.PlayerId != null)
             {
                 _players.Remove(player);
             }
@@ -149,5 +182,11 @@ namespace HotUpdate.Scripts.Network.Server.InGame
     {
         public int connectionId;
         public PlayerReadOnlyData player;
+    }
+
+    public class PlayerInGameInfo
+    {
+        public int connectionId;
+        public GamePlayerInfo player;
     }
 }

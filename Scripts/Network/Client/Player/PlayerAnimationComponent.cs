@@ -183,10 +183,8 @@ namespace HotUpdate.Scripts.Network.Client.Player
             }
         }
 
-        // 帧同步相关方法
         public AnimationState ExecuteAnimationState(PlayerInputCommand input, PlayerEnvironmentState environmentState, float groundDistance)
         {
-            // 根据输入和环境状态确定应该播放的动画
             var requestedState = DetermineAnimationState(input, environmentState, groundDistance);
             
             if (isServer)
@@ -198,7 +196,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 CmdUpdateRequestedAnimationState(requestedState);
             }
 
-            // 更新动画参数
             UpdateAnimationParameters(input, environmentState);
             return requestedState;
         }

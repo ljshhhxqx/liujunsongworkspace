@@ -115,6 +115,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
         public AnimationState AnimationState;   // 当前执行的命令
         [MemoryPackOrder(4)] 
         public PlayerEnvironmentState PlayerEnvironmentState; // 玩家在什么环境中
+        [MemoryPackOrder(5)] 
+        public int Index; // 玩家在什么环境中
 
         public bool IsEqual(PlayerGameStateData other)
         {
@@ -122,7 +124,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                    Mathf.Abs(Velocity.ToVector3().magnitude - other.Velocity.ToVector3().magnitude) < 0.05f &&
                    UnityEngine.Quaternion.Angle(Quaternion.ToQuaternion(), other.Quaternion.ToQuaternion()) < 10f &&
                    AnimationState == other.AnimationState &&
-                   PlayerEnvironmentState == other.PlayerEnvironmentState;
+                   PlayerEnvironmentState == other.PlayerEnvironmentState && Index == other.Index;
         }
 
         public void Init()
