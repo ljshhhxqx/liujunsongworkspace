@@ -21,32 +21,33 @@ namespace HotUpdate.Scripts.Audio
         public AudioManagerType AudioManagerType => AudioManagerType.UI;
         
         [Inject]
-        private async void Init()
+        public UIAudioManager()
+        {
+            Initialize().Forget();
+        }
+
+        private async UniTask Initialize()
         {
             var clips = await ResourceManager.Instance.GetAudioGameClip(AudioManagerType.ToString());
-            foreach (var clip in clips)
+            if (clips != null)
             {
-                if (Enum.TryParse(clip.name, out AudioMusicType audioMusicType))
+                foreach (var clip in clips)
                 {
-                    _audioClips.Add(audioMusicType, clip);
+                    if (Enum.TryParse<AudioMusicType>(clip.name, out var audioMusicType))
+                    {
+                        _audioClips.Add(audioMusicType, clip);
+                    }
+                    else if (Enum.TryParse<AudioEffectType>(clip.name, out var audioEffectType))
+                    {
+                        _effectAudioClips.Add(audioEffectType, clip);
+                    }
+                    else if (Enum.TryParse<UIAudioEffectType>(clip.name, out var uiAudioEffectType))
+                    {
+                        _uiAudioClips.Add(uiAudioEffectType, clip);
+                    }
                 }
-                else if (Enum.TryParse(clip.name, out AudioEffectType audioEffectType))
-                {
-                    _effectAudioClips.Add(audioEffectType, clip);
-                }
-                else if (Enum.TryParse(clip.name, out UIAudioEffectType uiAudioEffectType))
-                {
-                    _uiAudioClips.Add(uiAudioEffectType, clip);
-                }
-                else
-                {
-                    throw new Exception("AudioManager: AudioClip name is not valid.");
-                }
+                _audioSourcePrefab = ResourceManager.Instance.GetResource<GameObject>("AudioUIEffectPrefab", ".prefab").gameObject;
             }
-            _audioSourcePrefab = ResourceManager.Instance.GetResource<GameObject>(new ResourceData()
-            {
-                Name = "AudioSourcePrefab"
-            });
         }
 
         private void OnDestroy()

@@ -5,33 +5,13 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
-            "Name": "AudioGameEffectPrefab",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Audio/AudioGameEffectPrefab.prefab"
-        },
-        {
-            "UID": 1,
-            "ResourceType": "UnityEngine.GameObject",
-            "AssetType": 2,
-            "Extension": ".prefab",
-            "Name": "AudioUIEffectPrefab",
-            "IsPermanent": false,
-            "IsPreload": false,
-            "Address": "/Audio/AudioUIEffectPrefab.prefab"
-        },
-        {
-            "UID": 2,
-            "ResourceType": "UnityEngine.GameObject",
-            "AssetType": 2,
-            "Extension": ".prefab",
             "Name": "AttackBuff",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Effect/AttackBuff.prefab"
         },
         {
-            "UID": 3,
+            "UID": 1,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -41,7 +21,7 @@
             "Address": "/Effect/AttackDebuff.prefab"
         },
         {
-            "UID": 4,
+            "UID": 2,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -51,7 +31,7 @@
             "Address": "/Effect/DefenseBuff.prefab"
         },
         {
-            "UID": 5,
+            "UID": 3,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -61,7 +41,7 @@
             "Address": "/Effect/DefenseDebuff.prefab"
         },
         {
-            "UID": 6,
+            "UID": 4,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -71,7 +51,7 @@
             "Address": "/Effect/Die.prefab"
         },
         {
-            "UID": 7,
+            "UID": 5,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -81,7 +61,7 @@
             "Address": "/Effect/HitEffect.prefab"
         },
         {
-            "UID": 8,
+            "UID": 6,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -91,7 +71,7 @@
             "Address": "/Effect/RecoverBuff.prefab"
         },
         {
-            "UID": 9,
+            "UID": 7,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -101,7 +81,7 @@
             "Address": "/Effect/RecoverDebuff.prefab"
         },
         {
-            "UID": 10,
+            "UID": 8,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -129,6 +109,26 @@
             "IsPermanent": true,
             "IsPreload": false,
             "Address": "/Permanent/LoadingScreenPanel.prefab"
+        },
+        {
+            "UID": 200001,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "AudioGameEffectPrefab",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/AudioGameEffectPrefab.prefab"
+        },
+        {
+            "UID": 200002,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "AudioUIEffectPrefab",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/AudioUIEffectPrefab.prefab"
         },
         {
             "UID": 300000,

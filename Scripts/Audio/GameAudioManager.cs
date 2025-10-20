@@ -24,7 +24,7 @@ namespace HotUpdate.Scripts.Audio
         public AudioManagerType AudioManagerType => AudioManagerType.Game;
 
         [Inject]
-        private void Init(IObjectResolver objectResolver)
+        public GameAudioManager(IObjectResolver objectResolver)
         {
             _objectResolver = objectResolver;
             GetAudioClipAsync().Forget();
@@ -50,7 +50,7 @@ namespace HotUpdate.Scripts.Audio
             }
 
             var audioRes = DataJsonManager.Instance.GetResourceData("AudioGameEffectPrefab");
-            _audioSourcePrefab = await ResourceManager.Instance.LoadResourceAsync<GameObject>(audioRes);
+            _audioSourcePrefab = ResourceManager.Instance.GetResource<GameObject>(audioRes);
         }
 
         private void OnDestroy()
