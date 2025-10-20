@@ -21,7 +21,7 @@ namespace HotUpdate.Scripts.Config
                 _configs.Add(configObject.GetType(), configObject);
                 if (configObject is ConfigBase config)
                 {
-                    #if !UNITY_EDITOR
+                    #if UNITY_EDITOR
                     config.Init();
                     #else
                     TextAsset resource;
