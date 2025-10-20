@@ -337,7 +337,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public int maxBagSize;
     }
 
-    public enum EquipmentPart : byte
+    public enum EquipmentPart
     {
         None,
         //暴击率、暴击伤害
@@ -369,7 +369,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     /// <summary>
     /// 玩家道具类型
     /// </summary>
-    public enum PlayerItemType : byte
+    public enum PlayerItemType
     {
         None,
         Weapon,
