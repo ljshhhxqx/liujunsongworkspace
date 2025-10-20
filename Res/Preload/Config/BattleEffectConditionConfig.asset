@@ -40,7 +40,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468803
+      rid: 3783876270996062260
   - id: 3
     triggerType: 9
     probability: 50
@@ -50,7 +50,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468804
+      rid: 3783876270996062261
   - id: 4
     triggerType: 3
     probability: 50
@@ -60,7 +60,7 @@ MonoBehaviour:
     buffIncreaseType: 1
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468805
+      rid: 3783876270996062262
   - id: 5
     triggerType: 5
     probability: 5
@@ -90,7 +90,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468806
+      rid: 3783876270996062263
   - id: 8
     triggerType: 9
     probability: 80
@@ -100,7 +100,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468807
+      rid: 3783876270996062264
   - id: 9
     triggerType: 3
     probability: 80
@@ -110,7 +110,7 @@ MonoBehaviour:
     buffIncreaseType: 1
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468808
+      rid: 3783876270996062265
   - id: 10
     triggerType: 5
     probability: 15
@@ -140,7 +140,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468809
+      rid: 3783876270996062266
   - id: 13
     triggerType: 3
     probability: 50
@@ -150,7 +150,7 @@ MonoBehaviour:
     buffIncreaseType: 1
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468810
+      rid: 3783876270996062267
   - id: 14
     triggerType: 5
     probability: 5
@@ -170,7 +170,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468811
+      rid: 3783876270996062268
   - id: 16
     triggerType: 1
     probability: 100
@@ -190,7 +190,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468812
+      rid: 3783876270996062269
   - id: 18
     triggerType: 3
     probability: 80
@@ -200,7 +200,7 @@ MonoBehaviour:
     buffIncreaseType: 1
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468813
+      rid: 3783876270996062270
   - id: 19
     triggerType: 5
     probability: 15
@@ -220,7 +220,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468814
+      rid: 3783876270996062271
   - id: 21
     triggerType: 1
     probability: 100
@@ -240,7 +240,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468815
+      rid: 3783876270996062272
   - id: 23
     triggerType: 5
     probability: 5
@@ -260,7 +260,7 @@ MonoBehaviour:
     buffIncreaseType: 1
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468816
+      rid: 3783876270996062273
   - id: 25
     triggerType: 10
     probability: 20
@@ -270,7 +270,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468817
+      rid: 3783876270996062274
   - id: 26
     triggerType: 1
     probability: 100
@@ -290,7 +290,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468818
+      rid: 3783876270996062275
   - id: 28
     triggerType: 5
     probability: 10
@@ -310,7 +310,7 @@ MonoBehaviour:
     buffIncreaseType: 1
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468819
+      rid: 3783876270996062276
   - id: 30
     triggerType: 10
     probability: 50
@@ -320,7 +320,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468820
+      rid: 3783876270996062277
   - id: 31
     triggerType: 1
     probability: 100
@@ -340,7 +340,7 @@ MonoBehaviour:
     buffIncreaseType: 1
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468821
+      rid: 3783876270996062278
   - id: 33
     triggerType: 2
     probability: 50
@@ -350,7 +350,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468822
+      rid: 3783876270996062279
   - id: 34
     triggerType: 11
     probability: 100
@@ -360,7 +360,7 @@ MonoBehaviour:
     buffIncreaseType: 1
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468823
+      rid: 3783876270996062280
   - id: 35
     triggerType: 4
     probability: 100
@@ -370,7 +370,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468824
+      rid: 3783876270996062281
   - id: 36
     triggerType: 1
     probability: 100
@@ -390,7 +390,7 @@ MonoBehaviour:
     buffIncreaseType: 1
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468825
+      rid: 3783876270996062282
   - id: 38
     triggerType: 2
     probability: 80
@@ -400,7 +400,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468826
+      rid: 3783876270996062283
   - id: 39
     triggerType: 11
     probability: 100
@@ -410,7 +410,7 @@ MonoBehaviour:
     buffIncreaseType: 1
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468827
+      rid: 3783876270996062284
   - id: 40
     triggerType: 4
     probability: 100
@@ -420,7 +420,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468828
+      rid: 3783876270996062285
   - id: 41
     triggerType: 1
     probability: 100
@@ -440,7 +440,7 @@ MonoBehaviour:
     buffIncreaseType: 1
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468829
+      rid: 3783876270996062286
   - id: 43
     triggerType: 9
     probability: 50
@@ -450,7 +450,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468830
+      rid: 3783876270996062287
   - id: 44
     triggerType: 7
     probability: 50
@@ -460,7 +460,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468831
+      rid: 3783876270996062288
   - id: 45
     triggerType: 13
     probability: 100
@@ -490,7 +490,7 @@ MonoBehaviour:
     buffIncreaseType: 1
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468832
+      rid: 3783876270996062289
   - id: 48
     triggerType: 9
     probability: 50
@@ -500,7 +500,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468833
+      rid: 3783876270996062290
   - id: 49
     triggerType: 7
     probability: 50
@@ -510,7 +510,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468834
+      rid: 3783876270996062291
   - id: 50
     triggerType: 13
     probability: 100
@@ -550,7 +550,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468835
+      rid: 3783876270996062292
   - id: 54
     triggerType: 9
     probability: 80
@@ -560,7 +560,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468836
+      rid: 3783876270996062293
   - id: 55
     triggerType: 5
     probability: 5
@@ -590,7 +590,7 @@ MonoBehaviour:
     buffIncreaseType: 1
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468837
+      rid: 3783876270996062294
   - id: 58
     triggerType: 11
     probability: 100
@@ -600,7 +600,7 @@ MonoBehaviour:
     buffIncreaseType: 1
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468838
+      rid: 3783876270996062295
   - id: 59
     triggerType: 2
     probability: 50
@@ -610,7 +610,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468839
+      rid: 3783876270996062296
   - id: 60
     triggerType: 2
     probability: 70
@@ -620,7 +620,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468840
+      rid: 3783876270996062297
   - id: 61
     triggerType: 2
     probability: 50
@@ -630,7 +630,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468841
+      rid: 3783876270996062298
   - id: 62
     triggerType: 3
     probability: 20
@@ -640,7 +640,7 @@ MonoBehaviour:
     buffIncreaseType: 1
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468842
+      rid: 3783876270996062299
   - id: 63
     triggerType: 3
     probability: 40
@@ -650,7 +650,7 @@ MonoBehaviour:
     buffIncreaseType: 1
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468843
+      rid: 3783876270996062300
   - id: 64
     triggerType: 4
     probability: 80
@@ -660,7 +660,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468844
+      rid: 3783876270996062301
   - id: 65
     triggerType: 4
     probability: 100
@@ -670,7 +670,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468845
+      rid: 3783876270996062302
   - id: 66
     triggerType: 6
     probability: 50
@@ -680,7 +680,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468846
+      rid: 3783876270996062303
   - id: 67
     triggerType: 6
     probability: 80
@@ -690,7 +690,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468847
+      rid: 3783876270996062304
   - id: 68
     triggerType: 7
     probability: 50
@@ -700,7 +700,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468848
+      rid: 3783876270996062305
   - id: 69
     triggerType: 7
     probability: 100
@@ -710,7 +710,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468849
+      rid: 3783876270996062306
   - id: 70
     triggerType: 7
     probability: 50
@@ -720,7 +720,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468850
+      rid: 3783876270996062307
   - id: 71
     triggerType: 7
     probability: 100
@@ -730,7 +730,7 @@ MonoBehaviour:
     buffIncreaseType: 2
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468851
+      rid: 3783876270996062308
   - id: 72
     triggerType: 8
     probability: 80
@@ -740,7 +740,7 @@ MonoBehaviour:
     buffIncreaseType: 4
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468852
+      rid: 3783876270996062309
   - id: 73
     triggerType: 8
     probability: 100
@@ -750,7 +750,7 @@ MonoBehaviour:
     buffIncreaseType: 4
     targetCount: 1
     conditionParam:
-      rid: 1615940600843468853
+      rid: 3783876270996062310
   effectData:
     id: 0
     triggerType: 1
@@ -767,7 +767,7 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 1615940600843468803
+    - rid: 3783876270996062260
       type: {class: TakeDamageConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         hpRange:
@@ -780,19 +780,19 @@ MonoBehaviour:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468804
+    - rid: 3783876270996062261
       type: {class: HpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         hpRange:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468805
+    - rid: 3783876270996062262
       type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         attackRangeType: 0
         attack: 0
-    - rid: 1615940600843468806
+    - rid: 3783876270996062263
       type: {class: TakeDamageConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         hpRange:
@@ -805,19 +805,19 @@ MonoBehaviour:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468807
+    - rid: 3783876270996062264
       type: {class: HpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         hpRange:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468808
+    - rid: 3783876270996062265
       type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         attackRangeType: 0
         attack: 0
-    - rid: 1615940600843468809
+    - rid: 3783876270996062266
       type: {class: TakeDamageConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         hpRange:
@@ -830,19 +830,19 @@ MonoBehaviour:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468810
+    - rid: 3783876270996062267
       type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         attackRangeType: 0
         attack: 0
-    - rid: 1615940600843468811
+    - rid: 3783876270996062268
       type: {class: MpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         mpRange:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468812
+    - rid: 3783876270996062269
       type: {class: TakeDamageConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         hpRange:
@@ -855,65 +855,65 @@ MonoBehaviour:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468813
+    - rid: 3783876270996062270
       type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         attackRangeType: 0
         attack: 0
-    - rid: 1615940600843468814
+    - rid: 3783876270996062271
       type: {class: MpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         mpRange:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468815
+    - rid: 3783876270996062272
       type: {class: HpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         hpRange:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468816
+    - rid: 3783876270996062273
       type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         attackRangeType: 0
         attack: 0
-    - rid: 1615940600843468817
+    - rid: 3783876270996062274
       type: {class: MpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         mpRange:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468818
+    - rid: 3783876270996062275
       type: {class: HpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         hpRange:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468819
+    - rid: 3783876270996062276
       type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         attackRangeType: 0
         attack: 0
-    - rid: 1615940600843468820
+    - rid: 3783876270996062277
       type: {class: MpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         mpRange:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468821
+    - rid: 3783876270996062278
       type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         attackRangeType: 0
         attack: 0
-    - rid: 1615940600843468822
+    - rid: 3783876270996062279
       type: {class: AttackHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
-        targetType: 2
+        targetType: 0
         hpRange:
           isPercent: 0
           min: 0
@@ -923,10 +923,10 @@ MonoBehaviour:
           min: 0
           max: 0
         attackRangeType: 0
-    - rid: 1615940600843468823
+    - rid: 3783876270996062280
       type: {class: CriticalHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
-        targetType: 2
+        targetType: 0
         hpRange:
           isPercent: 0
           min: 0
@@ -937,10 +937,10 @@ MonoBehaviour:
           max: 0
         damageType: 0
         damageCastType: 0
-    - rid: 1615940600843468824
+    - rid: 3783876270996062281
       type: {class: SkillHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
-        targetType: 2
+        targetType: 0
         damageRange:
           isPercent: 0
           min: 0
@@ -950,15 +950,15 @@ MonoBehaviour:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468825
+    - rid: 3783876270996062282
       type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         attackRangeType: 0
         attack: 0
-    - rid: 1615940600843468826
+    - rid: 3783876270996062283
       type: {class: AttackHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
-        targetType: 2
+        targetType: 0
         hpRange:
           isPercent: 0
           min: 0
@@ -968,10 +968,10 @@ MonoBehaviour:
           min: 0
           max: 0
         attackRangeType: 0
-    - rid: 1615940600843468827
+    - rid: 3783876270996062284
       type: {class: CriticalHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
-        targetType: 2
+        targetType: 0
         hpRange:
           isPercent: 0
           min: 0
@@ -982,10 +982,10 @@ MonoBehaviour:
           max: 0
         damageType: 0
         damageCastType: 0
-    - rid: 1615940600843468828
+    - rid: 3783876270996062285
       type: {class: SkillHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
-        targetType: 2
+        targetType: 0
         damageRange:
           isPercent: 0
           min: 0
@@ -995,19 +995,19 @@ MonoBehaviour:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468829
+    - rid: 3783876270996062286
       type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         attackRangeType: 0
         attack: 0
-    - rid: 1615940600843468830
+    - rid: 3783876270996062287
       type: {class: HpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         hpRange:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468831
+    - rid: 3783876270996062288
       type: {class: TakeDamageConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         hpRange:
@@ -1020,19 +1020,19 @@ MonoBehaviour:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468832
+    - rid: 3783876270996062289
       type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         attackRangeType: 0
         attack: 0
-    - rid: 1615940600843468833
+    - rid: 3783876270996062290
       type: {class: HpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         hpRange:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468834
+    - rid: 3783876270996062291
       type: {class: TakeDamageConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         hpRange:
@@ -1045,24 +1045,24 @@ MonoBehaviour:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468835
+    - rid: 3783876270996062292
       type: {class: HpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         hpRange:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468836
+    - rid: 3783876270996062293
       type: {class: HpChangeConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         hpRange:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468837
+    - rid: 3783876270996062294
       type: {class: CriticalHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
-        targetType: 2
+        targetType: 0
         hpRange:
           isPercent: 0
           min: 0
@@ -1073,10 +1073,10 @@ MonoBehaviour:
           max: 0
         damageType: 0
         damageCastType: 0
-    - rid: 1615940600843468838
+    - rid: 3783876270996062295
       type: {class: CriticalHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
-        targetType: 2
+        targetType: 0
         hpRange:
           isPercent: 0
           min: 0
@@ -1087,10 +1087,10 @@ MonoBehaviour:
           max: 0
         damageType: 0
         damageCastType: 0
-    - rid: 1615940600843468839
+    - rid: 3783876270996062296
       type: {class: AttackHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
-        targetType: 2
+        targetType: 0
         hpRange:
           isPercent: 0
           min: 0
@@ -1100,10 +1100,10 @@ MonoBehaviour:
           min: 0
           max: 0
         attackRangeType: 0
-    - rid: 1615940600843468840
+    - rid: 3783876270996062297
       type: {class: AttackHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
-        targetType: 2
+        targetType: 0
         hpRange:
           isPercent: 0
           min: 0
@@ -1113,10 +1113,10 @@ MonoBehaviour:
           min: 0
           max: 0
         attackRangeType: 0
-    - rid: 1615940600843468841
+    - rid: 3783876270996062298
       type: {class: AttackHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
-        targetType: 2
+        targetType: 0
         hpRange:
           isPercent: 1
           min: 0.2
@@ -1126,17 +1126,17 @@ MonoBehaviour:
           min: 0
           max: 0
         attackRangeType: 0
-    - rid: 1615940600843468842
+    - rid: 3783876270996062299
       type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         attackRangeType: 0
         attack: 0
-    - rid: 1615940600843468843
+    - rid: 3783876270996062300
       type: {class: AttackConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         attackRangeType: 0
         attack: 0
-    - rid: 1615940600843468844
+    - rid: 3783876270996062301
       type: {class: SkillHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         targetType: 0
@@ -1149,7 +1149,7 @@ MonoBehaviour:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468845
+    - rid: 3783876270996062302
       type: {class: SkillHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         targetType: 0
@@ -1162,7 +1162,7 @@ MonoBehaviour:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468846
+    - rid: 3783876270996062303
       type: {class: SkillCastConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         mpRange:
@@ -1170,7 +1170,7 @@ MonoBehaviour:
           min: 0
           max: 0
         skillType: 0
-    - rid: 1615940600843468847
+    - rid: 3783876270996062304
       type: {class: SkillCastConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         mpRange:
@@ -1178,7 +1178,7 @@ MonoBehaviour:
           min: 0
           max: 0
         skillType: 0
-    - rid: 1615940600843468848
+    - rid: 3783876270996062305
       type: {class: TakeDamageConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         hpRange:
@@ -1191,7 +1191,7 @@ MonoBehaviour:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468849
+    - rid: 3783876270996062306
       type: {class: TakeDamageConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         hpRange:
@@ -1204,7 +1204,7 @@ MonoBehaviour:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468850
+    - rid: 3783876270996062307
       type: {class: TakeDamageConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         hpRange:
@@ -1217,7 +1217,7 @@ MonoBehaviour:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468851
+    - rid: 3783876270996062308
       type: {class: TakeDamageConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         hpRange:
@@ -1230,18 +1230,18 @@ MonoBehaviour:
           isPercent: 0
           min: 0
           max: 0
-    - rid: 1615940600843468852
+    - rid: 3783876270996062309
       type: {class: KillConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         targetCount: 1
         timeWindow: 0
-        targetType: 2
-    - rid: 1615940600843468853
+        targetType: 0
+    - rid: 3783876270996062310
       type: {class: KillConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:
         targetCount: 1
         timeWindow: 0
-        targetType: 2
+        targetType: 0
     - rid: 5224356400721821696
       type: {class: AttackHitConditionParam, ns: HotUpdate.Scripts.Config.ArrayConfig, asm: HotUpdate}
       data:

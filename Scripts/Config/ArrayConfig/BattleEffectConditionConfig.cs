@@ -7,11 +7,11 @@ using AOTScripts.CustomAttribute;
 using AOTScripts.Data;
 using HotUpdate.Scripts.Common;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using OfficeOpenXml;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Random = System.Random;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
@@ -58,40 +58,40 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                             conditionData.conditionParam = null;
                             break;
                         case TriggerType.OnAttackHit:
-                            conditionData.conditionParam = JsonConvert.DeserializeObject<AttackHitConditionParam>(text[8]);
+                            conditionData.conditionParam = JsonUtility.FromJson<AttackHitConditionParam>(text[8]);
                             break;
                         case TriggerType.OnAttack:
-                            conditionData.conditionParam = JsonConvert.DeserializeObject<AttackConditionParam>(text[8]);
+                            conditionData.conditionParam = JsonUtility.FromJson<AttackConditionParam>(text[8]);
                             break;
                         case TriggerType.OnSkillHit:
-                            conditionData.conditionParam = JsonConvert.DeserializeObject<SkillHitConditionParam>(text[8]);
+                            conditionData.conditionParam = JsonUtility.FromJson<SkillHitConditionParam>(text[8]);
                             break;
                         case TriggerType.OnMove:
-                            conditionData.conditionParam = JsonConvert.DeserializeObject<MoveConditionParam>(text[8]);
+                            conditionData.conditionParam = JsonUtility.FromJson<MoveConditionParam>(text[8]);
                             break;
                         case TriggerType.OnSkillCast:
-                            conditionData.conditionParam = JsonConvert.DeserializeObject<SkillCastConditionParam>(text[8]);
+                            conditionData.conditionParam = JsonUtility.FromJson<SkillCastConditionParam>(text[8]);
                             break;
                         case TriggerType.OnTakeDamage:
-                            conditionData.conditionParam = JsonConvert.DeserializeObject<TakeDamageConditionParam>(text[8]);
+                            conditionData.conditionParam = JsonUtility.FromJson<TakeDamageConditionParam>(text[8]);
                             break;
                         case TriggerType.OnKill:
-                            conditionData.conditionParam = JsonConvert.DeserializeObject<KillConditionParam>(text[8]);
+                            conditionData.conditionParam = JsonUtility.FromJson<KillConditionParam>(text[8]);
                             break;
                         case TriggerType.OnHpChange:
-                            conditionData.conditionParam = JsonConvert.DeserializeObject<HpChangeConditionParam>(text[8]);
+                            conditionData.conditionParam = JsonUtility.FromJson<HpChangeConditionParam>(text[8]);
                             break;
                         case TriggerType.OnManaChange:
-                            conditionData.conditionParam = JsonConvert.DeserializeObject<MpChangeConditionParam>(text[8]);
+                            conditionData.conditionParam =JsonUtility.FromJson<MpChangeConditionParam>(text[8]);
                             break;
                         case TriggerType.OnCriticalHit:
-                            conditionData.conditionParam = JsonConvert.DeserializeObject<CriticalHitConditionParam>(text[8]);
+                            conditionData.conditionParam = JsonUtility.FromJson<CriticalHitConditionParam>(text[8]);
                             break;
                         case TriggerType.OnDodge:
-                            conditionData.conditionParam = JsonConvert.DeserializeObject<DodgeConditionParam>(text[8]);
+                            conditionData.conditionParam = JsonUtility.FromJson<DodgeConditionParam>(text[8]);
                             break;
                         case TriggerType.OnDeath:
-                            conditionData.conditionParam = JsonConvert.DeserializeObject<DeathConditionParam>(text[8]);
+                            conditionData.conditionParam = JsonUtility.FromJson<DeathConditionParam>(text[8]);
                             break;
                     }
                 }
@@ -143,7 +143,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             {
                 NullValueHandling = NullValueHandling.Ignore
             };
-            jsonSerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+            jsonSerializerSettings.Converters.Add(new StringEnumConverter());
             var excel = Path.Combine(excelAssetReference.Path, $"{configName}.xlsx");
             using (var package = new ExcelPackage(new FileInfo(excel)))
             {
@@ -1100,5 +1100,13 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                     return default;
             }
         }
+    }
+
+    public interface IConditionParam
+    {
+        TriggerType GetTriggerType();
+        bool CheckConditionValid();
+        string GetConditionDesc();
+        T AnalysisConditionParam<T>(string str) where T : IConditionParam;
     }
 }

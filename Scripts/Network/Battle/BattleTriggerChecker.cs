@@ -6,7 +6,6 @@ using HotUpdate.Scripts.Tool.Coroutine;
 using MemoryPack;
 using Newtonsoft.Json;
 using UnityEngine;
-using IConditionParam = AOTScripts.Data.IConditionParam;
 using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Network.Battle
