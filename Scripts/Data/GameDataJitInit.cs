@@ -45,6 +45,18 @@ namespace HotUpdate.Scripts.Data
             GamePlayerInfo gamePlayerInfo = new GamePlayerInfo();
             RoomData roomDataRoom = new RoomData();
             GameMode gameMode = GameMode.Score;
+            AttackHitConditionParam attackHitConditionParam = new AttackHitConditionParam();
+            AttackConditionParam attackConditionParam = new AttackConditionParam();
+            SkillHitConditionParam skillHitConditionParam = new SkillHitConditionParam();
+            MoveConditionParam moveConditionParam = new MoveConditionParam();
+            SkillCastConditionParam skillCastConditionParam = new SkillCastConditionParam();
+            TakeDamageConditionParam takeDamageConditionParam = new TakeDamageConditionParam();
+            KillConditionParam killConditionParam = new KillConditionParam();
+            HpChangeConditionParam hpChangeConditionParam = new HpChangeConditionParam();
+            MpChangeConditionParam mpChangeConditionParam = new MpChangeConditionParam();
+            CriticalHitConditionParam criticalHitConditionParam = new CriticalHitConditionParam();
+            DodgeConditionParam dodgeConditionParam = new DodgeConditionParam();
+            DeathConditionParam deathConditionParam = new DeathConditionParam();
         }
     }
 }
