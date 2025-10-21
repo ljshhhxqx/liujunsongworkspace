@@ -16,6 +16,460 @@ using Random = System.Random;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
 {
+
+    public interface IConditionParam
+    {
+        TriggerType GetTriggerType();
+        bool CheckConditionValid();
+        string GetConditionDesc();
+        T AnalysisConditionParam<T>(string str) where T : IConditionParam;
+    }
+
+
+    [Serializable]
+    [JsonSerializable]
+    public struct BattleEffectConditionConfigData
+    {
+        [Header("Id")] public int id;
+        [Header("触发类型")] public TriggerType triggerType;
+        [Header("触发概率")] public float probability;
+        [Header("触发间隔")] public float interval;
+        [Header("Buff施加对象的类型")]
+        public ConditionTargetType targetType;
+        [Header("Buff额外权重系数")]
+        public float buffWeight;
+        [Header("Buff增益类型")]
+        public BuffIncreaseType buffIncreaseType;
+        [Header("Buff施加目标数量")] 
+        public int targetCount;
+        [SerializeReference]
+        [Header("条件参数")] public IConditionParam conditionParam;
+
+        public bool Equals(BattleEffectConditionConfigData other)
+        {
+            return triggerType == other.triggerType && Mathf.Approximately(probability, other.probability) && Mathf.Approximately(interval, other.interval) &&
+                   targetType == other.targetType && targetCount == other.targetCount;
+        }
+    }
+
+    [Serializable]
+    [JsonSerializable]
+    public struct AttackHitConditionParam : IConditionParam
+    {
+        [Header("目标类型")]
+        public ConditionTargetType targetType;
+        [Header("造成伤害占生命值百分比范围")]
+        public Range hpRange;
+        [Header("造成伤害的范围")]
+        public Range damageRange;
+        [Header("攻击距离类型")]
+        public AttackRangeType attackRangeType;
+        public TriggerType GetTriggerType() => TriggerType.OnAttackHit;
+
+        public bool CheckConditionValid()
+        {
+            return this.CheckConditionHeader() && hpRange.min >= 0 && hpRange.max >= hpRange.min &&
+                   hpRange.max <= 1f
+                   && damageRange.min >= 0 && damageRange.max >= damageRange.min && damageRange.max <= 1f;
+        }
+
+        public string GetConditionDesc()
+        {
+            return $"目标类型:{targetType}、造成伤害百分比:[{hpRange.min}%,{hpRange.max}%]、造成伤害:[{damageRange.min},{damageRange.max}],攻击范围:{attackRangeType}";
+        }
+
+        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
+        {
+            if (str == null) return default;
+            AttackHitConditionParam result; 
+            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
+            var targetTypeStr = parts[0].Replace("目标类型:", "");
+            result.targetType = (ConditionTargetType)Enum.Parse(typeof(ConditionTargetType), targetTypeStr);
+            var damageProperty = parts[1].Replace("造成伤害百分比:", "");
+            result.hpRange = Range.GetRange(damageProperty);
+            var damageRangeStr = parts[2].Replace("造成伤害:", "");
+            result.damageRange = Range.GetRange(damageRangeStr);
+            var attackRangeStr = parts[3].Replace("攻击范围:", "");
+            result.attackRangeType = (AttackRangeType)Enum.Parse(typeof(AttackRangeType), attackRangeStr);
+            return (T)(IConditionParam)result;
+        }
+    }
+
+    [Serializable]
+    [JsonSerializable]
+    public struct SkillCastConditionParam : IConditionParam
+    {
+        [Header("消耗MP百分比范围")]
+        public Range mpRange;
+        [Header("技能类型")]
+        public SkillType skillType;
+
+        public TriggerType GetTriggerType() => TriggerType.OnSkillCast;
+
+        public bool CheckConditionValid()
+        {
+            return this.CheckConditionHeader() && Enum.IsDefined(typeof(SkillBaseType), skillType) &&
+                   mpRange.min >= 0 && mpRange.max >= mpRange.min && mpRange.max <= 1f;
+        }
+
+        public string GetConditionDesc()
+        {
+            return $"技能类型:{skillType}、消耗MP百分比:[{mpRange.min}%,{mpRange.max}%]";
+        }
+
+        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
+        {
+            if (str == null) return default;
+            SkillCastConditionParam result;
+            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
+            var mpProperty = parts[1].Replace("消耗MP百分比:", "");
+            result.mpRange = Range.GetRange(mpProperty);
+            var skillStr = parts[0].Replace("技能类型:", "");
+            result.skillType = (SkillType)Enum.Parse(typeof(SkillType), skillStr);
+            return (T)(IConditionParam)result;
+        }
+    }
+
+    [Serializable]
+    [JsonSerializable]
+    public struct TakeDamageConditionParam : IConditionParam
+    {
+        [Header("造成伤害占生命值百分比范围")]
+        public Range hpRange;
+        [Header("伤害类型(物理或元素伤害)")]
+        public DamageType damageType;
+        [Header("伤害来源")]
+        public DamageCastType damageCastType;
+        [Header("伤害范围")]
+        public Range damageRange;
+        public TriggerType GetTriggerType() => TriggerType.OnTakeDamage;
+
+        public bool CheckConditionValid()
+        {
+            return this.CheckConditionHeader() && Enum.IsDefined(typeof(DamageCastType), damageCastType) &&
+                   damageRange.min >= 0 && damageRange.max >= damageRange.min && damageRange.max <= 1f &&
+                   hpRange.min >= 0 && hpRange.max >= hpRange.min && hpRange.max <= 1f &&
+                   Enum.IsDefined(typeof(DamageType), damageType);
+        }
+
+        public string GetConditionDesc()
+        {
+            var damageStr = EnumHeaderParser.GetHeader(damageType);
+            var damageCastStr = EnumHeaderParser.GetHeader(damageCastType);
+            return $"受到伤害类型:{damageStr}、受到伤害百分比:[{damageRange.min}%,{damageRange.max}%]、造成伤害:[{hpRange.min},{hpRange.max}]、伤害来源:{damageCastStr}";
+        }
+
+        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
+        {
+            if (str == null) return default;
+            TakeDamageConditionParam result;
+            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
+            var damageProperty = parts[1].Replace("受到伤害百分比:", "");
+            result.hpRange = Range.GetRange(damageProperty);
+            var damageRangeStr = parts[2].Replace("受到伤害:", "");
+            result.damageRange = Range.GetRange(damageRangeStr);
+            var damageTypeStr = parts[0].Replace("受到伤害类型:", "");    
+            result.damageType = (DamageType)Enum.Parse(typeof(DamageType), damageTypeStr);
+            var damageCastStr = parts[3].Replace("伤害来源:", "");
+            result.damageCastType = (DamageCastType)Enum.Parse(typeof(DamageCastType), damageCastStr);
+            return (T)(IConditionParam)result;
+        }
+    }
+
+    [Serializable]
+    [JsonSerializable]
+    public struct KillConditionParam : IConditionParam
+    {
+        [Header("击杀目标数量")]
+        public int targetCount;
+        [Header("时间窗口")]
+        public float timeWindow;
+        [Header("目标类型")]
+        public ConditionTargetType targetType;
+        public TriggerType GetTriggerType() => TriggerType.OnKill;
+
+        public bool CheckConditionValid()
+        {
+            return this.CheckConditionHeader() && targetCount >= 0 && timeWindow >= 0;
+        }
+
+        public string GetConditionDesc()
+        {
+            return $"目标类型:{targetType}、击杀目标数量:{targetCount}、时间窗口:{timeWindow}秒";
+        }
+
+        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
+        {
+            if (str == null) return default;
+            KillConditionParam result;
+            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
+            var targetTypeStr = parts[0].Replace("目标类型:", "");
+            result.targetType = (ConditionTargetType)Enum.Parse(typeof(ConditionTargetType), targetTypeStr);
+            var targetCountStr = parts[1].Replace("击杀目标数量:", "");
+            result.targetCount = int.Parse(targetCountStr);
+            var timeWindowStr = parts[2].Replace("时间窗口:", "");
+            result.timeWindow = float.Parse(timeWindowStr);
+            return (T)(IConditionParam)result;
+        }
+    }
+
+    [Serializable]
+    [JsonSerializable]
+    public struct HpChangeConditionParam : IConditionParam
+    {
+        [Header("生命值占最大生命值百分比范围")]
+        public Range hpRange;
+
+        public TriggerType GetTriggerType() => TriggerType.OnHpChange;
+
+        public bool CheckConditionValid()
+        {
+            return this.CheckConditionHeader() && hpRange.min >= 0 && hpRange.max >= hpRange.min &&
+                   hpRange.max <= 1f;
+        }
+        
+        public string GetConditionDesc()
+        {
+            return $"生命值百分比:[{hpRange.min}%,{hpRange.max}%]";
+        }
+
+        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
+        {
+            if (str == null) return default;
+            HpChangeConditionParam result;
+            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
+            var hpProperty = parts[0].Replace("生命值百分比:", "");
+            result.hpRange = Range.GetRange(hpProperty);
+            return (T)(IConditionParam)result;
+        }
+    }
+
+    [Serializable]
+    [JsonSerializable]
+    public struct MpChangeConditionParam : IConditionParam
+    {
+        [Header("魔法值占最大魔法值百分比范围")]
+        public Range mpRange;
+
+        public TriggerType GetTriggerType() => TriggerType.OnManaChange;
+
+        public bool CheckConditionValid()
+        {
+            return this.CheckConditionHeader() && mpRange.min >= 0 && mpRange.max >= mpRange.min &&
+                   mpRange.max <= 1f;
+        }
+        public string GetConditionDesc()
+        {
+            return $"魔法值百分比:[{mpRange.min}%,{mpRange.max}%]";
+        }
+
+        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
+        {
+            if (str == null) return default;
+            MpChangeConditionParam result;
+            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);            
+            var mpProperty = parts[0].Replace("魔法值百分比:", "");
+            result.mpRange = Range.GetRange(mpProperty);
+            return (T)(IConditionParam)result;
+        }
+    }
+
+    [Serializable]
+    [JsonSerializable]
+    public struct CriticalHitConditionParam : IConditionParam
+    {
+        [Header("目标类型")]
+        public ConditionTargetType targetType;
+        [Header("造成伤害占生命值百分比范围")]
+        public Range hpRange;
+        [Header("伤害值范围")]
+        public Range damageRange;
+        [Header("伤害类型(物理或元素伤害)")]
+        public DamageType damageType;
+        [Header("伤害来源")]
+        public DamageCastType damageCastType;
+        public TriggerType GetTriggerType() => TriggerType.OnCriticalHit;
+
+        public bool CheckConditionValid()
+        {
+            return this.CheckConditionHeader() && hpRange.min >= 0 && hpRange.max >= hpRange.min &&
+                   hpRange.max <= 1f &&
+                   damageRange.min >= 0 && damageRange.max <= 1f && damageRange.max >= damageRange.min &&
+                   Enum.IsDefined(typeof(DamageType), damageType);
+        }
+        public string GetConditionDesc()
+        {
+            return $"目标类型:{targetType}、造成伤害类型:{damageType}、造成伤害百分比:[{damageRange.min}%,{damageRange.max}%]、造成伤害:[{hpRange.min},{hpRange.max}]、伤害来源:{damageCastType}";
+        }
+
+        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
+        {
+            if (str == null) return default;
+            CriticalHitConditionParam result;
+            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
+            var targetTypeStr = parts[0].Replace("目标类型:", "");
+            result.targetType = (ConditionTargetType)Enum.Parse(typeof(ConditionTargetType), targetTypeStr);
+            var damageProperty = parts[2].Replace("造成伤害百分比:", "");
+            result.hpRange = Range.GetRange(damageProperty);
+            var damageRangeStr = parts[3].Replace("造成伤害:", "");
+            result.damageRange = Range.GetRange(damageRangeStr);
+            var damageTypeStr = parts[1].Replace("造成伤害类型:", "");
+            result.damageType = (DamageType)Enum.Parse(typeof(DamageType), damageTypeStr);
+            var damageCastStr = parts[4].Replace("伤害来源:", "");
+            result.damageCastType = (DamageCastType)Enum.Parse(typeof(DamageCastType), damageCastStr);
+            return (T)(IConditionParam)result;
+        }
+    }
+
+    [Serializable]
+    [JsonSerializable]
+    public struct DodgeConditionParam : IConditionParam
+    {
+        [Header("闪避次数")]
+        public int dodgeCount;
+        [Header("闪避频率")] 
+        public float dodgeRate;
+        public TriggerType GetTriggerType() => TriggerType.OnDodge;
+
+        public bool CheckConditionValid()
+        {
+            return this.CheckConditionHeader() && dodgeCount >= 0 && dodgeRate >= 0;
+        }
+        public string GetConditionDesc()
+        {
+            return $"闪避次数:{dodgeCount}、闪避率:{dodgeRate}";
+        }
+
+        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
+        {
+            if (str == null) return default;
+            DodgeConditionParam result;
+            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
+            var dodgeCountStr = parts[0].Replace("闪避次数:", "");
+            result.dodgeCount = int.Parse(dodgeCountStr);
+            var dodgeRateStr = parts[1].Replace("闪避率:", "");
+            result.dodgeRate = float.Parse(dodgeRateStr);
+            return (T)(IConditionParam)result;
+        }
+    }
+
+    [Serializable]
+    [JsonSerializable]
+    public struct AttackConditionParam : IConditionParam
+    {
+        [Header("攻击范围类型")]
+        public AttackRangeType attackRangeType;
+        [Header("攻击力")]
+        public float attack;
+        public TriggerType GetTriggerType() => TriggerType.OnAttack;
+
+        public bool CheckConditionValid()
+        {
+            return this.CheckConditionHeader() && attack >= 0 &&
+                   Enum.IsDefined(typeof(AttackRangeType), attackRangeType);
+        }
+        public string GetConditionDesc()
+        {
+            return $"攻击力:{attack}、攻击范围:{attackRangeType}";
+        }
+
+        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
+        {
+            if (str == null) return default;
+            AttackConditionParam result;
+            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
+            var attackStr = parts[0].Replace("攻击力:", "");
+            result.attack = float.Parse(attackStr);
+            var attackRangeStr = parts[1].Replace("攻击范围:", "");
+            result.attackRangeType = (AttackRangeType)Enum.Parse(typeof(AttackRangeType), attackRangeStr);
+            return (T)(IConditionParam)result;
+        }
+    }
+
+    [Serializable]
+    [JsonSerializable]
+    public struct SkillHitConditionParam : IConditionParam
+    {
+        [Header("目标类型")]
+        public ConditionTargetType targetType;
+        [Header("伤害值范围")]
+        public Range damageRange;
+        [Header("技能类型")]
+        public SkillType skillType;
+        [Header("造成伤害占生命值最大值百分比范围")]
+        public Range hpRange;
+        public TriggerType GetTriggerType() => TriggerType.OnSkillHit;
+
+        public bool CheckConditionValid()
+        {
+            return this.CheckConditionHeader();
+        }
+        public string GetConditionDesc()
+        {
+            return $"目标类型:{targetType}、技能类型:{skillType}、造成伤害百分比:[{hpRange.min}%,{hpRange.max}%]、造成伤害:[{damageRange.min},{damageRange.max}]";
+        }
+
+        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
+        {
+            if (str == null) return default;
+            SkillHitConditionParam result;
+            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
+            var targetTypeStr = parts[0].Replace("目标类型:", "");
+            result.targetType = (ConditionTargetType)Enum.Parse(typeof(ConditionTargetType), targetTypeStr);
+            var damageProperty = parts[3].Replace("造成伤害百分比:", "");
+            result.hpRange = Range.GetRange(damageProperty);
+            var damageRangeStr = parts[4].Replace("造成伤害:", "");
+            result.damageRange = Range.GetRange(damageRangeStr);
+            var skillStr = parts[1].Replace("技能类型:", "");
+            result.skillType = (SkillType)Enum.Parse(typeof(SkillType), skillStr);
+            return (T)(IConditionParam)result;
+        }
+    }
+    
+    [Serializable]
+    [JsonSerializable]
+    public struct DeathConditionParam : IConditionParam 
+    {
+        public TriggerType GetTriggerType() => TriggerType.OnDeath;
+
+        public bool CheckConditionValid()
+        {
+            return this.CheckConditionHeader();
+        }
+        public string GetConditionDesc()
+        {
+            return "";
+        }
+
+        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
+        {
+            if (str == null) return default;
+            return (T)(IConditionParam)new DeathConditionParam();
+        }
+    }
+    
+    [Serializable]
+    [JsonSerializable]
+    public struct MoveConditionParam : IConditionParam
+    {
+        public TriggerType GetTriggerType() => TriggerType.OnMove;
+
+        public bool CheckConditionValid()
+        {
+            return this.CheckConditionHeader();
+        }
+        public string GetConditionDesc()
+        {
+            return $"";
+        }
+
+        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
+        {
+            if (str == null) return default;
+            return (T)(IConditionParam)new DeathConditionParam();
+        }    
+    }
+    
     [CreateAssetMenu(fileName = "BattleEffectConditionConfig",
         menuName = "ScriptableObjects/BattleEffectConditionConfig")]
     public class BattleEffectConditionConfig : ConfigBase
@@ -615,451 +1069,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
     }
 
-
-    [Serializable]
-    [JsonSerializable]
-    public struct BattleEffectConditionConfigData
-    {
-        [Header("Id")] public int id;
-        [Header("触发类型")] public TriggerType triggerType;
-        [Header("触发概率")] public float probability;
-        [Header("触发间隔")] public float interval;
-        [Header("Buff施加对象的类型")]
-        public ConditionTargetType targetType;
-        [Header("Buff额外权重系数")]
-        public float buffWeight;
-        [Header("Buff增益类型")]
-        public BuffIncreaseType buffIncreaseType;
-        [Header("Buff施加目标数量")] 
-        public int targetCount;
-        [SerializeReference]
-        [Header("条件参数")] public IConditionParam conditionParam;
-
-        public bool Equals(BattleEffectConditionConfigData other)
-        {
-            return triggerType == other.triggerType && Mathf.Approximately(probability, other.probability) && Mathf.Approximately(interval, other.interval) &&
-                   targetType == other.targetType && targetCount == other.targetCount;
-        }
-    }
-
-    [Serializable]
-    [JsonSerializable]
-    public struct AttackHitConditionParam : IConditionParam
-    {
-        [Header("目标类型")]
-        public ConditionTargetType targetType;
-        [Header("造成伤害占生命值百分比范围")]
-        public Range hpRange;
-        [Header("造成伤害的范围")]
-        public Range damageRange;
-        [Header("攻击距离类型")]
-        public AttackRangeType attackRangeType;
-        public TriggerType GetTriggerType() => TriggerType.OnAttackHit;
-
-        public bool CheckConditionValid()
-        {
-            return this.CheckConditionHeader() && hpRange.min >= 0 && hpRange.max >= hpRange.min &&
-                   hpRange.max <= 1f
-                   && damageRange.min >= 0 && damageRange.max >= damageRange.min && damageRange.max <= 1f;
-        }
-
-        public string GetConditionDesc()
-        {
-            return $"目标类型:{targetType}、造成伤害百分比:[{hpRange.min}%,{hpRange.max}%]、造成伤害:[{damageRange.min},{damageRange.max}],攻击范围:{attackRangeType}";
-        }
-
-        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
-        {
-            if (str == null) return default;
-            AttackHitConditionParam result; 
-            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
-            var targetTypeStr = parts[0].Replace("目标类型:", "");
-            result.targetType = (ConditionTargetType)Enum.Parse(typeof(ConditionTargetType), targetTypeStr);
-            var damageProperty = parts[1].Replace("造成伤害百分比:", "");
-            result.hpRange = Range.GetRange(damageProperty);
-            var damageRangeStr = parts[2].Replace("造成伤害:", "");
-            result.damageRange = Range.GetRange(damageRangeStr);
-            var attackRangeStr = parts[3].Replace("攻击范围:", "");
-            result.attackRangeType = (AttackRangeType)Enum.Parse(typeof(AttackRangeType), attackRangeStr);
-            return (T)(IConditionParam)result;
-        }
-    }
-
-    [Serializable]
-    [JsonSerializable]
-    public struct SkillCastConditionParam : IConditionParam
-    {
-        [Header("消耗MP百分比范围")]
-        public Range mpRange;
-        [Header("技能类型")]
-        public SkillType skillType;
-
-        public TriggerType GetTriggerType() => TriggerType.OnSkillCast;
-
-        public bool CheckConditionValid()
-        {
-            return this.CheckConditionHeader() && Enum.IsDefined(typeof(SkillBaseType), skillType) &&
-                   mpRange.min >= 0 && mpRange.max >= mpRange.min && mpRange.max <= 1f;
-        }
-
-        public string GetConditionDesc()
-        {
-            return $"技能类型:{skillType}、消耗MP百分比:[{mpRange.min}%,{mpRange.max}%]";
-        }
-
-        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
-        {
-            if (str == null) return default;
-            SkillCastConditionParam result;
-            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
-            var mpProperty = parts[1].Replace("消耗MP百分比:", "");
-            result.mpRange = Range.GetRange(mpProperty);
-            var skillStr = parts[0].Replace("技能类型:", "");
-            result.skillType = (SkillType)Enum.Parse(typeof(SkillType), skillStr);
-            return (T)(IConditionParam)result;
-        }
-    }
-
-    [Serializable]
-    [JsonSerializable]
-    public struct TakeDamageConditionParam : IConditionParam
-    {
-        [Header("造成伤害占生命值百分比范围")]
-        public Range hpRange;
-        [Header("伤害类型(物理或元素伤害)")]
-        public DamageType damageType;
-        [Header("伤害来源")]
-        public DamageCastType damageCastType;
-        [Header("伤害范围")]
-        public Range damageRange;
-        public TriggerType GetTriggerType() => TriggerType.OnTakeDamage;
-
-        public bool CheckConditionValid()
-        {
-            return this.CheckConditionHeader() && Enum.IsDefined(typeof(DamageCastType), damageCastType) &&
-                   damageRange.min >= 0 && damageRange.max >= damageRange.min && damageRange.max <= 1f &&
-                   hpRange.min >= 0 && hpRange.max >= hpRange.min && hpRange.max <= 1f &&
-                   Enum.IsDefined(typeof(DamageType), damageType);
-        }
-
-        public string GetConditionDesc()
-        {
-            var damageStr = EnumHeaderParser.GetHeader(damageType);
-            var damageCastStr = EnumHeaderParser.GetHeader(damageCastType);
-            return $"受到伤害类型:{damageStr}、受到伤害百分比:[{damageRange.min}%,{damageRange.max}%]、造成伤害:[{hpRange.min},{hpRange.max}]、伤害来源:{damageCastStr}";
-        }
-
-        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
-        {
-            if (str == null) return default;
-            TakeDamageConditionParam result;
-            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
-            var damageProperty = parts[1].Replace("受到伤害百分比:", "");
-            result.hpRange = Range.GetRange(damageProperty);
-            var damageRangeStr = parts[2].Replace("受到伤害:", "");
-            result.damageRange = Range.GetRange(damageRangeStr);
-            var damageTypeStr = parts[0].Replace("受到伤害类型:", "");    
-            result.damageType = (DamageType)Enum.Parse(typeof(DamageType), damageTypeStr);
-            var damageCastStr = parts[3].Replace("伤害来源:", "");
-            result.damageCastType = (DamageCastType)Enum.Parse(typeof(DamageCastType), damageCastStr);
-            return (T)(IConditionParam)result;
-        }
-    }
-
-    [Serializable]
-    [JsonSerializable]
-    public struct KillConditionParam : IConditionParam
-    {
-        [Header("击杀目标数量")]
-        public int targetCount;
-        [Header("时间窗口")]
-        public float timeWindow;
-        [Header("目标类型")]
-        public ConditionTargetType targetType;
-        public TriggerType GetTriggerType() => TriggerType.OnKill;
-
-        public bool CheckConditionValid()
-        {
-            return this.CheckConditionHeader() && targetCount >= 0 && timeWindow >= 0;
-        }
-
-        public string GetConditionDesc()
-        {
-            return $"目标类型:{targetType}、击杀目标数量:{targetCount}、时间窗口:{timeWindow}秒";
-        }
-
-        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
-        {
-            if (str == null) return default;
-            KillConditionParam result;
-            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
-            var targetTypeStr = parts[0].Replace("目标类型:", "");
-            result.targetType = (ConditionTargetType)Enum.Parse(typeof(ConditionTargetType), targetTypeStr);
-            var targetCountStr = parts[1].Replace("击杀目标数量:", "");
-            result.targetCount = int.Parse(targetCountStr);
-            var timeWindowStr = parts[2].Replace("时间窗口:", "");
-            result.timeWindow = float.Parse(timeWindowStr);
-            return (T)(IConditionParam)result;
-        }
-    }
-
-    [Serializable]
-    [JsonSerializable]
-    public struct HpChangeConditionParam : IConditionParam
-    {
-        [Header("生命值占最大生命值百分比范围")]
-        public Range hpRange;
-
-        public TriggerType GetTriggerType() => TriggerType.OnHpChange;
-
-        public bool CheckConditionValid()
-        {
-            return this.CheckConditionHeader() && hpRange.min >= 0 && hpRange.max >= hpRange.min &&
-                   hpRange.max <= 1f;
-        }
-        
-        public string GetConditionDesc()
-        {
-            return $"生命值百分比:[{hpRange.min}%,{hpRange.max}%]";
-        }
-
-        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
-        {
-            if (str == null) return default;
-            HpChangeConditionParam result;
-            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
-            var hpProperty = parts[0].Replace("生命值百分比:", "");
-            result.hpRange = Range.GetRange(hpProperty);
-            return (T)(IConditionParam)result;
-        }
-    }
-
-    [Serializable]
-    [JsonSerializable]
-    public struct MpChangeConditionParam : IConditionParam
-    {
-        [Header("魔法值占最大魔法值百分比范围")]
-        public Range mpRange;
-
-        public TriggerType GetTriggerType() => TriggerType.OnManaChange;
-
-        public bool CheckConditionValid()
-        {
-            return this.CheckConditionHeader() && mpRange.min >= 0 && mpRange.max >= mpRange.min &&
-                   mpRange.max <= 1f;
-        }
-        public string GetConditionDesc()
-        {
-            return $"魔法值百分比:[{mpRange.min}%,{mpRange.max}%]";
-        }
-
-        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
-        {
-            if (str == null) return default;
-            MpChangeConditionParam result;
-            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);            
-            var mpProperty = parts[0].Replace("魔法值百分比:", "");
-            result.mpRange = Range.GetRange(mpProperty);
-            return (T)(IConditionParam)result;
-        }
-    }
-
-    [Serializable]
-    [JsonSerializable]
-    public struct CriticalHitConditionParam : IConditionParam
-    {
-        [Header("目标类型")]
-        public ConditionTargetType targetType;
-        [Header("造成伤害占生命值百分比范围")]
-        public Range hpRange;
-        [Header("伤害值范围")]
-        public Range damageRange;
-        [Header("伤害类型(物理或元素伤害)")]
-        public DamageType damageType;
-        [Header("伤害来源")]
-        public DamageCastType damageCastType;
-        public TriggerType GetTriggerType() => TriggerType.OnCriticalHit;
-
-        public bool CheckConditionValid()
-        {
-            return this.CheckConditionHeader() && hpRange.min >= 0 && hpRange.max >= hpRange.min &&
-                   hpRange.max <= 1f &&
-                   damageRange.min >= 0 && damageRange.max <= 1f && damageRange.max >= damageRange.min &&
-                   Enum.IsDefined(typeof(DamageType), damageType);
-        }
-        public string GetConditionDesc()
-        {
-            return $"目标类型:{targetType}、造成伤害类型:{damageType}、造成伤害百分比:[{damageRange.min}%,{damageRange.max}%]、造成伤害:[{hpRange.min},{hpRange.max}]、伤害来源:{damageCastType}";
-        }
-
-        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
-        {
-            if (str == null) return default;
-            CriticalHitConditionParam result;
-            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
-            var targetTypeStr = parts[0].Replace("目标类型:", "");
-            result.targetType = (ConditionTargetType)Enum.Parse(typeof(ConditionTargetType), targetTypeStr);
-            var damageProperty = parts[2].Replace("造成伤害百分比:", "");
-            result.hpRange = Range.GetRange(damageProperty);
-            var damageRangeStr = parts[3].Replace("造成伤害:", "");
-            result.damageRange = Range.GetRange(damageRangeStr);
-            var damageTypeStr = parts[1].Replace("造成伤害类型:", "");
-            result.damageType = (DamageType)Enum.Parse(typeof(DamageType), damageTypeStr);
-            var damageCastStr = parts[4].Replace("伤害来源:", "");
-            result.damageCastType = (DamageCastType)Enum.Parse(typeof(DamageCastType), damageCastStr);
-            return (T)(IConditionParam)result;
-        }
-    }
-
-    [Serializable]
-    [JsonSerializable]
-    public struct DodgeConditionParam : IConditionParam
-    {
-        [Header("闪避次数")]
-        public int dodgeCount;
-        [Header("闪避频率")] 
-        public float dodgeRate;
-        public TriggerType GetTriggerType() => TriggerType.OnDodge;
-
-        public bool CheckConditionValid()
-        {
-            return this.CheckConditionHeader() && dodgeCount >= 0 && dodgeRate >= 0;
-        }
-        public string GetConditionDesc()
-        {
-            return $"闪避次数:{dodgeCount}、闪避率:{dodgeRate}";
-        }
-
-        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
-        {
-            if (str == null) return default;
-            DodgeConditionParam result;
-            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
-            var dodgeCountStr = parts[0].Replace("闪避次数:", "");
-            result.dodgeCount = int.Parse(dodgeCountStr);
-            var dodgeRateStr = parts[1].Replace("闪避率:", "");
-            result.dodgeRate = float.Parse(dodgeRateStr);
-            return (T)(IConditionParam)result;
-        }
-    }
-
-    [Serializable]
-    [JsonSerializable]
-    public struct AttackConditionParam : IConditionParam
-    {
-        [Header("攻击范围类型")]
-        public AttackRangeType attackRangeType;
-        [Header("攻击力")]
-        public float attack;
-        public TriggerType GetTriggerType() => TriggerType.OnAttack;
-
-        public bool CheckConditionValid()
-        {
-            return this.CheckConditionHeader() && attack >= 0 &&
-                   Enum.IsDefined(typeof(AttackRangeType), attackRangeType);
-        }
-        public string GetConditionDesc()
-        {
-            return $"攻击力:{attack}、攻击范围:{attackRangeType}";
-        }
-
-        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
-        {
-            if (str == null) return default;
-            AttackConditionParam result;
-            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
-            var attackStr = parts[0].Replace("攻击力:", "");
-            result.attack = float.Parse(attackStr);
-            var attackRangeStr = parts[1].Replace("攻击范围:", "");
-            result.attackRangeType = (AttackRangeType)Enum.Parse(typeof(AttackRangeType), attackRangeStr);
-            return (T)(IConditionParam)result;
-        }
-    }
-
-    [Serializable]
-    [JsonSerializable]
-    public struct SkillHitConditionParam : IConditionParam
-    {
-        [Header("目标类型")]
-        public ConditionTargetType targetType;
-        [Header("伤害值范围")]
-        public Range damageRange;
-        [Header("技能类型")]
-        public SkillType skillType;
-        [Header("造成伤害占生命值最大值百分比范围")]
-        public Range hpRange;
-        public TriggerType GetTriggerType() => TriggerType.OnSkillHit;
-
-        public bool CheckConditionValid()
-        {
-            return this.CheckConditionHeader();
-        }
-        public string GetConditionDesc()
-        {
-            return $"目标类型:{targetType}、技能类型:{skillType}、造成伤害百分比:[{hpRange.min}%,{hpRange.max}%]、造成伤害:[{damageRange.min},{damageRange.max}]";
-        }
-
-        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
-        {
-            if (str == null) return default;
-            SkillHitConditionParam result;
-            var parts = str.Split(new[] { '、' }, StringSplitOptions.RemoveEmptyEntries);
-            var targetTypeStr = parts[0].Replace("目标类型:", "");
-            result.targetType = (ConditionTargetType)Enum.Parse(typeof(ConditionTargetType), targetTypeStr);
-            var damageProperty = parts[3].Replace("造成伤害百分比:", "");
-            result.hpRange = Range.GetRange(damageProperty);
-            var damageRangeStr = parts[4].Replace("造成伤害:", "");
-            result.damageRange = Range.GetRange(damageRangeStr);
-            var skillStr = parts[1].Replace("技能类型:", "");
-            result.skillType = (SkillType)Enum.Parse(typeof(SkillType), skillStr);
-            return (T)(IConditionParam)result;
-        }
-    }
-    
-    [Serializable]
-    [JsonSerializable]
-    public struct DeathConditionParam : IConditionParam 
-    {
-        public TriggerType GetTriggerType() => TriggerType.OnDeath;
-
-        public bool CheckConditionValid()
-        {
-            return this.CheckConditionHeader();
-        }
-        public string GetConditionDesc()
-        {
-            return "";
-        }
-
-        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
-        {
-            if (str == null) return default;
-            return (T)(IConditionParam)new DeathConditionParam();
-        }
-    }
-    
-    [Serializable]
-    [JsonSerializable]
-    public struct MoveConditionParam : IConditionParam
-    {
-        public TriggerType GetTriggerType() => TriggerType.OnMove;
-
-        public bool CheckConditionValid()
-        {
-            return this.CheckConditionHeader();
-        }
-        public string GetConditionDesc()
-        {
-            return $"";
-        }
-
-        public T AnalysisConditionParam<T>(string str) where T : IConditionParam
-        {
-            if (str == null) return default;
-            return (T)(IConditionParam)new DeathConditionParam();
-        }    
-    }
-
     public static class ConditionExtension
     {
         public static bool CheckConditionHeader(this IConditionParam conditionParam)
@@ -1100,13 +1109,5 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                     return default;
             }
         }
-    }
-
-    public interface IConditionParam
-    {
-        TriggerType GetTriggerType();
-        bool CheckConditionValid();
-        string GetConditionDesc();
-        T AnalysisConditionParam<T>(string str) where T : IConditionParam;
     }
 }

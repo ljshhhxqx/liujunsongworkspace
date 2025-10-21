@@ -6,6 +6,7 @@ using Game;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.Server.InGame;
@@ -53,6 +54,7 @@ namespace HotUpdate.Scripts.Game
         
         public async void Start()
         {
+            GameDataJitInit.Init();
             await LoadResources(); 
             await ResourcesLoadedCallback();
             _weatherManager = Object.FindObjectOfType<WeatherManager>();
