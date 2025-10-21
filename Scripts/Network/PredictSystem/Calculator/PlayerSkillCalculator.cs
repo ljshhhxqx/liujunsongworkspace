@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using AOTScripts.Data;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Battle;

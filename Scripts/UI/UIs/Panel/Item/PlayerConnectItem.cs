@@ -1,4 +1,5 @@
 ﻿using System;
+using AOTScripts.Data;
 using HotUpdate.Scripts.Config;
 using TMPro;
 using UnityEngine;

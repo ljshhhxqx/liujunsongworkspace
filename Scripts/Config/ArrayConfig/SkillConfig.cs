@@ -192,17 +192,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public ControlSkillType controlSkillType;
     }
 
-    public enum SkillType
-    {
-        None = 0,
-        SingleFly,
-        Single,
-        AreaRanged,
-        AreaFly,
-        Dash,
-        DelayedAreaRanged,
-    }
-
     // [JsonSerializable]
     // [Serializable]
     // public struct SingleTargetDamageSkillData : ISkillConfigExtraData

@@ -1,4 +1,5 @@
-﻿using AOTScripts.Tool.ObjectPool;
+﻿using AOTScripts.Data;
+using AOTScripts.Tool.ObjectPool;
 using DG.Tweening;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Tool.Static;
