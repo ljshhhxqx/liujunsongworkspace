@@ -6,6 +6,7 @@ using Cysharp.Threading.Tasks;
 using Data;
 using Game;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.Coroutine;

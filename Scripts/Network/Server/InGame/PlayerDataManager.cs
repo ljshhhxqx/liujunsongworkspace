@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Data;
+using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.Data;
 using Newtonsoft.Json;
 using UnityEngine;

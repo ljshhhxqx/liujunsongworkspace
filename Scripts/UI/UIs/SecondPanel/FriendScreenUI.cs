@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Tool;
 using Data;
+using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;

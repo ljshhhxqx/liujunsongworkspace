@@ -3,6 +3,7 @@ using System.Text;
 using AOTScripts.Tool.ObjectPool;
 using Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using UnityEngine;
 using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;

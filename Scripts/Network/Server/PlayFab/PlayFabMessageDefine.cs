@@ -1,5 +1,6 @@
 ﻿using System;
 using Data;
+using HotUpdate.Scripts.Data;
 
 namespace HotUpdate.Scripts.Network.Server.PlayFab
 {

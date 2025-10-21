@@ -5,6 +5,7 @@ using Data;
 using Game.Map;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.NetworkMes;

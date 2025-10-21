@@ -4,6 +4,7 @@ using System.Threading;
 using Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using Mirror;
 using Tool.GameEvent;

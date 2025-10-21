@@ -1,5 +1,6 @@
 ﻿using System;
 using Data;
+using HotUpdate.Scripts.Data;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
