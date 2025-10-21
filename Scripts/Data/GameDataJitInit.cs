@@ -2,6 +2,7 @@
 using Data;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using UnityEngine;
 
 namespace HotUpdate.Scripts.Data
 {
@@ -9,6 +10,9 @@ namespace HotUpdate.Scripts.Data
     {
         public static void Init()
         {
+            Debug.Log("GameDataJitInit.Init");
+            
+            
             AudioManagerType audioManager = AudioManagerType.Game;
             AudioEffectType audioEffect = AudioEffectType.None;
             AudioMusicType audioMusic = AudioMusicType.None;
@@ -57,6 +61,10 @@ namespace HotUpdate.Scripts.Data
             CriticalHitConditionParam criticalHitConditionParam = new CriticalHitConditionParam();
             DodgeConditionParam dodgeConditionParam = new DodgeConditionParam();
             DeathConditionParam deathConditionParam = new DeathConditionParam();
+            
+            
+            
+            Debug.Log("GameDataJitInit.Init Finish");
         }
     }
 }

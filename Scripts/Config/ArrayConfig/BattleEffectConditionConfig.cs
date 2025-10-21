@@ -499,6 +499,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 conditionData.targetCount = int.Parse(text[5]);
                 conditionData.buffWeight = float.Parse(text[6]);
                 conditionData.buffIncreaseType = (BuffIncreaseType)Enum.Parse(typeof(BuffIncreaseType), text[7]);
+                Debug.Log($"Start to read condition data: {conditionData.id} {conditionData.triggerType} {conditionData.probability} {conditionData.interval} {conditionData.targetType} {conditionData.targetCount} {conditionData.buffWeight} {conditionData.buffIncreaseType}");
                 if (text[8] == "null")
                 {
                     conditionData.conditionParam = null;
