@@ -58,7 +58,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 var data = textAsset[i];
                 var buff = new BuffData();
                 buff.buffId = int.Parse(data[0]);
-                buff.propertyType = Enum.Parse<PropertyTypeEnum>(data[1]);
+                buff.propertyType = (PropertyTypeEnum)Enum.Parse(typeof(PropertyTypeEnum), data[1]);
                 buff.duration = float.Parse(data[2]);
                 var json = JsonConvert.DeserializeObject<BuffIncreaseData[]>(data[3],jsonSerializerSettings);
                 buff.increaseDataList = json.ToList();
