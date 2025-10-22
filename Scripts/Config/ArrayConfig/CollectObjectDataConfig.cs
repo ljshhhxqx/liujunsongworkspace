@@ -63,7 +63,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 collectConfigData.weight = int.Parse(row[3]);    
                 collectConfigData.description = row[2];
                 collectConfigData.buffExtraData = JsonConvert.DeserializeObject<BuffExtraData[]>(row[4], jsonSerializerSettings)[0];
-                collectConfigData.collectObjectClass = Enum.Parse<CollectObjectClass>(row[5]);
+                collectConfigData.collectObjectClass = (CollectObjectClass)Enum.Parse(typeof(CollectObjectClass), row[5]);
                 // collectConfigData.randomItems = JsonConvert.DeserializeObject<RandomItemsData>(row[6]);
                 collectConfigDatas.Add(collectConfigData);
             }

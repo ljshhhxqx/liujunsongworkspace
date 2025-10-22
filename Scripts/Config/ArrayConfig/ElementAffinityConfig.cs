@@ -22,45 +22,45 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
-            elementAffinityData.Clear();
-            for (var i = 2; i < textAsset.Count; i++)
-            {
-                var data = textAsset[i];
-                var affinityData = new ElementAffinityData();
-                affinityData.attackType = (ElementType) Enum.Parse(typeof(ElementType), data[0]);
-                affinityData.defendType = (ElementType) Enum.Parse(typeof(ElementType), data[1]);
-                affinityData.multiplier = float.Parse(data[2]);
-                affinityData.consumeCount = float.Parse(data[3]);
-                affinityData.elementReactionType = (ElementReactionType) Enum.Parse(typeof(ElementReactionType), data[4]);
-                if (Enum.TryParse<ElementType>(data[5], out var type))
-                {
-                    affinityData.reactionConsumeElement = type;
-                }
-                else
-                {
-                    var strs = data[5].Split(',');
-                    affinityData.reactionConsumeElement = ElementType.None;
-                    foreach (var str in strs)
-                    {
-                        affinityData.reactionConsumeElement.AddState((ElementType) Enum.Parse(typeof(ElementReactionDamageType), str));
-                    }
-                }
-                if (Enum.TryParse<EffectType>(data[6], out var reactionDamageType))
-                {
-                    affinityData.effectType = reactionDamageType;
-                }
-                else
-                {
-                    var strs = data[6].Split(',');
-                    
-                    affinityData.effectType = EffectType.None;
-                    foreach (var str in strs)
-                    {
-                        affinityData.effectType.AddState((EffectType) Enum.Parse(typeof(EffectType), str));
-                    }
-                }
-                elementAffinityData.Add(affinityData);
-            }
+            // elementAffinityData.Clear();
+            // for (var i = 2; i < textAsset.Count; i++)
+            // {
+            //     var data = textAsset[i];
+            //     var affinityData = new ElementAffinityData();
+            //     affinityData.attackType = (ElementType) Enum.Parse(typeof(ElementType), data[0]);
+            //     affinityData.defendType = (ElementType) Enum.Parse(typeof(ElementType), data[1]);
+            //     affinityData.multiplier = float.Parse(data[2]);
+            //     affinityData.consumeCount = float.Parse(data[3]);
+            //     affinityData.elementReactionType = (ElementReactionType) Enum.Parse(typeof(ElementReactionType), data[4]);
+            //     if (Enum.TryParse<ElementType>(data[5], out var type))
+            //     {
+            //         affinityData.reactionConsumeElement = type;
+            //     }
+            //     else
+            //     {
+            //         var strs = data[5].Split(',');
+            //         affinityData.reactionConsumeElement = ElementType.None;
+            //         foreach (var str in strs)
+            //         {
+            //             affinityData.reactionConsumeElement.AddState((ElementType) Enum.Parse(typeof(ElementReactionDamageType), str));
+            //         }
+            //     }
+            //     if (Enum.TryParse<EffectType>(data[6], out var reactionDamageType))
+            //     {
+            //         affinityData.effectType = reactionDamageType;
+            //     }
+            //     else
+            //     {
+            //         var strs = data[6].Split(',');
+            //         
+            //         affinityData.effectType = EffectType.None;
+            //         foreach (var str in strs)
+            //         {
+            //             affinityData.effectType.AddState((EffectType) Enum.Parse(typeof(EffectType), str));
+            //         }
+            //     }
+            //     elementAffinityData.Add(affinityData);
+            // }
         }
         
         public float GetMultiplier(ElementType attackType, ElementType defendType)

@@ -88,9 +88,9 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 weaponConfig.weaponID = int.Parse(data[0]);
                 weaponConfig.itemID = int.Parse(data[1]);
                 weaponConfig.weaponName = data[2];
-                weaponConfig.weaponType = Enum.Parse<WeaponType>(data[3]);
+                weaponConfig.weaponType = (WeaponType)Enum.Parse(typeof(WeaponType), data[3]);
                 weaponConfig.skillID = int.Parse(data[4]);
-                weaponConfig.quality = Enum.Parse<QualityType>(data[5]);
+                weaponConfig.quality = (QualityType)Enum.Parse(typeof(QualityType), data[5]);
                 weaponConfig.battleEffectConditionId = int.Parse(data[6]);
                 weaponConfig.battleEffectConditionDescription = data[7];
                 weaponConfigData.Add(weaponConfig);

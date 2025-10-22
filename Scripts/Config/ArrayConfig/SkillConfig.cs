@@ -36,20 +36,20 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 data.name = text[1];
                 data.description = text[2];
                 data.cooldown = float.Parse(text[3]);
-                data.animationState = Enum.Parse<AnimationState>(text[4]);
+                data.animationState = (AnimationState)Enum.Parse(typeof(AnimationState),text[4]);
                 data.particleName = text[5].Trim();
                 data.maxDistance = float.Parse(text[6]);
                 data.radius = float.Parse(text[7]);
                 data.isAreaOfRange = bool.Parse(text[8]);
-                data.costProperty = Enum.Parse<PropertyTypeEnum>(text[9]);
+                data.costProperty = (PropertyTypeEnum)Enum.Parse(typeof(PropertyTypeEnum),text[9]);
                 data.flySpeed = float.Parse(text[10]);
                 data.duration = float.Parse(text[11]);
-                data.buffOperationType = Enum.Parse<BuffOperationType>(text[12]);
-                data.colliderType = Enum.Parse<ColliderType>(text[13]);
+                data.buffOperationType = (BuffOperationType)Enum.Parse(typeof(BuffOperationType),text[12]);
+                data.colliderType = (ColliderType)Enum.Parse(typeof(ColliderType),text[13]);
                 data.cost = float.Parse(text[14]);
                 data.isCostCurrentPercent = bool.Parse(text[15]);
                 data.events = JsonConvert.DeserializeObject<SkillConfigEventData[]>(text[16], setting);
-                data.conditionTarget = Enum.Parse<ConditionTargetType>(text[17]);
+                data.conditionTarget = (ConditionTargetType)Enum.Parse(typeof(ConditionTargetType), text[17]);
                 data.extraEffects = JsonConvert.DeserializeObject<SkillHitExtraEffectData[]>(text[18], setting);
                 data.skillType = Enum.Parse<SkillType>(text[19]);
                 skillData.Add(data);
@@ -160,36 +160,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         Control,
         Heal,
         
-    }
-
-    [Serializable]
-    [JsonSerializable]
-    public struct SkillConfigEventData
-    {
-        public SkillEventType skillEventType;
-        public float fireTime;
-
-        public bool UpdateAndCheck(float currentTime)
-        {
-            return currentTime >= fireTime;
-        }
-    }
-    
-    //技能附加效果，包含伤害、控制、治疗、buff等
-    [Serializable]
-    [JsonSerializable]
-    public struct SkillHitExtraEffectData
-    {
-        public ConditionTargetType target;
-        public float baseValue;
-        public PropertyTypeEnum buffProperty;
-        public bool isBuffMaxProperty;
-        public float extraRatio;
-        public PropertyTypeEnum effectProperty;
-        public BuffOperationType buffOperation;
-        public BuffIncreaseType buffIncreaseType;
-        public float duration;
-        public ControlSkillType controlSkillType;
     }
 
     // [JsonSerializable]
@@ -387,12 +357,4 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     //     }
     // }
     
-    //技能主动触发的事件
-    public enum SkillEventType
-    {
-        None = 0,
-        OnCast,
-        OnHitUpdate,
-        OnEnd,
-    }
 }

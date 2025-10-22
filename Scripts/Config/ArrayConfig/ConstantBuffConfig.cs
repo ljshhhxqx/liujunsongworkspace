@@ -62,8 +62,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 buff.duration = float.Parse(data[2]);
                 var json = JsonConvert.DeserializeObject<BuffIncreaseData[]>(data[3],jsonSerializerSettings);
                 buff.increaseDataList = json.ToList();
-                buff.sourceType = Enum.Parse<BuffSourceType>(data[4]);
-                buff.mainIncreaseType = Enum.Parse<BuffIncreaseType>(data[5]);
+                buff.sourceType = (BuffSourceType)Enum.Parse(typeof(BuffSourceType), data[4]);
+                buff.mainIncreaseType = (BuffIncreaseType)Enum.Parse(typeof(BuffIncreaseType), data[5]);
                 // else if (buff.sourceType == BuffSourceType.NoUnion)
                 // {
                 //     if (!_noUnionBuffs.ContainsKey(buff.propertyType))
