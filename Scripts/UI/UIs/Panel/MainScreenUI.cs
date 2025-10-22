@@ -57,7 +57,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         [Inject]
         private void Init(UIManager uiManager, PlayFabRoomManager playFabRoomManager, PlayFabAccountManager playFabAccountManager)
         {
-            _idTitle =idText.text;
+            _idTitle = idText.text;
             _nameTitle = nameText.text;
             _uiManager = uiManager;
             _playFabRoomManager = playFabRoomManager;
@@ -72,12 +72,15 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             logoutButton.BindDebouncedListener(OnLogoutButtonClick);
             quitButton.BindDebouncedListener(OnQuitButtonClick);
             friendButton.BindDebouncedListener(OnFriendButtonClick);
+            Debug.Log("MainScreenUI Init");
             PlayFabData.PlayerReadOnlyData.Subscribe(value =>
             {
+                Debug.Log($"PlayerId: {value.PlayerId}, Nickname: {value.Nickname}");
                 idText.text = _idTitle + value.PlayerId;
                 nameText.text = _nameTitle + value.Nickname;
             })
             .AddTo(this);
+            Debug.Log("PlayFabData.PlayerReadOnlyData Init");
         }
 
         private void OnFriendButtonClick()
