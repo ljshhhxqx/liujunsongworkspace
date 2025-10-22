@@ -6,7 +6,6 @@ using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.SecondPanel;
-using Network.Data;
 using TMPro;
 using UI.UIBase;
 using UI.UIs;
@@ -74,11 +73,11 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             quitButton.BindDebouncedListener(OnQuitButtonClick);
             friendButton.BindDebouncedListener(OnFriendButtonClick);
             PlayFabData.PlayerReadOnlyData.Subscribe(value =>
-                {
-                    idText.text = _idTitle + value.PlayerId;
-                    nameText.text = _nameTitle + value.Nickname;
-                })
-                .AddTo(this);
+            {
+                idText.text = _idTitle + value.PlayerId;
+                nameText.text = _nameTitle + value.Nickname;
+            })
+            .AddTo(this);
         }
 
         private void OnFriendButtonClick()

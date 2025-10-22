@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using AOTScripts.Data;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -147,23 +148,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     {
         public WeatherType weatherType;
         public Gradient cloudColor;
-    }
-
-    [Serializable]
-    public enum WeatherType
-    {
-        None,
-        Sunny,
-        Cloudy,
-        Rainy,
-        Snowy,
-    }
-
-    [Serializable]
-    public struct WeatherInfo
-    {
-        public WeatherType weatherType;
-        public float density;
     }
 
     public static class WeatherTypeExtension

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using AOTScripts.Data;
 using AOTScripts.Tool;
 using AOTScripts.Tool.ECS;
 using Cysharp.Threading.Tasks;
