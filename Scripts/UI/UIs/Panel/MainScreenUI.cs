@@ -82,12 +82,12 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             });
             test.Value = 10;
             Debug.Log("testData Init");
-            ReactiveProperty<PlayerInternalData> internalData = new ReactiveProperty<PlayerInternalData>();
+            Subject<PlayerInternalData> internalData = new Subject<PlayerInternalData>();
             internalData.Subscribe(value =>
             {
                 Debug.Log($"PlayerId: {value.PlayerId}");
             });
-            internalData.Value = new PlayerInternalData() { PlayerId = "123456" };
+            internalData.OnNext(new PlayerInternalData() { PlayerId = "123456" });
             Debug.Log("PlayerInternalData Init");
             PlayFabData.PlayerReadOnlyData.Subscribe(value =>
             {
@@ -96,7 +96,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                 nameText.text = _nameTitle + value.Nickname;
             })
             .AddTo(this);
-            Debug.Log("PlayFabData.PlayerReadOnlyData Init");
         }
 
         private void OnFriendButtonClick()
