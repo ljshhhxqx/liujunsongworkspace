@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AOTScripts.Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using MemoryPack;

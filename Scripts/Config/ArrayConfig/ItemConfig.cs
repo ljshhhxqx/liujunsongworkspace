@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AOTScripts.Data;
 using HotUpdate.Scripts.Tool.Static;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
@@ -331,55 +332,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         }
     }
 
-    [Serializable]
-    public struct ItemOtherData
-    {
-        public int maxBagSize;
-    }
-
-    public enum EquipmentPart
-    {
-        None,
-        //暴击率、暴击伤害
-        [Header("头肩")]
-        Head,
-        //生命值、防御力
-        [Header("上衣")]
-        Body,
-        //体力值、体力恢复速度
-        [Header("下装")]
-        Leg,
-        //移动速度、攻击速度
-        [Header("鞋")]
-        Feet,
-        //额外攻击力、生命恢复
-        [Header("腰带")]
-        Waist,
-        [Header("武器")]
-        Weapon,
-    }
-
-    public enum QualityType
-    {
-        Normal = 1,
-        Rare,
-        Legendary,
-    }
-
-    /// <summary>
-    /// 玩家道具类型
-    /// </summary>
-    public enum PlayerItemType
-    {
-        None,
-        Weapon,
-        Armor,
-        Consume,
-        Item,
-        Collect,
-        Gold,
-        Score,
-    }
+    
     
     public static class PlayerItemTypeExtension
     {

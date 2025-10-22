@@ -1,4 +1,5 @@
 ﻿using System;
+using AOTScripts.Data;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;

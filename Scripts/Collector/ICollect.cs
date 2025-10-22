@@ -1,3 +1,4 @@
+using AOTScripts.Data;
 using AOTScripts.Tool.ECS;
 using Game;
 using HotUpdate.Scripts.Config;

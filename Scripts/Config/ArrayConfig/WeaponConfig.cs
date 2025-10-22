@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using AOTScripts.Data;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using Sirenix.OdinInspector;
@@ -219,20 +220,5 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             AttackRange = attackRange;
             AttackHeight = attackHeight;
         }
-    }
-
-    public enum WeaponType
-    {
-        None,
-        Sword1,
-        Sword2,
-        Sword3,
-        Sword4,
-        Sword5,
-        Sword6,
-        Sword7,
-        Sword8,
-        Sword9,
-        Sword10,
     }
 }

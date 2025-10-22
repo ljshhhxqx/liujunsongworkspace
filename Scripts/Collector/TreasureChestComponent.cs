@@ -1,4 +1,5 @@
 using System;
+using AOTScripts.Data;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config.ArrayConfig;

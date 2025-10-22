@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AOTScripts.Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.UI.UIBase;

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AOTScripts.Data;
 using AOTScripts.Tool.ECS;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
