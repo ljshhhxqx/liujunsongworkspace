@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading;
+using AOTScripts.Data;
 using AOTScripts.Tool;
 using AOTScripts.Tool.ECS;
 using Cysharp.Threading.Tasks;

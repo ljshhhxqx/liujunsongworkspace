@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AOTScripts.Data;
 using Data;
 using Game.Map;
 using HotUpdate.Scripts.Config.ArrayConfig;

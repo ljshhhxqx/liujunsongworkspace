@@ -1,4 +1,5 @@
 ﻿using System;
+using AOTScripts.Data;
 using Data;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;

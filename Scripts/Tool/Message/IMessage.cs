@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using AOTScripts.Data;
 using Data;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;

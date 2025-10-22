@@ -1,4 +1,5 @@
-﻿using Data;
+﻿using AOTScripts.Data;
+using Data;
 using HotUpdate.Scripts.Data;
 using PlayFab.CloudScriptModels;
 using UniRx;
