@@ -51,7 +51,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 data.events = JsonConvert.DeserializeObject<SkillConfigEventData[]>(text[16], setting);
                 data.conditionTarget = (ConditionTargetType)Enum.Parse(typeof(ConditionTargetType), text[17]);
                 data.extraEffects = JsonConvert.DeserializeObject<SkillHitExtraEffectData[]>(text[18], setting);
-                data.skillType = Enum.Parse<SkillType>(text[19]);
+                data.skillType = (SkillType)Enum.Parse(typeof(SkillType), text[19]);
                 skillData.Add(data);
             }
         }
