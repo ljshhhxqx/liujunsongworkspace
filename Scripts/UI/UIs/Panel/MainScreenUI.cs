@@ -1,4 +1,5 @@
 ﻿using System;
+using AOTScripts.Data;
 using AOTScripts.Tool;
 using Data;
 using HotUpdate.Scripts.Network.Data;
@@ -73,6 +74,21 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             quitButton.BindDebouncedListener(OnQuitButtonClick);
             friendButton.BindDebouncedListener(OnFriendButtonClick);
             Debug.Log("MainScreenUI Init");
+            
+            ReactiveProperty<int> test = new ReactiveProperty<int>();
+            test.Subscribe(value =>
+            {
+                Debug.Log($"Test: {value}");
+            });
+            test.Value = 10;
+            Debug.Log("testData Init");
+            ReactiveProperty<PlayerInternalData> internalData = new ReactiveProperty<PlayerInternalData>();
+            internalData.Subscribe(value =>
+            {
+                Debug.Log($"PlayerId: {value.PlayerId}");
+            });
+            internalData.Value = new PlayerInternalData() { PlayerId = "123456" };
+            Debug.Log("PlayerInternalData Init");
             PlayFabData.PlayerReadOnlyData.Subscribe(value =>
             {
                 Debug.Log($"PlayerId: {value.PlayerId}, Nickname: {value.Nickname}");
