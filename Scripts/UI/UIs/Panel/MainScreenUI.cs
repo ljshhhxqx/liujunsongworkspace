@@ -579,7 +579,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
     //     }
     // }
     
-    [Serializable]
     public struct TestData
     {
         public int id;
