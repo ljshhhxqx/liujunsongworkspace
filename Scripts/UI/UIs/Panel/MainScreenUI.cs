@@ -84,12 +84,12 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             });
             test.Value = 10;
             Debug.Log("testData Init");
-            HReactiveProperty<TestData> internalData = new HReactiveProperty<TestData>();
+            HReactiveProperty<PlayerInternalData> internalData = new HReactiveProperty<PlayerInternalData>();
             internalData.Subscribe(value =>
             {
-                Debug.Log($"PlayerId: {value.id}");
+                Debug.Log($"PlayerId: {value.PlayerId}");
             });
-            internalData.Value = new TestData() { id = 13213, value = "test" };
+            internalData.Value = new PlayerInternalData() { PlayerId = "test" };
             Debug.Log("PlayerInternalData Init");
             PlayFabData.PlayerReadOnlyData.Subscribe(value =>
             {
