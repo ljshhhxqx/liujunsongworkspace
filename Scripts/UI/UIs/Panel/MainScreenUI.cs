@@ -1,6 +1,7 @@
 ﻿using System;
 using AOTScripts.Data;
 using AOTScripts.Tool;
+using AOTScripts.Tool.UniRxTool;
 using Data;
 using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.Server.PlayFab;
@@ -75,19 +76,19 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             friendButton.BindDebouncedListener(OnFriendButtonClick);
             Debug.Log("MainScreenUI Init");
             
-            ReactiveProperty<int> test = new ReactiveProperty<int>();
+            HReactiveProperty<int> test = new HReactiveProperty<int>();
             test.Subscribe(value =>
             {
                 Debug.Log($"Test: {value}");
             });
             test.Value = 10;
             Debug.Log("testData Init");
-            Subject<PlayerInternalData> internalData = new Subject<PlayerInternalData>();
+            HReactiveProperty<PlayerInternalData> internalData = new HReactiveProperty<PlayerInternalData>();
             internalData.Subscribe(value =>
             {
                 Debug.Log($"PlayerId: {value.PlayerId}");
             });
-            internalData.OnNext(new PlayerInternalData() { PlayerId = "123456" });
+            internalData.Value = new PlayerInternalData() { PlayerId = "123456"};
             Debug.Log("PlayerInternalData Init");
             PlayFabData.PlayerReadOnlyData.Subscribe(value =>
             {

@@ -171,15 +171,19 @@ namespace HotUpdate.Scripts.Network.Server
             NetworkServer.OnConnectedEvent += HandleServerConnected;
             NetworkServer.OnDisconnectedEvent += HandleServerDisconnected;
             PlayFabData.ConnectionAddress
-                .Where(address => !string.IsNullOrEmpty(address))
                 .Subscribe(address =>
             {
-                networkAddress = address.Trim();
+                if (!string.IsNullOrEmpty(address))
+                {
+                    networkAddress = address.Trim();
+                }
             }).AddTo(this);
-            PlayFabData.ConnectionPort
-                .Where(port => port > 0).Subscribe(port =>
+            PlayFabData.ConnectionPort.Subscribe(port =>
             {
-                _transport.port = (ushort)port;
+                if (port > 0)
+                {
+                    _transport.port = (ushort)port;
+                }
             }).AddTo(this);
 
             NetworkServer.RegisterHandler<MirrorPlayerConnectMessage>(OnServerPlayerAccountIdMessage);

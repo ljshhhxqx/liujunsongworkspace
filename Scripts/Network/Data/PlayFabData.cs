@@ -1,4 +1,6 @@
 ﻿using AOTScripts.Data;
+using AOTScripts.Tool;
+using AOTScripts.Tool.UniRxTool;
 using Data;
 using HotUpdate.Scripts.Data;
 using PlayFab.CloudScriptModels;
@@ -8,28 +10,28 @@ namespace HotUpdate.Scripts.Network.Data
 {
     public static class PlayFabData
     {
-        public static ReactiveProperty<string> PlayFabId { get; private set; }  = new ReactiveProperty<string>();
-        public static ReactiveProperty<bool> IsLoggedIn { get; private set; } = new ReactiveProperty<bool>();
-        public static ReactiveProperty<PlayerInternalData> PlayerInternalData { get; private set; } = new ReactiveProperty<PlayerInternalData>();
-        public static ReactiveProperty<PlayerReadOnlyData> PlayerReadOnlyData { get; private set; } = new ReactiveProperty<PlayerReadOnlyData>();
-        public static ReactiveProperty<bool> IsDevelopMode { get; private set; }    = new ReactiveProperty<bool>();
-        public static ReactiveProperty<EntityKey> EntityKey { get; private set; } = new ReactiveProperty<EntityKey>();
-        public static ReactiveCollection<GamePlayerInfo> PlayerList { get; private set; } = new ReactiveCollection<GamePlayerInfo>(); 
-        public static ReactiveProperty<string> ConnectionAddress { get; private set; } = new ReactiveProperty<string>();
-        public static ReactiveProperty<int> ConnectionPort { get; private set; } = new ReactiveProperty<int>();
-        public static ReactiveProperty<string> CurrentGameId { get; private set; } = new ReactiveProperty<string>();
+        public static HReactiveProperty<string> PlayFabId { get; private set; }  = new HReactiveProperty<string>();
+        public static HReactiveProperty<bool> IsLoggedIn { get; private set; } = new HReactiveProperty<bool>();
+        public static HReactiveProperty<PlayerInternalData> PlayerInternalData { get; private set; } = new HReactiveProperty<PlayerInternalData>();
+        public static HReactiveProperty<PlayerReadOnlyData> PlayerReadOnlyData { get; private set; } = new HReactiveProperty<PlayerReadOnlyData>();
+        public static HReactiveProperty<bool> IsDevelopMode { get; private set; }    = new HReactiveProperty<bool>();
+        public static HReactiveProperty<EntityKey> EntityKey { get; private set; } = new HReactiveProperty<EntityKey>();
+        public static HReactiveCollection<GamePlayerInfo> PlayerList { get; private set; } = new HReactiveCollection<GamePlayerInfo>(); 
+        public static HReactiveProperty<string> ConnectionAddress { get; private set; } = new HReactiveProperty<string>();
+        public static HReactiveProperty<int> ConnectionPort { get; private set; } = new HReactiveProperty<int>();
+        public static HReactiveProperty<string> CurrentGameId { get; private set; } = new HReactiveProperty<string>();
 
         public static void Initialize()
         {
-            PlayFabId ??= new ReactiveProperty<string>();
-            IsLoggedIn ??= new ReactiveProperty<bool>();
-            PlayerInternalData ??= new ReactiveProperty<PlayerInternalData>();
-            PlayerReadOnlyData ??= new ReactiveProperty<PlayerReadOnlyData>();
-            IsDevelopMode ??= new ReactiveProperty<bool>();
-            EntityKey ??= new ReactiveProperty<EntityKey>();
-            ConnectionAddress ??= new ReactiveProperty<string>();
-            ConnectionPort ??= new ReactiveProperty<int>();
-            PlayerList ??= new ReactiveCollection<GamePlayerInfo>();
+            PlayFabId ??= new HReactiveProperty<string>();
+            IsLoggedIn ??= new HReactiveProperty<bool>();
+            PlayerInternalData ??= new HReactiveProperty<PlayerInternalData>();
+            PlayerReadOnlyData ??= new HReactiveProperty<PlayerReadOnlyData>();
+            IsDevelopMode ??= new HReactiveProperty<bool>();
+            EntityKey ??= new HReactiveProperty<EntityKey>();
+            ConnectionAddress ??= new HReactiveProperty<string>();
+            ConnectionPort ??= new HReactiveProperty<int>();
+            PlayerList ??= new HReactiveCollection<GamePlayerInfo>();
         }
         
         public static void Dispose()
