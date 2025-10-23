@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using AOTScripts.Data;
 using AOTScripts.Tool;
 using AOTScripts.Tool.UniRxTool;
@@ -75,7 +76,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             quitButton.BindDebouncedListener(OnQuitButtonClick);
             friendButton.BindDebouncedListener(OnFriendButtonClick);
             Debug.Log("MainScreenUI Init");
-            ReactivePropertyDiagnosticTests.RunAllTests();
+            ReactivePropertySpecificTests.RunReactivePropertyTests();
+            //ReactivePropertyDiagnosticTests.RunAllTests();
             // HReactiveProperty<int> test = new HReactiveProperty<int>();
             // test.Subscribe(value =>
             // {
@@ -375,6 +377,206 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         public void Handle(T value)
         {
             Debug.Log($"泛型接口处理: {value}");
+        }
+    }
+    
+    public static class ReactivePropertySpecificTests
+    {
+        public static void RunReactivePropertyTests()
+        {
+            Debug.Log("=== 开始 ReactiveProperty 特定场景测试 ===");
+            
+            TestSubscriptionWithConversion();
+            TestNotificationWithConversion();
+            TestMultipleSubscribers();
+            TestValueTypes();
+            TestNullValues();
+            
+            Debug.Log("=== ReactiveProperty 场景测试完成 ===");
+        }
+
+        // 测试订阅时的立即通知（包含转换）
+        private static void TestSubscriptionWithConversion()
+        {
+            try
+            {
+                Debug.Log("测试: 订阅时的立即通知(含转换)");
+                var testData = new TestData { Value = "initial" };
+                bool notified = false;
+                
+                var reactiveProp = new ConvertingReactiveProperty<TestData>(testData);
+                reactiveProp.Subscribe(data => 
+                {
+                    notified = true;
+                    Debug.Log($"立即通知: {data.Value}");
+                }, notifyImmediately: true);
+                
+                Debug.Log($"✅ 立即通知测试 - 通知状态: {notified}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"❌ 立即通知测试失败: {e}");
+            }
+        }
+
+        // 测试值改变时的通知（包含转换）
+        private static void TestNotificationWithConversion()
+        {
+            try
+            {
+                Debug.Log("测试: 值改变通知(含转换)");
+                var reactiveProp = new ConvertingReactiveProperty<TestData>();
+                bool notified = false;
+                
+                reactiveProp.Subscribe(data => 
+                {
+                    notified = true;
+                    Debug.Log($"值改变通知: {data.Value}");
+                });
+                
+                reactiveProp.Value = new TestData { Value = "changed" };
+                Debug.Log($"✅ 值改变通知测试 - 通知状态: {notified}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"❌ 值改变通知测试失败: {e}");
+            }
+        }
+
+        // 测试多个订阅者
+        private static void TestMultipleSubscribers()
+        {
+            try
+            {
+                Debug.Log("测试: 多个订阅者");
+                var reactiveProp = new ConvertingReactiveProperty<int>(0);
+                int notificationCount = 0;
+                
+                reactiveProp.Subscribe(val => { notificationCount++; Debug.Log($"订阅者1: {val}"); });
+                reactiveProp.Subscribe(val => { notificationCount++; Debug.Log($"订阅者2: {val}"); });
+                
+                reactiveProp.Value = 1;
+                Debug.Log($"✅ 多订阅者测试 - 总通知次数: {notificationCount}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"❌ 多订阅者测试失败: {e}");
+            }
+        }
+
+        // 测试值类型
+        private static void TestValueTypes()
+        {
+            try
+            {
+                Debug.Log("测试: 值类型处理");
+                var reactiveProp = new ConvertingReactiveProperty<int>(0);
+                reactiveProp.Subscribe(val => Debug.Log($"值类型通知: {val}"));
+                reactiveProp.Value = 42;
+                Debug.Log("✅ 值类型测试通过");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"❌ 值类型测试失败: {e}");
+            }
+        }
+
+        // 测试 null 值处理
+        private static void TestNullValues()
+        {
+            try
+            {
+                Debug.Log("测试: null值处理");
+                var reactiveProp = new ConvertingReactiveProperty<TestData>(new TestData { Value = "initial" });
+                reactiveProp.Subscribe(data => Debug.Log($"null值测试: {(data == null ? "null" : data.Value)}"));
+                reactiveProp.Value = null;
+                Debug.Log("✅ null值测试通过");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"❌ null值测试失败: {e}");
+            }
+        }
+    }
+
+    // 模拟有问题的 ReactiveProperty 实现（用于测试）
+    public class ConvertingReactiveProperty<T>
+    {
+        private T _value;
+        private readonly List<IValueListener> _listeners = new List<IValueListener>();
+
+        public ConvertingReactiveProperty() : this(default(T)) { }
+
+        public ConvertingReactiveProperty(T initialValue)
+        {
+            _value = initialValue;
+        }
+
+        public T Value
+        {
+            get => _value;
+            set
+            {
+                if (EqualityComparer<T>.Default.Equals(_value, value))
+                    return;
+
+                _value = value;
+                NotifyValueChanged();
+            }
+        }
+
+        public IDisposable Subscribe(Action<T> listener, bool notifyImmediately = true)
+        {
+            var valueListener = new ConvertingListener<T>(listener);
+            _listeners.Add(valueListener);
+
+            if (notifyImmediately)
+            {
+                try
+                {
+                    valueListener.OnValueChanged(_value); // 这里可能出问题
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"立即通知错误: {e}");
+                    throw;
+                }
+            }
+
+            return new Subscription(this, valueListener);
+        }
+
+        private void NotifyValueChanged()
+        {
+            foreach (var listener in _listeners)
+            {
+                try
+                {
+                    listener.OnValueChanged(_value); // 这里可能出问题
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"值改变通知错误: {e}");
+                    throw;
+                }
+            }
+        }
+
+        private class Subscription : IDisposable
+        {
+            private ConvertingReactiveProperty<T> _property;
+            private IValueListener _listener;
+
+            public Subscription(ConvertingReactiveProperty<T> property, IValueListener listener)
+            {
+                _property = property;
+                _listener = listener;
+            }
+
+            public void Dispose()
+            {
+                _property?._listeners.Remove(_listener);
+            }
         }
     }
 }
