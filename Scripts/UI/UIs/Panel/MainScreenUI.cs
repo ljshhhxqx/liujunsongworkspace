@@ -75,28 +75,38 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             quitButton.BindDebouncedListener(OnQuitButtonClick);
             friendButton.BindDebouncedListener(OnFriendButtonClick);
             Debug.Log("MainScreenUI Init");
-            
-            HReactiveProperty<int> test = new HReactiveProperty<int>();
-            test.Subscribe(value =>
-            {
-                Debug.Log($"Test: {value}");
-            });
-            test.Value = 10;
-            Debug.Log("testData Init");
-            HReactiveProperty<PlayerInternalData> internalData = new HReactiveProperty<PlayerInternalData>();
-            internalData.Subscribe(value =>
-            {
-                Debug.Log($"PlayerId: {value.PlayerId}");
-            });
-            internalData.Value = new PlayerInternalData() { PlayerId = "123456"};
-            Debug.Log("PlayerInternalData Init");
-            PlayFabData.PlayerReadOnlyData.Subscribe(value =>
-            {
-                Debug.Log($"PlayerId: {value.PlayerId}, Nickname: {value.Nickname}");
-                idText.text = _idTitle + value.PlayerId;
-                nameText.text = _nameTitle + value.Nickname;
-            })
-            .AddTo(this);
+            ActionTest(OnPlayerDataTest, new PlayerInternalData() { PlayerId = "123456"});
+            // HReactiveProperty<int> test = new HReactiveProperty<int>();
+            // test.Subscribe(value =>
+            // {
+            //     Debug.Log($"Test: {value}");
+            // });
+            // test.Value = 10;
+            // Debug.Log("testData Init");
+            // HReactiveProperty<PlayerInternalData> internalData = new HReactiveProperty<PlayerInternalData>();
+            // internalData.Subscribe(value =>
+            // {
+            //     Debug.Log($"PlayerId: {value.PlayerId}");
+            // });
+            // internalData.Value = new PlayerInternalData() { PlayerId = "123456"};
+            // Debug.Log("PlayerInternalData Init");
+            // PlayFabData.PlayerReadOnlyData.Subscribe(value =>
+            // {
+            //     Debug.Log($"PlayerId: {value.PlayerId}, Nickname: {value.Nickname}");
+            //     idText.text = _idTitle + value.PlayerId;
+            //     nameText.text = _nameTitle + value.Nickname;
+            // })
+            // .AddTo(this);
+        }
+
+        private void OnPlayerDataTest(PlayerInternalData data)
+        {
+            Debug.Log($"PlayerDataTest: {data}");
+        }
+
+        private void ActionTest<T>(Action<T> action, T param)
+        {
+            action?.Invoke(param);
         }
 
         private void OnFriendButtonClick()
