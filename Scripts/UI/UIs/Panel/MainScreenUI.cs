@@ -84,12 +84,12 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             });
             test.Value = 10;
             Debug.Log("testData Init");
-            HReactiveProperty<PlayerInternalData> internalData = new HReactiveProperty<PlayerInternalData>();
+            HReactiveProperty<TestData> internalData = new HReactiveProperty<TestData>();
             internalData.Subscribe(value =>
             {
-                Debug.Log($"PlayerId: {value.PlayerId}");
+                Debug.Log($"PlayerId: {value.id}");
             });
-            internalData.Value = new PlayerInternalData() { PlayerId = "123456"};
+            internalData.Value = new TestData() { id = 13213, value = "test" };
             Debug.Log("PlayerInternalData Init");
             PlayFabData.PlayerReadOnlyData.Subscribe(value =>
             {
@@ -578,4 +578,11 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
     //         }
     //     }
     // }
+    
+    [Serializable]
+    public struct TestData
+    {
+        public int id;
+        public string value;
+    }
 }
