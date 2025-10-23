@@ -77,20 +77,20 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             Debug.Log("MainScreenUI Init");
             // ReactivePropertySpecificTests.RunReactivePropertyTests();
             //ReactivePropertyDiagnosticTests.RunAllTests();
-            HReactiveProperty<int> test = new HReactiveProperty<int>();
-            test.Subscribe(value =>
-            {
-                Debug.Log($"Test: {value}");
-            });
-            test.Value = 10;
-            Debug.Log("testData Init");
-            HReactiveProperty<PlayerInternalData> internalData = new HReactiveProperty<PlayerInternalData>();
-            internalData.Subscribe(value =>
-            {
-                Debug.Log($"PlayerId: {value.PlayerId}");
-            });
-            internalData.Value = new PlayerInternalData() { PlayerId = "test" };
-            Debug.Log("PlayerInternalData Init");
+            // HReactiveProperty<int> test = new HReactiveProperty<int>();
+            // test.Subscribe(value =>
+            // {
+            //     Debug.Log($"Test: {value}");
+            // });
+            // test.Value = 10;
+            // Debug.Log("testData Init");
+            // HReactiveProperty<PlayerInternalData> internalData = new HReactiveProperty<PlayerInternalData>();
+            // internalData.Subscribe(value =>
+            // {
+            //     Debug.Log($"PlayerId: {value.PlayerId}");
+            // });
+            // internalData.Value = new PlayerInternalData() { PlayerId = "test" };
+            // Debug.Log("PlayerInternalData Init");
             PlayFabData.PlayerReadOnlyData.Subscribe(value =>
             {
                 Debug.Log($"PlayerId: {value.PlayerId}, Nickname: {value.Nickname}");
