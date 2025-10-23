@@ -13,6 +13,7 @@ namespace HotUpdate.Scripts.Network.Client
     {
         private GameEventManager _gameEventManager;
         private JsonDataConfig _jsonDataConfig;
+        private PlayerConfigData _playerDataConfig;
         private Transform _target; // 角色的 Transform
         private Vector3 _offset; // 初始偏移量
         private float _lastHorizontal;
@@ -25,6 +26,7 @@ namespace HotUpdate.Scripts.Network.Client
         {
             _gameEventManager = gameEventManager;
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
+            _playerDataConfig = _jsonDataConfig.PlayerConfig;
             _uiManager = uiManager;
             _uiManager.IsUnlockMouse+= OnUnlockMouse;
             _gameEventManager.Subscribe<PlayerSpawnedEvent>(OnPlayerSpawned);
@@ -72,16 +74,16 @@ namespace HotUpdate.Scripts.Network.Client
                 Touch touch = Input.GetTouch(0);
                 if (touch.phase == TouchPhase.Moved)
                 {
-                    float horizontal = touch.deltaPosition.x * playerDataConfig.PlayerConfigData.TurnSpeed * Time.deltaTime;
-                    float vertical = touch.deltaPosition.y * playerDataConfig.PlayerConfigData.TurnSpeed * Time.deltaTime;
+                    float horizontal = touch.deltaPosition.x * _playerDataConfig.TurnSpeed * Time.deltaTime;
+                    float vertical = touch.deltaPosition.y * _playerDataConfig.TurnSpeed * Time.deltaTime;
 
                     // 计算摄像机与水平面的角度
-                    float angleWithGround = Vector3.Angle(Vector3.down, offset.normalized) - 90; // 减去90是因为原点是向下的
+                    float angleWithGround = Vector3.Angle(Vector3.down, _offset.normalized) - 90; // 减去90是因为原点是向下的
                     float maxVerticalAngle = 90 - Mathf.Abs(angleWithGround);
                     vertical = Mathf.Clamp(vertical, -maxVerticalAngle, maxVerticalAngle);
 
-                    offset = Quaternion.AngleAxis(horizontal, Vector3.up) * offset;
-                    offset = Quaternion.AngleAxis(vertical, Vector3.right) * offset;
+                    _offset = Quaternion.AngleAxis(horizontal, Vector3.up) * _offset;
+                    _offset = Quaternion.AngleAxis(vertical, Vector3.right) * _offset;
                 }
             }
 #else
