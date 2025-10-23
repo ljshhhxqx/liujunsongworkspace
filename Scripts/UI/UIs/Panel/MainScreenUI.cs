@@ -75,7 +75,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             quitButton.BindDebouncedListener(OnQuitButtonClick);
             friendButton.BindDebouncedListener(OnFriendButtonClick);
             Debug.Log("MainScreenUI Init");
-            ActionTest(OnPlayerDataTest, new PlayerInternalData() { PlayerId = "123456"});
+            ReactivePropertyDiagnosticTests.RunAllTests();
             // HReactiveProperty<int> test = new HReactiveProperty<int>();
             // test.Subscribe(value =>
             // {
@@ -99,9 +99,12 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             // .AddTo(this);
         }
 
-        private void OnPlayerDataTest(PlayerInternalData data)
+        private void OnPlayerDataTest<T>(T data)
         {
-            Debug.Log($"PlayerDataTest: {data}");
+            if (data is PlayerInternalData internalData)
+            {
+                Debug.Log($"PlayerDataTest: {internalData}");
+            }
         }
 
         private void ActionTest<T>(Action<T> action, T param)
@@ -185,6 +188,193 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             timerText.text = _timeSpan.ToString(@"mm\\:ss");
             _timer += 1f;
             Debug.Log($"Matchmaking: {_timer}");
+        }
+    }
+    public static class ReactivePropertyDiagnosticTests
+    {
+        private static TestData _testData = new TestData { Value = "test" };
+
+        public static void RunAllTests()
+        {
+            Debug.Log("=== 开始 HybridCLR ReactiveProperty 诊断测试 ===");
+            
+            TestCase1_DirectGenericDelegate();
+            TestCase2_InterfaceWithoutConversion();
+            TestCase3_TypeCheckOnly();
+            TestCase4_ConversionOnly();
+            TestCase5_FullInterfaceWithConversion();
+            TestCase6_GenericInterfaceCall();
+            
+            Debug.Log("=== 诊断测试完成 ===");
+        }
+
+        // 测试用例1：直接泛型委托调用（基准测试）
+        private static void TestCase1_DirectGenericDelegate()
+        {
+            try
+            {
+                Debug.Log("测试1: 直接泛型委托调用");
+                Action<TestData> action = data => Debug.Log($"直接委托: {data.Value}");
+                action(_testData);
+                Debug.Log("✅ 测试1通过 - 直接泛型委托正常");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"❌ 测试1失败: {e}");
+            }
+        }
+
+        // 测试用例2：接口调用但不涉及类型转换
+        private static void TestCase2_InterfaceWithoutConversion()
+        {
+            try
+            {
+                Debug.Log("测试2: 接口调用(无类型转换)");
+                var listener = new SimpleListener<TestData>(data => Debug.Log($"简单接口: {data.Value}"));
+                listener.OnValueChangedDirect(_testData);
+                Debug.Log("✅ 测试2通过 - 接口调用(无转换)正常");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"❌ 测试2失败: {e}");
+            }
+        }
+
+        // 测试用例3：只测试类型检查(is操作)
+        private static void TestCase3_TypeCheckOnly()
+        {
+            try
+            {
+                Debug.Log("测试3: 类型检查(is操作)");
+                object obj = _testData;
+                bool isTestData = obj is TestData;
+                Debug.Log($"类型检查结果: {isTestData}");
+                Debug.Log("✅ 测试3通过 - 类型检查正常");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"❌ 测试3失败: {e}");
+            }
+        }
+
+        // 测试用例4：只测试类型转换(as操作)
+        private static void TestCase4_ConversionOnly()
+        {
+            try
+            {
+                Debug.Log("测试4: 类型转换(as操作)");
+                object obj = _testData;
+                var converted = obj as TestData;
+                Debug.Log($"转换结果: {converted?.Value}");
+                Debug.Log("✅ 测试4通过 - 类型转换正常");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"❌ 测试4失败: {e}");
+            }
+        }
+
+        // 测试用例5：完整接口调用+类型转换（模拟我们问题代码）
+        private static void TestCase5_FullInterfaceWithConversion()
+        {
+            try
+            {
+                Debug.Log("测试5: 完整接口+类型转换");
+                var listener = new ConvertingListener<TestData>(data => Debug.Log($"转换接口: {data.Value}"));
+                IValueListener interfaceRef = listener;
+                interfaceRef.OnValueChanged(_testData);
+                Debug.Log("✅ 测试5通过 - 完整接口+转换正常");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"❌ 测试5失败: {e}");
+            }
+        }
+
+        // 测试用例6：泛型接口方法调用
+        private static void TestCase6_GenericInterfaceCall()
+        {
+            try
+            {
+                Debug.Log("测试6: 泛型接口方法调用");
+                var handler = new GenericHandler<TestData>();
+                IGenericHandler<TestData> interfaceRef = handler;
+                interfaceRef.Handle(_testData);
+                Debug.Log("✅ 测试6通过 - 泛型接口调用正常");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"❌ 测试6失败: {e}");
+            }
+        }
+    }
+
+    // 测试数据类
+    public class TestData
+    {
+        public string Value { get; set; }
+    }
+
+    // 简单接口（无转换）
+    public interface ISimpleListener<T>
+    {
+        void OnValueChangedDirect(T value);
+    }
+
+    public class SimpleListener<T> : ISimpleListener<T>
+    {
+        private readonly Action<T> _action;
+
+        public SimpleListener(Action<T> action)
+        {
+            _action = action;
+        }
+
+        public void OnValueChangedDirect(T value)
+        {
+            _action(value);
+        }
+    }
+
+    // 带转换的接口（模拟问题代码）
+    public interface IValueListener
+    {
+        void OnValueChanged(object value);
+        Type ValueType { get; }
+    }
+
+    public class ConvertingListener<T> : IValueListener
+    {
+        private readonly Action<T> _action;
+
+        public ConvertingListener(Action<T> action)
+        {
+            _action = action;
+        }
+
+        public Type ValueType => typeof(T);
+
+        public void OnValueChanged(object value)
+        {
+            // 这里模拟我们问题代码的转换逻辑
+            if (value is T typedValue)
+            {
+                _action(typedValue);
+            }
+        }
+    }
+
+    // 泛型接口测试
+    public interface IGenericHandler<T>
+    {
+        void Handle(T value);
+    }
+
+    public class GenericHandler<T> : IGenericHandler<T>
+    {
+        public void Handle(T value)
+        {
+            Debug.Log($"泛型接口处理: {value}");
         }
     }
 }
