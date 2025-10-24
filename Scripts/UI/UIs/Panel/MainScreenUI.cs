@@ -75,9 +75,9 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             quitButton.BindDebouncedListener(OnQuitButtonClick);
             friendButton.BindDebouncedListener(OnFriendButtonClick);
             Debug.Log("MainScreenUI Init");
-            ReactiveProperty<TestData> data = new ReactiveProperty<TestData>();
-            data.Subscribe(OnPlayerDataTest);
-            data.Value = new TestData() { value = "test" };
+            // ReactiveProperty<TestData> data = new ReactiveProperty<TestData>();
+            // data.Subscribe(OnPlayerDataTest);
+            // data.Value = new TestData() { value = "test" };
             // ReactivePropertySpecificTests.RunReactivePropertyTests();
             //ReactivePropertyDiagnosticTests.RunAllTests();
             // HReactiveProperty<int> test = new HReactiveProperty<int>();
