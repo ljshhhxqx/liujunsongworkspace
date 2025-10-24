@@ -11,7 +11,7 @@ using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Skill;
 using UnityEngine;
-using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
+using AnimationState = AOTScripts.Data.AnimationState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {

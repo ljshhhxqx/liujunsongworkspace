@@ -1,4 +1,5 @@
-﻿using HotUpdate.Scripts.UI.UIs.Panel.Item;
+﻿using AOTScripts.Data;
+using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using TMPro;
 using UnityEngine;
 

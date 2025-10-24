@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using AOTScripts.Data;
 using AOTScripts.Tool.ObjectPool;
-using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using MemoryPack;
 using UnityEngine;
-using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
+using AnimationState = AOTScripts.Data.AnimationState;
 using CooldownSnapshotData = HotUpdate.Scripts.Network.PredictSystem.Data.CooldownSnapshotData;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.State
@@ -31,30 +30,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.State
                        PlayerAnimationCooldownState.IsEqual(playerInputState.PlayerAnimationCooldownState);
             }
             return false;
-        }
-    }
-
-    public struct PlayerInputStateData : IPoolObject
-    {
-        public Vector3 InputMovement;   // 输入的移动
-        public AnimationState InputAnimations; // 输入指令的动画
-        public AnimationState Command; // 指令
-        public Vector3 Velocity; // 速度
-        public void Init()
-        {
-        }
-
-        public void Clear()
-        {
-            InputMovement = Vector3.zero;
-            InputAnimations = AnimationState.None;
-            Command = AnimationState.None;
-            Velocity = Vector3.zero;
-        }
-        
-        public override string ToString()
-        {
-            return $"InputMovement: {InputMovement}, InputAnimations: {InputAnimations}, Command: {Command} , Velocity: {Velocity}";
         }
     }
 

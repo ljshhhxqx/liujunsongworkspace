@@ -1,4 +1,5 @@
 ﻿using System;
+using AOTScripts.Data;
 using Cysharp.Threading.Tasks;
 using TMPro;
 using UniRx;

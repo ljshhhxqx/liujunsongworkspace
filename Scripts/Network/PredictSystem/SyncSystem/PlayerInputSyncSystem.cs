@@ -19,7 +19,7 @@ using UniRx;
 using UnityEngine;
 using VContainer;
 using AnimationEvent = HotUpdate.Scripts.Config.ArrayConfig.AnimationEvent;
-using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
+using AnimationState = AOTScripts.Data.AnimationState;
 using CooldownSnapshotData = HotUpdate.Scripts.Network.PredictSystem.Data.CooldownSnapshotData;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
 using InputCommand = HotUpdate.Scripts.Network.PredictSystem.Data.InputCommand;

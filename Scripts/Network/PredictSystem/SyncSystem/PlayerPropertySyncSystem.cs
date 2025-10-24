@@ -18,7 +18,7 @@ using MemoryPack;
 using Mirror;
 using UnityEngine;
 using VContainer;
-using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
+using AnimationState = AOTScripts.Data.AnimationState;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
 using PropertyAttackCommand = HotUpdate.Scripts.Network.PredictSystem.Data.PropertyAttackCommand;
 using PropertyAutoRecoverCommand = HotUpdate.Scripts.Network.PredictSystem.Data.PropertyAutoRecoverCommand;

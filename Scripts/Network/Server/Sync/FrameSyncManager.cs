@@ -9,7 +9,7 @@ using Network.NetworkMes;
 using Tool.Message;
 using UnityEngine;
 using VContainer;
-using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
+using AnimationState = AOTScripts.Data.AnimationState;
 
 namespace HotUpdate.Scripts.Network.Server.Sync
 {

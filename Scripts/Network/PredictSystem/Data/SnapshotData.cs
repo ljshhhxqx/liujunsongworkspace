@@ -8,7 +8,7 @@ using MemoryPack;
 using UniRx;
 using UnityEngine;
 using AnimationEvent = HotUpdate.Scripts.Config.ArrayConfig.AnimationEvent;
-using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
+using AnimationState = AOTScripts.Data.AnimationState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Data
 {

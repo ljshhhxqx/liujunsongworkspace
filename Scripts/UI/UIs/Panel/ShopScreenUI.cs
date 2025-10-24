@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using HotUpdate.Scripts.Network.PredictSystem.UI;
+using AOTScripts.Data;
+using AOTScripts.Data.UI;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;

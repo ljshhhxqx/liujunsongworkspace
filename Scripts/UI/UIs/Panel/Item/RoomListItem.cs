@@ -1,3 +1,4 @@
+using AOTScripts.Data;
 using AOTScripts.Tool;
 using TMPro;
 using UI.UIs.Common;

@@ -15,7 +15,7 @@ using MemoryPack;
 using Mirror;
 using UnityEngine;
 using VContainer;
-using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
+using AnimationState = AOTScripts.Data.AnimationState;
 using Object = UnityEngine.Object;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem

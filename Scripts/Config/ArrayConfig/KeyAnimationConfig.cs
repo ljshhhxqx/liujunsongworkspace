@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using HotUpdate.Scripts.Common;
 using Newtonsoft.Json;
 using UnityEngine;
-using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
+using AnimationState = AOTScripts.Data.AnimationState;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
 {

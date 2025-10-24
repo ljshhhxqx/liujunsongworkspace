@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using AOTScripts.Data;
-using Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
-using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
 using Mirror;
-using Tool.GameEvent;
 using UnityEngine;
-using UnityEngine.Serialization;
-using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
+using AnimationState = AOTScripts.Data.AnimationState;
 
 namespace Network.NetworkMes
 {

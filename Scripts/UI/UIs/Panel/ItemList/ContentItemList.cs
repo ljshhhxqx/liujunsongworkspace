@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using AOTScripts.Data;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using UnityEngine;

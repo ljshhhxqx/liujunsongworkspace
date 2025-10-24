@@ -1,5 +1,5 @@
 using System;
-using HotUpdate.Scripts.Network.PredictSystem.UI;
+using AOTScripts.Data.UI;
 using UI.UIBase;
 using UniRx;
 using UnityEngine;

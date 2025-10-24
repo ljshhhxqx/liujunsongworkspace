@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Data;
+using AOTScripts.Data.UI;
 using Data;
 using Game.Map;
 using HotUpdate.Scripts.Config.ArrayConfig;
@@ -11,7 +12,6 @@ using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.PredictSystem.Data;
-using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Tool.GameEvent;

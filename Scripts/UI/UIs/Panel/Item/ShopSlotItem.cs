@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Globalization;
+using AOTScripts.Data;
+using AOTScripts.Data.UI;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
-using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
 using TMPro;

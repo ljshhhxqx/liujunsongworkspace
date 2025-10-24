@@ -1,5 +1,4 @@
 ﻿using System.Threading;
-using HotUpdate.Scripts.Network.PredictSystem.UI;
 using HotUpdate.Scripts.Tool.Coroutine;
 using UnityEngine;
 

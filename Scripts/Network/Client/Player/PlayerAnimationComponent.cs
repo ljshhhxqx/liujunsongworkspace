@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using AOTScripts.Data;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
@@ -11,9 +12,8 @@ using Network.NetworkMes;
 using UniRx;
 using UnityEngine;
 using VContainer;
-using static HotUpdate.Scripts.Config.JsonConfig.AnimationState;
 using AnimationInfo = HotUpdate.Scripts.Config.ArrayConfig.AnimationInfo;
-using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
+using AnimationState = AOTScripts.Data.AnimationState;
 
 namespace HotUpdate.Scripts.Network.Client.Player
 {
@@ -51,7 +51,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         // 动画状态
         [SyncVar(hook = nameof(OnRequestedAnimationStateChanged))]
-        private AnimationState _requestAnimationState = Idle;
+        private AnimationState _requestAnimationState = AnimationState.Idle;
         [SyncVar(hook = nameof(OnNowAnimationStateChanged))]
         private AnimationState _nowAnimationState;
 
@@ -125,7 +125,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 case AnimationState.Jump:
                     _animator.CrossFadeInFixedTime(Jump, 0.1f);
                     break;
-                case SprintJump:
+                case AnimationState.SprintJump:
                     _animator.CrossFadeInFixedTime(JumpMove, 0.1f);
                     break;
                 case AnimationState.Roll:
@@ -133,7 +133,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     Debug.Log("Roll");
                     _animator.CrossFadeInFixedTime(Roll, 0.1f);
                     break;
-                case Attack:
+                case AnimationState.Attack:
                     IsPlayingSpecialAction = true;
                     Debug.Log("Attack");
                     RequestAttack();
@@ -142,7 +142,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     IsPlayingSpecialAction = true;
                     _animator.CrossFade(Hit, 0.01f);
                     break;
-                case Dead:
+                case AnimationState.Dead:
                     IsPlayingSpecialAction = true;
                     _animator.CrossFade(Death, 0.01f);
                     break;
@@ -153,7 +153,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         public bool CanPlayAnimation(AnimationState newState)
         {
             // 已死亡状态不能播放任何动画
-            if (_currentState.Value == Dead)
+            if (_currentState.Value == AnimationState.Dead)
                 return false;
             
             var currentInfo = _jsonDataConfig.GetAnimationInfo(_currentState.Value);
@@ -173,7 +173,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                     return currentInfo.canBeInterrupted && newInfo.priority > currentInfo.priority;
                 case AnimationType.Combo:
                     // 连击中的动画只能继续连击或被高优先级动画打断（如受击）
-                    if (newState == Attack)
+                    if (newState == AnimationState.Attack)
                     {
                         return _canComboSync;
                     }
@@ -212,9 +212,9 @@ namespace HotUpdate.Scripts.Network.Client.Player
         {
             _lastEnvironmentState = environmentState;
             // 优先处理特殊状态
-            if (_currentState.Value == Dead)
+            if (_currentState.Value == AnimationState.Dead)
             {
-                return Dead;
+                return AnimationState.Dead;
             }
 
             if (environmentState == PlayerEnvironmentState.InAir && groundDistance >= 0.25f)
@@ -224,15 +224,15 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
             if (environmentState == PlayerEnvironmentState.OnGround)
             {
-                if (input.isAttackRequested && CanPlayAnimation(Attack))
-                    return Attack;
+                if (input.isAttackRequested && CanPlayAnimation(AnimationState.Attack))
+                    return AnimationState.Attack;
 
                 if (input.isRollRequested && CanPlayAnimation(AnimationState.Roll))
                     return AnimationState.Roll;
 
                 if (input.isJumpRequested)
                 {
-                    var jumpState = _currentState.Value == Sprint ? SprintJump : AnimationState.Jump;
+                    var jumpState = _currentState.Value == AnimationState.Sprint ? AnimationState.SprintJump : AnimationState.Jump;
                     if (CanPlayAnimation(jumpState))
                         return jumpState;
                 }
@@ -244,7 +244,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             {
                 if (input.isJumpRequested)
                 {
-                    var jumpState = _currentState.Value == Sprint ? SprintJump : AnimationState.Jump;
+                    var jumpState = _currentState.Value == AnimationState.Sprint ? AnimationState.SprintJump : AnimationState.Jump;
                     if (CanPlayAnimation(jumpState))
                         return jumpState;
                 }
@@ -259,10 +259,10 @@ namespace HotUpdate.Scripts.Network.Client.Player
             // 处理移动状态
             if (input.playerInputMovement.magnitude > 0)
             {
-                return input.isSprinting ? Sprint : Move;
+                return input.isSprinting ? AnimationState.Sprint : AnimationState.Move;
             }
 
-            return Idle;
+            return AnimationState.Idle;
         }
 
         private void UpdateAnimationParameters(PlayerInputCommand input, PlayerEnvironmentState environmentState)
@@ -274,10 +274,10 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         public bool IsSpecialActionState(AnimationState state)
         {
-            return state is Dead or AnimationState.Hit or Attack or AnimationState.Roll;
+            return state is AnimationState.Dead or AnimationState.Hit or AnimationState.Attack or AnimationState.Roll;
         }
         
-        private readonly ReactiveProperty<AnimationState> _currentState = new ReactiveProperty<AnimationState>(Idle);
+        private readonly ReactiveProperty<AnimationState> _currentState = new ReactiveProperty<AnimationState>(AnimationState.Idle);
         public IReadOnlyReactiveProperty<AnimationState> CurrentState => _currentState;
 
         [SyncVar]
@@ -300,7 +300,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             _playerNotifyManager = FindObjectOfType<PlayerNotifyManager>();
             _networkAnimator = GetComponent<NetworkAnimator>();
             _uiManager = uiManager;
-            _attackInfo = _jsonDataConfig.GetAnimationInfo(Attack);
+            _attackInfo = _jsonDataConfig.GetAnimationInfo(AnimationState.Attack);
             _playerPropertyComponent = GetComponent<PlayerPropertyComponent>();
             _animationConfig = configProvider.GetConfig<AnimationConfig>();
             _animator = GetComponent<Animator>();
@@ -349,11 +349,11 @@ namespace HotUpdate.Scripts.Network.Client.Player
             }
 
             var stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
-            var newState = Idle;
+            var newState = AnimationState.Idle;
 
             if (stateInfo.IsName(JumpMove))
             {
-                newState = SprintJump;
+                newState = AnimationState.SprintJump;
             }
             else if (stateInfo.IsName(Jump))
             {
@@ -365,7 +365,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             }
             else if (stateInfo.IsName(Attack1) || stateInfo.IsName(Attack2) || stateInfo.IsName(Attack3))
             {
-                newState = Attack;
+                newState = AnimationState.Attack;
             }
             else if (stateInfo.IsName(Falling))
             {
@@ -379,16 +379,16 @@ namespace HotUpdate.Scripts.Network.Client.Player
             {
                 if (_animator.GetFloat(InputMagnitude) > 0f)
                 {
-                    newState = _animator.GetBool(IsSprinting) ? Sprint : Move;
+                    newState = _animator.GetBool(IsSprinting) ? AnimationState.Sprint : AnimationState.Move;
                 }
                 else
                 {
-                    newState = Idle;
+                    newState = AnimationState.Idle;
                 }
             }
             else if (stateInfo.IsName(Death))
             {
-                newState = Dead;
+                newState = AnimationState.Dead;
             }
             else if (stateInfo.IsName(Hit))
             {
@@ -402,7 +402,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             IsPlayingSpecialAction = IsSpecialActionState(newState);
             NowAnimationState = newState;
             _animator.SetBool(SpecialAction, IsPlayingSpecialAction);
-            if (_currentState.Value != Attack)
+            if (_currentState.Value != AnimationState.Attack)
             {
                 _playerPropertyComponent.DoAnimation(_currentState.Value);
             }
@@ -410,7 +410,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
 
         public bool IsMovingState()
         {
-            return _currentState.Value is Move or Sprint or Idle or AnimationState.Landed;
+            return _currentState.Value is AnimationState.Move or AnimationState.Sprint or AnimationState.Idle or AnimationState.Landed;
         }
         public void SetInputMagnitude(float magnitude)  
         {
@@ -439,7 +439,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         
         public void SetHit()
         {
-            if (_currentState.Value is AnimationState.Hit or Dead)
+            if (_currentState.Value is AnimationState.Hit or AnimationState.Dead)
             {
                 return;
             }
@@ -449,7 +449,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         
         public void SetDeath()
         {
-            if (_currentState.Value is Dead)
+            if (_currentState.Value is AnimationState.Dead)
             {
                 return;
             }
@@ -467,7 +467,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         {
             if (_currentComboSync > 0)
             {
-                if (_currentState.Value == Attack || IsMovingState())
+                if (_currentState.Value == AnimationState.Attack || IsMovingState())
                 {
                     //Debug.Log($"Request Attack - Combo: {_currentComboSync}, CanCombo: {_canComboSync}, CurrentState: {_currentState}");
                     StartAttack();
@@ -487,7 +487,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             _comboWindowCts = new CancellationTokenSource();
             _currentComboSync++;
             _canComboSync = false;
-            _playerPropertyComponent.DoAnimation(Attack);
+            _playerPropertyComponent.DoAnimation(AnimationState.Attack);
 
             // 触发对应段数的攻击动画
             switch (_currentComboSync)
@@ -549,7 +549,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         {
             _canComboSync = false;
             _currentComboSync = 0;
-            CmdDoAnimation(Attack);
+            CmdDoAnimation(AnimationState.Attack);
         }
         
         [Command]
@@ -584,7 +584,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             }
             // var currentInfo = _playerDataConfig.GetAnimationInfo(_currentState.Value);
             // var targetInfo = _playerDataConfig.GetAnimationInfo(animationState);
-            if (animationState == Attack && _currentComboSync > 0)
+            if (animationState == AnimationState.Attack && _currentComboSync > 0)
             {
                 return _canComboSync;
             }

@@ -1,6 +1,6 @@
 ﻿using HotUpdate.Scripts.Network.PredictSystem.Data;
 using MemoryPack;
-using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
+using AnimationState = AOTScripts.Data.AnimationState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.State
 {

@@ -16,7 +16,7 @@ using Tool.GameEvent;
 using UniRx;
 using UnityEngine;
 using VContainer;
-using AnimationState = HotUpdate.Scripts.Config.JsonConfig.AnimationState;
+using AnimationState = AOTScripts.Data.AnimationState;
 using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem

@@ -1,4 +1,5 @@
 ﻿using System;
+using AOTScripts.Data;
 using HotUpdate.Scripts.Audio;
 using TMPro;
 using UniRx;
