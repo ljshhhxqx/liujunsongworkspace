@@ -44,7 +44,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         [Inject]
         private void Init(UIManager uiManager, PlayFabRoomManager playFabRoomManager, PlayFabAccountManager playFabAccountManager)
         {
-            // TODO: Implement RoomScreenUI
             _uiManager = uiManager;
             _playFabAccountManager = playFabAccountManager;
             _playFabRoomManager = playFabRoomManager;

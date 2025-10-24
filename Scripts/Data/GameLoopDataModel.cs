@@ -14,20 +14,4 @@ namespace HotUpdate.Scripts.Data
         public static readonly ReactiveProperty<MapType> GameSceneName = new ReactiveProperty<MapType>();
         public static readonly ReactiveProperty<GameResultData> GameResult = new ReactiveProperty<GameResultData>();
     }
-
-    [Serializable]
-    public struct GameLoopData
-    {
-        public GameMode GameMode;
-        public int TargetScore;
-        public float TimeLimit;
-        public bool IsStartGame;
-    }
-
-    public enum GameResult
-    {
-        None,
-        Win,
-        Lose,
-    }
 }

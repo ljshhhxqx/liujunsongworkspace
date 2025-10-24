@@ -75,6 +75,9 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             quitButton.BindDebouncedListener(OnQuitButtonClick);
             friendButton.BindDebouncedListener(OnFriendButtonClick);
             Debug.Log("MainScreenUI Init");
+            ReactiveProperty<TestData> data = new ReactiveProperty<TestData>();
+            data.Subscribe(OnPlayerDataTest);
+            data.Value = new TestData() { value = "test" };
             // ReactivePropertySpecificTests.RunReactivePropertyTests();
             //ReactivePropertyDiagnosticTests.RunAllTests();
             // HReactiveProperty<int> test = new HReactiveProperty<int>();
@@ -102,15 +105,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
 
         private void OnPlayerDataTest<T>(T data)
         {
-            if (data is PlayerInternalData internalData)
+            if (data is TestData test )
             {
-                Debug.Log($"PlayerDataTest: {internalData}");
+                Debug.Log($"PlayerDataTest: {test.value}");
             }
-        }
-
-        private void ActionTest<T>(Action<T> action, T param)
-        {
-            action?.Invoke(param);
         }
 
         private void OnFriendButtonClick()
