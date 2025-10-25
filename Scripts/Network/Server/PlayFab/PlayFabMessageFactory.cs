@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AOTScripts.Data;
 using HotUpdate.Scripts.Network.Server.PlayFab;
 using Newtonsoft.Json;
 using UnityEngine;
