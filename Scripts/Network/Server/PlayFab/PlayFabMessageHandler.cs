@@ -161,7 +161,8 @@ namespace Network.Server.PlayFab
                     Debug.Log($"Received 0 new messages");
                     return;
                 }
-                var messages = JsonUtility.FromJson<Message[]>(result.FunctionResult.ToString());
+                var newMessages = JsonUtility.FromJson<GetNewMessagesResponse>(value.ToString());
+                var messages = newMessages.messages;
                 Debug.Log($"Received {messages.Length} new messages");
                 ProcessMessages(messages);
             }
