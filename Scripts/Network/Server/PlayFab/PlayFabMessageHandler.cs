@@ -162,7 +162,7 @@ namespace Network.Server.PlayFab
                     return;
                 }
                 Debug.Log($"Received {value} new messages");
-                var newMessages = JsonConvert.DeserializeObject<GetNewMessagesResponse>(value.ToString());
+                var newMessages = JsonUtility.FromJson<GetNewMessagesResponse>(result.FunctionResult.ToString());
                 Debug.Log($"Received {newMessages.messages.Length} new messages");
                 ProcessMessages(newMessages.messages);
             }
