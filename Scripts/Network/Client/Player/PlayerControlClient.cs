@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using AOTScripts.Data;
+using AOTScripts.Data.NetworkMes;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Inject;
-using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.Server.Sync;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
-using Tool.GameEvent;
 using UI.UIBase;
 using UniRx;
 using UnityEngine;

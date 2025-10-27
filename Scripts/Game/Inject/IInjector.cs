@@ -1,4 +1,5 @@
-﻿using HotUpdate.Scripts.Config.ArrayConfig;
+﻿using AOTScripts.Data;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Game.Inject

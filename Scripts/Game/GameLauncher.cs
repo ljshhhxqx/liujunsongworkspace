@@ -1,6 +1,7 @@
 ﻿using System;
 using AOTScripts.Data;
 using AOTScripts.Tool;
+using AOTScripts.Tool.GameEvent;
 using Cysharp.Threading.Tasks;
 using Data;
 using Game;
@@ -23,7 +24,6 @@ using PlayFab;
 using PlayFab.ClientModels;
 using PlayFab.CloudScriptModels;
 using Sirenix.OdinInspector;
-using Tool.GameEvent;
 using UI.UIBase;
 using UI.UIs;
 using UI.UIs.Exception;

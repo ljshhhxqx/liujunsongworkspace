@@ -1,6 +1,5 @@
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Tool.GameEvent;
-using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
 

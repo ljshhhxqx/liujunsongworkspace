@@ -9,6 +9,7 @@ using Data;
 using DG.Tweening;
 using Game;
 using HotUpdate.Scripts.Data;
+using HotUpdate.Scripts.Game;
 using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Static;
 using HotUpdate.Scripts.UI.UIBase;

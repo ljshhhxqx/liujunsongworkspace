@@ -1,8 +1,9 @@
-﻿using HotUpdate.Scripts.Audio;
+﻿using AOTScripts.Data;
+using AOTScripts.Data.NetworkMes;
+using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Game.Map;
-using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server;

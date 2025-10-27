@@ -1,6 +1,6 @@
-﻿using HotUpdate.Scripts.Config.JsonConfig;
+﻿using AOTScripts.Data.NetworkMes;
+using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Inject;
-using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.Server.Sync;
 using Mirror;
 using VContainer;

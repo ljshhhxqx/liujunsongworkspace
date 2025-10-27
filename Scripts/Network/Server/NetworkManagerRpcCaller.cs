@@ -2,7 +2,6 @@
 using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
 using Sirenix.OdinInspector;
-using Tool.GameEvent;
 using VContainer;
 
 namespace HotUpdate.Scripts.Network.Server

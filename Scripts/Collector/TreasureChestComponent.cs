@@ -1,5 +1,6 @@
 using System;
 using AOTScripts.Data;
+using AOTScripts.Tool.GameEvent;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config.ArrayConfig;
@@ -9,7 +10,6 @@ using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
 using Mirror;
 using Sirenix.OdinInspector;
-using Tool.GameEvent;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;

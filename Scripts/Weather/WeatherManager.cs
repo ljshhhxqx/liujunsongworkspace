@@ -15,7 +15,6 @@ using HotUpdate.Scripts.UI.UIs.Overlay;
 using HotUpdate.Scripts.Weather.WeatherEffects;
 using HotUpdate.Scripts.Weather.WeatherSettings;
 using Mirror;
-using Tool.GameEvent;
 using Tool.Message;
 using UI.UIBase;
 using UniRx;

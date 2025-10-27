@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using AOTScripts.Data;
 using AOTScripts.Tool.ECS;
+using AOTScripts.Tool.GameEvent;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Config.ArrayConfig;
@@ -10,7 +11,6 @@ using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
 using MemoryPack;
 using Mirror;
-using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
 

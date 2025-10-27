@@ -5,7 +5,6 @@ using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
 using Sirenix.OdinInspector;
-using Tool.GameEvent;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Serialization;

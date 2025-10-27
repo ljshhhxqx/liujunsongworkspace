@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AOTScripts.Data;
 using AOTScripts.Tool.Coroutine;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Data;

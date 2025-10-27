@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading;
 using AOTScripts.Data;
+using AOTScripts.Data.NetworkMes;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Inject;
-using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.Server.Sync;
 using HotUpdate.Scripts.UI.UIBase;
 using Mirror;

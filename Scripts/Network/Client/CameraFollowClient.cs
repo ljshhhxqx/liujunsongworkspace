@@ -1,9 +1,9 @@
 ﻿using System;
+using AOTScripts.Tool.GameEvent;
 using Game.Map;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
-using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
 

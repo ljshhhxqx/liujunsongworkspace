@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using AOTScripts.Data;
+using AOTScripts.Data.NetworkMes;
+using AOTScripts.Tool.Message;
 using DG.Tweening;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Client.Player;
-using HotUpdate.Scripts.Network.NetworkMes;
 using Mirror;
 using Tool.Message;
 using UnityEngine;

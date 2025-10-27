@@ -1,10 +1,11 @@
 ﻿using System;
+using AOTScripts.Data;
+using AOTScripts.Tool.GameEvent;
 using Cysharp.Threading.Tasks;
 using Game.Inject;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
-using Tool.GameEvent;
 using UI.UIBase;
 using UI.UIs;
 using UI.UIs.Exception;
@@ -12,7 +13,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer;
 
-namespace Game
+namespace HotUpdate.Scripts.Game
 {
     public class GameSceneManager
     {

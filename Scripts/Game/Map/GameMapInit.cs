@@ -1,4 +1,5 @@
 using System;
+using AOTScripts.Tool.GameEvent;
 using Cysharp.Threading.Tasks;
 using Game.Map;
 using HotUpdate.Scripts.Game.Inject;
@@ -6,7 +7,6 @@ using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
 using Mirror;
 using Sirenix.OdinInspector;
-using Tool.GameEvent;
 using UI.UIBase;
 using UI.UIs.Exception;
 using UnityEngine;

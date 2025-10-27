@@ -3,6 +3,7 @@ using AOTScripts.Tool.ECS;
 using Game;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Game;
 using HotUpdate.Scripts.Game.Inject;
 using Mirror;
 using UnityEngine;
@@ -54,11 +55,5 @@ namespace HotUpdate.Scripts.Collector
         {
             
         }
-    }
-
-    public interface IPickable
-    {
-        public void RequestPick(int pickerConnectionId);
-        uint SceneItemId { get; }  
     }
 }

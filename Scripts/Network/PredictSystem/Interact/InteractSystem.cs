@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using AOTScripts.Data;
 using AOTScripts.Tool.ECS;
+using AOTScripts.Tool.GameEvent;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Collector;
@@ -12,7 +13,6 @@ using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
 using MemoryPack;
 using Mirror;
-using Tool.GameEvent;
 using UnityEngine;
 using VContainer;
 

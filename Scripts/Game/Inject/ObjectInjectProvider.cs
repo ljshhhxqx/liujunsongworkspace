@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using AOTScripts.Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using UnityEngine;
 using VContainer;

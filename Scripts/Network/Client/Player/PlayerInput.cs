@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using AOTScripts.Data;
+using AOTScripts.Data.NetworkMes;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Inject;
-using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.Server.Sync;
 using UnityEngine;
 using VContainer;
