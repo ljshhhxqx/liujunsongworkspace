@@ -1,19 +1,17 @@
 ﻿using AOTScripts.Data;
-using AOTScripts.Tool;
-using AOTScripts.Tool.UniRxTool;
 using UniRx;
 
 namespace HotUpdate.Scripts.Weather
 {
     public static class WeatherDataModel
     {
-        public static HReactiveProperty<float> time;
-        public static HReactiveProperty<WeatherInfo> weatherInfo;
+        public static ReactiveProperty<float> time;
+        public static ReactiveProperty<WeatherInfo> weatherInfo;
         
         public static void Init()
         {
-            time = new HReactiveProperty<float>();
-            weatherInfo = new HReactiveProperty<WeatherInfo>();
+            time = new ReactiveProperty<float>();
+            weatherInfo = new ReactiveProperty<WeatherInfo>();
         }
 
         public static void Dispose()

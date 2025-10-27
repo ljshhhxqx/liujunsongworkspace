@@ -6,7 +6,6 @@ using AOTScripts.Data.State;
 using AOTScripts.Data.UI;
 using AOTScripts.Tool;
 using AOTScripts.Tool.Coroutine;
-using AOTScripts.Tool.GameEvent;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Common;

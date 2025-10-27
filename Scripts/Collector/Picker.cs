@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using AOTScripts.Data;
 using AOTScripts.Tool.ECS;
-using AOTScripts.Tool.GameEvent;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Config.ArrayConfig;

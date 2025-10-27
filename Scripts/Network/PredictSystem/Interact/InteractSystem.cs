@@ -4,7 +4,6 @@ using System.Text;
 using System.Threading;
 using AOTScripts.Data;
 using AOTScripts.Tool.ECS;
-using AOTScripts.Tool.GameEvent;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Collector;

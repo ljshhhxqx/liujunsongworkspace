@@ -3,7 +3,6 @@ using System.Threading;
 using AOTScripts.Data;
 using AOTScripts.Data.NetworkMes;
 using AOTScripts.Tool;
-using AOTScripts.Tool.GameEvent;
 using AOTScripts.Tool.Message;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Audio;

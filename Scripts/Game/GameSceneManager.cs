@@ -1,6 +1,5 @@
 ﻿using System;
 using AOTScripts.Data;
-using AOTScripts.Tool.GameEvent;
 using Cysharp.Threading.Tasks;
 using Game.Inject;
 using HotUpdate.Scripts.Config.ArrayConfig;

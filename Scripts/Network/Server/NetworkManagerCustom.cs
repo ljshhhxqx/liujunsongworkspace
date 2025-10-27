@@ -4,7 +4,6 @@ using System.Linq;
 using AOTScripts.Data;
 using AOTScripts.Data.NetworkMes;
 using AOTScripts.Data.UI;
-using AOTScripts.Tool.GameEvent;
 using Game.Map;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
@@ -18,7 +17,7 @@ using Mirror;
 using UniRx;
 using UnityEngine;
 using VContainer;
-using GameInfo = AOTScripts.Tool.GameEvent.GameInfo;
+using GameInfo = HotUpdate.Scripts.Tool.GameEvent.GameInfo;
 using PlayerInGameData = HotUpdate.Scripts.Network.Server.InGame.PlayerInGameData;
 using Random = UnityEngine.Random;
 

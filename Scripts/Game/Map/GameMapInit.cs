@@ -1,5 +1,4 @@
 using System;
-using AOTScripts.Tool.GameEvent;
 using Cysharp.Threading.Tasks;
 using Game.Map;
 using HotUpdate.Scripts.Game.Inject;

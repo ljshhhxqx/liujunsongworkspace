@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using AOTScripts.Tool;
-using AOTScripts.Tool.GameEvent;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Tool.GameEvent;
 using TMPro;

@@ -3,7 +3,7 @@ using AOTScripts.Data;
 using Mirror;
 using UnityEngine;
 
-namespace AOTScripts.Tool.GameEvent
+namespace HotUpdate.Scripts.Tool.GameEvent
 {
     /// <summary>
     /// GameEvent适合处理单端通信(比如客户端-客户端)

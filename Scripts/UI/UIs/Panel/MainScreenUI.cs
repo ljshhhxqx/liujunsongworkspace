@@ -1,11 +1,10 @@
 ﻿using System;
-using AOTScripts.Data;
 using AOTScripts.Tool;
 using AOTScripts.Tool.Coroutine;
-using AOTScripts.Tool.UniRxTool;
 using Data;
 using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.Server.PlayFab;
+using HotUpdate.Scripts.Tool.ReactiveProperty;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.SecondPanel;
 using TMPro;
@@ -75,6 +74,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             quitButton.BindDebouncedListener(OnQuitButtonClick);
             friendButton.BindDebouncedListener(OnFriendButtonClick);
             Debug.Log("MainScreenUI Init");
+            HReactiveProperty<TestData> testData = new HReactiveProperty<TestData>();
+            testData.Subscribe(OnPlayerDataTest);
+            testData.Value = new TestData() { value = "test" };
+            Debug.Log("testData Init");
             // ReactiveProperty<TestData> data = new ReactiveProperty<TestData>();
             // data.Subscribe(OnPlayerDataTest);
             // data.Value = new TestData() { value = "test" };

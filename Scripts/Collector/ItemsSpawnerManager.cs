@@ -6,7 +6,6 @@ using AOTScripts.Data;
 using AOTScripts.Data.State;
 using AOTScripts.Tool;
 using AOTScripts.Tool.ECS;
-using AOTScripts.Tool.GameEvent;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Common;

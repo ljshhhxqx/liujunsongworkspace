@@ -1,6 +1,5 @@
 using System;
 using AOTScripts.Tool.Coroutine;
-using AOTScripts.Tool.GameEvent;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Tool.GameEvent;

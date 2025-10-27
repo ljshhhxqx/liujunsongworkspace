@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using AOTScripts.Tool.GameEvent;
+using UnityEngine;
 
 namespace HotUpdate.Scripts.Tool.GameEvent
 {
@@ -11,7 +11,6 @@ namespace HotUpdate.Scripts.Tool.GameEvent
         
         public GameEventManager()
         {
-            //Debug.Log("GameEventManager created");
             GameEventExtensions.RegisterGameEventWriteRead();
         }
 
@@ -30,9 +29,6 @@ namespace HotUpdate.Scripts.Tool.GameEvent
             }
 
             _listenerMapping[listener] = internalListener;
-
-            //Debug.Log($"Subscribed to event {eventType.Name}");
-            //Debug.Log($"Listener count for event {eventType.Name}: {eventListeners[eventType].GetInvocationList().Length}");
         }
 
         public void Unsubscribe<T>(Action<T> listener) where T : IGameEvent
@@ -51,11 +47,11 @@ namespace HotUpdate.Scripts.Tool.GameEvent
                 }
 
                 _listenerMapping.Remove(listener);
-               // Debug.Log($"Unsubscribed from event {eventType.Name}");
+                Debug.Log($"Unsubscribed from event {eventType.Name}");
             }
             else
             {
-                //Debug.LogWarning($"Listener not found for event {eventType.Name}");
+                Debug.LogWarning($"Listener not found for event {eventType.Name}");
             }
         }
 
@@ -64,7 +60,7 @@ namespace HotUpdate.Scripts.Tool.GameEvent
             Type eventType = typeof(T);
             if (_eventListeners.TryGetValue(eventType, out var listener))
             {
-                //Debug.Log($"Publishing event {eventType.Name}");
+                Debug.Log($"Publishing event {eventType.Name}");
                 listener.Invoke(gameEvent);
             }
         }

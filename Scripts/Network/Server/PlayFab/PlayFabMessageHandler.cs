@@ -5,7 +5,6 @@ using System.Linq;
 using AOTScripts.Data;
 using AOTScripts.Tool;
 using AOTScripts.Tool.Coroutine;
-using AOTScripts.Tool.GameEvent;
 using Data;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Data;
