@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using AOTScripts.Data;
+using AOTScripts.Tool.Coroutine;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Data.PredictableObject;
-using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using Mirror;

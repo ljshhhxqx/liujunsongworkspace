@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Data;
 using AOTScripts.Tool;
+using AOTScripts.Tool.Coroutine;
 using Cysharp.Threading.Tasks;
 using Data;
 using Game;
@@ -10,7 +11,6 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.Server.InGame;
-using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel;
@@ -558,7 +558,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
 
         public void TryChangePlayerGameInfo(PlayerGameDuty duty = PlayerGameDuty.None, PlayerGameStatus status = PlayerGameStatus.None)
         {
-            var dutyEnum = Enum.Parse<PlayerGameDuty>(_currentGamePlayerInfo.playerDuty);
+            var dutyEnum = (PlayerGameDuty)Enum.Parse(typeof(PlayerGameDuty), _currentGamePlayerInfo.playerDuty);
             if (dutyEnum == duty)
             {
                 _uiManager.ShowTips("已经是该职位了");

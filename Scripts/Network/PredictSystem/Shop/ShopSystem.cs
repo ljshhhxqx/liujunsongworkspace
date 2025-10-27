@@ -1,16 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using HotUpdate.Scripts.Config.ArrayConfig;
-using HotUpdate.Scripts.Network.PredictSystem.Data;
-using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
-using HotUpdate.Scripts.Network.Server.InGame;
-using HotUpdate.Scripts.UI.UIs.Panel.Item;
-using MemoryPack;
-using Mirror;
-using UniRx;
-using UnityEngine;
-using VContainer;
+﻿using Mirror;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Shop
 {

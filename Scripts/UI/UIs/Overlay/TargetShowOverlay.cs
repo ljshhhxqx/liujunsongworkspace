@@ -1,7 +1,7 @@
 using System.Collections.Generic;
+using AOTScripts.Tool;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Tool.GameEvent;
-using HotUpdate.Scripts.Tool.Static;
 using TMPro;
 using Tool.GameEvent;
 using UI.UIBase;

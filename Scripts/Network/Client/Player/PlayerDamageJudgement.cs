@@ -3,7 +3,6 @@ using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.NetworkMes;
 using HotUpdate.Scripts.Network.Server.Sync;
 using Mirror;
-using Network.NetworkMes;
 using VContainer;
 
 namespace HotUpdate.Scripts.Network.Client.Player

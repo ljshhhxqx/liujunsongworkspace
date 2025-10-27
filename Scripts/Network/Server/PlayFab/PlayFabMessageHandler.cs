@@ -4,13 +4,13 @@ using System.IO;
 using System.Linq;
 using AOTScripts.Data;
 using AOTScripts.Tool;
+using AOTScripts.Tool.Coroutine;
 using Data;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.Server;
 using HotUpdate.Scripts.Network.Server.PlayFab;
-using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
 using Mirror;
@@ -274,7 +274,7 @@ namespace Network.Server.PlayFab
                         if (networkManager && gameStartConnectionMessage.targetPlayerInfo.playerId == PlayFabData.PlayFabId.Value)
                         {
                             Debug.Log($"Start game connection with {gameStartConnectionMessage.targetPlayerInfo.playerName}--{gameStartConnectionMessage.targetPlayerInfo.playerDuty}");
-                            var duty = Enum.Parse<PlayerGameDuty>(gameStartConnectionMessage.targetPlayerInfo.playerDuty);
+                            var duty = (PlayerGameDuty)Enum.Parse(typeof(PlayerGameDuty), gameStartConnectionMessage.targetPlayerInfo.playerDuty);
                             switch (duty)
                             {
                                 case PlayerGameDuty.Host:

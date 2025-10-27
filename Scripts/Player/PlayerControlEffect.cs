@@ -1,5 +1,5 @@
 ﻿using System.Threading;
-using HotUpdate.Scripts.Tool.Coroutine;
+using AOTScripts.Tool.Coroutine;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Player

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using AOTScripts.Data;
+using AOTScripts.Data.State;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Network.PredictSystem.State;
 using UnityEngine;
 using AnimationState = AOTScripts.Data.AnimationState;
-using PropertyCalculator = HotUpdate.Scripts.Network.PredictSystem.State.PropertyCalculator;
+using PropertyCalculator = AOTScripts.Data.State.PropertyCalculator;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using HotUpdate.Scripts.Network.PredictSystem.Data;
+using AOTScripts.Data;
 using Mirror;
 
 namespace HotUpdate.Scripts.Network.Item

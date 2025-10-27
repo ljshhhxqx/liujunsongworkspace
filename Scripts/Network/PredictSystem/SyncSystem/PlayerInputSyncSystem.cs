@@ -2,32 +2,29 @@
 using System.Collections.Generic;
 using System.Threading;
 using AOTScripts.Data;
+using AOTScripts.Data.State;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Network.Battle;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
-using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
-using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.Server.InGame;
 using MemoryPack;
 using Mirror;
 using UniRx;
 using UnityEngine;
 using VContainer;
-using AnimationEvent = HotUpdate.Scripts.Config.ArrayConfig.AnimationEvent;
+using AnimationEvent = AOTScripts.Data.AnimationEvent;
 using AnimationState = AOTScripts.Data.AnimationState;
-using CooldownSnapshotData = HotUpdate.Scripts.Network.PredictSystem.Data.CooldownSnapshotData;
-using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
-using InputCommand = HotUpdate.Scripts.Network.PredictSystem.Data.InputCommand;
-using PlayerAnimationCooldownState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerAnimationCooldownState;
-using PlayerGameStateData = HotUpdate.Scripts.Network.PredictSystem.State.PlayerGameStateData;
-using PlayerInputState = HotUpdate.Scripts.Network.PredictSystem.State.PlayerInputState;
-using PropertyAttackCommand = HotUpdate.Scripts.Network.PredictSystem.Data.PropertyAttackCommand;
-using PropertyServerAnimationCommand = HotUpdate.Scripts.Network.PredictSystem.Data.PropertyServerAnimationCommand;
+using CooldownSnapshotData = AOTScripts.Data.State.CooldownSnapshotData;
+using INetworkCommand = AOTScripts.Data.INetworkCommand;
+using InputCommand = AOTScripts.Data.InputCommand;
+using PlayerAnimationCooldownState = AOTScripts.Data.State.PlayerAnimationCooldownState;
+using PlayerGameStateData = AOTScripts.Data.State.PlayerGameStateData;
+using PlayerInputState = AOTScripts.Data.State.PlayerInputState;
+using PropertyAttackCommand = AOTScripts.Data.PropertyAttackCommand;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {

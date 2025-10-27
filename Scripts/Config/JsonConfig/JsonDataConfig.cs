@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Data;
+using AOTScripts.Tool;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
-using HotUpdate.Scripts.Tool.Static;
 using UnityEngine;
 using AnimationInfo = HotUpdate.Scripts.Config.ArrayConfig.AnimationInfo;
 using AnimationState = AOTScripts.Data.AnimationState;

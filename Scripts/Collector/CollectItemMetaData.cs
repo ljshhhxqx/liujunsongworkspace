@@ -1,5 +1,4 @@
-﻿using System;
-using HotUpdate.Scripts.Network.PredictSystem.Data;
+﻿using AOTScripts.Data;
 using MemoryPack;
 using UnityEngine;
 

@@ -1,6 +1,6 @@
-﻿using HotUpdate.Scripts.Network.PredictSystem.Calculator;
-using HotUpdate.Scripts.Network.PredictSystem.Data;
-using HotUpdate.Scripts.Network.PredictSystem.State;
+﻿using AOTScripts.Data;
+using AOTScripts.Data.State;
+using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {

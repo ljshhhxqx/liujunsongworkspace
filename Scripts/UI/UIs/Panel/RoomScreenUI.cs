@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using AOTScripts.Data;
 using AOTScripts.Tool;
+using AOTScripts.Tool.Coroutine;
 using Data;
 using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.Server.PlayFab;
-using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;

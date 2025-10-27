@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Data;
-using HotUpdate.Scripts.Tool.Static;
+using AOTScripts.Tool;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Random = UnityEngine.Random;

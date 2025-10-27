@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using HotUpdate.Scripts.Tool.Static;
+using AOTScripts.Tool;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;

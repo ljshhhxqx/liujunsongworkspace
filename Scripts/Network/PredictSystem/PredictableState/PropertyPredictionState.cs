@@ -1,24 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using AOTScripts.Data;
+using AOTScripts.Data.State;
 using AOTScripts.Data.UI;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
-using HotUpdate.Scripts.Network.PredictSystem.Data;
-using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Overlay;
-using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using UniRx;
 using UnityEngine;
 using VContainer;
 using AnimationState = AOTScripts.Data.AnimationState;
-using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
-using PropertyCalculator = HotUpdate.Scripts.Network.PredictSystem.State.PropertyCalculator;
+using INetworkCommand = AOTScripts.Data.INetworkCommand;
+using PropertyCalculator = AOTScripts.Data.State.PropertyCalculator;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {

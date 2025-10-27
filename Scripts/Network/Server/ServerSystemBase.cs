@@ -1,5 +1,4 @@
-﻿using HotUpdate.Scripts.Tool.Coroutine;
-using HotUpdate.Scripts.Tool.Message;
+﻿using HotUpdate.Scripts.Tool.Message;
 using Mirror;
 using Model;
 using Tool.Message;

@@ -6,7 +6,7 @@ using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Data;
-using Network.NetworkMes;
+using HotUpdate.Scripts.Network.NetworkMes;
 using Tool.GameEvent;
 using UnityEngine;
 

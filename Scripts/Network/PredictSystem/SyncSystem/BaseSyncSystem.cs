@@ -1,11 +1,11 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
-using HotUpdate.Scripts.Network.PredictSystem.Data;
+using AOTScripts.Data;
+using AOTScripts.Data.State;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
-using HotUpdate.Scripts.Network.PredictSystem.State;
 using Mirror;
 using UnityEngine;
-using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
+using INetworkCommand = AOTScripts.Data.INetworkCommand;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {

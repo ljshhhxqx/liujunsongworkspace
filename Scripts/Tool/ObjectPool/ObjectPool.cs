@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using HotUpdate.Scripts.Network.PredictSystem.State;
 
 namespace HotUpdate.Scripts.Tool.ObjectPool
 {

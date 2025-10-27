@@ -2,11 +2,11 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
+using AOTScripts.Data;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
-using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.Server.InGame;
@@ -16,8 +16,7 @@ using Tool.GameEvent;
 using UniRx;
 using UnityEngine;
 using VContainer;
-using AnimationState = AOTScripts.Data.AnimationState;
-using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
+using INetworkCommand = AOTScripts.Data.INetworkCommand;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {

@@ -6,7 +6,6 @@ namespace HotUpdate.Scripts.Tool.GameEvent
 {
     public class GameEventManager
     {
-        
         private readonly Dictionary<Type, Action<IGameEvent>> _eventListeners = new Dictionary<Type, Action<IGameEvent>>();
         private readonly Dictionary<Delegate, Action<IGameEvent>> _listenerMapping = new Dictionary<Delegate, Action<IGameEvent>>();
         

@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using AOTScripts.Data;
+using AOTScripts.Data.State;
 using HotUpdate.Scripts.Collector;
-using HotUpdate.Scripts.Config.ArrayConfig;
-using HotUpdate.Scripts.Network.Battle;
-using HotUpdate.Scripts.Network.PredictSystem.State;
-using MemoryPack;
 using UnityEngine;
 using AnimationState = AOTScripts.Data.AnimationState;
 

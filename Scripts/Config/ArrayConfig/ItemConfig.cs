@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AOTScripts.Data;
-using HotUpdate.Scripts.Tool.Static;
+using AOTScripts.Tool;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEditor;
@@ -329,26 +329,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             hashCode.Add(buffExtraData);
             hashCode.Add(propertyDesc);
             return hashCode.ToHashCode();
-        }
-    }
-
-    
-    
-    public static class PlayerItemTypeExtension
-    {
-        public static bool IsEquipment(this PlayerItemType itemType)
-        {
-            return itemType == PlayerItemType.Weapon || itemType == PlayerItemType.Armor;
-        }
-        
-        public static bool ShowProperty(this PlayerItemType itemType)
-        {
-            return itemType == PlayerItemType.Weapon || itemType == PlayerItemType.Armor || itemType == PlayerItemType.Consume;
-        }
-        
-        public static bool IsArmor(this PlayerItemType itemType)
-        {
-            return itemType == PlayerItemType.Weapon;
         }
     }   
 }

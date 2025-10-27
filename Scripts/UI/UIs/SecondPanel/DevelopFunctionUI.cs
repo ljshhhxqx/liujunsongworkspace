@@ -1,8 +1,7 @@
 ﻿using System;
 using AOTScripts.Data;
+using AOTScripts.Data.State;
 using HotUpdate.Scripts.Config.ArrayConfig;
-using HotUpdate.Scripts.Network.PredictSystem.Data;
-using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.UI.UIBase;
 using Mirror;
@@ -12,6 +11,7 @@ using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
+using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.UI.UIs.SecondPanel
 {
@@ -35,7 +35,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 .Subscribe(_ =>
                 {
                     var goldId = _itemConfig.GetGoldItemId();
-                    var count = UnityEngine.Random.Range(1, 1000);
+                    var count = Random.Range(1, 1000);
                     inputField.text = $"{goldId} {count}";
                 })
                 .AddTo(this);
@@ -43,7 +43,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 .Subscribe(_ =>
                 {
                     var score = _itemConfig.GetScoreItemId();
-                    var count = UnityEngine.Random.Range(1, 1000);
+                    var count = Random.Range(1, 1000);
                     inputField.text = $"{score} {count}";
                 })
                 .AddTo(this);
@@ -65,7 +65,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 .Subscribe(_ =>
                 {
                     var consume = _itemConfig.RandomConsumeItemId();
-                    var count = UnityEngine.Random.Range(1, 11);
+                    var count = Random.Range(1, 11);
                     inputField.text = $"{consume} {count}";
                 })
                 .AddTo(this);
@@ -73,7 +73,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 .Subscribe(_ =>
                 {
                     var item = _itemConfig.GetRandomItemId();
-                    var count = UnityEngine.Random.Range(1, 3);
+                    var count = Random.Range(1, 3);
                     inputField.text = $"{item} {count}";
                 })
                 .AddTo(this);

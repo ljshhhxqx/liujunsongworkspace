@@ -1,8 +1,8 @@
 ﻿using AOTScripts.Data;
+using AOTScripts.Tool;
 using AOTScripts.Tool.ObjectPool;
 using DG.Tweening;
 using HotUpdate.Scripts.Config;
-using HotUpdate.Scripts.Tool.Static;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using TMPro;
 using UnityEngine;

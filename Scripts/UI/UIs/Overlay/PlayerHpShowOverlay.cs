@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using AOTScripts.Data;
-using HotUpdate.Scripts.Tool.Static;
+using AOTScripts.Tool;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
 using UI.UIBase;

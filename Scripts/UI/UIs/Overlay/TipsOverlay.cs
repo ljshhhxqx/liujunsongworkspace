@@ -1,6 +1,6 @@
 ﻿using AOTScripts.Tool;
+using AOTScripts.Tool.Coroutine;
 using Cysharp.Threading.Tasks;
-using HotUpdate.Scripts.Tool.Coroutine;
 using Sirenix.OdinInspector;
 using Sirenix.Utilities;
 using TMPro;

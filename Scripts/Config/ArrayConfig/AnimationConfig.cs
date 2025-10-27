@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Serialization;
+using AnimationEvent = AOTScripts.Data.AnimationEvent;
 using AnimationState = AOTScripts.Data.AnimationState;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
@@ -159,67 +160,5 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public bool isOverrideCooldown;
         public bool isOverridePriority;
         public bool isOverrideAnimationSpeed;
-    }
-
-    public enum ActionType
-    {
-        None,
-        Movement,       // 移动类动作：立即响应 + 状态和解
-        Interaction,    // 交互类动作：需要服务器验证
-        Animation,      // 动画过渡：由状态机自动触发
-    }
-    
-    public enum AnimationType
-    {
-        Continuous,  // 持续性动画（待机、移动、奔跑）
-        Single,      // 一次性动画（跳跃、翻滚、受击、死亡）
-        Combo        // 连击动画（攻击）
-    }
-
-    public enum CooldownType
-    {
-        Normal,
-        KeyFrame,
-        Combo,
-        KeyFrameAndCombo,
-        None
-    }
-
-    public enum AnimationEvent
-    {
-        OnRollStart,
-        OnRollStop,
-        OnAttack,
-        OnSkillCastE,
-        OnSkillCastQ,
-    }
-
-    // 关键帧数据结构
-    [Serializable]
-    public struct KeyframeData
-    {
-        [Tooltip("事件触发时间（秒）")]
-        public float triggerTime;
-        [Tooltip("事件类型标识符")]
-        public AnimationEvent eventType;
-        [Tooltip("触发后是否重置冷却")]
-        public bool resetCooldown;
-        [Tooltip("触发后重置冷却的窗口时间(如果为0，那么将无法产生连招效果)")]
-        public float resetCooldownWindowTime;
-        [Tooltip("允许触发的时间误差")]
-        [Range(0f, 0.3f)]
-        public float tolerance;
-        [Tooltip("是否在服务器验证")]
-        public bool serverValidate;
-        
-        public KeyframeData(float triggerTime, AnimationEvent eventType, bool resetCooldown, float resetCooldownWindowTime, float tolerance, bool serverValidate)
-        {
-            this.triggerTime = triggerTime;
-            this.eventType = eventType;
-            this.resetCooldownWindowTime = resetCooldownWindowTime;
-            this.tolerance = tolerance;
-            this.resetCooldown = resetCooldown;
-            this.serverValidate = serverValidate;
-        }
     }
 }

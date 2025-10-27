@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using AOTScripts.CustomAttribute;
 using AOTScripts.Data;
+using AOTScripts.Data.State;
 using HotUpdate.Scripts.Collector;
-using HotUpdate.Scripts.Network.PredictSystem.State;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Sirenix.OdinInspector;

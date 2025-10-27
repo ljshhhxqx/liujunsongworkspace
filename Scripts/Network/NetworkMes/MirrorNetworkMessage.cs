@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using AOTScripts.Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
-using HotUpdate.Scripts.Network.PredictSystem.Data;
 using Mirror;
 using UnityEngine;
 using AnimationState = AOTScripts.Data.AnimationState;
 
-namespace Network.NetworkMes
+namespace HotUpdate.Scripts.Network.NetworkMes
 {
     [Serializable]
     public struct MirrorPlayerConnectMessage : NetworkMessage

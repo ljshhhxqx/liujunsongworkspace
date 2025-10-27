@@ -1,5 +1,5 @@
 using System;
-using HotUpdate.Scripts.Tool.Coroutine;
+using AOTScripts.Tool.Coroutine;
 using UI.UIBase;
 using UnityEngine;
 using VContainer;

@@ -1,6 +1,5 @@
 using System;
 using DG.Tweening;
-using HotUpdate.Scripts.Tool.Coroutine;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Random = UnityEngine.Random;

@@ -1,7 +1,7 @@
 using System;
+using AOTScripts.Tool.Coroutine;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Network.Data;
-using HotUpdate.Scripts.Tool.Coroutine;
 using HotUpdate.Scripts.Tool.GameEvent;
 using Network.Data;
 using PlayFab;

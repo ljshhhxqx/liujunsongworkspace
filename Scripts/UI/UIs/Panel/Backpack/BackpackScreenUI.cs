@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Data;
-using HotUpdate.Scripts.Config.ArrayConfig;
+using AOTScripts.Tool;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;

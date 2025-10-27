@@ -1,15 +1,15 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using AOTScripts.Data;
+using AOTScripts.Data.State;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Inject;
-using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
-using HotUpdate.Scripts.Network.PredictSystem.State;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using Mirror;
 using VContainer;
-using INetworkCommand = HotUpdate.Scripts.Network.PredictSystem.Data.INetworkCommand;
+using INetworkCommand = AOTScripts.Data.INetworkCommand;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {

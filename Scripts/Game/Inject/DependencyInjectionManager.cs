@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using AOTScripts.Tool.Coroutine;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Data;
-using HotUpdate.Scripts.Tool.Coroutine;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;

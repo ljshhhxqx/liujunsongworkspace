@@ -1,8 +1,9 @@
 ﻿using System.Linq;
+using AOTScripts.Data;
+using AOTScripts.Data.State;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Network.PredictSystem.State;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator

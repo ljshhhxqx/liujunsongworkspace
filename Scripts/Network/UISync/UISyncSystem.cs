@@ -2,9 +2,9 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
+using AOTScripts.Data;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Network.PredictSystem.Data;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using MemoryPack;

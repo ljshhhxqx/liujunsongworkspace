@@ -1,7 +1,7 @@
 ﻿using System;
+using AOTScripts.Tool.Coroutine;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using HotUpdate.Scripts.Tool.Coroutine;
 using UniRx;
 using UnityEngine;
 using VContainer;
