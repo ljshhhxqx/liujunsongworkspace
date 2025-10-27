@@ -67,7 +67,7 @@ namespace HotUpdate.Scripts.Network.Server
         {
             base.OnServerConnect(conn);
             _connectionToClients.Add(conn.connectionId, conn);
-            var hasHost = PlayFabData.PlayerList.Any(player => Enum.Parse<PlayerGameDuty>(player.playerDuty) == PlayerGameDuty.Host);
+            var hasHost = PlayFabData.PlayerList.Any(player => (PlayerGameDuty)Enum.Parse(typeof(PlayerGameDuty), player.playerDuty) == PlayerGameDuty.Host);
             Debug.Log($"玩家 【{conn.connectionId}】 已连接到服务器。");
             if (_connectionToClients.Count == PlayFabData.PlayerList.Count - (hasHost ? 0 : 1))
             {

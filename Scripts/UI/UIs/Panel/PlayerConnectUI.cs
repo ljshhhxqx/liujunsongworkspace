@@ -67,9 +67,9 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                 {
                     PlayerId = playerInfo.playerId,
                     Name = playerInfo.playerName,
-                    Duty = Enum.Parse<PlayerGameDuty>(playerInfo.playerDuty),
+                    Duty = (PlayerGameDuty)Enum.Parse(typeof(PlayerGameDuty), playerInfo.playerDuty),
                     Level = playerInfo.playerLevel,
-                    Status = Enum.Parse<PlayerGameStatus>(playerInfo.playerStatus),
+                    Status =  (PlayerGameStatus)Enum.Parse(typeof(PlayerGameStatus), playerInfo.playerStatus),
                 };
                 dict.Add(playerInfo.id, data);
             }
@@ -103,9 +103,9 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             {
                 PlayerId = player,
                 Name = playerInfo.playerName,
-                Duty = Enum.Parse<PlayerGameDuty>(playerInfo.playerDuty),
+                Duty = (PlayerGameDuty)Enum.Parse(typeof(PlayerGameDuty), playerInfo.playerDuty),
                 Level = playerInfo.playerLevel,
-                Status = Enum.Parse<PlayerGameStatus>(playerInfo.playerStatus),
+                Status =  (PlayerGameStatus)Enum.Parse(typeof(PlayerGameStatus), playerInfo.playerStatus),
             };
             contentItemList.SetItemList(dict);
         }
