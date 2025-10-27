@@ -3,6 +3,7 @@ using AOTScripts.Data;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Network.UI;
 using TMPro;
 using UniRx;
 using UnityEngine;

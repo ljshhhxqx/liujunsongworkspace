@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using AOTScripts.Data;
 using AOTScripts.Tool;
+using HotUpdate.Scripts.Network.UI;
+using HotUpdate.Scripts.Tool.ReactiveProperty;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
 using UI.UIBase;
@@ -19,7 +21,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private Dictionary<int, PlayerHpItemData> _playerHpItemDatas;
         private FollowTargetParams _defaultFollowTargetParams;
 
-        public void BindPlayersHp(ReactiveDictionary<int, PlayerHpItemData> playerHpItemDatas, FollowTargetParams defaultFollowTargetParams)
+        public void BindPlayersHp(HReactiveDictionary<int, PlayerHpItemData> playerHpItemDatas, FollowTargetParams defaultFollowTargetParams)
         {
             _defaultFollowTargetParams = defaultFollowTargetParams; 
             _defaultFollowTargetParams.CanvasRect = canvasRect;
@@ -30,36 +32,36 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                 _playerHpItemDatas.Add(key, data);
             }
 
-            playerHpItemDatas.ObserveAdd().Subscribe(x =>
+            playerHpItemDatas.ObserveAdd((x,y) =>
             {
-                if (_playerHpItemDatas.ContainsKey(x.Key))
+                if (_playerHpItemDatas.ContainsKey(x))
                 {
                     return;
                 }
-                _playerHpItemDatas.Add(x.Key, x.Value);
-                contentItemList.AddItem<PlayerHpItemData, PlayerHpItem>(x.Key, x.Value);
+                _playerHpItemDatas.Add(x, y);
+                contentItemList.AddItem<PlayerHpItemData, PlayerHpItem>(x, y);
                 SetItemDataAndShow(_playerHpItemDatas);
             }).AddTo(this);
-            playerHpItemDatas.ObserveRemove().Subscribe(x =>
+            playerHpItemDatas.ObserveRemove((x,y) =>
             {
-                if (!_playerHpItemDatas.ContainsKey(x.Key))
+                if (!_playerHpItemDatas.ContainsKey(x))
                     return;
-                _playerHpItemDatas.Remove(x.Key);
-                contentItemList.RemoveItem(x.Key);
+                _playerHpItemDatas.Remove(x);
+                contentItemList.RemoveItem(x);
                 SetItemDataAndShow(_playerHpItemDatas);
             }).AddTo(this); 
-            playerHpItemDatas.ObserveReplace().Subscribe(x =>
+            playerHpItemDatas.ObserveUpdate((x,y, z)  =>
             {
-                if (!x.NewValue.Equals(default) && !x.NewValue.Equals(x.OldValue))
+                if (!z.Equals(default) && !z.Equals(y))
                 {
-                    _playerHpItemDatas[x.Key] = x.NewValue;
-                    contentItemList.ReplaceItem<PlayerHpItemData, PlayerHpItem>(x.Key, x.NewValue);
-                    var item = contentItemList.GetItem<PlayerHpItem>(x.Key);
-                    item.DataChanged(x.NewValue);
+                    _playerHpItemDatas[x] = z;
+                    contentItemList.ReplaceItem<PlayerHpItemData, PlayerHpItem>(x, z);
+                    var item = contentItemList.GetItem<PlayerHpItem>(x);
+                    item.DataChanged(z);
                     item.Show(_defaultFollowTargetParams);
                 }
             }).AddTo(this);
-            playerHpItemDatas.ObserveReset().Subscribe(_ =>
+            playerHpItemDatas.ObserveClear(_ =>
             {
                 _playerHpItemDatas.Clear();
                 contentItemList.Clear();

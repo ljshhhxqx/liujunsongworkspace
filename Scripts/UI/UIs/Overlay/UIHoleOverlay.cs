@@ -1,5 +1,6 @@
 using System;
 using AOTScripts.Data.UI;
+using HotUpdate.Scripts.Tool.ReactiveProperty;
 using UI.UIBase;
 using UniRx;
 using UnityEngine;
@@ -16,7 +17,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         private Material _holeMaterial;
 
-        public void BindGoldData(IObservable<ValuePropertyData> goldData)
+        public void BindGoldData(HReactiveProperty<ValuePropertyData> goldData)
         {
             _holeMaterial ??= holeImage.material;
             goldData.Subscribe(data =>

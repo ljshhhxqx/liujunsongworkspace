@@ -3,6 +3,7 @@ using AOTScripts.Data.UI;
 using Coffee.UIEffects;
 using DG.Tweening;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Tool.ReactiveProperty;
 using HotUpdate.Scripts.UI.UIBase;
 using Sirenix.OdinInspector;
 using TMPro;
@@ -31,7 +32,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         [SerializeField]
         private TextMeshProUGUI countDownText;
         private UIManager _uiManager;
-        private IObservable<ValuePropertyData> _goldObservable;
+        private HReactiveProperty<ValuePropertyData> _goldObservable;
         private ValuePropertyData _valuePropertyData;
         private float _hpRatioToWarning;
         
@@ -54,7 +55,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             damageImage.color = new Color(damageImage.color.r, damageImage.color.g, damageImage.color.b, 0f);
         }
 
-        public void BindGold(IObservable<ValuePropertyData> goldObservable)
+        public void BindGold(HReactiveProperty<ValuePropertyData> goldObservable)
         {
             _goldObservable = goldObservable;
             _goldObservable.Subscribe(OnGoldChanged).AddTo(this);

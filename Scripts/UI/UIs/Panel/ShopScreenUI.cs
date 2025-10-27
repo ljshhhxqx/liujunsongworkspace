@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using AOTScripts.Data;
 using AOTScripts.Data.UI;
+using HotUpdate.Scripts.Network.UI;
+using HotUpdate.Scripts.Tool.ReactiveProperty;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
@@ -35,7 +37,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         private readonly List<ShopBagSlotItem> _bagSlotItems = new List<ShopBagSlotItem>();
         private readonly Dictionary<int, RandomShopItemData> _shopItemData = new Dictionary<int, RandomShopItemData>();
         private readonly Dictionary<int, BagItemData> _bagItemData = new Dictionary<int, BagItemData>();
-        private IObservable<ValuePropertyData> _goldObservable;
+        private HReactiveProperty<ValuePropertyData> _goldObservable;
         private Subject<Unit> _refreshSubject = new Subject<Unit>();
         public IObservable<Unit> OnRefresh => _refreshSubject;
 
@@ -54,7 +56,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                 .AddTo(this);
         }
 
-        public void BindPlayerGold(IObservable<ValuePropertyData> playerGold)
+        public void BindPlayerGold(HReactiveProperty<ValuePropertyData> playerGold)
         {
             _goldObservable = playerGold;
             _goldObservable.Subscribe(x =>
@@ -63,7 +65,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             }).AddTo(this);
         }
 
-        public void BindShopItemData(ReactiveDictionary<int, RandomShopItemData> shopItemData)
+        public void BindShopItemData(HReactiveDictionary<int, RandomShopItemData> shopItemData)
         {
             foreach (var keyValue in shopItemData)
             {
@@ -71,38 +73,38 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             }
             shopItemList.SetItemList(_shopItemData);
             InitShopItems();
-            shopItemData.ObserveAdd().Subscribe(x =>
+            shopItemData.ObserveAdd((x, y) =>
             {
-                if (!_shopItemData.ContainsKey(x.Key))
+                if (!_shopItemData.ContainsKey(x))
                 {
-                    _shopItemData.Add(x.Key, x.Value);
-                    shopItemList.AddItem<RandomShopItemData, ShopSlotItem>(x.Key, x.Value, OnSpawnShopItem);
+                    _shopItemData.Add(x, y);
+                    shopItemList.AddItem<RandomShopItemData, ShopSlotItem>(x, y, OnSpawnShopItem);
                 }
                 //shopItemList.SetItemList(_shopItemData);
             }).AddTo(this);
-            shopItemData.ObserveRemove().Subscribe(x =>
+            shopItemData.ObserveRemove((x, y) =>
             {
-                if (_shopItemData.ContainsKey(x.Key))
+                if (_shopItemData.ContainsKey(x))
                 {
-                    _shopItemData.Remove(x.Key);
-                    shopItemList.RemoveItem(x.Key);
+                    _shopItemData.Remove(x);
+                    shopItemList.RemoveItem(x);
                 }
             }).AddTo(this);
-            shopItemData.ObserveReplace().Subscribe(x =>
+            shopItemData.ObserveUpdate((x,y,z) => 
             {
-                if (x.OldValue.Equals(x.NewValue))
+                if (y.Equals(z))
                     return;
-                _shopItemData[x.Key] = x.NewValue;
-                shopItemList.ReplaceItem<RandomShopItemData, ShopSlotItem>(x.Key, x.NewValue);
+                _shopItemData[x] = z;
+                shopItemList.ReplaceItem<RandomShopItemData, ShopSlotItem>(x, z);
             }).AddTo(this);
-            shopItemData.ObserveReset().Subscribe(x =>
+            shopItemData.ObserveClear(x =>
             {
                 _shopItemData.Clear();
                 shopItemList.Clear();
             }).AddTo(this);
         }
 
-        public void BindBagItemData(ReactiveDictionary<int, BagItemData> bagItemData)
+        public void BindBagItemData(HReactiveDictionary<int, BagItemData> bagItemData)
         {
             foreach (var keyValue in bagItemData)
             {
@@ -110,32 +112,32 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             }
             bagItemList.SetItemList(_bagItemData);
             InitBagItems();
-            bagItemData.ObserveAdd().Subscribe(x =>
+            bagItemData.ObserveAdd((x, y) =>
             {
-                if (!_bagItemData.ContainsKey(x.Key))
+                if (!_bagItemData.ContainsKey(x))
                 {
-                    _bagItemData.Add(x.Key, x.Value);
-                    bagItemList.AddItem<BagItemData, ShopBagSlotItem>(x.Key, x.Value, OnSpawnBagItem);
+                    _bagItemData.Add(x, y);
+                    bagItemList.AddItem<BagItemData, ShopBagSlotItem>(x, y, OnSpawnBagItem);
                 }
                 //bagItemList.SetItemList(_bagItemData);
             }).AddTo(this);
-            bagItemData.ObserveRemove().Subscribe(x =>
+            bagItemData.ObserveRemove((x,y) =>
             {
-                if (!_bagItemData.ContainsKey(x.Key))
+                if (!_bagItemData.ContainsKey(x))
                 {
                     return;
                 }
-                _bagItemData.Remove(x.Key);
-                bagItemList.RemoveItem(x.Key);
+                _bagItemData.Remove(x);
+                bagItemList.RemoveItem(x);
             }).AddTo(this);
-            bagItemData.ObserveReplace().Subscribe(x =>
+            bagItemData.ObserveUpdate((x,y,z) =>
             {
-                if (x.OldValue.Equals(x.NewValue))
+                if (y.Equals(z))
                     return;
-                _bagItemData[x.Key] = x.NewValue;
-                bagItemList.ReplaceItem<BagItemData, ShopBagSlotItem>(x.Key, x.NewValue);
+                _bagItemData[x] = z;
+                bagItemList.ReplaceItem<BagItemData, ShopBagSlotItem>(x, z);
             }).AddTo(this);
-            bagItemData.ObserveReset().Subscribe(x =>
+            bagItemData.ObserveClear(x =>
             {
                 _bagItemData.Clear();
                 bagItemList.Clear();

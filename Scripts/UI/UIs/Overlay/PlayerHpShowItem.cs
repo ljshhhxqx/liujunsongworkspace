@@ -3,6 +3,7 @@ using AOTScripts.Tool;
 using AOTScripts.Tool.ObjectPool;
 using DG.Tweening;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using TMPro;
 using UnityEngine;

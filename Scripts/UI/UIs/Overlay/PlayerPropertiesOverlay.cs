@@ -4,6 +4,8 @@ using AOTScripts.Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Network.UI;
+using HotUpdate.Scripts.Tool.ReactiveProperty;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
 using UI.UIBase;
@@ -41,7 +43,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             _propertyConfig = configProvider.GetConfig<PropertyConfig>();
         }
 
-        public void BindPlayerProperty(ReactiveDictionary<int, PropertyItemData> playerPropertyData)
+        public void BindPlayerProperty(HReactiveDictionary<int, PropertyItemData> playerPropertyData)
         {
             _propertyItemDatas = new Dictionary<int, PropertyItemData>();
             foreach (var key in playerPropertyData.Keys)
@@ -51,39 +53,35 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             }
 
             contentItemList.SetItemList(_propertyItemDatas);
-            playerPropertyData.ObserveReplace()
-                .Subscribe(x =>
+            playerPropertyData.ObserveUpdate((x, y, z) =>
                 {
-                    if (!x.NewValue.Equals(x.OldValue))
+                    if (!z.Equals(y))
                     {
-                        _propertyItemDatas[x.Key] = x.NewValue;
-                        contentItemList.ReplaceItem<PropertyItemData, PropertyItems>(x.Key, x.NewValue);
+                        _propertyItemDatas[x] = z;
+                        contentItemList.ReplaceItem<PropertyItemData, PropertyItems>(x, z);
                         //Debug.Log($"Replace property {x.Key} {x.NewValue}");
                     }
                 })
                 .AddTo(this);
-            playerPropertyData.ObserveAdd()
-                .Subscribe(x =>
+            playerPropertyData.ObserveAdd((x,y) =>
                 {
-                    if (!_propertyItemDatas.ContainsKey(x.Key))
+                    if (!_propertyItemDatas.ContainsKey(x))
                     {
-                        _propertyItemDatas.Add(x.Key, x.Value);
-                        contentItemList.AddItem<PropertyItemData, PropertyItems>(x.Key, x.Value);
+                        _propertyItemDatas.Add(x,y);
+                        contentItemList.AddItem<PropertyItemData, PropertyItems>(x,y);
                     }
                 })
                 .AddTo(this);
-            playerPropertyData.ObserveRemove()
-                .Subscribe(x =>
+            playerPropertyData.ObserveRemove((x,y) =>
                 {
-                    if (_propertyItemDatas.ContainsKey(x.Key))
+                    if (_propertyItemDatas.ContainsKey(x))
                     {
-                        _propertyItemDatas.Remove(x.Key);
-                        contentItemList.RemoveItem(x.Key);
+                        _propertyItemDatas.Remove(x);
+                        contentItemList.RemoveItem(x);
                     }
                 })
                 .AddTo(this);
-            playerPropertyData.ObserveReset()
-                .Subscribe(x =>
+            playerPropertyData.ObserveClear(x =>
                 {
                     _propertyItemDatas.Clear();
                     contentItemList.Clear();

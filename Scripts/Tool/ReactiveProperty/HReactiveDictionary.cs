@@ -102,6 +102,20 @@ namespace HotUpdate.Scripts.Tool.ReactiveProperty
         }
 
         /// <summary>
+        /// 观察字典变化
+        /// </summary>
+        public IDisposable ObserveClear(Action<DictionaryChangeArgs<TKey, TValue>> onReset)
+        {
+            return Observe(args =>
+            {
+                if (args.ChangeType == DictionaryChangeType.Reset)
+                {
+                    onReset?.Invoke(args);
+                }
+            });
+        }
+
+        /// <summary>
         /// 观察添加操作
         /// </summary>
         public IDisposable ObserveAdd(Action<TKey, TValue> onAdded)

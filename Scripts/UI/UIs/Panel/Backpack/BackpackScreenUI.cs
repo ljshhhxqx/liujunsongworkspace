@@ -4,6 +4,8 @@ using System.Linq;
 using AOTScripts.Data;
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.UI;
+using HotUpdate.Scripts.Tool.ReactiveProperty;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
@@ -109,7 +111,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             equipmentItemList.SetItemList(slotEquipItemData);
         }
 
-        public void BindBagItemData(ReactiveDictionary<int, BagItemData> bagItemData)
+        public void BindBagItemData(HReactiveDictionary<int, BagItemData> bagItemData)
         {
             _bagSlotItems = new Dictionary<int, BagSlotItem>();
             _slotItems = new Dictionary<int, EquipmentSlotItem>();
@@ -122,50 +124,46 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             RefreshBag(_bagItemData);
             InitializeSlots();
             InitializeEquipSlots();
-            bagItemData.ObserveAdd()
-                .Subscribe(x =>
+            bagItemData.ObserveAdd((x, y) =>
                 {
-                    if (!_bagItemData.ContainsKey(x.Key))
+                    if (!_bagItemData.ContainsKey(x))
                     {
-                        _bagItemData.Add(x.Key, x.Value);
-                        if (x.Value.PlayerItemType.IsEquipment() && x.Value.IsEquip)
+                        _bagItemData.Add(x, y);
+                        if (y.PlayerItemType.IsEquipment() && y.IsEquip)
                         {
-                            equipmentItemList.AddItem<BagItemData, EquipmentSlotItem>(x.Key, x.Value);
+                            equipmentItemList.AddItem<BagItemData, EquipmentSlotItem>(x, y);
                         }
-                        bagItemList.AddItem<BagItemData, BagSlotItem>(x.Key, x.Value);
+                        bagItemList.AddItem<BagItemData, BagSlotItem>(x, y);
                     }
                 })
                 .AddTo(this);
-            bagItemData.ObserveRemove()
-                .Subscribe(x =>
+            bagItemData.ObserveRemove((x, y) =>
                 {
-                    if (_bagItemData.ContainsKey(x.Key))
+                    if (_bagItemData.ContainsKey(x))
                     {
-                        _bagItemData.Remove(x.Key);
-                        bagItemList.RemoveItem(x.Key);
-                        if (x.Value.PlayerItemType.IsEquipment() && !x.Value.IsEquip)
+                        _bagItemData.Remove(x);
+                        bagItemList.RemoveItem(x);
+                        if (y.PlayerItemType.IsEquipment() && !y.IsEquip)
                         {
-                            equipmentItemList.RemoveItem(x.Key);
+                            equipmentItemList.RemoveItem(x);
                         }
                     }
                 })
                 .AddTo(this);
-            bagItemData.ObserveReplace()
-                .Subscribe(x =>
+            bagItemData.ObserveUpdate((x,y,z) =>
                 {
-                    if (!x.NewValue.Equals(x.OldValue))
+                    if (!z.Equals(y))
                     {
-                        _bagItemData[x.Key] = x.NewValue;
-                        bagItemList.ReplaceItem<BagItemData, BagSlotItem>(x.Key, x.NewValue);
-                        if (x.NewValue.PlayerItemType.IsEquipment() && x.NewValue.IsEquip)
+                        _bagItemData[x] = z;
+                        bagItemList.ReplaceItem<BagItemData, BagSlotItem>(x, z);
+                        if (z.PlayerItemType.IsEquipment() && z.IsEquip)
                         {
-                            equipmentItemList.ReplaceItem<BagItemData, EquipmentSlotItem>(x.Key, x.NewValue);
+                            equipmentItemList.ReplaceItem<BagItemData, EquipmentSlotItem>(x, z);
                         }
                     }
                 })
                 .AddTo(this);
-            bagItemData.ObserveReset()
-                .Subscribe(x =>
+            bagItemData.ObserveClear(x =>
                 {
                     _bagItemData.Clear();
                     bagItemList.Clear();

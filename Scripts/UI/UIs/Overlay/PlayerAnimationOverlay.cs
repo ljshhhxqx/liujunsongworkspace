@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using AOTScripts.Data;
+using HotUpdate.Scripts.Network.UI;
+using HotUpdate.Scripts.Tool.ReactiveProperty;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
 using UI.UIBase;
@@ -14,7 +16,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private ContentItemList contentItemList;
         private Dictionary<int, AnimationStateData> _playerAnimiationDatas;
 
-        public void BindPlayerAnimationData(ReactiveDictionary<int, AnimationStateData> playerAnimationDatas)
+        public void BindPlayerAnimationData(HReactiveDictionary<int, AnimationStateData> playerAnimationDatas)
         {
             _playerAnimiationDatas = new Dictionary<int, AnimationStateData>();
             foreach (var (key, animationStateData) in playerAnimationDatas)
@@ -23,43 +25,39 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             }
             contentItemList.SetItemList(_playerAnimiationDatas);
 
-            playerAnimationDatas.ObserveAdd()
-                .Subscribe(addEvent =>
+            playerAnimationDatas.ObserveAdd((x,y) =>
                 {
-                    if (_playerAnimiationDatas.ContainsKey(addEvent.Key))
+                    if (_playerAnimiationDatas.ContainsKey(x))
                     {
                         return;
                     }
 
-                    _playerAnimiationDatas.Add(addEvent.Key, addEvent.Value);
-                    contentItemList.AddItem<AnimationStateData, AnimationItem>(addEvent.Key, addEvent.Value);
+                    _playerAnimiationDatas.Add(x, y);
+                    contentItemList.AddItem<AnimationStateData, AnimationItem>(x, y);
                 })
                 .AddTo(this);
-            playerAnimationDatas.ObserveReplace()
-                .Subscribe(replaceEvent =>
+            playerAnimationDatas.ObserveUpdate((x, y, z) =>
                 {
-                    if (!replaceEvent.OldValue.Equals(replaceEvent.NewValue))
+                    if (!y.Equals(z))
                     {
-                        if (_playerAnimiationDatas.ContainsKey(replaceEvent.Key))
+                        if (_playerAnimiationDatas.ContainsKey(x))
                         {
-                            _playerAnimiationDatas[replaceEvent.Key] = replaceEvent.NewValue;
-                            contentItemList.ReplaceItem<AnimationStateData, AnimationItem>(replaceEvent.Key, replaceEvent.NewValue);
+                            _playerAnimiationDatas[x] = z;
+                            contentItemList.ReplaceItem<AnimationStateData, AnimationItem>(x, z);
                         }
                     }
                 })
                 .AddTo(this);
-            playerAnimationDatas.ObserveRemove()
-                .Subscribe(removeEvent =>
+            playerAnimationDatas.ObserveRemove((x, y) =>
                 {
-                    if (_playerAnimiationDatas.ContainsKey(removeEvent.Key))
+                    if (_playerAnimiationDatas.ContainsKey(x))
                     {
-                        _playerAnimiationDatas.Remove(removeEvent.Key);
-                        contentItemList.RemoveItem(removeEvent.Key);
+                        _playerAnimiationDatas.Remove(x);
+                        contentItemList.RemoveItem(x);
                     }
                 })
                 .AddTo(this);
-            playerAnimationDatas.ObserveReset()
-                .Subscribe(_ =>
+            playerAnimationDatas.ObserveClear(_ =>
                 {
                     _playerAnimiationDatas.Clear();
                     contentItemList.Clear();

@@ -4,6 +4,7 @@ using AOTScripts.Data;
 using AOTScripts.Data.UI;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Network.UI;
 using Mirror;
 using TMPro;
 using UniRx;

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using AOTScripts.Data;
 using AOTScripts.Data.UI;
 using AOTScripts.Tool;
+using HotUpdate.Scripts.Network.UI;
+using HotUpdate.Scripts.Tool.ReactiveProperty;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using TMPro;
@@ -80,56 +82,36 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 .AddTo(_disposables);
             var shopItem = UIPropertyBinder.GetReactiveDictionary<RandomShopItemData>(_itemDetailsShopBindingKey);
             var bagItem = UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemDetailsBagBindingKey);
-            shopItem.ObserveRemove()
-                .Subscribe(x =>
+            shopItem.ObserveRemove((x, y) =>
                 {
-                    if (_currentItemData is RandomShopItemData randomShopItemData && randomShopItemData.ShopId == x.Value.ShopId)
+                    if (_currentItemData is RandomShopItemData randomShopItemData && randomShopItemData.ShopId == y.ShopId)
                     {
                         _uiManager.CloseUI(Type);
                     }
                 })
                 .AddTo(_disposables);
-            shopItem.ObserveReplace()
-                .Subscribe(x =>
+            shopItem.ObserveUpdate((x, y,z) =>
                 {
-                    if (_currentItemData is RandomShopItemData randomShopItemData && randomShopItemData.ShopId == x.NewValue.ShopId && !randomShopItemData.Equals(x.NewValue))
+                    if (_currentItemData is RandomShopItemData randomShopItemData && randomShopItemData.ShopId == z.ShopId && !randomShopItemData.Equals(z))
                     {
-                        OpenShop(x.NewValue);
+                        OpenShop(z);
                     }
                 })
                 .AddTo(_disposables);
-            shopItem.ObserveReset()
-                .Subscribe(_ =>
+            bagItem.ObserveRemove((x, y) =>
                 {
-                    if (_currentItemData is RandomShopItemData randomShopItemData)
+                    if (_currentItemData is BagItemData bagItemData && y.ConfigId == bagItemData.ConfigId)
                     {
                         _uiManager.CloseUI(Type);
                     }
                 })
                 .AddTo(_disposables);
-            bagItem.ObserveRemove()
-                .Subscribe(x =>
+            bagItem.ObserveUpdate((x, y,z) =>
                 {
-                    if (_currentItemData is BagItemData bagItemData && x.Value.ConfigId == bagItemData.ConfigId)
+                    if (_currentItemData is BagItemData bagItemData && z.ConfigId == bagItemData.ConfigId && !bagItemData.Equals(z))
                     {
-                        _uiManager.CloseUI(Type);
+                        OpenBag(z);
                     }
-                })
-                .AddTo(_disposables);
-            bagItem.ObserveReplace()
-                .Subscribe(x =>
-                {
-                    if (_currentItemData is BagItemData bagItemData && x.NewValue.ConfigId == bagItemData.ConfigId && !bagItemData.Equals(x.NewValue))
-                    {
-                        OpenBag(x.NewValue);
-                    }
-                })
-                .AddTo(_disposables);
-            bagItem.ObserveReset()
-                .Subscribe(_ =>
-                {
-                    if (_currentItemData is BagItemData bagItemData)
-                        _uiManager.CloseUI(Type);
                 })
                 .AddTo(_disposables);
             var texts = propertyContent.GetComponentsInChildren<TextMeshProUGUI>();
@@ -139,7 +121,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             }
         }
 
-        public void BindPlayerGold(IObservable<ValuePropertyData> playerGold)
+        public void BindPlayerGold(HReactiveProperty<ValuePropertyData> playerGold)
         {
             playerGold.Subscribe(data =>
             {

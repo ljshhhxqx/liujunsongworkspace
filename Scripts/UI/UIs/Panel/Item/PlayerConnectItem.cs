@@ -1,6 +1,7 @@
 ﻿using System;
 using AOTScripts.Data;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Network.UI;
 using TMPro;
 using UnityEngine;
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using AOTScripts.Data;
 using Cysharp.Threading.Tasks;
+using HotUpdate.Scripts.Network.UI;
 using TMPro;
 using UniRx;
 using UniRx.Triggers;

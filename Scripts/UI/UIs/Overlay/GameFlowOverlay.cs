@@ -11,6 +11,7 @@ using Game;
 using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Game;
 using HotUpdate.Scripts.Network.Data;
+using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Static;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel;

@@ -2,6 +2,7 @@
 using AOTScripts.Data;
 using Data;
 using HotUpdate.Scripts.Data;
+using HotUpdate.Scripts.Network.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

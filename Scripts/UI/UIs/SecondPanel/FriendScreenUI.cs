@@ -5,6 +5,7 @@ using AOTScripts.Tool;
 using AOTScripts.Tool.Coroutine;
 using Data;
 using HotUpdate.Scripts.Data;
+using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;

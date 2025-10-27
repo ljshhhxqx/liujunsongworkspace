@@ -18,6 +18,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Player;
 using HotUpdate.Scripts.Skill;
 using HotUpdate.Scripts.Tool.GameEvent;

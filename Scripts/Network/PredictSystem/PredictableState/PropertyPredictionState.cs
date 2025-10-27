@@ -9,6 +9,8 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.UI;
+using HotUpdate.Scripts.Tool.ReactiveProperty;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using UniRx;
@@ -32,8 +34,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private BindingKey _playerDeathTimeBindKey;
         private BindingKey _playerControlBindKey;
         private BindingKey _propertyBindKey;
-        private ReactiveDictionary<int, PropertyItemData> _uiPropertyData = new ReactiveDictionary<int, PropertyItemData>();
-        private ReactiveProperty<ValuePropertyData> _goldData;
+        private HReactiveDictionary<int, PropertyItemData> _uiPropertyData = new HReactiveDictionary<int, PropertyItemData>();
+        private HReactiveProperty<ValuePropertyData> _goldData;
 
         public PlayerPredictablePropertyState PlayerPredictablePropertyState => (PlayerPredictablePropertyState)CurrentState;
 
