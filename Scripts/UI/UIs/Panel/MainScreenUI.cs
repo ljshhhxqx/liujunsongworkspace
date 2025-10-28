@@ -7,6 +7,7 @@ using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Tool.ReactiveProperty;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.SecondPanel;
+using MemoryPack;
 using TMPro;
 using UI.UIBase;
 using UI.UIs;
@@ -74,29 +75,16 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             quitButton.BindDebouncedListener(OnQuitButtonClick);
             friendButton.BindDebouncedListener(OnFriendButtonClick);
             Debug.Log("MainScreenUI Init");
-            HReactiveProperty<TestData> testData = new HReactiveProperty<TestData>();
-            testData.Subscribe(OnPlayerDataTest);
-            testData.Value = new TestData() { value = "test" };
-            Debug.Log("testData Init");
-            // ReactiveProperty<TestData> data = new ReactiveProperty<TestData>();
-            // data.Subscribe(OnPlayerDataTest);
-            // data.Value = new TestData() { value = "test" };
-            // ReactivePropertySpecificTests.RunReactivePropertyTests();
-            //ReactivePropertyDiagnosticTests.RunAllTests();
-            // HReactiveProperty<int> test = new HReactiveProperty<int>();
-            // test.Subscribe(value =>
-            // {
-            //     Debug.Log($"Test: {value}");
-            // });
-            // test.Value = 10;
+            // HReactiveProperty<TestData> testData = new HReactiveProperty<TestData>();
+            // testData.Subscribe(OnPlayerDataTest);
+            // testData.Value = new TestData() { value = "test" };
             // Debug.Log("testData Init");
-            // HReactiveProperty<PlayerInternalData> internalData = new HReactiveProperty<PlayerInternalData>();
-            // internalData.Subscribe(value =>
-            // {
-            //     Debug.Log($"PlayerId: {value.PlayerId}");
-            // });
-            // internalData.Value = new PlayerInternalData() { PlayerId = "test" };
-            // Debug.Log("PlayerInternalData Init");
+            var stru = new TestStruct() { value = "test", id = 123 };
+            Debug.Log(stru);
+            var struBytes = MemoryPackSerializer.Serialize(stru);
+            Debug.Log(struBytes);
+            var stru2 = MemoryPackSerializer.Deserialize<TestStruct>(struBytes);
+            Debug.Log($"TestStruct: {stru2.value}, {stru2.id}");
             PlayFabData.PlayerReadOnlyData.Subscribe(value =>
             {
                 Debug.Log($"PlayerId: {value.PlayerId}, Nickname: {value.Nickname}");
@@ -581,6 +569,13 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
     // }
     
     public struct TestData
+    {
+        public int id;
+        public string value;
+    }
+    
+    [MemoryPackable]
+    public partial struct TestStruct
     {
         public int id;
         public string value;
