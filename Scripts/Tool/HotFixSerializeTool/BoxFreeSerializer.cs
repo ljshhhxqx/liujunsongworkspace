@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Text.Json.Serialization;
 using AOTScripts.Data;
-using AOTScripts.Data.NetworkMes;
-using AOTScripts.Data.State;
 using MemoryPack;
 using UnityEngine;
 
@@ -18,29 +14,26 @@ namespace HotUpdate.Scripts.Tool.HotFixSerializeTool
         private static Dictionary<Type, Delegate> _memoryDeserializers = new Dictionary<Type, Delegate>();
     
         // 注册结构体的序列化方法，避免运行时反射
-        public static void Register<T>()
+        public static void RegisterMemory<T>()
         {
-            var type = typeof(T);
-            var attrs = type.GetCustomAttributes(typeof(MemoryPackableAttribute));
-            foreach (var attr in attrs)
-            {
-                if (attr is MemoryPackableAttribute memoryPackable)
-                {
-                    _memorySerializers[typeof(T)] = new Func<T, byte[]>(SerializeInternal<T>);
-                    _memoryDeserializers[typeof(T)] = new Func<byte[], T>(DeserializeInternal<T>);
-                }
-                else if (attr is JsonAttribute jsonAttribute)
-                {
-                    _jsonSerializers[typeof(T)] = new Func<T, string>(JsonSerializeInternal<T>);
-                    _jsonDeserializers[typeof(T)] = new Func<string, T>(JsonDeserializeInternal<T>);
-                }
-            }
+            _memorySerializers[typeof(T)] = new Func<T, byte[]>(SerializeInternal<T>);
+            _memoryDeserializers[typeof(T)] = new Func<byte[], T>(DeserializeInternal<T>);
         }
         
-        public static void Unregister<T>()
+        public static void RegisterJson<T>()
+        {
+            _jsonSerializers[typeof(T)] = new Func<T, string>(JsonSerializeInternal<T>);
+            _jsonDeserializers[typeof(T)] = new Func<string, T>(JsonDeserializeInternal<T>);
+        }
+        
+        public static void UnregisterMemory<T>()
         {
             _memorySerializers.Remove(typeof(T));
             _memoryDeserializers.Remove(typeof(T));
+        }
+
+        public static void UnregisterJson<T>()
+        {
             _jsonSerializers.Remove(typeof(T));
             _jsonDeserializers.Remove(typeof(T));
         }
@@ -55,7 +48,7 @@ namespace HotUpdate.Scripts.Tool.HotFixSerializeTool
                 return json;
             }
 
-            Register<T>();
+            RegisterJson<T>();
             json = JsonUtility.ToJson(value);
             return json;
         }
@@ -67,7 +60,7 @@ namespace HotUpdate.Scripts.Tool.HotFixSerializeTool
             {
                 return ((Func<string, T>)deserializer)(json);
             }
-            Register<T>();
+            RegisterJson<T>();
 
             return (T)JsonUtility.FromJson(json, type);
         }
@@ -81,7 +74,7 @@ namespace HotUpdate.Scripts.Tool.HotFixSerializeTool
                 return ((Func<T, byte[]>)serializer)(value);
             }
         
-            Register<T>();
+            RegisterMemory<T>();
             return MemoryPackSerializer.Serialize(value);
         }
     
@@ -92,7 +85,7 @@ namespace HotUpdate.Scripts.Tool.HotFixSerializeTool
             {
                 return ((Func<byte[], T>)deserializer)(data);
             }
-            Register<T>();
+            RegisterMemory<T>();
         
             return (T)MemoryPackSerializer.Deserialize(type, data);
         }
@@ -119,167 +112,136 @@ namespace HotUpdate.Scripts.Tool.HotFixSerializeTool
 
     public static class BoxingFreeExtension
     {
-        public static void InitTownSceneData()
-        {
-            BoxingFreeSerializer.Register<MirrorPlayerConnectMessage>();
-            BoxingFreeSerializer.Register<PlayerAuthMessage>();
-            BoxingFreeSerializer.Register<MirrorCountdownMessage>();
-            BoxingFreeSerializer.Register<MirrorGameStartMessage>();
-            BoxingFreeSerializer.Register<MirrorGameWarmupMessage>();
-            BoxingFreeSerializer.Register<MirrorPickerPickUpCollectMessage>();
-            BoxingFreeSerializer.Register<MirrorPickerPickUpChestMessage>();
-            BoxingFreeSerializer.Register<MirrorPlayerInputInfoMessage>();
-            BoxingFreeSerializer.Register<MirrorPlayerStateMessage>();
-            BoxingFreeSerializer.Register<MirrorPlayerConnectedMessage>();
-            BoxingFreeSerializer.Register<MirrorPlayerRecoveryMessage>();
-            BoxingFreeSerializer.Register<AttackData>();
-            
-            BoxingFreeSerializer.Register<PlayerEquipmentState>();
-            BoxingFreeSerializer.Register<PlayerInputState>();
-            BoxingFreeSerializer.Register<PlayerItemState>();
-            BoxingFreeSerializer.Register<PlayerPropertyState>();
-            BoxingFreeSerializer.Register<PlayerShopState>();
-            BoxingFreeSerializer.Register<PlayerSkillState>();
-            BoxingFreeSerializer.Register<CooldownSnapshotData>();
-            
-            BoxingFreeSerializer.Register<ConditionHeader>();
-            BoxingFreeSerializer.Register<AttackHitConditionParam>();
-            BoxingFreeSerializer.Register<SkillCastConditionParam>();
-            BoxingFreeSerializer.Register<TakeDamageConditionParam>();
-            BoxingFreeSerializer.Register<KillConditionParam>();
-            BoxingFreeSerializer.Register<HpChangeConditionParam>();
-            BoxingFreeSerializer.Register<MpChangeConditionParam>();
-            BoxingFreeSerializer.Register<CriticalHitConditionParam>();
-            BoxingFreeSerializer.Register<DodgeConditionParam>();
-            BoxingFreeSerializer.Register<AttackConditionParam>();
-            BoxingFreeSerializer.Register<SkillHitConditionParam>();
-            BoxingFreeSerializer.Register<DeathConditionParam>();
-            BoxingFreeSerializer.Register<MoveConditionParam>();
-            BoxingFreeSerializer.Register<KeyframeData>();
-            
-            BoxingFreeSerializer.Register<AttackChecker>();
-            BoxingFreeSerializer.Register<AttackHitChecker>();
-            BoxingFreeSerializer.Register<SkillCastChecker>();
-            BoxingFreeSerializer.Register<SkillHitChecker>();
-            BoxingFreeSerializer.Register<TakeDamageChecker>();
-            BoxingFreeSerializer.Register<KillChecker>();
-            BoxingFreeSerializer.Register<HpChangeChecker>();
-            BoxingFreeSerializer.Register<MpChangeChecker>();
-            BoxingFreeSerializer.Register<CriticalHitChecker>();
-            BoxingFreeSerializer.Register<DodgeChecker>();
-            BoxingFreeSerializer.Register<DeathChecker>();
-            BoxingFreeSerializer.Register<MoveChecker>();
-            BoxingFreeSerializer.Register<NoConditionChecker>();
-            
-            BoxingFreeSerializer.Register<RandomItemsData>();
-            BoxingFreeSerializer.Register<ItemOtherData>();
-            BoxingFreeSerializer.Register<SkillConfigEventData>();
-            BoxingFreeSerializer.Register<SkillHitExtraEffectData>();
-            BoxingFreeSerializer.Register<ElementConfigData>();
-            BoxingFreeSerializer.Register<GameLoopData>();
-            BoxingFreeSerializer.Register<WeatherInfo>();
-            
-            BoxingFreeSerializer.Register<PropertyAutoRecoverCommand>();
-            BoxingFreeSerializer.Register<PropertyClientAnimationCommand>();
-            BoxingFreeSerializer.Register<PropertyServerAnimationCommand>();
-            BoxingFreeSerializer.Register<PropertyBuffCommand>();
-            BoxingFreeSerializer.Register<PropertyAttackCommand>();
-            BoxingFreeSerializer.Register<PropertySkillCommand>();
-            BoxingFreeSerializer.Register<PropertyEnvironmentChangeCommand>();
-            BoxingFreeSerializer.Register<InputCommand>();
-            BoxingFreeSerializer.Register<AnimationCommand>();
-            BoxingFreeSerializer.Register<InteractionCommand>();
-            BoxingFreeSerializer.Register<ItemsUseCommand>();
-            BoxingFreeSerializer.Register<ItemLockCommand>();
-            BoxingFreeSerializer.Register<ItemEquipCommand>();
-            BoxingFreeSerializer.Register<ItemDropCommand>();
-            BoxingFreeSerializer.Register<ItemExchangeCommand>();
-            BoxingFreeSerializer.Register<ItemsSellCommand>();
-            BoxingFreeSerializer.Register<ItemsBuyCommand>();
-            BoxingFreeSerializer.Register<GoldChangedCommand>();
-            BoxingFreeSerializer.Register<PropertyInvincibleChangedCommand>();
-            BoxingFreeSerializer.Register<PropertyEquipmentPassiveCommand>();
-            BoxingFreeSerializer.Register<PropertyEquipmentChangedCommand>();
-            BoxingFreeSerializer.Register<NoUnionPlayerAddMoreScoreAndGoldCommand>();
-            BoxingFreeSerializer.Register<SkillCommand>();
-            BoxingFreeSerializer.Register<PlayerDeathCommand>();
-            BoxingFreeSerializer.Register<PlayerRebornCommand>();
-            BoxingFreeSerializer.Register<PlayerTouchedBaseCommand>();
-            BoxingFreeSerializer.Register<PlayerTraceOtherPlayerHpCommand>();
-            BoxingFreeSerializer.Register<ItemsGetCommand>();
-            BoxingFreeSerializer.Register<EquipmentCommand>();
-            BoxingFreeSerializer.Register<BuyCommand>();
-            BoxingFreeSerializer.Register<RefreshShopCommand>();
-            BoxingFreeSerializer.Register<SellCommand>();
-            BoxingFreeSerializer.Register<SkillLoadCommand>();
-            BoxingFreeSerializer.Register<TriggerCommand>();
-            BoxingFreeSerializer.Register<SkillChangedCommand>();
-            BoxingFreeSerializer.Register<PropertyUseSkillCommand>();
-            BoxingFreeSerializer.Register<ItemSkillEnableCommand>();
-            BoxingFreeSerializer.Register<PropertyGetScoreGoldCommand>();
-            BoxingFreeSerializer.Register<SkillLoadOverloadAnimationCommand>();
-        }
-
-        public static void InitMainSceneData()
-        {
-            BoxingFreeSerializer.Register<PlayerInternalData>();
-            BoxingFreeSerializer.Register<PlayerReadOnlyData>();
-            BoxingFreeSerializer.Register<GameResultData>();
-            BoxingFreeSerializer.Register<PlayerGameResultData>();
-            BoxingFreeSerializer.Register<NonFriendOnlinePlayersResult>();
-            BoxingFreeSerializer.Register<FriendData>();
-            BoxingFreeSerializer.Register<FriendList>();
-            BoxingFreeSerializer.Register<PlayerInfo>();
-            BoxingFreeSerializer.Register<RoomGlobalInfo>();
-            BoxingFreeSerializer.Register<RoomsData>();
-            BoxingFreeSerializer.Register<RoomCustomInfo>();
-            BoxingFreeSerializer.Register<MainGameInfo>();
-            BoxingFreeSerializer.Register<GamePlayerInfo>();
-            BoxingFreeSerializer.Register<RoomData>();
-            BoxingFreeSerializer.Register<AOTScripts.Data.Message>();
-            BoxingFreeSerializer.Register<SendMessageResponse>();
-            BoxingFreeSerializer.Register<GetNewMessagesResponse>();
-            BoxingFreeSerializer.Register<InvitationMessage>();
-            BoxingFreeSerializer.Register<ApproveJoinRoomMessage>();
-            BoxingFreeSerializer.Register<ApplyJoinRoomMessage>();
-            BoxingFreeSerializer.Register<DownloadFileMessage>();
-            BoxingFreeSerializer.Register<LeaveRoomMessage>();
-            BoxingFreeSerializer.Register<GameInfoChangedMessage>();
-            BoxingFreeSerializer.Register<StartGameMessage>();
-            BoxingFreeSerializer.Register<ChangeGameInfoMessage>();
-            BoxingFreeSerializer.Register<LeaveGameMessage>();
-            BoxingFreeSerializer.Register<GameStartConnectionMessage>();
-        }
+        // public static void InitTownSceneData()
+        // {
+        //     BoxingFreeSerializer.RegisterMemory<MirrorPlayerConnectMessage>();
+        //     BoxingFreeSerializer.RegisterMemory<PlayerAuthMessage>();
+        //     BoxingFreeSerializer.RegisterMemory<MirrorCountdownMessage>();
+        //     BoxingFreeSerializer.RegisterMemory<MirrorGameStartMessage>();
+        //     BoxingFreeSerializer.RegisterMemory<MirrorGameWarmupMessage>();
+        //     BoxingFreeSerializer.RegisterMemory<MirrorPickerPickUpCollectMessage>();
+        //     BoxingFreeSerializer.RegisterMemory<MirrorPickerPickUpChestMessage>();
+        //     BoxingFreeSerializer.RegisterMemory<MirrorPlayerInputInfoMessage>();
+        //     BoxingFreeSerializer.RegisterMemory<MirrorPlayerStateMessage>();
+        //     BoxingFreeSerializer.RegisterMemory<MirrorPlayerConnectedMessage>();
+        //     BoxingFreeSerializer.RegisterMemory<MirrorPlayerRecoveryMessage>();
+        //     BoxingFreeSerializer.RegisterMemory<AttackData>();
+        //     
+        //     BoxingFreeSerializer.RegisterMemory<PlayerEquipmentState>();
+        //     BoxingFreeSerializer.RegisterMemory<PlayerInputState>();
+        //     BoxingFreeSerializer.RegisterMemory<PlayerItemState>();
+        //     BoxingFreeSerializer.RegisterMemory<PlayerPropertyState>();
+        //     BoxingFreeSerializer.RegisterMemory<PlayerShopState>();
+        //     BoxingFreeSerializer.RegisterMemory<PlayerSkillState>();
+        //     BoxingFreeSerializer.RegisterMemory<CooldownSnapshotData>();
+        //     
+        //     BoxingFreeSerializer.RegisterMemory<ConditionHeader>();
+        //     BoxingFreeSerializer.RegisterMemory<AttackHitConditionParam>();
+        //     BoxingFreeSerializer.RegisterMemory<SkillCastConditionParam>();
+        //     BoxingFreeSerializer.RegisterMemory<TakeDamageConditionParam>();
+        //     BoxingFreeSerializer.RegisterMemory<KillConditionParam>();
+        //     BoxingFreeSerializer.RegisterMemory<HpChangeConditionParam>();
+        //     BoxingFreeSerializer.RegisterMemory<MpChangeConditionParam>();
+        //     BoxingFreeSerializer.RegisterMemory<CriticalHitConditionParam>();
+        //     BoxingFreeSerializer.RegisterMemory<DodgeConditionParam>();
+        //     BoxingFreeSerializer.RegisterMemory<AttackConditionParam>();
+        //     BoxingFreeSerializer.RegisterMemory<SkillHitConditionParam>();
+        //     BoxingFreeSerializer.RegisterMemory<DeathConditionParam>();
+        //     BoxingFreeSerializer.RegisterMemory<MoveConditionParam>();
+        //     BoxingFreeSerializer.RegisterMemory<KeyframeData>();
+        //     
+        //     BoxingFreeSerializer.RegisterMemory<AttackChecker>();
+        //     BoxingFreeSerializer.RegisterMemory<AttackHitChecker>();
+        //     BoxingFreeSerializer.RegisterMemory<SkillCastChecker>();
+        //     BoxingFreeSerializer.RegisterMemory<SkillHitChecker>();
+        //     BoxingFreeSerializer.RegisterMemory<TakeDamageChecker>();
+        //     BoxingFreeSerializer.RegisterMemory<KillChecker>();
+        //     BoxingFreeSerializer.RegisterMemory<HpChangeChecker>();
+        //     BoxingFreeSerializer.RegisterMemory<MpChangeChecker>();
+        //     BoxingFreeSerializer.RegisterMemory<CriticalHitChecker>();
+        //     BoxingFreeSerializer.RegisterMemory<DodgeChecker>();
+        //     BoxingFreeSerializer.RegisterMemory<DeathChecker>();
+        //     BoxingFreeSerializer.RegisterMemory<MoveChecker>();
+        //     BoxingFreeSerializer.RegisterMemory<NoConditionChecker>();
+        //     
+        //     BoxingFreeSerializer.RegisterMemory<RandomItemsData>();
+        //     BoxingFreeSerializer.RegisterMemory<ItemOtherData>();
+        //     BoxingFreeSerializer.RegisterMemory<SkillConfigEventData>();
+        //     BoxingFreeSerializer.RegisterMemory<SkillHitExtraEffectData>();
+        //     BoxingFreeSerializer.RegisterMemory<ElementConfigData>();
+        //     BoxingFreeSerializer.RegisterMemory<GameLoopData>();
+        //     BoxingFreeSerializer.RegisterMemory<WeatherInfo>();
+        //     
+        //     BoxingFreeSerializer.RegisterMemory<PropertyAutoRecoverCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<PropertyClientAnimationCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<PropertyServerAnimationCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<PropertyBuffCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<PropertyAttackCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<PropertySkillCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<PropertyEnvironmentChangeCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<InputCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<AnimationCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<InteractionCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<ItemsUseCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<ItemLockCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<ItemEquipCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<ItemDropCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<ItemExchangeCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<ItemsSellCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<ItemsBuyCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<GoldChangedCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<PropertyInvincibleChangedCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<PropertyEquipmentPassiveCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<PropertyEquipmentChangedCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<NoUnionPlayerAddMoreScoreAndGoldCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<SkillCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<PlayerDeathCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<PlayerRebornCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<PlayerTouchedBaseCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<PlayerTraceOtherPlayerHpCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<ItemsGetCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<EquipmentCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<BuyCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<RefreshShopCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<SellCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<SkillLoadCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<TriggerCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<SkillChangedCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<PropertyUseSkillCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<ItemSkillEnableCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<PropertyGetScoreGoldCommand>();
+        //     BoxingFreeSerializer.RegisterMemory<SkillLoadOverloadAnimationCommand>();
+        // }
 
         public static void UnregisterMainSceneData()
         {
-            BoxingFreeSerializer.Unregister<PlayerInternalData>();
-            BoxingFreeSerializer.Unregister<PlayerReadOnlyData>();
-            BoxingFreeSerializer.Unregister<GameResultData>();
-            BoxingFreeSerializer.Unregister<PlayerGameResultData>();
-            BoxingFreeSerializer.Unregister<NonFriendOnlinePlayersResult>();
-            BoxingFreeSerializer.Unregister<FriendData>();
-            BoxingFreeSerializer.Unregister<FriendList>();
-            BoxingFreeSerializer.Unregister<PlayerInfo>();
-            BoxingFreeSerializer.Unregister<RoomGlobalInfo>();
-            BoxingFreeSerializer.Unregister<RoomsData>();
-            BoxingFreeSerializer.Unregister<RoomCustomInfo>();
-            BoxingFreeSerializer.Unregister<MainGameInfo>();
-            BoxingFreeSerializer.Unregister<GamePlayerInfo>();
-            BoxingFreeSerializer.Unregister<RoomData>();
-            BoxingFreeSerializer.Unregister<AOTScripts.Data.Message>();
-            BoxingFreeSerializer.Unregister<SendMessageResponse>();
-            BoxingFreeSerializer.Unregister<GetNewMessagesResponse>();
-            BoxingFreeSerializer.Unregister<InvitationMessage>();
-            BoxingFreeSerializer.Unregister<ApproveJoinRoomMessage>();
-            BoxingFreeSerializer.Unregister<ApplyJoinRoomMessage>();
-            BoxingFreeSerializer.Unregister<DownloadFileMessage>();
-            BoxingFreeSerializer.Unregister<LeaveRoomMessage>();
-            BoxingFreeSerializer.Unregister<GameInfoChangedMessage>();
-            BoxingFreeSerializer.Unregister<StartGameMessage>();
-            BoxingFreeSerializer.Unregister<ChangeGameInfoMessage>();
-            BoxingFreeSerializer.Unregister<LeaveGameMessage>();
-            BoxingFreeSerializer.Unregister<GameStartConnectionMessage>();
+            BoxingFreeSerializer.UnregisterJson<PlayerInternalData>();
+            BoxingFreeSerializer.UnregisterJson<PlayerReadOnlyData>();
+            BoxingFreeSerializer.UnregisterJson<GameResultData>();
+            BoxingFreeSerializer.UnregisterJson<PlayerGameResultData>();
+            BoxingFreeSerializer.UnregisterJson<NonFriendOnlinePlayersResult>();
+            BoxingFreeSerializer.UnregisterJson<FriendData>();
+            BoxingFreeSerializer.UnregisterJson<FriendList>();
+            BoxingFreeSerializer.UnregisterJson<PlayerInfo>();
+            BoxingFreeSerializer.UnregisterJson<RoomGlobalInfo>();
+            BoxingFreeSerializer.UnregisterJson<RoomsData>();
+            BoxingFreeSerializer.UnregisterJson<RoomCustomInfo>();
+            BoxingFreeSerializer.UnregisterJson<MainGameInfo>();
+            BoxingFreeSerializer.UnregisterJson<GamePlayerInfo>();
+            BoxingFreeSerializer.UnregisterJson<RoomData>();
+            BoxingFreeSerializer.UnregisterJson<AOTScripts.Data.Message>();
+            BoxingFreeSerializer.UnregisterJson<SendMessageResponse>();
+            BoxingFreeSerializer.UnregisterJson<GetNewMessagesResponse>();
+            BoxingFreeSerializer.UnregisterJson<InvitationMessage>();
+            BoxingFreeSerializer.UnregisterJson<ApproveJoinRoomMessage>();
+            BoxingFreeSerializer.UnregisterJson<ApplyJoinRoomMessage>();
+            BoxingFreeSerializer.UnregisterJson<DownloadFileMessage>();
+            BoxingFreeSerializer.UnregisterJson<LeaveRoomMessage>();
+            BoxingFreeSerializer.UnregisterJson<GameInfoChangedMessage>();
+            BoxingFreeSerializer.UnregisterJson<StartGameMessage>();
+            BoxingFreeSerializer.UnregisterJson<ChangeGameInfoMessage>();
+            BoxingFreeSerializer.UnregisterJson<LeaveGameMessage>();
+            BoxingFreeSerializer.UnregisterJson<GameStartConnectionMessage>();
         }
     }
 }
