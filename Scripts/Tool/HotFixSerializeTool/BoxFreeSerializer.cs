@@ -21,15 +21,19 @@ namespace HotUpdate.Scripts.Tool.HotFixSerializeTool
         public static void Register<T>()
         {
             var type = typeof(T);
-            if (type.GetCustomAttribute(typeof(MemoryPackableAttribute)) != null)
+            var attrs = type.GetCustomAttributes(typeof(MemoryPackableAttribute));
+            foreach (var attr in attrs)
             {
-                _memorySerializers[typeof(T)] = new Func<T, byte[]>(SerializeInternal<T>);
-                _memoryDeserializers[typeof(T)] = new Func<byte[], T>(DeserializeInternal<T>);
-            }
-            else if (type.GetCustomAttribute(typeof(JsonSerializableAttribute)) != null)
-            {
-                _jsonSerializers[typeof(T)] = new Func<T, string>(JsonSerializeInternal<T>);
-                _jsonDeserializers[typeof(T)] = new Func<string, T>(JsonDeserializeInternal<T>);
+                if (attr is MemoryPackableAttribute memoryPackable)
+                {
+                    _memorySerializers[typeof(T)] = new Func<T, byte[]>(SerializeInternal<T>);
+                    _memoryDeserializers[typeof(T)] = new Func<byte[], T>(DeserializeInternal<T>);
+                }
+                else if (attr is JsonAttribute jsonAttribute)
+                {
+                    _jsonSerializers[typeof(T)] = new Func<T, string>(JsonSerializeInternal<T>);
+                    _jsonDeserializers[typeof(T)] = new Func<string, T>(JsonDeserializeInternal<T>);
+                }
             }
         }
         
