@@ -4,6 +4,7 @@ using AOTScripts.Tool.Coroutine;
 using Data;
 using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.Server.PlayFab;
+using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using HotUpdate.Scripts.Tool.ReactiveProperty;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.SecondPanel;
@@ -75,22 +76,14 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             quitButton.BindDebouncedListener(OnQuitButtonClick);
             friendButton.BindDebouncedListener(OnFriendButtonClick);
             Debug.Log("MainScreenUI Init");
-            // HReactiveProperty<TestData> testData = new HReactiveProperty<TestData>();
-            // testData.Subscribe(OnPlayerDataTest);
-            // testData.Value = new TestData() { value = "test" };
-            // Debug.Log("testData Init");
+            InitData();
             try
             {
-                var stru = new TestStruct() { value = "test", id = 123 };
-                Debug.Log(stru);
-                var struBytes = MemoryPackSerializer.Serialize(stru);
-                Debug.Log(struBytes);
-                
-                var stru2 = MemoryPackSerializer.Deserialize(typeof(TestStruct), struBytes);
-                if (stru2 is TestStruct stru3)
-                {
-                    Debug.Log($"TestStruct: {stru3.value}, {stru3.id}");
-                }
+                var playerData = new TestData { value = "PlayerDataTest json struct" };
+                var jsonData = BoxingFreeSerializer.JsonSerialize(playerData);
+                Debug.Log(jsonData);
+                var deserializedData = BoxingFreeSerializer.JsonDeserialize<TestData>(jsonData);
+                Debug.Log(deserializedData.value);
             }
             catch (Exception e)
             {
@@ -100,11 +93,40 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
 
             try
             {
-                var stru = new TestStruct() { value = "test", id = 123 };
-                var struBytes = JsonUtility.ToJson(stru);
-                Debug.Log(struBytes);
-                var stru2 = (TestStruct)JsonUtility.FromJson(struBytes, typeof(TestStruct));
-                Debug.Log($"TestStruct: {stru2.value}, {stru2.id}");
+                var playerData = new TestData { value = "PlayerDataTest memory struct" };
+                var jsonData = BoxingFreeSerializer.MemorySerialize(playerData);
+                Debug.Log(jsonData);
+                var deserializedData = BoxingFreeSerializer.MemoryDeserialize<TestData>(jsonData);
+                Debug.Log(deserializedData.value);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+            try
+            {
+
+                var playerData = new TestClass() { value = "PlayerDataTest json class" };
+                var jsonData = BoxingFreeSerializer.JsonSerialize(playerData);
+                Debug.Log(jsonData);
+                var deserializedData = BoxingFreeSerializer.JsonDeserialize<TestClass>(jsonData);
+                Debug.Log(deserializedData.value);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+            try
+            {
+                var playerData = new TestClass() { value = "PlayerDataTest memory class" };
+                var jsonData = BoxingFreeSerializer.MemorySerialize(playerData);
+                Debug.Log(jsonData);
+                var deserializedData = BoxingFreeSerializer.MemoryDeserialize<TestClass>(jsonData);
+                Debug.Log(deserializedData.value);
             }
             catch (Exception e)
             {
@@ -118,6 +140,12 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                 nameText.text = _nameTitle + value.Nickname;
             })
             .AddTo(this);
+        }
+
+        private void InitData()
+        {
+            BoxingFreeSerializer.RegisterStruct<TestStruct>();
+            BoxingFreeSerializer.RegisterClass<TestClass>();
         }
 
         private void OnPlayerDataTest<T>(T data)
@@ -205,6 +233,12 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             _timer += 1f;
             Debug.Log($"Matchmaking: {_timer}");
         }
+    }
+
+    internal class TestClass
+    {
+        public string value;
+        public int number;
     }
     // public static class ReactivePropertyDiagnosticTests
     // {
