@@ -5,27 +5,20 @@ using System.Linq;
 using AOTScripts.Data;
 using AOTScripts.Tool;
 using AOTScripts.Tool.Coroutine;
-using Data;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.Data;
-using HotUpdate.Scripts.Network.Server;
-using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using HotUpdate.Scripts.UI.UIBase;
-using Mirror;
-using Network.Data;
-using Newtonsoft.Json;
 using PlayFab;
 using PlayFab.CloudScriptModels;
-using PlayFab.DataModels;
 using UI.UIBase;
 using UnityEngine;
 using VContainer;
-using EntityKey = PlayFab.CloudScriptModels.EntityKey;
 using Object = UnityEngine.Object;
 
-namespace Network.Server.PlayFab
+namespace HotUpdate.Scripts.Network.Server.PlayFab
 {
     public class PlayFabMessageHandler
     {
@@ -161,7 +154,7 @@ namespace Network.Server.PlayFab
                     return;
                 }
                 Debug.Log($"Received {value} new messages");
-                var newMessages = JsonUtility.FromJson<GetNewMessagesResponse>(result.FunctionResult.ToString());
+                var newMessages = BoxingFreeSerializer.JsonDeserialize<GetNewMessagesResponse>(result.FunctionResult.ToString());
                 Debug.Log($"Received {newMessages.messages.Length} new messages");
                 ProcessMessages(newMessages.messages);
             }
@@ -411,7 +404,7 @@ namespace Network.Server.PlayFab
 
             if (result.FunctionResult != null)
             {
-                var resultObject = JsonUtility.FromJson<DownloadFileMessage>(result.FunctionResult.ToString());
+                var resultObject = BoxingFreeSerializer.JsonDeserialize<DownloadFileMessage>(result.FunctionResult.ToString());
                 if (!string.IsNullOrEmpty(resultObject.fileContents))
                 {
                     // 获取持久化数据路径
@@ -434,14 +427,14 @@ namespace Network.Server.PlayFab
 
         private void Test(string content)
         {
-            var messageContent = JsonUtility.FromJson<TestMessage>(content);
+            var messageContent = BoxingFreeSerializer.JsonDeserialize<TestMessage>(content);
             Debug.Log($"Test message received {messageContent.testContent}");
         }
 
         
         private T ConvertToMessageContent<T>(string content) where T : IMessageContent, new()
         {
-            var messageContent = JsonUtility.FromJson<T>(content);
+            var messageContent = BoxingFreeSerializer.JsonDeserialize<T>(content);
             return messageContent;
             // 这里你需要将服务器返回的消息内容转换为Message对象并处理
         }
