@@ -79,10 +79,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             InitData();
             try
             {
-                var playerData = new TestData { value = "PlayerDataTest json struct" };
+                var playerData = new TestStruct() { value = "PlayerDataTest json struct" };
                 var jsonData = BoxingFreeSerializer.JsonSerialize(playerData);
                 Debug.Log(jsonData);
-                var deserializedData = BoxingFreeSerializer.JsonDeserialize<TestData>(jsonData);
+                var deserializedData = BoxingFreeSerializer.JsonDeserialize<TestStruct>(jsonData);
                 Debug.Log(deserializedData.value);
             }
             catch (Exception e)
@@ -93,10 +93,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
 
             try
             {
-                var playerData = new TestData { value = "PlayerDataTest memory struct" };
+                var playerData = new TestStruct { value = "PlayerDataTest memory struct" };
                 var jsonData = BoxingFreeSerializer.MemorySerialize(playerData);
                 Debug.Log(jsonData);
-                var deserializedData = BoxingFreeSerializer.MemoryDeserialize<TestData>(jsonData);
+                var deserializedData = BoxingFreeSerializer.MemoryDeserialize<TestStruct>(jsonData);
                 Debug.Log(deserializedData.value);
             }
             catch (Exception e)
@@ -146,14 +146,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         {
             BoxingFreeSerializer.RegisterStruct<TestStruct>();
             BoxingFreeSerializer.RegisterClass<TestClass>();
-        }
-
-        private void OnPlayerDataTest<T>(T data)
-        {
-            if (data is TestData test )
-            {
-                Debug.Log($"PlayerDataTest: {test.value}");
-            }
         }
 
         private void OnFriendButtonClick()
@@ -627,12 +619,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
     //         }
     //     }
     // }
-    
-    public struct TestData
-    {
-        public int id;
-        public string value;
-    }
     
     [Serializable]
     [MemoryPackable]
