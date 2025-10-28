@@ -88,7 +88,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw;
             }
 
             try
@@ -102,7 +101,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw;
             }
 
             try
@@ -117,7 +115,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw;
             }
 
             try
@@ -131,7 +128,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw;
             }
             PlayFabData.PlayerReadOnlyData.Subscribe(value =>
             {
@@ -225,12 +221,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             _timer += 1f;
             Debug.Log($"Matchmaking: {_timer}");
         }
-    }
-
-    internal class TestClass
-    {
-        public string value;
-        public int number;
     }
     // public static class ReactivePropertyDiagnosticTests
     // {
@@ -626,5 +616,13 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
     {
         public int id;
         public string value;
+    }
+
+    [Serializable]
+    [MemoryPackable]
+    public partial class TestClass
+    {
+        public string value;
+        public int number;
     }
 }
