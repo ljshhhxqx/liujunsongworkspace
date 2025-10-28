@@ -4,6 +4,7 @@ using AOTScripts.Tool;
 using AOTScripts.Tool.Coroutine;
 using Data;
 using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Tool.HotFixSerializeTool;
@@ -78,42 +79,6 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             quitButton.BindDebouncedListener(OnQuitButtonClick);
             friendButton.BindDebouncedListener(OnFriendButtonClick);
             Debug.Log("MainScreenUI Init");
-            BoxingFreeSerializer.RegisterStruct<PlayerReadOnlyData>();
-            BoxingFreeSerializer.RegisterStruct<CollectItemMetaData>();
-            try
-            {
-                var test = BoxingFreeSerializer.JsonSerialize(new PlayerReadOnlyData()
-                {
-                    PlayerId = "123456",
-                    Nickname = "Test"
-                });
-                Debug.Log(test);
-                var test2 = BoxingFreeSerializer.JsonDeserialize<PlayerReadOnlyData>(test);
-                Debug.Log(test2.PlayerId);
-                Debug.Log(test2.Nickname);
-                
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            try
-            {
-                var test = BoxingFreeSerializer.MemorySerialize(new CollectItemMetaData()
-                {
-                    ItemId = 1241245,
-                    ItemCollectConfigId = 1111111,
-                });
-                Debug.Log(test);
-                var test2 = BoxingFreeSerializer.MemoryDeserialize<CollectItemMetaData>(test);
-                Debug.Log(test2.ItemId);
-                Debug.Log(test2.ItemCollectConfigId);
-                
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
             PlayFabData.PlayerReadOnlyData.Subscribe(value =>
             {
                 Debug.Log($"PlayerId: {value.PlayerId}, Nickname: {value.Nickname}");

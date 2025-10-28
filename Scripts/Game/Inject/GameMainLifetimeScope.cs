@@ -2,6 +2,7 @@ using Data;
 using Game;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Tool.GameEvent;

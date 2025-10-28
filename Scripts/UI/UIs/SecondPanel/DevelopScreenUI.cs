@@ -1,5 +1,6 @@
 ﻿using AOTScripts.Tool;
 using Data;
+using HotUpdate.Scripts.Data;
 using TMPro;
 using UI.UIBase;
 using UnityEngine;

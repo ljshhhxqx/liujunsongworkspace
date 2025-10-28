@@ -13,6 +13,7 @@ using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.SecondPanel;
 using HotUpdate.Scripts.Weather;
@@ -68,9 +69,8 @@ namespace HotUpdate.Scripts.Game
             _uiManager.SwitchUI<LoginScreenUI>();
             // await _gameSceneManager.LoadScene("Town");
             // _playerDataManager.TestInitRoomPlayer();
-            
         }
-        
+
 
         private async UniTask LoadResources()
         {
@@ -81,7 +81,6 @@ namespace HotUpdate.Scripts.Game
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw;
             }
 
             try
@@ -93,7 +92,6 @@ namespace HotUpdate.Scripts.Game
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw;
             }
 
             _gameEventManager.Subscribe<GameMessageListeningEvent>(OnGameMessageListening);

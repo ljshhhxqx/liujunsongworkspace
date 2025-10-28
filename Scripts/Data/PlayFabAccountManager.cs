@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Data;
 using AOTScripts.Tool;
+using Data;
 using HotUpdate.Scripts.Config.JsonConfig;
-using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel;
-using Network.Data;
 using Newtonsoft.Json;
 using PlayFab;
 using PlayFab.ClientModels;
@@ -21,7 +21,7 @@ using VContainer;
 using EntityKey = PlayFab.CloudScriptModels.EntityKey;
 using ExecuteCloudScriptResult = PlayFab.CloudScriptModels.ExecuteCloudScriptResult;
 
-namespace Data
+namespace HotUpdate.Scripts.Data
 {
     public class PlayFabAccountManager
     {
@@ -188,12 +188,12 @@ namespace Data
             {
                 if (key == "internalData")
                 {
-                    PlayFabData.PlayerInternalData.Value = JsonUtility.FromJson<PlayerInternalData>(data[key].ToString());
+                    PlayFabData.PlayerInternalData.Value = BoxingFreeSerializer.JsonDeserialize<PlayerInternalData>(data[key].ToString());
                     Debug.Log("Player Internal Data Success" + PlayFabData.PlayerInternalData.Value.ToString());
                 }
                 else if (key == "readOnlyData")
                 {
-                    PlayFabData.PlayerReadOnlyData.Value = JsonUtility.FromJson<PlayerReadOnlyData>(data[key].ToString());
+                    PlayFabData.PlayerReadOnlyData.Value = BoxingFreeSerializer.JsonDeserialize<PlayerReadOnlyData>(data[key].ToString());
                     Debug.Log("Player ReadOnly Data Success" + PlayFabData.PlayerReadOnlyData.Value.ToString());
                 }
             }
@@ -286,7 +286,7 @@ namespace Data
             {
                 if (value.Key == "readOnlyData")
                 {
-                    PlayFabData.PlayerReadOnlyData.Value = JsonUtility.FromJson<PlayerReadOnlyData>(value.Value.ToString()); //.ParseCloudScriptResultToData<PlayerReadOnlyData>();
+                    PlayFabData.PlayerReadOnlyData.Value = BoxingFreeSerializer.JsonDeserialize<PlayerReadOnlyData>(value.Value.ToString()); //.ParseCloudScriptResultToData<PlayerReadOnlyData>();
                 }
             }
             Debug.Log("Modify NickName Success");
@@ -351,7 +351,7 @@ namespace Data
                 {
                     // 解析好友列表
                     var json = result.FunctionResult.ToString();
-                    var friendList = JsonConvert.DeserializeObject<FriendList>(json);
+                    var friendList = BoxingFreeSerializer.JsonDeserialize<FriendList>(json);
                     _friendDatas = friendList.Friends;
                     
                     // 更新UI或处理好友列表
@@ -423,7 +423,7 @@ namespace Data
                     // 解析结果
                     var dic = result.ParseCloudScriptResultToDic();
                     var json = result.FunctionResult.ToString();
-                    var apiResult = JsonConvert.DeserializeObject<NonFriendOnlinePlayersResult>(json);
+                    var apiResult = BoxingFreeSerializer.JsonDeserialize<NonFriendOnlinePlayersResult>(json);
                 
                     if (!string.IsNullOrEmpty(apiResult.error))
                     {

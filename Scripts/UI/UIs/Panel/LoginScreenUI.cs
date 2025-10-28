@@ -1,6 +1,8 @@
 using AOTScripts.Tool;
 using Data;
+using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.Data;
+using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using HotUpdate.Scripts.UI.UIBase;
 using Network.Data;
 using TMPro;
@@ -120,6 +122,8 @@ namespace UI.UIs
             passwordInputField.onValueChanged.RemoveListener(CheckInputField);
             loginButton.onClick.RemoveAllListeners();
             registerButton.onClick.RemoveAllListeners();
+            
+            BoxingFreeExtension.UnregisterMainSceneData();
         }
     }
 }

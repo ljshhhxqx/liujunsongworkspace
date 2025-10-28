@@ -13,6 +13,7 @@ using HotUpdate.Scripts.Game;
 using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel;
 using Network.Data;
@@ -222,7 +223,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
 
             if (data.TryGetValue("roomData", out var value))
             {
-                var roomData = JsonUtility.FromJson<RoomData>(value.ToString());
+                var roomData = BoxingFreeSerializer.JsonDeserialize<RoomData>(value.ToString());
                 CurrentRoomId = roomData.RoomId;
                 _uiManager.SwitchUI<RoomScreenUI>(ui =>
                 {
@@ -261,7 +262,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             var data = result.ParseCloudScriptResultToDic();
             if (data.TryGetValue("roomData", out var value))
             {
-                var roomData = JsonUtility.FromJson<RoomData>(value.ToString());
+                var roomData = BoxingFreeSerializer.JsonDeserialize<RoomData>(result.FunctionResult.ToString());
                 CurrentRoomId = roomData.RoomId;
                 _uiManager.SwitchUI<RoomScreenUI>(ui =>
                 {
@@ -380,7 +381,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             var data = result.ParseCloudScriptResultToDic();
             if (data.TryGetValue("roomData", out var value))
             {
-                var roomData = JsonUtility.FromJson<RoomData>(value.ToString());
+                var roomData = BoxingFreeSerializer.JsonDeserialize<RoomData>(result.FunctionResult.ToString());
                 _currentRoomData = roomData;
                 OnPlayerJoined?.Invoke(roomData);
                 _uiManager.CloseUI(UIType.RoomScreen);
@@ -407,19 +408,19 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             var data = result.ParseCloudScriptResultToDic();
             if (data.TryGetValue("allRooms", out var value))
             {
-                var roomData = JsonConvert.DeserializeObject<RoomData[]>(value.ToString());
+                var roomData = BoxingFreeSerializer.JsonDeserialize<RoomsData>(result.FunctionResult.ToString());
                 if (_uiManager.IsUIOpen(UIType.RoomList))
                 {
-                    OnRefreshRoomData?.Invoke(roomData);
+                    OnRefreshRoomData?.Invoke(roomData.AllRooms);
                 }
                 else
                 {
                     _uiManager.SwitchUI<RoomListScreenUI>( ui =>
                     {
-                        OnRefreshRoomData?.Invoke(roomData);
+                        OnRefreshRoomData?.Invoke(roomData.AllRooms);
                     });
                 }
-                RoomsData = roomData;
+                RoomsData = roomData.AllRooms;
                 Debug.Log("房间数据更新成功");
             }
         }
@@ -435,6 +436,12 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             };
             _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnGetInvitablePlayersSuccess, OnError, isShowLoading);
         }
+        
+        [Serializable]
+        private struct PlayersReadonlyData
+        {
+            public PlayerReadOnlyData[] players;
+        }
 
         private void OnGetInvitablePlayersSuccess(ExecuteCloudScriptResult result)
         {
@@ -448,11 +455,11 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                     //_uiManager.ShowTips("当前没有可邀请的玩家");
                     return;
                 }
-                var players = JsonConvert.DeserializeObject<PlayerReadOnlyData[]>(value.ToString());
+                var players = BoxingFreeSerializer.JsonDeserialize<PlayersReadonlyData>(result.FunctionResult.ToString());
                 if (_uiManager.IsUIOpen(UIType.RoomScreen))
                 {
-                    players = players.Where(p => p.PlayerId != PlayFabData.PlayFabId.Value).ToArray();
-                    OnRefreshPlayers?.Invoke(players);
+                    players.players = players.players.Where(p => p.PlayerId != PlayFabData.PlayFabId.Value).ToArray();
+                    OnRefreshPlayers?.Invoke(players.players);
                 }
             }
             
@@ -479,7 +486,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             var data = result.ParseCloudScriptResultToDic();
             if (data.TryGetValue("roomData", out var value))
             {
-                var roomData = JsonUtility.FromJson<RoomData>(value.ToString());
+                var roomData = BoxingFreeSerializer.JsonDeserialize<RoomData>(result.FunctionResult.ToString());
                 OnRefreshRoom?.Invoke(roomData);
             }
         }
