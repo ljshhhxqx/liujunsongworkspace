@@ -79,12 +79,38 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             // testData.Subscribe(OnPlayerDataTest);
             // testData.Value = new TestData() { value = "test" };
             // Debug.Log("testData Init");
-            var stru = new TestStruct() { value = "test", id = 123 };
-            Debug.Log(stru);
-            var struBytes = MemoryPackSerializer.Serialize(stru);
-            Debug.Log(struBytes);
-            var stru2 = MemoryPackSerializer.Deserialize<TestStruct>(struBytes);
-            Debug.Log($"TestStruct: {stru2.value}, {stru2.id}");
+            try
+            {
+                var stru = new TestStruct() { value = "test", id = 123 };
+                Debug.Log(stru);
+                var struBytes = MemoryPackSerializer.Serialize(stru);
+                Debug.Log(struBytes);
+                
+                var stru2 = MemoryPackSerializer.Deserialize(typeof(TestStruct), struBytes);
+                if (stru2 is TestStruct stru3)
+                {
+                    Debug.Log($"TestStruct: {stru3.value}, {stru3.id}");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+            try
+            {
+                var stru = new TestStruct() { value = "test", id = 123 };
+                var struBytes = JsonUtility.ToJson(stru);
+                Debug.Log(struBytes);
+                var stru2 = (TestStruct)JsonUtility.FromJson(struBytes, typeof(TestStruct));
+                Debug.Log($"TestStruct: {stru2.value}, {stru2.id}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
             PlayFabData.PlayerReadOnlyData.Subscribe(value =>
             {
                 Debug.Log($"PlayerId: {value.PlayerId}, Nickname: {value.Nickname}");
@@ -574,6 +600,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         public string value;
     }
     
+    [Serializable]
     [MemoryPackable]
     public partial struct TestStruct
     {
