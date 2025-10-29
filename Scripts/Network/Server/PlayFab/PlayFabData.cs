@@ -15,13 +15,6 @@ namespace AOTScripts.Data
         public float TimeLimit;
         public bool IsStartGame;
     }
-
-    public enum GameResult
-    {
-        None,
-        Win,
-        Lose,
-    }
     [Serializable]
     public struct PlayerInternalData
     {
@@ -72,17 +65,6 @@ namespace AOTScripts.Data
         }
     }
     
-    // 好友关系状态
-    public enum FriendStatus
-    {
-        None = 0,       // 无关系
-        RequestSent = 1, // 已发出邀请
-        RequestReceived = 2,  // 收到邀请
-        Friends = 3,    // 已是好友
-        Removed = 4,    // 已删除
-        Rejected = 5,   // 已拒绝
-    }
-    
     [Serializable]
     public struct NonFriendOnlinePlayersResult
     {
@@ -123,14 +105,6 @@ namespace AOTScripts.Data
     public struct FriendList
     {
         public List<FriendData> Friends;
-    }
-
-    public enum PlayerStatus
-    {
-        Offline,
-        Online,
-        InRoom,
-        InGame
     }
 
     [Serializable]
@@ -273,17 +247,5 @@ namespace AOTScripts.Data
             }
             return sb.ToString();
         }
-    }
-    
-    public enum GameMode
-    {
-        /// <summary>
-        /// 按时间结束
-        /// </summary>
-        Time,
-        /// <summary>
-        /// 按目标分数结束
-        /// </summary>
-        Score
     }
 }

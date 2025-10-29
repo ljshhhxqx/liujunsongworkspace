@@ -1,4 +1,5 @@
-﻿using AOTScripts.Data.NetworkMes;
+﻿using AOTScripts.Data;
+using AOTScripts.Data.NetworkMes;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.Server.Sync;

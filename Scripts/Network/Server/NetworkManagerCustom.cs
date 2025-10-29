@@ -255,7 +255,7 @@ namespace HotUpdate.Scripts.Network.Server
             // 获取当前连接
             NetworkConnection conn = NetworkClient.connection;
             //
-            var msg = new MirrorPlayerConnectMessage("Creator1", conn.connectionId, "asdw", new CompressedVector3(), 0);
+            var msg = new MirrorPlayerConnectMessage("Creator1", conn.connectionId, "asdw", new AotCompressedVector3(), 0);
             conn.Send(msg);
             // 发送 PlayerAccountId 给服务器
             // TODO: 取消注释
