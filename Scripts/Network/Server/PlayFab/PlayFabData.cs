@@ -274,16 +274,4 @@ namespace AOTScripts.Data
             return sb.ToString();
         }
     }
-    
-    public enum GameMode
-    {
-        /// <summary>
-        /// 按时间结束
-        /// </summary>
-        Time,
-        /// <summary>
-        /// 按目标分数结束
-        /// </summary>
-        Score
-    }
 }

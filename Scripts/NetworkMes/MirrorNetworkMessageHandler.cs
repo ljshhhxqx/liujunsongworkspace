@@ -134,7 +134,7 @@ namespace AOTScripts.Data.NetworkMes
             // 这里实现网络消息到本地消息的转换逻辑
             if (networkMessage is MirrorGameStartMessage gameStartMessage)
             {
-                return new GameStartMessage(gameStartMessage.mapType, gameStartMessage.gameMode, gameStartMessage.gameScore, gameStartMessage.gameTime, gameStartMessage.playerCount);
+                return new GameStartMessage((MapType)gameStartMessage.mapType, (GameMode)gameStartMessage.gameMode, gameStartMessage.gameScore, gameStartMessage.gameTime, gameStartMessage.playerCount);
             }
             
             if (networkMessage is MirrorCountdownMessage countdownMessage)

@@ -201,7 +201,7 @@ namespace HotUpdate.Scripts.Game
             Debug.Log("Warmup Complete. Game Start!");
 
             Debug.Log("Main game timer starts now!");
-            _messageHandler.SendToAllClients(new MirrorGameStartMessage(_gameInfo.SceneName, _gameInfo.GameMode, _gameInfo.GameScore, _gameInfo.GameTime, _gameInfo.PlayerCount));
+            _messageHandler.SendToAllClients(new MirrorGameStartMessage((int)_gameInfo.SceneName, (int)_gameInfo.GameMode, _gameInfo.GameScore, _gameInfo.GameTime, _gameInfo.PlayerCount));
             _gameEventManager.Publish(new GameStartEvent());
             await StartMainGameTimerAsync(cts.Token);
 
