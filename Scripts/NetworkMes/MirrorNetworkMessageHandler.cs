@@ -63,7 +63,6 @@ namespace AOTScripts.Data.NetworkMes
             RegisterServerHandler<MirrorPickerPickUpCollectMessage>();
             RegisterServerHandler<MirrorPickerPickUpChestMessage>();
             RegisterServerHandler<MirrorPlayerInputMessage>();
-            RegisterServerHandler<MirrorPlayerAttackHitMessage>();
             RegisterServerHandler<MirrorPlayerInputInfoMessage>();
             // 注册更多服务器消息处理程序...
         }
@@ -165,11 +164,6 @@ namespace AOTScripts.Data.NetworkMes
             if (networkMessage is MirrorFrameUpdateMessage frameUpdateMessage)
             {
                 return new PlayerFrameUpdateMessage(frameUpdateMessage.frame, frameUpdateMessage.playerInputs);
-            }
-            
-            if (networkMessage is MirrorPlayerAttackHitMessage playerAttackHitMessage)
-            {
-                return new PlayerAttackMessage(playerAttackHitMessage.attackData, playerAttackHitMessage.frame);
             }
             
             if (networkMessage is MirrorFrameAttackResultMessage frameAttackResultMessage)
