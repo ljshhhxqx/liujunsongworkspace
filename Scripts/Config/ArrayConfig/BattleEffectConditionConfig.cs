@@ -87,40 +87,40 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                             conditionData.conditionParam = null;
                             break;
                         case TriggerType.OnAttackHit:
-                            conditionData.conditionParam = JsonUtility.FromJson<AttackHitConditionParam>(text[8]);
+                            conditionData.conditionParam = (AttackHitConditionParam)JsonUtility.FromJson(text[8], typeof(AttackHitConditionParam));
                             break;
                         case TriggerType.OnAttack:
-                            conditionData.conditionParam = JsonUtility.FromJson<AttackConditionParam>(text[8]);
+                            conditionData.conditionParam = (AttackConditionParam)JsonUtility.FromJson(text[8], typeof(AttackConditionParam));
                             break;
                         case TriggerType.OnSkillHit:
-                            conditionData.conditionParam = JsonUtility.FromJson<SkillHitConditionParam>(text[8]);
+                            conditionData.conditionParam = (SkillHitConditionParam)JsonUtility.FromJson(text[8], typeof(SkillHitConditionParam));
                             break;
                         case TriggerType.OnMove:
-                            conditionData.conditionParam = JsonUtility.FromJson<MoveConditionParam>(text[8]);
+                            conditionData.conditionParam = (MoveConditionParam)JsonUtility.FromJson(text[8], typeof(MoveConditionParam));
                             break;
                         case TriggerType.OnSkillCast:
-                            conditionData.conditionParam = JsonUtility.FromJson<SkillCastConditionParam>(text[8]);
+                            conditionData.conditionParam = (SkillCastConditionParam)JsonUtility.FromJson(text[8], typeof(SkillCastConditionParam));
                             break;
                         case TriggerType.OnTakeDamage:
-                            conditionData.conditionParam = JsonUtility.FromJson<TakeDamageConditionParam>(text[8]);
+                            conditionData.conditionParam = (TakeDamageConditionParam)JsonUtility.FromJson(text[8], typeof(TakeDamageConditionParam));
                             break;
                         case TriggerType.OnKill:
-                            conditionData.conditionParam = JsonUtility.FromJson<KillConditionParam>(text[8]);
+                            conditionData.conditionParam = (KillConditionParam)JsonUtility.FromJson(text[8], typeof(KillConditionParam));
                             break;
                         case TriggerType.OnHpChange:
-                            conditionData.conditionParam = JsonUtility.FromJson<HpChangeConditionParam>(text[8]);
+                            conditionData.conditionParam = (HpChangeConditionParam)JsonUtility.FromJson(text[8], typeof(HpChangeConditionParam));
                             break;
                         case TriggerType.OnManaChange:
-                            conditionData.conditionParam =JsonUtility.FromJson<MpChangeConditionParam>(text[8]);
+                            conditionData.conditionParam = (MpChangeConditionParam)JsonUtility.FromJson(text[8], typeof(MpChangeConditionParam));
                             break;
                         case TriggerType.OnCriticalHit:
-                            conditionData.conditionParam = JsonUtility.FromJson<CriticalHitConditionParam>(text[8]);
+                            conditionData.conditionParam = (CriticalHitConditionParam)JsonUtility.FromJson(text[8], typeof(CriticalHitConditionParam));
                             break;
                         case TriggerType.OnDodge:
-                            conditionData.conditionParam = JsonUtility.FromJson<DodgeConditionParam>(text[8]);
+                            conditionData.conditionParam = (DodgeConditionParam)JsonUtility.FromJson(text[8], typeof(DodgeConditionParam));
                             break;
                         case TriggerType.OnDeath:
-                            conditionData.conditionParam = JsonUtility.FromJson<DeathConditionParam>(text[8]);
+                            conditionData.conditionParam = (DeathConditionParam)JsonUtility.FromJson(text[8], typeof(DeathConditionParam));
                             break;
                     }
                 }

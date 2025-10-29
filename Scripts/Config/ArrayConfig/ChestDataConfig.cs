@@ -43,9 +43,9 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 var row = textAsset[i];
                 var chestData = new ChestPropertyData();
                 chestData.chestId = int.Parse(row[0]);
-                chestData.itemIds = JsonConvert.DeserializeObject<int[]>(row[1]);
+                chestData.itemIds = (int[])JsonConvert.DeserializeObject(row[1], typeof(int[]));
                 chestData.description = row[2];
-                chestData.randomItems = JsonConvert.DeserializeObject<RandomItemsData>(row[3]);
+                chestData.randomItems = (RandomItemsData)JsonUtility.FromJson(row[3], typeof(RandomItemsData));
                 chestConfigData.Add(chestData);
             }
         }
