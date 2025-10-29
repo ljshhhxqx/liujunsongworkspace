@@ -15,6 +15,7 @@ using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
 using kcp2k;
 using Mirror;
+using UI.UIBase;
 using UniRx;
 using UnityEngine;
 using VContainer;
@@ -76,6 +77,7 @@ namespace HotUpdate.Scripts.Network.Server
                 {
                     SpawnPlayer(connection);
                 }
+                _uiManager.CloseUI(UIType.Main);
             }
         }
         
@@ -147,7 +149,7 @@ namespace HotUpdate.Scripts.Network.Server
         {
             if (Enum.TryParse<MapType>(sceneResourcesLoadedEvent.SceneName, out var mapType))
             {
-                _networkManagerHUD.enabled = true;
+                //_networkManagerHUD.enabled = true;
                 _mapName = mapType;
                 Debug.Log("map resources loaded");
                 return;
@@ -251,10 +253,10 @@ namespace HotUpdate.Scripts.Network.Server
         private void OnClientConnectToServer()
         {
             // 获取当前连接
-            // NetworkConnection conn = NetworkClient.connection;
+            NetworkConnection conn = NetworkClient.connection;
             //
-            // var msg = new MirrorPlayerConnectMessage("Creator1", conn.connectionId, "asdw", new CompressedVector3(), 0);
-            // conn.Send(msg);
+            var msg = new MirrorPlayerConnectMessage("Creator1", conn.connectionId, "asdw", new CompressedVector3(), 0);
+            conn.Send(msg);
             // 发送 PlayerAccountId 给服务器
             // TODO: 取消注释
             //var msg = new PlayerConnectMessage(PlayFabData.PlayFabId.Value, conn.connectionId, PlayFabData.PlayerReadOnlyData.Value.Nickname);
