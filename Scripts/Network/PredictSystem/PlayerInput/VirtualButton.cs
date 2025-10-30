@@ -1,20 +1,24 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
+using AnimationState = AOTScripts.Data.AnimationState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 {
     public class VirtualButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         [Header("Button Settings")]
-        public string buttonName = "ActionButton";
-        public float pressScale = 0.9f;
+        [SerializeField]
+        private AnimationState buttonName;
+        [SerializeField]
+        private float pressScale = 0.9f;
     
         private Vector3 _originalScale;
         private bool _isPressed;
     
         // 按钮事件
-        public System.Action<string> ButtonPressed;
-        public System.Action<string> ButtonReleased;
+        public System.Action<AnimationState> ButtonPressed;
+        public System.Action<AnimationState> ButtonReleased;
+        public AnimationState ButtonName => buttonName;
     
         private void Start()
         {

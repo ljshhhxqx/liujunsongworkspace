@@ -1,16 +1,13 @@
 using System;
 using System.Collections.Generic;
-using AOTScripts.Tool.ECS;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
-using Mirror;
 using UnityEngine;
 using VContainer;
-using Object = UnityEngine.Object;
 
 namespace HotUpdate.Scripts.Audio
 {
-    public class GameAudioManager : SingletonAutoNetMono<GameAudioManager>, IAudioManager
+    public class GameAudioManager : SingletonAutoMono<GameAudioManager>, IAudioManager
     {
         private AudioSource _musicAudioSource;
         private AudioSource _effectAudioSource;
@@ -24,7 +21,7 @@ namespace HotUpdate.Scripts.Audio
         public AudioManagerType AudioManagerType => AudioManagerType.Game;
 
         [Inject]
-        public GameAudioManager(IObjectResolver objectResolver)
+        private GameAudioManager(IObjectResolver objectResolver)
         {
             _objectResolver = objectResolver;
             GetAudioClipAsync().Forget();
@@ -55,10 +52,10 @@ namespace HotUpdate.Scripts.Audio
 
         private void OnDestroy()
         {
-            _audioClips.Clear();
-            _effectAudioClips.Clear();
-            Object.Destroy(_musicAudioSource?.gameObject);
-            Object.Destroy(_effectAudioSource?.gameObject);
+            _audioClips?.Clear();
+            _effectAudioClips?.Clear();
+            Destroy(_musicAudioSource?.gameObject);
+            Destroy(_effectAudioSource?.gameObject);
         }
         
         public void PlayMusic(AudioMusicType musicType)

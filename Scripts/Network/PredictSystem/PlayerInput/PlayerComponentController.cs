@@ -118,6 +118,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private UIManager _uiManager;
         private InteractSystem _interactSystem;
         private UIHoleOverlay _uiHoleOverlay;
+        private VirtualInputOverlay _virtualInputOverlay;
         private GameEventManager _gameEventManager;
         private List<PredictableStateBase> _predictionStates = new List<PredictableStateBase>();
         private List<SyncStateBase> _syncStates = new List<SyncStateBase>();
@@ -367,53 +368,65 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .AddTo(_disposables);
             
             Observable.EveryUpdate()
-                .Where(_ => _localPlayerHandler && Cursor.lockState == CursorLockMode.Locked && _isControlled 
-                                                && (_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)))
+                .Where(_ => _localPlayerHandler  && (_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)))
                 .Subscribe(_ => {
-                    var movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-                    if (movement.magnitude == 0)
+                    if (PlayerPlatformDefine.IsWindowsPlatform())
                     {
-                        GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.FootStep);
+                        if (Cursor.lockState == CursorLockMode.Locked || !_isControlled)
+                        {
+                            return;
+                        }
+                        var movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+                        if (movement.magnitude == 0)
+                        {
+                            GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.FootStep);
+                        }
+                        var animationStates = _inputState.GetAnimationStates();
+                        var playerInputStateData = new PlayerInputStateData
+                        {
+                            InputMovement = movement,
+                            InputAnimations = animationStates,
+                        };
+                        var command = GetCurrentAnimationState(playerInputStateData);
+                        
+                        if (!_playerAnimationCalculator.CanPlayAnimation(command))
+                        {
+                            command = AnimationState.None;
+                        }
+                        playerInputStateData.Command = command;
+                        if (_animationCooldownsDict.TryGetValue(command, out var animationCooldown))
+                        {
+                            playerInputStateData.Command = animationCooldown.IsReady() ? command : AnimationState.None;
+                        }
+                        _playerInputStateData = playerInputStateData;
+                        _inputStream.Value = playerInputStateData;
                     }
-                    var animationStates = _inputState.GetAnimationStates();
-
-                    // if (animationStates.HasAnyState(AnimationState.Attack))
-                    // {
-                    //     Debug.Log($"[PlayerInputController] Attack");
-                    // }
-                    // else if (animationStates.HasAnyState(AnimationState.Roll))
-                    // {
-                    //     Debug.Log($"[PlayerInputController] Roll");
-                    // }
-                    // else if (animationStates.HasAnyState(AnimationState.Jump))
-                    // {
-                    //     Debug.Log($"[PlayerInputController] Jump");
-                    // }
-                    var playerInputStateData = new PlayerInputStateData
+                    else if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.WebGLPlayer)
                     {
-                        InputMovement = movement,
-                        InputAnimations = animationStates,
-                    };
-                    var command = GetCurrentAnimationState(playerInputStateData);
-                    
-                    if (!_playerAnimationCalculator.CanPlayAnimation(command))
-                    {
-                        //Debug.LogWarning($"[PlayerInputController] Can not play animation {command}");
-                        command = AnimationState.None;
+                        var movement = _virtualInputOverlay.GetMovementInput();
+                        if (movement.magnitude == 0)
+                        {
+                            GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.FootStep);
+                        }
+                        var animationStates = _virtualInputOverlay.ActiveButtons.First();
+                        var playerInputStateData = new PlayerInputStateData
+                        {
+                            InputMovement = movement,
+                            InputAnimations = animationStates,
+                        };
+                        var command = GetCurrentAnimationState(playerInputStateData);
+                        if (!_playerAnimationCalculator.CanPlayAnimation(command))
+                        {
+                            command = AnimationState.None;
+                        }
+                        playerInputStateData.Command = command;
+                        if (_animationCooldownsDict.TryGetValue(command, out var animationCooldown))
+                        {
+                            playerInputStateData.Command = animationCooldown.IsReady() ? command : AnimationState.None;
+                        }
+                        _playerInputStateData = playerInputStateData;
+                        _inputStream.Value = playerInputStateData;
                     }
-                    playerInputStateData.Command = command;
-                    if (_animationCooldownsDict.TryGetValue(command, out var animationCooldown))
-                    {
-                        //Debug.LogWarning($"[PlayerInputController] Animation cooldown {animationCooldown.AnimationState} is ready => {animationCooldown.IsReady()}.");
-                        playerInputStateData.Command = animationCooldown.IsReady() ? command : AnimationState.None;
-                    }
-                    // if (playerInputStateData.Command == AnimationState.Attack)
-                    // {
-                    //     Debug.Log($"[PlayerInputController] Attack");
-                    // }
-                    _playerInputStateData = playerInputStateData;
-                    _inputStream.Value = playerInputStateData;
-                    //Debug.Log($"playerInputStateData - {playerInputStateData.InputMovement} {playerInputStateData.InputAnimations} {playerInputStateData.Command}");
                 })
                 .AddTo(_disposables);
             Observable.EveryFixedUpdate()
@@ -560,7 +573,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private void HandleLocalInitCallback()
         {
             _uiHoleOverlay = _uiManager.SwitchUI<UIHoleOverlay>();
-
             if (!_reactivePropertyBinds.ContainsKey(typeof(ValuePropertyData)))
             {
                 _reactivePropertyBinds.Add(typeof(ValuePropertyData), true);
@@ -581,6 +593,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _uiHoleOverlay.gameObject.SetActive(false);
 
             _uiManager.SwitchUI<TargetShowOverlay>();
+            if (PlayerPlatformDefine.IsJoystickPlatform())
+            {
+                _virtualInputOverlay = _uiManager.SwitchUI<VirtualInputOverlay>();
+            }
         }
 
         public void SwitchBag()

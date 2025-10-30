@@ -68,17 +68,8 @@ namespace HotUpdate.Scripts.Network.Server
         {
             base.OnServerConnect(conn);
             _connectionToClients.Add(conn.connectionId, conn);
-            var hasHost = PlayFabData.PlayerList.Any(player => (PlayerGameDuty)Enum.Parse(typeof(PlayerGameDuty), player.playerDuty) == PlayerGameDuty.Host);
             Debug.Log($"玩家 【{conn.connectionId}】 已连接到服务器。");
-            if (_connectionToClients.Count == PlayFabData.PlayerList.Count - (hasHost ? 0 : 1))
-            {
-                Debug.Log("所有玩家已连接到服务器。");
-                foreach (var connection in _connectionToClients.Values)
-                {
-                    SpawnPlayer(connection);
-                }
-                _uiManager.CloseUI(UIType.Main);
-            }
+
         }
         
         // 服务器端有玩家断开时调用
@@ -104,6 +95,7 @@ namespace HotUpdate.Scripts.Network.Server
             Debug.Log($"{NetworkClient.connection.connectionId}与服务器断开连接。");
             base.OnClientDisconnect();
             UIPropertyBinder.LocalPlayerId = -1;
+            
         }
 
         private GameObject SpawnPlayer(int connectionId, int spawnIndex)
@@ -135,14 +127,49 @@ namespace HotUpdate.Scripts.Network.Server
 
             _spawnPoints.Remove(spawnPoint);            
 
-            //_mirrorNetworkMessageHandler.SendToAllClients(new MirrorPlayerConnectedMessage(conn.connectionId, spawnIndex, playerGo.name));
-            NetworkServer.AddPlayerForConnection(conn, playerGo);
+            // 详细检查
+            Debug.Log($"Connection: {conn}");
+            Debug.Log($"Player GameObject: {playerGo}");
+            Debug.Log($"NetworkIdentity: {playerGo.GetComponent<NetworkIdentity>()}");
+    
+            // 检查所有 NetworkBehaviour 组件
+            NetworkBehaviour[] behaviours = playerGo.GetComponents<NetworkBehaviour>();
+            foreach (var behaviour in behaviours)
+            {
+                Debug.Log($"NetworkBehaviour: {behaviour} - Type: {behaviour.GetType()}");
+                if (behaviour == null)
+                {
+                    Debug.LogError("Found null NetworkBehaviour!");
+                }
+            }
+    
+            try
+            {
+                NetworkServer.AddPlayerForConnection(conn, playerGo);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"AddPlayerForConnection failed: {e}");
+                Destroy(playerGo);
+            }
+            
         }
 
 
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
             Debug.Log("OnServerAddPlayer");
+            
+            var hasHost = PlayFabData.PlayerList.Any(player => (PlayerGameDuty)Enum.Parse(typeof(PlayerGameDuty), player.playerDuty) == PlayerGameDuty.Host);
+            if (_connectionToClients.Count == PlayFabData.PlayerList.Count - (hasHost ? 0 : 1))
+            {
+                _uiManager.CloseAll();
+                Debug.Log("关闭主界面");
+                foreach (var connection in _connectionToClients.Values)
+                {
+                    SpawnPlayer(connection);
+                }
+            }
         }
 
         private void OnSceneResourcesLoaded(GameSceneResourcesLoadedEvent sceneResourcesLoadedEvent)

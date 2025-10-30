@@ -1,56 +1,49 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using UI.UIBase;
 using UnityEngine;
+using AnimationState = AOTScripts.Data.AnimationState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 {
-    public class VirtualInputManager : MonoBehaviour
+    public class VirtualInputOverlay : ScreenUIBase
     {
         [Header("Input Settings")]
-        public bool autoDetectControls = true;
-        public float buttonSizeMultiplier = 0.15f; // 按钮大小占屏幕比例
+        [SerializeField]
+        private bool autoDetectControls = true;
+        [SerializeField]
+        private float buttonSizeMultiplier = 0.15f; // 按钮大小占屏幕比例
     
         [Header("References")]
-        public VirtualJoystick movementJoystick;
-        public List<VirtualButton> actionButtons;
+        [SerializeField]
+        private VirtualJoystick movementJoystick;
+        [SerializeField]
+        private List<VirtualButton> actionButtons;
+        private HashSet<AnimationState> _activeButtons = new HashSet<AnimationState>();
+        public HashSet<AnimationState> ActiveButtons => _activeButtons;
     
-        private Dictionary<string, bool> buttonStates = new Dictionary<string, bool>();
-        private Dictionary<string, bool> buttonDownStates = new Dictionary<string, bool>();
-    
-        public static VirtualInputManager Instance { get; private set; }
-    
-        private void Awake()
+        private Dictionary<AnimationState, bool> buttonStates = new Dictionary<AnimationState, bool>();
+        private Dictionary<AnimationState, bool> buttonDownStates = new Dictionary<AnimationState, bool>();
+
+        private void Start()
         {
-            if (Instance == null)
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-                return;
-            }
-        
             InitializeInputSystem();
         }
-    
+
         private void InitializeInputSystem()
         {
             // 注册摇杆事件
-            if (movementJoystick != null)
-            {
-                movementJoystick.OnJoystickInput += OnJoystickInput;
-                movementJoystick.OnJoystickReleased += OnJoystickReleased;
-            }
-        
+            movementJoystick.OnInputChanged += OnJoystickInput;
+            movementJoystick.OnJoystickReleased += OnJoystickReleased;
+            
             // 注册按钮事件
             foreach (var button in actionButtons)
             {
                 button.ButtonPressed += OnButtonPressed;
                 button.ButtonReleased += OnButtonReleased;
             
-                buttonStates[button.buttonName] = false;
-                buttonDownStates[button.buttonName] = false;
+                buttonStates[button.ButtonName] = false;
+                buttonDownStates[button.ButtonName] = false;
             }
         
             // 自动适配控件布局
@@ -63,7 +56,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private void Update()
         {
             // 重置按钮按下状态（每帧重置）
-            foreach (var key in new List<string>(buttonDownStates.Keys))
+            foreach (var key in buttonDownStates.Keys)
             {
                 buttonDownStates[key] = false;
             }
@@ -73,24 +66,30 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private void OnJoystickInput(Vector2 input)
         {
             // 这里可以添加额外的输入处理逻辑
-            // Debug.Log($"Joystick Input: {input}");
+            Debug.Log($"Joystick Input: {input}");
         }
     
         private void OnJoystickReleased()
         {
             // 摇杆释放处理
+            Debug.Log("Joystick Released");
         }
     
         // 按钮输入处理
-        private void OnButtonPressed(string buttonName)
+        private void OnButtonPressed(AnimationState buttonName)
         {
             buttonStates[buttonName] = true;
             buttonDownStates[buttonName] = true;
+            _activeButtons.Add(buttonName);
         }
     
-        private void OnButtonReleased(string buttonName)
+        private void OnButtonReleased(AnimationState buttonName)
         {
             buttonStates[buttonName] = false;
+            if (_activeButtons.Contains(buttonName))
+            {
+                _activeButtons.Remove(buttonName);
+            }
         }
     
         // 公共输入接口
@@ -98,13 +97,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             return movementJoystick?.InputVector ?? Vector2.zero;
         }
-    
-        public bool GetButton(string buttonName)
+
+        public List<AnimationState> GetActiveButtons()
+        {
+            List<AnimationState> activeButtons = new List<AnimationState>();
+            foreach (var key in buttonStates.Keys)
+            {
+                if (buttonStates[key])
+                {
+                    activeButtons.Add(key);
+                }
+            }
+            return activeButtons;
+        }
+
+        public bool GetButton(AnimationState buttonName)
         {
             return buttonStates.ContainsKey(buttonName) && buttonStates[buttonName];
         }
     
-        public bool GetButtonDown(string buttonName)
+        public bool GetButtonDown(AnimationState buttonName)
         {
             return buttonDownStates.ContainsKey(buttonName) && buttonDownStates[buttonName];
         }
@@ -170,7 +182,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         }
     
         // 动态添加按钮
-        public void AddButton(string buttonName, System.Action<string> onPressed = null)
+        public void AddButton(string buttonName, Action<string> onPressed = null)
         {
             // 这里可以实现动态创建按钮的逻辑
         }
@@ -183,5 +195,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 AdaptControlsToScreen();
             }
         }
+
+        public override UIType Type => UIType.VirtualInput;
+        public override UICanvasType CanvasType => UICanvasType.Overlay;
     }
 }

@@ -55,6 +55,9 @@ namespace HotUpdate.Scripts.Tool.HotFixSerializeTool
 
         public static T JsonDeserialize<T>(string json)
         {
+#if UNITY_EDITOR
+            return JsonUtility.FromJson<T>(json);
+#endif
             var type = typeof(T);
             if (_jsonDeserializers.TryGetValue(type, out var deserializer))
             {
@@ -80,6 +83,9 @@ namespace HotUpdate.Scripts.Tool.HotFixSerializeTool
     
         public static T MemoryDeserialize<T>(byte[] data)
         {
+#if UNITY_EDITOR
+            return MemoryPackSerializer.Deserialize<T>(data);
+#endif
             var type = typeof(T);
             if (_memoryDeserializers.TryGetValue(type, out var deserializer))
             {

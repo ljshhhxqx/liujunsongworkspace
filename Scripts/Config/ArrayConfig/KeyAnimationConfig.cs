@@ -31,6 +31,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
         public AnimationState GetAllActiveActions()
         {
+
             var activeKeys = AnimationState.None;
             for (int i = keyAnimationConfigData.Count - 1; i >= 0 ; i--)
             {

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
@@ -6,23 +7,27 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
     public class VirtualJoystick : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerUpHandler
     {
         [Header("Joystick Components")]
-        public RectTransform background;
-        public RectTransform handle;
+        [SerializeField]
+        private RectTransform background;
+        [SerializeField]
+        private RectTransform handle;
     
         [Header("Settings")]
-        public float handleRange = 1f;
-        public float deadZone = 0.2f;
-        public bool snapToCenter = true;
+        [SerializeField]
+        private float handleRange = 1f;
+        [SerializeField]
+        private float deadZone = 0.2f;
+        [SerializeField]
+        private bool snapToCenter = true;
     
         private Canvas _canvas;
         private Camera _camera;
     
         public Vector2 InputVector { get; private set; }
         public bool IsActive { get; private set; }
-    
-        // 输入事件
-        public System.Action<Vector2> OnJoystickInput;
-        public System.Action OnJoystickReleased;
+        
+        public event Action<Vector2> OnInputChanged;
+        public event Action OnJoystickReleased;
     
         private void Start()
         {
@@ -40,12 +45,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             background.gameObject.SetActive(true);
         
             // 设置摇杆位置为点击位置
-            Vector2 localPoint;
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
                     _canvas.GetComponent<RectTransform>(), 
                     eventData.position, 
                     _camera, 
-                    out localPoint))
+                    out var localPoint))
             {
                 background.localPosition = localPoint;
                 handle.localPosition = Vector2.zero;
@@ -66,8 +70,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             // 更新手柄位置
             Vector2 handlePosition = InputVector * radius * handleRange;
             handle.localPosition = handlePosition;
-        
-            OnJoystickInput?.Invoke(InputVector);
+            
+            OnInputChanged?.Invoke(InputVector);
         }
     
         public void OnPointerUp(PointerEventData eventData)

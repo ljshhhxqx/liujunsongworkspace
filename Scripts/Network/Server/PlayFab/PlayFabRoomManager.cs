@@ -615,6 +615,12 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                     break;
                 }
             }
+            var localPlayer = PlayFabData.PlayerList.FirstOrDefault(x => changeGameInfoMessage.gamePlayerInfo.playerId == x.playerId);
+            if (localPlayer.playerId != null)
+            {
+                PlayFabData.PlayerList.Remove(localPlayer);
+                PlayFabData.PlayerList.Add(changeGameInfoMessage.gamePlayerInfo);
+            }
             OnGameInfoChanged?.Invoke(_currentMainGameInfo);
         }
 
@@ -624,6 +630,13 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             {
                 Debug.LogError($"不属于该房间的玩家，跳过");
                 return;
+            }
+
+            PlayFabData.PlayerList.Clear();
+            for (int i = 0; i < leaveGameMessage.mainGameInfo.playersInfo.Length; i++)
+            {
+                var playerInfo = leaveGameMessage.mainGameInfo.playersInfo[i];
+                PlayFabData.PlayerList.Add(playerInfo);
             }
             _currentMainGameInfo = leaveGameMessage.mainGameInfo;
             OnGameInfoChanged?.Invoke(_currentMainGameInfo);
