@@ -27,6 +27,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             gameEventManager.Subscribe<TargetShowEvent>(OnTargetShow);
             var gameConfig = configProvider.GetConfig<JsonDataConfig>().GameConfig;
 
+            Debug.Log("TargetShowOverlay Init");
             _mainCamera = Camera.main;
             _canvasRect = indicatorUI.parent.GetComponent<RectTransform>();
             indicatorUI.gameObject.SetActive(IsTargetNotNull);

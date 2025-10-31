@@ -368,18 +368,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .AddTo(_disposables);
             
             Observable.EveryUpdate()
-                .Where(_ => _localPlayerHandler  && (_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)))
+                .Where(_ => _localPlayerHandler && (_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)))
                 .Subscribe(_ => {
                     if (PlayerPlatformDefine.IsWindowsPlatform())
                     {
-                        if (Cursor.lockState == CursorLockMode.Locked || !_isControlled)
+                        if (Cursor.lockState != CursorLockMode.Locked || !_isControlled)
                         {
+                            //Debug.Log("Cursor is locked or not controlled");
                             return;
                         }
                         var movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
                         if (movement.magnitude == 0)
                         {
                             GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.FootStep);
+                            GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.Sprint);
                         }
                         var animationStates = _inputState.GetAnimationStates();
                         var playerInputStateData = new PlayerInputStateData
@@ -401,12 +403,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                         _playerInputStateData = playerInputStateData;
                         _inputStream.Value = playerInputStateData;
                     }
-                    else if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.WebGLPlayer)
+                    else if (PlayerPlatformDefine.IsJoystickPlatform())
                     {
                         var movement = _virtualInputOverlay.GetMovementInput();
                         if (movement.magnitude == 0)
                         {
                             GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.FootStep);
+                            GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.Sprint);
                         }
                         var animationStates = _virtualInputOverlay.ActiveButtons.First();
                         var playerInputStateData = new PlayerInputStateData
@@ -572,6 +575,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void HandleLocalInitCallback()
         {
+            _uiManager.CloseUI(UIType.Loading);
+            _uiManager.CloseUI(UIType.TipsPopup);
             _uiHoleOverlay = _uiManager.SwitchUI<UIHoleOverlay>();
             if (!_reactivePropertyBinds.ContainsKey(typeof(ValuePropertyData)))
             {
@@ -1040,20 +1045,32 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             switch (command)
             {
                 case AnimationState.Move:
+                    GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.Sprint);
                     GameAudioManager.Instance.PlayLoopingMusic(AudioEffectType.FootStep, transform.position, transform);
                     break;
                 case AnimationState.Sprint:
+                    GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.FootStep);
                     GameAudioManager.Instance.PlayLoopingMusic(AudioEffectType.Sprint, transform.position, transform);
                     break;
                 case AnimationState.Jump:
                 case AnimationState.SprintJump:
+                    GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.Sprint);
+                    GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.FootStep);
                     GameAudioManager.Instance.PlaySFX(AudioEffectType.Jump, transform.position, transform);
                     break;
                 case AnimationState.Dead:
+                    GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.Sprint);
+                    GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.FootStep);
                     GameAudioManager.Instance.PlaySFX(AudioEffectType.Die, transform.position, transform);
                     break;
                 case AnimationState.Hit:
+                    GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.Sprint);
+                    GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.FootStep);
                     GameAudioManager.Instance.PlaySFX(AudioEffectType.Hurt, transform.position, transform);
+                    break;
+                default:
+                    GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.Sprint);
+                    GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.FootStep);
                     break;
             }
         }

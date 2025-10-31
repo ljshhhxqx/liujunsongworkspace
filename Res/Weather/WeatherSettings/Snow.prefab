@@ -289,7 +289,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.5
+      scalar: 0.75
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -4845,6 +4845,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weatherType: 4
+  musicType: 0
+  subMusicType: 0
   snowParticles: {fileID: 4542892653006314761}
   snowMaterial: {fileID: 2100000, guid: 7700358e3245b654d896d80fa0a46e30, type: 2}
   snowCoverMaterial: {fileID: 2100000, guid: f04a8a67a839b4c4998b5851bdfe8fc4, type: 2}

@@ -128,20 +128,20 @@ namespace HotUpdate.Scripts.Network.Server
             _spawnPoints.Remove(spawnPoint);            
 
             // 详细检查
-            Debug.Log($"Connection: {conn}");
-            Debug.Log($"Player GameObject: {playerGo}");
-            Debug.Log($"NetworkIdentity: {playerGo.GetComponent<NetworkIdentity>()}");
-    
-            // 检查所有 NetworkBehaviour 组件
-            NetworkBehaviour[] behaviours = playerGo.GetComponents<NetworkBehaviour>();
-            foreach (var behaviour in behaviours)
-            {
-                Debug.Log($"NetworkBehaviour: {behaviour} - Type: {behaviour.GetType()}");
-                if (behaviour == null)
-                {
-                    Debug.LogError("Found null NetworkBehaviour!");
-                }
-            }
+            // Debug.Log($"Connection: {conn}");
+            // Debug.Log($"Player GameObject: {playerGo}");
+            // Debug.Log($"NetworkIdentity: {playerGo.GetComponent<NetworkIdentity>()}");
+            //
+            // // 检查所有 NetworkBehaviour 组件
+            // NetworkBehaviour[] behaviours = playerGo.GetComponents<NetworkBehaviour>();
+            // foreach (var behaviour in behaviours)
+            // {
+            //     Debug.Log($"NetworkBehaviour: {behaviour} - Type: {behaviour.GetType()}");
+            //     if (behaviour == null)
+            //     {
+            //         Debug.LogError("Found null NetworkBehaviour!");
+            //     }
+            // }
     
             try
             {
@@ -163,12 +163,13 @@ namespace HotUpdate.Scripts.Network.Server
             var hasHost = PlayFabData.PlayerList.Any(player => (PlayerGameDuty)Enum.Parse(typeof(PlayerGameDuty), player.playerDuty) == PlayerGameDuty.Host);
             if (_connectionToClients.Count == PlayFabData.PlayerList.Count - (hasHost ? 0 : 1))
             {
-                _uiManager.CloseAll();
+                _uiManager.CloseAllPanel();
                 Debug.Log("关闭主界面");
                 foreach (var connection in _connectionToClients.Values)
                 {
                     SpawnPlayer(connection);
                 }
+                _uiManager.CloseUI(UIType.Loading);
             }
         }
 

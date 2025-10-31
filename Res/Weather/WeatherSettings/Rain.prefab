@@ -289,7 +289,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.5
+      scalar: 0.75
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -4845,6 +4845,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weatherType: 3
+  musicType: 0
+  subMusicType: 0
   rainParticles: {fileID: 8560327636933914968}
   rainMaterial: {fileID: 2100000, guid: 945dad7d6a0446e4086381292954b1fa, type: 2}
   rainCoverMaterial: {fileID: 2100000, guid: 7700358e3245b654d896d80fa0a46e30, type: 2}

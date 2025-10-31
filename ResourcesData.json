@@ -1204,6 +1204,16 @@
             "UID": 3900016,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
+            "Extension": ".mp3",
+            "Name": "Sprint",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Audio/Game/Effect/Sprint.MP3"
+        },
+        {
+            "UID": 3900017,
+            "ResourceType": "UnityEngine.AudioClip",
+            "AssetType": 4,
             "Extension": ".wav",
             "Name": "Start",
             "IsPermanent": false,
@@ -1211,17 +1221,17 @@
             "Address": "/Audio/Game/Effect/Start.wav"
         },
         {
-            "UID": 3900017,
+            "UID": 3900018,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".wav",
-            "Name": "Thunder2",
+            "Name": "Thunder",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Audio/Game/Effect/Thunder2.wav"
+            "Address": "/Audio/Game/Effect/Thunder.wav"
         },
         {
-            "UID": 3900018,
+            "UID": 3900019,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".mp3",
@@ -1231,7 +1241,7 @@
             "Address": "/Audio/Game/Music/Cloudy.mp3"
         },
         {
-            "UID": 3900019,
+            "UID": 3900020,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".mp3",
@@ -1241,7 +1251,7 @@
             "Address": "/Audio/Game/Music/Game.mp3"
         },
         {
-            "UID": 3900020,
+            "UID": 3900021,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".ogg",
@@ -1251,7 +1261,7 @@
             "Address": "/Audio/Game/Music/Main.ogg"
         },
         {
-            "UID": 3900021,
+            "UID": 3900022,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".mp3",
@@ -1261,7 +1271,7 @@
             "Address": "/Audio/Game/Music/Rainy.mp3"
         },
         {
-            "UID": 3900022,
+            "UID": 3900023,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".mp3",
@@ -1271,7 +1281,7 @@
             "Address": "/Audio/Game/Music/Snowy.mp3"
         },
         {
-            "UID": 3900023,
+            "UID": 3900024,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".mp3",
@@ -1281,7 +1291,7 @@
             "Address": "/Audio/Game/Music/Sunny.mp3"
         },
         {
-            "UID": 3900024,
+            "UID": 3900025,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".wav",
@@ -1291,7 +1301,7 @@
             "Address": "/Audio/UI/Effect/Bag.wav"
         },
         {
-            "UID": 3900025,
+            "UID": 3900026,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".ogg",
@@ -1301,7 +1311,7 @@
             "Address": "/Audio/UI/Effect/Cancel.ogg"
         },
         {
-            "UID": 3900026,
+            "UID": 3900027,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".ogg",
@@ -1311,7 +1321,7 @@
             "Address": "/Audio/UI/Effect/Click.ogg"
         },
         {
-            "UID": 3900027,
+            "UID": 3900028,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".wav",
@@ -1321,7 +1331,7 @@
             "Address": "/Audio/UI/Effect/Confirm.wav"
         },
         {
-            "UID": 3900028,
+            "UID": 3900029,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".wav",
@@ -1331,7 +1341,7 @@
             "Address": "/Audio/UI/Effect/Error.wav"
         },
         {
-            "UID": 3900029,
+            "UID": 3900030,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".wav",
@@ -1341,7 +1351,7 @@
             "Address": "/Audio/UI/Effect/Lose.wav"
         },
         {
-            "UID": 3900030,
+            "UID": 3900031,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 15,
             "Extension": ".flac",
@@ -1351,7 +1361,7 @@
             "Address": "/Audio/UI/Effect/Notifacation.flac"
         },
         {
-            "UID": 3900031,
+            "UID": 3900032,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".ogg",
@@ -1361,7 +1371,7 @@
             "Address": "/Audio/UI/Effect/Warning.ogg"
         },
         {
-            "UID": 3900032,
+            "UID": 3900033,
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 4,
             "Extension": ".wav",

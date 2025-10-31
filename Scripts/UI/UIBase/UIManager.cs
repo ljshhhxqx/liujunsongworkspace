@@ -93,6 +93,23 @@ namespace HotUpdate.Scripts.UI.UIBase
             Debug.Log("资源管理器中没有找到UI对象");
         }
 
+        public void CloseAllPanel()
+        {
+            var list = _uiDict.Values.ToList();
+            foreach (var t in _uiDict.Values)
+            {
+                if (t && (t.CanvasType == UICanvasType.Panel || t && t.CanvasType == UICanvasType.SecondPanel || t.CanvasType == UICanvasType.ThirdPanel))
+                {
+                    Object.Destroy(t.gameObject);
+                    list.Add(t);
+                }
+            }
+            foreach (var t in list)
+            {
+                _uiDict.Remove(t.Type);
+            }
+        }
+
         public void CloseAll()
         {
             foreach (var t in _uiDict.Values)

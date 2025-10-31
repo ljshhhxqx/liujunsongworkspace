@@ -19,9 +19,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             RuntimePlatform.Android,
             RuntimePlatform.IPhonePlayer,
-            RuntimePlatform.tvOS,
-            RuntimePlatform.Switch,
-            RuntimePlatform.Stadia
         };
 
         public static bool IsJoystickPlatform()
@@ -31,6 +28,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         
         public static bool IsWindowsPlatform()
         {
+            #if UNITY_EDITOR
+            return true;
+            #endif
             return WindowsPlatforms.Contains(Application.platform);
         }
     }

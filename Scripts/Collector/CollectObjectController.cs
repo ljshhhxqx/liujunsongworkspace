@@ -74,7 +74,7 @@ namespace HotUpdate.Scripts.Collector
             CollectObjectData = collectObjectDataConfig.GetCollectObjectData(collectConfigId);
             if (isClient)
             {
-                Debug.Log($"CollectObjectController::Init");
+                Debug.Log($"CollectObjectController::Init call On Init");
                 _disposable = _collider.OnTriggerEnterAsObservable()
                     .Subscribe(OnTriggerEnterObserver)
                     .AddTo(this);
@@ -114,6 +114,10 @@ namespace HotUpdate.Scripts.Collector
             _collider = collectCollider.GetComponent<Collider>();
             _collider.enabled = true;
             _collectAnimationComponent?.Play();
+            Debug.Log($"CollectObjectController::Init call On OnStartClient");
+            _disposable = _collider.OnTriggerEnterAsObservable()
+                .Subscribe(OnTriggerEnterObserver)
+                .AddTo(this);
         }
 
         public override void OnSelfDespawn()

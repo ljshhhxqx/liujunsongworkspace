@@ -70,6 +70,7 @@ namespace HotUpdate.Scripts.Game
             get => _isEndGame;
             set
             {
+                Debug.Log("Game Start!");
                 _isEndGame = value;
                 _gameSyncManager.isGameStart = value;
                 _weatherManager.StartWeatherLoop(!value);
@@ -184,6 +185,7 @@ namespace HotUpdate.Scripts.Game
                 _cts = new CancellationTokenSource();
                 PlayerInGameManager.Instance.SpawnAllBases();
                 isEndGameSync = false;
+                IsEndGame = false;
                 
                 _warmupTime = _jsonDataConfig.GameConfig.warmupTime;
                 _noUnionTime = _jsonDataConfig.GameConfig.noUnionTime;
@@ -230,12 +232,12 @@ namespace HotUpdate.Scripts.Game
         
         private bool IsEndRoundFunc()
         {
-            var isEndRound = IsEndRound && !isEndGameSync;
+            var isEndRound = IsEndRound && !IsEndGame;
             if (isEndRound)
             {
                 Debug.Log("End Round!");
             }
-            return IsEndRound && !isEndGameSync; //_itemsSpawnerManager.SpawnedItems.Count == 0;
+            return IsEndRound && !IsEndGame; //_itemsSpawnerManager.SpawnedItems.Count == 0;
         }
 
         private async UniTask RoundStartAsync()
@@ -292,6 +294,7 @@ namespace HotUpdate.Scripts.Game
                     if (IsEndGameWithCountDown(remainingTime))
                     {
                         isEndGameSync = true;
+                        IsEndGame = true;
                         _gameEventManager.Publish(new PlayerListenMessageEvent());
                         SaveGameResult();
                         endGameFlag = true;
@@ -301,6 +304,7 @@ namespace HotUpdate.Scripts.Game
                 {
                     Debug.LogError($"Error updating remaining time: {ex.Message}");
                     isEndGameSync = true;
+                    IsEndGame = true;
                     _gameEventManager.Publish(new PlayerListenMessageEvent());
                     SaveGameResult();
                     endGameFlag = true;
@@ -331,6 +335,7 @@ namespace HotUpdate.Scripts.Game
                     if (PlayerInGameManager.Instance.IsPlayerGetTargetScore(_gameInfo.GameScore))
                     {
                         isEndGameSync = true;
+                        IsEndGame = true;
                         _gameEventManager.Publish(new PlayerListenMessageEvent());
                         SaveGameResult();
                         endGameFlag = true;
@@ -341,12 +346,13 @@ namespace HotUpdate.Scripts.Game
                 await UniTask.Yield();
             }
 
-            if (isEndGameSync)
+            if (IsEndGame)
             {
                 return;
             }
             _cts?.Cancel();
             isEndGameSync = true;
+            IsEndGame = true;
             _gameEventManager.Publish(new PlayerListenMessageEvent());
             SaveGameResult();
             Debug.Log("Main game timer ended.");

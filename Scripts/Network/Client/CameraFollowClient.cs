@@ -1,6 +1,7 @@
 ﻿using System;
 using Game.Map;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
 using UnityEngine;
@@ -19,6 +20,8 @@ namespace HotUpdate.Scripts.Network.Client
         private bool _isControlling = true;
         private LayerMask _groundSceneLayer;
         private UIManager _uiManager;
+        private bool _isWindowsApplication;
+        private bool _isMobile;
 
         [Inject]
         private void Init(IConfigProvider configProvider, GameEventManager gameEventManager, UIManager uiManager)
@@ -29,6 +32,8 @@ namespace HotUpdate.Scripts.Network.Client
             _uiManager = uiManager;
             _uiManager.IsUnlockMouse+= OnUnlockMouse;
             _gameEventManager.Subscribe<PlayerSpawnedEvent>(OnPlayerSpawned);
+            _isWindowsApplication = PlayerPlatformDefine.IsWindowsPlatform();
+            _isMobile = PlayerPlatformDefine.IsJoystickPlatform();
             Debug.Log("CameraFollowClient init");
         }
 
@@ -65,40 +70,51 @@ namespace HotUpdate.Scripts.Network.Client
         private void LateUpdate()
         {
             if (!_target || !_isControlling || Cursor.visible) return;
-
-#if UNITY_ANDROID || UNITY_IOS
-            // 手机平台的输入逻辑
-            if (Input.touchCount > 0)
+            float horizontal = 0;
+            float vertical = 0;
+            float rawVertical = 0;
+            float angleWithGround = 0;
+            float maxVerticalAngle = 0;
+            
+            if (_isWindowsApplication)
             {
-                Touch touch = Input.GetTouch(0);
-                if (touch.phase == TouchPhase.Moved)
+                // PC平台的输入逻辑
+                horizontal = Mathf.Lerp(_lastHorizontal, Input.GetAxis("Mouse X") * _jsonDataConfig.PlayerConfig.TurnSpeed, Time.deltaTime * 10);
+                rawVertical = Mathf.Clamp(Input.GetAxis("Mouse Y") * _jsonDataConfig.PlayerConfig.TurnSpeed, -10, 10);
+                _lastHorizontal = horizontal;
+            }
+            else if (_isMobile)
+            {
+                // 手机平台的输入逻辑
+                if (Input.touchCount > 0)
                 {
-                    float horizontal = touch.deltaPosition.x * _playerDataConfig.TurnSpeed * Time.deltaTime;
-                    float vertical = touch.deltaPosition.y * _playerDataConfig.TurnSpeed * Time.deltaTime;
+                    Touch touch = Input.GetTouch(0);
+                    if (touch.phase == TouchPhase.Moved)
+                    {
+                        horizontal = touch.deltaPosition.x * _playerDataConfig.TurnSpeed * Time.deltaTime;
+                        vertical = touch.deltaPosition.y * _playerDataConfig.TurnSpeed * Time.deltaTime;
 
-                    // 计算摄像机与水平面的角度
-                    float angleWithGround = Vector3.Angle(Vector3.down, _offset.normalized) - 90; // 减去90是因为原点是向下的
-                    float maxVerticalAngle = 90 - Mathf.Abs(angleWithGround);
-                    vertical = Mathf.Clamp(vertical, -maxVerticalAngle, maxVerticalAngle);
+                        // 计算摄像机与水平面的角度
+                        angleWithGround = Vector3.Angle(Vector3.down, _offset.normalized) - 90; // 减去90是因为原点是向下的
+                        maxVerticalAngle = 90 - Mathf.Abs(angleWithGround);
+                        vertical = Mathf.Clamp(vertical, -maxVerticalAngle, maxVerticalAngle);
 
-                    _offset = Quaternion.AngleAxis(horizontal, Vector3.up) * _offset;
-                    _offset = Quaternion.AngleAxis(vertical, Vector3.right) * _offset;
+                        _offset = Quaternion.AngleAxis(horizontal, Vector3.up) * _offset;
+                        _offset = Quaternion.AngleAxis(vertical, Vector3.right) * _offset;
+                    }
                 }
             }
-#else
-            // PC平台的输入逻辑
-            var horizontal = Mathf.Lerp(_lastHorizontal, Input.GetAxis("Mouse X") * _jsonDataConfig.PlayerConfig.TurnSpeed, Time.deltaTime * 10);
-            var rawVertical = Mathf.Clamp(Input.GetAxis("Mouse Y") * _jsonDataConfig.PlayerConfig.TurnSpeed, -10, 10);
-            _lastHorizontal = horizontal;
+
+            
+            
 
             // 计算摄像机与水平面的角度
-            float angleWithGround = Vector3.Angle(Vector3.down, _offset.normalized) - 90; // 减去90是因为原点是向下的
-            float maxVerticalAngle = 90 - Mathf.Abs(angleWithGround);
-            var vertical = Mathf.Clamp(rawVertical, -maxVerticalAngle, maxVerticalAngle);
+            angleWithGround = Vector3.Angle(Vector3.down, _offset.normalized) - 90; // 减去90是因为原点是向下的
+            maxVerticalAngle = 90 - Mathf.Abs(angleWithGround);
+            vertical = Mathf.Clamp(rawVertical, -maxVerticalAngle, maxVerticalAngle);
 
             _offset = Quaternion.AngleAxis(horizontal, Vector3.up) * _offset;
             _offset = Quaternion.AngleAxis(vertical, Vector3.right) * _offset;
-#endif
             var desiredPosition = _target.position + _offset;
             Vector3 smoothedPosition;
             if (Physics.Raycast(_target.position, desiredPosition - _target.position, out var hit, _offset.magnitude, _jsonDataConfig.GameConfig.groundSceneLayer))

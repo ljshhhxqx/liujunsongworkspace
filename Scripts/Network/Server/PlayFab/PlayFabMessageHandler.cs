@@ -285,6 +285,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                                     break;
                             }
                             _uiManager.CloseUI(UIType.PlayerConnect);
+                            _uiManager.CloseUI(UIType.Loading);
                         }
                         break;
                     default:

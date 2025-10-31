@@ -4,6 +4,7 @@ using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
@@ -16,7 +17,7 @@ using VContainer;
 
 namespace HotUpdate.Scripts.Collector
 {
-    public class TreasureChestComponent : NetworkBehaviour, IPickable, IItem, IPoolable
+    public class TreasureChestComponent : NetworkAutoInjectComponent, IPickable, IItem, IPoolable
     {
         [SerializeField] 
         private GameObject lid; // 宝箱盖子
@@ -61,6 +62,11 @@ namespace HotUpdate.Scripts.Collector
             _chestCommonData = _jsonDataConfig.ChestCommonData;
 
             lid.transform.eulerAngles = _chestCommonData.InitEulerAngles;
+            if (isClient)
+            {
+                Debug.Log("Init Chest send TargetShowEvent from client called on Init");
+                _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId));
+            }
         }
         
         public override void OnStartClient()
@@ -73,6 +79,7 @@ namespace HotUpdate.Scripts.Collector
             _chestCollider.OnTriggerExitAsObservable()
                 .Subscribe(OnTriggerExitObserver)
                 .AddTo(_disposables);
+            Debug.Log("Init Chest send TargetShowEvent from client called on OnStartClient");
             _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId));
         }
 

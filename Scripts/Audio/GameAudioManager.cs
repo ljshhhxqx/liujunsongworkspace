@@ -21,9 +21,10 @@ namespace HotUpdate.Scripts.Audio
         public AudioManagerType AudioManagerType => AudioManagerType.Game;
 
         [Inject]
-        private GameAudioManager(IObjectResolver objectResolver)
+        private void Init(IObjectResolver objectResolver)
         {
             _objectResolver = objectResolver;
+            Debug.Log("GameAudioManager Init");
             GetAudioClipAsync().Forget();
         }
 
@@ -42,7 +43,7 @@ namespace HotUpdate.Scripts.Audio
                 }
                 else
                 {
-                    throw new Exception("AudioManager: AudioClip name is not valid.");
+                    Debug.LogWarning($"Audio clip {clip.name} not found");
                 }
             }
 
@@ -89,9 +90,9 @@ namespace HotUpdate.Scripts.Audio
                 var audioSource = audioSourceObj.GetComponent<AudioSource>();
                 audioSource.clip = clip;
                 audioSource.loop = true;
+                audioSource.name = "AudioEffect" + effectType.ToString();
                 audioSource.Play();
                 _activeLoopingAudioSources[effectType] = audioSource;
-                ReturnAudioSourceToPool(audioSourceObj, clip.length).Forget();
             }
             else
             {
@@ -103,7 +104,7 @@ namespace HotUpdate.Scripts.Audio
         {
             if (_activeLoopingAudioSources.TryGetValue(effectType, out var source))
             {
-                if (source.isPlaying)
+                if (source && source.isPlaying)
                 {
                     source.Stop();
                 }
