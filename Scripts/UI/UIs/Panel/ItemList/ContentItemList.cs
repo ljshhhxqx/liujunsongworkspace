@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using AOTScripts.Data;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Network.UI;
-using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList

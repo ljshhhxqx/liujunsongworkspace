@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using AOTScripts.Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Tool.ReactiveProperty;
-using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
 using UI.UIBase;
 using UniRx;

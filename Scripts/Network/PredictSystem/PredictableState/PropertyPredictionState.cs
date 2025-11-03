@@ -74,14 +74,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                         continue;
                     }
 
+                    var baseProperties = _propertyConfig.GetBaseValue(propertyType);
                     var displayName = propertyConfig.description;
                     var consumeType = propertyConfig.consumeType;
                     itemDatas.Add((int)propertyType, new PropertyItemData
                     {
                         Name = displayName,
                         PropertyType = propertyType,
-                        CurrentProperty = 1,
-                        MaxProperty = 1,
+                        CurrentProperty = baseProperties,
+                        MaxProperty = baseProperties,
                         ConsumeType = consumeType
                     });
                 }
@@ -184,7 +185,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private void HandlePropertyRecover(ref PlayerPredictablePropertyState propertyState)
         {
             PlayerComponentController.HandlePropertyRecover(ref propertyState);
-            PropertyChanged(propertyState);
+            PropertyChanged(propertyState, true);
         }
 
         private void HandleAnimationCommand(ref PlayerPredictablePropertyState propertyState, PropertyClientAnimationCommand command)
@@ -209,7 +210,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private bool _isDead;
 
-        private void PropertyChanged(PlayerPredictablePropertyState predictablePropertyState)
+        private void PropertyChanged(PlayerPredictablePropertyState predictablePropertyState, bool isRecover = false)
         {
             // foreach (var key in predictablePropertyState.MemoryProperty.Keys)
             // {
@@ -284,6 +285,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                         data.CurrentProperty = property.CurrentValue;
                         data.MaxProperty = property.MaxCurrentValue;
                         data.IsPercentage = property.IsPercentage();
+                        data.IsAutoRecover = isRecover;
                         uiPropertyData[(int)kvp.Key] = data;
                     }
                     continue;
@@ -294,6 +296,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 {
                     data.CurrentProperty = property.CurrentValue;
                     data.IsPercentage = property.IsPercentage();
+                    data.IsAutoRecover = isRecover;
                     uiPropertyData[(int)kvp.Key] = data;
                 }
                 if (kvp.Key == PropertyTypeEnum.AttackSpeed)

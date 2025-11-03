@@ -1,14 +1,10 @@
 ﻿using AOTScripts.Data;
 using AOTScripts.Tool;
-using AOTScripts.Tool.ObjectPool;
 using DG.Tweening;
-using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.UI;
-using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace HotUpdate.Scripts.UI.UIs.Overlay
@@ -48,7 +44,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             nameText.text = playerHpItemData.Name;
             hpSlider.value = playerHpItemData.CurrentHp / playerHpItemData.MaxHp;
             mpSlider.value = playerHpItemData.CurrentMp / playerHpItemData.MaxMp;
-            SetDamageOrHealText((int)playerHpItemData.DiffValue, _data.PropertyType);
+            //SetDamageOrHealText((int)playerHpItemData.DiffValue, _data.PropertyType);
             gameObject.SetActive(true);
         }
 
@@ -73,6 +69,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                 .AppendCallback(() =>
                 {
                     gameObject.SetActive(false);
+                    indicatorTransform.transform.localPosition = Vector3.zero;
                 });
         }
 

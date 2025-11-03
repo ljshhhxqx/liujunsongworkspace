@@ -9,19 +9,48 @@ namespace HotUpdate.Scripts.UI.UIs.Common
     {
         [SerializeField]
         private Slider targetSlider;
+        [SerializeField]
+        private Image targetImage;
+
+        [SerializeField] private bool showSlider;
+        [SerializeField] private bool showImage;
+        [SerializeField] private float duration = 0.2f;
 
         private Slider _slider;
+        private Image _image;
         private Tween _tween;
 
         private void Start()
         {
             _slider = GetComponent<Slider>();
-            targetSlider.OnValueChangedAsObservable().Subscribe(value =>
+            _image = GetComponent<Image>();
+            _image.fillAmount = targetImage.fillAmount;
+            if (showSlider)
+            {
+                targetSlider.OnValueChangedAsObservable().Subscribe(value =>
+                {
+                    _tween?.Kill(true);
+                    _tween = _slider.DOValue(value, duration);
+                }).AddTo(this);
+            }
+        }
+
+        public void AnimationChangeValue()
+        {
+            if (showImage)
             {
                 _tween?.Kill(true);
-                _slider.DOValue(value, 0.2f);
-            }).AddTo(this);
+                _tween = _image.DOFillAmount(targetImage.fillAmount, duration);
+            }
         }
-        
+
+        public void ChaneValue()
+        {
+            if (showImage)
+            {
+                _tween?.Kill(true);
+                _image.fillAmount = targetImage.fillAmount;
+            }
+        }
     }
 }

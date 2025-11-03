@@ -238,6 +238,7 @@ namespace HotUpdate.Scripts.Network.UI
         public float CurrentProperty;
         public float MaxProperty;
         public bool IsPercentage;
+        public bool IsAutoRecover;
 
         public bool Equals(PropertyItemData other)
         {

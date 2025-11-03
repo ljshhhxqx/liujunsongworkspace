@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using AOTScripts.Data;
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Tool.ReactiveProperty;
-using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
 using UI.UIBase;
 using UniRx;
