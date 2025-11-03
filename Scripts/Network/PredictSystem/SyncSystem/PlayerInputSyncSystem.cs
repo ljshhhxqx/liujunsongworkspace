@@ -411,7 +411,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
 
                     cooldownInfo?.Use();
-                    Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost} player state {inputCommand.CommandAnimationState}");
+                    //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input animation {inputCommand.CommandAnimationState} cooldown {cooldown} cost {cost} player state {inputCommand.CommandAnimationState}");
                     if (playerAnimationCooldowns.ContainsKey(commandAnimation))
                     {
                         playerAnimationCooldowns[commandAnimation] = cooldownInfo;

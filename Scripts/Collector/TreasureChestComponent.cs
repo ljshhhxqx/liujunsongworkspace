@@ -119,6 +119,18 @@ namespace HotUpdate.Scripts.Collector
             }
         }
 
+        private void OnDisable()
+        {
+            _gameEventManager?.Publish(new TargetShowEvent(null, null, netId));
+        }
+
+        private void OnDestroy()
+        {
+            
+            _gameEventManager?.Publish(new TargetShowEvent(null, null, netId));
+            _disposables?.Clear();
+        }
+
         public void RequestPick(int pickerConnectionId)
         {
             

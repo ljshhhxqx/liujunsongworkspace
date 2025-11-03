@@ -3,10 +3,12 @@ using AOTScripts.Tool;
 using AOTScripts.Tool.ObjectPool;
 using DG.Tweening;
 using HotUpdate.Scripts.Config;
+using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace HotUpdate.Scripts.UI.UIs.Overlay
@@ -22,7 +24,9 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         [SerializeField]
         private TextMeshProUGUI nameText;
         [SerializeField]
-        private GameObject damageOrHealTextPrefab;
+        private TextMeshProUGUI hpMpDamageText;
+        [SerializeField]
+        private GameObject hpmpPanel;
 
         private Sequence _sequence;
         private PlayerHpItemData _data;
@@ -38,34 +42,34 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         public void DataChanged(PlayerHpItemData playerHpItemData)
         {
-            gameObject.SetActive(true);
             _data = playerHpItemData;
             PlayerId = playerHpItemData.PlayerId;
+            hpmpPanel.SetActive(PlayerId != PlayerInGameManager.Instance.LocalPlayerId);
             nameText.text = playerHpItemData.Name;
             hpSlider.value = playerHpItemData.CurrentHp / playerHpItemData.MaxHp;
             mpSlider.value = playerHpItemData.CurrentMp / playerHpItemData.MaxMp;
             SetDamageOrHealText((int)playerHpItemData.DiffValue, _data.PropertyType);
+            gameObject.SetActive(true);
         }
 
         public void SetDamageOrHealText(int damageOrHeal, PropertyTypeEnum propertyType)
         {
-            var isHeal = damageOrHeal > 0;
-            var go = GameObjectPoolManger.Instance.GetObject(damageOrHealTextPrefab, parent: damageOrHealTextPrefab.transform.parent);
-            var text = go.GetComponent<TextMeshProUGUI>();
-            go.gameObject.SetActive(true);
-            var property = EnumHeaderParser.GetHeader(propertyType);
-            text.text = isHeal ? $"{property}+{damageOrHeal}" : $"{property}-{damageOrHeal}";
-            text.transform.localPosition = Vector3.zero;
-            text.transform.localScale = Vector3.one;
-            text.color = isHeal ? Color.green : Color.red;
             _sequence?.Kill();
+            var isHeal = damageOrHeal > 0;
+            var property = EnumHeaderParser.GetHeader(propertyType);
+            hpMpDamageText.gameObject.SetActive(PlayerId == PlayerInGameManager.Instance.LocalPlayerId);
+            hpMpDamageText.text = isHeal ? $"{property}+{damageOrHeal}" : $"{property}-{damageOrHeal}";
+            hpMpDamageText.transform.localPosition = Vector3.zero;
+            hpMpDamageText.transform.localRotation = Quaternion.identity;
+            hpMpDamageText.transform.localScale = Vector3.one;
+            hpMpDamageText.color = isHeal ? Color.green : Color.red;
             _sequence = DOTween.Sequence()
-                .Append(text.transform.DOLocalMoveY(50f, 1f).SetEase(Ease.OutCubic).OnComplete(() =>
+                .Append(hpMpDamageText.transform.DOLocalMoveY(50f, 1f).SetEase(Ease.OutCubic).OnComplete(() =>
                 {
-                    GameObjectPoolManger.Instance.ReturnObject(go);
+                    hpMpDamageText.gameObject.SetActive(false);
                 }))
-                .Join(text.transform.DOScale(1.5f, 1f).SetEase(Ease.OutCubic).SetEase(Ease.OutCubic))
-                .AppendInterval(4f)
+                .Join(hpMpDamageText.transform.DOScale(1.5f, 1f).SetEase(Ease.OutCubic).SetEase(Ease.OutCubic))
+                .AppendInterval(3f)
                 .AppendCallback(() =>
                 {
                     gameObject.SetActive(false);

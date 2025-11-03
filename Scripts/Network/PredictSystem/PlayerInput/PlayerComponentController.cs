@@ -22,6 +22,7 @@ using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Player;
 using HotUpdate.Scripts.Skill;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using HotUpdate.Scripts.UI.UIs.Panel;
@@ -1138,7 +1139,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [TargetRpc]
         private void TargetRpcHandlePlayerHp(NetworkConnection target, byte[] data)
         {
-            var info = MemoryPackSerializer.Deserialize<MemoryList<TracedPlayerInfo>>(data);
+            var info = BoxingFreeSerializer.MemoryDeserialize<MemoryList<TracedPlayerInfo>>(data);
             var dic = UIPropertyBinder.GetReactiveDictionary<PlayerHpItemData>(_playerTraceOtherPlayerHpBindKey);
             for (int i = 0; i < info.Count; i++)
             {
@@ -1199,7 +1200,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [Command]
         public void CmdChangePlayerUnion(byte[] data)
         {
-            var playerChangeUnionCommand = MemoryPackSerializer.Deserialize<PlayerChangeUnionRequest>(data);
+            var playerChangeUnionCommand = BoxingFreeSerializer.MemoryDeserialize<PlayerChangeUnionRequest>(data);
             _interactSystem.EnqueueCommand(playerChangeUnionCommand);
         }
         
@@ -1327,7 +1328,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             {
                 return;
             }
-            var tracedInfo = MemoryPackSerializer.Deserialize<TracedPlayerInfo>(data);
+            var tracedInfo = BoxingFreeSerializer.MemoryDeserialize<TracedPlayerInfo>(data);
 
             PlayerComponentController playerComponent;
             if (tracedInfo.PlayerId == _playerInGameManager.LocalPlayerId)

@@ -48,7 +48,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                     return;
                 _playerHpItemDatas.Remove(x);
                 contentItemList.RemoveItem(x);
-                SetItemDataAndShow(_playerHpItemDatas);
+                //SetItemDataAndShow(_playerHpItemDatas);
             }).AddTo(this); 
             playerHpItemDatas.ObserveUpdate((x,y, z)  =>
             {
@@ -58,6 +58,8 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                     contentItemList.ReplaceItem<PlayerHpItemData, PlayerHpItem>(x, z);
                     var item = contentItemList.GetItem<PlayerHpItem>(x);
                     item.DataChanged(z);
+                    _defaultFollowTargetParams.Target = z.TargetPosition;
+                    _defaultFollowTargetParams.Player = z.PlayerPosition;
                     item.Show(_defaultFollowTargetParams);
                 }
             }).AddTo(this);
@@ -65,7 +67,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             {
                 _playerHpItemDatas.Clear();
                 contentItemList.Clear();
-                SetItemDataAndShow(_playerHpItemDatas);
+                //SetItemDataAndShow(_playerHpItemDatas);
             }).AddTo(this);
         }
 
