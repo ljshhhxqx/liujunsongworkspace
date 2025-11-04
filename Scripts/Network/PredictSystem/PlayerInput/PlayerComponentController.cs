@@ -236,20 +236,51 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             HandleLocalInitCallback();
             _uiManager.CloseUI(UIType.Main);
             _gameEventManager.Publish(new PlayerUnListenMessageEvent());
+            _gameEventManager.Subscribe<GameFunctionUIShowEvent>(OnGameFunctionUIShow);
         }
 
-        // private void OnAnimationCooldownChanged(SyncIDictionary<AnimationState, float>.Operation changeType, AnimationState key, float value)
-        // {
-        //     switch (changeType)
-        //     {
-        //         case SyncIDictionary<AnimationState, float>.Operation.OP_SET:
-        //             var animationCooldown = _animationCooldownsDict[key];
-        //             animationCooldown.SkillModifyCooldown(value);
-        //             break;
-        //         default:
-        //             throw new ArgumentOutOfRangeException(nameof(changeType), changeType, null);
-        //     }
-        // }
+        private void OnGameFunctionUIShow(GameFunctionUIShowEvent gameFunctionUIShowEvent)
+        {
+            if (!_uiManager.IsUIOpen(gameFunctionUIShowEvent.UIType))
+            {
+                _uiManager.CloseUI(gameFunctionUIShowEvent.UIType);
+                return;
+            }
+            switch (gameFunctionUIShowEvent.UIType)
+            {
+                case UIType.Backpack:
+                    var bagItemOverlay = _uiManager.SwitchUI<BackpackScreenUI>();
+                    if (!bagItemOverlay)
+                    {
+                        return;
+                    }
+                    UIAudioManager.Instance.PlayUIEffect(UIAudioEffectType.Bag);
+                    bagItemOverlay.BindBagItemData(UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey));
+                    break;
+                case UIType.Shop:
+                    var shopScreenUI = _uiManager.SwitchUI<ShopScreenUI>();
+                    if (!shopScreenUI)
+                    {
+                        return;
+                    }
+
+                    shopScreenUI.BindShopItemData(UIPropertyBinder.GetReactiveDictionary<RandomShopItemData>(_shopBindKey));
+                    shopScreenUI.BindBagItemData(UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey));
+                    shopScreenUI.BindPlayerGold(UIPropertyBinder.ObserveProperty<ValuePropertyData>(_goldBindKey));
+                    shopScreenUI.OnRefresh.Subscribe(_ =>
+                    {
+                        var refreshCommand = new RefreshShopCommand
+                        {
+                            Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId, CommandType.Shop, CommandAuthority.Client),
+                        };
+                        CmdSendCommand(NetworkCommandExtensions.SerializeCommand(refreshCommand).Item1);
+                    }).AddTo(shopScreenUI.gameObject);
+                    break;
+                default:
+                    Debug.LogWarning($"Not support UIType: {gameFunctionUIShowEvent.UIType}");
+                    break;
+            }
+        }
 
         public override void OnStartServer()
         {
@@ -310,60 +341,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     if (_keyFunctionConfig.IsKeyFunction(out var keyFunction))
                     {
                         var uiType = keyFunction.GetUIType();
-                        switch (uiType)
-                        {
-                            case UIType.None:
-                                break;
-                            case UIType.Backpack:
-                                var bagItemOverlay = _uiManager.SwitchUI<BackpackScreenUI>();
-                                if (!bagItemOverlay)
-                                {
-                                    return;
-                                }
-
-                                // if (_reactivePropertyBinds.TryGetValue(typeof(BagItemData), out var isBagBind) && isBagBind)
-                                // {
-                                //     return;
-                                // }
-                                
-                                //_reactivePropertyBinds.Add(typeof(BagItemData), true);
-                                UIAudioManager.Instance.PlayUIEffect(UIAudioEffectType.Bag);
-                                bagItemOverlay.BindBagItemData(UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey));
-                                //bagItemOverlay.BindEquipItemData(UIPropertyBinder.GetReactiveDictionary<EquipItemData>(_equipBindKey));
-                                break;
-                            case UIType.Shop:
-                                var shopScreenUI = _uiManager.SwitchUI<ShopScreenUI>();
-                                if (!shopScreenUI)
-                                {
-                                    return;
-                                }
-
-                                // if (_reactivePropertyBinds.TryGetValue(typeof(RandomShopItemData), out var isShopBind) && isShopBind)
-                                // {
-                                //     return;
-                                // }
-                                shopScreenUI.BindShopItemData(UIPropertyBinder.GetReactiveDictionary<RandomShopItemData>(_shopBindKey));
-                                shopScreenUI.BindBagItemData(UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey));
-                                shopScreenUI.BindPlayerGold(UIPropertyBinder.ObserveProperty<ValuePropertyData>(_goldBindKey));
-                                shopScreenUI.OnRefresh.Subscribe(_ =>
-                                {
-                                    var refreshCommand = new RefreshShopCommand
-                                    {
-                                        Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId, CommandType.Shop, CommandAuthority.Client),
-                                    };
-                                    CmdSendCommand(NetworkCommandExtensions.SerializeCommand(refreshCommand).Item1);
-                                }).AddTo(shopScreenUI.gameObject);
-                                //_reactivePropertyBinds.Add(typeof(RandomShopItemData), true);
-                                // var refreshCommand = new RefreshShopCommand
-                                // {
-                                //     Header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Shop, CommandAuthority.Client
-                                //     ),
-                                // };
-                                // _gameSyncManager.EnqueueCommand(NetworkCommandExtensions.SerializeCommand(refreshCommand).Item1);
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
+                        _gameEventManager.Publish(new GameFunctionUIShowEvent(uiType));
                     }
                 })
                 .AddTo(_disposables);

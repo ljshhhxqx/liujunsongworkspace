@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using UI.UIBase;
 using UnityEngine;
+using VContainer;
 using AnimationState = AOTScripts.Data.AnimationState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
@@ -19,15 +21,25 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private VirtualJoystick movementJoystick;
         [SerializeField]
         private List<VirtualButton> actionButtons;
+        [SerializeField]
+        private List<FunctionVirtualButton> functionButtons;
         private HashSet<AnimationState> _activeButtons = new HashSet<AnimationState>();
         public HashSet<AnimationState> ActiveButtons => _activeButtons;
     
         private Dictionary<AnimationState, bool> buttonStates = new Dictionary<AnimationState, bool>();
         private Dictionary<AnimationState, bool> buttonDownStates = new Dictionary<AnimationState, bool>();
 
-        private void Start()
+        private HashSet<AnimationState> _animationStates = new HashSet<AnimationState>();
+
+        [Inject]
+        private void Init(IObjectResolver objectResolver)
         {
             InitializeInputSystem();
+            for (int i = 0; i < functionButtons.Count; i++)
+            {
+                var functionButton = functionButtons[i];
+                objectResolver.Inject(functionButton);
+            }
         }
 
         private void InitializeInputSystem()
@@ -56,7 +68,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private void Update()
         {
             // 重置按钮按下状态（每帧重置）
-            foreach (var key in buttonDownStates.Keys)
+            foreach (var key in _animationStates)
             {
                 buttonDownStates[key] = false;
             }
@@ -80,6 +92,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             buttonStates[buttonName] = true;
             buttonDownStates[buttonName] = true;
+            _animationStates.Add(buttonName);
             _activeButtons.Add(buttonName);
         }
     

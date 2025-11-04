@@ -1525,13 +1525,23 @@
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
+            "Name": "Town_Minimap",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/MapSnapshots/Town_Minimap.png"
+        },
+        {
+            "UID": 4200008,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
             "Name": "AttackPotion-Large",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/Potions/AttackPotion-Large.png"
         },
         {
-            "UID": 4200008,
+            "UID": 4200009,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1541,7 +1551,7 @@
             "Address": "/Map/Town/Potions/AttackPotion-Medium.png"
         },
         {
-            "UID": 4200009,
+            "UID": 4200010,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1551,7 +1561,7 @@
             "Address": "/Map/Town/Potions/AttackPotion-Small.png"
         },
         {
-            "UID": 4200010,
+            "UID": 4200011,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1561,7 +1571,7 @@
             "Address": "/Map/Town/Potions/DefensePotion-Large.png"
         },
         {
-            "UID": 4200011,
+            "UID": 4200012,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1571,7 +1581,7 @@
             "Address": "/Map/Town/Potions/DefensePotion-Medium.png"
         },
         {
-            "UID": 4200012,
+            "UID": 4200013,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1581,7 +1591,7 @@
             "Address": "/Map/Town/Potions/DefensePotion-Small.png"
         },
         {
-            "UID": 4200013,
+            "UID": 4200014,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1591,7 +1601,7 @@
             "Address": "/Map/Town/Potions/ScorePotion-Large.png"
         },
         {
-            "UID": 4200014,
+            "UID": 4200015,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1601,7 +1611,7 @@
             "Address": "/Map/Town/Potions/ScorePotion-Medium.png"
         },
         {
-            "UID": 4200015,
+            "UID": 4200016,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1611,7 +1621,7 @@
             "Address": "/Map/Town/Potions/ScorePotion-Small.png"
         },
         {
-            "UID": 4200016,
+            "UID": 4200017,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1621,7 +1631,7 @@
             "Address": "/Map/Town/Potions/SpeedPotion-Large.png"
         },
         {
-            "UID": 4200017,
+            "UID": 4200018,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1631,7 +1641,7 @@
             "Address": "/Map/Town/Potions/SpeedPotion-Medium.png"
         },
         {
-            "UID": 4200018,
+            "UID": 4200019,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1641,7 +1651,7 @@
             "Address": "/Map/Town/Potions/SpeedPotion-Small.png"
         },
         {
-            "UID": 4200019,
+            "UID": 4200020,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1651,7 +1661,7 @@
             "Address": "/Map/Town/Potions/StrengthPotion-Large.png"
         },
         {
-            "UID": 4200020,
+            "UID": 4200021,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1661,7 +1671,7 @@
             "Address": "/Map/Town/Potions/StrengthPotion-Medium.png"
         },
         {
-            "UID": 4200021,
+            "UID": 4200022,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1671,7 +1681,7 @@
             "Address": "/Map/Town/Potions/StrengthPotion-Small.png"
         },
         {
-            "UID": 4200022,
+            "UID": 4200023,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1681,7 +1691,7 @@
             "Address": "/Map/Town/Potions/TreasurePotion-Large.png"
         },
         {
-            "UID": 4200023,
+            "UID": 4200024,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1691,7 +1701,7 @@
             "Address": "/Map/Town/Potions/TreasurePotion-Medium.png"
         },
         {
-            "UID": 4200024,
+            "UID": 4200025,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1915,13 +1925,23 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
+            "Name": "GameMiniMap",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/UIPrefab/GameMiniMap.prefab"
+        },
+        {
+            "UID": 4300022,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "Hole",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/UIPrefab/Hole.prefab"
         },
         {
-            "UID": 4300022,
+            "UID": 4300023,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1931,7 +1951,7 @@
             "Address": "/Map/Town/UIPrefab/ItemDetailUI.prefab"
         },
         {
-            "UID": 4300023,
+            "UID": 4300024,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1941,7 +1961,7 @@
             "Address": "/Map/Town/UIPrefab/JoystickOverlay.prefab"
         },
         {
-            "UID": 4300024,
+            "UID": 4300025,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1951,7 +1971,7 @@
             "Address": "/Map/Town/UIPrefab/PlayerAnimationOverlay.prefab"
         },
         {
-            "UID": 4300025,
+            "UID": 4300026,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1961,7 +1981,7 @@
             "Address": "/Map/Town/UIPrefab/PlayerDamageDeathTimeOverlay.prefab"
         },
         {
-            "UID": 4300026,
+            "UID": 4300027,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1971,7 +1991,7 @@
             "Address": "/Map/Town/UIPrefab/PlayerHpShowOverlay.prefab"
         },
         {
-            "UID": 4300027,
+            "UID": 4300028,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1981,7 +2001,7 @@
             "Address": "/Map/Town/UIPrefab/PlayerPropertyOverlay.prefab"
         },
         {
-            "UID": 4300028,
+            "UID": 4300029,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1991,7 +2011,7 @@
             "Address": "/Map/Town/UIPrefab/ShopUI.prefab"
         },
         {
-            "UID": 4300029,
+            "UID": 4300030,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2001,7 +2021,7 @@
             "Address": "/Map/Town/UIPrefab/TargetShowOverlay.prefab"
         },
         {
-            "UID": 4300030,
+            "UID": 4300031,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",

@@ -25,6 +25,16 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             }
         }
 
+        public UIType GetUIType(KeyFunction keyFunction)
+        {
+            var data = keyFunctionData.Find(x => x.keyFunction == keyFunction);
+            if (data.key == null)
+            {
+                return UIType.None;
+            }
+            return data.uIType;
+        }
+
         public bool IsKeyFunction(out KeyFunction keyFunction)
         {
             keyFunction = KeyFunction.None;
@@ -45,6 +55,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     {
         public KeyFunction keyFunction;
         public string key;
+        public UIType uIType;
     }
 
     public enum KeyFunction

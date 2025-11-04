@@ -1,6 +1,7 @@
 ﻿using System;
 using AOTScripts.Data;
 using Mirror;
+using UI.UIBase;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Tool.GameEvent
@@ -20,6 +21,16 @@ namespace HotUpdate.Scripts.Tool.GameEvent
     public struct GameMessageListeningEvent : IGameEvent
     {
         
+    }
+
+    public struct GameFunctionUIShowEvent : IGameEvent
+    {
+        public UIType UIType { get;  private set; }
+        
+        public GameFunctionUIShowEvent(UIType uiType)
+        {
+            UIType = uiType;
+        }
     }
 
     public struct GameSceneLoadedEvent : IGameEvent

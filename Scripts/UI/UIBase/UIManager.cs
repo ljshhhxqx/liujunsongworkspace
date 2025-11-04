@@ -143,7 +143,7 @@ namespace HotUpdate.Scripts.UI.UIBase
         {
             return _uiDict.ContainsKey(uIType);
         }
-        
+
         public T GetUI<T>() where T : ScreenUIBase
         {
             foreach (var uiBase in _uIPrefabs)
@@ -155,6 +155,66 @@ namespace HotUpdate.Scripts.UI.UIBase
             }
             Debug.Log($"UI类型有误{typeof(T).Name}");
             return null;
+        }
+        
+        public ScreenUIBase GetUI(UIType uIType)
+        {
+            foreach (var uiBase in _uIPrefabs)
+            {
+                if (uiBase.Type == uIType)
+                {
+                    return uiBase;
+                }
+            }
+            Debug.Log($"UI名有误{uIType}");
+            return null;
+        }
+
+        public ScreenUIBase OpenUI(UIType uIType, Action<ScreenUIBase> onShow = null)
+        {
+            var ui = GetUI(uIType);
+            if (ui)
+            {
+                var root = _roots.FirstOrDefault(t => t.CanvasType == ui.CanvasType)?.transform;
+                if (root == null)
+                {
+                    Debug.Log($"UI对象{uIType}没有找到Canvas");
+                    return null;
+                }
+                var go = Object.Instantiate(ui.gameObject, root);
+                ui = go.GetComponent<ScreenUIBase>();
+                if (!ui)
+                {
+                    throw new Exception($"UI对象{uIType}没有ScreenUIBase组件");
+                }
+                if (ui.CanvasType == UICanvasType.Panel)
+                {
+                    CurrentActiveScreenUI1 = ui;
+                }
+                else if (ui.CanvasType == UICanvasType.SecondPanel)
+                {
+                    CurrentActiveScreenUI2 = ui;
+                }
+                else if (ui.CanvasType == UICanvasType.ThirdPanel)
+                {
+                    CurrentActiveScreenUI3 = ui;
+                }
+
+                if (ui.TryGetComponent<BlockUIComponent>(out var resourceComponent))
+                {
+                    resourceComponent.SetUIType(uIType, ui.CanvasType);
+                    _injector.Inject(resourceComponent);
+                }
+                _injector.Inject(ui);
+                _uiDict.TryAdd(uIType, ui);
+                onShow?.Invoke(ui);
+                if (ui is IUnlockMouse)
+                {
+                    IsUnlockMouse?.Invoke(true);
+                }
+            }
+
+            return ui;
         }
 
         public T SwitchUI<T>(Action<T> onShow = null) where T : ScreenUIBase, new()
