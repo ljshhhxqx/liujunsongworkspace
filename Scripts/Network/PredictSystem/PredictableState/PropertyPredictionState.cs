@@ -75,6 +75,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     }
 
                     var baseProperties = _propertyConfig.GetBaseValue(propertyType);
+                    Debug.Log($"PropertyPredictionState [OnStartLocalPlayer]_{propertyType}_{baseProperties}");
                     var displayName = propertyConfig.description;
                     var consumeType = propertyConfig.consumeType;
                     itemDatas.Add((int)propertyType, new PropertyItemData
@@ -83,7 +84,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                         PropertyType = propertyType,
                         CurrentProperty = baseProperties,
                         MaxProperty = baseProperties,
-                        ConsumeType = consumeType
+                        ConsumeType = consumeType,
+                        IsPercentage = _propertyConfig.IsHundredPercent(propertyType),
                     });
                 }
                 UIPropertyBinder.OptimizedBatchAdd(_bindKey, itemDatas);

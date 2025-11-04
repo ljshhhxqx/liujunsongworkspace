@@ -285,7 +285,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             //     .AddTo(this);
             _capsuleCollider.OnTriggerStayAsObservable()
                 .Sample(TimeSpan.FromMilliseconds(GameSyncManager.TickSeconds * 1000))
-                .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer && _gameSyncManager.isGameStart)
+                .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && _localPlayerHandler && _gameSyncManager.isGameStart)
                 .Subscribe(c =>
                 {
                     var header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
