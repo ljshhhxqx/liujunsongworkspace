@@ -469,12 +469,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
         }
 
-        private void HandlePlayerTraceOtherPlayerHp(int headerConnectionId, int[] targetConnectionIds)
+        private void HandlePlayerTraceOtherPlayerHp(int headerConnectionId, uint[] targetConnectionIds)
         {
             var playerController = _playerInGameManager.GetPlayerComponent<PlayerComponentController>(headerConnectionId);
             var list = new List<TracedPlayerInfo>();
-            foreach (var id in targetConnectionIds)
+            foreach (var uid in targetConnectionIds)
             {
+                var id = _playerInGameManager.GetPlayerId(uid);
                 var playerState = GetState<PlayerPredictablePropertyState>(id);
                 var targetPlayer = _playerInGameManager.GetPlayerComponent<PlayerComponentController>(id);
                 var tracedPlayerInfo = new TracedPlayerInfo

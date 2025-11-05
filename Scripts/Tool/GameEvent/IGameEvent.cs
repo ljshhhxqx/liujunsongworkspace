@@ -1,5 +1,6 @@
 ﻿using System;
 using AOTScripts.Data;
+using HotUpdate.Scripts.Network.UI;
 using Mirror;
 using UI.UIBase;
 using UnityEngine;
@@ -42,7 +43,22 @@ namespace HotUpdate.Scripts.Tool.GameEvent
             SceneName = sceneName;
         }
     }
-    
+
+    public struct PlayerTracesEvent : IGameEvent
+    {
+        public uint PlayerId { get; private set; }
+        public Vector3 Position { get; private set; }
+        public MinimapTargetType MinimapTargetType { get; private set; }
+
+        public PlayerTracesEvent(uint playerId, Vector3 position, MinimapTargetType minimapTargetType)
+        {
+            PlayerId = playerId;
+            Position = position;
+            MinimapTargetType = minimapTargetType;
+        }
+        
+    }
+
     public struct TargetShowEvent : IGameEvent
     {
         public Transform Target { get; private set; }

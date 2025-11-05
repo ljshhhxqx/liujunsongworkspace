@@ -303,10 +303,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public static bool TryGetPlayersInScreen(
             Camera camera,
             IEnumerable<Transform> potentialTargets,
-            out List<int> playersInScreen,
+            out List<uint> playersInScreen,
             int layerMask)
         {
-            playersInScreen = new List<int>();
+            playersInScreen = new List<uint>();
             if (!camera) return false;
 
             var cameraPos = camera.transform.position;
@@ -362,7 +362,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 if (!isObstructed)
                 {
                     var component = target.GetComponent<PlayerComponentController>();
-                    playersInScreen.Add(component.connectionToClient.connectionId);
+                    playersInScreen.Add(component.netId);
                 }
             }
 

@@ -46,9 +46,8 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         private IColliderConfig _playerBaseColliderData;
         private IColliderConfig _playerPhysicsData;
         private uint _baseId;
-        // 同步给所有客户端的映射信息列表
-        // 使用 SyncList 会自动将变化同步给所有客户端
         
+        // 同步给所有客户端的映射信息列表
         [SyncVar(hook = nameof(OnIsGameStartedChanged))]
         public bool isGameStarted;
         private int _localPlayerId;
@@ -216,7 +215,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 await UniTask.Delay(TimeSpan.FromSeconds(GameSyncManager.TickSeconds), cancellationToken: token);
                 foreach (var uid in _playerNetIds.Values)
                 {
-                    var identity = NetworkServer.spawned[uid];
+                    var identity = NetworkClient.spawned[uid];
                     if (!identity) continue;
             
                     var position = identity.transform.position;

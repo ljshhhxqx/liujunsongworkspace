@@ -103,6 +103,19 @@ namespace HotUpdate.Scripts.Network.UI
         {
             return GetOrCreateDictionary<T>(key).Dictionary;
         }
+        
+        public static void UpdateDictionary<T>(BindingKey dictKey, int itemKey, T value) where T : IUIDatabase
+        {
+            var dic = GetOrCreateDictionary<T>(dictKey).Dictionary;
+            if (dic.ContainsKey(itemKey))
+            {
+                dic[itemKey] = value;
+            }
+            else
+            {
+                dic.Add(itemKey, value);
+            }
+        }
 
         private static ReactiveDictionaryWrapper<T> GetOrCreateDictionary<T>(BindingKey key) where T : IUIDatabase
         {

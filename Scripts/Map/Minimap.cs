@@ -1,16 +1,15 @@
 using System.Collections.Generic;
 using AOTScripts.Tool.ObjectPool;
 using Coffee.UIEffects;
+using DG.Tweening;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Static;
-using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.ReactiveProperty;
 using UI.UIBase;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
-using VContainer;
 
 namespace HotUpdate.Scripts.Map
 {
@@ -22,13 +21,34 @@ namespace HotUpdate.Scripts.Map
         private RectTransform map;
         private Vector2 _minimapPanelSize;
         private Bounds _worldBounds;
-        private GameEventManager _gameEventManager;
-        private readonly Dictionary<int, Image> _minimapItems = new Dictionary<int, Image>();
-        
-        [Inject]
-        private void Init(GameEventManager gameEventManager)
+        private readonly Dictionary<int, GameObject> _minimapItems = new Dictionary<int, GameObject>();
+        private readonly Dictionary<int, Sequence> _minimapSequence = new Dictionary<int, Sequence>();
+
+        private void SetMinimapItems(GameObject item, MinimapItemData minimapItemData)
         {
-            _gameEventManager = gameEventManager;
+            var image = item.GetComponent<Image>();
+            var effect = item.GetComponent<UIEffect>();
+            var icon = UISpriteContainer.GetSprite(minimapItemData.TargetType.ToString());
+            image.sprite = icon;
+            var canvasGroup = item.GetComponent<CanvasGroup>();
+            canvasGroup.alpha = 1f;
+            image.transform.localPosition = MinimapHelper.GetMinimapPosition(minimapItemData.WorldPosition, _worldBounds, _minimapPanelSize);
+            effect.enabled = minimapItemData.TargetType == MinimapTargetType.Player;
+            _minimapItems.Add(minimapItemData.Id, item);
+            if (minimapItemData.TargetType == MinimapTargetType.Enemy)
+            {
+                if (_minimapSequence.TryGetValue(minimapItemData.Id, out var sequence))
+                {
+                    sequence.Kill();
+                    sequence = DOTween.Sequence();
+                    sequence.AppendInterval(1f);
+                    sequence.Append(canvasGroup.DOFade(0f, 1f));
+                    sequence.OnComplete(() =>
+                    {
+                        _minimapSequence.Remove(minimapItemData.Id);
+                    });
+                }
+            }
         }
 
         public void BindPositions(HReactiveDictionary<int, MinimapItemData> worldPositions)
@@ -42,14 +62,7 @@ namespace HotUpdate.Scripts.Map
                     return;
                 }
                 var item = GameObjectPoolManger.Instance.GetObject(targetPrefab.gameObject, Vector3.zero, Quaternion.identity, transform);
-                var icon = UISpriteContainer.GetSprite(y.TargetType.ToString());
-
-                var image = item.GetComponent<Image>();
-                var effect = item.GetComponent<UIEffect>();
-                image.sprite = icon;
-                image.transform.localPosition = MinimapHelper.GetMinimapPosition(y.WorldPosition, _worldBounds, _minimapPanelSize);
-                _minimapItems.Add(x, image);
-                effect.enabled = y.TargetType == MinimapTargetType.Player;
+                SetMinimapItems(item, y);
             }).AddTo(this);
             worldPositions.ObserveRemove((x, y) =>
             {
@@ -67,11 +80,8 @@ namespace HotUpdate.Scripts.Map
                     Debug.LogWarning("Minimap item not found.");
                     return;
                 }
-                var effect = item.GetComponent<UIEffect>();
-                var icon = UISpriteContainer.GetSprite(z.TargetType.ToString());
-                item.sprite = icon;
-                item.transform.localPosition = MinimapHelper.GetMinimapPosition(z.WorldPosition, _worldBounds, _minimapPanelSize);
-                effect.enabled = y.TargetType == MinimapTargetType.Player;
+                
+                SetMinimapItems(item, y);
             }).AddTo(this);
             worldPositions.ObserveClear(_ =>
             {

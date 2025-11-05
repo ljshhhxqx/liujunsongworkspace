@@ -1081,7 +1081,7 @@ namespace AOTScripts.Data
         [MemoryPackOrder(0)] 
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public int[] TargetConnectionIds;
+        public uint[] TargetConnectionIds;
         public NetworkCommandHeader GetHeader() => Header;
         public NetworkCommandType GetCommandType() => NetworkCommandType.PlayerTraceOtherPlayerHp;
 

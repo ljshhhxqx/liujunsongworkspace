@@ -241,9 +241,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _gameEventManager.Subscribe<TargetShowEvent>(OnTargetShow);
         }
 
-        private void OnTargetShow(TargetShowEvent obj)
+        private void OnTargetShow(TargetShowEvent targetShowEvent)
         {
-            throw new NotImplementedException();
+            var isShow = targetShowEvent.Target != null;
+            if (!isShow)
+            {
+                UIPropertyBinder.RemoveFromDictionary<MinimapItemData>(_minimumBindKey, (int)targetShowEvent.TargetId);
+            }
+            else
+            {
+                var minimapItemData = new MinimapItemData
+                {
+                    Id = (int)targetShowEvent.TargetId,
+                    TargetType = MinimapTargetType.Treasure,
+                    WorldPosition = targetShowEvent.Target.transform.position
+                };
+                UIPropertyBinder.AddToDictionary(_minimumBindKey, (int)targetShowEvent.TargetId, minimapItemData);
+            }
         }
 
         private void OnGameFunctionUIShow(GameFunctionUIShowEvent gameFunctionUIShowEvent)
@@ -468,16 +482,27 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .Sample(TimeSpan.FromMilliseconds(Time.fixedDeltaTime * 1000))
                 .Subscribe()
                 .AddTo(this);
-            //处理物理信息
-            Observable.EveryFixedUpdate().Sample(TimeSpan.FromMilliseconds(FixedDeltaTime * 10 * 1000))
+            
+            Observable.EveryFixedUpdate()
+                .Sample(TimeSpan.FromSeconds(FixedDeltaTime))
                 .Where(_ => _localPlayerHandler)
                 .Subscribe(_ =>
                 {
-                    var otherPlayers = NetworkServer.connections
-                        .Where(x => x.Value.connectionId != _playerInGameManager.LocalPlayerId)
-                        .Select(x => x.Value.identity.GetComponent<Transform>());
-                    var potentialTargets = otherPlayers as Transform[] ?? otherPlayers.ToArray();
-                    if (potentialTargets.Length == 0)
+                    var potentialTargets = new List<Transform>();
+                    UIPropertyBinder.UpdateDictionary(_minimumBindKey, (int)netId, new MinimapItemData
+                    {
+                        Id = (int)netId,
+                        TargetType = MinimapTargetType.Player,
+                        WorldPosition = transform.position
+                    });
+                    foreach (var networkIdentity in NetworkClient.spawned.Values)
+                    {
+                        if (networkIdentity.TryGetComponent<PlayerComponentController>(out var component) && networkIdentity.netId != netId)
+                        {
+                            potentialTargets.Add(component.transform);
+                        }
+                    }
+                    if (potentialTargets.Count == 0)
                     {
                         return;
                     }
@@ -491,6 +516,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                             Header = header,
                             TargetConnectionIds = playersInScreen.ToArray(),
                         };
+                        foreach (var player in playersInScreen)
+                        {
+                            if (NetworkClient.spawned.TryGetValue(player, out var playerObject))
+                            {
+                                UIPropertyBinder.UpdateDictionary(_minimumBindKey, (int)netId, new MinimapItemData
+                                {
+                                    Id = (int)player,
+                                    TargetType = MinimapTargetType.Enemy,
+                                    WorldPosition = playerObject.transform.position
+                                });
+                            }
+                        }
+
                         CmdSendCommand(NetworkCommandExtensions.SerializeCommand(playerInScreenCommand).Item1);
                     }
                 })
