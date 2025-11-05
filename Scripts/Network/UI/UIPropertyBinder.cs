@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using AOTScripts.Data.UI;
 using HotUpdate.Scripts.Tool.ReactiveProperty;
 using Sirenix.Utilities;
 using UniRx;

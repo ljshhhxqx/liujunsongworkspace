@@ -1,8 +1,8 @@
 ﻿using System;
+using AOTScripts.Data;
 using AOTScripts.Tool.ObjectPool;
-using HotUpdate.Scripts.Network.UI;
 
-namespace AOTScripts.Data.UI
+namespace HotUpdate.Scripts.Network.UI
 {
     public enum UIPropertyDefine
     {
@@ -23,7 +23,9 @@ namespace AOTScripts.Data.UI
         [UIPropertyType(typeof(PlayerControlData))]
         PlayerControl,
         [UIPropertyType(typeof(AnimationStateData))]
-        Animation
+        Animation,
+        [UIPropertyType(typeof(MinimapItemData))]
+        MinimumValue
     }
 
     // 复合键结构（玩家ID + 数据Key）

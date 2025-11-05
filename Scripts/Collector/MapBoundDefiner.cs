@@ -27,7 +27,20 @@ namespace HotUpdate.Scripts.Collector
         public Vector3 MapMinBoundary { get; private set; }
         public Vector3 MapMaxBoundary { get; private set; }
         public List<Vector2Int> GridMap => _gridMap;
-        
+        private Bounds _mapBounds;
+
+        public Bounds MapBounds
+        {
+            get
+            {
+                if (_mapBounds.Equals(default))
+                {
+                    _mapBounds = new Bounds((MapMinBoundary + MapMaxBoundary)/2, MapMaxBoundary - MapMinBoundary);
+                }
+                return _mapBounds;
+            }
+        }
+
         private IEnumerable<GameObject> Walls => _walls ??= GameObject.FindGameObjectsWithTag("Wall");
 
         [Inject]

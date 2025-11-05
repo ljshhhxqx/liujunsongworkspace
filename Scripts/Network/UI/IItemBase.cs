@@ -1,7 +1,6 @@
 using System;
 using System.Text;
 using AOTScripts.Data;
-using AOTScripts.Data.UI;
 using AOTScripts.Tool.ObjectPool;
 using UnityEngine;
 using AnimationState = AOTScripts.Data.AnimationState;
@@ -21,6 +20,47 @@ namespace HotUpdate.Scripts.Network.UI
 
     public interface IItemBaseData : IUIDatabase
     {
+    }
+
+    public struct MinimapItemData : IItemBaseData, IEquatable<MinimapItemData>
+    {
+        public int Id;
+        public MinimapTargetType TargetType;
+        public Vector3 WorldPosition;
+
+        public bool Equals(MinimapItemData other)
+        {
+            return TargetType == other.TargetType && WorldPosition.Equals(other.WorldPosition) && Id == other.Id;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is MinimapItemData other && Equals(other) && Id == other.Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine((int)TargetType, WorldPosition, Id);
+        }
+
+        public static bool operator ==(MinimapItemData left, MinimapItemData right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(MinimapItemData left, MinimapItemData right)
+        {
+            return !left.Equals(right);
+        }
+        
+        public override string ToString()
+        {
+            var stringBuilder = new StringBuilder();
+            stringBuilder.AppendFormat("ID：{0}\n", Id);
+            stringBuilder.AppendFormat("目标类型：{0}\n", TargetType);
+            stringBuilder.AppendFormat("世界坐标：{0}\n", WorldPosition);
+            return stringBuilder.ToString();
+        }
     }
 
     public struct PlayerGameResultItemData : IItemBaseData, IEquatable<PlayerGameResultItemData>
@@ -535,5 +575,14 @@ namespace HotUpdate.Scripts.Network.UI
             sb.AppendFormat("最后登录时间：{0}\n", LastLoginTime);
             return sb.ToString();
         }
+    }
+
+    public enum MinimapTargetType
+    {
+        Player,
+        Monster,
+        Enemy,
+        Npc,
+        Treasure,
     }
 }

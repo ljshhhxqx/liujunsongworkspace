@@ -1,5 +1,5 @@
 using System;
-using AOTScripts.Data.UI;
+using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Tool.ReactiveProperty;
 using UI.UIBase;
 using UniRx;

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Data;
 using AOTScripts.Data.State;
-using AOTScripts.Data.UI;
 using AOTScripts.Tool;
 using AOTScripts.Tool.Coroutine;
 using AOTScripts.Tool.ObjectPool;
@@ -12,6 +11,7 @@ using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.GameBase;
+using HotUpdate.Scripts.Map;
 using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
@@ -136,6 +136,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private BindingKey _goldBindKey;
         private BindingKey _playerDeathTimeBindKey;
         private BindingKey _playerTraceOtherPlayerHpBindKey;
+        private BindingKey _minimumBindKey;
         private bool _localPlayerHandler;
         private bool _serverHandler;
         
@@ -237,6 +238,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _uiManager.CloseUI(UIType.Main);
             _gameEventManager.Publish(new PlayerUnListenMessageEvent());
             _gameEventManager.Subscribe<GameFunctionUIShowEvent>(OnGameFunctionUIShow);
+            _gameEventManager.Subscribe<TargetShowEvent>(OnTargetShow);
+        }
+
+        private void OnTargetShow(TargetShowEvent obj)
+        {
+            throw new NotImplementedException();
         }
 
         private void OnGameFunctionUIShow(GameFunctionUIShowEvent gameFunctionUIShowEvent)
@@ -306,7 +313,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 UIPropertyBinder.LocalPlayerId);
             _playerDeathTimeBindKey = new BindingKey(UIPropertyDefine.PlayerDeathTime, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
             _playerTraceOtherPlayerHpBindKey = new BindingKey(UIPropertyDefine.PlayerTraceOtherPlayerHp, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
-            
+            _minimumBindKey = new BindingKey(UIPropertyDefine.MinimumValue, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
             // _capsuleCollider.OnTriggerEnterAsObservable()
             //     .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
             //     .Subscribe(c =>
@@ -581,45 +588,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             {
                 _virtualInputOverlay = _uiManager.SwitchUI<VirtualInputOverlay>();
             }
-        }
-
-        public void SwitchBag()
-        {
-            if (!isLocalPlayer)
+            _uiManager.SwitchUI<Minimap>(ui =>
             {
-                return;
-            }
-
-            if (_uiManager.IsUIOpen(UIType.Backpack))
-            {
-                _uiManager.CloseUI(UIType.Backpack);
-                return;
-            }
-        }
-
-        public void SwitchShop()
-        {
-            if (!isLocalPlayer)
-            {
-                return;
-            }
+                ui.BindPositions(UIPropertyBinder.GetReactiveDictionary<MinimapItemData>(_minimumBindKey));
+            });
         }
         
-        // public void SwitchPlayerDeathTime()
-        // {
-        //     if (!isLocalPlayer)
-        //     {
-        //         return;
-        //     }
-        //     
-        //     // if (_uiManager.IsUIOpen(UIType.PlayerDamageDeathOverlay))
-        //     // {
-        //     //     _uiManager.CloseUI(UIType.PlayerDeathTime);
-        //     //     return;
-        //     // }
-        //     // var playerDeathTimeUI = _uiManager.SwitchUI<PlayerDeathTimeUI>();
-        //     // playerDeathTimeUI.BindPlayerDeathTime(UIPropertyBinder.ObserveProperty<PlayerDeathTimeData>(_playerDeathTimeBindKey));
-        // }
 
         private bool HandleSpecialState()
         {

@@ -1,8 +1,8 @@
 ﻿using System;
-using AOTScripts.Data.UI;
 using Coffee.UIEffects;
 using DG.Tweening;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Tool.ReactiveProperty;
 using HotUpdate.Scripts.UI.UIBase;
 using Sirenix.OdinInspector;
