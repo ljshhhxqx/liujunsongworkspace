@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: -5887710147613989233}
   m_Layer: 10
   m_Name: Legendary_Strength 1
-  m_TagString: Untagged
+  m_TagString: CollectItem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

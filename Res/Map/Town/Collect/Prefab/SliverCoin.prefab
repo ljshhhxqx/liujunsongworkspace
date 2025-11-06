@@ -100,7 +100,7 @@ GameObject:
   - component: {fileID: -6293348852269140335}
   m_Layer: 10
   m_Name: SliverCoin
-  m_TagString: Untagged
+  m_TagString: CollectItem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

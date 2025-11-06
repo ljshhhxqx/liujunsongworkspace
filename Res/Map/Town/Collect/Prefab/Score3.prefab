@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: -2578908193151116447}
   m_Layer: 10
   m_Name: Score3
-  m_TagString: Untagged
+  m_TagString: CollectItem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

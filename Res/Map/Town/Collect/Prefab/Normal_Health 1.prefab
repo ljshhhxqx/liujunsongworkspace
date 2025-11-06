@@ -100,7 +100,7 @@ GameObject:
   - component: {fileID: -6764914302377580618}
   m_Layer: 10
   m_Name: Normal_Health 1
-  m_TagString: Untagged
+  m_TagString: CollectItem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

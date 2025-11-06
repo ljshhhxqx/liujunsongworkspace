@@ -220,6 +220,10 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  autoInject: 1
+  isForClient: 1
+  isForLocalPlayer: 1
+  mapType: 0
   lid: {fileID: 1924515721642459049}
   playerLayer:
     serializedVersion: 2

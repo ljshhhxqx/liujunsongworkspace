@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 3795131822578953440}
   m_Layer: 10
   m_Name: Legendary_Health 2
-  m_TagString: Untagged
+  m_TagString: CollectItem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
