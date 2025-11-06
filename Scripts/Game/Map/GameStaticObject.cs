@@ -1,5 +1,6 @@
 ﻿using HotUpdate.Scripts.Collector;
 using UnityEngine;
+using VContainer;
 
 namespace HotUpdate.Scripts.Game.Map
 {
@@ -27,6 +28,7 @@ namespace HotUpdate.Scripts.Game.Map
             id = staticId;
         }
 
+        [Inject]
         public void Init()
         {
             Position = transform.position;

@@ -28,7 +28,6 @@ namespace HotUpdate.Scripts.Game.Map
             uiManager.InitMapSprites(mapName);
             uiManager.InitMapUIs(mapName);
             uiManager.CloseUI(UIType.Loading);
-            //InitMapStaticObjects();
             Debug.Log("game map init complete!!!!!!!!!!");
         }
 
@@ -77,24 +76,31 @@ namespace HotUpdate.Scripts.Game.Map
             }
         }
 
-        private void InitMapStaticObjects()
+        public override void OnStartClient()
         {
+            base.OnStartClient();
             var mapStaticObject = FindObjectsOfType<GameStaticObject>();
             foreach (var staticObject in mapStaticObject)
             {
-                if (isServer)
-                {
-                    GameStaticObjectContainer.Instance.ServerAddStaticObject(staticObject.gameObject);   
-                }
-                else
-                {
-                    GameStaticObjectContainer.Instance.ClientAddStaticObject(staticObject.gameObject);
-                }
+
+                GameObjectContainer.Instance.AddStaticObject(staticObject.gameObject);
+            }
+        }
+
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+            var mapStaticObject = FindObjectsOfType<GameStaticObject>();
+            foreach (var staticObject in mapStaticObject)
+            {
+
+                GameObjectContainer.Instance.AddStaticObject(staticObject.gameObject);
             }
         }
 
         private void OnDestroy()
         {
+            GameObjectContainer.Instance.ClearStaticObjects();
             ResourceManager.Instance.UnloadResourcesByAddress($"/Map/{mapName}");
         }
 

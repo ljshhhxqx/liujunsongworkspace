@@ -24,7 +24,6 @@ namespace HotUpdate.Scripts.Collector
         private Renderer fillRenderer;
         private LayerMask _playerLayer;  
         protected LayerMask _sceneLayer;
-        protected bool _serverHandler;
         
         public int CollectConfigId => collectConfigId;
         public override Collider Collider => _collider;
@@ -69,15 +68,8 @@ namespace HotUpdate.Scripts.Collector
             }
         }
 
-        public override void OnStartServer()
+        protected override void StartClient()
         {
-            base.OnStartServer();
-            _serverHandler = true;
-        }
-
-        public override void OnStartClient()
-        {
-            base.OnStartClient();
             Debug.Log("Local player collider started");
             _collectParticlePlayer = GetComponentInChildren<CollectParticlePlayer>();
             _collectAnimationComponent = GetComponent<CollectAnimationComponent>();

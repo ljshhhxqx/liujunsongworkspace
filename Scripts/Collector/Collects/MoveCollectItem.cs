@@ -44,7 +44,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         
         private void FixedUpdate()
         {
-            if(!_serverHandler) return;
+            if(!ServerHandler) return;
             // 只在非表面状态下应用模式运动
             if(!isOnSurface)
             {

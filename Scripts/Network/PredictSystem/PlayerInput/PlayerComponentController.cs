@@ -10,6 +10,7 @@ using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.GameBase;
 using HotUpdate.Scripts.Map;
 using HotUpdate.Scripts.Network.Inject;
@@ -45,7 +46,7 @@ using PropertyEnvironmentChangeCommand = AOTScripts.Data.PropertyEnvironmentChan
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 {
-    public class PlayerComponentController : NetworkAutoInjectComponent, IAttackAnimationEvent
+    public class PlayerComponentController : NetworkAutoInjectHandlerBehaviour, IAttackAnimationEvent
     {
         [Header("Components")]
         [SerializeField]
@@ -137,8 +138,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private BindingKey _playerDeathTimeBindKey;
         private BindingKey _playerTraceOtherPlayerHpBindKey;
         private BindingKey _minimumBindKey;
-        private bool _localPlayerHandler;
-        private bool _serverHandler;
         
         private Dictionary<Type, bool> _reactivePropertyBinds = new Dictionary<Type, bool>();
         
@@ -303,17 +302,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
         }
 
-        public override void OnStartServer()
+        protected override void StartLocalPlayer()
         {
-            base.OnStartServer();
-            _serverHandler = true;
-            Debug.Log($"[PlayerInputController] OnStartServer");
-        }
-
-        public override void OnStartLocalPlayer()
-        {
-            base.OnStartLocalPlayer();
-            _localPlayerHandler = true;
             Debug.Log($"[PlayerInputController] OnStartLocalPlayer");
             _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
                 UIPropertyBinder.LocalPlayerId);
@@ -337,7 +327,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             //     .AddTo(this);
             _capsuleCollider.OnTriggerStayAsObservable()
                 .Sample(TimeSpan.FromMilliseconds(GameSyncManager.TickSeconds * 1000))
-                .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && _localPlayerHandler && _gameSyncManager.isGameStart)
+                .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && LocalPlayerHandler && _gameSyncManager.isGameStart)
                 .Subscribe(c =>
                 {
                     var header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
@@ -356,7 +346,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             //     }).AddTo(_disposables);
             
             Observable.EveryUpdate()
-                .Where(_ => _localPlayerHandler)
+                .Where(_ => LocalPlayerHandler)
                 .Subscribe(_ =>
                 {
                     if (_keyFunctionConfig.IsKeyFunction(out var keyFunction))
@@ -368,7 +358,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .AddTo(_disposables);
             
             Observable.EveryUpdate()
-                .Where(_ => _localPlayerHandler && (_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)))
+                .Where(_ => LocalPlayerHandler && (_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)))
                 .Subscribe(_ => {
                     if (PlayerPlatformDefine.IsWindowsPlatform())
                     {
@@ -434,7 +424,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .AddTo(_disposables);
             Observable.EveryFixedUpdate()
                 .Sample(TimeSpan.FromMilliseconds(0.25f * 1000))
-                .Where(_ => _localPlayerHandler && _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) > 0)
+                .Where(_ => LocalPlayerHandler && _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) > 0)
                 .Subscribe(_ =>
                 {
                     var health = _propertyPredictionState.GetCalculator(PropertyTypeEnum.Health);
@@ -453,7 +443,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 })
                 .AddTo(this);
             Observable.EveryFixedUpdate()
-                .Where(_ => _localPlayerHandler && _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) > 0 && GameSyncManager.CurrentTick > 0)
+                .Where(_ => LocalPlayerHandler && _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) > 0 && GameSyncManager.CurrentTick > 0)
                 .Subscribe(_ =>
                 {
                     HandleInputPhysics(_playerInputStateData);
@@ -478,14 +468,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .AddTo(this);
             
             //发送网络命令
-            _inputStream.Where(x=> _localPlayerHandler && x.Command != AnimationState.None && x.Command != AnimationState.Idle)
+            _inputStream.Where(x=> LocalPlayerHandler && x.Command != AnimationState.None && x.Command != AnimationState.Idle)
                 .Sample(TimeSpan.FromMilliseconds(Time.fixedDeltaTime * 1000))
                 .Subscribe()
                 .AddTo(this);
             
             Observable.EveryFixedUpdate()
                 .Sample(TimeSpan.FromSeconds(FixedDeltaTime))
-                .Where(_ => _localPlayerHandler)
+                .Where(_ => LocalPlayerHandler)
                 .Subscribe(_ =>
                 {
                     var potentialTargets = new List<Transform>();
@@ -660,7 +650,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             // _rigidbody.velocity = newState.Velocity;
             // _gameStateStream.Value = newState.PlayerEnvironmentState;
             // _playerAnimationCalculator.SetEnvironmentState(newState.PlayerEnvironmentState);
-            if(_localPlayerHandler)
+            if(LocalPlayerHandler)
                 return;
             
             _playerAnimationCalculator.PlayAnimationWithNoCondition(newState.AnimationState, newState.Index);
@@ -1027,7 +1017,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcPlayAudioEffect(AnimationState command)
         {
-            if (_localPlayerHandler) return;
+            if (LocalPlayerHandler) return;
             PlayEffect(command);
         }
 

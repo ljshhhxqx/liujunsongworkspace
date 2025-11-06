@@ -24,7 +24,7 @@ namespace HotUpdate.Scripts.Collector
         public uint ItemId { get; }
     }
 
-    public abstract class CollectObject : NetworkMonoController, ICollect, IItem, IPoolable
+    public abstract class CollectObject : NetworkHandlerBehaviour, ICollect, IItem, IPoolable
     {
         [HideInInspector]
         [SyncVar] 

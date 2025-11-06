@@ -28,7 +28,7 @@ using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Collector
 {
-    public class ItemsSpawnerManager : ServerNetworkComponent
+    public class ItemsSpawnerManager : NetworkHandlerBehaviour
     {
         private readonly Dictionary<int, CollectObjectController> _collectiblePrefabs = new Dictionary<int, CollectObjectController>();
 
@@ -68,14 +68,10 @@ namespace HotUpdate.Scripts.Collector
         private readonly Dictionary<uint, CollectObjectController> _clientCollectObjectControllers = new Dictionary<uint, CollectObjectController>();
         
         [SyncVar]
-        //private byte[] _serverTreasureChestMetaDataBytes;
         private CollectItemMetaData _serverTreasureChestMetaData;
         private readonly Dictionary<QualityType, IColliderConfig> _chestColliderConfigs = new Dictionary<QualityType, IColliderConfig>();
         private readonly Dictionary<QualityType, IColliderConfig> _droppedItemColliderConfigs = new Dictionary<QualityType, IColliderConfig> ();
         private TreasureChestComponent _clientTreasureChest;
-
-        private bool _serverHandler;
-        private bool _clientHandler;
         
         [Inject]
         private void Init(UIManager uiManager, IConfigProvider configProvider, GameSyncManager gameSyncManager, GameMapInjector gameMapInjector,GameEventManager gameEventManager, MessageCenter messageCenter)
@@ -100,18 +96,6 @@ namespace HotUpdate.Scripts.Collector
             _spawnedParent = transform;
         }
 
-        public override void OnStartServer()
-        {
-            base.OnStartServer();
-            _serverHandler = true;
-        }
-
-        public override void OnStartClient()
-        {
-            base.OnStartClient();
-            _clientHandler = true;
-        }
-
         private void OnGameSceneResourcesLoadedLoaded(GameSceneResourcesLoadedEvent gameSceneResourcesLoadedEvent)
         {
             var collectData = _jsonDataConfig.CollectData;
@@ -128,7 +112,7 @@ namespace HotUpdate.Scripts.Collector
         [Server]
         public void SpawnItemsByDroppedItems(byte[] droppedItemsBytes, Vector3 position)
         {
-            if (!_serverHandler)
+            if (!ServerHandler)
             {
                 return;
             }
@@ -145,7 +129,7 @@ namespace HotUpdate.Scripts.Collector
         [ClientRpc]
         public void SpawnItemsByDroppedItemsClientRpc(byte[] droppedItemsBytes, Vector3 position)
         {
-            if (!_clientHandler)
+            if (!ClientHandler)
             {
                 return;
             }
@@ -162,7 +146,7 @@ namespace HotUpdate.Scripts.Collector
         [Server]
         public void PickerPickUpChest(uint pickerId, uint itemId)
         {
-            if (_serverHandler)
+            if (ServerHandler)
             {
                 var state = (ItemState)_serverTreasureChestMetaData.StateFlags;
                 if (state.HasAnyState(ItemState.IsInteracting) || state.HasAnyState(ItemState.IsInBag)) return;
@@ -247,7 +231,7 @@ namespace HotUpdate.Scripts.Collector
         [ClientRpc]
         private void RpcPickupChest(uint pickerId, uint itemId)
         {
-            if (_clientHandler)
+            if (ClientHandler)
             {
                 if (NetworkServer.spawned.TryGetValue(itemId, out var item))
                 {
@@ -260,7 +244,7 @@ namespace HotUpdate.Scripts.Collector
         [Server]
         public void PickerPickupItem(uint pickerId, uint itemId)
         {
-            if (_serverHandler)
+            if (ServerHandler)
             {
                 HandleItemPickup(itemId, pickerId);
                 JudgeEndRound();
@@ -376,7 +360,7 @@ namespace HotUpdate.Scripts.Collector
         [Server]
         private void HandleItemPickup(uint itemId, uint pickerId)
         {
-            if (!_serverHandler)
+            if (!ServerHandler)
             {
                 return;
             }
@@ -486,7 +470,7 @@ namespace HotUpdate.Scripts.Collector
         [Server]
         public async UniTask EndRound()
         {
-            if (!_serverHandler)
+            if (!ServerHandler)
             {
                 return;
             }
@@ -553,7 +537,7 @@ namespace HotUpdate.Scripts.Collector
         [Server]
         public async UniTask SpawnManyItems()
         {
-            if (!_serverHandler)
+            if (!ServerHandler)
             {
                 return;
             }
@@ -643,7 +627,7 @@ namespace HotUpdate.Scripts.Collector
         [Server]
         public void SpawnTreasureChestServer()
         {
-            if (!_serverHandler)
+            if (!ServerHandler)
             {
                 return;
             }
@@ -977,7 +961,7 @@ namespace HotUpdate.Scripts.Collector
                     position = startPoint + _itemSpacing * spawnedIDs.Count * direction;
             
                     // 从高处发射射线
-                    var rayStart = position + Vector3.up * 1000f;
+                    var rayStart = position + Vector3.up * 50f;
                     if (Physics.Raycast(rayStart, Vector3.down, out var hit, Mathf.Infinity, _sceneLayer))
                     {
                         position = hit.point + Vector3.up * _itemHeight;
@@ -1040,8 +1024,8 @@ namespace HotUpdate.Scripts.Collector
                 return false;
 
             // 从高处发射射线检查地面
-            var rayStart = position + Vector3.up * 1000f;
-            if (!Physics.Raycast(rayStart, Vector3.down, out var hit, Mathf.Infinity, _sceneLayer))
+            var rayStart = position + Vector3.up * 50f;
+            if (!Physics.Raycast(rayStart, Vector3.down, out var hit, 60f, _sceneLayer))
                 return false;
 
             // 调整位置到地面上方
