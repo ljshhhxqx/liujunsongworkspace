@@ -13,6 +13,7 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game;
 using HotUpdate.Scripts.Game.Inject;
+using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.Item;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
@@ -965,7 +966,7 @@ namespace HotUpdate.Scripts.Collector
                     if (Physics.Raycast(rayStart, Vector3.down, out var hit, Mathf.Infinity, _sceneLayer))
                     {
                         position = hit.point + Vector3.up * _itemHeight;
-                        if (IsPositionValid(position, itemPrefab.GetComponent<Collider>()) && 
+                        if (IsPositionValid(position, configId) && 
                             IsWithinBoundary(position))
                         {
                             validPosition = true;
@@ -999,7 +1000,7 @@ namespace HotUpdate.Scripts.Collector
         
         private bool IsPositionValidWithoutItem(Vector3 position)
         {
-            return IsPositionValid(position, null);
+            return IsPositionValid(position, 0);
         }
     
         private Vector3 GetRandomStartPoint(float height)
@@ -1013,7 +1014,7 @@ namespace HotUpdate.Scripts.Collector
             return MapBoundDefiner.Instance.GetRandomDirection();
         }
 
-        private bool IsPositionValid(Vector3 position, Collider itemPrefab)
+        private bool IsPositionValid(Vector3 position, int configId)
         {
             var gridPos = GetGridPosition(position);
             if (!_gridMap.TryGetValue(gridPos, out var grid))
@@ -1030,70 +1031,27 @@ namespace HotUpdate.Scripts.Collector
 
             // 调整位置到地面上方
             position = hit.point + Vector3.up * _itemHeight;
-
-            // 检查碰撞
-            if (itemPrefab && itemPrefab is not MeshCollider)
+            HashSet<GameStaticObjectData> data;
+                
+            if (_colliderConfigs.TryGetValue(configId, out var colliderConfig))
             {
-                int count;
-                float checkRadius;
-
-                if (itemPrefab is BoxCollider boxCollider)
+                if (GameObjectContainer.Instance.IsIntersect(position, colliderConfig, out data))
                 {
-                    var checkSize = boxCollider.size * (0.5f * 1.1f); // 直接使用size更高效
-                    count = Physics.OverlapBoxNonAlloc(
-                        position, 
-                        checkSize, 
-                        _colliderBuffer,
-                        boxCollider.transform.rotation, // 考虑旋转
-                        _sceneLayer.value,
-                        QueryTriggerInteraction.Ignore);
+                    foreach (var hashSet in data)
+                    {
+                        if (hashSet.Layer != _sceneLayer)
+                        {
+                            Debug.LogWarning($"Game object with id | {hashSet.Id} | layer is not equal to scene layer");
+                            return false;
+                        }
+                    }
                 }
-                else if (itemPrefab is SphereCollider sphereCollider)
-                {
-                    checkRadius = sphereCollider.radius * 1.1f;
-                    count = Physics.OverlapSphereNonAlloc(
-                        position, 
-                        checkRadius, 
-                        _colliderBuffer, 
-                        _sceneLayer.value,
-                        QueryTriggerInteraction.Ignore);
-                }
-                else if (itemPrefab is CapsuleCollider capsuleCollider)
-                {
-                    checkRadius = capsuleCollider.radius * 1.1f;
-                    var point2 = position + capsuleCollider.transform.TransformDirection(
-                        capsuleCollider.direction switch {
-                            0 => Vector3.right,
-                            1 => Vector3.up,
-                            2 => Vector3.forward,
-                            _ => Vector3.up
-                        }) * (capsuleCollider.height * 0.5f);
-
-                    count = Physics.OverlapCapsuleNonAlloc(
-                        position,
-                        point2,
-                        checkRadius,
-                        _colliderBuffer,
-                        _sceneLayer.value,
-                        QueryTriggerInteraction.Ignore);
-                }
-                else
-                {
-                    Debug.LogError("Unsupported collider type");
-                    return false;
-                }
-
-                // 有效性检查（注意：NonAlloc返回的是实际碰撞数）
-                for (int i = 0; i < count; i++) 
-                {
-                    // 排除非障碍物（可通过tag二次过滤）
-                    if ((_spawnedLayer.value & (1 << _colliderBuffer[i].gameObject.layer)) == 0) 
-                        return false;
-                }
-                return count == 0;
             }
-
-            return true;
+            else
+            {
+                return false;
+            }
+            return data.Count == 0;
         }
 
         private bool IsWithinBoundary(Vector3 position)

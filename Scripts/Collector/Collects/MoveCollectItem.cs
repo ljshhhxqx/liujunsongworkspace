@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using HotUpdate.Scripts.Game.Map;
+using UnityEngine;
 
 namespace HotUpdate.Scripts.Collector.Collects
 {
@@ -69,6 +70,10 @@ namespace HotUpdate.Scripts.Collector.Collects
         
         private bool CheckCollisionAhead()
         {
+            if (!GameObjectContainer.Instance.IsIntersect(transform.position, ColliderConfig))
+            {
+                return false;
+            }
             // 使用球形检测前方碰撞
             Vector3 checkPosition = transform.position + currentDirection * collisionCheckDistance;
             return Physics.CheckSphere(checkPosition, sphereCheckRadius, _sceneLayer);
@@ -77,8 +82,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         private void HandleCollision()
         {
             // 发射射线获取碰撞点法线
-            RaycastHit hit;
-            if(Physics.Raycast(transform.position, currentDirection, out hit, collisionCheckDistance * 1.5f, _sceneLayer))
+            if(Physics.Raycast(transform.position, currentDirection, out var hit, collisionCheckDistance * 1.5f, _sceneLayer))
             {
                 Vector3 surfaceNormal = hit.normal;
                 

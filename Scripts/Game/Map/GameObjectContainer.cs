@@ -7,25 +7,60 @@ namespace HotUpdate.Scripts.Game.Map
 {
     public class GameObjectContainer : Singleton<GameObjectContainer>
     {
+        private readonly Dictionary<int, GameObject> _idToGameObject = new Dictionary<int, GameObject>();
         private readonly Dictionary<Vector2Int, List<GameStaticObjectData>> _mapObjectData = new Dictionary<Vector2Int, List<GameStaticObjectData>>();
 
-        public GameStaticObjectData IsIntersect(Vector3 position, IColliderConfig colliderConfig)
+        public bool IsIntersect(Vector3 position, IColliderConfig colliderConfig)
         {
-            var grid = MapBoundDefiner.Instance.GetGridPosition(position);
-            if (_mapObjectData.TryGetValue(grid, out var value))
+            var bounds = GamePhysicsSystem.GetWorldBounds(position, colliderConfig);
+            var coveredGrids = MapBoundDefiner.Instance.GetBoundsCovered(bounds);
+            if (coveredGrids.Count == 0)
             {
-                foreach (var data in value)
+                Debug.LogWarning("No covered grids found for " + position);
+                return false;
+            }
+            foreach (var grid in coveredGrids)
+            {
+                if (_mapObjectData.TryGetValue(grid, out var value))
                 {
-                    if (GamePhysicsSystem.FastCheckItemIntersects(position, data.Position, colliderConfig,
-                            data.ColliderConfig))
+                    foreach (var data in value)
                     {
-                        return data;
+                        if (GamePhysicsSystem.FastCheckItemIntersects(position, data.Position, colliderConfig,
+                                data.ColliderConfig))
+                        {
+                            return true;
+                        }
                     }
                 }
-                return default(GameStaticObjectData);
             }
-            Debug.LogWarning("No static object data found at " + position);
-            return default;
+            return false;
+        }
+
+        public bool IsIntersect(Vector3 position, IColliderConfig colliderConfig, out HashSet<GameStaticObjectData> intersectedObjects)
+        {
+            intersectedObjects = new HashSet<GameStaticObjectData>(5);
+            var bounds = GamePhysicsSystem.GetWorldBounds(position, colliderConfig);
+            var coveredGrids = MapBoundDefiner.Instance.GetBoundsCovered(bounds);
+            if (coveredGrids.Count == 0)
+            {
+                Debug.LogWarning("No covered grids found for " + position);
+                return false;
+            }
+            foreach (var grid in coveredGrids)
+            {
+                if (_mapObjectData.TryGetValue(grid, out var value))
+                {
+                    foreach (var data in value)
+                    {
+                        if (GamePhysicsSystem.FastCheckItemIntersects(position, data.Position, colliderConfig,
+                                data.ColliderConfig))
+                        {
+                            intersectedObjects.Add(data);
+                        }
+                    }
+                }
+            }
+            return intersectedObjects.Count > 0;
         }
 
         public void AddStaticObject(GameObject gameObject)
@@ -40,13 +75,16 @@ namespace HotUpdate.Scripts.Game.Map
                 Id = staticObject.Id,
                 Position = collider.transform.position,
                 ColliderConfig = colliderConfig,
-                Grid = grid
+                Grid = grid,
+                Layer = gameObject.layer,
+                Tag = gameObject.tag
             };
             if (!_mapObjectData.ContainsKey(grid))
             {
                 _mapObjectData.Add(grid, new List<GameStaticObjectData> {data});
             }
             _mapObjectData[grid].Add(data);
+            _idToGameObject.Add(staticObject.Id, gameObject);
         }
 
         public void ClearStaticObjects()
@@ -70,10 +108,13 @@ namespace HotUpdate.Scripts.Game.Map
         public Vector3 Position;
         public IColliderConfig ColliderConfig;
         public Vector2Int Grid;
+        public int Layer;
+        public string Tag;
 
         public bool Equals(GameStaticObjectData other)
         {
-            return Id == other.Id && Position.Equals(other.Position) && Equals(ColliderConfig, other.ColliderConfig) && Grid.Equals(other.Grid);
+            return Id == other.Id && Position.Equals(other.Position) && Equals(ColliderConfig, other.ColliderConfig) 
+                   && Layer == other.Layer && Tag == other.Tag && Grid.Equals(other.Grid);
         }
 
         public override bool Equals(object obj)
@@ -83,7 +124,7 @@ namespace HotUpdate.Scripts.Game.Map
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Id, Position, ColliderConfig, Grid);
+            return HashCode.Combine(Id, Position, ColliderConfig, Grid, Layer, Tag);
         }
 
         public static bool operator ==(GameStaticObjectData left, GameStaticObjectData right)
@@ -99,7 +140,9 @@ namespace HotUpdate.Scripts.Game.Map
         public override string ToString()
         {
             var sb = new System.Text.StringBuilder();
-            sb.Append("Id: ").Append(Id).Append(", Position: ").Append(Position).Append(", ColliderConfig: ").Append(ColliderConfig).Append(", Grid: ").Append(Grid);
+            sb.Append("Id: ").Append(Id).Append(", Position: ").Append(Position).Append(", ColliderConfig: ").
+                Append(ColliderConfig).Append(", Grid: ").Append(Grid)
+                .Append(", Layer: ").Append(Layer).Append(", Tag: ").Append(Tag);
             return sb.ToString();
         }
     }

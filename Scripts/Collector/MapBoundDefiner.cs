@@ -52,6 +52,32 @@ namespace HotUpdate.Scripts.Collector
             InitializeGrid();
         }
 
+        public HashSet<Vector2Int> GetBoundsCovered(Bounds bounds)
+        {
+            var coveredGrids = new HashSet<Vector2Int>();
+        
+            // 计算边界框在XZ平面上的覆盖范围
+            Vector3 min = bounds.min;
+            Vector3 max = bounds.max;
+        
+            // 获取覆盖的网格范围
+            int minGridX = Mathf.FloorToInt(min.x / _gridSize);
+            int maxGridX = Mathf.FloorToInt(max.x / _gridSize);
+            int minGridZ = Mathf.FloorToInt(min.z / _gridSize);
+            int maxGridZ = Mathf.FloorToInt(max.z / _gridSize);
+        
+            // 遍历所有覆盖的网格
+            for (int x = minGridX; x <= maxGridX; x++)
+            {
+                for (int z = minGridZ; z <= maxGridZ; z++)
+                {
+                    coveredGrids.Add(new Vector2Int(x, z));
+                }
+            }
+        
+            return coveredGrids;
+        }
+
         public Vector2Int GetGridPosition(Vector3 worldPos)
         {
             return new Vector2Int(

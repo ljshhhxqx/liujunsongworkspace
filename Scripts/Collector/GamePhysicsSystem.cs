@@ -73,7 +73,7 @@ namespace HotUpdate.Scripts.Collector
             var isIntersects = aBounds.Intersects(bBounds);
             return isIntersects;
         }
-        private static Bounds GetWorldBounds(Vector3 position, IColliderConfig config)
+        public static Bounds GetWorldBounds(Vector3 position, IColliderConfig config)
         {
             if (config == null)
                 return new Bounds();
@@ -86,7 +86,7 @@ namespace HotUpdate.Scripts.Collector
             };
         }
 
-        private static Bounds GetCapsuleBounds(Vector3 position, IColliderConfig config)
+        public static Bounds GetCapsuleBounds(Vector3 position, IColliderConfig config)
         {
             var axis = config.Direction switch
             {

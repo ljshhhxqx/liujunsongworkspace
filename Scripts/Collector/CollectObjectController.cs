@@ -34,6 +34,7 @@ namespace HotUpdate.Scripts.Collector
         private Collider _collider;
         private CollectObjectDataConfig _collectObjectDataConfig;
         private IDisposable _disposable;
+        protected IColliderConfig ColliderConfig;
 
         [Inject]
         private void Init(IConfigProvider configProvider)
@@ -43,8 +44,15 @@ namespace HotUpdate.Scripts.Collector
             _playerLayer = playerConfig.PlayerLayer;
             _sceneLayer = jsonDataConfig.GameConfig.groundSceneLayer;
             var collectObjectDataConfig = configProvider.GetConfig<CollectObjectDataConfig>();
-
+            var collectCollider = GetComponentInChildren<CollectCollider>();
+            _collider = collectCollider.GetComponent<Collider>();
             CollectObjectData = collectObjectDataConfig.GetCollectObjectData(collectConfigId);
+            if (!collectCollider)
+            {
+                Debug.LogError("Collider not found");
+                return;
+            }
+            ColliderConfig = GamePhysicsSystem.CreateColliderConfig(collectCollider.GetComponent<Collider>());
             if (isClient)
             {
                 Debug.Log($"CollectObjectController::Init call On Init");
@@ -75,15 +83,8 @@ namespace HotUpdate.Scripts.Collector
             _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
             _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
             _interactSystem = FindObjectOfType<InteractSystem>();
-            var collectCollider = GetComponentInChildren<CollectCollider>();
-            if (!collectCollider)
-            {
-                Debug.LogError("Collider not found");
-                return;
-            }
             _collectAnimationComponent?.Play();
             Debug.Log("Local player animation");
-            _collider = collectCollider.GetComponent<Collider>();
             _collider.enabled = true;
             _collectAnimationComponent?.Play();
             Debug.Log($"CollectObjectController::Init call On OnStartClient");
