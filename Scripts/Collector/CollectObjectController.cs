@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using AOTScripts.Data.NetworkMes;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using Mirror;
 using UniRx;
-using UniRx.Triggers;
 using UnityEngine;
 using VContainer;
 
@@ -35,6 +37,7 @@ namespace HotUpdate.Scripts.Collector
         private CollectObjectDataConfig _collectObjectDataConfig;
         private IDisposable _disposable;
         protected IColliderConfig ColliderConfig;
+        protected HashSet<DynamicObjectData> CachedDynamicObjectData = new HashSet<DynamicObjectData>();
 
         [Inject]
         private void Init(IConfigProvider configProvider)
@@ -53,25 +56,37 @@ namespace HotUpdate.Scripts.Collector
                 return;
             }
             ColliderConfig = GamePhysicsSystem.CreateColliderConfig(collectCollider.GetComponent<Collider>());
-            if (isClient)
+            GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, ColliderConfig, ObjectType.Collectable, gameObject.layer);
+
+            if (ClientHandler)
             {
                 Debug.Log($"CollectObjectController::Init call On Init");
-                _disposable = _collider.OnTriggerEnterAsObservable()
-                    .Subscribe(OnTriggerEnterObserver)
-                    .AddTo(this);
+                // _disposable = Observable.EveryFixedUpdate()
+                //     .Where(_ => _collider.enabled &&
+                //                 GameObjectContainer.Instance.DynamicObjectIntersects(transform.position, ColliderConfig,
+                //                     CachedDynamicObjectData))
+                //     .Subscribe(_ =>
+                //     {
+                //         OnTriggerEnterObserver();
+                //     });
             }
         }
 
         public override void OnSelfSpawn()
         {
             base.OnSelfSpawn();
-            if (isClient && _collider)
+            if (ClientHandler && _collider)
             {
                 Debug.Log("Local player collider enabled");
-                _collider.enabled = true;
-                _disposable = _collider.OnTriggerEnterAsObservable()
-                    .Subscribe(OnTriggerEnterObserver)
-                    .AddTo(this);
+                // _collider.enabled = true;
+                // _disposable = Observable.EveryFixedUpdate()
+                //     .Where(_ => _collider.enabled &&
+                //                 GameObjectContainer.Instance.DynamicObjectIntersects(transform.position, ColliderConfig,
+                //                     CachedDynamicObjectData))
+                //     .Subscribe(_ =>
+                //     {
+                //         OnTriggerEnterObserver();
+                //     });
                 _collectAnimationComponent?.Play();
             }
         }
@@ -88,9 +103,14 @@ namespace HotUpdate.Scripts.Collector
             _collider.enabled = true;
             _collectAnimationComponent?.Play();
             Debug.Log($"CollectObjectController::Init call On OnStartClient");
-            _disposable = _collider.OnTriggerEnterAsObservable()
-                .Subscribe(OnTriggerEnterObserver)
-                .AddTo(this);
+            // _disposable = Observable.EveryFixedUpdate()
+            //     .Where(_ => _collider.enabled &&
+            //                 GameObjectContainer.Instance.DynamicObjectIntersects(transform.position, ColliderConfig,
+            //                     CachedDynamicObjectData))
+            //     .Subscribe(_ =>
+            //     {
+            //         OnTriggerEnterObserver();
+            //     });
         }
 
         public override void OnSelfDespawn()
@@ -104,23 +124,33 @@ namespace HotUpdate.Scripts.Collector
             _disposable?.Dispose();
         }
         
-        protected virtual void OnTriggerEnterObserver(Collider other)
+        protected virtual void OnTriggerEnterObserver()
         {
-            if ((_playerLayer.value & (1 << other.gameObject.layer)) == 0)
+            foreach (var data in CachedDynamicObjectData)
             {
-                Debug.Log($"OnTriggerEnterObserver -- Not player layer, ignore");
-                return;
-            }
-            
-            if (other.TryGetComponent<Picker>(out var pickerComponent))
-            {
-                Debug.Log($"OnTriggerEnterObserver -- Picker component");
-                pickerComponent.SendCollectRequest(pickerComponent.netId, pickerComponent.PickerType, netId, CollectObjectData.collectObjectClass);
+                if ((_playerLayer.value & (1 << data.Layer)) == 0 || data.Type != ObjectType.Player)
+                {
+                    continue;
+                }
+                
+                var player = NetworkClient.spawned[data.NetId];
+                var picker = player.GetComponent<Picker>();
+                if (picker)
+                {
+                    picker.SendCollectRequest(picker.netId, picker.PickerType, netId,
+                        CollectObjectData.collectObjectClass);
+                }
             }
         }
         
         protected override void SendCollectRequest(uint pickerId, PickerType pickerType)
         {
+        }
+
+        private void OnDestroy()
+        {
+            _disposable?.Dispose();
+            GameObjectContainer.Instance.RemoveDynamicObject(netId);
         }
 
         public void CollectSuccess()

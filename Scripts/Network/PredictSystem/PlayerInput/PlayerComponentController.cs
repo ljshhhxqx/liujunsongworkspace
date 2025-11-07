@@ -7,10 +7,12 @@ using AOTScripts.Tool;
 using AOTScripts.Tool.Coroutine;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Audio;
+using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
+using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.GameBase;
 using HotUpdate.Scripts.Map;
 using HotUpdate.Scripts.Network.Inject;
@@ -129,7 +131,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private AnimationState _previousAnimationState;
         private KeyframeComboCooldown _attackAnimationCooldown;       
         private PlayerInGameManager _playerInGameManager;
-        
+        public IColliderConfig ColliderConfig { get; private set; }
+
         private BindingKey _propertyBindKey;
         private BindingKey _itemBindKey;
         private BindingKey _equipBindKey;
@@ -214,7 +217,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             UIManager uiManager,
             GameEventManager gameEventManager)
         {
+            
             _configProvider = configProvider;
+
             var jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
             _gameConfigData = jsonDataConfig.GameConfig;
             _playerConfigData = jsonDataConfig.PlayerConfig;
@@ -230,6 +235,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _animationCooldowns = GetAnimationCooldowns();
             _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
             _gameEventManager = gameEventManager;
+            ColliderConfig = GamePhysicsSystem.CreateColliderConfig(GetComponent<Collider>());
+            GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, ColliderConfig, ObjectType.Player, gameObject.layer);
+
             //_currentAnimationCooldowns.OnChange += OnAnimationCooldownChanged;
             GetAllCalculators(configProvider, gameSyncManager);
             HandleAllSyncState();
@@ -302,6 +310,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
         }
 
+
         protected override void StartLocalPlayer()
         {
             Debug.Log($"[PlayerInputController] OnStartLocalPlayer");
@@ -330,13 +339,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && LocalPlayerHandler && _gameSyncManager.isGameStart)
                 .Subscribe(c =>
                 {
-                    var header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
-                        CommandType.Property, CommandAuthority.Client);
-                    var playerTouchedBaseCommand = new PlayerTouchedBaseCommand
-                    {
-                        Header = header,
-                    };
-                    CmdSendCommand(NetworkCommandExtensions.SerializeCommand(playerTouchedBaseCommand).Item1);
                 }).AddTo(_disposables);
             // _capsuleCollider.OnTriggerExitAsObservable()
             //     .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
@@ -711,6 +713,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
         }
 
+        private readonly HashSet<DynamicObjectData> _cachedDynamicObjectData = new HashSet<DynamicObjectData>();
 
         private void HandleInputPhysics(PlayerInputStateData inputData)
         {
@@ -723,6 +726,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerAnimationCalculator.SetGroundDistance(_groundDistanceStream.Value);
             _playerAnimationCalculator.SetAnimatorParams(inputData.InputMovement.magnitude, _groundDistanceStream.Value, _currentSpeed);
             _playerAnimationCalculator.UpdateAnimationState();
+            if (GameObjectContainer.Instance.DynamicObjectIntersects(transform.position, ColliderConfig, _cachedDynamicObjectData))
+            {
+                foreach (var data in _cachedDynamicObjectData)
+                {
+                    if (data.Type == ObjectType.Base)
+                    {
+                        var header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
+                            CommandType.Property, CommandAuthority.Client);
+                        var playerTouchedBaseCommand = new PlayerTouchedBaseCommand
+                        {
+                            Header = header,
+                        };
+                        CmdSendCommand(NetworkCommandExtensions.SerializeCommand(playerTouchedBaseCommand).Item1);
+                        break;
+                    }
+                }
+            }
             //Debug.Log($"[HandleInputPhysics]- _currentSpeed > {_currentSpeed} _targetSpeed ->{_targetSpeed} _speedSmoothVelocity -> {_speedSmoothVelocity} _speedSmoothTime -> {_speedSmoothTime}");
            
         }
@@ -914,6 +934,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void OnDestroy()
         {
+            GameObjectContainer.Instance.RemoveDynamicObject(netId);
             _disposables?.Clear();
             _propertyPredictionState.OnPropertyChanged -= HandlePropertyChange;
             _propertyPredictionState.OnStateChanged -= HandlePropertyStateChanged;

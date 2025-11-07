@@ -5,7 +5,7 @@ using System.Text;
 using AOTScripts.Data;
 using AOTScripts.Data.State;
 using AOTScripts.Tool;
-using AOTScripts.Tool.ECS;
+using AOTScripts.Tool.Coroutine;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Common;
@@ -91,8 +91,6 @@ namespace HotUpdate.Scripts.Collector
             _chestConfig = _configProvider.GetConfig<ChestDataConfig>();
             _shopConfig = _configProvider.GetConfig<ShopConfig>();
             _sceneLayer = _jsonDataConfig.GameConfig.groundSceneLayer;
-            // _messageCenter.Register<PickerPickUpChestMessage>(OnPickerPickUpChestMessage);
-            // _messageCenter.Register<PickerPickUpMessage>(OnPickUpItem);
             _gameLoopController = FindObjectOfType<GameLoopController>();
             _spawnedParent = transform;
         }
@@ -108,6 +106,21 @@ namespace HotUpdate.Scripts.Collector
             _onceSpawnWeight = collectData.onceSpawnWeight;
             OnGameStart(gameSceneResourcesLoadedEvent.SceneName);
             InitializeGrid();
+        }
+
+        protected override void StartServer()
+        {
+            RepeatedTask.Instance.StartRepeatingTask(UpdateDynamicObjects, 0.1f);
+        }
+        
+        protected override void StartClient()
+        {
+            RepeatedTask.Instance.StartRepeatingTask(UpdateDynamicObjects, 0.1f);
+        }
+
+        private void UpdateDynamicObjects()
+        {
+            GameObjectContainer.Instance.UpdateDynamicObjects(ServerHandler);
         }
 
         [Server]
@@ -356,6 +369,8 @@ namespace HotUpdate.Scripts.Collector
         private void OnDestroy()
         {
             MapBoundDefiner.Instance.Clear();
+            GameObjectContainer.Instance.ClearObjects();
+            RepeatedTask.Instance.StopRepeatingTask(UpdateDynamicObjects);
         }
 
         [Server]
@@ -1014,6 +1029,8 @@ namespace HotUpdate.Scripts.Collector
             return MapBoundDefiner.Instance.GetRandomDirection();
         }
 
+        private readonly HashSet<GameObjectData> _cache = new HashSet<GameObjectData>();
+
         private bool IsPositionValid(Vector3 position, int configId)
         {
             var gridPos = GetGridPosition(position);
@@ -1031,13 +1048,12 @@ namespace HotUpdate.Scripts.Collector
 
             // 调整位置到地面上方
             position = hit.point + Vector3.up * _itemHeight;
-            HashSet<GameStaticObjectData> data;
                 
             if (_colliderConfigs.TryGetValue(configId, out var colliderConfig))
             {
-                if (GameObjectContainer.Instance.IsIntersect(position, colliderConfig, out data))
+                if (GameObjectContainer.Instance.IsIntersect(position, colliderConfig, _cache))
                 {
-                    foreach (var hashSet in data)
+                    foreach (var hashSet in _cache)
                     {
                         if (hashSet.Layer != _sceneLayer)
                         {
@@ -1051,7 +1067,7 @@ namespace HotUpdate.Scripts.Collector
             {
                 return false;
             }
-            return data.Count == 0;
+            return _cache.Count == 0;
         }
 
         private bool IsWithinBoundary(Vector3 position)

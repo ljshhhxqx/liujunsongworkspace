@@ -100,7 +100,7 @@ namespace HotUpdate.Scripts.Game.Map
 
         private void OnDestroy()
         {
-            GameObjectContainer.Instance.ClearStaticObjects();
+            GameObjectContainer.Instance.ClearObjects();
             ResourceManager.Instance.UnloadResourcesByAddress($"/Map/{mapName}");
         }
 

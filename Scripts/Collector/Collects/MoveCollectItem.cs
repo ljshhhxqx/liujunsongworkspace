@@ -42,10 +42,11 @@ namespace HotUpdate.Scripts.Collector.Collects
             currentDirection = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized;
             currentVelocity = currentDirection * moveSpeed;
         }
-        
+
         private void FixedUpdate()
         {
-            if(!ServerHandler) return;
+            if (!ServerHandler) 
+                return;
             // 只在非表面状态下应用模式运动
             if(!isOnSurface)
             {
@@ -193,9 +194,9 @@ namespace HotUpdate.Scripts.Collector.Collects
             currentVelocity = currentDirection * moveSpeed;
         }
         
-        protected override void OnTriggerEnterObserver(Collider other)
+        protected override void OnTriggerEnterObserver()
         {
-            base.OnTriggerEnterObserver(other);
+            base.OnTriggerEnterObserver();
         }
     }
 
