@@ -217,7 +217,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             UIManager uiManager,
             GameEventManager gameEventManager)
         {
-            
+            ColliderConfig = GamePhysicsSystem.CreateColliderConfig(GetComponent<Collider>());
             _configProvider = configProvider;
 
             var jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
@@ -235,7 +235,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _animationCooldowns = GetAnimationCooldowns();
             _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
             _gameEventManager = gameEventManager;
-            ColliderConfig = GamePhysicsSystem.CreateColliderConfig(GetComponent<Collider>());
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, ColliderConfig, ObjectType.Player, gameObject.layer);
 
             //_currentAnimationCooldowns.OnChange += OnAnimationCooldownChanged;
@@ -726,7 +725,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerAnimationCalculator.SetGroundDistance(_groundDistanceStream.Value);
             _playerAnimationCalculator.SetAnimatorParams(inputData.InputMovement.magnitude, _groundDistanceStream.Value, _currentSpeed);
             _playerAnimationCalculator.UpdateAnimationState();
-            if (GameObjectContainer.Instance.DynamicObjectIntersects(transform.position, ColliderConfig, _cachedDynamicObjectData))
+            if (GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, ColliderConfig, _cachedDynamicObjectData))
             {
                 foreach (var data in _cachedDynamicObjectData)
                 {

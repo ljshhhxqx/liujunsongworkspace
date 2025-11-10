@@ -121,6 +121,7 @@ namespace HotUpdate.Scripts.Collector
             {
                 _collider.enabled = false;
             }
+            GameObjectContainer.Instance.RemoveDynamicObject(netId);
             _disposable?.Dispose();
         }
         

@@ -39,10 +39,10 @@ namespace HotUpdate.Scripts.Collector
             _gameEventManager = gameEventManager;
             _interactSystem = FindObjectOfType<InteractSystem>();
             _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
-            _colliderConfig = GetComponent<PlayerComponentController>().ColliderConfig;
+            _colliderConfig = GamePhysicsSystem.CreateColliderConfig(GetComponent<Collider>());
 
             Observable.EveryFixedUpdate()
-                .Where(_ => LocalPlayerHandler && GameObjectContainer.Instance.DynamicObjectIntersects(transform.position, _colliderConfig, _cachedCollects))
+                .Where(_ => LocalPlayerHandler && GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, _colliderConfig, _cachedCollects))
                 .Subscribe(_ =>
                 {
                     HandlePlayerTouched();

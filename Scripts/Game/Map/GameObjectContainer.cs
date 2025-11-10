@@ -30,7 +30,7 @@ namespace HotUpdate.Scripts.Game.Map
             }
         }
 
-        public bool DynamicObjectIntersects(Vector3 position, IColliderConfig colliderConfig, HashSet<DynamicObjectData> intersectedObjects)
+        public bool DynamicObjectIntersects(uint uid,Vector3 position, IColliderConfig colliderConfig, HashSet<DynamicObjectData> intersectedObjects)
         {
             intersectedObjects.Clear();
             var bounds = GamePhysicsSystem.GetWorldBounds(position, colliderConfig);
@@ -44,6 +44,10 @@ namespace HotUpdate.Scripts.Game.Map
             {
                 foreach (var data in _netIdToDynamicObjectData)
                 {
+                    if (data.Key == uid)
+                    {
+                        continue;
+                    }
                     var gridBounds = MapBoundDefiner.Instance.GetGridPosition(data.Value.Position);
 
                     if (gridBounds == grid)
@@ -90,6 +94,10 @@ namespace HotUpdate.Scripts.Game.Map
 
         public void AddDynamicObject(uint netId, Vector3 position, IColliderConfig colliderConfig, ObjectType type, int layer)
         {
+            if (netId == 0)
+            {
+                return;
+            }
             var data = new DynamicObjectData
             {
                 NetId = netId,
@@ -98,6 +106,7 @@ namespace HotUpdate.Scripts.Game.Map
                 Type = type,
                 Layer = layer
             };
+            Debug.Log("AddDynamicObject: " + data);
             _netIdToDynamicObjectData.TryAdd(netId, data);
         }
 

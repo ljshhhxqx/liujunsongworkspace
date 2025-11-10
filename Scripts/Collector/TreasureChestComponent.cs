@@ -145,6 +145,7 @@ namespace HotUpdate.Scripts.Collector
             _gameEventManager?.Publish(new TargetShowEvent(null, null, netId));
             //_chestDataConfig = null;
             _disposables?.Clear();
+            GameObjectContainer.Instance.RemoveDynamicObject(netId);
         }
     }
 
