@@ -8,7 +8,7 @@ namespace HotUpdate.Scripts.Game.Inject
         [SerializeField] 
         private MapType mapType = MapType.Town;
 
-        private void Start()
+        protected virtual void Start()
         {
             ObjectInjectProvider.Instance.InjectMap(mapType, this);
         }

@@ -117,7 +117,7 @@ namespace HotUpdate.Scripts.Collector
         [Command]
         private void CmdCollect(byte[] request, int itemClass)
         {
-            var data = MemoryPackSerializer.Deserialize<SceneInteractRequest>(request);
+            var data = BoxingFreeSerializer.MemoryDeserialize<SceneInteractRequest>(request);
             _interactSystem.EnqueueCommand(data);
             RpcPlayEffect(itemClass);
         }

@@ -1643,7 +1643,7 @@ namespace AOTScripts.Data
             ToSlotIndex = default;
         }
     }
-    
+
     [MemoryPackable]
     public partial struct ItemDropCommand : INetworkCommand, IPoolObject
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.Text;
 using HotUpdate.Scripts.Collector;
 using Mirror;
 using UnityEngine;
@@ -92,7 +92,7 @@ namespace HotUpdate.Scripts.Game.Map
             return false;
         }
 
-        public void AddDynamicObject(uint netId, Vector3 position, IColliderConfig colliderConfig, ObjectType type, int layer)
+        public void AddDynamicObject(uint netId, Vector3 position, IColliderConfig colliderConfig, ObjectType type, int layer, string tag)
         {
             if (netId == 0)
             {
@@ -104,7 +104,8 @@ namespace HotUpdate.Scripts.Game.Map
                 Position = position,
                 ColliderConfig = colliderConfig,
                 Type = type,
-                Layer = layer
+                Layer = layer,
+                Tag = tag,
             };
             Debug.Log("AddDynamicObject: " + data);
             _netIdToDynamicObjectData.TryAdd(netId, data);
@@ -232,11 +233,12 @@ namespace HotUpdate.Scripts.Game.Map
         public IColliderConfig ColliderConfig;
         public ObjectType Type;
         public LayerMask Layer;
+        public string Tag;
         
         public override string ToString()
         {
             
-            return $"NetId: {NetId}, Position: {Position}, ColliderConfig: {ColliderConfig}";
+            return $"NetId: {NetId}, Position: {Position}, ColliderConfig: {ColliderConfig} Type: {Type}, Layer: {Layer}, Tag: {Tag}";
         }
     }
 
@@ -277,7 +279,7 @@ namespace HotUpdate.Scripts.Game.Map
 
         public override string ToString()
         {
-            var sb = new System.Text.StringBuilder();
+            var sb = new StringBuilder();
             sb.Append("Id: ").Append(Id).Append(", Position: ").Append(Position).Append(", ColliderConfig: ").
                 Append(ColliderConfig).Append(", Grid: ").Append(Grid)
                 .Append(", Layer: ").Append(Layer).Append(", Tag: ").Append(Tag);

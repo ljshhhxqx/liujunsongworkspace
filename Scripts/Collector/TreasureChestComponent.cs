@@ -2,18 +2,15 @@ using System;
 using AOTScripts.Data;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
-using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
-using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
 using Mirror;
 using Sirenix.OdinInspector;
 using UniRx;
-using UniRx.Triggers;
 using UnityEngine;
 using VContainer;
 
@@ -61,7 +58,7 @@ namespace HotUpdate.Scripts.Collector
             }
             _chestCollider = collectCollider.GetComponent<Collider>();
             var colliderConfig = GamePhysicsSystem.CreateColliderConfig(_chestCollider);
-            GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, colliderConfig, ObjectType.Chest, gameObject.layer);
+            GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, colliderConfig, ObjectType.Chest, gameObject.layer, gameObject.tag);
             //_chestDataConfig = configProvider.GetConfig<ChestDataConfig>();
             _chestCommonData = _jsonDataConfig.ChestCommonData;
 

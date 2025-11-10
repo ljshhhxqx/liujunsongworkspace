@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace HotUpdate.Scripts.Collector.Collects
 {
-    public class MoveCollectItem : CollectObjectController
+    public class MoveCollectItem : CollectBehaviour
     {
         [Header("运动设置")]
         public float moveSpeed = 3f;
@@ -22,6 +22,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         public MoveType movementPattern = MoveType.Linear;
         public float patternAmplitude = 2f;
         public float patternFrequency = 1f;
+        private LayerMask _sceneLayer;
         
         private void Start()
         {
@@ -125,16 +126,16 @@ namespace HotUpdate.Scripts.Collector.Collects
             return tangent.normalized;
         }
         
-        // 可视化调试
-        private void OnDrawGizmosSelected()
-        {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawRay(transform.position, currentDirection * collisionCheckDistance);
-            
-            Gizmos.color = Color.red;
-            Vector3 spherePos = transform.position + currentDirection * collisionCheckDistance;
-            Gizmos.DrawWireSphere(spherePos, sphereCheckRadius);
-        }
+        // // 可视化调试
+        // private void OnDrawGizmosSelected()
+        // {
+        //     Gizmos.color = Color.blue;
+        //     Gizmos.DrawRay(transform.position, currentDirection * collisionCheckDistance);
+        //     
+        //     Gizmos.color = Color.red;
+        //     Vector3 spherePos = transform.position + currentDirection * collisionCheckDistance;
+        //     Gizmos.DrawWireSphere(spherePos, sphereCheckRadius);
+        // }
         
         private void ApplyMovementPattern()
         {
@@ -193,10 +194,10 @@ namespace HotUpdate.Scripts.Collector.Collects
             // 这里只需保持当前速度
             currentVelocity = currentDirection * moveSpeed;
         }
-        
-        protected override void OnTriggerEnterObserver()
+
+        protected override void OnInitialize()
         {
-            base.OnTriggerEnterObserver();
+            _sceneLayer = GameConfigData.stairSceneLayer;
         }
     }
 

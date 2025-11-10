@@ -14,7 +14,7 @@ namespace HotUpdate.Scripts.GameBase
         private void Start()
         {
             var colliderData = GamePhysicsSystem.CreateColliderConfig(baseCollider);
-            GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, colliderData, ObjectType.Base, gameObject.layer);
+            GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, colliderData, ObjectType.Base, gameObject.layer, gameObject.tag);
         }
 
         private void OnDestroy()

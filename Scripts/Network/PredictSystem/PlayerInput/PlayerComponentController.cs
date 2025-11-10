@@ -235,7 +235,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _animationCooldowns = GetAnimationCooldowns();
             _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
             _gameEventManager = gameEventManager;
-            GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, ColliderConfig, ObjectType.Player, gameObject.layer);
+            GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, ColliderConfig, ObjectType.Player, gameObject.layer, gameObject.tag);
 
             //_currentAnimationCooldowns.OnChange += OnAnimationCooldownChanged;
             GetAllCalculators(configProvider, gameSyncManager);

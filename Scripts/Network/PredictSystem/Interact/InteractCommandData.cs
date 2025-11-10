@@ -25,9 +25,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 
     public enum InteractionType
     {
-        PickupItem = 0,
+        PickupItem = 1,
         PickupChest,
         DropItem,
+        ItemAttack,
+        PlayerAttackItem,
+        ItemPunch,
+        ItemExplode,
         Count
     }
 
@@ -72,6 +76,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
     [MemoryPackUnion(1, typeof(PlayerInteractRequest))]
     [MemoryPackUnion(2, typeof(EnvironmentInteractRequest))]
     [MemoryPackUnion(3, typeof(PlayerToSceneRequest))]
+    [MemoryPackUnion(4, typeof(PlayerChangeUnionRequest))]
+    [MemoryPackUnion(5, typeof(SceneToPlayerInteractRequest))]
+    [MemoryPackUnion(6, typeof(SceneToSceneInteractRequest))]
     public partial interface IInteractRequest
     {
         InteractHeader GetHeader();
@@ -150,6 +157,38 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         public bool IsValid()
         {
             return HazardId > 0 && Intensity > 0;
+        }
+    }
+    
+    // 场景物品直接影响玩家
+    [MemoryPackable]
+    public partial struct SceneToPlayerInteractRequest : IInteractRequest
+    {
+        [MemoryPackOrder(0)] public InteractHeader Header;
+        [MemoryPackOrder(1)] public uint SceneItemId; // 场景物体ID（由服务器生成的id）
+        [MemoryPackOrder(2)] public InteractionType InteractionType; // 交互类型（开门/拾取等）
+        [MemoryPackOrder(3)] public int TargetPlayerId; // 交互类型（开门/拾取等）
+        public InteractCategory Category => Header.Category;
+        public InteractHeader GetHeader() => Header;
+        public bool IsValid()
+        {
+            return SceneItemId > 0 && InteractionType > 0 && TargetPlayerId >= 0;
+        }
+    }
+    
+    // 场景物品影响场景物品
+    [MemoryPackable]
+    public partial struct SceneToSceneInteractRequest : IInteractRequest
+    {
+        [MemoryPackOrder(0)] public InteractHeader Header;
+        [MemoryPackOrder(1)] public uint SceneItemId; // 场景物体ID（由服务器生成的id）
+        [MemoryPackOrder(2)] public InteractionType InteractionType; // 交互类型（开门/拾取等）
+        [MemoryPackOrder(1)] public uint TargetSceneItemId; // 场景物体ID（由服务器生成的id）
+        public InteractCategory Category => Header.Category;
+        public InteractHeader GetHeader() => Header;
+        public bool IsValid()
+        {
+            return SceneItemId > 0 && InteractionType > 0 && TargetSceneItemId > 0;
         }
     }
     

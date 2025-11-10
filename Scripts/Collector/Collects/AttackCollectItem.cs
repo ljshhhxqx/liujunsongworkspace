@@ -1,46 +1,68 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
+using AOTScripts.Data;
+using HotUpdate.Scripts.Game.Map;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using HotUpdate.Scripts.Network.Server.InGame;
+using Mirror;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Collector.Collects
 {
-    public class AttackCollectItem : CollectObjectController
+    public class AttackCollectItem : CollectBehaviour
     {
-        [SerializeField] private int health = 3;
-        [SerializeField] private int damage = 1;
+        public struct AttackInfo
+        {
+            public float Health;
+            public float Damage;
+            public float AttackRange;
+            public float AttackCooldown;
+        }
+        
+        [SerializeField] private float health = 3;
+        [SerializeField] private float damage = 1;
         [SerializeField] private float attackRange = 3f;
         [SerializeField] private float attackCooldown = 2f;
     
+        private const string PlayerTag = "Player";
+        private const string CollectableTag = "CollectItem";
+        
         private float _lastAttackTime;
         private bool _isDead = false;
-    
-        private readonly Collider[] _colliders = new Collider[10];
+        private InteractSystem _interactSystem;
+        private readonly HashSet<DynamicObjectData> _collectedObjects = new HashSet<DynamicObjectData>();
 
         private void FixedUpdate()
         {
-            if(_isDead) return;
-        
-            // 搜索攻击目标（玩家或其他攻击型物品）
-            Physics.OverlapSphereNonAlloc(transform.position, attackRange, _colliders);
-            foreach(var target in _colliders)
+            if(_isDead || !ServerHandler) return;
+
+            if (!GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, ColliderConfig, _collectedObjects))
             {
-                if(target.CompareTag("Player") || target.CompareTag("CollectItem") && target.gameObject != this.gameObject)
+                return;
+            }
+            foreach (var target in _collectedObjects)
+            {
+                if(target.Tag.Equals(PlayerTag) || target.Tag.Equals(CollectableTag))
                 {
-                    if(Time.time >= _lastAttackTime + attackCooldown)
+                    if (Time.time >= _lastAttackTime + attackCooldown)
                     {
-                        //Attack(target.gameObject);
+                        Attack();
                         _lastAttackTime = Time.time;
                     }
                 }
             }
         }
-    
-        public void TakeDamage(int damageAmount)
+        
+        private void Attack()
         {
-            health -= damageAmount;
-            if(health <= 0)
+            var request = new SceneToPlayerInteractRequest
             {
-                StartCoroutine(DeathSequence());
-            }
+                Header = InteractSystem.CreateInteractHeader(0, InteractCategory.SceneToPlayer,
+                    transform.position),
+                InteractionType = InteractionType.ItemAttack,
+                SceneItemId = netId,
+            };
+            _interactSystem.EnqueueCommand(request);
         }
     
         private IEnumerator DeathSequence()
@@ -57,21 +79,27 @@ namespace HotUpdate.Scripts.Collector.Collects
     
         private void Explode()
         {
-            // 爆炸伤害范围内的玩家
-            // Collider[] players = Physics.OverlapSphere(transform.position, 2f);
-            // foreach(var player in players)
-            // {
-            //     if(player.CompareTag("Player"))
-            //     {
-            //         player.GetComponent<PlayerHealth>().TakeDamage(damage);
-            //     }
-            // }
-            //
-            // // 爆炸特效
-            // Instantiate(explosionEffect, transform.position, Quaternion.identity);
-            //
-            // // 变成可拾取状态
-            // GetComponent<Item>().MakeCollectible();
+            var request = new SceneToPlayerInteractRequest
+            {
+                Header = InteractSystem.CreateInteractHeader(0, InteractCategory.SceneToPlayer,
+                    transform.position),
+                InteractionType = InteractionType.ItemExplode,
+                SceneItemId = netId,
+            };
+            _interactSystem.EnqueueCommand(request);
+        }
+        
+        public void InitInfo(AttackInfo info)
+        {
+            health = info.Health;
+            damage = info.Damage;
+            attackRange = info.AttackRange;
+            attackCooldown = info.AttackCooldown;
+        }
+
+        protected override void OnInitialize()
+        {
+            _interactSystem = FindObjectOfType<InteractSystem>();
         }
     }
 }

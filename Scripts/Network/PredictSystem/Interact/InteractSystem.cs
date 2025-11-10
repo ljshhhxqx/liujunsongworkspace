@@ -7,6 +7,7 @@ using AOTScripts.Tool.ECS;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
@@ -17,16 +18,19 @@ using VContainer;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 {
-    public class InteractSystem : ServerNetworkComponent
+    public class InteractSystem : NetworkHandlerBehaviour
     {
         private ItemsSpawnerManager _itemsSpawnerManager;
         private readonly ConcurrentQueue<IInteractRequest> _commandQueue = new ConcurrentQueue<IInteractRequest>();
         private CancellationTokenSource _cts = new CancellationTokenSource();
 
+        private SyncDictionary<uint, SceneItemInfo> _sceneItems = new SyncDictionary<uint, SceneItemInfo>();
+        
         [Inject]
         private void Init(GameEventManager gameEventManager)
         {
             //_gameSyncManager = FindObjectOfType<GameSyncManager>();
+            SceneItemWriter();
             _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
             gameEventManager.Subscribe<GameStartEvent>(OnGameStart);
         }
@@ -62,10 +66,31 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                         case PlayerChangeUnionRequest playerKillPlayerRequest:
                             HandlePlayerChangeUnion(playerKillPlayerRequest);
                             break;
-                        
+                        case SceneToPlayerInteractRequest sceneToPlayerInteractRequest:
+                            HandleSceneToPlayerInteractRequest(sceneToPlayerInteractRequest);
+                            break;
+                        case SceneToSceneInteractRequest sceneToSceneInteractRequest:
+                            HandleSceneToSceneInteractRequest(sceneToSceneInteractRequest);
+                            break;
                     }
                 }
             }
+        }
+
+        private void HandleSceneToSceneInteractRequest(SceneToSceneInteractRequest sceneToSceneInteractRequest)
+        {
+            if (!NetworkServer.spawned.TryGetValue(sceneToSceneInteractRequest.SceneItemId, out var sceneObject)||
+                NetworkServer.spawned.TryGetValue(sceneToSceneInteractRequest.TargetSceneItemId, out var targetSceneObject))
+            {
+                Debug.LogError($"Scene item {sceneToSceneInteractRequest.SceneItemId} or target scene item {sceneToSceneInteractRequest.TargetSceneItemId} not found");
+                return;
+            }
+            var sceneData = _sceneItems[sceneToSceneInteractRequest.SceneItemId];
+        }
+
+        private void HandleSceneToPlayerInteractRequest(SceneToPlayerInteractRequest sceneToPlayerInteractRequest)
+        {
+            
         }
 
         private void HandlePlayerChangeUnion(PlayerChangeUnionRequest playerChangeUnionRequest)
@@ -106,7 +131,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 
         public void EnqueueCommand<T>(T request) where T : IInteractRequest
         {
-            if (isServer)
+            if (ServerHandler)
             {
                 var header = request.GetHeader();
                 var validCommand = request.CommandValidResult();
@@ -125,20 +150,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             }
         }
 
-        [Command]
-        public void CmdEnqueueCommand(byte[] commandBytes)
-        {
-            var command = MemoryPackSerializer.Deserialize<IInteractRequest>(commandBytes);
-            var header = command.GetHeader();
-            var validCommand = command.CommandValidResult();
-            if (!validCommand.IsValid)
-            {
-                Debug.LogError($"Invalid command: {header}");
-                return;
-            }
-            _commandQueue.Enqueue(command);
-        }
-
         private void HandleSceneInteractRequest(SceneInteractRequest request)
         {
             var header = request.GetHeader();
@@ -151,8 +162,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                 case InteractionType.PickupChest:
                     _itemsSpawnerManager.PickerPickUpChest(playerNetId, request.SceneItemId);
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                    
             }
         }
 
@@ -169,5 +179,66 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             _cts.Cancel();
             _commandQueue.Clear();
         }
+
+        private void SceneItemWriter()
+        {
+            Reader<SceneItemInfo>.read = ReadSceneItem;
+            Writer<SceneItemInfo>.write = WriteSceneItem;
+        }
+
+        private SceneItemInfo ReadSceneItem(NetworkReader reader)
+        {
+            var sceneItemId = reader.ReadInt();
+            var health = reader.ReadFloat();
+            var maxHealth = reader.ReadFloat();
+            var attackInterval = reader.ReadFloat();
+            var attackRange = reader.ReadFloat();
+            var attackDamage = reader.ReadFloat();
+            var defence = reader.ReadFloat();
+            var speed = reader.ReadFloat();
+            return new SceneItemInfo
+            {
+                sceneItemId = (uint) sceneItemId,
+                health = health,
+                maxHealth = maxHealth,
+                attackInterval = attackInterval,
+                attackRange = attackRange,
+                attackDamage = attackDamage,
+                defence = defence,
+                speed = speed
+            };
+        }
+
+        private void WriteSceneItem(NetworkWriter writer, SceneItemInfo info)
+        {
+            writer.WriteUInt(info.sceneItemId);
+            writer.WriteFloat(info.health);
+            writer.WriteFloat(info.maxHealth);
+            writer.WriteFloat(info.attackInterval);
+            writer.WriteFloat(info.attackRange);
+            writer.WriteFloat(info.attackDamage);
+            writer.WriteFloat(info.defence);
+            writer.WriteFloat(info.speed);
+        }
+    }
+
+    [Serializable]
+    public struct SceneItemInfo
+    {
+        public uint sceneItemId;
+        public float health;
+        public float maxHealth;
+        public float attackInterval;
+        public float attackRange;
+        public float attackDamage;
+        public float defence;
+        public float speed;
+    }
+
+    public enum CollectBehaviorType
+    {
+        Aggressive = 1,
+        Movable,
+        Hidden
     }
 }

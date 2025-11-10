@@ -39,6 +39,8 @@ namespace HotUpdate.Scripts.Collector
         protected IColliderConfig ColliderConfig;
         protected HashSet<DynamicObjectData> CachedDynamicObjectData = new HashSet<DynamicObjectData>();
 
+        public SceneItemInfo SceneItemInfo { get; set; }
+        
         [Inject]
         private void Init(IConfigProvider configProvider)
         {
@@ -56,14 +58,14 @@ namespace HotUpdate.Scripts.Collector
                 return;
             }
             ColliderConfig = GamePhysicsSystem.CreateColliderConfig(collectCollider.GetComponent<Collider>());
-            GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, ColliderConfig, ObjectType.Collectable, gameObject.layer);
+            GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, ColliderConfig, ObjectType.Collectable, gameObject.layer, gameObject.tag);
 
             if (ClientHandler)
             {
                 Debug.Log($"CollectObjectController::Init call On Init");
                 // _disposable = Observable.EveryFixedUpdate()
                 //     .Where(_ => _collider.enabled &&
-                //                 GameObjectContainer.Instance.DynamicObjectIntersects(transform.position, ColliderConfig,
+                //                 GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, ColliderConfig,
                 //                     CachedDynamicObjectData))
                 //     .Subscribe(_ =>
                 //     {
@@ -125,24 +127,24 @@ namespace HotUpdate.Scripts.Collector
             _disposable?.Dispose();
         }
         
-        protected virtual void OnTriggerEnterObserver()
-        {
-            foreach (var data in CachedDynamicObjectData)
-            {
-                if ((_playerLayer.value & (1 << data.Layer)) == 0 || data.Type != ObjectType.Player)
-                {
-                    continue;
-                }
-                
-                var player = NetworkClient.spawned[data.NetId];
-                var picker = player.GetComponent<Picker>();
-                if (picker)
-                {
-                    picker.SendCollectRequest(picker.netId, picker.PickerType, netId,
-                        CollectObjectData.collectObjectClass);
-                }
-            }
-        }
+        // protected virtual void OnTriggerEnterObserver()
+        // {
+        //     foreach (var data in CachedDynamicObjectData)
+        //     {
+        //         if ((_playerLayer.value & (1 << data.Layer)) == 0 || data.Type != ObjectType.Player)
+        //         {
+        //             continue;
+        //         }
+        //         
+        //         var player = NetworkClient.spawned[data.NetId];
+        //         var picker = player.GetComponent<Picker>();
+        //         if (picker)
+        //         {
+        //             picker.SendCollectRequest(picker.netId, picker.PickerType, netId,
+        //                 CollectObjectData.collectObjectClass);
+        //         }
+        //     }
+        // }
         
         protected override void SendCollectRequest(uint pickerId, PickerType pickerType)
         {
