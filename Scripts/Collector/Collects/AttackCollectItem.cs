@@ -17,24 +17,21 @@ namespace HotUpdate.Scripts.Collector.Collects
             public float Damage;
             public float AttackRange;
             public float AttackCooldown;
+            public bool IsRemoteAttack;
+            public float Speed;
+            public float LifeTime;
+            public float CriticalRate;
+            public float CriticalDamage;
         }
         
-        [SerializeField] private float health = 3;
-        [SerializeField] private float damage = 1;
-        [SerializeField] private float attackRange = 3f;
-        [SerializeField] private float attackCooldown = 2f;
-    
-        private const string PlayerTag = "Player";
-        private const string CollectableTag = "CollectItem";
+        private AttackInfo _attackInfo;
         
         private float _lastAttackTime;
-        private bool _isDead = false;
-        private InteractSystem _interactSystem;
         private readonly HashSet<DynamicObjectData> _collectedObjects = new HashSet<DynamicObjectData>();
 
         private void FixedUpdate()
         {
-            if(_isDead || !ServerHandler) return;
+            if(IsDead || !ServerHandler) return;
 
             if (!GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, ColliderConfig, _collectedObjects))
             {
@@ -42,64 +39,71 @@ namespace HotUpdate.Scripts.Collector.Collects
             }
             foreach (var target in _collectedObjects)
             {
-                if(target.Tag.Equals(PlayerTag) || target.Tag.Equals(CollectableTag))
+                if(target.Type == ObjectType.Collectable || target.Type == ObjectType.Player)
                 {
-                    if (Time.time >= _lastAttackTime + attackCooldown)
+                    if (Time.time >= _lastAttackTime + _attackInfo.AttackCooldown)
                     {
-                        Attack();
+                        var direction = (target.Position - transform.position).normalized;
+                        Attack(direction, target.NetId);
                         _lastAttackTime = Time.time;
                     }
                 }
             }
         }
         
-        private void Attack()
+        private void Attack(Vector3 direction, uint targetNetId)
         {
-            var request = new SceneToPlayerInteractRequest
+            if (_attackInfo.IsRemoteAttack)
+            {
+                var bullet = new SpawnBullet()
+                {
+                    Header = InteractSystem.CreateInteractHeader(0, InteractCategory.SceneToPlayer, transform.position),
+                    InteractionType = InteractionType.Bullet,
+                    Direction = direction,
+                    AttackPower = _attackInfo.Damage,
+                    Speed = _attackInfo.Speed,
+                    LifeTime = _attackInfo.LifeTime,
+                    StartPosition = transform.position,
+                    
+                    Spawner = netId,
+                    CriticalRate = _attackInfo.CriticalRate,
+                    CriticalDamageRatio = _attackInfo.CriticalDamage,
+                };
+                InteractSystem.EnqueueCommand(bullet);
+                return;
+            }
+            var request = new SceneItemAttackInteractRequest
             {
                 Header = InteractSystem.CreateInteractHeader(0, InteractCategory.SceneToPlayer,
                     transform.position),
                 InteractionType = InteractionType.ItemAttack,
                 SceneItemId = netId,
+                TargetId = targetNetId,
             };
-            _interactSystem.EnqueueCommand(request);
+            InteractSystem.EnqueueCommand(request);
         }
     
-        private IEnumerator DeathSequence()
-        {
-            _isDead = true;
-            // 死亡效果：闪烁、缩放等
-            GetComponent<Renderer>().material.color = Color.red;
+        // private IEnumerator DeathSequence()
+        // {
+        //     IsDead = true;
+        //     // 死亡效果：闪烁、缩放等
+        //     GetComponent<Renderer>().material.color = Color.red;
+        //
+        //     yield return new WaitForSeconds(2f);
+        //
+        //     // 自爆效果
+        //     Explode();
+        // }
         
-            yield return new WaitForSeconds(2f);
-        
-            // 自爆效果
-            Explode();
-        }
-    
-        private void Explode()
+        public void Init(AttackInfo info)
         {
-            var request = new SceneToPlayerInteractRequest
-            {
-                Header = InteractSystem.CreateInteractHeader(0, InteractCategory.SceneToPlayer,
-                    transform.position),
-                InteractionType = InteractionType.ItemExplode,
-                SceneItemId = netId,
-            };
-            _interactSystem.EnqueueCommand(request);
-        }
-        
-        public void InitInfo(AttackInfo info)
-        {
-            health = info.Health;
-            damage = info.Damage;
-            attackRange = info.AttackRange;
-            attackCooldown = info.AttackCooldown;
+            _attackInfo = info;
+            _lastAttackTime = Time.time;
+            
         }
 
         protected override void OnInitialize()
         {
-            _interactSystem = FindObjectOfType<InteractSystem>();
         }
     }
 }

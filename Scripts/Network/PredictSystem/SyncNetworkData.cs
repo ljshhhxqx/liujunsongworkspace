@@ -62,6 +62,7 @@ namespace AOTScripts.Data
     [MemoryPackUnion(37, typeof(ItemSkillEnableCommand))]
     [MemoryPackUnion(36, typeof(PropertyGetScoreGoldCommand))]
     [MemoryPackUnion(38, typeof(SkillLoadOverloadAnimationCommand))]
+    [MemoryPackUnion(39, typeof(PropertyItemAttackCommand))]
     public partial interface INetworkCommand
     {
         NetworkCommandHeader GetHeader();
@@ -111,7 +112,8 @@ namespace AOTScripts.Data
         PropertyUseSkill,
         PropertyGetScoreGold,
         ItemSkillEnable,
-        SkillOverride
+        SkillOverride,
+        PropertyItemAttack
     }
 
     public static class NetworkCommandExtensions
@@ -579,6 +581,7 @@ namespace AOTScripts.Data
                 NetworkCommandType.SkillChanged => (INetworkCommand)BoxingFreeSerializer.MemoryDeserialize<SkillChangedCommand>(data),
                 NetworkCommandType.PropertyUseSkill =>BoxingFreeSerializer.MemoryDeserialize<PropertyUseSkillCommand>(data),
                 NetworkCommandType.ItemSkillEnable => (INetworkCommand)BoxingFreeSerializer.MemoryDeserialize<ItemSkillEnableCommand>(data),
+                NetworkCommandType.PropertyItemAttack => (INetworkCommand)BoxingFreeSerializer.MemoryDeserialize<PropertyItemAttackCommand>(data),
                 NetworkCommandType.PropertyGetScoreGold => (INetworkCommand)BoxingFreeSerializer.MemoryDeserialize<PropertyGetScoreGoldCommand>(data),
             };
         }
@@ -1102,6 +1105,37 @@ namespace AOTScripts.Data
         {
             Header = default;
             TargetConnectionIds = null;
+        }
+    }
+    
+    [MemoryPackable]
+    public partial struct PropertyItemAttackCommand : INetworkCommand, IPoolObject
+    {
+        [MemoryPackOrder(0)] 
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public uint AttackerId;
+        [MemoryPackOrder(2)]
+        public int TargetId;
+        [MemoryPackOrder(3)]
+        public float Damage;
+        [MemoryPackOrder(4)]
+        public bool IsCritical;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.PropertyItemAttack;
+
+        public NetworkCommandHeader GetHeader() => Header;
+        public bool IsValid()
+        {
+            return AttackerId > 0 && TargetId > 0;
+        }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+            AttackerId = default;
         }
     }
 

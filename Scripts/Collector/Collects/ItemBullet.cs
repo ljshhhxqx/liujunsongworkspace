@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Collector.Collects
@@ -11,29 +12,81 @@ namespace HotUpdate.Scripts.Collector.Collects
         private IColliderConfig _colliderConfig;
         private HashSet<DynamicObjectData> _hitObjects = new HashSet<DynamicObjectData>();
         private bool _isHandle;
+        private Vector3 _direction;
+        private float _speed;
+        private float _lifeTime;
+        private uint _attackId;
+        private float _attackPower;
+        private uint _spawnerId;
+        private InteractSystem _interactSystem;
+        private float _criticalRate;
+        private float _criticalDamage;
+
+        public void Init(Vector3 direction, float speed, float lifeTime, float attackPower, uint spawnerId, float criticalRate, float criticalDamage)
+        {
+            _direction = direction;
+            _speed = speed;
+            _lifeTime = lifeTime;
+            _isHandle = false;
+            _attackPower = attackPower;
+            _spawnerId = spawnerId;
+            _criticalRate = criticalRate;
+            _criticalDamage = criticalDamage;
+        }
         
         protected override void Start()
         {
             base.Start();
+            _interactSystem = FindObjectOfType<InteractSystem>();
             _colliderConfig = GamePhysicsSystem.CreateColliderConfig(GetComponent<Collider>());
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _colliderConfig, ObjectType.Bullet, gameObject.layer, gameObject.tag);
         }
         
         private void FixedUpdate()
         {
-            if (!ServerHandler || _isHandle || GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, _colliderConfig, _hitObjects))
+            if (!ServerHandler || _direction == Vector3.zero || _isHandle || GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, _colliderConfig, _hitObjects))
             {
                 return;
             }
 
             foreach (var hitObject in _hitObjects)
             {
+                if (_spawnerId== hitObject.NetId)
+                {
+                    continue;
+                }
                 if (hitObject.Type == ObjectType.Player || hitObject.Type == ObjectType.Collectable && !_isHandle)
                 {
                     _isHandle = true;
+                    _attackId = hitObject.NetId;
+                    break;
                 }
             }
 
+            if (_isHandle)
+            {
+                NetworkGameObjectPoolManager.Instance.Despawn(gameObject);
+                var request = new SceneItemAttackInteractRequest
+                {
+                    Header = InteractSystem.CreateInteractHeader(0, InteractCategory.SceneToPlayer,
+                        transform.position),
+                    InteractionType = InteractionType.ItemAttack,
+                    SceneItemId = _spawnerId,
+                    TargetId = _attackId,
+                    AttackPower =_attackPower,
+                    CriticalRate = _criticalRate,
+                    CriticalDamage = _criticalDamage,
+                };
+                _interactSystem.EnqueueCommand(request);
+                return;
+            }
+
+            transform.position += _direction * (_speed * Time.fixedDeltaTime);
+            _lifeTime -= Time.deltaTime;
+            if (_lifeTime <= 0)
+            {
+                NetworkGameObjectPoolManager.Instance.Despawn(gameObject);
+            }
         }
     }
 }

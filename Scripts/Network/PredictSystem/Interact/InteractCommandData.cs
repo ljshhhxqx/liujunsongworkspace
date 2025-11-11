@@ -32,6 +32,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         PlayerAttackItem,
         ItemPunch,
         ItemExplode,
+        Bullet,
         Count
     }
 
@@ -79,6 +80,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
     [MemoryPackUnion(4, typeof(PlayerChangeUnionRequest))]
     [MemoryPackUnion(5, typeof(SceneToPlayerInteractRequest))]
     [MemoryPackUnion(6, typeof(SceneToSceneInteractRequest))]
+    [MemoryPackUnion(7, typeof(SpawnBullet))]
+    [MemoryPackUnion(8, typeof(SceneItemAttackInteractRequest))]
     public partial interface IInteractRequest
     {
         InteractHeader GetHeader();
@@ -159,7 +162,49 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             return HazardId > 0 && Intensity > 0;
         }
     }
+
+    [MemoryPackable]
+    public partial struct SpawnBullet : IInteractRequest
+    {
+        [MemoryPackOrder(0)] public InteractHeader Header;
+        [MemoryPackOrder(1)] public InteractionType InteractionType; // 交互类型（开门/拾取等）
+        [MemoryPackOrder(2)] public CompressedVector3 Direction;
+        [MemoryPackOrder(3)] public float AttackPower;
+        [MemoryPackOrder(4)] public float Speed;
+        [MemoryPackOrder(5)] public float LifeTime;
+        [MemoryPackOrder(6)] public CompressedVector3 StartPosition;
+        [MemoryPackOrder(7)] public uint Spawner;
+        [MemoryPackOrder(8)] public float CriticalRate;
+        [MemoryPackOrder(9)] public float CriticalDamageRatio;
+        
+        public InteractHeader GetHeader() => Header;
+
+        public bool IsValid()
+        {
+            return InteractionType > 0 && Spawner > 0 && CriticalRate >= 0 && CriticalDamageRatio > 0 && StartPosition.x != 0 && StartPosition.y != 0 && StartPosition.z != 0 && Direction.x != 0 && Direction.y != 0 && Direction.z != 0 && AttackPower > 0 && Speed > 0 && LifeTime > 0;
+        }
+    }
     
+    // 场景物品直接影响玩家
+    [MemoryPackable]
+    public partial struct SceneItemAttackInteractRequest : IInteractRequest
+    {
+        [MemoryPackOrder(0)] public InteractHeader Header;
+        [MemoryPackOrder(1)] public uint SceneItemId; // 场景物体ID（由服务器生成的id）
+        [MemoryPackOrder(2)] public InteractionType InteractionType; // 交互类型（开门/拾取等）
+        [MemoryPackOrder(3)] public uint TargetId;
+        [MemoryPackOrder(4)] public float AttackPower;
+        [MemoryPackOrder(5)] public float CriticalRate;
+        [MemoryPackOrder(6)] public float CriticalDamage;
+        public InteractCategory Category => Header.Category;
+
+        public InteractHeader GetHeader() => Header;
+        public bool IsValid()
+        {
+            return SceneItemId > 0 && InteractionType > 0 && TargetId > 0;
+        }
+    }
+
     // 场景物品直接影响玩家
     [MemoryPackable]
     public partial struct SceneToPlayerInteractRequest : IInteractRequest
@@ -167,12 +212,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         [MemoryPackOrder(0)] public InteractHeader Header;
         [MemoryPackOrder(1)] public uint SceneItemId; // 场景物体ID（由服务器生成的id）
         [MemoryPackOrder(2)] public InteractionType InteractionType; // 交互类型（开门/拾取等）
-        [MemoryPackOrder(3)] public int TargetPlayerId; // 交互类型（开门/拾取等）
+        [MemoryPackOrder(3)] public uint TargetPlayerId;
         public InteractCategory Category => Header.Category;
         public InteractHeader GetHeader() => Header;
         public bool IsValid()
         {
-            return SceneItemId > 0 && InteractionType > 0 && TargetPlayerId >= 0;
+            return SceneItemId > 0 && InteractionType > 0 && TargetPlayerId > 0;
         }
     }
     

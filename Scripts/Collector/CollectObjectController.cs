@@ -38,8 +38,6 @@ namespace HotUpdate.Scripts.Collector
         private IDisposable _disposable;
         protected IColliderConfig ColliderConfig;
         protected HashSet<DynamicObjectData> CachedDynamicObjectData = new HashSet<DynamicObjectData>();
-
-        public SceneItemInfo SceneItemInfo { get; set; }
         
         [Inject]
         private void Init(IConfigProvider configProvider)
