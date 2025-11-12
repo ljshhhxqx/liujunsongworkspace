@@ -82,6 +82,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
     [MemoryPackUnion(6, typeof(SceneToSceneInteractRequest))]
     [MemoryPackUnion(7, typeof(SpawnBullet))]
     [MemoryPackUnion(8, typeof(SceneItemAttackInteractRequest))]
+    [MemoryPackUnion(9, typeof(ItemExplodeRequest))]
     public partial interface IInteractRequest
     {
         InteractHeader GetHeader();
@@ -202,6 +203,24 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         public bool IsValid()
         {
             return SceneItemId > 0 && InteractionType > 0 && TargetId > 0;
+        }
+    }
+    
+    
+    // 场景物品直接影响玩家
+    [MemoryPackable]
+    public partial struct ItemExplodeRequest : IInteractRequest
+    {
+        [MemoryPackOrder(0)] public InteractHeader Header;
+        [MemoryPackOrder(1)] public uint SceneItemId;
+        [MemoryPackOrder(2)] public InteractionType InteractionType;
+        [MemoryPackOrder(3)] public float AttackPower;
+        [MemoryPackOrder(4)] public float Radius;
+        public InteractCategory Category => Header.Category;
+        public InteractHeader GetHeader() => Header;
+        public bool IsValid()
+        {
+            return SceneItemId > 0 && InteractionType > 0;
         }
     }
 

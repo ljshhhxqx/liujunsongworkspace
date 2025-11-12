@@ -1,31 +1,34 @@
-﻿using AOTScripts.Tool.Coroutine;
+﻿using System;
+using AOTScripts.Tool.Coroutine;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Effect;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using Mirror;
 using UnityEngine;
 using VContainer;
+using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Collector.Collects
 {
     public abstract class CollectBehaviour : NetworkAutoInjectHandlerBehaviour
     {
+        private static readonly int ColorPropertyId = Shader.PropertyToID("_Color");
         protected Color OriginalColor;
         protected SceneItemInfo SceneItemInfo;
-        protected Renderer Renderer;
         protected IColliderConfig ColliderConfig;
         protected GameConfigData GameConfigData;
         protected CollectObjectController CollectObjectController;
         protected InteractSystem InteractSystem;
         protected bool IsDead;
+        protected MaterialTransparencyController[] MaterialTransparencyControllers;
         
         [Inject]
         private void Init(IConfigProvider configProvider)
         {
-            Renderer = GetComponent<Renderer>();
-            OriginalColor = Renderer.material.color;
+            MaterialTransparencyControllers = GetComponentsInChildren<MaterialTransparencyController>();
             CollectObjectController = GetComponent<CollectObjectController>();
             var jsonConfig = configProvider.GetConfig<JsonDataConfig>();
             GameConfigData = jsonConfig.GameConfig;
@@ -35,9 +38,35 @@ namespace HotUpdate.Scripts.Collector.Collects
             OnInitialize();
         }
 
+        protected void SetColor(Color color)
+        {
+            OriginalColor = color;
+            foreach (var materialTransparencyController in MaterialTransparencyControllers)
+            {
+                materialTransparencyController.SetColor(color);
+            }
+        }
+        
+        protected void SetAlpha(float alpha)
+        {
+            foreach (var materialTransparencyController in MaterialTransparencyControllers)
+            {
+                materialTransparencyController.SetColor(alpha: alpha);
+            }
+        }
+        
+        protected void SetEnabled(bool isEnabled)
+        {
+            foreach (var materialTransparencyController in MaterialTransparencyControllers)
+            {
+                materialTransparencyController.SetEnabled(isEnabled);
+            }
+            
+        }
+
         protected virtual void OnSceneItemInfoChanged(uint id, SceneItemInfo info)
         {
-            if (id != netId)
+            if (id != netId || !ServerHandler)
             {
                 return;
             }
@@ -45,24 +74,38 @@ namespace HotUpdate.Scripts.Collector.Collects
             if (SceneItemInfo.health <= 0)
             {
                 IsDead = true;
-                Renderer.material.color = Color.red;
-                DelayInvoker.DelayInvoke(1.9f, RpcOnDeath);
+                var explodeRange = Random.Range(1f, 2.5f);
+                DelayInvoker.DelayInvoke(1.9f, () =>
+                {
+                    var request = new ItemExplodeRequest
+                    {
+                        Header = InteractSystem.CreateInteractHeader(0, InteractCategory.SceneToPlayer, transform.position),
+                        InteractionType = InteractionType.ItemExplode,
+                        SceneItemId = netId,
+                        AttackPower = info.attackDamage,
+                        Radius = explodeRange,
+                    };
+                    InteractSystem.EnqueueCommand(request);
+                    RpcOnDeath();
+                });
+            }
+        }
+
+        private void OnDisable()
+        {
+            foreach (var materialTransparencyController in MaterialTransparencyControllers)
+            {
+                materialTransparencyController.SetColor(OriginalColor);
+                materialTransparencyController.SetEnabled(true);
+                materialTransparencyController.RestoreOriginalMaterials();
             }
         }
 
         [ClientRpc]
         protected virtual void RpcOnDeath()
         {
-            GameAudioManager.Instance.PlaySFX(AudioEffectType.Explode, transform.position,transform);
-            
-            var request = new SceneToPlayerInteractRequest
-            {
-                Header = InteractSystem.CreateInteractHeader(0, InteractCategory.SceneToPlayer,
-                    transform.position),
-                InteractionType = InteractionType.ItemExplode,
-                SceneItemId = netId,
-            };
-            InteractSystem.EnqueueCommand(request);
+            GameAudioManager.Instance.PlaySFX(AudioEffectType.Explode, transform.position, transform);
+            EffectPlayer.Instance.PlayEffect(ParticlesType.Explode, transform.position, transform);
             NetworkGameObjectPoolManager.Instance.Despawn(gameObject);
         }
 

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace HotUpdate.Scripts.Collector.Collects
 {
-    public class MoveCollectItem : CollectBehaviour
+    public class MoveCollectItem : CollectBehaviour, IPoolable
     {
         [Header("运动设置")]
         public float moveSpeed = 3f;
@@ -23,26 +23,6 @@ namespace HotUpdate.Scripts.Collector.Collects
         public float patternAmplitude = 2f;
         public float patternFrequency = 1f;
         private LayerMask _sceneLayer;
-        
-        private void Start()
-        {
-            patternOrigin = transform.position;
-            patternTimer = 0f;
-            
-            // 设置线性运动的目标点
-            linearTarget = patternOrigin + new Vector3(
-                Random.Range(-patternAmplitude, patternAmplitude),
-                0,
-                Random.Range(-patternAmplitude, patternAmplitude)
-            );
-            
-            // 初始方向指向目标
-            currentDirection = (linearTarget - patternOrigin).normalized;
-            currentVelocity = currentDirection * moveSpeed;
-            // 随机初始方向
-            currentDirection = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized;
-            currentVelocity = currentDirection * moveSpeed;
-        }
 
         private void FixedUpdate()
         {
@@ -198,6 +178,32 @@ namespace HotUpdate.Scripts.Collector.Collects
         protected override void OnInitialize()
         {
             _sceneLayer = GameConfigData.stairSceneLayer;
+        }
+
+        public void OnSelfSpawn()
+        {
+            
+            patternOrigin = transform.position;
+            patternTimer = 0f;
+            
+            // 设置线性运动的目标点
+            linearTarget = patternOrigin + new Vector3(
+                Random.Range(-patternAmplitude, patternAmplitude),
+                0,
+                Random.Range(-patternAmplitude, patternAmplitude)
+            );
+            
+            // 初始方向指向目标
+            currentDirection = (linearTarget - patternOrigin).normalized;
+            currentVelocity = currentDirection * moveSpeed;
+            // 随机初始方向
+            currentDirection = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized;
+            currentVelocity = currentDirection * moveSpeed;
+        }
+
+        public void OnSelfDespawn()
+        {
+            
         }
     }
 

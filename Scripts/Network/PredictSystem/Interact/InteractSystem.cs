@@ -11,6 +11,7 @@ using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Collector.Collects;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
+using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
@@ -33,8 +34,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         private PlayerPropertySyncSystem _playerPropertySyncSystem;
 
         private SyncDictionary<uint, SceneItemInfo> _sceneItems = new SyncDictionary<uint, SceneItemInfo>();
+        private HashSet<DynamicObjectData> _dynamicObjects = new HashSet<DynamicObjectData>();
         
         public event Action<uint, SceneItemInfo> SceneItemInfoChanged;
+
+        public bool IsItemCanPickup(uint sceneItemId)
+        {
+            if (!_sceneItems.TryGetValue(sceneItemId, out var sceneItemInfo))
+            {
+                Debug.Log($"Scene item {sceneItemId} not found");
+                return false;
+                
+            }
+            return sceneItemInfo.health <= 1;
+        }
         
         [Inject]
         private void Init(GameEventManager gameEventManager, IConfigProvider configProvider)
@@ -92,7 +105,65 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                         case SceneItemAttackInteractRequest sceneItemAttackInteractRequest:
                             HandleSceneItemAttackInteractRequest(sceneItemAttackInteractRequest);
                             break;
+                        case ItemExplodeRequest itemExplodeRequest:
+                            HandleItemExplodeRequest(itemExplodeRequest);
+                            break;
                     }
+                }
+            }
+        }
+
+        private void HandleItemExplodeRequest(ItemExplodeRequest itemExplodeRequest)
+        {
+            if (!NetworkServer.spawned.TryGetValue(itemExplodeRequest.SceneItemId, out var sceneObject))
+            {
+                Debug.LogError($"Scene item {itemExplodeRequest.SceneItemId} not found");
+                return;
+            }
+
+            var colliderConfig = GamePhysicsSystem.CreateColliderConfig(ColliderType.Sphere, Vector3.zero, Vector3.zero,
+                itemExplodeRequest.Radius);
+            float defense;
+            if (GameObjectContainer.Instance.DynamicObjectIntersects(itemExplodeRequest.SceneItemId,sceneObject.transform.position, colliderConfig, _dynamicObjects))
+            {
+                foreach (var hitObjectData in _dynamicObjects)
+                {
+                    if (!NetworkServer.spawned.TryGetValue(hitObjectData.NetId, out var hitObject))
+                    {
+                        Debug.LogError($"Scene item {itemExplodeRequest.SceneItemId} not found");
+                        continue;
+                    }
+                    if (_sceneItems.TryGetValue(hitObjectData.NetId, out var sceneItemInfo))
+                    {
+                        defense = sceneItemInfo.defense;
+                        var damage = _jsonConfig.GetDamage(itemExplodeRequest.AttackPower, defense, 1f, 2f);
+                        Debug.Log($"Scene item {itemExplodeRequest.SceneItemId} attack scene item {hitObjectData.NetId} with damage {damage}");
+                        sceneItemInfo.health -= damage.Damage;
+                        if (sceneItemInfo.health <= 0)
+                        {
+                            Debug.Log($"Scene item {hitObjectData.NetId} is dead");
+                            SceneItemInfoChanged?.Invoke(hitObjectData.NetId, sceneItemInfo);
+                            _sceneItems.Remove(hitObjectData.NetId);
+                        }
+                    }
+                    else
+                    {
+                        var connectionId = PlayerInGameManager.Instance.GetPlayerId(hitObjectData.NetId);
+                        var property = _playerPropertySyncSystem.GetPlayerProperty(connectionId);
+                        defense = property.GetValueOrDefault(PropertyTypeEnum.Defense).CurrentValue;
+                        var damage = _jsonConfig.GetDamage(itemExplodeRequest.AttackPower, defense, 1, 2);
+                        Debug.Log($"Scene item {hitObjectData.NetId} attack player {hitObjectData.NetId} with damage {damage}");
+                        var command = new PropertyItemAttackCommand
+                        {
+                            TargetId = connectionId,
+                            Header = GameSyncManager.CreateNetworkCommandHeader(0, CommandType.Property, CommandAuthority.Server),
+                            Damage = damage.Damage,
+                            IsCritical = damage.IsCritical,
+                            AttackerId = itemExplodeRequest.SceneItemId, 
+                        };
+                        _gameSyncManager.EnqueueServerCommand(command);
+                    }
+                    
                 }
             }
         }

@@ -98,6 +98,24 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public float gridSize;
         public int onceSpawnCount;
         public int onceSpawnWeight;
+
+        public float spawnAttackRatio;
+        public float spawnMoveRatio;
+        public float spawnHiddenRatio;
+        public float spawnAttackMoveRatio;
+        public float spawnAttackHiddenRatio;
+        public float spawnMoveHiddenRatio;
+        public float spawnAttackMoveHiddenRatio;
+        
+        public Range attackPowerRange;
+        public Range speedRange;
+        public Range attackRange;
+        public Range criticalRateRange;
+        public Range criticalDamageRatioRange;
+        public Range defenseRange;
+        public Range explodeRange;
+        public float explodeCriticalRate;
+        public float explodeCriticalDamageRatio;
     }
 
     /// <summary>
@@ -114,5 +132,17 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         Score,
         Gold,
         Buff,
+    }
+
+    public enum CollectObjectType
+    {
+        Attack,
+        Move,
+        Hidden,
+        
+        AttackMove,
+        AttackHidden,
+        MoveHidden,
+        AttackMoveHidden,
     }
 }

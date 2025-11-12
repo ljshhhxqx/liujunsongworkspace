@@ -82,6 +82,43 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         
         }
 
+        public CollectObjectType GetCollectObjectType()
+        {
+            var config = CollectData;
+            var sum = config.spawnAttackRatio + config.spawnHiddenRatio + config.spawnMoveRatio +
+                      config.spawnAttackHiddenRatio + config.spawnMoveHiddenRatio + config.spawnAttackMoveRatio +
+                      config.spawnAttackMoveHiddenRatio;
+            var rand = Random.Range(0f, sum);
+            if (rand < config.spawnAttackRatio)
+            {
+                return CollectObjectType.Attack;
+            }
+            else if (rand < config.spawnAttackRatio + config.spawnHiddenRatio)
+            {
+                return CollectObjectType.Hidden;
+            }
+            else if (rand < config.spawnAttackRatio + config.spawnHiddenRatio + config.spawnMoveRatio)
+            {
+                return CollectObjectType.Move;
+            }
+            else if (rand < config.spawnAttackRatio + config.spawnHiddenRatio + config.spawnMoveRatio + config.spawnAttackHiddenRatio)
+            {
+                return CollectObjectType.AttackHidden;
+            }
+            else if (rand < config.spawnAttackRatio + config.spawnHiddenRatio + config.spawnMoveRatio + config.spawnAttackHiddenRatio + config.spawnMoveHiddenRatio)
+            {
+                return CollectObjectType.MoveHidden;
+            }
+            else if (rand < config.spawnAttackRatio + config.spawnHiddenRatio + config.spawnMoveRatio + config.spawnAttackHiddenRatio + config.spawnMoveHiddenRatio + config.spawnAttackMoveRatio)
+            {
+                return CollectObjectType.AttackMove;
+            }
+            else
+            {
+                return CollectObjectType.AttackMoveHidden;
+            }
+        }
+
         #region 装备生成器
         public EquipmentAttributeData GenerateEquipment(
             float totalGold,
@@ -579,6 +616,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
             return gameBaseData.basePositions.GetNearestVector(targetPosition);
         }
     }
+
 
     [Serializable]
     public struct GameBaseData

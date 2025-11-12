@@ -1,15 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using AOTScripts.Data;
+﻿using System.Collections.Generic;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
-using HotUpdate.Scripts.Network.Server.InGame;
-using Mirror;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Collector.Collects
 {
-    public class AttackCollectItem : CollectBehaviour
+    public class AttackCollectItem : CollectBehaviour, IPoolable
     {
         public struct AttackInfo
         {
@@ -104,6 +100,18 @@ namespace HotUpdate.Scripts.Collector.Collects
 
         protected override void OnInitialize()
         {
+        }
+
+        public void OnSelfSpawn()
+        {
+            
+        }
+
+        public void OnSelfDespawn()
+        {
+            _lastAttackTime = 0;
+            _attackInfo = default;
+            _collectedObjects.Clear();
         }
     }
 }

@@ -61,6 +61,7 @@ namespace HotUpdate.Scripts.Collector
         private ItemConfig _itemConfig;
         private GameLoopController _gameLoopController;
         private GameSyncManager _gameSyncManager;
+        private InteractSystem _interactSystem;
         
         // 服务器维护的核心数据
         private readonly SyncDictionary<uint, byte[]> _serverItemMap = new SyncDictionary<uint, byte[]>();
@@ -93,6 +94,7 @@ namespace HotUpdate.Scripts.Collector
             _sceneLayer = _jsonDataConfig.GameConfig.groundSceneLayer;
             _gameLoopController = FindObjectOfType<GameLoopController>();
             _spawnedParent = transform;
+            _interactSystem = FindObjectOfType<InteractSystem>();
         }
 
         private void OnGameSceneResourcesLoadedLoaded(GameSceneResourcesLoadedEvent gameSceneResourcesLoadedEvent)
