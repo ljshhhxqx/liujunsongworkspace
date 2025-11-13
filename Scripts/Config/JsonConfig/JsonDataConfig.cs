@@ -93,30 +93,27 @@ namespace HotUpdate.Scripts.Config.JsonConfig
             {
                 return CollectObjectType.Attack;
             }
-            else if (rand < config.spawnAttackRatio + config.spawnHiddenRatio)
+            if (rand < config.spawnAttackRatio + config.spawnHiddenRatio)
             {
                 return CollectObjectType.Hidden;
             }
-            else if (rand < config.spawnAttackRatio + config.spawnHiddenRatio + config.spawnMoveRatio)
+            if (rand < config.spawnAttackRatio + config.spawnHiddenRatio + config.spawnMoveRatio)
             {
                 return CollectObjectType.Move;
             }
-            else if (rand < config.spawnAttackRatio + config.spawnHiddenRatio + config.spawnMoveRatio + config.spawnAttackHiddenRatio)
+            if (rand < config.spawnAttackRatio + config.spawnHiddenRatio + config.spawnMoveRatio + config.spawnAttackHiddenRatio)
             {
                 return CollectObjectType.AttackHidden;
             }
-            else if (rand < config.spawnAttackRatio + config.spawnHiddenRatio + config.spawnMoveRatio + config.spawnAttackHiddenRatio + config.spawnMoveHiddenRatio)
+            if (rand < config.spawnAttackRatio + config.spawnHiddenRatio + config.spawnMoveRatio + config.spawnAttackHiddenRatio + config.spawnMoveHiddenRatio)
             {
                 return CollectObjectType.MoveHidden;
             }
-            else if (rand < config.spawnAttackRatio + config.spawnHiddenRatio + config.spawnMoveRatio + config.spawnAttackHiddenRatio + config.spawnMoveHiddenRatio + config.spawnAttackMoveRatio)
+            if (rand < config.spawnAttackRatio + config.spawnHiddenRatio + config.spawnMoveRatio + config.spawnAttackHiddenRatio + config.spawnMoveHiddenRatio + config.spawnAttackMoveRatio)
             {
                 return CollectObjectType.AttackMove;
             }
-            else
-            {
-                return CollectObjectType.AttackMoveHidden;
-            }
+            return CollectObjectType.AttackMoveHidden;
         }
 
         #region 装备生成器

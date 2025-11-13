@@ -15,7 +15,6 @@ namespace HotUpdate.Scripts.Collector.Collects
 {
     public abstract class CollectBehaviour : NetworkAutoInjectHandlerBehaviour
     {
-        private static readonly int ColorPropertyId = Shader.PropertyToID("_Color");
         protected Color OriginalColor;
         protected SceneItemInfo SceneItemInfo;
         protected IColliderConfig ColliderConfig;

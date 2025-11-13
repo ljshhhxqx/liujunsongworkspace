@@ -1,15 +1,14 @@
 ﻿using DG.Tweening;
+using Mirror;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Collector.Collects
 {
     public class HiddenItem : CollectBehaviour, IPoolable
     {
+        [SyncVar]
+        private HiddenItemData _hiddenItemData;
         private bool _isHidden;
-        private float _translucence;
-        private HideType _hideType;
-        private float _mysteryTime;
-        private float _translucenceTime;
         
         private Sequence _sequence;
     
@@ -32,13 +31,10 @@ namespace HotUpdate.Scripts.Collector.Collects
             
         }
 
-        public void Init(HideType hideType, float translucence, float mysteryTime, float translucenceTime)
+        public void Init(HiddenItemData hiddenItemData)
         {
-            _hideType = hideType;
-            _translucence = translucence;
-            _mysteryTime = mysteryTime;
-            _translucenceTime = translucenceTime;
-            switch (hideType)
+            _hiddenItemData = hiddenItemData;
+            switch (hiddenItemData.hideType)
             {
                 case HideType.Inactive:
                     HideItem();
@@ -60,22 +56,22 @@ namespace HotUpdate.Scripts.Collector.Collects
             {
                 SetColor(Color.red);
             });
-            _sequence.AppendInterval(_translucenceTime);
+            _sequence.AppendInterval(_hiddenItemData.translucenceTime);
             _sequence.AppendCallback(() =>
             {
                 SetColor(Color.yellow);
             });
-            _sequence.AppendInterval(_translucenceTime);
+            _sequence.AppendInterval(_hiddenItemData.translucenceTime);
             _sequence.AppendCallback(() =>
             {
                 SetColor(Color.green);
             });
-            _sequence.AppendInterval(_translucenceTime);
+            _sequence.AppendInterval(_hiddenItemData.translucenceTime);
             _sequence.AppendCallback(() =>
             {
                 SetColor(Color.cyan);
             });
-            _sequence.AppendInterval(_translucenceTime);
+            _sequence.AppendInterval(_hiddenItemData.translucenceTime);
             _sequence.AppendCallback(() =>
             {
                 SetColor(Color.blue);
@@ -95,7 +91,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             {
                 SetEnabled(false);
             });
-            _sequence.AppendInterval(_mysteryTime);
+            _sequence.AppendInterval(_hiddenItemData.mysteryTime);
             _sequence.AppendCallback(() =>
             {
                 SetEnabled(true);
@@ -114,15 +110,5 @@ namespace HotUpdate.Scripts.Collector.Collects
             
             SetEnabled(true);
         }
-    }
-
-    public enum HideType
-    {
-        //完全消失
-        Inactive,
-        //不可预知，一会消失，一会出现
-        Mystery,
-        //透明度低于50%
-        Translucence,
     }
 }

@@ -2241,6 +2241,51 @@ namespace AOTScripts.Data
     
     [MemoryPackable]
     [StructLayout(LayoutKind.Sequential, Pack = 1)] // 紧密打包
+    public partial struct CompressedVector4
+    {
+        [MemoryPackOrder(0)]
+        public float x;
+        [MemoryPackOrder(1)]
+        public float y;
+        [MemoryPackOrder(2)]
+        public float z;
+        [MemoryPackOrder(3)]
+        public float w;
+
+        public Quaternion ToQuaternion() => new Quaternion(x, y, z, w);
+        public static CompressedVector4 FromVector4(Quaternion v) => new CompressedVector4()
+        {
+            x = v.x,
+            y = v.y,
+            z = v.z,
+            w = v.w
+        };
+        
+        public static implicit operator Quaternion(CompressedVector4 v) => v.ToQuaternion();
+        public static implicit operator CompressedVector4(Quaternion v) => FromVector4(v);
+        
+        public static implicit operator Vector4(CompressedVector4 v) => new Vector4(v.x, v.y, v.z, v.w);
+        public static implicit operator CompressedVector4(Vector4 v) => new CompressedVector4()
+        {
+            x = v.x,
+            y = v.y,
+            z = v.z,
+            w = v.w
+        };
+        
+        public static implicit operator Color(CompressedVector4 v) => new Color(v.x, v.y, v.z, v.w);
+
+        public static implicit operator CompressedVector4(Color c) => new CompressedVector4()
+        {
+            x = c.r,
+            y = c.g,
+            z = c.b,
+            w = c.a
+        };
+    }
+    
+    [MemoryPackable]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)] // 紧密打包
     public partial struct CompressedVector3
     {
         [MemoryPackOrder(0)]

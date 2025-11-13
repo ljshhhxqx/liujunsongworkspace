@@ -19,6 +19,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using HotUpdate.Scripts.Tool.Message;
 using HotUpdate.Scripts.UI.UIBase;
 using MemoryPack;
@@ -95,6 +96,7 @@ namespace HotUpdate.Scripts.Collector
             _gameLoopController = FindObjectOfType<GameLoopController>();
             _spawnedParent = transform;
             _interactSystem = FindObjectOfType<InteractSystem>();
+            ReadWriteData();
         }
 
         private void OnGameSceneResourcesLoadedLoaded(GameSceneResourcesLoadedEvent gameSceneResourcesLoadedEvent)
@@ -132,7 +134,7 @@ namespace HotUpdate.Scripts.Collector
             {
                 return;
             }
-            var items = MemoryPackSerializer.Deserialize<DroppedItemData[]>(droppedItemsBytes);
+            var items = BoxingFreeSerializer.MemoryDeserialize<DroppedItemData[]>(droppedItemsBytes);
             for (int i = 0; i < items.Length; i++)
             {
                 var item = items[i];
@@ -149,7 +151,7 @@ namespace HotUpdate.Scripts.Collector
             {
                 return;
             }
-            var items = MemoryPackSerializer.Deserialize<DroppedItemData[]>(droppedItemsBytes);
+            var items = BoxingFreeSerializer.MemoryDeserialize<DroppedItemData[]>(droppedItemsBytes);
             for (int i = 0; i < items.Length; i++)
             {
                 var item = items[i];
@@ -393,7 +395,7 @@ namespace HotUpdate.Scripts.Collector
                         return;
                     }
 
-                    var itemData = MemoryPackSerializer.Deserialize<CollectItemMetaData>(itemInfo);
+                    var itemData = BoxingFreeSerializer.MemoryDeserialize<CollectItemMetaData>(itemInfo);
                     var itemColliderData = _colliderConfigs.GetValueOrDefault(itemData.ItemCollectConfigId);
                     var itemConfigId = _collectObjectDataConfig.GetCollectObjectData(itemData.ItemCollectConfigId)
                         .itemId;
@@ -553,6 +555,48 @@ namespace HotUpdate.Scripts.Collector
         }
 
         [Server]
+        public AttackInfo GetRandomAttackInfo()
+        {
+            var attackInfo = new AttackInfo();
+            attackInfo.health = _jsonDataConfig.CollectData.healthRange.GetRandomValue();
+            attackInfo.damage = _jsonDataConfig.CollectData.attackPowerRange.GetRandomValue();
+            attackInfo.speed = _jsonDataConfig.CollectData.bulletSpeedRange.GetRandomValue();
+            attackInfo.isRemoteAttack = Random.Range(0,3f) < 1f;
+            attackInfo.criticalRate = attackInfo.isRemoteAttack ? _jsonDataConfig.CollectData.criticalRateRange.GetRandomByWeight(0.2f) : _jsonDataConfig.CollectData.criticalRateRange.GetRandomByWeight(0.7f);
+            attackInfo.criticalDamage =attackInfo.isRemoteAttack ?  _jsonDataConfig.CollectData.criticalDamageRatioRange.GetRandomByWeight(0.2f) : _jsonDataConfig.CollectData.criticalDamageRatioRange.GetRandomByWeight(0.7f);
+            attackInfo.attackRange = attackInfo.isRemoteAttack ? _jsonDataConfig.CollectData.attackRange.GetRandomByWeight(0.7f) : _jsonDataConfig.CollectData.attackRange.GetRandomByWeight(0.2f);
+            attackInfo.attackCooldown = attackInfo.isRemoteAttack ? _jsonDataConfig.CollectData.attackCooldown.GetRandomByWeight(0.7f) : _jsonDataConfig.CollectData.attackCooldown.GetRandomByWeight(0.2f);
+            attackInfo.lifeTime = _jsonDataConfig.CollectData.lifeTimeRange.GetRandomValue();
+            attackInfo.defense = _jsonDataConfig.CollectData.defenseRange.GetRandomValue();
+            return attackInfo;
+        }
+        
+        [Server]
+        public MoveInfo GetRandomMoveInfo(Vector3 position)
+        {
+            var dir = GetRandomDirection();
+            var moveInfo = new MoveInfo();
+            moveInfo.moveType = (MoveType)Random.Range(0, 3);
+            moveInfo.patternAmplitude = _jsonDataConfig.CollectData.patternAmplitudeRange.GetRandomValue();
+            moveInfo.patternFrequency = _jsonDataConfig.CollectData.patternFrequencyRange.GetRandomValue();
+            moveInfo.rotateSpeed = _jsonDataConfig.CollectData.rotateSpeedRange.GetRandomValue();
+            moveInfo.speed = _jsonDataConfig.CollectData.speedRange.GetRandomValue();
+            moveInfo.TargetPosition = position + dir * Random.Range(3, 5);
+            return moveInfo;
+        }
+
+        [Server]
+        public HiddenItemData GetRandomHiddenItemData()
+        {
+            var hiddenItemData = new HiddenItemData();
+            hiddenItemData.hideType = (HideType)Random.Range(0, 4);
+            hiddenItemData.translucence = _jsonDataConfig.CollectData.translucenceRange.GetRandomValue();
+            hiddenItemData.mysteryTime = _jsonDataConfig.CollectData.mysteryTimeRange.GetRandomValue();
+            hiddenItemData.translucenceTime = _jsonDataConfig.CollectData.translucenceTimeRange.GetRandomValue();
+            return hiddenItemData;
+        }
+
+        [Server]
         public async UniTask SpawnManyItems()
         {
             if (!ServerHandler)
@@ -575,9 +619,15 @@ namespace HotUpdate.Scripts.Collector
                     spawnedCount += newSpawnInfos.Count;
                     foreach (var item in newSpawnInfos)
                     {
+                        var type = _jsonDataConfig.GetCollectObjectType();
                         var go = NetworkGameObjectPoolManager.Instance.Spawn(_collectiblePrefabs[item.Item1].gameObject, item.Item2, Quaternion.identity, null,
-                            poolSize: newSpawnInfos.Count);
+                            poolSize: newSpawnInfos.Count, onSpawn: (identity) =>
+                            {
+                                var controller = identity.GetComponent<CollectObjectController>();
+                                controller.BehaviourType = (int)type;
+                            });
                         var identity = go.GetComponent<NetworkIdentity>();
+                        
                         // if (_serverItemMap.TryGetValue(identity.netId, out var itemInfo))
                         // {
                         //     //Debug.LogError($"Item with id: {identity.netId} already exists in map, destroying it");
@@ -652,7 +702,13 @@ namespace HotUpdate.Scripts.Collector
             var random = Random.Range(0f, 1f);
             var chestData = _chestConfig.RandomOne(random);
             var position = GetRandomStartPoint(0.5f);
-            var chestGo = NetworkGameObjectPoolManager.Instance.Spawn(_treasureChestPrefabs.GetValueOrDefault(chestData.randomItems.quality).gameObject, position, Quaternion.identity);
+            var type = _jsonDataConfig.GetCollectObjectType();
+            var chestGo = NetworkGameObjectPoolManager.Instance.Spawn(_treasureChestPrefabs.GetValueOrDefault(chestData.randomItems.quality).gameObject, position,
+                Quaternion.identity, onSpawn: (identity) =>
+                {
+                    var controller = identity.GetComponent<TreasureChestComponent>();
+                    controller.BehaviourType = (int)type;
+                });
             var identity = chestGo.GetComponent<NetworkIdentity>();
             // if (identity.netId == 0 || !NetworkServer.spawned.TryGetValue(identity.netId, out var itemInfo))
             // {
@@ -1085,6 +1141,170 @@ namespace HotUpdate.Scripts.Collector
             {
                 ItemIDs = ids;
             }
+        }
+
+        private void ReadWriteData()
+        {
+            Reader<AttackInfo>.read = ReadAttackInfoData;
+            Writer<AttackInfo>.write = WriteAttackInfoData;
+            Reader<MoveInfo>.read = ReadMoveInfo;
+            Writer<MoveInfo>.write = WriteMoveInfo;
+            Reader<HiddenItemData>.read = ReadHiddenItemData;
+            Writer<HiddenItemData>.write = WriteHiddenItemData;
+        }
+
+        private AttackInfo ReadAttackInfoData(NetworkReader reader)
+        {
+            return new AttackInfo
+            {
+                health = reader.ReadFloat(),
+                damage = reader.ReadFloat(),
+                attackRange = reader.ReadFloat(),
+                attackCooldown = reader.ReadFloat(),
+                isRemoteAttack = reader.ReadBool(),
+                speed = reader.ReadFloat(),
+                lifeTime = reader.ReadFloat(),
+                criticalRate = reader.ReadFloat(),
+                criticalDamage = reader.ReadFloat(),
+                defense = reader.ReadFloat()
+            };
+        }
+        private void WriteAttackInfoData(NetworkWriter writer, AttackInfo data)
+        {
+            writer.Write(data.health);
+            writer.Write(data.damage);
+            writer.Write(data.attackRange);
+            writer.Write(data.attackCooldown);
+            writer.Write(data.isRemoteAttack);
+            writer.Write(data.speed);
+            writer.Write(data.lifeTime);
+            writer.Write(data.criticalRate);
+            writer.Write(data.criticalDamage);
+            writer.Write(data.defense);
+        }
+
+        private MoveInfo ReadMoveInfo(NetworkReader reader)
+        {
+            return new MoveInfo
+            {
+                moveType = (MoveType)reader.ReadByte(),
+                TargetPosition = reader.ReadVector3(),
+                patternAmplitude = reader.ReadFloat(),
+                patternFrequency = reader.ReadFloat(),
+                speed = reader.ReadFloat(),
+                rotateSpeed = reader.ReadFloat()
+            };
+        }
+        private void WriteMoveInfo(NetworkWriter writer, MoveInfo data)
+        {
+            writer.Write((byte)data.moveType);
+            writer.Write(data.TargetPosition);
+            writer.Write(data.patternAmplitude);
+            writer.Write(data.patternFrequency);
+            writer.Write(data.speed);
+            writer.Write(data.rotateSpeed);
+        }
+
+        private HiddenItemData ReadHiddenItemData(NetworkReader reader)
+        {
+            return new HiddenItemData
+            {
+                hideType = (HideType)reader.ReadByte(),
+                translucence = reader.ReadFloat(),
+                mysteryTime = reader.ReadFloat(),
+                translucenceTime = reader.ReadFloat(),
+            };
+        }
+        private void WriteHiddenItemData(NetworkWriter writer, HiddenItemData data)
+        {
+            writer.Write((byte)data.hideType);
+            writer.Write(data.translucence);
+            writer.Write(data.mysteryTime);
+            writer.Write(data.translucenceTime);
+        }
+    }
+    [Serializable]
+    public struct AttackInfo
+    {
+        public float health;
+        public float damage;
+        public float attackRange;
+        public float attackCooldown;
+        public bool isRemoteAttack;
+        public float speed;
+        public float lifeTime;
+        public float criticalRate;
+        public float criticalDamage;
+        public float defense;
+
+        public AttackInfo(float health, float damage, float attackRange, float attackCooldown,
+            bool isRemoteAttack, float speed, float lifeTime, float criticalRate, float criticalDamage, float defense)
+        {
+            this.health = health;
+            this.damage = damage;
+            this.attackRange = attackRange;
+            this.defense = defense;
+            this.attackCooldown = attackCooldown;
+            this.isRemoteAttack = isRemoteAttack;
+            this.speed = speed;
+            this.lifeTime = lifeTime;
+            this.criticalRate = criticalRate;
+            this.criticalDamage = criticalDamage;
+        }
+    }
+
+    public enum HideType
+    {
+        //完全消失
+        Inactive,
+        //不可预知，一会消失，一会出现
+        Mystery,
+        //透明度低于50%
+        Translucence,
+    }
+    
+    [Serializable]
+    public struct HiddenItemData
+    {
+        public HideType hideType;
+        public float translucence;
+        public float mysteryTime;
+        public float translucenceTime;
+        
+        public HiddenItemData(HideType hideType, float translucence, float mysteryTime, float translucenceTime)
+        {
+            this.hideType = hideType;
+            this.translucence = translucence;
+            this.mysteryTime = mysteryTime;
+            this.translucenceTime = translucenceTime;
+        }
+    }
+
+    public enum MoveType
+    {
+        Linear,
+        Circular, 
+        SineWave, 
+    }
+
+    [Serializable]
+    public struct MoveInfo
+    {
+        public MoveType moveType;
+        public CompressedVector3 TargetPosition;
+        public float patternAmplitude;
+        public float patternFrequency;
+        public float speed;
+        public float rotateSpeed;
+        
+        public MoveInfo(MoveType moveType, Vector3 vector3, float patternAmplitude, float patternFrequency, float speed, float rotateSpeed)
+        {
+            this.moveType = moveType;
+            TargetPosition = vector3;
+            this.patternAmplitude = patternAmplitude;
+            this.patternFrequency = patternFrequency;
+            this.speed = speed;
+            this.rotateSpeed = rotateSpeed;
         }
     }
 }

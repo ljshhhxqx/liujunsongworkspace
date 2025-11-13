@@ -1,25 +1,14 @@
 ﻿using System.Collections.Generic;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using Mirror;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Collector.Collects
 {
     public class AttackCollectItem : CollectBehaviour, IPoolable
     {
-        public struct AttackInfo
-        {
-            public float Health;
-            public float Damage;
-            public float AttackRange;
-            public float AttackCooldown;
-            public bool IsRemoteAttack;
-            public float Speed;
-            public float LifeTime;
-            public float CriticalRate;
-            public float CriticalDamage;
-        }
-        
+        [SyncVar]
         private AttackInfo _attackInfo;
         
         private float _lastAttackTime;
@@ -37,7 +26,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             {
                 if(target.Type == ObjectType.Collectable || target.Type == ObjectType.Player)
                 {
-                    if (Time.time >= _lastAttackTime + _attackInfo.AttackCooldown)
+                    if (Time.time >= _lastAttackTime + _attackInfo.attackCooldown)
                     {
                         var direction = (target.Position - transform.position).normalized;
                         Attack(direction, target.NetId);
@@ -49,21 +38,21 @@ namespace HotUpdate.Scripts.Collector.Collects
         
         private void Attack(Vector3 direction, uint targetNetId)
         {
-            if (_attackInfo.IsRemoteAttack)
+            if (_attackInfo.isRemoteAttack)
             {
                 var bullet = new SpawnBullet()
                 {
                     Header = InteractSystem.CreateInteractHeader(0, InteractCategory.SceneToPlayer, transform.position),
                     InteractionType = InteractionType.Bullet,
                     Direction = direction,
-                    AttackPower = _attackInfo.Damage,
-                    Speed = _attackInfo.Speed,
-                    LifeTime = _attackInfo.LifeTime,
+                    AttackPower = _attackInfo.damage,
+                    Speed = _attackInfo.speed,
+                    LifeTime = _attackInfo.lifeTime,
                     StartPosition = transform.position,
                     
                     Spawner = netId,
-                    CriticalRate = _attackInfo.CriticalRate,
-                    CriticalDamageRatio = _attackInfo.CriticalDamage,
+                    CriticalRate = _attackInfo.criticalRate,
+                    CriticalDamageRatio = _attackInfo.criticalDamage,
                 };
                 InteractSystem.EnqueueCommand(bullet);
                 return;
@@ -78,18 +67,6 @@ namespace HotUpdate.Scripts.Collector.Collects
             };
             InteractSystem.EnqueueCommand(request);
         }
-    
-        // private IEnumerator DeathSequence()
-        // {
-        //     IsDead = true;
-        //     // 死亡效果：闪烁、缩放等
-        //     GetComponent<Renderer>().material.color = Color.red;
-        //
-        //     yield return new WaitForSeconds(2f);
-        //
-        //     // 自爆效果
-        //     Explode();
-        // }
         
         public void Init(AttackInfo info)
         {

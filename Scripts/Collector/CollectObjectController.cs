@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AOTScripts.Data.NetworkMes;
+using HotUpdate.Scripts.Collector.Collects;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Map;
@@ -26,6 +27,8 @@ namespace HotUpdate.Scripts.Collector
         private Renderer fillRenderer;
         private LayerMask _playerLayer;  
         protected LayerMask _sceneLayer;
+
+        [SyncVar] public int BehaviourType;
         
         public int CollectConfigId => collectConfigId;
         public override Collider Collider => _collider;
@@ -36,6 +39,7 @@ namespace HotUpdate.Scripts.Collector
         private Collider _collider;
         private CollectObjectDataConfig _collectObjectDataConfig;
         private IDisposable _disposable;
+        protected ItemsSpawnerManager SpawnerManager;
         protected IColliderConfig ColliderConfig;
         protected HashSet<DynamicObjectData> CachedDynamicObjectData = new HashSet<DynamicObjectData>();
         
@@ -43,6 +47,7 @@ namespace HotUpdate.Scripts.Collector
         private void Init(IConfigProvider configProvider)
         {
             var jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
+            SpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
             var playerConfig = jsonDataConfig.PlayerConfig;
             _playerLayer = playerConfig.PlayerLayer;
             _sceneLayer = jsonDataConfig.GameConfig.groundSceneLayer;
@@ -69,6 +74,93 @@ namespace HotUpdate.Scripts.Collector
                 //     {
                 //         OnTriggerEnterObserver();
                 //     });
+                ChangeBehaviour();
+            }
+        }
+
+        protected override void Start()
+        {
+            base.Start();
+            ChangeBehaviour();
+        }
+
+        private void InitAttackItem(AttackInfo attackInfo)
+        {
+            if (!gameObject.TryGetComponent<AttackCollectItem>(out var attackCollectItem))
+            {
+                attackCollectItem = gameObject.AddComponent<AttackCollectItem>();
+            }
+            attackCollectItem.enabled = true;
+            attackCollectItem.Init(attackInfo);
+        }
+        
+        private void InitMoveItem(MoveInfo moveInfo)
+        {
+            if (!gameObject.TryGetComponent<MoveCollectItem>(out var moveCollectItem))
+            {
+                moveCollectItem = gameObject.AddComponent<MoveCollectItem>();
+            }
+            moveCollectItem.enabled = true;
+            moveCollectItem.Init(moveInfo);
+        }
+        
+        private void InitHiddenItem(HiddenItemData hiddenItemData)
+        {
+            if (!gameObject.TryGetComponent<HiddenItem>(out var hiddenCollectItem))
+            {
+                hiddenCollectItem = gameObject.AddComponent<HiddenItem>();
+            }
+            hiddenCollectItem.enabled = true;
+            hiddenCollectItem.Init(hiddenItemData);
+        }
+
+        private void DisableComponent<T>() where T : CollectBehaviour
+        {
+            if (gameObject.TryGetComponent<T>(out var component))
+            {
+                component.enabled = false;
+            }
+        }
+
+        private void ChangeBehaviour()
+        {
+            switch ((CollectObjectType)BehaviourType)
+            {
+                case CollectObjectType.Attack:
+                    InitAttackItem(SpawnerManager.GetRandomAttackInfo());
+                    DisableComponent<MoveCollectItem>();
+                    DisableComponent<HiddenItem>();
+                    break;
+                case CollectObjectType.Move:
+                    InitMoveItem(SpawnerManager.GetRandomMoveInfo(transform.position));
+                    DisableComponent<AttackCollectItem>();
+                    DisableComponent<HiddenItem>();
+                    break;
+                case CollectObjectType.Hidden:
+                    InitHiddenItem(SpawnerManager.GetRandomHiddenItemData());
+                    DisableComponent<AttackCollectItem>();
+                    DisableComponent<MoveCollectItem>();
+                    break;
+                case CollectObjectType.AttackMove:
+                    InitAttackItem(SpawnerManager.GetRandomAttackInfo());
+                    InitMoveItem(SpawnerManager.GetRandomMoveInfo(transform.position));
+                    DisableComponent<HiddenItem>();
+                    break;
+                case CollectObjectType.AttackHidden:
+                    InitAttackItem(SpawnerManager.GetRandomAttackInfo());
+                    InitHiddenItem(SpawnerManager.GetRandomHiddenItemData());
+                    DisableComponent<MoveCollectItem>();
+                    break;
+                case CollectObjectType.MoveHidden:
+                    InitMoveItem(SpawnerManager.GetRandomMoveInfo(transform.position));
+                    InitHiddenItem(SpawnerManager.GetRandomHiddenItemData());
+                    DisableComponent<AttackCollectItem>();
+                    break;
+                case CollectObjectType.AttackMoveHidden:
+                    InitAttackItem(SpawnerManager.GetRandomAttackInfo());
+                    InitMoveItem(SpawnerManager.GetRandomMoveInfo(transform.position));
+                    InitHiddenItem(SpawnerManager.GetRandomHiddenItemData());
+                    break;
             }
         }
 

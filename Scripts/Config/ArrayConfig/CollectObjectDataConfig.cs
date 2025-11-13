@@ -107,12 +107,27 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public float spawnMoveHiddenRatio;
         public float spawnAttackMoveHiddenRatio;
         
+        [Header("AttackItem")]
+        public Range healthRange;
         public Range attackPowerRange;
-        public Range speedRange;
+        public Range attackCooldown;
+        public Range bulletSpeedRange;
+        public Range bulletLifeTimeRange;
         public Range attackRange;
         public Range criticalRateRange;
         public Range criticalDamageRatioRange;
         public Range defenseRange;
+        public Range lifeTimeRange;
+        [Header("MoveItem")]
+        public Range speedRange;
+        public Range rotateSpeedRange;
+        public Range patternAmplitudeRange;
+        public Range patternFrequencyRange;
+        [Header("HiddenItem")]
+        public Range translucenceRange;
+        public Range mysteryTimeRange;
+        public Range translucenceTimeRange;
+        [Header("ExplodeItem")]
         public Range explodeRange;
         public float explodeCriticalRate;
         public float explodeCriticalDamageRatio;
