@@ -64,6 +64,23 @@ namespace HotUpdate.Scripts.Game.Map
             return intersectedObjects.Count > 0;
         }
 
+        public HashSet<uint> GetDynamicObjectIdsByGrids(HashSet<Vector2Int> grids)
+        {
+            var hashSet = new HashSet<uint>();
+            foreach (var grid in grids)
+            {
+                foreach (var data in _netIdToDynamicObjectData.Keys)
+                {
+                    var objectGrid = MapBoundDefiner.Instance.GetGridPosition(_netIdToDynamicObjectData[data].Position);
+                    if (objectGrid == grid)
+                    {
+                        hashSet.Add(data);
+                    }
+                }
+            }
+            return hashSet;
+        }
+
         public bool DynamicObjectIntersects(Vector3 position, IColliderConfig colliderConfig)
         {
             var bounds = GamePhysicsSystem.GetWorldBounds(position, colliderConfig);

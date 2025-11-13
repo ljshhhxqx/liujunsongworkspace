@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using AOTScripts.Data;
 using AOTScripts.Data.State;
@@ -288,14 +289,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var attackConfigData = new AttackConfigData(playerProperty[PropertyTypeEnum.AttackRadius].CurrentValue, playerProperty[PropertyTypeEnum.AttackAngle].CurrentValue, playerProperty[PropertyTypeEnum.AttackHeight].CurrentValue);
             var defenders = playerController.HandleAttack(new AttackParams(playerController.transform.position,
                 playerController.transform.forward, connectionId, playerController.netId, attackConfigData));
-            if (defenders.Length > 0)
+            if (defenders.Count > 0)
             {
 
                 GameSyncManager.EnqueueServerCommand(new PropertyAttackCommand
                 {
                     Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property, CommandAuthority.Server, CommandExecuteType.Immediate),
                     AttackerId = connectionId,
-                    TargetIds = defenders,
+                    TargetIds = defenders.ToArray(),
                 });
             }
             var attack = propertySyncSystem.GetPlayerProperty(connectionId, PropertyTypeEnum.Attack);

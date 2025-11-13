@@ -867,7 +867,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerPhysicsCalculator = new PlayerPhysicsCalculator(new PhysicsComponent(_rigidbody, transform, _checkStairTransform, _capsuleCollider, _camera));
             _playerPropertyCalculator = new PlayerPropertyCalculator(PlayerPropertyCalculator.GetPropertyCalculators());
             _playerAnimationCalculator = new PlayerAnimationCalculator(new AnimationComponent{ Animator = _animator});
-            _playerBattleCalculator = new PlayerBattleCalculator(new PlayerBattleComponent(transform));
+            _playerBattleCalculator = new PlayerBattleCalculator(new PlayerBattleComponent(transform, _interactSystem));
             _playerItemCalculator = new PlayerItemCalculator();
             _playerElementCalculator = new PlayerElementCalculator();
             _playerEquipmentCalculator = new PlayerEquipmentCalculator();
@@ -1106,7 +1106,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerPropertyCalculator.HandleEnvironmentChange(ref playerPredictablePropertyState, hasInputMovement, environmentType, isSprinting);
         }
 
-        public uint[] HandleAttack(AttackParams attackParams)
+        public HashSet<uint> HandleAttack(AttackParams attackParams)
         {
             return _playerBattleCalculator.IsInAttackRange(attackParams);
         }

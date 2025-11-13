@@ -352,8 +352,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         }
                     }
                 }
+                //todo: 分别处理对于玩家和生成物的攻击
                 var targetPlayerIds = _playerInGameManager.GetPlayersWithNetIds(hitPlayer.ToArray());
-                HandlePlayerAttack(header.ConnectionId, targetPlayerIds);
+                HandlePlayerAttack(header.ConnectionId, targetPlayerIds, null);
             }
             else if (command is PropertySkillCommand skillCommand)
             {
@@ -903,7 +904,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             return propertyCalculator.UpdateCalculator(buffData.BuffData.increaseDataList, isReverse);
         }
 
-        private void HandlePlayerAttack(int attacker, int[] defenderPlayerIds)
+        private void HandlePlayerAttack(int attacker, int[] defenderPlayerIds, uint[] hitItemIds)
         {
             var propertyState = GetState<PlayerPredictablePropertyState>(attacker);
             var defendersState = PropertyStates

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Game.Map;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
 using UnityEngine;
@@ -24,7 +26,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             PlayerBattleComponent = playerBattleComponent;
         }
 
-        public uint[] IsInAttackRange(AttackParams attackParams, bool isServer = true)
+        public HashSet<uint> IsInAttackRange(AttackParams attackParams, bool isServer = true)
         {
             var hitPlayers = new HashSet<uint>();
         
@@ -36,7 +38,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         
             // 获取周围Grid中的玩家
             var nearbyGrids = MapBoundDefiner.Instance.GetSurroundingGrids(attackerGrid, gridRadius);
-            var candidates = PlayerInGameManager.Instance.GetPlayersInGrids(nearbyGrids);
+            var candidates = GameObjectContainer.Instance.GetDynamicObjectIdsByGrids(nearbyGrids);
 
             foreach (var candidate in candidates)
             {
@@ -61,7 +63,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 }
             }
 
-            return hitPlayers.ToArray();
+            return hitPlayers;
         }
         
         #region 辅助方法
@@ -88,10 +90,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
     public class PlayerBattleComponent
     {
         public Transform Transform;
+        public InteractSystem InteractSystem;
         
-        public PlayerBattleComponent(Transform transform)
+        public PlayerBattleComponent(Transform transform, InteractSystem interactSystem)
         {
             Transform = transform;
+            InteractSystem = interactSystem;
         }
     }
 
