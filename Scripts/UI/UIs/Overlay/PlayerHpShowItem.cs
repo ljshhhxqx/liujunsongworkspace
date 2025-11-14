@@ -44,7 +44,10 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             nameText.text = playerHpItemData.Name;
             hpSlider.value = playerHpItemData.CurrentHp / playerHpItemData.MaxHp;
             mpSlider.value = playerHpItemData.CurrentMp / playerHpItemData.MaxMp;
-            //SetDamageOrHealText((int)playerHpItemData.DiffValue, _data.PropertyType);
+            if (PlayerId != PlayerInGameManager.Instance.LocalPlayerId)
+            {
+                SetDamageOrHealText((int)playerHpItemData.DiffValue, _data.PropertyType);
+            }
             gameObject.SetActive(true);
         }
 

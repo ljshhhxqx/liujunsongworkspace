@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using AOTScripts.Data;
+using AOTScripts.Data.State;
+using AOTScripts.Tool;
 using HotUpdate.Scripts.Network.UI;
 using Mirror;
 using UI.UIBase;
@@ -191,6 +194,11 @@ namespace HotUpdate.Scripts.Tool.GameEvent
     {
     }
 
+    public struct FollowTargetEvent : IGameEvent
+    {
+        public Vector3 Position { get; private set; }
+    }
+
     public struct PlayerSpawnedEvent : IGameEvent
     {
         public Transform Target { get; private set; }
@@ -198,6 +206,36 @@ namespace HotUpdate.Scripts.Tool.GameEvent
         public PlayerSpawnedEvent(Transform target)
         {
             Target = target;
+        }
+    }
+
+    public struct PlayerSkillItemEvent : IGameEvent
+    {
+        public uint PlayerId { get; private set; }
+        public PlayerPredictablePropertyState PlayerState { get; private set; }
+        public SkillHitExtraEffectData SkillHitExtraEffectData { get; private set; }
+        public uint DefenderId { get; private set; }
+        
+        public PlayerSkillItemEvent(uint playerId, PlayerPredictablePropertyState playerState, SkillHitExtraEffectData skillHitExtraEffectData, uint defenderId)
+        {
+            PlayerId = playerId;
+            PlayerState = playerState;
+            SkillHitExtraEffectData = skillHitExtraEffectData;
+            DefenderId = defenderId;
+        }
+    }
+
+    public struct PlayerAttackItemEvent : IGameEvent
+    {
+        public uint AttackerId { get; private set; }
+        public uint[] DefenderIds { get; private set; }
+        public PlayerPredictablePropertyState AttackerState { get; private set; }
+
+        public PlayerAttackItemEvent(uint attackerId, uint[] defenderIds, PlayerPredictablePropertyState attackerState)
+        {
+            AttackerId = attackerId;
+            DefenderIds = defenderIds;
+            AttackerState = attackerState;
         }
     }
 

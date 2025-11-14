@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using AOTScripts.Tool;
+using AOTScripts.Tool.ObjectPool;
+using DG.Tweening;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Tool.GameEvent;
 using TMPro;
@@ -15,7 +17,9 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private Transform _player; // 玩家角色
         [SerializeField] private RectTransform indicatorUI; // UI指示器
         [SerializeField] private TextMeshProUGUI distanceText; // 显示距离的Text组件
+        [SerializeField] private RectTransform textUI; // UI指示器
         private FollowTargetParams _followTargetParams;
+        private FollowTargetParams _followTextParams;
         
         private Camera _mainCamera;
         private RectTransform _canvasRect;
@@ -25,18 +29,37 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private void Init(GameEventManager gameEventManager, IConfigProvider configProvider)
         {
             gameEventManager.Subscribe<TargetShowEvent>(OnTargetShow);
+            gameEventManager.Subscribe<FollowTargetEvent>(OnFollowTarget);
             var gameConfig = configProvider.GetConfig<JsonDataConfig>().GameConfig;
 
             Debug.Log("TargetShowOverlay Init");
             _mainCamera = Camera.main;
             _canvasRect = indicatorUI.parent.GetComponent<RectTransform>();
             indicatorUI.gameObject.SetActive(IsTargetNotNull);
-            _followTargetParams??= new FollowTargetParams();
+            _followTargetParams ??= new FollowTargetParams();
             _followTargetParams.MainCamera = _mainCamera;
             _followTargetParams.CanvasRect = _canvasRect;
             _followTargetParams.ScreenBorderOffset = gameConfig.screenBorderOffset;
             _followTargetParams.IndicatorUI = indicatorUI;
             _followTargetParams.DistanceText = distanceText;
+            _followTextParams ??= new FollowTargetParams();
+            _followTextParams.MainCamera = _mainCamera;
+            _followTextParams.CanvasRect = _canvasRect;
+            _followTextParams.ScreenBorderOffset = gameConfig.screenBorderOffset;
+        }
+
+        private void OnFollowTarget(FollowTargetEvent followTargetEvent)
+        {
+            _followTextParams.Target = followTargetEvent.Position;
+            var go = GameObjectPoolManger.Instance.GetObject(textUI.gameObject);
+            go.transform.localPosition = Vector3.zero;
+            go.transform.localScale = Vector3.one;
+            _followTextParams.IndicatorUI = go.GetComponent<RectTransform>();
+            GameStaticExtensions.FollowTarget(_followTextParams);
+            var seq = DOTween.Sequence();
+            seq.Append(go.transform.DOLocalMoveY(100, 1f));
+            seq.Join(go.transform.DOScale(1.3f, 1f));
+            seq.onComplete += () => GameObjectPoolManger.Instance.ReturnObject(go);
         }
 
         private void OnTargetShow(TargetShowEvent targetShowEvent)

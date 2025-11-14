@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using AOTScripts.Data;
-using AOTScripts.Tool.ECS;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Collector;
@@ -15,7 +14,6 @@ using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
-using MemoryPack;
 using Mirror;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -31,13 +29,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         private GameObject _bulletPrefab;
         private JsonDataConfig _jsonConfig;
         private GameSyncManager _gameSyncManager;
+        private GameEventManager _gameEventManager;
         private PlayerPropertySyncSystem _playerPropertySyncSystem;
 
         private SyncDictionary<uint, SceneItemInfo> _sceneItems = new SyncDictionary<uint, SceneItemInfo>();
         private HashSet<DynamicObjectData> _dynamicObjects = new HashSet<DynamicObjectData>();
         
         public event Action<uint, SceneItemInfo> SceneItemInfoChanged;
-
+        public event Action<uint, float, ControlSkillType> ItemControlSkillChanged;
+        
         public bool IsItemCanPickup(uint sceneItemId)
         {
             if (!_sceneItems.TryGetValue(sceneItemId, out var sceneItemInfo))
@@ -52,13 +52,61 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         [Inject]
         private void Init(GameEventManager gameEventManager, IConfigProvider configProvider)
         {
+            _gameEventManager = gameEventManager;
             //_gameSyncManager = FindObjectOfType<GameSyncManager>();
             SceneItemWriter();
             _jsonConfig = configProvider.GetConfig<JsonDataConfig>();
             _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
             _gameSyncManager = FindObjectOfType<GameSyncManager>();
             _playerPropertySyncSystem = _gameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
-            gameEventManager.Subscribe<GameStartEvent>(OnGameStart);
+            _gameEventManager.Subscribe<GameStartEvent>(OnGameStart);
+            _gameEventManager.Subscribe<PlayerAttackItemEvent>(OnPlayerAttackItem);
+            _gameEventManager.Subscribe<PlayerSkillItemEvent>(OnSkillItem);
+        }
+
+        private void OnSkillItem(PlayerSkillItemEvent playerSkillItemEvent)
+        {
+            var extraPower = playerSkillItemEvent.PlayerState.MemoryProperty.GetValueOrDefault(playerSkillItemEvent.SkillHitExtraEffectData.effectProperty).CurrentValue;
+            var attackPower = playerSkillItemEvent.SkillHitExtraEffectData.isBuffMaxProperty ? playerSkillItemEvent.PlayerState.MemoryProperty.GetValueOrDefault(playerSkillItemEvent.SkillHitExtraEffectData.buffProperty).MaxValue : playerSkillItemEvent.PlayerState.MemoryProperty.GetValueOrDefault(playerSkillItemEvent.SkillHitExtraEffectData.buffProperty).GetPropertyValue(playerSkillItemEvent.SkillHitExtraEffectData.buffIncreaseType);
+            if (_sceneItems.TryGetValue(playerSkillItemEvent.DefenderId, out var sceneItemInfo))
+            {
+                var damageResult = _jsonConfig.GetDamage(attackPower + extraPower * playerSkillItemEvent.SkillHitExtraEffectData.extraRatio, sceneItemInfo.defense, 0, 1);
+                Debug.Log($"Player {playerSkillItemEvent.PlayerId} attack scene item {playerSkillItemEvent.DefenderId} with damage {damageResult.Damage}");
+                sceneItemInfo.health -= damageResult.Damage;
+                SceneItemInfoChanged?.Invoke(playerSkillItemEvent.DefenderId, sceneItemInfo);
+                if (sceneItemInfo.health <= 0)
+                {
+                    Debug.Log($"Scene item {playerSkillItemEvent.DefenderId} is dead");
+                    _sceneItems.Remove(playerSkillItemEvent.DefenderId);
+                }
+
+                if (playerSkillItemEvent.SkillHitExtraEffectData.controlSkillType!= ControlSkillType.None)
+                {
+                    ItemControlSkillChanged?.Invoke(playerSkillItemEvent.DefenderId, playerSkillItemEvent.SkillHitExtraEffectData.duration, playerSkillItemEvent.SkillHitExtraEffectData.controlSkillType);
+                }
+            }
+        }
+
+        private void OnPlayerAttackItem(PlayerAttackItemEvent playerAttackItemEvent)
+        {
+            var criticalRate = playerAttackItemEvent.AttackerState.MemoryProperty.GetValueOrDefault(PropertyTypeEnum.CriticalRate).CurrentValue;
+            var criticalDamage = playerAttackItemEvent.AttackerState.MemoryProperty.GetValueOrDefault(PropertyTypeEnum.CriticalDamageRatio).CurrentValue;
+            var attackPower = playerAttackItemEvent.AttackerState.MemoryProperty.GetValueOrDefault(PropertyTypeEnum.Attack).CurrentValue;
+            foreach (var sceneItemId in playerAttackItemEvent.DefenderIds)
+            {
+                if (_sceneItems.TryGetValue(sceneItemId, out var sceneItemInfo))
+                {
+                    var damageResult = _jsonConfig.GetDamage(attackPower, sceneItemInfo.defense, criticalRate, criticalDamage);
+                    Debug.Log($"Player {playerAttackItemEvent.AttackerId} attack scene item {sceneItemId} with damage {damageResult.Damage}");
+                    sceneItemInfo.health -= damageResult.Damage;
+                    SceneItemInfoChanged?.Invoke(sceneItemId, sceneItemInfo);
+                    if (sceneItemInfo.health <= 0)
+                    {
+                        Debug.Log($"Scene item {sceneItemId} is dead");
+                        _sceneItems.Remove(sceneItemId);
+                    }
+                }
+            }
         }
 
         private void OnGameStart(GameStartEvent gameStartEvent)
@@ -139,10 +187,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                         var damage = _jsonConfig.GetDamage(itemExplodeRequest.AttackPower, defense, 1f, 2f);
                         Debug.Log($"Scene item {itemExplodeRequest.SceneItemId} attack scene item {hitObjectData.NetId} with damage {damage}");
                         sceneItemInfo.health -= damage.Damage;
+                        SceneItemInfoChanged?.Invoke(hitObjectData.NetId, sceneItemInfo);
                         if (sceneItemInfo.health <= 0)
                         {
                             Debug.Log($"Scene item {hitObjectData.NetId} is dead");
-                            SceneItemInfoChanged?.Invoke(hitObjectData.NetId, sceneItemInfo);
                             _sceneItems.Remove(hitObjectData.NetId);
                         }
                     }

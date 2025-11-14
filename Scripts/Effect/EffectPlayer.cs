@@ -101,7 +101,14 @@ namespace HotUpdate.Scripts.Effect
     public enum ParticlesType
     {
         Explode,
-        Fire,
-        Smoke,
+        AttackBuff,
+        AttackDebuff,
+        DefenseBuff,
+        DefenseDebuff,
+        Die,
+        HitEffect,
+        RecoverBuff,
+        RecoverDebuff,
+        Skill,
     }
 }

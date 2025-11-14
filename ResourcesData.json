@@ -55,13 +55,23 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
+            "Name": "Explode",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Effect/Explode.prefab"
+        },
+        {
+            "UID": 6,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "HitEffect",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Effect/HitEffect.prefab"
         },
         {
-            "UID": 6,
+            "UID": 7,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -71,7 +81,7 @@
             "Address": "/Effect/RecoverBuff.prefab"
         },
         {
-            "UID": 7,
+            "UID": 8,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -81,7 +91,7 @@
             "Address": "/Effect/RecoverDebuff.prefab"
         },
         {
-            "UID": 8,
+            "UID": 9,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",

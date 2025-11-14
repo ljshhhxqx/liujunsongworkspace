@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Network.UI;
+using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.ReactiveProperty;
+using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
 using UI.UIBase;
 using UniRx;
 using UnityEngine;
+using VContainer;
 
 namespace HotUpdate.Scripts.UI.UIs.Overlay
 {
@@ -18,6 +21,21 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private RectTransform canvasRect;
         private Dictionary<int, PlayerHpItemData> _playerHpItemDatas;
         private FollowTargetParams _defaultFollowTargetParams;
+
+        private GameEventManager _gameEventManager;
+        
+        [Inject]
+        private void Init(GameEventManager gameEventManager)
+        {
+            _gameEventManager = gameEventManager;
+            _gameEventManager.Subscribe<FollowTargetEvent>(OnFollowTargetEvent);
+            
+        }
+
+        private void OnFollowTargetEvent(FollowTargetEvent followTargetEvent)
+        {
+            //contentItemList.AddItem<PlayerHpItemData, PlayerHpItem>(100, y);
+        }
 
         public void BindPlayersHp(HReactiveDictionary<int, PlayerHpItemData> playerHpItemDatas, FollowTargetParams defaultFollowTargetParams)
         {

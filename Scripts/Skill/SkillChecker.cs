@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using AOTScripts.Data;
 using AOTScripts.Data.State;
 using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Game.Map;
 using UnityEngine;
 using AnimationState = AOTScripts.Data.AnimationState;
 
@@ -19,7 +20,7 @@ namespace HotUpdate.Scripts.Skill
         bool CheckExecute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams);
         bool Execute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams, params object[] args);
         void Destroy();
-        int[] UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc);
+        HashSet<DynamicObjectData> UpdateFly(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<DynamicObjectData>> isHitFunc);
         Vector3 GetSkillEffectPosition();
         SkillEffectLifeCycle GetSkillEffectLifeCycle();
         void SetSkillEffectLifeCycle(SkillEffectLifeCycle skillEffectLifeCycle);
@@ -45,6 +46,7 @@ namespace HotUpdate.Scripts.Skill
         public float Radius;
         public bool IsAreaOfRanged;
         public AnimationState AnimationState;
+        public uint CasterId;
     }
 
     public struct SkillCheckerParams
@@ -66,6 +68,7 @@ namespace HotUpdate.Scripts.Skill
         public SkillEffectFlyType SkillEffectFlyType;
         public Vector3 CurrentPosition;
         public List<SkillEventData> SkillEventData;
+        public uint CasterId;
 
         public IColliderConfig ColliderConfig { get; }
 
@@ -112,7 +115,7 @@ namespace HotUpdate.Scripts.Skill
             return SkillEventType.None;
         }
 
-        public int[] Update(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc)
+        public HashSet<DynamicObjectData> Update(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<DynamicObjectData>> isHitFunc)
         {
             if (CurrentTime >= ExpectationTime)
             {
@@ -131,7 +134,7 @@ namespace HotUpdate.Scripts.Skill
                 step = distance;
             }
             CurrentPosition += (Target - Origin).normalized * step;
-            return isHitFunc(CurrentPosition, ColliderConfig);
+            return isHitFunc(CasterId, CurrentPosition, ColliderConfig);
         }
     }
 
@@ -208,7 +211,7 @@ namespace HotUpdate.Scripts.Skill
         }
 
         //释放、飞行、命中后造成伤害
-        public int[] UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc)
+        public HashSet<DynamicObjectData> UpdateFly(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<DynamicObjectData>> isHitFunc)
         {
             return SkillEffectLifeCycle.Update(deltaTime, isHitFunc);
         }
@@ -285,7 +288,7 @@ namespace HotUpdate.Scripts.Skill
             return CheckExecute(ref checker, skillCheckerParams);
         }
 
-        public int[] UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc)
+        public HashSet<DynamicObjectData> UpdateFly(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<DynamicObjectData>> isHitFunc)
         {
             return SkillEffectLifeCycle.Update(deltaTime, isHitFunc);
         }
@@ -383,7 +386,7 @@ namespace HotUpdate.Scripts.Skill
         }
         
         //释放、飞行、命中后造成伤害
-        public int[] UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc)
+        public HashSet<DynamicObjectData> UpdateFly(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<DynamicObjectData>> isHitFunc)
         {
             return SkillEffectLifeCycle.Update(deltaTime, isHitFunc);
         }
@@ -459,7 +462,7 @@ namespace HotUpdate.Scripts.Skill
         }
 
         
-        public int[] UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc)
+        public HashSet<DynamicObjectData> UpdateFly(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<DynamicObjectData>> isHitFunc)
         {
             return SkillEffectLifeCycle.Update(deltaTime, isHitFunc);
         }
@@ -540,7 +543,7 @@ namespace HotUpdate.Scripts.Skill
             return CheckExecute(ref checker, skillCheckerParams);
         }
         
-        public int[] UpdateFly(float deltaTime, Func<Vector3, IColliderConfig, int[]> isHitFunc)
+        public HashSet<DynamicObjectData> UpdateFly(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<DynamicObjectData>> isHitFunc)
         {
             return SkillEffectLifeCycle.Update(deltaTime, isHitFunc);
         }

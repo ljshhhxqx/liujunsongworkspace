@@ -863,6 +863,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 GameSyncManager = gameSyncManager,
                 SkillConfig = configProvider.GetConfig<SkillConfig>(),
                 SceneLayerMask = gameData.stairSceneLayer,
+                CasterId = netId
             });
             _playerPhysicsCalculator = new PlayerPhysicsCalculator(new PhysicsComponent(_rigidbody, transform, _checkStairTransform, _capsuleCollider, _camera));
             _playerPropertyCalculator = new PlayerPropertyCalculator(PlayerPropertyCalculator.GetPropertyCalculators());

@@ -290,7 +290,11 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             var players = new HashSet<int>();
             foreach (var id in netIds)
             {
-                players.Add(GetPlayerId(id));
+                if (!_playerIdsByNetId.TryGetValue(id, out var playerId))
+                {
+                    continue;
+                }
+                players.Add(playerId);
             }
 
             return players.ToArray();
@@ -298,7 +302,12 @@ namespace HotUpdate.Scripts.Network.Server.InGame
 
         public int GetPlayerId(uint id)
         {
-            return _playerIdsByNetId.GetValueOrDefault(id);
+            if (_playerIdsByNetId.TryGetValue(id, out var playerId))
+            {
+                return playerId;
+            }
+            Debug.LogError($"Player uid {id} not found");
+            return -1;
         }
 
         private void OnIsGameStartedChanged(bool oldIsGameStarted, bool newIsGameStarted)
@@ -851,19 +860,19 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             return newPosition;
         }
 
-        public int[] GetHitPlayers(Vector3 position, IColliderConfig colliderConfig)
-        {
-            var hitPlayers = new List<int>();
-            foreach (var key in _playerPositions.Keys)
-            {
-                var playerPosition = _playerPositions.GetValueOrDefault(key);
-                if (GamePhysicsSystem.FastCheckItemIntersects(position, playerPosition, colliderConfig, _playerPhysicsData))
-                {
-                    hitPlayers.Add(GetPlayerId(key));
-                }
-            }
-            return hitPlayers.ToArray();
-        }
+        // public int[] GetHitPlayers(Vector3 position, IColliderConfig colliderConfig)
+        // {
+        //     var hitPlayers = new List<int>();
+        //     foreach (var key in _playerPositions.Keys)
+        //     {
+        //         var playerPosition = _playerPositions.GetValueOrDefault(key);
+        //         if (GamePhysicsSystem.FastCheckItemIntersects(position, playerPosition, colliderConfig, _playerPhysicsData))
+        //         {
+        //             hitPlayers.Add(GetPlayerId(key));
+        //         }
+        //     }
+        //     return hitPlayers.ToArray();
+        // }
     }
 
     [Serializable]

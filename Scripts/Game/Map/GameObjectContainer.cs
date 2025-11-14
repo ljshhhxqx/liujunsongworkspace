@@ -12,7 +12,7 @@ namespace HotUpdate.Scripts.Game.Map
         private readonly Dictionary<int, GameObject> _idToGameObject = new Dictionary<int, GameObject>();
         private readonly Dictionary<Vector2Int, List<GameObjectData>> _mapObjectData = new Dictionary<Vector2Int, List<GameObjectData>>();
 
-        private Dictionary<uint, DynamicObjectData> _netIdToDynamicObjectData = new Dictionary<uint, DynamicObjectData>();
+        private readonly Dictionary<uint, DynamicObjectData> _netIdToDynamicObjectData = new Dictionary<uint, DynamicObjectData>();
 
         public void UpdateDynamicObjects(bool isServer)
         {
@@ -30,7 +30,15 @@ namespace HotUpdate.Scripts.Game.Map
             }
         }
 
-        public bool DynamicObjectIntersects(uint uid,Vector3 position, IColliderConfig colliderConfig, HashSet<DynamicObjectData> intersectedObjects)
+        public HashSet<DynamicObjectData> GetIntersectedDynamicObjects(uint uid, Vector3 position,
+            IColliderConfig colliderConfig)
+        {
+            var result = new HashSet<DynamicObjectData>();
+            DynamicObjectIntersects(uid, position, colliderConfig, result);
+            return result;
+        }
+
+        public bool DynamicObjectIntersects(uint uid, Vector3 position, IColliderConfig colliderConfig, HashSet<DynamicObjectData> intersectedObjects)
         {
             intersectedObjects.Clear();
             var bounds = GamePhysicsSystem.GetWorldBounds(position, colliderConfig);

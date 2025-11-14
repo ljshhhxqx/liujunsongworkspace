@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using AOTScripts.Data;
 using AOTScripts.Data.State;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
@@ -84,7 +87,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         }
 
         public static bool ExecuteSkill(PlayerComponentController playerController, SkillConfigData skillConfigData, PropertyCalculator propertyCalculator, 
-            SkillCommand skillCommand, AnimationState key, Func<Vector3, IColliderConfig, int[]> isHitFunc, out Vector3 position)
+            SkillCommand skillCommand, AnimationState key, Func<uint, Vector3, IColliderConfig, HashSet<DynamicObjectData>> isHitFunc, out Vector3 position)
         {
             var checkers = playerController.SkillCheckerDict;
             var skillChecker = checkers[key];
@@ -136,27 +139,28 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return true;
         }
 
-        public static int[] UpdateSkillFlyEffect(int connectionId, float deltaTime, ISkillChecker skillChecker, Func<Vector3, IColliderConfig, int[]> isHitFunc)
+        public static uint[] UpdateSkillFlyEffect(int connectionId, float deltaTime, ISkillChecker skillChecker, Func<uint, Vector3, IColliderConfig, HashSet<DynamicObjectData>> isHitFunc)
         {
             var hitPlayers = skillChecker.UpdateFly(deltaTime, isHitFunc);
-            if (hitPlayers == null || hitPlayers.Length == 0)
+            if (hitPlayers == null || hitPlayers.Count == 0)
             {
                 Debug.Log("没有命中任何玩家");
-                return Array.Empty<int>();
+                return null;
             }
 
+            var hits = hitPlayers.Select(x => x.NetId).ToArray();
             var commonSkillCheckerHeader = skillChecker.GetCommonSkillCheckerHeader();
             var command = new PropertySkillCommand();
             command.Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property, CommandAuthority.Server, CommandExecuteType.Immediate);
             command.SkillId = commonSkillCheckerHeader.ConfigId;
-            command.HitPlayerIds = commonSkillCheckerHeader.IsAreaOfRanged ? hitPlayers : new int[] { hitPlayers[0] };
+            command.HitPlayerIds = commonSkillCheckerHeader.IsAreaOfRanged ? hits : new uint[] { hits[0] };
             foreach (var playerId in command.HitPlayerIds)
             {
                 Debug.Log($"技能命中玩家{playerId}");
                 
             }
             Constant.GameSyncManager.EnqueueServerCommand(command);
-            return hitPlayers;
+            return hits;
         }
     }
 
@@ -166,5 +170,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public SkillConfig SkillConfig;
         public LayerMask SceneLayerMask;
         public bool IsServer;
+        public uint CasterId;
     }
 }

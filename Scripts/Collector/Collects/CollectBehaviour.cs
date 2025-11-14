@@ -34,7 +34,19 @@ namespace HotUpdate.Scripts.Collector.Collects
             ColliderConfig = GamePhysicsSystem.CreateColliderConfig(GetComponent<Collider>());
             InteractSystem = FindObjectOfType<InteractSystem>();
             InteractSystem.SceneItemInfoChanged += OnSceneItemInfoChanged;
+            InteractSystem.ItemControlSkillChanged += OnItemControlSkillChanged;
             OnInitialize();
+        }
+
+        private void OnItemControlSkillChanged(uint id, float duration, ControlSkillType skillType)
+        {
+            RpcOnItemControlSkillChanged(id, duration, skillType);
+        }
+
+        [ClientRpc]
+        private void RpcOnItemControlSkillChanged(uint id, float duration, ControlSkillType skillType)
+        {
+            //todo：飘字+特效
         }
 
         protected void SetColor(Color color)

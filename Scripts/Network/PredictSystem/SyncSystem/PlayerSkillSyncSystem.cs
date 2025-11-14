@@ -7,6 +7,7 @@ using AOTScripts.Data.State;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Server.InGame;
@@ -23,6 +24,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private readonly Dictionary<int, PlayerSkillSyncState> _playerSkillSyncStates = new Dictionary<int, PlayerSkillSyncState>();
         private SkillConfig _skillConfig;
         private PlayerInGameManager _playerInGameManager;
+        private GameObjectContainer _gameObjectContainer;
         private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
         private int _currentSkillId;
         protected override CommandType CommandType => CommandType.Skill;
@@ -32,6 +34,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             _skillConfig = configProvider.GetConfig<SkillConfig>();
             _playerInGameManager = PlayerInGameManager.Instance;
+            _gameObjectContainer = GameObjectContainer.Instance;
         }
 
         protected override void OnGameStart(bool isGameStarted)
@@ -107,7 +110,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                             var skillChecker = skillDic[keys[j]];
                             if (skillChecker.IsSkillEffect())
                             {
-                                PlayerSkillCalculator.UpdateSkillFlyEffect(playerId, GameSyncManager.TickSeconds, skillChecker, _playerInGameManager.GetHitPlayers);
+                                PlayerSkillCalculator.UpdateSkillFlyEffect(playerId, GameSyncManager.TickSeconds, skillChecker, _gameObjectContainer.GetIntersectedDynamicObjects);
                             }
 
                             if (!skillChecker.IsSkillNotInCd())
@@ -162,14 +165,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     Debug.LogError($"Player {header.ConnectionId} skill checker has different config ID {skillCommonHeader.ConfigId} for player {header.ConnectionId}");
                     return PropertyStates[header.ConnectionId];
                 }
-                var playerConnection = GameSyncManager.GetPlayerConnection(skillCommand.Header.ConnectionId);
-                var skillCheckers = playerConnection.AnimationCooldownsDict;
+                //var playerConnection = GameSyncManager.GetPlayerConnection(skillCommand.Header.ConnectionId);
+                //var skillCheckers = playerConnection.AnimationCooldownsDict;
                 var skillData = _skillConfig.GetSkillData(skillCommand.SkillConfigId);
                 var propertySync = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
                 var playerProperty = propertySync.GetPropertyCalculator(header.ConnectionId, skillData.costProperty);
                 var playerComponent = GameSyncManager.GetPlayerConnection(header.ConnectionId);
                 if (!PlayerSkillCalculator.ExecuteSkill(playerComponent, skillData, playerProperty, skillCommand,
-                        skillCommand.KeyCode, _playerInGameManager.GetHitPlayers, out var position))
+                        skillCommand.KeyCode, _gameObjectContainer.GetIntersectedDynamicObjects, out var position))
                 {
                     Debug.LogError($"Player {header.ConnectionId} execute skill failed");
                     return PropertyStates[header.ConnectionId];

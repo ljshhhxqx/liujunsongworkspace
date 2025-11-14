@@ -9,15 +9,18 @@ using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Tool.GameEvent;
 using MemoryPack;
 using Mirror;
 using UnityEngine;
 using VContainer;
 using AnimationState = AOTScripts.Data.AnimationState;
 using INetworkCommand = AOTScripts.Data.INetworkCommand;
+using Object = UnityEngine.Object;
 using PropertyAttackCommand = AOTScripts.Data.PropertyAttackCommand;
 using PropertyAutoRecoverCommand = AOTScripts.Data.PropertyAutoRecoverCommand;
 using PropertyBuffCommand = AOTScripts.Data.PropertyBuffCommand;
@@ -51,6 +54,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private SkillConfig _skillConfig;
         private GameConfigData _gameConfigData;
         private BattleEffectConditionConfig _battleEffectConfig;
+        private GameEventManager _gameEventManager;
         private float _timeBuffTimer;
         private readonly List<(BuffBase, int)> _previousNoUnionPlayerBuff = new List<(BuffBase, int)>();
         protected override CommandType CommandType => CommandType.Property;
@@ -59,8 +63,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         
         
         [Inject]
-        private void Init(IConfigProvider configProvider)
+        private void Init(IConfigProvider configProvider,GameEventManager gameEventManager)
         {
+            _gameEventManager = gameEventManager;
             _configProvider = configProvider;
             _jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
             _gameConfigData = _jsonDataConfig.GameConfig;
@@ -341,6 +346,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 var playerNetId = _playerInGameManager.GetPlayerNetId(header.ConnectionId);
                 var hitPlayer = attackCommand.TargetIds.ToHashSet();
+                var attackPlayer = GetState<PlayerPredictablePropertyState>(attackCommand.AttackerId);
                 if (_playerInGameManager.TryGetOtherPlayersInUnion(playerNetId, out var otherPlayers) && GameSyncManager.isRandomUnionStart)
                 {
                     for (int i = 0; i < attackCommand.TargetIds.Length; i++)
@@ -352,9 +358,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         }
                     }
                 }
-                //todo: 分别处理对于玩家和生成物的攻击
+                
                 var targetPlayerIds = _playerInGameManager.GetPlayersWithNetIds(hitPlayer.ToArray());
-                HandlePlayerAttack(header.ConnectionId, targetPlayerIds, null);
+                HandlePlayerAttack(header.ConnectionId, targetPlayerIds);
+                _gameEventManager.Publish(new PlayerAttackItemEvent(playerNetId, attackCommand.TargetIds, attackPlayer));
             }
             else if (command is PropertySkillCommand skillCommand)
             {
@@ -904,7 +911,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             return propertyCalculator.UpdateCalculator(buffData.BuffData.increaseDataList, isReverse);
         }
 
-        private void HandlePlayerAttack(int attacker, int[] defenderPlayerIds, uint[] hitItemIds)
+        private void HandlePlayerAttack(int attacker, int[] defenderPlayerIds)
         {
             var propertyState = GetState<PlayerPredictablePropertyState>(attacker);
             var defendersState = PropertyStates
@@ -1067,15 +1074,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             PropertyChange(playerConnection);
         }
 
-        private void HandleSkill(int attacker, int skillConfigId, int[] hitPlayerIds)
+        private void HandleSkill(int attacker, int skillConfigId, uint[] hitIds)
         {
             var skillData = _skillConfig.GetSkillData(skillConfigId);
             var playerNetId = _playerInGameManager.GetPlayerNetId(attacker);
             var effectData = skillData.extraEffects;
-            for (int i = 0; i < hitPlayerIds.Length; i++)
+            for (int i = 0; i < hitIds.Length; i++)
             {
-                var hitPlayerId = hitPlayerIds[i];
-                var otherPlayerNetId = _playerInGameManager.GetPlayerNetId(attacker);
+                var hitPlayerId = hitIds[i];
+                //var otherPlayerNetId = _playerInGameManager.GetPlayerNetId(attacker);
                 //var isAlly = _playerInGameManager.IsOtherPlayerAlly(playerNetId, otherPlayerNetId);
                 if (skillData.conditionTarget == ConditionTargetType.Ally)
                 {
@@ -1090,7 +1097,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     var equipmentSystem = GameSyncManager.GetSyncSystem<PlayerEquipmentSystem>(CommandType.Equipment);
                     for (int j = 0; j < effectData.Length; j++)
                     {
-                        var hitPlayerState = GetState<PlayerPredictablePropertyState>(hitPlayerId);
+                        var playerId = _playerInGameManager.GetPlayerId(hitPlayerId);
+                        var hitPlayerState = GetState<PlayerPredictablePropertyState>(playerId);
                         var preHealth = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue;
                         var effect = effectData[j];
                         HandleSkillHit(attacker, effect, hitPlayerId, false);
@@ -1116,48 +1124,55 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
         }
 
-        private void HandleSkillHit(int attacker, SkillHitExtraEffectData skillHitExtraEffectData, int hitPlayerId, bool isAlly)
+        private void HandleSkillHit(int attacker, SkillHitExtraEffectData skillHitExtraEffectData, uint hitId, bool isAlly)
         {
-            var hitPlayerState = GetState<PlayerPredictablePropertyState>(hitPlayerId);
-            if(!isAlly && skillHitExtraEffectData.effectProperty == PropertyTypeEnum.Health && hitPlayerState.SubjectedState == SubjectedStateType.IsInvisible)
-                return;
+            var attakerId = _playerInGameManager.GetPlayerNetId(attacker);
+            var playerId = _playerInGameManager.GetPlayerId(hitId);
             var playerState = GetState<PlayerPredictablePropertyState>(attacker);
-            var propertyCalculator = hitPlayerState.MemoryProperty[skillHitExtraEffectData.effectProperty];
-            var playerCalculator = playerState.MemoryProperty[skillHitExtraEffectData.buffProperty];
-            float value;
-            var preHealth = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue;
-            if (skillHitExtraEffectData.baseValue < 1)
+            if (playerId != -1)
             {
-                value = playerCalculator.CurrentValue * (skillHitExtraEffectData.baseValue + skillHitExtraEffectData.extraRatio);
+                var hitPlayerState = GetState<PlayerPredictablePropertyState>(playerId);
+                if(!isAlly && skillHitExtraEffectData.effectProperty == PropertyTypeEnum.Health && hitPlayerState.SubjectedState == SubjectedStateType.IsInvisible)
+                    return;
+                var propertyCalculator = hitPlayerState.MemoryProperty[skillHitExtraEffectData.effectProperty];
+                var playerCalculator = playerState.MemoryProperty[skillHitExtraEffectData.buffProperty];
+                float value;
+                var preHealth = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue;
+                if (skillHitExtraEffectData.baseValue < 1)
+                {
+                    value = playerCalculator.CurrentValue * (skillHitExtraEffectData.baseValue + skillHitExtraEffectData.extraRatio);
+                }
+                else
+                {
+                    value = skillHitExtraEffectData.baseValue + playerCalculator.CurrentValue * skillHitExtraEffectData.extraRatio;
+                }
+                var buffIncreaseData = new BuffIncreaseData
+                {
+                    increaseValue = value,
+                    operationType = skillHitExtraEffectData.buffOperation,
+                    increaseType = skillHitExtraEffectData.buffIncreaseType,
+                };
+                propertyCalculator = propertyCalculator.UpdateCalculator(propertyCalculator, buffIncreaseData);
+                if (skillHitExtraEffectData.duration > 0)
+                {
+                    var data = new SkillBuffManagerData();
+                    data.playerId = playerId;
+                    data.value = value;
+                    data.duration = skillHitExtraEffectData.duration;
+                    data.operationType = skillHitExtraEffectData.buffOperation;
+                    data.increaseType = skillHitExtraEffectData.buffIncreaseType;
+                    data.propertyType = skillHitExtraEffectData.effectProperty;
+                    data.currentTime = skillHitExtraEffectData.duration;
+                    data.skillType = skillHitExtraEffectData.controlSkillType;
+                    _skillBuffs = _skillBuffs.Add(data);
+                }
+                hitPlayerState.MemoryProperty[skillHitExtraEffectData.effectProperty] = propertyCalculator;
+                PropertyStates[playerId] = hitPlayerState;
+                PropertyChange(playerId);
+                HandlePlayerControl(playerId, skillHitExtraEffectData.controlSkillType);
+                return;
             }
-            else
-            {
-                value = skillHitExtraEffectData.baseValue + playerCalculator.CurrentValue * skillHitExtraEffectData.extraRatio;
-            }
-            var buffIncreaseData = new BuffIncreaseData
-            {
-                increaseValue = value,
-                operationType = skillHitExtraEffectData.buffOperation,
-                increaseType = skillHitExtraEffectData.buffIncreaseType,
-            };
-            propertyCalculator = propertyCalculator.UpdateCalculator(propertyCalculator, buffIncreaseData);
-            if (skillHitExtraEffectData.duration > 0)
-            {
-                var data = new SkillBuffManagerData();
-                data.playerId = hitPlayerId;
-                data.value = value;
-                data.duration = skillHitExtraEffectData.duration;
-                data.operationType = skillHitExtraEffectData.buffOperation;
-                data.increaseType = skillHitExtraEffectData.buffIncreaseType;
-                data.propertyType = skillHitExtraEffectData.effectProperty;
-                data.currentTime = skillHitExtraEffectData.duration;
-                data.skillType = skillHitExtraEffectData.controlSkillType;
-                _skillBuffs = _skillBuffs.Add(data);
-            }
-            hitPlayerState.MemoryProperty[skillHitExtraEffectData.effectProperty] = propertyCalculator;
-            PropertyStates[hitPlayerId] = hitPlayerState;
-            PropertyChange(hitPlayerId);
-            HandlePlayerControl(hitPlayerId, skillHitExtraEffectData.controlSkillType);
+            _gameEventManager.Publish(new PlayerSkillItemEvent(attakerId,playerState, skillHitExtraEffectData, hitId));
         }
 
         private void HandlePlayerControl(int playerId, ControlSkillType controlSkillType)

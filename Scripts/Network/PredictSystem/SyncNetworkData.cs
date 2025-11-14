@@ -1179,7 +1179,7 @@ namespace AOTScripts.Data
         [MemoryPackOrder(1)]
         public int SkillId;
         [MemoryPackOrder(2)]
-        public int[] HitPlayerIds;
+        public uint[] HitPlayerIds;
         public NetworkCommandHeader GetHeader() => Header;
         public NetworkCommandType GetCommandType() => NetworkCommandType.PropertySkill;
         public bool IsValid()
