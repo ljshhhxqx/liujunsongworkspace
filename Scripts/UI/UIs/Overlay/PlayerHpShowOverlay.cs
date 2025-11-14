@@ -64,7 +64,6 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                     return;
                 _playerHpItemDatas.Remove(x);
                 contentItemList.RemoveItem(x);
-                //SetItemDataAndShow(_playerHpItemDatas);
             }).AddTo(this); 
             playerHpItemDatas.ObserveUpdate((x,y, z)  =>
             {

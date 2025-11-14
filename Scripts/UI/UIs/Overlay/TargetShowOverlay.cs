@@ -55,10 +55,15 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             go.transform.localPosition = Vector3.zero;
             go.transform.localScale = Vector3.one;
             _followTextParams.IndicatorUI = go.GetComponent<RectTransform>();
+            var canvasGroup = go.GetComponent<CanvasGroup>();
+            canvasGroup.alpha = 1f;
             GameStaticExtensions.FollowTarget(_followTextParams);
             var seq = DOTween.Sequence();
             seq.Append(go.transform.DOLocalMoveY(100, 1f));
             seq.Join(go.transform.DOScale(1.3f, 1f));
+            seq.AppendInterval(1f);
+            seq.Append(go.transform.DOLocalMoveY(100, 1f));
+            seq.Join(canvasGroup.DOFade(0f, 1f));
             seq.onComplete += () => GameObjectPoolManger.Instance.ReturnObject(go);
         }
 

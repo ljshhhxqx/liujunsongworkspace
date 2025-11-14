@@ -82,6 +82,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         public void Show(FollowTargetParams followTargetParams)
         {
+            indicatorTransform.SetParent(followTargetParams.CanvasRect);
             followTargetParams.IndicatorUI = indicatorTransform;
             followTargetParams.Target = _data.TargetPosition;
             followTargetParams.Player = _data.PlayerPosition;
