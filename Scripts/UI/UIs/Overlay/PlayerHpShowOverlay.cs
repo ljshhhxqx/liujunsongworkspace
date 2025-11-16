@@ -28,11 +28,11 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private void Init(GameEventManager gameEventManager)
         {
             _gameEventManager = gameEventManager;
-            _gameEventManager.Subscribe<FollowTargetEvent>(OnFollowTargetEvent);
+            _gameEventManager.Subscribe<FollowTargetTextEvent>(OnFollowTargetEvent);
             
         }
 
-        private void OnFollowTargetEvent(FollowTargetEvent followTargetEvent)
+        private void OnFollowTargetEvent(FollowTargetTextEvent followTargetTextEvent)
         {
             //contentItemList.AddItem<PlayerHpItemData, PlayerHpItem>(100, y);
         }

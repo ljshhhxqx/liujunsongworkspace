@@ -1126,7 +1126,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private void HandleSkillHit(int attacker, SkillHitExtraEffectData skillHitExtraEffectData, uint hitId, bool isAlly)
         {
-            var attakerId = _playerInGameManager.GetPlayerNetId(attacker);
+            var attackerId = _playerInGameManager.GetPlayerNetId(attacker);
             var playerId = _playerInGameManager.GetPlayerId(hitId);
             var playerState = GetState<PlayerPredictablePropertyState>(attacker);
             if (playerId != -1)
@@ -1172,7 +1172,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 HandlePlayerControl(playerId, skillHitExtraEffectData.controlSkillType);
                 return;
             }
-            _gameEventManager.Publish(new PlayerSkillItemEvent(attakerId,playerState, skillHitExtraEffectData, hitId));
+            _gameEventManager.Publish(new PlayerSkillItemEvent(attackerId,playerState, skillHitExtraEffectData, hitId));
         }
 
         private void HandlePlayerControl(int playerId, ControlSkillType controlSkillType)

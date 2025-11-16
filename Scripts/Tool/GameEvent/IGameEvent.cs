@@ -194,9 +194,16 @@ namespace HotUpdate.Scripts.Tool.GameEvent
     {
     }
 
-    public struct FollowTargetEvent : IGameEvent
+    public struct FollowTargetTextEvent : IGameEvent
     {
         public Vector3 Position { get; private set; }
+        public string Text { get; private set; }
+
+        public FollowTargetTextEvent(Vector3 position, string text)
+        {
+            Position = position;
+            Text = text;
+        }
     }
 
     public struct PlayerSpawnedEvent : IGameEvent

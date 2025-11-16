@@ -29,7 +29,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private void Init(GameEventManager gameEventManager, IConfigProvider configProvider)
         {
             gameEventManager.Subscribe<TargetShowEvent>(OnTargetShow);
-            gameEventManager.Subscribe<FollowTargetEvent>(OnFollowTarget);
+            gameEventManager.Subscribe<FollowTargetTextEvent>(OnFollowTarget);
             var gameConfig = configProvider.GetConfig<JsonDataConfig>().GameConfig;
 
             Debug.Log("TargetShowOverlay Init");
@@ -48,9 +48,9 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             _followTextParams.ScreenBorderOffset = gameConfig.screenBorderOffset;
         }
 
-        private void OnFollowTarget(FollowTargetEvent followTargetEvent)
+        private void OnFollowTarget(FollowTargetTextEvent followTargetTextEvent)
         {
-            _followTextParams.Target = followTargetEvent.Position;
+            _followTextParams.Target = followTargetTextEvent.Position;
             var go = GameObjectPoolManger.Instance.GetObject(textUI.gameObject);
             go.transform.localPosition = Vector3.zero;
             go.transform.localScale = Vector3.one;

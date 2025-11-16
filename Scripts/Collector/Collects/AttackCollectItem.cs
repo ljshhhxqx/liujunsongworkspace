@@ -16,7 +16,7 @@ namespace HotUpdate.Scripts.Collector.Collects
 
         private void FixedUpdate()
         {
-            if(IsDead || !ServerHandler) return;
+            if(IsDead || !ServerHandler || !IsAttackable) return;
 
             if (!GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, ColliderConfig, _collectedObjects))
             {

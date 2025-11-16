@@ -21,7 +21,7 @@ namespace HotUpdate.Scripts.Collector.Collects
 
         private void FixedUpdate()
         {
-            if (!ServerHandler) 
+            if (!ServerHandler || !IsMoveable) 
                 return;
             // 只在非表面状态下应用模式运动
             if(!_isOnSurface)
@@ -71,7 +71,7 @@ namespace HotUpdate.Scripts.Collector.Collects
                 }
                 
                 _currentDirection = newDirection;
-                _currentVelocity = _currentDirection * _moveInfo.speed;
+                _currentVelocity = _currentDirection * NowSpeed(_moveInfo.speed);
                 _isOnSurface = true;
             }
         }
@@ -122,7 +122,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             Vector3 targetPos = Vector3.Lerp(_patternOrigin, _moveInfo.TargetPosition, pingPong);
             
             _currentDirection = (targetPos - transform.position).normalized;
-            _currentVelocity = _currentDirection * _moveInfo.speed;
+            _currentVelocity = _currentDirection * NowSpeed(_moveInfo.speed);
         }
         
         private void ApplyCircularPattern()
@@ -133,7 +133,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             Vector3 targetPos = _patternOrigin + new Vector3(x, 0, z);
             
             _currentDirection = (targetPos - transform.position).normalized;
-            _currentVelocity = _currentDirection * _moveInfo.speed;
+            _currentVelocity = _currentDirection * NowSpeed(_moveInfo.speed);
         }
         
         private void ApplySinePattern()
@@ -143,7 +143,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             Vector3 targetPos = _patternOrigin + new Vector3(0, y, 0);
             
             _currentDirection = (targetPos - transform.position).normalized;
-            _currentVelocity = _currentDirection * _moveInfo.speed;
+            _currentVelocity = _currentDirection * NowSpeed(_moveInfo.speed);
         }
 
         protected override void OnInitialize()
@@ -158,7 +158,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             
             // 初始方向指向目标
             _currentDirection = (_moveInfo.TargetPosition - _patternOrigin).normalized;
-            _currentVelocity = _currentDirection * _moveInfo.speed;
+            _currentVelocity = _currentDirection * NowSpeed(_moveInfo.speed);
         }
 
         public void Init(MoveInfo moveInfo)

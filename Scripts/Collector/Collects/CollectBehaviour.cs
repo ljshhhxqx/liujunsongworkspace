@@ -1,4 +1,5 @@
 ﻿using System;
+using AOTScripts.Data;
 using AOTScripts.Tool.Coroutine;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Audio;
@@ -6,6 +7,7 @@ using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Effect;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -23,9 +25,21 @@ namespace HotUpdate.Scripts.Collector.Collects
         protected InteractSystem InteractSystem;
         protected bool IsDead;
         protected MaterialTransparencyController[] MaterialTransparencyControllers;
+        protected GameEventManager GameEventManager;
+        [SyncVar] protected int CurrentControlSkillType;
+
+        protected float NowSpeed(float currentSpeed)
+        {
+            return currentSpeed * (CurrentControlSkillType == (int)ControlSkillType.Frozen ? 0.3f : 1f);
+        }
+        
+        protected bool IsMoveable => CurrentControlSkillType != (int)ControlSkillType.Frozen && CurrentControlSkillType != (int)ControlSkillType.Stunned &&
+                    CurrentControlSkillType != (int)ControlSkillType.Stoned;
+        protected bool IsAttackable => CurrentControlSkillType != (int)ControlSkillType.Frozen && CurrentControlSkillType != (int)ControlSkillType.Stunned &&
+                                     CurrentControlSkillType != (int)ControlSkillType.Stoned && CurrentControlSkillType != (int)ControlSkillType.Blinded;
         
         [Inject]
-        private void Init(IConfigProvider configProvider)
+        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)
         {
             MaterialTransparencyControllers = GetComponentsInChildren<MaterialTransparencyController>();
             CollectObjectController = GetComponent<CollectObjectController>();
@@ -35,18 +49,39 @@ namespace HotUpdate.Scripts.Collector.Collects
             InteractSystem = FindObjectOfType<InteractSystem>();
             InteractSystem.SceneItemInfoChanged += OnSceneItemInfoChanged;
             InteractSystem.ItemControlSkillChanged += OnItemControlSkillChanged;
+            GameEventManager = gameEventManager;
+            
             OnInitialize();
         }
 
         private void OnItemControlSkillChanged(uint id, float duration, ControlSkillType skillType)
         {
-            RpcOnItemControlSkillChanged(id, duration, skillType);
+            if (id != netId)
+            {
+                return;
+            }
+            CurrentControlSkillType = (int)skillType;
+            DelayInvoker.DelayInvoke(duration, ReverseControlSkillType);
+            RpcOnItemControlSkillChanged(duration, skillType);
+        }
+
+        private void ReverseControlSkillType()
+        {
+            CurrentControlSkillType = 0;
         }
 
         [ClientRpc]
-        private void RpcOnItemControlSkillChanged(uint id, float duration, ControlSkillType skillType)
+        private void RpcOnItemControlSkillChanged(float duration, ControlSkillType skillType)
         {
             //todo：飘字+特效
+            DelayInvoker.DelayInvoke(duration, StopControlSkillEffect);
+            EffectPlayer.Instance.PlayEffect(ParticlesType.AttackDebuff, transform.position, transform);
+            GameEventManager.Publish(new FollowTargetTextEvent(transform.position, EnumHeaderParser.GetHeader(skillType)));
+        }
+
+        private static void StopControlSkillEffect()
+        {
+            EffectPlayer.Instance.StopEffect(ParticlesType.AttackDebuff);
         }
 
         protected void SetColor(Color color)
