@@ -5,6 +5,8 @@ using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using UnityEngine;
+using ElementGaugeData = HotUpdate.Scripts.Network.State.ElementGaugeData;
+using ElementState = HotUpdate.Scripts.Network.State.ElementState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {

@@ -9,6 +9,7 @@ using Newtonsoft.Json.Converters;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using AnimationState = AOTScripts.Data.AnimationState;
+using PropertyCalculator = HotUpdate.Scripts.Network.State.PropertyCalculator;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
 {

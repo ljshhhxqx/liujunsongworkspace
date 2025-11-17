@@ -21,11 +21,13 @@ using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Network.State;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Player;
 using HotUpdate.Scripts.Skill;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.HotFixSerializeTool;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using HotUpdate.Scripts.UI.UIs.Panel;
@@ -42,8 +44,9 @@ using AnimationState = AOTScripts.Data.AnimationState;
 using InputCommand = AOTScripts.Data.InputCommand;
 using PlayerAnimationCooldownState = AOTScripts.Data.State.PlayerAnimationCooldownState;
 using PlayerGameStateData = AOTScripts.Data.State.PlayerGameStateData;
+using PlayerPredictablePropertyState = HotUpdate.Scripts.Network.State.PlayerPredictablePropertyState;
 using PropertyAutoRecoverCommand = AOTScripts.Data.PropertyAutoRecoverCommand;
-using PropertyCalculator = AOTScripts.Data.State.PropertyCalculator;
+using PropertyCalculator = HotUpdate.Scripts.Network.State.PropertyCalculator;
 using PropertyEnvironmentChangeCommand = AOTScripts.Data.PropertyEnvironmentChangeCommand;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
@@ -572,7 +575,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     break;
                 case SubjectedStateType.IsFrozen:
                     break;
-                case SubjectedStateType.IsElectrified:
+                case SubjectedStateType.IsStoned:
                     break;
                 case SubjectedStateType.IsBlowup:
                     break;
@@ -774,13 +777,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     _rigidbody.velocity = Vector3.zero;
                     _playerPhysicsCalculator.HandlePlayerRoll();
                     break;
-                // case AnimationState.Dead:
-                // case AnimationState.Hit:
-                // case AnimationState.SkillE:
-                // case AnimationState.SkillQ:
-                // case AnimationState.Attack:
-                //     _rigidbody.velocity = Vector3.zero;
-                //     break;
             }
         }
 

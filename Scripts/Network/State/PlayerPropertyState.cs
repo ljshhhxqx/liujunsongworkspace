@@ -3,24 +3,39 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using AOTScripts.Data;
+using AOTScripts.Data.State;
+using HotUpdate.Scripts.Common;
 using JetBrains.Annotations;
 using MemoryPack;
 using UnityEngine;
 
-namespace AOTScripts.Data.State
+namespace HotUpdate.Scripts.Network.State
 {
     [MemoryPackable]
     public partial struct PlayerPredictablePropertyState : ISyncPropertyState
     {
         [MemoryPackOrder(0)] public MemoryDictionary<PropertyTypeEnum, PropertyCalculator> MemoryProperty;
-        [MemoryPackOrder(1)] public SubjectedStateType SubjectedState;
+        [MemoryPackOrder(1)] public SubjectedStateType ControlSkillType;
         [MemoryPackOrder(2)] public PlayerPropertyState PlayerState;
+        public float NowSpeedRatio => ControlSkillType.HasAnyState(SubjectedStateType.IsSlowdown) ? 0.3f : 1f;
+        
+        public float NowSpeed(float currentSpeed)
+        {
+            return currentSpeed * NowSpeedRatio;
+        }
+
+        public bool IsMoveable => !ControlSkillType.HasAnyState(SubjectedStateType.IsCantMoved) && !ControlSkillType.HasAnyState(SubjectedStateType.IsFrozen) && !ControlSkillType.HasAnyState(SubjectedStateType.IsStunned)
+                                  && !ControlSkillType.HasAnyState(SubjectedStateType.IsStoned) && !ControlSkillType.HasAnyState(SubjectedStateType.IsBlowup);
+        public bool IsAttackable => !ControlSkillType.HasAnyState(SubjectedStateType.IsFrozen) && !ControlSkillType.HasAnyState(SubjectedStateType.IsStunned)
+            && !ControlSkillType.HasAnyState(SubjectedStateType.IsStoned) && !ControlSkillType.HasAnyState(SubjectedStateType.IsBlowup) && !ControlSkillType.HasAnyState(SubjectedStateType.IsBlinded);
+
         public PlayerSyncStateType GetStateType() => PlayerSyncStateType.PlayerProperty;
 
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.AppendLine($"SubjectedState: {SubjectedState}");
+            sb.AppendLine($"SubjectedState: {ControlSkillType}");
             sb.AppendLine($"PlayerState: {PlayerState}");
             sb.AppendLine($"MemoryProperty:");
             foreach (var kvp in MemoryProperty)
@@ -552,15 +567,18 @@ namespace AOTScripts.Data.State
     }
 
     [Flags]
-    public enum SubjectedStateType : byte
+    public enum SubjectedStateType
     {
         None = 0,
         IsInvisible = 1 << 0,
         IsFrozen = 1 << 1,
-        IsElectrified = 1 << 2,
+        IsStoned = 1 << 2,
         IsBlowup = 1 << 3,
         IsStunned = 1 << 4,
         IsDead = 1 << 5,
         IsCantMoved = 1 << 6,
+        IsSlowdown = 1 << 7,
+        IsBlinded = 1 << 8,
+        IsCursed = 1 << 9,
     }
 }

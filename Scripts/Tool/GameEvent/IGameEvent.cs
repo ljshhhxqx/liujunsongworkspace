@@ -7,6 +7,7 @@ using HotUpdate.Scripts.Network.UI;
 using Mirror;
 using UI.UIBase;
 using UnityEngine;
+using PlayerPredictablePropertyState = HotUpdate.Scripts.Network.State.PlayerPredictablePropertyState;
 
 namespace HotUpdate.Scripts.Tool.GameEvent
 {

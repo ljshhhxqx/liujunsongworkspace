@@ -54,19 +54,19 @@ namespace HotUpdate.Scripts.Network.UISync
         [Command]
         public void CmdUpdateUI(UISyncDataHeader header, byte[] data, UISyncDataType type)
         {
-            var uiData = ObjectPool<UISyncCommand>.Get();
-            uiData.Header = header;
-            uiData.CommandData = data;
-            uiData.SyncDataType = type;
-            switch (header.SyncMode)
-            {
-                case SyncMode.Immediate:
-                    _immediateQueue.Enqueue(uiData);
-                    break;
-                case SyncMode.Timed:
-                    _timedQueue.Enqueue(uiData);
-                    break;
-            }
+            // var uiData = ObjectPool<UISyncCommand>.Get();
+            // uiData.Header = header;
+            // uiData.CommandData = data;
+            // uiData.SyncDataType = type;
+            // switch (header.SyncMode)
+            // {
+            //     case SyncMode.Immediate:
+            //         _immediateQueue.Enqueue(uiData);
+            //         break;
+            //     case SyncMode.Timed:
+            //         _timedQueue.Enqueue(uiData);
+            //         break;
+            // }
         }
 
         [Server]
@@ -163,12 +163,13 @@ namespace HotUpdate.Scripts.Network.UISync
         public static UISyncCommand CreateUISyncCommand(UISyncDataHeader header, IUISyncCommandData commandData,
             UISyncDataType type)
         {
-            var uiData = ObjectPool<UISyncCommand>.Get();
-            var data = MemoryPackSerializer.Serialize(commandData);
-            uiData.Header = header;
-            uiData.CommandData = data;
-            uiData.SyncDataType = type;
-            return uiData;
+            // var uiData = ObjectPool<UISyncCommand>.Get();
+            // var data = MemoryPackSerializer.Serialize(commandData);
+            // uiData.Header = header;
+            // uiData.CommandData = data;
+            // uiData.SyncDataType = type;
+            // return uiData;
+            return new UISyncCommand();
         }
 
         public static byte[] Serialize<T>(T data) where T : IUIData

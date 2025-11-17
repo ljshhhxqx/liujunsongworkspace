@@ -12,6 +12,7 @@ using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using Mirror;
 using Newtonsoft.Json;
 using UnityEngine;
+using PropertyCalculator = HotUpdate.Scripts.Network.State.PropertyCalculator;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {

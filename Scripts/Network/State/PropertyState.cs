@@ -12,7 +12,7 @@ namespace AOTScripts.Data.State
     [MemoryPackUnion(0, typeof(PlayerEquipmentState))]
     [MemoryPackUnion(1, typeof(PlayerItemState))]
     [MemoryPackUnion(2, typeof(PlayerInputState))]
-    [MemoryPackUnion(3, typeof(PlayerPredictablePropertyState))]
+    [MemoryPackUnion(3, typeof(HotUpdate.Scripts.Network.State.PlayerPredictablePropertyState))]
     [MemoryPackUnion(4, typeof(PlayerShopState))]
     [MemoryPackUnion(5, typeof(PlayerSkillState))]
     public partial interface ISyncPropertyState

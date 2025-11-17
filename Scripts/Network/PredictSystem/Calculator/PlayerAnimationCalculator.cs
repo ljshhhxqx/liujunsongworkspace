@@ -6,6 +6,7 @@ using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using UnityEngine;
 using AnimationInfo = HotUpdate.Scripts.Config.ArrayConfig.AnimationInfo;
 using AnimationState = AOTScripts.Data.AnimationState;

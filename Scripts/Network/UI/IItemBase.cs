@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using AOTScripts.Data;
 using AOTScripts.Tool.ObjectPool;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using UnityEngine;
 using AnimationState = AOTScripts.Data.AnimationState;
 

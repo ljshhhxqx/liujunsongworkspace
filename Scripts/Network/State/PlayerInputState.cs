@@ -1,4 +1,5 @@
 ﻿using AOTScripts.Tool.ObjectPool;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using MemoryPack;
 using UnityEngine;
 using CooldownSnapshotData = AOTScripts.Data.State.CooldownSnapshotData;

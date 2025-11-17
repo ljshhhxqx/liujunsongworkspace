@@ -1,6 +1,7 @@
 ﻿using System;
 using AOTScripts.Data;
 using AOTScripts.Tool.ObjectPool;
+using HotUpdate.Scripts.Tool.ObjectPool;
 
 namespace HotUpdate.Scripts.Network.UI
 {

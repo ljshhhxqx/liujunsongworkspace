@@ -5,14 +5,15 @@ using System.Linq;
 using AOTScripts.Data;
 using AOTScripts.Data.State;
 using AOTScripts.Tool;
+using AOTScripts.Tool.Coroutine;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
-using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Network.State;
 using HotUpdate.Scripts.Tool.GameEvent;
 using MemoryPack;
 using Mirror;
@@ -20,11 +21,11 @@ using UnityEngine;
 using VContainer;
 using AnimationState = AOTScripts.Data.AnimationState;
 using INetworkCommand = AOTScripts.Data.INetworkCommand;
-using Object = UnityEngine.Object;
+using PlayerPredictablePropertyState = HotUpdate.Scripts.Network.State.PlayerPredictablePropertyState;
 using PropertyAttackCommand = AOTScripts.Data.PropertyAttackCommand;
 using PropertyAutoRecoverCommand = AOTScripts.Data.PropertyAutoRecoverCommand;
 using PropertyBuffCommand = AOTScripts.Data.PropertyBuffCommand;
-using PropertyCalculator = AOTScripts.Data.State.PropertyCalculator;
+using PropertyCalculator = HotUpdate.Scripts.Network.State.PropertyCalculator;
 using PropertyClientAnimationCommand = AOTScripts.Data.PropertyClientAnimationCommand;
 using PropertyEnvironmentChangeCommand = AOTScripts.Data.PropertyEnvironmentChangeCommand;
 using PropertyServerAnimationCommand = AOTScripts.Data.PropertyServerAnimationCommand;
@@ -616,11 +617,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerState = GetState<PlayerPredictablePropertyState>(headerConnectionId);
             if (isInvincible)
             {
-                playerState.SubjectedState = playerState.SubjectedState.AddState(SubjectedStateType.IsInvisible);
+                playerState.ControlSkillType = playerState.ControlSkillType.AddState(SubjectedStateType.IsInvisible);
             }
             else
             {
-                playerState.SubjectedState = playerState.SubjectedState.RemoveState(SubjectedStateType.IsInvisible);
+                playerState.ControlSkillType = playerState.ControlSkillType.RemoveState(SubjectedStateType.IsInvisible);
             }
             PropertyStates[headerConnectionId] = playerState;
             PropertyChange(headerConnectionId);
@@ -1045,7 +1046,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerConnection = _playerInGameManager.GetPlayerId(playerId);
             var playerController = GameSyncManager.GetPlayerConnection(playerConnection);
             var playerState = GetState<PlayerPredictablePropertyState>(playerConnection);
-            playerState.SubjectedState = playerState.SubjectedState.AddState(SubjectedStateType.IsDead);
+            playerState.ControlSkillType = playerState.ControlSkillType.AddState(SubjectedStateType.IsDead);
             playerState = playerController.HandlePlayerDie(playerState, countdownTime);
             GameSyncManager.EnqueueServerCommand(new PlayerDeathCommand
             {
@@ -1062,7 +1063,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerConnection = _playerInGameManager.GetPlayerId(playerId);
             var playerState = GetState<PlayerPredictablePropertyState>(playerConnection);
-            playerState.SubjectedState = playerState.SubjectedState.RemoveState(SubjectedStateType.IsDead);
+            playerState.ControlSkillType = playerState.ControlSkillType.RemoveState(SubjectedStateType.IsDead);
             var playerController = GameSyncManager.GetPlayerConnection(playerConnection);
             playerState = playerController.HandlePlayerRespawn(playerState);
             GameSyncManager.EnqueueServerCommand(new PlayerRebornCommand
@@ -1132,7 +1133,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             if (playerId != -1)
             {
                 var hitPlayerState = GetState<PlayerPredictablePropertyState>(playerId);
-                if(!isAlly && skillHitExtraEffectData.effectProperty == PropertyTypeEnum.Health && hitPlayerState.SubjectedState == SubjectedStateType.IsInvisible)
+                if(!isAlly && skillHitExtraEffectData.effectProperty == PropertyTypeEnum.Health && hitPlayerState.ControlSkillType.HasAnyState(SubjectedStateType.IsInvisible))
                     return;
                 var propertyCalculator = hitPlayerState.MemoryProperty[skillHitExtraEffectData.effectProperty];
                 var playerCalculator = playerState.MemoryProperty[skillHitExtraEffectData.buffProperty];
@@ -1167,12 +1168,24 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     _skillBuffs = _skillBuffs.Add(data);
                 }
                 hitPlayerState.MemoryProperty[skillHitExtraEffectData.effectProperty] = propertyCalculator;
+                var state = skillHitExtraEffectData.controlSkillType.ToSubjectedStateType();
+                hitPlayerState.ControlSkillType.AddState(state);
+                DelayInvoker.DelayInvoke(skillHitExtraEffectData.duration, () => RevertPlayerState(playerId, state));
                 PropertyStates[playerId] = hitPlayerState;
                 PropertyChange(playerId);
                 HandlePlayerControl(playerId, skillHitExtraEffectData.controlSkillType);
                 return;
             }
             _gameEventManager.Publish(new PlayerSkillItemEvent(attackerId,playerState, skillHitExtraEffectData, hitId));
+        }
+
+        private void RevertPlayerState(int connectionId, SubjectedStateType state)
+        {
+            if (PropertyStates[connectionId] is PlayerPredictablePropertyState propertyState)
+            {
+                propertyState.ControlSkillType = propertyState.ControlSkillType.RemoveState(state);
+                PropertyStates[connectionId] = propertyState;
+            }
         }
 
         private void HandlePlayerControl(int playerId, ControlSkillType controlSkillType)
@@ -1497,5 +1510,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public PropertyTypeEnum PropertyDifferentPropertyType;
         [MemoryPackOrder(9)]
         public float PropertyDifferentValue;
+    }
+
+    public static class SkillHitExtraEffectDataExt
+    {
+        public static SubjectedStateType ToSubjectedStateType(this ControlSkillType controlSkillType)
+        {
+            return controlSkillType switch
+            {
+                ControlSkillType.None => SubjectedStateType.None,
+                ControlSkillType.Stunned => SubjectedStateType.IsStunned,
+                ControlSkillType.Blinded => SubjectedStateType.IsBlinded,
+                ControlSkillType.Cursed => SubjectedStateType.IsCursed,
+                ControlSkillType.Frozen => SubjectedStateType.IsFrozen,
+                ControlSkillType.Slowdown => SubjectedStateType.IsSlowdown,
+                ControlSkillType.Stoned => SubjectedStateType.IsStoned,
+                _ => 0
+            };
+        }
     }
 }

@@ -6,6 +6,7 @@ using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Game.Map;
 using UnityEngine;
 using AnimationState = AOTScripts.Data.AnimationState;
+using PropertyCalculator = HotUpdate.Scripts.Network.State.PropertyCalculator;
 
 namespace HotUpdate.Scripts.Skill
 {

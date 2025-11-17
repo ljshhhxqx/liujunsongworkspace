@@ -22,14 +22,6 @@ namespace HotUpdate.Scripts.Network.UISync
 
         public void SetLocalData(UISyncDataHeader header, byte[] data, UISyncDataType type)
         {
-            var uiSyncCommand = ObjectPool<UISyncCommand>.Get();
-            uiSyncCommand.Header = header;
-            uiSyncCommand.CommandData = data;
-            uiSyncCommand.SyncDataType = type;
-            var uiData = MemoryPackSerializer.Deserialize<IUIData>(data);
-            _localData[type] = uiData;
-            _pendingOperations[header.CommandHeader.CommandId] = uiSyncCommand;
-            PublishData(type, uiData);
         }
         
         // 服务器拒绝时回滚

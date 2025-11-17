@@ -10,6 +10,7 @@ using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Static;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using Mirror;
@@ -195,6 +196,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 _isSimulating = true;
                 if (header.CommandType == CommandType.Input && command is InputCommand inputCommand)
                 {
+                    if (!_propertyPredictionState.CanDoAnimation(inputCommand.CommandAnimationState))
+                    {
+                        Debug.LogWarning($"Cannot perform {inputCommand.CommandAnimationState}. now has {_propertyPredictionState.NowStateType}");
+                        return;
+                    }
                     if (inputCommand.CommandAnimationState is AnimationState.Attack or AnimationState.Jump or AnimationState.SprintJump or AnimationState.Roll or AnimationState.SkillE or AnimationState.SkillQ)
                     {
                         Debug.Log($"[PlayerInputPredictionState] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
@@ -273,7 +279,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     }
 
                     var inputStateData = ObjectPoolManager<PlayerInputStateData>.Instance.Get(50);
-                    inputStateData.InputMovement = inputCommand.InputMovement.ToVector3();
+                    inputStateData.InputMovement = inputCommand.InputMovement.ToVector3() * _propertyPredictionState.NowSpeedRatio;
                     inputStateData.InputAnimations = inputCommand.InputAnimationStates;
                     inputStateData.Command = inputCommand.CommandAnimationState;
                     PlayerComponentController.HandlePlayerSpecialAction(inputStateData.Command);
@@ -300,6 +306,30 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 await UniTask.Delay(TimeSpan.FromSeconds(deltaTime), cancellationToken: token);
                 PlayerComponentController.UpdateAnimation(deltaTime);
             }
+        }
+    }
+
+    public struct PlayerInputStateData : IPoolObject
+    {
+        public Vector3 InputMovement;   // 输入的移动
+        public AnimationState InputAnimations; // 输入指令的动画
+        public AnimationState Command; // 指令
+        public Vector3 Velocity; // 速度
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            InputMovement = Vector3.zero;
+            InputAnimations = AnimationState.None;
+            Command = AnimationState.None;
+            Velocity = Vector3.zero;
+        }
+        
+        public override string ToString()
+        {
+            return $"InputMovement: {InputMovement}, InputAnimations: {InputAnimations}, Command: {Command} , Velocity: {Velocity}";
         }
     }
 }

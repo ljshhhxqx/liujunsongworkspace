@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using AOTScripts.Tool.ObjectPool;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using MemoryPack;
 using UniRx;
 using UnityEngine;

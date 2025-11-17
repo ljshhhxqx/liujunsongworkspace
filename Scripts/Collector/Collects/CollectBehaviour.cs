@@ -3,10 +3,12 @@ using AOTScripts.Data;
 using AOTScripts.Tool.Coroutine;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Audio;
+using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Effect;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using HotUpdate.Scripts.Network.State;
 using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
 using UnityEngine;
@@ -27,16 +29,17 @@ namespace HotUpdate.Scripts.Collector.Collects
         protected MaterialTransparencyController[] MaterialTransparencyControllers;
         protected GameEventManager GameEventManager;
         [SyncVar] protected int CurrentControlSkillType;
+        protected SubjectedStateType CurrentSubjectedStateType => (SubjectedStateType)CurrentControlSkillType;
 
         protected float NowSpeed(float currentSpeed)
         {
-            return currentSpeed * (CurrentControlSkillType == (int)ControlSkillType.Frozen ? 0.3f : 1f);
+            return currentSpeed * (CurrentSubjectedStateType.HasAnyState(SubjectedStateType.IsSlowdown)  ? 0.3f : 1f);
         }
-        
-        protected bool IsMoveable => CurrentControlSkillType != (int)ControlSkillType.Frozen && CurrentControlSkillType != (int)ControlSkillType.Stunned &&
-                    CurrentControlSkillType != (int)ControlSkillType.Stoned;
-        protected bool IsAttackable => CurrentControlSkillType != (int)ControlSkillType.Frozen && CurrentControlSkillType != (int)ControlSkillType.Stunned &&
-                                     CurrentControlSkillType != (int)ControlSkillType.Stoned && CurrentControlSkillType != (int)ControlSkillType.Blinded;
+
+        protected bool IsMoveable => !CurrentSubjectedStateType.HasAnyState(SubjectedStateType.IsFrozen) && !CurrentSubjectedStateType.HasAnyState(SubjectedStateType.IsStunned)
+                                 && !CurrentSubjectedStateType.HasAnyState(SubjectedStateType.IsStoned) && !CurrentSubjectedStateType.HasAnyState(SubjectedStateType.IsBlowup);
+        protected bool IsAttackable => !CurrentSubjectedStateType.HasAnyState(SubjectedStateType.IsFrozen) && !CurrentSubjectedStateType.HasAnyState(SubjectedStateType.IsStunned)
+            && !CurrentSubjectedStateType.HasAnyState(SubjectedStateType.IsStoned) && !CurrentSubjectedStateType.HasAnyState(SubjectedStateType.IsBlowup) && !CurrentSubjectedStateType.HasAnyState(SubjectedStateType.IsBlinded);
         
         [Inject]
         private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)

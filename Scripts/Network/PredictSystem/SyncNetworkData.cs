@@ -7,6 +7,7 @@ using System.Threading;
 using AOTScripts.Data.State;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Tool.HotFixSerializeTool;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using MemoryPack;
 using Mirror;
 using UnityEngine;
@@ -14,7 +15,7 @@ using ISyncPropertyState = AOTScripts.Data.State.ISyncPropertyState;
 using PlayerEquipmentState = AOTScripts.Data.State.PlayerEquipmentState;
 using PlayerInputState = AOTScripts.Data.State.PlayerInputState;
 using PlayerItemState = AOTScripts.Data.State.PlayerItemState;
-using PlayerPredictablePropertyState = AOTScripts.Data.State.PlayerPredictablePropertyState;
+using PlayerPredictablePropertyState = HotUpdate.Scripts.Network.State.PlayerPredictablePropertyState;
 using PlayerShopState = AOTScripts.Data.State.PlayerShopState;
 using PlayerSkillState = AOTScripts.Data.State.PlayerSkillState;
 

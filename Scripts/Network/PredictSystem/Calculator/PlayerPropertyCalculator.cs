@@ -5,9 +5,11 @@ using AOTScripts.Data.State;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.State;
 using UnityEngine;
 using AnimationState = AOTScripts.Data.AnimationState;
-using PropertyCalculator = AOTScripts.Data.State.PropertyCalculator;
+using PlayerPredictablePropertyState = HotUpdate.Scripts.Network.State.PlayerPredictablePropertyState;
+using PropertyCalculator = HotUpdate.Scripts.Network.State.PropertyCalculator;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {
@@ -123,7 +125,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 resultData.DamageCastType = DamageCastType.NormalAttack;
                 resultData.DamageRatio = 0;
                 resultData.IsDead = false;
-                if (defenderPropertyState.SubjectedState.HasAnyState(SubjectedStateType.IsInvisible))
+                if (defenderPropertyState.ControlSkillType.HasAnyState(SubjectedStateType.IsInvisible))
                 {
                     Debug.Log($"PlayerConnectionId: {key} is invisible, cannot attack.");
                     resultData.IsDodged = true;

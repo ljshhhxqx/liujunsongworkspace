@@ -8,7 +8,9 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.State;
 using HotUpdate.Scripts.Network.UI;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Tool.ReactiveProperty;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Overlay;
@@ -17,7 +19,8 @@ using UnityEngine;
 using VContainer;
 using AnimationState = AOTScripts.Data.AnimationState;
 using INetworkCommand = AOTScripts.Data.INetworkCommand;
-using PropertyCalculator = AOTScripts.Data.State.PropertyCalculator;
+using PlayerPredictablePropertyState = HotUpdate.Scripts.Network.State.PlayerPredictablePropertyState;
+using PropertyCalculator = HotUpdate.Scripts.Network.State.PropertyCalculator;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {
@@ -40,7 +43,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         protected override CommandType CommandType => CommandType.Property;
 
+        public bool IsAttackable => PlayerPredictablePropertyState.IsAttackable;
+        public bool IsMovable => PlayerPredictablePropertyState.IsMoveable;
+        public float NowSpeedRatio => PlayerPredictablePropertyState.NowSpeedRatio;
         
+        public SubjectedStateType NowStateType => PlayerPredictablePropertyState.ControlSkillType;
+
+        public bool CanDoAnimation(AnimationState animationState)
+        {
+            if (animationState == AnimationState.Move || animationState == AnimationState.Sprint)
+            {
+                return IsMovable;
+            }
+            if (animationState == AnimationState.Attack)
+            {
+                return IsAttackable;
+            }
+            return true;
+        
+        }
+
         [Inject]
         protected void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider, UIManager uiManager)
         {
@@ -224,7 +246,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 Debug.LogError($"PropertyChanged {predictablePropertyState.ToString()} {!NetworkIdentity.isLocalPlayer} is not a player or is dead {_isDead}");
                 return;
             }
-            if (!_isDead && !_subjectedStateType.HasAnyState(SubjectedStateType.IsDead) && predictablePropertyState.SubjectedState.HasAnyState(SubjectedStateType.IsDead))
+            if (!_isDead && !_subjectedStateType.HasAnyState(SubjectedStateType.IsDead) && predictablePropertyState.ControlSkillType.HasAnyState(SubjectedStateType.IsDead))
             {
                 var countDown = _jsonDataConfig.GameConfig.GetPlayerDeathTime((int)predictablePropertyState.MemoryProperty[PropertyTypeEnum.Score].CurrentValue);
                 OnPlayerDead?.Invoke(countDown);
@@ -232,12 +254,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 _isDead = true;
                 return;
             }
-            else if (_subjectedStateType.HasAnyState(SubjectedStateType.IsDead) && !predictablePropertyState.SubjectedState.HasAnyState(SubjectedStateType.IsDead))
+            else if (_subjectedStateType.HasAnyState(SubjectedStateType.IsDead) && !predictablePropertyState.ControlSkillType.HasAnyState(SubjectedStateType.IsDead))
             {
                 OnPlayerRespawned?.Invoke();
             }
-            _subjectedStateType = predictablePropertyState.SubjectedState;
-            OnStateChanged?.Invoke(predictablePropertyState.SubjectedState);
+            _subjectedStateType = _subjectedStateType.AddState(predictablePropertyState.ControlSkillType);
+            OnStateChanged?.Invoke(predictablePropertyState.ControlSkillType);
             var goldData = ObjectPoolManager<ValuePropertyData>.Instance.Get(15);
             var uiPropertyData = UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_propertyBindKey);
             foreach (var kvp in predictablePropertyState.MemoryProperty)
