@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using AOTScripts.Data;
 using AOTScripts.Data.State;
 using AOTScripts.Tool;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.UI;
 using Mirror;
 using UI.UIBase;
@@ -193,6 +194,20 @@ namespace HotUpdate.Scripts.Tool.GameEvent
     
     public struct PlayerUnListenMessageEvent : IGameEvent
     {
+    }
+
+    public struct ItemSpawnedEvent : IGameEvent
+    {
+        public uint ItemId { get; private set; }
+        public Vector3 Position { get; private set; }
+        public SceneItemInfo SceneItemInfo { get; private set; }
+        
+        public ItemSpawnedEvent(uint itemId, Vector3 position, SceneItemInfo sceneItemInfo)
+        {
+            ItemId = itemId;
+            Position = position;
+            SceneItemInfo = sceneItemInfo;
+        }
     }
 
     public struct FollowTargetTextEvent : IGameEvent

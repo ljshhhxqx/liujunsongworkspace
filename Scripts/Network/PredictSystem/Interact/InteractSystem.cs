@@ -17,7 +17,6 @@ using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using Mirror;
 using UnityEngine;
-using UnityEngine.Serialization;
 using VContainer;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Interact
@@ -63,6 +62,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             _gameEventManager.Subscribe<GameStartEvent>(OnGameStart);
             _gameEventManager.Subscribe<PlayerAttackItemEvent>(OnPlayerAttackItem);
             _gameEventManager.Subscribe<PlayerSkillItemEvent>(OnSkillItem);
+            _gameEventManager.Subscribe<ItemSpawnedEvent>(OnItemSpawned);
+        }
+
+        private void OnItemSpawned(ItemSpawnedEvent itemSpawnedEvent)
+        {
+            if (_sceneItems.TryGetValue(itemSpawnedEvent.ItemId, out var sceneItemInfo))
+            {
+                sceneItemInfo.health = Mathf.Max(sceneItemInfo.health, itemSpawnedEvent.SceneItemInfo.health);
+                sceneItemInfo.defense = Mathf.Max(sceneItemInfo.defense, itemSpawnedEvent.SceneItemInfo.defense);
+                sceneItemInfo.speed = Mathf.Max(sceneItemInfo.speed, itemSpawnedEvent.SceneItemInfo.speed);
+                sceneItemInfo.attackDamage = Mathf.Max(sceneItemInfo.attackDamage, itemSpawnedEvent.SceneItemInfo.attackDamage);
+                sceneItemInfo.attackRange = Mathf.Max(sceneItemInfo.attackRange, itemSpawnedEvent.SceneItemInfo.attackRange);
+                sceneItemInfo.attackInterval = Mathf.Max(sceneItemInfo.attackInterval, itemSpawnedEvent.SceneItemInfo.attackInterval);
+                sceneItemInfo.maxHealth = Mathf.Max(sceneItemInfo.maxHealth, itemSpawnedEvent.SceneItemInfo.maxHealth);
+            }
         }
 
         private void OnSkillItem(PlayerSkillItemEvent playerSkillItemEvent)
@@ -358,6 +372,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             switch (request.InteractionType)
             {
                 case InteractionType.PickupItem:
+                    if (!IsItemCanPickup(request.SceneItemId))
+                    {
+                        Debug.LogError($"Can't pickup item {request.SceneItemId}");
+                        return;
+                    }
                     _itemsSpawnerManager.PickerPickupItem(playerNetId, request.SceneItemId);
                     break;
                 case InteractionType.PickupChest:
@@ -431,8 +450,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         public float maxHealth;
         public float attackInterval;
         public float attackRange;
-        public float attackDamage;
-        [FormerlySerializedAs("defenSe")] [FormerlySerializedAs("defence")] public float defense;
+        public float attackDamage; 
+        public float defense;
         public float speed;
     }
 

@@ -68,8 +68,8 @@ MonoBehaviour:
         max: 1.75
       bulletSpeedRange:
         isPercent: 0
-        min: 5
-        max: 15
+        min: 20
+        max: 50
       bulletLifeTimeRange:
         isPercent: 0
         min: 1

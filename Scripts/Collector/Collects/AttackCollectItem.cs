@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
 using UnityEngine;
 
@@ -11,12 +12,12 @@ namespace HotUpdate.Scripts.Collector.Collects
         [SyncVar]
         private AttackInfo _attackInfo;
         
-        private float _lastAttackTime;
+        private float _nextAttackTime;
         private readonly HashSet<DynamicObjectData> _collectedObjects = new HashSet<DynamicObjectData>();
 
         private void FixedUpdate()
         {
-            if(IsDead || !ServerHandler || !IsAttackable) return;
+            if(IsDead || !ServerHandler || !IsAttackable || Time.time < _nextAttackTime) return;
 
             if (!GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, ColliderConfig, _collectedObjects))
             {
@@ -24,14 +25,12 @@ namespace HotUpdate.Scripts.Collector.Collects
             }
             foreach (var target in _collectedObjects)
             {
-                if(target.Type == ObjectType.Collectable || target.Type == ObjectType.Player)
+                if (target.Type == ObjectType.Collectable || target.Type == ObjectType.Player)
                 {
-                    if (Time.time >= _lastAttackTime + _attackInfo.attackCooldown)
-                    {
-                        var direction = (target.Position - transform.position).normalized;
-                        Attack(direction, target.NetId);
-                        _lastAttackTime = Time.time;
-                    }
+                    var direction = (target.Position - transform.position).normalized;
+                    Attack(direction, target.NetId);
+                    _nextAttackTime = Time.time + _attackInfo.attackCooldown;
+                    break;
                 }
             }
         }
@@ -49,7 +48,6 @@ namespace HotUpdate.Scripts.Collector.Collects
                     Speed = _attackInfo.speed,
                     LifeTime = _attackInfo.lifeTime,
                     StartPosition = transform.position,
-                    
                     Spawner = netId,
                     CriticalRate = _attackInfo.criticalRate,
                     CriticalDamageRatio = _attackInfo.criticalDamage,
@@ -71,8 +69,20 @@ namespace HotUpdate.Scripts.Collector.Collects
         public void Init(AttackInfo info)
         {
             _attackInfo = info;
-            _lastAttackTime = Time.time;
-            
+            _nextAttackTime = Time.time;
+            if (ServerHandler)
+            {
+                GameEventManager.Publish(new ItemSpawnedEvent(netId, transform.position, new SceneItemInfo
+                {
+                    health = _attackInfo.health,
+                    attackDamage = _attackInfo.damage,
+                    defense = _attackInfo.defense,
+                    sceneItemId = netId,
+                    attackRange = _attackInfo.attackRange,
+                    attackInterval = _attackInfo.attackCooldown,
+                    maxHealth = _attackInfo.health,
+                }));
+            }
         }
 
         protected override void OnInitialize()
@@ -86,7 +96,7 @@ namespace HotUpdate.Scripts.Collector.Collects
 
         public void OnSelfDespawn()
         {
-            _lastAttackTime = 0;
+            _nextAttackTime = 0;
             _attackInfo = default;
             _collectedObjects.Clear();
         }

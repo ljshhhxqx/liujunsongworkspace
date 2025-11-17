@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using HotUpdate.Scripts.Game.Map;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
 using UnityEngine;
 
@@ -164,6 +166,15 @@ namespace HotUpdate.Scripts.Collector.Collects
         public void Init(MoveInfo moveInfo)
         {
             _moveInfo = moveInfo;
+            if (ServerHandler)
+            {
+                GameEventManager.Publish(new ItemSpawnedEvent(netId, transform.position, new SceneItemInfo
+                {
+                    health = 1,
+                    sceneItemId = netId,
+                    speed = _moveInfo.speed,
+                }));
+            }
         }
 
         public void OnSelfDespawn()

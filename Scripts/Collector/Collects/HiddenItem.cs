@@ -1,4 +1,6 @@
 ﻿using DG.Tweening;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
 using UnityEngine;
 
@@ -34,6 +36,15 @@ namespace HotUpdate.Scripts.Collector.Collects
         public void Init(HiddenItemData hiddenItemData)
         {
             _hiddenItemData = hiddenItemData;
+            
+            if (ServerHandler)
+            {
+                GameEventManager.Publish(new ItemSpawnedEvent(netId, transform.position, new SceneItemInfo
+                {
+                    health = 1,
+                    sceneItemId = netId,
+                }));
+            }
             switch (hiddenItemData.hideType)
             {
                 case HideType.Inactive:
