@@ -54,6 +54,8 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             var go = GameObjectPoolManger.Instance.GetObject(textUI.gameObject);
             go.transform.localPosition = Vector3.zero;
             go.transform.localScale = Vector3.one;
+            var text = go.GetComponent<TextMeshProUGUI>();
+            text.text = followTargetTextEvent.Text;
             _followTextParams.IndicatorUI = go.GetComponent<RectTransform>();
             var canvasGroup = go.GetComponent<CanvasGroup>();
             canvasGroup.alpha = 1f;

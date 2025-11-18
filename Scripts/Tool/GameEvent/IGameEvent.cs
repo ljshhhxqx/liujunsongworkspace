@@ -86,7 +86,30 @@ namespace HotUpdate.Scripts.Tool.GameEvent
             GameInfo = gameInfo;
         }
     }
-    
+    public struct PlayerDieEvent : IGameEvent
+    {
+        public uint PlayerId { get; private set; }
+        public Vector3 Position { get; private set; }
+
+        public PlayerDieEvent(uint playerId, Vector3 position)
+        {
+            PlayerId = playerId;
+            Position = position;
+        }
+    }
+
+    public struct StartGameTrainEvent : IGameEvent
+    {
+        public float MoveDuration { get; private set; }
+        public int RandomSeed { get; private set; }
+
+        public StartGameTrainEvent(float moveDuration, int randomSeed)
+        {
+            MoveDuration = moveDuration;
+            RandomSeed = randomSeed;
+        }
+    }
+
     public struct GameStartEvent : IGameEvent
     {
         // public GameInfo GameInfo { get; private set; }

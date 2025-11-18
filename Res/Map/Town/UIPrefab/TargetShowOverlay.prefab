@@ -152,7 +152,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4407722629294213524
 RectTransform:
   m_ObjectHideFlags: 0
@@ -355,6 +355,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   indicatorUI: {fileID: 5317390678637167665}
   distanceText: {fileID: 3753617063964520683}
+  textUI: {fileID: 4407722629294213524}
 --- !u!1 &8199576978585037834
 GameObject:
   m_ObjectHideFlags: 0

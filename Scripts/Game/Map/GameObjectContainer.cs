@@ -248,7 +248,8 @@ namespace HotUpdate.Scripts.Game.Map
         Player,
         Collectable,
         Bullet,
-        Chest
+        Chest,
+        Train,
     }
 
     public class DynamicObjectData
