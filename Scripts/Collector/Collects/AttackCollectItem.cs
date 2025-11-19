@@ -19,22 +19,22 @@ namespace HotUpdate.Scripts.Collector.Collects
         {
             if(IsDead || !ServerHandler || !IsAttackable || Time.time < _nextAttackTime) return;
 
-            if (!GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, ColliderConfig, _collectedObjects))
-            {
-                return;
-            }
-            foreach (var target in _collectedObjects)
-            {
-                if (target.Type == ObjectType.Collectable || target.Type == ObjectType.Player)
-                {
-                    var direction = (target.Position - transform.position).normalized;
-                    Attack(direction, target.NetId);
-                    _nextAttackTime = Time.time + _attackInfo.attackCooldown;
-                    break;
-                }
-            }
+            GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, ColliderConfig,
+                _collectedObjects, OnInteract);
         }
-        
+
+        private bool OnInteract(DynamicObjectData target)
+        {
+            if (target.Type == ObjectType.Collectable || target.Type == ObjectType.Player)
+            {
+                var direction = (target.Position - transform.position).normalized;
+                Attack(direction, target.NetId);
+                _nextAttackTime = Time.time + _attackInfo.attackCooldown;
+                return true;
+            }
+            return false;
+        }
+
         private void Attack(Vector3 direction, uint targetNetId)
         {
             if (_attackInfo.isRemoteAttack)

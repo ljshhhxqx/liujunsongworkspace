@@ -8,6 +8,7 @@ using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Buff;
 using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.Data;
@@ -46,6 +47,7 @@ namespace HotUpdate.Scripts.Game
         private GameSyncManager _gameSyncManager;
         private JsonDataConfig _jsonDataConfig;
         private ItemsSpawnerManager _itemsSpawnerManager;
+        private MapConfig _mapConfig;
         private GameInfo _gameInfo;
         private MessageCenter _messageCenter;
         private MirrorNetworkMessageHandler _messageHandler;
@@ -128,6 +130,7 @@ namespace HotUpdate.Scripts.Game
             _weatherManager = FindObjectOfType<WeatherManager>();
             _gameSyncManager = FindObjectOfType<GameSyncManager>();
             _roundInterval = _jsonDataConfig.GameConfig.roundInterval;
+            _mapConfig = configProvider.GetConfig<MapConfig>();
             Debug.Log($"GameLoopController Init");
             RegisterMessage();
         }
@@ -174,6 +177,7 @@ namespace HotUpdate.Scripts.Game
                 TimeLimit = _gameInfo.GameScore,
                 IsStartGame = true
             };
+            GameLoopDataModel.MapConfig.Value = _mapConfig.GetMapConfigData(message.mapType);
         }
 
         private void OnGameReady(GameReadyEvent gameReadyEvent)

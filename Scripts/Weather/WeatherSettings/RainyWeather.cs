@@ -1,8 +1,6 @@
-using System;
 using DG.Tweening;
-using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
-using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Data;
 using UniRx;
 using UnityEngine;
 
@@ -24,9 +22,12 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
         {
             var mainModule = rainParticles.main;
             var emission =  rainParticles.emission;
+            var shape = rainParticles.shape;
+            shape.scale *= GameLoopDataModel.MapConfig.Value.mapSize;
             _originalRainSnowSetting = new RainSnowSetting
             {
                 emissionRate = emission.rateOverTime,
+                
                 size = mainModule.startSize,
                 speed = mainModule.startSpeed,
             };
@@ -69,6 +70,8 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
         private void OnDestroy()
         {
             rainCoverMaterial.SetFloat(Shader.PropertyToID("_Wetness"), 0);
+            var shape = rainParticles.shape;
+            shape.scale /= GameLoopDataModel.MapConfig.Value.mapSize;
         }
     }
 }

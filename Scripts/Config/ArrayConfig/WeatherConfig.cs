@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using AOTScripts.Data;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -35,7 +36,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             return default;
         }
 
-        public WeatherData GetRandomWeatherData()
+        public WeatherData GetRandomWeatherData(List<WeatherType> weatherTypes)
         {
             if (weatherData.Count == 0)
             {
@@ -43,9 +44,10 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 return GetWeatherData(WeatherType.Sunny); // 默认返回晴天
             }
 
+            var data = weatherData.Where(w => weatherTypes.Contains(w.weatherType)).ToList();
             // 计算总概率
             var totalProbability = 0f;
-            foreach (var wp in weatherData)
+            foreach (var wp in data)
             {
                 totalProbability += wp.weatherRatio;
             }
@@ -61,7 +63,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
             // 遍历天气类型，找到随机数落入的概率区间
             var cumulative = 0f;
-            foreach (var wp in weatherData)
+            foreach (var wp in data)
             {
                 cumulative += wp.weatherRatio;
                 if (randomValue <= cumulative)

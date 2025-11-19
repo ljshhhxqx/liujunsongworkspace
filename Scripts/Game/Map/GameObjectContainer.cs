@@ -38,7 +38,8 @@ namespace HotUpdate.Scripts.Game.Map
             return result;
         }
 
-        public bool DynamicObjectIntersects(uint uid, Vector3 position, IColliderConfig colliderConfig, HashSet<DynamicObjectData> intersectedObjects)
+        public bool DynamicObjectIntersects(uint uid, Vector3 position, IColliderConfig colliderConfig,
+            HashSet<DynamicObjectData> intersectedObjects, Func<DynamicObjectData, bool> onIntersected = null)
         {
             intersectedObjects.Clear();
             var bounds = GamePhysicsSystem.GetWorldBounds(position, colliderConfig);
@@ -65,6 +66,17 @@ namespace HotUpdate.Scripts.Game.Map
                         {
                             intersectedObjects.Add(data.Value);
                         }
+                    }
+                }
+            }
+
+            if (intersectedObjects.Count > 0 && onIntersected != null)
+            {
+                foreach (var data in intersectedObjects)
+                {
+                    if (onIntersected.Invoke(data))
+                    {
+                        break;
                     }
                 }
             }
@@ -250,6 +262,7 @@ namespace HotUpdate.Scripts.Game.Map
         Bullet,
         Chest,
         Train,
+        Well
     }
 
     public class DynamicObjectData

@@ -8,6 +8,7 @@ using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
 using HotUpdate.Scripts.UI.UIBase;
@@ -40,6 +41,7 @@ namespace HotUpdate.Scripts.Weather
         private GameEventManager _gameEventManager;
         private JsonDataConfig _jsonDataConfig;
         private WeatherConfig _weatherConfig;
+        private MapConfig _mapConfig;
         private readonly List<WeatherSetting> _weatherPrefabs = new List<WeatherSetting>();
         private List<GameObject> _weatherEffectPrefabs = new List<GameObject>();
         private WeatherSetting _currentWeatherSetting;
@@ -137,7 +139,8 @@ namespace HotUpdate.Scripts.Weather
         private void RandomWeather()
         {
             _enableLightning?.Dispose();
-            var randomWeather = _weatherConfig.GetRandomWeatherData();
+            var mapData =_mapConfig.GetMapConfigData(GameLoopDataModel.GameSceneName.Value);
+            var randomWeather = _weatherConfig.GetRandomWeatherData(mapData.availableWeather);
             var weatherEffectData = GetWeatherEffectData(randomWeather);
 
             if (weatherEffectData.enableThunder)

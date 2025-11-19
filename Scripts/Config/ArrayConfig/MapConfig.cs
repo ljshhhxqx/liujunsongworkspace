@@ -74,5 +74,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public int maxPlayer;
         public int minPlayer;
         public List<WeatherType> availableWeather;
+        public float mapSize;
     }
 }

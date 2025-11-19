@@ -2,11 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using AOTScripts.Tool;
+using AOTScripts.Tool.ObjectPool;
 using DG.Tweening;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Tool.GameEvent;
+using Mirror;
 using UnityEngine;
 using VContainer;
 using Random = UnityEngine.Random;
@@ -33,14 +35,17 @@ namespace HotUpdate.Scripts.Game.GamePlay
         private List<SmokeConfig> smokeConfigs = new List<SmokeConfig>();
 
         [SerializeField] private Collider deathCollider;
+        [SerializeField] private Collider rocketCollider;
         private IColliderConfig _colliderConfig;
+        private IColliderConfig _rocketColliderConfig;
         [Header("烟雾强度设置")]
         [SerializeField]
         private AnimationCurve smokeIntensityCurve = AnimationCurve.Linear(0, 1, 1, 1);
     
         // DOTween相关
         private Sequence _trainSequence;
-        private bool isMovingToTarget = true;
+        [SerializeField]
+        private ObjectType type;
     
         // 烟雾管理
         private List<GameObject> _activeSmokeParticles = new List<GameObject>();
@@ -56,7 +61,11 @@ namespace HotUpdate.Scripts.Game.GamePlay
             _gameEventManager.Subscribe<StartGameTrainEvent>(OnStartTrain);
             _origin = _targets.RandomSelect();
             _colliderConfig = GamePhysicsSystem.CreateColliderConfig(deathCollider);
-            //GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _colliderConfig, ObjectType.Train, gameObject.layer, gameObject.tag);
+            if (rocketCollider)
+            {
+                _rocketColliderConfig = GamePhysicsSystem.CreateColliderConfig(rocketCollider);
+            }
+            GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _colliderConfig, type, gameObject.layer, gameObject.tag);
         }
 
         private void FixedUpdate()
@@ -66,16 +75,22 @@ namespace HotUpdate.Scripts.Game.GamePlay
                 return;
             }
 
-            if (GameObjectContainer.Instance.DynamicObjectIntersects(netId, deathCollider.transform.position, _colliderConfig, _dynamicObjects))
+            GameObjectContainer.Instance.DynamicObjectIntersects(netId, deathCollider.transform.position, _colliderConfig, _dynamicObjects,
+                OnIntersect);
+            if (_rocketColliderConfig != null)
             {
-                foreach (var dynamicObject in _dynamicObjects)
-                {
-                    if (dynamicObject.Type == ObjectType.Player)
-                    {
-                        _gameEventManager.Publish(new PlayerDieEvent(dynamicObject.NetId, dynamicObject.Position));
-                    }
-                }
+                GameObjectContainer.Instance.DynamicObjectIntersects(netId, rocketCollider.transform.position, _rocketColliderConfig, _dynamicObjects,
+                    OnIntersect);
             }
+        }
+
+        private bool OnIntersect(DynamicObjectData dynamicObject)
+        {
+            if (dynamicObject.Type == ObjectType.Player)
+            {
+                _gameEventManager.Publish(new PlayerTouchTrafficEvent(dynamicObject.NetId, dynamicObject.Position, type));
+            }
+            return false;
         }
 
         private void OnStartTrain(StartGameTrainEvent startEvent)
@@ -110,7 +125,6 @@ namespace HotUpdate.Scripts.Game.GamePlay
         
             // 移动到目标点
             _trainSequence.AppendCallback(() => {
-                isMovingToTarget = true;
                 SetTrainVisible(true);
                 StartWheelRotation();
                 StartSmokeEmission();
@@ -118,7 +132,6 @@ namespace HotUpdate.Scripts.Game.GamePlay
         
             _trainSequence.Append(transform.DOMove(_target, movementDuration)
                 .SetEase(Ease.Linear)
-                .OnUpdate(() => UpdateSmokeIntensity())
                 .OnComplete(() => {
                     StopWheelRotation();
                     StopSmokeEmission();
@@ -137,6 +150,10 @@ namespace HotUpdate.Scripts.Game.GamePlay
     
         void StartWheelRotation()
         {
+            if (wheels.Count == 0)
+            {
+                return;
+            }
             foreach (var wheelConfig in wheels)
             {
                 if (wheelConfig.wheelTransform != null)
@@ -179,19 +196,14 @@ namespace HotUpdate.Scripts.Game.GamePlay
         void StartSmokeEmission()
         {
             // 开始烟雾发射协程
+            
             foreach (var smokeConfig in smokeConfigs)
             {
                 StartCoroutine(SmokeEmissionCoroutine(smokeConfig));
             }
         }
     
-        void StopSmokeEmission()
-        {
-            // 停止所有烟雾发射协程
-            StopAllCoroutines();
-        }
-    
-        IEnumerator SmokeEmissionCoroutine(SmokeConfig config)
+        private IEnumerator SmokeEmissionCoroutine(SmokeConfig config)
         {
             while (true)
             {
@@ -212,11 +224,11 @@ namespace HotUpdate.Scripts.Game.GamePlay
             }
         }
     
-        void EmitSmoke(SmokeConfig config)
+        private void EmitSmoke(SmokeConfig config)
         {
-            if (config.smokePrefab == null || config.emissionPoint == null) return;
+            if (!config.smokePrefab || !config.emissionPoint) return;
         
-            GameObject smoke = Instantiate(config.smokePrefab, 
+            GameObject smoke = NetworkGameObjectPoolManager.Instance.Spawn(config.smokePrefab, 
                 config.emissionPoint.position, 
                 Quaternion.identity);
         
@@ -248,7 +260,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
         
             // 淡出效果（如果有Renderer）
             Renderer r = smoke.GetComponent<Renderer>();
-            if (r != null)
+            if (r)
             {
                 // 假设使用标准材质，可以通过颜色淡出
                 Material material = r.material;
@@ -264,7 +276,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
         
             // 动画完成后销毁对象
             smokeSequence.OnComplete(() => {
-                if (smoke != null)
+                if (smoke)
                 {
                     _activeSmokeParticles.Remove(smoke);
                     Destroy(smoke);
@@ -274,13 +286,29 @@ namespace HotUpdate.Scripts.Game.GamePlay
             smokeSequence.Play();
         }
     
-        void UpdateSmokeIntensity()
+        void StopSmokeEmission()
         {
-            // 这个方法会在移动过程中每帧调用，可以在这里根据移动进度调整烟雾强度
-            // 目前已经在协程中处理，这里可以留空或添加其他效果
+            // 停止所有烟雾发射协程
+            StopAllCoroutines();
         }
-    
+        
         void SetTrainVisible(bool visible)
+        {
+            RpcSetTrainVisible(visible);
+        
+            // 使用DOTween实现淡入淡出效果（如果有需要）
+            // if (visible)
+            // {
+            //     // 可以在这里添加淡入效果
+            // }
+            // else
+            // {
+            //     // 隐藏前可以添加淡出效果
+            // }
+        }
+
+        [ClientRpc]
+        private void RpcSetTrainVisible(bool visible)
         {
             foreach (var carriage in carriages)
             {
@@ -293,18 +321,8 @@ namespace HotUpdate.Scripts.Game.GamePlay
                 if (wheel.wheelTransform != null)
                     wheel.wheelTransform.gameObject.SetActive(visible);
             }
-        
-            // 使用DOTween实现淡入淡出效果（如果有需要）
-            // if (visible)
-            // {
-            //     // 可以在这里添加淡入效果
-            // }
-            // else
-            // {
-            //     // 隐藏前可以添加淡出效果
-            // }
         }
-    
+
         void ResetTrainState()
         {
             foreach (var carriage in carriages)

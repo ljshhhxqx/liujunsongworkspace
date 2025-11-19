@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using AOTScripts.Data;
 using AOTScripts.Data.State;
 using AOTScripts.Tool;
+using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.UI;
 using Mirror;
@@ -23,7 +24,17 @@ namespace HotUpdate.Scripts.Tool.GameEvent
     {
         
     }
-    
+
+    public struct PlayerTouchWellEvent : IGameEvent
+    {
+        public uint PlayerId { get; private set; }
+        
+        public PlayerTouchWellEvent(uint playerId)
+        {
+            PlayerId = playerId;
+        }
+    }
+
     public struct GameMessageListeningEvent : IGameEvent
     {
         
@@ -86,15 +97,17 @@ namespace HotUpdate.Scripts.Tool.GameEvent
             GameInfo = gameInfo;
         }
     }
-    public struct PlayerDieEvent : IGameEvent
+    public struct PlayerTouchTrafficEvent : IGameEvent
     {
         public uint PlayerId { get; private set; }
         public Vector3 Position { get; private set; }
+        public ObjectType ObjectType { get; private set; }
 
-        public PlayerDieEvent(uint playerId, Vector3 position)
+        public PlayerTouchTrafficEvent(uint playerId, Vector3 position, ObjectType objectType)
         {
             PlayerId = playerId;
             Position = position;
+            ObjectType = objectType;
         }
     }
 

@@ -2,6 +2,7 @@
 using DG.Tweening;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Data;
 using UniRx;
 using UnityEngine;
 
@@ -24,6 +25,8 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
         {
             var mainModule = snowParticles.main;
             var emission =  snowParticles.emission;
+            var shape = snowParticles.shape;
+            shape.scale *= GameLoopDataModel.MapConfig.Value.mapSize;
             _originalRainSnowSetting = new RainSnowSetting
             {
                 emissionRate = emission.rateOverTime,
@@ -69,6 +72,8 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
         private void OnDestroy()
         {
             snowCoverMaterial.SetFloat(Shader.PropertyToID("_SnowCoverage"), 0);
+            var shape = snowParticles.shape;
+            shape.scale /= GameLoopDataModel.MapConfig.Value.mapSize;
         }
     }
 }

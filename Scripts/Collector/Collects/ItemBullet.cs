@@ -44,24 +44,13 @@ namespace HotUpdate.Scripts.Collector.Collects
         
         private void FixedUpdate()
         {
-            if (!ServerHandler || _direction == Vector3.zero || _isHandle || GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, _colliderConfig, _hitObjects))
+            if (!ServerHandler || _direction == Vector3.zero || _isHandle)
             {
                 return;
             }
 
-            foreach (var hitObject in _hitObjects)
-            {
-                if (_spawnerId== hitObject.NetId)
-                {
-                    continue;
-                }
-                if (hitObject.Type == ObjectType.Player || hitObject.Type == ObjectType.Collectable && !_isHandle)
-                {
-                    _isHandle = true;
-                    _attackId = hitObject.NetId;
-                    break;
-                }
-            }
+            GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, _colliderConfig,
+                _hitObjects, OnIntersect);
 
             if (_isHandle)
             {
@@ -87,6 +76,22 @@ namespace HotUpdate.Scripts.Collector.Collects
             {
                 NetworkGameObjectPoolManager.Instance.Despawn(gameObject);
             }
+        }
+
+        private bool OnIntersect(DynamicObjectData hitObject)
+        {
+            if (_spawnerId== hitObject.NetId)
+            {
+                return false;
+            }
+            if (hitObject.Type == ObjectType.Player || hitObject.Type == ObjectType.Collectable && !_isHandle)
+            {
+                _isHandle = true;
+                _attackId = hitObject.NetId;
+                return true;
+            }
+
+            return false;
         }
     }
 }
