@@ -8,6 +8,8 @@ namespace HotUpdate.Scripts.Game.Map
     {
         [SerializeField]
         private int id;
+        public bool isMesh;
+        public Collider interactableCollider;
         public int Id => id;
 
         public Vector3 Position

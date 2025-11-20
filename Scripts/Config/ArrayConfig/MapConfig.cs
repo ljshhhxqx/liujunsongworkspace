@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AOTScripts.CustomAttribute;
 using AOTScripts.Data;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
@@ -61,7 +62,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 data.mapType = (MapType) Enum.Parse(typeof(MapType), row[0]);
                 data.maxPlayer = int.Parse(row[1]);
                 data.minPlayer = int.Parse(row[2]);
-                data.availableWeather = JsonConvert.DeserializeObject<List<WeatherType>>(row[3]);
+                data.availableWeather = (List<WeatherType>)JsonConvert.DeserializeObject(row[3], typeof(List<WeatherType>));
                 mapConfigData.Add(data);
             }
         }
@@ -78,10 +79,11 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     }
 
     [Serializable]
+    [JsonSerializable]
     public struct WeatherMapData
     {
         public WeatherType weatherType;
-        public Vector3 position;
-        public Vector3 size;
+        public CompressedVector3 position;
+        public CompressedVector3 size;
     }
 }

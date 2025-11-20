@@ -212,9 +212,8 @@ namespace HotUpdate.Scripts.Game.Map
             return intersectedObjects.Count > 0;
         }
 
-        public void AddStaticObject(GameObject gameObject)
+        public void AddStaticObject(GameObject gameObject, Collider collider, bool isMesh)
         {
-            var collider = gameObject.GetComponent<Collider>();
             var staticObject = gameObject.GetComponent<GameStaticObject>();
             var position = gameObject.transform.position;
             var grid = MapBoundDefiner.Instance.GetGridPosition(position);
@@ -234,6 +233,11 @@ namespace HotUpdate.Scripts.Game.Map
             }
             _mapObjectData[grid].Add(data);
             _idToGameObject.TryAdd(staticObject.Id, gameObject);
+            if (isMesh)
+            {
+                collider.enabled = false;
+            }
+            
         }
 
         public void ClearObjects()

@@ -83,7 +83,7 @@ namespace HotUpdate.Scripts.Game.Map
             foreach (var staticObject in mapStaticObject)
             {
 
-                GameObjectContainer.Instance.AddStaticObject(staticObject.gameObject);
+                GameObjectContainer.Instance.AddStaticObject(staticObject.gameObject, staticObject.interactableCollider, staticObject.isMesh);
             }
         }
 
@@ -94,7 +94,7 @@ namespace HotUpdate.Scripts.Game.Map
             foreach (var staticObject in mapStaticObject)
             {
 
-                GameObjectContainer.Instance.AddStaticObject(staticObject.gameObject);
+                GameObjectContainer.Instance.AddStaticObject(staticObject.gameObject, staticObject.interactableCollider, staticObject.isMesh);
             }
         }
 
