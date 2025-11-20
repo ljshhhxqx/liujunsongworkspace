@@ -17,6 +17,9 @@ namespace HotUpdate.Scripts.Game.Inject
 {
     public class GameMapLifetimeScope : LifetimeScope, IMapLifeScope
     {
+        [SerializeField]
+        private MapType mapType;
+        
         protected override void Configure(IContainerBuilder builder)
         {
             RegisterComponent<MirrorNetworkMessageHandler>(builder);
@@ -40,7 +43,7 @@ namespace HotUpdate.Scripts.Game.Inject
                 .AsImplementedInterfaces();
         }
 
-        public MapType MapType => MapType.Town;
+        public MapType MapType => mapType;
     }
 
     public interface IMapLifeScope
