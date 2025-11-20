@@ -74,6 +74,14 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public int maxPlayer;
         public int minPlayer;
         public List<WeatherType> availableWeather;
-        public float mapSize;
+        public WeatherMapData[] weatherMapData;
+    }
+
+    [Serializable]
+    public struct WeatherMapData
+    {
+        public WeatherType weatherType;
+        public Vector3 position;
+        public Vector3 size;
     }
 }

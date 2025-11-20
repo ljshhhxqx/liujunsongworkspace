@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using AOTScripts.Data;
 using DG.Tweening;
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
@@ -16,6 +18,8 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
         private Material snowMaterial;
         [SerializeField]
         private Material snowCoverMaterial;
+        private Vector3 _size;
+        private Vector3 _pos;
         // 强度参数
         private float _snowDensity;
         private readonly ReactiveProperty<float> _currentSnowDensity = new ReactiveProperty<float>();
@@ -26,7 +30,10 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
             var mainModule = snowParticles.main;
             var emission =  snowParticles.emission;
             var shape = snowParticles.shape;
-            shape.scale *= GameLoopDataModel.MapConfig.Value.mapSize;
+            var weathers = GameLoopDataModel.MapConfig.Value.weatherMapData.First(x => x.weatherType == WeatherType.Rainy);
+
+            shape.scale = weathers.size;
+            shape.position = weathers.position;
             _originalRainSnowSetting = new RainSnowSetting
             {
                 emissionRate = emission.rateOverTime,
@@ -73,7 +80,8 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
         {
             snowCoverMaterial.SetFloat(Shader.PropertyToID("_SnowCoverage"), 0);
             var shape = snowParticles.shape;
-            shape.scale /= GameLoopDataModel.MapConfig.Value.mapSize;
+            shape.position = _pos;
+            shape.scale = _size;
         }
     }
 }

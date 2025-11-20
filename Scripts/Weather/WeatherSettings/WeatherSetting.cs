@@ -5,6 +5,7 @@ using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace HotUpdate.Scripts.Weather.WeatherSettings
 {
@@ -17,13 +18,13 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
     
     public abstract class WeatherSetting : MonoBehaviour, IIWeather 
     {
-        [SerializeField]
-        private WeatherType weatherType;
+        [FormerlySerializedAs("weatherType")] [SerializeField]
+        private WeatherType wType;
         [SerializeField]
         private AudioMusicType musicType;
         [SerializeField]
         private AudioEffectType subMusicType;
-        public WeatherType WeatherType => weatherType;
+        public WeatherType WType => wType;
 
         private WeatherLoadData _weatherLoadData;
         public WeatherData WeatherData { get; set; }

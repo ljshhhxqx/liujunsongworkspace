@@ -1,3 +1,5 @@
+using System.Linq;
+using AOTScripts.Data;
 using DG.Tweening;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Data;
@@ -15,6 +17,8 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
         [SerializeField]
         private Material rainCoverMaterial;
         private float _rainDensity;
+        private Vector3 _size;
+        private Vector3 _pos;
         private readonly ReactiveProperty<float> _currentRainDensity = new ReactiveProperty<float>();
         private RainSnowSetting _originalRainSnowSetting;
 
@@ -23,7 +27,11 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
             var mainModule = rainParticles.main;
             var emission =  rainParticles.emission;
             var shape = rainParticles.shape;
-            shape.scale *= GameLoopDataModel.MapConfig.Value.mapSize;
+            _pos = shape.position;
+            _size = shape.scale;
+            var weathers = GameLoopDataModel.MapConfig.Value.weatherMapData.First(x => x.weatherType == WeatherType.Rainy);
+            shape.scale = weathers.size;
+            shape.position = weathers.position;
             _originalRainSnowSetting = new RainSnowSetting
             {
                 emissionRate = emission.rateOverTime,
@@ -71,7 +79,8 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
         {
             rainCoverMaterial.SetFloat(Shader.PropertyToID("_Wetness"), 0);
             var shape = rainParticles.shape;
-            shape.scale /= GameLoopDataModel.MapConfig.Value.mapSize;
+            shape.position = _pos;
+            shape.scale = _size;
         }
     }
 }

@@ -116,7 +116,7 @@ namespace HotUpdate.Scripts.Weather
             {
                 if (weather.TryGetComponent<WeatherSetting>(out var setting))
                 {
-                    setting.WeatherData = _weatherConfig.GetWeatherData(setting.WeatherType);
+                    setting.WeatherData = _weatherConfig.GetWeatherData(setting.WType);
                     setting.WeatherConstantData = _jsonDataConfig.WeatherConstantData;
                     _weatherPrefabs.Add(setting);
                 }

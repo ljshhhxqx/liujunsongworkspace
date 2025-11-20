@@ -141,6 +141,16 @@
             "Address": "/Preload/AudioUIEffectPrefab.prefab"
         },
         {
+            "UID": 200003,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "GamePlay",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Scenes/GamePlay.prefab"
+        },
+        {
             "UID": 300000,
             "ResourceType": "UnityEditor.SceneAsset",
             "AssetType": 15,
@@ -1551,7 +1561,17 @@
             "Address": "/Map/Town/Joystick/joystick_square_pad_d.png"
         },
         {
-            "UID": 4300007,
+            "UID": 4400000,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "Stairs",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/MapScenePrefab/Stairs.prefab"
+        },
+        {
+            "UID": 4500000,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1561,7 +1581,7 @@
             "Address": "/Map/Town/MapSnapshots/Town_Minimap.png"
         },
         {
-            "UID": 4300008,
+            "UID": 4500001,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1571,7 +1591,7 @@
             "Address": "/Map/Town/Potions/AttackPotion-Large.png"
         },
         {
-            "UID": 4300009,
+            "UID": 4500002,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1581,7 +1601,7 @@
             "Address": "/Map/Town/Potions/AttackPotion-Medium.png"
         },
         {
-            "UID": 4300010,
+            "UID": 4500003,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1591,7 +1611,7 @@
             "Address": "/Map/Town/Potions/AttackPotion-Small.png"
         },
         {
-            "UID": 4300011,
+            "UID": 4500004,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1601,7 +1621,7 @@
             "Address": "/Map/Town/Potions/DefensePotion-Large.png"
         },
         {
-            "UID": 4300012,
+            "UID": 4500005,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1611,7 +1631,7 @@
             "Address": "/Map/Town/Potions/DefensePotion-Medium.png"
         },
         {
-            "UID": 4300013,
+            "UID": 4500006,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1621,7 +1641,7 @@
             "Address": "/Map/Town/Potions/DefensePotion-Small.png"
         },
         {
-            "UID": 4300014,
+            "UID": 4500007,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1631,7 +1651,7 @@
             "Address": "/Map/Town/Potions/ScorePotion-Large.png"
         },
         {
-            "UID": 4300015,
+            "UID": 4500008,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1641,7 +1661,7 @@
             "Address": "/Map/Town/Potions/ScorePotion-Medium.png"
         },
         {
-            "UID": 4300016,
+            "UID": 4500009,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1651,7 +1671,7 @@
             "Address": "/Map/Town/Potions/ScorePotion-Small.png"
         },
         {
-            "UID": 4300017,
+            "UID": 4500010,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1661,7 +1681,7 @@
             "Address": "/Map/Town/Potions/SpeedPotion-Large.png"
         },
         {
-            "UID": 4300018,
+            "UID": 4500011,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1671,7 +1691,7 @@
             "Address": "/Map/Town/Potions/SpeedPotion-Medium.png"
         },
         {
-            "UID": 4300019,
+            "UID": 4500012,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1681,7 +1701,7 @@
             "Address": "/Map/Town/Potions/SpeedPotion-Small.png"
         },
         {
-            "UID": 4300020,
+            "UID": 4500013,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1691,7 +1711,7 @@
             "Address": "/Map/Town/Potions/StrengthPotion-Large.png"
         },
         {
-            "UID": 4300021,
+            "UID": 4500014,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1701,7 +1721,7 @@
             "Address": "/Map/Town/Potions/StrengthPotion-Medium.png"
         },
         {
-            "UID": 4300022,
+            "UID": 4500015,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1711,7 +1731,7 @@
             "Address": "/Map/Town/Potions/StrengthPotion-Small.png"
         },
         {
-            "UID": 4300023,
+            "UID": 4500016,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1721,7 +1741,7 @@
             "Address": "/Map/Town/Potions/TreasurePotion-Large.png"
         },
         {
-            "UID": 4300024,
+            "UID": 4500017,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1731,7 +1751,7 @@
             "Address": "/Map/Town/Potions/TreasurePotion-Medium.png"
         },
         {
-            "UID": 4300025,
+            "UID": 4500018,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1741,7 +1761,7 @@
             "Address": "/Map/Town/Potions/TreasurePotion-Small.png"
         },
         {
-            "UID": 4400000,
+            "UID": 4600000,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1751,7 +1771,7 @@
             "Address": "/Map/Town/Skill/AoE slash green 1.prefab"
         },
         {
-            "UID": 4400001,
+            "UID": 4600001,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1761,7 +1781,7 @@
             "Address": "/Map/Town/Skill/Buff 1.prefab"
         },
         {
-            "UID": 4400002,
+            "UID": 4600002,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1771,7 +1791,7 @@
             "Address": "/Map/Town/Skill/Crystals crossfade 2.prefab"
         },
         {
-            "UID": 4400003,
+            "UID": 4600003,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1781,7 +1801,7 @@
             "Address": "/Map/Town/Skill/Debuff 1.prefab"
         },
         {
-            "UID": 4400004,
+            "UID": 4600004,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1791,7 +1811,7 @@
             "Address": "/Map/Town/Skill/Dust ground 1.prefab"
         },
         {
-            "UID": 4400005,
+            "UID": 4600005,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1801,7 +1821,7 @@
             "Address": "/Map/Town/Skill/Electro slash 1.prefab"
         },
         {
-            "UID": 4400006,
+            "UID": 4600006,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1811,7 +1831,7 @@
             "Address": "/Map/Town/Skill/Freeze circle 1.prefab"
         },
         {
-            "UID": 4400007,
+            "UID": 4600007,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1821,7 +1841,7 @@
             "Address": "/Map/Town/Skill/Ground AOE explosion 1.prefab"
         },
         {
-            "UID": 4400008,
+            "UID": 4600008,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1831,7 +1851,7 @@
             "Address": "/Map/Town/Skill/Healing circle 1.prefab"
         },
         {
-            "UID": 4400009,
+            "UID": 4600009,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1841,7 +1861,7 @@
             "Address": "/Map/Town/Skill/Holy hit 1.prefab"
         },
         {
-            "UID": 4400010,
+            "UID": 4600010,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1851,7 +1871,7 @@
             "Address": "/Map/Town/Skill/Laser AOE 1.prefab"
         },
         {
-            "UID": 4400011,
+            "UID": 4600011,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1861,7 +1881,7 @@
             "Address": "/Map/Town/Skill/Lightning aura 1.prefab"
         },
         {
-            "UID": 4400012,
+            "UID": 4600012,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1871,7 +1891,7 @@
             "Address": "/Map/Town/Skill/Magic circle 2.prefab"
         },
         {
-            "UID": 4400013,
+            "UID": 4600013,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1881,7 +1901,7 @@
             "Address": "/Map/Town/Skill/Magic shield blue 1.prefab"
         },
         {
-            "UID": 4400014,
+            "UID": 4600014,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1891,7 +1911,7 @@
             "Address": "/Map/Town/Skill/Meteors AOE 1.prefab"
         },
         {
-            "UID": 4400015,
+            "UID": 4600015,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1901,7 +1921,7 @@
             "Address": "/Map/Town/Skill/Plexus AoE 1.prefab"
         },
         {
-            "UID": 4400016,
+            "UID": 4600016,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1911,7 +1931,7 @@
             "Address": "/Map/Town/Skill/Red energy explosion 1.prefab"
         },
         {
-            "UID": 4400017,
+            "UID": 4600017,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1921,7 +1941,7 @@
             "Address": "/Map/Town/Skill/Slash.prefab"
         },
         {
-            "UID": 4400018,
+            "UID": 4600018,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1931,7 +1951,7 @@
             "Address": "/Map/Town/Skill/Snow AOE 1.prefab"
         },
         {
-            "UID": 4400019,
+            "UID": 4600019,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1941,7 +1961,7 @@
             "Address": "/Map/Town/Skill/Snow hit 1.prefab"
         },
         {
-            "UID": 4400020,
+            "UID": 4600020,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1951,7 +1971,7 @@
             "Address": "/Map/Town/UIPrefab/BackpackUI.prefab"
         },
         {
-            "UID": 4400021,
+            "UID": 4600021,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1961,7 +1981,7 @@
             "Address": "/Map/Town/UIPrefab/GameMiniMap.prefab"
         },
         {
-            "UID": 4400022,
+            "UID": 4600022,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1971,7 +1991,7 @@
             "Address": "/Map/Town/UIPrefab/Hole.prefab"
         },
         {
-            "UID": 4400023,
+            "UID": 4600023,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1981,7 +2001,7 @@
             "Address": "/Map/Town/UIPrefab/ItemDetailUI.prefab"
         },
         {
-            "UID": 4400024,
+            "UID": 4600024,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1991,7 +2011,7 @@
             "Address": "/Map/Town/UIPrefab/JoystickOverlay.prefab"
         },
         {
-            "UID": 4400025,
+            "UID": 4600025,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2001,7 +2021,7 @@
             "Address": "/Map/Town/UIPrefab/PlayerAnimationOverlay.prefab"
         },
         {
-            "UID": 4400026,
+            "UID": 4600026,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2011,7 +2031,7 @@
             "Address": "/Map/Town/UIPrefab/PlayerDamageDeathTimeOverlay.prefab"
         },
         {
-            "UID": 4400027,
+            "UID": 4600027,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2021,7 +2041,7 @@
             "Address": "/Map/Town/UIPrefab/PlayerHpShowOverlay.prefab"
         },
         {
-            "UID": 4400028,
+            "UID": 4600028,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2031,7 +2051,7 @@
             "Address": "/Map/Town/UIPrefab/PlayerPropertyOverlay.prefab"
         },
         {
-            "UID": 4400029,
+            "UID": 4600029,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2041,7 +2061,7 @@
             "Address": "/Map/Town/UIPrefab/ShopUI.prefab"
         },
         {
-            "UID": 4400030,
+            "UID": 4600030,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2051,7 +2071,7 @@
             "Address": "/Map/Town/UIPrefab/TargetShowOverlay.prefab"
         },
         {
-            "UID": 4400031,
+            "UID": 4600031,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2061,7 +2081,7 @@
             "Address": "/Map/Town/UIPrefab/WeatherShowOverlay.prefab"
         },
         {
-            "UID": 4500000,
+            "UID": 4700000,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -2071,7 +2091,7 @@
             "Address": "/Preload/ConfigAsset/Csv/AnimationConfig.csv"
         },
         {
-            "UID": 4500001,
+            "UID": 4700001,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -2081,7 +2101,7 @@
             "Address": "/Preload/ConfigAsset/Csv/ArmorConfig.csv"
         },
         {
-            "UID": 4500002,
+            "UID": 4700002,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -2091,7 +2111,7 @@
             "Address": "/Preload/ConfigAsset/Csv/BattleEffectConditionConfig.csv"
         },
         {
-            "UID": 4500003,
+            "UID": 4700003,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -2101,7 +2121,7 @@
             "Address": "/Preload/ConfigAsset/Csv/ChestDataConfig.csv"
         },
         {
-            "UID": 4500004,
+            "UID": 4700004,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -2111,7 +2131,7 @@
             "Address": "/Preload/ConfigAsset/Csv/CollectObjectDataConfig.csv"
         },
         {
-            "UID": 4500005,
+            "UID": 4700005,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -2121,7 +2141,7 @@
             "Address": "/Preload/ConfigAsset/Csv/ConstantBuffConfig.csv"
         },
         {
-            "UID": 4500006,
+            "UID": 4700006,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -2131,7 +2151,7 @@
             "Address": "/Preload/ConfigAsset/Csv/ItemConfig.csv"
         },
         {
-            "UID": 4500007,
+            "UID": 4700007,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -2141,7 +2161,7 @@
             "Address": "/Preload/ConfigAsset/Csv/KeyAnimationConfig.csv"
         },
         {
-            "UID": 4500008,
+            "UID": 4700008,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -2151,7 +2171,7 @@
             "Address": "/Preload/ConfigAsset/Csv/KeyFunctionConfig.csv"
         },
         {
-            "UID": 4500009,
+            "UID": 4700009,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -2161,7 +2181,7 @@
             "Address": "/Preload/ConfigAsset/Csv/MapConfig.csv"
         },
         {
-            "UID": 4500010,
+            "UID": 4700010,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -2171,7 +2191,7 @@
             "Address": "/Preload/ConfigAsset/Csv/PropertyConfig.csv"
         },
         {
-            "UID": 4500011,
+            "UID": 4700011,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -2181,7 +2201,7 @@
             "Address": "/Preload/ConfigAsset/Csv/RandomBuffConfig.csv"
         },
         {
-            "UID": 4500012,
+            "UID": 4700012,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -2191,7 +2211,7 @@
             "Address": "/Preload/ConfigAsset/Csv/ShopConfig.csv"
         },
         {
-            "UID": 4500013,
+            "UID": 4700013,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -2201,7 +2221,7 @@
             "Address": "/Preload/ConfigAsset/Csv/SkillConfig.csv"
         },
         {
-            "UID": 4500014,
+            "UID": 4700014,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -2211,7 +2231,7 @@
             "Address": "/Preload/ConfigAsset/Csv/TimedBuffConfig.csv"
         },
         {
-            "UID": 4500015,
+            "UID": 4700015,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -2221,7 +2241,7 @@
             "Address": "/Preload/ConfigAsset/Csv/WeaponConfig.csv"
         },
         {
-            "UID": 4500016,
+            "UID": 4700016,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,
             "Extension": ".csv",
@@ -2231,7 +2251,7 @@
             "Address": "/Preload/ConfigAsset/Csv/WeatherConfig.csv"
         },
         {
-            "UID": 4500017,
+            "UID": 4700017,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -2241,7 +2261,7 @@
             "Address": "/Preload/ConfigAsset/Json/AnimationConfig.json"
         },
         {
-            "UID": 4500018,
+            "UID": 4700018,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -2251,7 +2271,7 @@
             "Address": "/Preload/ConfigAsset/Json/ChestDataConfig.json"
         },
         {
-            "UID": 4500019,
+            "UID": 4700019,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -2261,7 +2281,7 @@
             "Address": "/Preload/ConfigAsset/Json/CollectObjectDataConfig.json"
         },
         {
-            "UID": 4500020,
+            "UID": 4700020,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -2271,7 +2291,7 @@
             "Address": "/Preload/ConfigAsset/Json/ConstantBuffConfig.json"
         },
         {
-            "UID": 4500021,
+            "UID": 4700021,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -2281,7 +2301,7 @@
             "Address": "/Preload/ConfigAsset/Json/ItemConfig.json"
         },
         {
-            "UID": 4500022,
+            "UID": 4700022,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -2291,7 +2311,7 @@
             "Address": "/Preload/ConfigAsset/Json/JsonDataConfig.json"
         },
         {
-            "UID": 4500023,
+            "UID": 4700023,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -2301,7 +2321,7 @@
             "Address": "/Preload/ConfigAsset/Json/MapConfig.json"
         },
         {
-            "UID": 4500024,
+            "UID": 4700024,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -2311,7 +2331,7 @@
             "Address": "/Preload/ConfigAsset/Json/PropertyConfig.json"
         },
         {
-            "UID": 4500025,
+            "UID": 4700025,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -2321,7 +2341,7 @@
             "Address": "/Preload/ConfigAsset/Json/RandomBuffConfig.json"
         },
         {
-            "UID": 4500026,
+            "UID": 4700026,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -2331,7 +2351,7 @@
             "Address": "/Preload/ConfigAsset/Json/WeatherConfig.json"
         },
         {
-            "UID": 4600000,
+            "UID": 4800000,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2341,7 +2361,7 @@
             "Address": "/Map/Town/Armor/UI/Belt_1.png"
         },
         {
-            "UID": 4600001,
+            "UID": 4800001,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2351,7 +2371,7 @@
             "Address": "/Map/Town/Armor/UI/Belt_2.png"
         },
         {
-            "UID": 4600002,
+            "UID": 4800002,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2361,7 +2381,7 @@
             "Address": "/Map/Town/Armor/UI/Belt_3.png"
         },
         {
-            "UID": 4600003,
+            "UID": 4800003,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2371,7 +2391,7 @@
             "Address": "/Map/Town/Armor/UI/Belt_4.png"
         },
         {
-            "UID": 4600004,
+            "UID": 4800004,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2381,7 +2401,7 @@
             "Address": "/Map/Town/Armor/UI/Belt_5.png"
         },
         {
-            "UID": 4600005,
+            "UID": 4800005,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2391,7 +2411,7 @@
             "Address": "/Map/Town/Armor/UI/BodyArmor_1.png"
         },
         {
-            "UID": 4600006,
+            "UID": 4800006,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2401,7 +2421,7 @@
             "Address": "/Map/Town/Armor/UI/BodyArmor_2.png"
         },
         {
-            "UID": 4600007,
+            "UID": 4800007,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2411,7 +2431,7 @@
             "Address": "/Map/Town/Armor/UI/BodyArmor_3.png"
         },
         {
-            "UID": 4600008,
+            "UID": 4800008,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2421,7 +2441,7 @@
             "Address": "/Map/Town/Armor/UI/BodyArmor_4.png"
         },
         {
-            "UID": 4600009,
+            "UID": 4800009,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2431,7 +2451,7 @@
             "Address": "/Map/Town/Armor/UI/BodyArmor_5.png"
         },
         {
-            "UID": 4600010,
+            "UID": 4800010,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2441,7 +2461,7 @@
             "Address": "/Map/Town/Armor/UI/Boots_1.png"
         },
         {
-            "UID": 4600011,
+            "UID": 4800011,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2451,7 +2471,7 @@
             "Address": "/Map/Town/Armor/UI/Boots_2.png"
         },
         {
-            "UID": 4600012,
+            "UID": 4800012,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2461,7 +2481,7 @@
             "Address": "/Map/Town/Armor/UI/Boots_3.png"
         },
         {
-            "UID": 4600013,
+            "UID": 4800013,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2471,7 +2491,7 @@
             "Address": "/Map/Town/Armor/UI/Boots_4.png"
         },
         {
-            "UID": 4600014,
+            "UID": 4800014,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2481,7 +2501,7 @@
             "Address": "/Map/Town/Armor/UI/Boots_5.png"
         },
         {
-            "UID": 4600015,
+            "UID": 4800015,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2491,7 +2511,7 @@
             "Address": "/Map/Town/Armor/UI/Helmet_1.png"
         },
         {
-            "UID": 4600016,
+            "UID": 4800016,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2501,7 +2521,7 @@
             "Address": "/Map/Town/Armor/UI/Helmet_2.png"
         },
         {
-            "UID": 4600017,
+            "UID": 4800017,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2511,7 +2531,7 @@
             "Address": "/Map/Town/Armor/UI/Helmet_3.png"
         },
         {
-            "UID": 4600018,
+            "UID": 4800018,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2521,7 +2541,7 @@
             "Address": "/Map/Town/Armor/UI/Helmet_4.png"
         },
         {
-            "UID": 4600019,
+            "UID": 4800019,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2531,7 +2551,7 @@
             "Address": "/Map/Town/Armor/UI/Helmet_5.png"
         },
         {
-            "UID": 4600020,
+            "UID": 4800020,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2541,7 +2561,7 @@
             "Address": "/Map/Town/Armor/UI/Pants_1.png"
         },
         {
-            "UID": 4600021,
+            "UID": 4800021,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2551,7 +2571,7 @@
             "Address": "/Map/Town/Armor/UI/Pants_2.png"
         },
         {
-            "UID": 4600022,
+            "UID": 4800022,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2561,7 +2581,7 @@
             "Address": "/Map/Town/Armor/UI/Pants_3.png"
         },
         {
-            "UID": 4600023,
+            "UID": 4800023,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2571,7 +2591,7 @@
             "Address": "/Map/Town/Armor/UI/Pants_4.png"
         },
         {
-            "UID": 4600024,
+            "UID": 4800024,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -2581,7 +2601,7 @@
             "Address": "/Map/Town/Armor/UI/Pants_5.png"
         },
         {
-            "UID": 4700000,
+            "UID": 4900000,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2591,7 +2611,7 @@
             "Address": "/Map/Town/Collect/Extra/Bullet.prefab"
         },
         {
-            "UID": 4700001,
+            "UID": 4900001,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2601,7 +2621,7 @@
             "Address": "/Map/Town/Collect/Extra/Pistol.prefab"
         },
         {
-            "UID": 4700002,
+            "UID": 4900002,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2611,7 +2631,7 @@
             "Address": "/Map/Town/Collect/Particle/VFX_Ceramic_Hit.prefab"
         },
         {
-            "UID": 4700003,
+            "UID": 4900003,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2621,7 +2641,7 @@
             "Address": "/Map/Town/Collect/Particle/VFX_Coins.prefab"
         },
         {
-            "UID": 4700004,
+            "UID": 4900004,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2631,7 +2651,7 @@
             "Address": "/Map/Town/Collect/Particle/VFX_Confetti_Hit.prefab"
         },
         {
-            "UID": 4700005,
+            "UID": 4900005,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2641,7 +2661,7 @@
             "Address": "/Map/Town/Collect/Particle/VFX_Diamond_Hit.prefab"
         },
         {
-            "UID": 4700006,
+            "UID": 4900006,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2651,7 +2671,7 @@
             "Address": "/Map/Town/Collect/Particle/VFX_Pumpkin_Hit.prefab"
         },
         {
-            "UID": 4700007,
+            "UID": 4900007,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2661,7 +2681,7 @@
             "Address": "/Map/Town/Collect/Particle/VFX_Toxic_Hit.prefab"
         },
         {
-            "UID": 4700008,
+            "UID": 4900008,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2671,7 +2691,7 @@
             "Address": "/Map/Town/Collect/Particle/VFX_WoodBox_Hit.prefab"
         },
         {
-            "UID": 4700009,
+            "UID": 4900009,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2681,7 +2701,7 @@
             "Address": "/Map/Town/Collect/Prefab/DroppedItem.prefab"
         },
         {
-            "UID": 4700010,
+            "UID": 4900010,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2691,7 +2711,7 @@
             "Address": "/Map/Town/Collect/Prefab/Gem.prefab"
         },
         {
-            "UID": 4700011,
+            "UID": 4900011,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2701,7 +2721,7 @@
             "Address": "/Map/Town/Collect/Prefab/GoldChest.prefab"
         },
         {
-            "UID": 4700012,
+            "UID": 4900012,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2711,7 +2731,7 @@
             "Address": "/Map/Town/Collect/Prefab/GoldCoin.prefab"
         },
         {
-            "UID": 4700013,
+            "UID": 4900013,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2721,7 +2741,7 @@
             "Address": "/Map/Town/Collect/Prefab/Legendary_Health 1.prefab"
         },
         {
-            "UID": 4700014,
+            "UID": 4900014,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2731,7 +2751,7 @@
             "Address": "/Map/Town/Collect/Prefab/Legendary_Health 2.prefab"
         },
         {
-            "UID": 4700015,
+            "UID": 4900015,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2741,7 +2761,7 @@
             "Address": "/Map/Town/Collect/Prefab/Legendary_Strength 1.prefab"
         },
         {
-            "UID": 4700016,
+            "UID": 4900016,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2751,7 +2771,7 @@
             "Address": "/Map/Town/Collect/Prefab/Legendary_Strength 2.prefab"
         },
         {
-            "UID": 4700017,
+            "UID": 4900017,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2761,7 +2781,7 @@
             "Address": "/Map/Town/Collect/Prefab/Normal_Health 1.prefab"
         },
         {
-            "UID": 4700018,
+            "UID": 4900018,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2771,7 +2791,7 @@
             "Address": "/Map/Town/Collect/Prefab/Normal_Health 2.prefab"
         },
         {
-            "UID": 4700019,
+            "UID": 4900019,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2781,7 +2801,7 @@
             "Address": "/Map/Town/Collect/Prefab/Normal_Strength 1.prefab"
         },
         {
-            "UID": 4700020,
+            "UID": 4900020,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2791,7 +2811,7 @@
             "Address": "/Map/Town/Collect/Prefab/Normal_Strength 2.prefab"
         },
         {
-            "UID": 4700021,
+            "UID": 4900021,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2801,7 +2821,7 @@
             "Address": "/Map/Town/Collect/Prefab/OldChest.prefab"
         },
         {
-            "UID": 4700022,
+            "UID": 4900022,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2811,7 +2831,7 @@
             "Address": "/Map/Town/Collect/Prefab/Rare_Health 1.prefab"
         },
         {
-            "UID": 4700023,
+            "UID": 4900023,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2821,7 +2841,7 @@
             "Address": "/Map/Town/Collect/Prefab/Rare_Health 2.prefab"
         },
         {
-            "UID": 4700024,
+            "UID": 4900024,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2831,7 +2851,7 @@
             "Address": "/Map/Town/Collect/Prefab/Rare_Strength 1.prefab"
         },
         {
-            "UID": 4700025,
+            "UID": 4900025,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2841,7 +2861,7 @@
             "Address": "/Map/Town/Collect/Prefab/Rare_Strength 2.prefab"
         },
         {
-            "UID": 4700026,
+            "UID": 4900026,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2851,7 +2871,7 @@
             "Address": "/Map/Town/Collect/Prefab/Score1.prefab"
         },
         {
-            "UID": 4700027,
+            "UID": 4900027,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2861,7 +2881,7 @@
             "Address": "/Map/Town/Collect/Prefab/Score2.prefab"
         },
         {
-            "UID": 4700028,
+            "UID": 4900028,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2871,7 +2891,7 @@
             "Address": "/Map/Town/Collect/Prefab/Score3.prefab"
         },
         {
-            "UID": 4700029,
+            "UID": 4900029,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2881,7 +2901,7 @@
             "Address": "/Map/Town/Collect/Prefab/SliverCoin.prefab"
         },
         {
-            "UID": 4700030,
+            "UID": 4900030,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2891,7 +2911,7 @@
             "Address": "/Map/Town/Collect/Prefab/StoneChest.prefab"
         },
         {
-            "UID": 4800000,
+            "UID": 5000000,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -2901,7 +2921,7 @@
             "Address": "/Map/Town/CollectFill/Legendary/Attack.mat"
         },
         {
-            "UID": 4800001,
+            "UID": 5000001,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -2911,7 +2931,7 @@
             "Address": "/Map/Town/CollectFill/Legendary/CriticalDamageRatio.mat"
         },
         {
-            "UID": 4800002,
+            "UID": 5000002,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -2921,7 +2941,7 @@
             "Address": "/Map/Town/CollectFill/Legendary/CriticalRate.mat"
         },
         {
-            "UID": 4800003,
+            "UID": 5000003,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -2931,7 +2951,7 @@
             "Address": "/Map/Town/CollectFill/Legendary/Defense.mat"
         },
         {
-            "UID": 4800004,
+            "UID": 5000004,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -2941,7 +2961,7 @@
             "Address": "/Map/Town/CollectFill/Legendary/Health.mat"
         },
         {
-            "UID": 4800005,
+            "UID": 5000005,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -2951,7 +2971,7 @@
             "Address": "/Map/Town/CollectFill/Legendary/Speed.mat"
         },
         {
-            "UID": 4800006,
+            "UID": 5000006,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -2961,7 +2981,7 @@
             "Address": "/Map/Town/CollectFill/Legendary/Strength.mat"
         },
         {
-            "UID": 4800007,
+            "UID": 5000007,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -2971,7 +2991,7 @@
             "Address": "/Map/Town/CollectFill/Normal/Attack.mat"
         },
         {
-            "UID": 4800008,
+            "UID": 5000008,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -2981,7 +3001,7 @@
             "Address": "/Map/Town/CollectFill/Normal/CriticalDamageRatio.mat"
         },
         {
-            "UID": 4800009,
+            "UID": 5000009,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -2991,7 +3011,7 @@
             "Address": "/Map/Town/CollectFill/Normal/CriticalRate.mat"
         },
         {
-            "UID": 4800010,
+            "UID": 5000010,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -3001,7 +3021,7 @@
             "Address": "/Map/Town/CollectFill/Normal/Defense.mat"
         },
         {
-            "UID": 4800011,
+            "UID": 5000011,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -3011,7 +3031,7 @@
             "Address": "/Map/Town/CollectFill/Normal/Health.mat"
         },
         {
-            "UID": 4800012,
+            "UID": 5000012,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -3021,7 +3041,7 @@
             "Address": "/Map/Town/CollectFill/Normal/Speed.mat"
         },
         {
-            "UID": 4800013,
+            "UID": 5000013,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -3031,7 +3051,7 @@
             "Address": "/Map/Town/CollectFill/Normal/Strength.mat"
         },
         {
-            "UID": 4800014,
+            "UID": 5000014,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -3041,7 +3061,7 @@
             "Address": "/Map/Town/CollectFill/Rare/Attack.mat"
         },
         {
-            "UID": 4800015,
+            "UID": 5000015,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -3051,7 +3071,7 @@
             "Address": "/Map/Town/CollectFill/Rare/CriticalDamageRatio.mat"
         },
         {
-            "UID": 4800016,
+            "UID": 5000016,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -3061,7 +3081,7 @@
             "Address": "/Map/Town/CollectFill/Rare/CriticalRate.mat"
         },
         {
-            "UID": 4800017,
+            "UID": 5000017,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -3071,7 +3091,7 @@
             "Address": "/Map/Town/CollectFill/Rare/Defense.mat"
         },
         {
-            "UID": 4800018,
+            "UID": 5000018,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -3081,7 +3101,7 @@
             "Address": "/Map/Town/CollectFill/Rare/Health.mat"
         },
         {
-            "UID": 4800019,
+            "UID": 5000019,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -3091,7 +3111,7 @@
             "Address": "/Map/Town/CollectFill/Rare/Speed.mat"
         },
         {
-            "UID": 4800020,
+            "UID": 5000020,
             "ResourceType": "UnityEngine.Material",
             "AssetType": 9,
             "Extension": ".mat",
@@ -3101,7 +3121,7 @@
             "Address": "/Map/Town/CollectFill/Rare/Strength.mat"
         },
         {
-            "UID": 4900000,
+            "UID": 5100000,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3111,7 +3131,7 @@
             "Address": "/Map/Town/Player/Prefab/MPlayer.prefab"
         },
         {
-            "UID": 4900001,
+            "UID": 5100001,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3121,7 +3141,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword1_Gold.prefab"
         },
         {
-            "UID": 4900002,
+            "UID": 5100002,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3131,7 +3151,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword1_Green.prefab"
         },
         {
-            "UID": 4900003,
+            "UID": 5100003,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3141,7 +3161,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword1_Sliver.prefab"
         },
         {
-            "UID": 4900004,
+            "UID": 5100004,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3151,7 +3171,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword2_Green.prefab"
         },
         {
-            "UID": 4900005,
+            "UID": 5100005,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3161,7 +3181,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword2_Red.prefab"
         },
         {
-            "UID": 4900006,
+            "UID": 5100006,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3171,7 +3191,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword2_Yellow.prefab"
         },
         {
-            "UID": 4900007,
+            "UID": 5100007,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3181,7 +3201,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword3_Blue.prefab"
         },
         {
-            "UID": 4900008,
+            "UID": 5100008,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3191,7 +3211,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword3_Green.prefab"
         },
         {
-            "UID": 4900009,
+            "UID": 5100009,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3201,7 +3221,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword3_Red.prefab"
         },
         {
-            "UID": 4900010,
+            "UID": 5100010,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3211,7 +3231,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword4_Blue.prefab"
         },
         {
-            "UID": 4900011,
+            "UID": 5100011,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3221,7 +3241,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword4_Red.prefab"
         },
         {
-            "UID": 4900012,
+            "UID": 5100012,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3231,7 +3251,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword4_Yellow.prefab"
         },
         {
-            "UID": 4900013,
+            "UID": 5100013,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3241,7 +3261,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword5_Blue.prefab"
         },
         {
-            "UID": 4900014,
+            "UID": 5100014,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3251,7 +3271,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword5_Gold.prefab"
         },
         {
-            "UID": 4900015,
+            "UID": 5100015,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3261,7 +3281,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword5_Red.prefab"
         },
         {
-            "UID": 4900016,
+            "UID": 5100016,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3271,7 +3291,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword5_Yellow.prefab"
         },
         {
-            "UID": 4900017,
+            "UID": 5100017,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3281,7 +3301,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword6_Blue.prefab"
         },
         {
-            "UID": 4900018,
+            "UID": 5100018,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3291,7 +3311,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword6_Red.prefab"
         },
         {
-            "UID": 4900019,
+            "UID": 5100019,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3301,7 +3321,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword6_Yellow.prefab"
         },
         {
-            "UID": 4900020,
+            "UID": 5100020,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3311,7 +3331,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword7_Blue.prefab"
         },
         {
-            "UID": 4900021,
+            "UID": 5100021,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3321,7 +3341,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword7_Green.prefab"
         },
         {
-            "UID": 4900022,
+            "UID": 5100022,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3331,7 +3351,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword7_Red.prefab"
         },
         {
-            "UID": 4900023,
+            "UID": 5100023,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3341,7 +3361,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword8_Corrupted.prefab"
         },
         {
-            "UID": 4900024,
+            "UID": 5100024,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3351,7 +3371,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword8_Gold.prefab"
         },
         {
-            "UID": 4900025,
+            "UID": 5100025,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3361,7 +3381,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword8_White.prefab"
         },
         {
-            "UID": 4900026,
+            "UID": 5100026,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3371,7 +3391,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword9_Blue.prefab"
         },
         {
-            "UID": 4900027,
+            "UID": 5100027,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3381,7 +3401,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword9_Green.prefab"
         },
         {
-            "UID": 4900028,
+            "UID": 5100028,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3391,7 +3411,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword9_Purple.prefab"
         },
         {
-            "UID": 4900029,
+            "UID": 5100029,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3401,7 +3421,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword9_Red.prefab"
         },
         {
-            "UID": 4900030,
+            "UID": 5100030,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3411,7 +3431,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword9_White.prefab"
         },
         {
-            "UID": 5000000,
+            "UID": 5200000,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -3421,7 +3441,7 @@
             "Address": "/Map/Town/Weapon/UI/Sword1.png"
         },
         {
-            "UID": 5000001,
+            "UID": 5200001,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -3431,7 +3451,7 @@
             "Address": "/Map/Town/Weapon/UI/Sword2.png"
         },
         {
-            "UID": 5000002,
+            "UID": 5200002,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -3441,7 +3461,7 @@
             "Address": "/Map/Town/Weapon/UI/Sword3.png"
         },
         {
-            "UID": 5000003,
+            "UID": 5200003,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -3451,7 +3471,7 @@
             "Address": "/Map/Town/Weapon/UI/Sword4.png"
         },
         {
-            "UID": 5000004,
+            "UID": 5200004,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -3461,7 +3481,7 @@
             "Address": "/Map/Town/Weapon/UI/Sword5.png"
         },
         {
-            "UID": 5000005,
+            "UID": 5200005,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -3471,7 +3491,7 @@
             "Address": "/Map/Town/Weapon/UI/Sword6.png"
         },
         {
-            "UID": 5000006,
+            "UID": 5200006,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -3481,7 +3501,7 @@
             "Address": "/Map/Town/Weapon/UI/Sword7.png"
         },
         {
-            "UID": 5000007,
+            "UID": 5200007,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -3491,7 +3511,7 @@
             "Address": "/Map/Town/Weapon/UI/Sword8.png"
         },
         {
-            "UID": 5000008,
+            "UID": 5200008,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
