@@ -36,6 +36,7 @@ namespace HotUpdate.Scripts.Game.Map
             Position = transform.position;
             var goCollider = GetComponent<Collider>();
             ColliderConfig = GamePhysicsSystem.CreateColliderConfig(goCollider);
+            interactableCollider ??= goCollider;
         }
     }
 }

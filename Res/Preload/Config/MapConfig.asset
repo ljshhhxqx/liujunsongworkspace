@@ -25,3 +25,19 @@ MonoBehaviour:
     maxPlayer: 4
     minPlayer: 1
     availableWeather: 01000000020000000300000004000000
+    weatherMapData: []
+  - mapType: 1
+    maxPlayer: 4
+    minPlayer: 1
+    availableWeather: 010000000200000003000000
+    weatherMapData: []
+  - mapType: 2
+    maxPlayer: 4
+    minPlayer: 1
+    availableWeather: 010000000200000004000000
+    weatherMapData: []
+  - mapType: 3
+    maxPlayer: 4
+    minPlayer: 1
+    availableWeather: 0100000002000000
+    weatherMapData: []

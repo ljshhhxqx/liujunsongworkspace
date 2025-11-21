@@ -1565,10 +1565,30 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
+            "Name": "cart",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/MapScenePrefab/cart.prefab"
+        },
+        {
+            "UID": 4400001,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "Stairs",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/MapScenePrefab/Stairs.prefab"
+        },
+        {
+            "UID": 4400002,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "water tank",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/MapScenePrefab/water tank.prefab"
         },
         {
             "UID": 4500000,

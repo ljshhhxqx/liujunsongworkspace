@@ -63,6 +63,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 data.maxPlayer = int.Parse(row[1]);
                 data.minPlayer = int.Parse(row[2]);
                 data.availableWeather = (List<WeatherType>)JsonConvert.DeserializeObject(row[3], typeof(List<WeatherType>));
+                data.weatherMapData = (WeatherMapData[])JsonConvert.DeserializeObject(row[4], typeof(WeatherMapData[]));
                 mapConfigData.Add(data);
             }
         }
