@@ -4,29 +4,41 @@ using Game.Map;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
-using Mirror;
 using Sirenix.OdinInspector;
 using UI.UIBase;
-using UI.UIs.Exception;
 using UnityEngine;
 using VContainer;
 
 namespace HotUpdate.Scripts.Game.Map
 {
-    public class GameMapInit : NetworkBehaviour
+    public class GameMapInit : NetworkAutoInjectHandlerBehaviour // MonoBehaviour
     {
-        private string mapName;
-
+        private string _mapName;
+        private int _staticObjectId;
+        
+#if UNITY_EDITOR
+        //[MenuItem("CONTEXT/InitMapStaticObjectsId")]
+        [Button("静态物品ID初始化")]
+        private void InitMapStaticObjectsId()
+        {
+            var mapStaticObject = FindObjectsOfType<GameStaticObject>();
+            foreach (var staticObject in mapStaticObject)
+            {
+                _staticObjectId++;
+                staticObject.ModifyId(_staticObjectId);
+            }
+        }
+#endif
         [Inject]
         private async void Init(GameEventManager gameEventManager, UIManager uiManager)
         {
             //uiManager.SwitchUI<LoadingScreenUI>();
-            mapName ??= gameObject.scene.name;
+            _mapName ??= gameObject.scene.name;
             InjectGameObjects();
             await LoadGameResources();
-            gameEventManager.Publish(new GameSceneResourcesLoadedEvent(mapName));
-            uiManager.InitMapSprites(mapName);
-            uiManager.InitMapUIs(mapName);
+            gameEventManager.Publish(new GameSceneResourcesLoadedEvent(_mapName));
+            uiManager.InitMapSprites(_mapName);
+            uiManager.InitMapUIs(_mapName);
             uiManager.CloseUI(UIType.Loading);
             Debug.Log("game map init complete!!!!!!!!!!");
         }
@@ -64,7 +76,7 @@ namespace HotUpdate.Scripts.Game.Map
 
         private async UniTask LoadGameResources()
         {
-            var mapResource = await ResourceManager.Instance.GetMapResource(mapName);
+            var mapResource = await ResourceManager.Instance.GetMapResource(_mapName);
             if (mapResource == null)
             {
                 throw new UnityException("Main map resource not found.");
@@ -82,18 +94,18 @@ namespace HotUpdate.Scripts.Game.Map
             var mapStaticObject = FindObjectsOfType<GameStaticObject>();
             foreach (var staticObject in mapStaticObject)
             {
-
+        
                 GameObjectContainer.Instance.AddStaticObject(staticObject.gameObject, staticObject.interactableCollider, staticObject.isMesh);
             }
         }
-
+        
         public override void OnStartServer()
         {
             base.OnStartServer();
             var mapStaticObject = FindObjectsOfType<GameStaticObject>();
             foreach (var staticObject in mapStaticObject)
             {
-
+        
                 GameObjectContainer.Instance.AddStaticObject(staticObject.gameObject, staticObject.interactableCollider, staticObject.isMesh);
             }
         }
@@ -101,20 +113,7 @@ namespace HotUpdate.Scripts.Game.Map
         private void OnDestroy()
         {
             GameObjectContainer.Instance.ClearObjects();
-            ResourceManager.Instance.UnloadResourcesByAddress($"/Map/{mapName}");
-        }
-
-        private int _staticObjectId;
-        
-        [Button("静态物品ID初始化")]
-        private void InitMapStaticObjectsId()
-        {
-            var mapStaticObject = FindObjectsOfType<GameStaticObject>();
-            foreach (var staticObject in mapStaticObject)
-            {
-                _staticObjectId++;
-                staticObject.ModifyId(_staticObjectId);
-            }
+            ResourceManager.Instance.UnloadResourcesByAddress($"/Map/{_mapName}");
         }
     }
 }

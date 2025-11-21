@@ -88,6 +88,7 @@ MonoBehaviour:
   quality: 2
   collectConfigId: 2
   fillRenderer: {fileID: 0}
+  BehaviourType: 0
 --- !u!114 &9215843777453308375
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,6 +166,7 @@ GameObject:
   - component: {fileID: 4271735776560842}
   - component: {fileID: 33160559832521050}
   - component: {fileID: 23941041030839374}
+  - component: {fileID: 5885081602124530346}
   m_Layer: 10
   m_Name: Play
   m_TagString: Untagged
@@ -237,6 +239,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &5885081602124530346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667978803413412}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 831b541088f248239ea44d2bd20c5047, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetAlpha: 1
+  transitionDuration: 0.5
 --- !u!1 &8294282843703853812
 GameObject:
   m_ObjectHideFlags: 0

@@ -54,15 +54,13 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  autoInject: 1
-  isForClient: 1
-  isForLocalPlayer: 1
   mapType: 0
   lid: {fileID: 8651839352465368413}
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
   quality: 2
+  BehaviourType: 0
   isPicked: 0
 --- !u!114 &5570644776954151841
 MonoBehaviour:
@@ -158,6 +156,7 @@ GameObject:
   - component: {fileID: 708062447458636444}
   - component: {fileID: 8340928965105472913}
   - component: {fileID: 4658014297132087092}
+  - component: {fileID: 4062197081213292527}
   m_Layer: 10
   m_Name: Stone Chest
   m_TagString: Untagged
@@ -230,6 +229,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &4062197081213292527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6422763027157245655}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 831b541088f248239ea44d2bd20c5047, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetAlpha: 1
+  transitionDuration: 0.5
 --- !u!1 &6884525444293899997
 GameObject:
   m_ObjectHideFlags: 0
@@ -307,6 +320,7 @@ GameObject:
   - component: {fileID: 2288846471223112901}
   - component: {fileID: 79212149909298947}
   - component: {fileID: 5210683457215621969}
+  - component: {fileID: 1996048140982385069}
   m_Layer: 10
   m_Name: Stone Chest.Roof
   m_TagString: Untagged
@@ -379,3 +393,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1996048140982385069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8651839352465368413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 831b541088f248239ea44d2bd20c5047, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetAlpha: 1
+  transitionDuration: 0.5

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6179101503579111714}
   - component: {fileID: 2738683600175288546}
   - component: {fileID: 8890038341520676885}
+  - component: {fileID: 1494915499183576025}
   m_Layer: 10
   m_Name: Gold Chest
   m_TagString: Untagged
@@ -83,6 +84,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1494915499183576025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 862193888439646769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 831b541088f248239ea44d2bd20c5047, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetAlpha: 1
+  transitionDuration: 0.5
 --- !u!1 &1924515721642459049
 GameObject:
   m_ObjectHideFlags: 0
@@ -94,6 +109,7 @@ GameObject:
   - component: {fileID: 7345434545127266326}
   - component: {fileID: 5181524394000796870}
   - component: {fileID: 8574990178446388607}
+  - component: {fileID: 1900340756508618569}
   m_Layer: 10
   m_Name: Gold ChestRoof
   m_TagString: Untagged
@@ -166,6 +182,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1900340756508618569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1924515721642459049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 831b541088f248239ea44d2bd20c5047, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetAlpha: 1
+  transitionDuration: 0.5
 --- !u!1 &4150729518734284287
 GameObject:
   m_ObjectHideFlags: 0
@@ -220,15 +250,13 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  autoInject: 1
-  isForClient: 1
-  isForLocalPlayer: 1
   mapType: 0
   lid: {fileID: 1924515721642459049}
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
   quality: 3
+  BehaviourType: 0
   isPicked: 0
 --- !u!114 &8347805051186883820
 MonoBehaviour:
