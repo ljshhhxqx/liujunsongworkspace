@@ -1039,7 +1039,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 60
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 301913870}
 --- !u!65 &301913870
 BoxCollider:
@@ -2117,7 +2117,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 61
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 488636996}
 --- !u!65 &488636996
 BoxCollider:
@@ -2471,7 +2471,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 53
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 528792690}
 --- !u!65 &528792690
 BoxCollider:
@@ -2622,7 +2622,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 63
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 568282802}
 --- !u!65 &568282802
 BoxCollider:
@@ -2691,7 +2691,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 64
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 645223661}
 --- !u!65 &645223661
 BoxCollider:
@@ -2949,7 +2949,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 52
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 678554325}
 --- !u!65 &678554325
 BoxCollider:
@@ -3221,7 +3221,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 57
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 753890867}
 --- !u!65 &753890867
 BoxCollider:
@@ -3536,7 +3536,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 58
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 834684998}
 --- !u!65 &834684998
 BoxCollider:
@@ -5191,7 +5191,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 54
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 1217203643}
 --- !u!65 &1217203643
 BoxCollider:
@@ -5342,7 +5342,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 59
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 1242515888}
 --- !u!65 &1242515888
 BoxCollider:
@@ -5493,7 +5493,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 56
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 1263450668}
 --- !u!65 &1263450668
 BoxCollider:
@@ -7429,7 +7429,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 62
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 1519658006}
 --- !u!65 &1519658006
 BoxCollider:
@@ -7838,7 +7838,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 50
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 1718859315}
 --- !u!65 &1718859315
 BoxCollider:
@@ -8952,9 +8952,25 @@ MonoBehaviour:
   mapType: 1
   movementDuration: 5
   carriages:
-  - gameObject: {fileID: 0}
+  - gameObject: {fileID: 6163023282300280578}
     localPosition: {x: 0, y: 0, z: 0}
-  - gameObject: {fileID: 0}
+  - gameObject: {fileID: 6348254968417333146}
+    localPosition: {x: 0, y: 0, z: 0}
+  - gameObject: {fileID: 639871638052809254}
+    localPosition: {x: 0, y: 0, z: 0}
+  - gameObject: {fileID: 1934234017087262033}
+    localPosition: {x: 0, y: 0, z: 0}
+  - gameObject: {fileID: 6348254967470532402}
+    localPosition: {x: 0, y: 0, z: 0}
+  - gameObject: {fileID: 639871638516935990}
+    localPosition: {x: 0, y: 0, z: 0}
+  - gameObject: {fileID: 639871638516935990}
+    localPosition: {x: 0, y: 0, z: 0}
+  - gameObject: {fileID: 877634388}
+    localPosition: {x: 0, y: 0, z: 0}
+  - gameObject: {fileID: 1091890660}
+    localPosition: {x: 0, y: 0, z: 0}
+  - gameObject: {fileID: 1655979741}
     localPosition: {x: 0, y: 0, z: 0}
   wheels: []
   smokeConfigs:
@@ -9301,7 +9317,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 55
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 2067579087}
 --- !u!65 &2067579087
 BoxCollider:
@@ -9370,7 +9386,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 51
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 2094936305}
 --- !u!65 &2094936305
 BoxCollider:

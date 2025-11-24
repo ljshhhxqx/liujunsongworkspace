@@ -274,7 +274,7 @@ namespace HotUpdate.Scripts.Collector
             _gridMap.Clear();
             ObjectInjectProvider.Instance.Inject(MapBoundDefiner.Instance);
             _gridMap = MapBoundDefiner.Instance.GridMap.ToDictionary(x => x,_ => new Grid(new HashSet<int>()));
-            var res = ResourceManager.Instance.GetMapCollectObject(sceneName);
+            var res = ResourceManager.Instance.GetMapCollectObject($"Town");
             if (_collectiblePrefabs.Count == 0)
             {
                 foreach (var data in res)
@@ -310,7 +310,7 @@ namespace HotUpdate.Scripts.Collector
                     {
                         _collectibleMaterials.Add(qualityType, new Dictionary<PropertyTypeEnum, Material>());
                     }
-                    var matList = ResourceManager.Instance.GetMapCollectObjectMaterial(sceneName, qualityType.ToString());
+                    var matList = ResourceManager.Instance.GetMapCollectObjectMaterial("Town", qualityType.ToString());
                     foreach (var material in matList)
                     {
                         if (Enum.TryParse(material.name, out PropertyTypeEnum propertyType))

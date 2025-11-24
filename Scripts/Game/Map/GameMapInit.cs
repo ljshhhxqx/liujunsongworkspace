@@ -14,6 +14,7 @@ namespace HotUpdate.Scripts.Game.Map
     public class GameMapInit : NetworkAutoInjectHandlerBehaviour // MonoBehaviour NetworkAutoInjectHandlerBehaviour
     {
         private string _mapName;
+        private string _commonMapName;
         private int _staticObjectId;
         
 #if UNITY_EDITOR
@@ -34,11 +35,12 @@ namespace HotUpdate.Scripts.Game.Map
         {
             //uiManager.SwitchUI<LoadingScreenUI>();
             _mapName ??= gameObject.scene.name;
+            _commonMapName = $"Town";
             InjectGameObjects();
-            await LoadGameResources();
+            await LoadGameResources(_commonMapName);
             gameEventManager.Publish(new GameSceneResourcesLoadedEvent(_mapName));
-            uiManager.InitMapSprites(_mapName);
-            uiManager.InitMapUIs(_mapName);
+            uiManager.InitMapSprites(_commonMapName);
+            uiManager.InitMapUIs(_commonMapName);
             uiManager.CloseUI(UIType.Loading);
             Debug.Log("game map init complete!!!!!!!!!!");
         }
@@ -74,9 +76,9 @@ namespace HotUpdate.Scripts.Game.Map
             }
         }
 
-        private async UniTask LoadGameResources()
+        private async UniTask LoadGameResources(string mapName)
         {
-            var mapResource = await ResourceManager.Instance.GetMapResource(_mapName);
+            var mapResource = await ResourceManager.Instance.GetMapResource(mapName);
             if (mapResource == null)
             {
                 throw new UnityException("Main map resource not found.");
@@ -113,7 +115,7 @@ namespace HotUpdate.Scripts.Game.Map
         private void OnDestroy()
         {
             GameObjectContainer.Instance.ClearObjects();
-            ResourceManager.Instance.UnloadResourcesByAddress($"/Map/{_mapName}");
+            ResourceManager.Instance.UnloadResourcesByAddress($"/Map/{_commonMapName}");
         }
     }
 }

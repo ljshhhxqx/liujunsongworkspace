@@ -217,6 +217,10 @@ namespace HotUpdate.Scripts.Game.Map
             var staticObject = gameObject.GetComponent<GameStaticObject>();
             var position = gameObject.transform.position;
             var grid = MapBoundDefiner.Instance.GetGridPosition(position);
+            if (!collider)
+            {
+                collider = gameObject.GetComponent<Collider>();
+            }
             var colliderConfig = GamePhysicsSystem.CreateColliderConfig(collider);
             var data = new GameObjectData
             {

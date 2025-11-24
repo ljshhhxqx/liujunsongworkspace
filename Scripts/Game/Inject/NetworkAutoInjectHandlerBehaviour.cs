@@ -6,7 +6,7 @@ namespace HotUpdate.Scripts.Game.Inject
     public abstract class NetworkAutoInjectHandlerBehaviour : NetworkHandlerBehaviour
     {
         [SerializeField] 
-        private MapType mapType = MapType.Town;
+        private MapType mapType;
 
         protected virtual void Start()
         {

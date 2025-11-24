@@ -22,7 +22,6 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
 {
     public class PlayFabMessageHandler
     {
-        // RepeatedTask是一套用UniTask封装的定时器，可以方便地实现重复任务
         private readonly UIManager _uiManager;
         private readonly GameEventManager _gameEventManager;
         private bool _isProcessingPopup;
