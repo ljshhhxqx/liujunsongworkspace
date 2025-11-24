@@ -11,7 +11,7 @@ using VContainer;
 
 namespace HotUpdate.Scripts.Game.Map
 {
-    public class GameMapInit : MonoBehaviour // MonoBehaviour NetworkAutoInjectHandlerBehaviour
+    public class GameMapInit : NetworkAutoInjectHandlerBehaviour // MonoBehaviour NetworkAutoInjectHandlerBehaviour
     {
         private string _mapName;
         private int _staticObjectId;
@@ -88,27 +88,27 @@ namespace HotUpdate.Scripts.Game.Map
             }
         }
 
-        // public override void OnStartClient()
-        // {
-        //     base.OnStartClient();
-        //     var mapStaticObject = FindObjectsOfType<GameStaticObject>();
-        //     foreach (var staticObject in mapStaticObject)
-        //     {
-        //
-        //         GameObjectContainer.Instance.AddStaticObject(staticObject.gameObject, staticObject.interactableCollider, staticObject.isMesh);
-        //     }
-        // }
-        //
-        // public override void OnStartServer()
-        // {
-        //     base.OnStartServer();
-        //     var mapStaticObject = FindObjectsOfType<GameStaticObject>();
-        //     foreach (var staticObject in mapStaticObject)
-        //     {
-        //
-        //         GameObjectContainer.Instance.AddStaticObject(staticObject.gameObject, staticObject.interactableCollider, staticObject.isMesh);
-        //     }
-        // }
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            var mapStaticObject = FindObjectsOfType<GameStaticObject>();
+            foreach (var staticObject in mapStaticObject)
+            {
+        
+                GameObjectContainer.Instance.AddStaticObject(staticObject.gameObject, staticObject.interactableCollider, staticObject.isMesh);
+            }
+        }
+        
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+            var mapStaticObject = FindObjectsOfType<GameStaticObject>();
+            foreach (var staticObject in mapStaticObject)
+            {
+        
+                GameObjectContainer.Instance.AddStaticObject(staticObject.gameObject, staticObject.interactableCollider, staticObject.isMesh);
+            }
+        }
 
         private void OnDestroy()
         {
