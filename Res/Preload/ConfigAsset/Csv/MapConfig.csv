@@ -1,6 +1,6 @@
 mapType,maxPlayer,minPlayer,availableWeather,weatherMapData
 MapType,int,int,WeatherType[],WeatherMapData[]
-Town,4,1,"[1,2,3,4]","[{"weatherType":"Rainy","position":{"x":0,"y":0,"z":0.0},"size":{"x":80,"y":6,"z":50.0}},{"weatherType":"Snow","position":{"x":0,"y":0.0,"z":0.0},"size":{"x":66.63,"y":55.54,"z":50.0}}  ]"
+Town,4,1,"[1,2,3,4]","[{"weatherType":"Rainy","position":{"x":0,"y":0,"z":0.0},"size":{"x":80,"y":6,"z":50.0}},{"weatherType":"Snowy","position":{"x":0,"y":0.0,"z":0.0},"size":{"x":66.63,"y":55.54,"z":50.0}}  ]"
 Rocket,4,1,"[1,2,3]","[{"weatherType":"Rainy","position":{"x":-18.4,"y":0.1,"z":0.0},"size":{"x":138.04,"y":11.9,"z":50.0}}]"
-Christmas,4,1,"[1,2,4]","[{"weatherType":"Rainy","position":{"x":-38.9,"y":-1.1,"z":0.0},"size":{"x":140.0,"y":11.4,"z":50.0}},{"weatherType":"Snow","position":{"x":-40.5,"y":0.0,"z":0.0},"size":{"x":164.5,"y":78.3,"z":50.0}}]"
+Christmas,4,1,"[1,2,4]","[{"weatherType":"Rainy","position":{"x":-38.9,"y":-1.1,"z":0.0},"size":{"x":140.0,"y":11.4,"z":50.0}},{"weatherType":"Snowy","position":{"x":-40.5,"y":0.0,"z":0.0},"size":{"x":164.5,"y":78.3,"z":50.0}}]"
 WestWild,4,1,"[1,2]",[]

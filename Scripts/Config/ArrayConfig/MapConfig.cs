@@ -84,7 +84,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     public struct WeatherMapData
     {
         public WeatherType weatherType;
-        public CompressedVector3 position;
-        public CompressedVector3 size;
+        public Vector3 position;
+        public Vector3 size;
     }
 }

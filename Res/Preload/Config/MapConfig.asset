@@ -25,17 +25,32 @@ MonoBehaviour:
     maxPlayer: 4
     minPlayer: 1
     availableWeather: 01000000020000000300000004000000
-    weatherMapData: []
+    weatherMapData:
+    - weatherType: 3
+      position: {x: 0, y: 0, z: 0}
+      size: {x: 80, y: 6, z: 50}
+    - weatherType: 4
+      position: {x: 0, y: 0, z: 0}
+      size: {x: 66.63, y: 55.54, z: 50}
   - mapType: 1
     maxPlayer: 4
     minPlayer: 1
     availableWeather: 010000000200000003000000
-    weatherMapData: []
+    weatherMapData:
+    - weatherType: 3
+      position: {x: -18.4, y: 0.1, z: 0}
+      size: {x: 138.04, y: 11.9, z: 50}
   - mapType: 2
     maxPlayer: 4
     minPlayer: 1
     availableWeather: 010000000200000004000000
-    weatherMapData: []
+    weatherMapData:
+    - weatherType: 3
+      position: {x: -38.9, y: -1.1, z: 0}
+      size: {x: 140, y: 11.4, z: 50}
+    - weatherType: 4
+      position: {x: -40.5, y: 0, z: 0}
+      size: {x: 164.5, y: 78.3, z: 50}
   - mapType: 3
     maxPlayer: 4
     minPlayer: 1

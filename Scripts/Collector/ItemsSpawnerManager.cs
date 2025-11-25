@@ -273,7 +273,7 @@ namespace HotUpdate.Scripts.Collector
         {
             _gridMap.Clear();
             ObjectInjectProvider.Instance.Inject(MapBoundDefiner.Instance);
-            _gridMap = MapBoundDefiner.Instance.GridMap.ToDictionary(x => x,_ => new Grid(new HashSet<int>()));
+            _gridMap = MapBoundDefiner.Instance.GridMap.Distinct().ToDictionary(x => x,_ => new Grid(new HashSet<int>()));
             var res = ResourceManager.Instance.GetMapCollectObject($"Town");
             if (_collectiblePrefabs.Count == 0)
             {

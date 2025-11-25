@@ -310,7 +310,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 12
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 63913553}
 --- !u!1 &85984612
 GameObject:
@@ -662,7 +662,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 10
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 139103091}
 --- !u!1 &193794621
 GameObject:
@@ -814,7 +814,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 14
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 194937857}
 --- !u!1 &197974299
 GameObject:
@@ -966,7 +966,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 13
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 202924247}
 --- !u!1 &206348593
 GameObject:
@@ -980,7 +980,6 @@ GameObject:
   - component: {fileID: 206348597}
   - component: {fileID: 206348596}
   - component: {fileID: 206348595}
-  - component: {fileID: 206348598}
   m_Layer: 7
   m_Name: stones group winter (7)
   m_TagString: Untagged
@@ -1076,21 +1075,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 206348593}
   m_Mesh: {fileID: 5298958895379297157, guid: 773dabc407abb0c418db7ae13bbc9541, type: 3}
---- !u!114 &206348598
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 206348593}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a22ca65cdc8a47c9a5789def65786632, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: 68
-  isMesh: 0
-  interactableCollider: {fileID: 0}
 --- !u!1 &237158588
 GameObject:
   m_ObjectHideFlags: 0
@@ -3234,7 +3218,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 3
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 722488994}
 --- !u!1001 &724056234
 PrefabInstance:
@@ -5109,7 +5093,6 @@ GameObject:
   - component: {fileID: 952334331}
   - component: {fileID: 952334330}
   - component: {fileID: 952334332}
-  - component: {fileID: 952334334}
   - component: {fileID: 952334333}
   m_Layer: 7
   m_Name: wooden winter house 2
@@ -5222,21 +5205,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 9
-  isMesh: 0
-  interactableCollider: {fileID: 0}
---- !u!114 &952334334
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 952334327}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a22ca65cdc8a47c9a5789def65786632, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: 61
   isMesh: 0
   interactableCollider: {fileID: 0}
 --- !u!1 &953069022
@@ -6205,7 +6173,6 @@ GameObject:
   - component: {fileID: 1014188582}
   - component: {fileID: 1014188581}
   - component: {fileID: 1014188580}
-  - component: {fileID: 1014188583}
   m_Layer: 7
   m_Name: stones group winter (8)
   m_TagString: Untagged
@@ -6301,21 +6268,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1014188578}
   m_Mesh: {fileID: 5298958895379297157, guid: 773dabc407abb0c418db7ae13bbc9541, type: 3}
---- !u!114 &1014188583
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1014188578}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a22ca65cdc8a47c9a5789def65786632, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: 69
-  isMesh: 0
-  interactableCollider: {fileID: 0}
 --- !u!1 &1031499785
 GameObject:
   m_ObjectHideFlags: 0
@@ -7509,13 +7461,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1232323867}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.05487263, y: -0.98429966, z: 0.009337738, w: 0.16749941}
-  m_LocalPosition: {x: -85.18, y: 4.07, z: -4.97}
+  m_LocalRotation: {x: -0.05380255, y: -0.8261465, z: -0.014264779, w: 0.56069946}
+  m_LocalPosition: {x: -82.94, y: 3.87, z: -3.95}
   m_LocalScale: {x: 20, y: 20, z: 20}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 959330668}
-  m_LocalEulerAnglesHint: {x: 0, y: -160.685, z: 6.382}
+  m_LocalEulerAnglesHint: {x: -4.813, y: -111.848, z: 4.195}
 --- !u!23 &1232323870
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -7661,7 +7613,6 @@ GameObject:
   - component: {fileID: 1247136423}
   - component: {fileID: 1247136422}
   - component: {fileID: 1247136424}
-  - component: {fileID: 1247136426}
   - component: {fileID: 1247136425}
   m_Layer: 7
   m_Name: wooden winter house 3
@@ -7773,21 +7724,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 8
-  isMesh: 0
-  interactableCollider: {fileID: 0}
---- !u!114 &1247136426
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1247136419}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a22ca65cdc8a47c9a5789def65786632, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: 59
   isMesh: 0
   interactableCollider: {fileID: 0}
 --- !u!1 &1277093931
@@ -8168,7 +8104,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 2
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 1359131262}
 --- !u!1 &1366138138
 GameObject:
@@ -8927,7 +8863,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 1
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 1465007850}
 --- !u!1 &1488248879
 GameObject:
@@ -9200,7 +9136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 15
-  isMesh: 0
+  isMesh: 1
   interactableCollider: {fileID: 1494893215}
 --- !u!1 &1518011217
 GameObject:
@@ -9679,7 +9615,7 @@ Transform:
   m_GameObject: {fileID: 1558141971}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
-  m_LocalPosition: {x: 28.74, y: 27.2, z: -3.1}
+  m_LocalPosition: {x: 28.68, y: 27.2, z: -3.1}
   m_LocalScale: {x: 1.1676599, y: 0.1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9921,7 +9857,6 @@ GameObject:
   - component: {fileID: 1571244177}
   - component: {fileID: 1571244176}
   - component: {fileID: 1571244175}
-  - component: {fileID: 1571244178}
   m_Layer: 7
   m_Name: stones group winter (6)
   m_TagString: Untagged
@@ -10017,21 +9952,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1571244173}
   m_Mesh: {fileID: 5298958895379297157, guid: 773dabc407abb0c418db7ae13bbc9541, type: 3}
---- !u!114 &1571244178
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1571244173}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a22ca65cdc8a47c9a5789def65786632, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: 67
-  isMesh: 0
-  interactableCollider: {fileID: 0}
 --- !u!1 &1573273122
 GameObject:
   m_ObjectHideFlags: 0
@@ -10464,7 +10384,6 @@ GameObject:
   - component: {fileID: 1602593518}
   - component: {fileID: 1602593517}
   - component: {fileID: 1602593519}
-  - component: {fileID: 1602593521}
   - component: {fileID: 1602593520}
   m_Layer: 7
   m_Name: wooden winter house
@@ -10577,21 +10496,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 7
-  isMesh: 0
-  interactableCollider: {fileID: 0}
---- !u!114 &1602593521
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1602593514}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a22ca65cdc8a47c9a5789def65786632, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: 55
   isMesh: 0
   interactableCollider: {fileID: 0}
 --- !u!1 &1620827042
@@ -14835,7 +14739,6 @@ GameObject:
   - component: {fileID: 1767499025685030705}
   - component: {fileID: 4567667852712006651}
   - component: {fileID: 4567667852712006652}
-  - component: {fileID: 4567667852712006654}
   - component: {fileID: 4567667852712006653}
   m_Layer: 7
   m_Name: wooden winter house
@@ -15947,21 +15850,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 6
-  isMesh: 0
-  interactableCollider: {fileID: 0}
---- !u!114 &4567667852712006654
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2622046911400604206}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a22ca65cdc8a47c9a5789def65786632, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: 38
   isMesh: 0
   interactableCollider: {fileID: 0}
 --- !u!1 &4582511987386242203
@@ -17927,7 +17815,6 @@ GameObject:
   - component: {fileID: 6812067806492104240}
   - component: {fileID: 8749830907625923322}
   - component: {fileID: 8749830907625923323}
-  - component: {fileID: 8749830907625923325}
   - component: {fileID: 8749830907625923324}
   m_Layer: 7
   m_Name: wooden winter house 3
@@ -19825,7 +19712,6 @@ GameObject:
   - component: {fileID: 5041193456249224213}
   - component: {fileID: 7066462227784714463}
   - component: {fileID: 8724001914263267595}
-  - component: {fileID: 8724001914263267597}
   - component: {fileID: 8724001914263267596}
   m_Layer: 7
   m_Name: wooden winter house 2
@@ -19869,21 +19755,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 4
-  isMesh: 0
-  interactableCollider: {fileID: 0}
---- !u!114 &8724001914263267597
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8724001914263267594}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a22ca65cdc8a47c9a5789def65786632, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: 16
   isMesh: 0
   interactableCollider: {fileID: 0}
 --- !u!23 &8749830907625923322
@@ -19963,21 +19834,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 5
-  isMesh: 0
-  interactableCollider: {fileID: 0}
---- !u!114 &8749830907625923325
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7092422475940184879}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a22ca65cdc8a47c9a5789def65786632, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: 28
   isMesh: 0
   interactableCollider: {fileID: 0}
 --- !u!4 &8802823527079095144

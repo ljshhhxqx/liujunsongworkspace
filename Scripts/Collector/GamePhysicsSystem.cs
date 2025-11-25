@@ -165,7 +165,8 @@ namespace HotUpdate.Scripts.Collector
                     };
             
                 default:
-                    throw new ArgumentException("Collider type not supported: " + collider.GetType());
+                    Debug.LogWarning($"the game object { collider.gameObject.name } has no Collider type not supported: " + collider.GetType());
+                    return null;
             }
         }
 

@@ -29,9 +29,15 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
             var shape = rainParticles.shape;
             _pos = shape.position;
             _size = shape.scale;
-            var weathers = GameLoopDataModel.MapConfig.Value.weatherMapData.First(x => x.weatherType == WeatherType.Rainy);
-            shape.scale = weathers.size;
-            shape.position = weathers.position;
+            
+            GameLoopDataModel.MapConfig
+                .Where(x => x.weatherMapData!= null)
+                .Subscribe(weather =>
+            {
+                var weathers = weather.weatherMapData.First(x => x.weatherType == WeatherType.Rainy);
+                shape.scale = weathers.size;
+                shape.position = weathers.position;
+            }).AddTo(this);
             _originalRainSnowSetting = new RainSnowSetting
             {
                 emissionRate = emission.rateOverTime,

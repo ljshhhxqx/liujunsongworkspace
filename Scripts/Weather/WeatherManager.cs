@@ -98,6 +98,7 @@ namespace HotUpdate.Scripts.Weather
             _uiManager = uiManager;
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _weatherConfig = configProvider.GetConfig<WeatherConfig>();
+            _mapConfig = configProvider.GetConfig<MapConfig>();
             _isDayNightCycle = false;
             _gameEventManager = gameEventManager;
             _objectResolver = objectResolver;
