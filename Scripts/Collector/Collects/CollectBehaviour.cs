@@ -29,6 +29,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         protected MaterialTransparencyController[] MaterialTransparencyControllers;
         protected GameEventManager GameEventManager;
         [SyncVar] protected int CurrentControlSkillType;
+        protected override bool AutoInjectLocalPlayer => false;
         protected SubjectedStateType CurrentSubjectedStateType => (SubjectedStateType)CurrentControlSkillType;
 
         protected float NowSpeed(float currentSpeed)

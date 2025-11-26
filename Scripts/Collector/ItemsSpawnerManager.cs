@@ -66,6 +66,7 @@ namespace HotUpdate.Scripts.Collector
         
         // 服务器维护的核心数据
         private readonly SyncDictionary<uint, byte[]> _serverItemMap = new SyncDictionary<uint, byte[]>();
+        private readonly SyncDictionary<uint, int> _serverItemBehaviour = new SyncDictionary<uint, int>();
         private readonly Dictionary<int, IColliderConfig> _colliderConfigs = new Dictionary<int, IColliderConfig>();
         private readonly HashSet<uint> _processedItems = new HashSet<uint>();
         private readonly Dictionary<uint, CollectObjectController> _clientCollectObjectControllers = new Dictionary<uint, CollectObjectController>();
@@ -440,6 +441,7 @@ namespace HotUpdate.Scripts.Collector
 
                         _processedItems.Remove(itemId);
                         _serverItemMap.Remove(itemId);
+                        _serverItemBehaviour.Remove(itemId);
                         Debug.Log($"Player {player.name} pick up item {itemId}");
                     }
                 }
@@ -527,6 +529,7 @@ namespace HotUpdate.Scripts.Collector
                 // 通知客户端清理
                 //RpcEndRound();
                 _serverItemMap.Clear();
+                _serverItemBehaviour.Clear();
                 Debug.Log("EndRound finished on server");
                 await UniTask.Yield();
                 
@@ -621,12 +624,9 @@ namespace HotUpdate.Scripts.Collector
                     {
                         var type = _jsonDataConfig.GetCollectObjectType();
                         var go = NetworkGameObjectPoolManager.Instance.Spawn(_collectiblePrefabs[item.Item1].gameObject, item.Item2, Quaternion.identity, null,
-                            poolSize: newSpawnInfos.Count, onSpawn: (identity) =>
-                            {
-                                var controller = identity.GetComponent<CollectObjectController>();
-                                controller.BehaviourType = (int)type;
-                            });
+                            poolSize: newSpawnInfos.Count);
                         var identity = go.GetComponent<NetworkIdentity>();
+                        _serverItemBehaviour.TryAdd(identity.netId, (int)type);
                         
                         // if (_serverItemMap.TryGetValue(identity.netId, out var itemInfo))
                         // {
@@ -1221,6 +1221,11 @@ namespace HotUpdate.Scripts.Collector
             writer.Write(data.translucence);
             writer.Write(data.mysteryTime);
             writer.Write(data.translucenceTime);
+        }
+
+        public CollectObjectType GetCollectObjectType(uint id)
+        {
+            return (CollectObjectType)_serverItemBehaviour.FirstOrDefault(x => x.Key == id).Value;
         }
     }
     [Serializable]

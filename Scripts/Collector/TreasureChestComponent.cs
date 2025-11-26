@@ -36,6 +36,7 @@ namespace HotUpdate.Scripts.Collector
         private Transform _playerTransform;
         public Collider ChestCollider => _chestCollider;
         public QualityType Quality => quality;
+        protected override bool AutoInjectLocalPlayer => false;
 
         [SyncVar] public int BehaviourType;
         

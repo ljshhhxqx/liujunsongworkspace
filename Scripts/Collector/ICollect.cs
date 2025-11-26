@@ -34,6 +34,7 @@ namespace HotUpdate.Scripts.Collector
         public QualityType Quality => quality;
         public abstract Collider Collider { get; }
         protected abstract void SendCollectRequest(uint pickerId, PickerType pickerType);
+        protected override bool AutoInjectLocalPlayer => false;
 
         // protected virtual void Awake()
         // {
@@ -44,11 +45,6 @@ namespace HotUpdate.Scripts.Collector
         protected bool IsInjected { get; private set; }
         public virtual void OnSelfSpawn()
         {
-            if (!IsInjected)
-            {
-                ObjectInjectProvider.Instance.InjectMapGameObject(GameSceneManager.CurrentMapType, gameObject);
-                IsInjected = true;
-            }
         }
 
         public virtual void OnSelfDespawn()

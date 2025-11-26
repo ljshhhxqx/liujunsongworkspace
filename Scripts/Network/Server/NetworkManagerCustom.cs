@@ -97,14 +97,11 @@ namespace HotUpdate.Scripts.Network.Server
             
         }
 
-        private GameObject SpawnPlayer(int connectionId, int spawnIndex)
+        private GameObject SpawnPlayer(int connectionId, NetworkStartPosition spawnPoint)
         {
-            var spawnPoint = _spawnPoints[spawnIndex];
             var res = DataJsonManager.Instance.GetResourceData(_gameConfigData.playerPrefabName);
             var resInfo = ResourceManager.Instance.GetResource<GameObject>(res);
-            var playerGo = Instantiate(resInfo.gameObject);
-            playerGo.transform.position =spawnPoint.transform.position;
-            playerGo.transform.localRotation = Quaternion.identity;
+            var playerGo = Instantiate(resInfo.gameObject, spawnPoint.transform.position, Quaternion.identity, spawnPoint.transform);
             playerGo.name = playerGo.name.Replace("(Clone)", connectionId.ToString());
             Debug.Log("Spawned player: " + playerGo.name);
             return playerGo;
@@ -116,7 +113,7 @@ namespace HotUpdate.Scripts.Network.Server
             var res = DataJsonManager.Instance.GetResourceData(_gameConfigData.playerPrefabName);
             var spawnPoint = _spawnPoints[spawnIndex];
             
-            var playerGo = SpawnPlayer(conn.connectionId, spawnIndex);
+            var playerGo = SpawnPlayer(conn.connectionId, spawnPoint);
             //currentPlayer = resInfo.gameObject;
             // playerGo.gameObject.SetActive(false);
             // ObjectInjectProvider.Instance.InjectMapGameObject(_mapName, playerGo);

@@ -44,12 +44,19 @@ namespace HotUpdate.Scripts.Tool.ReactiveProperty
 
         public void Add(TKey key, TValue value)
         {
-            _dictionary.Add(key, value);
+            if (_dictionary.ContainsKey(key))
+            {
+                return;
+            }
             OnDictionaryChanged(DictionaryChangeType.Added, key, value, default(TValue));
         }
 
         public void Add(KeyValuePair<TKey, TValue> item)
         {
+            if (_dictionary.ContainsKey(item.Key))
+            {
+                return;
+            }
             Add(item.Key, item.Value);
         }
 

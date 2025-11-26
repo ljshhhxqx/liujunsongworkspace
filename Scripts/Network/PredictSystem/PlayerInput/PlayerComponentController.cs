@@ -71,6 +71,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private PlayerControlEffect playerControlEffect;
         [SerializeField]
         private Transform rotateCenter;
+        protected override bool AutoInjectClient => false;
         
         [Header("States-NetworkBehaviour")]
         private PlayerInputPredictionState _inputState;
@@ -240,7 +241,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _gameEventManager = gameEventManager;
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, ColliderConfig, ObjectType.Player, gameObject.layer, gameObject.tag);
 
-            //_currentAnimationCooldowns.OnChange += OnAnimationCooldownChanged;
             GetAllCalculators(configProvider, gameSyncManager);
             HandleAllSyncState();
             HandleLocalInitCallback();
@@ -313,8 +313,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         }
 
 
-        protected override void StartLocalPlayer()
+        protected override void InjectCallback()
         {
+            if (!LocalPlayerHandler)
+            {
+                return;
+            }
             Debug.Log($"[PlayerInputController] OnStartLocalPlayer");
             _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
                 UIPropertyBinder.LocalPlayerId);

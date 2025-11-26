@@ -445,7 +445,7 @@ MonoBehaviour:
     TypeName: HotUpdate.Scripts.Game.Inject.GameMainLifetimeScope
   autoRun: 1
   autoInjectGameObjects: []
-  mapType: 0
+  _mapType: 0
 --- !u!1 &4134770680424130314
 GameObject:
   m_ObjectHideFlags: 0
@@ -609,6 +609,7 @@ MonoBehaviour:
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs:
+  - {fileID: 102501099124174454, guid: 2d9d37277d6d0ee46911889994118f5d, type: 3}
   - {fileID: 5922523686023914852, guid: 3f71c83a126da864da95e9ba6ad5e38e, type: 3}
   - {fileID: 3580850165668990844, guid: 6d09f1047ed7fb244a255fa66291cb94, type: 3}
   - {fileID: 4150729518734284287, guid: 0ba1573e0923cf0419e46253abd27b17, type: 3}

@@ -21,6 +21,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         private InteractSystem _interactSystem;
         private float _criticalRate;
         private float _criticalDamage;
+        protected override bool AutoInjectLocalPlayer => false;
 
         public void Init(Vector3 direction, float speed, float lifeTime, float attackPower, uint spawnerId, float criticalRate, float criticalDamage)
         {
@@ -33,10 +34,9 @@ namespace HotUpdate.Scripts.Collector.Collects
             _criticalRate = criticalRate;
             _criticalDamage = criticalDamage;
         }
-        
-        protected override void Start()
+
+        protected override void InjectCallback()
         {
-            base.Start();
             _interactSystem = FindObjectOfType<InteractSystem>();
             _colliderConfig = GamePhysicsSystem.CreateColliderConfig(GetComponent<Collider>());
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _colliderConfig, ObjectType.Bullet, gameObject.layer, gameObject.tag);

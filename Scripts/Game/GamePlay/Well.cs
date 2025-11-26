@@ -13,6 +13,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
         private GameEventManager _gameEventManager;
         private IColliderConfig _colliderConfig;
         private HashSet<DynamicObjectData> _dynamicObjects = new HashSet<DynamicObjectData>();
+        protected override bool AutoInjectLocalPlayer => false;
         
         [Inject]
         private void Init(GameEventManager gameEventManager)

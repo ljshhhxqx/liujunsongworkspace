@@ -59,7 +59,10 @@ namespace HotUpdate.Scripts.Game.GamePlay
         {
             _gameEventManager = gameEventManager;
             _gameEventManager.Subscribe<StartGameTrainEvent>(OnStartTrain);
-            _origin = _targets.RandomSelect();
+            if (_targets != null && _targets.Length > 0)
+            {
+                _origin = _targets.RandomSelect();
+            }
             _colliderConfig = GamePhysicsSystem.CreateColliderConfig(deathCollider);
             if (rocketCollider)
             {
@@ -75,13 +78,13 @@ namespace HotUpdate.Scripts.Game.GamePlay
                 return;
             }
 
-            GameObjectContainer.Instance.DynamicObjectIntersects(netId, deathCollider.transform.position, _colliderConfig, _dynamicObjects,
-                OnIntersect);
-            if (_rocketColliderConfig != null)
-            {
-                GameObjectContainer.Instance.DynamicObjectIntersects(netId, rocketCollider.transform.position, _rocketColliderConfig, _dynamicObjects,
-                    OnIntersect);
-            }
+            // GameObjectContainer.Instance.DynamicObjectIntersects(netId, deathCollider.transform.position, _colliderConfig, _dynamicObjects,
+            //     OnIntersect);
+            // if (_rocketColliderConfig != null)
+            // {
+            //     GameObjectContainer.Instance.DynamicObjectIntersects(netId, rocketCollider.transform.position, _rocketColliderConfig, _dynamicObjects,
+            //         OnIntersect);
+            // }
         }
 
         private bool OnIntersect(DynamicObjectData dynamicObject)

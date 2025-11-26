@@ -30,6 +30,7 @@ namespace HotUpdate.Scripts.Collector
         private PlayerInGameManager _playerInGameManager;
         private IColliderConfig _colliderConfig;
         private HashSet<DynamicObjectData> _cachedCollects = new HashSet<DynamicObjectData>();
+        protected override bool AutoInjectClient => false;
 
         private readonly HashSet<uint> _collects = new HashSet<uint>();
     

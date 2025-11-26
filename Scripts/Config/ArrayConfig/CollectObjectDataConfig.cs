@@ -151,6 +151,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 
     public enum CollectObjectType
     {
+        None,
         Attack,
         Move,
         Hidden,

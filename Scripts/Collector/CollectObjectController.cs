@@ -27,9 +27,7 @@ namespace HotUpdate.Scripts.Collector
         private Renderer fillRenderer;
         private LayerMask _playerLayer;  
         protected LayerMask _sceneLayer;
-
-        [SyncVar] public int BehaviourType;
-        
+        private CollectObjectType _collectObjectType;
         public int CollectConfigId => collectConfigId;
         public override Collider Collider => _collider;
         public CollectObjectData CollectObjectData { get; private set; }
@@ -48,12 +46,14 @@ namespace HotUpdate.Scripts.Collector
         {
             var jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             SpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
+            _collectObjectType = SpawnerManager.GetCollectObjectType(netId);
             var playerConfig = jsonDataConfig.PlayerConfig;
             _playerLayer = playerConfig.PlayerLayer;
             _sceneLayer = jsonDataConfig.GameConfig.groundSceneLayer;
             var collectObjectDataConfig = configProvider.GetConfig<CollectObjectDataConfig>();
             var collectCollider = GetComponentInChildren<CollectCollider>();
             _collider = collectCollider.GetComponent<Collider>();
+            _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
             CollectObjectData = collectObjectDataConfig.GetCollectObjectData(collectConfigId);
             if (!collectCollider)
             {
@@ -62,25 +62,7 @@ namespace HotUpdate.Scripts.Collector
             }
             ColliderConfig = GamePhysicsSystem.CreateColliderConfig(collectCollider.GetComponent<Collider>());
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, ColliderConfig, ObjectType.Collectable, gameObject.layer, gameObject.tag);
-
-            if (ClientHandler)
-            {
-                Debug.Log($"CollectObjectController::Init call On Init");
-                // _disposable = Observable.EveryFixedUpdate()
-                //     .Where(_ => _collider.enabled &&
-                //                 GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, ColliderConfig,
-                //                     CachedDynamicObjectData))
-                //     .Subscribe(_ =>
-                //     {
-                //         OnTriggerEnterObserver();
-                //     });
-                ChangeBehaviour();
-            }
-        }
-
-        protected override void Start()
-        {
-            base.Start();
+            _collectAnimationComponent?.Play();
             ChangeBehaviour();
         }
 
@@ -122,9 +104,15 @@ namespace HotUpdate.Scripts.Collector
             }
         }
 
-        private void ChangeBehaviour()
+        public void ChangeBehaviour()
         {
-            switch ((CollectObjectType)BehaviourType)
+            if (_collectObjectType == CollectObjectType.None)
+            {
+                Debug.LogError("CollectObjectController::ChangeBehaviour call with CollectObjectType.None");
+                return;
+            }
+            Debug.Log($"CollectObjectController::ChangeBehaviour call" + _collectObjectType);
+            switch (_collectObjectType)
             {
                 case CollectObjectType.Attack:
                     InitAttackItem(SpawnerManager.GetRandomAttackInfo());
@@ -180,30 +168,32 @@ namespace HotUpdate.Scripts.Collector
                 //         OnTriggerEnterObserver();
                 //     });
                 _collectAnimationComponent?.Play();
+                ChangeBehaviour();
             }
         }
 
-        protected override void StartClient()
-        {
-            Debug.Log("Local player collider started");
-            _collectParticlePlayer = GetComponentInChildren<CollectParticlePlayer>();
-            _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
-            _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
-            _interactSystem = FindObjectOfType<InteractSystem>();
-            _collectAnimationComponent?.Play();
-            Debug.Log("Local player animation");
-            _collider.enabled = true;
-            _collectAnimationComponent?.Play();
-            Debug.Log($"CollectObjectController::Init call On OnStartClient");
-            // _disposable = Observable.EveryFixedUpdate()
-            //     .Where(_ => _collider.enabled &&
-            //                 GameObjectContainer.Instance.DynamicObjectIntersects(transform.position, ColliderConfig,
-            //                     CachedDynamicObjectData))
-            //     .Subscribe(_ =>
-            //     {
-            //         OnTriggerEnterObserver();
-            //     });
-        }
+        // protected override void InjectCallback()
+        // {
+        //     _collectParticlePlayer = GetComponentInChildren<CollectParticlePlayer>();
+        //     _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
+        //     _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
+        //     _interactSystem = FindObjectOfType<InteractSystem>();
+        //     _collectAnimationComponent?.Play();
+        //     var collectCollider = GetComponentInChildren<CollectCollider>();
+        //     _collider = collectCollider.GetComponent<Collider>();
+        //     _collider.enabled = true;
+        //     _collectAnimationComponent?.Play();
+        //     
+        //     ChangeBehaviour();
+        //     // _disposable = Observable.EveryFixedUpdate()
+        //     //     .Where(_ => _collider.enabled &&
+        //     //                 GameObjectContainer.Instance.DynamicObjectIntersects(transform.position, ColliderConfig,
+        //     //                     CachedDynamicObjectData))
+        //     //     .Subscribe(_ =>
+        //     //     {
+        //     //         OnTriggerEnterObserver();
+        //     //     });
+        // }
 
         public override void OnSelfDespawn()
         {
