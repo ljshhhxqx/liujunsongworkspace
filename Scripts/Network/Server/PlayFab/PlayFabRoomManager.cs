@@ -44,6 +44,8 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         private MainGameInfo _currentMainGameInfo;
         private GamePlayerInfo _currentGamePlayerInfo;
         private GameEventManager _gameEventManager;
+        private MapConfig _mapConfig;
+        private IConfigProvider _configProvider;
         public RoomData[] RoomsData { get; private set; } = Array.Empty<RoomData>();
         public static string CurrentRoomId { get; private set; }
         public bool IsMatchmaking {
@@ -66,14 +68,21 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         public event Action<MainGameInfo>  OnGameInfoChanged;
         
         [Inject]
-        private PlayFabRoomManager(UIManager uiManager, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller, 
+        private PlayFabRoomManager(UIManager uiManager, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller, IConfigProvider configProvider,
             PlayerDataManager playerDataManager, GameSceneManager gameSceneManager, GameEventManager gameEventManager)
         {
             _gameEventManager = gameEventManager;
             _gameSceneManager = gameSceneManager;
             _uiManager = uiManager;
             _playerDataManager = playerDataManager;
+            _configProvider = configProvider;
             _playFabClientCloudScriptCaller = playFabClientCloudScriptCaller;
+            _gameEventManager.Subscribe<GameResourceLoadedEvent>(OnGameResourceLoaded);
+        }
+
+        private void OnGameResourceLoaded(GameResourceLoadedEvent resourceLoadedEvent)
+        {
+            _mapConfig = _configProvider.GetConfig<MapConfig>();
         }
 
         #region 匹配
@@ -552,6 +561,8 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             PlayFabData.ConnectionAddress.Value = message.mainGameInfo.ipAddress;
             PlayFabData.ConnectionPort.Value = message.mainGameInfo.port;
             PlayFabData.CurrentGameId.Value = message.mainGameInfo.gameId;
+            GameLoopDataModel.GameSceneName.Value = (MapType)message.mainGameInfo.mapType;
+            GameLoopDataModel.MapConfig.Value = _mapConfig.GetMapConfigData(GameLoopDataModel.GameSceneName.Value);
             operation.Completed += (op) =>
             {
                 _playerDataManager.InitRoomPlayer(_currentRoomData);

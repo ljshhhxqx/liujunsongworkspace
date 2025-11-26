@@ -169,15 +169,6 @@ namespace HotUpdate.Scripts.Game
         private void OnGameStartMessage(GameStartMessage message)
         {
             //Debug.Log($"Game Start! Scene: {message.mapType} | Mode: {_gameInfo.GameMode} | Time: {_gameInfo.GameTime} | Score: {_gameInfo.GameScore}");
-            GameLoopDataModel.GameSceneName.Value = message.mapType;
-            GameLoopDataModel.GameLoopData.Value = new GameLoopData
-            {
-                GameMode = GameMode.Time,
-                TargetScore = _gameInfo.GameTime,
-                TimeLimit = _gameInfo.GameScore,
-                IsStartGame = true
-            };
-            GameLoopDataModel.MapConfig.Value = _mapConfig.GetMapConfigData(message.mapType);
         }
 
         private void OnGameReady(GameReadyEvent gameReadyEvent)
@@ -187,7 +178,7 @@ namespace HotUpdate.Scripts.Game
             if (_serverHandler)
             {
                 _cts = new CancellationTokenSource();
-                PlayerInGameManager.Instance.SpawnAllBases();
+                PlayerInGameManager.Instance.SpawnAllBases(gameReadyEvent.GameInfo.SceneName);
                 isEndGameSync = false;
                 IsEndGame = false;
                 

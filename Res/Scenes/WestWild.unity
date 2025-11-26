@@ -186,6 +186,10 @@ PrefabInstance:
       propertyPath: mapType
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 2768597044963340948, guid: dc0546152642ee54f90f3c2ff0290c38, type: 3}
+      propertyPath: _mapType
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4134770680424130314, guid: dc0546152642ee54f90f3c2ff0290c38, type: 3}
       propertyPath: m_Name
       value: GamePlay
@@ -7269,7 +7273,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1014166579}
-  - component: {fileID: 1014166580}
   m_Layer: 7
   m_Name: GameObject (1)
   m_TagString: Untagged
@@ -7296,21 +7299,6 @@ Transform:
   - {fileID: 1602781896}
   m_Father: {fileID: 992121946}
   m_LocalEulerAnglesHint: {x: 0, y: 195.863, z: 0}
---- !u!114 &1014166580
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1014166578}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a22ca65cdc8a47c9a5789def65786632, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: 57
-  isMesh: 0
-  interactableCollider: {fileID: 0}
 --- !u!1 &1016180965
 GameObject:
   m_ObjectHideFlags: 0
@@ -7320,7 +7308,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1016180966}
-  - component: {fileID: 1016180967}
   m_Layer: 7
   m_Name: GameObject (2)
   m_TagString: Untagged
@@ -7350,21 +7337,6 @@ Transform:
   - {fileID: 2051769559}
   m_Father: {fileID: 992121946}
   m_LocalEulerAnglesHint: {x: 0, y: 301.849, z: 0}
---- !u!114 &1016180967
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1016180965}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a22ca65cdc8a47c9a5789def65786632, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: 58
-  isMesh: 0
-  interactableCollider: {fileID: 0}
 --- !u!1 &1038651383
 GameObject:
   m_ObjectHideFlags: 0
@@ -7434,7 +7406,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  mapType: 0
   movementDuration: 5
   carriages:
   - gameObject: {fileID: 4173178655008118245}
@@ -10703,7 +10674,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1503726887}
-  - component: {fileID: 1503726888}
   m_Layer: 7
   m_Name: GameObject
   m_TagString: Untagged
@@ -10731,21 +10701,6 @@ Transform:
   - {fileID: 1369379359}
   m_Father: {fileID: 992121946}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1503726888
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1503726886}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a22ca65cdc8a47c9a5789def65786632, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: 94
-  isMesh: 0
-  interactableCollider: {fileID: 0}
 --- !u!1 &1517305321
 GameObject:
   m_ObjectHideFlags: 0

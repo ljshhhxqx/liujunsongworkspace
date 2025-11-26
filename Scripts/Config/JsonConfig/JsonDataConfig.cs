@@ -579,13 +579,28 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         {
             return 0.002f * score + 10f;
         }
-        
-        public Vector3 GetPlayerSpawnPosition(Vector3[] existPositions) 
+
+        public BasePositionData GetBasePositionData(MapType mapType)
         {
-            if (existPositions.Length == 0) return gameBaseData.basePositions[0];
             for (int i = 0; i < gameBaseData.basePositions.Length; i++)
             {
-                var pos = gameBaseData.basePositions[i];
+                var basePosition = gameBaseData.basePositions[i];
+                if (basePosition.mapType == mapType)
+                {
+                    return basePosition;
+                }
+            }
+            Debug.LogError($"没有找到对应的基地数据 {mapType}");
+            return default;
+        }
+
+        public Vector3 GetPlayerSpawnPosition(MapType mapType, Vector3[] existPositions)
+        {
+            var poss = GetBasePositionData(mapType).basePositions;
+            if (existPositions.Length == 0) return poss[0];
+            for (int i = 0; i < poss.Length; i++)
+            {
+                var pos = poss[i];
                 if (existPositions.Contains(pos))
                 {
                     continue;
@@ -608,9 +623,10 @@ namespace HotUpdate.Scripts.Config.JsonConfig
 
         #endregion
 
-        public Vector3 GetNearestBase(Vector3 targetPosition)
+        public Vector3 GetNearestBase(MapType mapType, Vector3 targetPosition)
         {
-            return gameBaseData.basePositions.GetNearestVector(targetPosition);
+            var nearestBase = GetBasePositionData(mapType).basePositions;
+            return nearestBase.GetNearestVector(targetPosition);
         }
     }
 
@@ -620,11 +636,18 @@ namespace HotUpdate.Scripts.Config.JsonConfig
     {
         public float playerBaseHpRecoverRatioPerSec;
         public float playerBaseManaRecoverRatioPerSec;
-        public Vector3[] basePositions;
+        public BasePositionData[] basePositions;
         public Vector3 baseCenter;
         public float baseRadius;
         public float baseHeight;
         public int baseDirection;
+    }
+
+    [Serializable]
+    public struct BasePositionData
+    {
+        public MapType mapType;
+        public Vector3[] basePositions;
     }
 
     [Serializable]

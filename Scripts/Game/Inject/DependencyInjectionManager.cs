@@ -92,7 +92,7 @@ namespace HotUpdate.Scripts.Game.Inject
             var lifeScopes = Object.FindObjectsByType<LifetimeScope>(FindObjectsSortMode.None);
             foreach (var scope in lifeScopes)
             {
-                if (scope is IMapLifeScope mapLifeScope && mapLifeScope.MapType == mapType)
+                if (scope is IMapLifeScope mapLifeScope && mapLifeScope.GetMapType() == mapType)
                 {
                     _injectors.Add(mapType, scope);
                     return scope;

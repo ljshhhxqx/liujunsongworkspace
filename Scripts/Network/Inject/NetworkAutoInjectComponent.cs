@@ -1,6 +1,7 @@
 ﻿using System;
 using AOTScripts.Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Game.Inject;
 using Mirror;
 using UnityEngine;
@@ -16,17 +17,17 @@ namespace HotUpdate.Scripts.Network.Inject
         [SerializeField]
         private bool isForLocalPlayer = true;
 
-        [SerializeField] 
-        private MapType mapType = MapType.Town;
+        private MapType _mapType;
         
         public int ConnectionID => netIdentity.connectionToClient.connectionId;
         public string PlayerId { get;set; }
 
         private void Start()
         {
+            _mapType = GameLoopDataModel.GameSceneName.Value;
             if (autoInject && isForLocalPlayer)
             {
-                ObjectInjectProvider.Instance.InjectMap(mapType, this);
+                ObjectInjectProvider.Instance.InjectMap(_mapType, this);
                 
                 OnInject();
             }

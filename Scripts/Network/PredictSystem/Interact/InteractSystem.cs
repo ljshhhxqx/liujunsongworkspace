@@ -46,6 +46,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                 return false;
                 
             }
+            Debug.Log($"Scene item {sceneItemId}  heath is {sceneItemInfo.health}");
             return sceneItemInfo.health <= 1;
         }
         
@@ -67,7 +68,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 
         private void OnItemSpawned(ItemSpawnedEvent itemSpawnedEvent)
         {
-            if (_sceneItems.TryGetValue(itemSpawnedEvent.ItemId, out var sceneItemInfo))
+            if (!_sceneItems.TryGetValue(itemSpawnedEvent.ItemId, out var sceneItemInfo))
+            {
+                sceneItemInfo = new SceneItemInfo
+                {
+                    health = itemSpawnedEvent.SceneItemInfo.health,
+                    defense = itemSpawnedEvent.SceneItemInfo.defense,
+                    speed = itemSpawnedEvent.SceneItemInfo.speed,
+                    attackDamage = itemSpawnedEvent.SceneItemInfo.attackDamage,
+                    attackRange = itemSpawnedEvent.SceneItemInfo.attackRange,
+                    attackInterval = itemSpawnedEvent.SceneItemInfo.attackInterval,
+                    maxHealth = itemSpawnedEvent.SceneItemInfo.maxHealth
+                };
+                Debug.Log($"Add scene item {itemSpawnedEvent.ItemId} to scene items");
+                _sceneItems.Add(itemSpawnedEvent.ItemId, sceneItemInfo);
+            }
+            else
             {
                 sceneItemInfo.health = Mathf.Max(sceneItemInfo.health, itemSpawnedEvent.SceneItemInfo.health);
                 sceneItemInfo.defense = Mathf.Max(sceneItemInfo.defense, itemSpawnedEvent.SceneItemInfo.defense);
@@ -76,6 +92,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                 sceneItemInfo.attackRange = Mathf.Max(sceneItemInfo.attackRange, itemSpawnedEvent.SceneItemInfo.attackRange);
                 sceneItemInfo.attackInterval = Mathf.Max(sceneItemInfo.attackInterval, itemSpawnedEvent.SceneItemInfo.attackInterval);
                 sceneItemInfo.maxHealth = Mathf.Max(sceneItemInfo.maxHealth, itemSpawnedEvent.SceneItemInfo.maxHealth);
+                _sceneItems[itemSpawnedEvent.ItemId] = sceneItemInfo;
             }
         }
 

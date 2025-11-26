@@ -186,10 +186,30 @@ MonoBehaviour:
         playerBaseHpRecoverRatioPerSec: 25
         playerBaseManaRecoverRatioPerSec: 25
         basePositions:
-        - {x: -12.37, y: -0.1, z: -16.19}
-        - {x: -12.37, y: -0.1, z: 23.63}
-        - {x: 40.6, y: -0.1, z: 23.63}
-        - {x: 40.6, y: -0.1, z: -16.19}
+        - mapType: 0
+          basePositions:
+          - {x: -13.9, y: 0, z: -20.05}
+          - {x: -13.9, y: 0, z: 20.05}
+          - {x: 41.9, y: 0, z: 20.05}
+          - {x: 41.9, y: 0, z: -20.05}
+        - mapType: 1
+          basePositions:
+          - {x: -49.8, y: 7, z: -47.05}
+          - {x: 49.71, y: 7, z: -47.05}
+          - {x: 49.71, y: 7, z: 45.4}
+          - {x: -49.8, y: 7, z: 45.4}
+        - mapType: 2
+          basePositions:
+          - {x: -61.43, y: 5, z: -24.38}
+          - {x: -67.82, y: 5, z: 19.86}
+          - {x: 11.7, y: 5, z: -20.35}
+          - {x: 12.71, y: 5, z: 20}
+        - mapType: 3
+          basePositions:
+          - {x: -0.192, y: 5, z: -41.04}
+          - {x: 17.8, y: 5, z: -38.8}
+          - {x: 34.85, y: 5, z: -39.9}
+          - {x: 54.26, y: 5, z: -33.44}
         baseCenter: {x: 0, y: 2, z: 0}
         baseRadius: 1.7
         baseHeight: 7

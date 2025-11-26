@@ -3667,7 +3667,6 @@ GameObject:
   - component: {fileID: 756617993}
   - component: {fileID: 756617996}
   - component: {fileID: 756617995}
-  - component: {fileID: 756617997}
   m_Layer: 7
   m_Name: garland
   m_TagString: Untagged
@@ -3740,21 +3739,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 756617992}
   m_Mesh: {fileID: -154146207022500120, guid: 22f3fde8e05c621479652f6fd31882ae, type: 3}
---- !u!114 &756617997
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 756617992}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a22ca65cdc8a47c9a5789def65786632, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: 103
-  isMesh: 0
-  interactableCollider: {fileID: 0}
 --- !u!1 &763586061
 GameObject:
   m_ObjectHideFlags: 0
@@ -3949,6 +3933,10 @@ PrefabInstance:
       propertyPath: sceneId
       value: 1102819694
       objectReference: {fileID: 0}
+    - target: {fileID: 2768597044963340948, guid: dc0546152642ee54f90f3c2ff0290c38, type: 3}
+      propertyPath: _mapType
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4134770680424130314, guid: dc0546152642ee54f90f3c2ff0290c38, type: 3}
       propertyPath: m_Name
       value: GamePlay
@@ -3960,6 +3948,10 @@ PrefabInstance:
     - target: {fileID: 4466748647633313807, guid: dc0546152642ee54f90f3c2ff0290c38, type: 3}
       propertyPath: sceneId
       value: 3792012555
+      objectReference: {fileID: 0}
+    - target: {fileID: 6098529954693438608, guid: dc0546152642ee54f90f3c2ff0290c38, type: 3}
+      propertyPath: mapType
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7322632931282267248, guid: dc0546152642ee54f90f3c2ff0290c38, type: 3}
       propertyPath: sceneId
@@ -4289,7 +4281,6 @@ GameObject:
   - component: {fileID: 854596620}
   - component: {fileID: 854596623}
   - component: {fileID: 854596622}
-  - component: {fileID: 854596624}
   m_Layer: 7
   m_Name: garland (1)
   m_TagString: Untagged
@@ -4362,21 +4353,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 854596619}
   m_Mesh: {fileID: -154146207022500120, guid: 22f3fde8e05c621479652f6fd31882ae, type: 3}
---- !u!114 &854596624
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 854596619}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a22ca65cdc8a47c9a5789def65786632, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: 100
-  isMesh: 0
-  interactableCollider: {fileID: 0}
 --- !u!1 &866500115
 GameObject:
   m_ObjectHideFlags: 0
@@ -9751,7 +9727,6 @@ GameObject:
   - component: {fileID: 1566987165}
   - component: {fileID: 1566987168}
   - component: {fileID: 1566987167}
-  - component: {fileID: 1566987166}
   m_Layer: 7
   m_Name: garland
   m_TagString: Untagged
@@ -9774,27 +9749,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1602593515}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
---- !u!65 &1566987166
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1566987164}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 6.7774143, y: 0.74437296, z: 0.1852034}
-  m_Center: {x: 0.00000011920929, y: -0.33419925, z: 0.00084034353}
 --- !u!23 &1566987167
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -16877,7 +16831,6 @@ GameObject:
   - component: {fileID: 4940301974823940056}
   - component: {fileID: 8295808556696182909}
   - component: {fileID: 6108102257139864759}
-  - component: {fileID: 8295808556696182910}
   m_Layer: 7
   m_Name: garland (1)
   m_TagString: Untagged
@@ -19292,21 +19245,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5747906852985435490}
   m_Mesh: {fileID: -154146207022500120, guid: 22f3fde8e05c621479652f6fd31882ae, type: 3}
---- !u!114 &8295808556696182910
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5747906852985435490}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a22ca65cdc8a47c9a5789def65786632, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: 30
-  isMesh: 0
-  interactableCollider: {fileID: 0}
 --- !u!33 &8295808556829797100
 MeshFilter:
   m_ObjectHideFlags: 0

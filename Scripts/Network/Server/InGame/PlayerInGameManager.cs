@@ -13,6 +13,7 @@ using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.GameBase;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -36,9 +37,10 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         private CancellationTokenSource _updateGridsTokenSource = new CancellationTokenSource();
         private IConfigProvider _configProvider;
 
-        private GameConfigData _gameConfigData => _configProvider.GetConfig<JsonDataConfig>().GameConfig;
+        private GameConfigData _gameConfigData;
 
 
+        private GameEventManager _gameEventManager;
         private PlayerBase _playerBasePrefab;
         private Collider _playerCollider;
         private SyncDictionary<Vector3, uint> _playerSpawnPoints = new SyncDictionary<Vector3, uint>();
@@ -73,20 +75,28 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         }
 
         [Inject]
-        private void Init(IConfigProvider configProvider)
+        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)
         {
             RegisterReaderWriter();
+            _gameEventManager = gameEventManager;
             _configProvider = configProvider;
+            _gameEventManager.Subscribe<GameResourceLoadedEvent>(OnGameResourceLoaded);
         }
-        
+
+        private void OnGameResourceLoaded(GameResourceLoadedEvent gameResourceLoadedEvent)
+        {
+            _gameConfigData = _configProvider.GetConfig<JsonDataConfig>().GameConfig;
+        }
+
 
         [Server]
-        public void SpawnAllBases()
+        public void SpawnAllBases(MapType mapType)
         {
-            var allSpawnPoints = _gameConfigData.gameBaseData.basePositions;
-            for (var i = 0; i < allSpawnPoints.Length; i++)
+            Debug.Log("SpawnAllBases" + mapType);
+            var allSpawnPoints = _gameConfigData.gameBaseData.basePositions.First(x => x.mapType == mapType);
+            for (var i = 0; i < allSpawnPoints.basePositions.Length; i++)
             {
-                var spawnPoint = allSpawnPoints[i];
+                var spawnPoint = allSpawnPoints.basePositions[i];
                 if (_playerSpawnPoints.ContainsKey(spawnPoint))
                 {
                     continue;
@@ -341,7 +351,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             _playerInGameData.TryAdd(connectId, playerInGameData);
             _playerIdsByNetId.TryAdd(playerInGameData.networkIdentity.netId, connectId);
             var pos = playerInGameData.networkIdentity.transform.position;
-            var nearestBase = _gameConfigData.GetNearestBase(pos);
+            var nearestBase = _gameConfigData.GetNearestBase(GameLoopDataModel.GameSceneName.Value, pos);
             _playerSpawnPoints[nearestBase] = playerInGameData.networkIdentity.netId;
             _playerPositions.TryAdd(playerInGameData.networkIdentity.netId, pos);
             _playerGrids.TryAdd(playerInGameData.networkIdentity.netId,  MapBoundDefiner.Instance.GetGridPosition(pos));
@@ -430,7 +440,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 _playerPhysicsData = GamePhysicsSystem.CreateColliderConfig(playerCollider);
             }
             var pos = playerInGameData.networkIdentity.transform.position;
-            var nearestBase = _gameConfigData.GetNearestBase(pos);
+            var nearestBase = _gameConfigData.GetNearestBase(GameLoopDataModel.GameSceneName.Value, pos);
             var basePosition = _playerBases.FirstOrDefault(x => x.Value.transform.position == nearestBase);
             if (basePosition.Key != 0)
             {

@@ -18,7 +18,7 @@ namespace HotUpdate.Scripts.Game.Inject
     public class GameMapLifetimeScope : LifetimeScope, IMapLifeScope
     {
         [SerializeField]
-        private MapType mapType;
+        private MapType _mapType;
         
         protected override void Configure(IContainerBuilder builder)
         {
@@ -43,11 +43,11 @@ namespace HotUpdate.Scripts.Game.Inject
                 .AsImplementedInterfaces();
         }
 
-        public MapType MapType => mapType;
+        public MapType GetMapType() => _mapType;
     }
 
     public interface IMapLifeScope
     {
-        public MapType MapType { get; }
+        public MapType GetMapType();
     }
 }
