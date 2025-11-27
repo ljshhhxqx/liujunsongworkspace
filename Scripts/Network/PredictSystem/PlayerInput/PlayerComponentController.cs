@@ -471,10 +471,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .AddTo(this);
             
             //发送网络命令
-            _inputStream.Where(x=> LocalPlayerHandler && x.Command != AnimationState.None && x.Command != AnimationState.Idle)
-                .Sample(TimeSpan.FromMilliseconds(Time.fixedDeltaTime * 1000))
-                .Subscribe()
-                .AddTo(this);
+            // _inputStream.Where(x=> LocalPlayerHandler && x.Command != AnimationState.None && x.Command != AnimationState.Idle)
+            //     .Sample(TimeSpan.FromMilliseconds(Time.fixedDeltaTime * 1000))
+            //     .Subscribe()
+            //     .AddTo(this);
             
             Observable.EveryFixedUpdate()
                 .Sample(TimeSpan.FromSeconds(FixedDeltaTime))
@@ -531,24 +531,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void HandleAllSyncState()
         {
-            // gameObject.AddComponent<PlayerEquipmentSyncState>();
-            // gameObject.AddComponent<PlayerInputPredictionState>();
-            // gameObject.AddComponent<PlayerItemPredictableState>();
-            // gameObject.AddComponent<PlayerShopPredictableState>();
-            // gameObject.AddComponent<PlayerSkillSyncState>();
-            // gameObject.AddComponent<PropertyPredictionState>();
             var states = GetComponents<PredictableStateBase>();
             var syncStates = GetComponents<SyncStateBase>();
             for (int i = 0; i < states.Length; i++)
             {
                 _predictionStates.Add(states[i]);
-                //ObjectInjectProvider.Instance.InjectMapGameObject(states[i]);
             }
 
             for (int i = 0; i < syncStates.Length; i++)
             {
                 _syncStates.Add(syncStates[i]);
-                //ObjectInjectProvider.Instance.Inject(states[i]);
             }
             _inputState = GetComponent<PlayerInputPredictionState>();
             _propertyPredictionState = GetComponent<PropertyPredictionState>();
@@ -662,16 +654,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void HandleSendNetworkCommand(PlayerInputStateData inputData)
         {
-            // _timer+=Time.fixedDeltaTime;
-            // _frameCount++;
-            // if (_timer >= 1f)
-            // {
-            //     Debug.Log($"[HandleSendNetworkCommand] 理论frameCount => {1/Time.fixedDeltaTime} 实际frameCount => {_frameCount}");
-            //     
-            //     _timer = 0;
-            //     _frameCount = 0;
-            // }
-            //Debug.Log($"[HandleSendNetworkCommand] {inputData.Command} {_previousAnimationState}");
             if (_previousAnimationState == inputData.Command && 
                 _previousAnimationState!= AnimationState.Idle && 
                 _previousAnimationState!= AnimationState.Move && 

@@ -38,6 +38,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private SkillConfig _skillConfig;
         private PlayerSkillSyncState _skillSyncState;
         private BindingKey _playerAnimationKey;
+        private UIManager _uiManager;
         private bool _isSimulating;
 
         private float _updatePositionTimer;
@@ -56,49 +57,43 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private void InitContainer(GameSyncManager gameSyncManager, IConfigProvider configProvider, UIManager uiManager)
         {
             base.Init(gameSyncManager, configProvider);
+            _uiManager = uiManager;
             _propertyPredictionState = GetComponent<PropertyPredictionState>();
             _skillSyncState = GetComponent<PlayerSkillSyncState>();
             _animationConfig = configProvider.GetConfig<AnimationConfig>();
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _keyAnimationConfig = configProvider.GetConfig<KeyAnimationConfig>();
             _skillConfig = configProvider.GetConfig<SkillConfig>();
-
-            //UpdateAnimationCooldowns(_cancellationTokenSource.Token, GameSyncManager.TickSeconds).Forget();
-            if (NetworkIdentity.isLocalPlayer)
-            {                
-                _playerAnimationKey = new BindingKey(UIPropertyDefine.Animation, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
-
-                var dic = new Dictionary<int, AnimationStateData>();
-                var animations = _animationConfig.AnimationInfos;
-                for (int i = 0; i < animations.Count; i++)
-                {
-                    var ani = animations[i];
-                    if (ani.showInHud)
-                    {
-                        var stateData = ObjectPoolManager<AnimationStateData>.Instance.Get(animations.Count);
-                        stateData.State = ani.state;
-                        stateData.Duration = ani.cooldown;
-                        stateData.Cost = ani.cost;
-                        stateData.Timer = 0;
-                        stateData.Icon = UISpriteContainer.GetSprite(ani.icon);
-                        stateData.Frame = UISpriteContainer.GetQualitySprite(ani.frame);
-                        stateData.Index = 0;
-                        dic.Add((int)ani.state, stateData);
-                    }
-                }
-                UIPropertyBinder.OptimizedBatchAdd(_playerAnimationKey, dic);
-                var playerAnimationOverlay = uiManager.SwitchUI<PlayerAnimationOverlay>();
-                var animationStateDataDict =
-                    UIPropertyBinder.GetReactiveDictionary<AnimationStateData>(_playerAnimationKey);
-                playerAnimationOverlay.BindPlayerAnimationData(animationStateDataDict);
-            }
         }
 
-        public override void OnStartLocalPlayer()
+        protected override void InjectLocalPlayerCallback()
         {
-            base.OnStartLocalPlayer();
-            if (isClient && isServer)
-                return;
+            Debug.Log($"PropertyPredictionState [OnStartLocalPlayer]  ");
+            _playerAnimationKey = new BindingKey(UIPropertyDefine.Animation, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
+
+            var dic = new Dictionary<int, AnimationStateData>();
+            var animations = _animationConfig.AnimationInfos;
+            for (int i = 0; i < animations.Count; i++)
+            {
+                var ani = animations[i];
+                if (ani.showInHud)
+                {
+                    var stateData = ObjectPoolManager<AnimationStateData>.Instance.Get(animations.Count);
+                    stateData.State = ani.state;
+                    stateData.Duration = ani.cooldown;
+                    stateData.Cost = ani.cost;
+                    stateData.Timer = 0;
+                    stateData.Icon = UISpriteContainer.GetSprite(ani.icon);
+                    stateData.Frame = UISpriteContainer.GetQualitySprite(ani.frame);
+                    stateData.Index = 0;
+                    dic.Add((int)ani.state, stateData);
+                }
+            }
+            UIPropertyBinder.OptimizedBatchAdd(_playerAnimationKey, dic);
+            var playerAnimationOverlay = _uiManager.SwitchUI<PlayerAnimationOverlay>();
+            var animationStateDataDict =
+                UIPropertyBinder.GetReactiveDictionary<AnimationStateData>(_playerAnimationKey);
+            playerAnimationOverlay.BindPlayerAnimationData(animationStateDataDict);
             UpdateAnimationCooldowns(_cancellationTokenSource.Token, GameSyncManager.ServerUpdateInterval).Forget();
         }
 
