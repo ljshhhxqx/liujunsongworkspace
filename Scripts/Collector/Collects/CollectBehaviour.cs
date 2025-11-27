@@ -94,7 +94,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             OriginalColor = color;
             foreach (var materialTransparencyController in MaterialTransparencyControllers)
             {
-                materialTransparencyController.SetColor(color);
+                materialTransparencyController?.SetColor(color);
             }
         }
         

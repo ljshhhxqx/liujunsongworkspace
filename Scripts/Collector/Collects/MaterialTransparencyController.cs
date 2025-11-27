@@ -107,7 +107,11 @@ namespace HotUpdate.Scripts.Collector.Collects
         
         public void SetColor(Color targetColor = default, float alpha = 1f)
         {
-            if(_fadeCoroutine != null)
+            if (!this)
+            {
+                return;
+            }
+            if(_fadeCoroutine != null || !this)
                 StopCoroutine(_fadeCoroutine);
             
             _fadeCoroutine = StartCoroutine(FadeToAlpha(targetColor, alpha));
