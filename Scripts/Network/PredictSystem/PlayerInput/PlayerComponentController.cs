@@ -243,7 +243,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
             GetAllCalculators(configProvider, gameSyncManager);
             HandleAllSyncState();
-            HandleLocalInitCallback();
             _uiManager.CloseUI(UIType.Main);
             _gameEventManager.Publish(new PlayerUnListenMessageEvent());
             _gameEventManager.Subscribe<GameFunctionUIShowEvent>(OnGameFunctionUIShow);
@@ -313,12 +312,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         }
 
 
-        protected override void InjectCallback()
+        protected override void InjectLocalPlayerCallback()
         {
-            if (!LocalPlayerHandler)
-            {
-                return;
-            }
             Debug.Log($"[PlayerInputController] OnStartLocalPlayer");
             _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
                 UIPropertyBinder.LocalPlayerId);
@@ -531,6 +526,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     }
                 })
                 .AddTo(_disposables);
+            HandleLocalInitCallback();
         }
 
         private void HandleAllSyncState()

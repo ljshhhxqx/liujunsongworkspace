@@ -34,7 +34,6 @@ namespace HotUpdate.Scripts.Game.Map
         private async void Init(GameEventManager gameEventManager, UIManager uiManager)
         {
             //uiManager.SwitchUI<LoadingScreenUI>();
-            _mapName ??= gameObject.scene.name;
             _commonMapName = $"Town";
             InjectGameObjects();
             await LoadGameResources(_commonMapName);
@@ -42,6 +41,7 @@ namespace HotUpdate.Scripts.Game.Map
             uiManager.InitMapSprites(_commonMapName);
             uiManager.InitMapUIs(_commonMapName);
             uiManager.CloseUI(UIType.Loading);
+            _mapName ??= gameObject.scene.name;
             Debug.Log("game map init complete!!!!!!!!!!");
         }
 

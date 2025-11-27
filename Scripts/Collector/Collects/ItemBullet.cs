@@ -35,7 +35,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             _criticalDamage = criticalDamage;
         }
 
-        protected override void InjectCallback()
+        protected override void InjectLocalPlayerCallback()
         {
             _interactSystem = FindObjectOfType<InteractSystem>();
             _colliderConfig = GamePhysicsSystem.CreateColliderConfig(GetComponent<Collider>());

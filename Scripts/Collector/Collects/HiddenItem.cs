@@ -33,16 +33,16 @@ namespace HotUpdate.Scripts.Collector.Collects
             
         }
 
-        public void Init(HiddenItemData hiddenItemData)
+        public void Init(HiddenItemData hiddenItemData, bool serverHandler, uint id)
         {
             _hiddenItemData = hiddenItemData;
-            
-            if (ServerHandler)
+            NetId = id;
+            if (serverHandler)
             {
-                GameEventManager.Publish(new ItemSpawnedEvent(netId, transform.position, new SceneItemInfo
+                GameEventManager.Publish(new ItemSpawnedEvent(NetId, transform.position, new SceneItemInfo
                 {
                     health = 1,
-                    sceneItemId = netId,
+                    sceneItemId = id,
                 }));
             }
             switch (hiddenItemData.hideType)

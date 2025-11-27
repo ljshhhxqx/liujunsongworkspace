@@ -163,15 +163,16 @@ namespace HotUpdate.Scripts.Collector.Collects
             _currentVelocity = _currentDirection * NowSpeed(_moveInfo.speed);
         }
 
-        public void Init(MoveInfo moveInfo)
+        public void Init(MoveInfo moveInfo, bool serverHandler, uint id)
         {
             _moveInfo = moveInfo;
-            if (ServerHandler)
+            NetId = id;
+            if (serverHandler)
             {
-                GameEventManager.Publish(new ItemSpawnedEvent(netId, transform.position, new SceneItemInfo
+                GameEventManager.Publish(new ItemSpawnedEvent(NetId, transform.position, new SceneItemInfo
                 {
                     health = 1,
-                    sceneItemId = netId,
+                    sceneItemId = id,
                     speed = _moveInfo.speed,
                 }));
             }

@@ -28,6 +28,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         protected bool IsDead;
         protected MaterialTransparencyController[] MaterialTransparencyControllers;
         protected GameEventManager GameEventManager;
+        protected uint NetId;
         [SyncVar] protected int CurrentControlSkillType;
         protected override bool AutoInjectLocalPlayer => false;
         protected SubjectedStateType CurrentSubjectedStateType => (SubjectedStateType)CurrentControlSkillType;

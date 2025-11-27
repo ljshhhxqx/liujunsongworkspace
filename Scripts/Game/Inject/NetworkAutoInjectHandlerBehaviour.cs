@@ -1,4 +1,6 @@
-﻿using AOTScripts.Data;
+﻿using System;
+using AOTScripts.Data;
+using HotUpdate.Scripts.Data;
 
 namespace HotUpdate.Scripts.Game.Inject
 {
@@ -7,19 +9,24 @@ namespace HotUpdate.Scripts.Game.Inject
         protected virtual bool AutoInjectClient => true;
         protected virtual bool AutoInjectServer => true;
         protected virtual bool AutoInjectLocalPlayer => true;
-        private MapType _mapType;
+        protected MapType MapType;
+
+        private void Awake()
+        {
+            MapType = GameLoopDataModel.GameSceneName.Value;
+        }
 
         protected override void StartClient()
         {
             base.StartClient();
             if (!AutoInjectClient)
             {
-                InjectCallback();
+                InjectClientCallback();
                 return;
             }
 
-            ObjectInjectProvider.Instance.InjectMap(_mapType, this);
-            InjectCallback();
+            ObjectInjectProvider.Instance.InjectMap(MapType, this);
+            InjectClientCallback();
         }
         
         protected override void StartServer()
@@ -27,12 +34,12 @@ namespace HotUpdate.Scripts.Game.Inject
             base.StartServer();
             if (!AutoInjectServer)
             {
-                InjectCallback();
+                InjectServerCallback();
                 return;
             }
 
-            ObjectInjectProvider.Instance.InjectMap(_mapType, this);
-            InjectCallback();
+            ObjectInjectProvider.Instance.InjectMap(MapType, this);
+            InjectServerCallback();
         }
 
         protected override void StartLocalPlayer()
@@ -40,18 +47,29 @@ namespace HotUpdate.Scripts.Game.Inject
             base.StartServer();
             if (!AutoInjectLocalPlayer)
             {
-                InjectCallback();
+                InjectLocalPlayerCallback();
                 return;
             }
 
-            ObjectInjectProvider.Instance.InjectMap(_mapType, this);
-            InjectCallback();
+            ObjectInjectProvider.Instance.InjectMap(MapType, this);
+            InjectLocalPlayerCallback();
         }
 
-        protected virtual void InjectCallback()
+        protected virtual void InjectLocalPlayerCallback()
         {
             
         }
+
+        protected virtual void InjectClientCallback()
+        {
+            
+        }
+
+        protected virtual void InjectServerCallback()
+        {
+            
+        }
+
 
 
     }

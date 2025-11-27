@@ -4,6 +4,7 @@ using AOTScripts.Data.NetworkMes;
 using HotUpdate.Scripts.Collector.Collects;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using Mirror;
@@ -63,7 +64,10 @@ namespace HotUpdate.Scripts.Collector
             ColliderConfig = GamePhysicsSystem.CreateColliderConfig(collectCollider.GetComponent<Collider>());
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, ColliderConfig, ObjectType.Collectable, gameObject.layer, gameObject.tag);
             _collectAnimationComponent?.Play();
-            ChangeBehaviour();
+            if (ClientHandler)
+            {
+                ChangeBehaviour();
+            }
         }
 
         private void InitAttackItem(AttackInfo attackInfo)
@@ -71,9 +75,10 @@ namespace HotUpdate.Scripts.Collector
             if (!gameObject.TryGetComponent<AttackCollectItem>(out var attackCollectItem))
             {
                 attackCollectItem = gameObject.AddComponent<AttackCollectItem>();
+                ObjectInjectProvider.Instance.Inject(attackCollectItem);
             }
             attackCollectItem.enabled = true;
-            attackCollectItem.Init(attackInfo);
+            attackCollectItem.Init(attackInfo, ServerHandler, netId);
         }
         
         private void InitMoveItem(MoveInfo moveInfo)
@@ -81,9 +86,10 @@ namespace HotUpdate.Scripts.Collector
             if (!gameObject.TryGetComponent<MoveCollectItem>(out var moveCollectItem))
             {
                 moveCollectItem = gameObject.AddComponent<MoveCollectItem>();
+                ObjectInjectProvider.Instance.Inject(moveCollectItem);
             }
             moveCollectItem.enabled = true;
-            moveCollectItem.Init(moveInfo);
+            moveCollectItem.Init(moveInfo, ServerHandler, netId);
         }
         
         private void InitHiddenItem(HiddenItemData hiddenItemData)
@@ -91,9 +97,10 @@ namespace HotUpdate.Scripts.Collector
             if (!gameObject.TryGetComponent<HiddenItem>(out var hiddenCollectItem))
             {
                 hiddenCollectItem = gameObject.AddComponent<HiddenItem>();
+                ObjectInjectProvider.Instance.Inject(hiddenCollectItem);
             }
             hiddenCollectItem.enabled = true;
-            hiddenCollectItem.Init(hiddenItemData);
+            hiddenCollectItem.Init(hiddenItemData, ServerHandler, netId);
         }
 
         private void DisableComponent<T>() where T : CollectBehaviour
@@ -158,42 +165,10 @@ namespace HotUpdate.Scripts.Collector
             if (ClientHandler && _collider)
             {
                 Debug.Log("Local player collider enabled");
-                // _collider.enabled = true;
-                // _disposable = Observable.EveryFixedUpdate()
-                //     .Where(_ => _collider.enabled &&
-                //                 GameObjectContainer.Instance.DynamicObjectIntersects(transform.position, ColliderConfig,
-                //                     CachedDynamicObjectData))
-                //     .Subscribe(_ =>
-                //     {
-                //         OnTriggerEnterObserver();
-                //     });
                 _collectAnimationComponent?.Play();
                 ChangeBehaviour();
             }
         }
-
-        // protected override void InjectCallback()
-        // {
-        //     _collectParticlePlayer = GetComponentInChildren<CollectParticlePlayer>();
-        //     _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
-        //     _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
-        //     _interactSystem = FindObjectOfType<InteractSystem>();
-        //     _collectAnimationComponent?.Play();
-        //     var collectCollider = GetComponentInChildren<CollectCollider>();
-        //     _collider = collectCollider.GetComponent<Collider>();
-        //     _collider.enabled = true;
-        //     _collectAnimationComponent?.Play();
-        //     
-        //     ChangeBehaviour();
-        //     // _disposable = Observable.EveryFixedUpdate()
-        //     //     .Where(_ => _collider.enabled &&
-        //     //                 GameObjectContainer.Instance.DynamicObjectIntersects(transform.position, ColliderConfig,
-        //     //                     CachedDynamicObjectData))
-        //     //     .Subscribe(_ =>
-        //     //     {
-        //     //         OnTriggerEnterObserver();
-        //     //     });
-        // }
 
         public override void OnSelfDespawn()
         {
@@ -206,25 +181,6 @@ namespace HotUpdate.Scripts.Collector
             GameObjectContainer.Instance.RemoveDynamicObject(netId);
             _disposable?.Dispose();
         }
-        
-        // protected virtual void OnTriggerEnterObserver()
-        // {
-        //     foreach (var data in CachedDynamicObjectData)
-        //     {
-        //         if ((_playerLayer.value & (1 << data.Layer)) == 0 || data.Type != ObjectType.Player)
-        //         {
-        //             continue;
-        //         }
-        //         
-        //         var player = NetworkClient.spawned[data.NetId];
-        //         var picker = player.GetComponent<Picker>();
-        //         if (picker)
-        //         {
-        //             picker.SendCollectRequest(picker.netId, picker.PickerType, netId,
-        //                 CollectObjectData.collectObjectClass);
-        //         }
-        //     }
-        // }
         
         protected override void SendCollectRequest(uint pickerId, PickerType pickerType)
         {

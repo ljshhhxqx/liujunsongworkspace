@@ -3,6 +3,7 @@ using AOTScripts.Data;
 using AOTScripts.Data.State;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using MemoryPack;
@@ -12,7 +13,7 @@ using VContainer;
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {
     //客户端
-    public abstract class SyncStateBase : NetworkAutoInjectComponent
+    public abstract class SyncStateBase : NetworkAutoInjectHandlerBehaviour
     {
         protected abstract ISyncPropertyState CurrentState { get; set; }
         protected readonly ConcurrentQueue<INetworkCommand> CommandQueue = new ConcurrentQueue<INetworkCommand>();

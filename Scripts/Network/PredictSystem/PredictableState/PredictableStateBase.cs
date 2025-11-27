@@ -4,6 +4,7 @@ using System.Linq;
 using AOTScripts.Data;
 using AOTScripts.Data.State;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
@@ -13,7 +14,7 @@ using INetworkCommand = AOTScripts.Data.INetworkCommand;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {
-    public abstract class PredictableStateBase : NetworkAutoInjectComponent
+    public abstract class PredictableStateBase : NetworkAutoInjectHandlerBehaviour
     {
         protected abstract ISyncPropertyState CurrentState { get; set; }
         protected readonly ConcurrentQueue<INetworkCommand> CommandQueue = new ConcurrentQueue<INetworkCommand>();

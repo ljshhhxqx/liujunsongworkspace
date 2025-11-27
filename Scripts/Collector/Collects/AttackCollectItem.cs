@@ -11,7 +11,6 @@ namespace HotUpdate.Scripts.Collector.Collects
     {
         [SyncVar]
         private AttackInfo _attackInfo;
-        
         private float _nextAttackTime;
         private readonly HashSet<DynamicObjectData> _collectedObjects = new HashSet<DynamicObjectData>();
 
@@ -19,7 +18,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         {
             if(IsDead || !ServerHandler || !IsAttackable || Time.time < _nextAttackTime) return;
 
-            GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, ColliderConfig,
+            GameObjectContainer.Instance.DynamicObjectIntersects(NetId, transform.position, ColliderConfig,
                 _collectedObjects, OnInteract);
         }
 
@@ -48,7 +47,7 @@ namespace HotUpdate.Scripts.Collector.Collects
                     Speed = _attackInfo.speed,
                     LifeTime = _attackInfo.lifeTime,
                     StartPosition = transform.position,
-                    Spawner = netId,
+                    Spawner = NetId,
                     CriticalRate = _attackInfo.criticalRate,
                     CriticalDamageRatio = _attackInfo.criticalDamage,
                 };
@@ -60,24 +59,25 @@ namespace HotUpdate.Scripts.Collector.Collects
                 Header = InteractSystem.CreateInteractHeader(0, InteractCategory.SceneToPlayer,
                     transform.position),
                 InteractionType = InteractionType.ItemAttack,
-                SceneItemId = netId,
+                SceneItemId = NetId,
                 TargetId = targetNetId,
             };
             InteractSystem.EnqueueCommand(request);
         }
         
-        public void Init(AttackInfo info)
+        public void Init(AttackInfo info, bool serverHandler, uint id)
         {
             _attackInfo = info;
             _nextAttackTime = Time.time;
-            if (ServerHandler)
+            NetId = id;
+            if (serverHandler)
             {
-                GameEventManager.Publish(new ItemSpawnedEvent(netId, transform.position, new SceneItemInfo
+                GameEventManager.Publish(new ItemSpawnedEvent(NetId, transform.position, new SceneItemInfo
                 {
                     health = _attackInfo.health,
                     attackDamage = _attackInfo.damage,
                     defense = _attackInfo.defense,
-                    sceneItemId = netId,
+                    sceneItemId = NetId,
                     attackRange = _attackInfo.attackRange,
                     attackInterval = _attackInfo.attackCooldown,
                     maxHealth = _attackInfo.health,
