@@ -34,7 +34,7 @@ namespace HotUpdate.Scripts.Network.UI
 
         public static void SetProperty<T>(BindingKey key, T value) where T : IUIDatabase
         {
-            GetOrCreateProperty<T>(key).Value = value;
+            GetOrCreateProperty<T>(key).SetValueAndNotify(value);
         }
 
         private static HReactiveProperty<T> GetOrCreateProperty<T>(BindingKey key)  where T : IUIDatabase

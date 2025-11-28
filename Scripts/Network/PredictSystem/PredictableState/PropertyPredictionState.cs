@@ -221,12 +221,41 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _subjectedStateType = _subjectedStateType.AddState(predictablePropertyState.ControlSkillType);
             OnStateChanged?.Invoke(predictablePropertyState.ControlSkillType);
             var goldData = ObjectPoolManager<ValuePropertyData>.Instance.Get(15);
-            var uiPropertyData = UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_propertyBindKey);
             foreach (var kvp in predictablePropertyState.MemoryProperty)
             {
                 var property = kvp.Value;
+                if (property.IsShowInHud())
+                {
+                    if (!_uiPropertyData.TryGetValue((int)kvp.Key, out var propertyData))
+                    {
+                        propertyData = new PropertyItemData
+                        {
+                            Name = _propertyConfig.GetPropertyConfigData((PropertyTypeEnum)kvp.Key).description,
+                            PropertyType = (PropertyTypeEnum)kvp.Key,
+                            CurrentProperty = property.CurrentValue,
+                            MaxProperty = property.MaxCurrentValue,
+                            ConsumeType = _propertyConfig.GetPropertyConfigData((PropertyTypeEnum)kvp.Key).consumeType,
+                            IsPercentage = _propertyConfig.IsHundredPercent((PropertyTypeEnum)kvp.Key),
+                        };
+                        _uiPropertyData[(int)kvp.Key] = propertyData;
+                    }
+                    else
+                    {
+                        propertyData.CurrentProperty = property.CurrentValue;
+                        propertyData.MaxProperty = property.MaxCurrentValue;
+                        propertyData.IsAutoRecover = isRecover;
+                        _uiPropertyData[(int)kvp.Key] = propertyData;
+                    }
+                    OnPropertyChanged?.Invoke(kvp.Key, property);
+                    UIPropertyBinder.UpdateDictionary(_propertyBindKey, (int)kvp.Key, propertyData);
+                }
                 //Debug.Log($"predictablePropertyState.MemoryProperty changed {kvp}: {property.CurrentValue} {property.MaxCurrentValue}");
-                uiPropertyData.TryGetValue((int)kvp.Key, out var data);
+                //;
+
+                // data.CurrentProperty = property.CurrentValue;
+                // data.MaxProperty = property.MaxCurrentValue;
+                // data.IsAutoRecover = isRecover;
+                // UIPropertyBinder.UpdateDictionary(_propertyBindKey, (int)kvp.Key, data);
                 switch (kvp.Key)
                 {
                     case PropertyTypeEnum.Gold:
@@ -263,25 +292,27 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 if (property.IsResourceProperty())
                 {
                     OnPropertyChanged?.Invoke(kvp.Key, property);
-                    if (data.ConsumeType!= PropertyConsumeType.None)
-                    {
-                        data.CurrentProperty = property.CurrentValue;
-                        data.MaxProperty = property.MaxCurrentValue;
-                        data.IsPercentage = property.IsPercentage();
-                        data.IsAutoRecover = isRecover;
-                        uiPropertyData[(int)kvp.Key] = data;
-                    }
+                    // if (data.ConsumeType!= PropertyConsumeType.None)
+                    // {
+                    //     data.CurrentProperty = property.CurrentValue;
+                    //     data.MaxProperty = property.MaxCurrentValue;
+                    //     data.IsPercentage = property.IsPercentage();
+                    //     data.IsAutoRecover = isRecover;
+                    //     _uiPropertyData[(int)kvp.Key] = data;
+                    //     Debug.Log($"uiPropertyData[{kvp.Key}]: {data}");
+                    // }
                     continue;
                 }
                 
                 OnPropertyChanged?.Invoke(kvp.Key, property);
-                if (data.ConsumeType!= PropertyConsumeType.None)
-                {
-                    data.CurrentProperty = property.CurrentValue;
-                    data.IsPercentage = property.IsPercentage();
-                    data.IsAutoRecover = isRecover;
-                    uiPropertyData[(int)kvp.Key] = data;
-                }
+                // if (data.ConsumeType!= PropertyConsumeType.None)
+                // {
+                //     data.CurrentProperty = property.CurrentValue;
+                //     data.IsPercentage = property.IsPercentage();
+                //     data.IsAutoRecover = isRecover;
+                //     _uiPropertyData[(int)kvp.Key] = data;
+                //     Debug.Log($"uiPropertyData[{kvp.Key}]: {data}");
+                // }
                 if (kvp.Key == PropertyTypeEnum.AttackSpeed)
                 {
                     PlayerComponentController.SetAnimatorSpeed(AnimationState.Attack, property.CurrentValue);

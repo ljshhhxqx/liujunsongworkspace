@@ -11,6 +11,7 @@ using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Static;
 using HotUpdate.Scripts.Tool.ObjectPool;
+using HotUpdate.Scripts.Tool.ReactiveProperty;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using Mirror;
@@ -46,7 +47,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         protected override CommandType CommandType => CommandType.Input;
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private bool _isApplyingState;
-        private ReactiveDictionary<int, AnimationStateData> _animationStateDataDict;
+        private HReactiveDictionary<int, AnimationStateData> _animationStateDataDict = new HReactiveDictionary<int, AnimationStateData>();
         
         public event Action<PlayerGameStateData> OnPlayerStateChanged; 
         public event Action<PlayerAnimationCooldownState> OnPlayerAnimationCooldownChanged;
@@ -75,10 +76,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             Debug.Log($"PropertyPredictionState [OnStartLocalPlayer]  ");
             _playerAnimationKey = new BindingKey(UIPropertyDefine.Animation, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
 
-            var animationStateDataDict =
+            _animationStateDataDict =
                 UIPropertyBinder.GetReactiveDictionary<AnimationStateData>(_playerAnimationKey);
             var playerAnimationOverlay = _uiManager.SwitchUI<PlayerAnimationOverlay>();
-            playerAnimationOverlay.BindPlayerAnimationData(animationStateDataDict);
+            playerAnimationOverlay.BindPlayerAnimationData(_animationStateDataDict);
             var dic = new Dictionary<int, AnimationStateData>();
             var animations = _animationConfig.AnimationInfos;
             for (int i = 0; i < animations.Count; i++)
@@ -98,6 +99,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 }
             }
             UIPropertyBinder.OptimizedBatchAdd(_playerAnimationKey, dic);
+            
             if (ServerHandler)
             {
                 return;
@@ -155,28 +157,38 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _isApplyingState = false;
         }
 
-        [Client]
         private void UpdateUIAnimation(MemoryDictionary<AnimationState, CooldownSnapshotData> snapshot)
         {
-            if (!isLocalPlayer)
+            if (!LocalPlayerHandler)
             {
                 return;
             }
-            var animationStateDataDict =
-                UIPropertyBinder.GetReactiveDictionary<AnimationStateData>(_playerAnimationKey);
             
             foreach (var kvp in snapshot)
             {
-                if (animationStateDataDict.TryGetValue((int)kvp.Key, out var animationData))
+                if (!_animationStateDataDict.TryGetValue((int)kvp.Key, out var animationData))
                 {
-                    //Debug.Log($"[UpdateUIAnimation] {animationData.ToString()}");
+                    animationData = new AnimationStateData();
+                    animationData.State = kvp.Key;
+                    animationData.Duration = _animationConfig.GetAnimationInfo(kvp.Key).cooldown;
+                    animationData.Cost = 0;
+                    animationData.Timer = kvp.Value.CurrentCountdown;
+                    animationData.Icon = UISpriteContainer.GetSprite(_animationConfig.GetAnimationInfo(kvp.Key).icon);
+                    animationData.Frame = UISpriteContainer.GetQualitySprite(_animationConfig.GetAnimationInfo(kvp.Key).frame);
+                    animationData.Index = kvp.Value.CurrentStage;
+                    _animationStateDataDict.Add((int)kvp.Key, animationData);
+                }
+                else
+                {
                     if (!Mathf.Approximately(animationData.Timer, kvp.Value.CurrentCountdown))
                     {
                         animationData.Timer = kvp.Value.CurrentCountdown;
                     }
                     animationData.Index = kvp.Value.CurrentStage;
-                    animationStateDataDict[(int)kvp.Key] = animationData;
+                    _animationStateDataDict[(int)kvp.Key] = animationData;
                 }
+                UIPropertyBinder.UpdateDictionary(_playerAnimationKey, (int)kvp.Key, animationData);
+                Debug.Log($"[UpdateUIAnimation] {animationData.ToString()}");
             }
         }
 

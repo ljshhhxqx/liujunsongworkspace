@@ -206,7 +206,7 @@ namespace HotUpdate.Scripts.Network.State
                     {
                         _propertyData.CurrentValue = newValue;
                         Debug.Log($"SetPropertyValue NewValue: {newValue}");
-                        return new PropertyCalculator(_propertyType, _propertyData, _maxValue, _minValue, _isResourceProperty);
+                        return new PropertyCalculator(_propertyType, _propertyData, _maxValue, _minValue, _isResourceProperty, _isShowInHud);
                     }
                     break;
                 default:
@@ -227,7 +227,7 @@ namespace HotUpdate.Scripts.Network.State
                 _propertyData.CurrentValue = Mathf.Clamp(currentValue, _minValue, _maxValue);
             }
 
-            return new PropertyCalculator(_propertyType, _propertyData, _maxValue, _minValue, _isResourceProperty);
+            return new PropertyCalculator(_propertyType, _propertyData, _maxValue, _minValue, _isResourceProperty, _isShowInHud);
         }
 
         [MemoryPackOrder(0)] 
@@ -240,6 +240,8 @@ namespace HotUpdate.Scripts.Network.State
         private float _minValue;
         [MemoryPackOrder(4)]
         private bool _isResourceProperty;
+        [MemoryPackOrder(5)]
+        private bool _isShowInHud;
         [MemoryPackIgnore]
         public PropertyData PropertyDataValue => _propertyData;
         [MemoryPackIgnore]
@@ -248,13 +250,14 @@ namespace HotUpdate.Scripts.Network.State
         public float MinValue => _minValue;
         [MemoryPackIgnore]
         public PropertyTypeEnum PropertyType => _propertyType;
-        public PropertyCalculator(PropertyTypeEnum propertyType, PropertyData propertyData, float maxValue, float minValue, bool isResourceProperty)
+        public PropertyCalculator(PropertyTypeEnum propertyType, PropertyData propertyData, float maxValue, float minValue, bool isResourceProperty, bool isShowInHud)
         {
             _propertyType = propertyType;
             _propertyData = propertyData;
             _maxValue = maxValue;
             _minValue = minValue;
             _isResourceProperty = isResourceProperty;
+            _isShowInHud = isShowInHud;
         }
 
         public bool IsResourceProperty()
@@ -274,6 +277,11 @@ namespace HotUpdate.Scripts.Network.State
                 or PropertyTypeEnum.CriticalDamageRatio;
         }
 
+        public bool IsShowInHud()
+        {
+            return _isShowInHud;
+        }
+
         public PropertyCalculator UpdateCurrentValue(float value)
         {
             return new PropertyCalculator(_propertyType, new PropertyData
@@ -285,7 +293,7 @@ namespace HotUpdate.Scripts.Network.State
                 CurrentValue = Mathf.Clamp(value + _propertyData.CurrentValue, _minValue, 
                     IsResourceProperty() ? _propertyData.MaxCurrentValue : _maxValue),
                 MaxCurrentValue = _propertyData.MaxCurrentValue
-            }, _maxValue, _minValue, _isResourceProperty);
+            }, _maxValue, _minValue, _isResourceProperty, _isShowInHud);
         }
         public PropertyCalculator UpdateCurrentValueByRatio(float ratio)
         {
@@ -299,7 +307,7 @@ namespace HotUpdate.Scripts.Network.State
                 CurrentValue = Mathf.Clamp(newValue, _minValue, 
                     IsResourceProperty() ? _propertyData.MaxCurrentValue : _maxValue),
                 MaxCurrentValue = _propertyData.MaxCurrentValue
-            }, _maxValue, _minValue, _isResourceProperty);
+            }, _maxValue, _minValue, _isResourceProperty, _isShowInHud);
         }
 
         public PropertyCalculator UpdateCalculator(List<BuffIncreaseData> data, bool isReverse = false)
@@ -382,7 +390,7 @@ namespace HotUpdate.Scripts.Network.State
                 propertyData.CurrentValue = Mathf.Clamp(newValue, _minValue, _maxValue);
             }
 
-            return new PropertyCalculator(_propertyType, propertyData, _maxValue, _minValue, _isResourceProperty);
+            return new PropertyCalculator(_propertyType, propertyData, _maxValue, _minValue, _isResourceProperty, _isShowInHud);
         }
         
         private float ApplyOperation(float original, float value, BuffOperationType operation, bool isReverse = false)
@@ -411,7 +419,7 @@ namespace HotUpdate.Scripts.Network.State
 
             propertyData.CurrentValue = Mathf.Clamp(newValue, _minValue, _maxValue);
 
-            return new PropertyCalculator(_propertyType, propertyData, _maxValue, _minValue, _isResourceProperty);
+            return new PropertyCalculator(_propertyType, propertyData, _maxValue, _minValue, _isResourceProperty, _isShowInHud);
         }
 
         public bool Equals(PropertyCalculator other)
