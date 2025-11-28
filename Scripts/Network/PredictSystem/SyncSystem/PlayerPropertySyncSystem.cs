@@ -270,7 +270,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             PropertyStates.TryAdd(connectionId, playerPropertyState);
             _propertyPredictionStates.TryAdd(connectionId, playerPredictableState);
             RpcSetPlayerPropertyState(connectionId, netId, NetworkCommandExtensions.SerializePlayerState(playerPropertyState).Item1);
-            //RpcSetPlayerPropertyState(connectionId, MemoryPackSerializer.Serialize(playerPropertyState));
         }
         
         [ClientRpc]

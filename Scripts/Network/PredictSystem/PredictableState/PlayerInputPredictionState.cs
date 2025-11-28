@@ -64,6 +64,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _keyAnimationConfig = configProvider.GetConfig<KeyAnimationConfig>();
             _skillConfig = configProvider.GetConfig<SkillConfig>();
+            if (NetworkIdentity.isLocalPlayer)
+            {
+                
+            }
         }
 
         protected override void InjectLocalPlayerCallback()
@@ -71,6 +75,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             Debug.Log($"PropertyPredictionState [OnStartLocalPlayer]  ");
             _playerAnimationKey = new BindingKey(UIPropertyDefine.Animation, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
 
+            var animationStateDataDict =
+                UIPropertyBinder.GetReactiveDictionary<AnimationStateData>(_playerAnimationKey);
+            var playerAnimationOverlay = _uiManager.SwitchUI<PlayerAnimationOverlay>();
+            playerAnimationOverlay.BindPlayerAnimationData(animationStateDataDict);
             var dic = new Dictionary<int, AnimationStateData>();
             var animations = _animationConfig.AnimationInfos;
             for (int i = 0; i < animations.Count; i++)
@@ -90,10 +98,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 }
             }
             UIPropertyBinder.OptimizedBatchAdd(_playerAnimationKey, dic);
-            var playerAnimationOverlay = _uiManager.SwitchUI<PlayerAnimationOverlay>();
-            var animationStateDataDict =
-                UIPropertyBinder.GetReactiveDictionary<AnimationStateData>(_playerAnimationKey);
-            playerAnimationOverlay.BindPlayerAnimationData(animationStateDataDict);
             UpdateAnimationCooldowns(_cancellationTokenSource.Token, GameSyncManager.ServerUpdateInterval).Forget();
         }
 

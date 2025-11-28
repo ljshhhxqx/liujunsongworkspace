@@ -126,7 +126,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             CleanupConfirmedCommands(GameSyncManager.CurrentTick);
             
-            if (isLocalPlayer)
+            if (LocalPlayerHandler)
             {
                 //Debug.Log($"[PredictableStateBase] ApplyServerState {state.GetType().Name} at tick {GameSyncManager.CurrentTick}");
                  if (NeedsReconciliation(state))

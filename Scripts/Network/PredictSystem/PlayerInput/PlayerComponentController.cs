@@ -15,7 +15,6 @@ using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.GameBase;
 using HotUpdate.Scripts.Map;
-using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
@@ -28,6 +27,7 @@ using HotUpdate.Scripts.Skill;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using HotUpdate.Scripts.Tool.ObjectPool;
+using HotUpdate.Scripts.Tool.ReactiveProperty;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using HotUpdate.Scripts.UI.UIs.Panel;
@@ -79,13 +79,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private PlayerSkillSyncState _skillSyncState;
         
         [Header("Subject")]
-        private readonly ReactiveProperty<PlayerInputStateData> _inputStream = new ReactiveProperty<PlayerInputStateData>();
+        private readonly HReactiveProperty<PlayerInputStateData> _inputStream = new HReactiveProperty<PlayerInputStateData>();
         private readonly Subject<int> _onAttackPoint = new Subject<int>();
         private readonly Subject<int> _onAttackEnd = new Subject<int>();
         
-        private readonly ReactiveProperty<PlayerEnvironmentState> _gameStateStream = new ReactiveProperty<PlayerEnvironmentState>();
-        private readonly ReactiveProperty<float> _groundDistanceStream = new ReactiveProperty<float>();
-        private readonly ReactiveProperty<bool> _isSpecialActionStream = new ReactiveProperty<bool>();
+        private readonly HReactiveProperty<PlayerEnvironmentState> _gameStateStream = new HReactiveProperty<PlayerEnvironmentState>();
+        private readonly HReactiveProperty<float> _groundDistanceStream = new HReactiveProperty<float>();
+        private readonly HReactiveProperty<bool> _isSpecialActionStream = new HReactiveProperty<bool>();
         
         [Header("Calculators")]
         private PlayerPhysicsCalculator _playerPhysicsCalculator;
@@ -157,10 +157,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public bool isDead;
 
         public int CurrentComboStage { get; private set; }
-        public IObservable<PlayerInputStateData> InputStream => _inputStream;
-        public IReadOnlyReactiveProperty<PlayerEnvironmentState> GameStateStream => _gameStateStream;
-        public IReadOnlyReactiveProperty<float> GroundDistanceStream => _groundDistanceStream;
-        public IObservable<bool> IsSpecialAction => _isSpecialActionStream;
+        // public IObservable<PlayerInputStateData> InputStream => _inputStream;
+        // public IReadOnlyReactiveProperty<PlayerEnvironmentState> GameStateStream => _gameStateStream;
+        // public IReadOnlyReactiveProperty<float> GroundDistanceStream => _groundDistanceStream;
+        // public IObservable<bool> IsSpecialAction => _isSpecialActionStream;
         public IObservable<int> AttackPointReached => _onAttackPoint;
         public IObservable<int> AttackEnded => _onAttackEnd;
         
@@ -349,7 +349,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             //     }).AddTo(_disposables);
             
             Observable.EveryUpdate()
-                .Where(_ => LocalPlayerHandler)
                 .Subscribe(_ =>
                 {
                     if (_keyFunctionConfig.IsKeyFunction(out var keyFunction))
@@ -361,7 +360,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .AddTo(_disposables);
             
             Observable.EveryUpdate()
-                .Where(_ => LocalPlayerHandler && (_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)))
+                .Where(_ =>  (_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)))
                 .Subscribe(_ => {
                     if (PlayerPlatformDefine.IsWindowsPlatform())
                     {
@@ -427,7 +426,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .AddTo(_disposables);
             Observable.EveryFixedUpdate()
                 .Sample(TimeSpan.FromMilliseconds(0.25f * 1000))
-                .Where(_ => LocalPlayerHandler && _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) > 0)
+                .Where(_ => _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) > 0)
                 .Subscribe(_ =>
                 {
                     var health = _propertyPredictionState.GetCalculator(PropertyTypeEnum.Health);
@@ -446,7 +445,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 })
                 .AddTo(this);
             Observable.EveryFixedUpdate()
-                .Where(_ => LocalPlayerHandler && _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) > 0 && GameSyncManager.CurrentTick > 0)
+                .Where(_ => _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) > 0 && GameSyncManager.CurrentTick > 0)
                 .Subscribe(_ =>
                 {
                     HandleInputPhysics(_playerInputStateData);
@@ -478,7 +477,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             
             Observable.EveryFixedUpdate()
                 .Sample(TimeSpan.FromSeconds(FixedDeltaTime))
-                .Where(_ => LocalPlayerHandler)
                 .Subscribe(_ =>
                 {
                     var potentialTargets = new List<Transform>();
@@ -578,8 +576,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     break;
                 case SubjectedStateType.IsCantMoved:
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -1303,7 +1299,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void HandlePlayerPropertyDifference(byte[] data)
         {
-            if (!isLocalPlayer)
+            if (!LocalPlayerHandler)
             {
                 return;
             }
@@ -1369,7 +1365,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcPlayEffect(PlayerEffectType effectType)
         {
-            if (!isLocalPlayer || effectType == PlayerEffectType.None)
+            if (!LocalPlayerHandler || effectType == PlayerEffectType.None)
             {
                 return;
             }
