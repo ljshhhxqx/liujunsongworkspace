@@ -73,7 +73,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             {
                
             }
-        }
+        } 
 
         public float GetProperty(PropertyTypeEnum propertyType)
         {
@@ -297,7 +297,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             var playerPropertiesOverlay = _uiManager.SwitchUI<PlayerPropertiesOverlay>();
             playerPropertiesOverlay.BindPlayerProperty(
                 UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_propertyBindKey));
-            Debug.Log($"PropertyPredictionState [OnStartLocalPlayer]  ");
+            Debug.Log($"PropertyPredictionState [InjectLocalPlayerCallback]  ");
             _goldBindKey = new BindingKey(UIPropertyDefine.PlayerBaseData, DataScope.LocalPlayer,
                 UIPropertyBinder.LocalPlayerId);
             _playerDeathTimeBindKey = new BindingKey(UIPropertyDefine.PlayerDeathTime, DataScope.LocalPlayer,

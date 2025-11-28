@@ -1292,6 +1292,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
 
                 animationCooldown.Refresh(snapshotCoolDown);
+                if (animationCooldown is KeyframeComboCooldown kcd)
+                {
+                    _attackAnimationCooldown = kcd;
+                }
             }
             _previousAnimationState = AnimationState.None;
         }

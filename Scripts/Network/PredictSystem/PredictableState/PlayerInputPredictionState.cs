@@ -98,6 +98,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 }
             }
             UIPropertyBinder.OptimizedBatchAdd(_playerAnimationKey, dic);
+            if (ServerHandler)
+            {
+                return;
+            }
             UpdateAnimationCooldowns(_cancellationTokenSource.Token, GameSyncManager.ServerUpdateInterval).Forget();
         }
 

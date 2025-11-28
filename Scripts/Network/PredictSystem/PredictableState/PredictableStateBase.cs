@@ -47,7 +47,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         // 添加预测命令（不立即执行）
         public void AddPredictedCommand<T>(T command) where T : INetworkCommand
         {
-            if (isServer && !isLocalPlayer)
+            if (ServerHandler && !LocalPlayerHandler)
             {
                 return;
             }

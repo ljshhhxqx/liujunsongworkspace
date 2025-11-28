@@ -83,6 +83,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     break;
                 case AnimationState.Attack:
                     var attackName = GetAnimationName(AnimationState.Attack, index);
+                    Debug.Log("PlayAnimationWithNoCondition Attack" + attackName + ", " + index);
                     _animationComponent.Animator.CrossFadeInFixedTime(attackName, 0.1f);
                     break;
                 case AnimationState.Hit:
@@ -217,6 +218,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 case AnimationState.Attack:
                     IsPlayingSpecialAction = true;
                     var attackName = GetAnimationName(AnimationState.Attack, index);
+                    
+                    Debug.Log("PlayAnimationWithNoCondition Attack" + attackName + ", " + index);
                     _animationComponent.Animator.CrossFadeInFixedTime(attackName, 0.1f);
                     break;
                 case AnimationState.Hit:
