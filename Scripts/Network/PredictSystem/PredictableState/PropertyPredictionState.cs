@@ -237,15 +237,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                             ConsumeType = _propertyConfig.GetPropertyConfigData((PropertyTypeEnum)kvp.Key).consumeType,
                             IsPercentage = _propertyConfig.IsHundredPercent((PropertyTypeEnum)kvp.Key),
                         };
-                        _uiPropertyData[(int)kvp.Key] = propertyData;
                     }
                     else
                     {
                         propertyData.CurrentProperty = property.CurrentValue;
                         propertyData.MaxProperty = property.MaxCurrentValue;
                         propertyData.IsAutoRecover = isRecover;
-                        _uiPropertyData[(int)kvp.Key] = propertyData;
                     }
+                    _uiPropertyData[(int)kvp.Key] = propertyData;
                     OnPropertyChanged?.Invoke(kvp.Key, property);
                     UIPropertyBinder.UpdateDictionary(_propertyBindKey, (int)kvp.Key, propertyData);
                 }

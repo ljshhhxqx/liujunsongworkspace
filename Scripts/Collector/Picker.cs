@@ -86,6 +86,10 @@ namespace HotUpdate.Scripts.Collector
         {
             if (LocalPlayerHandler)
             {
+                if (!_interactSystem.IsItemCanPickup(itemId))
+                {
+                    return;
+                }
                 var request = new SceneInteractRequest
                 {
                     Header = InteractSystem.CreateInteractHeader(PlayerInGameManager.Instance.GetPlayerId(pickerId), InteractCategory.PlayerToScene,

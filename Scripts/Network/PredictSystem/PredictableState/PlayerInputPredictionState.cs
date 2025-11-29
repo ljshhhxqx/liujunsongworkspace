@@ -176,19 +176,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     animationData.Icon = UISpriteContainer.GetSprite(_animationConfig.GetAnimationInfo(kvp.Key).icon);
                     animationData.Frame = UISpriteContainer.GetQualitySprite(_animationConfig.GetAnimationInfo(kvp.Key).frame);
                     animationData.Index = kvp.Value.CurrentStage;
-                    _animationStateDataDict.Add((int)kvp.Key, animationData);
                 }
                 else
                 {
-                    if (!Mathf.Approximately(animationData.Timer, kvp.Value.CurrentCountdown))
-                    {
-                        animationData.Timer = kvp.Value.CurrentCountdown;
-                    }
+                    animationData.Timer = kvp.Value.CurrentCountdown;
                     animationData.Index = kvp.Value.CurrentStage;
-                    _animationStateDataDict[(int)kvp.Key] = animationData;
                 }
+                _animationStateDataDict[(int)kvp.Key] = animationData;
                 UIPropertyBinder.UpdateDictionary(_playerAnimationKey, (int)kvp.Key, animationData);
-                Debug.Log($"[UpdateUIAnimation] {animationData.ToString()}");
+                //Debug.Log($"[UpdateUIAnimation] {animationData.ToString()}");
             }
         }
 

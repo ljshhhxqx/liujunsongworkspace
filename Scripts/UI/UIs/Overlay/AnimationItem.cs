@@ -29,13 +29,13 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         {
             if (data is AnimationStateData animationStateData)
             {
+                var isReady = animationStateData.Timer < 0.1f;
                 frameImage.sprite = !animationStateData.Frame ? frameImage.sprite : animationStateData.Frame;
                 iconImage.sprite = !animationStateData.Icon ? iconImage.sprite : animationStateData.Icon;
-                countdownImage.fillAmount = animationStateData.Timer / animationStateData.Duration;
+                countdownImage.fillAmount = isReady ? 0 : animationStateData.Timer / animationStateData.Duration;
                 indexText.text = animationStateData.Index == 0 ? string.Empty : animationStateData.Index.ToString();
                 keyText.text = EnumHeaderParser.GetHeader(animationStateData.State);
                 costText.text = animationStateData.Cost.ToString("0");
-                var isReady = animationStateData.Timer == 0f;
                 timeText.enabled = !isReady;
                 timeText.text = animationStateData.Timer.ToString("00");
                 //Debug.Log($"AnimationItem SetData : {animationStateData}");
