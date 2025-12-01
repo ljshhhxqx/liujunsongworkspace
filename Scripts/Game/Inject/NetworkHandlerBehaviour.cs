@@ -4,9 +4,9 @@ namespace HotUpdate.Scripts.Game.Inject
 {
     public abstract class NetworkHandlerBehaviour : NetworkBehaviour
     {
-        public bool ServerHandler { get; private set; }
-        public bool ClientHandler { get; private set; }
-        public bool LocalPlayerHandler { get; private set; }
+        public bool ServerHandler { get; protected set; }
+        public bool ClientHandler { get; protected set; }
+        public bool LocalPlayerHandler { get; protected set; }
 
         public override void OnStartClient()
         {

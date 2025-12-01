@@ -11,12 +11,16 @@ namespace HotUpdate.Scripts.Collector.Collects
     {
         [SyncVar]
         private AttackInfo _attackInfo;
-        private float _nextAttackTime;
+        private float _lastAttackTime;
         private readonly HashSet<DynamicObjectData> _collectedObjects = new HashSet<DynamicObjectData>();
 
         private void FixedUpdate()
         {
-            if(IsDead || !ServerHandler || !IsAttackable || Time.time < _nextAttackTime) return;
+            if (IsDead || !ServerHandler || !IsAttackable || Time.time < _lastAttackTime + _attackInfo.attackCooldown)
+            {
+                //Debug.LogError($"{name} is dead or not attackable or attack cooldown not over yet");
+                return;
+            }
 
             GameObjectContainer.Instance.DynamicObjectIntersects(NetId, transform.position, ColliderConfig,
                 _collectedObjects, OnInteract);
@@ -28,7 +32,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             {
                 var direction = (target.Position - transform.position).normalized;
                 Attack(direction, target.NetId);
-                _nextAttackTime = Time.time + _attackInfo.attackCooldown;
+                _lastAttackTime = Time.time;
                 return true;
             }
             return false;
@@ -68,8 +72,8 @@ namespace HotUpdate.Scripts.Collector.Collects
         public void Init(AttackInfo info, bool serverHandler, uint id)
         {
             _attackInfo = info;
-            _nextAttackTime = Time.time;
             NetId = id;
+            ServerHandler = serverHandler;
             if (serverHandler)
             {
                 GameEventManager.Publish(new ItemSpawnedEvent(NetId, transform.position, new SceneItemInfo
@@ -96,7 +100,7 @@ namespace HotUpdate.Scripts.Collector.Collects
 
         public void OnSelfDespawn()
         {
-            _nextAttackTime = 0;
+            _lastAttackTime = 0;
             _attackInfo = default;
             _collectedObjects.Clear();
         }

@@ -183,7 +183,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 
         public bool IsValid()
         {
-            return InteractionType > 0 && Spawner > 0 && CriticalRate >= 0 && CriticalDamageRatio > 0 && StartPosition.x != 0 && StartPosition.y != 0 && StartPosition.z != 0 && Direction.x != 0 && Direction.y != 0 && Direction.z != 0 && AttackPower > 0 && Speed > 0 && LifeTime > 0;
+            return InteractionType > 0 && Spawner > 0 && StartPosition.x != 0 && StartPosition.y != 0 && StartPosition.z != 0 && Direction.x != 0 && Direction.y != 0 && Direction.z != 0 && AttackPower > 0 && Speed > 0 && LifeTime > 0;
         }
     }
     

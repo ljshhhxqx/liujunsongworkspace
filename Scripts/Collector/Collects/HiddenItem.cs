@@ -37,6 +37,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         {
             _hiddenItemData = hiddenItemData;
             NetId = id;
+            ServerHandler = serverHandler;
             if (serverHandler)
             {
                 GameEventManager.Publish(new ItemSpawnedEvent(NetId, transform.position, new SceneItemInfo

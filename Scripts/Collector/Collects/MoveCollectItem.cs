@@ -18,13 +18,16 @@ namespace HotUpdate.Scripts.Collector.Collects
         private Vector3 _patternOrigin;
         private float _patternTimer;
         private LayerMask _sceneLayer;
-        private float collisionCheckDistance = 1f;
+        private float _collisionCheckDistance = 1f;
         private HashSet<GameObjectData> _collectedItems = new HashSet<GameObjectData>();
 
         private void FixedUpdate()
         {
-            if (!ServerHandler || !IsMoveable) 
+            if (!ServerHandler || !IsMoveable)
+            {
+                //Debug.LogError($"{name} is not moveable-{IsMoveable} or serverHandler-{ServerHandler}-{CurrentSubjectedStateType}");
                 return;
+            }
             // 只在非表面状态下应用模式运动
             if(!_isOnSurface)
             {
@@ -59,7 +62,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         private void HandleCollision()
         {
             // 发射射线获取碰撞点法线
-            if(Physics.Raycast(transform.position, _currentDirection, out var hit, collisionCheckDistance * 1.5f, _sceneLayer))
+            if(Physics.Raycast(transform.position, _currentDirection, out var hit, _collisionCheckDistance * 1.5f, _sceneLayer))
             {
                 Vector3 surfaceNormal = hit.normal;
                 
@@ -167,6 +170,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         {
             _moveInfo = moveInfo;
             NetId = id;
+            ServerHandler = serverHandler;
             if (serverHandler)
             {
                 GameEventManager.Publish(new ItemSpawnedEvent(NetId, transform.position, new SceneItemInfo

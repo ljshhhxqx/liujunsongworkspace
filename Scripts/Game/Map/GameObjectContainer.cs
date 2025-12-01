@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Tool;
 using Mirror;
 using UnityEngine;
 
@@ -12,13 +13,22 @@ namespace HotUpdate.Scripts.Game.Map
         private readonly Dictionary<int, GameObject> _idToGameObject = new Dictionary<int, GameObject>();
         private readonly Dictionary<Vector2Int, List<GameObjectData>> _mapObjectData = new Dictionary<Vector2Int, List<GameObjectData>>();
 
-        private readonly Dictionary<uint, DynamicObjectData> _netIdToDynamicObjectData = new Dictionary<uint, DynamicObjectData>();
+        private readonly DoubleModifiedDictionary<uint, DynamicObjectData> _netIdToDynamicObjectData = new DoubleModifiedDictionary<uint, DynamicObjectData>();
 
         public void UpdateDynamicObjects(bool isServer)
         {
-            foreach (var data in _netIdToDynamicObjectData)
+            foreach (var data in _netIdToDynamicObjectData.GetReadOnlyView())
             {
-                var identity = isServer ? NetworkServer.spawned[data.Key] : NetworkClient.spawned[data.Key];
+                NetworkIdentity identity;
+
+                if (NetworkServer.spawned.TryGetValue(data.Key, out identity))
+                {
+                    
+                }
+                else if (NetworkClient.spawned.TryGetValue(data.Key, out identity))
+                {
+                    
+                }
                 if (!identity)
                 {
                     RemoveDynamicObject(data.Key);
@@ -51,7 +61,7 @@ namespace HotUpdate.Scripts.Game.Map
             }
             foreach (var grid in coveredGrids)
             {
-                foreach (var data in _netIdToDynamicObjectData)
+                foreach (var data in _netIdToDynamicObjectData.GetReadOnlyView())
                 {
                     if (data.Key == uid)
                     {
@@ -87,14 +97,15 @@ namespace HotUpdate.Scripts.Game.Map
         public HashSet<uint> GetDynamicObjectIdsByGrids(HashSet<Vector2Int> grids)
         {
             var hashSet = new HashSet<uint>();
+            var readonlyView = _netIdToDynamicObjectData.GetReadOnlyView();
             foreach (var grid in grids)
             {
-                foreach (var data in _netIdToDynamicObjectData.Keys)
+                foreach (var data in readonlyView)
                 {
-                    var objectGrid = MapBoundDefiner.Instance.GetGridPosition(_netIdToDynamicObjectData[data].Position);
+                    var objectGrid = MapBoundDefiner.Instance.GetGridPosition(data.Value.Position);
                     if (objectGrid == grid)
                     {
-                        hashSet.Add(data);
+                        hashSet.Add(data.Value.NetId);
                     }
                 }
             }
@@ -112,7 +123,7 @@ namespace HotUpdate.Scripts.Game.Map
             }
             foreach (var grid in coveredGrids)
             {
-                foreach (var data in _netIdToDynamicObjectData)
+                foreach (var data in _netIdToDynamicObjectData.GetReadOnlyView())
                 {
                     var gridBounds = MapBoundDefiner.Instance.GetGridPosition(data.Value.Position);
 
@@ -145,7 +156,7 @@ namespace HotUpdate.Scripts.Game.Map
                 Tag = tag,
             };
             Debug.Log("AddDynamicObject: " + data);
-            _netIdToDynamicObjectData.TryAdd(netId, data);
+            _netIdToDynamicObjectData.Add(netId, data);
         }
 
         public void RemoveDynamicObject(uint netId)
@@ -155,7 +166,7 @@ namespace HotUpdate.Scripts.Game.Map
 
         public DynamicObjectData GetDynamicObjectData(uint netId)
         {
-            _netIdToDynamicObjectData.TryGetValue(netId, out var data);
+            _netIdToDynamicObjectData.GetReadOnlyView().TryGetValue(netId, out var data);
             return data;
         }
         

@@ -7,10 +7,10 @@ namespace HotUpdate.Scripts.Tool.ReactiveProperty
     public class HReactiveProperty<T>
     {
         private T _value;
-        private readonly List<Action<T>> _listeners = new List<Action<T>>();
+        private LinkedList<Action<T>> _listeners = new LinkedList<Action<T>>();
         private bool _isNotifying = false;
-        private readonly List<Action<T>> _pendingAdditions = new List<Action<T>>();
-        private readonly List<Action<T>> _pendingRemovals = new List<Action<T>>();
+        private readonly LinkedList<Action<T>> _pendingAdditions = new LinkedList<Action<T>>();
+        private readonly LinkedList<Action<T>> _pendingRemovals = new LinkedList<Action<T>>();
 
         public HReactiveProperty(T initialValue = default(T))
         {
@@ -33,16 +33,23 @@ namespace HotUpdate.Scripts.Tool.ReactiveProperty
         public IDisposable Subscribe(Action<T> listener, bool notifyImmediately = true)
         {
             if (listener == null)
-                throw new ArgumentNullException(nameof(listener));
+            {
+                Debug.LogWarning("Listener is null.");
+                return null;
+            }
 
-            // 确保订阅操作在热更新内部完成
+            // 创建链表节点，用于后续的高效移除
+            var node = new LinkedListNode<Action<T>>(listener);
             if (_isNotifying)
             {
-                _pendingAdditions.Add(listener);
+                lock (_pendingAdditions)
+                {
+                    _pendingAdditions.AddLast(node);
+                }
             }
             else
             {
-                _listeners.Add(listener);
+                _listeners.AddLast(node);
             }
 
             if (notifyImmediately)
@@ -50,7 +57,7 @@ namespace HotUpdate.Scripts.Tool.ReactiveProperty
                 SafeInvoke(listener, _value);
             }
 
-            return new Subscription(this, listener);
+            return new Subscription(this, node);
         }
 
         public void SetValueAndNotify(T newValue)
@@ -72,20 +79,26 @@ namespace HotUpdate.Scripts.Tool.ReactiveProperty
         public void Dispose()
         {
             _listeners.Clear();
-            _pendingAdditions.Clear();
-            _pendingRemovals.Clear();
+            lock (_pendingAdditions)
+            {
+                _pendingAdditions.Clear();
+                _pendingRemovals.Clear();
+            }
             _value = default(T);
         }
 
-        private void Unsubscribe(Action<T> listener)
+        private void Unsubscribe(LinkedListNode<Action<T>> node)
         {
             if (_isNotifying)
             {
-                _pendingRemovals.Add(listener);
+                lock (_pendingRemovals)
+                {
+                    _pendingRemovals.AddLast(node);
+                }
             }
             else
             {
-                _listeners.Remove(listener);
+                _listeners.Remove(node);
             }
         }
 
@@ -99,9 +112,12 @@ namespace HotUpdate.Scripts.Tool.ReactiveProperty
             try
             {
                 // 所有委托调用都在热更新内部
-                foreach (var listener in _listeners)
+                var currentNode = _listeners.First;
+                while (currentNode != null)
                 {
-                    SafeInvoke(listener, _value);
+                    var nextNode = currentNode.Next; // 先保存下一个节点，因为回调中可能会移除当前节点
+                    SafeInvoke(currentNode.Value, _value);
+                    currentNode = nextNode;
                 }
 
                 ProcessPendingOperations();
@@ -114,20 +130,31 @@ namespace HotUpdate.Scripts.Tool.ReactiveProperty
 
         private void ProcessPendingOperations()
         {
-            foreach (var listener in _pendingAdditions)
+            // 处理待添加的监听器
+            lock (_pendingAdditions)
             {
-                if (!_listeners.Contains(listener))
+                var currentNode = _pendingAdditions.First;
+                while (currentNode != null)
                 {
-                    _listeners.Add(listener);
+                    var nextNode = currentNode.Next;
+                    _listeners.AddLast(currentNode);
+                    _pendingAdditions.Remove(currentNode);
+                    currentNode = nextNode;
                 }
             }
-            _pendingAdditions.Clear();
 
-            foreach (var listener in _pendingRemovals)
+            // 处理待移除的监听器
+            lock (_pendingRemovals)
             {
-                _listeners.Remove(listener);
+                var currentNode = _pendingRemovals.First;
+                while (currentNode != null)
+                {
+                    var nextNode = currentNode.Next;
+                    _listeners.Remove(currentNode);
+                    _pendingRemovals.Remove(currentNode);
+                    currentNode = nextNode;
+                }
             }
-            _pendingRemovals.Clear();
         }
 
         private void SafeInvoke(Action<T> action, T value)
@@ -150,21 +177,21 @@ namespace HotUpdate.Scripts.Tool.ReactiveProperty
         private class Subscription : IDisposable
         {
             private HReactiveProperty<T> _property;
-            private Action<T> _listener;
+            private LinkedListNode<Action<T>> _node;
 
-            public Subscription(HReactiveProperty<T> property, Action<T> listener)
+            public Subscription(HReactiveProperty<T> property, LinkedListNode<Action<T>> node)
             {
                 _property = property;
-                _listener = listener;
+                _node = node;
             }
 
             public void Dispose()
             {
-                if (_property != null && _listener != null)
+                if (_property != null && _node != null)
                 {
-                    _property.Unsubscribe(_listener);
+                    _property.Unsubscribe(_node);
                     _property = null;
-                    _listener = null;
+                    _node = null;
                 }
             }
         }

@@ -13,8 +13,48 @@ namespace HotUpdate.Scripts.Tool.ReactiveProperty
     {
         private readonly Dictionary<TKey, TValue> _dictionary = new Dictionary<TKey, TValue>();
         
+        // 使用链表存储监听器以避免并发修改问题
+        private LinkedList<Action<DictionaryChangeArgs<TKey, TValue>>> _dictionaryChangedHandlers = new LinkedList<Action<DictionaryChangeArgs<TKey, TValue>>>();
+        private bool _isNotifying = false;
+        private readonly LinkedList<Action<DictionaryChangeArgs<TKey, TValue>>> _pendingAdditions = new LinkedList<Action<DictionaryChangeArgs<TKey, TValue>>>();
+        private readonly LinkedList<Action<DictionaryChangeArgs<TKey, TValue>>> _pendingRemovals = new LinkedList<Action<DictionaryChangeArgs<TKey, TValue>>>();
+
         // 使用Action而不是接口，确保热更新内部调用
-        private event Action<DictionaryChangeArgs<TKey, TValue>> DictionaryChanged;
+        public event Action<DictionaryChangeArgs<TKey, TValue>> DictionaryChanged
+        {
+            add
+            {
+                if (value == null) return;
+                
+                if (_isNotifying)
+                {
+                    lock (_pendingAdditions)
+                    {
+                        _pendingAdditions.AddLast(value);
+                    }
+                }
+                else
+                {
+                    _dictionaryChangedHandlers.AddLast(value);
+                }
+            }
+            remove
+            {
+                if (value == null) return;
+                
+                if (_isNotifying)
+                {
+                    lock (_pendingRemovals)
+                    {
+                        _pendingRemovals.AddLast(value);
+                    }
+                }
+                else
+                {
+                    _dictionaryChangedHandlers.Remove(value);
+                }
+            }
+        }
 
         public TValue this[TKey key]
         {
@@ -44,19 +84,17 @@ namespace HotUpdate.Scripts.Tool.ReactiveProperty
 
         public void Add(TKey key, TValue value)
         {
-            if (_dictionary.ContainsKey(key))
+            if (!_dictionary.TryAdd(key, value))
             {
+                _dictionary[key] = value;
                 return;
             }
+
             OnDictionaryChanged(DictionaryChangeType.Added, key, value, default(TValue));
         }
 
         public void Add(KeyValuePair<TKey, TValue> item)
         {
-            if (_dictionary.ContainsKey(item.Key))
-            {
-                return;
-            }
             Add(item.Key, item.Value);
         }
 
@@ -87,6 +125,20 @@ namespace HotUpdate.Scripts.Tool.ReactiveProperty
             _dictionary.Clear();
             OnDictionaryChanged(DictionaryChangeType.Reset, oldItems);
         }
+        
+        public void Update(TKey key, TValue value)
+        {
+            if (_dictionary.TryGetValue(key, out var oldValue))
+            {
+                _dictionary[key] = value;
+                OnDictionaryChanged(DictionaryChangeType.Updated, key, value, oldValue);
+            }
+            else
+            {
+                _dictionary[key] = value;
+                OnDictionaryChanged(DictionaryChangeType.Added, key, value, default(TValue));
+            }
+        }
 
         public bool ContainsKey(TKey key) => _dictionary.ContainsKey(key);
         public bool Contains(KeyValuePair<TKey, TValue> item) => _dictionary.Contains(item);
@@ -104,7 +156,20 @@ namespace HotUpdate.Scripts.Tool.ReactiveProperty
         /// </summary>
         public IDisposable Observe(Action<DictionaryChangeArgs<TKey, TValue>> handler)
         {
-            DictionaryChanged += handler;
+            if (handler == null) return null;
+            
+            if (_isNotifying)
+            {
+                lock (_pendingAdditions)
+                {
+                    _pendingAdditions.AddLast(handler);
+                }
+            }
+            else
+            {
+                _dictionaryChangedHandlers.AddLast(handler);
+            }
+            
             return new DictionarySubscription(this, handler);
         }
 
@@ -199,6 +264,27 @@ namespace HotUpdate.Scripts.Tool.ReactiveProperty
             this[key] = value;
         }
 
+        /// <summary>
+        /// 批量操作，减少通知次数
+        /// </summary>
+        public void BatchUpdate(Action<HReactiveDictionary<TKey, TValue>> updateAction)
+        {
+            if (updateAction == null) return;
+
+            var oldHandlers = _dictionaryChangedHandlers;
+            _dictionaryChangedHandlers = new LinkedList<Action<DictionaryChangeArgs<TKey, TValue>>>();
+
+            try
+            {
+                updateAction(this);
+                OnDictionaryChanged(DictionaryChangeType.Reset, _dictionary.ToArray());
+            }
+            finally
+            {
+                _dictionaryChangedHandlers = oldHandlers;
+            }
+        }
+
         private void OnDictionaryChanged(DictionaryChangeType changeType, TKey key, TValue newValue, TValue oldValue)
         {
             var args = new DictionaryChangeArgs<TKey, TValue>(changeType, key, newValue, oldValue);
@@ -213,19 +299,80 @@ namespace HotUpdate.Scripts.Tool.ReactiveProperty
 
         private void OnDictionaryChanged(DictionaryChangeArgs<TKey, TValue> args)
         {
+            if (_dictionaryChangedHandlers.Count == 0 && _pendingAdditions.Count == 0)
+                return;
+
+            _isNotifying = true;
+
             try
             {
-                DictionaryChanged?.Invoke(args); // 热更新内部调用
+                var currentNode = _dictionaryChangedHandlers.First;
+                while (currentNode != null)
+                {
+                    var nextNode = currentNode.Next;
+                    try
+                    {
+                        currentNode.Value?.Invoke(args);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError($"Error in dictionary change notification: {e}");
+                    }
+                    currentNode = nextNode;
+                }
+
+                ProcessPendingOperations();
             }
-            catch (Exception e)
+            finally
             {
-                Debug.LogError($"Error in dictionary change notification: {e}");
+                _isNotifying = false;
+            }
+        }
+
+        private void ProcessPendingOperations()
+        {
+            // 处理待添加的监听器
+            lock (_pendingAdditions)
+            {
+                var currentNode = _pendingAdditions.First;
+                while (currentNode != null)
+                {
+                    var nextNode = currentNode.Next;
+                    _dictionaryChangedHandlers.AddLast(currentNode);
+                    _pendingAdditions.Remove(currentNode);
+                    currentNode = nextNode;
+                }
+            }
+
+            // 处理待移除的监听器
+            lock (_pendingRemovals)
+            {
+                var currentNode = _pendingRemovals.First;
+                while (currentNode != null)
+                {
+                    var nextNode = currentNode.Next;
+                    _dictionaryChangedHandlers.Remove(currentNode);
+                    _pendingRemovals.Remove(currentNode);
+                    currentNode = nextNode;
+                }
             }
         }
 
         private void RemoveObserver(Action<DictionaryChangeArgs<TKey, TValue>> handler)
         {
-            DictionaryChanged -= handler;
+            if (handler == null) return;
+            
+            if (_isNotifying)
+            {
+                lock (_pendingRemovals)
+                {
+                    _pendingRemovals.AddLast(handler);
+                }
+            }
+            else
+            {
+                _dictionaryChangedHandlers.Remove(handler);
+            }
         }
 
         private class DictionarySubscription : IDisposable

@@ -31,7 +31,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         protected uint NetId;
         [SyncVar] protected int CurrentControlSkillType;
         protected override bool AutoInjectLocalPlayer => false;
-        protected SubjectedStateType CurrentSubjectedStateType => (SubjectedStateType)CurrentControlSkillType;
+        public SubjectedStateType CurrentSubjectedStateType => (SubjectedStateType)CurrentControlSkillType;
 
         protected float NowSpeed(float currentSpeed)
         {
@@ -61,7 +61,7 @@ namespace HotUpdate.Scripts.Collector.Collects
 
         private void OnItemControlSkillChanged(uint id, float duration, ControlSkillType skillType)
         {
-            if (id != netId)
+            if (id != NetId)
             {
                 return;
             }
@@ -117,7 +117,7 @@ namespace HotUpdate.Scripts.Collector.Collects
 
         protected virtual void OnSceneItemInfoChanged(uint id, SceneItemInfo info)
         {
-            if (id != netId || !ServerHandler)
+            if (id != NetId || !ServerHandler)
             {
                 return;
             }
@@ -132,7 +132,7 @@ namespace HotUpdate.Scripts.Collector.Collects
                     {
                         Header = InteractSystem.CreateInteractHeader(0, InteractCategory.SceneToPlayer, transform.position),
                         InteractionType = InteractionType.ItemExplode,
-                        SceneItemId = netId,
+                        SceneItemId = NetId,
                         AttackPower = info.attackDamage,
                         Radius = explodeRange,
                     };

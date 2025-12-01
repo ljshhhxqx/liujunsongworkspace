@@ -10,8 +10,47 @@ namespace HotUpdate.Scripts.Tool.ReactiveProperty
     {
         private readonly List<T> _items = new List<T>();
         
-        // 事件在热更新内部处理
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
+        // 使用链表存储监听器以避免并发修改问题
+        private LinkedList<NotifyCollectionChangedEventHandler> _collectionChangedHandlers = new LinkedList<NotifyCollectionChangedEventHandler>();
+        private bool _isNotifying = false;
+        private readonly LinkedList<NotifyCollectionChangedEventHandler> _pendingAdditions = new LinkedList<NotifyCollectionChangedEventHandler>();
+        private readonly LinkedList<NotifyCollectionChangedEventHandler> _pendingRemovals = new LinkedList<NotifyCollectionChangedEventHandler>();
+
+        public event NotifyCollectionChangedEventHandler CollectionChanged
+        {
+            add
+            {
+                if (value == null) return;
+                
+                if (_isNotifying)
+                {
+                    lock (_pendingAdditions)
+                    {
+                        _pendingAdditions.AddLast(value);
+                    }
+                }
+                else
+                {
+                    _collectionChangedHandlers.AddLast(value);
+                }
+            }
+            remove
+            {
+                if (value == null) return;
+                
+                if (_isNotifying)
+                {
+                    lock (_pendingRemovals)
+                    {
+                        _pendingRemovals.AddLast(value);
+                    }
+                }
+                else
+                {
+                    _collectionChangedHandlers.Remove(value);
+                }
+            }
+        }
 
         public T this[int index]
         {
@@ -87,8 +126,23 @@ namespace HotUpdate.Scripts.Tool.ReactiveProperty
         /// </summary>
         public IDisposable Observe(Action<NotifyCollectionChangedEventArgs> handler)
         {
-            CollectionChanged += (sender, args) => handler(args);
-            return new CollectionSubscription(this, handler);
+            if (handler == null) return null;
+            
+            NotifyCollectionChangedEventHandler eventHandler = (sender, args) => handler(args);
+            
+            if (_isNotifying)
+            {
+                lock (_pendingAdditions)
+                {
+                    _pendingAdditions.AddLast(eventHandler);
+                }
+            }
+            else
+            {
+                _collectionChangedHandlers.AddLast(eventHandler);
+            }
+            
+            return new CollectionSubscription(this, eventHandler);
         }
 
         /// <summary>
@@ -136,17 +190,19 @@ namespace HotUpdate.Scripts.Tool.ReactiveProperty
         /// </summary>
         public void BatchUpdate(Action<HReactiveCollection<T>> updateAction)
         {
-            var oldHandlers = CollectionChanged;
-            CollectionChanged = null;
+            if (updateAction == null) return;
+
+            var oldHandlers = _collectionChangedHandlers;
+            _collectionChangedHandlers = new LinkedList<NotifyCollectionChangedEventHandler>();
 
             try
             {
-                updateAction?.Invoke(this);
+                updateAction(this);
                 OnCollectionChanged(NotifyCollectionChangedAction.Reset, null);
             }
             finally
             {
-                CollectionChanged = oldHandlers;
+                _collectionChangedHandlers = oldHandlers;
             }
         }
 
@@ -176,22 +232,88 @@ namespace HotUpdate.Scripts.Tool.ReactiveProperty
 
         protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs args)
         {
+            if (_collectionChangedHandlers.Count == 0 && _pendingAdditions.Count == 0)
+                return;
+
+            _isNotifying = true;
+
             try
             {
-                CollectionChanged?.Invoke(this, args); // 热更新内部事件调用
+                var currentNode = _collectionChangedHandlers.First;
+                while (currentNode != null)
+                {
+                    var nextNode = currentNode.Next;
+                    try
+                    {
+                        currentNode.Value?.Invoke(this, args);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError($"Error in collection change notification: {e}");
+                    }
+                    currentNode = nextNode;
+                }
+
+                ProcessPendingOperations();
             }
-            catch (Exception e)
+            finally
             {
-                Debug.LogError($"Error in collection change notification: {e}");
+                _isNotifying = false;
+            }
+        }
+
+        private void ProcessPendingOperations()
+        {
+            // 处理待添加的监听器
+            lock (_pendingAdditions)
+            {
+                var currentNode = _pendingAdditions.First;
+                while (currentNode != null)
+                {
+                    var nextNode = currentNode.Next;
+                    _collectionChangedHandlers.AddLast(currentNode);
+                    _pendingAdditions.Remove(currentNode);
+                    currentNode = nextNode;
+                }
+            }
+
+            // 处理待移除的监听器
+            lock (_pendingRemovals)
+            {
+                var currentNode = _pendingRemovals.First;
+                while (currentNode != null)
+                {
+                    var nextNode = currentNode.Next;
+                    _collectionChangedHandlers.Remove(currentNode);
+                    _pendingRemovals.Remove(currentNode);
+                    currentNode = nextNode;
+                }
+            }
+        }
+
+        private void RemoveObserver(NotifyCollectionChangedEventHandler handler)
+        {
+            if (handler == null) return;
+            
+            if (_isNotifying)
+            {
+                lock (_pendingRemovals)
+                {
+                    _pendingRemovals.AddLast(handler);
+                }
+            }
+            else
+            {
+                _collectionChangedHandlers.Remove(handler);
             }
         }
 
         private class CollectionSubscription : IDisposable
         {
             private HReactiveCollection<T> _collection;
-            private Action<NotifyCollectionChangedEventArgs> _handler;
+            private NotifyCollectionChangedEventHandler _handler;
 
-            public CollectionSubscription(HReactiveCollection<T> collection, Action<NotifyCollectionChangedEventArgs> handler)
+            public CollectionSubscription(HReactiveCollection<T> collection, NotifyCollectionChangedEventHandler handler)
             {
                 _collection = collection;
                 _handler = handler;
@@ -201,8 +323,7 @@ namespace HotUpdate.Scripts.Tool.ReactiveProperty
             {
                 if (_collection != null && _handler != null)
                 {
-                    // 需要从事件中移除，这里简化处理
-                    // 实际实现需要维护handler列表
+                    _collection.RemoveObserver(_handler);
                     _collection = null;
                     _handler = null;
                 }

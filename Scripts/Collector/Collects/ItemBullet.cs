@@ -33,13 +33,13 @@ namespace HotUpdate.Scripts.Collector.Collects
             _spawnerId = spawnerId;
             _criticalRate = criticalRate;
             _criticalDamage = criticalDamage;
+            _interactSystem ??= FindObjectOfType<InteractSystem>();
+            _colliderConfig ??= GamePhysicsSystem.CreateColliderConfig(GetComponent<Collider>());
+            GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _colliderConfig, ObjectType.Bullet, gameObject.layer, gameObject.tag);
         }
 
         protected override void InjectLocalPlayerCallback()
         {
-            _interactSystem = FindObjectOfType<InteractSystem>();
-            _colliderConfig = GamePhysicsSystem.CreateColliderConfig(GetComponent<Collider>());
-            GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _colliderConfig, ObjectType.Bullet, gameObject.layer, gameObject.tag);
         }
         
         private void FixedUpdate()

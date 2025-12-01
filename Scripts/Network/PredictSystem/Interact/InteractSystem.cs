@@ -250,10 +250,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 
         private void HandleSceneItemAttackInteractRequest(SceneItemAttackInteractRequest sceneItemAttackInteractRequest)
         {
-            if (!NetworkServer.spawned.TryGetValue(sceneItemAttackInteractRequest.SceneItemId, out var sceneObject)||
-                NetworkServer.spawned.TryGetValue(sceneItemAttackInteractRequest.TargetId, out var targetSceneObject))
+            if (!NetworkServer.spawned.TryGetValue(sceneItemAttackInteractRequest.SceneItemId, out var sceneObject))
             {
-                Debug.LogError($"Scene item {sceneItemAttackInteractRequest.SceneItemId} or target scene item {sceneItemAttackInteractRequest.TargetId} not found");
+                Debug.LogError($"Scene item {sceneItemAttackInteractRequest.SceneItemId} not found");
+                return;
+            }
+
+            if (!NetworkServer.spawned.TryGetValue(sceneItemAttackInteractRequest.TargetId, out var targetSceneObject))
+            {
+                Debug.LogError($"Target Scene item {sceneItemAttackInteractRequest.TargetId} not found");
                 return;
             }
 
@@ -306,10 +311,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 
         private void HandleSceneToSceneInteractRequest(SceneToSceneInteractRequest sceneToSceneInteractRequest)
         {
-            if (!NetworkServer.spawned.TryGetValue(sceneToSceneInteractRequest.SceneItemId, out var sceneObject)||
-                NetworkServer.spawned.TryGetValue(sceneToSceneInteractRequest.TargetSceneItemId, out var targetSceneObject))
+            if (!NetworkServer.spawned.TryGetValue(sceneToSceneInteractRequest.SceneItemId, out var sceneObject))
             {
-                Debug.LogError($"Scene item {sceneToSceneInteractRequest.SceneItemId} or target scene item {sceneToSceneInteractRequest.TargetSceneItemId} not found");
+                Debug.LogError($"Scene item {sceneToSceneInteractRequest.SceneItemId} not found");
+                return;
+            }
+
+            if (!NetworkServer.spawned.TryGetValue(sceneToSceneInteractRequest.TargetSceneItemId, out var targetSceneObject))
+            {
+                Debug.LogError($"Target Scene item {sceneToSceneInteractRequest.TargetSceneItemId} not found");
                 return;
             }
             var sceneData = _sceneItems[sceneToSceneInteractRequest.SceneItemId];
@@ -317,10 +327,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 
         private void HandleSceneToPlayerInteractRequest(SceneToPlayerInteractRequest sceneToPlayerInteractRequest)
         {
-            if (!NetworkServer.spawned.TryGetValue(sceneToPlayerInteractRequest.SceneItemId, out var sceneObject)||
-                NetworkServer.spawned.TryGetValue(sceneToPlayerInteractRequest.TargetPlayerId, out var targetSceneObject))
+            if (!NetworkServer.spawned.TryGetValue(sceneToPlayerInteractRequest.SceneItemId, out var sceneObject))
             {
-                Debug.LogError($"Scene item {sceneToPlayerInteractRequest.SceneItemId} or target scene item {sceneToPlayerInteractRequest.TargetPlayerId} not found");
+                Debug.LogError($"Scene item {sceneToPlayerInteractRequest.SceneItemId} not found");
+                return;
+            }
+
+            if (!NetworkServer.spawned.TryGetValue(sceneToPlayerInteractRequest.TargetPlayerId, out var targetSceneObject))
+            {
+                Debug.LogError($"Target Scene item {sceneToPlayerInteractRequest.TargetPlayerId} not found");
                 return;
             }
         }

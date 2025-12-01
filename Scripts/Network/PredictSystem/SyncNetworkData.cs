@@ -1127,7 +1127,13 @@ namespace AOTScripts.Data
         public NetworkCommandHeader GetHeader() => Header;
         public bool IsValid()
         {
-            return AttackerId > 0 && TargetId > 0;
+            var isValid = AttackerId > 0 && TargetId > 0 && Damage > 0;
+            if (isValid)
+            {
+                return true;
+            }
+            Debug.LogError($"PropertyItemAttackCommand is invalid for attackerId: {AttackerId}, targetId: {TargetId}, damage: {Damage}, isCritical: {IsCritical}");
+            return false;
         }
         public void Init()
         {
