@@ -137,7 +137,7 @@ namespace HotUpdate.Scripts.Collector.Collects
                         Radius = explodeRange,
                     };
                     InteractSystem.EnqueueCommand(request);
-                    RpcOnDeath();
+                    CollectObjectController.RpcOnDeath();
                 });
             }
         }
@@ -150,14 +150,6 @@ namespace HotUpdate.Scripts.Collector.Collects
                 materialTransparencyController.SetEnabled(true);
                 materialTransparencyController.RestoreOriginalMaterials();
             }
-        }
-
-        [ClientRpc]
-        protected virtual void RpcOnDeath()
-        {
-            GameAudioManager.Instance.PlaySFX(AudioEffectType.Explode, transform.position, transform);
-            EffectPlayer.Instance.PlayEffect(ParticlesType.Explode, transform.position, transform);
-            NetworkGameObjectPoolManager.Instance.Despawn(gameObject);
         }
 
         protected abstract void OnInitialize();

@@ -310,6 +310,16 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             return players.ToArray();
         }
 
+        public bool TryGetPlayerById(uint id, out int playerConnectId)
+        {
+            if (_playerIdsByNetId.TryGetValue(id, out playerConnectId))
+            {
+                return true;
+            }
+            Debug.LogError($"Player uid {id} not found in player list.");
+            return false;
+        }
+
         public int GetPlayerId(uint id)
         {
             if (_playerIdsByNetId.TryGetValue(id, out var playerId))
@@ -350,6 +360,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             _playerNetIds.TryAdd(connectId, playerInGameData.networkIdentity.netId);
             _playerInGameData.TryAdd(connectId, playerInGameData);
             _playerIdsByNetId.TryAdd(playerInGameData.networkIdentity.netId, connectId);
+            Debug.Log($"Player connectionId : {connectId} netId : {playerInGameData.networkIdentity.netId} added");
             var pos = playerInGameData.networkIdentity.transform.position;
             var nearestBase = _gameConfigData.GetNearestBase(GameLoopDataModel.GameSceneName.Value, pos);
             _playerSpawnPoints[nearestBase] = playerInGameData.networkIdentity.netId;

@@ -393,6 +393,7 @@ namespace HotUpdate.Scripts.Collector
                 {
                     if (!_processedItems.Add(itemId))
                     {
+                        Debug.Log($"Item with id: {itemId} has been processed");
                         return;
                     }
 
@@ -411,7 +412,7 @@ namespace HotUpdate.Scripts.Collector
                     }
 
                     // 验证位置和碰撞
-                    if (ValidatePickup(itemPos.ToVector3(), player.transform.position, itemColliderData,
+                    if (ValidatePickup(itemPos, player.transform.position, itemColliderData,
                             playerColliderConfig))
                     {
                         var list = new MemoryList<ItemsCommandData>(2);
@@ -443,6 +444,10 @@ namespace HotUpdate.Scripts.Collector
                         _serverItemMap.Remove(itemId);
                         _serverItemBehaviour.Remove(itemId);
                         Debug.Log($"Player {player.name} pick up item {itemId}");
+                    }
+                    else
+                    {
+                        Debug.Log($"Player {player.name} cannot pick up item {itemId}");
                     }
                 }
                 else

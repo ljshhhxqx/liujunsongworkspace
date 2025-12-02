@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using HotUpdate.Scripts.Collector;
-using HotUpdate.Scripts.Tool;
 using Mirror;
 using UnityEngine;
 
@@ -13,29 +12,33 @@ namespace HotUpdate.Scripts.Game.Map
         private readonly Dictionary<int, GameObject> _idToGameObject = new Dictionary<int, GameObject>();
         private readonly Dictionary<Vector2Int, List<GameObjectData>> _mapObjectData = new Dictionary<Vector2Int, List<GameObjectData>>();
 
-        private readonly DoubleModifiedDictionary<uint, DynamicObjectData> _netIdToDynamicObjectData = new DoubleModifiedDictionary<uint, DynamicObjectData>();
+        private List<DynamicObjectData> _dynamicObjectData = new List<DynamicObjectData>();
+        private Dictionary<uint, int> _dynamicObjectIds = new Dictionary<uint, int>();
 
         public void UpdateDynamicObjects(bool isServer)
         {
-            foreach (var data in _netIdToDynamicObjectData.GetReadOnlyView())
+            for (int i = 0; i < _dynamicObjectData.Count; i++)
             {
+                var data = _dynamicObjectData[i];
                 NetworkIdentity identity;
 
-                if (NetworkServer.spawned.TryGetValue(data.Key, out identity))
+                if (NetworkServer.spawned.TryGetValue(data.NetId, out identity))
                 {
                     
                 }
-                else if (NetworkClient.spawned.TryGetValue(data.Key, out identity))
+                else if (NetworkClient.spawned.TryGetValue(data.NetId, out identity))
                 {
                     
                 }
                 if (!identity)
                 {
-                    RemoveDynamicObject(data.Key);
+                    _dynamicObjectData.RemoveAt(i);
+                    _dynamicObjectIds.Remove(data.NetId);
                 }
                 else
                 {
-                    data.Value.Position = identity.transform.position;
+                    data.Position = identity.transform.position;
+                    _dynamicObjectData[i] = data;
                 }
             }
         }
@@ -61,51 +64,43 @@ namespace HotUpdate.Scripts.Game.Map
             }
             foreach (var grid in coveredGrids)
             {
-                foreach (var data in _netIdToDynamicObjectData.GetReadOnlyView())
+                for (int i = 0; i < _dynamicObjectData.Count; i++)
                 {
-                    if (data.Key == uid)
+                    var data = _dynamicObjectData[i];
+                    if (data.NetId == uid)
                     {
                         continue;
                     }
-                    var gridBounds = MapBoundDefiner.Instance.GetGridPosition(data.Value.Position);
+                    var gridBounds = MapBoundDefiner.Instance.GetGridPosition(data.Position);
 
                     if (gridBounds == grid)
                     {
-                        if (GamePhysicsSystem.FastCheckItemIntersects(position, data.Value.Position, colliderConfig,
-                                data.Value.ColliderConfig))
+                        if (GamePhysicsSystem.FastCheckItemIntersects(position, data.Position, colliderConfig,
+                                data.ColliderConfig))
                         {
-                            intersectedObjects.Add(data.Value);
+                            intersectedObjects.Add(data);
+                            onIntersected?.Invoke(data);
                         }
                     }
                 }
             }
-
-            if (intersectedObjects.Count > 0 && onIntersected != null)
-            {
-                foreach (var data in intersectedObjects)
-                {
-                    if (onIntersected.Invoke(data))
-                    {
-                        break;
-                    }
-                }
-            }
-
             return intersectedObjects.Count > 0;
         }
 
         public HashSet<uint> GetDynamicObjectIdsByGrids(HashSet<Vector2Int> grids)
         {
             var hashSet = new HashSet<uint>();
-            var readonlyView = _netIdToDynamicObjectData.GetReadOnlyView();
             foreach (var grid in grids)
             {
-                foreach (var data in readonlyView)
+                for (int i = 0; i < _dynamicObjectData.Count; i++)
                 {
-                    var objectGrid = MapBoundDefiner.Instance.GetGridPosition(data.Value.Position);
-                    if (objectGrid == grid)
+                    
+                    var data = _dynamicObjectData[i];
+                    var gridBounds = MapBoundDefiner.Instance.GetGridPosition(data.Position);
+
+                    if (gridBounds == grid)
                     {
-                        hashSet.Add(data.Value.NetId);
+                        hashSet.Add(data.NetId);
                     }
                 }
             }
@@ -123,14 +118,15 @@ namespace HotUpdate.Scripts.Game.Map
             }
             foreach (var grid in coveredGrids)
             {
-                foreach (var data in _netIdToDynamicObjectData.GetReadOnlyView())
+                for (int i = 0; i < _dynamicObjectData.Count; i++)
                 {
-                    var gridBounds = MapBoundDefiner.Instance.GetGridPosition(data.Value.Position);
+                    var data = _dynamicObjectData[i];
+                    var gridBounds = MapBoundDefiner.Instance.GetGridPosition(data.Position);
 
                     if (gridBounds == grid)
                     {
-                        if (GamePhysicsSystem.FastCheckItemIntersects(position, data.Value.Position, colliderConfig,
-                                data.Value.ColliderConfig))
+                        if (GamePhysicsSystem.FastCheckItemIntersects(position, data.Position, colliderConfig,
+                                data.ColliderConfig))
                         {
                             return true;
                         }
@@ -146,6 +142,11 @@ namespace HotUpdate.Scripts.Game.Map
             {
                 return;
             }
+
+            if (_dynamicObjectIds.ContainsKey(netId))
+            {
+                return;
+            }
             var data = new DynamicObjectData
             {
                 NetId = netId,
@@ -156,18 +157,36 @@ namespace HotUpdate.Scripts.Game.Map
                 Tag = tag,
             };
             Debug.Log("AddDynamicObject: " + data);
-            _netIdToDynamicObjectData.Add(netId, data);
+            _dynamicObjectData.Add(data);
+            _dynamicObjectIds.Add(netId, _dynamicObjectData.Count - 1);
         }
 
         public void RemoveDynamicObject(uint netId)
         {
-            _netIdToDynamicObjectData.Remove(netId);
+            if (netId == 0)
+            {
+                return;
+            }
+            if (!_dynamicObjectIds.TryGetValue(netId, out var index))
+            {
+                return;
+            }
+
+            if (_dynamicObjectData.Count <= index)
+            {
+                return;
+            }
+            _dynamicObjectData.RemoveAt(index);
+            Debug.LogWarning("RemoveDynamicObject: " + netId);
         }
 
         public DynamicObjectData GetDynamicObjectData(uint netId)
         {
-            _netIdToDynamicObjectData.GetReadOnlyView().TryGetValue(netId, out var data);
-            return data;
+            if (!_dynamicObjectIds.TryGetValue(netId, out var index))
+            {
+                return null;
+            }
+            return _dynamicObjectData[index];
         }
         
         public bool IsIntersect(Vector3 position, IColliderConfig colliderConfig)
@@ -259,7 +278,7 @@ namespace HotUpdate.Scripts.Game.Map
         {
             _mapObjectData.Clear();
             _idToGameObject.Clear();
-            _netIdToDynamicObjectData.Clear();
+            _dynamicObjectData.Clear();
         }
 
         public List<int> GetStaticObjectIds(Vector2Int position)

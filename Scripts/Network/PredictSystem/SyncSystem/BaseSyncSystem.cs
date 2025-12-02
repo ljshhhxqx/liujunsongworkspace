@@ -92,7 +92,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
             if (!ValidateCommand(command))
             {
-                Debug.LogError($"{GetType().Name} not valid command type {command.GetHeader().CommandType} for {CommandType} or Command is not Valid");
+                Debug.LogError($"{command.GetType().Name} not valid command type {command.GetHeader().CommandType} for {CommandType} or Command is not Valid");
                 return;
             }
             ProcessCommand(command);
@@ -103,13 +103,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var header = command.GetHeader();
             if (!PropertyStates.ContainsKey(header.ConnectionId))
             {
-                Debug.LogError($"{GetType().Name} not valid command playerId {header.ConnectionId}");
+                Debug.LogError($"{command.GetType().Name} not valid command playerId {header.ConnectionId}");
                 return false;
             }
 
             if (!command.IsValid())
             {
-                Debug.LogError($"{GetType().Name} not valid command {command.GetHeader().CommandType}");
+                Debug.LogError($"{command.GetType().Name} not valid command {command.GetHeader().CommandType}");
                 return false;
             }
 

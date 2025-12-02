@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using AOTScripts.Data.NetworkMes;
+using AOTScripts.Tool.ObjectPool;
+using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Collector.Collects;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Effect;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
@@ -195,6 +198,14 @@ namespace HotUpdate.Scripts.Collector
         public void CollectSuccess()
         {
             _collectParticlePlayer.Play(_collectAnimationComponent.OutlineColorValue);
+        }
+
+        [ClientRpc]
+        public void RpcOnDeath()
+        {
+            GameAudioManager.Instance.PlaySFX(AudioEffectType.Explode, transform.position, transform);
+            EffectPlayer.Instance.PlayEffect(ParticlesType.Explode, transform.position, transform);
+            NetworkGameObjectPoolManager.Instance.Despawn(gameObject);
         }
     }
 }

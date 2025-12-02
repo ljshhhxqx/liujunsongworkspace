@@ -21,6 +21,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         private InteractSystem _interactSystem;
         private float _criticalRate;
         private float _criticalDamage;
+        private bool _destroyed;
         protected override bool AutoInjectLocalPlayer => false;
 
         public void Init(Vector3 direction, float speed, float lifeTime, float attackPower, uint spawnerId, float criticalRate, float criticalDamage)
@@ -33,24 +34,18 @@ namespace HotUpdate.Scripts.Collector.Collects
             _spawnerId = spawnerId;
             _criticalRate = criticalRate;
             _criticalDamage = criticalDamage;
+            _destroyed = false;
             _interactSystem ??= FindObjectOfType<InteractSystem>();
             _colliderConfig ??= GamePhysicsSystem.CreateColliderConfig(GetComponent<Collider>());
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _colliderConfig, ObjectType.Bullet, gameObject.layer, gameObject.tag);
         }
-
-        protected override void InjectLocalPlayerCallback()
-        {
-        }
         
         private void FixedUpdate()
         {
-            if (!ServerHandler || _direction == Vector3.zero || _isHandle)
+            if (!ServerHandler || _direction == Vector3.zero || _isHandle || _destroyed) 
             {
                 return;
             }
-
-            GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, _colliderConfig,
-                _hitObjects, OnIntersect);
 
             if (_isHandle)
             {
@@ -66,26 +61,36 @@ namespace HotUpdate.Scripts.Collector.Collects
                     CriticalRate = _criticalRate,
                     CriticalDamage = _criticalDamage,
                 };
+                Debug.Log($"[ItemBullet] Send SceneItemAttackInteractRequest - SceneItemId: {request.SceneItemId} -  TargetId: {request.TargetId} -  AttackPower: {request.AttackPower} -  CriticalRate: {request.CriticalRate} -  CriticalDamage: {request.CriticalDamage}");
                 _interactSystem.EnqueueCommand(request);
                 return;
             }
-
-            transform.position += _direction * (_speed * Time.fixedDeltaTime);
-            _lifeTime -= Time.deltaTime;
             if (_lifeTime <= 0)
             {
+                _destroyed = true;
                 NetworkGameObjectPoolManager.Instance.Despawn(gameObject);
+                return;
             }
+            _lifeTime -= Time.fixedDeltaTime;
+            transform.position += _direction * (_speed * Time.fixedDeltaTime);
+            GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, _colliderConfig,
+                _hitObjects, OnIntersect);
         }
 
         private bool OnIntersect(DynamicObjectData hitObject)
         {
-            if (_spawnerId== hitObject.NetId)
+            if (_destroyed)
+            {
+                return false;
+            }
+            if (_spawnerId == hitObject.NetId || hitObject.NetId == 0)
             {
                 return false;
             }
             if (hitObject.Type == ObjectType.Player || hitObject.Type == ObjectType.Collectable && !_isHandle)
             {
+                _destroyed = true;
+                Debug.Log("[OnIntersect] ItemBullet hit " + hitObject.NetId);
                 _isHandle = true;
                 _attackId = hitObject.NetId;
                 return true;

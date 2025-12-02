@@ -30,9 +30,9 @@ namespace HotUpdate.Scripts.Collector.Collects
         {
             if (target.Type == ObjectType.Collectable || target.Type == ObjectType.Player)
             {
+                _lastAttackTime = Time.time;
                 var direction = (target.Position - transform.position).normalized;
                 Attack(direction, target.NetId);
-                _lastAttackTime = Time.time;
                 return true;
             }
             return false;
@@ -56,6 +56,7 @@ namespace HotUpdate.Scripts.Collector.Collects
                     CriticalDamageRatio = _attackInfo.criticalDamage,
                 };
                 InteractSystem.EnqueueCommand(bullet);
+                Debug.Log($"{NetId} is Remote Attack and send bullet to {targetNetId} - direction: {direction} - attackPower: {_attackInfo.damage} - speed: {_attackInfo.speed} - lifeTime: {_attackInfo.lifeTime} - criticalRate: {_attackInfo.criticalRate} - criticalDamage: {_attackInfo.criticalDamage}");
                 return;
             }
             var request = new SceneItemAttackInteractRequest
@@ -65,7 +66,11 @@ namespace HotUpdate.Scripts.Collector.Collects
                 InteractionType = InteractionType.ItemAttack,
                 SceneItemId = NetId,
                 TargetId = targetNetId,
+                AttackPower = _attackInfo.damage,
+                CriticalRate = _attackInfo.criticalRate,
+                CriticalDamage = _attackInfo.criticalDamage,
             };
+            Debug.Log($"{NetId} is Local Attack and send request to {targetNetId} - attackPower: {_attackInfo.damage} - criticalRate: {_attackInfo.criticalRate} - criticalDamage: {_attackInfo.criticalDamage}");
             InteractSystem.EnqueueCommand(request);
         }
         
