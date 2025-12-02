@@ -88,7 +88,7 @@ namespace HotUpdate.Scripts.Collector
             {
                 if (!_interactSystem.IsItemCanPickup(itemId))
                 {
-                    Debug.LogError($"Pickup Item {itemId} not found or can't be picked up");
+                    Debug.Log($"Pickup Item {itemId} not found or can't be picked up");
                     return;
                 }
                 Debug.Log($"Send Collect Request: {pickerId} {pickerType} {itemId} {itemClass}");

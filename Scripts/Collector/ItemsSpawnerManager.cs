@@ -397,12 +397,23 @@ namespace HotUpdate.Scripts.Collector
                         return;
                     }
 
+                    if (!NetworkServer.spawned.TryGetValue(itemId, out var item))
+                    {
+                        Debug.LogError($"Item with id: {itemId} has not been spawned or is destroyed");
+                        return;
+                    }
+
+                    if (!NetworkServer.spawned.TryGetValue(pickerId, out var player))
+                    {
+                        Debug.LogError($"Picker with id: {pickerId} has not been spawned or is destroyed");
+                        return;
+                    }
+
                     var itemData = BoxingFreeSerializer.MemoryDeserialize<CollectItemMetaData>(itemInfo);
                     var itemColliderData = _colliderConfigs.GetValueOrDefault(itemData.ItemCollectConfigId);
                     var itemConfigId = _collectObjectDataConfig.GetCollectObjectData(itemData.ItemCollectConfigId)
                         .itemId;
-                    var itemPos = itemData.Position;
-                    var player = NetworkServer.spawned[pickerId];
+                    var itemPos = item.transform.position;
                     var playerConnectionId = PlayerInGameManager.Instance.GetPlayerId(pickerId);
                     var playerColliderConfig = PlayerInGameManager.Instance.PlayerPhysicsData;
                     if (!player)
@@ -1010,6 +1021,7 @@ namespace HotUpdate.Scripts.Collector
         
         private bool ValidatePickup(Vector3 item, Vector3 player, IColliderConfig itemColliderConfig, IColliderConfig playerColliderConfig)
         {
+            Debug.Log($"ValidatePickup: {item} {player}");
             return GamePhysicsSystem.CheckIntersectsWithMargin(player, item, playerColliderConfig, itemColliderConfig);
         }
         

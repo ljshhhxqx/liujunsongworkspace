@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 4991328150455509456}
   - component: {fileID: 1514153703607748493}
   - component: {fileID: 419486889675878417}
-  - component: {fileID: 6307705808308494976}
   - component: {fileID: 5687750055946011591}
   - component: {fileID: 6614488612780417132}
+  - component: {fileID: 8436121315516103165}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Untagged
@@ -89,27 +89,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &6307705808308494976
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 102501099124174454}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.02, y: 0.02, z: 0.018805746}
-  m_Center: {x: 0, y: 0, z: -0.00062563363}
 --- !u!114 &5687750055946011591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,3 +121,24 @@ MonoBehaviour:
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
+--- !u!65 &8436121315516103165
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 102501099124174454}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.12, y: 0.12, z: 0.112834476}
+  m_Center: {x: 0, y: 0, z: -0.0037538}

@@ -26,7 +26,7 @@ namespace HotUpdate.Scripts.Collector.Collects
 
         public void Init(Vector3 direction, float speed, float lifeTime, float attackPower, uint spawnerId, float criticalRate, float criticalDamage)
         {
-            _direction = direction;
+            _direction = direction.normalized;
             _speed = speed;
             _lifeTime = lifeTime;
             _isHandle = false;
@@ -68,13 +68,15 @@ namespace HotUpdate.Scripts.Collector.Collects
             if (_lifeTime <= 0)
             {
                 _destroyed = true;
+                _isHandle = false;
                 NetworkGameObjectPoolManager.Instance.Despawn(gameObject);
+                Debug.Log($"[ItemBullet] Destroyed - {netId}");
                 return;
             }
-            _lifeTime -= Time.fixedDeltaTime;
-            transform.position += _direction * (_speed * Time.fixedDeltaTime);
             GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, _colliderConfig,
                 _hitObjects, OnIntersect);
+            _lifeTime -= Time.fixedDeltaTime;
+            transform.Translate(_direction * (_speed * Time.fixedDeltaTime));
         }
 
         private bool OnIntersect(DynamicObjectData hitObject)
@@ -87,7 +89,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             {
                 return false;
             }
-            if (hitObject.Type == ObjectType.Player || hitObject.Type == ObjectType.Collectable && !_isHandle)
+            if ((hitObject.Type == ObjectType.Player) && !_isHandle)
             {
                 _destroyed = true;
                 Debug.Log("[OnIntersect] ItemBullet hit " + hitObject.NetId);

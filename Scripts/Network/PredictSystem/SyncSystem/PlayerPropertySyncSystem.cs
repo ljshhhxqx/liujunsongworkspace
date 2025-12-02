@@ -362,6 +362,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 var targetPlayerIds = _playerInGameManager.GetPlayersWithNetIds(hitPlayer.ToArray());
                 HandlePlayerAttack(header.ConnectionId, targetPlayerIds);
                 _gameEventManager.Publish(new PlayerAttackItemEvent(playerNetId, attackCommand.TargetIds, attackPlayer));
+                Debug.Log($"PlayerPropertySyncSystem: {header.ConnectionId} attack {attackCommand.TargetIds.Length}");
             }
             else if (command is PropertySkillCommand skillCommand)
             {

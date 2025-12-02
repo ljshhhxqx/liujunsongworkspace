@@ -205,7 +205,7 @@ namespace HotUpdate.Scripts.Collector
         {
             GameAudioManager.Instance.PlaySFX(AudioEffectType.Explode, transform.position, transform);
             EffectPlayer.Instance.PlayEffect(ParticlesType.Explode, transform.position, transform);
-            NetworkGameObjectPoolManager.Instance.Despawn(gameObject);
+            //NetworkGameObjectPoolManager.Instance.Despawn(gameObject);
         }
     }
 }

@@ -89,6 +89,16 @@ namespace HotUpdate.Scripts.Tool.ReactiveProperty
 
         private void Unsubscribe(LinkedListNode<Action<T>> node)
         {
+            if (node == null)
+            {
+                Debug.LogWarning("Node is null.");
+                return;
+            }
+
+            if (_listeners.Count == 0)
+            {
+                return; 
+            }
             if (_isNotifying)
             {
                 lock (_pendingRemovals)

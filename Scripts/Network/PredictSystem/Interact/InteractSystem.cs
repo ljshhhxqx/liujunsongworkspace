@@ -78,7 +78,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                     attackDamage = itemSpawnedEvent.SceneItemInfo.attackDamage,
                     attackRange = itemSpawnedEvent.SceneItemInfo.attackRange,
                     attackInterval = itemSpawnedEvent.SceneItemInfo.attackInterval,
-                    maxHealth = itemSpawnedEvent.SceneItemInfo.maxHealth
+                    maxHealth = itemSpawnedEvent.SceneItemInfo.maxHealth,
+                    sceneItemId = itemSpawnedEvent.ItemId,
                 };
                 Debug.Log($"Add scene item {itemSpawnedEvent.ItemId} to scene items");
                 _sceneItems.Add(itemSpawnedEvent.ItemId, sceneItemInfo);
@@ -92,7 +93,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                 sceneItemInfo.attackRange = Mathf.Max(sceneItemInfo.attackRange, itemSpawnedEvent.SceneItemInfo.attackRange);
                 sceneItemInfo.attackInterval = Mathf.Max(sceneItemInfo.attackInterval, itemSpawnedEvent.SceneItemInfo.attackInterval);
                 sceneItemInfo.maxHealth = Mathf.Max(sceneItemInfo.maxHealth, itemSpawnedEvent.SceneItemInfo.maxHealth);
+                sceneItemInfo.sceneItemId = itemSpawnedEvent.ItemId;
                 _sceneItems[itemSpawnedEvent.ItemId] = sceneItemInfo;
+                Debug.Log($"[OnItemSpawned] Update scene item {itemSpawnedEvent.ItemId} info - {sceneItemInfo}");
             }
         }
 
@@ -103,12 +106,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             if (_sceneItems.TryGetValue(playerSkillItemEvent.DefenderId, out var sceneItemInfo))
             {
                 var damageResult = _jsonConfig.GetDamage(attackPower + extraPower * playerSkillItemEvent.SkillHitExtraEffectData.extraRatio, sceneItemInfo.defense, 0, 1);
-                Debug.Log($"Player {playerSkillItemEvent.PlayerId} attack scene item {playerSkillItemEvent.DefenderId} with damage {damageResult.Damage}");
+                Debug.Log($"[OnSkillItem] Player {playerSkillItemEvent.PlayerId} attack scene item {playerSkillItemEvent.DefenderId} with damage {damageResult.Damage}");
                 sceneItemInfo.health -= damageResult.Damage;
                 SceneItemInfoChanged?.Invoke(playerSkillItemEvent.DefenderId, sceneItemInfo);
                 if (sceneItemInfo.health <= 0)
                 {
-                    Debug.Log($"Scene item {playerSkillItemEvent.DefenderId} is dead");
+                    Debug.Log($"[OnSkillItem] Scene item {playerSkillItemEvent.DefenderId} is dead");
                     _sceneItems.Remove(playerSkillItemEvent.DefenderId);
                 }
 
@@ -129,12 +132,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                 if (_sceneItems.TryGetValue(sceneItemId, out var sceneItemInfo))
                 {
                     var damageResult = _jsonConfig.GetDamage(attackPower, sceneItemInfo.defense, criticalRate, criticalDamage);
-                    Debug.Log($"Player {playerAttackItemEvent.AttackerId} attack scene item {sceneItemId} with damage {damageResult.Damage}");
+                    Debug.Log($"[OnPlayerAttackItem] Player {playerAttackItemEvent.AttackerId} attack scene item {sceneItemId} with damage {damageResult.Damage}");
                     sceneItemInfo.health -= damageResult.Damage;
                     SceneItemInfoChanged?.Invoke(sceneItemId, sceneItemInfo);
+                    _sceneItems[sceneItemId] = sceneItemInfo;
                     if (sceneItemInfo.health <= 0)
                     {
-                        Debug.Log($"Scene item {sceneItemId} is dead");
+                        Debug.Log($"[OnPlayerAttackItem] Scene item {sceneItemId} is dead");
                         _sceneItems.Remove(sceneItemId);
                     }
                 }
@@ -217,12 +221,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                     {
                         defense = sceneItemInfo.defense;
                         var damage = _jsonConfig.GetDamage(itemExplodeRequest.AttackPower, defense, 1f, 2f);
-                        Debug.Log($"Scene item {itemExplodeRequest.SceneItemId} attack scene item {hitObjectData.NetId} with damage {damage}");
+                        Debug.Log($"[HandleItemExplodeRequest] Scene item {itemExplodeRequest.SceneItemId} attack scene item {hitObjectData.NetId} with damage {damage}");
                         sceneItemInfo.health -= damage.Damage;
                         SceneItemInfoChanged?.Invoke(hitObjectData.NetId, sceneItemInfo);
+                        _sceneItems[hitObjectData.NetId] = sceneItemInfo;
                         if (sceneItemInfo.health <= 0)
                         {
-                            Debug.Log($"Scene item {hitObjectData.NetId} is dead");
+                            Debug.Log($"[HandleItemExplodeRequest] Scene item {hitObjectData.NetId} is dead");
                             _sceneItems.Remove(hitObjectData.NetId);
                         }
                     }
@@ -231,7 +236,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                         var property = _playerPropertySyncSystem.GetPlayerProperty(connectionId);
                         defense = property.GetValueOrDefault(PropertyTypeEnum.Defense).CurrentValue;
                         var damage = _jsonConfig.GetDamage(itemExplodeRequest.AttackPower, defense, 1, 2);
-                        Debug.Log($"Scene item {hitObjectData.NetId} attack player {hitObjectData.NetId} with damage {damage}");
+                        Debug.Log($"[HandleItemExplodeRequest] Scene item {hitObjectData.NetId} attack player {hitObjectData.NetId} with damage {damage}");
                         var command = new PropertyItemAttackCommand
                         {
                             TargetId = connectionId,
@@ -251,13 +256,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         {
             if (!NetworkServer.spawned.TryGetValue(sceneItemAttackInteractRequest.SceneItemId, out var sceneObject))
             {
-                Debug.LogError($"Scene item {sceneItemAttackInteractRequest.SceneItemId} not found");
+                Debug.LogError($"[HandleSceneItemAttackInteractRequest] Scene item {sceneItemAttackInteractRequest.SceneItemId} not found");
                 return;
             }
 
             if (!NetworkServer.spawned.TryGetValue(sceneItemAttackInteractRequest.TargetId, out var targetSceneObject))
             {
-                Debug.LogError($"Target Scene item {sceneItemAttackInteractRequest.TargetId} not found");
+                Debug.LogError($"[HandleSceneItemAttackInteractRequest] Target Scene item {sceneItemAttackInteractRequest.TargetId} not found");
                 return;
             }
 
@@ -272,8 +277,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                     return;
                 defense = sceneItemInfo.defense;
                 var damage = _jsonConfig.GetDamage(attackPower, defense, criticalRate, criticalDamage);
-                Debug.Log($"[HandleSceneItemAttackInteractRequest] Scene item {sceneItemAttackInteractRequest.SceneItemId} attack scene item {sceneItemAttackInteractRequest.TargetId} with damage {damage}");
+                Debug.Log($"[HandleSceneItemAttackInteractRequest] Scene item {sceneItemAttackInteractRequest.SceneItemId} attack scene item {sceneItemAttackInteractRequest.TargetId} with damage {damage.Damage}");
                 sceneItemInfo.health -= damage.Damage;
+                _sceneItems[sceneItemInfo.sceneItemId] = sceneItemInfo;
                 if (sceneItemInfo.health <= 0)
                 {
                     Debug.Log($"[HandleSceneItemAttackInteractRequest] Scene item {sceneItemAttackInteractRequest.TargetId} is dead");
@@ -281,13 +287,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                     _sceneItems.Remove(sceneItemAttackInteractRequest.TargetId);
                 }
             }
-            else
+            else if (PlayerInGameManager.Instance.TryGetPlayerById(sceneItemAttackInteractRequest.TargetId, out var connectionId))
             {
-                var connectionId = PlayerInGameManager.Instance.GetPlayerId(sceneItemAttackInteractRequest.TargetId);
                 var property = _playerPropertySyncSystem.GetPlayerProperty(connectionId);
                 defense = property.GetValueOrDefault(PropertyTypeEnum.Defense).CurrentValue;
                 var damage = _jsonConfig.GetDamage(attackPower, defense, criticalRate, criticalDamage);
-                Debug.Log($"Scene item {sceneItemAttackInteractRequest.SceneItemId} attack player {sceneItemAttackInteractRequest.TargetId} with damage {damage.Damage}");
+                Debug.Log($"[HandleSceneItemAttackInteractRequest] Scene item {sceneItemAttackInteractRequest.SceneItemId} attack player {sceneItemAttackInteractRequest.TargetId} with damage {damage.Damage}");
                 var command = new PropertyItemAttackCommand
                 {
                     TargetId = connectionId,
@@ -485,6 +490,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         public float attackDamage; 
         public float defense;
         public float speed;
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"SceneItemInfo: {sceneItemId}");
+            sb.AppendLine($"Health: {health}/{maxHealth}");
+            sb.AppendLine($"AttackInterval: {attackInterval}");
+            sb.AppendLine($"AttackRange: {attackRange}");
+            sb.AppendLine($"AttackDamage: {attackDamage}");
+            sb.AppendLine($"Defense: {defense}");
+            sb.AppendLine($"Speed: {speed}");
+            return sb.ToString();
+        }
     }
 
     public enum CollectBehaviorType

@@ -28,7 +28,7 @@ namespace HotUpdate.Scripts.Collector.Collects
 
         private bool OnInteract(DynamicObjectData target)
         {
-            if (target.Type == ObjectType.Collectable || target.Type == ObjectType.Player)
+            if (target.Type == ObjectType.Player)
             {
                 _lastAttackTime = Time.time;
                 var direction = (target.Position - transform.position).normalized;

@@ -137,6 +137,7 @@ namespace HotUpdate.Scripts.Collector.Collects
                         Radius = explodeRange,
                     };
                     InteractSystem.EnqueueCommand(request);
+                    NetworkGameObjectPoolManager.Instance.Despawn(gameObject);
                     CollectObjectController.RpcOnDeath();
                 });
             }
