@@ -239,10 +239,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                         Debug.Log($"[HandleItemExplodeRequest] Scene item {hitObjectData.NetId} attack player {hitObjectData.NetId} with damage {damage}");
                         var command = new PropertyItemAttackCommand
                         {
-                            TargetId = connectionId,
+                            TargetId = hitObjectData.NetId,
                             Header = GameSyncManager.CreateNetworkCommandHeader(0, CommandType.Property, CommandAuthority.Server),
-                            Damage = damage.Damage,
-                            IsCritical = damage.IsCritical,
+                            Damage = damage,
                             AttackerId = itemExplodeRequest.SceneItemId, 
                         };
                         _gameSyncManager.EnqueueServerCommand(command);
@@ -295,10 +294,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                 Debug.Log($"[HandleSceneItemAttackInteractRequest] Scene item {sceneItemAttackInteractRequest.SceneItemId} attack player {sceneItemAttackInteractRequest.TargetId} with damage {damage.Damage}");
                 var command = new PropertyItemAttackCommand
                 {
-                    TargetId = connectionId,
+                    TargetId = sceneItemAttackInteractRequest.TargetId,
                     Header = GameSyncManager.CreateNetworkCommandHeader(0, CommandType.Property, CommandAuthority.Server),
-                    Damage = damage.Damage,
-                    IsCritical = damage.IsCritical,
+                    Damage = damage,
                     AttackerId = sceneItemAttackInteractRequest.SceneItemId, 
                 };
                 _gameSyncManager.EnqueueServerCommand(command);

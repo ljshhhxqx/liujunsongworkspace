@@ -292,7 +292,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 playerController.transform.forward, connectionId, playerController.netId, attackConfigData));
             if (defenders.Count > 0)
             {
-
                 GameSyncManager.EnqueueServerCommand(new PropertyAttackCommand
                 {
                     Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property, CommandAuthority.Server, CommandExecuteType.Immediate),
@@ -307,7 +306,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
                 TriggerType = TriggerType.OnAttack,
-                TriggerData = MemoryPackSerializer.Serialize(triggerParams),
+                TriggerData = NetworkCommandExtensions.SerializeBattleCondition(triggerParams).buffer,
             });
         }
 

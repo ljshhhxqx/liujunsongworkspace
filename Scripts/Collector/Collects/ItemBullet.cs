@@ -46,25 +46,6 @@ namespace HotUpdate.Scripts.Collector.Collects
             {
                 return;
             }
-
-            if (_isHandle)
-            {
-                NetworkGameObjectPoolManager.Instance.Despawn(gameObject);
-                var request = new SceneItemAttackInteractRequest
-                {
-                    Header = InteractSystem.CreateInteractHeader(0, InteractCategory.SceneToPlayer,
-                        transform.position),
-                    InteractionType = InteractionType.ItemAttack,
-                    SceneItemId = _spawnerId,
-                    TargetId = _attackId,
-                    AttackPower =_attackPower,
-                    CriticalRate = _criticalRate,
-                    CriticalDamage = _criticalDamage,
-                };
-                Debug.Log($"[ItemBullet] Send SceneItemAttackInteractRequest - SceneItemId: {request.SceneItemId} -  TargetId: {request.TargetId} -  AttackPower: {request.AttackPower} -  CriticalRate: {request.CriticalRate} -  CriticalDamage: {request.CriticalDamage}");
-                _interactSystem.EnqueueCommand(request);
-                return;
-            }
             if (_lifeTime <= 0)
             {
                 _destroyed = true;
@@ -95,6 +76,20 @@ namespace HotUpdate.Scripts.Collector.Collects
                 Debug.Log("[OnIntersect] ItemBullet hit " + hitObject.NetId);
                 _isHandle = true;
                 _attackId = hitObject.NetId;
+                var request = new SceneItemAttackInteractRequest
+                {
+                    Header = InteractSystem.CreateInteractHeader(0, InteractCategory.SceneToPlayer,
+                        transform.position),
+                    InteractionType = InteractionType.ItemAttack,
+                    SceneItemId = _spawnerId,
+                    TargetId = _attackId,
+                    AttackPower =_attackPower,
+                    CriticalRate = _criticalRate,
+                    CriticalDamage = _criticalDamage,
+                };
+                Debug.Log($"[ItemBullet] Send SceneItemAttackInteractRequest - SceneItemId: {request.SceneItemId} -  TargetId: {request.TargetId} -  AttackPower: {request.AttackPower} -  CriticalRate: {request.CriticalRate} -  CriticalDamage: {request.CriticalDamage}");
+                _interactSystem.EnqueueCommand(request);
+                NetworkGameObjectPoolManager.Instance.Despawn(gameObject);
                 return true;
             }
 

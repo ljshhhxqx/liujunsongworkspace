@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using AOTScripts.Data.State;
 using AOTScripts.Tool.ObjectPool;
+using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using MemoryPack;
@@ -1117,22 +1118,20 @@ namespace AOTScripts.Data
         [MemoryPackOrder(1)]
         public uint AttackerId;
         [MemoryPackOrder(2)]
-        public int TargetId;
+        public uint TargetId;
         [MemoryPackOrder(3)]
-        public float Damage;
-        [MemoryPackOrder(4)]
-        public bool IsCritical;
+        public DamageCalculateResultData Damage;
         public NetworkCommandType GetCommandType() => NetworkCommandType.PropertyItemAttack;
 
         public NetworkCommandHeader GetHeader() => Header;
         public bool IsValid()
         {
-            var isValid = AttackerId > 0 && TargetId > 0 && Damage > 0;
+            var isValid = AttackerId > 0 && TargetId > 0 && Damage.Damage > 0;
             if (isValid)
             {
                 return true;
             }
-            Debug.LogError($"PropertyItemAttackCommand is invalid for attackerId: {AttackerId}, targetId: {TargetId}, damage: {Damage}, isCritical: {IsCritical}");
+            Debug.LogError($"PropertyItemAttackCommand is invalid for attackerId: {AttackerId}, targetId: {TargetId}, damage: {Damage.Damage}, isCritical: {Damage.IsCritical}");
             return false;
         }
         public void Init()

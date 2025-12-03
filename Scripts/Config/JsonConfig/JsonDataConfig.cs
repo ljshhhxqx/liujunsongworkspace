@@ -372,6 +372,8 @@ namespace HotUpdate.Scripts.Config.JsonConfig
 
     public struct DamageResultData
     {
+        public uint HitterUid;
+        public uint DefenderUid;
         public int Hitter;
         public int Defender;
         public DamageCalculateResultData DamageCalculateResult;
@@ -383,6 +385,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public float DamageRatio;
         public float HpRemainRatio;
         public bool IsDead;
+        public bool IsCritical;
     }
 
     [Serializable]

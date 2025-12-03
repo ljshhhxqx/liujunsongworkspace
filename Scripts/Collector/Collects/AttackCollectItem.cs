@@ -21,6 +21,7 @@ namespace HotUpdate.Scripts.Collector.Collects
                 //Debug.LogError($"{name} is dead or not attackable or attack cooldown not over yet");
                 return;
             }
+            
 
             GameObjectContainer.Instance.DynamicObjectIntersects(NetId, transform.position, ColliderConfig,
                 _collectedObjects, OnInteract);

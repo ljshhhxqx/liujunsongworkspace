@@ -404,11 +404,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 HandleUseSkill(header.ConnectionId, propertyUseSkillCommand.SkillConfigId);
             }
+            else if (command is PropertyItemAttackCommand propertyItemAttackCommand)
+            {
+                HandleItemAttack(propertyItemAttackCommand);
+            }
             else
             {
                 Debug.LogError($"PlayerPropertySyncSystem: Unknown command type {command.GetType().Name}");
             }
             return null;
+        }
+
+        private void HandleItemAttack(PropertyItemAttackCommand propertyItemAttackCommand)
+        {
+            var playerId = _playerInGameManager.GetPlayerId(propertyItemAttackCommand.TargetId);
+            var playerState = GetState<PlayerPredictablePropertyState>(playerId);
+            var damageResult = PlayerPropertyCalculator.HandleItemAttack(propertyItemAttackCommand.AttackerId,
+                propertyItemAttackCommand.TargetId, ref playerState, propertyItemAttackCommand.Damage);
+            
+            PropertyStates[playerId] = playerState;
+            PropertyChange(playerId);
         }
 
         private void HandleGetScoreGold(int headerConnectionId, int score, int gold)
@@ -914,20 +929,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private void HandlePlayerAttack(int attacker, int[] defenderPlayerIds)
         {
+            var attackerUid = _playerInGameManager.GetPlayerNetId(attacker);
             var propertyState = GetState<PlayerPredictablePropertyState>(attacker);
             var defendersState = PropertyStates
                 .Where(x => defenderPlayerIds.Contains(x.Key))
-                .ToDictionary(x => x.Key, x => (PlayerPredictablePropertyState)x.Value);
-            var damageDatas = PlayerPropertyCalculator.HandleAttack(attacker, ref propertyState, ref defendersState, _jsonDataConfig.GetDamage);
+                .ToDictionary(x => _playerInGameManager.GetPlayerNetId(x.Key), x => (PlayerPredictablePropertyState)x.Value);
+            var damageDatas = PlayerPropertyCalculator.HandleAttack(attackerUid, ref propertyState, ref defendersState, _jsonDataConfig.GetDamage);
             for (int i = 0; i < defenderPlayerIds.Length; i++)
             {
-                PropertyStates[defenderPlayerIds[i]] = defendersState[defenderPlayerIds[i]];
+                var playerNetId = _playerInGameManager.GetPlayerNetId(defenderPlayerIds[i]);
+                PropertyStates[defenderPlayerIds[i]] = defendersState[playerNetId];
                 PropertyChange(defenderPlayerIds[i]);
                 if (PropertyStates[defenderPlayerIds[i]] is PlayerPredictablePropertyState playerPropertyState &&
                     playerPropertyState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue <= 0)
                 {
                     var deadManId = _playerInGameManager.GetPlayerNetId(defenderPlayerIds[i]);
-                    var deadTime = _jsonDataConfig.GameConfig.GetPlayerDeathTime((int)defendersState[defenderPlayerIds[i]].MemoryProperty[PropertyTypeEnum.Score].CurrentValue);
+                    var deadTime = _jsonDataConfig.GameConfig.GetPlayerDeathTime((int)defendersState[playerNetId].MemoryProperty[PropertyTypeEnum.Score].CurrentValue);
                     if (!_playerInGameManager.TryAddDeathPlayer(deadManId, deadTime, attacker, OnPlayerDeath, OnPlayerRespawn))
                     {
                         Debug.LogError($"PlayerPropertySyncSystem: Failed to add death player {deadManId}");

@@ -102,8 +102,32 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return Properties[propertyType].CurrentValue;
         }
 
-        public static DamageResultData[] HandleAttack(int connectionId, ref PlayerPredictablePropertyState playerPredictablePropertyState, 
-            ref Dictionary<int, PlayerPredictablePropertyState> defenders, Func<float, float, float, float, DamageCalculateResultData> getDamageFunction)
+        public static DamageResultData HandleItemAttack(uint attackerId, uint defenderId, ref PlayerPredictablePropertyState defender, DamageCalculateResultData damageCalculateResultData)
+        {
+            var damageResultData = new DamageResultData();
+            damageResultData.HitterUid = attackerId;
+            damageResultData.DefenderUid = defenderId;
+            damageResultData.DamageCalculateResult = damageCalculateResultData;
+            damageResultData.IsCritical = damageCalculateResultData.IsCritical;
+            damageResultData.DamageRatio = damageCalculateResultData.Damage / defender.MemoryProperty[PropertyTypeEnum.Health].MaxCurrentValue;
+            var remainHealth = GetRemainHealth(defender.MemoryProperty[PropertyTypeEnum.Health], damageCalculateResultData.Damage);
+            defender.MemoryProperty[PropertyTypeEnum.Health] = remainHealth;
+            damageResultData.HpRemainRatio = remainHealth.CurrentValue / defender.MemoryProperty[PropertyTypeEnum.Health].MaxCurrentValue;
+            if (remainHealth.CurrentValue <= 0)
+            {
+                damageResultData.IsDead = true;
+            }
+            
+            if (defender.ControlSkillType.HasAnyState(SubjectedStateType.IsInvisible))
+            {
+                Debug.Log($"PlayerConnectionId: {defenderId} is invisible, cannot attack.");
+                damageResultData.IsDodged = true;
+            }
+            return damageResultData;
+        }
+
+        public static DamageResultData[] HandleAttack(uint attackerId, ref PlayerPredictablePropertyState playerPredictablePropertyState, 
+            ref Dictionary<uint, PlayerPredictablePropertyState> defenders, Func<float, float, float, float, DamageCalculateResultData> getDamageFunction)
         {
             var playerState = playerPredictablePropertyState;
             var propertyState = playerState.MemoryProperty;
@@ -115,8 +139,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             foreach (var (key, defenderPropertyState) in defenders)
             {
                 var resultData = new DamageResultData();
-                resultData.Hitter = connectionId;
-                resultData.Defender = key;
+                resultData.HitterUid = attackerId;
+                resultData.DefenderUid = key;
                 resultData.DamageCalculateResult = new DamageCalculateResultData();
                 resultData.DamageCalculateResult.Damage = 0;
                 resultData.DamageCalculateResult.IsCritical = false;
@@ -134,13 +158,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 }
                 var defense = defenderPropertyState.MemoryProperty[PropertyTypeEnum.Defense].CurrentValue;
                 resultData.DamageCalculateResult = getDamageFunction(attack, defense, critical, criticalDamage);
+                resultData.IsCritical = resultData.DamageCalculateResult.IsCritical;
                 resultData.DamageRatio = resultData.DamageCalculateResult.Damage /
                                          defenderPropertyState.MemoryProperty[PropertyTypeEnum.Health].MaxCurrentValue;
                 var remainHealth = GetRemainHealth(defenderPropertyState.MemoryProperty[PropertyTypeEnum.Health], resultData.DamageCalculateResult.Damage);
                 defenderPropertyState.MemoryProperty[PropertyTypeEnum.Health] = remainHealth;
                 defenderPropertyStates[key] = defenderPropertyState;
-                resultData.HpRemainRatio = remainHealth.CurrentValue /
-                                          defenderPropertyState.MemoryProperty[PropertyTypeEnum.Health].MaxCurrentValue;
+                resultData.HpRemainRatio = remainHealth.CurrentValue / defenderPropertyState.MemoryProperty[PropertyTypeEnum.Health].MaxCurrentValue;
                 if (remainHealth.CurrentValue <= 0)
                 {
                     resultData.IsDead = true;
