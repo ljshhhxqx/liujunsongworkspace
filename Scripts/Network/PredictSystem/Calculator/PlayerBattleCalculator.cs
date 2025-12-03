@@ -68,7 +68,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         
         #region 辅助方法
 
-        // 扇形区域检测（优化版）
         private bool IsInAttackSector(Vector3 origin, Vector3 direction, Vector3 targetPos, float radius, float angle, float height)
         {
             Vector3 toTarget = targetPos - origin;

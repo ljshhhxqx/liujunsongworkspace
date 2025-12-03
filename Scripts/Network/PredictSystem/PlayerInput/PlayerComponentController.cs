@@ -24,6 +24,7 @@ using HotUpdate.Scripts.Network.State;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Player;
 using HotUpdate.Scripts.Skill;
+using HotUpdate.Scripts.Tool;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using HotUpdate.Scripts.Tool.ObjectPool;
@@ -72,6 +73,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [SerializeField]
         private Transform rotateCenter;
         protected override bool AutoInjectClient => false;
+        private PropertyConfig _propertyConfig;
         
         [Header("States-NetworkBehaviour")]
         private PlayerInputPredictionState _inputState;
@@ -163,7 +165,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         // public IObservable<bool> IsSpecialAction => _isSpecialActionStream;
         public IObservable<int> AttackPointReached => _onAttackPoint;
         public IObservable<int> AttackEnded => _onAttackEnd;
-        
+
+        public Dictionary<AnimationState, IAnimationCooldown> GetAnimationCooldownsDict(AnimationConfig animationConfig)
+        {
+            if (_animationCooldownsDict.Count == 0)
+            {
+                if (_animationCooldowns.Count == 0)
+                {
+                    _animationCooldowns = GetAnimationCooldowns(animationConfig);
+                }
+                _animationCooldownsDict = _animationCooldowns.ToDictionary(x => x.AnimationState, x => x);
+            }
+            return _animationCooldownsDict;
+        }
+
         public Dictionary<AnimationState, IAnimationCooldown> AnimationCooldownsDict
         {
             get
@@ -236,11 +251,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _animator = GetComponent<Animator>();
             _skillConfig = _configProvider.GetConfig<SkillConfig>();
             _camera = Camera.main;
-            _animationCooldowns = GetAnimationCooldowns();
+            _animationCooldowns = GetAnimationCooldowns(_configProvider.GetConfig<AnimationConfig>());
             _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
             _gameEventManager = gameEventManager;
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, ColliderConfig, ObjectType.Player, gameObject.layer, gameObject.tag);
 
+            _propertyConfig = _configProvider.GetConfig<PropertyConfig>();
             GetAllCalculators(configProvider, gameSyncManager);
             HandleAllSyncState();
             _uiManager.CloseUI(UIType.Main);
@@ -315,6 +331,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         protected override void InjectLocalPlayerCallback()
         {
             Debug.Log($"[PlayerInputController] OnStartLocalPlayer");
+            var attackSector = gameObject.GetComponent<AttackSectorLine>();
+            var radius = _propertyConfig.GetBaseValue(PropertyTypeEnum.AttackRadius);
+            var range = _propertyConfig.GetBaseValue(PropertyTypeEnum.AttackAngle);
+            var height = _propertyConfig.GetBaseValue(PropertyTypeEnum.AttackHeight);
+            attackSector.SetParams(new AttackConfigData
+            {
+                AttackRadius = radius,
+                AttackRange = range,
+                AttackHeight = height,
+            });
             _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
                 UIPropertyBinder.LocalPlayerId);
             _itemBindKey = new BindingKey(UIPropertyDefine.BagItem, DataScope.LocalPlayer,
@@ -1205,10 +1231,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerAnimationCalculator.SetClipSpeed(animationState, speed);
         }
         
-        private List<IAnimationCooldown> GetAnimationCooldowns()
+        private List<IAnimationCooldown> GetAnimationCooldowns(AnimationConfig config)
         {
             var list = new List<IAnimationCooldown>();
-            var config = _configProvider.GetConfig<AnimationConfig>();
             var animations = config.AnimationInfos;
             for (int i = 0; i < animations.Count; i++)
             {
