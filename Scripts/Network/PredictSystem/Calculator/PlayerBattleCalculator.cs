@@ -36,7 +36,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             // 计算检测半径对应的Grid范围
             var gridRadius = Mathf.CeilToInt(AttackConfigData.AttackRadius / MapBoundDefiner.Instance.GridSize);
         
-            // 获取周围Grid中的玩家
             var nearbyGrids = MapBoundDefiner.Instance.GetSurroundingGrids(attackerGrid, gridRadius);
             var candidates = GameObjectContainer.Instance.GetDynamicObjectIdsByGrids(nearbyGrids);
 
@@ -50,6 +49,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             
                 if (!identity) continue;
 
+                Debug.Log($"Start check attack {candidate}:" +
+                          $"attackPos:{attackParams.attackPos},attackDir:{attackParams.attackDir},attackerNetId:{attackParams.attackerNetId},targetPos:{identity.transform.position},attackRadius:{attackParams.AttackConfigData.AttackRadius},attackRange:{attackParams.AttackConfigData.AttackRange},attackHeight:{attackParams.AttackConfigData.AttackHeight}");
                 // 精确检测
                 if (IsInAttackSector(
                         attackParams.attackPos,

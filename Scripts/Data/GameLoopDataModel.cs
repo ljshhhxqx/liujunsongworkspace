@@ -3,6 +3,7 @@ using AOTScripts.Data;
 using Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using UniRx;
+using UnityEngine;
 
 namespace HotUpdate.Scripts.Data
 {
@@ -14,5 +15,6 @@ namespace HotUpdate.Scripts.Data
         public static readonly ReactiveProperty<MapType> GameSceneName = new ReactiveProperty<MapType>();
         public static readonly ReactiveProperty<MapConfigData> MapConfig = new ReactiveProperty<MapConfigData>();
         public static readonly ReactiveProperty<GameResultData> GameResult = new ReactiveProperty<GameResultData>();
+        public static readonly ReactiveProperty<Vector3> LocalPlayerPosition = new ReactiveProperty<Vector3>();
     }
 }

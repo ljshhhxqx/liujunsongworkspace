@@ -23,8 +23,6 @@ namespace HotUpdate.Scripts.UI.UIs.Common
         private void Start()
         {
             _slider = GetComponent<Slider>();
-            _image = GetComponent<Image>();
-            _image.fillAmount = targetImage.fillAmount;
             if (showSlider)
             {
                 targetSlider.OnValueChangedAsObservable().Subscribe(value =>
@@ -32,6 +30,11 @@ namespace HotUpdate.Scripts.UI.UIs.Common
                     _tween?.Kill(true);
                     _tween = _slider.DOValue(value, duration);
                 }).AddTo(this);
+            }
+            else
+            {
+                _image = GetComponent<Image>();
+                _image.fillAmount = targetImage.fillAmount;
             }
         }
 

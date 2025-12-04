@@ -1,9 +1,14 @@
+using System;
 using System.Collections.Generic;
 using AOTScripts.Tool;
 using AOTScripts.Tool.ObjectPool;
 using DG.Tweening;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
+using Mirror;
 using TMPro;
 using UI.UIBase;
 using UnityEngine;
@@ -18,8 +23,11 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         [SerializeField] private RectTransform indicatorUI; // UI指示器
         [SerializeField] private TextMeshProUGUI distanceText; // 显示距离的Text组件
         [SerializeField] private RectTransform textUI; // UI指示器
+        [SerializeField] private ContentItemList itemList;
         private FollowTargetParams _followTargetParams;
         private FollowTargetParams _followTextParams;
+        private FollowTargetParams _followCollectItemParams;
+        // private readonly Dictionary<uint, CollectItem> _collectItems = new Dictionary<uint, CollectItem>();
         
         private Camera _mainCamera;
         private RectTransform _canvasRect;
@@ -30,6 +38,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         {
             gameEventManager.Subscribe<TargetShowEvent>(OnTargetShow);
             gameEventManager.Subscribe<FollowTargetTextEvent>(OnFollowTarget);
+            gameEventManager.Subscribe<SceneItemInfoChangedEvent>(OnSceneItemInfoChanged);
             var gameConfig = configProvider.GetConfig<JsonDataConfig>().GameConfig;
 
             Debug.Log("TargetShowOverlay Init");
@@ -46,6 +55,35 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             _followTextParams.MainCamera = _mainCamera;
             _followTextParams.CanvasRect = _canvasRect;
             _followTextParams.ScreenBorderOffset = gameConfig.screenBorderOffset;
+            _followCollectItemParams ??= new FollowTargetParams();
+            _followCollectItemParams.MainCamera = _mainCamera;
+            _followCollectItemParams.CanvasRect = _canvasRect;
+            _followCollectItemParams.ScreenBorderOffset = gameConfig.screenBorderOffset;
+            _followCollectItemParams.ShowBehindIndicator = true;
+        }
+
+        private void OnSceneItemInfoChanged(SceneItemInfoChangedEvent itemInfoChangedEvent)
+        {
+            switch (itemInfoChangedEvent.Operation)
+            {
+                case SyncIDictionary<uint, SceneItemInfo>.Operation.OP_ADD:
+                case SyncIDictionary<uint, SceneItemInfo>.Operation.OP_SET:
+                    var itemData = new CollectItemData();
+                    itemData.ItemId = itemInfoChangedEvent.ItemId;
+                    itemData.CurrentHp = itemInfoChangedEvent.SceneItemInfo.health;
+                    itemData.MaxHp = itemInfoChangedEvent.SceneItemInfo.maxHealth;
+                    itemData.Position = itemInfoChangedEvent.SceneItemInfo.Position;
+                    var collectItem =  itemList.ReplaceItem<CollectItemData, CollectItem>((int)itemInfoChangedEvent.ItemId, itemData);
+                    _followCollectItemParams.IndicatorUI = collectItem.rectTransform;
+                    collectItem.Show(_followCollectItemParams);
+                    break;
+                case SyncIDictionary<uint, SceneItemInfo>.Operation.OP_CLEAR:
+                    itemList.Clear();
+                    break;
+                case SyncIDictionary<uint, SceneItemInfo>.Operation.OP_REMOVE:
+                    itemList.RemoveItem((int)itemInfoChangedEvent.ItemId);
+                    break;
+            }
         }
 
         private void OnFollowTarget(FollowTargetTextEvent followTargetTextEvent)

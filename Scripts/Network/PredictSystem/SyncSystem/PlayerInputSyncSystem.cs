@@ -282,12 +282,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private void HandlePlayerAttack(int connectionId)
         {
-            Debug.Log($"[HandlePlayerAttack] player {connectionId} attack");
             var playerController = GameSyncManager.GetPlayerConnection(connectionId);
             var propertySyncSystem = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
             GameAudioManager.Instance.PlaySFX(AudioEffectType.Attack, playerController.transform.position, playerController.transform);
             var playerProperty = propertySyncSystem.GetPlayerProperty(connectionId);
             var attackConfigData = new AttackConfigData(playerProperty[PropertyTypeEnum.AttackRadius].CurrentValue, playerProperty[PropertyTypeEnum.AttackAngle].CurrentValue, playerProperty[PropertyTypeEnum.AttackHeight].CurrentValue);
+            Debug.Log($"[HandlePlayerAttack] player {connectionId} attack - position {playerController.transform.position} forward {playerController.transform.forward}");
             var defenders = playerController.HandleAttack(new AttackParams(playerController.transform.position,
                 playerController.transform.forward, connectionId, playerController.netId, attackConfigData));
             if (defenders.Count > 0)

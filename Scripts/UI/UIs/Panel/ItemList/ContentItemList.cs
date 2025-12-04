@@ -71,17 +71,18 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
             ItemBaseDatas.Clear();
         }
         
-        public void ReplaceItem<T, TItem>(int key, T itemData, Action<T, TItem> onSpawn = null) where T : IItemBaseData, new() where TItem : ItemBase, new()
+        public TItem ReplaceItem<T, TItem>(int key, T itemData, Action<T, TItem> onSpawn = null) where T : IItemBaseData, new() where TItem : ItemBase, new()
         {
             if (!ItemBases.TryGetValue(key, out var itemBase))
             {
                 itemBase = AddItem<T, TItem>(key, itemData);
                 onSpawn?.Invoke(itemData, (TItem)itemBase);
-                return;
+                return (TItem)itemBase;
             }
             itemBase.SetData(itemData);
             ItemBaseDatas[key] = itemData;
             onSpawn?.Invoke(itemData, (TItem)itemBase);
+            return (TItem)itemBase;
         }
 
         public void SetItemList<T>(IDictionary<int, T> itemDict) where T : IItemBaseData

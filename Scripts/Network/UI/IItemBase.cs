@@ -23,6 +23,42 @@ namespace HotUpdate.Scripts.Network.UI
     {
     }
 
+    public struct CollectItemData : IItemBaseData, IEquatable<CollectItemData>
+    {
+        public uint ItemId;
+        public float CurrentHp;
+        public float MaxHp;
+        public Vector3 Position;
+        public Vector3 PlayerPosition;
+
+        public bool Equals(CollectItemData other)
+        {
+            return ItemId == other.ItemId && Mathf.Approximately(CurrentHp, other.CurrentHp) 
+                                          && Mathf.Approximately(MaxHp, other.MaxHp) 
+                                          && Mathf.Approximately(Position.x, other.Position.x) && Mathf.Approximately(Position.y, other.Position.y) && Mathf.Approximately(Position.z, other.Position.z)
+                                          && PlayerPosition.Equals(other.PlayerPosition);
+        }
+        public override bool Equals(object obj)
+        {
+            return obj is CollectItemData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(ItemId, CurrentHp, MaxHp, Position, PlayerPosition);
+        }
+
+        public static bool operator ==(CollectItemData left, CollectItemData right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(CollectItemData left, CollectItemData right)
+        {
+            return !left.Equals(right);
+        }
+    }
+
     public struct MinimapItemData : IItemBaseData, IEquatable<MinimapItemData>
     {
         public int Id;

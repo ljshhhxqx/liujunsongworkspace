@@ -112,7 +112,7 @@ MonoBehaviour:
     isHundredPercent: 1
     showInHud: 0
   - propertyType: 8
-    baseValue: 5
+    baseValue: 3
     minValue: 0
     maxValue: 25
     consumeType: 2
@@ -122,7 +122,7 @@ MonoBehaviour:
     isHundredPercent: 0
     showInHud: 0
   - propertyType: 9
-    baseValue: 3
+    baseValue: 0.5
     minValue: 0
     maxValue: 25
     consumeType: 2
@@ -142,9 +142,9 @@ MonoBehaviour:
     isHundredPercent: 1
     showInHud: 0
   - propertyType: 13
-    baseValue: 0.5
+    baseValue: 1.25
     minValue: 0.35
-    maxValue: 1.5
+    maxValue: 10
     consumeType: 2
     isHandleWithCorrectFactor: 0
     description: "\u653B\u51FB\u8DDD\u79BB"
@@ -152,9 +152,9 @@ MonoBehaviour:
     isHundredPercent: 0
     showInHud: 0
   - propertyType: 14
-    baseValue: 60
+    baseValue: 160
     minValue: 45
-    maxValue: 180
+    maxValue: 240
     consumeType: 2
     isHandleWithCorrectFactor: 0
     description: "\u653B\u51FB\u89D2\u5EA6"
@@ -162,9 +162,9 @@ MonoBehaviour:
     isHundredPercent: 0
     showInHud: 0
   - propertyType: 15
-    baseValue: 0.35
+    baseValue: 1.25
     minValue: 0.15
-    maxValue: 1.25
+    maxValue: 2.5
     consumeType: 2
     isHandleWithCorrectFactor: 0
     description: "\u653B\u51FB\u9AD8\u5EA6"

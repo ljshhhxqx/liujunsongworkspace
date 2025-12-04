@@ -63,39 +63,49 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             _gameEventManager.Subscribe<GameStartEvent>(OnGameStart);
             _gameEventManager.Subscribe<PlayerAttackItemEvent>(OnPlayerAttackItem);
             _gameEventManager.Subscribe<PlayerSkillItemEvent>(OnSkillItem);
-            _gameEventManager.Subscribe<ItemSpawnedEvent>(OnItemSpawned);
+            _gameEventManager.Subscribe<SceneItemInfoChanged>(OnItemSpawned);
+            _sceneItems.OnChange += OnSceneItemsChanged;
         }
 
-        private void OnItemSpawned(ItemSpawnedEvent itemSpawnedEvent)
+        private void OnSceneItemsChanged(SyncIDictionary<uint, SceneItemInfo>.Operation type, uint uid, SceneItemInfo info)
         {
-            if (!_sceneItems.TryGetValue(itemSpawnedEvent.ItemId, out var sceneItemInfo))
+            SceneItemInfoChanged?.Invoke(uid, info);
+            _gameEventManager.Publish(new SceneItemInfoChangedEvent(uid, info, type));
+            Debug.Log($"[OnSceneItemsChanged] {type} scene item {uid} info - {info}");
+        }
+
+        private void OnItemSpawned(SceneItemInfoChanged sceneItemInfoChanged)
+        {
+            if (!_sceneItems.TryGetValue(sceneItemInfoChanged.ItemId, out var sceneItemInfo))
             {
                 sceneItemInfo = new SceneItemInfo
                 {
-                    health = itemSpawnedEvent.SceneItemInfo.health,
-                    defense = itemSpawnedEvent.SceneItemInfo.defense,
-                    speed = itemSpawnedEvent.SceneItemInfo.speed,
-                    attackDamage = itemSpawnedEvent.SceneItemInfo.attackDamage,
-                    attackRange = itemSpawnedEvent.SceneItemInfo.attackRange,
-                    attackInterval = itemSpawnedEvent.SceneItemInfo.attackInterval,
-                    maxHealth = itemSpawnedEvent.SceneItemInfo.maxHealth,
-                    sceneItemId = itemSpawnedEvent.ItemId,
+                    health = sceneItemInfoChanged.SceneItemInfo.health,
+                    defense = sceneItemInfoChanged.SceneItemInfo.defense,
+                    speed = sceneItemInfoChanged.SceneItemInfo.speed,
+                    attackDamage = sceneItemInfoChanged.SceneItemInfo.attackDamage,
+                    attackRange = sceneItemInfoChanged.SceneItemInfo.attackRange,
+                    attackInterval = sceneItemInfoChanged.SceneItemInfo.attackInterval,
+                    maxHealth = sceneItemInfoChanged.SceneItemInfo.maxHealth,
+                    sceneItemId = sceneItemInfoChanged.ItemId,
+                    Position = sceneItemInfoChanged.Position
                 };
-                Debug.Log($"Add scene item {itemSpawnedEvent.ItemId} to scene items");
-                _sceneItems.Add(itemSpawnedEvent.ItemId, sceneItemInfo);
+                Debug.Log($"Add scene item {sceneItemInfoChanged.ItemId} to scene items");
+                _sceneItems.Add(sceneItemInfoChanged.ItemId, sceneItemInfo);
             }
             else
             {
-                sceneItemInfo.health = Mathf.Max(sceneItemInfo.health, itemSpawnedEvent.SceneItemInfo.health);
-                sceneItemInfo.defense = Mathf.Max(sceneItemInfo.defense, itemSpawnedEvent.SceneItemInfo.defense);
-                sceneItemInfo.speed = Mathf.Max(sceneItemInfo.speed, itemSpawnedEvent.SceneItemInfo.speed);
-                sceneItemInfo.attackDamage = Mathf.Max(sceneItemInfo.attackDamage, itemSpawnedEvent.SceneItemInfo.attackDamage);
-                sceneItemInfo.attackRange = Mathf.Max(sceneItemInfo.attackRange, itemSpawnedEvent.SceneItemInfo.attackRange);
-                sceneItemInfo.attackInterval = Mathf.Max(sceneItemInfo.attackInterval, itemSpawnedEvent.SceneItemInfo.attackInterval);
-                sceneItemInfo.maxHealth = Mathf.Max(sceneItemInfo.maxHealth, itemSpawnedEvent.SceneItemInfo.maxHealth);
-                sceneItemInfo.sceneItemId = itemSpawnedEvent.ItemId;
-                _sceneItems[itemSpawnedEvent.ItemId] = sceneItemInfo;
-                Debug.Log($"[OnItemSpawned] Update scene item {itemSpawnedEvent.ItemId} info - {sceneItemInfo}");
+                sceneItemInfo.health = Mathf.Max(sceneItemInfo.health, sceneItemInfoChanged.SceneItemInfo.health);
+                sceneItemInfo.defense = Mathf.Max(sceneItemInfo.defense, sceneItemInfoChanged.SceneItemInfo.defense);
+                sceneItemInfo.speed = Mathf.Max(sceneItemInfo.speed, sceneItemInfoChanged.SceneItemInfo.speed);
+                sceneItemInfo.attackDamage = Mathf.Max(sceneItemInfo.attackDamage, sceneItemInfoChanged.SceneItemInfo.attackDamage);
+                sceneItemInfo.attackRange = Mathf.Max(sceneItemInfo.attackRange, sceneItemInfoChanged.SceneItemInfo.attackRange);
+                sceneItemInfo.attackInterval = Mathf.Max(sceneItemInfo.attackInterval, sceneItemInfoChanged.SceneItemInfo.attackInterval);
+                sceneItemInfo.maxHealth = Mathf.Max(sceneItemInfo.maxHealth, sceneItemInfoChanged.SceneItemInfo.maxHealth);
+                sceneItemInfo.sceneItemId = sceneItemInfoChanged.ItemId;
+                sceneItemInfo.Position = sceneItemInfoChanged.Position;
+                _sceneItems[sceneItemInfoChanged.ItemId] = sceneItemInfo;
+                Debug.Log($"[OnItemSpawned] Update scene item {sceneItemInfoChanged.ItemId} info - {sceneItemInfo}");
             }
         }
 
@@ -488,6 +498,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         public float attackDamage; 
         public float defense;
         public float speed;
+        public CompressedVector3 Position;
 
         public override string ToString()
         {
@@ -499,6 +510,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             sb.AppendLine($"AttackDamage: {attackDamage}");
             sb.AppendLine($"Defense: {defense}");
             sb.AppendLine($"Speed: {speed}");
+            sb.AppendLine($"Position: {Position}");
             return sb.ToString();
         }
     }

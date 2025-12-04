@@ -82,7 +82,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             ServerHandler = serverHandler;
             if (serverHandler)
             {
-                GameEventManager.Publish(new ItemSpawnedEvent(NetId, transform.position, new SceneItemInfo
+                GameEventManager.Publish(new SceneItemInfoChanged(NetId, transform.position, new SceneItemInfo
                 {
                     health = _attackInfo.health,
                     attackDamage = _attackInfo.damage,

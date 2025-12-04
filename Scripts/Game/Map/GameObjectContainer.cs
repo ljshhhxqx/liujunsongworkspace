@@ -94,7 +94,6 @@ namespace HotUpdate.Scripts.Game.Map
             {
                 for (int i = 0; i < _dynamicObjectData.Count; i++)
                 {
-                    
                     var data = _dynamicObjectData[i];
                     var gridBounds = MapBoundDefiner.Instance.GetGridPosition(data.Position);
 

@@ -1163,7 +1163,7 @@ namespace AOTScripts.Data
             {
                 return false;
             }
-            return AttackerId > 0 && TargetIds.All(t => t > 0);
+            return TargetIds.All(t => t > 0);
         }
         public void Init()
         {

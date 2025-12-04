@@ -232,13 +232,13 @@ namespace HotUpdate.Scripts.Tool.GameEvent
     {
     }
 
-    public struct ItemSpawnedEvent : IGameEvent
+    public struct SceneItemInfoChanged : IGameEvent
     {
         public uint ItemId { get; private set; }
         public Vector3 Position { get; private set; }
         public SceneItemInfo SceneItemInfo { get; private set; }
         
-        public ItemSpawnedEvent(uint itemId, Vector3 position, SceneItemInfo sceneItemInfo)
+        public SceneItemInfoChanged(uint itemId, Vector3 position, SceneItemInfo sceneItemInfo)
         {
             ItemId = itemId;
             Position = position;
@@ -265,6 +265,22 @@ namespace HotUpdate.Scripts.Tool.GameEvent
         public PlayerSpawnedEvent(Transform target)
         {
             Target = target;
+        }
+    }
+
+    public struct SceneItemInfoChangedEvent : IGameEvent
+    {
+        public uint ItemId { get; private set; }
+        public SceneItemInfo SceneItemInfo { get; private set; }
+        public SyncIDictionary<uint, SceneItemInfo>.Operation Operation { get; private set; }
+
+        public SceneItemInfoChangedEvent(uint itemId, SceneItemInfo sceneItemInfo, SyncIDictionary<uint, SceneItemInfo>.Operation operation)
+        {
+            
+            ItemId = itemId;
+            SceneItemInfo = sceneItemInfo;
+            Operation = operation;
+        
         }
     }
 

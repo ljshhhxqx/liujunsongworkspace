@@ -82,8 +82,48 @@ namespace HotUpdate.Scripts.Collector
         {
             return new Vector2Int(
                 Mathf.FloorToInt(worldPos.x / GridSize),
-                Mathf.FloorToInt(worldPos.z / GridSize) // 假设使用XZ平面
+                Mathf.FloorToInt(worldPos.z / GridSize) 
             );
+        }
+        
+        public Vector2Int FindClosestGrid(Vector3 worldPos)
+        {
+            // 先计算出理论上的网格坐标
+            Vector2Int theoreticalGrid = new Vector2Int(
+                Mathf.FloorToInt(worldPos.x / GridSize),
+                Mathf.FloorToInt(worldPos.z / GridSize)
+            );
+    
+            // 如果_gridMap包含这个网格，直接返回
+            if (_gridMap.Contains(theoreticalGrid))
+            {
+                return theoreticalGrid;
+            }
+    
+            // 否则，找到最接近的有效网格
+            Vector2Int closestGrid = _gridMap[0];
+            float minDistance = float.MaxValue;
+    
+            foreach (var grid in _gridMap)
+            {
+                // 计算网格中心点位置
+                Vector3 gridCenter = new Vector3(
+                    grid.x * GridSize + GridSize * 0.5f,
+                    0,
+                    grid.y * GridSize + GridSize * 0.5f
+                );
+        
+                // 计算与世界位置的距离
+                float distance = Vector3.Distance(worldPos, gridCenter);
+        
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    closestGrid = grid;
+                }
+            }
+    
+            return closestGrid;
         }
 
         private void CalculateAdjustedBounds() 
@@ -135,17 +175,22 @@ namespace HotUpdate.Scripts.Collector
         public HashSet<Vector2Int> GetSurroundingGrids(Vector2Int center, int radius)
         {
             var grids = new HashSet<Vector2Int>();
+    
+            // 先找出所有可能的网格
             for (var x = -radius; x <= radius; x++)
             {
                 for (var y = -radius; y <= radius; y++)
                 {
-                    var grid = new Vector2Int(
-                        Mathf.Clamp(center.x + x, 0, _gridMap.Count - 1),
-                        Mathf.Clamp(center.y + y, 0, _gridMap.Count - 1)
-                    );
-                    grids.Add(grid);
+                    var potentialGrid = new Vector2Int(center.x + x, center.y + y);
+            
+                    // 检查这个网格是否在有效网格列表中
+                    if (_gridMap.Contains(potentialGrid))
+                    {
+                        grids.Add(potentialGrid);
+                    }
                 }
             }
+    
             return grids;
         }
     

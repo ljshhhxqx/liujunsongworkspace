@@ -461,14 +461,14 @@ namespace HotUpdate.Scripts.Collector
                         Debug.Log($"Player {player.name} cannot pick up item {itemId}");
                     }
                 }
-                else
-                {
-                    var sb = new StringBuilder();
-                    sb.AppendLine($"Cannot find item with id: {itemId}");
-                    foreach (var item in _serverItemMap.Keys)
-                        sb.AppendLine($"Existing item id: {item}");
-                    Debug.LogError(sb.ToString());
-                }
+                // else
+                // {
+                //     var sb = new StringBuilder();
+                //     sb.AppendLine($"Cannot find item with id: {itemId}");
+                //     foreach (var item in _serverItemMap.Keys)
+                //         sb.AppendLine($"Existing item id: {item}");
+                //     Debug.LogError(sb.ToString());
+                // }
             }
             catch (Exception e)
             {
