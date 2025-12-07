@@ -217,10 +217,15 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 return _playerBaseColliderData;
             }
         }
+        
+        public Vector3 GetLocalPlayerPosition()
+        {
+            return _playerPositions.GetValueOrDefault(GetPlayerNetId(LocalPlayerId));
+        }
 
         private async UniTaskVoid UpdateAllPlayerGrids(CancellationToken token)
         {
-            while (!token.IsCancellationRequested)
+            while (!token.IsCancellationRequested && isServer)
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(GameSyncManager.TickSeconds), cancellationToken: token);
                 foreach (var uid in _playerNetIds.Values)
@@ -229,6 +234,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                     if (!identity) continue;
             
                     var position = identity.transform.position;
+                    //Debug.Log("UpdatePlayerGrids " + position);
                     var deathCountdown = _playerDeathCountdowns.GetValueOrDefault(uid);
                     UpdatePlayerGrid(uid, position);
                     _playerPositions[uid] = position;

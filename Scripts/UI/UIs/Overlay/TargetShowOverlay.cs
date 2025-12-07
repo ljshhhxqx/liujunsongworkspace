@@ -5,6 +5,7 @@ using AOTScripts.Tool.ObjectPool;
 using DG.Tweening;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
@@ -38,7 +39,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         {
             gameEventManager.Subscribe<TargetShowEvent>(OnTargetShow);
             gameEventManager.Subscribe<FollowTargetTextEvent>(OnFollowTarget);
-            gameEventManager.Subscribe<SceneItemInfoChangedEvent>(OnSceneItemInfoChanged);
+            //gameEventManager.Subscribe<SceneItemInfoChangedEvent>(OnSceneItemInfoChanged);
             var gameConfig = configProvider.GetConfig<JsonDataConfig>().GameConfig;
 
             Debug.Log("TargetShowOverlay Init");
@@ -73,6 +74,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                     itemData.CurrentHp = itemInfoChangedEvent.SceneItemInfo.health;
                     itemData.MaxHp = itemInfoChangedEvent.SceneItemInfo.maxHealth;
                     itemData.Position = itemInfoChangedEvent.SceneItemInfo.Position;
+                    itemData.PlayerPosition = PlayerInGameManager.Instance.GetLocalPlayerPosition();
                     var collectItem =  itemList.ReplaceItem<CollectItemData, CollectItem>((int)itemInfoChangedEvent.ItemId, itemData);
                     _followCollectItemParams.IndicatorUI = collectItem.rectTransform;
                     collectItem.Show(_followCollectItemParams);

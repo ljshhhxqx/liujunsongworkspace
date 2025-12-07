@@ -48,8 +48,8 @@ namespace HotUpdate.Scripts.Collector.Collects
             UpdateRotation();
             
             _patternTimer += Time.deltaTime;
-            SceneItemInfo.Position =transform.position;
-            GameEventManager.Publish(new SceneItemInfoChanged(NetId, transform.position, SceneItemInfo));
+            // SceneItemInfo.Position =transform.position;
+            // GameEventManager.Publish(new SceneItemInfoChanged(NetId, transform.position, SceneItemInfo));
         }
         
         private bool CheckCollisionAhead()

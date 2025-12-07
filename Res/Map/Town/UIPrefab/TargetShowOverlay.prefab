@@ -510,7 +510,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4407722629294213524
 RectTransform:
   m_ObjectHideFlags: 0
@@ -689,7 +689,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 8364474527447479283}
-  content: {fileID: 1055754946388619210}
+  content: {fileID: 7763415250596035094}
 --- !u!1 &3402971903043231553
 GameObject:
   m_ObjectHideFlags: 0
@@ -871,7 +871,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetSlider: {fileID: 423662336695947417}
   targetImage: {fileID: 0}
-  showSlider: 0
+  showSlider: 1
   showImage: 0
   duration: 0.2
 --- !u!1 &3815887725510994424
@@ -1110,6 +1110,7 @@ MonoBehaviour:
   nameText: {fileID: 3740827747460977377}
   hpText: {fileID: 8151889662026097386}
   canvasGroup: {fileID: 7827997530777777961}
+  rectTransform: {fileID: 2139362976443141716}
 --- !u!1 &6141002153257433315
 GameObject:
   m_ObjectHideFlags: 0
