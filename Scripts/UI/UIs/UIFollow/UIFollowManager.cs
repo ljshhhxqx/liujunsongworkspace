@@ -11,8 +11,8 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow
         private GameObject _worldCanvasPrefab;    // 世界空间Canvas预设
         private GameObject _screenCanvasPrefab;   // 屏幕空间Canvas预设
     
-        private List<GameObject> _uiPrefabs;      // 可用的UI预设列表
-        private List<GameObject> _controllerPrefabs; // 可用的控制器预设列表
+        private List<GameObject> _uiPrefabs = new List<GameObject>();      // 可用的UI预设列表
+        private List<GameObject> _controllerPrefabs = new List<GameObject>(); // 可用的控制器预设列表
     
         [Header("默认设置")]
         public float defaultOffsetY = 1.5f;
@@ -48,15 +48,8 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow
             _canvasContainer.localPosition = Vector3.zero;
         
             // 如果没有预设，创建默认Canvas预制体
-            if (!_worldCanvasPrefab)
-            {
-                _worldCanvasPrefab = CreateDefaultCanvasPrefab(RenderMode.WorldSpace);
-            }
-        
-            if (!_screenCanvasPrefab)
-            {
-                _screenCanvasPrefab = CreateDefaultCanvasPrefab(RenderMode.ScreenSpaceOverlay);
-            }
+            _worldCanvasPrefab ??= CreateDefaultCanvasPrefab(RenderMode.WorldSpace);
+            _screenCanvasPrefab ??= CreateDefaultCanvasPrefab(RenderMode.ScreenSpaceOverlay);
         }
 
         void Update()

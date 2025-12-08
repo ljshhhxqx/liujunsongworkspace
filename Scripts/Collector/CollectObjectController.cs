@@ -70,7 +70,7 @@ namespace HotUpdate.Scripts.Collector
             ColliderConfig = GamePhysicsSystem.CreateColliderConfig(collectCollider.GetComponent<Collider>());
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, ColliderConfig, ObjectType.Collectable, gameObject.layer, gameObject.tag);
             _collectAnimationComponent?.Play();
-            if (ClientHandler)
+            if (ClientHandler && gameObject.activeSelf)
             {
                 if (!_collectFollowUI)
                 {

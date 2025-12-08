@@ -125,7 +125,8 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow
                 UIFollowManager.Instance.UIFollowInstances.Remove(Transform);
             }
         
-            Destroy(gameObject);
+            if (gameObject)
+                Destroy(gameObject);
         }
     
         #endregion
