@@ -314,7 +314,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 // }
                 if (kvp.Key == PropertyTypeEnum.AttackSpeed)
                 {
-                    PlayerComponentController.SetAnimatorSpeed(AnimationState.Attack, property.CurrentValue);
+                    PlayerComponentController.RpcSetAnimatorSpeed(AnimationState.Attack, property.CurrentValue);
                 }
             }
             UIPropertyBinder.SetProperty(_goldBindKey, goldData);

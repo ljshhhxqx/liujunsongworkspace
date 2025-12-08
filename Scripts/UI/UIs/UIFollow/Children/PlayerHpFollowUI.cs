@@ -14,8 +14,25 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow.Children
         
         protected override void BindControllersToModels()
         {
+            if (_infoDataModel == null)
+            {
+                _controller = UIFollowManager.Instance.GetController<PlayerHpFollowController>();
+                _infoDataModel = new InfoDataModel();
+            }
             _controller.BindToModel(_infoDataModel);
-            // _gameEventManager.Subscribe<SceneItemInfoChangedEvent>(OnSceneItemInfoChanged);
+            _gameEventManager.Subscribe<PlayerInfoChangedEvent>(OnPlayerInfoChanged);
+        }
+
+        private void OnPlayerInfoChanged(PlayerInfoChangedEvent playerInfoChangedEvent)
+        {
+            if (SceneId.Value == playerInfoChangedEvent.PlayerId)
+            {
+                _infoDataModel.Health.Value = playerInfoChangedEvent.Health;
+                _infoDataModel.MaxHealth.Value = playerInfoChangedEvent.MaxHealth;
+                _infoDataModel.Mana.Value = playerInfoChangedEvent.Mana;
+                _infoDataModel.MaxMana.Value = playerInfoChangedEvent.MaxMana;
+                _infoDataModel.Name.Value = playerInfoChangedEvent.PlayerName;
+            }
         }
 
         protected override void OnDestroy()

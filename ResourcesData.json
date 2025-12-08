@@ -2131,6 +2131,26 @@
             "Address": "/Map/Town/UIPrefab/WeatherShowOverlay.prefab"
         },
         {
+            "UID": 4800032,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "CollectItemController",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/WorldUIPrefab/CollectItemController.prefab"
+        },
+        {
+            "UID": 4800033,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "PlayerItemController",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/WorldUIPrefab/PlayerItemController.prefab"
+        },
+        {
             "UID": 4900000,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 7,

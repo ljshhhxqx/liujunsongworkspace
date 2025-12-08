@@ -21,7 +21,7 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow
     {
         None,
         CollectItem,
-        Player,
+        PlayerItem,
     }
 
     public enum FollowMode
@@ -279,29 +279,20 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow
         /// </summary>
         private void CreateUIInstance()
         {
-            // 获取UI预设
-            GameObject uiPrefab = null;
-            if (UIFollowManager.Instance.UIPrefabDict.TryGetValue(UIFollowConfig.uiPrefabName, out uiPrefab))
+            // 创建世界空间UI
+            _worldCanvas = CreateCanvas(RenderMode.WorldSpace, gameObject);
+            if (_worldCanvas)
             {
-                // 创建世界空间UI
-                _worldCanvas = CreateCanvas(RenderMode.WorldSpace, uiPrefab);
-                if (_worldCanvas)
-                {
-                    _worldCanvas.transform.SetParent(transform);
-                    _worldCanvas.transform.localPosition = Vector3.zero;
-                }
-            
-                // 创建屏幕空间UI
-                _screenCanvas = CreateCanvas(RenderMode.ScreenSpaceOverlay, uiPrefab);
-                if (_screenCanvas)
-                {
-                    _screenCanvas.transform.SetParent(transform);
-                    _screenRect = _screenCanvas.GetComponent<RectTransform>();
-                }
+                _worldCanvas.transform.SetParent(transform);
+                _worldCanvas.transform.localPosition = Vector3.zero;
             }
-            else
+            
+            // 创建屏幕空间UI
+            _screenCanvas = CreateCanvas(RenderMode.ScreenSpaceOverlay, gameObject);
+            if (_screenCanvas)
             {
-                Debug.LogError($"UIFollowInstance: UI prefab '{UIFollowConfig.uiPrefabName}' not found!");
+                _screenCanvas.transform.SetParent(transform);
+                _screenRect = _screenCanvas.GetComponent<RectTransform>();
             }
         }
     

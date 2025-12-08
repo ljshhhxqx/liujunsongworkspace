@@ -34,6 +34,8 @@ using HotUpdate.Scripts.UI.UIs.Overlay;
 using HotUpdate.Scripts.UI.UIs.Panel;
 using HotUpdate.Scripts.UI.UIs.Panel.Backpack;
 using HotUpdate.Scripts.UI.UIs.Popup;
+using HotUpdate.Scripts.UI.UIs.UIFollow;
+using HotUpdate.Scripts.UI.UIs.UIFollow.Children;
 using MemoryPack;
 using Mirror;
 using UI.UIBase;
@@ -263,6 +265,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _gameEventManager.Publish(new PlayerUnListenMessageEvent());
             _gameEventManager.Subscribe<GameFunctionUIShowEvent>(OnGameFunctionUIShow);
             _gameEventManager.Subscribe<TargetShowEvent>(OnTargetShow);
+            if (LocalPlayerHandler)
+            {
+                if (!_playerHpFollowUI)
+                {
+                    if (!TryGetComponent(out _playerHpFollowUI))
+                    {
+                        _playerHpFollowUI = gameObject.AddComponent<PlayerHpFollowUI>();
+                    }
+                    var config = new UIFollowConfig();
+                    config.uiPrefabName = FollowUIType.PlayerItem;
+                    _playerHpFollowUI.Init(config);
+                }
+            }
         }
 
         private void OnTargetShow(TargetShowEvent targetShowEvent)
@@ -327,6 +342,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
         }
 
+        private PlayerHpFollowUI _playerHpFollowUI;
 
         protected override void InjectLocalPlayerCallback()
         {
@@ -1204,7 +1220,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             var playerChangeUnionCommand = BoxingFreeSerializer.MemoryDeserialize<PlayerChangeUnionRequest>(data);
             _interactSystem.EnqueueCommand(playerChangeUnionCommand);
         }
-        
+
+        [ClientRpc]
+        public void RpcSetPlayerInfo(float hp, float mp, float maxHp, float maxMp, uint playerId, string playerName)
+        {
+            _gameEventManager.Publish(new PlayerInfoChangedEvent(hp, mp, maxHp, maxMp, playerId, playerName));
+        }
 
         [ClientRpc]
         public void RpcSetPlayerAlpha(float alpha)
@@ -1215,7 +1236,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             playerControlEffect.SetTransparency( 1 -actualAlpha);
         }
 
-        public void SetAnimatorSpeed(AnimationState animationState, float speed)
+        [ClientRpc]
+        public void RpcSetAnimatorSpeed(AnimationState animationState, float speed)
         {
             var propertyConfig = _configProvider.GetConfig<PropertyConfig>();
             var property = propertyConfig.GetPropertyType(animationState);

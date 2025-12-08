@@ -8,11 +8,11 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow
     public class UIFollowManager : SingletonAutoMono<UIFollowManager>
     {
         [Header("Canvas 预设")]
-        public GameObject worldCanvasPrefab;    // 世界空间Canvas预设
-        public GameObject screenCanvasPrefab;   // 屏幕空间Canvas预设
+        private GameObject _worldCanvasPrefab;    // 世界空间Canvas预设
+        private GameObject _screenCanvasPrefab;   // 屏幕空间Canvas预设
     
-        [Header("UI 预设")]
-        public List<GameObject> uiPrefabs;      // 可用的UI预设列表
+        private List<GameObject> _uiPrefabs;      // 可用的UI预设列表
+        private List<GameObject> _controllerPrefabs; // 可用的控制器预设列表
     
         [Header("默认设置")]
         public float defaultOffsetY = 1.5f;
@@ -20,17 +20,23 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow
         public float defaultMaxDistance = 50f;
         public bool defaultFaceCamera = true;
 
-        private Dictionary<FollowUIType, GameObject> _uiPrefabDict = new Dictionary<FollowUIType, GameObject>();
         private Dictionary<Transform, UIFollowInstance> _uiFollowInstances = new Dictionary<Transform, UIFollowInstance>();
         private Stack<Canvas> _worldCanvasPool = new Stack<Canvas>();
         private Stack<Canvas> _screenCanvasPool = new Stack<Canvas>();
         private Transform _canvasContainer;
         
-        public Dictionary<FollowUIType, GameObject> UIPrefabDict => _uiPrefabDict;
         public Dictionary<Transform, UIFollowInstance> UIFollowInstances => _uiFollowInstances;
 
-        private void Start()
+        public void InitPrefabs(string mapName)
         {
+            var mapUIs = ResourceManager.Instance.GetResources<GameObject>(x => x.resourceData.Address.StartsWith($"/Map/{mapName}/WorldUIPrefab") && x.resourceInfo.Resource is GameObject);
+            foreach (var go in mapUIs)
+            {
+                if (go.TryGetComponent<IUIController>(out _))
+                {
+                    _controllerPrefabs.Add(go);
+                }
+            }
             Initialize();
         }
 
@@ -40,26 +46,16 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow
             _canvasContainer = new GameObject("UI_Follow_Container").transform;
             _canvasContainer.SetParent(transform);
             _canvasContainer.localPosition = Vector3.zero;
-
-            // 初始化预设字典
-            foreach (var prefab in uiPrefabs)
-            {
-                if (prefab)
-                {
-                    var uiType = (FollowUIType)System.Enum.Parse(typeof(FollowUIType), prefab.name);
-                    _uiPrefabDict.TryAdd(uiType, prefab);
-                }
-            }
         
             // 如果没有预设，创建默认Canvas预制体
-            if (!worldCanvasPrefab)
+            if (!_worldCanvasPrefab)
             {
-                worldCanvasPrefab = CreateDefaultCanvasPrefab(RenderMode.WorldSpace);
+                _worldCanvasPrefab = CreateDefaultCanvasPrefab(RenderMode.WorldSpace);
             }
         
-            if (!screenCanvasPrefab)
+            if (!_screenCanvasPrefab)
             {
-                screenCanvasPrefab = CreateDefaultCanvasPrefab(RenderMode.ScreenSpaceOverlay);
+                _screenCanvasPrefab = CreateDefaultCanvasPrefab(RenderMode.ScreenSpaceOverlay);
             }
         }
 
@@ -226,7 +222,7 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow
             }
         
             // 池为空，创建新的Canvas
-            var prefab = renderMode == RenderMode.WorldSpace ? worldCanvasPrefab : screenCanvasPrefab;
+            var prefab = renderMode == RenderMode.WorldSpace ? _worldCanvasPrefab : _screenCanvasPrefab;
             if (prefab)
             {
                 var canvasObj = Instantiate(prefab, _canvasContainer);
@@ -261,29 +257,6 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow
             {
                 _screenCanvasPool.Push(canvas);
             }
-        }
-
-        /// <summary>
-        /// 获取UI预设
-        /// </summary>
-        public GameObject GetUIPrefab(FollowUIType prefabName)
-        {
-            if (_uiPrefabDict.TryGetValue(prefabName, out GameObject prefab))
-            {
-                return prefab;
-            }
-        
-            // 尝试查找（不区分大小写）
-            foreach (var kvp in _uiPrefabDict)
-            {
-                if (prefabName == kvp.Key)
-                {
-                    return kvp.Value;
-                }
-            }
-        
-            Debug.LogWarning($"UI prefab '{prefabName}' not found. Available prefabs: {string.Join(", ", _uiPrefabDict.Keys)}");
-            return null;
         }
 
         #endregion
@@ -335,24 +308,6 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow
         }
 
         /// <summary>
-        /// 添加UI预设（运行时）
-        /// </summary>
-        public void AddUIPrefab(GameObject prefab)
-        {
-            if (!prefab) return;
-        
-            var uiType = (FollowUIType)System.Enum.Parse(typeof(FollowUIType), prefab.name);
-            if (!_uiPrefabDict.ContainsKey(uiType))
-            {
-                _uiPrefabDict[uiType] = prefab;
-            }
-            else
-            {
-                Debug.LogWarning($"UI prefab with name '{prefab.name}' already exists.");
-            }
-        }
-
-        /// <summary>
         /// 清理对象池
         /// </summary>
         public void CleanupPools()
@@ -377,6 +332,7 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow
         
             _worldCanvasPool.Clear();
             _screenCanvasPool.Clear();
+            _uiFollowInstances.Clear();
         }
 
         #endregion
@@ -423,6 +379,27 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow
         void OnDestroy()
         {
             CleanupPools();
+            
         }
+
+        public T GetController<T>() where T : IUIController
+        {
+            foreach (var controller in _controllerPrefabs)
+            {
+                if (controller.TryGetComponent<T>(out var c))
+                {
+                    return c;
+                }
+            }
+            Debug.LogError($"Controller {typeof(T).Name} not found.");
+            return default;
+        }
+    }
+
+    public enum UIFollowType
+    {
+        None,
+        Default,
+        Adapt,
     }
 }

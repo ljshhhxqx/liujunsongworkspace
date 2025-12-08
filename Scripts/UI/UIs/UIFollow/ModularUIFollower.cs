@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Tool.ReactiveProperty;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace HotUpdate.Scripts.UI.UIs.UIFollow
 {
@@ -21,17 +22,20 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow
     {
         [Header("基础配置")]
         [SerializeField]
-        protected UIFollowConfig config;
+        protected FollowUIType followUIType;
+        protected UIFollowConfig UIFollowConfig;
     
         protected UIFollowInstance UIFollowInstance;
         protected Dictionary<Type, IUIController> UIControllers = new Dictionary<Type, IUIController>();
         protected Dictionary<Type, IUIDataModel> UIDataModels = new Dictionary<Type, IUIDataModel>();
         public HReactiveProperty<uint> SceneId { get; } = new HReactiveProperty<uint>();
+        public FollowUIType FollowUIType => followUIType;
 
-        private void Start()
+        public virtual void Init(UIFollowConfig uiFollowConfig)
         {
+            UIFollowConfig = uiFollowConfig;
             ObjectInjectProvider.Instance.Inject(this);
-            UIFollowInstance = UIFollowSystem.CreateFollowUI(gameObject, config);
+            UIFollowInstance = UIFollowSystem.CreateFollowUI(gameObject, uiFollowConfig);
             if (!UIFollowInstance)
             {
                 Debug.LogError($"Failed to create UI instance for {gameObject.name}");
@@ -39,7 +43,7 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow
             }
             InitializeControllers();
             BindControllersToModels();
-            UIFollowInstance.Initialize(transform, config);
+            UIFollowInstance.Initialize(transform, uiFollowConfig);
         }
 
         protected abstract void BindControllersToModels();

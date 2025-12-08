@@ -237,6 +237,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerState = PropertyStates[connectionId];
             var playerController = GameSyncManager.GetPlayerConnection(connectionId);
+            var playerName = _playerInGameManager.GetPlayer(connectionId).player.Nickname;
+            float health = 0;
+            float maxHealth = 0;
+            float mana = 0;
+            float maxMana = 0;
             if (playerState is PlayerPredictablePropertyState playerPredictablePropertyState)
             {
                 foreach (var property in playerPredictablePropertyState.MemoryProperty.Keys)
@@ -245,7 +250,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     OnPropertyChange?.Invoke(connectionId, propertyValue.PropertyType, propertyValue.CurrentValue);
                     if (property == PropertyTypeEnum.AttackSpeed)
                     {
-                        playerController.SetAnimatorSpeed(AnimationState.Attack, propertyValue.CurrentValue);
+                        playerController.RpcSetAnimatorSpeed(AnimationState.Attack, propertyValue.CurrentValue);
                     }
                     else if (property == PropertyTypeEnum.Alpha)
                     {
@@ -256,7 +261,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     {
                         //playerController.RpcPlayEffect();
                     }
+                    else if (property == PropertyTypeEnum.Health)
+                    {
+                        health = propertyValue.CurrentValue;
+                        maxHealth = propertyValue.MaxCurrentValue;
+                    }
+                    else if (property == PropertyTypeEnum.Strength)
+                    {
+                        mana = propertyValue.CurrentValue;
+                        maxMana = propertyValue.MaxCurrentValue;
+                    }
                 }
+                playerController.RpcSetPlayerInfo(health, mana, maxHealth, maxMana, playerController.netId, playerName);
             }
         }
 

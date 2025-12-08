@@ -93,7 +93,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void OnPlayerShopStateChanged(PlayerShopState playerShopState)
         {
-            if(!isLocalPlayer)
+            if(!LocalPlayerHandler)
                return;
             CurrentState = playerShopState;
             var shopItems = UIPropertyBinder.GetReactiveDictionary<RandomShopItemData>(_bindKey);

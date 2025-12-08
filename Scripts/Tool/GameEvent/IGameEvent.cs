@@ -232,6 +232,26 @@ namespace HotUpdate.Scripts.Tool.GameEvent
     {
     }
 
+    public struct PlayerInfoChangedEvent : IGameEvent
+    {
+        public float Health { get; private set; }
+        public float MaxHealth { get; private set; }
+        public float Mana { get; private set; }
+        public float MaxMana { get; private set; }
+        public uint PlayerId { get; private set; }
+        public string PlayerName { get; private set; }
+        
+        public PlayerInfoChangedEvent(float health, float maxHealth, float mana, float maxMana, uint playerId, string playerName)
+        {
+            Health = health;
+            MaxHealth = maxHealth;
+            Mana = mana;
+            MaxMana = maxMana;
+            PlayerId = playerId;
+            PlayerName = playerName;
+        }
+    }
+
     public struct SceneItemInfoChanged : IGameEvent
     {
         public uint ItemId { get; private set; }

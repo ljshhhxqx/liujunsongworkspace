@@ -14,7 +14,11 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow.Children
         
         protected override void BindControllersToModels()
         {
-            _infoDataModel = new InfoDataModel();
+            if (_infoDataModel == null)
+            {
+                _controller = UIFollowManager.Instance.GetController<CollectFollowController>();
+                _infoDataModel = new InfoDataModel();
+            }
             _controller.BindToModel(_infoDataModel);
             _gameEventManager.Subscribe<SceneItemInfoChangedEvent>(OnSceneItemInfoChanged);
         }
