@@ -75,7 +75,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             InteractSystem.EnqueueCommand(request);
         }
         
-        public void Init(AttackInfo info, bool serverHandler, uint id)
+        public void Init(AttackInfo info, bool serverHandler, uint id, bool clientHandler)
         {
             _attackInfo = info;
             NetId = id;
@@ -92,6 +92,10 @@ namespace HotUpdate.Scripts.Collector.Collects
                     attackInterval = _attackInfo.attackCooldown,
                     maxHealth = _attackInfo.health,
                 }));
+            }
+            if (clientHandler)
+            {
+                GameEventManager.Publish(new SceneItemSpawnedEvent(NetId, gameObject, true));
             }
         }
 

@@ -9,9 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1279232231127102581}
-  - component: {fileID: 6351357851236755737}
   - component: {fileID: 70099070637128397}
-  - component: {fileID: -8326122496243417142}
+  - component: {fileID: 435584963391811352}
   m_Layer: 5
   m_Name: PlayerItemController
   m_TagString: Untagged
@@ -43,24 +42,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &6351357851236755737
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 626616096166135443}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8ba5c710026471d8ad5b412381a590e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hp: {fileID: 3228889137156323344}
-  mp: {fileID: 300612491534419985}
-  nameText: {fileID: 1077360367605215989}
-  hpText: {fileID: 5845462146597317016}
-  mpText: {fileID: 3976282052389388126}
-  canvasGroup: {fileID: 70099070637128397}
 --- !u!225 &70099070637128397
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -73,7 +54,7 @@ CanvasGroup:
   m_Interactable: 0
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &-8326122496243417142
+--- !u!114 &435584963391811352
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -82,9 +63,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 626616096166135443}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb219b23cdf4b314f94a27bca3cc8012, type: 3}
+  m_Script: {fileID: 11500000, guid: f8ba5c710026471d8ad5b412381a590e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  worldUIType: 2
+  hp: {fileID: 2468274563970648620}
+  mp: {fileID: 300612491534419985}
+  nameText: {fileID: 1077360367605215989}
+  hpText: {fileID: 5845462146597317016}
+  mpText: {fileID: 3976282052389388126}
+  canvasGroup: {fileID: 70099070637128397}
 --- !u!1 &868928400099057162
 GameObject:
   m_ObjectHideFlags: 0
@@ -820,7 +808,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetSlider: {fileID: 2468274563970648620}
   targetImage: {fileID: 0}
-  showSlider: 0
+  showSlider: 1
   showImage: 0
   duration: 0.2
 --- !u!1 &6269670176049579173
@@ -1060,7 +1048,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetSlider: {fileID: 300612491534419985}
   targetImage: {fileID: 0}
-  showSlider: 0
+  showSlider: 1
   showImage: 0
   duration: 0.2
 --- !u!1 &6975921606148998959

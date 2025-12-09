@@ -6,14 +6,14 @@ using UnityEngine.UI;
 
 namespace HotUpdate.Scripts.UI.UIs.UIFollow.UIController
 {
-    public class CollectFollowController : MonoBehaviour, IUIController
+    public class CollectFollowController : FollowedUIController, IUIController
     {
         [SerializeField] private Slider hp;
         [SerializeField] private TextMeshProUGUI nameText;
         [SerializeField] private TextMeshProUGUI hpText;
         [SerializeField] private CanvasGroup canvasGroup;
         
-        public void BindToModel(IUIDataModel model)
+        public override void BindToModel(IUIDataModel model)
         {
             if (model is InfoDataModel infoDataModel)
             {
@@ -33,7 +33,7 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow.UIController
             Debug.LogError("BindToModel error" + model.GetType());
         }
 
-        public void UnBindFromModel(IUIDataModel model)
+        public override void UnBindFromModel(IUIDataModel model)
         {
             if (model is InfoDataModel infoDataModel)
             {

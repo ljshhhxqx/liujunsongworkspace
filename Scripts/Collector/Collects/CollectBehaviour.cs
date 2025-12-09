@@ -149,6 +149,8 @@ namespace HotUpdate.Scripts.Collector.Collects
                 materialTransparencyController.SetEnabled(true);
                 materialTransparencyController.RestoreOriginalMaterials();
             }
+            
+            GameEventManager.Publish(new SceneItemSpawnedEvent(NetId, gameObject, false));
         }
 
         protected abstract void OnInitialize();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Network.UI;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
 {
@@ -12,13 +13,17 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
         private ItemBase itemPrefab;
         [SerializeField]
         private Transform content;
+        private HorizontalLayoutGroup _horizontalLayoutGroup;
+        private VerticalLayoutGroup _verticalLayoutGroup;
         public Dictionary<int, ItemBase> ItemBases { get; } = new Dictionary<int, ItemBase>();
         public Dictionary<int, IItemBaseData> ItemBaseDatas { get; } = new Dictionary<int, IItemBaseData>();
 
-        private void Start()
+        private void Awake()
         {
             content ??= transform;
             itemPrefab.gameObject.SetActive(false);
+            _horizontalLayoutGroup = content.GetComponent<HorizontalLayoutGroup>();
+            _verticalLayoutGroup = content.GetComponent<VerticalLayoutGroup>();
         }
 
         public T GetItem<T>(int index) where T : ItemBase
@@ -43,6 +48,9 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
                 ItemBaseDatas.Add(key, item);
                 itemPrefab.gameObject.SetActive(false);
                 onSpawn?.Invoke(item, (TItem)itemBase);
+                var localPosition = itemBase.transform.localPosition;
+                localPosition.z = 0;
+                itemBase.transform.localPosition = localPosition;
                 return (TItem)itemBase;
             }
             Debug.LogWarning($"ItemList: AddItem failed, key --{key}-- already exists.");
@@ -104,6 +112,20 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
                     itemBase.SetData(itemData.Value);
                     ItemBases.Add(itemData.Key, itemBase);
                     ItemBaseDatas.Add(itemData.Key, itemData.Value);
+                    var localPosition = itemBase.transform.localPosition;
+                    localPosition.z = 0;
+                    itemBase.transform.localPosition = localPosition;
+                    // if (_horizontalLayoutGroup|| _verticalLayoutGroup)
+                    // {
+                    //     if (!itemBase.TryGetComponent<LayoutElement>(out var layoutElement))
+                    //     {
+                    //         layoutElement = itemBase.gameObject.AddComponent<LayoutElement>();
+                    //     }
+                    //     layoutElement.ignoreLayout = true;
+                    //     var localPosition = itemBase.transform.localPosition;
+                    //     localPosition.z = 0;
+                    //     itemBase.transform.localPosition = localPosition;
+                    // }
                 }
                 itemPrefab.gameObject.SetActive(false);
                 return;

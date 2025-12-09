@@ -415,7 +415,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetSlider: {fileID: 2392542312176298828}
   targetImage: {fileID: 0}
-  showSlider: 0
+  showSlider: 1
   showImage: 0
   duration: 0.2
 --- !u!1 &7006905659389413159
@@ -429,7 +429,6 @@ GameObject:
   - component: {fileID: 1681568506282552205}
   - component: {fileID: 2844208186268036657}
   - component: {fileID: 1675034106223198988}
-  - component: {fileID: 5693961705793042476}
   m_Layer: 5
   m_Name: CollectItemController
   m_TagString: Untagged
@@ -483,22 +482,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e7262edcda248c58598b92d4d5247e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  worldUIType: 1
   hp: {fileID: 2392542312176298828}
   nameText: {fileID: 3210590604244708724}
   hpText: {fileID: 1487621151514675810}
   canvasGroup: {fileID: 2844208186268036657}
---- !u!114 &5693961705793042476
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7006905659389413159}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb219b23cdf4b314f94a27bca3cc8012, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &7737636690865277411
 GameObject:
   m_ObjectHideFlags: 0

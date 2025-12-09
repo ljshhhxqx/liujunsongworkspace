@@ -266,6 +266,20 @@ namespace HotUpdate.Scripts.Tool.GameEvent
         }
     }
 
+    public struct SceneItemSpawnedEvent : IGameEvent
+    {
+        public uint ItemId { get; private set; }
+        public GameObject SpawnedObject { get; private set; }
+        public bool Spawned { get; private set; }
+        
+        public SceneItemSpawnedEvent(uint itemId, GameObject spawnedObject, bool spawned)
+        {
+            ItemId = itemId;
+            SpawnedObject = spawnedObject;
+            Spawned = spawned;
+        }
+    }
+
     public struct FollowTargetTextEvent : IGameEvent
     {
         public Vector3 Position { get; private set; }
@@ -280,11 +294,17 @@ namespace HotUpdate.Scripts.Tool.GameEvent
 
     public struct PlayerSpawnedEvent : IGameEvent
     {
-        public Transform Target { get; private set; }
-
-        public PlayerSpawnedEvent(Transform target)
+        public Transform CameraFollowTarget { get; private set; }
+        public GameObject Target { get; private set; }
+        public uint PlayerId { get; private set; }
+        public bool Spawned { get; private set; }
+        
+        public PlayerSpawnedEvent(Transform cameraFollowTarget, GameObject target, uint playerId, bool spawned)
         {
+            CameraFollowTarget = cameraFollowTarget;
             Target = target;
+            PlayerId = playerId;
+            Spawned = spawned;
         }
     }
 

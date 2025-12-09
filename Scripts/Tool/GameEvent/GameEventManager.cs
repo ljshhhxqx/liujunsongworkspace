@@ -60,7 +60,7 @@ namespace HotUpdate.Scripts.Tool.GameEvent
             Type eventType = typeof(T);
             if (_eventListeners.TryGetValue(eventType, out var listener))
             {
-                Debug.Log($"Publishing event {eventType.Name}");
+               // Debug.Log($"Publishing event {eventType.Name}");
                 listener.Invoke(gameEvent);
             }
         }

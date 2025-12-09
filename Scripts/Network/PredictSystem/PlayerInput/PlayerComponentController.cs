@@ -34,8 +34,6 @@ using HotUpdate.Scripts.UI.UIs.Overlay;
 using HotUpdate.Scripts.UI.UIs.Panel;
 using HotUpdate.Scripts.UI.UIs.Panel.Backpack;
 using HotUpdate.Scripts.UI.UIs.Popup;
-using HotUpdate.Scripts.UI.UIs.UIFollow;
-using HotUpdate.Scripts.UI.UIs.UIFollow.Children;
 using MemoryPack;
 using Mirror;
 using UI.UIBase;
@@ -267,16 +265,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _gameEventManager.Subscribe<TargetShowEvent>(OnTargetShow);
             if (LocalPlayerHandler)
             {
-                if (!_playerHpFollowUI)
-                {
-                    if (!TryGetComponent(out _playerHpFollowUI))
-                    {
-                        _playerHpFollowUI = gameObject.AddComponent<PlayerHpFollowUI>();
-                    }
-                    var config = new UIFollowConfig();
-                    config.uiPrefabName = FollowUIType.PlayerItem;
-                    _playerHpFollowUI.Init(config);
-                }
+                _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter, gameObject, netId, true));
             }
         }
 
@@ -341,8 +330,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     break;
             }
         }
-
-        private PlayerHpFollowUI _playerHpFollowUI;
 
         protected override void InjectLocalPlayerCallback()
         {
@@ -899,7 +886,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerStateCalculators.Add(_playerEquipmentCalculator);
             _playerStateCalculators.Add(_playerShopCalculator);
             _playerStateCalculators.Add(_playerSkillCalculator);
-            _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter));
             var shopConstant = PlayerShopCalculator.Constant;
             shopConstant.IsServer = isServer;
             shopConstant.IsClient = isClient;
@@ -950,6 +936,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void OnDestroy()
         {
+            _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter, gameObject, netId, true));
             GameObjectContainer.Instance.RemoveDynamicObject(netId);
             _disposables?.Clear();
             _propertyPredictionState.OnPropertyChanged -= HandlePropertyChange;

@@ -1,12 +1,14 @@
-﻿using HotUpdate.Scripts.UI.UIs.UIFollow.DataModel;
+﻿using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.UI.UIs.UIFollow.DataModel;
 using TMPro;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
 namespace HotUpdate.Scripts.UI.UIs.UIFollow.UIController
 {
-    public class PlayerHpFollowController: MonoBehaviour, IUIController
+    public class PlayerHpFollowController: FollowedUIController, IUIController
     {
         [SerializeField] private Slider hp;
         [SerializeField] private Slider mp;
@@ -14,8 +16,8 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow.UIController
         [SerializeField] private TextMeshProUGUI hpText;
         [SerializeField] private TextMeshProUGUI mpText;
         [SerializeField] private CanvasGroup canvasGroup;
-        
-        public void BindToModel(IUIDataModel model)
+
+        public override void BindToModel(IUIDataModel model)
         {
             if (model is InfoDataModel infoDataModel)
             {
@@ -47,7 +49,7 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow.UIController
             Debug.LogError("PlayerHpFollowController BindToModel not implemented" + model.ToString());
         }
 
-        public void UnBindFromModel(IUIDataModel model)
+        public override void UnBindFromModel(IUIDataModel model)
         {
             if (model is InfoDataModel infoDataModel)
             {

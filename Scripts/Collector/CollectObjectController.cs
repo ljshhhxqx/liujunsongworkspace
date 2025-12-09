@@ -10,8 +10,6 @@ using HotUpdate.Scripts.Effect;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
-using HotUpdate.Scripts.UI.UIs.UIFollow;
-using HotUpdate.Scripts.UI.UIs.UIFollow.Children;
 using Mirror;
 using UniRx;
 using UnityEngine;
@@ -44,7 +42,6 @@ namespace HotUpdate.Scripts.Collector
         private CollectObjectDataConfig _collectObjectDataConfig;
         private IDisposable _disposable;
         protected ItemsSpawnerManager SpawnerManager;
-        protected CollectFollowUI _collectFollowUI;
         protected IColliderConfig ColliderConfig;
         protected HashSet<DynamicObjectData> CachedDynamicObjectData = new HashSet<DynamicObjectData>();
         
@@ -70,18 +67,8 @@ namespace HotUpdate.Scripts.Collector
             ColliderConfig = GamePhysicsSystem.CreateColliderConfig(collectCollider.GetComponent<Collider>());
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, ColliderConfig, ObjectType.Collectable, gameObject.layer, gameObject.tag);
             _collectAnimationComponent?.Play();
-            if (ClientHandler && gameObject.activeSelf)
+            if (ClientHandler)
             {
-                if (!_collectFollowUI)
-                {
-                    if (!TryGetComponent(out _collectFollowUI))
-                    {
-                        _collectFollowUI = gameObject.AddComponent<CollectFollowUI>();
-                    }
-                    var config = new UIFollowConfig();
-                    config.uiPrefabName = FollowUIType.CollectItem;
-                    _collectFollowUI.Init(config);
-                }
                 ChangeBehaviour();
             }
         }
@@ -94,7 +81,7 @@ namespace HotUpdate.Scripts.Collector
                 ObjectInjectProvider.Instance.Inject(attackCollectItem);
             }
             attackCollectItem.enabled = true;
-            attackCollectItem.Init(attackInfo, ServerHandler, netId);
+            attackCollectItem.Init(attackInfo, ServerHandler, netId, ClientHandler);
         }
         
         private void InitMoveItem(MoveInfo moveInfo)

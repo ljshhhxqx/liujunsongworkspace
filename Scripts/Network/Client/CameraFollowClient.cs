@@ -51,7 +51,7 @@ namespace HotUpdate.Scripts.Network.Client
                 return;
             }
 
-            _target = playerSpawnedEvent.Target;
+            _target = playerSpawnedEvent.CameraFollowTarget;
             _offset = _jsonDataConfig.PlayerConfig.Offset;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;

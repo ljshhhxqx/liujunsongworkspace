@@ -4,7 +4,6 @@ using Game.Map;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
-using HotUpdate.Scripts.UI.UIs.UIFollow;
 using Sirenix.OdinInspector;
 using UI.UIBase;
 using UnityEngine;
@@ -41,7 +40,6 @@ namespace HotUpdate.Scripts.Game.Map
             gameEventManager.Publish(new GameSceneResourcesLoadedEvent(_mapName));
             uiManager.InitMapSprites(_commonMapName);
             uiManager.InitMapUIs(_commonMapName);
-            UIFollowManager.Instance.InitPrefabs(_commonMapName);
             _mapName ??= gameObject.scene.name;
             uiManager.CloseUI(UIType.Loading);
             Debug.Log("game map init complete!!!!!!!!!!");
