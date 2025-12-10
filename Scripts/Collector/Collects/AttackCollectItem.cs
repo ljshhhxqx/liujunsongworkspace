@@ -75,7 +75,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             InteractSystem.EnqueueCommand(request);
         }
         
-        public void Init(AttackInfo info, bool serverHandler, uint id, bool clientHandler)
+        public void Init(AttackInfo info, bool serverHandler, uint id, bool clientHandler, Transform player)
         {
             _attackInfo = info;
             NetId = id;
@@ -95,7 +95,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             }
             if (clientHandler)
             {
-                GameEventManager.Publish(new SceneItemSpawnedEvent(NetId, gameObject, true));
+                GameEventManager.Publish(new SceneItemSpawnedEvent(NetId, gameObject, true, player));
             }
         }
 

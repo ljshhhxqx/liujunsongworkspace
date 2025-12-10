@@ -14,6 +14,7 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
         private GameEventManager _gameEventManager;
         private Camera _mainCamera;
         private Canvas _uiCanvas;
+        private GameObject _uiFollowParent;
         private Dictionary<WorldUIType, GameObject> _prefabs = new Dictionary<WorldUIType, GameObject>();
         private Dictionary<WorldUIType, Dictionary<uint, IUIDataModel>> _dataModels = new Dictionary<WorldUIType, Dictionary<uint, IUIDataModel>>();
         
@@ -40,6 +41,8 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
             {
                 dataModel.Dispose();
                 _dataModels[WorldUIType.PlayerItem].Remove(playerSpawnedEvent.PlayerId);
+                _followedUIControllers.Remove(playerSpawnedEvent.PlayerId);
+                GameObjectPoolManger.Instance.ReturnObject(_followedUIControllers[playerSpawnedEvent.PlayerId].gameObject);
                 return;
             }
 
@@ -52,8 +55,9 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
             _dataModels[WorldUIType.PlayerItem] = dataModels;
             var go = GameObjectPoolManger.Instance.GetObject(prefab, parent: transform);
             var controller = go.GetComponent<FollowedUIController>();
-            controller.InitFollowedInstance(go, playerSpawnedEvent.PlayerId, _uiCanvas, MainCamera);
+            controller.InitFollowedInstance(playerSpawnedEvent.Target, playerSpawnedEvent.PlayerId, playerSpawnedEvent.Target.transform, MainCamera);
             controller.BindToModel(dataModel);
+            _followedUIControllers.Add(playerSpawnedEvent.PlayerId, controller);
         }
         
         private IUIDataModel GetDataModel(WorldUIType uiType, uint id, out Dictionary<uint, IUIDataModel> dataModels)
@@ -85,8 +89,10 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
 
             if (!sceneItemSpawnedEvent.Spawned)
             {
+                GameObjectPoolManger.Instance.ReturnObject(_followedUIControllers[sceneItemSpawnedEvent.ItemId].gameObject);
                 dataModel.Dispose();
                 _dataModels[WorldUIType.CollectItem].Remove(sceneItemSpawnedEvent.ItemId);
+                _followedUIControllers.Remove(sceneItemSpawnedEvent.ItemId);
                 return;
             }
 
@@ -99,8 +105,9 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
             _dataModels[WorldUIType.CollectItem] = dataModels;
             var go = GameObjectPoolManger.Instance.GetObject(prefab, parent: transform);
             var controller = go.GetComponent<FollowedUIController>();
-            controller.InitFollowedInstance(go, sceneItemSpawnedEvent.ItemId, _uiCanvas, MainCamera);
+            controller.InitFollowedInstance(sceneItemSpawnedEvent.SpawnedObject, sceneItemSpawnedEvent.ItemId, sceneItemSpawnedEvent.Player, MainCamera);
             controller.BindToModel(dataModel);
+            _followedUIControllers.Add(sceneItemSpawnedEvent.ItemId, controller);
         }
 
         private void OnPlayerInfoChanged(PlayerInfoChangedEvent playerInfoChangedEvent)
@@ -147,6 +154,11 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
                 if (resource.TryGetComponent<FollowedUIController>(out var followedUIController))
                 {
                     _prefabs.TryAdd(followedUIController.worldUIType, resource);
+                }
+
+                if (resource.CompareTag("UIFollowParent"))
+                {
+                    _uiFollowParent = resource;
                 }
             }
         }

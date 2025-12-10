@@ -52,6 +52,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             _followTargetParams.ScreenBorderOffset = gameConfig.screenBorderOffset;
             _followTargetParams.IndicatorUI = indicatorUI;
             _followTargetParams.DistanceText = distanceText;
+            _followTargetParams.ShowBehindIndicator = true;
             _followTextParams ??= new FollowTargetParams();
             _followTextParams.MainCamera = _mainCamera;
             _followTextParams.CanvasRect = _canvasRect;

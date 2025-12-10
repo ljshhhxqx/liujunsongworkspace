@@ -271,12 +271,14 @@ namespace HotUpdate.Scripts.Tool.GameEvent
         public uint ItemId { get; private set; }
         public GameObject SpawnedObject { get; private set; }
         public bool Spawned { get; private set; }
+        public Transform Player { get; private set; }
         
-        public SceneItemSpawnedEvent(uint itemId, GameObject spawnedObject, bool spawned)
+        public SceneItemSpawnedEvent(uint itemId, GameObject spawnedObject, bool spawned, Transform player)
         {
             ItemId = itemId;
             SpawnedObject = spawnedObject;
             Spawned = spawned;
+            Player = player;
         }
     }
 

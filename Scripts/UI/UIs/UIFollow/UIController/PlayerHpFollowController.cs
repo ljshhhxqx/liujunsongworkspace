@@ -1,4 +1,5 @@
-﻿using HotUpdate.Scripts.Tool.GameEvent;
+﻿using DG.Tweening;
+using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIs.UIFollow.DataModel;
 using TMPro;
 using UniRx;
@@ -16,33 +17,51 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow.UIController
         [SerializeField] private TextMeshProUGUI hpText;
         [SerializeField] private TextMeshProUGUI mpText;
         [SerializeField] private CanvasGroup canvasGroup;
+        private Sequence _tween;
+
+        private void DoTween()
+        {
+            canvasGroup.alpha = 1;
+            _tween?.Kill();
+            _tween = DOTween.Sequence();
+            _tween.AppendInterval(1.5F);
+            _tween.Append(canvasGroup.DOFade(0, 0.5f));
+        }
 
         public override void BindToModel(IUIDataModel model)
         {
             if (model is InfoDataModel infoDataModel)
             {
-                infoDataModel.Name.Subscribe(n => nameText.text = n).AddTo(this);
+                infoDataModel.Name.Subscribe(n =>
+                {
+                    nameText.text = n;
+                    DoTween();
+                }).AddTo(this);
                 
                 infoDataModel.Health.Subscribe(h =>
                 {
                     hpText.text = $"{h}/{infoDataModel.MaxHealth.Value}";
                     hp.value = h / infoDataModel.MaxHealth.Value;
+                    DoTween();
                 }).AddTo(this);
                 infoDataModel.MaxHealth.Subscribe(m =>
                 {
                     hpText.text = $"{infoDataModel.Health.Value}/{m}";
-                    hp.maxValue = m;
+                    hp.value = infoDataModel.Health.Value / m;
+                    DoTween();
                 }).AddTo(this);
                 
                 infoDataModel.Mana.Subscribe(m =>
                 {
                     mpText.text = $"{m}/{infoDataModel.MaxMana.Value}";
                     mp.value = m / infoDataModel.MaxMana.Value;
+                    DoTween();
                 }).AddTo(this);
                 infoDataModel.MaxMana.Subscribe(m =>
                 {
                     mpText.text = $"{infoDataModel.Mana.Value}/{m}";
-                    mp.maxValue = m;
+                    mp.value = infoDataModel.Mana.Value / m;
+                    DoTween();
                 }).AddTo(this);
                 return;
             }

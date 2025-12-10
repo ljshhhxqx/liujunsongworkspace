@@ -10,6 +10,7 @@ using HotUpdate.Scripts.Effect;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
 using UniRx;
 using UnityEngine;
@@ -36,6 +37,7 @@ namespace HotUpdate.Scripts.Collector
         public override Collider Collider => _collider;
         public CollectObjectData CollectObjectData { get; private set; }
         public BuffExtraData BuffData => _buffData;
+        protected Transform PlayerTransform;
 
         private MirrorNetworkMessageHandler _mirrorNetworkMessageHandler;
         private Collider _collider;
@@ -69,6 +71,7 @@ namespace HotUpdate.Scripts.Collector
             _collectAnimationComponent?.Play();
             if (ClientHandler)
             {
+                PlayerTransform ??= PlayerInGameManager.Instance.LocalPlayerTransform;
                 ChangeBehaviour();
             }
         }
@@ -81,7 +84,7 @@ namespace HotUpdate.Scripts.Collector
                 ObjectInjectProvider.Instance.Inject(attackCollectItem);
             }
             attackCollectItem.enabled = true;
-            attackCollectItem.Init(attackInfo, ServerHandler, netId, ClientHandler);
+            attackCollectItem.Init(attackInfo, ServerHandler, netId, ClientHandler, PlayerTransform);
         }
         
         private void InitMoveItem(MoveInfo moveInfo)

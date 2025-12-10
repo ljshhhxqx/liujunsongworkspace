@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using HotUpdate.Scripts.UI.UIBase;
+using AOTScripts;
+using UI.UIBase;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
 
-namespace UI.UIBase
+namespace HotUpdate.Scripts.UI.UIBase
 {
     [RequireComponent(typeof(Image))]
-    public class BlockUIComponent : MonoBehaviour
+    public class BlockUIComponent : MonoBehaviour, IBlockablePopup
     {
         private UIType _uIType;
         private UICanvasType _uiCanvasType;
@@ -86,6 +87,16 @@ namespace UI.UIBase
             if (_uIType != UIType.None) return;
             _uIType = uiType;
             _uiCanvasType = uiCanvasType;
+        }
+
+        public void Block()
+        {
+            _blockImage.raycastTarget = true;
+        }
+
+        public void Unblock()
+        {
+            _blockImage.raycastTarget = false;
         }
     }
 }

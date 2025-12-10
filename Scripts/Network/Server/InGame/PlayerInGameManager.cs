@@ -53,6 +53,31 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         [SyncVar(hook = nameof(OnIsGameStartedChanged))]
         public bool isGameStarted;
         private int _localPlayerId;
+        private uint _localPlayerNetId;
+
+        public uint LocalPlayerNetId
+        {
+            get
+            {
+                if (_localPlayerNetId == 0)
+                {
+                    _localPlayerNetId = NetworkClient.localPlayer.netId;
+                }
+                return _localPlayerNetId;
+            }
+        }
+
+        public Transform LocalPlayerTransform
+        {
+            get
+            {
+                if (!NetworkClient.localPlayer)
+                {
+                    return null;
+                }
+                return NetworkClient.localPlayer.transform;
+            }
+        }
 
         public int LocalPlayerId
         {

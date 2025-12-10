@@ -2145,6 +2145,16 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
+            "Name": "Follower",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/WorldUIPrefab/Follower.prefab"
+        },
+        {
+            "UID": 4700034,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "PlayerItemController",
             "IsPermanent": false,
             "IsPreload": false,

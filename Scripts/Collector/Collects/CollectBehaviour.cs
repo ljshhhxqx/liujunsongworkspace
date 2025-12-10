@@ -150,7 +150,7 @@ namespace HotUpdate.Scripts.Collector.Collects
                 materialTransparencyController.RestoreOriginalMaterials();
             }
             
-            GameEventManager.Publish(new SceneItemSpawnedEvent(NetId, gameObject, false));
+            GameEventManager.Publish(new SceneItemSpawnedEvent(NetId, gameObject, false, null));
         }
 
         protected abstract void OnInitialize();

@@ -1,34 +1,43 @@
-﻿using UnityEngine;
+﻿using AOTScripts.Tool;
+using UnityEngine;
 
 namespace HotUpdate.Scripts.UI.UIs.WorldUI
 {
     public class UIFollower : MonoBehaviour
     {
         private GameObject _target;
-        private Camera _worldCamera;
-        private Canvas _canvas;
+        private Camera _worldCamera; // 场景主摄像机（World -> Screen）
         private RectTransform _rectTransform;
         private RectTransform _parentRectTransform;
+        private FollowTargetParams _followTargetParams;
+        private Transform _playerTransform;
 
-        public void Initialize(GameObject target, Camera worldCamera, Canvas canvas)
+        public void Initialize(GameObject target, Camera worldCamera, Transform playerTransform)
         {
             _rectTransform = GetComponent<RectTransform>();
-            _parentRectTransform = (RectTransform)transform.parent;
             _target = target;
             _worldCamera = worldCamera;
-            _canvas = canvas;
+            _parentRectTransform = transform.parent.GetComponent<RectTransform>();
+            _followTargetParams = new FollowTargetParams();
+            _followTargetParams.IndicatorUI = _rectTransform;
+            _followTargetParams.CanvasRect = _parentRectTransform;
+            _followTargetParams.MainCamera = _worldCamera;
+            _followTargetParams.ShowBehindIndicator = false;
+            _followTargetParams.ScreenBorderOffset = 1f;
+            _playerTransform = playerTransform;
         }
 
         private void LateUpdate()
         {
-            if (!_target.activeSelf)
+            if (!_target || !_target.activeSelf)
             {
-                return;
-            }
-            var vp = _worldCamera.WorldToViewportPoint(_target.transform.position);
-            var sp = _canvas.worldCamera.ViewportToScreenPoint(vp);
-            RectTransformUtility.ScreenPointToWorldPointInRectangle(_parentRectTransform, sp, _canvas.worldCamera, out var worldPoint);
-            _rectTransform.position = worldPoint;
+                return; 
+                
+            } 
+            _followTargetParams.Target = _target.transform.position; 
+            _followTargetParams.Player = _playerTransform.position;
+            GameStaticExtensions.FollowTarget(_followTargetParams);
         }
+
     }
 }

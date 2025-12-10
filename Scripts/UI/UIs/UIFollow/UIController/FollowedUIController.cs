@@ -25,9 +25,9 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow.UIController
             }
         }
 
-        public virtual void InitFollowedInstance(GameObject go, uint sceneId, Canvas uiCanvas, Camera uiCamera)
+        public virtual void InitFollowedInstance(GameObject go, uint sceneId, Transform playerTransform, Camera uiCamera)
         {
-            UIFollower?.Initialize(go, uiCamera, uiCanvas);
+            UIFollower?.Initialize(go, uiCamera, playerTransform);
             SceneId = sceneId;
         }
     }
