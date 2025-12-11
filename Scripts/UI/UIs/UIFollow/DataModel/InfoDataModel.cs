@@ -4,10 +4,10 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow.DataModel
 {
     public class InfoDataModel : IUIDataModel
     {
-        public HReactiveProperty<float> Health { get; } = new HReactiveProperty<float>();
-        public HReactiveProperty<float> MaxHealth { get; } = new HReactiveProperty<float>();
-        public HReactiveProperty<float> Mana { get; } = new HReactiveProperty<float>();
-        public HReactiveProperty<float> MaxMana { get; } = new HReactiveProperty<float>();
+        public HReactiveProperty<int> Health { get; } = new HReactiveProperty<int>();
+        public HReactiveProperty<int> MaxHealth { get; } = new HReactiveProperty<int>();
+        public HReactiveProperty<int> Mana { get; } = new HReactiveProperty<int>();
+        public HReactiveProperty<int> MaxMana { get; } = new HReactiveProperty<int>();
         public HReactiveProperty<string> Name { get; } = new HReactiveProperty<string>();
         public HReactiveProperty<int> Level { get; } = new HReactiveProperty<int>();
         

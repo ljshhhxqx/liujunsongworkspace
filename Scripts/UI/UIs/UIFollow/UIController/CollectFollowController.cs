@@ -46,8 +46,8 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow.UIController
             canvasGroup.alpha = 1;
             _tween?.Kill();
             _tween = DOTween.Sequence();
-            _tween.AppendInterval(1.5F);
-            _tween.Append(canvasGroup.DOFade(0, 0.5f));
+            _tween.AppendInterval(2F);
+            _tween.Append(canvasGroup.DOFade(0, 1));
         }
 
         public override void UnBindFromModel(IUIDataModel model)

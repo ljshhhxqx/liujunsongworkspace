@@ -421,7 +421,27 @@
             "Address": "/Map/Mat/Corks.mat"
         },
         {
+            "UID": 1300001,
+            "ResourceType": "UnityEngine.Material",
+            "AssetType": 9,
+            "Extension": ".mat",
+            "Name": "Disintegration",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Mat/Disintegration.mat"
+        },
+        {
             "UID": 1400000,
+            "ResourceType": "UnityEngine.Shader",
+            "AssetType": 11,
+            "Extension": ".shader",
+            "Name": "DisintegrationShader",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Mat/DisintegrationShader.shader"
+        },
+        {
+            "UID": 1400001,
             "ResourceType": "UnityEngine.Shader",
             "AssetType": 11,
             "Extension": ".shader",

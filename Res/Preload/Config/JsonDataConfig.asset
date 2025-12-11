@@ -47,13 +47,13 @@ MonoBehaviour:
       gridSize: 10
       onceSpawnCount: 40
       onceSpawnWeight: 100
-      spawnAttackRatio: 0.4
-      spawnMoveRatio: 0.4
-      spawnHiddenRatio: 0.2
-      spawnAttackMoveRatio: 0.15
-      spawnAttackHiddenRatio: 0.15
-      spawnMoveHiddenRatio: 0.15
-      spawnAttackMoveHiddenRatio: 0.05
+      spawnAttackRatio: 0.15
+      spawnMoveRatio: 0.15
+      spawnHiddenRatio: 0.1
+      spawnAttackMoveRatio: 0.05
+      spawnAttackHiddenRatio: 0.05
+      spawnMoveHiddenRatio: 0.05
+      spawnAttackMoveHiddenRatio: 0.02
       healthRange:
         isPercent: 0
         min: 10

@@ -248,28 +248,25 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 {
                     var propertyValue = playerPredictablePropertyState.MemoryProperty[property];
                     OnPropertyChange?.Invoke(connectionId, propertyValue.PropertyType, propertyValue.CurrentValue);
-                    if (property == PropertyTypeEnum.AttackSpeed)
+                    switch (property)
                     {
-                        playerController.RpcSetAnimatorSpeed(AnimationState.Attack, propertyValue.CurrentValue);
-                    }
-                    else if (property == PropertyTypeEnum.Alpha)
-                    {
-                        playerController.RpcSetPlayerAlpha(propertyValue.CurrentValue);
-                        
-                    }
-                    else if (property == PropertyTypeEnum.View)
-                    {
-                        //playerController.RpcPlayEffect();
-                    }
-                    else if (property == PropertyTypeEnum.Health)
-                    {
-                        health = propertyValue.CurrentValue;
-                        maxHealth = propertyValue.MaxCurrentValue;
-                    }
-                    else if (property == PropertyTypeEnum.Strength)
-                    {
-                        mana = propertyValue.CurrentValue;
-                        maxMana = propertyValue.MaxCurrentValue;
+                        case PropertyTypeEnum.Health:
+                            health = propertyValue.CurrentValue;
+                            maxHealth = propertyValue.MaxCurrentValue;
+                            break;
+                        case PropertyTypeEnum.Strength:
+                            mana = propertyValue.CurrentValue;
+                            maxMana = propertyValue.MaxCurrentValue;
+                            break;
+                        case PropertyTypeEnum.AttackSpeed:
+                            playerController.RpcSetAnimatorSpeed(AnimationState.Attack, propertyValue.CurrentValue);
+                            break;
+                        case PropertyTypeEnum.Alpha:
+                            playerController.RpcSetPlayerAlpha(propertyValue.CurrentValue);
+                            break;
+                        case PropertyTypeEnum.View:
+                            //playerController.RpcPlayEffect();
+                            break;
                     }
                 }
                 playerController.RpcSetPlayerInfo(health, mana, maxHealth, maxMana, playerController.netId, playerName);

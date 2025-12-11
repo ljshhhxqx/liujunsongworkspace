@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using HotUpdate.Scripts.Collector.Effect;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Tool.GameEvent;
@@ -11,8 +12,10 @@ namespace HotUpdate.Scripts.Collector.Collects
     {
         [SyncVar]
         private AttackInfo _attackInfo;
+        private CollectEffectController _collectEffectController;
         private float _lastAttackTime;
         private readonly HashSet<DynamicObjectData> _collectedObjects = new HashSet<DynamicObjectData>();
+        private AttackMainEffect _attackMainEffect;
 
         private void FixedUpdate()
         {
@@ -95,7 +98,13 @@ namespace HotUpdate.Scripts.Collector.Collects
             }
             if (clientHandler)
             {
+                _attackMainEffect ??= GetComponentInChildren<AttackMainEffect>();
                 GameEventManager.Publish(new SceneItemSpawnedEvent(NetId, gameObject, true, player));
+                if (!TryGetComponent<CollectEffectController>(out _collectEffectController))
+                {
+                    _collectEffectController = _attackMainEffect.gameObject.AddComponent<CollectEffectController>();
+                }
+                _collectEffectController.SetAttackParameters(_attackInfo.damage, _attackInfo.attackCooldown);
             }
         }
 

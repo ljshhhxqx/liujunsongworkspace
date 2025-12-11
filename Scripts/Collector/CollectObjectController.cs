@@ -121,7 +121,6 @@ namespace HotUpdate.Scripts.Collector
         {
             if (_collectObjectType == CollectObjectType.None)
             {
-                Debug.LogError("CollectObjectController::ChangeBehaviour call with CollectObjectType.None");
                 return;
             }
             Debug.Log($"CollectObjectController::ChangeBehaviour call" + _collectObjectType);

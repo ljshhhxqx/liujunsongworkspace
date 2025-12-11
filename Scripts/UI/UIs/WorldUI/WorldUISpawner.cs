@@ -121,11 +121,11 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
 
             if (dataModel is InfoDataModel infoDataModel)
             {
-                infoDataModel.Health.Value = playerInfoChangedEvent.Health;
-                infoDataModel.MaxHealth.Value = playerInfoChangedEvent.MaxHealth;
-                infoDataModel.Mana.Value = playerInfoChangedEvent.Mana;
-                infoDataModel.MaxMana.Value = playerInfoChangedEvent.MaxMana;
-                infoDataModel.Name.Value = playerInfoChangedEvent.PlayerName;
+                infoDataModel.Health.Value = (int)playerInfoChangedEvent.Health;
+                infoDataModel.MaxHealth.Value = (int)playerInfoChangedEvent.MaxHealth;
+                infoDataModel.Mana.Value = (int)playerInfoChangedEvent.Mana;
+                infoDataModel.MaxMana.Value = (int)playerInfoChangedEvent.MaxMana;
+                infoDataModel.Name.Value ??= playerInfoChangedEvent.PlayerName;
             }
         }
 
@@ -140,8 +140,8 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
 
             if (dataModel is InfoDataModel infoDataModel)
             {
-                infoDataModel.Health.Value = sceneItemInfoChangedEvent.SceneItemInfo.health;
-                infoDataModel.MaxHealth.Value = sceneItemInfoChangedEvent.SceneItemInfo.maxHealth;
+                infoDataModel.Health.Value = (int)sceneItemInfoChangedEvent.SceneItemInfo.health;
+                infoDataModel.MaxHealth.Value = (int)sceneItemInfoChangedEvent.SceneItemInfo.maxHealth;
                 infoDataModel.Name.Value ??= $"{WorldUIType.CollectItem.ToString()}/{sceneItemInfoChangedEvent.ItemId}";
             }
         }

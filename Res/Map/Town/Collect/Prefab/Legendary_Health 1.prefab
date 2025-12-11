@@ -56,12 +56,10 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  mapType: 0
   collectId: 0
   quality: 3
   collectConfigId: 14
   fillRenderer: {fileID: 23753439705546060}
-  BehaviourType: 0
 --- !u!114 &7727184122250189628
 MonoBehaviour:
   m_ObjectHideFlags: 0
