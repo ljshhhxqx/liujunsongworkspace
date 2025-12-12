@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using AOTScripts.Tool;
 using HotUpdate.Scripts.Collector.Effect;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
@@ -78,7 +80,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             InteractSystem.EnqueueCommand(request);
         }
         
-        public void Init(AttackInfo info, bool serverHandler, uint id, bool clientHandler, Transform player)
+        public void Init(AttackInfo info, bool serverHandler, uint id, bool clientHandler, Transform player, AttackConfig config)
         {
             _attackInfo = info;
             NetId = id;
@@ -104,7 +106,9 @@ namespace HotUpdate.Scripts.Collector.Collects
                 {
                     _collectEffectController = _attackMainEffect.gameObject.AddComponent<CollectEffectController>();
                 }
-                _collectEffectController.SetAttackParameters(_attackInfo.damage, _attackInfo.attackCooldown);
+                _collectEffectController.Initialize();
+                _collectEffectController.SetMinMaxAttackParameters(config.MinAttackPower, config.MaxAttackPower, config.MinAttackInterval, config.MaxAttackInterval);
+                _collectEffectController.SetAttackParameters(GameStaticExtensions.GetAttackExpectancy(_attackInfo.damage, _attackInfo.criticalRate, _attackInfo.criticalDamage),  _attackInfo.attackCooldown);
             }
         }
 
@@ -122,6 +126,40 @@ namespace HotUpdate.Scripts.Collector.Collects
             _lastAttackTime = 0;
             _attackInfo = default;
             _collectedObjects.Clear();
+            GameEventManager.Publish(new SceneItemSpawnedEvent(NetId, gameObject, false, null));
+        }
+    }
+
+    public struct AttackConfig : IEquatable<AttackConfig>
+    {
+        public float MaxAttackPower;
+        public float MinAttackPower;
+        public float MaxAttackInterval;
+        public float MinAttackInterval;
+
+        public bool Equals(AttackConfig other)
+        {
+            return MaxAttackPower.Equals(other.MaxAttackPower) && MinAttackPower.Equals(other.MinAttackPower) && MaxAttackInterval.Equals(other.MaxAttackInterval) && MinAttackInterval.Equals(other.MinAttackInterval);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is AttackConfig other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(MaxAttackPower, MinAttackPower, MaxAttackInterval, MinAttackInterval);
+        }
+
+        public static bool operator ==(AttackConfig left, AttackConfig right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(AttackConfig left, AttackConfig right)
+        {
+            return !left.Equals(right);
         }
     }
 }

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4336748824580364}
   - component: {fileID: 33800315709682508}
   - component: {fileID: 23427727207255438}
+  - component: {fileID: 4623079973990857230}
   m_Layer: 10
   m_Name: SilverCoin
   m_TagString: Untagged
@@ -83,6 +84,18 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &4623079973990857230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1564703782647594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c43cdd3e9a9481f91838ab2eb7dd191, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1708572530373918
 GameObject:
   m_ObjectHideFlags: 0
@@ -166,7 +179,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  mapType: 0
   collectId: 0
   quality: 1
   collectConfigId: 1

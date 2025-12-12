@@ -137,12 +137,7 @@ namespace HotUpdate.Scripts.Game.Map
 
         public void AddDynamicObject(uint netId, Vector3 position, IColliderConfig colliderConfig, ObjectType type, int layer, string tag)
         {
-            if (netId == 0)
-            {
-                return;
-            }
-
-            if (_dynamicObjectIds.ContainsKey(netId))
+            if (netId == 0 || _dynamicObjectIds.ContainsKey(netId))
             {
                 return;
             }

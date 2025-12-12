@@ -78,6 +78,7 @@ GameObject:
   - component: {fileID: 673436840203450752}
   - component: {fileID: 3367690269665004874}
   - component: {fileID: 6635798248674193094}
+  - component: {fileID: 8865806653543488869}
   m_Layer: 0
   m_Name: Score1
   m_TagString: Untagged
@@ -164,6 +165,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetAlpha: 1
   transitionDuration: 0.5
+--- !u!114 &8865806653543488869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3872123733443587231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c43cdd3e9a9481f91838ab2eb7dd191, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7663935228497233084
 GameObject:
   m_ObjectHideFlags: 0
@@ -247,12 +260,10 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  mapType: 0
   collectId: 0
   quality: 1
   collectConfigId: 16
   fillRenderer: {fileID: 0}
-  BehaviourType: 0
 --- !u!114 &1512672863881429098
 MonoBehaviour:
   m_ObjectHideFlags: 0

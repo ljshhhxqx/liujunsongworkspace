@@ -108,6 +108,7 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
             controller.InitFollowedInstance(sceneItemSpawnedEvent.SpawnedObject, sceneItemSpawnedEvent.ItemId, sceneItemSpawnedEvent.Player, MainCamera);
             controller.BindToModel(dataModel);
             _followedUIControllers.Add(sceneItemSpawnedEvent.ItemId, controller);
+            Debug.Log($"Spawned {sceneItemSpawnedEvent.SpawnedObject.name} with id {sceneItemSpawnedEvent.ItemId}");
         }
 
         private void OnPlayerInfoChanged(PlayerInfoChangedEvent playerInfoChangedEvent)

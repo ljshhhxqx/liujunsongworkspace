@@ -56,12 +56,10 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  mapType: 0
   collectId: 0
   quality: 3
   collectConfigId: 15
   fillRenderer: {fileID: 23753439705546060}
-  BehaviourType: 0
 --- !u!114 &7727184122250189628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -365,6 +363,7 @@ GameObject:
   - component: {fileID: 33304492332863124}
   - component: {fileID: 23753439705546060}
   - component: {fileID: 8148598712204992921}
+  - component: {fileID: 9185034307462534279}
   m_Layer: 10
   m_Name: Fill
   m_TagString: Untagged
@@ -451,6 +450,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetAlpha: 1
   transitionDuration: 0.5
+--- !u!114 &9185034307462534279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1712395895031752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c43cdd3e9a9481f91838ab2eb7dd191, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1904886460746576
 GameObject:
   m_ObjectHideFlags: 0

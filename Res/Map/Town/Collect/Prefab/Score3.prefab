@@ -83,12 +83,10 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  mapType: 0
   collectId: 0
   quality: 3
   collectConfigId: 18
   fillRenderer: {fileID: 0}
-  BehaviourType: 0
 --- !u!114 &8536711420218250496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -284,6 +282,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7535266119704928820, guid: f4d621ea820f55141a21865558bf86ca, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4558303845303697400}
+    - targetCorrespondingSourceObject: {fileID: 7535266119704928820, guid: f4d621ea820f55141a21865558bf86ca, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8410088681402913812}
   m_SourcePrefab: {fileID: 100100000, guid: f4d621ea820f55141a21865558bf86ca, type: 3}
 --- !u!1 &3747996787779067092 stripped
 GameObject:
@@ -304,6 +305,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetAlpha: 1
   transitionDuration: 0.5
+--- !u!114 &8410088681402913812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3747996787779067092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c43cdd3e9a9481f91838ab2eb7dd191, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &4559999712380323438 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7194909630747392142, guid: f4d621ea820f55141a21865558bf86ca, type: 3}

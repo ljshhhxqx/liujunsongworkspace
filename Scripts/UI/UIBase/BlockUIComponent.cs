@@ -28,7 +28,7 @@ namespace HotUpdate.Scripts.UI.UIBase
             _blockImage ??= GetComponent<Image>();
             var childGraphicsArray = GetComponentsInChildren<Graphic>();
             _childGraphicRectTransforms = childGraphicsArray.Select(x => x.transform as RectTransform)
-                .Where(x => x != null && x.gameObject != gameObject)
+                .Where(x => x && x.gameObject != gameObject)
                 .ToList();
             _blockImage.raycastTarget = false;
         }

@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
-namespace HotUpdate.Scripts.Collector
+namespace HotUpdate.Scripts.Collector.Effect
 {
     [System.Serializable]
     public class AttackEffectConfig
@@ -9,7 +9,7 @@ namespace HotUpdate.Scripts.Collector
         [Header("攻击力等级映射")]
         public AttackPowerLevel powerLevel = AttackPowerLevel.Normal;
         public float minPower = 0f;
-        public float maxPower = 100f;
+        public float maxPower = 20f;
         
         [Header("扭曲效果配置")]
         public float baseDistortion = 0.1f;
@@ -71,12 +71,12 @@ namespace HotUpdate.Scripts.Collector
         private static readonly int FlashColor = Shader.PropertyToID("_FlashColor");
 
         [Header("配置")]
-        public AttackEffectConfig powerConfig;
-        public AttackSpeedConfig speedConfig;
+        public AttackEffectConfig powerConfig = new AttackEffectConfig();
+        public AttackSpeedConfig speedConfig = new AttackSpeedConfig();
         
         [Header("运行时参数")]
-        public float currentAttackPower = 50f;
-        public float currentAttackInterval = 1f;
+        public float currentAttackPower;
+        public float currentAttackInterval;
         
         [Header("当前等级")]
         [SerializeField] public AttackPowerLevel currentPowerLevel;

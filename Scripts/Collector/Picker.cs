@@ -54,24 +54,30 @@ namespace HotUpdate.Scripts.Collector
 
         private void HandlePlayerTouched()
         {
+            _collects.Clear();
             if (_cachedCollects.Count == 0)
             {
-                if (_collects.Count > 0)
-                    _collects.Clear();
                 return;
             }
-            _collects.RemoveWhere(x => _cachedCollects.All(y => y.NetId != x));
+
             foreach (var collect in _cachedCollects)
             {
-                if (collect.Type == ObjectType.Collectable)
+                if (!NetworkClient.spawned.TryGetValue(collect.NetId, out var identity))
                 {
-                    var identity = NetworkClient.spawned[collect.NetId];
-                    var collectObjectController = identity.GetComponent<CollectObjectController>();
-                    SendCollectRequest(netId, PickerType, collect.NetId, collectObjectController.CollectObjectData.collectObjectClass);
+                    //Debug.LogWarning($"Identity not found for netId {collect.NetId}");
+                    continue;
                 }
-                else if (collect.Type == ObjectType.Chest)
+
+                switch (collect.Type)
                 {
-                    _collects.Add(collect.NetId);
+                    case ObjectType.Collectable:
+                        var collectObjectController = identity.GetComponent<CollectObjectController>();
+                        SendCollectRequest(netId, PickerType, collect.NetId, collectObjectController.CollectObjectData.collectObjectClass);
+                        break;
+                    case ObjectType.Chest:
+                        _collects.Add(collect.NetId);
+                        break;
+                        
                 }
             }
         }
@@ -86,11 +92,11 @@ namespace HotUpdate.Scripts.Collector
         {
             if (LocalPlayerHandler)
             {
-                if (!_interactSystem.IsItemCanPickup(itemId))
-                {
-                    Debug.Log($"Pickup Item {itemId} not found or can't be picked up");
-                    return;
-                }
+                // if (!_interactSystem.IsItemCanPickup(itemId))
+                // {
+                //     Debug.Log($"Pickup Item {itemId} not found or can't be picked up");
+                //     return;
+                // }
                 Debug.Log($"Send Collect Request: {pickerId} {pickerType} {itemId} {itemClass}");
                 var request = new SceneInteractRequest
                 {

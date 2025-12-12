@@ -38,6 +38,8 @@ namespace HotUpdate.Scripts.Collector
         public CollectObjectData CollectObjectData { get; private set; }
         public BuffExtraData BuffData => _buffData;
         protected Transform PlayerTransform;
+        protected AttackConfig AttackConfig;
+        protected JsonDataConfig JsonConfig;
 
         private MirrorNetworkMessageHandler _mirrorNetworkMessageHandler;
         private Collider _collider;
@@ -59,6 +61,7 @@ namespace HotUpdate.Scripts.Collector
             var collectObjectDataConfig = configProvider.GetConfig<CollectObjectDataConfig>();
             var collectCollider = GetComponentInChildren<CollectCollider>();
             _collider = collectCollider.GetComponent<Collider>();
+            JsonConfig = configProvider.GetConfig<JsonDataConfig>();
             _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
             CollectObjectData = collectObjectDataConfig.GetCollectObjectData(collectConfigId);
             if (!collectCollider)
@@ -83,8 +86,15 @@ namespace HotUpdate.Scripts.Collector
                 attackCollectItem = gameObject.AddComponent<AttackCollectItem>();
                 ObjectInjectProvider.Instance.Inject(attackCollectItem);
             }
+            if (AttackConfig == default)
+            {
+                AttackConfig.MinAttackInterval = JsonConfig.CollectData.attackCooldown.min;
+                AttackConfig.MaxAttackInterval = JsonConfig.CollectData.attackCooldown.max;
+                AttackConfig.MinAttackPower = JsonConfig.CollectData.attackPowerRange.min;
+                AttackConfig.MaxAttackPower = JsonConfig.CollectData.attackPowerRange.max;
+            }
             attackCollectItem.enabled = true;
-            attackCollectItem.Init(attackInfo, ServerHandler, netId, ClientHandler, PlayerTransform);
+            attackCollectItem.Init(attackInfo, ServerHandler, netId, ClientHandler, PlayerTransform, AttackConfig);
         }
         
         private void InitMoveItem(MoveInfo moveInfo)
@@ -119,6 +129,7 @@ namespace HotUpdate.Scripts.Collector
 
         public void ChangeBehaviour()
         {
+            return;
             if (_collectObjectType == CollectObjectType.None)
             {
                 return;

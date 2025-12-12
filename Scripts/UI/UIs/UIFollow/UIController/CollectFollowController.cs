@@ -27,13 +27,13 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow.UIController
                 infoDataModel.Health.Subscribe(h =>
                 {
                     hpText.text = $"{h}/{infoDataModel.MaxHealth.Value}";
-                    hp.value = h / infoDataModel.MaxHealth.Value;
+                    hp.value = h / (float)infoDataModel.MaxHealth.Value;
                     DoTween();
                 }).AddTo(this);
                 infoDataModel.MaxHealth.Subscribe(m =>
                 {
                     hpText.text = $"{infoDataModel.Health.Value}/{m}";
-                    hp.value = infoDataModel.Health.Value / m;
+                    hp.value = infoDataModel.Health.Value / (float)m;
                     DoTween();
                 }).AddTo(this);
                 return;

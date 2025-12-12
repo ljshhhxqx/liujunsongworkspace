@@ -1,6 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using HotUpdate.Scripts.Collector.Collects;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Collector.Effect
@@ -8,6 +8,10 @@ namespace HotUpdate.Scripts.Collector.Effect
     [RequireComponent(typeof(Renderer))]
     public class CollectEffectController : MonoBehaviour
     {
+        private static readonly int Color1 = Shader.PropertyToID("_Color");
+        private static readonly int MainTex = Shader.PropertyToID("_MainTex");
+        private static readonly int EmissionColor = Shader.PropertyToID("_EmissionColor");
+
         [Header("攻击属性（生成时设置）")]
         [SerializeField] private float attackPower;
         [SerializeField] private float attackSpeed; // 攻击间隔（秒）
@@ -17,10 +21,10 @@ namespace HotUpdate.Scripts.Collector.Effect
         [SerializeField] private bool hasTarget = false;
     
         [Header("视觉组件（动态生成）")]
-        private AttackEffectMapper effectMapper;
-        private AttackStateController stateController;
-        private SweepParticleSystem sweepSystem;
-        private EffectController effectController;
+        private AttackEffectMapper _attackEffectMapper;
+        private AttackStateController _attackStateController;
+        private SweepParticleSystem _sweepParticleSystem;
+        private EffectController _effectController;
     
         [Header("配置")]
         public bool autoInitialize = true;
@@ -32,13 +36,13 @@ namespace HotUpdate.Scripts.Collector.Effect
     
         [Header("材质配置")]
         public Shader effectShader;
-        private Material originalMaterial;
-        private Material effectMaterial;
+        private Material _originalMaterial;
+        private Material _effectMaterial;
     
         // 事件委托
         public delegate void AttackEventHandler(float power, float speed);
         public event AttackEventHandler OnAttackTriggered;
-        public event System.Action OnModeChanged;
+        public event Action OnModeChanged;
     
         void Awake()
         {
@@ -63,15 +67,15 @@ namespace HotUpdate.Scripts.Collector.Effect
             if (showDebugLogs) Debug.Log($"[CollectObjectController] 初始化 {gameObject.name}");
         
             // 1. 确保有Renderer组件
-            Renderer renderer = GetComponent<Renderer>();
-            if (renderer == null)
+            Renderer r = GetComponent<Renderer>();
+            if (!r)
             {
                 Debug.LogError($"[CollectObjectController] {gameObject.name} 没有Renderer组件!");
                 return;
             }
         
             // 2. 创建效果材质
-            SetupEffectMaterial(renderer);
+            SetupEffectMaterial(r);
         
             // 3. 动态创建所有视觉效果组件
             CreateVisualComponents();
@@ -85,17 +89,17 @@ namespace HotUpdate.Scripts.Collector.Effect
             if (showDebugLogs) Debug.Log($"[CollectObjectController] {gameObject.name} 初始化完成!");
         }
     
-        private void SetupEffectMaterial(Renderer renderer)
+        private void SetupEffectMaterial(Renderer r)
         {
             // 保存原始材质
-            originalMaterial = renderer.material;
+            _originalMaterial = r.material;
         
             // 使用默认Shader或指定的Shader
-            if (effectShader == null)
+            if (!effectShader)
             {
                 // 查找项目中的效果Shader
                 effectShader = Shader.Find("Custom/DisintegrationShader");
-                if (effectShader == null)
+                if (!effectShader)
                 {
                     // 如果找不到，使用默认Shader
                     effectShader = Shader.Find("Standard");
@@ -104,26 +108,26 @@ namespace HotUpdate.Scripts.Collector.Effect
             }
         
             // 创建新的效果材质
-            effectMaterial = new Material(effectShader);
+            _effectMaterial = new Material(effectShader);
         
             // 复制原始材质的属性（如果可能）
-            CopyMaterialProperties(originalMaterial, effectMaterial);
+            CopyMaterialProperties(_originalMaterial, _effectMaterial);
         
             // 应用效果材质
-            renderer.material = effectMaterial;
+            r.material = _effectMaterial;
         }
     
         private void CopyMaterialProperties(Material source, Material target)
         {
             // 尝试复制常见属性
-            if (source.HasProperty("_Color"))
-                target.SetColor("_Color", source.GetColor("_Color"));
+            if (source.HasProperty(Color1))
+                target.SetColor(Color1, source.GetColor(Color1));
         
-            if (source.HasProperty("_MainTex"))
-                target.SetTexture("_MainTex", source.GetTexture("_MainTex"));
+            if (source.HasProperty(MainTex))
+                target.SetTexture(MainTex, source.GetTexture(MainTex));
         
-            if (source.HasProperty("_EmissionColor"))
-                target.SetColor("_EmissionColor", source.GetColor("_EmissionColor"));
+            if (source.HasProperty(EmissionColor))
+                target.SetColor(EmissionColor, source.GetColor(EmissionColor));
         
             // 复制其他可能需要的基本属性
             target.name = source.name + "_Effect";
@@ -132,18 +136,18 @@ namespace HotUpdate.Scripts.Collector.Effect
         private void CreateVisualComponents()
         {
             // 创建EffectController
-            effectController = gameObject.GetComponent<EffectController>();
-            if (effectController == null)
+            _effectController = gameObject.GetComponent<EffectController>();
+            if (!_effectController)
             {
-                effectController = gameObject.AddComponent<EffectController>();
+                _effectController = gameObject.AddComponent<EffectController>();
                 if (showDebugLogs) Debug.Log($"[CollectObjectController] 创建EffectController");
             }
         
             // 创建AttackEffectMapper
-            effectMapper = gameObject.GetComponent<AttackEffectMapper>();
-            if (effectMapper == null)
+            _attackEffectMapper = gameObject.GetComponent<AttackEffectMapper>();
+            if (!_attackEffectMapper)
             {
-                effectMapper = gameObject.AddComponent<AttackEffectMapper>();
+                _attackEffectMapper = gameObject.AddComponent<AttackEffectMapper>();
                 if (showDebugLogs) Debug.Log($"[CollectObjectController] 创建AttackEffectMapper");
             
                 // 设置默认配置
@@ -151,18 +155,18 @@ namespace HotUpdate.Scripts.Collector.Effect
             }
         
             // 创建AttackStateController
-            stateController = gameObject.GetComponent<AttackStateController>();
-            if (stateController == null)
+            _attackStateController = gameObject.GetComponent<AttackStateController>();
+            if (!_attackStateController)
             {
-                stateController = gameObject.AddComponent<AttackStateController>();
+                _attackStateController = gameObject.AddComponent<AttackStateController>();
                 if (showDebugLogs) Debug.Log($"[CollectObjectController] 创建AttackStateController");
             }
         
             // 创建SweepParticleSystem（可选）
-            sweepSystem = gameObject.GetComponent<SweepParticleSystem>();
-            if (sweepSystem == null)
+            _sweepParticleSystem = gameObject.GetComponent<SweepParticleSystem>();
+            if (!_sweepParticleSystem)
             {
-                sweepSystem = gameObject.AddComponent<SweepParticleSystem>();
+                _sweepParticleSystem = gameObject.AddComponent<SweepParticleSystem>();
                 if (showDebugLogs) Debug.Log($"[CollectObjectController] 创建SweepParticleSystem");
             
                 // 设置默认粒子系统
@@ -172,26 +176,26 @@ namespace HotUpdate.Scripts.Collector.Effect
     
         private void SetupDefaultEffectConfig()
         {
-            if (effectMapper == null) return;
+            if (!_attackEffectMapper) return;
         
             // 配置默认攻击效果映射
-            effectMapper.powerConfig.minPower = 0f;
-            effectMapper.powerConfig.maxPower = 100f;
+            _attackEffectMapper.powerConfig.minPower = 3f;
+            _attackEffectMapper.powerConfig.maxPower = 10f;
         
-            effectMapper.powerConfig.normalDistortion = 0.2f;
-            effectMapper.powerConfig.strongDistortion = 0.4f;
-            effectMapper.powerConfig.superDistortion = 0.7f;
+            _attackEffectMapper.powerConfig.normalDistortion = 0.2f;
+            _attackEffectMapper.powerConfig.strongDistortion = 0.4f;
+            _attackEffectMapper.powerConfig.superDistortion = 0.7f;
         
-            effectMapper.powerConfig.normalDisintegration = 0.3f;
-            effectMapper.powerConfig.strongDisintegration = 0.6f;
-            effectMapper.powerConfig.superDisintegration = 1f;
+            _attackEffectMapper.powerConfig.normalDisintegration = 0.3f;
+            _attackEffectMapper.powerConfig.strongDisintegration = 0.6f;
+            _attackEffectMapper.powerConfig.superDisintegration = 1f;
         
-            effectMapper.powerConfig.normalFlashIntensity = 3f;
-            effectMapper.powerConfig.strongFlashIntensity = 6f;
-            effectMapper.powerConfig.superFlashIntensity = 10f;
+            _attackEffectMapper.powerConfig.normalFlashIntensity = 3f;
+            _attackEffectMapper.powerConfig.strongFlashIntensity = 6f;
+            _attackEffectMapper.powerConfig.superFlashIntensity = 10f;
         
             // 设置默认颜色池
-            effectMapper.powerConfig.flashColorPool = new List<Color>
+            _attackEffectMapper.powerConfig.flashColorPool = new List<Color>
             {
                 Color.white,
                 new Color(1f, 0.9f, 0f), // 金色
@@ -202,21 +206,21 @@ namespace HotUpdate.Scripts.Collector.Effect
             };
         
             // 配置速度映射
-            effectMapper.speedConfig.minAttackInterval = 0.1f;
-            effectMapper.speedConfig.maxAttackInterval = 2f;
+            _attackEffectMapper.speedConfig.minAttackInterval = 0.75f;
+            _attackEffectMapper.speedConfig.maxAttackInterval = 1.75f;
         
-            effectMapper.speedConfig.normalSpeed = 1f;
-            effectMapper.speedConfig.fastSpeed = 1.5f;
-            effectMapper.speedConfig.superFastSpeed = 2f;
+            _attackEffectMapper.speedConfig.normalSpeed = 1f;
+            _attackEffectMapper.speedConfig.fastSpeed = 1.5f;
+            _attackEffectMapper.speedConfig.superFastSpeed = 2f;
         
-            effectMapper.speedConfig.normalAttackDuration = 1f;
-            effectMapper.speedConfig.fastAttackDuration = 0.5f;
-            effectMapper.speedConfig.superFastAttackDuration = 0.25f;
+            _attackEffectMapper.speedConfig.normalAttackDuration = 1f;
+            _attackEffectMapper.speedConfig.fastAttackDuration = 0.5f;
+            _attackEffectMapper.speedConfig.superFastAttackDuration = 0.25f;
         }
     
         private void SetupDefaultParticleSystem()
         {
-            if (sweepSystem == null) return;
+            if (!_sweepParticleSystem) return;
         
             // 创建并配置粒子系统
             GameObject particleObject = new GameObject("SweepParticles");
@@ -224,10 +228,10 @@ namespace HotUpdate.Scripts.Collector.Effect
             particleObject.transform.localPosition = Vector3.zero;
         
             // 添加并配置粒子系统
-            ParticleSystem particleSystem = particleObject.AddComponent<ParticleSystem>();
+            ParticleSystem p = particleObject.AddComponent<ParticleSystem>();
         
             // 配置主模块
-            var main = particleSystem.main;
+            var main = p.main;
             main.startSpeed = 5f;
             main.startSize = 0.5f;
             main.startLifetime = 0.5f;
@@ -235,18 +239,18 @@ namespace HotUpdate.Scripts.Collector.Effect
             main.simulationSpace = ParticleSystemSimulationSpace.World;
         
             // 配置发射模块
-            var emission = particleSystem.emission;
+            var emission = p.emission;
             emission.rateOverTime = 0;
             emission.enabled = false;
         
             // 配置形状（弧形）
-            var shape = particleSystem.shape;
+            var shape = p.shape;
             shape.shapeType = ParticleSystemShapeType.Cone;
             shape.angle = 30f;
             shape.radius = 1f;
             shape.arc = 180f;
         
-            sweepSystem.sweepParticleSystem = particleSystem;
+            _sweepParticleSystem.sweepParticleSystem = p;
         
             // 创建命中粒子系统
             GameObject hitParticleObject = new GameObject("HitParticles");
@@ -264,7 +268,7 @@ namespace HotUpdate.Scripts.Collector.Effect
             hitEmission.rateOverTime = 0;
             hitEmission.enabled = false;
         
-            sweepSystem.hitParticleSystem = hitParticleSystem;
+            _sweepParticleSystem.hitParticleSystem = hitParticleSystem;
         
             if (showDebugLogs) Debug.Log($"[CollectObjectController] 创建默认粒子系统");
         }
@@ -272,14 +276,14 @@ namespace HotUpdate.Scripts.Collector.Effect
         private void InitializeComponents()
         {
             // 设置组件间的引用
-            if (stateController != null)
+            if (_attackStateController)
             {
-                stateController.effectController = effectController;
-                stateController.effectMapper = effectMapper;
+                _attackStateController.effectController = _effectController;
+                _attackStateController.effectMapper = _attackEffectMapper;
             }
         
             // 初始化EffectController
-            if (effectController != null)
+            if (_effectController)
             {
                 // EffectController会在Start时自动初始化
             }
@@ -291,7 +295,17 @@ namespace HotUpdate.Scripts.Collector.Effect
         #endregion
     
         #region 公共API
-    
+
+        public void SetMinMaxAttackParameters(float minPower, float maxPower, float minSpeed, float maxSpeed)
+        {
+            if (!isInitialized) return;
+        
+            _attackEffectMapper.powerConfig.minPower = minPower;
+            _attackEffectMapper.powerConfig.maxPower = maxPower;
+            _attackEffectMapper.speedConfig.minAttackInterval = minSpeed;
+            _attackEffectMapper.speedConfig.maxAttackInterval = maxSpeed;
+        }
+
         /// <summary>
         /// 设置攻击参数（生成时调用）
         /// </summary>
@@ -305,12 +319,12 @@ namespace HotUpdate.Scripts.Collector.Effect
                 return;
             }
         
-            attackPower = Mathf.Clamp(power, 0f, 100f);
-            attackSpeed = Mathf.Max(0.1f, speed);
+            attackPower = Mathf.Clamp(power, _attackEffectMapper.powerConfig.minPower, _attackEffectMapper.powerConfig.maxPower);
+            attackSpeed = Mathf.Max(_attackEffectMapper.speedConfig.minAttackInterval, _attackEffectMapper.speedConfig.maxAttackInterval);
         
-            if (effectMapper )
+            if (_attackEffectMapper )
             {
-                effectMapper.SetAttackParameters(attackPower, attackSpeed);
+                _attackEffectMapper.SetAttackParameters(attackPower, attackSpeed);
             }
         
             if (showDebugLogs)
@@ -329,9 +343,9 @@ namespace HotUpdate.Scripts.Collector.Effect
             isAttackingMode = false;
             hasTarget = hasEnemyInSight;
         
-            if (stateController )
+            if (_attackStateController )
             {
-                stateController.SetHasTarget(hasTarget);
+                _attackStateController.SetHasTarget(hasTarget);
             }
         
             OnModeChanged?.Invoke();
@@ -353,9 +367,9 @@ namespace HotUpdate.Scripts.Collector.Effect
             isAttackingMode = true;
             hasTarget = hasEnemy;
         
-            if (stateController)
+            if (_attackStateController)
             {
-                stateController.SetHasTarget(hasTarget);
+                _attackStateController.SetHasTarget(hasTarget);
             }
         
             OnModeChanged?.Invoke();
@@ -374,15 +388,15 @@ namespace HotUpdate.Scripts.Collector.Effect
         {
             if (!isInitialized) return;
         
-            if (stateController)
+            if (_attackStateController)
             {
-                stateController.StartAttack(attackPower, attackSpeed);
+                _attackStateController.StartAttack(attackPower, attackSpeed);
             }
         
             // 触发横扫粒子效果
-            if (sweepSystem  && effectMapper)
+            if (_sweepParticleSystem  && _attackEffectMapper)
             {
-                sweepSystem.TriggerSweep(effectMapper.currentPowerLevel, effectMapper.currentSpeedLevel);
+                _sweepParticleSystem.TriggerSweep(_attackEffectMapper.currentPowerLevel, _attackEffectMapper.currentSpeedLevel);
             }
         
             OnAttackTriggered?.Invoke(attackPower, attackSpeed);
@@ -400,9 +414,9 @@ namespace HotUpdate.Scripts.Collector.Effect
         {
             if (!isInitialized) return;
         
-            if (effectController != null)
+            if (_effectController)
             {
-                effectController.StopAllAnimations();
+                _effectController.StopAllAnimations();
             }
         
             if (showDebugLogs) Debug.Log($"[CollectObjectController] 停止所有效果");
@@ -446,11 +460,11 @@ namespace HotUpdate.Scripts.Collector.Effect
         /// </summary>
         public (float distortion, float disintegration, float flash) GetEffectIntensities()
         {
-            if (effectMapper != null)
+            if (_attackEffectMapper)
             {
-                return (effectMapper.distortionIntensity, 
-                    effectMapper.disintegrationIntensity, 
-                    effectMapper.flashIntensity);
+                return (_attackEffectMapper.distortionIntensity, 
+                    _attackEffectMapper.disintegrationIntensity, 
+                    _attackEffectMapper.flashIntensity);
             }
             return (0f, 0f, 0f);
         }
@@ -461,7 +475,7 @@ namespace HotUpdate.Scripts.Collector.Effect
         public (EffectController effect, AttackEffectMapper mapper, 
             AttackStateController state, SweepParticleSystem sweep) GetComponentReferences()
         {
-            return (effectController, effectMapper, stateController, sweepSystem);
+            return (_effectController, _attackEffectMapper, _attackStateController, _sweepParticleSystem);
         }
     
         #endregion
@@ -526,7 +540,7 @@ namespace HotUpdate.Scripts.Collector.Effect
                       $"扭曲强度: {distortion}\n" +
                       $"肢解强度: {disintegration}\n" +
                       $"闪光强度: {flash}\n" +
-                      $"闪光颜色: {effectMapper?.flashColor}");
+                      $"闪光颜色: {_attackEffectMapper?.flashColor}");
         }
     
         [ContextMenu("测试攻击序列")]
@@ -574,16 +588,16 @@ namespace HotUpdate.Scripts.Collector.Effect
         void OnDestroy()
         {
             // 清理动态创建的材质
-            if (effectMaterial != null)
+            if (_effectMaterial != null)
             {
-                Destroy(effectMaterial);
+                Destroy(_effectMaterial);
             }
         
             // 恢复原始材质
             Renderer renderer = GetComponent<Renderer>();
-            if (renderer != null && originalMaterial != null)
+            if (renderer != null && _originalMaterial != null)
             {
-                renderer.material = originalMaterial;
+                renderer.material = _originalMaterial;
             }
         
             // 清理粒子系统
@@ -592,16 +606,16 @@ namespace HotUpdate.Scripts.Collector.Effect
     
         private void CleanupParticleSystems()
         {
-            if (sweepSystem != null)
+            if (_sweepParticleSystem)
             {
-                if (sweepSystem.sweepParticleSystem != null)
+                if (_sweepParticleSystem.sweepParticleSystem)
                 {
-                    Destroy(sweepSystem.sweepParticleSystem.gameObject);
+                    Destroy(_sweepParticleSystem.sweepParticleSystem.gameObject);
                 }
             
-                if (sweepSystem.hitParticleSystem != null)
+                if (_sweepParticleSystem.hitParticleSystem)
                 {
-                    Destroy(sweepSystem.hitParticleSystem.gameObject);
+                    Destroy(_sweepParticleSystem.hitParticleSystem.gameObject);
                 }
             }
         }

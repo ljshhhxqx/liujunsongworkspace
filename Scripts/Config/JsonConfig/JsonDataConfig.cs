@@ -88,7 +88,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
             var sum = config.spawnAttackRatio + config.spawnHiddenRatio + config.spawnMoveRatio +
                       config.spawnAttackHiddenRatio + config.spawnMoveHiddenRatio + config.spawnAttackMoveRatio +
                       config.spawnAttackMoveHiddenRatio;
-            var rand = Random.Range(0f, sum);
+            var rand = Random.Range(0f, 1f);
             if (rand < config.spawnAttackRatio)
             {
                 return CollectObjectType.Attack;
@@ -113,7 +113,13 @@ namespace HotUpdate.Scripts.Config.JsonConfig
             {
                 return CollectObjectType.AttackMove;
             }
-            return CollectObjectType.AttackMoveHidden;
+
+            if (rand < sum)
+            {
+                return CollectObjectType.AttackMoveHidden;
+            }
+
+            return CollectObjectType.None;
         }
 
         #region 装备生成器

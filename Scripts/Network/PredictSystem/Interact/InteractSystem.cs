@@ -416,11 +416,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             switch (request.InteractionType)
             {
                 case InteractionType.PickupItem:
-                    if (!IsItemCanPickup(request.SceneItemId))
-                    {
-                        Debug.LogError($"Can't pickup item {request.SceneItemId}");
-                        return;
-                    }
+                    // if (!IsItemCanPickup(request.SceneItemId))
+                    // {
+                    //     Debug.LogError($"Can't pickup item {request.SceneItemId}");
+                    //     return;
+                    // }
                     Debug.Log($"Player {playerNetId} pickup item {request.SceneItemId}");
                     _itemsSpawnerManager.PickerPickupItem(playerNetId, request.SceneItemId);
                     break;
