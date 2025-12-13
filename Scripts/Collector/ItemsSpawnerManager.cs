@@ -444,6 +444,8 @@ namespace HotUpdate.Scripts.Collector
 
                         var collectObjectController = identity.GetComponent<CollectObjectController>();
                         NetworkGameObjectPoolManager.Instance.Despawn(identity.gameObject);
+                        var picker = player.GetComponent<Picker>();
+                        picker.RpcPlayEffect((int)collectObjectController.CollectObjectData.collectObjectClass);
                         //collectObjectController.RpcRecycleItem();
                         Debug.Log(
                             $"Recycle item with id: {itemId} itemConfigid {collectObjectController.CollectConfigId}");

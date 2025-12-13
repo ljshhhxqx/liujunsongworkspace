@@ -48,6 +48,7 @@ namespace HotUpdate.Scripts.Collector
         protected ItemsSpawnerManager SpawnerManager;
         protected IColliderConfig ColliderConfig;
         protected HashSet<DynamicObjectData> CachedDynamicObjectData = new HashSet<DynamicObjectData>();
+        public uint NetId;
         
         [Inject]
         private void Init(IConfigProvider configProvider)
@@ -76,6 +77,7 @@ namespace HotUpdate.Scripts.Collector
             {
                 PlayerTransform ??= PlayerInGameManager.Instance.LocalPlayerTransform;
                 ChangeBehaviour();
+                NetId = netId;
             }
         }
 

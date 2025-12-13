@@ -43,10 +43,11 @@ namespace HotUpdate.Scripts.Collector
             _colliderConfig = GamePhysicsSystem.CreateColliderConfig(GetComponent<Collider>());
 
             Observable.EveryFixedUpdate()
-                .Where(_ => LocalPlayerHandler && GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, _colliderConfig, _cachedCollects))
+                .Where(_ => LocalPlayerHandler)
                 .Subscribe(_ =>
                 {
-                    HandlePlayerTouched();
+                    if(GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, _colliderConfig, _cachedCollects))
+                        HandlePlayerTouched();
                 })
                 .AddTo(this);
             Debug.Log($"Picker Init----{_interactSystem}");
@@ -54,6 +55,10 @@ namespace HotUpdate.Scripts.Collector
 
         private void HandlePlayerTouched()
         {
+            // foreach (var collect in _cachedCollects)
+            // {
+            //     Debug.Log($"Picker HandlePlayerTouched - {collect.NetId}-{collect.Type}-{collect.Position}");
+            // }
             _collects.Clear();
             if (_cachedCollects.Count == 0)
             {
@@ -105,9 +110,8 @@ namespace HotUpdate.Scripts.Collector
                     InteractionType = InteractionType.PickupItem,
                     SceneItemId = itemId,
                 };
-                PlayAudio(itemClass);
                 var commandBytes = MemoryPackSerializer.Serialize(request);
-                CmdCollect(commandBytes, (int)itemClass);
+                CmdCollect(commandBytes);
             }
         }
 
@@ -128,20 +132,16 @@ namespace HotUpdate.Scripts.Collector
         }
         
         [Command]
-        private void CmdCollect(byte[] request, int itemClass)
+        private void CmdCollect(byte[] request)
         {
             var data = BoxingFreeSerializer.MemoryDeserialize<SceneInteractRequest>(request);
             _interactSystem.EnqueueCommand(data);
-            RpcPlayEffect(itemClass);
+            //RpcPlayEffect(itemClass);
         }
 
         [ClientRpc]
-        private void RpcPlayEffect(int itemClass)
+        public void RpcPlayEffect(int itemClass)
         {
-            if (LocalPlayerHandler)
-            {
-                return;
-            }
             PlayAudio((CollectObjectClass)itemClass);
         }
 

@@ -71,12 +71,13 @@ namespace HotUpdate.Scripts.Game.Map
                     {
                         continue;
                     }
-                    var gridBounds = MapBoundDefiner.Instance.GetGridPosition(data.Position);
+                    var gridBounds = MapBoundDefiner.Instance.FindClosestGrid(data.Position);
 
-                    if (gridBounds == grid)
+                    if (Vector2Int.Distance(gridBounds, grid) <= 1)
                     {
-                        if (GamePhysicsSystem.FastCheckItemIntersects(position, data.Position, colliderConfig,
-                                data.ColliderConfig))
+                        //Debug.Log($"Found grid {gridBounds} for {data.NetId}");
+                        if (GamePhysicsSystem.CheckIntersectsWithMargin(position, data.Position, colliderConfig,
+                                data.ColliderConfig, 1f))
                         {
                             intersectedObjects.Add(data);
                             onIntersected?.Invoke(data);
