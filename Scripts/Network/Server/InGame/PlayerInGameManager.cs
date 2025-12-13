@@ -48,6 +48,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         private IColliderConfig _playerBaseColliderData;
         private IColliderConfig _playerPhysicsData;
         private uint _baseId;
+        private GameSyncManager _gameSyncManager;
         
         // 同步给所有客户端的映射信息列表
         [SyncVar(hook = nameof(OnIsGameStartedChanged))]
@@ -404,6 +405,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
 
         private void SetCalculatorConstants()
         {
+            _gameSyncManager??= FindObjectOfType<GameSyncManager>();
             var gameData = _configProvider.GetConfig<JsonDataConfig>().GameConfig;
             var playerData = _configProvider.GetConfig<JsonDataConfig>().PlayerConfig;
             PlayerElementCalculator.SetPlayerElementComponent(_configProvider.GetConfig<ElementAffinityConfig>(), _configProvider.GetConfig<TransitionLevelBaseDamageConfig>(), _configProvider.GetConfig<ElementConfig>());
@@ -423,12 +425,16 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 RollForce = playerData.RollForce,
                 JumpSpeed = playerData.JumpSpeed,
                 SpeedToVelocityRatio = playerData.SpeedToVelocityRatio,
+                IsClient = isClient,
             });
             PlayerPropertyCalculator.SetCalculatorConstant(new PropertyCalculatorConstant
             {
                 TickRate = GameSyncManager.TickSeconds,
                 PropertyConfig =  _configProvider.GetConfig<PropertyConfig>(),
                 PlayerConfig = _configProvider.GetConfig<JsonDataConfig>().PlayerConfig,
+                IsServer = isServer,
+                IsClient = isClient,
+                IsLocalPlayer = isLocalPlayer
             });
             PlayerAnimationCalculator.SetAnimationConstant(new AnimationConstant
             {
@@ -436,6 +442,9 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 InputThreshold = gameData.inputThreshold,
                 AttackComboMaxCount = playerData.AttackComboMaxCount,
                 AnimationConfig = _configProvider.GetConfig<AnimationConfig>(),
+                IsServer = isServer,
+                IsClient = isClient,
+                IsLocalPlayer = isLocalPlayer
             });
             PlayerItemCalculator.SetConstant(new PlayerItemConstant
             {
@@ -447,22 +456,36 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 ConstantBuffConfig = _configProvider.GetConfig<ConstantBuffConfig>(),
                 RandomBuffConfig = _configProvider.GetConfig<RandomBuffConfig>(),
                 SkillConfig = _configProvider.GetConfig<SkillConfig>(),
+                GameSyncManager = _gameSyncManager,
+                IsServer = isServer,
+                IsClient = isClient,
+                IsLocalPlayer = isLocalPlayer
             });
             PlayerEquipmentCalculator.SetConstant(new PlayerEquipmentConstant
             {
                 ItemConfig = _configProvider.GetConfig<ItemConfig>(),
                 SkillConfig = _configProvider.GetConfig<SkillConfig>(),
+                IsServer = isServer,
+                IsClient = isClient,
+                GameSyncManager = _gameSyncManager,
+                IsLocalPlayer = isLocalPlayer
             });
             PlayerShopCalculator.SetConstant(new ShopCalculatorConstant
             {
                 ShopConfig = _configProvider.GetConfig<ShopConfig>(),
                 ItemConfig = _configProvider.GetConfig<ItemConfig>(),
                 PlayerConfigData = playerData,
+                IsServer = isServer,
+                GameSyncManager = _gameSyncManager,
+                IsClient = isClient,
+                IsLocalPlayer = isLocalPlayer
             });
             PlayerSkillCalculator.SetConstant(new SkillCalculatorConstant
             {
                 SkillConfig = _configProvider.GetConfig<SkillConfig>(),
                 SceneLayerMask = gameData.stairSceneLayer,
+                IsServer = isServer,
+                GameSyncManager = _gameSyncManager,
             });
         }
 

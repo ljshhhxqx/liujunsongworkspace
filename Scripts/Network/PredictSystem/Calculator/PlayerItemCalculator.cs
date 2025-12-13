@@ -223,7 +223,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     }
                     var configId = GetEquipmentConfigId(config.itemType, bagSlotItem.ConfigId);
                     var skillId = GetEquipSkillId(config.itemType, bagSlotItem.ConfigId);
-                    if (configId != 0)
+                    if (configId != 0 && Constant.IsServer)
                     {
                         for (int i = 0; i < removedItemIds.Length; i++)
                         {
@@ -277,6 +277,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     ItemConfigId = bagSlotItem.ConfigId,
                     ItemIds = Constant.IsServer ? removedItemIds : Array.Empty<int>(),
                 }); 
+            }
+            if (!Constant.IsServer)
+            {
+                return;
             }
             var player = NetworkServer.connections[connectionId].identity.netId;
             var playerComponent = NetworkServer.spawned[player];
@@ -391,7 +395,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     AddPlayerItems(itemsData, header, ref playerItemState);
                     break;
                 case PlayerItemType.Collect:
-                    if (header.ConnectionId < 0)
+                    if (header.ConnectionId < 0 || !Constant.IsServer)
                     {
                         break;
                     }
@@ -410,7 +414,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     break;
                 case PlayerItemType.Gold:
                 case PlayerItemType.Score:
-                    if (header.ConnectionId < 0)
+                    if (header.ConnectionId < 0 || !Constant.IsServer)
                     {
                         break;
                     }
@@ -498,6 +502,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public static void AddPlayerItems(ItemsCommandData itemsData, NetworkCommandHeader header,
             ref PlayerItemState playerItemState)
         {
+            if (!Constant.IsServer)
+                return;
             var itemConfigData = Constant.ItemConfig.GetGameItemData(itemsData.ItemConfigId);
             var skillId = GetEquipSkillId(itemConfigData.itemType, itemsData.ItemConfigId);
             var bagItem = new PlayerBagItem();
@@ -669,6 +675,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
         public static void CommandUseItems(ItemsUseCommand itemsUseCommand, ref PlayerItemState playerItemState)
         {
+
+            if (!Constant.IsServer)
+            {
+                return;
+            }
             if (itemsUseCommand.Slots.Count == 0)
             {
                 return;
