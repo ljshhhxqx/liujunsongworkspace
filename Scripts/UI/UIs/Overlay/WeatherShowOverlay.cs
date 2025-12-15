@@ -54,8 +54,8 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         private void ResetGame()
         {
-            targetScore.SetActive(false);
-            countDownGameObject.SetActive(false);
+            targetScore.transform.localScale = Vector3.zero;
+            countDownText.transform.localScale = Vector3.zero;
         }
 
         private void SetWarmupRemainingTime(string warmup)
@@ -67,10 +67,11 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private void SetCountDown(string countDown)
         {
             //Debug.Log($"SetCountDown: {countDown}");
-            // if (warmupText.transform.parent.gameObject.activeSelf)
-            // {
-            //     warmupText.transform.parent.gameObject.SetActive(false);
-            // }
+            if (warmupText.transform.parent.gameObject.activeSelf)
+            {
+                warmupText.transform.parent.gameObject.SetActive(false);
+            }
+            countDownText.transform.localScale = Vector3.one;
             countDownText.text = countDown;
         }
 

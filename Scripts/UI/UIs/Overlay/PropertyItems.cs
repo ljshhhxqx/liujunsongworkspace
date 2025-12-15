@@ -18,13 +18,12 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private Image iconImage;
         private PropertyItemData _propertyData;
         private Sequence _sq;
-        private Vector2 _startPosition;
         private HorizontalLayoutGroup _horizontalLayoutGroup;
 
         private void Start()
         {
-            _startPosition = changedText.transform.localPosition;
             _horizontalLayoutGroup = GetComponent<HorizontalLayoutGroup>();
+            changedText.transform.localScale = Vector3.zero;
         }
 
         public override void SetData<T>(T data)
@@ -55,7 +54,6 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                     var currentValueInt = Mathf.RoundToInt(currentValue);
                     valueText.text = _propertyData.IsPercentage ? $"{currentValue * 100:0}%" : currentValueInt.ToString("0");
                     iconImage.transform.parent.gameObject.SetActive(false);
-                    changedText.transform.localScale = Vector3.zero;
                     if (changeValue != 0)
                     {
                         changedText.transform.localScale = Vector3.one;
@@ -63,14 +61,13 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                     }
                     break;
                 case PropertyConsumeType.Consume:
-                    changedText.transform.localScale = Vector3.zero;
                     var ratio = currentValue / maxValue;
                     currentValueInt = Mathf.RoundToInt(currentValue);
                     var maxValueInt = Mathf.RoundToInt(maxValue);
                     valueText.text = $"{currentValueInt}/{maxValueInt}";
                     iconImage.transform.parent.gameObject.SetActive(true);
                     iconImage.fillAmount = ratio;
-                    if (!_propertyData.IsAutoRecover && changeValue != 0)
+                    if (!_propertyData.IsAutoRecover && changeValue > 0)
                     {
                         changedText.transform.localScale = Vector3.one;
                         DoAnimation(changeValue);
@@ -81,7 +78,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         private void DoAnimation(float changeValue)
         {
-            changedText.transform.localPosition = _startPosition;
+            changedText.transform.localPosition = valueText.transform.localPosition;
             changedText.text = changeValue > 0 ? $"+{changeValue:0}" : $"-{changeValue:0}";
             changedText.color = changeValue > 0 ? Color.green : Color.red;
             if (_sq != null && _sq.IsActive())

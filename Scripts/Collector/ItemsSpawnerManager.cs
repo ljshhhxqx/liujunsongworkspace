@@ -60,6 +60,7 @@ namespace HotUpdate.Scripts.Collector
         private RandomBuffConfig _randomBuffConfig;
         private ShopConfig _shopConfig;
         private ItemConfig _itemConfig;
+        private GameEventManager _gameEventManager;
         private GameLoopController _gameLoopController;
         private GameSyncManager _gameSyncManager;
         private InteractSystem _interactSystem;
@@ -71,6 +72,10 @@ namespace HotUpdate.Scripts.Collector
         private readonly HashSet<uint> _processedItems = new HashSet<uint>();
         private readonly Dictionary<uint, CollectObjectController> _clientCollectObjectControllers = new Dictionary<uint, CollectObjectController>();
         
+        private readonly SyncDictionary<uint, AttackInfo> _attackInfoMap = new SyncDictionary<uint, AttackInfo>();
+        private readonly SyncDictionary<uint, MoveInfo> _moveInfoMap = new SyncDictionary<uint, MoveInfo>();
+        private readonly SyncDictionary<uint, HiddenItemData> _hiddenInfoMap = new SyncDictionary<uint, HiddenItemData>();
+        
         [SyncVar]
         private CollectItemMetaData _serverTreasureChestMetaData;
         private readonly Dictionary<QualityType, IColliderConfig> _chestColliderConfigs = new Dictionary<QualityType, IColliderConfig>();
@@ -78,7 +83,8 @@ namespace HotUpdate.Scripts.Collector
         private TreasureChestComponent _clientTreasureChest;
         
         [Inject]
-        private void Init(UIManager uiManager, IConfigProvider configProvider, GameSyncManager gameSyncManager, GameMapInjector gameMapInjector,GameEventManager gameEventManager, MessageCenter messageCenter)
+        private void Init(UIManager uiManager, IConfigProvider configProvider, GameSyncManager gameSyncManager, 
+            GameMapInjector gameMapInjector,GameEventManager gameEventManager, MessageCenter messageCenter)
         {
             _uiManager = uiManager;
             _configProvider = configProvider;
@@ -87,7 +93,8 @@ namespace HotUpdate.Scripts.Collector
             _gameSyncManager = gameSyncManager;
             _itemConfig = _configProvider.GetConfig<ItemConfig>();
             _messageCenter = messageCenter;
-            gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnGameSceneResourcesLoadedLoaded);
+            _gameEventManager = gameEventManager;
+            _gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnGameSceneResourcesLoadedLoaded);
             _collectObjectDataConfig = _configProvider.GetConfig<CollectObjectDataConfig>();
             _constantBuffConfig = _configProvider.GetConfig<ConstantBuffConfig>();
             _randomBuffConfig = _configProvider.GetConfig<RandomBuffConfig>();
@@ -575,8 +582,37 @@ namespace HotUpdate.Scripts.Collector
             return null;
         }
 
-        [Server]
-        public AttackInfo GetRandomAttackInfo()
+        public AttackInfo GetAttackInfo(uint itemId)
+        {
+            if (_attackInfoMap.TryGetValue(itemId, out var attackInfo))
+            {
+                return attackInfo;
+            }
+            Debug.LogError($"No prefab found for itemId: {itemId} in attackInfoMap");
+            return default;
+        }
+
+        public MoveInfo GetMoveInfo(uint itemId)
+        {
+            if (_moveInfoMap.TryGetValue(itemId, out var moveInfo))
+            {
+                return moveInfo;
+            }
+            Debug.LogError($"No prefab found for itemId: {itemId} in moveInfoMap");
+            return default;
+        }
+
+        public HiddenItemData GetHiddenItemData(uint itemId)
+        {
+            if (_hiddenInfoMap.TryGetValue(itemId, out var hiddenItemData))
+            {
+                return hiddenItemData;
+            }
+            Debug.LogError($"No prefab found for itemId: {itemId} in hiddenInfoMap");
+            return default;
+        }
+
+        private AttackInfo GetRandomAttackInfo()
         {
             var attackInfo = new AttackInfo();
             attackInfo.health = _jsonDataConfig.CollectData.healthRange.GetRandomValue();
@@ -592,8 +628,7 @@ namespace HotUpdate.Scripts.Collector
             return attackInfo;
         }
         
-        [Server]
-        public MoveInfo GetRandomMoveInfo(Vector3 position)
+        private MoveInfo GetRandomMoveInfo(Vector3 position)
         {
             var dir = GetRandomDirection();
             var moveInfo = new MoveInfo();
@@ -606,8 +641,7 @@ namespace HotUpdate.Scripts.Collector
             return moveInfo;
         }
 
-        [Server]
-        public HiddenItemData GetRandomHiddenItemData()
+        private HiddenItemData GetRandomHiddenItemData()
         {
             var hiddenItemData = new HiddenItemData();
             hiddenItemData.hideType = (HideType)Random.Range(0, 4);
@@ -645,7 +679,122 @@ namespace HotUpdate.Scripts.Collector
                             poolSize: newSpawnInfos.Count);
                         var identity = go.GetComponent<NetworkIdentity>();
                         _serverItemBehaviour.TryAdd(identity.netId, (int)type);
-                        
+                        switch (type)
+                        {
+                            case CollectObjectType.Attack:
+                                var attackInfo = GetRandomAttackInfo();
+                                _attackInfoMap.Add(identity.netId, attackInfo);
+                                _gameEventManager.Publish(new SceneItemInfoChanged(identity.netId, item.Item2, new SceneItemInfo
+                                {
+                                    health = attackInfo.health,
+                                    attackDamage = attackInfo.damage,
+                                    defense = attackInfo.defense,
+                                    sceneItemId = identity.netId,
+                                    attackRange = attackInfo.attackRange,
+                                    attackInterval = attackInfo.attackCooldown,
+                                    maxHealth = attackInfo.health,
+                                    Position = item.Item2
+                                }));
+                                break;
+                            case CollectObjectType.Move:
+                                var moveInfo = GetRandomMoveInfo(item.Item2);
+                                _moveInfoMap.Add(identity.netId, moveInfo);
+                                _gameEventManager.Publish(new SceneItemInfoChanged(identity.netId, item.Item2, new SceneItemInfo
+                                {
+                                    health = 1,
+                                    sceneItemId = identity.netId,
+                                    speed = moveInfo.speed,
+                                    Position = item.Item2,
+                                }));
+                                break;
+                            case CollectObjectType.Hidden:
+                                var hiddenItemData = GetRandomHiddenItemData();
+                                _hiddenInfoMap.Add(identity.netId, hiddenItemData);
+                                _gameEventManager.Publish(new SceneItemInfoChanged(identity.netId, item.Item2, new SceneItemInfo
+                                {
+                                    health = 1,
+                                    sceneItemId = identity.netId,
+                                    Position = item.Item2
+                                }));
+                                break;
+                            case CollectObjectType.AttackMove:
+                                attackInfo = GetRandomAttackInfo();
+                                moveInfo = GetRandomMoveInfo(item.Item2);
+                                _attackInfoMap.Add(identity.netId, attackInfo);
+                                _moveInfoMap.Add(identity.netId, moveInfo);
+                                _gameEventManager.Publish(new SceneItemInfoChanged(identity.netId, item.Item2, new SceneItemInfo
+                                {
+                                    health = attackInfo.health,
+                                    attackDamage = attackInfo.damage,
+                                    defense = attackInfo.defense,
+                                    sceneItemId = identity.netId,
+                                    attackRange = attackInfo.attackRange,
+                                    attackInterval = attackInfo.attackCooldown,
+                                    maxHealth = attackInfo.health,
+                                    speed = moveInfo.speed,
+                                    Position = item.Item2,
+                                }));
+                                break;
+                            case CollectObjectType.AttackHidden:
+                                hiddenItemData = GetRandomHiddenItemData();
+                                attackInfo = GetRandomAttackInfo();
+                                _attackInfoMap.Add(identity.netId, attackInfo);
+                                _hiddenInfoMap.Add(identity.netId, hiddenItemData);
+                                _gameEventManager.Publish(new SceneItemInfoChanged(identity.netId, item.Item2, new SceneItemInfo
+                                {
+                                    health = attackInfo.health,
+                                    attackDamage = attackInfo.damage,
+                                    defense = attackInfo.defense,
+                                    sceneItemId = identity.netId,
+                                    attackRange = attackInfo.attackRange,
+                                    attackInterval = attackInfo.attackCooldown,
+                                    maxHealth = attackInfo.health,
+                                    Position = item.Item2,
+                                }));
+                                break;
+                            case CollectObjectType.MoveHidden:
+                                moveInfo = GetRandomMoveInfo(item.Item2);
+                                hiddenItemData = GetRandomHiddenItemData();
+                                _moveInfoMap.Add(identity.netId, moveInfo);
+                                _hiddenInfoMap.Add(identity.netId, hiddenItemData);
+                                _gameEventManager.Publish(new SceneItemInfoChanged(identity.netId, item.Item2, new SceneItemInfo
+                                {
+                                    sceneItemId = identity.netId,
+                                    speed = moveInfo.speed,
+                                    Position = item.Item2,
+                                }));
+                                break;
+                            case CollectObjectType.AttackMoveHidden:
+                                hiddenItemData = GetRandomHiddenItemData();
+                                attackInfo = GetRandomAttackInfo();
+                                moveInfo = GetRandomMoveInfo(item.Item2);
+                                _attackInfoMap.Add(identity.netId, attackInfo);
+                                _moveInfoMap.Add(identity.netId, moveInfo);
+                                _hiddenInfoMap.Add(identity.netId, hiddenItemData);
+                                _gameEventManager.Publish(new SceneItemInfoChanged(identity.netId, item.Item2,
+                                    new SceneItemInfo
+                                    {
+
+                                        health = attackInfo.health,
+                                        attackDamage = attackInfo.damage,
+                                        defense = attackInfo.defense,
+                                        sceneItemId = identity.netId,
+                                        attackRange = attackInfo.attackRange,
+                                        attackInterval = attackInfo.attackCooldown,
+                                        maxHealth = attackInfo.health,
+                                        speed = moveInfo.speed,
+                                        Position = item.Item2,
+                                    }));
+                                break;
+                            default:
+                                
+                                _gameEventManager.Publish(new SceneItemInfoChanged(identity.netId, item.Item2,
+                                    new SceneItemInfo
+                                    {
+                                        health = 1
+                                    }));
+                                break;
+                        }
                         // if (_serverItemMap.TryGetValue(identity.netId, out var itemInfo))
                         // {
                         //     //Debug.LogError($"Item with id: {identity.netId} already exists in map, destroying it");

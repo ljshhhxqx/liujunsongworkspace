@@ -30,17 +30,40 @@ namespace HotUpdate.Scripts.Game.Map
                 {
                     
                 }
-                if (!identity)
-                {
-                    _dynamicObjectData.RemoveAt(i);
-                    _dynamicObjectIds.Remove(data.NetId);
-                }
-                else
+                if (identity)
                 {
                     data.Position = identity.transform.position;
                     _dynamicObjectData[i] = data;
                 }
+                else
+                {
+                    RemoveObject(data.NetId);
+                }
             }
+        }
+
+        private bool RemoveObject(uint netId)
+        {
+            if (!_dynamicObjectIds.TryGetValue(netId, out var index))
+            {
+                Debug.LogError($"{netId} not found in DynamicObjectData");
+                return false;
+            }
+
+            if (_dynamicObjectData.Count <= index)
+            {
+                //Debug.LogError("DynamicObjectData index out of range");
+                return false;
+            }
+            
+            var lastIndex = _dynamicObjectData.Count - 1;
+            var lastItem = _dynamicObjectData[lastIndex];
+            _dynamicObjectData[index] = lastItem;
+            _dynamicObjectData.RemoveAt(lastIndex);
+            _dynamicObjectIds[lastItem.NetId] = index;
+            _dynamicObjectIds.Remove(netId);
+
+            return true;
         }
 
         public HashSet<DynamicObjectData> GetIntersectedDynamicObjects(uint uid, Vector3 position,
@@ -55,36 +78,33 @@ namespace HotUpdate.Scripts.Game.Map
             HashSet<DynamicObjectData> intersectedObjects, Func<DynamicObjectData, bool> onIntersected = null)
         {
             intersectedObjects.Clear();
-            var bounds = GamePhysicsSystem.GetWorldBounds(position, colliderConfig);
-            var coveredGrids = MapBoundDefiner.Instance.GetBoundsCovered(bounds);
-            if (coveredGrids.Count == 0)
+            // var bounds = GamePhysicsSystem.GetWorldBounds(position, colliderConfig);
+            // var coveredGrids = MapBoundDefiner.Instance.GetBoundsCovered(bounds);
+            // if (coveredGrids.Count == 0)
+            // {
+            //     Debug.LogWarning("No covered grids found for " + position);
+            //     return false;
+            // }
+            for (int i = 0; i < _dynamicObjectData.Count; i++)
             {
-                Debug.LogWarning("No covered grids found for " + position);
-                return false;
-            }
-            foreach (var grid in coveredGrids)
-            {
-                for (int i = 0; i < _dynamicObjectData.Count; i++)
+                var data = _dynamicObjectData[i];
+                if (data.NetId == uid)
                 {
-                    var data = _dynamicObjectData[i];
-                    if (data.NetId == uid)
-                    {
-                        continue;
-                    }
-                    var gridBounds = MapBoundDefiner.Instance.FindClosestGrid(data.Position);
-
-                    if (Vector2Int.Distance(gridBounds, grid) <= 1)
-                    {
-                        //Debug.Log($"Found grid {gridBounds} for {data.NetId}");
-                        if (GamePhysicsSystem.CheckIntersectsWithMargin(position, data.Position, colliderConfig,
-                                data.ColliderConfig, 1f))
-                        {
-                            intersectedObjects.Add(data);
-                            onIntersected?.Invoke(data);
-                        }
-                    }
+                    continue;
+                }
+                // var gridBounds = MapBoundDefiner.Instance.FindClosestGrid(data.Position);
+                //
+                //
+                if (GamePhysicsSystem.CheckIntersectsWithMargin(position, data.Position, colliderConfig,
+                        data.ColliderConfig, 1f))
+                {
+                    intersectedObjects.Add(data);
+                    onIntersected?.Invoke(data);
                 }
             }
+            // foreach (var grid in coveredGrids)
+            // {
+            // }
             return intersectedObjects.Count > 0;
         }
 
@@ -162,17 +182,11 @@ namespace HotUpdate.Scripts.Game.Map
             {
                 return;
             }
-            if (!_dynamicObjectIds.TryGetValue(netId, out var index))
-            {
-                return;
-            }
 
-            if (_dynamicObjectData.Count <= index)
+            if (RemoveObject(netId))
             {
-                return;
+                Debug.LogWarning("RemoveDynamicObject: " + netId);
             }
-            _dynamicObjectData.RemoveAt(index);
-            Debug.LogWarning("RemoveDynamicObject: " + netId);
         }
 
         public DynamicObjectData GetDynamicObjectData(uint netId)

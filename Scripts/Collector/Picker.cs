@@ -43,11 +43,10 @@ namespace HotUpdate.Scripts.Collector
             _colliderConfig = GamePhysicsSystem.CreateColliderConfig(GetComponent<Collider>());
 
             Observable.EveryFixedUpdate()
-                .Where(_ => LocalPlayerHandler)
+                .Where(_ => LocalPlayerHandler && GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, _colliderConfig, _cachedCollects))
                 .Subscribe(_ =>
                 {
-                    if(GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, _colliderConfig, _cachedCollects))
-                        HandlePlayerTouched();
+                    HandlePlayerTouched();
                 })
                 .AddTo(this);
             Debug.Log($"Picker Init----{_interactSystem}");
@@ -97,11 +96,11 @@ namespace HotUpdate.Scripts.Collector
         {
             if (LocalPlayerHandler)
             {
-                // if (!_interactSystem.IsItemCanPickup(itemId))
-                // {
-                //     Debug.Log($"Pickup Item {itemId} not found or can't be picked up");
-                //     return;
-                // }
+                if (!_interactSystem.IsItemCanPickup(itemId))
+                {
+                    Debug.Log($"Pickup Item {itemId} not found or can't be picked up");
+                    return;
+                }
                 Debug.Log($"Send Collect Request: {pickerId} {pickerType} {itemId} {itemClass}");
                 var request = new SceneInteractRequest
                 {
