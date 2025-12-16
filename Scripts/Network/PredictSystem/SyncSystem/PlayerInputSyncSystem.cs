@@ -12,6 +12,7 @@ using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Network.State;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using MemoryPack;
 using Mirror;
@@ -20,7 +21,7 @@ using UnityEngine;
 using VContainer;
 using AnimationEvent = AOTScripts.Data.AnimationEvent;
 using AnimationState = AOTScripts.Data.AnimationState;
-using CooldownSnapshotData = AOTScripts.Data.State.CooldownSnapshotData;
+using CooldownSnapshotData = HotUpdate.Scripts.Network.State.CooldownSnapshotData;
 using INetworkCommand = AOTScripts.Data.INetworkCommand;
 using InputCommand = AOTScripts.Data.InputCommand;
 using PlayerAnimationCooldownState = AOTScripts.Data.State.PlayerAnimationCooldownState;
@@ -474,10 +475,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 cooldownInfo.SkillModifyCooldown(skillLoadOverloadAnimationCommand.Cooldowntime);
             }
 
-            if (command is PlayerDeathCommand)
+            if (command is PlayerDeathCommand playerDeathCommand)
             {
                 playerInputState.PlayerGameStateData.Velocity = CompressedVector3.FromVector3( Vector3.zero);
                 playerInputState.PlayerGameStateData.AnimationState = AnimationState.Dead;
+                var playerController = GameSyncManager.GetPlayerConnection(header.ConnectionId);
+                playerController.RpcHandlePlayerDeadClient(playerDeathCommand.DeadCountdownTime);
                 return playerInputState;
             }
             
@@ -489,6 +492,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 playerInputState.PlayerGameStateData.Position = playerRebornCommand.RebornPosition;
                 playerInputState.PlayerGameStateData.Quaternion = CompressedQuaternion.FromQuaternion(Quaternion.identity);
                 playerInputState.PlayerGameStateData.PlayerEnvironmentState = PlayerEnvironmentState.OnGround;
+                var playerController = GameSyncManager.GetPlayerConnection(header.ConnectionId);
+                playerController.RpcHandlePlayerRespawnedClient();
                 return playerInputState;
             }
 

@@ -173,16 +173,6 @@ namespace HotUpdate.Scripts.Collector.Collects
             _moveInfo = moveInfo;
             NetId = id;
             ServerHandler = serverHandler;
-            if (serverHandler)
-            {
-                GameEventManager.Publish(new SceneItemInfoChanged(NetId, transform.position, new SceneItemInfo
-                {
-                    health = 1,
-                    sceneItemId = id,
-                    speed = _moveInfo.speed,
-                    Position = transform.position,
-                }));
-            }
         }
 
         public void OnSelfDespawn()

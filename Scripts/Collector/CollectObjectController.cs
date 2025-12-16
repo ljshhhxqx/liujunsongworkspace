@@ -72,7 +72,7 @@ namespace HotUpdate.Scripts.Collector
             }
             ColliderConfig = GamePhysicsSystem.CreateColliderConfig(collectCollider.GetComponent<Collider>());
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, ColliderConfig, ObjectType.Collectable, gameObject.layer, gameObject.tag);
-            _collectAnimationComponent?.Play();
+            
             NetId = netId;
             PlayerTransform ??= PlayerInGameManager.Instance.LocalPlayerTransform;
             ChangeBehaviour();
@@ -128,10 +128,6 @@ namespace HotUpdate.Scripts.Collector
 
         private void ChangeBehaviour()
         {
-            if (_collectObjectType == CollectObjectType.None)
-            {
-                return;
-            }
             Debug.Log($"CollectObjectController::ChangeBehaviour call" + _collectObjectType);
             switch (_collectObjectType)
             {
@@ -182,6 +178,15 @@ namespace HotUpdate.Scripts.Collector
                     InitMoveItem(moveInfo);
                     InitAttackItem(attackInfo);
                     break;
+                case CollectObjectType.None:
+                    DisableComponent<MoveCollectItem>();
+                    DisableComponent<HiddenItem>();
+                    DisableComponent<AttackCollectItem>();
+                    if (ClientHandler)
+                    {
+                        _collectAnimationComponent?.Play();
+                    }
+                    break;
             }
         }
 
@@ -191,7 +196,6 @@ namespace HotUpdate.Scripts.Collector
             if (ClientHandler && _collider)
             {
                 Debug.Log("Local player collider enabled");
-                _collectAnimationComponent?.Play();
                 ChangeBehaviour();
             }
         }

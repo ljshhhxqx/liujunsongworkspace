@@ -276,7 +276,6 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                     {
                         deathCountdown -= GameSyncManager.TickSeconds;
                         _playerDeathCountdowns[uid] = deathCountdown;
-                        _playerPositions[uid] = position;
                     }
                 }
             }

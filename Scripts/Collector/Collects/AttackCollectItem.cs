@@ -4,6 +4,7 @@ using AOTScripts.Tool;
 using HotUpdate.Scripts.Collector.Effect;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using HotUpdate.Scripts.Network.State;
 using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
 using UnityEngine;
@@ -18,6 +19,8 @@ namespace HotUpdate.Scripts.Collector.Collects
         private float _lastAttackTime;
         private readonly HashSet<DynamicObjectData> _collectedObjects = new HashSet<DynamicObjectData>();
         private AttackMainEffect _attackMainEffect;
+        private bool _isAttacking;
+        private KeyframeCooldown _keyframeCooldown;
 
         private void FixedUpdate()
         {
@@ -39,7 +42,18 @@ namespace HotUpdate.Scripts.Collector.Collects
                 _lastAttackTime = Time.time;
                 var direction = (target.Position - transform.position).normalized;
                 Attack(direction, target.NetId);
+                if (!_isAttacking)
+                {
+                    _isAttacking = true;
+                    _collectEffectController.SwitchToAttackMode();
+                }
                 return true;
+            }
+
+            if (_isAttacking)
+            {
+                _isAttacking = false;
+                _collectEffectController.SwitchToTrackingMode();
             }
             return false;
         }
@@ -85,19 +99,6 @@ namespace HotUpdate.Scripts.Collector.Collects
             _attackInfo = info;
             NetId = id;
             ServerHandler = serverHandler;
-            if (serverHandler)
-            {
-                GameEventManager.Publish(new SceneItemInfoChanged(NetId, transform.position, new SceneItemInfo
-                {
-                    health = _attackInfo.health,
-                    attackDamage = _attackInfo.damage,
-                    defense = _attackInfo.defense,
-                    sceneItemId = NetId,
-                    attackRange = _attackInfo.attackRange,
-                    attackInterval = _attackInfo.attackCooldown,
-                    maxHealth = _attackInfo.health,
-                }));
-            }
             if (clientHandler)
             {
                 _attackMainEffect ??= GetComponentInChildren<AttackMainEffect>();
@@ -109,6 +110,7 @@ namespace HotUpdate.Scripts.Collector.Collects
                 _collectEffectController.Initialize();
                 _collectEffectController.SetMinMaxAttackParameters(config.MinAttackPower, config.MaxAttackPower, config.MinAttackInterval, config.MaxAttackInterval);
                 _collectEffectController.SetAttackParameters(GameStaticExtensions.GetAttackExpectancy(_attackInfo.damage, _attackInfo.criticalRate, _attackInfo.criticalDamage),  _attackInfo.attackCooldown);
+                _collectEffectController.SwitchToTrackingMode();
             }
         }
 

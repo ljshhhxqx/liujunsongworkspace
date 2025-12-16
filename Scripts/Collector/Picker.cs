@@ -98,10 +98,10 @@ namespace HotUpdate.Scripts.Collector
             {
                 if (!_interactSystem.IsItemCanPickup(itemId))
                 {
-                    Debug.Log($"Pickup Item {itemId} not found or can't be picked up");
+                    //Debug.Log($"Pickup Item {itemId} not found or can't be picked up");
                     return;
                 }
-                Debug.Log($"Send Collect Request: {pickerId} {pickerType} {itemId} {itemClass}");
+                //Debug.Log($"Send Collect Request: {pickerId} {pickerType} {itemId} {itemClass}");
                 var request = new SceneInteractRequest
                 {
                     Header = InteractSystem.CreateInteractHeader(PlayerInGameManager.Instance.GetPlayerId(pickerId), InteractCategory.PlayerToScene,

@@ -38,14 +38,6 @@ namespace HotUpdate.Scripts.Collector.Collects
             _hiddenItemData = hiddenItemData;
             NetId = id;
             ServerHandler = serverHandler;
-            if (serverHandler)
-            {
-                GameEventManager.Publish(new SceneItemInfoChanged(NetId, transform.position, new SceneItemInfo
-                {
-                    health = 1,
-                    sceneItemId = id,
-                }));
-            }
             switch (hiddenItemData.hideType)
             {
                 case HideType.Inactive:
@@ -55,7 +47,7 @@ namespace HotUpdate.Scripts.Collector.Collects
                     MysteryItem();
                     break;
                 case HideType.Translucence:
-                    TranslucenceItem();
+                    //TranslucenceItem();
                     break;
             }
         }

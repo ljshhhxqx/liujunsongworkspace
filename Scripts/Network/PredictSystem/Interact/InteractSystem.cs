@@ -46,7 +46,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                 return false;
                 
             }
-            Debug.Log($"Scene item {sceneItemId}  heath is {sceneItemInfo.health}");
+            //Debug.Log($"Scene item {sceneItemId}  heath is {sceneItemInfo.health}");
             return sceneItemInfo.health <= 1;
         }
         
@@ -95,7 +95,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             }
             else
             {
-                sceneItemInfo.health = Mathf.Max(sceneItemInfo.health, sceneItemInfoChanged.SceneItemInfo.health);
+                sceneItemInfo.health = Mathf.Max(sceneItemInfo.health, Mathf.Max(0, sceneItemInfoChanged.SceneItemInfo.health));
                 sceneItemInfo.defense = Mathf.Max(sceneItemInfo.defense, sceneItemInfoChanged.SceneItemInfo.defense);
                 sceneItemInfo.speed = Mathf.Max(sceneItemInfo.speed, sceneItemInfoChanged.SceneItemInfo.speed);
                 sceneItemInfo.attackDamage = Mathf.Max(sceneItemInfo.attackDamage, sceneItemInfoChanged.SceneItemInfo.attackDamage);
@@ -118,6 +118,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                 var damageResult = _jsonConfig.GetDamage(attackPower + extraPower * playerSkillItemEvent.SkillHitExtraEffectData.extraRatio, sceneItemInfo.defense, 0, 1);
                 Debug.Log($"[OnSkillItem] Player {playerSkillItemEvent.PlayerId} attack scene item {playerSkillItemEvent.DefenderId} with damage {damageResult.Damage}");
                 sceneItemInfo.health -= damageResult.Damage;
+                sceneItemInfo.health = Mathf.Max(sceneItemInfo.health, 0);
                 SceneItemInfoChanged?.Invoke(playerSkillItemEvent.DefenderId, sceneItemInfo);
                 if (sceneItemInfo.health <= 0)
                 {
@@ -144,9 +145,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                     var damageResult = _jsonConfig.GetDamage(attackPower, sceneItemInfo.defense, criticalRate, criticalDamage);
                     Debug.Log($"[OnPlayerAttackItem] Player {playerAttackItemEvent.AttackerId} attack scene item {sceneItemId} with damage {damageResult.Damage}");
                     sceneItemInfo.health -= damageResult.Damage;
+                    sceneItemInfo.health = Mathf.Max(sceneItemInfo.health, 0);
                     SceneItemInfoChanged?.Invoke(sceneItemId, sceneItemInfo);
                     _sceneItems[sceneItemId] = sceneItemInfo;
-                    if (sceneItemInfo.health <= 0)
+                    if (sceneItemInfo.health == 0)
                     {
                         Debug.Log($"[OnPlayerAttackItem] Scene item {sceneItemId} is dead");
                         _sceneItems.Remove(sceneItemId);
@@ -233,9 +235,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                         var damage = _jsonConfig.GetDamage(itemExplodeRequest.AttackPower, defense, 1f, 2f);
                         Debug.Log($"[HandleItemExplodeRequest] Scene item {itemExplodeRequest.SceneItemId} attack scene item {hitObjectData.NetId} with damage {damage}");
                         sceneItemInfo.health -= damage.Damage;
+                        sceneItemInfo.health = Mathf.Max(sceneItemInfo.health, 0);
                         SceneItemInfoChanged?.Invoke(hitObjectData.NetId, sceneItemInfo);
                         _sceneItems[hitObjectData.NetId] = sceneItemInfo;
-                        if (sceneItemInfo.health <= 0)
+                        if (sceneItemInfo.health == 0)
                         {
                             Debug.Log($"[HandleItemExplodeRequest] Scene item {hitObjectData.NetId} is dead");
                             _sceneItems.Remove(hitObjectData.NetId);
@@ -282,14 +285,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 
             if (_sceneItems.TryGetValue(sceneItemAttackInteractRequest.TargetId, out var sceneItemInfo))
             {
-                if (sceneItemInfo.health <= 0)
+                if (sceneItemInfo.health == 0)
                     return;
                 defense = sceneItemInfo.defense;
                 var damage = _jsonConfig.GetDamage(attackPower, defense, criticalRate, criticalDamage);
                 Debug.Log($"[HandleSceneItemAttackInteractRequest] Scene item {sceneItemAttackInteractRequest.SceneItemId} attack scene item {sceneItemAttackInteractRequest.TargetId} with damage {damage.Damage}");
                 sceneItemInfo.health -= damage.Damage;
+                sceneItemInfo.health = Mathf.Max(0, sceneItemInfo.health);
                 _sceneItems[sceneItemInfo.sceneItemId] = sceneItemInfo;
-                if (sceneItemInfo.health <= 0)
+                if (sceneItemInfo.health == 0)
                 {
                     Debug.Log($"[HandleSceneItemAttackInteractRequest] Scene item {sceneItemAttackInteractRequest.TargetId} is dead");
                     SceneItemInfoChanged?.Invoke(sceneItemAttackInteractRequest.TargetId, sceneItemInfo);

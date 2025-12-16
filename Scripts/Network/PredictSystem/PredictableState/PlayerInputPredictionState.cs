@@ -19,6 +19,7 @@ using UniRx;
 using UnityEngine;
 using VContainer;
 using AnimationState = AOTScripts.Data.AnimationState;
+using CooldownSnapshotData = HotUpdate.Scripts.Network.State.CooldownSnapshotData;
 using INetworkCommand = AOTScripts.Data.INetworkCommand;
 using InputCommand = AOTScripts.Data.InputCommand;
 using PlayerAnimationCooldownState = AOTScripts.Data.State.PlayerAnimationCooldownState;

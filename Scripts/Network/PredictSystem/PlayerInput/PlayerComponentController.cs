@@ -42,6 +42,7 @@ using UniRx.Triggers;
 using UnityEngine;
 using VContainer;
 using AnimationState = AOTScripts.Data.AnimationState;
+using CooldownSnapshotData = HotUpdate.Scripts.Network.State.CooldownSnapshotData;
 using InputCommand = AOTScripts.Data.InputCommand;
 using PlayerAnimationCooldownState = AOTScripts.Data.State.PlayerAnimationCooldownState;
 using PlayerGameStateData = AOTScripts.Data.State.PlayerGameStateData;
@@ -574,8 +575,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _skillSyncState = GetComponent<PlayerSkillSyncState>();
             _propertyPredictionState.OnPropertyChanged += HandlePropertyChange;
             _propertyPredictionState.OnStateChanged += HandlePropertyStateChanged;
-            _propertyPredictionState.OnPlayerDead += HandlePlayerDeadClient;
-            _propertyPredictionState.OnPlayerRespawned += HandlePlayerRespawnedClient;
+            //_propertyPredictionState.OnPlayerDead += HandlePlayerDeadClient;
+            //_propertyPredictionState.OnPlayerRespawned += HandlePlayerRespawnedClient;
             _inputState.OnPlayerStateChanged += HandlePlayerStateChanged;
             _inputState.OnPlayerAnimationCooldownChanged += HandlePlayerAnimationCooldownChanged;
             _inputState.OnPlayerInputStateChanged += HandlePlayerInputStateChanged;
@@ -941,8 +942,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _disposables?.Clear();
             _propertyPredictionState.OnPropertyChanged -= HandlePropertyChange;
             _propertyPredictionState.OnStateChanged -= HandlePropertyStateChanged;
-            _propertyPredictionState.OnPlayerDead -= HandlePlayerDeadClient;
-            _propertyPredictionState.OnPlayerRespawned -= HandlePlayerRespawnedClient;
+            // _propertyPredictionState.OnPlayerDead -= HandlePlayerDeadClient;
+            // _propertyPredictionState.OnPlayerRespawned -= HandlePlayerRespawnedClient;
             _inputState.OnPlayerStateChanged -= HandlePlayerStateChanged;
             _inputState.OnPlayerAnimationCooldownChanged -= HandlePlayerAnimationCooldownChanged;
             _inputState.OnPlayerInputStateChanged -= HandlePlayerInputStateChanged;
@@ -961,19 +962,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _isControlled = !isUnlock;
         }
 
-        private void HandlePlayerDeadClient(float countdownTime)
+        [ClientRpc]
+        public void RpcHandlePlayerDeadClient(float countdownTime)
         {
-            if (!isLocalPlayer)
-            {
-                return;
-            }
             _playerAnimationCalculator.HandleAnimation(AnimationState.Dead);
             var playerDamageDeathOverlay = _uiManager.GetUI<PlayerDamageDeathOverlay>();
             playerDamageDeathOverlay.PlayDeathEffect(countdownTime);
         }
 
-        private void HandlePlayerRespawnedClient()
+        [ClientRpc]
+        public void RpcHandlePlayerRespawnedClient()
         {
+            _playerAnimationCalculator.HandleAnimation(AnimationState.Idle);
             var playerDamageDeathOverlay = _uiManager.GetUI<PlayerDamageDeathOverlay>();
             playerDamageDeathOverlay.Clear();
         }
@@ -1319,10 +1319,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     continue;
                 }
 
-                if (snapshotCoolDown.CurrentCountdown != 0)
-                {
-                    Debug.Log($"RefreshSnapData {snapshotCoolDown}");
-                }
+                // if (snapshotCoolDown.CurrentCountdown != 0)
+                // {
+                //     Debug.Log($"RefreshSnapData {snapshotCoolDown}");
+                // }
 
 
                 animationCooldown.Refresh(snapshotCoolDown);

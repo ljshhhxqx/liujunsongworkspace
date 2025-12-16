@@ -55,7 +55,7 @@ namespace HotUpdate.Scripts.Collector.Effect
         void Update()
         {
             // 调试输入
-            HandleDebugInput();
+            //HandleDebugInput();
         }
     
         #region 初始化
@@ -362,7 +362,7 @@ namespace HotUpdate.Scripts.Collector.Effect
         /// </summary>
         public void SwitchToAttackMode(bool hasEnemy = true)
         {
-            if (!isInitialized) return;
+            if (!isInitialized || isAttackingMode) return;
         
             isAttackingMode = true;
             hasTarget = hasEnemy;
@@ -484,40 +484,40 @@ namespace HotUpdate.Scripts.Collector.Effect
     
         private void HandleDebugInput()
         {
-            if (!showDebugLogs) return;
-        
-            // 仅在编辑器中使用快捷键
-#if UNITY_EDITOR
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                SwitchToTrackingMode(false);
-            }
-        
-            if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                SwitchToTrackingMode(true);
-            }
-        
-            if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                SwitchToAttackMode(true);
-            }
-        
-            if (Input.GetKeyDown(KeyCode.Alpha4))
-            {
-                TriggerAttack();
-            }
-        
-            if (Input.GetKeyDown(KeyCode.Alpha5))
-            {
-                StopAllEffects();
-            }
-        
-            if (Input.GetKeyDown(KeyCode.Alpha6))
-            {
-                LogCurrentStatus();
-            }
-#endif
+//             if (!showDebugLogs) return;
+//         
+//             // 仅在编辑器中使用快捷键
+// #if UNITY_EDITOR
+//             if (Input.GetKeyDown(KeyCode.Alpha1))
+//             {
+//                 SwitchToTrackingMode(false);
+//             }
+//         
+//             if (Input.GetKeyDown(KeyCode.Alpha2))
+//             {
+//                 SwitchToTrackingMode(true);
+//             }
+//         
+//             if (Input.GetKeyDown(KeyCode.Alpha3))
+//             {
+//                 SwitchToAttackMode(true);
+//             }
+//         
+//             if (Input.GetKeyDown(KeyCode.Alpha4))
+//             {
+//                 TriggerAttack();
+//             }
+//         
+//             if (Input.GetKeyDown(KeyCode.Alpha5))
+//             {
+//                 StopAllEffects();
+//             }
+//         
+//             if (Input.GetKeyDown(KeyCode.Alpha6))
+//             {
+//                 LogCurrentStatus();
+//             }
+// #endif
         }
     
         [ContextMenu("日志当前状态")]
@@ -588,16 +588,16 @@ namespace HotUpdate.Scripts.Collector.Effect
         void OnDestroy()
         {
             // 清理动态创建的材质
-            if (_effectMaterial != null)
+            if (_effectMaterial)
             {
                 Destroy(_effectMaterial);
             }
         
             // 恢复原始材质
-            Renderer renderer = GetComponent<Renderer>();
-            if (renderer != null && _originalMaterial != null)
+            Renderer r = GetComponent<Renderer>();
+            if (r && _originalMaterial)
             {
-                renderer.material = _originalMaterial;
+                r.material = _originalMaterial;
             }
         
             // 清理粒子系统
@@ -619,19 +619,6 @@ namespace HotUpdate.Scripts.Collector.Effect
                 }
             }
         }
-    
-        #endregion
-    
-        #region 编辑器支持
-    
-#if UNITY_EDITOR
-        void OnValidate()
-        {
-            // 在编辑器中限制参数范围
-            attackPower = Mathf.Clamp(attackPower, 0f, 100f);
-            attackSpeed = Mathf.Max(0.1f, attackSpeed);
-        }
-#endif
     
         #endregion
     }

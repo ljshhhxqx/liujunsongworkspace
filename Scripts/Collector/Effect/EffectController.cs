@@ -302,7 +302,7 @@ namespace HotUpdate.Scripts.Collector.Effect
     
         private void UpdateMaterialFloat(string propertyName, float value)
         {
-            if (material != null && material.HasProperty(propertyName))
+            if (material && material.HasProperty(propertyName))
             {
                 material.SetFloat(propertyName, value);
             }

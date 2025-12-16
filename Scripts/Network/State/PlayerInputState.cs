@@ -2,7 +2,7 @@
 using HotUpdate.Scripts.Tool.ObjectPool;
 using MemoryPack;
 using UnityEngine;
-using CooldownSnapshotData = AOTScripts.Data.State.CooldownSnapshotData;
+using CooldownSnapshotData = HotUpdate.Scripts.Network.State.CooldownSnapshotData;
 
 namespace AOTScripts.Data.State
 {
@@ -35,9 +35,9 @@ namespace AOTScripts.Data.State
     public partial struct PlayerAnimationCooldownState
     {
         [MemoryPackOrder(0)]
-        public MemoryDictionary<AnimationState, CooldownSnapshotData> AnimationCooldowns;
+        public MemoryDictionary<AnimationState, HotUpdate.Scripts.Network.State.CooldownSnapshotData> AnimationCooldowns;
         
-        public PlayerAnimationCooldownState(MemoryDictionary<AnimationState, CooldownSnapshotData> animationCooldowns)
+        public PlayerAnimationCooldownState(MemoryDictionary<AnimationState, HotUpdate.Scripts.Network.State.CooldownSnapshotData> animationCooldowns)
         {
             AnimationCooldowns = animationCooldowns;
         }

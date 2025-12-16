@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using AOTScripts.Tool.ObjectPool;
+using AOTScripts.Data;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using MemoryPack;
 using UniRx;
 using UnityEngine;
+using AnimationEvent = AOTScripts.Data.AnimationEvent;
+using AnimationState = AOTScripts.Data.AnimationState;
 
-namespace AOTScripts.Data.State
+namespace HotUpdate.Scripts.Network.State
 {
     public interface IAttackAnimationEvent
     {
@@ -194,7 +196,7 @@ namespace AOTScripts.Data.State
                 Debug.Log($"[IsReady] [Keyframe] _timeline.Count == 0 && _configCooldown <= 0  _currentCountdown-{_currentCountdown} _configCooldown-{_configCooldown}");
                 return true;
             }
-            Debug.Log($"[IsReady] [Keyframe] _currentCountdown-{_currentCountdown} _configCooldown-{_configCooldown}");
+            //Debug.Log($"[IsReady] [Keyframe] _currentCountdown-{_currentCountdown} _configCooldown-{_configCooldown}");
             return _currentCountdown <= 0;
         }
         public float AnimationSpeed { get; private set; }
@@ -389,7 +391,7 @@ namespace AOTScripts.Data.State
             }
             // 推进动画时间轴
             _currentTime += deltaTime;
-            Debug.Log($"[Update] [Animation] Animation-{_state}  _currentCountdown-{_currentCountdown} _windowCountdown-{_windowCountdown} _currentTime-{_currentTime}  _currentStage-{_currentStage}");
+            //Debug.Log($"[Update] [Animation] Animation-{_state}  _currentCountdown-{_currentCountdown} _windowCountdown-{_windowCountdown} _currentTime-{_currentTime}  _currentStage-{_currentStage}");
         }
 
         public void Use()
