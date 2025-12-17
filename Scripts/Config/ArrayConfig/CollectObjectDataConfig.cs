@@ -118,6 +118,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public Range criticalDamageRatioRange;
         public Range defenseRange;
         public Range lifeTimeRange;
+        public KeyframeData bulletFrameData;
+        public KeyframeData attackFrameData;
         [Header("MoveItem")]
         public Range speedRange;
         public Range rotateSpeedRange;

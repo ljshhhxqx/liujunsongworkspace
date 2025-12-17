@@ -65,6 +65,7 @@ namespace HotUpdate.Scripts.Collector.Effect
             if (isInitialized) return;
         
             if (showDebugLogs) Debug.Log($"[CollectObjectController] 初始化 {gameObject.name}");
+            isInitialized = true;
         
             // 1. 确保有Renderer组件
             Renderer r = GetComponent<Renderer>();
@@ -83,7 +84,6 @@ namespace HotUpdate.Scripts.Collector.Effect
             // 4. 初始化组件
             InitializeComponents();
         
-            isInitialized = true;
             componentsCreated = true;
         
             if (showDebugLogs) Debug.Log($"[CollectObjectController] {gameObject.name} 初始化完成!");
@@ -311,13 +311,13 @@ namespace HotUpdate.Scripts.Collector.Effect
         /// </summary>
         public void SetAttackParameters(float power, float speed)
         {
-            if (!isInitialized)
-            {
-                Debug.LogWarning($"[CollectObjectController] 未初始化，延迟设置参数");
-                attackPower = power;
-                attackSpeed = speed;
-                return;
-            }
+            // if (!isInitialized)
+            // {
+            //     Debug.LogWarning($"[CollectObjectController] 未初始化，延迟设置参数");
+            //     attackPower = power;
+            //     attackSpeed = speed;
+            //     return;
+            // }
         
             attackPower = Mathf.Clamp(power, _attackEffectMapper.powerConfig.minPower, _attackEffectMapper.powerConfig.maxPower);
             attackSpeed = Mathf.Max(_attackEffectMapper.speedConfig.minAttackInterval, _attackEffectMapper.speedConfig.maxAttackInterval);

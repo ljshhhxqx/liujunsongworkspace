@@ -50,9 +50,9 @@ MonoBehaviour:
       spawnAttackRatio: 0.15
       spawnMoveRatio: 0.15
       spawnHiddenRatio: 0.1
-      spawnAttackMoveRatio: 0.03
+      spawnAttackMoveRatio: 0.05
       spawnAttackHiddenRatio: 0.03
-      spawnMoveHiddenRatio: 0.02
+      spawnMoveHiddenRatio: 0.03
       spawnAttackMoveHiddenRatio: 0.01
       healthRange:
         isPercent: 0
@@ -94,6 +94,20 @@ MonoBehaviour:
         isPercent: 0
         min: 1
         max: 2.5
+      bulletFrameData:
+        triggerTime: 0.35
+        eventType: 2
+        resetCooldown: 0
+        resetCooldownWindowTime: 0
+        tolerance: 0.15
+        serverValidate: 0
+      attackFrameData:
+        triggerTime: 0.2
+        eventType: 2
+        resetCooldown: 0
+        resetCooldownWindowTime: 0
+        tolerance: 0.15
+        serverValidate: 0
       speedRange:
         isPercent: 0
         min: 0.5

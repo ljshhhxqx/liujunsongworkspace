@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AOTScripts.Data;
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Collector.Effect;
 using HotUpdate.Scripts.Game.Map;
@@ -7,7 +8,10 @@ using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.State;
 using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
+using UniRx;
 using UnityEngine;
+using AnimationEvent = AOTScripts.Data.AnimationEvent;
+using AnimationState = AOTScripts.Data.AnimationState;
 
 namespace HotUpdate.Scripts.Collector.Collects
 {
@@ -21,10 +25,12 @@ namespace HotUpdate.Scripts.Collector.Collects
         private AttackMainEffect _attackMainEffect;
         private bool _isAttacking;
         private KeyframeCooldown _keyframeCooldown;
+        private CompositeDisposable _disposable = new CompositeDisposable();
 
         private void FixedUpdate()
         {
-            if (IsDead || !ServerHandler || !IsAttackable || Time.time < _lastAttackTime + _attackInfo.attackCooldown)
+            _keyframeCooldown.Update(Time.fixedDeltaTime);
+            if (IsDead || !ServerHandler || !IsAttackable || !_keyframeCooldown.IsReady() || Time.time < _lastAttackTime + _attackInfo.attackCooldown)
             {
                 //Debug.LogError($"{name} is dead or not attackable or attack cooldown not over yet");
                 return;
@@ -35,17 +41,30 @@ namespace HotUpdate.Scripts.Collector.Collects
                 _collectedObjects, OnInteract);
         }
 
+        public void RpcSwitchAttackMode(bool isAttacking)
+        {
+            if (isAttacking)
+            {
+                _collectEffectController.SwitchToAttackMode();
+            }
+            else
+            {
+                _collectEffectController.SwitchToTrackingMode();
+            }
+        }
+
         private bool OnInteract(DynamicObjectData target)
         {
             if (target.Type == ObjectType.Player)
             {
-                _lastAttackTime = Time.time;
-                var direction = (target.Position - transform.position).normalized;
-                Attack(direction, target.NetId);
-                if (!_isAttacking)
+                //Attack(_direction, target.NetId);
+                if (!_isAttacking && _keyframeCooldown.IsReady())
                 {
+                    Debug.Log($"Start Attack");
+                    _lastAttackTime = Time.time;
+                    _keyframeCooldown.Use();
                     _isAttacking = true;
-                    _collectEffectController.SwitchToAttackMode();
+                    CollectObjectController.RpcSwitchAttackMode(_isAttacking);
                 }
                 return true;
             }
@@ -53,7 +72,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             if (_isAttacking)
             {
                 _isAttacking = false;
-                _collectEffectController.SwitchToTrackingMode();
+                CollectObjectController.RpcSwitchAttackMode(_isAttacking);
             }
             return false;
         }
@@ -94,11 +113,19 @@ namespace HotUpdate.Scripts.Collector.Collects
             InteractSystem.EnqueueCommand(request);
         }
         
-        public void Init(AttackInfo info, bool serverHandler, uint id, bool clientHandler, Transform player, AttackConfig config)
+        public void Init(AttackInfo info, bool serverHandler, uint id, bool clientHandler, Transform player, AttackConfig config, KeyframeData[] keyframeData)
         {
+            _disposable?.Dispose();
+            _disposable?.Clear();
             _attackInfo = info;
             NetId = id;
             ServerHandler = serverHandler;
+            _keyframeCooldown?.Reset();
+            _keyframeCooldown = new KeyframeCooldown(AnimationState.Attack, info.attackCooldown, keyframeData, 1);
+            _keyframeCooldown.EventStream
+                .Where(x => x == AnimationEvent.OnAttack)
+                .Subscribe(_ => OnAttack())
+                .AddTo(_disposable);
             if (clientHandler)
             {
                 _attackMainEffect ??= GetComponentInChildren<AttackMainEffect>();
@@ -111,6 +138,32 @@ namespace HotUpdate.Scripts.Collector.Collects
                 _collectEffectController.SetMinMaxAttackParameters(config.MinAttackPower, config.MaxAttackPower, config.MinAttackInterval, config.MaxAttackInterval);
                 _collectEffectController.SetAttackParameters(GameStaticExtensions.GetAttackExpectancy(_attackInfo.damage, _attackInfo.criticalRate, _attackInfo.criticalDamage),  _attackInfo.attackCooldown);
                 _collectEffectController.SwitchToTrackingMode();
+            }
+        }
+
+        private void OnAttack()
+        {
+            if (_collectedObjects.Count == 0)
+            {
+                return;
+            }
+
+            var distance = float.MaxValue;
+            DynamicObjectData dynamicObject = null;
+            foreach (var data in _collectedObjects)
+            {
+                var dis = Vector3.Distance(transform.position, data.Position);
+                if (distance < dis)
+                {
+                    distance = dis;
+                    dynamicObject = data;
+                }
+            }
+
+            if (dynamicObject != null)
+            {
+                var direction = (dynamicObject.Position - transform.position).normalized;
+                Attack(direction, dynamicObject.NetId);
             }
         }
 
@@ -130,6 +183,8 @@ namespace HotUpdate.Scripts.Collector.Collects
             _collectedObjects.Clear();
             GameEventManager.Publish(new SceneItemSpawnedEvent(NetId, gameObject, false, null));
         }
+
+        public static KeyframeData KeyframeData;
     }
 
     public struct AttackConfig : IEquatable<AttackConfig>
