@@ -19,8 +19,8 @@ namespace HotUpdate.Scripts.Collector.Effect
         public float attackAnimationMultiplier = 3f; // 攻击时肢解/闪光动画速度倍率
 
         [Header("时间控制")] public float attackCooldown = 0.5f;
-        private float lastAttackTime = 0f;
-        private Coroutine attackCoroutine;
+        private float _lastAttackTime = 0f;
+        private Coroutine _attackCoroutine;
 
         public enum AttackState
         {
@@ -40,22 +40,6 @@ namespace HotUpdate.Scripts.Collector.Effect
 
             // 初始状态：缓慢播放扭曲动画
             StartSearchingAnimation();
-        }
-
-        void Update()
-        {
-            // 模拟状态切换（实际游戏中由敌人检测逻辑控制）
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                hasTarget = !hasTarget;
-                UpdateAttackState();
-            }
-
-            // 模拟攻击触发（实际游戏中由攻击逻辑触发）
-            if (Input.GetKeyDown(KeyCode.A) && hasTarget)
-            {
-                TriggerAttack();
-            }
         }
 
         public void UpdateAttackState()
@@ -80,17 +64,17 @@ namespace HotUpdate.Scripts.Collector.Effect
             if (currentState is AttackState.Attacking or AttackState.Cooldown)
                 return;
 
-            if (Time.time - lastAttackTime < attackCooldown)
+            if (Time.time - _lastAttackTime < attackCooldown)
                 return;
 
             SetState(AttackState.Attacking);
 
             // 停止正在进行的动画协程
-            if (attackCoroutine != null)
-                StopCoroutine(attackCoroutine);
+            if (_attackCoroutine != null)
+                StopCoroutine(_attackCoroutine);
 
             // 开始攻击动画序列
-            attackCoroutine = StartCoroutine(AttackAnimationSequence());
+            _attackCoroutine = StartCoroutine(AttackAnimationSequence());
         }
 
         private void SetState(AttackState newState)
@@ -150,8 +134,8 @@ namespace HotUpdate.Scripts.Collector.Effect
                 StartSearchingAnimation();
             }
 
-            lastAttackTime = Time.time;
-            attackCoroutine = null;
+            _lastAttackTime = Time.time;
+            _attackCoroutine = null;
         }
 
         private IEnumerator AttackPhase1(float duration)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AOTScripts.Tool;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Game.Map;
@@ -43,9 +44,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             {
                 if (candidate == attackParams.attackerNetId) continue;
 
-                var identity = isServer ? 
-                    NetworkServer.spawned[candidate] : 
-                    NetworkClient.spawned[candidate];
+                var identity = GameStaticExtensions.GetNetworkIdentity(candidate);
             
                 if (!identity) continue;
 

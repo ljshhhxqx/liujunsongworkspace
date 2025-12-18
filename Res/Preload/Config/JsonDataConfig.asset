@@ -99,14 +99,14 @@ MonoBehaviour:
         eventType: 2
         resetCooldown: 0
         resetCooldownWindowTime: 0
-        tolerance: 0.15
+        tolerance: 0.1
         serverValidate: 0
       attackFrameData:
         triggerTime: 0.2
         eventType: 2
         resetCooldown: 0
         resetCooldownWindowTime: 0
-        tolerance: 0.15
+        tolerance: 0.1
         serverValidate: 0
       speedRange:
         isPercent: 0

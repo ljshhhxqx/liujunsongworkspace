@@ -35,6 +35,10 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
 
         private void OnPlayerSpawned(PlayerSpawnedEvent playerSpawnedEvent)
         {
+            if (_followedUIControllers.ContainsKey(playerSpawnedEvent.PlayerId))
+            {
+                return;
+            }
             var dataModel = GetDataModel(WorldUIType.CollectItem, playerSpawnedEvent.PlayerId, out var dataModels);
 
             if (!playerSpawnedEvent.Spawned)

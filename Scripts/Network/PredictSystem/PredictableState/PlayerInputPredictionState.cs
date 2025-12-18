@@ -183,7 +183,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     animationData.Timer = kvp.Value.CurrentCountdown;
                     animationData.Index = kvp.Value.CurrentStage;
                 }
-                _animationStateDataDict[(int)kvp.Key] = animationData;
+                _animationStateDataDict.Update((int)kvp.Key, animationData);//[] = animationData;
                 UIPropertyBinder.UpdateDictionary(_playerAnimationKey, (int)kvp.Key, animationData);
                 //Debug.Log($"[UpdateUIAnimation] {animationData.ToString()}");
             }

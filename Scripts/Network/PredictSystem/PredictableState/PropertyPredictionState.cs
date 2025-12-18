@@ -244,7 +244,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                         propertyData.MaxProperty = property.MaxCurrentValue;
                         propertyData.IsAutoRecover = isRecover;
                     }
-                    _uiPropertyData[(int)kvp.Key] = propertyData;
+                    _uiPropertyData.Update((int)kvp.Key, propertyData);
                     OnPropertyChanged?.Invoke(kvp.Key, property);
                     UIPropertyBinder.UpdateDictionary(_propertyBindKey, (int)kvp.Key, propertyData);
                 }

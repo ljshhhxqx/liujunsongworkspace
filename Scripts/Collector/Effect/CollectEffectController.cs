@@ -390,7 +390,7 @@ namespace HotUpdate.Scripts.Collector.Effect
         
             if (_attackStateController)
             {
-                _attackStateController.StartAttack(attackPower, attackSpeed);
+                _attackStateController.StartAttack(attackPower, attackSpeed*0.8f);
             }
         
             // 触发横扫粒子效果

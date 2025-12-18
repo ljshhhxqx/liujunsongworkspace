@@ -231,6 +231,7 @@ namespace HotUpdate.Scripts.Network.State
                 {
                     _eventStream.OnNext(kf.eventType);
                     _currentStage++;
+                    Debug.LogWarning($"[Update] [Keyframe] 关键帧已通过触发条件 Animation-{_state}  _currentStage-{_currentStage} _currentTime-{_currentTime}");
                 }
             }
             //Debug.Log($"[Update] [Animation] Animation-{_state}  _currentCountdown-{_currentCountdown} _currentTime-{_currentTime}  _currentStage-{_currentStage}");

@@ -109,7 +109,7 @@ namespace HotUpdate.Scripts.Network.UI
             var dic = GetOrCreateDictionary<T>(dictKey).Dictionary;
             if (dic.ContainsKey(itemKey))
             {
-                dic[itemKey] = value;
+                dic.Update(itemKey, value);
             }
             else
             {

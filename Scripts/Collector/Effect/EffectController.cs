@@ -7,8 +7,8 @@ namespace HotUpdate.Scripts.Collector.Effect
     public class EffectController : MonoBehaviour
     {
         [Header("材质引用")]
-        private Material material;
-        private Material originalMaterial;
+        private Material _material;
+        private Material _originalMaterial;
     
         [Header("效果参数")]
         [SerializeField] private float distortionIntensity = 0f;
@@ -20,7 +20,7 @@ namespace HotUpdate.Scripts.Collector.Effect
         [Header("动画控制")]
         public AnimationCurve disintegrationCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
         public AnimationCurve flashCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
-        private Coroutine activeAnimation;
+        private Coroutine _activeAnimation;
     
         [Header("状态")]
         public bool isInitialized = false;
@@ -33,7 +33,7 @@ namespace HotUpdate.Scripts.Collector.Effect
         void Update()
         {
             // 如果需要每帧更新材质参数（例如扭曲动画）
-            if (isInitialized && material)
+            if (_material)
             {
                 // 更新扭曲相关的时间参数
                 UpdateDistortionTime();
@@ -46,9 +46,9 @@ namespace HotUpdate.Scripts.Collector.Effect
             if (renderer)
             {
                 // 复制材质以确保不影响其他使用相同材质的物体
-                originalMaterial = renderer.material;
-                material = new Material(originalMaterial);
-                renderer.material = material;
+                _originalMaterial = renderer.material;
+                _material = new Material(_originalMaterial);
+                renderer.material = _material;
             
                 // 初始化Shader参数
                 ResetAllEffects();
@@ -147,12 +147,12 @@ namespace HotUpdate.Scripts.Collector.Effect
             if (!isInitialized) return;
         
             // 停止正在进行的动画
-            if (activeAnimation != null)
+            if (_activeAnimation != null)
             {
-                StopCoroutine(activeAnimation);
+                StopCoroutine(_activeAnimation);
             }
         
-            activeAnimation = StartCoroutine(AnimateDisintegration(targetIntensity, duration, curve));
+            _activeAnimation = StartCoroutine(AnimateDisintegration(targetIntensity, duration, curve));
         }
     
         public void PlayFlashAnimation(float targetIntensity, float duration, Color flashColor, AnimationCurve curve = null)
@@ -160,12 +160,12 @@ namespace HotUpdate.Scripts.Collector.Effect
             if (!isInitialized) return;
         
             // 停止正在进行的动画
-            if (activeAnimation != null)
+            if (_activeAnimation != null)
             {
-                StopCoroutine(activeAnimation);
+                StopCoroutine(_activeAnimation);
             }
         
-            activeAnimation = StartCoroutine(AnimateFlash(targetIntensity, duration, flashColor, curve));
+            _activeAnimation = StartCoroutine(AnimateFlash(targetIntensity, duration, flashColor, curve));
         }
     
         public void PlayAttackAnimation(float disintegrationIntensity, float flashIntensity, float duration, Color flashColor)
@@ -173,20 +173,20 @@ namespace HotUpdate.Scripts.Collector.Effect
             if (!isInitialized) return;
         
             // 停止正在进行的动画
-            if (activeAnimation != null)
+            if (_activeAnimation != null)
             {
-                StopCoroutine(activeAnimation);
+                StopCoroutine(_activeAnimation);
             }
         
-            activeAnimation = StartCoroutine(AnimateAttack(disintegrationIntensity, flashIntensity, duration, flashColor));
+            _activeAnimation = StartCoroutine(AnimateAttack(disintegrationIntensity, flashIntensity, duration, flashColor));
         }
     
         public void StopAllAnimations()
         {
-            if (activeAnimation != null)
+            if (_activeAnimation != null)
             {
-                StopCoroutine(activeAnimation);
-                activeAnimation = null;
+                StopCoroutine(_activeAnimation);
+                _activeAnimation = null;
             }
         
             ResetAllEffects();
@@ -214,7 +214,7 @@ namespace HotUpdate.Scripts.Collector.Effect
             }
         
             SetDisintegrationIntensity(targetIntensity);
-            activeAnimation = null;
+            _activeAnimation = null;
         }
     
         private IEnumerator AnimateFlash(float targetIntensity, float duration, Color color, AnimationCurve curve)
@@ -242,7 +242,7 @@ namespace HotUpdate.Scripts.Collector.Effect
             }
         
             SetFlashIntensity(targetIntensity);
-            activeAnimation = null;
+            _activeAnimation = null;
         }
     
         private IEnumerator AnimateAttack(float disintegrationTarget, float flashTarget, float duration, Color flashColor)
@@ -293,7 +293,7 @@ namespace HotUpdate.Scripts.Collector.Effect
             // 确保最后回到初始状态
             SetDisintegrationIntensity(0f);
             SetFlashIntensity(0f);
-            activeAnimation = null;
+            _activeAnimation = null;
         }
     
         #endregion
@@ -302,9 +302,9 @@ namespace HotUpdate.Scripts.Collector.Effect
     
         private void UpdateMaterialFloat(string propertyName, float value)
         {
-            if (material && material.HasProperty(propertyName))
+            if (_material && _material.HasProperty(propertyName))
             {
-                material.SetFloat(propertyName, value);
+                _material.SetFloat(propertyName, value);
             }
             else
             {
@@ -314,9 +314,9 @@ namespace HotUpdate.Scripts.Collector.Effect
     
         private void UpdateMaterialColor(string propertyName, Color value)
         {
-            if (material != null && material.HasProperty(propertyName))
+            if (_material && _material.HasProperty(propertyName))
             {
-                material.SetColor(propertyName, value);
+                _material.SetColor(propertyName, value);
             }
             else
             {
@@ -358,9 +358,9 @@ namespace HotUpdate.Scripts.Collector.Effect
         void OnDestroy()
         {
             // 清理材质实例
-            if (material != null)
+            if (_material != null)
             {
-                Destroy(material);
+                Destroy(_material);
             }
         }
     

@@ -12,15 +12,15 @@ namespace HotUpdate.Scripts.Collector.Effect
         public float maxPower = 20f;
         
         [Header("扭曲效果配置")]
-        public float baseDistortion = 0.1f;
-        public float normalDistortion = 0.2f;
-        public float strongDistortion = 0.4f;
-        public float superDistortion = 0.7f;
+        public float baseDistortion = 0.25f;
+        public float normalDistortion = 0.5f;
+        public float strongDistortion = 0.75f;
+        public float superDistortion = 1f;
         
         [Header("肢解效果配置")]
-        public float baseDisintegration = 0f;
-        public float normalDisintegration = 0.3f;
-        public float strongDisintegration = 0.6f;
+        public float baseDisintegration = 0.25f;
+        public float normalDisintegration = 0.5f;
+        public float strongDisintegration = 0.75f;
         public float superDisintegration = 1f;
         
         [Header("闪光效果配置")]
@@ -183,12 +183,14 @@ namespace HotUpdate.Scripts.Collector.Effect
                     break;
                     
                 case AttackPowerLevel.Strong:
+                    //Debug.Log($"[AttackEffectMapper] strong MapPowerToEffects - {powerConfig.strongDistortion} - {powerConfig.strongDisintegration} - {powerConfig.strongFlashIntensity}");
                     distortionIntensity = powerConfig.strongDistortion;
                     disintegrationIntensity = powerConfig.strongDisintegration;
                     flashIntensity = powerConfig.strongFlashIntensity;
                     break;
                     
                 case AttackPowerLevel.Super:
+                    //Debug.Log($"[AttackEffectMapper] super MapPowerToEffects - {powerConfig.strongDistortion} - {powerConfig.strongDisintegration} - {powerConfig.strongFlashIntensity}");
                     distortionIntensity = powerConfig.superDistortion;
                     disintegrationIntensity = powerConfig.superDisintegration;
                     flashIntensity = powerConfig.superFlashIntensity;

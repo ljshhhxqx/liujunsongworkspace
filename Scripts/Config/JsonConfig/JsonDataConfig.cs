@@ -91,41 +91,41 @@ namespace HotUpdate.Scripts.Config.JsonConfig
             var rand = Random.Range(0f, 1f);
             if (rand < config.spawnAttackRatio)
             {
-                Debug.Log("Spawn Attack : " + rand );
+                Debug.Log("【GetCollectObjectType】 Spawn Attack : " + rand );
                 return CollectObjectType.Attack;
             }
             if (rand < config.spawnAttackRatio + config.spawnHiddenRatio)
             {
-                Debug.Log("Spawn Hidden : " + rand);
+                Debug.Log("【GetCollectObjectType】 Spawn Hidden : " + rand);
                 return CollectObjectType.Hidden;
             }
             if (rand < config.spawnAttackRatio + config.spawnHiddenRatio + config.spawnMoveRatio)
             {
-                Debug.Log("Spawn Move : " + rand);
+                Debug.Log("【GetCollectObjectType】 Spawn Move : " + rand);
                 return CollectObjectType.Move;
             }
             if (rand < config.spawnAttackRatio + config.spawnHiddenRatio + config.spawnMoveRatio + config.spawnAttackHiddenRatio)
             {
-                Debug.Log("Spawn Attack Hidden : " + rand);
+                Debug.Log("【GetCollectObjectType】 Spawn Attack Hidden : " + rand);
                 return CollectObjectType.AttackHidden;
             }
             if (rand < config.spawnAttackRatio + config.spawnHiddenRatio + config.spawnMoveRatio + config.spawnAttackHiddenRatio + config.spawnMoveHiddenRatio)
             {
-                Debug.Log("Spawn Move Hidden: " + rand);
+                Debug.Log("【GetCollectObjectType】 Spawn Move Hidden: " + rand);
                 return CollectObjectType.MoveHidden;
             }
             if (rand < config.spawnAttackRatio + config.spawnHiddenRatio + config.spawnMoveRatio + config.spawnAttackHiddenRatio + config.spawnMoveHiddenRatio + config.spawnAttackMoveRatio)
             {
-                Debug.Log("Spawn Attack Move : " + rand);
+                Debug.Log("【GetCollectObjectType】 Spawn Attack Move : " + rand);
                 return CollectObjectType.AttackMove;
             }
 
             if (rand < sum)
             {
-                Debug.Log("Spawn Attack Move Hidden : " + rand);
+                Debug.Log("【GetCollectObjectType】 Spawn Attack Move Hidden : " + rand);
                 return CollectObjectType.AttackMoveHidden;
             }
-            Debug.Log("Spawn None : " + rand);
+            Debug.Log("【GetCollectObjectType】 Spawn None : " + rand);
 
             return CollectObjectType.None;
         }

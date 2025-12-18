@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AOTScripts.Data;
 using AOTScripts.Tool;
+using AOTScripts.Tool.Coroutine;
 using HotUpdate.Scripts.Collector.Effect;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
@@ -58,19 +59,21 @@ namespace HotUpdate.Scripts.Collector.Collects
             if (target.Type == ObjectType.Player)
             {
                 //Attack(_direction, target.NetId);
-                if (!_isAttacking && _keyframeCooldown.IsReady())
+                if (!_isAttacking)
                 {
-                    Debug.Log($"Start Attack");
-                    _lastAttackTime = Time.time;
-                    _keyframeCooldown.Use();
+                    Debug.Log($"[ AttackCollectItem ] Start Attack");
                     _isAttacking = true;
                     CollectObjectController.RpcSwitchAttackMode(_isAttacking);
                 }
+                _lastAttackTime = Time.time;
+                _keyframeCooldown.Use();
+                _collectEffectController.TriggerAttack();
                 return true;
             }
 
             if (_isAttacking)
             {
+                Debug.Log($"[ AttackCollectItem ] Stop Attack");
                 _isAttacking = false;
                 CollectObjectController.RpcSwitchAttackMode(_isAttacking);
             }
@@ -115,8 +118,8 @@ namespace HotUpdate.Scripts.Collector.Collects
         
         public void Init(AttackInfo info, bool serverHandler, uint id, bool clientHandler, Transform player, AttackConfig config, KeyframeData[] keyframeData)
         {
-            _disposable?.Dispose();
-            _disposable?.Clear();
+            // _disposable?.Dispose();
+            // _disposable?.Clear();
             _attackInfo = info;
             NetId = id;
             ServerHandler = serverHandler;
@@ -130,14 +133,21 @@ namespace HotUpdate.Scripts.Collector.Collects
             {
                 _attackMainEffect ??= GetComponentInChildren<AttackMainEffect>();
                 GameEventManager.Publish(new SceneItemSpawnedEvent(NetId, gameObject, true, player));
-                if (!TryGetComponent<CollectEffectController>(out _collectEffectController))
+                if (!TryGetComponent(out _collectEffectController))
                 {
+                    if (!_attackMainEffect)
+                    {
+                        throw new Exception($"{NetId}-{gameObject.name}-{CollectObjectController.CollectObjectData.id} AttackMainEffect not found in ");
+                    }
                     _collectEffectController = _attackMainEffect.gameObject.AddComponent<CollectEffectController>();
                 }
-                _collectEffectController.Initialize();
-                _collectEffectController.SetMinMaxAttackParameters(config.MinAttackPower, config.MaxAttackPower, config.MinAttackInterval, config.MaxAttackInterval);
-                _collectEffectController.SetAttackParameters(GameStaticExtensions.GetAttackExpectancy(_attackInfo.damage, _attackInfo.criticalRate, _attackInfo.criticalDamage),  _attackInfo.attackCooldown);
-                _collectEffectController.SwitchToTrackingMode();
+                if (_collectEffectController)
+                {
+                    _collectEffectController.Initialize();
+                    _collectEffectController.SetMinMaxAttackParameters(config.MinAttackPower, config.MaxAttackPower, config.MinAttackInterval, config.MaxAttackInterval);
+                    _collectEffectController.SetAttackParameters(GameStaticExtensions.GetAttackExpectancy(_attackInfo.damage, _attackInfo.criticalRate, _attackInfo.criticalDamage),  _attackInfo.attackCooldown);
+                    _collectEffectController.SwitchToTrackingMode();
+                }
             }
         }
 
@@ -145,6 +155,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         {
             if (_collectedObjects.Count == 0)
             {
+                Debug.LogWarning($"[ OnAttack ] {name} collected no object");
                 return;
             }
 
@@ -153,7 +164,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             foreach (var data in _collectedObjects)
             {
                 var dis = Vector3.Distance(transform.position, data.Position);
-                if (distance < dis)
+                if (distance > dis)
                 {
                     distance = dis;
                     dynamicObject = data;
@@ -162,6 +173,7 @@ namespace HotUpdate.Scripts.Collector.Collects
 
             if (dynamicObject != null)
             {
+                Debug.Log($"[ OnAttack ] {name} attack {dynamicObject.NetId}");
                 var direction = (dynamicObject.Position - transform.position).normalized;
                 Attack(direction, dynamicObject.NetId);
             }
