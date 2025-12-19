@@ -319,7 +319,8 @@ namespace HotUpdate.Scripts.Network.UI
 
         public bool Equals(PropertyItemData other)
         {
-            return PropertyType == other.PropertyType&& IsPercentage == other.IsPercentage && Name == other.Name && ConsumeType == other.ConsumeType && Mathf.Approximately(CurrentProperty, other.CurrentProperty) && Mathf.Approximately(MaxProperty, other.MaxProperty);
+            return PropertyType == other.PropertyType&& IsPercentage == other.IsPercentage
+                                                     && Name == other.Name && ConsumeType == other.ConsumeType && Mathf.Approximately(CurrentProperty, other.CurrentProperty) && Mathf.Approximately(MaxProperty, other.MaxProperty);
         }
 
         public override bool Equals(object obj)

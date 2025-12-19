@@ -60,6 +60,8 @@ MonoBehaviour:
   quality: 3
   collectConfigId: 8
   fillRenderer: {fileID: 23753439705546060}
+  attackMainEffect: {fileID: 3708693177825018498}
+  NetId: 0
 --- !u!114 &7727184122250189628
 MonoBehaviour:
   m_ObjectHideFlags: 0

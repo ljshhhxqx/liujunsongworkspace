@@ -1,18 +1,16 @@
 ﻿using DG.Tweening;
-using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIs.UIFollow.DataModel;
 using TMPro;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
-using VContainer;
 
 namespace HotUpdate.Scripts.UI.UIs.UIFollow.UIController
 {
     public class PlayerHpFollowController: FollowedUIController, IUIController
     {
-        [SerializeField] private Slider hp;
-        [SerializeField] private Slider mp;
+        [SerializeField] private Image hp;
+        [SerializeField] private Image mp;
         [SerializeField] private TextMeshProUGUI nameText;
         [SerializeField] private TextMeshProUGUI hpText;
         [SerializeField] private TextMeshProUGUI mpText;
@@ -41,26 +39,26 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow.UIController
                 infoDataModel.Health.Subscribe(h =>
                 {
                     hpText.text = $"{h}/{infoDataModel.MaxHealth.Value}";
-                    hp.value = h / (float)infoDataModel.MaxHealth.Value;
+                    hp.fillAmount = h / (float)infoDataModel.MaxHealth.Value;
                     DoTween();
                 }).AddTo(this);
                 infoDataModel.MaxHealth.Subscribe(m =>
                 {
                     hpText.text = $"{infoDataModel.Health.Value}/{m}";
-                    hp.value = infoDataModel.Health.Value / (float)m;
+                    hp.fillAmount = infoDataModel.Health.Value / (float)m;
                     DoTween();
                 }).AddTo(this);
                 
                 infoDataModel.Mana.Subscribe(m =>
                 {
                     mpText.text = $"{m}/{infoDataModel.MaxMana.Value}";
-                    mp.value = m / (float)infoDataModel.MaxMana.Value;
+                    mp.fillAmount = m / (float)infoDataModel.MaxMana.Value;
                     DoTween();
                 }).AddTo(this);
                 infoDataModel.MaxMana.Subscribe(m =>
                 {
                     mpText.text = $"{infoDataModel.Mana.Value}/{m}";
-                    mp.value = infoDataModel.Mana.Value / (float)m;
+                    mp.fillAmount = infoDataModel.Mana.Value / (float)m;
                     DoTween();
                 }).AddTo(this);
                 return;

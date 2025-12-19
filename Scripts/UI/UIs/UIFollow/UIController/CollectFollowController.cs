@@ -9,7 +9,7 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow.UIController
 {
     public class CollectFollowController : FollowedUIController, IUIController
     {
-        [SerializeField] private Slider hp;
+        [SerializeField] private Image hp;
         [SerializeField] private TextMeshProUGUI nameText;
         [SerializeField] private TextMeshProUGUI hpText;
         [SerializeField] private CanvasGroup canvasGroup;
@@ -22,26 +22,43 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow.UIController
                 infoDataModel.Name.Subscribe(n =>
                 {
                     nameText.text = n;
-                    DoTween();
+                    DoAnimationTween();
                 }).AddTo(this);
                 infoDataModel.Health.Subscribe(h =>
                 {
                     hpText.text = $"{h}/{infoDataModel.MaxHealth.Value}";
-                    hp.value = h / (float)infoDataModel.MaxHealth.Value;
-                    DoTween();
+                    hp.fillAmount = h / (float)infoDataModel.MaxHealth.Value;
+                    if (h <= 0)
+                    {
+                        DoFadeOutAnimation();
+                        return;
+                    }
+                    DoAnimationTween();
                 }).AddTo(this);
                 infoDataModel.MaxHealth.Subscribe(m =>
                 {
                     hpText.text = $"{infoDataModel.Health.Value}/{m}";
-                    hp.value = infoDataModel.Health.Value / (float)m;
-                    DoTween();
+                    hp.fillAmount = infoDataModel.Health.Value / (float)m;
+                    DoAnimationTween();
                 }).AddTo(this);
                 return;
             }
             Debug.LogError("BindToModel error" + model.GetType());
         }
 
-        private void DoTween()
+        private void DoFadeOutAnimation()
+        {
+            canvasGroup.alpha = 1;
+            _tween?.Kill();
+            _tween = DOTween.Sequence();
+            _tween.AppendInterval(0.15f);
+            _tween.Append(canvasGroup.DOFade(0, 1));
+            _tween.AppendInterval(0.15f);
+            _tween.Append(canvasGroup.DOFade(1, 1));
+            _tween.SetLoops(4);
+        }
+
+        private void DoAnimationTween()
         {
             canvasGroup.alpha = 1;
             _tween?.Kill();

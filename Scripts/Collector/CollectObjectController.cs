@@ -5,6 +5,7 @@ using AOTScripts.Data.NetworkMes;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Collector.Collects;
+using HotUpdate.Scripts.Collector.Effect;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Effect;
@@ -13,8 +14,10 @@ using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
+using Sirenix.OdinInspector;
 using UniRx;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VContainer;
 
 namespace HotUpdate.Scripts.Collector
@@ -31,6 +34,8 @@ namespace HotUpdate.Scripts.Collector
         private int collectConfigId;
         [SerializeField]
         private Renderer fillRenderer;
+        [SerializeField]
+        private AttackMainEffect attackMainEffect;
         private LayerMask _playerLayer;  
         protected LayerMask _sceneLayer;
         private CollectObjectType _collectObjectType;
@@ -108,7 +113,7 @@ namespace HotUpdate.Scripts.Collector
             {
                 keyframeDatas = new[] { _collectData.attackFrameData };
             }
-            _attackCollectItem.Init(attackInfo, ServerHandler, netId, ClientHandler, _playerTransform, _config, keyframeDatas);
+            _attackCollectItem.Init(attackInfo, ServerHandler, netId, ClientHandler, _playerTransform, _config, keyframeDatas, attackMainEffect);
         }
         
         private void InitMoveItem(MoveInfo moveInfo)

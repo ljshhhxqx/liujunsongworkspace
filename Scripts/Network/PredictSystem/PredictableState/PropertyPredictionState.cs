@@ -69,10 +69,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _animationConfig = configProvider.GetConfig<AnimationConfig>();
             _propertyConfig = configProvider.GetConfig<PropertyConfig>();
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
-            if (NetworkIdentity.isLocalPlayer)
-            {
-               
-            }
         } 
 
         public float GetProperty(PropertyTypeEnum propertyType)
@@ -214,7 +210,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 _isDead = true;
                 return;
             }
-            else if (_subjectedStateType.HasAnyState(SubjectedStateType.IsDead) && !predictablePropertyState.ControlSkillType.HasAnyState(SubjectedStateType.IsDead))
+            if (_subjectedStateType.HasAnyState(SubjectedStateType.IsDead) && !predictablePropertyState.ControlSkillType.HasAnyState(SubjectedStateType.IsDead))
             {
                 OnPlayerRespawned?.Invoke();
             }
@@ -236,6 +232,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                             MaxProperty = property.MaxCurrentValue,
                             ConsumeType = _propertyConfig.GetPropertyConfigData((PropertyTypeEnum)kvp.Key).consumeType,
                             IsPercentage = _propertyConfig.IsHundredPercent((PropertyTypeEnum)kvp.Key),
+                            IsAutoRecover = isRecover,
                         };
                     }
                     else
@@ -288,22 +285,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                         goldData.Alpha = property.CurrentValue;
                         break;
                 }
-                if (property.IsResourceProperty())
-                {
-                    OnPropertyChanged?.Invoke(kvp.Key, property);
-                    // if (data.ConsumeType!= PropertyConsumeType.None)
-                    // {
-                    //     data.CurrentProperty = property.CurrentValue;
-                    //     data.MaxProperty = property.MaxCurrentValue;
-                    //     data.IsPercentage = property.IsPercentage();
-                    //     data.IsAutoRecover = isRecover;
-                    //     _uiPropertyData[(int)kvp.Key] = data;
-                    //     Debug.Log($"uiPropertyData[{kvp.Key}]: {data}");
-                    // }
-                    continue;
-                }
-                
-                OnPropertyChanged?.Invoke(kvp.Key, property);
                 // if (data.ConsumeType!= PropertyConsumeType.None)
                 // {
                 //     data.CurrentProperty = property.CurrentValue;
@@ -316,6 +297,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 {
                     PlayerComponentController.RpcSetAnimatorSpeed(AnimationState.Attack, property.CurrentValue);
                 }
+                OnPropertyChanged?.Invoke(kvp.Key, property);
             }
             UIPropertyBinder.SetProperty(_goldBindKey, goldData);
         }

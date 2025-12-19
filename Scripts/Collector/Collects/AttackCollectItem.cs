@@ -116,7 +116,8 @@ namespace HotUpdate.Scripts.Collector.Collects
             InteractSystem.EnqueueCommand(request);
         }
         
-        public void Init(AttackInfo info, bool serverHandler, uint id, bool clientHandler, Transform player, AttackConfig config, KeyframeData[] keyframeData)
+        public void Init(AttackInfo info, bool serverHandler, uint id, bool clientHandler, Transform player, AttackConfig config,
+            KeyframeData[] keyframeData, AttackMainEffect attackMainEffect)
         {
             // _disposable?.Dispose();
             // _disposable?.Clear();
@@ -129,20 +130,13 @@ namespace HotUpdate.Scripts.Collector.Collects
                 .Where(x => x == AnimationEvent.OnAttack)
                 .Subscribe(_ => OnAttack())
                 .AddTo(_disposable);
+            _attackMainEffect ??= attackMainEffect;
             if (clientHandler)
             {
-                _attackMainEffect ??= GetComponentInChildren<AttackMainEffect>();
                 GameEventManager.Publish(new SceneItemSpawnedEvent(NetId, gameObject, true, player));
                 if (!TryGetComponent(out _collectEffectController))
                 {
-                    if (!_attackMainEffect)
-                    {
-                        throw new Exception($"{NetId}-{gameObject.name}-{CollectObjectController.CollectObjectData.id} AttackMainEffect not found in ");
-                    }
                     _collectEffectController = _attackMainEffect.gameObject.AddComponent<CollectEffectController>();
-                }
-                if (_collectEffectController)
-                {
                     _collectEffectController.Initialize();
                     _collectEffectController.SetMinMaxAttackParameters(config.MinAttackPower, config.MaxAttackPower, config.MinAttackInterval, config.MaxAttackInterval);
                     _collectEffectController.SetAttackParameters(GameStaticExtensions.GetAttackExpectancy(_attackInfo.damage, _attackInfo.criticalRate, _attackInfo.criticalDamage),  _attackInfo.attackCooldown);

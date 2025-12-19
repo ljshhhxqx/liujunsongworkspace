@@ -69,9 +69,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 
         private void OnSceneItemsChanged(SyncIDictionary<uint, SceneItemInfo>.Operation type, uint uid, SceneItemInfo info)
         {
-            SceneItemInfoChanged?.Invoke(uid, info);
-            _gameEventManager.Publish(new SceneItemInfoChangedEvent(uid, info, type));
-            Debug.Log($"[OnSceneItemsChanged] {type} scene item {uid} info - {info}");
+            SceneItemInfoChanged?.Invoke(uid, _sceneItems[uid]);
+            _gameEventManager.Publish(new SceneItemInfoChangedEvent(uid, _sceneItems[uid], type));
+            Debug.Log($"[OnSceneItemsChanged] {type} scene item {uid} info - {_sceneItems[uid]}");
         }
 
         private void OnItemSpawned(SceneItemInfoChanged sceneItemInfoChanged)
@@ -93,20 +93,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                 Debug.Log($"Add scene item {sceneItemInfoChanged.ItemId} to scene items");
                 _sceneItems.Add(sceneItemInfoChanged.ItemId, sceneItemInfo);
             }
-            else
-            {
-                sceneItemInfo.health = Mathf.Max(sceneItemInfo.health, Mathf.Max(0, sceneItemInfoChanged.SceneItemInfo.health));
-                sceneItemInfo.defense = Mathf.Max(sceneItemInfo.defense, sceneItemInfoChanged.SceneItemInfo.defense);
-                sceneItemInfo.speed = Mathf.Max(sceneItemInfo.speed, sceneItemInfoChanged.SceneItemInfo.speed);
-                sceneItemInfo.attackDamage = Mathf.Max(sceneItemInfo.attackDamage, sceneItemInfoChanged.SceneItemInfo.attackDamage);
-                sceneItemInfo.attackRange = Mathf.Max(sceneItemInfo.attackRange, sceneItemInfoChanged.SceneItemInfo.attackRange);
-                sceneItemInfo.attackInterval = Mathf.Max(sceneItemInfo.attackInterval, sceneItemInfoChanged.SceneItemInfo.attackInterval);
-                sceneItemInfo.maxHealth = Mathf.Max(sceneItemInfo.maxHealth, sceneItemInfoChanged.SceneItemInfo.maxHealth);
-                sceneItemInfo.sceneItemId = sceneItemInfoChanged.ItemId;
-                sceneItemInfo.Position = sceneItemInfoChanged.Position;
-                _sceneItems[sceneItemInfoChanged.ItemId] = sceneItemInfo;
-                Debug.Log($"[OnItemSpawned] Update scene item {sceneItemInfoChanged.ItemId} info - {sceneItemInfo}");
-            }
+            // else
+            // {
+            //     sceneItemInfo.health = Mathf.Max(sceneItemInfo.health, Mathf.Max(0, sceneItemInfoChanged.SceneItemInfo.health));
+            //     sceneItemInfo.defense = Mathf.Max(sceneItemInfo.defense, sceneItemInfoChanged.SceneItemInfo.defense);
+            //     sceneItemInfo.speed = Mathf.Max(sceneItemInfo.speed, sceneItemInfoChanged.SceneItemInfo.speed);
+            //     sceneItemInfo.attackDamage = Mathf.Max(sceneItemInfo.attackDamage, sceneItemInfoChanged.SceneItemInfo.attackDamage);
+            //     sceneItemInfo.attackRange = Mathf.Max(sceneItemInfo.attackRange, sceneItemInfoChanged.SceneItemInfo.attackRange);
+            //     sceneItemInfo.attackInterval = Mathf.Max(sceneItemInfo.attackInterval, sceneItemInfoChanged.SceneItemInfo.attackInterval);
+            //     sceneItemInfo.maxHealth = Mathf.Max(sceneItemInfo.maxHealth, sceneItemInfoChanged.SceneItemInfo.maxHealth);
+            //     sceneItemInfo.sceneItemId = sceneItemInfoChanged.ItemId;
+            //     sceneItemInfo.Position = sceneItemInfoChanged.Position;
+            //     _sceneItems[sceneItemInfoChanged.ItemId] = sceneItemInfo;
+            //     Debug.Log($"[OnItemSpawned] Update scene item {sceneItemInfoChanged.ItemId} info - {sceneItemInfo}");
+            // }
         }
 
         private void OnSkillItem(PlayerSkillItemEvent playerSkillItemEvent)
@@ -143,11 +143,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                 if (_sceneItems.TryGetValue(sceneItemId, out var sceneItemInfo))
                 {
                     var damageResult = _jsonConfig.GetDamage(attackPower, sceneItemInfo.defense, criticalRate, criticalDamage);
-                    Debug.Log($"[OnPlayerAttackItem] Player {playerAttackItemEvent.AttackerId} attack scene item {sceneItemId} with damage {damageResult.Damage}");
-                    sceneItemInfo.health -= damageResult.Damage;
-                    sceneItemInfo.health = Mathf.Max(sceneItemInfo.health, 0);
-                    SceneItemInfoChanged?.Invoke(sceneItemId, sceneItemInfo);
+                    var health = sceneItemInfo.health;
+                    health -= damageResult.Damage;
+                    sceneItemInfo.health = Mathf.Max(0, health);
+                    Debug.Log($"[OnPlayerAttackItem] Player {playerAttackItemEvent.AttackerId} attack scene item {sceneItemId} with damage {damageResult.Damage},now health {health} - max health {sceneItemInfo.maxHealth}");
                     _sceneItems[sceneItemId] = sceneItemInfo;
+                    SceneItemInfoChanged?.Invoke(sceneItemId, sceneItemInfo);
                     if (sceneItemInfo.health == 0)
                     {
                         Debug.Log($"[OnPlayerAttackItem] Scene item {sceneItemId} is dead");
@@ -492,7 +493,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
     }
 
     [Serializable]
-    public struct SceneItemInfo
+    public struct SceneItemInfo : IEqualityComparer<SceneItemInfo>
     {
         public uint sceneItemId;
         public float health;
@@ -516,6 +517,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             sb.AppendLine($"Speed: {speed}");
             sb.AppendLine($"Position: {Position}");
             return sb.ToString();
+        }
+
+        public bool Equals(SceneItemInfo x, SceneItemInfo y)
+        {
+            return x.sceneItemId == y.sceneItemId && x.health.Equals(y.health) && x.maxHealth.Equals(y.maxHealth) && x.attackInterval.Equals(y.attackInterval) && x.attackRange.Equals(y.attackRange) && x.attackDamage.Equals(y.attackDamage) && x.defense.Equals(y.defense) && x.speed.Equals(y.speed) && x.Position.Equals(y.Position);
+        }
+
+        public int GetHashCode(SceneItemInfo obj)
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(obj.sceneItemId);
+            hashCode.Add(obj.health);
+            hashCode.Add(obj.maxHealth);
+            hashCode.Add(obj.attackInterval);
+            hashCode.Add(obj.attackRange);
+            hashCode.Add(obj.attackDamage);
+            hashCode.Add(obj.defense);
+            hashCode.Add(obj.speed);
+            hashCode.Add(obj.Position);
+            return hashCode.ToHashCode();
         }
     }
 

@@ -2292,7 +2292,7 @@ namespace AOTScripts.Data
     
     [MemoryPackable]
     [StructLayout(LayoutKind.Sequential, Pack = 1)] // 紧密打包
-    public partial struct CompressedVector3
+    public partial struct CompressedVector3 : IEquatable<CompressedVector3>
     {
         [MemoryPackOrder(0)]
         public float x;
@@ -2311,6 +2311,31 @@ namespace AOTScripts.Data
         
         public static implicit operator Vector3(CompressedVector3 v) => v.ToVector3();
         public static implicit operator CompressedVector3(Vector3 v) => FromVector3(v);
+
+        public bool Equals(CompressedVector3 other)
+        {
+            return x.Equals(other.x) && y.Equals(other.y) && z.Equals(other.z);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is CompressedVector3 other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(x, y, z);
+        }
+
+        public static bool operator ==(CompressedVector3 left, CompressedVector3 right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(CompressedVector3 left, CompressedVector3 right)
+        {
+            return !left.Equals(right);
+        }
     }
     
     [MemoryPackable]

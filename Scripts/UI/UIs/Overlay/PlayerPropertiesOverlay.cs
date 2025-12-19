@@ -52,12 +52,8 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             contentItemList.SetItemList(_propertyItemDatas);
             playerPropertyData.ObserveUpdate((x, y, z) =>
                 {
-                    if (!z.Equals(y))
-                    {
-                        _propertyItemDatas[x] = z;
-                        contentItemList.ReplaceItem<PropertyItemData, PropertyItems>(x, z);
-                        //Debug.Log($"Replace property {x.Key} {x.NewValue}");
-                    }
+                    _propertyItemDatas[x] = z;
+                    contentItemList.ReplaceItem<PropertyItemData, PropertyItems>(x, z);
                 })
                 .AddTo(this);
             playerPropertyData.ObserveAdd((x,y) =>
