@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace HotUpdate.Scripts.Collector.Effect
 {
-
     public class SweepParticleSystem : MonoBehaviour
     {
         [Header("粒子系统")] public ParticleSystem sweepParticleSystem;
@@ -29,20 +28,20 @@ namespace HotUpdate.Scripts.Collector.Effect
 
         [Header("目标点（可选）")] public Transform targetPoint;
 
-        private Coroutine sweepCoroutine;
-        private ParticleSystem.MainModule sweepMain;
-        private ParticleSystem.MainModule hitMain;
+        private Coroutine _sweepCoroutine;
+        private ParticleSystem.MainModule _mainModule;
+        private ParticleSystem.MainModule _hitMain;
 
         void Start()
         {
             if (sweepParticleSystem)
             {
-                sweepMain = sweepParticleSystem.main;
+                _mainModule = sweepParticleSystem.main;
             }
 
             if (hitParticleSystem)
             {
-                hitMain = hitParticleSystem.main;
+                _hitMain = hitParticleSystem.main;
             }
 
             // 初始状态
@@ -52,11 +51,11 @@ namespace HotUpdate.Scripts.Collector.Effect
         public void TriggerSweep(AttackPowerLevel powerLevel, AttackSpeedLevel speedLevel)
         {
             // 停止正在进行的横扫
-            if (sweepCoroutine != null)
-                StopCoroutine(sweepCoroutine);
+            if (_sweepCoroutine != null)
+                StopCoroutine(_sweepCoroutine);
 
             // 开始新的横扫
-            sweepCoroutine = StartCoroutine(SweepAnimation(powerLevel, speedLevel));
+            _sweepCoroutine = StartCoroutine(SweepAnimation(powerLevel, speedLevel));
         }
 
         private IEnumerator SweepAnimation(AttackPowerLevel powerLevel, AttackSpeedLevel speedLevel)
@@ -100,7 +99,7 @@ namespace HotUpdate.Scripts.Collector.Effect
             // 6. 停用武器轨迹
             SetTrailActive(false);
 
-            sweepCoroutine = null;
+            _sweepCoroutine = null;
         }
 
         private void SetupParticlesByPower(AttackPowerLevel powerLevel)
@@ -114,20 +113,20 @@ namespace HotUpdate.Scripts.Collector.Effect
             switch (powerLevel)
             {
                 case AttackPowerLevel.Normal:
-                    sweepMain.startColor = normalColor;
-                    sweepMain.startSize = normalSize;
+                    _mainModule.startColor = normalColor;
+                    _mainModule.startSize = normalSize;
                     emission.rateOverTime = 50f;
                     break;
 
                 case AttackPowerLevel.Strong:
-                    sweepMain.startColor = strongColor;
-                    sweepMain.startSize = strongSize;
+                    _mainModule.startColor = strongColor;
+                    _mainModule.startSize = strongSize;
                     emission.rateOverTime = 100f;
                     break;
 
                 case AttackPowerLevel.Super:
-                    sweepMain.startColor = superColor;
-                    sweepMain.startSize = superSize;
+                    _mainModule.startColor = superColor;
+                    _mainModule.startSize = superSize;
                     emission.rateOverTime = 200f;
                     break;
             }

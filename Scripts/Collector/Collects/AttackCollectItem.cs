@@ -112,6 +112,7 @@ namespace HotUpdate.Scripts.Collector.Collects
                 CriticalRate = _attackInfo.criticalRate,
                 CriticalDamage = _attackInfo.criticalDamage,
             };
+            
             Debug.Log($"{NetId} is Local Attack and send request to {targetNetId} - attackPower: {_attackInfo.damage} - criticalRate: {_attackInfo.criticalRate} - criticalDamage: {_attackInfo.criticalDamage}");
             InteractSystem.EnqueueCommand(request);
         }

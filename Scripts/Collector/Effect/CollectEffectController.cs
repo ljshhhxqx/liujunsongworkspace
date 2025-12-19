@@ -23,7 +23,6 @@ namespace HotUpdate.Scripts.Collector.Effect
         [Header("视觉组件（动态生成）")]
         private AttackEffectMapper _attackEffectMapper;
         private AttackStateController _attackStateController;
-        private SweepParticleSystem _sweepParticleSystem;
         private EffectController _effectController;
     
         [Header("配置")]
@@ -163,15 +162,15 @@ namespace HotUpdate.Scripts.Collector.Effect
             }
         
             // 创建SweepParticleSystem（可选）
-            _sweepParticleSystem = gameObject.GetComponent<SweepParticleSystem>();
-            if (!_sweepParticleSystem)
-            {
-                _sweepParticleSystem = gameObject.AddComponent<SweepParticleSystem>();
-                if (showDebugLogs) Debug.Log($"[CollectObjectController] 创建SweepParticleSystem");
-            
-                // 设置默认粒子系统
-                SetupDefaultParticleSystem();
-            }
+            // _sweepParticleSystem = gameObject.GetComponent<SweepParticleSystem>();
+            // if (!_sweepParticleSystem)
+            // {
+            //     _sweepParticleSystem = gameObject.AddComponent<SweepParticleSystem>();
+            //     if (showDebugLogs) Debug.Log($"[CollectObjectController] 创建SweepParticleSystem");
+            //
+            //     // 设置默认粒子系统
+            //     SetupDefaultParticleSystem();
+            // }
         }
     
         private void SetupDefaultEffectConfig()
@@ -218,61 +217,7 @@ namespace HotUpdate.Scripts.Collector.Effect
             _attackEffectMapper.speedConfig.superFastAttackDuration = 0.25f;
         }
     
-        private void SetupDefaultParticleSystem()
-        {
-            if (!_sweepParticleSystem) return;
         
-            // 创建并配置粒子系统
-            GameObject particleObject = new GameObject("SweepParticles");
-            particleObject.transform.SetParent(transform);
-            particleObject.transform.localPosition = Vector3.zero;
-        
-            // 添加并配置粒子系统
-            ParticleSystem p = particleObject.AddComponent<ParticleSystem>();
-        
-            // 配置主模块
-            var main = p.main;
-            main.startSpeed = 5f;
-            main.startSize = 0.5f;
-            main.startLifetime = 0.5f;
-            main.maxParticles = 100;
-            main.simulationSpace = ParticleSystemSimulationSpace.World;
-        
-            // 配置发射模块
-            var emission = p.emission;
-            emission.rateOverTime = 0;
-            emission.enabled = false;
-        
-            // 配置形状（弧形）
-            var shape = p.shape;
-            shape.shapeType = ParticleSystemShapeType.Cone;
-            shape.angle = 30f;
-            shape.radius = 1f;
-            shape.arc = 180f;
-        
-            _sweepParticleSystem.sweepParticleSystem = p;
-        
-            // 创建命中粒子系统
-            GameObject hitParticleObject = new GameObject("HitParticles");
-            hitParticleObject.transform.SetParent(transform);
-            hitParticleObject.transform.localPosition = Vector3.zero;
-        
-            ParticleSystem hitParticleSystem = hitParticleObject.AddComponent<ParticleSystem>();
-            var hitMain = hitParticleSystem.main;
-            hitMain.startSpeed = 2f;
-            hitMain.startSize = 0.3f;
-            hitMain.startLifetime = 1f;
-            hitMain.maxParticles = 50;
-        
-            var hitEmission = hitParticleSystem.emission;
-            hitEmission.rateOverTime = 0;
-            hitEmission.enabled = false;
-        
-            _sweepParticleSystem.hitParticleSystem = hitParticleSystem;
-        
-            if (showDebugLogs) Debug.Log($"[CollectObjectController] 创建默认粒子系统");
-        }
-    
         private void InitializeComponents()
         {
             // 设置组件间的引用
@@ -393,12 +338,6 @@ namespace HotUpdate.Scripts.Collector.Effect
                 _attackStateController.StartAttack(attackPower, attackSpeed * 0.75f);
             }
         
-            // 触发横扫粒子效果
-            if (_sweepParticleSystem  && _attackEffectMapper)
-            {
-                _sweepParticleSystem.TriggerSweep(_attackEffectMapper.currentPowerLevel, _attackEffectMapper.currentSpeedLevel);
-            }
-        
             OnAttackTriggered?.Invoke(attackPower, attackSpeed);
         
             if (showDebugLogs)
@@ -473,9 +412,9 @@ namespace HotUpdate.Scripts.Collector.Effect
         /// 获取组件引用（高级使用）
         /// </summary>
         public (EffectController effect, AttackEffectMapper mapper, 
-            AttackStateController state, SweepParticleSystem sweep) GetComponentReferences()
+            AttackStateController state) GetComponentReferences()
         {
-            return (_effectController, _attackEffectMapper, _attackStateController, _sweepParticleSystem);
+            return (_effectController, _attackEffectMapper, _attackStateController);
         }
     
         #endregion
@@ -598,25 +537,6 @@ namespace HotUpdate.Scripts.Collector.Effect
             if (r && _originalMaterial)
             {
                 r.material = _originalMaterial;
-            }
-        
-            // 清理粒子系统
-            CleanupParticleSystems();
-        }
-    
-        private void CleanupParticleSystems()
-        {
-            if (_sweepParticleSystem)
-            {
-                if (_sweepParticleSystem.sweepParticleSystem)
-                {
-                    Destroy(_sweepParticleSystem.sweepParticleSystem.gameObject);
-                }
-            
-                if (_sweepParticleSystem.hitParticleSystem)
-                {
-                    Destroy(_sweepParticleSystem.hitParticleSystem.gameObject);
-                }
             }
         }
     

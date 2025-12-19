@@ -358,7 +358,7 @@ namespace HotUpdate.Scripts.Collector.Effect
         void OnDestroy()
         {
             // 清理材质实例
-            if (_material != null)
+            if (_material)
             {
                 Destroy(_material);
             }

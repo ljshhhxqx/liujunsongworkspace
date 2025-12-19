@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AOTScripts.Tool.ObjectPool;
+using HotUpdate.Scripts.Tool.GameEvent;
 using UnityEngine;
 using VContainer;
 
@@ -13,14 +14,19 @@ namespace HotUpdate.Scripts.Effect
         private readonly Dictionary<ParticlesType, ParticleSystem> _activeParticleSystems = new Dictionary<ParticlesType, ParticleSystem>();
         
         [Inject]
-        private void Init()
+        private void Init(GameEventManager gameEventManager)
         {
-            LoadEffects();
+            gameEventManager.Subscribe<GameResourceLoadedEvent>(OnGameResourceLoaded);
         }
 
-        private async void LoadEffects()
+        private void OnGameResourceLoaded(GameResourceLoadedEvent eResourceLoadedEvent)
         {
-            var effectsResource = await ResourceManager.Instance.GetEffectsResource();
+            LoadEffects(eResourceLoadedEvent.MapType.ToString());
+        }
+
+        private void LoadEffects(string mapName)
+        {
+            var effectsResource = ResourceManager.Instance.GetEffectsResource(mapName);
             foreach (var effect in effectsResource)
             {
                 if (effect.TryGetComponent<ParticleSystem>(out var ps))
@@ -110,5 +116,6 @@ namespace HotUpdate.Scripts.Effect
         RecoverBuff,
         RecoverDebuff,
         Skill,
+        Slash
     }
 }

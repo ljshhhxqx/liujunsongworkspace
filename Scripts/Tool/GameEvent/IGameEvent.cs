@@ -22,7 +22,12 @@ namespace HotUpdate.Scripts.Tool.GameEvent
 
     public struct GameResourceLoadedEvent : IGameEvent
     {
-        
+        public MapType MapType { get; private set; }
+
+        public GameResourceLoadedEvent(MapType mapType)
+        {
+            MapType = mapType;
+        }
     }
 
     public struct PlayerTouchWellEvent : IGameEvent
