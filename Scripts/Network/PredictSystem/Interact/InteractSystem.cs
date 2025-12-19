@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using AOTScripts.Data;
+using AOTScripts.Tool;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Collector.Collects;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Effect;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
@@ -93,20 +95,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                 Debug.Log($"Add scene item {sceneItemInfoChanged.ItemId} to scene items");
                 _sceneItems.Add(sceneItemInfoChanged.ItemId, sceneItemInfo);
             }
-            // else
-            // {
-            //     sceneItemInfo.health = Mathf.Max(sceneItemInfo.health, Mathf.Max(0, sceneItemInfoChanged.SceneItemInfo.health));
-            //     sceneItemInfo.defense = Mathf.Max(sceneItemInfo.defense, sceneItemInfoChanged.SceneItemInfo.defense);
-            //     sceneItemInfo.speed = Mathf.Max(sceneItemInfo.speed, sceneItemInfoChanged.SceneItemInfo.speed);
-            //     sceneItemInfo.attackDamage = Mathf.Max(sceneItemInfo.attackDamage, sceneItemInfoChanged.SceneItemInfo.attackDamage);
-            //     sceneItemInfo.attackRange = Mathf.Max(sceneItemInfo.attackRange, sceneItemInfoChanged.SceneItemInfo.attackRange);
-            //     sceneItemInfo.attackInterval = Mathf.Max(sceneItemInfo.attackInterval, sceneItemInfoChanged.SceneItemInfo.attackInterval);
-            //     sceneItemInfo.maxHealth = Mathf.Max(sceneItemInfo.maxHealth, sceneItemInfoChanged.SceneItemInfo.maxHealth);
-            //     sceneItemInfo.sceneItemId = sceneItemInfoChanged.ItemId;
-            //     sceneItemInfo.Position = sceneItemInfoChanged.Position;
-            //     _sceneItems[sceneItemInfoChanged.ItemId] = sceneItemInfo;
-            //     Debug.Log($"[OnItemSpawned] Update scene item {sceneItemInfoChanged.ItemId} info - {sceneItemInfo}");
-            // }
         }
 
         private void OnSkillItem(PlayerSkillItemEvent playerSkillItemEvent)
@@ -149,6 +137,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                     Debug.Log($"[OnPlayerAttackItem] Player {playerAttackItemEvent.AttackerId} attack scene item {sceneItemId} with damage {damageResult.Damage},now health {health} - max health {sceneItemInfo.maxHealth}");
                     _sceneItems[sceneItemId] = sceneItemInfo;
                     SceneItemInfoChanged?.Invoke(sceneItemId, sceneItemInfo);
+                    var identity = GameStaticExtensions.GetNetworkIdentity(sceneItemId);
+                    if (identity)
+                    {
+                        var collectObjectController = identity.GetComponent<IEffectPlayer>();
+                        collectObjectController.RpcPlayEffect(ParticlesType.HitEffect);
+                    }
+
                     if (sceneItemInfo.health == 0)
                     {
                         Debug.Log($"[OnPlayerAttackItem] Scene item {sceneItemId} is dead");

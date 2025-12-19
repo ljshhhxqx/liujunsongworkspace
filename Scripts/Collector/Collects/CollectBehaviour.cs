@@ -126,6 +126,10 @@ namespace HotUpdate.Scripts.Collector.Collects
                 var explodeRange = Random.Range(1f, 2.5f);
                 DelayInvoker.DelayInvoke(1.9f, () =>
                 {
+                    if (!gameObject.activeInHierarchy)
+                    {
+                        return;
+                    }
                     var request = new ItemExplodeRequest
                     {
                         Header = InteractSystem.CreateInteractHeader(0, InteractCategory.SceneToPlayer, transform.position),

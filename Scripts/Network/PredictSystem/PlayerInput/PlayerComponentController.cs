@@ -11,6 +11,7 @@ using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Effect;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.GameBase;
@@ -53,7 +54,7 @@ using PropertyEnvironmentChangeCommand = AOTScripts.Data.PropertyEnvironmentChan
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 {
-    public class PlayerComponentController : NetworkAutoInjectHandlerBehaviour, IAttackAnimationEvent
+    public class PlayerComponentController : NetworkAutoInjectHandlerBehaviour, IAttackAnimationEvent, IEffectPlayer
     {
         [Header("Components")]
         [SerializeField]
@@ -1476,6 +1477,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             _skillSyncState.SpawnSkillEffect(skillConfigId, position, code);
            
+        }
+        
+        [ClientRpc]
+        public void RpcPlayEffect(ParticlesType type)
+        {
+            EffectPlayer.Instance.PlayEffect(type, transform.position, transform);
         }
     }
 }

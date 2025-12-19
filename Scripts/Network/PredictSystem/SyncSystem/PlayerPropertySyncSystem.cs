@@ -9,6 +9,7 @@ using AOTScripts.Tool.Coroutine;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Effect;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
@@ -434,7 +435,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerState = GetState<PlayerPredictablePropertyState>(playerId);
             var damageResult = PlayerPropertyCalculator.HandleItemAttack(propertyItemAttackCommand.AttackerId,
                 propertyItemAttackCommand.TargetId, ref playerState, propertyItemAttackCommand.Damage);
-            
+            var player = _playerInGameManager.GetPlayerComponent<PlayerComponentController>(playerId);
+            player.RpcPlayEffect(ParticlesType.HitEffect);
             PropertyStates[playerId] = playerState;
             PropertyChange(playerId);
         }

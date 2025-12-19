@@ -4,6 +4,7 @@ using AOTScripts.Data;
 using AOTScripts.Tool;
 using AOTScripts.Tool.Coroutine;
 using HotUpdate.Scripts.Collector.Effect;
+using HotUpdate.Scripts.Effect;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.State;
@@ -68,6 +69,10 @@ namespace HotUpdate.Scripts.Collector.Collects
                 _lastAttackTime = Time.time;
                 _keyframeCooldown.Use();
                 _collectEffectController.TriggerAttack();
+                if (!_attackInfo.isRemoteAttack)
+                {
+                    CollectObjectController.RpcPlayEffect(ParticlesType.Slash);
+                }
                 return true;
             }
 
@@ -98,6 +103,7 @@ namespace HotUpdate.Scripts.Collector.Collects
                     CriticalDamageRatio = _attackInfo.criticalDamage,
                 };
                 InteractSystem.EnqueueCommand(bullet);
+                CollectObjectController.RpcPlayEffect(ParticlesType.Emit);
                 Debug.Log($"{NetId} is Remote Attack and send bullet to {targetNetId} - direction: {direction} - attackPower: {_attackInfo.damage} - speed: {_attackInfo.speed} - lifeTime: {_attackInfo.lifeTime} - criticalRate: {_attackInfo.criticalRate} - criticalDamage: {_attackInfo.criticalDamage}");
                 return;
             }

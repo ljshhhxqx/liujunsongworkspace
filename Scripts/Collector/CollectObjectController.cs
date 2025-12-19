@@ -22,7 +22,7 @@ using VContainer;
 
 namespace HotUpdate.Scripts.Collector
 {
-    public class CollectObjectController : CollectObject
+    public class CollectObjectController : CollectObject, IEffectPlayer
     {
         private PooledObject _pooledObject;
         private CollectParticlePlayer _collectParticlePlayer;
@@ -254,13 +254,24 @@ namespace HotUpdate.Scripts.Collector
             EffectPlayer.Instance.PlayEffect(ParticlesType.Explode, transform.position, transform);
             //NetworkGameObjectPoolManager.Instance.Despawn(gameObject);
         }
-        
+
+        [ClientRpc]
+        public void RpcPlayEffect(ParticlesType type)
+        {
+            EffectPlayer.Instance.PlayEffect(type, transform.position, transform);
+        }
+
         private CollectObjectController _collectObjectController;
 
         [ClientRpc]
         public void RpcSwitchAttackMode(bool isAttacking)
         {
             _attackCollectItem.RpcSwitchAttackMode(isAttacking);
+        }
+
+        public void RpcPlayEffect()
+        {
+            throw new NotImplementedException();
         }
     }
 }

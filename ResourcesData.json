@@ -1495,13 +1495,23 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
+            "Name": "Emit",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Effect/Emit.prefab"
+        },
+        {
+            "UID": 4200007,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "Explode",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/Effect/Explode.prefab"
         },
         {
-            "UID": 4200007,
+            "UID": 4200008,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1511,7 +1521,7 @@
             "Address": "/Map/Town/Effect/HitEffect.prefab"
         },
         {
-            "UID": 4200008,
+            "UID": 4200009,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1521,7 +1531,7 @@
             "Address": "/Map/Town/Effect/RecoverBuff.prefab"
         },
         {
-            "UID": 4200009,
+            "UID": 4200010,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1531,7 +1541,7 @@
             "Address": "/Map/Town/Effect/RecoverDebuff.prefab"
         },
         {
-            "UID": 4200010,
+            "UID": 4200011,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1541,7 +1551,7 @@
             "Address": "/Map/Town/Effect/Skill.prefab"
         },
         {
-            "UID": 4200011,
+            "UID": 4200012,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -1549,6 +1559,16 @@
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/Effect/Slash.prefab"
+        },
+        {
+            "UID": 4200013,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
+            "Name": "StoneHit",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Effect/StoneHit.prefab"
         },
         {
             "UID": 4300000,

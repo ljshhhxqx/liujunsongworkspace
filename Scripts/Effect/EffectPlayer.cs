@@ -116,6 +116,13 @@ namespace HotUpdate.Scripts.Effect
         RecoverBuff,
         RecoverDebuff,
         Skill,
-        Slash
+        Slash,
+        Emit,
+        StoneHit
+    }
+
+    public interface IEffectPlayer
+    {
+        void RpcPlayEffect(ParticlesType type);
     }
 }
