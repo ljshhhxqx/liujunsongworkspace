@@ -16,6 +16,7 @@ namespace HotUpdate.Scripts.Game.Map
         private string _mapName;
         private string _commonMapName;
         private int _staticObjectId;
+        private GameEventManager _gameEventManager;
         
 #if UNITY_EDITOR
         //[MenuItem("CONTEXT/InitMapStaticObjectsId")]
@@ -34,6 +35,7 @@ namespace HotUpdate.Scripts.Game.Map
         private async void Init(GameEventManager gameEventManager, UIManager uiManager)
         {
             //uiManager.SwitchUI<LoadingScreenUI>();
+            _gameEventManager = gameEventManager;
             _commonMapName = $"Town";
             InjectGameObjects();
             await LoadGameResources(_commonMapName);
@@ -88,6 +90,7 @@ namespace HotUpdate.Scripts.Game.Map
             {
                 Debug.Log($"加载资源成功: {resource.name}");
             }
+            _gameEventManager.Publish(new GameMapResourceLoadedEvent(mapName));
         }
 
         public override void OnStartClient()

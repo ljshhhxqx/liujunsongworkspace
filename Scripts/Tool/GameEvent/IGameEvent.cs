@@ -209,6 +209,16 @@ namespace HotUpdate.Scripts.Tool.GameEvent
         }
     }
 
+    public struct GameMapResourceLoadedEvent : IGameEvent
+    {
+        public string SceneName { get; private set; }
+
+        public GameMapResourceLoadedEvent(string sceneName)
+        {
+            SceneName = sceneName;
+        }
+    }
+
     public struct PlayerLoginEvent : IGameEvent
     {
         public string PlayerId { get; private set; }

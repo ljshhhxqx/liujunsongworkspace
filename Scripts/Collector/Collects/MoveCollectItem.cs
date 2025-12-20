@@ -28,28 +28,27 @@ namespace HotUpdate.Scripts.Collector.Collects
                 //Debug.LogError($"{name} is not moveable-{IsMoveable} or serverHandler-{ServerHandler}-{CurrentSubjectedStateType}");
                 return;
             }
-            // 只在非表面状态下应用模式运动
-            if(!_isOnSurface)
-            {
-                ApplyMovementPattern();
-            }
             
             // 碰撞检测和基础运动
             if(CheckCollisionAhead())
             {
                 HandleCollision();
             }
+            // 只在非表面状态下应用模式运动
+            if(!_isOnSurface)
+            {
+                ApplyMovementPattern();
+            }
             else
             {
                 _isOnSurface = false;
-            }
             
-            ApplyMovement();
+                ApplyMovement();
+            }
+
             UpdateRotation();
             
             _patternTimer += Time.deltaTime;
-            // SceneItemInfo.Position =transform.position;
-            // GameEventManager.Publish(new SceneItemInfoChanged(NetId, transform.position, SceneItemInfo));
         }
         
         private bool CheckCollisionAhead()
@@ -125,7 +124,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         private void ApplyLinearPattern()
         {
             // 线性往返运动
-            float pingPong = Mathf.PingPong(_patternTimer * _moveInfo.speed * 0.3f, 1f);
+            float pingPong = Mathf.PingPong(_patternTimer * _moveInfo.speed * 0.3f, 5f);
             Vector3 targetPos = Vector3.Lerp(_patternOrigin, _moveInfo.TargetPosition, pingPong);
             
             _currentDirection = (targetPos - transform.position).normalized;

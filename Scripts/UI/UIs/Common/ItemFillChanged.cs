@@ -1,4 +1,7 @@
-﻿using DG.Tweening;
+﻿using System;
+using AOTScripts.Tool.Coroutine;
+using DG.Tweening;
+using HotUpdate.Scripts.Tool.ReactiveProperty;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,6 +22,7 @@ namespace HotUpdate.Scripts.UI.UIs.Common
         private Slider _slider;
         private Image _image;
         private Tween _tween;
+        private HReactiveProperty<float> FillAmount { get; } = new HReactiveProperty<float>();
 
         private void Start()
         {
@@ -34,26 +38,31 @@ namespace HotUpdate.Scripts.UI.UIs.Common
             else
             {
                 _image = GetComponent<Image>();
-                _image.fillAmount = targetImage.fillAmount;
+                RepeatedTask.Instance.StartRepeatingTask(OnFillAmountChanged, 0.1f);
+                FillAmount.Subscribe(f =>
+                {
+                    _tween?.Kill(true);
+                    _tween = _image.DOFillAmount(f, duration);
+                })
+                .AddTo(this);
+                FillAmount.Value = targetImage.fillAmount;
             }
         }
 
-        public void AnimationChangeValue()
+        private void OnFillAmountChanged()
         {
             if (showImage)
             {
-                _tween?.Kill(true);
-                _tween = _image.DOFillAmount(targetImage.fillAmount, duration);
+                if (!Mathf.Approximately(FillAmount.Value, targetImage.fillAmount))
+                {
+                    FillAmount.Value = targetImage.fillAmount;
+                }
             }
         }
 
-        public void ChaneValue()
+        private void OnDestroy()
         {
-            if (showImage)
-            {
-                _tween?.Kill(true);
-                _image.fillAmount = targetImage.fillAmount;
-            }
+            RepeatedTask.Instance.StopRepeatingTask(OnFillAmountChanged);
         }
     }
 }

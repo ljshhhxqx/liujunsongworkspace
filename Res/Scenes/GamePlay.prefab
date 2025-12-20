@@ -130,6 +130,50 @@ MonoBehaviour:
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
+--- !u!1 &2063166951518833460
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6618941859870998966}
+  - component: {fileID: 1142802262556718280}
+  m_Layer: 0
+  m_Name: EffectPlayer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6618941859870998966
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2063166951518833460}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3288497921807335221}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1142802262556718280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2063166951518833460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 355f948b70b14df0ad24e7d70264090f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2476314531994316569
 GameObject:
   m_ObjectHideFlags: 0
@@ -427,6 +471,7 @@ Transform:
   - {fileID: 1639078117619348273}
   - {fileID: 8731884866607142839}
   - {fileID: 7032191185623961045}
+  - {fileID: 6618941859870998966}
   m_Father: {fileID: 1639110870451443802}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2768597044963340948
@@ -444,7 +489,8 @@ MonoBehaviour:
   parentReference:
     TypeName: HotUpdate.Scripts.Game.Inject.GameMainLifetimeScope
   autoRun: 1
-  autoInjectGameObjects: []
+  autoInjectGameObjects:
+  - {fileID: 2063166951518833460}
   _mapType: 0
 --- !u!1 &4134770680424130314
 GameObject:

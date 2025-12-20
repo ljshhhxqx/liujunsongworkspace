@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AOTScripts.Tool.ObjectPool;
+using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Tool.GameEvent;
 using UnityEngine;
 using VContainer;
@@ -16,12 +17,12 @@ namespace HotUpdate.Scripts.Effect
         [Inject]
         private void Init(GameEventManager gameEventManager)
         {
-            gameEventManager.Subscribe<GameResourceLoadedEvent>(OnGameResourceLoaded);
+            gameEventManager.Subscribe<GameMapResourceLoadedEvent>(OnGameMapResourceLoaded);  
         }
 
-        private void OnGameResourceLoaded(GameResourceLoadedEvent eResourceLoadedEvent)
+        private void OnGameMapResourceLoaded(GameMapResourceLoadedEvent loadedEvent)
         {
-            LoadEffects(eResourceLoadedEvent.MapType.ToString());
+            LoadEffects(loadedEvent.SceneName);
         }
 
         private void LoadEffects(string mapName)
@@ -31,7 +32,7 @@ namespace HotUpdate.Scripts.Effect
             {
                 if (effect.TryGetComponent<ParticleSystem>(out var ps))
                 {
-                    _particleSystemsPrefab.Add((ParticlesType)Enum.Parse(typeof(ParticlesType), effect.name), effect);
+                    _particleSystemsPrefab.TryAdd((ParticlesType)Enum.Parse(typeof(ParticlesType), effect.name), effect);
                 }
             }
         }
@@ -57,7 +58,7 @@ namespace HotUpdate.Scripts.Effect
             var effect = GameObjectPoolManger.Instance.GetObject(value.gameObject, position, parent: parent);
             var ps = effect.GetComponent<ParticleSystem>();
             ps.Play();
-            _activeParticleSystems.Add(type, ps);
+            _activeParticleSystems.TryAdd(type, ps);
         }
 
         public void StopEffect(ParticlesType type)

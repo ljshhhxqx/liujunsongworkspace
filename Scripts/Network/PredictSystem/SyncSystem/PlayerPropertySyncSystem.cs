@@ -437,6 +437,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 propertyItemAttackCommand.TargetId, ref playerState, propertyItemAttackCommand.Damage);
             var player = _playerInGameManager.GetPlayerComponent<PlayerComponentController>(playerId);
             player.RpcPlayEffect(ParticlesType.HitEffect);
+            player.RpcPlayAnimation(AnimationState.Hit);
             PropertyStates[playerId] = playerState;
             PropertyChange(playerId);
         }
@@ -953,6 +954,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             for (int i = 0; i < defenderPlayerIds.Length; i++)
             {
                 var playerNetId = _playerInGameManager.GetPlayerNetId(defenderPlayerIds[i]);
+                var playerConnection = GameSyncManager.GetPlayerConnection(defenderPlayerIds[i]);
+                playerConnection.RpcPlayEffect(ParticlesType.HitEffect);
+                playerConnection.RpcPlayAnimation(AnimationState.Hit);
                 PropertyStates[defenderPlayerIds[i]] = defendersState[playerNetId];
                 PropertyChange(defenderPlayerIds[i]);
                 if (PropertyStates[defenderPlayerIds[i]] is PlayerPredictablePropertyState playerPropertyState &&

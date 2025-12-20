@@ -54,7 +54,7 @@ using PropertyEnvironmentChangeCommand = AOTScripts.Data.PropertyEnvironmentChan
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 {
-    public class PlayerComponentController : NetworkAutoInjectHandlerBehaviour, IAttackAnimationEvent, IEffectPlayer
+    public class PlayerComponentController : NetworkAutoInjectHandlerBehaviour, IAttackAnimationEvent, IEffectPlayer, IAnimationPlayer
     {
         [Header("Components")]
         [SerializeField]
@@ -1483,6 +1483,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public void RpcPlayEffect(ParticlesType type)
         {
             EffectPlayer.Instance.PlayEffect(type, transform.position, transform);
+        }
+
+        [ClientRpc]
+        public void RpcPlayAnimation(AnimationState animationState)
+        {
+            _playerAnimationCalculator.HandleAnimation(animationState);
         }
     }
 }

@@ -513,4 +513,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             IsClient = isClient;
         }
     }
+
+    public interface IAnimationPlayer
+    {
+        void RpcPlayAnimation(AnimationState animationState);
+    }
 }
