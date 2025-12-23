@@ -5,6 +5,7 @@ using AOTScripts.Data.NetworkMes;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Collector.Collects;
+using HotUpdate.Scripts.Collector.Collects.Move;
 using HotUpdate.Scripts.Collector.Effect;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;

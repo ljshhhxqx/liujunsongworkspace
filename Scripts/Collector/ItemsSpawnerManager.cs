@@ -25,6 +25,7 @@ using HotUpdate.Scripts.UI.UIBase;
 using MemoryPack;
 using Mirror;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VContainer;
 using Random = UnityEngine.Random;
 
@@ -631,14 +632,33 @@ namespace HotUpdate.Scripts.Collector
         private MoveInfo GetRandomMoveInfo(Vector3 position)
         {
             var dir = GetRandomDirection();
+            var moveType = Random.Range((int)MoveType.Bounced, (int)MoveType.Periodic + 1);
             var moveInfo = new MoveInfo();
-            moveInfo.moveType = (MoveType)Random.Range(0, 3);
             moveInfo.patternAmplitude = _jsonDataConfig.CollectData.patternAmplitudeRange.GetRandomValue();
             moveInfo.patternFrequency = _jsonDataConfig.CollectData.patternFrequencyRange.GetRandomValue();
             moveInfo.rotateSpeed = _jsonDataConfig.CollectData.rotateSpeedRange.GetRandomValue();
             moveInfo.speed = _jsonDataConfig.CollectData.speedRange.GetRandomValue();
             moveInfo.TargetPosition = position + dir * Random.Range(3, 5);
+            moveInfo.movementConfig = JsonUtility.ToJson(GetMovementConfig((MoveType)moveType));
             return moveInfo;
+        }
+
+        private static IMovementConfig GetMovementConfig(MoveType moveType)
+        {
+            switch (moveType)
+            {
+                case MoveType.Bounced:
+                    break;
+                case MoveType.Evasive:
+                    break;
+                case MoveType.Periodic:
+                    break;
+                default:
+                    Debug.LogError($"Invalid move type: {moveType}");
+                    break;
+            }
+
+            return null;
         }
 
         private HiddenItemData GetRandomHiddenItemData()
@@ -1355,22 +1375,22 @@ namespace HotUpdate.Scripts.Collector
         {
             return new MoveInfo
             {
-                moveType = (MoveType)reader.ReadByte(),
                 TargetPosition = reader.ReadVector3(),
                 patternAmplitude = reader.ReadFloat(),
                 patternFrequency = reader.ReadFloat(),
                 speed = reader.ReadFloat(),
-                rotateSpeed = reader.ReadFloat()
+                rotateSpeed = reader.ReadFloat(),
+                movementConfig = reader.ReadString()
             };
         }
         private void WriteMoveInfo(NetworkWriter writer, MoveInfo data)
         {
-            writer.Write((byte)data.moveType);
             writer.Write(data.TargetPosition);
             writer.Write(data.patternAmplitude);
             writer.Write(data.patternFrequency);
             writer.Write(data.speed);
             writer.Write(data.rotateSpeed);
+            writer.Write(data.movementConfig);
         }
 
         private HiddenItemData ReadHiddenItemData(NetworkReader reader)
@@ -1453,31 +1473,24 @@ namespace HotUpdate.Scripts.Collector
         }
     }
 
-    public enum MoveType
-    {
-        Linear,
-        Circular, 
-        SineWave, 
-    }
-
     [Serializable]
     public struct MoveInfo
     {
-        public MoveType moveType;
         public CompressedVector3 TargetPosition;
         public float patternAmplitude;
         public float patternFrequency;
         public float speed;
         public float rotateSpeed;
+        public string movementConfig;
         
-        public MoveInfo(MoveType moveType, Vector3 vector3, float patternAmplitude, float patternFrequency, float speed, float rotateSpeed)
+        public MoveInfo(Vector3 vector3, float patternAmplitude, float patternFrequency, float speed, float rotateSpeed, string movementConfig)
         {
-            this.moveType = moveType;
             TargetPosition = vector3;
             this.patternAmplitude = patternAmplitude;
             this.patternFrequency = patternFrequency;
             this.speed = speed;
             this.rotateSpeed = rotateSpeed;
+            this.movementConfig = movementConfig;
         }
     }
 }

@@ -124,6 +124,34 @@ MonoBehaviour:
         isPercent: 0
         min: 1
         max: 3
+      commonPeriodicMovementConfig:
+        pathType: 2
+        moveSpeed: 2
+        amplitude: 3
+        frequency: 1
+        axisMultiplier: {x: 1, y: 1, z: 1}
+        waypoints: []
+        loopWaypoints: 1
+        timeCounter: 0
+      commonEvasiveMovementConfig:
+        detectionRadius: 8
+        escapeSpeed: 4
+        wanderSpeed: 1.5
+        minSafeDistance: 3
+        directionChangeInterval: 2
+        playerPredictionFactor: 0.5
+        wanderTarget: {x: 0, y: 0, z: 0}
+        useObstacleAvoidance: 1
+        avoidanceWeight: 2
+        canJump: 0
+        jumpChance: 0.1
+      commonBouncingMovementConfig:
+        bounceHeight: 2
+        bounceSpeed: 3
+        bounceDecay: 0.9
+        minBounceHeight: 0.3
+        bounceDirection: {x: 0, y: 1, z: 0}
+        groundLevel: 0
       translucenceRange:
         isPercent: 0
         min: 0.5

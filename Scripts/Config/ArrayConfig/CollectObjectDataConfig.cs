@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AOTScripts.CustomAttribute;
 using AOTScripts.Data;
+using HotUpdate.Scripts.Collector;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -89,6 +90,82 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         //public RandomItemsData randomItems;
     }
 
+    public enum MoveType
+    {
+        None,
+        Bounced,
+        Evasive,
+        Periodic,
+    }
+
+    // 运动配置基类
+    public interface IMovementConfig
+    {
+        MoveType MoveType { get; }
+    }
+    public interface IItemMovement
+    {
+        void Initialize(Transform ts, IColliderConfig colliderConfig, Func<Vector3, bool> insideMapCheck, Func<Vector3, IColliderConfig, bool> obstacleCheck);
+        void UpdateMovement(float deltaTime);
+        void ResetMovement();
+        Vector3 GetPredictedPosition(float timeAhead);
+    }
+    [Serializable]
+    public struct BouncingMovementConfig : IMovementConfig
+    {
+        [Header("弹跳参数")]
+        public float bounceHeight;
+        public float bounceSpeed;
+        public float bounceDecay; // 每次弹跳高度衰减
+        public float minBounceHeight;
+        public Vector3 bounceDirection;
+        public float groundLevel ;
+        
+        public MoveType MoveType => MoveType.Bounced;
+    }
+    [Serializable]
+    public struct EvasiveMovementConfig : IMovementConfig
+    {
+        [Header("逃避参数")]
+        public float detectionRadius;
+        public float escapeSpeed;
+        public float wanderSpeed;
+        public float minSafeDistance;
+        public float directionChangeInterval;
+        public float playerPredictionFactor; // 玩家移动预测
+        public Vector3 wanderTarget;
+    
+        [Header("逃避行为")]
+        public bool useObstacleAvoidance;
+        public float avoidanceWeight;
+        public bool canJump;
+        public float jumpChance;
+        public MoveType MoveType => MoveType.Evasive;
+    }
+    [Serializable]
+    public struct PeriodicMovementConfig : IMovementConfig
+    {
+        public PathType pathType;
+        public float moveSpeed;
+        public float amplitude;
+        public float frequency;
+        public Vector3 axisMultiplier;
+        public Vector3[] waypoints;
+        public bool loopWaypoints;
+        public float timeCounter;
+        
+        public MoveType MoveType => MoveType.Periodic;
+    }
+    public enum PathType
+    {
+        Horizontal,
+        Vertical,
+        Circular,
+        Lissajous,
+        Square,
+        CustomWaypoints
+    }
+
     [Serializable]
     public struct CollectData
     {
@@ -125,6 +202,9 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public Range rotateSpeedRange;
         public Range patternAmplitudeRange;
         public Range patternFrequencyRange;
+        public PeriodicMovementConfig commonPeriodicMovementConfig;
+        public EvasiveMovementConfig commonEvasiveMovementConfig;
+        public BouncingMovementConfig commonBouncingMovementConfig;
         [Header("HiddenItem")]
         public Range translucenceRange;
         public Range mysteryTimeRange;
@@ -133,6 +213,12 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public Range explodeRange;
         public float explodeCriticalRate;
         public float explodeCriticalDamageRatio;
+    }
+    
+    public class MovementConfigLink
+    {
+        public IMovementConfig MovementConfig;
+        public IItemMovement ItemMovement;
     }
 
     /// <summary>
