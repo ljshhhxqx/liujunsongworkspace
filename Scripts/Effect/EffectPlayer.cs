@@ -39,7 +39,7 @@ namespace HotUpdate.Scripts.Effect
 
         public void PlayEffect(ParticlesType type, Vector3 position, Transform parent = null)
         {
-            if (_activeParticleSystems.ContainsKey(type))
+            if (_activeParticleSystems.ContainsKey(type) && _activeParticleSystems[type].gameObject)
             {
                 _activeParticleSystems[type].gameObject.SetActive(true);
                 _activeParticleSystems[type].transform.position = position;

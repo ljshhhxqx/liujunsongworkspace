@@ -35,11 +35,11 @@ MonoBehaviour:
       isPercent: 0
       min: 0.9
       max: 1
-    fogRatio: 0.25
+    fogRatio: 0.3
     fogDensity:
       isPercent: 0
       min: 0.01
-      max: 0.2
+      max: 0.1
     thunderRatio: 0
     rainDensity:
       isPercent: 0
@@ -67,7 +67,7 @@ MonoBehaviour:
     fogDensity:
       isPercent: 0
       min: 0.01
-      max: 0.03
+      max: 0.02
     thunderRatio: 0
     rainDensity:
       isPercent: 0

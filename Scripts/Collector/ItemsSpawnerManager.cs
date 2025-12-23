@@ -25,7 +25,6 @@ using HotUpdate.Scripts.UI.UIBase;
 using MemoryPack;
 using Mirror;
 using UnityEngine;
-using UnityEngine.Serialization;
 using VContainer;
 using Random = UnityEngine.Random;
 
@@ -639,26 +638,19 @@ namespace HotUpdate.Scripts.Collector
             moveInfo.rotateSpeed = _jsonDataConfig.CollectData.rotateSpeedRange.GetRandomValue();
             moveInfo.speed = _jsonDataConfig.CollectData.speedRange.GetRandomValue();
             moveInfo.TargetPosition = position + dir * Random.Range(3, 5);
-            moveInfo.movementConfig = JsonUtility.ToJson(GetMovementConfig((MoveType)moveType));
-            return moveInfo;
-        }
-
-        private static IMovementConfig GetMovementConfig(MoveType moveType)
-        {
-            switch (moveType)
+            switch ((MoveType)moveType)
             {
                 case MoveType.Bounced:
-                    break;
-                case MoveType.Evasive:
+                    moveInfo.bouncingConfig = _jsonDataConfig.CollectData.commonBouncingMovementConfig;
                     break;
                 case MoveType.Periodic:
+                    moveInfo.periodicConfig = _jsonDataConfig.CollectData.commonPeriodicMovementConfig;
                     break;
-                default:
-                    Debug.LogError($"Invalid move type: {moveType}");
+                case MoveType.Evasive:
+                    moveInfo.evasiveConfig = _jsonDataConfig.CollectData.commonEvasiveMovementConfig;
                     break;
             }
-
-            return null;
+            return moveInfo;
         }
 
         private HiddenItemData GetRandomHiddenItemData()
@@ -931,94 +923,6 @@ namespace HotUpdate.Scripts.Collector
                 ChestConfigId = chestData.chestId,
             }, netIdentity);
         }
-
-        // [ClientRpc]
-        // private void RpcSpawnTreasureChest(byte[] serverTreasureChestMetaData)
-        // {
-        //     var metaData = MemoryPackSerializer.Deserialize<CollectItemMetaData>(serverTreasureChestMetaData);
-        //     var position = metaData.Position.ToVector3();
-        //     var quality = metaData.GetCustomData<ChestItemCustomData>().Quality;
-        //     var treasureChestPrefab = _treasureChestPrefabs.GetValueOrDefault(quality);
-        //     if (!treasureChestPrefab)
-        //     {
-        //         Debug.LogError($"No treasure chest prefab found for quality: {quality}");
-        //         return;
-        //     }
-        //     var spawnedChest = NetworkGameObjectPoolManager.Instance.Spawn(
-        //         treasureChestPrefab.gameObject,
-        //         position,
-        //         Quaternion.identity,
-        //         null,
-        //         go => _gameMapInjector.InjectGameObject(go)
-        //     );
-        //     _clientTreasureChest = spawnedChest.GetComponent<TreasureChestComponent>();
-        //     _clientTreasureChest.ItemId = metaData.ItemId;
-        //     //_clientTreasureChest.chestType = chestType;
-        //     Debug.Log($"Client spawning treasure chest at position: {position} with id: {metaData.ItemId}");
-        // }
-
-        // [ClientRpc]
-        // private void SpawnManyItemsClientRpc(byte[] allSpawnedItems)
-        // {
-        //     var allItems = MemoryPackSerializer.Deserialize<CollectItemMetaData>(allSpawnedItems);
-        //     SpawnItems(allItems);
-        // }
-
-        // private void SpawnItems(CollectItemMetaData data)
-        // {
-        //     var position = data.Position;
-        //     Debug.Log($"Client spawning item at position: {position}"); // 添加日志
-        //     var prefab = GetPrefabByCollectType(data.ItemCollectConfigId);
-        //     if (!prefab)
-        //     {
-        //         Debug.LogError($"Failed to find prefab for CollectType: {data.ItemCollectConfigId}");
-        //         return;
-        //     }
-        //
-        //     var go = NetworkGameObjectPoolManager.Instance.Spawn(prefab.gameObject, position, Quaternion.identity, null,
-        //         go => _gameMapInjector.InjectGameObject(go));
-        //     if (!go)
-        //     {
-        //         Debug.LogError("Failed to get object from pool");
-        //         return;
-        //     }
-        //     var configData = _collectObjectDataConfig.GetCollectObjectData(data.ItemCollectConfigId);
-        //     //var collectItemCustomData = data.GetCustomData<CollectItemCustomData>();
-        //     var buff = configData.buffExtraData.buffType == BuffType.Random? _randomBuffConfig.GetBuff(configData.buffExtraData):_constantBuffConfig.GetBuffData(configData.buffExtraData.buffId);
-        //     var component = go.GetComponent<CollectObjectController>();
-        //     if (go.TryGetComponent(out Collider co))
-        //     {
-        //         co.enabled = false;
-        //     }
-        //     if (component.CollectObjectData.collectObjectClass == CollectObjectClass.Buff)
-        //     {
-        //         if (!_collectibleMaterials.TryGetValue(component.Quality, out var materials))
-        //         {
-        //             Debug.LogError($"No materials found for quality: {component.Quality}");
-        //             return;
-        //         }
-        //         if (!materials.TryGetValue(buff.propertyType, out var material))
-        //         {
-        //             Debug.LogError($"No materials found for quality: {component.Quality}");
-        //             return;
-        //         }   
-        //         component.SetMaterial(material);
-        //     }
-        //     component.collectId = data.ItemId;
-        //     // var identity = go.GetComponent<NetworkIdentity>();
-        //     // identity.AssignClientAuthority(connectionToClient);
-        //     component.SetBuffData(new BuffExtraData
-        //     {
-        //         buffId = buff.buffId,
-        //         buffType = BuffType.Random,
-        //     });
-        //     Debug.Log($"Spawning item at position: {position} with id: {data.ItemId}-{data.OwnerId}-{data.ItemCollectConfigId}-{buff.propertyType}-{buff.buffId}");
-        //
-        //     // 确保位置正确设置
-        //     go.transform.position = position;
-        //     component.ItemId = data.ItemId;
-        //     _clientCollectObjectControllers.Add(data.ItemId, component);
-        // }
 
         private void InitializeGrid()
         {
@@ -1380,7 +1284,9 @@ namespace HotUpdate.Scripts.Collector
                 patternFrequency = reader.ReadFloat(),
                 speed = reader.ReadFloat(),
                 rotateSpeed = reader.ReadFloat(),
-                movementConfig = reader.ReadString()
+                bouncingConfig = reader.Read<BouncingMovementConfig>(),
+                evasiveConfig = reader.Read<EvasiveMovementConfig>(),
+                periodicConfig = reader.Read<PeriodicMovementConfig>(),
             };
         }
         private void WriteMoveInfo(NetworkWriter writer, MoveInfo data)
@@ -1390,7 +1296,9 @@ namespace HotUpdate.Scripts.Collector
             writer.Write(data.patternFrequency);
             writer.Write(data.speed);
             writer.Write(data.rotateSpeed);
-            writer.Write(data.movementConfig);
+            writer.Write(data.bouncingConfig);
+            writer.Write(data.evasiveConfig);
+            writer.Write(data.periodicConfig);
         }
 
         private HiddenItemData ReadHiddenItemData(NetworkReader reader)
@@ -1474,23 +1382,54 @@ namespace HotUpdate.Scripts.Collector
     }
 
     [Serializable]
-    public struct MoveInfo
+    public struct MoveInfo : IEquatable<MoveInfo>
     {
         public CompressedVector3 TargetPosition;
         public float patternAmplitude;
         public float patternFrequency;
         public float speed;
         public float rotateSpeed;
-        public string movementConfig;
+        public BouncingMovementConfig bouncingConfig;
+        public EvasiveMovementConfig evasiveConfig;
+        public PeriodicMovementConfig periodicConfig;
         
-        public MoveInfo(Vector3 vector3, float patternAmplitude, float patternFrequency, float speed, float rotateSpeed, string movementConfig)
+        public MoveInfo(Vector3 vector3, float patternAmplitude, float patternFrequency, float speed, float rotateSpeed,
+            BouncingMovementConfig bouncingConfig, EvasiveMovementConfig evasiveConfig, PeriodicMovementConfig periodicConfig)
         {
             TargetPosition = vector3;
             this.patternAmplitude = patternAmplitude;
             this.patternFrequency = patternFrequency;
             this.speed = speed;
             this.rotateSpeed = rotateSpeed;
-            this.movementConfig = movementConfig;
+            this.bouncingConfig = bouncingConfig;
+            this.evasiveConfig = evasiveConfig;
+            this.periodicConfig = periodicConfig;
+        }
+
+        public bool Equals(MoveInfo other)
+        {
+            return TargetPosition.Equals(other.TargetPosition) && patternAmplitude.Equals(other.patternAmplitude) && patternFrequency.Equals(other.patternFrequency) && speed.Equals(other.speed) && rotateSpeed.Equals(other.rotateSpeed) && 
+                    evasiveConfig.Equals(other.evasiveConfig) && bouncingConfig.Equals(other.bouncingConfig) && periodicConfig.Equals(other.periodicConfig);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is MoveInfo other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(TargetPosition, patternAmplitude, patternFrequency, speed, rotateSpeed, evasiveConfig, bouncingConfig, periodicConfig);
+        }
+
+        public static bool operator ==(MoveInfo left, MoveInfo right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(MoveInfo left, MoveInfo right)
+        {
+            return !left.Equals(right);
         }
     }
 }

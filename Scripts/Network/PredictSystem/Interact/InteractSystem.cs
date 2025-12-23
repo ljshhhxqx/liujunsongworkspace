@@ -71,9 +71,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 
         private void OnSceneItemsChanged(SyncIDictionary<uint, SceneItemInfo>.Operation type, uint uid, SceneItemInfo info)
         {
-            SceneItemInfoChanged?.Invoke(uid, _sceneItems[uid]);
-            _gameEventManager.Publish(new SceneItemInfoChangedEvent(uid, _sceneItems[uid], type));
-            Debug.Log($"[OnSceneItemsChanged] {type} scene item {uid} info - {_sceneItems[uid]}");
+            if (!_sceneItems.TryGetValue(uid, out var value))
+            {
+                return;
+            }
+            SceneItemInfoChanged?.Invoke(uid, value);
+            _gameEventManager.Publish(new SceneItemInfoChangedEvent(uid, value, type));
+            Debug.Log($"[OnSceneItemsChanged] {type} scene item {uid} info - {value}");
         }
 
         private void OnItemSpawned(SceneItemInfoChanged sceneItemInfoChanged)

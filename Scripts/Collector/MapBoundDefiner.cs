@@ -51,6 +51,18 @@ namespace HotUpdate.Scripts.Collector
             CalculateAdjustedBounds();
             InitializeGrid();
         }
+        
+        public Vector3[] GetWaypointPositions(Vector3 position)
+        {
+            var count = Random.Range(1, 6);
+            var positions = new Vector3[count];
+            for (var i = 0; i < count; i++)
+            {
+                var direction = GetRandomDirection();
+                positions[i] = position + direction * Random.Range(0f, _safetyMargin);
+            }
+            return positions;
+        }
 
         public HashSet<Vector2Int> GetBoundsCovered(Bounds bounds)
         {

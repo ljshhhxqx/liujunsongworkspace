@@ -19,7 +19,7 @@ namespace HotUpdate.Scripts.Collector.Collects.Move
 
         private void FixedUpdate()
         {
-            if (!ServerHandler || !IsMoveable)
+            if (_moveInfo == default || !ServerHandler || !IsMoveable)
             {
                 return;
             }
@@ -40,29 +40,25 @@ namespace HotUpdate.Scripts.Collector.Collects.Move
         public void Init(MoveInfo moveInfo, bool serverHandler, uint id)
         {
             _movementConfigLink ??= new MovementConfigLink();
-            _moveInfo = moveInfo;
             NetId = id;
             ServerHandler = serverHandler;
-            var config = JsonUtility.FromJson<IMovementConfig>(moveInfo.movementConfig);
-            switch (config)
+            if (moveInfo.bouncingConfig != default)
             {
-                case BouncingMovementConfig bouncingMovementConfig:
-                    _movementConfigLink.MovementConfig = bouncingMovementConfig;
-                    _movementConfigLink.ItemMovement = new BouncingMovement(bouncingMovementConfig);
-                    break;
-                case EvasiveMovementConfig evasiveMovementConfig:
-                    _movementConfigLink.MovementConfig = evasiveMovementConfig;
-                    _movementConfigLink.ItemMovement = new EvasiveMovement(evasiveMovementConfig);
-                    break;
-                case PeriodicMovementConfig periodicMovementConfig:
-                    _movementConfigLink.MovementConfig = periodicMovementConfig;
-                    _movementConfigLink.ItemMovement = new PeriodicMovement(periodicMovementConfig);
-                    break;
-                default:
-                    Debug.LogError($"{nameof(moveInfo.movementConfig)} is not supported");
-                    break;
+                _movementConfigLink.MovementConfig = moveInfo.bouncingConfig;
+                _movementConfigLink.ItemMovement = new BouncingMovement(moveInfo.bouncingConfig);
+            }
+            else if (moveInfo.evasiveConfig != default)
+            {
+                _movementConfigLink.MovementConfig = moveInfo.evasiveConfig;
+                _movementConfigLink.ItemMovement = new EvasiveMovement(moveInfo.evasiveConfig);
+            }
+            else
+            {
+                _movementConfigLink.MovementConfig = moveInfo.periodicConfig;
+                _movementConfigLink.ItemMovement = new PeriodicMovement(moveInfo.periodicConfig);
             }
             _movementConfigLink.ItemMovement.Initialize(transform, ColliderConfig, _checkInsideMap, _checkObstacle);
+            _moveInfo = moveInfo;
         }
 
         public void OnSelfDespawn()

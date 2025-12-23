@@ -79,7 +79,7 @@ namespace HotUpdate.Scripts.Collector.Collects.Move
             // 应用重力
             if (_transform.position.y > 0.1f)
             {
-                _currentVelocity.y -= 9.8f * deltaTime;
+                _currentVelocity.y -= Physics.gravity.magnitude * deltaTime;
             }
             else
             {

@@ -111,7 +111,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         Vector3 GetPredictedPosition(float timeAhead);
     }
     [Serializable]
-    public struct BouncingMovementConfig : IMovementConfig
+    public struct BouncingMovementConfig : IMovementConfig, IEquatable<BouncingMovementConfig>
     {
         [Header("弹跳参数")]
         public float bounceHeight;
@@ -122,9 +122,34 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public float groundLevel ;
         
         public MoveType MoveType => MoveType.Bounced;
+
+        public bool Equals(BouncingMovementConfig other)
+        {
+            return bounceHeight.Equals(other.bounceHeight) && bounceSpeed.Equals(other.bounceSpeed) && bounceDecay.Equals(other.bounceDecay) && minBounceHeight.Equals(other.minBounceHeight) && bounceDirection.Equals(other.bounceDirection) && groundLevel.Equals(other.groundLevel);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is BouncingMovementConfig other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(bounceHeight, bounceSpeed, bounceDecay, minBounceHeight, bounceDirection, groundLevel);
+        }
+
+        public static bool operator ==(BouncingMovementConfig left, BouncingMovementConfig right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(BouncingMovementConfig left, BouncingMovementConfig right)
+        {
+            return !left.Equals(right);
+        }
     }
     [Serializable]
-    public struct EvasiveMovementConfig : IMovementConfig
+    public struct EvasiveMovementConfig : IMovementConfig, IEquatable<EvasiveMovementConfig>
     {
         [Header("逃避参数")]
         public float detectionRadius;
@@ -141,9 +166,46 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public bool canJump;
         public float jumpChance;
         public MoveType MoveType => MoveType.Evasive;
+
+        public bool Equals(EvasiveMovementConfig other)
+        {
+            return detectionRadius.Equals(other.detectionRadius) && escapeSpeed.Equals(other.escapeSpeed) && wanderSpeed.Equals(other.wanderSpeed) && minSafeDistance.Equals(other.minSafeDistance) && directionChangeInterval.Equals(other.directionChangeInterval) && playerPredictionFactor.Equals(other.playerPredictionFactor) && wanderTarget.Equals(other.wanderTarget) && useObstacleAvoidance == other.useObstacleAvoidance && avoidanceWeight.Equals(other.avoidanceWeight) && canJump == other.canJump && jumpChance.Equals(other.jumpChance);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is EvasiveMovementConfig other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(detectionRadius);
+            hashCode.Add(escapeSpeed);
+            hashCode.Add(wanderSpeed);
+            hashCode.Add(minSafeDistance);
+            hashCode.Add(directionChangeInterval);
+            hashCode.Add(playerPredictionFactor);
+            hashCode.Add(wanderTarget);
+            hashCode.Add(useObstacleAvoidance);
+            hashCode.Add(avoidanceWeight);
+            hashCode.Add(canJump);
+            hashCode.Add(jumpChance);
+            return hashCode.ToHashCode();
+        }
+
+        public static bool operator ==(EvasiveMovementConfig left, EvasiveMovementConfig right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(EvasiveMovementConfig left, EvasiveMovementConfig right)
+        {
+            return !left.Equals(right);
+        }
     }
     [Serializable]
-    public struct PeriodicMovementConfig : IMovementConfig
+    public struct PeriodicMovementConfig : IMovementConfig, IEquatable<PeriodicMovementConfig>
     {
         public PathType pathType;
         public float moveSpeed;
@@ -155,6 +217,31 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public float timeCounter;
         
         public MoveType MoveType => MoveType.Periodic;
+
+        public bool Equals(PeriodicMovementConfig other)
+        {
+            return pathType == other.pathType && moveSpeed.Equals(other.moveSpeed) && amplitude.Equals(other.amplitude) && frequency.Equals(other.frequency) && axisMultiplier.Equals(other.axisMultiplier) && Equals(waypoints, other.waypoints) && loopWaypoints == other.loopWaypoints && timeCounter.Equals(other.timeCounter);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is PeriodicMovementConfig other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine((int)pathType, moveSpeed, amplitude, frequency, axisMultiplier, waypoints, loopWaypoints, timeCounter);
+        }
+
+        public static bool operator ==(PeriodicMovementConfig left, PeriodicMovementConfig right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(PeriodicMovementConfig left, PeriodicMovementConfig right)
+        {
+            return !left.Equals(right);
+        }
     }
     public enum PathType
     {

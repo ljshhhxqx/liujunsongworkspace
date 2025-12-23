@@ -163,10 +163,6 @@ namespace HotUpdate.Scripts.Collector
                     InitMoveItem(moveInfo);
                     DisableComponent<HiddenItem>();
                     DisableComponent<AttackCollectItem>();
-                    if (ClientHandler)
-                    {
-                        _collectAnimationComponent?.Play();
-                    }
                     break;
                 case CollectObjectType.Hidden:
                     var hiddenItemData = _itemsSpawnerManager.GetHiddenItemData(NetId);
