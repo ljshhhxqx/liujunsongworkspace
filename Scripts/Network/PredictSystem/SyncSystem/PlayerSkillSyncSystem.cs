@@ -9,6 +9,7 @@ using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Skill;
@@ -16,6 +17,7 @@ using Mirror;
 using UnityEngine;
 using VContainer;
 using AnimationState = AOTScripts.Data.AnimationState;
+using Object = UnityEngine.Object;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
@@ -24,6 +26,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private readonly Dictionary<int, PlayerSkillSyncState> _playerSkillSyncStates = new Dictionary<int, PlayerSkillSyncState>();
         private SkillConfig _skillConfig;
         private PlayerInGameManager _playerInGameManager;
+        private InteractSystem _interactSystem;
         private GameObjectContainer _gameObjectContainer;
         private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
         private int _currentSkillId;
@@ -35,6 +38,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _skillConfig = configProvider.GetConfig<SkillConfig>();
             _playerInGameManager = PlayerInGameManager.Instance;
             _gameObjectContainer = GameObjectContainer.Instance;
+            _interactSystem = Object.FindObjectOfType<InteractSystem>();
         }
 
         protected override void OnGameStart(bool isGameStarted)
@@ -110,7 +114,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                             var skillChecker = skillDic[keys[j]];
                             if (skillChecker.IsSkillEffect())
                             {
-                                PlayerSkillCalculator.UpdateSkillFlyEffect(playerId, GameSyncManager.TickSeconds, skillChecker, _gameObjectContainer.GetIntersectedDynamicObjects);
+                                PlayerSkillCalculator.UpdateSkillFlyEffect(playerId, GameSyncManager.TickSeconds, skillChecker, _interactSystem.GetHitObjectDatas);
                             }
 
                             if (!skillChecker.IsSkillNotInCd())

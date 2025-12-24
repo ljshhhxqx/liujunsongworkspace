@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using AOTScripts.Data;
@@ -78,6 +79,47 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             SceneItemInfoChanged?.Invoke(uid, value);
             _gameEventManager.Publish(new SceneItemInfoChangedEvent(uid, value, type));
             Debug.Log($"[OnSceneItemsChanged] {type} scene item {uid} info - {value}");
+        }
+
+        public HashSet<DynamicObjectData> GetHitObjectDatas(uint uid, Vector3 position, IColliderConfig config)
+        {
+            var result = new HashSet<DynamicObjectData>();
+            var cache = new HashSet<DynamicObjectData>();
+            if (GameObjectContainer.Instance.DynamicObjectIntersects(uid, position, config, result))
+            {
+                foreach (var objectData in result)
+                {
+                    if (PlayerInGameManager.Instance.IsPlayer(objectData.NetId))
+                    {
+                        cache.Add(objectData);
+                    }
+                    else if (_sceneItems.TryGetValue(objectData.NetId, out var sceneItemInfo))
+                    {
+                        if (sceneItemInfo.health > 1 && sceneItemInfo.maxHealth > 1)
+                        {
+                            cache.Add(objectData);
+                        }
+                    }
+                }
+            }
+            return cache;
+        }
+
+        public Vector3 GetNearestObject(uint uid, float distance)
+        {
+            var data = GameObjectContainer.Instance.GetDynamicObjectData(uid);
+            foreach (var key in _sceneItems.Keys)
+            {
+                if (_sceneItems[key].maxHealth > 1)
+                {
+                    var position = GameObjectContainer.Instance.GetDynamicObjectData(key).Position;
+                    if (Vector3.Distance(position, data.Position) < distance)
+                    {
+                        return position;
+                    }
+                }
+            }
+            return Vector3.zero;
         }
 
         private void OnItemSpawned(SceneItemInfoChanged sceneItemInfoChanged)

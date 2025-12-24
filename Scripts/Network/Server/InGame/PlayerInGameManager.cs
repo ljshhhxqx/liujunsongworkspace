@@ -12,11 +12,13 @@ using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.GameBase;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
 using UnityEngine;
 using VContainer;
+using Object = UnityEngine.Object;
 
 namespace HotUpdate.Scripts.Network.Server.InGame
 {
@@ -49,6 +51,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         private IColliderConfig _playerPhysicsData;
         private uint _baseId;
         private GameSyncManager _gameSyncManager;
+        private InteractSystem _interactSystem;
         
         // 同步给所有客户端的映射信息列表
         [SyncVar(hook = nameof(OnIsGameStartedChanged))]
@@ -405,6 +408,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         private void SetCalculatorConstants()
         {
             _gameSyncManager??= FindObjectOfType<GameSyncManager>();
+            _interactSystem??= FindObjectOfType<InteractSystem>();
             var gameData = _configProvider.GetConfig<JsonDataConfig>().GameConfig;
             var playerData = _configProvider.GetConfig<JsonDataConfig>().PlayerConfig;
             PlayerElementCalculator.SetPlayerElementComponent(_configProvider.GetConfig<ElementAffinityConfig>(), _configProvider.GetConfig<TransitionLevelBaseDamageConfig>(), _configProvider.GetConfig<ElementConfig>());
@@ -485,6 +489,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 SceneLayerMask = gameData.stairSceneLayer,
                 IsServer = isServer,
                 GameSyncManager = _gameSyncManager,
+                InteractSystem = _interactSystem,
             });
         }
 
@@ -876,6 +881,11 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         public Vector3 GetPlayerPosition(int headerConnectionId)
         {
             return _playerPositions.GetValueOrDefault(GetPlayerNetId(headerConnectionId));
+        }
+
+        public bool IsPlayer(uint uid)
+        {
+            return _playerGrids.ContainsKey(uid);
         }
 
         public Vector3 GetOtherPlayerNearestPlayer(int headerConnectionId, float distance)

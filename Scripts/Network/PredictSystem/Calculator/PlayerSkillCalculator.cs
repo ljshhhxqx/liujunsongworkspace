@@ -6,6 +6,7 @@ using AOTScripts.Data.State;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Game.Map;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
@@ -99,10 +100,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 return false;
             }
             var header = skillCommand.Header;
+            var playerNetId = playerController.netId;
             if (skillCommand.IsAutoSelectTarget)
             {
                 //自动选择目标，找寻离自己最近且在距离内的玩家
-                position = PlayerInGameManager.Instance.GetOtherPlayerNearestPlayer(header.ConnectionId, skillConfigData.maxDistance);
+                position = Constant.InteractSystem.GetNearestObject(playerNetId, skillConfigData.maxDistance);
             }
             else
             {
@@ -154,7 +156,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var command = new PropertySkillCommand();
             command.Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property, CommandAuthority.Server, CommandExecuteType.Immediate);
             command.SkillId = commonSkillCheckerHeader.ConfigId;
-            command.HitPlayerIds = commonSkillCheckerHeader.IsAreaOfRanged ? hits : new uint[] { hits[0] };
+            command.HitPlayerIds = commonSkillCheckerHeader.IsAreaOfRanged ? hits.ToArray() : new uint[] { hits[0] };
             foreach (var playerId in command.HitPlayerIds)
             {
                 Debug.Log($"技能命中玩家{playerId}");
@@ -169,6 +171,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
     {
         public GameSyncManager GameSyncManager;
         public SkillConfig SkillConfig;
+        public InteractSystem InteractSystem;
         public LayerMask SceneLayerMask;
         public bool IsServer;
         public uint CasterId;

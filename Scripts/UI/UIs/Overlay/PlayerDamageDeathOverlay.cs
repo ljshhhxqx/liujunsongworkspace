@@ -52,35 +52,39 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             deathRoot.gameObject.SetActive(false);
             damageRoot.gameObject.SetActive(false);
             _hpRatioToWarning = gameConfig.playerHpRatioToWarning;
-            damageImage.color = new Color(damageImage.color.r, damageImage.color.g, damageImage.color.b, 0f);
         }
 
         public void BindGold(HReactiveProperty<ValuePropertyData> goldObservable)
         {
             _goldObservable = goldObservable;
             _goldObservable.Subscribe(OnGoldChanged).AddTo(this);
+            damageRoot.SetActive(false);
+            Debug.Log("PlayerDamageDeathOverlay BindGold called");
         }
 
         private void OnGoldChanged(ValuePropertyData valuePropertyData)
         {
             if (valuePropertyData.Equals(default) || Mathf.Approximately(valuePropertyData.Health, _valuePropertyData.Health)) return;
             deathRoot.SetActive(false);
+            PlayDamageEffect(_valuePropertyData.Health, valuePropertyData.Health, valuePropertyData.MaxHealth);
             _valuePropertyData = valuePropertyData;
-            PlayDamageEffect(_valuePropertyData.Health, valuePropertyData.Health, _valuePropertyData.MaxHealth);
         }
 
         public void PlayDamageEffect(float oldHealth, float newHealth, float maxHealth)
         {
+            if (oldHealth <= 0 || newHealth >= oldHealth) return;
             damageRoot.SetActive(newHealth < oldHealth);
+            Debug.Log($"PlayerDamageDeathOverlay PlayDamageEffect called  oldHealth: {oldHealth}, newHealth: {newHealth}, maxHealth: {maxHealth}");
             deathRoot.SetActive(false);
             _damageSequence?.Kill();
             _deathSequence?.Kill();
             _countDownTween?.Kill();
             damageImage.color = new Color(damageImage.color.r, damageImage.color.g, damageImage.color.b, 0f);
             _damageSequence = DOTween.Sequence();
-            _damageSequence.Append(damageImage.DOFade(0.2f, 0.05f).SetEase(Ease.Linear));
-            _damageSequence.SetLoops(8, LoopType.Yoyo);
-            _damageSequence.AppendCallback(() =>
+            _damageSequence.Append(damageImage.DOFade(0.5f, 0.05f).SetEase(Ease.Linear));
+            _damageSequence.Append(damageImage.DOFade(0, 0.05f).SetEase(Ease.Linear));
+            _damageSequence.SetLoops(2);
+            _damageSequence.OnComplete(() =>
             {
                 if (oldHealth / maxHealth < _hpRatioToWarning)
                 {
