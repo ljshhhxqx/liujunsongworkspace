@@ -57,6 +57,13 @@ namespace HotUpdate.Scripts.Collector.Collects
 
         private bool OnInteract(DynamicObjectData target)
         {
+            if (_isAttacking)
+            {
+                Debug.Log($"[ AttackCollectItem ] {NetId} Stop Attack");
+                _isAttacking = false;
+                CollectObjectController.RpcSwitchAttackMode(_isAttacking);
+                return false;
+            }
             if (target.Type == ObjectType.Player)
             {
                 //Attack(_direction, target.NetId);
@@ -74,13 +81,6 @@ namespace HotUpdate.Scripts.Collector.Collects
                     CollectObjectController.RpcPlayEffect(ParticlesType.Slash);
                 }
                 return true;
-            }
-
-            if (_isAttacking)
-            {
-                Debug.Log($"[ AttackCollectItem ] Stop Attack");
-                _isAttacking = false;
-                CollectObjectController.RpcSwitchAttackMode(_isAttacking);
             }
             return false;
         }

@@ -1489,6 +1489,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public void RpcPlayAnimation(AnimationState animationState)
         {
             _playerAnimationCalculator.HandleAnimation(animationState);
+            GameAudioManager.Instance.PlaySFX(AudioEffectType.Hurt, transform.position, transform);
         }
     }
 }

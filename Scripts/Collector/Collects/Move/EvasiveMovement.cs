@@ -20,6 +20,7 @@ namespace HotUpdate.Scripts.Collector.Collects.Move
         private Vector3 _lastSafePosition;
         private bool _isEscaping;
         private float _jumpTimer;
+        private float _groundLevel;
     
         public EvasiveMovement(EvasiveMovementConfig evasiveMovementConfig)
         {
@@ -39,6 +40,7 @@ namespace HotUpdate.Scripts.Collector.Collects.Move
             _lastSafePosition = ts.position;
             _wanderTarget = GetRandomWanderTarget();
             _directionTimer = _evasiveMovementConfig.directionChangeInterval;
+            _groundLevel = ts.position.y;
         }
     
         public void UpdateMovement(float deltaTime)
@@ -77,14 +79,14 @@ namespace HotUpdate.Scripts.Collector.Collects.Move
             }
         
             // 应用重力
-            if (_transform.position.y > 0.1f)
+            if (_transform.position.y > _groundLevel)
             {
                 _currentVelocity.y -= Physics.gravity.magnitude * deltaTime;
             }
             else
             {
                 _currentVelocity.y = 0;
-                _transform.position = new Vector3(_transform.position.x, 0, _transform.position.z);
+                _transform.position = new Vector3(_transform.position.x, _groundLevel, _transform.position.z);
             }
         
             // 计算新位置

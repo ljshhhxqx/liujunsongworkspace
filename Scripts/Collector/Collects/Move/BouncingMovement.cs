@@ -20,6 +20,8 @@ namespace HotUpdate.Scripts.Collector.Collects.Move
         private Vector3 _horizontalVelocity;
         private float _lastBounceTime;
         private Vector3 _lastSafePosition;
+        private float _minHeight;
+        private float _groundLevel;
     
         public BouncingMovement(BouncingMovementConfig movementConfig)
         {
@@ -38,7 +40,9 @@ namespace HotUpdate.Scripts.Collector.Collects.Move
             _colliderConfig = colliderConfig;
         
             _currentPosition = ts.position;
-            _currentHeight = _movementConfig.groundLevel;
+            _groundLevel = ts.position.y;
+            _minHeight = ts.position.y + _movementConfig.groundLevel;
+            _currentHeight = _groundLevel;
             _lastSafePosition = _currentPosition;
         
             // 初始水平速度
@@ -56,16 +60,16 @@ namespace HotUpdate.Scripts.Collector.Collects.Move
             _currentHeight += _currentVelocity * deltaTime;
         
             // 触地反弹
-            if (_currentHeight <= _movementConfig.groundLevel)
+            if (_currentHeight <= _groundLevel)
             {
-                _currentHeight = _movementConfig.groundLevel;
+                _currentHeight = _groundLevel;
                 _currentVelocity = -_currentVelocity * _movementConfig.bounceDecay; // 反弹
             
                 // 更新弹跳高度
                 _currentBounceHeight *= _movementConfig.bounceDecay;
-                if (_currentBounceHeight < _movementConfig.minBounceHeight)
+                if (_currentBounceHeight < _minHeight)
                 {
-                    _currentBounceHeight = _movementConfig.minBounceHeight;
+                    _currentBounceHeight = _minHeight;
                 }
             
                 // 随机改变水平方向
@@ -139,7 +143,7 @@ namespace HotUpdate.Scripts.Collector.Collects.Move
     
         public void ResetMovement()
         {
-            _currentHeight = _movementConfig.groundLevel;
+            _currentHeight = _groundLevel;
             _currentVelocity = 0;
             _currentBounceHeight = _movementConfig.bounceHeight;
             _currentPosition = _transform.position;
@@ -159,7 +163,7 @@ namespace HotUpdate.Scripts.Collector.Collects.Move
             Vector3 predictedPos = _currentPosition + _horizontalVelocity * timeAhead;
         
             // 预测垂直运动（简谐运动近似）
-            float predictedHeight = Mathf.Max(_movementConfig.groundLevel, 
+            float predictedHeight = Mathf.Max(_groundLevel, 
                 _currentHeight + _currentVelocity * timeAhead - 4.9f * timeAhead * timeAhead);
         
             return predictedPos + (Vector3)_movementConfig.bounceDirection * predictedHeight;

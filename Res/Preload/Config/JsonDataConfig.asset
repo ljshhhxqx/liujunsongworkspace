@@ -47,13 +47,13 @@ MonoBehaviour:
       gridSize: 10
       onceSpawnCount: 40
       onceSpawnWeight: 100
-      spawnAttackRatio: 0.15
-      spawnMoveRatio: 0.15
+      spawnAttackRatio: 0.25
+      spawnMoveRatio: 0.35
       spawnHiddenRatio: 0.1
-      spawnAttackMoveRatio: 0.05
-      spawnAttackHiddenRatio: 0.03
-      spawnMoveHiddenRatio: 0.03
-      spawnAttackMoveHiddenRatio: 0.01
+      spawnAttackMoveRatio: 0.15
+      spawnAttackHiddenRatio: 0.1
+      spawnMoveHiddenRatio: 0.1
+      spawnAttackMoveHiddenRatio: 0.05
       healthRange:
         isPercent: 0
         min: 10
@@ -146,12 +146,12 @@ MonoBehaviour:
         canJump: 0
         jumpChance: 0.1
       commonBouncingMovementConfig:
-        bounceHeight: 2
-        bounceSpeed: 3
+        bounceHeight: 4
+        bounceSpeed: 6
         bounceDecay: 0.9
-        minBounceHeight: 0.3
+        minBounceHeight: 0.6
         bounceDirection: {x: 0, y: 1, z: 0}
-        groundLevel: 0
+        groundLevel: 0.5
       translucenceRange:
         isPercent: 0
         min: 0.5

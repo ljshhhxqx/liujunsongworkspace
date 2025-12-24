@@ -96,7 +96,7 @@ namespace HotUpdate.Scripts.Game.Map
                 //
                 //
                 if (GamePhysicsSystem.CheckIntersectsWithMargin(position, data.Position, colliderConfig,
-                        data.ColliderConfig, 1f))
+                        data.ColliderConfig, 0.3f))
                 {
                     intersectedObjects.Add(data);
                     onIntersected?.Invoke(data);

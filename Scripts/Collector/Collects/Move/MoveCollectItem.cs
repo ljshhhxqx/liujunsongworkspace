@@ -10,7 +10,7 @@ namespace HotUpdate.Scripts.Collector.Collects.Move
     public class MoveCollectItem : CollectBehaviour, IPoolable
     {
         [SyncVar]
-        private MoveInfo _moveInfo;
+        public MoveInfo _moveInfo;
         private MovementConfigLink _movementConfigLink;
         private Transform _cachedTransform;
         private HashSet<GameObjectData> _collectedItems = new HashSet<GameObjectData>();
