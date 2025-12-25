@@ -29,7 +29,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private FollowTargetParams _followTextParams;
         private FollowTargetParams _followCollectItemParams;
         // private readonly Dictionary<uint, CollectItem> _collectItems = new Dictionary<uint, CollectItem>();
-        
+        private Camera _uiCamera;
         private Camera _mainCamera;
         private RectTransform _canvasRect;
         private bool IsTargetNotNull => _targets != null && _targets.Count > 0;
@@ -45,6 +45,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             Debug.Log("TargetShowOverlay Init");
             _mainCamera = Camera.main;
             _canvasRect = indicatorUI.parent.GetComponent<RectTransform>();
+            _uiCamera = _canvasRect.GetComponentInParent<Canvas>().worldCamera;
             indicatorUI.gameObject.SetActive(IsTargetNotNull);
             _followTargetParams ??= new FollowTargetParams();
             _followTargetParams.MainCamera = _mainCamera;
@@ -53,41 +54,44 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             _followTargetParams.IndicatorUI = indicatorUI;
             _followTargetParams.DistanceText = distanceText;
             _followTargetParams.ShowBehindIndicator = true;
+            _followTargetParams.CanvasCamera = _uiCamera;
             _followTextParams ??= new FollowTargetParams();
             _followTextParams.MainCamera = _mainCamera;
             _followTextParams.CanvasRect = _canvasRect;
             _followTextParams.ScreenBorderOffset = gameConfig.screenBorderOffset;
+            _followTextParams.CanvasCamera = _uiCamera;
             _followCollectItemParams ??= new FollowTargetParams();
             _followCollectItemParams.MainCamera = _mainCamera;
             _followCollectItemParams.CanvasRect = _canvasRect;
             _followCollectItemParams.ScreenBorderOffset = gameConfig.screenBorderOffset;
             _followCollectItemParams.ShowBehindIndicator = true;
+            _followCollectItemParams.CanvasCamera = _uiCamera;
         }
 
-        private void OnSceneItemInfoChanged(SceneItemInfoChangedEvent itemInfoChangedEvent)
-        {
-            switch (itemInfoChangedEvent.Operation)
-            {
-                case SyncIDictionary<uint, SceneItemInfo>.Operation.OP_ADD:
-                case SyncIDictionary<uint, SceneItemInfo>.Operation.OP_SET:
-                    var itemData = new CollectItemData();
-                    itemData.ItemId = itemInfoChangedEvent.ItemId;
-                    itemData.CurrentHp = itemInfoChangedEvent.SceneItemInfo.health;
-                    itemData.MaxHp = itemInfoChangedEvent.SceneItemInfo.maxHealth;
-                    itemData.Position = itemInfoChangedEvent.SceneItemInfo.Position;
-                    itemData.PlayerPosition = PlayerInGameManager.Instance.GetLocalPlayerPosition();
-                    var collectItem =  itemList.ReplaceItem<CollectItemData, CollectItem>((int)itemInfoChangedEvent.ItemId, itemData);
-                    _followCollectItemParams.IndicatorUI = collectItem.rectTransform;
-                    collectItem.Show(_followCollectItemParams);
-                    break;
-                case SyncIDictionary<uint, SceneItemInfo>.Operation.OP_CLEAR:
-                    itemList.Clear();
-                    break;
-                case SyncIDictionary<uint, SceneItemInfo>.Operation.OP_REMOVE:
-                    itemList.RemoveItem((int)itemInfoChangedEvent.ItemId);
-                    break;
-            }
-        }
+        // private void OnSceneItemInfoChanged(SceneItemInfoChangedEvent itemInfoChangedEvent)
+        // {
+        //     switch (itemInfoChangedEvent.Operation)
+        //     {
+        //         case SyncIDictionary<uint, SceneItemInfo>.Operation.OP_ADD:
+        //         case SyncIDictionary<uint, SceneItemInfo>.Operation.OP_SET:
+        //             var itemData = new CollectItemData();
+        //             itemData.ItemId = itemInfoChangedEvent.ItemId;
+        //             itemData.CurrentHp = itemInfoChangedEvent.SceneItemInfo.health;
+        //             itemData.MaxHp = itemInfoChangedEvent.SceneItemInfo.maxHealth;
+        //             itemData.Position = itemInfoChangedEvent.SceneItemInfo.Position;
+        //             itemData.PlayerPosition = PlayerInGameManager.Instance.GetLocalPlayerPosition();
+        //             var collectItem =  itemList.ReplaceItem<CollectItemData, CollectItem>((int)itemInfoChangedEvent.ItemId, itemData);
+        //             _followCollectItemParams.IndicatorUI = collectItem.rectTransform;
+        //             collectItem.Show(_followCollectItemParams);
+        //             break;
+        //         case SyncIDictionary<uint, SceneItemInfo>.Operation.OP_CLEAR:
+        //             itemList.Clear();
+        //             break;
+        //         case SyncIDictionary<uint, SceneItemInfo>.Operation.OP_REMOVE:
+        //             itemList.RemoveItem((int)itemInfoChangedEvent.ItemId);
+        //             break;
+        //     }
+        // }
 
         private void OnFollowTarget(FollowTargetTextEvent followTargetTextEvent)
         {

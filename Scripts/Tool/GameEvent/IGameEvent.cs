@@ -384,7 +384,17 @@ namespace HotUpdate.Scripts.Tool.GameEvent
             IsEnter = isEnter;
         }
     }
-    
+
+    public struct DevelopItemGetEvent : IGameEvent
+    {
+        public ItemsGetCommand ItemsGetCommand { get; private set; }
+
+        public DevelopItemGetEvent(ItemsGetCommand itemsGetCommand)
+        {
+            ItemsGetCommand = itemsGetCommand;
+        }
+    }
+
     [Serializable]
     public struct GameInfo
     {

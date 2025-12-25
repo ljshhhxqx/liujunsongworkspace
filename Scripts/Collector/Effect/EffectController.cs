@@ -306,10 +306,10 @@ namespace HotUpdate.Scripts.Collector.Effect
             {
                 _material.SetFloat(propertyName, value);
             }
-            else
-            {
-                Debug.LogWarning($"Material does not have property: {propertyName}");
-            }
+            // else
+            // {
+            //     Debug.LogWarning($"Material does not have property: {propertyName}");
+            // }
         }
     
         private void UpdateMaterialColor(string propertyName, Color value)
@@ -318,10 +318,10 @@ namespace HotUpdate.Scripts.Collector.Effect
             {
                 _material.SetColor(propertyName, value);
             }
-            else
-            {
-                Debug.LogWarning($"Material does not have property: {propertyName}");
-            }
+            // else
+            // {
+            //     Debug.LogWarning($"Material does not have property: {propertyName}");
+            // }
         }
     
         private void UpdateDistortionTime()

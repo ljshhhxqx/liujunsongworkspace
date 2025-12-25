@@ -13,6 +13,7 @@ using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.GameBase;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
@@ -400,12 +401,11 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             _playerSpawnPoints[nearestBase] = playerInGameData.networkIdentity.netId;
             _playerPositions.TryAdd(playerInGameData.networkIdentity.netId, pos);
             _playerGrids.TryAdd(playerInGameData.networkIdentity.netId,  MapBoundDefiner.Instance.GetGridPosition(pos));
-            SetCalculatorConstants();
-            RpcAddPlayer(connectId, playerInGameData, playerInGameData.networkIdentity.netId);
-            RpcAddPlayer(playerInGameData.networkIdentity.connectionToClient);
+            SetCalculatorConstants(playerIdentity);
+            RpcAddPlayer(connectId, playerInGameData, playerInGameData.networkIdentity);
         }
 
-        private void SetCalculatorConstants()
+        private void SetCalculatorConstants(NetworkIdentity identity)
         {
             _gameSyncManager??= FindObjectOfType<GameSyncManager>();
             _interactSystem??= FindObjectOfType<InteractSystem>();
@@ -462,7 +462,8 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 GameSyncManager = _gameSyncManager,
                 IsServer = isServer,
                 IsClient = isClient,
-                IsLocalPlayer = isLocalPlayer
+                IsLocalPlayer = isLocalPlayer,
+                PlayerComponentController = identity.GetComponent<PlayerComponentController>()
             });
             PlayerEquipmentCalculator.SetConstant(new PlayerEquipmentConstant
             {
@@ -471,7 +472,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 IsServer = isServer,
                 IsClient = isClient,
                 GameSyncManager = _gameSyncManager,
-                IsLocalPlayer = isLocalPlayer
+                IsLocalPlayer = isLocalPlayer,
             });
             PlayerShopCalculator.SetConstant(new ShopCalculatorConstant
             {
@@ -481,7 +482,8 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 IsServer = isServer,
                 GameSyncManager = _gameSyncManager,
                 IsClient = isClient,
-                IsLocalPlayer = isLocalPlayer
+                IsLocalPlayer = isLocalPlayer,
+                PlayerInGameManager = Instance
             });
             PlayerSkillCalculator.SetConstant(new SkillCalculatorConstant
             {
@@ -493,14 +495,14 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             });
         }
 
-        [TargetRpc]
-        public void RpcAddPlayer(NetworkConnectionToClient client)
-        {
-            SetCalculatorConstants();
-        }
+        // [TargetRpc]
+        // public void RpcAddPlayer(NetworkIdentity client)
+        // {
+        //     SetCalculatorConstants(client);
+        // }
 
         [ClientRpc]
-        private void RpcAddPlayer(int connectId, PlayerInGameData playerInGameData, uint playerNetId)
+        private void RpcAddPlayer(int connectId, PlayerInGameData playerInGameData, NetworkIdentity networkIdentity)
         {
             var playerIdentity = playerInGameData.networkIdentity;
             if (_playerPhysicsData == null)
@@ -518,6 +520,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 _playerBases[connectId] = value;
                 _playerBases.Remove(basePosition.Key);
             }
+            SetCalculatorConstants(networkIdentity);
         }
 
         public void RemovePlayer(int connectId)

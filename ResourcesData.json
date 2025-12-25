@@ -755,13 +755,23 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
+            "Name": "DevelopSwitchUI",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/UI/DevelopSwitchUI.prefab"
+        },
+        {
+            "UID": 3600003,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "DevelopUI",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/UI/DevelopUI.prefab"
         },
         {
-            "UID": 3600003,
+            "UID": 3600004,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -771,7 +781,7 @@
             "Address": "/Preload/UI/FriendScreenUI.prefab"
         },
         {
-            "UID": 3600004,
+            "UID": 3600005,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -781,7 +791,7 @@
             "Address": "/Preload/UI/GameFlowOverlay.prefab"
         },
         {
-            "UID": 3600005,
+            "UID": 3600006,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -791,7 +801,7 @@
             "Address": "/Preload/UI/HelpPopup.prefab"
         },
         {
-            "UID": 3600006,
+            "UID": 3600007,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -801,7 +811,7 @@
             "Address": "/Preload/UI/InfoPanel.prefab"
         },
         {
-            "UID": 3600007,
+            "UID": 3600008,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -811,7 +821,7 @@
             "Address": "/Preload/UI/LoginPanel.prefab"
         },
         {
-            "UID": 3600008,
+            "UID": 3600009,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -821,7 +831,7 @@
             "Address": "/Preload/UI/MainUI.prefab"
         },
         {
-            "UID": 3600009,
+            "UID": 3600010,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -831,7 +841,7 @@
             "Address": "/Preload/UI/ModifyNameUI.prefab"
         },
         {
-            "UID": 3600010,
+            "UID": 3600011,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -841,7 +851,7 @@
             "Address": "/Preload/UI/PasswordUI.prefab"
         },
         {
-            "UID": 3600011,
+            "UID": 3600012,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -851,7 +861,7 @@
             "Address": "/Preload/UI/PlayerConnectUI.prefab"
         },
         {
-            "UID": 3600012,
+            "UID": 3600013,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -861,7 +871,7 @@
             "Address": "/Preload/UI/RegistPanel.prefab"
         },
         {
-            "UID": 3600013,
+            "UID": 3600014,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -871,7 +881,7 @@
             "Address": "/Preload/UI/RoomListUI.prefab"
         },
         {
-            "UID": 3600014,
+            "UID": 3600015,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -881,7 +891,7 @@
             "Address": "/Preload/UI/RoomScreenUI.prefab"
         },
         {
-            "UID": 3600015,
+            "UID": 3600016,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -891,7 +901,7 @@
             "Address": "/Preload/UI/TipPopup.prefab"
         },
         {
-            "UID": 3600016,
+            "UID": 3600017,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",

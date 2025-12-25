@@ -456,17 +456,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var skillConfig = Constant.SkillConfig.GetSkillData(skillId);
             bagItem.IsEnableSkill = isEnable;
             playerItemState.PlayerItemConfigIdSlotDictionary[slotIndex] = bagItem;
-            if (Constant.IsLocalPlayer)
+            var skillEnableCommand = new SkillLoadCommand
             {
-                var skillEnableCommand = new SkillLoadCommand
-                {
-                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill, CommandAuthority.Client),
-                    SkillConfigId = skillId,
-                    IsLoad = isEnable,
-                    KeyCode = SkillConfig.GetAnimationState(bagItem.PlayerItemType),
-                };
-                Constant.PlayerComponentController.PlayerAddCommand(CommandType.Skill, skillEnableCommand);
-            }
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill, CommandAuthority.Client),
+                SkillConfigId = skillId,
+                IsLoad = isEnable,
+                KeyCode = SkillConfig.GetAnimationState(bagItem.PlayerItemType),
+            };
+            Constant.PlayerComponentController.PlayerAddCommand(CommandType.Skill, skillEnableCommand);
         }
 
         public static bool TryUnloadSkill(ref PlayerItemState playerItemState, int connectionId, int slotIndex, out PlayerBagSlotItem unloadedItem)

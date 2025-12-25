@@ -44,7 +44,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             }
             if (command is SkillLoadCommand skillLoadCommand)
             {
-                Debug.Log($"[SkillLoadCommand] Player {NetworkClient.localPlayer.connectionToClient.connectionId} skill {skillLoadCommand.SkillConfigId} start load");
+                Debug.Log($"[SkillLoadCommand] Player {NetworkIdentity.netId} skill {skillLoadCommand.SkillConfigId} start load");
                 ISkillChecker checker;
                 var skillData = _skillConfig.GetSkillData(skillLoadCommand.SkillConfigId);
                 var skillCheckers = _playerComponentController.SkillCheckerDict;

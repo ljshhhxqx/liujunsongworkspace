@@ -35,6 +35,7 @@ using HotUpdate.Scripts.UI.UIs.Overlay;
 using HotUpdate.Scripts.UI.UIs.Panel;
 using HotUpdate.Scripts.UI.UIs.Panel.Backpack;
 using HotUpdate.Scripts.UI.UIs.Popup;
+using HotUpdate.Scripts.UI.UIs.SecondPanel;
 using MemoryPack;
 using Mirror;
 using UI.UIBase;
@@ -262,13 +263,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             GetAllCalculators(configProvider, gameSyncManager);
             HandleAllSyncState();
             _uiManager.CloseUI(UIType.Main);
-            _gameEventManager.Publish(new PlayerUnListenMessageEvent());
-            _gameEventManager.Subscribe<GameFunctionUIShowEvent>(OnGameFunctionUIShow);
-            _gameEventManager.Subscribe<TargetShowEvent>(OnTargetShow);
             if (LocalPlayerHandler)
             {
+                _gameEventManager.Publish(new PlayerUnListenMessageEvent());
                 _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter, gameObject, netId, true));
+                _gameEventManager.Subscribe<DevelopItemGetEvent>(OnDevelopItemGet);
+                _gameEventManager.Subscribe<GameFunctionUIShowEvent>(OnGameFunctionUIShow);
+                _gameEventManager.Subscribe<TargetShowEvent>(OnTargetShow);
             }
+        }
+
+        private void OnDevelopItemGet(DevelopItemGetEvent developItemGetEvent)
+        {
+            CmdSendCommand(NetworkCommandExtensions.SerializeCommand(developItemGetEvent.ItemsGetCommand).Item1);
         }
 
         private void OnTargetShow(TargetShowEvent targetShowEvent)
@@ -292,7 +299,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void OnGameFunctionUIShow(GameFunctionUIShowEvent gameFunctionUIShowEvent)
         {
-            if (!_uiManager.IsUIOpen(gameFunctionUIShowEvent.UIType))
+            if (_uiManager.IsUIOpen(gameFunctionUIShowEvent.UIType))
             {
                 _uiManager.CloseUI(gameFunctionUIShowEvent.UIType);
                 return;
@@ -318,6 +325,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     shopScreenUI.BindShopItemData(UIPropertyBinder.GetReactiveDictionary<RandomShopItemData>(_shopBindKey));
                     shopScreenUI.BindBagItemData(UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey));
                     shopScreenUI.BindPlayerGold(UIPropertyBinder.ObserveProperty<ValuePropertyData>(_goldBindKey));
+                    UIAudioManager.Instance.PlayUIEffect(UIAudioEffectType.Bag);
                     shopScreenUI.OnRefresh.Subscribe(_ =>
                     {
                         var refreshCommand = new RefreshShopCommand
@@ -614,6 +622,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             _uiManager.CloseUI(UIType.Loading);
             _uiManager.CloseUI(UIType.TipsPopup);
+            _uiManager.SwitchUI<DevelopSwitchUI>();
             _uiHoleOverlay = _uiManager.SwitchUI<UIHoleOverlay>();
             if (!_reactivePropertyBinds.ContainsKey(typeof(ValuePropertyData)))
             {

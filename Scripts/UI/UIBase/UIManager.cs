@@ -49,7 +49,7 @@ namespace HotUpdate.Scripts.UI.UIBase
         
         public void InitMapUIs(string mapName)
         {
-            var mapUIs = ResourceManager.Instance.GetResources<GameObject>(x => x.resourceData.Address.StartsWith($"/Map/{mapName}") && x.resourceInfo.Resource is GameObject).ToList();
+            var mapUIs = ResourceManager.Instance.GetResources<GameObject>(x => x.resourceData.Address.StartsWith($"/Map/{mapName}/UIPrefab") && x.resourceInfo.Resource is GameObject).ToList();
             if (mapUIs.Count > 0)
             {
                 foreach (var mapUI in mapUIs)

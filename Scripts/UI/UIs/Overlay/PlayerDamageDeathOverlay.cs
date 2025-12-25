@@ -83,7 +83,6 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             _damageSequence = DOTween.Sequence();
             _damageSequence.Append(damageImage.DOFade(0.5f, 0.05f).SetEase(Ease.Linear));
             _damageSequence.Append(damageImage.DOFade(0, 0.05f).SetEase(Ease.Linear));
-            _damageSequence.SetLoops(2);
             _damageSequence.OnComplete(() =>
             {
                 if (oldHealth / maxHealth < _hpRatioToWarning)

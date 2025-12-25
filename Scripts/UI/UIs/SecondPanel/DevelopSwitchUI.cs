@@ -1,15 +1,15 @@
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.UI.UIBase;
-using HotUpdate.Scripts.UI.UIs.SecondPanel;
 using UI.UIBase;
+using UI.UIs.SecondPanel;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
 
-namespace UI.UIs.SecondPanel
+namespace HotUpdate.Scripts.UI.UIs.SecondPanel
 {
-    public class DevelopSwitchUI : MonoBehaviour
+    public class DevelopSwitchUI : ScreenUIBase
     {
         [SerializeField]
         private Button switchButton;
@@ -55,6 +55,8 @@ namespace UI.UIs.SecondPanel
             _switchCount = 0;
             _uiManager.SwitchUI<DevelopScreenUI>();
         }
-        
+
+        public override UIType Type => UIType.DevelopSwitch;
+        public override UICanvasType CanvasType => UICanvasType.Popup;
     }
 }

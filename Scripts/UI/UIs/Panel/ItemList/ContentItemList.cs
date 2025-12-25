@@ -130,6 +130,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
                 itemPrefab.gameObject.SetActive(false);
                 return;
             }
+            itemPrefab.gameObject.SetActive(false);
             Debug.LogWarning($"ItemList: SetItemList failed, itemDict --{itemDict.GetType().Name}-- is null or empty.");
         }
     }

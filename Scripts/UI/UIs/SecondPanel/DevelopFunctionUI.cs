@@ -3,6 +3,7 @@ using AOTScripts.Data;
 using AOTScripts.Data.State;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
 using Mirror;
 using TMPro;
@@ -28,7 +29,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         private ItemConfig _itemConfig;
 
         [Inject]
-        private void Initialize(IConfigProvider configProvider, UIManager uiManager)
+        private void Initialize(IConfigProvider configProvider, UIManager uiManager, GameEventManager gameEventManager)
         {
             _itemConfig = configProvider.GetConfig<ItemConfig>();
             giveMoneyButton.OnClickAsObservable()
@@ -77,17 +78,16 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                     inputField.text = $"{item} {count}";
                 })
                 .AddTo(this);
-            var gameSyncManager = FindObjectOfType<GameSyncManager>();
             confirmButton.OnClickAsObservable()
                 .ThrottleFirst(TimeSpan.FromMilliseconds(0.5f*1000))
                 .Subscribe(_ =>
                 {
-                    CheckInputAndSend(inputField.text, gameSyncManager, uiManager);
+                    CheckInputAndSend(inputField.text, gameEventManager, uiManager);
                 })
                 .AddTo(this);
         }
 
-        private void CheckInputAndSend(string input, GameSyncManager gameSyncManager, UIManager uiManager)
+        private void CheckInputAndSend(string input, GameEventManager gameEventManager, UIManager uiManager)
         {
             if (string.IsNullOrEmpty(input) || string.IsNullOrWhiteSpace(input))
             {
@@ -138,7 +138,8 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 itemGetCommand.Header =
                     GameSyncManager.CreateNetworkCommandHeader(NetworkClient.connection.connectionId, CommandType.Item);
                 itemGetCommand.Items = items;
-                gameSyncManager.CmdEnqueueCommand(NetworkCommandExtensions.SerializeCommand(itemGetCommand).Item1);
+                gameEventManager.Publish(new DevelopItemGetEvent(itemGetCommand));
+                //gameEventManager.CmdEnqueueCommand(NetworkCommandExtensions.SerializeCommand(itemGetCommand).Item1);
             }
             else
             {
@@ -158,7 +159,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                     itemGetCommand.Header =
                         GameSyncManager.CreateNetworkCommandHeader(NetworkClient.connection.connectionId, CommandType.Item);
                     itemGetCommand.Items = items;
-                    gameSyncManager.CmdEnqueueCommand(NetworkCommandExtensions.SerializeCommand(itemGetCommand).Item1);
+                    gameEventManager.Publish(new DevelopItemGetEvent(itemGetCommand));
                 }
             }
 

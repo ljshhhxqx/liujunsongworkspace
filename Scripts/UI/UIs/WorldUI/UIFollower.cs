@@ -7,6 +7,7 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
     {
         private GameObject _target;
         private Camera _worldCamera; // 场景主摄像机（World -> Screen）
+        private Camera _uiCamera; // UI摄像机（UI -> Screen）
         private RectTransform _rectTransform;
         private RectTransform _parentRectTransform;
         private FollowTargetParams _followTargetParams;
@@ -18,12 +19,14 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
             _target = target;
             _worldCamera = worldCamera;
             _parentRectTransform = transform.parent.GetComponent<RectTransform>();
+            _uiCamera = _parentRectTransform.GetComponentInParent<Canvas>().worldCamera;
             _followTargetParams = new FollowTargetParams();
             _followTargetParams.IndicatorUI = _rectTransform;
             _followTargetParams.CanvasRect = _parentRectTransform;
             _followTargetParams.MainCamera = _worldCamera;
             _followTargetParams.ShowBehindIndicator = false;
             _followTargetParams.ScreenBorderOffset = 1f;
+            _followTargetParams.CanvasCamera = _uiCamera;
             _playerTransform = playerTransform;
         }
 
