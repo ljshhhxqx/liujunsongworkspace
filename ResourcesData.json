@@ -1355,10 +1355,10 @@
             "ResourceType": "UnityEngine.AudioClip",
             "AssetType": 15,
             "Extension": ".flac",
-            "Name": "Notifacation",
+            "Name": "Notification",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Audio/UI/Effect/Notifacation.flac"
+            "Address": "/Audio/UI/Effect/Notification.flac"
         },
         {
             "UID": 4000032,
