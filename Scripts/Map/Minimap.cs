@@ -63,6 +63,7 @@ namespace HotUpdate.Scripts.Map
                 }
                 var item = GameObjectPoolManger.Instance.GetObject(targetPrefab.gameObject, Vector3.zero, Quaternion.identity, transform);
                 SetMinimapItems(item, y);
+                _minimapItems.Add(x, item);
             }).AddTo(this);
             worldPositions.ObserveRemove((x, y) =>
             {
@@ -82,6 +83,7 @@ namespace HotUpdate.Scripts.Map
                 }
                 
                 SetMinimapItems(item, y);
+                _minimapItems[x] = item;
             }).AddTo(this);
             worldPositions.ObserveClear(_ =>
             {
