@@ -34,7 +34,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         private GameSyncManager _gameSyncManager;
         private GameEventManager _gameEventManager;
         private PlayerPropertySyncSystem _playerPropertySyncSystem;
-
+        private List<PlayerPropertySyncSystem.SkillBuffManagerData> _activeBuffs = new List<PlayerPropertySyncSystem.SkillBuffManagerData>();
         private SyncDictionary<uint, SceneItemInfo> _sceneItems = new SyncDictionary<uint, SceneItemInfo>();
         private HashSet<DynamicObjectData> _dynamicObjects = new HashSet<DynamicObjectData>();
         
@@ -136,7 +136,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                     attackInterval = sceneItemInfoChanged.SceneItemInfo.attackInterval,
                     maxHealth = sceneItemInfoChanged.SceneItemInfo.maxHealth,
                     sceneItemId = sceneItemInfoChanged.ItemId,
-                    Position = sceneItemInfoChanged.Position
+                    Position = sceneItemInfoChanged.Position,
+                    criticalRate = sceneItemInfoChanged.SceneItemInfo.criticalRate,
+                    criticalDamageRatio = sceneItemInfoChanged.SceneItemInfo.criticalDamageRatio,
                 };
                 Debug.Log($"Add scene item {sceneItemInfoChanged.ItemId} to scene items");
                 _sceneItems.Add(sceneItemInfoChanged.ItemId, sceneItemInfo);
@@ -145,14 +147,44 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 
         private void OnSkillItem(PlayerSkillItemEvent playerSkillItemEvent)
         {
-            var extraPower = playerSkillItemEvent.PlayerState.MemoryProperty.GetValueOrDefault(playerSkillItemEvent.SkillHitExtraEffectData.effectProperty).CurrentValue;
-            var attackPower = playerSkillItemEvent.SkillHitExtraEffectData.isBuffMaxProperty ? playerSkillItemEvent.PlayerState.MemoryProperty.GetValueOrDefault(playerSkillItemEvent.SkillHitExtraEffectData.buffProperty).MaxValue : playerSkillItemEvent.PlayerState.MemoryProperty.GetValueOrDefault(playerSkillItemEvent.SkillHitExtraEffectData.buffProperty).GetPropertyValue(playerSkillItemEvent.SkillHitExtraEffectData.buffIncreaseType);
-            if (_sceneItems.TryGetValue(playerSkillItemEvent.DefenderId, out var sceneItemInfo))
+            var effectData = playerSkillItemEvent.SkillHitExtraEffectData;
+            var memoryProperty = playerSkillItemEvent.PlayerState.MemoryProperty;
+            if (_sceneItems.TryGetValue(playerSkillItemEvent.DefenderId, out var sceneItemInfo) && sceneItemInfo.health > 1)
             {
-                var damageResult = _jsonConfig.GetDamage(attackPower + extraPower * playerSkillItemEvent.SkillHitExtraEffectData.extraRatio, sceneItemInfo.defense, 0, 1);
-                Debug.Log($"[OnSkillItem] Player {playerSkillItemEvent.PlayerId} attack scene item {playerSkillItemEvent.DefenderId} with damage {damageResult.Damage}");
-                sceneItemInfo.health -= damageResult.Damage;
-                sceneItemInfo.health = Mathf.Max(sceneItemInfo.health, 0);
+                float value;
+                if (effectData.baseValue < 1)
+                {
+                    value = memoryProperty.GetValueOrDefault(effectData.buffProperty).CurrentValue * (effectData.baseValue + effectData.extraRatio);
+                }
+                else
+                {
+                    value = effectData.baseValue + memoryProperty.GetValueOrDefault(effectData.buffProperty).CurrentValue * effectData.extraRatio;
+                }
+                if (effectData.effectProperty == PropertyTypeEnum.Health)
+                {
+                    var damageResult = _jsonConfig.GetDamage(value, sceneItemInfo.defense, memoryProperty.GetValueOrDefault(PropertyTypeEnum.CriticalRate).CurrentValue, memoryProperty.GetValueOrDefault(PropertyTypeEnum.CriticalDamageRatio).CurrentValue);
+                    Debug.Log($"[OnSkillItem] Player {playerSkillItemEvent.PlayerId} attack scene item {playerSkillItemEvent.DefenderId} with damage {damageResult.Damage}");
+                    sceneItemInfo.health -= damageResult.Damage;
+                    sceneItemInfo.health = Mathf.Max(sceneItemInfo.health, 0);
+                }
+                else if (effectData.effectProperty is PropertyTypeEnum.Defense or PropertyTypeEnum.Attack or PropertyTypeEnum.CriticalRate 
+                         or PropertyTypeEnum.CriticalDamageRatio or PropertyTypeEnum.AttackRadius or PropertyTypeEnum.Speed || effectData.isBuffMaxProperty)
+                {
+                    sceneItemInfo = sceneItemInfo.UpdateItemInfo(effectData.effectProperty, effectData.isBuffMaxProperty, value);
+                    var buff = new PlayerPropertySyncSystem.SkillBuffManagerData
+                    {
+                        playerId = playerSkillItemEvent.DefenderId,
+                        value = value,
+                        duration = effectData.duration,
+                        operationType = effectData.buffOperation,
+                        increaseType = effectData.buffIncreaseType,
+                        currentTime = effectData.duration,
+                        propertyType = effectData.effectProperty,
+                        skillType = effectData.controlSkillType,
+                    };
+                    _activeBuffs.Add(buff);
+                }
+                _sceneItems[playerSkillItemEvent.DefenderId] = sceneItemInfo;
                 SceneItemInfoChanged?.Invoke(playerSkillItemEvent.DefenderId, sceneItemInfo);
                 if (sceneItemInfo.health <= 0)
                 {
@@ -160,10 +192,24 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                     _sceneItems.Remove(playerSkillItemEvent.DefenderId);
                 }
 
-                if (playerSkillItemEvent.SkillHitExtraEffectData.controlSkillType!= ControlSkillType.None)
+                if (effectData.controlSkillType!= ControlSkillType.None)
                 {
                     ItemControlSkillChanged?.Invoke(playerSkillItemEvent.DefenderId, playerSkillItemEvent.SkillHitExtraEffectData.duration, playerSkillItemEvent.SkillHitExtraEffectData.controlSkillType);
                 }
+            }
+            else
+            {
+                Debug.LogError($"[OnSkillItem] Scene item {playerSkillItemEvent.DefenderId} not found");
+            }
+        }
+
+        private void HandleItemSkillBuffMove(PlayerPropertySyncSystem.SkillBuffManagerData buff, int index)
+        {
+            if (_sceneItems.TryGetValue(buff.playerId, out var sceneItemInfo))
+            {
+                sceneItemInfo = sceneItemInfo.UpdateItemInfo(buff.propertyType, buff.isMaxProperty, -buff.value);
+                _sceneItems[buff.playerId] = sceneItemInfo;
+                _activeBuffs.RemoveAt(index);
             }
         }
 
@@ -201,9 +247,30 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 
         private void OnGameStart(GameStartEvent gameStartEvent)
         {
+            _bulletPrefab = ResourceManager.Instance.GetResource<GameObject>("Bullet");
+            if (!ServerHandler)
+            {
+                return;
+            }
             //Debug.Log($"InteractSystem start isClient-{isClient} isServer-{isServer} isLocalPlayer-{isLocalPlayer}");
             UpdateInteractRequests(_cts.Token).Forget();
-            _bulletPrefab = ResourceManager.Instance.GetResource<GameObject>("Bullet");
+            UpdateBuffs(GameSyncManager.ServerUpdateInterval);
+        }
+
+        private void UpdateBuffs(float serverUpdateInterval)
+        {
+            if (_activeBuffs.Count == 0)
+            {
+                for (int i = 0; i < _activeBuffs.Count; i++)
+                {
+                    _activeBuffs[i] = _activeBuffs[i].Update(serverUpdateInterval);
+                    if (_activeBuffs[i].currentTime <= 0)
+                    {
+                        HandleItemSkillBuffMove(_activeBuffs[i], i);
+                        _activeBuffs.RemoveAt(i);
+                    }
+                }
+            }
         }
 
         private async UniTaskVoid UpdateInteractRequests(CancellationToken cts)
@@ -544,6 +611,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         public float attackDamage; 
         public float defense;
         public float speed;
+        public float criticalRate;
+        public float criticalDamageRatio;
         public CompressedVector3 Position;
 
         public override string ToString()
@@ -557,12 +626,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             sb.AppendLine($"Defense: {defense}");
             sb.AppendLine($"Speed: {speed}");
             sb.AppendLine($"Position: {Position}");
+            sb.AppendLine($"CriticalRate: {criticalRate}");
+            sb.AppendLine($"CriticalDamageRatio: {criticalDamageRatio}");
             return sb.ToString();
         }
 
         public bool Equals(SceneItemInfo x, SceneItemInfo y)
         {
-            return x.sceneItemId == y.sceneItemId && x.health.Equals(y.health) && x.maxHealth.Equals(y.maxHealth) && x.attackInterval.Equals(y.attackInterval) && x.attackRange.Equals(y.attackRange) && x.attackDamage.Equals(y.attackDamage) && x.defense.Equals(y.defense) && x.speed.Equals(y.speed) && x.Position.Equals(y.Position);
+            return x.sceneItemId == y.sceneItemId && x.health.Equals(y.health) && x.maxHealth.Equals(y.maxHealth) 
+                   && x.attackInterval.Equals(y.attackInterval) && x.attackRange.Equals(y.attackRange) && x.attackDamage.Equals(y.attackDamage) 
+                   && x.defense.Equals(y.defense) && x.speed.Equals(y.speed) && x.Position.Equals(y.Position) && x.criticalRate.Equals(y.criticalRate) && x.criticalDamageRatio.Equals(y.criticalDamageRatio);
         }
 
         public int GetHashCode(SceneItemInfo obj)
@@ -577,7 +650,51 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             hashCode.Add(obj.defense);
             hashCode.Add(obj.speed);
             hashCode.Add(obj.Position);
+            hashCode.Add(obj.criticalRate);
+            hashCode.Add(obj.criticalDamageRatio);
             return hashCode.ToHashCode();
+        }
+
+        public SceneItemInfo UpdateItemInfo(PropertyTypeEnum propertyType, bool isMax, float value)
+        {
+            var info = this;
+            switch (propertyType)
+            {
+                case PropertyTypeEnum.Health:
+                    if (isMax)
+                    {
+                        info.maxHealth += value;
+                        break;
+                    }
+                    health += value;
+                    break;
+                case PropertyTypeEnum.Defense:
+                    info.attackInterval += value;
+                    break;
+                case PropertyTypeEnum.Speed:
+                    info.speed += value;
+                    break;
+                case PropertyTypeEnum.AttackSpeed:
+                    info.attackInterval += value;
+                    break;
+                case PropertyTypeEnum.AttackRadius:
+                    info.attackRange += value;
+                    break;
+                case PropertyTypeEnum.Attack:
+                    info.attackDamage += value;
+                    break;
+                case PropertyTypeEnum.CriticalRate:
+                    info.criticalRate += value;
+                    break;
+                case PropertyTypeEnum.CriticalDamageRatio:
+                    info.criticalDamageRatio += value;
+                    break;
+                default:
+                    Debug.Log($"Property type {propertyType} is not supported to modify scene item info");
+                    break;
+            }
+
+            return info;
         }
     }
 

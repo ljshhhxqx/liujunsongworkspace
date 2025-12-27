@@ -37,11 +37,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
     public class PlayerPropertySyncSystem : BaseSyncSystem
     {
         private readonly Dictionary<int, PropertyPredictionState> _propertyPredictionStates = new Dictionary<int, PropertyPredictionState>();
-        private ImmutableList<BuffManagerData> _activeBuffs;
-        private ImmutableList<TimedBuffData> _timedBuffs;
-        private ImmutableList<EquipmentData> _activeEquipments;
-        private ImmutableList<EquipmentPassiveData> _passiveBuffs;
-        private ImmutableList<SkillBuffManagerData> _skillBuffs;
+        private List<BuffManagerData> _activeBuffs = new List<BuffManagerData>();
+        private List<TimedBuffData> _timedBuffs = new List<TimedBuffData>();
+        private List<EquipmentData> _activeEquipments = new List<EquipmentData>();
+        private List<EquipmentPassiveData> _passiveBuffs = new List<EquipmentPassiveData>();
+        private List<SkillBuffManagerData> _skillBuffs = new List<SkillBuffManagerData>();
         private IConfigProvider _configProvider;
         private AnimationConfig _animationConfig;
         private ConstantBuffConfig _constantBuffConfig;
@@ -82,11 +82,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _skillConfig = _configProvider.GetConfig<SkillConfig>();
             _battleEffectConfig = _configProvider.GetConfig<BattleEffectConditionConfig>();
             _playerInGameManager = PlayerInGameManager.Instance;
-            _activeBuffs ??= ImmutableList<BuffManagerData>.Empty;
-            _passiveBuffs??= ImmutableList<EquipmentPassiveData>.Empty;
-            _timedBuffs ??= ImmutableList<TimedBuffData>.Empty;
-            _activeEquipments ??= ImmutableList<EquipmentData>.Empty;
-            _skillBuffs ??= ImmutableList<SkillBuffManagerData>.Empty;
             BuffDataReaderWriter.RegisterReaderWriter();
         }
 
@@ -302,7 +297,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             for (var i = _activeBuffs.Count - 1; i >= 0; i--)
             {
                 var nowBuff = _activeBuffs[i].Update(deltaTime);
-                _activeBuffs = _activeBuffs.SetItem(i, nowBuff);
+                _activeBuffs[i] = nowBuff;
                 Debug.Log($"[UpdateBuffs] Buff {_activeBuffs[i].BuffData.BuffData.buffId} {_activeBuffs[i].BuffData.BuffData.propertyType} {_activeBuffs[i].BuffData.BuffData.sourceType} current {_activeBuffs[i].BuffData.ElapsedTime}");
                 if (_activeBuffs[i].BuffData.IsExpired())
                 {
@@ -618,7 +613,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     var equipment = _activeEquipments[i];
                     if (equipment.equipItemConfigId == equipConfigId && equipment.equipItemId == equipItemId)
                     {
-                        _activeEquipments = _activeEquipments.RemoveAt(i);
+                        _activeEquipments.RemoveAt(i);
                         changed = true;
                         break;
                     }
@@ -629,7 +624,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 var equipment = _activeEquipments[index];
                 if (equipment.equipItemConfigId == equipConfigId && equipment.equipItemId == equipItemId)
                 {
-                    _activeEquipments = _activeEquipments.SetItem(index, new EquipmentData());
+                    _activeEquipments[index] = new EquipmentData();
                     changed = true;
                 }
             }
@@ -734,7 +729,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private void AddTimedBuff(int player, PlayerPredictablePropertyState playerState, TimedBuffData buff)
         {
-            _timedBuffs = _timedBuffs.Add(buff);
+            _timedBuffs.Add(buff);
             var propertyCalculator = playerState.MemoryProperty[buff.propertyType];
             playerState.MemoryProperty[buff.propertyType] = propertyCalculator.UpdateCalculator(propertyCalculator, new BuffIncreaseData
             {
@@ -769,7 +764,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             playerState.MemoryProperty[newBuff.BuffData.propertyType] = HandleBuffInfo(propertyCalculator, newBuff);
             if (buffManagerData.BuffData.BuffData.duration > 0)
             {
-                _activeBuffs = _activeBuffs.Add(buffManagerData);
+                _activeBuffs.Add(buffManagerData);
             }
             var index = _activeBuffs.Count - 1;
             PropertyStates[targetId] = playerState;
@@ -863,7 +858,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             };
             var propertyCalculator = playerState.MemoryProperty[newBuff.BuffData.propertyType];
             playerState.MemoryProperty[newBuff.BuffData.propertyType] = HandleBuffInfo(propertyCalculator, newBuff);
-            _activeEquipments = _activeEquipments.Add(buffManagerData);
+            _activeEquipments.Add(buffManagerData);
             PropertyStates[targetId] = playerState;
             PropertyChange(targetId);
         }
@@ -879,7 +874,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 if (passiveBuff.equipConfigId == equipItemConfigId && passiveBuff.equipItemId == equipItemId)
                 {
                     changed = true;
-                    _passiveBuffs = _passiveBuffs.RemoveAt(i);
+                    _passiveBuffs.RemoveAt(i);
                 }
             }
             if (changed)
@@ -906,7 +901,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             };
             var propertyCalculator = playerState.MemoryProperty[newBuff.BuffData.propertyType];
             playerState.MemoryProperty[newBuff.BuffData.propertyType] = HandleBuffInfo(propertyCalculator, newBuff);
-            _passiveBuffs = _passiveBuffs.Add(buffManagerData);
+            _passiveBuffs.Add(buffManagerData);
             PropertyStates[targetId] = playerState;
             PropertyChange(targetId);
         }
@@ -917,7 +912,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var propertyCalculator = playerState.MemoryProperty[buff.BuffData.propertyType];
             propertyCalculator = HandleBuffInfo(propertyCalculator, buff, true);
             playerState.MemoryProperty[buff.BuffData.propertyType] = propertyCalculator;
-            _activeBuffs = _activeBuffs.RemoveAt(index);
+            _activeBuffs.RemoveAt(index);
             PropertyStates[buff.TargetPlayerId] = playerState;
             PropertyChange(buff.TargetPlayerId);
         }
@@ -934,7 +929,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             PropertyStates[buff.targetPlayerId] = playerState;
             PropertyChange(buff.targetPlayerId);
             if (index != -1)
-                _timedBuffs = _timedBuffs.RemoveAt(index);
+                _timedBuffs.RemoveAt(index);
         }
 
 
@@ -1126,7 +1121,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     for (int j = 0; j < effectData.Length; j++)
                     {
                         var effect = effectData[j];
-                        HandleSkillHit(attacker, effect, hitPlayerId, true);
+                        HandleSkillHit(playerNetId, effect, hitPlayerId, true);
                     }
                 }
                 else if (skillData.conditionTarget == ConditionTargetType.Enemy)
@@ -1138,7 +1133,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         var hitPlayerState = GetState<PlayerPredictablePropertyState>(playerId);
                         var preHealth = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue;
                         var effect = effectData[j];
-                        HandleSkillHit(attacker, effect, hitPlayerId, false);
+                        HandleSkillHit(playerNetId, effect, hitPlayerId, false);
                         if (effect.effectProperty == PropertyTypeEnum.Health)
                         {
                             if (equipmentSystem.TryGetPlayerConditionChecker(attacker, TriggerType.OnSkillHit, out var conditionChecker))
@@ -1161,58 +1156,62 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
         }
 
-        private void HandleSkillHit(int attacker, SkillHitExtraEffectData skillHitExtraEffectData, uint hitId, bool isAlly)
+        private void HandleSkillHit(uint attacker, SkillHitExtraEffectData skillHitExtraEffectData, uint hitId, bool isAlly)
         {
-            var attackerId = _playerInGameManager.GetPlayerNetId(attacker);
-            var playerId = _playerInGameManager.GetPlayerId(hitId);
-            var playerState = GetState<PlayerPredictablePropertyState>(attacker);
-            if (playerId != -1)
+            if (_playerInGameManager.IsPlayer(attacker))
             {
-                var hitPlayerState = GetState<PlayerPredictablePropertyState>(playerId);
-                if(!isAlly && skillHitExtraEffectData.effectProperty == PropertyTypeEnum.Health && hitPlayerState.ControlSkillType.HasAnyState(SubjectedStateType.IsInvisible))
+                var attackerId = _playerInGameManager.GetPlayerId(attacker);
+                var playerId = _playerInGameManager.GetPlayerId(hitId);
+                var playerState = GetState<PlayerPredictablePropertyState>(attackerId);
+                if (playerId != -1)
+                {
+                    var hitPlayerState = GetState<PlayerPredictablePropertyState>(playerId);
+                    if (!isAlly && skillHitExtraEffectData.effectProperty == PropertyTypeEnum.Health &&
+                        hitPlayerState.ControlSkillType.HasAnyState(SubjectedStateType.IsInvisible))
+                        return;
+                    var propertyCalculator = hitPlayerState.MemoryProperty[skillHitExtraEffectData.effectProperty];
+                    var playerCalculator = playerState.MemoryProperty[skillHitExtraEffectData.buffProperty];
+                    float value;
+                    var preHealth = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue;
+                    if (skillHitExtraEffectData.baseValue < 1)
+                    {
+                        value = playerCalculator.CurrentValue * (skillHitExtraEffectData.baseValue + skillHitExtraEffectData.extraRatio);
+                    }
+                    else
+                    {
+                        value = skillHitExtraEffectData.baseValue + playerCalculator.CurrentValue * skillHitExtraEffectData.extraRatio;
+                    }
+                    var buffIncreaseData = new BuffIncreaseData
+                    {
+                        increaseValue = value,
+                        operationType = skillHitExtraEffectData.buffOperation,
+                        increaseType = skillHitExtraEffectData.buffIncreaseType,
+                    };
+                    propertyCalculator = propertyCalculator.UpdateCalculator(propertyCalculator, buffIncreaseData);
+                    if (skillHitExtraEffectData.duration > 0)
+                    {
+                        var data = new SkillBuffManagerData();
+                        data.playerId = hitId;
+                        data.value = value;
+                        data.duration = skillHitExtraEffectData.duration;
+                        data.operationType = skillHitExtraEffectData.buffOperation;
+                        data.increaseType = skillHitExtraEffectData.buffIncreaseType;
+                        data.propertyType = skillHitExtraEffectData.effectProperty;
+                        data.currentTime = skillHitExtraEffectData.duration;
+                        data.skillType = skillHitExtraEffectData.controlSkillType;
+                        _skillBuffs.Add(data);
+                    }
+                    hitPlayerState.MemoryProperty[skillHitExtraEffectData.effectProperty] = propertyCalculator;
+                    var state = skillHitExtraEffectData.controlSkillType.ToSubjectedStateType();
+                    hitPlayerState.ControlSkillType.AddState(state);
+                    DelayInvoker.DelayInvoke(skillHitExtraEffectData.duration, () => RevertPlayerState(playerId, state));
+                    PropertyStates[playerId] = hitPlayerState;
+                    PropertyChange(playerId);
+                    HandlePlayerControl(playerId, skillHitExtraEffectData.controlSkillType);
                     return;
-                var propertyCalculator = hitPlayerState.MemoryProperty[skillHitExtraEffectData.effectProperty];
-                var playerCalculator = playerState.MemoryProperty[skillHitExtraEffectData.buffProperty];
-                float value;
-                var preHealth = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue;
-                if (skillHitExtraEffectData.baseValue < 1)
-                {
-                    value = playerCalculator.CurrentValue * (skillHitExtraEffectData.baseValue + skillHitExtraEffectData.extraRatio);
                 }
-                else
-                {
-                    value = skillHitExtraEffectData.baseValue + playerCalculator.CurrentValue * skillHitExtraEffectData.extraRatio;
-                }
-                var buffIncreaseData = new BuffIncreaseData
-                {
-                    increaseValue = value,
-                    operationType = skillHitExtraEffectData.buffOperation,
-                    increaseType = skillHitExtraEffectData.buffIncreaseType,
-                };
-                propertyCalculator = propertyCalculator.UpdateCalculator(propertyCalculator, buffIncreaseData);
-                if (skillHitExtraEffectData.duration > 0)
-                {
-                    var data = new SkillBuffManagerData();
-                    data.playerId = playerId;
-                    data.value = value;
-                    data.duration = skillHitExtraEffectData.duration;
-                    data.operationType = skillHitExtraEffectData.buffOperation;
-                    data.increaseType = skillHitExtraEffectData.buffIncreaseType;
-                    data.propertyType = skillHitExtraEffectData.effectProperty;
-                    data.currentTime = skillHitExtraEffectData.duration;
-                    data.skillType = skillHitExtraEffectData.controlSkillType;
-                    _skillBuffs = _skillBuffs.Add(data);
-                }
-                hitPlayerState.MemoryProperty[skillHitExtraEffectData.effectProperty] = propertyCalculator;
-                var state = skillHitExtraEffectData.controlSkillType.ToSubjectedStateType();
-                hitPlayerState.ControlSkillType.AddState(state);
-                DelayInvoker.DelayInvoke(skillHitExtraEffectData.duration, () => RevertPlayerState(playerId, state));
-                PropertyStates[playerId] = hitPlayerState;
-                PropertyChange(playerId);
-                HandlePlayerControl(playerId, skillHitExtraEffectData.controlSkillType);
-                return;
+                _gameEventManager.Publish(new PlayerSkillItemEvent(attacker,playerState, skillHitExtraEffectData, hitId));
             }
-            _gameEventManager.Publish(new PlayerSkillItemEvent(attackerId,playerState, skillHitExtraEffectData, hitId));
         }
 
         private void RevertPlayerState(int connectionId, SubjectedStateType state)
@@ -1261,7 +1260,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     HandleEquipPropertyUnload(_passiveBuffs[i].BuffData.TargetPlayerId, _passiveBuffs[i].equipConfigId, _passiveBuffs[i].equipItemId, i);
                     continue;
                 }
-                _passiveBuffs = _passiveBuffs.SetItem(i, _passiveBuffs[i].Update(serverUpdateInterval));
+
+                _passiveBuffs[i] = _passiveBuffs[i].Update(serverUpdateInterval);
             }
         }
 
@@ -1271,7 +1271,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 return;
             for (var i = _skillBuffs.Count - 1; i >= 0; i--)
             {
-                _skillBuffs = _skillBuffs.SetItem(i, _skillBuffs[i].Update(deltaTime));
+                _skillBuffs[i] = _skillBuffs[i].Update(deltaTime);
                 if (_skillBuffs[i].currentTime > _skillBuffs[i].duration)
                 {
                     HandleSkillBuffRemove(_skillBuffs[i], i);
@@ -1281,7 +1281,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private void HandleSkillBuffRemove(SkillBuffManagerData buff, int index)
         {
-            var playerState = GetState<PlayerPredictablePropertyState>(buff.playerId);
+            var playerId = _playerInGameManager.GetPlayerId(buff.playerId);
+            var playerState = GetState<PlayerPredictablePropertyState>(playerId);
             var propertyCalculator = playerState.MemoryProperty[buff.propertyType];
             var buffOperationType = buff.operationType.GetNegativeOperationType();
             var buffIncreaseData = new BuffIncreaseData
@@ -1291,10 +1292,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 increaseType = buff.increaseType,
             };
             playerState.MemoryProperty[buff.propertyType] = propertyCalculator.UpdateCalculator(propertyCalculator, buffIncreaseData);
-            _skillBuffs = _skillBuffs.RemoveAt(index);
-            PropertyStates[buff.playerId] = playerState;
-            PropertyChange(buff.playerId);
-            HandlePlayerControl(buff.playerId, ControlSkillType.None);
+            _skillBuffs.RemoveAt(index);
+            PropertyStates[playerId] = playerState;
+            PropertyChange(playerId);
+            HandlePlayerControl(playerId, ControlSkillType.None);
         }
 
         private void HandleAnimationCommand(int connectionId, AnimationState command, int skillId = 0)
@@ -1385,7 +1386,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public override void Clear()
         {
             base.Clear();
-            _activeBuffs = _activeBuffs.Clear();
+            _activeBuffs.Clear();
             _propertyPredictionStates.Clear();
         }
 
@@ -1432,23 +1433,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         }
 
         [Serializable]
-        private struct BuffManagerData
+        public struct BuffManagerData
         {
             public BuffBase BuffData;
 
             public BuffManagerData Update(float deltaTime)
             {
-                return new BuffManagerData
-                {
-                    BuffData = BuffData.Update(deltaTime),
-                };
+                var managerData = this;
+                managerData.BuffData = managerData.BuffData.Update(deltaTime);
+                return managerData;
             }
         }
         
         [Serializable]
-        private struct SkillBuffManagerData
+        public struct SkillBuffManagerData
         {
-            public int playerId;
+            public uint playerId;
             public float value;
             public float duration;
             public BuffOperationType operationType;
@@ -1456,9 +1456,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             public float currentTime;
             public PropertyTypeEnum propertyType;
             public ControlSkillType skillType;
+            public bool isMaxProperty;
             
-            public SkillBuffManagerData(int playerId, float value, float duration, BuffOperationType operationType,
-                BuffIncreaseType increaseType, PropertyTypeEnum propertyType, ControlSkillType skillType)
+            public SkillBuffManagerData(uint playerId, float value, float duration, BuffOperationType operationType,
+                BuffIncreaseType increaseType, PropertyTypeEnum propertyType, ControlSkillType skillType, bool isMaxProperty)
             {
                 this.playerId = playerId;
                 this.value = value;
@@ -1468,21 +1469,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 currentTime = duration;
                 this.propertyType = propertyType;
                 this.skillType = skillType;
+                this.isMaxProperty = isMaxProperty;
             }
 
             public SkillBuffManagerData Update(float deltaTime)
             {
-                currentTime -= deltaTime;
-                return new SkillBuffManagerData
-                {
-                    playerId = playerId,
-                    value = value,
-                    duration = duration,
-                    operationType = operationType,
-                    increaseType = increaseType,
-                    currentTime = currentTime,
-                    propertyType = propertyType,
-                };
+                var managerData = this;
+                managerData.currentTime -= deltaTime;
+                return managerData;
             }
         }
         
@@ -1510,15 +1504,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
             public EquipmentPassiveData Update(float serverUpdateInterval)
             {
-                return new EquipmentPassiveData()
-                {
-                    playerItemType = playerItemType,
-                    equipConfigId = equipConfigId,
-                    equipItemId = equipItemId,
-                    BuffData = BuffData.Update(serverUpdateInterval),
-                    Interval = Interval,
-                    Timer = Timer + serverUpdateInterval
-                };
+                var data = this;
+                data.Timer += serverUpdateInterval;
+                data.BuffData = data.BuffData.Update(serverUpdateInterval);
+                return data;
             }
         }
     }

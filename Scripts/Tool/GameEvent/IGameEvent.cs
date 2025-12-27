@@ -341,6 +341,20 @@ namespace HotUpdate.Scripts.Tool.GameEvent
         }
     }
 
+    public struct ItemSkillItemEvent : IGameEvent
+    {
+        public uint ItemId { get; private set; }
+        public SkillHitExtraEffectData SkillHitExtraEffectData { get; private set; }
+        public uint DefenderId { get; private set; }
+
+        public ItemSkillItemEvent(uint itemId, SkillHitExtraEffectData skillHitExtraEffectData, uint defenderId)
+        {
+            ItemId = itemId;
+            SkillHitExtraEffectData = skillHitExtraEffectData;
+            DefenderId = defenderId;
+        }
+    }
+
     public struct PlayerSkillItemEvent : IGameEvent
     {
         public uint PlayerId { get; private set; }

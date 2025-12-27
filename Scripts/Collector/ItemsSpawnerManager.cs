@@ -705,7 +705,9 @@ namespace HotUpdate.Scripts.Collector
                                     attackRange = attackInfo.attackRange,
                                     attackInterval = attackInfo.attackCooldown,
                                     maxHealth = attackInfo.health,
-                                    Position = item.Item2
+                                    Position = item.Item2,
+                                    criticalRate = attackInfo.criticalRate,
+                                    criticalDamageRatio = attackInfo.criticalDamage
                                 }));
                                 break;
                             case CollectObjectType.Move:
@@ -745,6 +747,8 @@ namespace HotUpdate.Scripts.Collector
                                     maxHealth = attackInfo.health,
                                     speed = moveInfo.speed,
                                     Position = item.Item2,
+                                    criticalRate = attackInfo.criticalRate,
+                                    criticalDamageRatio = attackInfo.criticalDamage
                                 }));
                                 break;
                             case CollectObjectType.AttackHidden:
@@ -762,6 +766,8 @@ namespace HotUpdate.Scripts.Collector
                                     attackInterval = attackInfo.attackCooldown,
                                     maxHealth = attackInfo.health,
                                     Position = item.Item2,
+                                    criticalRate = attackInfo.criticalRate,
+                                    criticalDamageRatio = attackInfo.criticalDamage
                                 }));
                                 break;
                             case CollectObjectType.MoveHidden:
@@ -796,6 +802,8 @@ namespace HotUpdate.Scripts.Collector
                                         maxHealth = attackInfo.health,
                                         speed = moveInfo.speed,
                                         Position = item.Item2,
+                                        criticalRate = attackInfo.criticalRate,
+                                        criticalDamageRatio = attackInfo.criticalDamage
                                     }));
                                 break;
                             default:
@@ -807,25 +815,8 @@ namespace HotUpdate.Scripts.Collector
                                     }));
                                 break;
                         }
-                        // if (_serverItemMap.TryGetValue(identity.netId, out var itemInfo))
-                        // {
-                        //     //Debug.LogError($"Item with id: {identity.netId} already exists in map, destroying it");
-                        //     GameObjectPoolManger.Instance.ReturnObject(go);
-                        //     NetworkServer.Destroy(go);
-                        //     _serverItemMap.Remove(identity.netId);
-                        //     continue;
-                        // }
                         Debug.Log($"Get Object with id: {identity.netId} itemConfigid {item.Item1}");
-                        // if (identity.netId == 0 || !NetworkServer.spawned.TryGetValue(identity.netId, out identity))
-                        // {
-                        //     Debug.Log($"[SpawnManyItems] Item not or is 0, netId: {identity?.netId}");
-                        //     NetworkServer.Spawn(go);
-                        //     identity = go.GetComponent<NetworkIdentity>();
-                        //     Debug.Log($"[SpawnManyItems] Spawned item with id: {identity.netId}");
-                        // }
-                        //go.transform.position = item.Item2;
-                        //Debug.Log($"Spawning item {item.Item1} at position: {item.Item2} with id: {identity.netId}, real position: {go.transform.position}");
-
+                        
                         var buffData = GetBuffExtraData(item.Item1);
                         var buff = _randomBuffConfig.GetRandomBuffData(buffData.buffId);
                         var extraData = new CollectItemCustomData
