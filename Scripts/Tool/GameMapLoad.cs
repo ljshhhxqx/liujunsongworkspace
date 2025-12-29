@@ -1,6 +1,7 @@
 using System.Collections;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace HotUpdate.Scripts.Tool
 {
@@ -12,10 +13,12 @@ namespace HotUpdate.Scripts.Tool
         public LayerMask includeLayers = -1;
     
         private Camera snapshotCamera;
+        private string sceneName;
     
         [Button]
         void SnapshotMap()
         {
+            sceneName = SceneManager.GetActiveScene().name;
             // 自动生成地图快照（如果不存在）
             if (!MapSnapshotExists())
             {
@@ -58,7 +61,7 @@ namespace HotUpdate.Scripts.Tool
             snapshot.Apply();
         
             // 保存到文件
-            SaveTextureToFile(snapshot, "map_snapshot.png");
+            SaveTextureToFile(snapshot, $"{sceneName}_MiniMap.png");
         
             // 清理
             RenderTexture.active = null;

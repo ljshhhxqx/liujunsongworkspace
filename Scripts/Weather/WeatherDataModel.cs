@@ -6,19 +6,20 @@ namespace HotUpdate.Scripts.Weather
 {
     public static class WeatherDataModel
     {
-        public static HReactiveProperty<float> time;
-        public static HReactiveProperty<WeatherInfo> weatherInfo;
+        public static HReactiveProperty<float> GameTime;
+        public static HReactiveProperty<WeatherInfo> WeatherInfo;
+        public static HReactiveProperty<bool> IsDayTime;
         
         public static void Init()
         {
-            time = new HReactiveProperty<float>();
-            weatherInfo = new HReactiveProperty<WeatherInfo>();
+            GameTime = new HReactiveProperty<float>();
+            WeatherInfo = new HReactiveProperty<WeatherInfo>();
         }
 
         public static void Dispose()
         {
-            time.Dispose();
-            weatherInfo.Dispose();
+            GameTime.Dispose();
+            WeatherInfo.Dispose();
         }
     }
 }

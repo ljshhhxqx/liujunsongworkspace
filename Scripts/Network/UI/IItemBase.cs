@@ -64,15 +64,16 @@ namespace HotUpdate.Scripts.Network.UI
         public int Id;
         public MinimapTargetType TargetType;
         public Vector3 WorldPosition;
+        public QualityType QualityType;
 
         public bool Equals(MinimapItemData other)
         {
-            return TargetType == other.TargetType && WorldPosition.Equals(other.WorldPosition) && Id == other.Id;
+            return TargetType == other.TargetType && WorldPosition.Equals(other.WorldPosition) && Id == other.Id && QualityType == other.QualityType;
         }
 
         public override bool Equals(object obj)
         {
-            return obj is MinimapItemData other && Equals(other) && Id == other.Id;
+            return obj is MinimapItemData other && Equals(other);
         }
 
         public override int GetHashCode()
@@ -96,6 +97,7 @@ namespace HotUpdate.Scripts.Network.UI
             stringBuilder.AppendFormat("ID：{0}\n", Id);
             stringBuilder.AppendFormat("目标类型：{0}\n", TargetType);
             stringBuilder.AppendFormat("世界坐标：{0}\n", WorldPosition);
+            stringBuilder.AppendFormat("品质类型：{0}\n", QualityType);
             return stringBuilder.ToString();
         }
     }

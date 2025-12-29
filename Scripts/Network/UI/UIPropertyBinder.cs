@@ -82,20 +82,39 @@ namespace HotUpdate.Scripts.Network.UI
 
         public static void AddToDictionary<T>(BindingKey dictKey, int itemKey, T value) where T : IUIDatabase
         {
-            GetOrCreateDictionary<T>(dictKey).Dictionary.Add(itemKey, value);
+            var dict = GetOrCreateDictionary<T>(dictKey).Dictionary;
+            if (dict.ContainsKey(itemKey))
+            {
+                dict[itemKey] = value;
+            }
+            else
+            {
+                dict.Add(itemKey, value);
+            }
         }
 
         public static void RemoveFromDictionary<T>(BindingKey dictKey, int itemKey) where T : IUIDatabase
         {
-            GetOrCreateDictionary<T>(dictKey).Dictionary.Remove(itemKey);
+            var dict = GetOrCreateDictionary<T>(dictKey).Dictionary;
+            if (dict.ContainsKey(itemKey))
+            {
+                dict.Remove(itemKey);
+            }
         }
-
+        
         public static void BatchAddToDictionary<T>(BindingKey dictKey, IEnumerable<KeyValuePair<int, T>> items) where T : IUIDatabase
         {
             var dict = GetOrCreateDictionary<T>(dictKey);
             foreach (var item in items)
             {
-                dict.Dictionary.Add(item.Key, item.Value);
+                if (dict.Dictionary.ContainsKey(item.Key))
+                {
+                    dict.Dictionary[item.Key] = item.Value;
+                }
+                else
+                {
+                    dict.Dictionary.Add(item.Key, item.Value);
+                }
             }
         }
 

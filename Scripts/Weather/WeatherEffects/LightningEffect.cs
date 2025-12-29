@@ -2,6 +2,7 @@
 using AOTScripts.Tool.Coroutine;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using HotUpdate.Scripts.Game.GamePlay;
 using UniRx;
 using UnityEngine;
 using VContainer;

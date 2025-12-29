@@ -1,27 +1,23 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Data;
 using AOTScripts.Tool;
 using Cysharp.Threading.Tasks;
-using Data;
 using DG.Tweening;
-using Game;
 using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Game;
 using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Static;
+using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Panel;
-using HotUpdate.Scripts.UI.UIs.Panel.Item;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
 using TMPro;
 using UI.UIBase;
 using UniRx;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using VContainer;
 
@@ -82,12 +78,14 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private float _currentGameTime;
         private bool _isGameRunning;
         private GameResult _gameResult;
+        private GameEventManager _gameEventManager;
 
         [Inject]
-        private void Init(GameSceneManager gameSceneManager, UIManager uiManager)
+        private void Init(UIManager uiManager, GameEventManager gameEventManager)
         {
             InitializeUI();
             DOTween.Init();
+            _gameEventManager = gameEventManager;
             GameLoopDataModel.WarmupRemainingTime
                 .Where(time => time <= 3)
                 .Take(1)
@@ -111,6 +109,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                 {
                     uiManager.SwitchUI<MainScreenUI>();
                     uiManager.CloseUI(Type);
+                    _gameEventManager.Publish(new PlayerListenMessageEvent());
                 };
             });
         }

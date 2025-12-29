@@ -2,6 +2,7 @@
 using HotUpdate.Scripts.Config;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Game.GamePlay;
 using UniRx;
 using UnityEngine;
 using VContainer;
@@ -20,7 +21,7 @@ namespace HotUpdate.Scripts.Weather.WeatherEffects
         {
             var config = configProvider.GetConfig<JsonDataConfig>();
             _dayNightCycleData = config.DayNightCycleData;
-            WeatherDataModel.time.Subscribe(UpdateSun).AddTo(this);
+            WeatherDataModel.GameTime.Subscribe(UpdateSun).AddTo(this);
         }
 
         public override void PlayEffect(WeatherEffectData weatherData)
@@ -38,6 +39,7 @@ namespace HotUpdate.Scripts.Weather.WeatherEffects
 
             if (currentTime >= _dayNightCycleData.sunriseTime && currentTime < _dayNightCycleData.sunsetTime)
             {
+                WeatherDataModel.IsDayTime.Value = true;
                 // 白天
                 var t = (currentTime - _dayNightCycleData.sunriseTime) / (_dayNightCycleData.sunsetTime - _dayNightCycleData.sunriseTime); // [0,1]
 
@@ -47,6 +49,7 @@ namespace HotUpdate.Scripts.Weather.WeatherEffects
             }
             else
             {
+                WeatherDataModel.IsDayTime.Value = false;
                 // 夜晚
                 float t;
                 if (currentTime >= _dayNightCycleData.sunsetTime)

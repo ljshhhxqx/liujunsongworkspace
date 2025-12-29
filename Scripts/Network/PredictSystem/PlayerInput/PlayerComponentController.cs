@@ -291,7 +291,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 {
                     Id = (int)targetShowEvent.TargetId,
                     TargetType = MinimapTargetType.Treasure,
-                    WorldPosition = targetShowEvent.Target.transform.position
+                    WorldPosition = targetShowEvent.Target.transform.position,
+                    QualityType = targetShowEvent.Quality,
                 };
                 UIPropertyBinder.AddToDictionary(_minimumBindKey, (int)targetShowEvent.TargetId, minimapItemData);
             }
@@ -523,7 +524,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     {
                         Id = (int)netId,
                         TargetType = MinimapTargetType.Player,
-                        WorldPosition = transform.position
+                        WorldPosition = transform.position,
                     });
                     foreach (var networkIdentity in NetworkClient.spawned.Values)
                     {

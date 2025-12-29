@@ -1685,13 +1685,43 @@
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
+            "Name": "Christmas_MiniMap",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/MapSnapshots/Christmas_MiniMap.png"
+        },
+        {
+            "UID": 4500001,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "Rocket_MiniMap",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/MapSnapshots/Rocket_MiniMap.png"
+        },
+        {
+            "UID": 4500002,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
             "Name": "Town_Minimap",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/MapSnapshots/Town_Minimap.png"
         },
         {
-            "UID": 4500001,
+            "UID": 4500003,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "WestWild_MiniMap",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/MapSnapshots/WestWild_MiniMap.png"
+        },
+        {
+            "UID": 4500004,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1701,7 +1731,7 @@
             "Address": "/Map/Town/Potions/AttackPotion-Large.png"
         },
         {
-            "UID": 4500002,
+            "UID": 4500005,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1711,7 +1741,7 @@
             "Address": "/Map/Town/Potions/AttackPotion-Medium.png"
         },
         {
-            "UID": 4500003,
+            "UID": 4500006,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1721,7 +1751,7 @@
             "Address": "/Map/Town/Potions/AttackPotion-Small.png"
         },
         {
-            "UID": 4500004,
+            "UID": 4500007,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1731,7 +1761,7 @@
             "Address": "/Map/Town/Potions/DefensePotion-Large.png"
         },
         {
-            "UID": 4500005,
+            "UID": 4500008,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1741,7 +1771,7 @@
             "Address": "/Map/Town/Potions/DefensePotion-Medium.png"
         },
         {
-            "UID": 4500006,
+            "UID": 4500009,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1751,7 +1781,7 @@
             "Address": "/Map/Town/Potions/DefensePotion-Small.png"
         },
         {
-            "UID": 4500007,
+            "UID": 4500010,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1761,7 +1791,7 @@
             "Address": "/Map/Town/Potions/ScorePotion-Large.png"
         },
         {
-            "UID": 4500008,
+            "UID": 4500011,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1771,7 +1801,7 @@
             "Address": "/Map/Town/Potions/ScorePotion-Medium.png"
         },
         {
-            "UID": 4500009,
+            "UID": 4500012,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1781,7 +1811,7 @@
             "Address": "/Map/Town/Potions/ScorePotion-Small.png"
         },
         {
-            "UID": 4500010,
+            "UID": 4500013,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1791,7 +1821,7 @@
             "Address": "/Map/Town/Potions/SpeedPotion-Large.png"
         },
         {
-            "UID": 4500011,
+            "UID": 4500014,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1801,7 +1831,7 @@
             "Address": "/Map/Town/Potions/SpeedPotion-Medium.png"
         },
         {
-            "UID": 4500012,
+            "UID": 4500015,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1811,7 +1841,7 @@
             "Address": "/Map/Town/Potions/SpeedPotion-Small.png"
         },
         {
-            "UID": 4500013,
+            "UID": 4500016,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1821,7 +1851,7 @@
             "Address": "/Map/Town/Potions/StrengthPotion-Large.png"
         },
         {
-            "UID": 4500014,
+            "UID": 4500017,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1831,7 +1861,7 @@
             "Address": "/Map/Town/Potions/StrengthPotion-Medium.png"
         },
         {
-            "UID": 4500015,
+            "UID": 4500018,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1841,7 +1871,7 @@
             "Address": "/Map/Town/Potions/StrengthPotion-Small.png"
         },
         {
-            "UID": 4500016,
+            "UID": 4500019,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1851,7 +1881,7 @@
             "Address": "/Map/Town/Potions/TreasurePotion-Large.png"
         },
         {
-            "UID": 4500017,
+            "UID": 4500020,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -1861,7 +1891,7 @@
             "Address": "/Map/Town/Potions/TreasurePotion-Medium.png"
         },
         {
-            "UID": 4500018,
+            "UID": 4500021,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -3271,7 +3301,1107 @@
             "Address": "/Map/Town/Player/Prefab/MPlayer.prefab"
         },
         {
-            "UID": 5100001,
+            "UID": 5200000,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "arrowDown",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/arrowDown.png"
+        },
+        {
+            "UID": 5200001,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "arrowLeft",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/arrowLeft.png"
+        },
+        {
+            "UID": 5200002,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "arrowRight",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/arrowRight.png"
+        },
+        {
+            "UID": 5200003,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "arrowUp",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/arrowUp.png"
+        },
+        {
+            "UID": 5200004,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "audioOff",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/audioOff.png"
+        },
+        {
+            "UID": 5200005,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "audioOn",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/audioOn.png"
+        },
+        {
+            "UID": 5200006,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "backward",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/backward.png"
+        },
+        {
+            "UID": 5200007,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "barsHorizontal",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/barsHorizontal.png"
+        },
+        {
+            "UID": 5200008,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "barsVertical",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/barsVertical.png"
+        },
+        {
+            "UID": 5200009,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "basket",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/basket.png"
+        },
+        {
+            "UID": 5200010,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "button1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/button1.png"
+        },
+        {
+            "UID": 5200011,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "button2",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/button2.png"
+        },
+        {
+            "UID": 5200012,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "button3",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/button3.png"
+        },
+        {
+            "UID": 5200013,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "buttonA",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/buttonA.png"
+        },
+        {
+            "UID": 5200014,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "buttonB",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/buttonB.png"
+        },
+        {
+            "UID": 5200015,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "buttonL",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/buttonL.png"
+        },
+        {
+            "UID": 5200016,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "buttonL1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/buttonL1.png"
+        },
+        {
+            "UID": 5200017,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "buttonL2",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/buttonL2.png"
+        },
+        {
+            "UID": 5200018,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "buttonR",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/buttonR.png"
+        },
+        {
+            "UID": 5200019,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "buttonR1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/buttonR1.png"
+        },
+        {
+            "UID": 5200020,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "buttonR2",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/buttonR2.png"
+        },
+        {
+            "UID": 5200021,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "buttonSelect",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/buttonSelect.png"
+        },
+        {
+            "UID": 5200022,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "buttonStart",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/buttonStart.png"
+        },
+        {
+            "UID": 5200023,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "buttonX",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/buttonX.png"
+        },
+        {
+            "UID": 5200024,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "buttonY",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/buttonY.png"
+        },
+        {
+            "UID": 5200025,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "cart",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/cart.png"
+        },
+        {
+            "UID": 5200026,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "checkmark",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/checkmark.png"
+        },
+        {
+            "UID": 5200027,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "contrast",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/contrast.png"
+        },
+        {
+            "UID": 5200028,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "cross",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/cross.png"
+        },
+        {
+            "UID": 5200029,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "door",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/door.png"
+        },
+        {
+            "UID": 5200030,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "down",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/down.png"
+        },
+        {
+            "UID": 5200031,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "downLeft",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/downLeft.png"
+        },
+        {
+            "UID": 5200032,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "downRight",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/downRight.png"
+        },
+        {
+            "UID": 5200033,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "exclamation",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/exclamation.png"
+        },
+        {
+            "UID": 5200034,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "exitLeft",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/exitLeft.png"
+        },
+        {
+            "UID": 5200035,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "exitRight",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/exitRight.png"
+        },
+        {
+            "UID": 5200036,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "export",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/export.png"
+        },
+        {
+            "UID": 5200037,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "fastForward",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/fastForward.png"
+        },
+        {
+            "UID": 5200038,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "film",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/film.png"
+        },
+        {
+            "UID": 5200039,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "forward",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/forward.png"
+        },
+        {
+            "UID": 5200040,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "gamepad",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/gamepad.png"
+        },
+        {
+            "UID": 5200041,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "gamepad1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/gamepad1.png"
+        },
+        {
+            "UID": 5200042,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "gamepad2",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/gamepad2.png"
+        },
+        {
+            "UID": 5200043,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "gamepad3",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/gamepad3.png"
+        },
+        {
+            "UID": 5200044,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "gamepad4",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/gamepad4.png"
+        },
+        {
+            "UID": 5200045,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "gear",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/gear.png"
+        },
+        {
+            "UID": 5200046,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "home",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/home.png"
+        },
+        {
+            "UID": 5200047,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "import",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/import.png"
+        },
+        {
+            "UID": 5200048,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "information",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/information.png"
+        },
+        {
+            "UID": 5200049,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "joystick",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/joystick.png"
+        },
+        {
+            "UID": 5200050,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "joystickLeft",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/joystickLeft.png"
+        },
+        {
+            "UID": 5200051,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "joystickRight",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/joystickRight.png"
+        },
+        {
+            "UID": 5200052,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "joystickUp",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/joystickUp.png"
+        },
+        {
+            "UID": 5200053,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "larger",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/larger.png"
+        },
+        {
+            "UID": 5200054,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "leaderboardsComplex",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/leaderboardsComplex.png"
+        },
+        {
+            "UID": 5200055,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "leaderboardsSimple",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/leaderboardsSimple.png"
+        },
+        {
+            "UID": 5200056,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "locked",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/locked.png"
+        },
+        {
+            "UID": 5200057,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "massiveMultiplayer",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/massiveMultiplayer.png"
+        },
+        {
+            "UID": 5200058,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "medal1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/medal1.png"
+        },
+        {
+            "UID": 5200059,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "medal2",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/medal2.png"
+        },
+        {
+            "UID": 5200060,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "menuGrid",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/menuGrid.png"
+        },
+        {
+            "UID": 5200061,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "menuList",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/menuList.png"
+        },
+        {
+            "UID": 5200062,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "minus",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/minus.png"
+        },
+        {
+            "UID": 5200063,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "mouse",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/mouse.png"
+        },
+        {
+            "UID": 5200064,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "multiplayer",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/multiplayer.png"
+        },
+        {
+            "UID": 5200065,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "musicOff",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/musicOff.png"
+        },
+        {
+            "UID": 5200066,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "musicOn",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/musicOn.png"
+        },
+        {
+            "UID": 5200067,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "next",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/next.png"
+        },
+        {
+            "UID": 5200068,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "open",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/open.png"
+        },
+        {
+            "UID": 5200069,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "pause",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/pause.png"
+        },
+        {
+            "UID": 5200070,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "phone",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/phone.png"
+        },
+        {
+            "UID": 5200071,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "player",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/player.png"
+        },
+        {
+            "UID": 5200072,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "plus",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/plus.png"
+        },
+        {
+            "UID": 5200073,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "power",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/power.png"
+        },
+        {
+            "UID": 5200074,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "previous",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/previous.png"
+        },
+        {
+            "UID": 5200075,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "question",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/question.png"
+        },
+        {
+            "UID": 5200076,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "return",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/return.png"
+        },
+        {
+            "UID": 5200077,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "rewind",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/rewind.png"
+        },
+        {
+            "UID": 5200078,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "save",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/save.png"
+        },
+        {
+            "UID": 5200079,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "scrollHorizontal",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/scrollHorizontal.png"
+        },
+        {
+            "UID": 5200080,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "scrollVertical",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/scrollVertical.png"
+        },
+        {
+            "UID": 5200081,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "share1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/share1.png"
+        },
+        {
+            "UID": 5200082,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "share2",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/share2.png"
+        },
+        {
+            "UID": 5200083,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "signal1",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/signal1.png"
+        },
+        {
+            "UID": 5200084,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "signal2",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/signal2.png"
+        },
+        {
+            "UID": 5200085,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "signal3",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/signal3.png"
+        },
+        {
+            "UID": 5200086,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "smaller",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/smaller.png"
+        },
+        {
+            "UID": 5200087,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "star",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/star.png"
+        },
+        {
+            "UID": 5200088,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "stop",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/stop.png"
+        },
+        {
+            "UID": 5200089,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "tablet",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/tablet.png"
+        },
+        {
+            "UID": 5200090,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "target",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/target.png"
+        },
+        {
+            "UID": 5200091,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "trashcan",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/trashcan.png"
+        },
+        {
+            "UID": 5200092,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "trashcanOpen",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/trashcanOpen.png"
+        },
+        {
+            "UID": 5200093,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "trophy",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/trophy.png"
+        },
+        {
+            "UID": 5200094,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "unlocked",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/unlocked.png"
+        },
+        {
+            "UID": 5200095,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "up",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/up.png"
+        },
+        {
+            "UID": 5200096,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "upLeft",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/upLeft.png"
+        },
+        {
+            "UID": 5200097,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "upRight",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/upRight.png"
+        },
+        {
+            "UID": 5200098,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "video",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/video.png"
+        },
+        {
+            "UID": 5200099,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "warning",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/warning.png"
+        },
+        {
+            "UID": 5200100,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "wrench",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/wrench.png"
+        },
+        {
+            "UID": 5200101,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "zoom",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/zoom.png"
+        },
+        {
+            "UID": 5200102,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "zoomDefault",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/zoomDefault.png"
+        },
+        {
+            "UID": 5200103,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "zoomIn",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/zoomIn.png"
+        },
+        {
+            "UID": 5200104,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "zoomOut",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/GUI/zoomOut.png"
+        },
+        {
+            "UID": 5200105,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "Chest_Legendary",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/Map/Chest_Legendary.png"
+        },
+        {
+            "UID": 5200106,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "Chest_Normal",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/Map/Chest_Normal.png"
+        },
+        {
+            "UID": 5200107,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "Chest_Rare",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/Map/Chest_Rare.png"
+        },
+        {
+            "UID": 5200108,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "Enemy",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/Map/Enemy.png"
+        },
+        {
+            "UID": 5200109,
+            "ResourceType": "UnityEngine.Texture2D",
+            "AssetType": 3,
+            "Extension": ".png",
+            "Name": "Player",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Sprites/Map/Player.png"
+        },
+        {
+            "UID": 5300000,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3281,7 +4411,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword1_Gold.prefab"
         },
         {
-            "UID": 5100002,
+            "UID": 5300001,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3291,7 +4421,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword1_Green.prefab"
         },
         {
-            "UID": 5100003,
+            "UID": 5300002,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3301,7 +4431,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword1_Sliver.prefab"
         },
         {
-            "UID": 5100004,
+            "UID": 5300003,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3311,7 +4441,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword2_Green.prefab"
         },
         {
-            "UID": 5100005,
+            "UID": 5300004,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3321,7 +4451,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword2_Red.prefab"
         },
         {
-            "UID": 5100006,
+            "UID": 5300005,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3331,7 +4461,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword2_Yellow.prefab"
         },
         {
-            "UID": 5100007,
+            "UID": 5300006,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3341,7 +4471,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword3_Blue.prefab"
         },
         {
-            "UID": 5100008,
+            "UID": 5300007,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3351,7 +4481,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword3_Green.prefab"
         },
         {
-            "UID": 5100009,
+            "UID": 5300008,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3361,7 +4491,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword3_Red.prefab"
         },
         {
-            "UID": 5100010,
+            "UID": 5300009,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3371,7 +4501,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword4_Blue.prefab"
         },
         {
-            "UID": 5100011,
+            "UID": 5300010,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3381,7 +4511,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword4_Red.prefab"
         },
         {
-            "UID": 5100012,
+            "UID": 5300011,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3391,7 +4521,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword4_Yellow.prefab"
         },
         {
-            "UID": 5100013,
+            "UID": 5300012,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3401,7 +4531,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword5_Blue.prefab"
         },
         {
-            "UID": 5100014,
+            "UID": 5300013,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3411,7 +4541,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword5_Gold.prefab"
         },
         {
-            "UID": 5100015,
+            "UID": 5300014,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3421,7 +4551,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword5_Red.prefab"
         },
         {
-            "UID": 5100016,
+            "UID": 5300015,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3431,7 +4561,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword5_Yellow.prefab"
         },
         {
-            "UID": 5100017,
+            "UID": 5300016,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3441,7 +4571,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword6_Blue.prefab"
         },
         {
-            "UID": 5100018,
+            "UID": 5300017,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3451,7 +4581,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword6_Red.prefab"
         },
         {
-            "UID": 5100019,
+            "UID": 5300018,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3461,7 +4591,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword6_Yellow.prefab"
         },
         {
-            "UID": 5100020,
+            "UID": 5300019,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3471,7 +4601,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword7_Blue.prefab"
         },
         {
-            "UID": 5100021,
+            "UID": 5300020,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3481,7 +4611,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword7_Green.prefab"
         },
         {
-            "UID": 5100022,
+            "UID": 5300021,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3491,7 +4621,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword7_Red.prefab"
         },
         {
-            "UID": 5100023,
+            "UID": 5300022,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3501,7 +4631,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword8_Corrupted.prefab"
         },
         {
-            "UID": 5100024,
+            "UID": 5300023,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3511,7 +4641,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword8_Gold.prefab"
         },
         {
-            "UID": 5100025,
+            "UID": 5300024,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3521,7 +4651,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword8_White.prefab"
         },
         {
-            "UID": 5100026,
+            "UID": 5300025,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3531,7 +4661,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword9_Blue.prefab"
         },
         {
-            "UID": 5100027,
+            "UID": 5300026,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3541,7 +4671,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword9_Green.prefab"
         },
         {
-            "UID": 5100028,
+            "UID": 5300027,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3551,7 +4681,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword9_Purple.prefab"
         },
         {
-            "UID": 5100029,
+            "UID": 5300028,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3561,7 +4691,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword9_Red.prefab"
         },
         {
-            "UID": 5100030,
+            "UID": 5300029,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3571,7 +4701,7 @@
             "Address": "/Map/Town/Weapon/Prefab/Sword9_White.prefab"
         },
         {
-            "UID": 5200000,
+            "UID": 5400000,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -3581,7 +4711,7 @@
             "Address": "/Map/Town/Weapon/UI/Sword1.png"
         },
         {
-            "UID": 5200001,
+            "UID": 5400001,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -3591,7 +4721,7 @@
             "Address": "/Map/Town/Weapon/UI/Sword2.png"
         },
         {
-            "UID": 5200002,
+            "UID": 5400002,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -3601,7 +4731,7 @@
             "Address": "/Map/Town/Weapon/UI/Sword3.png"
         },
         {
-            "UID": 5200003,
+            "UID": 5400003,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -3611,7 +4741,7 @@
             "Address": "/Map/Town/Weapon/UI/Sword4.png"
         },
         {
-            "UID": 5200004,
+            "UID": 5400004,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -3621,7 +4751,7 @@
             "Address": "/Map/Town/Weapon/UI/Sword5.png"
         },
         {
-            "UID": 5200005,
+            "UID": 5400005,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -3631,7 +4761,7 @@
             "Address": "/Map/Town/Weapon/UI/Sword6.png"
         },
         {
-            "UID": 5200006,
+            "UID": 5400006,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -3641,7 +4771,7 @@
             "Address": "/Map/Town/Weapon/UI/Sword7.png"
         },
         {
-            "UID": 5200007,
+            "UID": 5400007,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
@@ -3651,7 +4781,7 @@
             "Address": "/Map/Town/Weapon/UI/Sword8.png"
         },
         {
-            "UID": 5200008,
+            "UID": 5400008,
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",

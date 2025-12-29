@@ -47,8 +47,8 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                 scoreText.text = _gameLoopData.TargetScore.ToString();
             }).AddTo(this);
             GameLoopDataModel.GameRemainingTime.Subscribe(x => SetCountDown(x.ToHMSStr(true, true, false))).AddTo(this);
-            WeatherDataModel.time.Subscribe(x => SetShowTime(x.ToHMSStr(false))).AddTo(this);
-            WeatherDataModel.weatherInfo.Subscribe(x => SetWeather(x.ToDescription())).AddTo(this);
+            WeatherDataModel.GameTime.Subscribe(x => SetShowTime(x.ToHMSStr(false))).AddTo(this);
+            WeatherDataModel.WeatherInfo.Subscribe(x => SetWeather(x.ToDescription())).AddTo(this);
             ResetGame();
         }
 

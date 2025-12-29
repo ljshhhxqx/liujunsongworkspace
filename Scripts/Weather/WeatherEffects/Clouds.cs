@@ -32,7 +32,7 @@ namespace HotUpdate.Scripts.Weather.WeatherEffects
             _weatherConstantData = config.WeatherConstantData;
             _lowCloudBlock = MatStaticExtension.GetPropertyBlock(lowCloud);
             _highCloudBlock = MatStaticExtension.GetPropertyBlock(highCloud);
-            WeatherDataModel.time.Subscribe(UpdateCloudsColor).AddTo(this);
+            WeatherDataModel.GameTime.Subscribe(UpdateCloudsColor).AddTo(this);
         }
 
         public override void PlayEffect(WeatherEffectData weatherData)

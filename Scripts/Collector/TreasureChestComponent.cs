@@ -69,7 +69,7 @@ namespace HotUpdate.Scripts.Collector
             if (ClientHandler)
             {
                 Debug.Log("Init Chest send TargetShowEvent from client called on Init");
-                _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId));
+                _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId, quality));
             }
         }
         
@@ -78,7 +78,7 @@ namespace HotUpdate.Scripts.Collector
             base.OnStartClient();
             _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
             Debug.Log("Init Chest send TargetShowEvent from client called on OnStartClient");
-            _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId));
+            _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId, quality));
         }
         
         [Button("开箱")]
@@ -103,12 +103,12 @@ namespace HotUpdate.Scripts.Collector
 
         private void OnDisable()
         {
-            _gameEventManager?.Publish(new TargetShowEvent(null, null, netId));
+            _gameEventManager?.Publish(new TargetShowEvent(null, null, netId, quality));
         }
 
         private void OnDestroy()
         {
-            _gameEventManager?.Publish(new TargetShowEvent(null, null, netId));
+            _gameEventManager?.Publish(new TargetShowEvent(null, null, netId, quality));
             _disposables?.Clear();
         }
 
@@ -132,7 +132,7 @@ namespace HotUpdate.Scripts.Collector
         {
             if (isClient)
             {
-                _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId));
+                _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId, quality));
             }
         }
 
@@ -142,7 +142,7 @@ namespace HotUpdate.Scripts.Collector
             {
                 _chestCollider.enabled = true;
             }
-            _gameEventManager?.Publish(new TargetShowEvent(null, null, netId));
+            _gameEventManager?.Publish(new TargetShowEvent(null, null, netId, quality));
             //_chestDataConfig = null;
             _disposables?.Clear();
             GameObjectContainer.Instance.RemoveDynamicObject(netId);

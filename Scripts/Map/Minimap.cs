@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using AOTScripts.Tool.ObjectPool;
-using Coffee.UIEffects;
 using DG.Tweening;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Network.UI;
@@ -24,17 +23,19 @@ namespace HotUpdate.Scripts.Map
         private readonly Dictionary<int, GameObject> _minimapItems = new Dictionary<int, GameObject>();
         private readonly Dictionary<int, Sequence> _minimapSequence = new Dictionary<int, Sequence>();
 
+        private void Start()
+        {
+            targetPrefab.gameObject.SetActive(false);
+        }
+
         private void SetMinimapItems(GameObject item, MinimapItemData minimapItemData)
         {
             var image = item.GetComponent<Image>();
-            var effect = item.GetComponent<UIEffect>();
-            var icon = UISpriteContainer.GetSprite(minimapItemData.TargetType.ToString());
+            var icon = minimapItemData.TargetType == MinimapTargetType.Treasure ? UISpriteContainer.GetSprite(minimapItemData.TargetType.ToString()+"_"+minimapItemData.QualityType) : UISpriteContainer.GetSprite(minimapItemData.TargetType.ToString());
             image.sprite = icon;
             var canvasGroup = item.GetComponent<CanvasGroup>();
             canvasGroup.alpha = 1f;
             image.transform.localPosition = MinimapHelper.GetMinimapPosition(minimapItemData.WorldPosition, _worldBounds, _minimapPanelSize);
-            effect.enabled = minimapItemData.TargetType == MinimapTargetType.Player;
-            _minimapItems.Add(minimapItemData.Id, item);
             if (minimapItemData.TargetType == MinimapTargetType.Enemy)
             {
                 if (_minimapSequence.TryGetValue(minimapItemData.Id, out var sequence))
@@ -49,6 +50,7 @@ namespace HotUpdate.Scripts.Map
                     });
                 }
             }
+            item.gameObject.SetActive(true);
         }
 
         public void BindPositions(HReactiveDictionary<int, MinimapItemData> worldPositions)

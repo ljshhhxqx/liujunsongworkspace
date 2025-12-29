@@ -73,13 +73,13 @@ namespace HotUpdate.Scripts.Weather
         
         private void OnDayNightCycleTimeChanged(float oldTime, float newTime)
         {
-            WeatherDataModel.time.Value = newTime;
+            WeatherDataModel.GameTime.Value = newTime;
             //Debug.Log($"OnDayNightCycleTimeChanged: {oldTime}, {newTime}");
         }
         
         private void OnWeatherChanged(WeatherInfo oldWeather, WeatherInfo newWeather)
         {
-            WeatherDataModel.weatherInfo.Value = newWeather;
+            WeatherDataModel.WeatherInfo.Value = newWeather;
             //Debug.Log($"OnWeatherChanged: {oldWeather}, {newWeather}");
         }
 
@@ -238,9 +238,9 @@ namespace HotUpdate.Scripts.Weather
             _currentWeatherSetting.LoadWeather(loadData);
             _currentWeatherSetting.gameObject.SetActive(true);
             
-            if (!_uiManager.IsUIOpen(UIType.Weather))
+            if (!_uiManager.IsUIOpen(UIType.GameFlow))
             {
-                _uiManager.SwitchUI<WeatherShowOverlay>();
+                _uiManager.SwitchUI<GameFlowOverlay>();
             }
         }
         

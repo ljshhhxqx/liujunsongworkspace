@@ -85,12 +85,14 @@ namespace HotUpdate.Scripts.Tool.GameEvent
         public Transform Target { get; private set; }
         public Transform Player { get; private set; }
         public uint TargetId { get; private set; }
+        public QualityType Quality { get; private set; }
 
-        public TargetShowEvent(Transform target, Transform player, uint targetId)
+        public TargetShowEvent(Transform target, Transform player, uint targetId, QualityType quality)
         {
             Target = target;
             Player = player;
             TargetId = targetId;
+            Quality = quality;
         }
     }
 
