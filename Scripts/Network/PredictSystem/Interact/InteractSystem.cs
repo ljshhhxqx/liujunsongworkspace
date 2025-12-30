@@ -20,6 +20,7 @@ using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using Mirror;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VContainer;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Interact
@@ -37,6 +38,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         private List<PlayerPropertySyncSystem.SkillBuffManagerData> _activeBuffs = new List<PlayerPropertySyncSystem.SkillBuffManagerData>();
         private SyncDictionary<uint, SceneItemInfo> _sceneItems = new SyncDictionary<uint, SceneItemInfo>();
         private HashSet<DynamicObjectData> _dynamicObjects = new HashSet<DynamicObjectData>();
+
+        [SyncVar] public int currentTrainId;
         
         public event Action<uint, SceneItemInfo> SceneItemInfoChanged;
         public event Action<uint, float, ControlSkillType> ItemControlSkillChanged;
@@ -540,7 +543,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                 case InteractionType.PickupChest:
                     _itemsSpawnerManager.PickerPickUpChest(playerNetId, request.SceneItemId);
                     break;
-                    
+                case InteractionType.TouchRocket:
+                    _gameEventManager.Publish(new TakeTrainEvent(currentTrainId, playerNetId));
+                    break;
+                case InteractionType.TouchWell:
+                    _gameEventManager.Publish(new PlayerTouchWellEvent(playerNetId, request.SceneItemId));
+                    break;
+                case InteractionType.TouchTrainDeath:
+                    _gameEventManager.Publish(new TrainAttackPlayerEvent(currentTrainId, playerNetId));
+                    break;
+                case InteractionType.TouchTrain:
+                    _gameEventManager.Publish(new TakeTrainEvent(currentTrainId, playerNetId));
+                    break;
             }
         }
 

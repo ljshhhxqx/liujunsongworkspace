@@ -309,10 +309,11 @@ namespace HotUpdate.Scripts.Game.Map
         Bullet,
         Chest,
         Train,
+        Rocket,
         Well
     }
 
-    public class DynamicObjectData
+    public class DynamicObjectData : IEquatable<DynamicObjectData>
     {
         public uint NetId;
         public Vector3 Position;
@@ -325,6 +326,13 @@ namespace HotUpdate.Scripts.Game.Map
         {
             
             return $"NetId: {NetId}, Position: {Position}, ColliderConfig: {ColliderConfig} Type: {Type}, Layer: {Layer}, Tag: {Tag}";
+        }
+
+        public bool Equals(DynamicObjectData other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return NetId == other.NetId && Position.Equals(other.Position) && Equals(ColliderConfig, other.ColliderConfig) && Type == other.Type && Layer == other.Layer && Tag == other.Tag;
         }
     }
 

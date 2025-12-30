@@ -1,8 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using AOTScripts.Tool;
 using AOTScripts.Tool.ObjectPool;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Game.Inject;
@@ -70,32 +70,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
             }
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _colliderConfig, type, gameObject.layer, gameObject.tag);
         }
-
-        private void FixedUpdate()
-        {
-            if (!ServerHandler)
-            {
-                return;
-            }
-
-            // GameObjectContainer.Instance.DynamicObjectIntersects(netId, deathCollider.transform.position, _colliderConfig, _dynamicObjects,
-            //     OnIntersect);
-            // if (_rocketColliderConfig != null)
-            // {
-            //     GameObjectContainer.Instance.DynamicObjectIntersects(netId, rocketCollider.transform.position, _rocketColliderConfig, _dynamicObjects,
-            //         OnIntersect);
-            // }
-        }
-
-        private bool OnIntersect(DynamicObjectData dynamicObject)
-        {
-            if (dynamicObject.Type == ObjectType.Player)
-            {
-                _gameEventManager.Publish(new PlayerTouchTrafficEvent(dynamicObject.NetId, dynamicObject.Position, type));
-            }
-            return false;
-        }
-
+        
         private void OnStartTrain(StartGameTrainEvent startEvent)
         {
             if (!ServerHandler)
@@ -159,7 +134,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
             }
             foreach (var wheelConfig in wheels)
             {
-                if (wheelConfig.wheelTransform != null)
+                if (wheelConfig.wheelTransform)
                 {
                     // 计算旋转速度（根据移动时间和轮子周长）
                     float wheelCircumference = 2 * Mathf.PI * wheelConfig.radius;
@@ -199,14 +174,13 @@ namespace HotUpdate.Scripts.Game.GamePlay
         void StartSmokeEmission()
         {
             // 开始烟雾发射协程
-            
             foreach (var smokeConfig in smokeConfigs)
             {
-                StartCoroutine(SmokeEmissionCoroutine(smokeConfig));
+                SmokeEmissionCoroutine(smokeConfig).Forget();
             }
         }
     
-        private IEnumerator SmokeEmissionCoroutine(SmokeConfig config)
+        private async UniTaskVoid SmokeEmissionCoroutine(SmokeConfig config)
         {
             while (true)
             {
@@ -223,7 +197,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
                     EmitSmoke(config);
                 }
             
-                yield return null;
+                await UniTask.Yield();
             }
         }
     
@@ -231,7 +205,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
         {
             if (!config.smokePrefab || !config.emissionPoint) return;
         
-            GameObject smoke = NetworkGameObjectPoolManager.Instance.Spawn(config.smokePrefab, 
+            var smoke = NetworkGameObjectPoolManager.Instance.Spawn(config.smokePrefab, 
                 config.emissionPoint.position, 
                 Quaternion.identity);
         

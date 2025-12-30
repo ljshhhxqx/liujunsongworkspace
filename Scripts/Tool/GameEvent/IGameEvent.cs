@@ -33,10 +33,12 @@ namespace HotUpdate.Scripts.Tool.GameEvent
     public struct PlayerTouchWellEvent : IGameEvent
     {
         public uint PlayerId { get; private set; }
+        public uint WellId { get; private set; }
         
-        public PlayerTouchWellEvent(uint playerId)
+        public PlayerTouchWellEvent(uint playerId, uint wellId)
         {
             PlayerId = playerId;
+            WellId = wellId;
         }
     }
 
@@ -122,11 +124,51 @@ namespace HotUpdate.Scripts.Tool.GameEvent
     {
         public float MoveDuration { get; private set; }
         public int RandomSeed { get; private set; }
+        public int TrainId { get; private set; }
 
-        public StartGameTrainEvent(float moveDuration, int randomSeed)
+        public StartGameTrainEvent(float moveDuration, int randomSeed, int trainId)
         {
             MoveDuration = moveDuration;
             RandomSeed = randomSeed;
+            TrainId = trainId;
+        }
+    }
+
+    public struct TakeTrainEvent : IGameEvent
+    {
+        public int TrainId { get; private set; }
+        public uint PlayerId { get; private set; }
+
+        public TakeTrainEvent(int trainId, uint playerId)
+        {
+            TrainId = trainId;
+            PlayerId = playerId;
+        }
+    }
+
+    public struct TrainArrivedEvent : IGameEvent
+    {
+        public int TrainId { get; private set; }
+        public uint[] PlayersId { get; private set; }
+        public ObjectType ObjectType { get; private set; }
+
+        public TrainArrivedEvent(int trainId, uint[] playersId, ObjectType objectType)
+        {
+            TrainId = trainId;
+            PlayersId = playersId;
+            ObjectType = objectType;
+        }
+    }
+
+    public struct TrainAttackPlayerEvent : IGameEvent
+    {
+        public int TrainId { get; private set; }
+        public uint PlayerId { get; private set; }
+
+        public TrainAttackPlayerEvent(int trainId, uint playerId)
+        {
+            TrainId = trainId;
+            PlayerId = playerId;
         }
     }
 

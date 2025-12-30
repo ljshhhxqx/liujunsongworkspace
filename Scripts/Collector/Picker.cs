@@ -32,7 +32,7 @@ namespace HotUpdate.Scripts.Collector
         private HashSet<DynamicObjectData> _cachedCollects = new HashSet<DynamicObjectData>();
         protected override bool AutoInjectClient => false;
 
-        private readonly HashSet<uint> _collects = new HashSet<uint>();
+        private readonly HashSet<DynamicObjectData> _collects = new HashSet<DynamicObjectData>();
     
         [Inject]
         private void Init(GameEventManager gameEventManager)
@@ -79,9 +79,11 @@ namespace HotUpdate.Scripts.Collector
                         SendCollectRequest(netId, PickerType, collect.NetId, collectObjectController.CollectObjectData.collectObjectClass);
                         break;
                     case ObjectType.Chest:
-                        _collects.Add(collect.NetId);
+                    case ObjectType.Well:
+                    case ObjectType.Rocket:
+                    case ObjectType.Train:
+                        _collects.Add(collect);
                         break;
-                        
                 }
             }
         }
@@ -144,19 +146,6 @@ namespace HotUpdate.Scripts.Collector
             PlayAudio((CollectObjectClass)itemClass);
         }
 
-        // private void OnInteractionStateChange(GameInteractableEffect interactableObjectEffectEventEvent)
-        // {
-        //     if (interactableObjectEffectEventEvent.Picker.GetInstanceID() != gameObject.GetInstanceID()) return;
-        //     if (interactableObjectEffectEventEvent.IsEnter)
-        //     {
-        //         _collects.Add(interactableObjectEffectEventEvent.CollectObject);
-        //     }
-        //     else
-        //     {
-        //         _collects.Remove(interactableObjectEffectEventEvent.CollectObject);
-        //     }
-        // }
-
         private void Update()
         {
             switch (PickerType)
@@ -184,7 +173,19 @@ namespace HotUpdate.Scripts.Collector
             }
         }
 
-        private async UniTaskVoid Collect(uint sceneItemId)
+        private static InteractionType GetInteractionType(ObjectType objectType)
+        {
+            return objectType switch
+            {
+                ObjectType.Chest => InteractionType.PickupChest,
+                ObjectType.Well => InteractionType.TouchWell,
+                ObjectType.Train => InteractionType.TouchTrainDeath,
+                ObjectType.Rocket => InteractionType.TouchRocket,
+                _ => InteractionType.PickupItem,
+            };
+        }
+
+        private async UniTaskVoid Collect(DynamicObjectData collect)
         {
             if(!LocalPlayerHandler) return;
             
@@ -192,12 +193,15 @@ namespace HotUpdate.Scripts.Collector
             {
                 Header = InteractSystem.CreateInteractHeader(_playerInGameManager.LocalPlayerId, InteractCategory.PlayerToScene,
                     transform.position, CommandAuthority.Client),
-                InteractionType = InteractionType.PickupChest,
-                SceneItemId = sceneItemId,
+                InteractionType = GetInteractionType(collect.Type),
+                SceneItemId = collect.NetId,
             };
             var json = MemoryPackSerializer.Serialize(request);
-            CmdOpenChest(json);
-            GameAudioManager.Instance.PlaySFX(AudioEffectType.Chest, transform.position, transform);
+            if (collect.Type == ObjectType.Chest)
+            {
+                CmdOpenChest(json);
+                GameAudioManager.Instance.PlaySFX(AudioEffectType.Chest, transform.position, transform);
+            }
             await UniTask.DelayFrame(1);
         }
         
