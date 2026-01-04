@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using AOTScripts.Data;
 using AOTScripts.Tool;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
@@ -7,9 +9,14 @@ using DG.Tweening;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Network.State;
 using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VContainer;
 using Random = UnityEngine.Random;
 
@@ -33,11 +40,13 @@ namespace HotUpdate.Scripts.Game.GamePlay
         private List<WheelConfig> wheels = new List<WheelConfig>();
         [SerializeField]
         private List<SmokeConfig> smokeConfigs = new List<SmokeConfig>();
+        [SerializeField]
+        private List<Transform> trainParts = new List<Transform>();
 
         [SerializeField] private Collider deathCollider;
-        [SerializeField] private Collider rocketCollider;
-        private IColliderConfig _colliderConfig;
-        private IColliderConfig _rocketColliderConfig;
+        [SerializeField] private Collider touchCollider;
+        private IColliderConfig _deathColliderConfig;
+        private IColliderConfig _touchColliderConfig;
         [Header("烟雾强度设置")]
         [SerializeField]
         private AnimationCurve smokeIntensityCurve = AnimationCurve.Linear(0, 1, 1, 1);
@@ -46,31 +55,86 @@ namespace HotUpdate.Scripts.Game.GamePlay
         private Sequence _trainSequence;
         [SerializeField]
         private ObjectType type;
+        private GameSyncManager _gameSyncManager;
     
         // 烟雾管理
         private List<GameObject> _activeSmokeParticles = new List<GameObject>();
         private List<Tween> _smokeTweens = new List<Tween>();
+        private List<Transform> _cachedTrainParts = new List<Transform>();
         
         private GameEventManager _gameEventManager;
-        private HashSet<DynamicObjectData> _dynamicObjects = new HashSet<DynamicObjectData>();
+        private InteractSystem _interactSystem;
+        
+        private SyncHashSet<uint> _trainPlayers = new SyncHashSet<uint>();
 
         [Inject]
-        private void Init(GameEventManager gameEventManager)
+        private void Init(GameEventManager gameEventManager, IObjectResolver objectResolver)
         {
             _gameEventManager = gameEventManager;
             _gameEventManager.Subscribe<StartGameTrainEvent>(OnStartTrain);
+            _gameEventManager.Subscribe<TakeTrainEvent>(OnTakeTrain);
+            _gameEventManager.Subscribe<TrainAttackPlayerEvent>(OnTrainAttackPlayer);
+            _gameSyncManager = objectResolver.Resolve<GameSyncManager>();
+            _interactSystem = objectResolver.Resolve<InteractSystem>();
             if (_targets != null && _targets.Length > 0)
             {
                 _origin = _targets.RandomSelect();
             }
-            _colliderConfig = GamePhysicsSystem.CreateColliderConfig(deathCollider);
-            if (rocketCollider)
-            {
-                _rocketColliderConfig = GamePhysicsSystem.CreateColliderConfig(rocketCollider);
-            }
-            GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _colliderConfig, type, gameObject.layer, gameObject.tag);
+            _deathColliderConfig = GamePhysicsSystem.CreateColliderConfig(deathCollider);
+            _touchColliderConfig = GamePhysicsSystem.CreateColliderConfig(touchCollider);
+            GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _touchColliderConfig, type, gameObject.layer, gameObject.tag);
+            GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _deathColliderConfig, ObjectType.Death, gameObject.layer, gameObject.tag);
         }
-        
+
+        private void OnTrainAttackPlayer(TrainAttackPlayerEvent trainAttackEvent)
+        {
+            if (!ServerHandler)
+            {
+                return;
+            }
+            var playerIdentity = GameStaticExtensions.GetNetworkIdentity(trainAttackEvent.PlayerId);
+            if (playerIdentity)
+            {
+                var playerConnectionId = PlayerInGameManager.Instance.GetPlayerId(trainAttackEvent.PlayerId);
+                var rigidBody = playerIdentity.GetComponent<Rigidbody>();
+                //向玩家施加一个冲击力，基于火车运动的方向
+                Vector3 direction = (rigidBody.position - transform.position).normalized;
+                rigidBody.AddForce(direction * 750f, ForceMode.Impulse);
+                var command = new PlayerDeathCommand();
+                command.Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Property);
+                _gameSyncManager.EnqueueServerCommand(command);
+            }
+        }
+
+        private void OnTakeTrain(TakeTrainEvent takeEvent)
+        {
+            if (!ServerHandler)
+            {
+                return;
+            }
+
+            if (!NetworkServer.spawned.TryGetValue(takeEvent.PlayerId, out var identity))
+            {
+                Debug.LogError($"Player {takeEvent.PlayerId} not spawned.");
+                return;
+            }
+
+            if (!_trainPlayers.Add(takeEvent.PlayerId))
+            {
+                return;
+            }
+
+            var playerConnectionId = PlayerInGameManager.Instance.GetPlayerId(takeEvent.PlayerId);
+            var command = new PlayerStateChangedCommand();
+            command.NewState = SubjectedStateType.IsCantMoved;
+            command.Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Property);
+            command.OperationType = OperationType.Add;
+            var ts = _cachedTrainParts.RandomSelect();
+            _cachedTrainParts.Remove(ts);
+            identity.transform.SetParent(ts);
+            _gameSyncManager.EnqueueServerCommand(command);
+        }
+
         private void OnStartTrain(StartGameTrainEvent startEvent)
         {
             if (!ServerHandler)
@@ -113,9 +177,46 @@ namespace HotUpdate.Scripts.Game.GamePlay
                 .OnComplete(() => {
                     StopWheelRotation();
                     StopSmokeEmission();
+                    OnTrainArrived();
                 }));
         }
-    
+
+        private void OnTrainArrived()
+        {
+            if (!ServerHandler)
+            {
+                return;
+            }
+
+            _cachedTrainParts.Clear();
+            var trainPlayers = _trainPlayers.ToArray();
+            for (var i = 0; i < trainPlayers.Length; i++)
+            {
+                var player = trainPlayers[i];
+                var identity = GameStaticExtensions.GetNetworkIdentity(player);
+                if (identity)
+                {
+                    var playerConnectionId = PlayerInGameManager.Instance.GetPlayerId(player);
+                    var command = new PlayerStateChangedCommand();
+                    command.NewState = SubjectedStateType.IsCantMoved;
+                    command.Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Property);
+                    command.OperationType = OperationType.Subtract;
+                    identity.transform.SetParent(null);
+                    _gameSyncManager.EnqueueServerCommand(command);
+                }
+            }
+
+            for (int i = 0; i < trainParts.Count; i++)
+            {
+                var trainPart = trainParts[i];
+                if (trainPart)
+                {
+                    _cachedTrainParts.Add(trainPart);
+                }
+            }
+            _gameEventManager.Publish(new TrainArrivedEvent(_interactSystem.currentTrainId, trainPlayers, type));
+        }
+
         void StartTrainMovement()
         {
             _trainSequence?.Play();
@@ -289,13 +390,13 @@ namespace HotUpdate.Scripts.Game.GamePlay
         {
             foreach (var carriage in carriages)
             {
-                if (carriage.gameObject != null)
+                if (carriage.gameObject)
                     carriage.gameObject.SetActive(visible);
             }
         
             foreach (var wheel in wheels)
             {
-                if (wheel.wheelTransform != null)
+                if (wheel.wheelTransform)
                     wheel.wheelTransform.gameObject.SetActive(visible);
             }
         }

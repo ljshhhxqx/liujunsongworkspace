@@ -400,7 +400,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .AddTo(_disposables);
             
             Observable.EveryUpdate()
-                .Where(_ =>  (_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)))
+                .Where(_ =>  (_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)) && !_subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
                 .Subscribe(_ => {
                     if (PlayerPlatformDefine.IsWindowsPlatform())
                     {

@@ -228,7 +228,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 {
                     increaseType = BuffIncreaseType.Current,
                     increaseValue = cost,
-                    operationType = BuffOperationType.Subtract,
+                    operationType = OperationType.Subtract,
                 });
             }
             playerPredictablePropertyState = propertyState;
@@ -286,7 +286,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             {
                 increaseType = BuffIncreaseType.Current,
                 increaseValue = damage,
-                operationType = BuffOperationType.Subtract,
+                operationType = OperationType.Subtract,
             });
         }
 

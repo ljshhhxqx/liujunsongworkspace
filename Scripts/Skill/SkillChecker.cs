@@ -559,7 +559,7 @@ namespace HotUpdate.Scripts.Skill
     {
         public PropertyCalculator BuffCalculator;
         public PropertyCalculator TargetCalculator;
-        public BuffOperationType OperationType;
+        public OperationType OperationType;
         public int PlayerId;
         public float Value;
 

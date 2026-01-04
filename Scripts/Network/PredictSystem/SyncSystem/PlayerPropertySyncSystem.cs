@@ -417,11 +417,32 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 HandleItemAttack(propertyItemAttackCommand);
             }
+            else if (command is PlayerStateChangedCommand playerStateChangedCommand)
+            {
+                HandlePlayerStateChanged(playerStateChangedCommand);
+            }
             else
             {
                 Debug.LogError($"PlayerPropertySyncSystem: Unknown command type {command.GetType().Name}");
             }
             return null;
+        }
+
+        private void HandlePlayerStateChanged(PlayerStateChangedCommand playerStateChangedCommand)
+        {
+            var header = playerStateChangedCommand.GetHeader();
+            var playerState = GetState<PlayerPredictablePropertyState>(header.ConnectionId);
+            if (playerStateChangedCommand.OperationType == OperationType.Add)
+            {
+                playerState.ControlSkillType.AddState(playerStateChangedCommand.NewState);
+            }
+            else if (playerStateChangedCommand.OperationType == OperationType.Subtract)
+            {
+                playerState.ControlSkillType.RemoveState(playerStateChangedCommand.NewState);
+            }
+
+            PropertyStates[header.ConnectionId] = playerState;
+            PropertyChange(header.ConnectionId);
         }
 
         private void HandleItemAttack(PropertyItemAttackCommand propertyItemAttackCommand)
@@ -1184,7 +1205,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     var buffIncreaseData = new BuffIncreaseData
                     {
                         increaseValue = value,
-                        operationType = skillHitExtraEffectData.buffOperation,
+                        operationType = skillHitExtraEffectData.operation,
                         increaseType = skillHitExtraEffectData.buffIncreaseType,
                     };
                     propertyCalculator = propertyCalculator.UpdateCalculator(propertyCalculator, buffIncreaseData);
@@ -1194,7 +1215,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         data.playerId = hitId;
                         data.value = value;
                         data.duration = skillHitExtraEffectData.duration;
-                        data.operationType = skillHitExtraEffectData.buffOperation;
+                        data.operationType = skillHitExtraEffectData.operation;
                         data.increaseType = skillHitExtraEffectData.buffIncreaseType;
                         data.propertyType = skillHitExtraEffectData.effectProperty;
                         data.currentTime = skillHitExtraEffectData.duration;
@@ -1451,14 +1472,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             public uint playerId;
             public float value;
             public float duration;
-            public BuffOperationType operationType;
+            public OperationType operationType;
             public BuffIncreaseType increaseType;
             public float currentTime;
             public PropertyTypeEnum propertyType;
             public ControlSkillType skillType;
             public bool isMaxProperty;
             
-            public SkillBuffManagerData(uint playerId, float value, float duration, BuffOperationType operationType,
+            public SkillBuffManagerData(uint playerId, float value, float duration, OperationType operationType,
                 BuffIncreaseType increaseType, PropertyTypeEnum propertyType, ControlSkillType skillType, bool isMaxProperty)
             {
                 this.playerId = playerId;

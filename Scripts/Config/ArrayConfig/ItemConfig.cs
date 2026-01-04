@@ -228,7 +228,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                                 {
                                     increaseType = tuple.Item2,
                                     increaseValue = tuple.Item3,
-                                    operationType = BuffOperationType.Add,
+                                    operationType = OperationType.Add,
                                 }
                             },
                         });

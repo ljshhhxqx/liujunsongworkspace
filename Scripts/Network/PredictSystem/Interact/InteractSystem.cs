@@ -179,7 +179,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                         playerId = playerSkillItemEvent.DefenderId,
                         value = value,
                         duration = effectData.duration,
-                        operationType = effectData.buffOperation,
+                        operationType = effectData.operation,
                         increaseType = effectData.buffIncreaseType,
                         currentTime = effectData.duration,
                         propertyType = effectData.effectProperty,

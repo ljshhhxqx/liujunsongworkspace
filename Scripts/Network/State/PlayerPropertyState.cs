@@ -393,14 +393,14 @@ namespace HotUpdate.Scripts.Network.State
             return new PropertyCalculator(_propertyType, propertyData, _maxValue, _minValue, _isResourceProperty, _isShowInHud);
         }
         
-        private float ApplyOperation(float original, float value, BuffOperationType operation, bool isReverse = false)
+        private float ApplyOperation(float original, float value, OperationType operation, bool isReverse = false)
         {
             return operation switch
             {
-                BuffOperationType.Add => isReverse ? original - value :  original + value,
-                BuffOperationType.Subtract => isReverse ? original + value : original - value,
-                BuffOperationType.Multiply => isReverse ? original / value : original * value,
-                BuffOperationType.Divide => isReverse ? original * value : original / value,
+                OperationType.Add => isReverse ? original - value :  original + value,
+                OperationType.Subtract => isReverse ? original + value : original - value,
+                OperationType.Multiply => isReverse ? original / value : original * value,
+                OperationType.Divide => isReverse ? original * value : original / value,
                 _ => original + value // 默认加法
             };
         }

@@ -611,12 +611,12 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         {
             var propName = EnumHeaderParser.GetHeader(effect.propertyType);
 
-            var operation = effect.increaseData.header.buffOperationType switch
+            var operation = effect.increaseData.header.operationType switch
             {
-                BuffOperationType.Add => "增加",
-                BuffOperationType.Subtract => "减少", 
-                BuffOperationType.Multiply => "提升",
-                BuffOperationType.Divide => "降低",
+                OperationType.Add => "增加",
+                OperationType.Subtract => "减少", 
+                OperationType.Multiply => "提升",
+                OperationType.Divide => "降低",
                 _ => "调整"
             };
             var increaseDesc = effect.increaseData.header.buffIncreaseType switch

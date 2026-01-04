@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 using AnimationState = AOTScripts.Data.AnimationState;
 using PropertyCalculator = HotUpdate.Scripts.Network.State.PropertyCalculator;
 
@@ -45,7 +46,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 data.costProperty = (PropertyTypeEnum)Enum.Parse(typeof(PropertyTypeEnum),text[9]);
                 data.flySpeed = float.Parse(text[10]);
                 data.duration = float.Parse(text[11]);
-                data.buffOperationType = (BuffOperationType)Enum.Parse(typeof(BuffOperationType),text[12]);
+                data.operationType = (OperationType)Enum.Parse(typeof(OperationType),text[12]);
                 data.colliderType = (ColliderType)Enum.Parse(typeof(ColliderType),text[13]);
                 data.cost = float.Parse(text[14]);
                 data.isCostCurrentPercent = bool.Parse(text[15]);
@@ -140,7 +141,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public float flySpeed;
         //技能生命周期
         public float duration;
-        public BuffOperationType buffOperationType;
+        [FormerlySerializedAs("buffOperationType")] public OperationType operationType;
         public ColliderType colliderType;
         public float cost;
         public bool isCostCurrentPercent;

@@ -7,6 +7,7 @@ using System.Threading;
 using AOTScripts.Data.State;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.State;
 using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using MemoryPack;
@@ -65,6 +66,7 @@ namespace AOTScripts.Data
     [MemoryPackUnion(36, typeof(PropertyGetScoreGoldCommand))]
     [MemoryPackUnion(38, typeof(SkillLoadOverloadAnimationCommand))]
     [MemoryPackUnion(39, typeof(PropertyItemAttackCommand))]
+    [MemoryPackUnion(40, typeof(PlayerStateChangedCommand))]
     public partial interface INetworkCommand
     {
         NetworkCommandHeader GetHeader();
@@ -115,7 +117,8 @@ namespace AOTScripts.Data
         PropertyGetScoreGold,
         ItemSkillEnable,
         SkillOverride,
-        PropertyItemAttack
+        PropertyItemAttack,
+        PlayerStateChanged
     }
 
     public static class NetworkCommandExtensions
@@ -1077,6 +1080,35 @@ namespace AOTScripts.Data
         public void Clear()
         {
             Header = default;
+        }
+    }
+
+    [MemoryPackable]
+    public partial struct PlayerStateChangedCommand : INetworkCommand, IPoolObject
+    {
+        [MemoryPackOrder(0)] 
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)]
+        public SubjectedStateType NewState;
+        [MemoryPackOrder(2)]
+        public OperationType OperationType;
+
+        public NetworkCommandHeader GetHeader() => Header;
+
+        public bool IsValid()
+        {
+            return true;
+        }
+
+        public NetworkCommandType GetCommandType() => NetworkCommandType.PlayerStateChanged;
+
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            NewState = SubjectedStateType.None;
         }
     }
 

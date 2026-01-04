@@ -310,7 +310,8 @@ namespace HotUpdate.Scripts.Game.Map
         Chest,
         Train,
         Rocket,
-        Well
+        Well,
+        Death,
     }
 
     public class DynamicObjectData : IEquatable<DynamicObjectData>

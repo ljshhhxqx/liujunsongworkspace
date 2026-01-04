@@ -220,7 +220,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public bool isPermanent;
         public GrowthType growthType;
         public double steepAngle;
-        public BuffOperationType operationType;
+        public OperationType operationType;
         public PlayerEffectType playerEffectType;
     }
 }

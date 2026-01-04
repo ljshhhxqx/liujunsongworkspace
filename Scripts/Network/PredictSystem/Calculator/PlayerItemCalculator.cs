@@ -123,7 +123,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     var header = new AttributeIncreaseDataHeader();
                     header.buffIncreaseType = constantBuff.mainIncreaseType;
                     header.propertyType = constantBuff.propertyType;
-                    header.buffOperationType = BuffOperationType.Add;
+                    header.operationType = OperationType.Add;
                     var data = new AttributeIncreaseData();
                     data.header = header;
                     if (constantBuff.increaseDataList == null || constantBuff.increaseDataList.Count == 0)
@@ -138,7 +138,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     var header2 = new AttributeIncreaseDataHeader();
                     header2.buffIncreaseType = randomBuff.mainIncreaseType;
                     header2.propertyType = randomBuff.propertyType;
-                    header2.buffOperationType = BuffOperationType.Add;
+                    header2.operationType = OperationType.Add;
                     var data2 = new RandomAttributeIncreaseData();
                     data2.header = header2;
                     if (randomBuff.increaseDataList == null || randomBuff.increaseDataList.Count == 0)
@@ -633,7 +633,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                             {
                                 buffIncreaseType = passiveAttribute.increaseDataList[i].increaseType,
                                 propertyType = passiveAttribute.propertyType,
-                                buffOperationType = BuffOperationType.Add
+                                operationType = OperationType.Add
                             },
                             increaseValue = passiveAttribute.increaseDataList[i].increaseValue
                         });
