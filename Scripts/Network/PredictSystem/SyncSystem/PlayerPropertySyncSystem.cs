@@ -10,6 +10,7 @@ using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Effect;
+using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
@@ -55,6 +56,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private ItemConfig _itemConfig;
         private SkillConfig _skillConfig;
         private GameConfigData _gameConfigData;
+        private CollectData _collectData;
         private BattleEffectConditionConfig _battleEffectConfig;
         private GameEventManager _gameEventManager;
         private float _timeBuffTimer;
@@ -71,6 +73,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _configProvider = configProvider;
             _jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
             _gameConfigData = _jsonDataConfig.GameConfig;
+            _collectData = _jsonDataConfig.CollectData;
             _animationConfig = _configProvider.GetConfig<AnimationConfig>();
             _timedBuffConfig = _configProvider.GetConfig<TimedBuffConfig>();
             _constantBuffConfig = configProvider.GetConfig<ConstantBuffConfig>();
@@ -421,11 +424,42 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 HandlePlayerStateChanged(playerStateChangedCommand);
             }
+            else if (command is PlayerTouchObjectCommand playerTakeTrainArrivedCommand)
+            {
+                HandlePlayerTouchObject(playerTakeTrainArrivedCommand);
+            }
             else
             {
                 Debug.LogError($"PlayerPropertySyncSystem: Unknown command type {command.GetType().Name}");
             }
             return null;
+        }
+
+        private void HandlePlayerTouchObject(PlayerTouchObjectCommand playerTouchObjectCommand)
+        {
+            var header = playerTouchObjectCommand.GetHeader();
+            var playerState = GetState<PlayerPredictablePropertyState>(header.ConnectionId);
+            switch (playerTouchObjectCommand.ObjectType)
+            {
+                case ObjectType.Train:
+                    var trainScore = _collectData.touchTrainGainScore.GetRandomValue();
+                    playerState.MemoryProperty[PropertyTypeEnum.Score] = playerState.MemoryProperty[PropertyTypeEnum.Score].UpdateCurrentValue(trainScore);
+                    break;
+                case ObjectType.Rocket:
+                    var rockerScore = _collectData.touchRocketGainScore.GetRandomValue();
+                    playerState.MemoryProperty[PropertyTypeEnum.Score] = playerState.MemoryProperty[PropertyTypeEnum.Score].UpdateCurrentValue(rockerScore);
+                    break;
+                case ObjectType.Well:
+                    var hp = _collectData.touchWellRecoverHp.GetRandomValue();
+                    playerState.MemoryProperty[PropertyTypeEnum.Health] = playerState.MemoryProperty[PropertyTypeEnum.Health].UpdateCurrentValue(hp);
+                    break;
+                default:
+                    Debug.LogWarning($"无交互的物品类型{playerTouchObjectCommand.ObjectType}");
+                    break;
+            }
+            
+            PropertyStates[header.ConnectionId] = playerState;
+            PropertyChange(header.ConnectionId);
         }
 
         private void HandlePlayerStateChanged(PlayerStateChangedCommand playerStateChangedCommand)
@@ -453,6 +487,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 propertyItemAttackCommand.TargetId, ref playerState, propertyItemAttackCommand.Damage);
             var player = _playerInGameManager.GetPlayerComponent<PlayerComponentController>(playerId);
             player.RpcPlayEffect(ParticlesType.HitEffect);
+            
             player.RpcPlayAnimation(AnimationState.Hit);
             PropertyStates[playerId] = playerState;
             PropertyChange(playerId);
@@ -1221,6 +1256,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         data.currentTime = skillHitExtraEffectData.duration;
                         data.skillType = skillHitExtraEffectData.controlSkillType;
                         _skillBuffs.Add(data);
+                    }
+
+                    if (skillHitExtraEffectData.effectProperty == PropertyTypeEnum.Health && !isAlly)
+                    {
+                        var playerConnection = GameSyncManager.GetPlayerConnection(hitId);
+                        playerConnection.RpcPlayEffect(ParticlesType.HitEffect);
+                        playerConnection.RpcPlayAudioEffect(AnimationState.Hit);
                     }
                     hitPlayerState.MemoryProperty[skillHitExtraEffectData.effectProperty] = propertyCalculator;
                     var state = skillHitExtraEffectData.controlSkillType.ToSubjectedStateType();

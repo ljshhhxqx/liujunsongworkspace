@@ -4,6 +4,7 @@ using AOTScripts.Data;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
@@ -11,6 +12,8 @@ using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.HotFixSerializeTool;
+using HotUpdate.Scripts.UI.UIBase;
+using HotUpdate.Scripts.UI.UIs.Overlay;
 using MemoryPack;
 using Mirror;
 using UniRx;
@@ -24,22 +27,29 @@ namespace HotUpdate.Scripts.Collector
     /// </summary>
     public class Picker : NetworkAutoInjectHandlerBehaviour
     {
+        public bool IsTouching { get; set; }
+
         public PickerType PickerType { get; set; }
         private GameEventManager _gameEventManager;
         private InteractSystem _interactSystem;
+        private CollectData _collectData;
         private PlayerInGameManager _playerInGameManager;
         private IColliderConfig _colliderConfig;
+        private UIManager _uiManager;
+        private PlayerPropertiesOverlay _playerPropertiesOverlay;
         private HashSet<DynamicObjectData> _cachedCollects = new HashSet<DynamicObjectData>();
         protected override bool AutoInjectClient => false;
 
         private readonly HashSet<DynamicObjectData> _collects = new HashSet<DynamicObjectData>();
     
         [Inject]
-        private void Init(GameEventManager gameEventManager)
+        private void Init(GameEventManager gameEventManager, IObjectResolver objectResolver, UIManager uiManager, IConfigProvider configProvider)
         {
             _gameEventManager = gameEventManager;
-            _interactSystem = FindObjectOfType<InteractSystem>();
-            _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
+            _collectData = configProvider.GetConfig<JsonDataConfig>().CollectData;
+            _interactSystem = objectResolver.Resolve<InteractSystem>();
+            _playerInGameManager = PlayerInGameManager.Instance;
+            _uiManager = uiManager;
             _colliderConfig = GamePhysicsSystem.CreateColliderConfig(GetComponent<Collider>());
 
             Observable.EveryFixedUpdate()
@@ -167,10 +177,25 @@ namespace HotUpdate.Scripts.Collector
 
         private void PerformPickup()
         {
+            if (!_playerPropertiesOverlay)
+            {
+                _playerPropertiesOverlay = _uiManager.GetUI<PlayerPropertiesOverlay>();
+            }
             foreach (var collect in _collects)
             {
-                Collect(collect).Forget();
+                IsTouching = true;
+                var time = _collectData.GetTouchTime(collect.Type);
+                _playerPropertiesOverlay.StartProgress($"收集{collect.Type}中...", time, () =>
+                {
+                    Collect(collect).Forget();
+                    IsTouching = false;
+                }, GetIsTouching);
             }
+        }
+
+        private bool GetIsTouching()
+        {
+            return IsTouching;
         }
 
         private static InteractionType GetInteractionType(ObjectType objectType)

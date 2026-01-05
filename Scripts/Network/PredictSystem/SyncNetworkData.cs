@@ -7,6 +7,7 @@ using System.Threading;
 using AOTScripts.Data.State;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.State;
 using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using HotUpdate.Scripts.Tool.ObjectPool;
@@ -67,6 +68,7 @@ namespace AOTScripts.Data
     [MemoryPackUnion(38, typeof(SkillLoadOverloadAnimationCommand))]
     [MemoryPackUnion(39, typeof(PropertyItemAttackCommand))]
     [MemoryPackUnion(40, typeof(PlayerStateChangedCommand))]
+    [MemoryPackUnion(41, typeof(PlayerTouchObjectCommand))]
     public partial interface INetworkCommand
     {
         NetworkCommandHeader GetHeader();
@@ -118,7 +120,8 @@ namespace AOTScripts.Data
         ItemSkillEnable,
         SkillOverride,
         PropertyItemAttack,
-        PlayerStateChanged
+        PlayerStateChanged,
+        PlayerTouchObject
     }
 
     public static class NetworkCommandExtensions
@@ -588,6 +591,8 @@ namespace AOTScripts.Data
                 NetworkCommandType.ItemSkillEnable => (INetworkCommand)BoxingFreeSerializer.MemoryDeserialize<ItemSkillEnableCommand>(data),
                 NetworkCommandType.PropertyItemAttack => (INetworkCommand)BoxingFreeSerializer.MemoryDeserialize<PropertyItemAttackCommand>(data),
                 NetworkCommandType.PropertyGetScoreGold => (INetworkCommand)BoxingFreeSerializer.MemoryDeserialize<PropertyGetScoreGoldCommand>(data),
+                NetworkCommandType.PlayerStateChanged => (INetworkCommand)BoxingFreeSerializer.MemoryDeserialize<PlayerStateChangedCommand>(data),
+                NetworkCommandType.PlayerTouchObject => BoxingFreeSerializer.MemoryDeserialize<PlayerTouchObjectCommand>(data),
             };
         }
     }
@@ -1072,6 +1077,30 @@ namespace AOTScripts.Data
         public bool IsValid()
         {
             return true;
+        }
+        public void Init()
+        {
+        }
+
+        public void Clear()
+        {
+            Header = default;
+        }
+    }
+
+    [MemoryPackable]
+    public partial struct PlayerTouchObjectCommand : INetworkCommand, IPoolObject
+    {
+        [MemoryPackOrder(0)] 
+        public NetworkCommandHeader Header;
+        [MemoryPackOrder(1)] 
+        public ObjectType ObjectType;
+        
+        public NetworkCommandHeader GetHeader() => Header;
+        public NetworkCommandType GetCommandType() => NetworkCommandType.PlayerTouchObject;
+        public bool IsValid()
+        {
+            return ObjectType == ObjectType.Train || ObjectType == ObjectType.Rocket;
         }
         public void Init()
         {

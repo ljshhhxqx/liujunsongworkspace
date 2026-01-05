@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.Server.InGame;
@@ -16,10 +17,6 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
     {
         [SerializeField]
         private ContentItemList contentItemList;
-        private PlayerInGameManager _playerInGameManager;
-        private PlayerPropertyComponent _playerPropertyComponent;
-        private PropertyConfig _propertyConfig;
-
         [SerializeField]
         private FieldItem animationState;
         [SerializeField]
@@ -30,7 +27,13 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private FieldItem hasMovementInput;
         [SerializeField]
         private FieldItem frameCount;
+        [SerializeField] 
+        private ProgressItem progressItem;
         
+        private PlayerInGameManager _playerInGameManager;
+        private PlayerPropertyComponent _playerPropertyComponent;
+        private PropertyConfig _propertyConfig;
+
         private Dictionary<int, PropertyItemData> _propertyItemDatas;
         
         [Inject]
@@ -95,6 +98,17 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                 _seconds = 0;
                 frameCount.SetField("帧数：", 1/Time.deltaTime);
             }
+        }
+
+        public void StartProgress(string description, float countdown, Action onComplete = null, Func<bool> condition = null)
+        {
+            if (countdown <= 0)
+            {
+                onComplete?.Invoke();
+                return;
+            }
+            progressItem.gameObject.SetActive(true);
+            progressItem.SetProgress(description, countdown, onComplete, condition);
         }
     }
 }

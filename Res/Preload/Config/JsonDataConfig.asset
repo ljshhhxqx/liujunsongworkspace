@@ -170,6 +170,18 @@ MonoBehaviour:
         max: 3
       explodeCriticalRate: 1
       explodeCriticalDamageRatio: 2
+      touchWellRecoverHp:
+        isPercent: 0
+        min: 30
+        max: 80
+      touchRocketGainScore:
+        isPercent: 0
+        min: 150
+        max: 250
+      touchTrainGainScore:
+        isPercent: 0
+        min: 100
+        max: 175
     damageData:
       defenseRatio: 15
       amplificationRatio: 0

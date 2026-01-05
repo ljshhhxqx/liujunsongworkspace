@@ -197,12 +197,16 @@ namespace HotUpdate.Scripts.Game.GamePlay
                 if (identity)
                 {
                     var playerConnectionId = PlayerInGameManager.Instance.GetPlayerId(player);
-                    var command = new PlayerStateChangedCommand();
-                    command.NewState = SubjectedStateType.IsCantMoved;
-                    command.Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Property);
-                    command.OperationType = OperationType.Subtract;
+                    var stateChangedCommand = new PlayerStateChangedCommand();
+                    stateChangedCommand.NewState = SubjectedStateType.IsCantMoved;
+                    stateChangedCommand.Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Property);
+                    stateChangedCommand.OperationType = OperationType.Subtract;
                     identity.transform.SetParent(null);
-                    _gameSyncManager.EnqueueServerCommand(command);
+                    _gameSyncManager.EnqueueServerCommand(stateChangedCommand);
+                    var takeTrainCommand = new PlayerTouchObjectCommand();
+                    takeTrainCommand.Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Property);
+                    takeTrainCommand.ObjectType = type;
+                    _gameSyncManager.EnqueueServerCommand(takeTrainCommand);
                 }
             }
 

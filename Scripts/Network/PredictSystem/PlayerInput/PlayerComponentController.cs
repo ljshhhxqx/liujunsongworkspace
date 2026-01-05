@@ -140,6 +140,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private AnimationState _previousAnimationState;
         private KeyframeComboCooldown _attackAnimationCooldown;       
         private PlayerInGameManager _playerInGameManager;
+        private Picker _picker;
         public IColliderConfig ColliderConfig { get; private set; }
 
         private BindingKey _propertyBindKey;
@@ -154,8 +155,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private Dictionary<Type, bool> _reactivePropertyBinds = new Dictionary<Type, bool>();
         
         private Vector3 _bornPosition;
-
-        [SyncVar] 
+        [SyncVar]  
         public int unionId;
 
         [SyncVar] 
@@ -246,6 +246,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _gameConfigData = jsonDataConfig.GameConfig;
             _playerConfigData = jsonDataConfig.PlayerConfig;
             _keyFunctionConfig = _configProvider.GetConfig<KeyFunctionConfig>();
+            _picker = GetComponent<Picker>();
             _gameSyncManager = gameSyncManager;
             _interactSystem = FindObjectOfType<InteractSystem>();
             _uiManager = uiManager;
@@ -400,7 +401,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .AddTo(_disposables);
             
             Observable.EveryUpdate()
-                .Where(_ =>  (_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)) && !_subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
+                .Where(_ => !_picker.IsTouching && (_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)) && !_subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
                 .Subscribe(_ => {
                     if (PlayerPlatformDefine.IsWindowsPlatform())
                     {
@@ -1498,6 +1499,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcPlayAnimation(AnimationState animationState)
         {
+            if (animationState == AnimationState.Hit)
+            {
+                _picker.IsTouching = false;
+            }
             _playerAnimationCalculator.HandleAnimation(animationState);
             GameAudioManager.Instance.PlaySFX(AudioEffectType.Hurt, transform.position, transform);
         }

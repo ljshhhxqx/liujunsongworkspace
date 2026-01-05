@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using AOTScripts.CustomAttribute;
 using AOTScripts.Data;
 using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Game.Map;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
 {
@@ -300,6 +302,27 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public Range explodeRange;
         public float explodeCriticalRate;
         public float explodeCriticalDamageRatio;
+        [Header("TouchItem")] 
+        public Range touchWellRecoverHp;
+        public Range touchRocketGainScore;
+        public Range touchTrainGainScore;
+        [Header("TouchItemTime")]
+        public float touchWellTime;
+        public float touchRocketTime;
+        public float touchTrainTime;
+        public float touchChestTime;
+
+        public float GetTouchTime(ObjectType objectType)
+        {
+            return objectType switch
+            {
+                ObjectType.Well => touchWellTime,
+                ObjectType.Rocket => touchRocketTime,
+                ObjectType.Train => touchTrainTime,
+                ObjectType.Chest => touchChestTime,
+                _ => 0,
+            };
+        }
     }
     
     public class MovementConfigLink
