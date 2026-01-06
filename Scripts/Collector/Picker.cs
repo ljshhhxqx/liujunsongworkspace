@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Game.GamePlay;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
@@ -32,7 +33,7 @@ namespace HotUpdate.Scripts.Collector
         public PickerType PickerType { get; set; }
         private GameEventManager _gameEventManager;
         private InteractSystem _interactSystem;
-        private CollectData _collectData;
+        private MapElementData _collectData;
         private PlayerInGameManager _playerInGameManager;
         private IColliderConfig _colliderConfig;
         private UIManager _uiManager;
@@ -46,7 +47,7 @@ namespace HotUpdate.Scripts.Collector
         private void Init(GameEventManager gameEventManager, IObjectResolver objectResolver, UIManager uiManager, IConfigProvider configProvider)
         {
             _gameEventManager = gameEventManager;
-            _collectData = configProvider.GetConfig<JsonDataConfig>().CollectData;
+            _collectData = configProvider.GetConfig<JsonDataConfig>().CollectData.mapElementData;
             _interactSystem = objectResolver.Resolve<InteractSystem>();
             _playerInGameManager = PlayerInGameManager.Instance;
             _uiManager = uiManager;
@@ -88,11 +89,19 @@ namespace HotUpdate.Scripts.Collector
                         var collectObjectController = identity.GetComponent<CollectObjectController>();
                         SendCollectRequest(netId, PickerType, collect.NetId, collectObjectController.CollectObjectData.collectObjectClass);
                         break;
-                    case ObjectType.Chest:
                     case ObjectType.Well:
+                        if (identity.TryGetComponent<Well>(out var well))
+                        {
+                            if (!well.CanTouchWell())
+                            {
+                                return;
+                            }
+                            _collects.Add(collect);
+                        }
+                        break;
+                    case ObjectType.Chest:
                     case ObjectType.Rocket:
                     case ObjectType.Train:
-                        _collects.Add(collect);
                         break;
                 }
             }

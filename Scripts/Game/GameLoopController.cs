@@ -12,6 +12,7 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.Data;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.Server.PlayFab;
@@ -49,10 +50,11 @@ namespace HotUpdate.Scripts.Game
         private ItemsSpawnerManager _itemsSpawnerManager;
         private MapConfig _mapConfig;
         private GameInfo _gameInfo;
+        private MapElementData _mapElementData;
         private MessageCenter _messageCenter;
         private MirrorNetworkMessageHandler _messageHandler;
         private IPlayFabClientCloudScriptCaller _playFabClientCloudScriptCaller;
-        
+        private InteractSystem _interactSystem;
         private BuffManager _buffManager;
         private GameAudioManager _gameAudioManager;
         private WeatherManager _weatherManager;
@@ -120,17 +122,19 @@ namespace HotUpdate.Scripts.Game
             MirrorNetworkMessageHandler messageHandler, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller)
         {
             _playFabClientCloudScriptCaller = playFabClientCloudScriptCaller;
+            _interactSystem = objectResolver.Resolve<InteractSystem>();
             _gameEventManager = gameEventManager;
             _messageCenter = messageCenter;
             _messageHandler = messageHandler;
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _gameEventManager.Subscribe<GameReadyEvent>(OnGameReady);
-            _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
-            _gameAudioManager = FindObjectOfType<GameAudioManager>();
-            _weatherManager = FindObjectOfType<WeatherManager>();
-            _gameSyncManager = FindObjectOfType<GameSyncManager>();
+            _itemsSpawnerManager = objectResolver.Resolve<ItemsSpawnerManager>();
+            _gameAudioManager = objectResolver.Resolve<GameAudioManager>();
+            _weatherManager = objectResolver.Resolve<WeatherManager>();
+            _gameSyncManager = objectResolver.Resolve<GameSyncManager>();
             _roundInterval = _jsonDataConfig.GameConfig.roundInterval;
             _mapConfig = configProvider.GetConfig<MapConfig>();
+            _mapElementData = configProvider.GetConfig<JsonDataConfig>().CollectData.mapElementData;
             Debug.Log($"GameLoopController Init");
             RegisterMessage();
         }
@@ -244,6 +248,28 @@ namespace HotUpdate.Scripts.Game
             //todo: 给分数较低的玩家增加DeBuff
             _gameEventManager.Publish(new AddBuffToAllPlayerEvent(_currentRound));
             _gameEventManager.Publish(new AddDeBuffToLowScorePlayerEvent(_currentRound));
+
+            switch (_gameInfo.SceneName)
+            {
+                case MapType.Christmas:
+                    var wellPosition = MapBoundDefiner.Instance.GetRandomPoint(v =>
+                    {
+                        return v.y < 0.5f && v.y > -0.5f;
+                    });
+                    _gameEventManager.Publish(new StartGameWellEvent(wellPosition, ++_interactSystem.currentWellId));
+                    break;
+                case MapType.Rocket:
+                    var rocketPosition = _mapElementData.RocketPositions.RandomSelect();
+                    var duration = _mapElementData.durationRange.GetRandomValue();
+                    _gameEventManager.Publish(new StartGameTrainEvent(rocketPosition.RandomSelect(), duration, ++_interactSystem.currentTrainId));
+                    break;
+                case MapType.WestWild:
+                    rocketPosition = _mapElementData.TrainPositions.RandomSelect();
+                    duration = _mapElementData.durationRange.GetRandomValue();
+                    _gameEventManager.Publish(new StartGameTrainEvent(rocketPosition.RandomSelect(), duration, ++_interactSystem.currentTrainId));
+                    break;
+            }
+            
         }
 
         private async UniTask RoundEndAsync()

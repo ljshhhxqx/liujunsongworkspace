@@ -229,6 +229,59 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5.211814, y: 14.096228, z: 5.475363}
   m_Center: {x: -0.00000023841858, y: 7.048114, z: 0.00000035762787}
+--- !u!1 &3419027925310437852
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1600701150515488403}
+  - component: {fileID: 2609748403855796729}
+  m_Layer: 11
+  m_Name: TouchCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1600701150515488403
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3419027925310437852}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 857877892616649925}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &2609748403855796729
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3419027925310437852}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 16.1, y: 33.95, z: 16.7}
+  m_Center: {x: 0.10505533, y: 33.826393, z: 4.9273596}
 --- !u!1 &4504356552716656324
 GameObject:
   m_ObjectHideFlags: 0
@@ -726,6 +779,7 @@ Transform:
   - {fileID: 8036306907477106707}
   - {fileID: 1987829126925596662}
   - {fileID: 7676910854842966016}
+  - {fileID: 1600701150515488403}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8501703347543080535
@@ -785,7 +839,7 @@ MonoBehaviour:
   - {fileID: 1987829126925596662}
   - {fileID: 7676910854842966016}
   deathCollider: {fileID: 5354872103838634974}
-  touchCollider: {fileID: 0}
+  touchCollider: {fileID: 2609748403855796729}
   smokeIntensityCurve:
     serializedVersion: 2
     m_Curve:

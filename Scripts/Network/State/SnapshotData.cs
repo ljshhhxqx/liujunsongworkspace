@@ -29,7 +29,7 @@ namespace HotUpdate.Scripts.Network.State
         bool IsReady();
         float SetAnimationSpeed(float speed);
         //更新冷却时间
-        void Update(float deltaTime);
+        float Update(float deltaTime);
         //使用，进入冷却状态
         void Use();
         //使用快照数据来刷新冷却状态(快照是服务器传过来的，用于同步客户端)
@@ -78,7 +78,7 @@ namespace HotUpdate.Scripts.Network.State
             return AnimationSpeed;
         }
 
-        public void Update(float deltaTime)
+        public float Update(float deltaTime)
         {
             _currentCountdown = Mathf.Max(0, _currentCountdown - deltaTime);
             
@@ -88,6 +88,7 @@ namespace HotUpdate.Scripts.Network.State
                 if (_windowCountdown <= 0)
                     EndComboWindow();
             }
+            return _currentCountdown;
         }
 
         public void Use()
@@ -206,18 +207,18 @@ namespace HotUpdate.Scripts.Network.State
             return AnimationSpeed;
         }
 
-        public void Update(float deltaTime)
+        public float Update(float deltaTime)
         {
             if (_currentCountdown <= 0)
             {
                 //Reset();
-                return;
+                return _currentCountdown;
             }
             _currentCountdown = Mathf.Max(0, _currentCountdown - deltaTime);
             if (_currentStage >= _timeline.Count)
             {
                 _currentTime = 0;
-                return;
+                return _currentCountdown;
             }
 
 
@@ -234,6 +235,7 @@ namespace HotUpdate.Scripts.Network.State
                     Debug.LogWarning($"[Update] [Keyframe] 关键帧已通过触发条件 Animation-{_state}  _currentStage-{_currentStage} _currentTime-{_currentTime}");
                 }
             }
+            return _currentCountdown;
             //Debug.Log($"[Update] [Animation] Animation-{_state}  _currentCountdown-{_currentCountdown} _currentTime-{_currentTime}  _currentStage-{_currentStage}");
         }
 
@@ -327,7 +329,7 @@ namespace HotUpdate.Scripts.Network.State
             return _windowCountdown > 0 && _inComboWindow && _currentStage < _keyframe.Count;
         }
 
-        public void Update(float deltaTime)
+        public float Update(float deltaTime)
         {
             if (_currentCountdown > 0)
             {
@@ -339,12 +341,12 @@ namespace HotUpdate.Scripts.Network.State
                     _inComboWindow = true;
                     Reset();
                 }
-                return;
+                return _currentCountdown;
             }
             
             if (!_isComboStart)
             {
-                return;
+                return _currentCountdown;
             }
             
             // 连招窗口倒计时
@@ -356,7 +358,7 @@ namespace HotUpdate.Scripts.Network.State
                 {
                     EndComboWindow();
                 }
-                return;
+                return _currentCountdown;
             }
 
             // 检测当前阶段关键帧
@@ -367,7 +369,7 @@ namespace HotUpdate.Scripts.Network.State
                 _isComboStart = false;
                 _inComboWindow = false;
                 _currentCountdown = _configCooldown;
-                return;
+                return _currentCountdown;
             }
 
             // 关键帧触发检测
@@ -387,11 +389,12 @@ namespace HotUpdate.Scripts.Network.State
                     _inComboWindow = false;
                     _currentStage = 0;
                     _isComboStart = false;
-                    return;
+                    return _currentCountdown;
                 }
             }
             // 推进动画时间轴
             _currentTime += deltaTime;
+            return _currentCountdown;
             //Debug.Log($"[Update] [Animation] Animation-{_state}  _currentCountdown-{_currentCountdown} _windowCountdown-{_windowCountdown} _currentTime-{_currentTime}  _currentStage-{_currentStage}");
         }
 
@@ -480,13 +483,14 @@ namespace HotUpdate.Scripts.Network.State
             return AnimationSpeed;
         }
         
-        public void Update(float deltaTime)
+        public float Update(float deltaTime)
         {
             if (_currentCountdown <= 0)
             {
-                return;
+                return _currentCountdown;
             }
             _currentCountdown = Mathf.Max(0, _currentCountdown - deltaTime);
+            return _currentCountdown;
             //Debug.Log($"[Update] [Animation] Animation-{_animationState}  _currentCountdown-{_currentCountdown}");
         }
         

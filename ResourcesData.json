@@ -2815,13 +2815,23 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
+            "Name": "Well",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/Collect/Extra/Well.prefab"
+        },
+        {
+            "UID": 4900003,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "VFX_Ceramic_Hit",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/Collect/Particle/VFX_Ceramic_Hit.prefab"
         },
         {
-            "UID": 4900003,
+            "UID": 4900004,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2831,7 +2841,7 @@
             "Address": "/Map/Town/Collect/Particle/VFX_Coins.prefab"
         },
         {
-            "UID": 4900004,
+            "UID": 4900005,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2841,7 +2851,7 @@
             "Address": "/Map/Town/Collect/Particle/VFX_Confetti_Hit.prefab"
         },
         {
-            "UID": 4900005,
+            "UID": 4900006,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2851,7 +2861,7 @@
             "Address": "/Map/Town/Collect/Particle/VFX_Diamond_Hit.prefab"
         },
         {
-            "UID": 4900006,
+            "UID": 4900007,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2861,7 +2871,7 @@
             "Address": "/Map/Town/Collect/Particle/VFX_Pumpkin_Hit.prefab"
         },
         {
-            "UID": 4900007,
+            "UID": 4900008,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2871,7 +2881,7 @@
             "Address": "/Map/Town/Collect/Particle/VFX_Toxic_Hit.prefab"
         },
         {
-            "UID": 4900008,
+            "UID": 4900009,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2881,7 +2891,7 @@
             "Address": "/Map/Town/Collect/Particle/VFX_WoodBox_Hit.prefab"
         },
         {
-            "UID": 4900009,
+            "UID": 4900010,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2891,7 +2901,7 @@
             "Address": "/Map/Town/Collect/Prefab/DroppedItem.prefab"
         },
         {
-            "UID": 4900010,
+            "UID": 4900011,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2901,7 +2911,7 @@
             "Address": "/Map/Town/Collect/Prefab/Gem.prefab"
         },
         {
-            "UID": 4900011,
+            "UID": 4900012,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2911,7 +2921,7 @@
             "Address": "/Map/Town/Collect/Prefab/GoldChest.prefab"
         },
         {
-            "UID": 4900012,
+            "UID": 4900013,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2921,7 +2931,7 @@
             "Address": "/Map/Town/Collect/Prefab/GoldCoin.prefab"
         },
         {
-            "UID": 4900013,
+            "UID": 4900014,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2931,7 +2941,7 @@
             "Address": "/Map/Town/Collect/Prefab/Legendary_Health 1.prefab"
         },
         {
-            "UID": 4900014,
+            "UID": 4900015,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2941,7 +2951,7 @@
             "Address": "/Map/Town/Collect/Prefab/Legendary_Health 2.prefab"
         },
         {
-            "UID": 4900015,
+            "UID": 4900016,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2951,7 +2961,7 @@
             "Address": "/Map/Town/Collect/Prefab/Legendary_Strength 1.prefab"
         },
         {
-            "UID": 4900016,
+            "UID": 4900017,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2961,7 +2971,7 @@
             "Address": "/Map/Town/Collect/Prefab/Legendary_Strength 2.prefab"
         },
         {
-            "UID": 4900017,
+            "UID": 4900018,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2971,7 +2981,7 @@
             "Address": "/Map/Town/Collect/Prefab/Normal_Health 1.prefab"
         },
         {
-            "UID": 4900018,
+            "UID": 4900019,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2981,7 +2991,7 @@
             "Address": "/Map/Town/Collect/Prefab/Normal_Health 2.prefab"
         },
         {
-            "UID": 4900019,
+            "UID": 4900020,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2991,7 +3001,7 @@
             "Address": "/Map/Town/Collect/Prefab/Normal_Strength 1.prefab"
         },
         {
-            "UID": 4900020,
+            "UID": 4900021,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3001,7 +3011,7 @@
             "Address": "/Map/Town/Collect/Prefab/Normal_Strength 2.prefab"
         },
         {
-            "UID": 4900021,
+            "UID": 4900022,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3011,7 +3021,7 @@
             "Address": "/Map/Town/Collect/Prefab/OldChest.prefab"
         },
         {
-            "UID": 4900022,
+            "UID": 4900023,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3021,7 +3031,7 @@
             "Address": "/Map/Town/Collect/Prefab/Rare_Health 1.prefab"
         },
         {
-            "UID": 4900023,
+            "UID": 4900024,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3031,7 +3041,7 @@
             "Address": "/Map/Town/Collect/Prefab/Rare_Health 2.prefab"
         },
         {
-            "UID": 4900024,
+            "UID": 4900025,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3041,7 +3051,7 @@
             "Address": "/Map/Town/Collect/Prefab/Rare_Strength 1.prefab"
         },
         {
-            "UID": 4900025,
+            "UID": 4900026,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3051,7 +3061,7 @@
             "Address": "/Map/Town/Collect/Prefab/Rare_Strength 2.prefab"
         },
         {
-            "UID": 4900026,
+            "UID": 4900027,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3061,7 +3071,7 @@
             "Address": "/Map/Town/Collect/Prefab/Score1.prefab"
         },
         {
-            "UID": 4900027,
+            "UID": 4900028,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3071,7 +3081,7 @@
             "Address": "/Map/Town/Collect/Prefab/Score2.prefab"
         },
         {
-            "UID": 4900028,
+            "UID": 4900029,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3081,7 +3091,7 @@
             "Address": "/Map/Town/Collect/Prefab/Score3.prefab"
         },
         {
-            "UID": 4900029,
+            "UID": 4900030,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -3091,7 +3101,7 @@
             "Address": "/Map/Town/Collect/Prefab/SliverCoin.prefab"
         },
         {
-            "UID": 4900030,
+            "UID": 4900031,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",

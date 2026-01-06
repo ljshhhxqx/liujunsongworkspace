@@ -10,7 +10,9 @@ using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Collector.Collects;
+using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Effect;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
@@ -31,6 +33,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         private readonly ConcurrentQueue<IInteractRequest> _commandQueue = new ConcurrentQueue<IInteractRequest>();
         private CancellationTokenSource _cts = new CancellationTokenSource();
         private GameObject _bulletPrefab;
+        private GameObject _wellPrefab;
+        private GameObject _trainPrefab;
+        private MapElementData _mapElementData;
+        private GameObject _rocketPrefab;
         private JsonDataConfig _jsonConfig;
         private GameSyncManager _gameSyncManager;
         private GameEventManager _gameEventManager;
@@ -40,6 +46,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         private HashSet<DynamicObjectData> _dynamicObjects = new HashSet<DynamicObjectData>();
 
         [SyncVar] public int currentTrainId;
+        [SyncVar] public int currentWellId;
         
         public event Action<uint, SceneItemInfo> SceneItemInfoChanged;
         public event Action<uint, float, ControlSkillType> ItemControlSkillChanged;
@@ -70,7 +77,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             _gameEventManager.Subscribe<PlayerAttackItemEvent>(OnPlayerAttackItem);
             _gameEventManager.Subscribe<PlayerSkillItemEvent>(OnSkillItem);
             _gameEventManager.Subscribe<SceneItemInfoChanged>(OnItemSpawned);
+            _gameEventManager.Subscribe<StartGameWellEvent>(OnStartGameWell);
+            _gameEventManager.Subscribe<StartGameTrainEvent>(OnStartGameTrain);
             _sceneItems.OnChange += OnSceneItemsChanged;
+        }
+
+        private void OnStartGameTrain(StartGameTrainEvent startGameTrainEvent)
+        {
+            currentTrainId = startGameTrainEvent.TrainId;
+        }
+
+        private void OnStartGameWell(StartGameWellEvent startGameWellEvent)
+        {
+            currentWellId = startGameWellEvent.WellId;
+            NetworkGameObjectPoolManager.Instance.Spawn(_wellPrefab, startGameWellEvent.SpawnPosition,
+                Quaternion.identity);
         }
 
         private void OnSceneItemsChanged(SyncIDictionary<uint, SceneItemInfo>.Operation type, uint uid, SceneItemInfo info)
@@ -251,6 +272,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         private void OnGameStart(GameStartEvent gameStartEvent)
         {
             _bulletPrefab = ResourceManager.Instance.GetResource<GameObject>("Bullet");
+            _wellPrefab = ResourceManager.Instance.GetResource<GameObject>("Well");
+            _trainPrefab = ResourceManager.Instance.GetResource<GameObject>("Train");
+            _rocketPrefab = ResourceManager.Instance.GetResource<GameObject>("Rocket");
             if (!ServerHandler)
             {
                 return;
@@ -258,6 +282,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             //Debug.Log($"InteractSystem start isClient-{isClient} isServer-{isServer} isLocalPlayer-{isLocalPlayer}");
             UpdateInteractRequests(_cts.Token).Forget();
             UpdateBuffs(GameSyncManager.ServerUpdateInterval);
+            switch (GameLoopDataModel.GameSceneName.Value)
+            {
+                case MapType.Rocket:
+                    var position = _mapElementData.spawnRockerPosition;
+                    NetworkGameObjectPoolManager.Instance.Spawn(_rocketPrefab, position, Quaternion.identity);
+                    break;
+                case MapType.WestWild:
+                    position = _mapElementData.spawnTrainPosition;
+                    NetworkGameObjectPoolManager.Instance.Spawn(_trainPrefab, position, Quaternion.identity);
+                    break;
+            }
         }
 
         private void UpdateBuffs(float serverUpdateInterval)

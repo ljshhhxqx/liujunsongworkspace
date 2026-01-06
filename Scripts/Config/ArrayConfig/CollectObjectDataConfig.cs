@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AOTScripts.CustomAttribute;
 using AOTScripts.Data;
+using AOTScripts.Tool;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Game.Map;
 using Newtonsoft.Json;
@@ -302,6 +303,13 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public Range explodeRange;
         public float explodeCriticalRate;
         public float explodeCriticalDamageRatio;
+        [Header("TouchItem")]
+        public MapElementData mapElementData;
+    }
+
+    [Serializable]
+    public struct MapElementData 
+    {
         [Header("TouchItem")] 
         public Range touchWellRecoverHp;
         public Range touchRocketGainScore;
@@ -311,6 +319,15 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public float touchRocketTime;
         public float touchTrainTime;
         public float touchChestTime;
+        [Header("WellExtraData")] 
+        public float wellCount;
+        public float wellCd;
+        [Header("Position")]
+        public Vector3 spawnRockerPosition;
+        public Vector3 spawnTrainPosition;
+        public Vector3[][] RocketPositions;
+        public Vector3[][] TrainPositions;
+        public Range durationRange;
 
         public float GetTouchTime(ObjectType objectType)
         {
@@ -324,7 +341,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             };
         }
     }
-    
+
     public class MovementConfigLink
     {
         public IMovementConfig MovementConfig;

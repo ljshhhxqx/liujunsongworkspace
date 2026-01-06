@@ -56,15 +56,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private ItemConfig _itemConfig;
         private SkillConfig _skillConfig;
         private GameConfigData _gameConfigData;
-        private CollectData _collectData;
+        private MapElementData _collectData;
         private BattleEffectConditionConfig _battleEffectConfig;
         private GameEventManager _gameEventManager;
         private float _timeBuffTimer;
         private readonly List<(BuffBase, int)> _previousNoUnionPlayerBuff = new List<(BuffBase, int)>();
         protected override CommandType CommandType => CommandType.Property;
-        
         public event Action<int, PropertyTypeEnum, float> OnPropertyChange;
-        
         
         [Inject]
         private void Init(IConfigProvider configProvider,GameEventManager gameEventManager)
@@ -73,7 +71,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _configProvider = configProvider;
             _jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
             _gameConfigData = _jsonDataConfig.GameConfig;
-            _collectData = _jsonDataConfig.CollectData;
+            _collectData = _jsonDataConfig.CollectData.mapElementData;
             _animationConfig = _configProvider.GetConfig<AnimationConfig>();
             _timedBuffConfig = _configProvider.GetConfig<TimedBuffConfig>();
             _constantBuffConfig = configProvider.GetConfig<ConstantBuffConfig>();

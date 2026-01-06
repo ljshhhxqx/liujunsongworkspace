@@ -66,6 +66,9 @@ namespace HotUpdate.Scripts.Game.GamePlay
         private InteractSystem _interactSystem;
         
         private SyncHashSet<uint> _trainPlayers = new SyncHashSet<uint>();
+        
+        
+        protected override bool AutoInjectLocalPlayer => true;
 
         [Inject]
         private void Init(GameEventManager gameEventManager, IObjectResolver objectResolver)
