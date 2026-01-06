@@ -123,12 +123,16 @@ namespace HotUpdate.Scripts.Tool.GameEvent
     public struct StartGameTrainEvent : IGameEvent
     {
         public Vector3 StartPosition { get; private set; }
+        public Quaternion StartRotation { get; private set; }
+        public Vector3 TargetPosition { get; private set; }
         public float MoveDuration { get; private set; }
         public int TrainId { get; private set; }
 
-        public StartGameTrainEvent(Vector3 startPosition, float moveDuration, int trainId)
+        public StartGameTrainEvent(Vector3 startPosition, Vector3 targetPosition, Quaternion startRotation, float moveDuration, int trainId)
         {
             StartPosition = startPosition;
+            TargetPosition = targetPosition;
+            StartRotation = startRotation;
             MoveDuration = moveDuration;
             TrainId = trainId;
         }
@@ -137,12 +141,14 @@ namespace HotUpdate.Scripts.Tool.GameEvent
     public struct StartGameWellEvent : IGameEvent
     {
         public Vector3 SpawnPosition { get; private set; }
+        public Quaternion StartRotation { get; private set; }
         public int WellId { get; private set; }
 
-        public StartGameWellEvent(Vector3 spawnPosition, int wellId)
+        public StartGameWellEvent(Vector3 spawnPosition, Quaternion startRotation, int wellId)
         {
             SpawnPosition = spawnPosition;
             WellId = wellId;
+            StartRotation = startRotation;
         }
     }
 

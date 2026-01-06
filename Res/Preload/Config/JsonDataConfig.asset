@@ -170,18 +170,40 @@ MonoBehaviour:
         max: 3
       explodeCriticalRate: 1
       explodeCriticalDamageRatio: 2
-      touchWellRecoverHp:
-        isPercent: 0
-        min: 30
-        max: 80
-      touchRocketGainScore:
-        isPercent: 0
-        min: 150
-        max: 250
-      touchTrainGainScore:
-        isPercent: 0
-        min: 100
-        max: 175
+      mapElementData:
+        touchWellRecoverHp:
+          isPercent: 0
+          min: 30
+          max: 80
+        touchRocketGainScore:
+          isPercent: 0
+          min: 150
+          max: 250
+        touchTrainGainScore:
+          isPercent: 0
+          min: 100
+          max: 175
+        touchWellTime: 3
+        touchRocketTime: 1.5
+        touchTrainTime: 1
+        touchChestTime: 1
+        wellCount: 3
+        wellCd: 15
+        spawnRockerPosition: {x: 0, y: 0, z: 0}
+        spawnTrainPosition: {x: 0, y: 0, z: 0}
+        rocketPositions:
+        - vectors:
+          - {x: 0, y: 0, z: 0}
+          - {x: 0, y: 0, z: 0}
+        - vectors:
+          - {x: 0, y: 0, z: 0}
+          - {x: 0, y: 0, z: 0}
+        trainPositions:
+        - vectors: []
+        durationRange:
+          isPercent: 0
+          min: 6
+          max: 22
     damageData:
       defenseRatio: 15
       amplificationRatio: 0

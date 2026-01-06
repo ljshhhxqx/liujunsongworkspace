@@ -26,6 +26,7 @@ using Tool.Message;
 using UnityEngine;
 using VContainer;
 using ExecuteCloudScriptResult = PlayFab.CloudScriptModels.ExecuteCloudScriptResult;
+using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Game
 {
@@ -256,17 +257,20 @@ namespace HotUpdate.Scripts.Game
                     {
                         return v.y < 0.5f && v.y > -0.5f;
                     });
-                    _gameEventManager.Publish(new StartGameWellEvent(wellPosition, ++_interactSystem.currentWellId));
+                    var rotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
+                    _gameEventManager.Publish(new StartGameWellEvent(wellPosition, rotation, ++_interactSystem.currentWellId));
                     break;
                 case MapType.Rocket:
-                    var rocketPosition = _mapElementData.RocketPositions.RandomSelect();
+                    var rocketPosition = _mapElementData.rocketPositions.RandomSelect();
                     var duration = _mapElementData.durationRange.GetRandomValue();
-                    _gameEventManager.Publish(new StartGameTrainEvent(rocketPosition.RandomSelect(), duration, ++_interactSystem.currentTrainId));
+                    var index = Random.Range(0, rocketPosition.vectors.Length);
+                    _gameEventManager.Publish(new StartGameTrainEvent(rocketPosition.vectors[index], rocketPosition.vectors[rocketPosition.vectors.Length - 1 - index], rocketPosition.rotation, duration, ++_interactSystem.currentTrainId));
                     break;
                 case MapType.WestWild:
-                    rocketPosition = _mapElementData.TrainPositions.RandomSelect();
+                    rocketPosition = _mapElementData.trainPositions.RandomSelect();
                     duration = _mapElementData.durationRange.GetRandomValue();
-                    _gameEventManager.Publish(new StartGameTrainEvent(rocketPosition.RandomSelect(), duration, ++_interactSystem.currentTrainId));
+                    index = Random.Range(0, rocketPosition.vectors.Length);
+                    _gameEventManager.Publish(new StartGameTrainEvent(rocketPosition.vectors[index], rocketPosition.vectors[rocketPosition.vectors.Length - 1 - index], rocketPosition.rotation,duration, ++_interactSystem.currentTrainId));
                     break;
             }
             

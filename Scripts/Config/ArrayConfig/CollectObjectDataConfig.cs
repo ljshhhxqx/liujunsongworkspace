@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using AOTScripts.CustomAttribute;
 using AOTScripts.Data;
@@ -325,8 +326,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [Header("Position")]
         public Vector3 spawnRockerPosition;
         public Vector3 spawnTrainPosition;
-        public Vector3[][] RocketPositions;
-        public Vector3[][] TrainPositions;
+        public MultiVector3[] rocketPositions;
+        public MultiVector3[] trainPositions;
         public Range durationRange;
 
         public float GetTouchTime(ObjectType objectType)
@@ -340,6 +341,13 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 _ => 0,
             };
         }
+    }
+
+    [Serializable]
+    public struct MultiVector3
+    {
+        public Vector3[] vectors;
+        public Quaternion rotation;
     }
 
     public class MovementConfigLink
