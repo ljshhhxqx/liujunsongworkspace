@@ -745,8 +745,9 @@ GameObject:
   - component: {fileID: 8501703347543080535}
   - component: {fileID: 2703483385820481265}
   - component: {fileID: 4690568801871765067}
+  - component: {fileID: 5236468677082297370}
   m_Layer: 11
-  m_Name: Rocket
+  m_Name: RocketSpace
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -864,6 +865,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  easeType: 11
   type: 0
 --- !u!114 &2703483385820481265
 MonoBehaviour:
@@ -915,6 +917,18 @@ MonoBehaviour:
   positionSensitivity: 0.01
   rotationSensitivity: 0.01
   scaleSensitivity: 0.01
+--- !u!114 &5236468677082297370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5767421372733147812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e743f15d5c5e4597ac62286553216e7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5854873447528668449
 GameObject:
   m_ObjectHideFlags: 0

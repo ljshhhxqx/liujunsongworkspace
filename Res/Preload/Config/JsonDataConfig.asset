@@ -193,13 +193,26 @@ MonoBehaviour:
         spawnTrainPosition: {x: 0, y: 0, z: 0}
         rocketPositions:
         - vectors:
-          - {x: 0, y: 0, z: 0}
-          - {x: 0, y: 0, z: 0}
-        - vectors:
-          - {x: 0, y: 0, z: 0}
-          - {x: 0, y: 0, z: 0}
+          - {x: 0, y: -47.1, z: 0}
+          - {x: 0, y: 100, z: 0}
+          rotation: {x: 0, y: 0, z: 0, w: 0}
         trainPositions:
-        - vectors: []
+        - vectors:
+          - {x: -61.39, y: 5.32, z: 2.09}
+          - {x: 69.91, y: 5.32, z: 2.09}
+          rotation: {x: 0, y: 0, z: 0, w: 0}
+        - vectors:
+          - {x: 103.19, y: 5.32, z: 2.09}
+          - {x: -29.4, y: 5.32, z: 2.09}
+          rotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
+        - vectors:
+          - {x: 69.91, y: 5.32, z: 9.09}
+          - {x: -61.39, y: 5.32, z: 9.09}
+          rotation: {x: 0, y: 0, z: 0, w: 0}
+        - vectors:
+          - {x: -25.2, y: 5.32, z: 9.09}
+          - {x: 106.7, y: 5.32, z: 9.09}
+          rotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
         durationRange:
           isPercent: 0
           min: 6

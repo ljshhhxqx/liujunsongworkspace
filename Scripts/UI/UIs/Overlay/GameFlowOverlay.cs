@@ -79,25 +79,29 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private bool _isGameRunning;
         private GameResult _gameResult;
         private GameEventManager _gameEventManager;
+        
+        private CompositeDisposable _warmupDisposable;
+        private CompositeDisposable _gameTimerDisposable;
 
         [Inject]
         private void Init(UIManager uiManager, GameEventManager gameEventManager)
         {
             InitializeUI();
-            DOTween.Init();
+            //DOTween.Init();
             _gameEventManager = gameEventManager;
             GameLoopDataModel.WarmupRemainingTime
-                .Where(time => time <= 3)
+                .Where(time => time <= 3 && time > 0)
                 .Take(1)
                 .Subscribe(_ => StartWarmupCountdown())
-                .AddTo(this);
+                .AddTo(_warmupDisposable);
             
             GameLoopDataModel.GameRemainingTime
-                .Where(time => time <= 5)
+                .Where(time => time <= 5&& time > 0)
                 .Take(1)
                 .Subscribe(_ => StartGameTimer(warningThreshold))
-                .AddTo(this);
+                .AddTo(_gameTimerDisposable);
             GameLoopDataModel.GameResult
+                .Where(result => result.playersResultData!= null)
                 .Subscribe(ShowGameOver)
                 .AddTo(this);
             
@@ -134,6 +138,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         // 开始热身倒计时
         private void StartWarmupCountdown(int warmupSeconds = 3)
         {
+            _warmupDisposable?.Dispose();
             _warmupSequence?.Kill();
             WarmupCountdownCoroutine(warmupSeconds);
         }
@@ -141,6 +146,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         // 开始游戏总倒计时
         private void StartGameTimer(float gameTimeSeconds)
         {
+            _gameTimerDisposable?.Dispose();
             _totalGameTime = gameTimeSeconds;
             _currentGameTime = gameTimeSeconds;
             _isGameRunning = true;

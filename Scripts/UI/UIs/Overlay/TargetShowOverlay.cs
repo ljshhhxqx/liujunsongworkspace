@@ -116,6 +116,11 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         private void OnTargetShow(TargetShowEvent targetShowEvent)
         {
+            if (!indicatorUI)
+            {
+                return;
+            }
+
             if (!_targets.ContainsKey(targetShowEvent.TargetId) && targetShowEvent.Target)
             {
                 _targets.Add(targetShowEvent.TargetId, targetShowEvent.Target);
@@ -124,7 +129,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             {
                 _targets.Remove(targetShowEvent.TargetId);
             }
-            indicatorUI?.gameObject.SetActive(_targets != null && _targets.Count > 0);
+            indicatorUI.gameObject.SetActive(_targets != null && _targets.Count > 0);
             if (!targetShowEvent.Player)
             {
                 return;

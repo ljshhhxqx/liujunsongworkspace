@@ -72,7 +72,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             _jsonConfig = configProvider.GetConfig<JsonDataConfig>();
             _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
             _gameSyncManager = FindObjectOfType<GameSyncManager>();
-            _playerPropertySyncSystem = _gameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
             _gameEventManager.Subscribe<GameStartEvent>(OnGameStart);
             _gameEventManager.Subscribe<PlayerAttackItemEvent>(OnPlayerAttackItem);
             _gameEventManager.Subscribe<PlayerSkillItemEvent>(OnSkillItem);
@@ -271,10 +270,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 
         private void OnGameStart(GameStartEvent gameStartEvent)
         {
+            _playerPropertySyncSystem = _gameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
             _bulletPrefab = ResourceManager.Instance.GetResource<GameObject>("Bullet");
             _wellPrefab = ResourceManager.Instance.GetResource<GameObject>("Well");
             _trainPrefab = ResourceManager.Instance.GetResource<GameObject>("Train");
-            _rocketPrefab = ResourceManager.Instance.GetResource<GameObject>("Rocket");
+            _rocketPrefab = ResourceManager.Instance.GetResource<GameObject>("RocketSpace");
             if (!ServerHandler)
             {
                 return;

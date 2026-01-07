@@ -2039,6 +2039,7 @@ GameObject:
   - component: {fileID: 1639275499402532529}
   - component: {fileID: 2111044192580870824}
   - component: {fileID: 1280649179071624766}
+  - component: {fileID: 1095420935897204226}
   m_Layer: 11
   m_Name: Train
   m_TagString: Untagged
@@ -2173,6 +2174,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  easeType: 1
   type: 0
 --- !u!114 &2111044192580870824
 MonoBehaviour:
@@ -2224,6 +2226,18 @@ MonoBehaviour:
   positionSensitivity: 0.01
   rotationSensitivity: 0.01
   scaleSensitivity: 0.01
+--- !u!114 &1095420935897204226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8058077809302069407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e743f15d5c5e4597ac62286553216e7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8129817404261903586
 GameObject:
   m_ObjectHideFlags: 0

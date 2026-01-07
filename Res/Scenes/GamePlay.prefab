@@ -48,6 +48,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  currentTrainId: 0
+  currentWellId: 0
 --- !u!114 &799039448993416177
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -675,6 +677,7 @@ MonoBehaviour:
   - {fileID: 1999239547283070, guid: ba0db3962bbff524c86619cbe428a746, type: 3}
   - {fileID: 1999239547283070, guid: b0f4a01fd18c0894fa0e1ce414638cdd, type: 3}
   - {fileID: 1999239547283070, guid: dfc9e887a2b309742bc9d98f1d06d559, type: 3}
+  - {fileID: 5767421372733147812, guid: fdc6309527a0b014fb12d0ba5132291a, type: 3}
   - {fileID: 7663935228497233084, guid: bbd83d45ae29b5a4a808e958b55baab3, type: 3}
   - {fileID: 2627840716489825252, guid: f034ba5f91d2e674baadbede9d1704ba, type: 3}
   - {fileID: 1455299820460675964, guid: d0a515575143da64cb707dab583e7a05, type: 3}
@@ -683,6 +686,8 @@ MonoBehaviour:
   - {fileID: 1251353114522481715, guid: 6cd058d24e3e2c248a89283b2af2776b, type: 3}
   - {fileID: 7535266119704928820, guid: f394a5fdb2d205349b4101dd79bf0c8d, type: 3}
   - {fileID: 2918856425992379746, guid: 94fa9d42e8dafb14692c7a6ebe2d4579, type: 3}
+  - {fileID: 8058077809302069407, guid: 3152dbd65635b6f4e8f59e458e76ffbc, type: 3}
+  - {fileID: 6477117795200731065, guid: cf36f7fdb9b2bdc458641c69644fc442, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2

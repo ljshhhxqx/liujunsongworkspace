@@ -14,6 +14,7 @@ namespace HotUpdate.Scripts.Weather
         {
             GameTime = new HReactiveProperty<float>();
             WeatherInfo = new HReactiveProperty<WeatherInfo>();
+            IsDayTime = new HReactiveProperty<bool>();
         }
 
         public static void Dispose()

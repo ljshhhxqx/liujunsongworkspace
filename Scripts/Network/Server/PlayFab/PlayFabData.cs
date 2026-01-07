@@ -30,18 +30,68 @@ namespace AOTScripts.Data
         }
     }
     [Serializable]
-    public struct GameResultData
+    public struct GameResultData : IEquatable<GameResultData>
     {
         public PlayerGameResultData[] playersResultData;
+
+        public bool Equals(GameResultData other)
+        {
+            return Equals(playersResultData, other.playersResultData);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is GameResultData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return (playersResultData != null ? playersResultData.GetHashCode() : 0);
+        }
+
+        public static bool operator ==(GameResultData left, GameResultData right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(GameResultData left, GameResultData right)
+        {
+            return !left.Equals(right);
+        }
     }
 
     [Serializable]
-    public struct PlayerGameResultData
+    public struct PlayerGameResultData : IEquatable<PlayerGameResultData>
     {
         public string playerName;
         public int score;
         public int rank;
         public bool isWinner;
+
+        public bool Equals(PlayerGameResultData other)
+        {
+            return playerName == other.playerName && score == other.score && rank == other.rank && isWinner == other.isWinner;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is PlayerGameResultData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(playerName, score, rank, isWinner);
+        }
+
+        public static bool operator ==(PlayerGameResultData left, PlayerGameResultData right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(PlayerGameResultData left, PlayerGameResultData right)
+        {
+            return !left.Equals(right);
+        }
     }
 
     [Serializable]

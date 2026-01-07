@@ -102,6 +102,7 @@ namespace HotUpdate.Scripts.Collector
                     case ObjectType.Chest:
                     case ObjectType.Rocket:
                     case ObjectType.Train:
+                        _collects.Add(collect);
                         break;
                 }
             }

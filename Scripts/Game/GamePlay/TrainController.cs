@@ -28,7 +28,6 @@ namespace HotUpdate.Scripts.Game.GamePlay
 
         [Header("路径设置")]
         private Vector3 _origin = Vector3.zero;
-        private Vector3[] _targets;
         private Vector3 _target;
         [SerializeField]
         private float movementDuration = 5f;
@@ -50,7 +49,10 @@ namespace HotUpdate.Scripts.Game.GamePlay
         [Header("烟雾强度设置")]
         [SerializeField]
         private AnimationCurve smokeIntensityCurve = AnimationCurve.Linear(0, 1, 1, 1);
-    
+
+        [SerializeField] 
+        private Ease easeType = Ease.Linear;
+        
         // DOTween相关
         private Sequence _trainSequence;
         [SerializeField]
@@ -73,16 +75,13 @@ namespace HotUpdate.Scripts.Game.GamePlay
         [Inject]
         private void Init(GameEventManager gameEventManager, IObjectResolver objectResolver)
         {
+            transform.localScale = Vector3.zero;
             _gameEventManager = gameEventManager;
             _gameEventManager.Subscribe<StartGameTrainEvent>(OnStartTrain);
             _gameEventManager.Subscribe<TakeTrainEvent>(OnTakeTrain);
             _gameEventManager.Subscribe<TrainAttackPlayerEvent>(OnTrainAttackPlayer);
             _gameSyncManager = objectResolver.Resolve<GameSyncManager>();
             _interactSystem = objectResolver.Resolve<InteractSystem>();
-            if (_targets != null && _targets.Length > 0)
-            {
-                _origin = _targets.RandomSelect();
-            }
             _deathColliderConfig = GamePhysicsSystem.CreateColliderConfig(deathCollider);
             _touchColliderConfig = GamePhysicsSystem.CreateColliderConfig(touchCollider);
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _touchColliderConfig, type, gameObject.layer, gameObject.tag);
@@ -144,6 +143,11 @@ namespace HotUpdate.Scripts.Game.GamePlay
             {
                 return;
             }
+            transform.localScale = Vector3.one;
+            _origin = startEvent.StartPosition;
+            _target = startEvent.TargetPosition;
+            transform.position = _origin;
+            transform.rotation = startEvent.StartRotation;
             ResetTrainState();
         
             // 创建火车移动序列
@@ -181,6 +185,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
                     StopWheelRotation();
                     StopSmokeEmission();
                     OnTrainArrived();
+                    transform.localScale = Vector3.zero;
                 }));
         }
 

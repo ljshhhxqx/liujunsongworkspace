@@ -37,8 +37,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         Bullet,
         TouchRocket,
         TouchTrainDeath,
+        TouchTrain,
+        
+        
         Count,
-        TouchTrain
     }
 
     // 基础交互头
@@ -88,6 +90,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
     [MemoryPackUnion(7, typeof(SpawnBullet))]
     [MemoryPackUnion(8, typeof(SceneItemAttackInteractRequest))]
     [MemoryPackUnion(9, typeof(ItemExplodeRequest))]
+    [MemoryPackUnion(10, typeof(PlayerInteractRequest))]
     public partial interface IInteractRequest
     {
         InteractHeader GetHeader();
@@ -137,7 +140,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         public bool IsValid()
         {
             return InteractionType >= InteractionType.PickupItem && InteractionType < InteractionType.Count 
-                                                                 && SceneItemId > 0 && OtherId > 0;
+                                                                 && SceneItemId > 0;
         }
     }
 
