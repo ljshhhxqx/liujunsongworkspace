@@ -139,6 +139,18 @@ namespace HotUpdate.Scripts.UI.UIBase
             Debug.Log($"UI名有误{uIType}");
         }
 
+        public T GetActiveUI<T>(UIType uIType) where T : ScreenUIBase
+        {
+            if (_uiDict.TryGetValue(uIType, out var ui))
+            {
+                if (ui)
+                {
+                    return ui as T;
+                }
+            }
+            return null;
+        }
+
         public bool IsUIOpen(UIType uIType)
         {
             return _uiDict.ContainsKey(uIType);

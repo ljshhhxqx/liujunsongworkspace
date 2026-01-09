@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Tool.ReactiveProperty;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
+using TMPro;
 using UI.UIBase;
 using UniRx;
 using UnityEngine;
+using UnityEngine.UI;
 using VContainer;
 
 namespace HotUpdate.Scripts.UI.UIs.Overlay
@@ -27,9 +30,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private FieldItem hasMovementInput;
         [SerializeField]
         private FieldItem frameCount;
-        [SerializeField] 
-        private ProgressItem progressItem;
-        
+
         private PlayerInGameManager _playerInGameManager;
         private PlayerPropertyComponent _playerPropertyComponent;
         private PropertyConfig _propertyConfig;
@@ -100,15 +101,6 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             }
         }
 
-        public void StartProgress(string description, float countdown, Action onComplete = null, Func<bool> condition = null)
-        {
-            if (countdown <= 0)
-            {
-                onComplete?.Invoke();
-                return;
-            }
-            progressItem.gameObject.SetActive(true);
-            progressItem.SetProgress(description, countdown, onComplete, condition);
-        }
+        
     }
 }

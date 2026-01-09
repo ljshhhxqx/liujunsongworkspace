@@ -17,6 +17,7 @@ using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using MemoryPack;
 using Mirror;
+using UI.UIBase;
 using UniRx;
 using UnityEngine;
 using VContainer;
@@ -37,7 +38,7 @@ namespace HotUpdate.Scripts.Collector
         private PlayerInGameManager _playerInGameManager;
         private IColliderConfig _colliderConfig;
         private UIManager _uiManager;
-        private PlayerPropertiesOverlay _playerPropertiesOverlay;
+        private PlayerAnimationOverlay _playerPropertiesOverlay;
         private HashSet<DynamicObjectData> _cachedCollects = new HashSet<DynamicObjectData>();
         protected override bool AutoInjectClient => false;
 
@@ -168,20 +169,21 @@ namespace HotUpdate.Scripts.Collector
 
         private void Update()
         {
-            switch (PickerType)
+            if (!LocalPlayerHandler)
             {
-                case PickerType.Player:
-                    if (Input.GetKeyDown(KeyCode.F))
-                    {
-                        PerformPickup();
-                    }
-                    break;
-                case PickerType.Computer:
+                return;
+            }
+
+            if (PickerType == PickerType.Player)
+            {
+                if (Input.GetKeyDown(KeyCode.F))
+                {
                     PerformPickup();
-                    break;
-                default:
-                    Debug.LogError("PickerType is not set");
-                    break;
+                }
+            }
+            else if (PickerType == PickerType.Computer)
+            {
+                PerformPickup();
             }
         }
 
@@ -189,18 +191,22 @@ namespace HotUpdate.Scripts.Collector
         {
             if (!_playerPropertiesOverlay)
             {
-                _playerPropertiesOverlay = _uiManager.GetUI<PlayerPropertiesOverlay>();
+                _playerPropertiesOverlay = _uiManager.GetActiveUI<PlayerAnimationOverlay>(UIType.PlayerPropertiesOverlay);
             }
+            //_playerPropertiesOverlay.StartProgress($"收集{collect.Type}中... + {time}秒 ", time, () => OnComplete(collect) , GetIsTouching);
             foreach (var collect in _collects)
             {
                 IsTouching = true;
                 var time = _collectData.GetTouchTime(collect.Type);
-                _playerPropertiesOverlay.StartProgress($"收集{collect.Type}中...", time, () =>
-                {
-                    Collect(collect).Forget();
-                    IsTouching = false;
-                }, GetIsTouching);
+                _playerPropertiesOverlay.StartProgress($"收集{collect.Type}中... + {time}秒 ", time, () => OnComplete(collect) , GetIsTouching);
             }
+        }
+
+        private void OnComplete(DynamicObjectData collect)
+        {
+            Debug.Log($"PICKER : PerformPickup {collect.NetId} {collect.Type}");
+            Collect(collect).Forget();
+            IsTouching = false;
         }
 
         private bool GetIsTouching()

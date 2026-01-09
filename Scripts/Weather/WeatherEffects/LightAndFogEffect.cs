@@ -68,16 +68,18 @@ namespace HotUpdate.Scripts.Weather.WeatherEffects
                 lightColor = _dayNightCycleData.nightColor.Evaluate(t);
             }
 
+            mainLight.intensity = lightIntensity;
+            mainLight.color = lightColor;
             // 设置光照强度和平滑过渡颜色
-            mainLight.DOIntensity(lightIntensity, 0.9f).SetEase(Ease.Linear);
-            mainLight.DOColor(lightColor, 0.9f).SetEase(Ease.Linear);
+            // mainLight.DOIntensity(lightIntensity, 0.9f).SetEase(Ease.Linear);
+            // mainLight.DOColor(lightColor, 0.9f).SetEase(Ease.Linear);
             // Debug.Log($"(WeatherManager)(-Target-) Light intensity: {lightIntensity} Color: {lightColor}");
             // Debug.Log($"(WeatherManager)(-Current-) Light intensity: {mainLight.intensity} Color: {mainLight.color}");
             // 调整光照角度
             var timeRatio = currentTime / _dayNightCycleData.oneDayDuration;
             var sunAngle = timeRatio * 360f - 90f; // 太阳角度，从-90度（东升）到270度（西落）
             var targetRotation = Quaternion.Euler(new Vector3(sunAngle, 0f, 0f));
-            mainLight.transform.DORotateQuaternion(targetRotation, 0.99f); // 在1秒内平滑过渡到目标角度
+            mainLight.transform.rotation = targetRotation;
         }
     }
 }

@@ -299,6 +299,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
         }
 
+        private Vector3 _movement;
+
         private void OnGameFunctionUIShow(GameFunctionUIShowEvent gameFunctionUIShowEvent)
         {
             if (_uiManager.IsUIOpen(gameFunctionUIShowEvent.UIType))
@@ -399,6 +401,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     }
                 })
                 .AddTo(_disposables);
+            Observable.EveryUpdate()
+                .Subscribe(_ =>
+                {
+                    _movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+                })
+                .AddTo(_disposables);
             
             Observable.EveryUpdate()
                 .Where(_ => !_picker.IsTouching && (_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)) && !_subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
@@ -410,8 +418,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                             //Debug.Log("Cursor is locked or not controlled");
                             return;
                         }
-                        var movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-                        if (movement.magnitude == 0)
+                        if (_movement.magnitude == 0)
                         {
                             GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.FootStep);
                             GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.Sprint);
@@ -419,7 +426,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                         var animationStates = _inputState.GetAnimationStates();
                         var playerInputStateData = new PlayerInputStateData
                         {
-                            InputMovement = movement,
+                            InputMovement = _movement,
                             InputAnimations = animationStates,
                         };
                         var command = GetCurrentAnimationState(playerInputStateData);
@@ -739,6 +746,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void HandleInputPhysics(PlayerInputStateData inputData)
         {
+            inputData.InputMovement = _movement;
             _currentSpeed = Mathf.SmoothDamp(_currentSpeed, _targetSpeed, ref _speedSmoothVelocity, _speedSmoothTime);
             _playerPhysicsCalculator.CurrentSpeed = _currentSpeed;
             _gameStateStream.Value = _playerPhysicsCalculator.CheckPlayerState(new CheckGroundDistanceParam(inputData.InputMovement, FixedDeltaTime));

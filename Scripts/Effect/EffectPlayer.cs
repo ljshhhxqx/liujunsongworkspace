@@ -92,10 +92,10 @@ namespace HotUpdate.Scripts.Effect
 
         public void ClearAllEffects()
         {
-            foreach (var effect in _activeParticleSystems)
-            {
-                GameObjectPoolManger.Instance.ReturnObject(effect.Value.gameObject);
-            }
+            // foreach (var effect in _activeParticleSystems)
+            // {
+            //     GameObjectPoolManger.Instance.ReturnObject(effect.Value.gameObject);
+            // }
             _activeParticleSystems.Clear();
             foreach (var effect in _particleSystemsPrefab)
             {

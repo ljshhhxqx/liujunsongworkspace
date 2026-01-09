@@ -60,7 +60,7 @@ namespace HotUpdate.Scripts.Weather
             get => _dayNightCycleTime;
             set
             {
-                if (isServer)
+                if (_serverHandled)
                 {
                     _dayNightCycleTime = value;
                 }
@@ -74,7 +74,7 @@ namespace HotUpdate.Scripts.Weather
         private void OnDayNightCycleTimeChanged(float oldTime, float newTime)
         {
             WeatherDataModel.GameTime.Value = newTime;
-            //Debug.Log($"OnDayNightCycleTimeChanged: {oldTime}, {newTime}");
+//            Debug.Log($"OnDayNightCycleTimeChanged: {oldTime}, {newTime}");
         }
         
         private void OnWeatherChanged(WeatherInfo oldWeather, WeatherInfo newWeather)
@@ -316,7 +316,7 @@ namespace HotUpdate.Scripts.Weather
 
         private void Update()
         {
-            if (!_isDayNightCycle || !isServer)
+            if (!_isDayNightCycle || !_serverHandled)
             {
                 return;
             }

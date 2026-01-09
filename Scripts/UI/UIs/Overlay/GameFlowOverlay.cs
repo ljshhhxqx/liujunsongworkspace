@@ -80,8 +80,8 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private GameResult _gameResult;
         private GameEventManager _gameEventManager;
         
-        private CompositeDisposable _warmupDisposable;
-        private CompositeDisposable _gameTimerDisposable;
+        private CompositeDisposable _warmupDisposable = new CompositeDisposable();
+        private CompositeDisposable _gameTimerDisposable = new CompositeDisposable();
 
         [Inject]
         private void Init(UIManager uiManager, GameEventManager gameEventManager)
