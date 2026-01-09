@@ -27,11 +27,12 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             transform.localScale = Vector3.one;
             Debug.Log("ProgressItem set progress to " + text + $"transform.localScale = {transform.localScale.ToString()}");
             progressText.text = text;
+            progressText.alpha = 1f;
             progressImage.fillAmount = 01f;
             _progressTween?.Kill();
             _progressTween = DOTween.Sequence();
             _progressTween.Append(progressImage.DOFillAmount(0, countdownTime));
-            _progressTween.Join(progressText.DOFade(0f, 0.5f).SetLoops(int.MaxValue, LoopType.Yoyo));
+            _progressTween.Join(progressText.DOFade(0f, 0.5f).SetLoops((int) (countdownTime / 0.5f), LoopType.Yoyo));
             _progressTween.OnUpdate(() =>
             {
                 if (condition != null && !condition.Invoke())

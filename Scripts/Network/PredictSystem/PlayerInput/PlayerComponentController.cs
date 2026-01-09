@@ -162,10 +162,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public bool isDead;
 
         public int CurrentComboStage { get; private set; }
-        // public IObservable<PlayerInputStateData> InputStream => _inputStream;
-        // public IReadOnlyReactiveProperty<PlayerEnvironmentState> GameStateStream => _gameStateStream;
-        // public IReadOnlyReactiveProperty<float> GroundDistanceStream => _groundDistanceStream;
-        // public IObservable<bool> IsSpecialAction => _isSpecialActionStream;
         public IObservable<int> AttackPointReached => _onAttackPoint;
         public IObservable<int> AttackEnded => _onAttackEnd;
 
@@ -401,27 +397,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     }
                 })
                 .AddTo(_disposables);
-            Observable.EveryUpdate()
-                .Subscribe(_ =>
-                {
-                    _movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-                })
-                .AddTo(_disposables);
             
             Observable.EveryUpdate()
-                .Where(_ => !_picker.IsTouching && (_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)) && !_subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
+                //.Where(_ => !_picker.IsTouching && (_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)) && !_subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
                 .Subscribe(_ => {
                     if (PlayerPlatformDefine.IsWindowsPlatform())
                     {
-                        if (Cursor.lockState != CursorLockMode.Locked || !_isControlled)
-                        {
-                            //Debug.Log("Cursor is locked or not controlled");
-                            return;
-                        }
+                        _movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
                         if (_movement.magnitude == 0)
                         {
                             GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.FootStep);
                             GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.Sprint);
+                        }
+                        if (Cursor.lockState != CursorLockMode.Locked || !_isControlled)
+                        {
+                            //Debug.Log("Cursor is locked or not controlled");
+                            return;
                         }
                         var animationStates = _inputState.GetAnimationStates();
                         var playerInputStateData = new PlayerInputStateData
@@ -496,6 +487,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .Where(_ => _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) > 0 && GameSyncManager.CurrentTick > 0)
                 .Subscribe(_ =>
                 {
+                    if (_picker.IsTouching)
+                    {
+                        return;
+                    }
+
+                    if (!(_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)))
+                    {
+                        return;
+                    }
+
+                    if (_subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
+                    {
+                        return;
+                    }
+
                     HandleInputPhysics(_playerInputStateData);
                     if (_inputStream.Value.Command != AnimationState.None && _inputStream.Value.Command != AnimationState.Idle)
                     {
@@ -505,7 +511,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     var propertyEnvironmentChangeCommand = ObjectPoolManager<PropertyEnvironmentChangeCommand>.Instance.Get(50);
                     propertyEnvironmentChangeCommand.Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
                         CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate, NetworkCommandType.PropertyEnvironmentChange);
-                    propertyEnvironmentChangeCommand.HasInputMovement = _playerInputStateData.InputMovement.magnitude > 0.1f;
+                    propertyEnvironmentChangeCommand.HasInputMovement = _movement.magnitude > 0.1f;
                     propertyEnvironmentChangeCommand.PlayerEnvironmentState = _gameStateStream.Value;
                     propertyEnvironmentChangeCommand.IsSprinting = _playerInputStateData.Command.HasAnyState(AnimationState.Sprint);
                     _propertyPredictionState.AddPredictedCommand(propertyEnvironmentChangeCommand);
@@ -721,7 +727,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             inputCommand.InputMovement = CompressedVector3.FromVector3(inputData.InputMovement);
             inputCommand.Header = GameSyncManager.CreateNetworkCommandHeader( _playerInGameManager.LocalPlayerId,
                 CommandType.Input, CommandAuthority.Client, CommandExecuteType.Predicate, NetworkCommandType.Input);
-            inputCommand.InputAnimationStates = inputData.InputAnimations;
+            inputCommand.InputAnimationStates = inputData.InputAnimations; 
             inputCommand.CommandAnimationState = inputData.Command;
             _inputState.AddPredictedCommand(inputCommand);
         }
@@ -746,7 +752,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void HandleInputPhysics(PlayerInputStateData inputData)
         {
-            inputData.InputMovement = _movement;
             _currentSpeed = Mathf.SmoothDamp(_currentSpeed, _targetSpeed, ref _speedSmoothVelocity, _speedSmoothTime);
             _playerPhysicsCalculator.CurrentSpeed = _currentSpeed;
             _gameStateStream.Value = _playerPhysicsCalculator.CheckPlayerState(new CheckGroundDistanceParam(inputData.InputMovement, FixedDeltaTime));
