@@ -10,7 +10,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
 
         private void Start()
         {
-            _spotLight = GetComponentInChildren<Light>();
+            _spotLight = GetComponentInChildren<Light>(true);
             WeatherDataModel.IsDayTime
                 .Subscribe(dayTime =>
                 {

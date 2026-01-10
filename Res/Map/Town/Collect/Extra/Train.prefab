@@ -2042,7 +2042,7 @@ GameObject:
   - component: {fileID: 1095420935897204226}
   m_Layer: 11
   m_Name: Train
-  m_TagString: Untagged
+  m_TagString: SpawnedObjects
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

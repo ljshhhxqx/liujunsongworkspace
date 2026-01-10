@@ -489,8 +489,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 {
                     if (_picker.IsTouching)
                     {
+                        _playerInputStateData = default;
+                        HandleInputPhysics(_playerInputStateData);
                         return;
                     }
+                    HandleInputPhysics(_playerInputStateData);
 
                     if (!(_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)))
                     {

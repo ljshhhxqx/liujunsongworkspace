@@ -1591,6 +1591,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stairs (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 886115044241072501, guid: c2cf6f27209f49440a244999081cea92, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 2447693467140097360, guid: c2cf6f27209f49440a244999081cea92, type: 3}
       propertyPath: m_LocalScale.y
       value: 0.96557236
@@ -2976,6 +2980,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stairs (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 886115044241072501, guid: c2cf6f27209f49440a244999081cea92, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 2447693467140097360, guid: c2cf6f27209f49440a244999081cea92, type: 3}
       propertyPath: m_LocalScale.y
       value: 0.96557236
@@ -3110,6 +3118,10 @@ PrefabInstance:
     - target: {fileID: 886115044241072501, guid: c2cf6f27209f49440a244999081cea92, type: 3}
       propertyPath: m_Name
       value: Stairs (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 886115044241072501, guid: c2cf6f27209f49440a244999081cea92, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2447693467140097360, guid: c2cf6f27209f49440a244999081cea92, type: 3}
       propertyPath: m_LocalScale.y
@@ -4764,6 +4776,10 @@ PrefabInstance:
     - target: {fileID: 886115044241072501, guid: c2cf6f27209f49440a244999081cea92, type: 3}
       propertyPath: m_Name
       value: Stairs (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 886115044241072501, guid: c2cf6f27209f49440a244999081cea92, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2447693467140097360, guid: c2cf6f27209f49440a244999081cea92, type: 3}
       propertyPath: m_LocalScale.y
@@ -8073,6 +8089,10 @@ PrefabInstance:
     - target: {fileID: 886115044241072501, guid: c2cf6f27209f49440a244999081cea92, type: 3}
       propertyPath: m_Name
       value: Stairs (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 886115044241072501, guid: c2cf6f27209f49440a244999081cea92, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2447693467140097360, guid: c2cf6f27209f49440a244999081cea92, type: 3}
       propertyPath: m_LocalScale.y
