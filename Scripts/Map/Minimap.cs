@@ -14,6 +14,8 @@ namespace HotUpdate.Scripts.Map
 {
     public class Minimap : ScreenUIBase
     {
+        [SerializeField] 
+        private Image minimap;
         [SerializeField]
         private Image targetPrefab;
         [SerializeField]
@@ -26,6 +28,11 @@ namespace HotUpdate.Scripts.Map
         private void Start()
         {
             targetPrefab.gameObject.SetActive(false);
+        }
+        
+        public void SetMinimapSprite(Sprite sprite)
+        {
+            minimap.sprite = sprite;
         }
 
         private void SetMinimapItems(GameObject item, MinimapItemData minimapItemData)

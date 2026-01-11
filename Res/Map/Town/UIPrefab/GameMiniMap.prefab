@@ -138,6 +138,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cf5520d2067cfb4e85cc52b24574f27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minimap: {fileID: 8651393068113167809}
   targetPrefab: {fileID: 8539530900459534795}
   map: {fileID: 6520235173613231453}
 --- !u!1 &7232217900052416899

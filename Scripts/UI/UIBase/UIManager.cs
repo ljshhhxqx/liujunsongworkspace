@@ -139,15 +139,32 @@ namespace HotUpdate.Scripts.UI.UIBase
             Debug.Log($"UI名有误{uIType}");
         }
 
-        public T GetActiveUI<T>(UIType uIType) where T : ScreenUIBase
+        public T GetActiveUI<T>(UIType uIType, UICanvasType canvasType) where T : ScreenUIBase
         {
+            T uI = null;
             if (_uiDict.TryGetValue(uIType, out var ui))
             {
                 if (ui)
                 {
-                    return ui as T;
+                    uI = ui as T;
+                    return uI;
                 }
             }
+
+            for (int i = 0; i < _roots.Length; i++)
+            {
+                var root = _roots[i];
+                if (root.CanvasType == canvasType)
+                {
+                    uI =root.GetComponentInChildren<T>();
+                    if (uI)
+                    {
+                        _uiDict.Add(uIType, uI);
+                        return uI;
+                    }
+                }
+            }
+            
             return null;
         }
 

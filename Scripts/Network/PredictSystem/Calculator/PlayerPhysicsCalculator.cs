@@ -28,6 +28,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         private float _verticalSpeed;
         private bool _isMoving;
         public float GroundDistance { get; private set; }
+        public float StepHeight = 0.35f;
+        public float StepCheckDistance = 0.3f;
+
         
         public float CurrentSpeed
         {
@@ -45,10 +48,69 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         {
             PhysicsDetermineConstant = constant;
         }
+        public void TryStepClimb(CheckGroundDistanceParam param)
+        {
+            if (param.InputMovement.magnitude < 0.1f) return;
+            if (_playerEnvironmentState == PlayerEnvironmentState.InAir) return;
+
+            var col = _physicsComponent.CapsuleCollider;
+            var rb = _physicsComponent.Rigidbody;
+
+            float radius = col.radius * 0.95f;
+            float height = col.height;
+
+            Vector3 moveDir = param.InputMovement.normalized;
+            moveDir = _physicsComponent.Camera.transform.TransformDirection(moveDir);
+            moveDir.y = 0;
+            moveDir.Normalize();
+
+            // === 1. 低位 CapsuleCast ===
+            Vector3 p1 = rb.position + col.center + Vector3.up * (radius);
+            Vector3 p2 = p1 + Vector3.up * (height - radius * 2);
+
+            bool lowHit = Physics.CapsuleCast(
+                p1, p2, radius,
+                moveDir,
+                out RaycastHit lowHitInfo,
+                StepCheckDistance,
+                PhysicsDetermineConstant.GroundSceneLayer
+            );
+
+            if (!lowHit) return;
+
+            // === 2. 高位检测 ===
+            Vector3 offset = Vector3.up * StepHeight;
+
+            bool highBlocked = Physics.CapsuleCast(
+                p1 + offset, p2 + offset, radius,
+                moveDir,
+                StepCheckDistance,
+                PhysicsDetermineConstant.GroundSceneLayer
+            );
+
+            if (highBlocked) return;
+
+            // === 3. 检测落点 ===
+            Vector3 stepTarget = rb.position + offset + moveDir * StepCheckDistance;
+
+            if (!Physics.Raycast(
+                    stepTarget + Vector3.up * 0.2f,
+                    Vector3.down,
+                    0.6f,
+                    PhysicsDetermineConstant.GroundSceneLayer))
+                return;
+
+            // === 4. 抬升 ===
+            rb.MovePosition(
+                Vector3.Lerp(rb.position, stepTarget, 0.35f)
+            );
+        }
+
         
         public PlayerEnvironmentState CheckPlayerState(CheckGroundDistanceParam param)
         {
             CheckGroundDistance(param);
+            TryStepClimb(param);
             PlayerEnvironmentState newEnvironmentState; // 默认保持当前状态
 
             // 检查楼梯状态

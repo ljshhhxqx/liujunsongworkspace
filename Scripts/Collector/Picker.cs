@@ -191,7 +191,7 @@ namespace HotUpdate.Scripts.Collector
         {
             if (!_playerPropertiesOverlay)
             {
-                _playerPropertiesOverlay = _uiManager.GetActiveUI<PlayerAnimationOverlay>(UIType.PlayerAnimationOverlay);
+                _playerPropertiesOverlay = _uiManager.GetActiveUI<PlayerAnimationOverlay>(UIType.PlayerAnimationOverlay, UICanvasType.Overlay);
             }
             //_playerPropertiesOverlay.StartProgress($"收集{collect.Type}中... + {time}秒 ", time, () => OnComplete(collect) , GetIsTouching);
             foreach (var collect in _collects)

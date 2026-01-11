@@ -11,6 +11,7 @@ using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Effect;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
@@ -25,6 +26,7 @@ using HotUpdate.Scripts.Network.State;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Player;
 using HotUpdate.Scripts.Skill;
+using HotUpdate.Scripts.Static;
 using HotUpdate.Scripts.Tool;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.HotFixSerializeTool;
@@ -340,10 +342,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     break;
             }
         }
+        
+        private Minimap _minimap;
 
         protected override void InjectLocalPlayerCallback()
         {
             Debug.Log($"[PlayerInputController] OnStartLocalPlayer");
+            _minimap = _uiManager.GetActiveUI<Minimap>(UIType.Minimap, UICanvasType.Overlay);
+            var sprite = UISpriteContainer.GetSprite($"{GameLoopDataModel.GameSceneName.Value.ToString()}_MiniMap");
+            _minimap.SetMinimapSprite(sprite);
             var attackSector = gameObject.GetComponent<AttackSectorLine>();
             var radius = _propertyConfig.GetBaseValue(PropertyTypeEnum.AttackRadius);
             var range = _propertyConfig.GetBaseValue(PropertyTypeEnum.AttackAngle);
@@ -484,27 +491,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 })
                 .AddTo(this);
             Observable.EveryFixedUpdate()
-                .Where(_ => _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) > 0 && GameSyncManager.CurrentTick > 0)
                 .Subscribe(_ =>
                 {
-                    if (_picker.IsTouching)
+                    if (_picker.IsTouching || _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) <= 0 ||
+                        GameSyncManager.CurrentTick <= 0 || !(_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)) || _subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
                     {
                         _playerInputStateData = default;
                         HandleInputPhysics(_playerInputStateData);
                         return;
                     }
-                    HandleInputPhysics(_playerInputStateData);
-
-                    if (!(_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)))
-                    {
-                        return;
-                    }
-
-                    if (_subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
-                    {
-                        return;
-                    }
-
                     HandleInputPhysics(_playerInputStateData);
                     if (_inputStream.Value.Command != AnimationState.None && _inputStream.Value.Command != AnimationState.Idle)
                     {

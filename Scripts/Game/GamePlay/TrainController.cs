@@ -38,8 +38,6 @@ namespace HotUpdate.Scripts.Game.GamePlay
         [SerializeField]
         private List<WheelConfig> wheels = new List<WheelConfig>();
         [SerializeField]
-        private List<SmokeConfig> smokeConfigs = new List<SmokeConfig>();
-        [SerializeField]
         private List<Transform> trainParts = new List<Transform>();
 
         [SerializeField] private Collider deathCollider;
@@ -143,6 +141,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
             {
                 return;
             }
+            Debug.Log("[TrainController] Start Game Train");
             transform.localScale = Vector3.one;
             _origin = startEvent.StartPosition;
             _target = startEvent.TargetPosition;
@@ -176,7 +175,6 @@ namespace HotUpdate.Scripts.Game.GamePlay
             _trainSequence.AppendCallback(() => {
                 SetTrainVisible(true);
                 StartWheelRotation();
-                StartSmokeEmission();
             });
         
             _trainSequence.Append(transform.DOMove(_target, movementDuration)
@@ -186,6 +184,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
                     StopSmokeEmission();
                     OnTrainArrived();
                     transform.localScale = Vector3.zero;
+                    Debug.Log("[TrainController] Stop Game Train");
                 }));
         }
 
@@ -282,15 +281,6 @@ namespace HotUpdate.Scripts.Game.GamePlay
                 }
             }
             _smokeTweens.Clear();
-        }
-    
-        void StartSmokeEmission()
-        {
-            // 开始烟雾发射协程
-            foreach (var smokeConfig in smokeConfigs)
-            {
-                SmokeEmissionCoroutine(smokeConfig).Forget();
-            }
         }
     
         private async UniTaskVoid SmokeEmissionCoroutine(SmokeConfig config)
