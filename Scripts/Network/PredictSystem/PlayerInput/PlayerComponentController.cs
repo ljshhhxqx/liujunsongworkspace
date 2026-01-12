@@ -348,9 +348,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         protected override void InjectLocalPlayerCallback()
         {
             Debug.Log($"[PlayerInputController] OnStartLocalPlayer");
-            _minimap = _uiManager.GetActiveUI<Minimap>(UIType.Minimap, UICanvasType.Overlay);
-            var sprite = UISpriteContainer.GetSprite($"{GameLoopDataModel.GameSceneName.Value.ToString()}_MiniMap");
-            _minimap.SetMinimapSprite(sprite);
+            // _minimap = _uiManager.GetActiveUI<Minimap>(UIType.Minimap, UICanvasType.Overlay);
+            // var sprite = UISpriteContainer.GetSprite($"{GameLoopDataModel.GameSceneName.Value.ToString()}_MiniMap");
+            // _minimap.SetMinimapSprite(sprite);
             var attackSector = gameObject.GetComponent<AttackSectorLine>();
             var radius = _propertyConfig.GetBaseValue(PropertyTypeEnum.AttackRadius);
             var range = _propertyConfig.GetBaseValue(PropertyTypeEnum.AttackAngle);
@@ -988,16 +988,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcHandlePlayerDeadClient(float countdownTime)
         {
-            _playerAnimationCalculator.HandleAnimation(AnimationState.Dead);
+            _playerAnimationCalculator.HandleAnimation(AnimationState.Dead, forcePlay: true);
             var playerDamageDeathOverlay = _uiManager.GetUI<PlayerDamageDeathOverlay>();
             playerDamageDeathOverlay.PlayDeathEffect(countdownTime);
+            Debug.Log($"[RpcHandlePlayerDeadClient] {netId}===countdownTime ->{countdownTime}");
         }
 
         [ClientRpc]
         public void RpcHandlePlayerRespawnedClient()
         {
-            _playerAnimationCalculator.HandleAnimation(AnimationState.Idle);
+            _playerAnimationCalculator.HandleAnimation(AnimationState.Idle, forcePlay: true);
             var playerDamageDeathOverlay = _uiManager.GetUI<PlayerDamageDeathOverlay>();
+            Debug.Log($"[RpcHandlePlayerRespawnedClient] {netId}");
             playerDamageDeathOverlay.Clear();
         }
 
@@ -1459,41 +1461,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             _gameSyncManager.EnqueueCommand(commandJson);
         }
-
-        // private void Update()
-        // {
-        //     if (_localPlayerHandler)
-        //     {
-        //     }
-        //
-        // }
-        //
-        // private void TestNetworkCommandHeader()
-        // {
-        //     var header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Input,
-        //         CommandAuthority.Client);
-        //     Debug.Log($"TestNetworkCommandHeader -> {header.CommandType} -> {header.CommandId} ->{header.ConnectionId} {header.Timestamp} {header.Authority} {header.Tick}");
-        //     var data = MemoryPackSerializer.Serialize(header);
-        //     var originData = MemoryPackSerializer.Deserialize<NetworkCommandHeader>(data);
-        //     Debug.Log($"TestNetworkCommandHeader -> {originData.CommandType} -> {originData.CommandId} ->{originData.ConnectionId} {originData.Timestamp} {originData.Authority} {originData.Tick}");
-        // }
-        //
-        // private void TestInputAnimationStates()
-        // {
-        //     var inputCommand = new InputCommand();
-        //     var header = GameSyncManager.CreateNetworkCommandHeader(connectionToClient.connectionId, CommandType.Input,
-        //         CommandAuthority.Client);
-        //     var inputMovement = CompressedVector3.FromVector3(new Vector3(0,0,0.125555f));
-        //     inputCommand.Header = header;
-        //     inputCommand.InputMovement = inputMovement;
-        //     inputCommand.InputAnimationStates = AnimationState.None;
-        //     inputCommand.CommandAnimationState = AnimationState.Move;
-        //     Debug.Log($"TestInputAnimationStates -> {inputCommand.Header.CommandType} -> {inputCommand.Header.CommandId} ->{inputCommand.Header.ConnectionId} {inputCommand.Header.Timestamp} {inputCommand.Header.Authority} {inputCommand.Header.Tick}");
-        //     var data = NetworkCommandExtensions.SerializeCommand(inputCommand);
-        //     var originData = NetworkCommandExtensions.DeserializeCommand(data.Item1);
-        //     var headerData = originData.GetHeader();
-        //     Debug.Log($"TestInputAnimationStates -> {headerData.CommandType} -> {headerData.CommandId} ->{headerData.ConnectionId} {headerData.Timestamp} {headerData.Authority} {headerData.Tick}");
-        // }
         [ClientRpc]
         public void RpcSpawnSkillEffect(int skillConfigId, Vector3 position, AnimationState code)
         {
@@ -1508,13 +1475,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         }
 
         [ClientRpc]
-        public void RpcPlayAnimation(AnimationState animationState)
+        public void RpcPlayAnimation(AnimationState animationState, bool forcePlay)
         {
+            Debug.Log($"[PlayerComponentController] RpcPlayAnimation {animationState} {forcePlay}");
             if (animationState == AnimationState.Hit)
             {
                 _picker.IsTouching = false;
             }
-            _playerAnimationCalculator.HandleAnimation(animationState);
+            _playerAnimationCalculator.HandleAnimation(animationState, forcePlay: forcePlay);
             GameAudioManager.Instance.PlaySFX(AudioEffectType.Hurt, transform.position, transform);
         }
     }

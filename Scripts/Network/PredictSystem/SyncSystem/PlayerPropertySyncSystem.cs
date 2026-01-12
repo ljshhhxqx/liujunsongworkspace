@@ -485,8 +485,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 propertyItemAttackCommand.TargetId, ref playerState, propertyItemAttackCommand.Damage);
             var player = _playerInGameManager.GetPlayerComponent<PlayerComponentController>(playerId);
             player.RpcPlayEffect(ParticlesType.HitEffect);
+            var rb = player.GetComponent<Rigidbody>();
+            rb.velocity = new Vector3(0, rb.velocity.y, 0);
+            player.RpcPlayAnimation(AnimationState.Hit, true);
             
-            player.RpcPlayAnimation(AnimationState.Hit);
+            if (playerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue <= 0)
+            {
+                var deadManId = propertyItemAttackCommand.TargetId;
+                var deadTime = _jsonDataConfig.GameConfig.GetPlayerDeathTime((int)playerState.MemoryProperty[PropertyTypeEnum.Score].CurrentValue);
+                if (!_playerInGameManager.TryAddDeathPlayer(deadManId, deadTime, propertyItemAttackCommand.AttackerId, OnPlayerDeath, OnPlayerRespawn))
+                {
+                    Debug.LogError($"PlayerPropertySyncSystem: Failed to add death player {deadManId}");
+                }
+            }
             PropertyStates[playerId] = playerState;
             PropertyChange(playerId);
         }
@@ -1004,8 +1015,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 var playerNetId = _playerInGameManager.GetPlayerNetId(defenderPlayerIds[i]);
                 var playerConnection = GameSyncManager.GetPlayerConnection(defenderPlayerIds[i]);
+                var rb = playerConnection.GetComponent<Rigidbody>();
+                rb.velocity = new Vector3(0, rb.velocity.y, 0);
                 playerConnection.RpcPlayEffect(ParticlesType.HitEffect);
-                playerConnection.RpcPlayAnimation(AnimationState.Hit);
+                playerConnection.RpcPlayAnimation(AnimationState.Hit, true);
                 PropertyStates[defenderPlayerIds[i]] = defendersState[playerNetId];
                 PropertyChange(defenderPlayerIds[i]);
                 if (PropertyStates[defenderPlayerIds[i]] is PlayerPredictablePropertyState playerPropertyState &&
@@ -1013,7 +1026,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 {
                     var deadManId = _playerInGameManager.GetPlayerNetId(defenderPlayerIds[i]);
                     var deadTime = _jsonDataConfig.GameConfig.GetPlayerDeathTime((int)defendersState[playerNetId].MemoryProperty[PropertyTypeEnum.Score].CurrentValue);
-                    if (!_playerInGameManager.TryAddDeathPlayer(deadManId, deadTime, attacker, OnPlayerDeath, OnPlayerRespawn))
+                    if (!_playerInGameManager.TryAddDeathPlayer(deadManId, deadTime, attackerUid, OnPlayerDeath, OnPlayerRespawn))
                     {
                         Debug.LogError($"PlayerPropertySyncSystem: Failed to add death player {deadManId}");
                     }
@@ -1126,7 +1139,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             PropertyChange(attacker);
         }
 
-        private void OnPlayerDeath(uint playerId, int killerId, float countdownTime)
+        private void OnPlayerDeath(uint playerId, uint killerId, float countdownTime)
         {
             var playerConnection = _playerInGameManager.GetPlayerId(playerId);
             var playerController = GameSyncManager.GetPlayerConnection(playerConnection);
@@ -1139,6 +1152,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 DeadCountdownTime = countdownTime,
                 KillerId = killerId,
             });
+            var rb = playerController.GetComponent<Rigidbody>();
+            rb.velocity = new Vector3(0, rb.velocity.y, 0);
             var killerPlayer = GameSyncManager.GetPlayerConnection(killerId);
             PropertyStates[playerConnection] = playerState;
             PropertyChange(playerConnection);

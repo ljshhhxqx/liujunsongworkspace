@@ -798,41 +798,8 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   movementDuration: 5
-  carriages:
-  - gameObject: {fileID: 4504356552716656324}
-    localPosition: {x: 0, y: 0, z: 0}
-  - gameObject: {fileID: 2380645584607007554}
-    localPosition: {x: 0, y: 0, z: 0}
-  - gameObject: {fileID: 5854873447528668449}
-    localPosition: {x: 0, y: 0, z: 0}
-  - gameObject: {fileID: 5081534392745410935}
-    localPosition: {x: 0, y: 0, z: 0}
-  - gameObject: {fileID: 4626150018205930122}
-    localPosition: {x: 0, y: 0, z: 0}
-  - gameObject: {fileID: 5715944004636352140}
-    localPosition: {x: 0, y: 0, z: 0}
-  - gameObject: {fileID: 5715944004636352140}
-    localPosition: {x: 0, y: 0, z: 0}
-  - gameObject: {fileID: 7492031557897969188}
-    localPosition: {x: 0, y: 0, z: 0}
-  - gameObject: {fileID: 835440576231863686}
-    localPosition: {x: 0, y: 0, z: 0}
-  - gameObject: {fileID: 2172220836349772368}
-    localPosition: {x: 0, y: 0, z: 0}
+  carriages: []
   wheels: []
-  smokeConfigs:
-  - emissionPoint: {fileID: 5852879945043300118}
-    smokePrefab: {fileID: 0}
-    minEmissionRate: 3
-    maxEmissionRate: 10
-    smokeLifetime: 1.5
-    smokeSpeed: 4
-  - emissionPoint: {fileID: 7037601664023744177}
-    smokePrefab: {fileID: 0}
-    minEmissionRate: 3
-    maxEmissionRate: 10
-    smokeLifetime: 1.5
-    smokeSpeed: 4
   trainParts:
   - {fileID: 6599555745271577745}
   - {fileID: 8036306907477106707}

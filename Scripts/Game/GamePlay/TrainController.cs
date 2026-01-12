@@ -29,8 +29,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
         [Header("路径设置")]
         private Vector3 _origin = Vector3.zero;
         private Vector3 _target;
-        [SerializeField]
-        private float movementDuration = 5f;
+        private float _movementDuration;
     
         [Header("火车部件")]
         [SerializeField]
@@ -141,7 +140,12 @@ namespace HotUpdate.Scripts.Game.GamePlay
             {
                 return;
             }
-            Debug.Log("[TrainController] Start Game Train");
+            if (_trainSequence != null && _trainSequence.IsPlaying())
+            {
+                return;
+            }
+            _movementDuration = startEvent.MoveDuration;
+            Debug.Log($"[TrainController] Start Game Train {startEvent.TrainId} {startEvent.StartPosition} {startEvent.TargetPosition}");
             transform.localScale = Vector3.one;
             _origin = startEvent.StartPosition;
             _target = startEvent.TargetPosition;
@@ -177,7 +181,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
                 StartWheelRotation();
             });
         
-            _trainSequence.Append(transform.DOMove(_target, movementDuration)
+            _trainSequence.Append(transform.DOMove(_target, _movementDuration)
                 .SetEase(Ease.Linear)
                 .OnComplete(() => {
                     StopWheelRotation();
@@ -252,7 +256,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
                     float wheelCircumference = 2 * Mathf.PI * wheelConfig.radius;
                     float totalDistance = Vector3.Distance(_origin, _target);
                     float totalRotations = totalDistance / wheelCircumference;
-                    float rotationDuration = movementDuration / totalRotations;
+                    float rotationDuration = _movementDuration / totalRotations;
                 
                     // 确定旋转方向
                     Vector3 rotationAxis = Vector3.right;

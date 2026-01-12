@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using AOTScripts.Tool.ObjectPool;
 using DG.Tweening;
 using HotUpdate.Scripts.Collector;
+using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Static;
 using HotUpdate.Scripts.Tool.ReactiveProperty;
@@ -9,6 +10,7 @@ using UI.UIBase;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
 namespace HotUpdate.Scripts.Map
 {
@@ -25,12 +27,18 @@ namespace HotUpdate.Scripts.Map
         private readonly Dictionary<int, GameObject> _minimapItems = new Dictionary<int, GameObject>();
         private readonly Dictionary<int, Sequence> _minimapSequence = new Dictionary<int, Sequence>();
 
-        private void Start()
+        [Inject]
+        private void Init()
         {
             targetPrefab.gameObject.SetActive(false);
+            GameLoopDataModel.GameSceneName.Subscribe(sceneName =>
+            {
+                var sprite = UISpriteContainer.GetSprite($"{sceneName.ToString()}_MiniMap");
+                SetMinimapSprite(sprite);
+            }).AddTo(this);
         }
         
-        public void SetMinimapSprite(Sprite sprite)
+        private void SetMinimapSprite(Sprite sprite)
         {
             minimap.sprite = sprite;
         }

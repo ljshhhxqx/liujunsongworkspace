@@ -992,7 +992,7 @@ namespace AOTScripts.Data
         [MemoryPackOrder(0)] 
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public int KillerId;
+        public uint KillerId;
         [MemoryPackOrder(2)]
         public float DeadCountdownTime;
         public NetworkCommandHeader GetHeader() => Header;

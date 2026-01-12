@@ -2083,13 +2083,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   movementDuration: 5
-  carriages:
-  - gameObject: {fileID: 5384742045822100388}
-    localPosition: {x: 0, y: 0, z: 0}
-  - gameObject: {fileID: 7071190570418517633}
-    localPosition: {x: 0, y: 0, z: 0}
-  - gameObject: {fileID: 8922181979728436622}
-    localPosition: {x: 0, y: 0, z: 0}
+  carriages: []
   wheels:
   - wheelTransform: {fileID: 3671912705608494858}
     radius: 0
@@ -2130,19 +2124,6 @@ MonoBehaviour:
   - wheelTransform: {fileID: 4080691877834782531}
     radius: 0
     isReverse: 0
-  smokeConfigs:
-  - emissionPoint: {fileID: 5503130954948288018}
-    smokePrefab: {fileID: 1987620244256032554}
-    minEmissionRate: 5
-    maxEmissionRate: 10
-    smokeLifetime: 2
-    smokeSpeed: 3
-  - emissionPoint: {fileID: 8899131594325640933}
-    smokePrefab: {fileID: 1987620244256032554}
-    minEmissionRate: 2
-    maxEmissionRate: 5
-    smokeLifetime: 3
-    smokeSpeed: 1
   trainParts:
   - {fileID: 4306390539220375940}
   - {fileID: 4028229663736695869}

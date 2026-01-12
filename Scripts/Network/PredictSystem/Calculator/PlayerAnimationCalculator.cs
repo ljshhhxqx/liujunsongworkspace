@@ -193,12 +193,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return animationInfo.isClearVelocity;
         }
         
-        public void HandleAnimation(AnimationState newState, int index = 0)
+        public void HandleAnimation(AnimationState newState, int index = 0, bool forcePlay = false)
         {
             // 验证是否可以播放
-            if (!_currentAnimationCanPlay)
+            if (!forcePlay)
             {
-                return;
+                if (!_currentAnimationCanPlay)
+                {
+                    return;
+                }
             }
             
             // 根据动画状态执行相应的动画
@@ -516,6 +519,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
     public interface IAnimationPlayer
     {
-        void RpcPlayAnimation(AnimationState animationState);
+        void RpcPlayAnimation(AnimationState animationState, bool forcePlay = false);
     }
 }

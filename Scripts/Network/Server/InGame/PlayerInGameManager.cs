@@ -848,12 +848,13 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         }
 
         [Server]
-        public bool TryAddDeathPlayer(uint playerNetId, float countdown, int killerPlayerId, Action<uint, int, float> playerDeathCallback, Action<uint> playerBornCallback)
+        public bool TryAddDeathPlayer(uint playerNetId, float countdown, uint killerPlayerId, Action<uint, uint, float> playerDeathCallback, Action<uint> playerBornCallback)
         {
             if (!_playerDeathCountdowns.TryAdd(playerNetId, countdown))
             {
                 return false;
             }
+            Debug.Log($"[PlayerInGameManager] Add death player {playerNetId}");
             playerDeathCallback?.Invoke(playerNetId,killerPlayerId, countdown);
             _playerBornCallbacks.Add(playerNetId, playerBornCallback);
             return true;

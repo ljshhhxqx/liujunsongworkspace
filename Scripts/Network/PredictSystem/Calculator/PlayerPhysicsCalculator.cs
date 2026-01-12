@@ -28,8 +28,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         private float _verticalSpeed;
         private bool _isMoving;
         public float GroundDistance { get; private set; }
-        public float StepHeight = 0.35f;
-        public float StepCheckDistance = 0.3f;
+        public float StepHeight = 0.5f;
+        public float StepCheckDistance = 0.35f;
 
         
         public float CurrentSpeed

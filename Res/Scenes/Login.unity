@@ -1423,6 +1423,7 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects:
   - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 981738843}
   - {fileID: 1083092506}
 --- !u!4 &2025638714

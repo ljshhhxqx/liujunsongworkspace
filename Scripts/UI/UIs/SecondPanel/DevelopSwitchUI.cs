@@ -36,8 +36,8 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             if (_gameConfigData.developKeyValue == null)
             {
                 var gameConfig = _configProvider.GetConfig<JsonDataConfig>();
-                
-                _isDevelop = PlayerPrefs.GetInt(gameConfig.GameConfig.developKeyValue) == 1;
+                var value = PlayerPrefs.GetInt(gameConfig.GameConfig.developKey);
+                _isDevelop = value == 1;
             }
             if (_isDevelop)
             {

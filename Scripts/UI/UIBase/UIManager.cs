@@ -12,6 +12,7 @@ using UI.UIs.Popup;
 using UI.UIs.SecondPanel;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 using Object = UnityEngine.Object;
 
 namespace HotUpdate.Scripts.UI.UIBase
@@ -20,7 +21,7 @@ namespace HotUpdate.Scripts.UI.UIBase
     {
         private List<ScreenUIBase> _uIPrefabs = new List<ScreenUIBase>();
         private UICanvasRoot[] _roots;
-        private IObjectInjector _injector;
+        private IObjectResolver _resolver;
         private readonly Dictionary<UIType, ScreenUIBase> _uiDict = new Dictionary<UIType, ScreenUIBase>();
         public ScreenUIBase CurrentActiveScreenUI1 { get; private set; }
 
@@ -31,9 +32,9 @@ namespace HotUpdate.Scripts.UI.UIBase
         public event Action<bool> IsUnlockMouse;
 
         [Inject]
-        private void Init(IObjectInjector injector)
+        private void Init(IObjectResolver resolver)
         {
-            _injector = injector;
+            _resolver = resolver;
             _roots = Object.FindObjectsOfType<UICanvasRoot>();
         }
 
@@ -210,7 +211,7 @@ namespace HotUpdate.Scripts.UI.UIBase
                     Debug.Log($"UI对象{uIType}没有找到Canvas");
                     return null;
                 }
-                var go = Object.Instantiate(ui.gameObject, root);
+                var go = _resolver.Instantiate(ui.gameObject, root);
                 ui = go.GetComponent<ScreenUIBase>();
                 if (!ui)
                 {
@@ -232,9 +233,7 @@ namespace HotUpdate.Scripts.UI.UIBase
                 if (ui.TryGetComponent<BlockUIComponent>(out var resourceComponent))
                 {
                     resourceComponent.SetUIType(uIType, ui.CanvasType);
-                    _injector.Inject(resourceComponent);
                 }
-                _injector.Inject(ui);
                 _uiDict.TryAdd(uIType, ui);
                 onShow?.Invoke(ui);
                 if (ui is IUnlockMouse)
@@ -284,7 +283,7 @@ namespace HotUpdate.Scripts.UI.UIBase
                     }
                     return null;
                 }
-                var go = Object.Instantiate(ui.gameObject, root);
+                var go = _resolver.Instantiate(ui.gameObject, root);
                 ui = go.GetComponent<T>();
                 if (!ui)
                 {
@@ -306,9 +305,7 @@ namespace HotUpdate.Scripts.UI.UIBase
                 if (ui.TryGetComponent<BlockUIComponent>(out var resourceComponent))
                 {
                     resourceComponent.SetUIType(uIType, ui.CanvasType);
-                    _injector.Inject(resourceComponent);
                 }
-                _injector.Inject(ui);
                 _uiDict.TryAdd(uIType, ui);
                 onShow?.Invoke(ui);
                 if (ui is IUnlockMouse)
