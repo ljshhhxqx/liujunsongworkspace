@@ -8,6 +8,7 @@ using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using Mirror;
 using Sirenix.OdinInspector;
 using UniRx;

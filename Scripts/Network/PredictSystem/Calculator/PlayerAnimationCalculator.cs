@@ -226,7 +226,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     _animationComponent.Animator.CrossFadeInFixedTime(attackName, 0.1f);
                     break;
                 case AnimationState.Hit:
-                    IsPlayingSpecialAction = true;
+                    if (IsSpecialAction)
+                    {
+                        ret
+                    }
                     _animationComponent.Animator.CrossFade(GetAnimationName(AnimationState.Hit), 0.01f);
                     break;
                 case AnimationState.Dead:

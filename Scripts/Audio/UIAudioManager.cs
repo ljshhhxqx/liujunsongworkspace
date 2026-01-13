@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using UnityEngine;
 using VContainer;
 using Object = UnityEngine.Object;

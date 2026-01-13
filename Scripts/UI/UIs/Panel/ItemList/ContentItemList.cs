@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Network.UI;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using UnityEngine;
 using UnityEngine.UI;
 

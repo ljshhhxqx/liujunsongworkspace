@@ -30,14 +30,19 @@ namespace HotUpdate.Scripts.Game.Map
             id = staticId;
         }
 
-        [Inject]
-        public void Init()
+        public void Start()
         {
             Position = transform.position;
             var goCollider = GetComponent<Collider>();
             ColliderConfig = GamePhysicsSystem.CreateColliderConfig(goCollider);
-            interactableCollider ??= goCollider;
-            interactableCollider.enabled = false;
+            if (!interactableCollider)
+            {
+                interactableCollider = goCollider;
+            }
+            else
+            {
+                interactableCollider.enabled = false;
+            }
         }
     }
 }

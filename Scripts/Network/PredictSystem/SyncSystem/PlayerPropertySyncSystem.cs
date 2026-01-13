@@ -441,14 +441,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 case ObjectType.Train:
                     var trainScore = _collectData.touchTrainGainScore.GetRandomValue();
+                    Debug.Log($"PlayerPropertySyncSystem: {header.ConnectionId} gain {trainScore} score by touch train");
                     playerState.MemoryProperty[PropertyTypeEnum.Score] = playerState.MemoryProperty[PropertyTypeEnum.Score].UpdateCurrentValue(trainScore);
                     break;
                 case ObjectType.Rocket:
                     var rockerScore = _collectData.touchRocketGainScore.GetRandomValue();
+                    Debug.Log($"PlayerPropertySyncSystem: {header.ConnectionId} gain {rockerScore} score by touch rocket");
                     playerState.MemoryProperty[PropertyTypeEnum.Score] = playerState.MemoryProperty[PropertyTypeEnum.Score].UpdateCurrentValue(rockerScore);
                     break;
                 case ObjectType.Well:
                     var hp = _collectData.touchWellRecoverHp.GetRandomValue();
+                    Debug.Log($"PlayerPropertySyncSystem: {header.ConnectionId} recover {hp} hp by touch well");
                     playerState.MemoryProperty[PropertyTypeEnum.Health] = playerState.MemoryProperty[PropertyTypeEnum.Health].UpdateCurrentValue(hp);
                     break;
                 default:
@@ -487,7 +490,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             player.RpcPlayEffect(ParticlesType.HitEffect);
             var rb = player.GetComponent<Rigidbody>();
             rb.velocity = new Vector3(0, rb.velocity.y, 0);
-            player.RpcPlayAnimation(AnimationState.Hit, true);
+            player.RpcPlayAnimation(AnimationState.Hit, false);
             
             if (playerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue <= 0)
             {
@@ -606,7 +609,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var recoverMpRatio = isPlayerInHisBase ? _gameConfigData.gameBaseData.playerBaseManaRecoverRatioPerSec : -_gameConfigData.gameBaseData.playerBaseManaRecoverRatioPerSec;
             playerState.MemoryProperty[PropertyTypeEnum.Health] = playerState.MemoryProperty[PropertyTypeEnum.Health].UpdateCurrentValueByRatio(recoverHpRatio);
             playerState.MemoryProperty[PropertyTypeEnum.Strength] = playerState.MemoryProperty[PropertyTypeEnum.Strength].UpdateCurrentValueByRatio(recoverMpRatio);
-            
+
+            if (playerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue <= 0)
+            {
+                var deadManId = _playerInGameManager.GetPlayerNetId(headerConnectionId);
+                var deadTime = _jsonDataConfig.GameConfig.GetPlayerDeathTime((int)playerState.MemoryProperty[PropertyTypeEnum.Score].CurrentValue);
+                if (!_playerInGameManager.TryAddDeathPlayer(deadManId, deadTime, 0, OnPlayerDeath, OnPlayerRespawn))
+                {
+                    Debug.LogError($"PlayerPropertySyncSystem: Failed to add death player {deadManId}");
+                }
+            }
             PropertyStates[headerConnectionId] = playerState;
             PropertyChange(headerConnectionId);
         }
@@ -1018,7 +1030,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 var rb = playerConnection.GetComponent<Rigidbody>();
                 rb.velocity = new Vector3(0, rb.velocity.y, 0);
                 playerConnection.RpcPlayEffect(ParticlesType.HitEffect);
-                playerConnection.RpcPlayAnimation(AnimationState.Hit, true);
+                playerConnection.RpcPlayAnimation(AnimationState.Hit, false);
                 PropertyStates[defenderPlayerIds[i]] = defendersState[playerNetId];
                 PropertyChange(defenderPlayerIds[i]);
                 if (PropertyStates[defenderPlayerIds[i]] is PlayerPredictablePropertyState playerPropertyState &&

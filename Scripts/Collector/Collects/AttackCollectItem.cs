@@ -7,6 +7,8 @@ using HotUpdate.Scripts.Collector.Effect;
 using HotUpdate.Scripts.Effect;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.State;
 using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
@@ -28,6 +30,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         private bool _isAttacking;
         private KeyframeCooldown _keyframeCooldown;
         private CompositeDisposable _disposable = new CompositeDisposable();
+        private GameSyncManager _gameSyncManager;
 
         private void FixedUpdate()
         {
@@ -66,6 +69,10 @@ namespace HotUpdate.Scripts.Collector.Collects
             }
             if (target.Type == ObjectType.Player)
             {
+                if (PlayerInGameManager.Instance.IsPlayerDead(target.NetId, out var countdown))
+                {
+                    return false;
+                }
                 //Attack(_direction, target.NetId);
                 if (!_isAttacking)
                 {

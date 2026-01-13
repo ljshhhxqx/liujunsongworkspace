@@ -198,7 +198,7 @@ namespace HotUpdate.Scripts.Collector
             {
                 IsTouching = true;
                 var time = _collectData.GetTouchTime(collect.Type);
-                _playerPropertiesOverlay.StartProgress($"收集{collect.Type}中... + {time}秒 ", time, () => OnComplete(collect) , GetIsTouching);
+                _playerPropertiesOverlay.StartProgress($"收集{collect.Type}中...需要{time}秒 ", time, () => OnComplete(collect) , GetIsTouching);
             }
         }
 

@@ -5,6 +5,7 @@ using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Static;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Tool.ReactiveProperty;
 using UI.UIBase;
 using UniRx;
@@ -78,7 +79,7 @@ namespace HotUpdate.Scripts.Map
                 {
                     return;
                 }
-                var item = GameObjectPoolManger.Instance.GetObject(targetPrefab.gameObject, Vector3.zero, Quaternion.identity, transform);
+                var item = GameObjectPoolManger.Instance.GetObject(targetPrefab.gameObject, Vector3.zero, Quaternion.identity, map);
                 SetMinimapItems(item, y);
                 _minimapItems.Add(x, item);
             }).AddTo(this);

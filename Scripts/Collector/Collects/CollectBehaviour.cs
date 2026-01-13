@@ -28,6 +28,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         protected GameEventManager GameEventManager;
         protected uint NetId;
         [SyncVar] protected int CurrentControlSkillType;
+        protected IObjectResolver ObjectResolver;
         protected override bool AutoInjectLocalPlayer => false;
         public SubjectedStateType CurrentSubjectedStateType => (SubjectedStateType)CurrentControlSkillType;
 
@@ -42,7 +43,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             && !CurrentSubjectedStateType.HasAnyState(SubjectedStateType.IsStoned) && !CurrentSubjectedStateType.HasAnyState(SubjectedStateType.IsBlowup) && !CurrentSubjectedStateType.HasAnyState(SubjectedStateType.IsBlinded);
         
         [Inject]
-        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)
+        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager, IObjectResolver objectResolver)
         {
             MaterialTransparencyControllers = GetComponentsInChildren<MaterialTransparencyController>();
             CollectObjectController = GetComponent<CollectObjectController>();
@@ -53,7 +54,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             InteractSystem.SceneItemInfoChanged += OnSceneItemInfoChanged;
             InteractSystem.ItemControlSkillChanged += OnItemControlSkillChanged;
             GameEventManager = gameEventManager;
-            
+            ObjectResolver = objectResolver;
             OnInitialize();
         }
 

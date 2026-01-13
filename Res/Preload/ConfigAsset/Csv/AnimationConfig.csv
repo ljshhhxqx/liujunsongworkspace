@@ -10,7 +10,7 @@ Falling,0,0,0,Continuous,False,Animation,["Falling"],[],False,Normal,None,False,
 Landed,0,0,0,Single,True,Animation,["Landed"],[],False,Normal,None,False,1,0,Normal,False,False
 Attack,10,2,1,Combo,True,Interaction,"["Attack1","Attack2","Attack3"]","[{"triggerTime":0.56,"eventType":"OnAttack","resetCooldown":true,"resetCooldownWindowTime":1.0,"tolerance":0.04,"serverValidate":true},{"triggerTime":0.57,"eventType":"OnAttack","resetCooldown":true,"resetCooldownWindowTime":1.0,"tolerance":0.04,"serverValidate":true},{"triggerTime":0.35,"eventType":"OnAttack","resetCooldown":true,"resetCooldownWindowTime":1.0,"tolerance":0.04,"serverValidate":true}]",True,KeyFrameAndCombo,None,True,1,Attack,Rare,False,False
 Dead,0,10,999,Single,False,Interaction,["Death"],[],True,Normal,None,False,1,0,Normal,False,False
-Hit,0,0,2,Single,True,Interaction,["Hit"],[],True,Normal,None,False,1,0,Normal,False,False
+Hit,0,0,1,Single,True,Interaction,["Hit"],[],True,Normal,None,False,1,0,Normal,False,False
 Collect,0,0,1,Single,True,Interaction,["Collect"],[],False,Normal,None,False,1,0,Normal,False,False
 SkillE,70,15,1,Single,True,Interaction,["Skill"],"[{"triggerTime":0.75,"eventType":"OnSkillCastE","resetCooldown":false,"resetCooldownWindowTime":0.0,"tolerance":0.1,"serverValidate":true}]",True,KeyFrame,None,True,1.5,SkillE,Rare,True,True
 SkillQ,70,15,1,Single,True,Interaction,["Skill"],"[{"triggerTime":1.25,"eventType":"OnSkillCastQ","resetCooldown":false,"resetCooldownWindowTime":0.0,"tolerance":0.1,"serverValidate":true}]",True,KeyFrame,None,True,1,SkillQ,Legendary,True,True

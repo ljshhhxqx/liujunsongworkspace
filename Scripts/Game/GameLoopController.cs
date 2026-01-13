@@ -263,14 +263,12 @@ namespace HotUpdate.Scripts.Game
                 case MapType.Rocket:
                     var rocketPosition = _mapElementData.rocketPositions.RandomSelect();
                     var duration = _mapElementData.durationRange.GetRandomValue();
-                    var index = Random.Range(0, rocketPosition.vectors.Length);
-                    _gameEventManager.Publish(new StartGameTrainEvent(rocketPosition.vectors[index], rocketPosition.vectors[rocketPosition.vectors.Length - 1 - index], rocketPosition.rotation, duration, ++_interactSystem.currentTrainId));
+                    _gameEventManager.Publish(new StartGameTrainEvent(rocketPosition.vectors[0], rocketPosition.vectors[^1], rocketPosition.rotation, duration, ++_interactSystem.currentTrainId));
                     break;
                 case MapType.WestWild:
                     rocketPosition = _mapElementData.trainPositions.RandomSelect();
                     duration = _mapElementData.durationRange.GetRandomValue();
-                    index = Random.Range(0, rocketPosition.vectors.Length);
-                    _gameEventManager.Publish(new StartGameTrainEvent(rocketPosition.vectors[index], rocketPosition.vectors[rocketPosition.vectors.Length - 1 - index], rocketPosition.rotation,duration, ++_interactSystem.currentTrainId));
+                    _gameEventManager.Publish(new StartGameTrainEvent(rocketPosition.vectors[0], rocketPosition.vectors[^1], rocketPosition.rotation,duration, ++_interactSystem.currentTrainId));
                     break;
             }
             

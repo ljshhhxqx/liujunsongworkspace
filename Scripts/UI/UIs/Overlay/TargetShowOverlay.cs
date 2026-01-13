@@ -8,6 +8,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
 using Mirror;
 using TMPro;

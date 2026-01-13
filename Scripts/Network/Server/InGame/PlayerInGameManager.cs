@@ -284,6 +284,16 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 }
             }
         }
+
+        public bool IsPlayerDead(uint playerId, out float deathCountdown)
+        {
+            if (_playerDeathCountdowns.TryGetValue(playerId, out deathCountdown))
+            {
+                return deathCountdown > 0;
+            }
+            return false;
+        }
+        
         private void UpdatePlayerGrid(uint id, Vector3 playerPosition)
         {
             var newGrid = MapBoundDefiner.Instance.GetGridPosition(playerPosition);

@@ -266,7 +266,7 @@ MonoBehaviour:
   - state: 1024
     cost: 0
     cooldown: 0
-    priority: 2
+    priority: 1
     animationType: 1
     canBeInterrupted: 1
     actionType: 2

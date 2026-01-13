@@ -31,8 +31,8 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             progressImage.fillAmount = 01f;
             _progressTween?.Kill();
             _progressTween = DOTween.Sequence();
-            _progressTween.Append(progressImage.DOFillAmount(0, countdownTime));
-            _progressTween.Join(progressText.DOFade(0f, 0.5f).SetLoops((int) (countdownTime / 0.5f), LoopType.Yoyo));
+            _progressTween.Append(progressImage.DOFillAmount(0, countdownTime).SetEase(Ease.Linear));
+            _progressTween.Join(progressText.DOFade(0f, 0.5f).SetLoops((int) (countdownTime / 0.5f), LoopType.Yoyo).SetEase(Ease.Linear));
             _progressTween.OnUpdate(() =>
             {
                 if (condition != null && !condition.Invoke())

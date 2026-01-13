@@ -4,13 +4,13 @@ using Mirror;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace AOTScripts.Tool.ObjectPool
+namespace HotUpdate.Scripts.Tool.ObjectPool
 {
     public class GameObjectPoolManger : Singleton<GameObjectPoolManger>
     {
         private readonly Dictionary<int, Queue<GameObject>> _poolDictionary = new Dictionary<int, Queue<GameObject>>();
         
-        private Queue<GameObject> CreateOrGetPool(GameObject prefab, int capacity = 10, int assetId = 0)
+        private Queue<GameObject> CreateOrGetPool(GameObject prefab, int capacity = 5, int assetId = 0)
         {
             int key = assetId != 0 ? assetId : prefab.GetInstanceID();
 

@@ -755,7 +755,7 @@ GameObject:
   - component: {fileID: 174435944}
   m_Layer: 7
   m_Name: GameObject (1)
-  m_TagString: Wall
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -1599,7 +1599,6 @@ GameObject:
   - component: {fileID: 390795010}
   - component: {fileID: 390795013}
   - component: {fileID: 390795012}
-  - component: {fileID: 390795011}
   - component: {fileID: 390795014}
   m_Layer: 7
   m_Name: stone large gray blue 6 (5)
@@ -1624,27 +1623,6 @@ Transform:
   - {fileID: 488636994}
   m_Father: {fileID: 8224007617301933329}
   m_LocalEulerAnglesHint: {x: 3.882, y: -183.289, z: -2.798}
---- !u!65 &390795011
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 390795009}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 11.534336, y: 7.9337077, z: 12.719223}
-  m_Center: {x: -0.0000026226044, y: 3.9668539, z: 0}
 --- !u!23 &390795012
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1714,7 +1692,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -4338604023145711183, guid: 04d24b59572e39047986fb6c7870e9f3, type: 3}
 --- !u!1001 &398951602
@@ -2771,7 +2749,6 @@ GameObject:
   - component: {fileID: 657216487}
   - component: {fileID: 657216490}
   - component: {fileID: 657216489}
-  - component: {fileID: 657216488}
   - component: {fileID: 657216491}
   m_Layer: 7
   m_Name: stone large gray blue 6 (3)
@@ -2796,27 +2773,6 @@ Transform:
   - {fileID: 1242515886}
   m_Father: {fileID: 8224007617301933329}
   m_LocalEulerAnglesHint: {x: -6.171, y: -164.778, z: -1.448}
---- !u!65 &657216488
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 657216486}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 11.534336, y: 7.9337077, z: 12.719223}
-  m_Center: {x: -0.0000026226044, y: 3.9668539, z: 0}
 --- !u!23 &657216489
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2886,7 +2842,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -4338604023145711183, guid: 04d24b59572e39047986fb6c7870e9f3, type: 3}
 --- !u!1 &669178439
@@ -3788,7 +3744,6 @@ GameObject:
   - component: {fileID: 857918058}
   - component: {fileID: 857918061}
   - component: {fileID: 857918060}
-  - component: {fileID: 857918059}
   - component: {fileID: 857918062}
   m_Layer: 7
   m_Name: stone large gray blue 6 (9)
@@ -3813,27 +3768,6 @@ Transform:
   - {fileID: 301913868}
   m_Father: {fileID: 8224007617301933329}
   m_LocalEulerAnglesHint: {x: -3.108, y: -164.855, z: -1.441}
---- !u!65 &857918059
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 857918057}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 11.534336, y: 7.9337077, z: 12.719223}
-  m_Center: {x: -0.0000026226044, y: 3.9668539, z: 0}
 --- !u!23 &857918060
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3903,7 +3837,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -4338604023145711183, guid: 04d24b59572e39047986fb6c7870e9f3, type: 3}
 --- !u!1001 &886677361
@@ -4089,7 +4023,6 @@ GameObject:
   - component: {fileID: 907539676}
   - component: {fileID: 907539680}
   - component: {fileID: 907539679}
-  - component: {fileID: 907539678}
   - component: {fileID: 907539677}
   m_Layer: 7
   m_Name: stone large gray blue 6 (8)
@@ -4133,30 +4066,9 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -4338604023145711183, guid: 04d24b59572e39047986fb6c7870e9f3, type: 3}
---- !u!65 &907539678
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 907539675}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 11.534336, y: 7.9337077, z: 12.719223}
-  m_Center: {x: -0.0000026226044, y: 3.9668539, z: 0}
 --- !u!23 &907539679
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4383,7 +4295,7 @@ GameObject:
   - component: {fileID: 994362603}
   m_Layer: 7
   m_Name: GameObject (3)
-  m_TagString: Wall
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -4427,7 +4339,6 @@ GameObject:
   - component: {fileID: 1001776639}
   - component: {fileID: 1001776642}
   - component: {fileID: 1001776641}
-  - component: {fileID: 1001776640}
   - component: {fileID: 1001776643}
   m_Layer: 7
   m_Name: stone large gray blue 6 (2)
@@ -4452,27 +4363,6 @@ Transform:
   - {fileID: 568282800}
   m_Father: {fileID: 8224007617301933329}
   m_LocalEulerAnglesHint: {x: 0, y: -224.501, z: 0}
---- !u!65 &1001776640
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1001776638}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 11.534336, y: 7.9337077, z: 12.719223}
-  m_Center: {x: -0.0000026226044, y: 3.9668539, z: 0}
 --- !u!23 &1001776641
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4542,7 +4432,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -4338604023145711183, guid: 04d24b59572e39047986fb6c7870e9f3, type: 3}
 --- !u!1001 &1134160847
@@ -4935,7 +4825,6 @@ GameObject:
   - component: {fileID: 1175007902}
   - component: {fileID: 1175007905}
   - component: {fileID: 1175007904}
-  - component: {fileID: 1175007903}
   - component: {fileID: 1175007906}
   m_Layer: 7
   m_Name: stone large gray blue 6 (7)
@@ -4960,27 +4849,6 @@ Transform:
   - {fileID: 1519658004}
   m_Father: {fileID: 8224007617301933329}
   m_LocalEulerAnglesHint: {x: 3.882, y: -183.289, z: -2.798}
---- !u!65 &1175007903
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1175007901}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 11.534336, y: 7.9337077, z: 12.719223}
-  m_Center: {x: -0.0000026226044, y: 3.9668539, z: 0}
 --- !u!23 &1175007904
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5050,7 +4918,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -4338604023145711183, guid: 04d24b59572e39047986fb6c7870e9f3, type: 3}
 --- !u!1 &1217203640
@@ -5701,7 +5569,6 @@ GameObject:
   - component: {fileID: 1314734620}
   - component: {fileID: 1314734623}
   - component: {fileID: 1314734622}
-  - component: {fileID: 1314734621}
   - component: {fileID: 1314734624}
   m_Layer: 7
   m_Name: stone large gray blue 6 (4)
@@ -5726,27 +5593,6 @@ Transform:
   - {fileID: 645223659}
   m_Father: {fileID: 8224007617301933329}
   m_LocalEulerAnglesHint: {x: 0, y: -235.22699, z: 0}
---- !u!65 &1314734621
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1314734619}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 11.534336, y: 7.9337077, z: 12.719223}
-  m_Center: {x: -0.0000026226044, y: 3.9668539, z: 0}
 --- !u!23 &1314734622
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5816,7 +5662,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -4338604023145711183, guid: 04d24b59572e39047986fb6c7870e9f3, type: 3}
 --- !u!1 &1316637954
@@ -5960,7 +5806,7 @@ GameObject:
   - component: {fileID: 1362837461}
   m_Layer: 7
   m_Name: GameObject
-  m_TagString: Wall
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -6211,7 +6057,6 @@ GameObject:
   - component: {fileID: 1382051436}
   - component: {fileID: 1382051439}
   - component: {fileID: 1382051438}
-  - component: {fileID: 1382051437}
   - component: {fileID: 1382051440}
   m_Layer: 7
   m_Name: stone large gray blue 6 (11)
@@ -6236,27 +6081,6 @@ Transform:
   - {fileID: 1718859313}
   m_Father: {fileID: 8224007617301933329}
   m_LocalEulerAnglesHint: {x: 0, y: -14.337, z: 0}
---- !u!65 &1382051437
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1382051435}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 11.534336, y: 7.9337077, z: 12.719223}
-  m_Center: {x: -0.0000026226044, y: 3.9668539, z: 0}
 --- !u!23 &1382051438
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -6326,7 +6150,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -4338604023145711183, guid: 04d24b59572e39047986fb6c7870e9f3, type: 3}
 --- !u!1001 &1401609502
@@ -6512,7 +6336,6 @@ GameObject:
   - component: {fileID: 1439302549}
   - component: {fileID: 1439302552}
   - component: {fileID: 1439302551}
-  - component: {fileID: 1439302550}
   - component: {fileID: 1439302553}
   m_Layer: 7
   m_Name: stone large gray blue 3 (1)
@@ -6537,27 +6360,6 @@ Transform:
   - {fileID: 1217203641}
   m_Father: {fileID: 8224007617301933329}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &1439302550
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1439302548}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 5.5838127, y: 3.2789657, z: 6.212946}
-  m_Center: {x: -0.000010728836, y: 1.6394829, z: -0.00000011920929}
 --- !u!23 &1439302551
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -6627,7 +6429,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 7717472857734826641, guid: 8d157510e1265fa44b168f6e4cc26ff0, type: 3}
 --- !u!1001 &1465058172
@@ -7165,7 +6967,6 @@ GameObject:
   - component: {fileID: 1517919761}
   - component: {fileID: 1517919764}
   - component: {fileID: 1517919763}
-  - component: {fileID: 1517919762}
   - component: {fileID: 1517919765}
   m_Layer: 7
   m_Name: stone large gray blue 4 (1)
@@ -7190,27 +6991,6 @@ Transform:
   - {fileID: 1263450666}
   m_Father: {fileID: 8224007617301933329}
   m_LocalEulerAnglesHint: {x: 0, y: -22.397, z: 0}
---- !u!65 &1517919762
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1517919760}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 12.234881, y: 6.883957, z: 11.367607}
-  m_Center: {x: 0.00000047683716, y: 3.4419785, z: 0}
 --- !u!23 &1517919763
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -7280,7 +7060,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -204705267960742803, guid: d1002d9c0cbe2ae46b3a7f87ccd4e883, type: 3}
 --- !u!1 &1519658003
@@ -7449,7 +7229,6 @@ GameObject:
   - component: {fileID: 1594137114}
   - component: {fileID: 1594137117}
   - component: {fileID: 1594137116}
-  - component: {fileID: 1594137115}
   - component: {fileID: 1594137118}
   m_Layer: 7
   m_Name: stone large gray blue 5 (1)
@@ -7474,27 +7253,6 @@ Transform:
   - {fileID: 834684996}
   m_Father: {fileID: 8224007617301933329}
   m_LocalEulerAnglesHint: {x: 0, y: -45.453, z: 0}
---- !u!65 &1594137115
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1594137113}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 14.74395, y: 9.216973, z: 10.75362}
-  m_Center: {x: 0.00000166893, y: 4.6084867, z: 0}
 --- !u!23 &1594137116
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -7564,7 +7322,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -8722806120838145497, guid: 516da8ee5e89d5f4aab6d3271b656b43, type: 3}
 --- !u!1001 &1681127878
@@ -8393,7 +8151,7 @@ GameObject:
   - component: {fileID: 1888220022}
   m_Layer: 7
   m_Name: GameObject (2)
-  m_TagString: Wall
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -9362,7 +9120,6 @@ GameObject:
   - component: {fileID: 577561421851912654}
   - component: {fileID: 4588097752549615211}
   - component: {fileID: 1749865957568549537}
-  - component: {fileID: 8780653514038261889}
   - component: {fileID: 8780653514038261890}
   m_Layer: 7
   m_Name: stone large gray blue 3
@@ -9392,27 +9149,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3.6089363, y: 4.3916783, z: 3.7995903}
   m_Center: {x: 0.0000044107437, y: 2.1958392, z: 0}
---- !u!65 &377967159533646917
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2803111335115091099}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 11.534336, y: 7.9337077, z: 12.719223}
-  m_Center: {x: -0.0000026226044, y: 3.9668539, z: 0}
 --- !u!23 &491456078968524383
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -9926,27 +9662,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
   m_IsActive: 1
---- !u!65 &2278713073450815714
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5395724681642293852}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 14.74395, y: 9.216973, z: 10.75362}
-  m_Center: {x: 0.00000166893, y: 4.6084867, z: 0}
 --- !u!65 &2323677243433705786
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10063,7 +9778,6 @@ GameObject:
   - component: {fileID: 3291416941299217953}
   - component: {fileID: 1874251511317969284}
   - component: {fileID: 4460352091277774158}
-  - component: {fileID: 377967159533646917}
   - component: {fileID: 4460352091277774159}
   m_Layer: 7
   m_Name: stone large gray blue 6 (1)
@@ -10123,7 +9837,6 @@ GameObject:
   - component: {fileID: 2471974612493389219}
   - component: {fileID: 1576801127154631174}
   - component: {fileID: 3604316818143721164}
-  - component: {fileID: 3680329533839592471}
   - component: {fileID: 3680329533839592472}
   m_Layer: 7
   m_Name: stone large gray blue 4
@@ -10353,27 +10066,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &3680329533839592471
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2956023252444747545}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 12.234881, y: 6.883957, z: 11.367607}
-  m_Center: {x: 0.00000047683716, y: 3.4419785, z: 0}
 --- !u!64 &3680329533839592472
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -10393,7 +10085,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -204705267960742803, guid: d1002d9c0cbe2ae46b3a7f87ccd4e883, type: 3}
 --- !u!23 &3720236560187914596
@@ -10615,7 +10307,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -4338604023145711183, guid: 04d24b59572e39047986fb6c7870e9f3, type: 3}
 --- !u!33 &4588097752549615211
@@ -10825,7 +10517,6 @@ GameObject:
   - component: {fileID: 4731778724300120294}
   - component: {fileID: 8504340065406152515}
   - component: {fileID: 5900150311489051529}
-  - component: {fileID: 2278713073450815714}
   - component: {fileID: 8504340065406152516}
   m_Layer: 7
   m_Name: stone large gray blue 5
@@ -12269,7 +11960,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -8722806120838145497, guid: 516da8ee5e89d5f4aab6d3271b656b43, type: 3}
 --- !u!33 &8596502480059152939
@@ -12403,27 +12094,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.7118016, y: 0.86043525, z: 0.77826416}
   m_Center: {x: -0.0000012516975, y: 0.43021768, z: 0.000000074505806}
---- !u!65 &8780653514038261889
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 236502344152626036}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 5.5838127, y: 3.2789657, z: 6.212946}
-  m_Center: {x: -0.000010728836, y: 1.6394829, z: -0.00000011920929}
 --- !u!64 &8780653514038261890
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -12443,7 +12113,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 7717472857734826641, guid: 8d157510e1265fa44b168f6e4cc26ff0, type: 3}
 --- !u!4 &8818322411750465362
