@@ -437,16 +437,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var header = playerTouchObjectCommand.GetHeader();
             var playerState = GetState<PlayerPredictablePropertyState>(header.ConnectionId);
+            var player = _playerInGameManager.GetPlayerComponent<PlayerComponentController>(header.ConnectionId);
+            var playerBase = _playerInGameManager.GetPlayerBasePositionById(header.ConnectionId);
             switch (playerTouchObjectCommand.ObjectType)
             {
                 case ObjectType.Train:
                     var trainScore = _collectData.touchTrainGainScore.GetRandomValue();
+                    player.transform.position = playerBase + new Vector3(0, 0.5f, 0);
                     Debug.Log($"PlayerPropertySyncSystem: {header.ConnectionId} gain {trainScore} score by touch train");
                     playerState.MemoryProperty[PropertyTypeEnum.Score] = playerState.MemoryProperty[PropertyTypeEnum.Score].UpdateCurrentValue(trainScore);
                     break;
                 case ObjectType.Rocket:
                     var rockerScore = _collectData.touchRocketGainScore.GetRandomValue();
                     Debug.Log($"PlayerPropertySyncSystem: {header.ConnectionId} gain {rockerScore} score by touch rocket");
+                    player.transform.position = playerBase + new Vector3(0, 0.5f, 0);
                     playerState.MemoryProperty[PropertyTypeEnum.Score] = playerState.MemoryProperty[PropertyTypeEnum.Score].UpdateCurrentValue(rockerScore);
                     break;
                 case ObjectType.Well:

@@ -2049,7 +2049,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   easeType: 1
-  type: 0
+  type: 6
 --- !u!114 &2111044192580870824
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2131,8 +2131,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 38.8, y: 6.31, z: 9.15}
-  m_Center: {x: 18.036623, y: 2.2787383, z: -0.15199149}
+  m_Size: {x: 37.3, y: 6.31, z: 8.2}
+  m_Center: {x: 17.609585, y: 2.2787383, z: -0.15199137}
 --- !u!135 &4224191298376350738
 SphereCollider:
   m_ObjectHideFlags: 0

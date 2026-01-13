@@ -228,7 +228,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 case AnimationState.Hit:
                     if (IsSpecialAction)
                     {
-                        ret
+                        return;
                     }
                     _animationComponent.Animator.CrossFade(GetAnimationName(AnimationState.Hit), 0.01f);
                     break;
