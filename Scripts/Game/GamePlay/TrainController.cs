@@ -83,6 +83,15 @@ namespace HotUpdate.Scripts.Game.GamePlay
             _touchColliderConfig = GamePhysicsSystem.CreateColliderConfig(touchCollider);
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _touchColliderConfig, type, gameObject.layer, gameObject.tag);
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _deathColliderConfig, ObjectType.Death, gameObject.layer, gameObject.tag);
+
+            for (int i = 0; i < trainParts.Count; i++)
+            {
+                var trainPart = trainParts[i];
+                if (trainPart)
+                {
+                    _cachedTrainParts.Add(trainPart);
+                }
+            }
         }
 
         private void OnTrainAttackPlayer(TrainAttackPlayerEvent trainAttackEvent)
@@ -122,6 +131,8 @@ namespace HotUpdate.Scripts.Game.GamePlay
             {
                 return;
             }
+            
+            Debug.Log($"[TrainController] Take Train {takeEvent.PlayerId}");
 
             var playerConnectionId = PlayerInGameManager.Instance.GetPlayerId(takeEvent.PlayerId);
             var command = new PlayerStateChangedCommand();
@@ -129,8 +140,8 @@ namespace HotUpdate.Scripts.Game.GamePlay
             command.Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Property);
             command.OperationType = OperationType.Add;
             var ts = _cachedTrainParts.RandomSelect();
-            _cachedTrainParts.Remove(ts);
             identity.transform.SetParent(ts);
+            _cachedTrainParts.Remove(ts);
             _gameSyncManager.EnqueueServerCommand(command);
         }
 

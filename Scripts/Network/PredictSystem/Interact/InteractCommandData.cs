@@ -133,13 +133,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
     {
         [MemoryPackOrder(0)] public InteractHeader Header;
         [MemoryPackOrder(1)] public uint SceneItemId; // 场景物体ID（由服务器生成的id）
-        [MemoryPackOrder(2)] public InteractionType InteractionType; // 交互类型（开门/拾取等）
+        [MemoryPackOrder(2)] public int InteractionType; // 交互类型（开门/拾取等）
         [MemoryPackOrder(3)] public int OtherId; // 其他玩家ID（如果是玩家间交互）
         public InteractCategory Category => Header.Category;
         public InteractHeader GetHeader() => Header;
         public bool IsValid()
         {
-            return InteractionType >= InteractionType.PickupItem && InteractionType < InteractionType.Count 
+            return InteractionType >= (int)Interact.InteractionType.PickupItem && InteractionType < (int)Interact.InteractionType.Count 
                                                                  && SceneItemId > 0;
         }
     }

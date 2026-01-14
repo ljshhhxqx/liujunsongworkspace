@@ -47,7 +47,7 @@ namespace HotUpdate.Scripts.Map
         private void SetMinimapItems(GameObject item, MinimapItemData minimapItemData)
         {
             var image = item.GetComponent<Image>();
-            var icon = minimapItemData.TargetType == MinimapTargetType.Treasure ? UISpriteContainer.GetSprite(minimapItemData.TargetType.ToString()+"_"+minimapItemData.QualityType) : UISpriteContainer.GetSprite(minimapItemData.TargetType.ToString());
+            var icon = minimapItemData.TargetType == MinimapTargetType.Treasure ? UISpriteContainer.GetSprite(minimapItemData.TargetType.ToString()+"_"+minimapItemData.QualityType.ToString()) : UISpriteContainer.GetSprite(minimapItemData.TargetType.ToString());
             image.sprite = icon;
             var canvasGroup = item.GetComponent<CanvasGroup>();
             canvasGroup.alpha = 1f;

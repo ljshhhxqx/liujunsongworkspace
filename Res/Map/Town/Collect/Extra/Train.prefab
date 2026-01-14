@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7552710924930889080}
   - component: {fileID: 785727578420038327}
   - component: {fileID: 4448538348430433460}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: front wheels 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -117,7 +117,7 @@ GameObject:
   - component: {fileID: 8317162288721412869}
   - component: {fileID: 5891305975067412509}
   - component: {fileID: 3711862483280484829}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: connecting device
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -222,7 +222,7 @@ GameObject:
   - component: {fileID: 3131998391831717760}
   - component: {fileID: 5373167384053229242}
   - component: {fileID: 7993465420400955720}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: rear wheels 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -324,7 +324,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4983753334199903164}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: GameObject (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -355,7 +355,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8899131594325640933}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: Emit (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -389,7 +389,7 @@ GameObject:
   - component: {fileID: 5519182046760152848}
   - component: {fileID: 2386807218550869173}
   - component: {fileID: 8472027302006533372}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: rear wheels 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -494,7 +494,7 @@ GameObject:
   - component: {fileID: 4423314713360112623}
   - component: {fileID: 1322137866727826938}
   - component: {fileID: 2955593224488673100}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: rear wheels 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -682,7 +682,7 @@ GameObject:
   - component: {fileID: 7196042451794204064}
   - component: {fileID: 7920240749621584066}
   - component: {fileID: 2900907513281738430}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: rear wheels 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -784,7 +784,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5352699012885651117}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: GameObject (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -818,7 +818,7 @@ GameObject:
   - component: {fileID: 8934198212403430359}
   - component: {fileID: 5429094741898990457}
   - component: {fileID: 2889449997068959641}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: front wheels 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -923,7 +923,7 @@ GameObject:
   - component: {fileID: 6244388127299097800}
   - component: {fileID: 4227567555640069752}
   - component: {fileID: 248224075531827401}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: train body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1028,7 +1028,7 @@ GameObject:
   - component: {fileID: 4193883803468763920}
   - component: {fileID: 5914488854398655613}
   - component: {fileID: 9024174930624142957}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: coal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1133,7 +1133,7 @@ GameObject:
   - component: {fileID: 1968090167068905946}
   - component: {fileID: 8002722814369146}
   - component: {fileID: 117547774408591100}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: passenger wagon body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1238,7 +1238,7 @@ GameObject:
   - component: {fileID: 6758397607277997836}
   - component: {fileID: 5092630720984607394}
   - component: {fileID: 2338394344713200009}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: front wheels 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1340,7 +1340,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5503130954948288018}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: Emit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1371,7 +1371,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4028229663736695869}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: GameObject (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1405,7 +1405,7 @@ GameObject:
   - component: {fileID: 2557733159412407013}
   - component: {fileID: 7498004269826183922}
   - component: {fileID: 1681723602314185225}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: front wheels 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1507,7 +1507,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3612984022235577181}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: train (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1548,7 +1548,7 @@ GameObject:
   - component: {fileID: 2277083804386613837}
   - component: {fileID: 3787964283711436840}
   - component: {fileID: 83700785573003057}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: rear wheels 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1650,7 +1650,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1409761705871281460}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: freight wagon black
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1691,7 +1691,7 @@ GameObject:
   - component: {fileID: 3574135553098738021}
   - component: {fileID: 1517970612027741255}
   - component: {fileID: 6559768402331070686}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: front wheels 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1796,7 +1796,7 @@ GameObject:
   - component: {fileID: 7715804561700864633}
   - component: {fileID: 6916859649238334048}
   - component: {fileID: 8723694060810361814}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: freight wagon body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1898,7 +1898,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4306390539220375940}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2166,7 +2166,7 @@ GameObject:
   - component: {fileID: 3621220604801135842}
   - component: {fileID: 2504957575540629890}
   - component: {fileID: 1745280709098177615}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: connecting device
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2271,7 +2271,7 @@ GameObject:
   - component: {fileID: 649409257801734511}
   - component: {fileID: 2826043140289004279}
   - component: {fileID: 5231576079059760868}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: front wheels 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2373,7 +2373,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4342482291635686512}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: passenger wagon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2417,7 +2417,7 @@ GameObject:
   - component: {fileID: 3363576245880933615}
   - component: {fileID: 3157085394652503128}
   - component: {fileID: 4732673283974935080}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: rear wheels 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5852879945043300118}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: Emit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6599555745271577745}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: GameObject (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71,7 +71,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7037601664023744177}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: Emit (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -102,7 +102,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8036306907477106707}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: GameObject (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 1673184400896694719}
   - component: {fileID: 5348359972509923906}
   - component: {fileID: 3562430869525383792}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: fire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -241,7 +241,7 @@ GameObject:
   - component: {fileID: 4267403958337500119}
   - component: {fileID: 2525945304732707739}
   - component: {fileID: 6883734480895767525}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: space shuttle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -346,7 +346,7 @@ GameObject:
   - component: {fileID: 6481742114952908586}
   - component: {fileID: 5273203225774970377}
   - component: {fileID: 7765954719221905574}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: fire (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -451,7 +451,7 @@ GameObject:
   - component: {fileID: 8463932531764925675}
   - component: {fileID: 3500635694486900807}
   - component: {fileID: 3112092929349236294}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: external tank
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -553,7 +553,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1987829126925596662}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: GameObject (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -587,7 +587,7 @@ GameObject:
   - component: {fileID: 8898811658560451603}
   - component: {fileID: 1188760192892770077}
   - component: {fileID: 5835851489913733922}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: solid rocket booster (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -897,7 +897,7 @@ GameObject:
   - component: {fileID: 7747669758349173212}
   - component: {fileID: 4765284723745913590}
   - component: {fileID: 3294513286571265163}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: solid rocket booster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -999,7 +999,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7676910854842966016}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: GameObject (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

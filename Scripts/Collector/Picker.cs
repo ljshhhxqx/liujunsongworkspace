@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Data;
@@ -129,7 +130,7 @@ namespace HotUpdate.Scripts.Collector
                 {
                     Header = InteractSystem.CreateInteractHeader(PlayerInGameManager.Instance.GetPlayerId(pickerId), InteractCategory.PlayerToScene,
                         transform.position, CommandAuthority.Client),
-                    InteractionType = InteractionType.PickupItem,
+                    InteractionType = (int)InteractionType.PickupItem,
                     SceneItemId = itemId,
                 };
                 var commandBytes = MemoryPackSerializer.Serialize(request);
@@ -174,16 +175,17 @@ namespace HotUpdate.Scripts.Collector
                 return;
             }
 
-            if (PickerType == PickerType.Player)
+            switch (PickerType)
             {
-                if (Input.GetKeyDown(KeyCode.F))
-                {
+                case PickerType.Player:
+                    if (Input.GetKeyDown(KeyCode.F))
+                    {
+                        PerformPickup();
+                    }
+                    break;
+                case PickerType.Computer:
                     PerformPickup();
-                }
-            }
-            else if (PickerType == PickerType.Computer)
-            {
-                PerformPickup();
+                    break;
             }
         }
 
@@ -200,6 +202,7 @@ namespace HotUpdate.Scripts.Collector
                 var time = _collectData.GetTouchTime(collect.Type);
                 _playerPropertiesOverlay.StartProgress($"收集{collect.Type}中...需要{time}秒 ", time, () => OnComplete(collect) , GetIsTouching);
             }
+            _collects.Clear();
         }
 
         private void OnComplete(DynamicObjectData collect)
@@ -220,7 +223,7 @@ namespace HotUpdate.Scripts.Collector
             {
                 ObjectType.Chest => InteractionType.PickupChest,
                 ObjectType.Well => InteractionType.TouchWell,
-                ObjectType.Train => InteractionType.TouchTrainDeath,
+                ObjectType.Train => InteractionType.TouchTrain,
                 ObjectType.Rocket => InteractionType.TouchRocket,
                 _ => InteractionType.PickupItem,
             };
@@ -234,24 +237,28 @@ namespace HotUpdate.Scripts.Collector
             {
                 Header = InteractSystem.CreateInteractHeader(_playerInGameManager.LocalPlayerId, InteractCategory.PlayerToScene,
                     transform.position, CommandAuthority.Client),
-                InteractionType = GetInteractionType(collect.Type),
+                InteractionType = (int)GetInteractionType(collect.Type),
                 SceneItemId = collect.NetId,
             };
+            Debug.Log($"PICKER UniTaskVoid: Collect {collect.NetId} {request.InteractionType}");
             var json = MemoryPackSerializer.Serialize(request);
+            CmdSendInteract(json);
             if (collect.Type == ObjectType.Chest)
             {
-                CmdOpenChest(json);
                 GameAudioManager.Instance.PlaySFX(AudioEffectType.Chest, transform.position, transform);
             }
             await UniTask.DelayFrame(1);
         }
         
         [Command]
-        private void CmdOpenChest(byte[] data)
+        private void CmdSendInteract(byte[] data)
         {
             var request = BoxingFreeSerializer.MemoryDeserialize<SceneInteractRequest>(data);
             _interactSystem.EnqueueCommand(request);
-            RpcPlayChest();
+            if (request.InteractionType== (int)InteractionType.PickupChest)
+            {
+                RpcPlayChest();
+            }
         }
         
         [ClientRpc]

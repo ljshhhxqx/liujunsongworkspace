@@ -321,7 +321,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         }
     }
 
-    public struct PlayerInputStateData : IPoolObject
+    public struct PlayerInputStateData : IPoolObject,IEquatable<PlayerInputStateData>
     {
         public Vector3 InputMovement;   // 输入的移动
         public AnimationState InputAnimations; // 输入指令的动画
@@ -342,6 +342,31 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         public override string ToString()
         {
             return $"InputMovement: {InputMovement}, InputAnimations: {InputAnimations}, Command: {Command} , Velocity: {Velocity}";
+        }
+
+        public bool Equals(PlayerInputStateData other)
+        {
+            return InputMovement.Equals(other.InputMovement) && InputAnimations == other.InputAnimations && Command == other.Command && Velocity.Equals(other.Velocity);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is PlayerInputStateData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(InputMovement, (int)InputAnimations, (int)Command, Velocity);
+        }
+
+        public static bool operator ==(PlayerInputStateData left, PlayerInputStateData right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(PlayerInputStateData left, PlayerInputStateData right)
+        {
+            return !left.Equals(right);
         }
     }
 }

@@ -322,6 +322,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                     switch (command)
                     {
                         case SceneInteractRequest sceneInteractRequest:
+                            Debug.Log($"UpdateInteractRequests - {(InteractionType)sceneInteractRequest.InteractionType}-{sceneInteractRequest.SceneItemId}");
                             HandleSceneInteractRequest(sceneInteractRequest);
                             break;
                         case PlayerInteractRequest playerInteractRequest:
@@ -564,7 +565,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         {
             var header = request.GetHeader();
             var playerNetId = PlayerInGameManager.Instance.GetPlayerNetId(header.RequestConnectionId);
-            switch (request.InteractionType)
+            switch ((InteractionType)request.InteractionType)
             {
                 case InteractionType.PickupItem:
                     // if (!IsItemCanPickup(request.SceneItemId))
@@ -579,6 +580,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                     _itemsSpawnerManager.PickerPickUpChest(playerNetId, request.SceneItemId);
                     break;
                 case InteractionType.TouchRocket:
+                    Debug.Log($"Player {playerNetId} touch rocket {request.SceneItemId}");
                     _gameEventManager.Publish(new TakeTrainEvent(currentTrainId, playerNetId));
                     break;
                 case InteractionType.TouchWell:
@@ -588,6 +590,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                     _gameEventManager.Publish(new TrainAttackPlayerEvent(currentTrainId, playerNetId));
                     break;
                 case InteractionType.TouchTrain:
+                    Debug.Log($"Player {playerNetId} touch train {request.SceneItemId}");
                     _gameEventManager.Publish(new TakeTrainEvent(currentTrainId, playerNetId));
                     break;
             }

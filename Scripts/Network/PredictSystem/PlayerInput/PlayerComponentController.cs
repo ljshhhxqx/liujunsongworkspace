@@ -494,10 +494,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .Subscribe(_ =>
                 {
                     if (_picker.IsTouching || _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) <= 0 ||
-                        GameSyncManager.CurrentTick <= 0 || !(_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)) || _subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
+                        GameSyncManager.CurrentTick <= 0 || !(_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)) || 
+                        _subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
                     {
                         _playerInputStateData = default;
+                        _inputStream.Value = default;
                         HandleInputPhysics(_playerInputStateData);
+                        HandleSendNetworkCommand(_inputStream.Value);
                         return;
                     }
                     HandleInputPhysics(_playerInputStateData);
