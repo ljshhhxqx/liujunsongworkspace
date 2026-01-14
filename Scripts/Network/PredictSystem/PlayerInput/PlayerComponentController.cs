@@ -1485,7 +1485,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             {
                 _picker.IsTouching = false;
             }
-            _playerAnimationCalculator.HandleAnimation(animationState, forcePlay: forcePlay);
+            _playerAnimationCalculator.HandleAnimation(animationState, forcePlay: false);
             GameAudioManager.Instance.PlaySFX(AudioEffectType.Hurt, transform.position, transform);
         }
     }

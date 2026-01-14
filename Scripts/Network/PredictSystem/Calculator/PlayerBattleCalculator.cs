@@ -72,16 +72,34 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         {
             Vector3 toTarget = targetPos - origin;
             float sqrDistance = toTarget.sqrMagnitude;
-            
-            // 快速距离检查
-            if (sqrDistance > radius * radius) return false;
-            // 高度检查
-            if (Mathf.Abs(toTarget.y - origin.y) > height) return false;
-            
-            // 精确角度检查
+    
+            Debug.Log($"sqrDistance: {sqrDistance}, radius^2: {radius*radius}");
+    
+            if (sqrDistance > radius * radius) 
+            {
+                Debug.Log("Failed: Distance check");
+                return false;
+            }
+    
+            float heightDiff = Mathf.Abs(origin.y - targetPos.y);
+            Debug.Log($"Height diff: {heightDiff}, max height: {height}");
+    
+            if (heightDiff > height) 
+            {
+                Debug.Log("Failed: Height check");
+                return false;
+            }
+    
             float cosAngle = Mathf.Cos(angle * 0.5f * Mathf.Deg2Rad);
-            float dot = Vector3.Dot(direction.normalized, toTarget.normalized);
-            return dot >= cosAngle;
+            Vector3 dirNormalized = direction.normalized;
+            Vector3 toTargetNormalized = toTarget.normalized;
+            float dot = Vector3.Dot(dirNormalized, toTargetNormalized);
+    
+            Debug.Log($"cosAngle: {cosAngle}, dot: {dot}, angle: {Mathf.Acos(dot) * Mathf.Rad2Deg}");
+    
+            bool result = dot >= cosAngle;
+            if (!result) Debug.Log("Failed: Angle check");
+            return result;
         }
         #endregion
     }

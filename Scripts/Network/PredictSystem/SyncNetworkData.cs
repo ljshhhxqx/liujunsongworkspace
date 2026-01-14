@@ -1100,7 +1100,7 @@ namespace AOTScripts.Data
         public NetworkCommandType GetCommandType() => NetworkCommandType.PlayerTouchObject;
         public bool IsValid()
         {
-            return ObjectType == ObjectType.Train || ObjectType == ObjectType.Rocket;
+            return ObjectType == ObjectType.Train || ObjectType == ObjectType.Rocket || ObjectType == ObjectType.Well;
         }
         public void Init()
         {

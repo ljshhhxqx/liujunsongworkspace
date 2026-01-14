@@ -87,7 +87,7 @@ MonoBehaviour:
   - state: 8
     cost: 10
     cooldown: 1
-    priority: 1
+    priority: 2
     animationType: 1
     canBeInterrupted: 1
     actionType: 1
@@ -108,7 +108,7 @@ MonoBehaviour:
   - state: 16
     cost: 12
     cooldown: 1
-    priority: 1
+    priority: 2
     animationType: 1
     canBeInterrupted: 1
     actionType: 1
@@ -129,7 +129,7 @@ MonoBehaviour:
   - state: 32
     cost: 20
     cooldown: 2
-    priority: 1
+    priority: 2
     animationType: 1
     canBeInterrupted: 0
     actionType: 2
@@ -204,7 +204,7 @@ MonoBehaviour:
   - state: 256
     cost: 10
     cooldown: 2
-    priority: 1
+    priority: 2
     animationType: 2
     canBeInterrupted: 1
     actionType: 2
@@ -308,7 +308,7 @@ MonoBehaviour:
   - state: 4096
     cost: 70
     cooldown: 15
-    priority: 1
+    priority: 2
     animationType: 1
     canBeInterrupted: 1
     actionType: 2
@@ -335,7 +335,7 @@ MonoBehaviour:
   - state: 8192
     cost: 70
     cooldown: 15
-    priority: 1
+    priority: 2
     animationType: 1
     canBeInterrupted: 1
     actionType: 2

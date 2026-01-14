@@ -226,7 +226,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     _animationComponent.Animator.CrossFadeInFixedTime(attackName, 0.1f);
                     break;
                 case AnimationState.Hit:
-                    if (IsSpecialAction)
+                    if (IsPlayingSpecialAction)
                     {
                         return;
                     }

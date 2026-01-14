@@ -74,7 +74,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         {
             if (oldHealth <= 0 || newHealth >= oldHealth) return;
             damageRoot.SetActive(newHealth < oldHealth);
-            Debug.Log($"PlayerDamageDeathOverlay PlayDamageEffect called  oldHealth: {oldHealth}, newHealth: {newHealth}, maxHealth: {maxHealth}");
+//            Debug.Log($"PlayerDamageDeathOverlay PlayDamageEffect called  oldHealth: {oldHealth}, newHealth: {newHealth}, maxHealth: {maxHealth}");
             deathRoot.SetActive(false);
             _damageSequence?.Kill();
             _deathSequence?.Kill();

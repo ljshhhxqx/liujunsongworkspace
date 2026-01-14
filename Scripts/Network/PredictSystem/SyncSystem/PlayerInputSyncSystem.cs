@@ -290,7 +290,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var attackConfigData = new AttackConfigData(playerProperty[PropertyTypeEnum.AttackRadius].CurrentValue, playerProperty[PropertyTypeEnum.AttackAngle].CurrentValue, playerProperty[PropertyTypeEnum.AttackHeight].CurrentValue);
             Debug.Log($"[HandlePlayerAttack] player {connectionId} attack - position {playerController.transform.position} forward {playerController.transform.forward}");
             var defenders = playerController.HandleAttack(new AttackParams(playerController.transform.position,
-                playerController.transform.forward, connectionId, playerController.netId, attackConfigData));
+                playerController.transform.forward.normalized, connectionId, playerController.netId, attackConfigData));
             if (defenders.Count > 0)
             {
                 GameSyncManager.EnqueueServerCommand(new PropertyAttackCommand
