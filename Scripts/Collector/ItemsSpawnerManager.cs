@@ -506,19 +506,6 @@ namespace HotUpdate.Scripts.Collector
                 {
                     var picker = player.GetComponent<Picker>();
                     picker.AddPicked(itemId);
-                
-                    switch ((CollectObjectClass)itemClass)
-                    {
-                        case CollectObjectClass.Score:
-                            GameAudioManager.Instance.PlaySFX(AudioEffectType.Gem, player.transform.position, player.transform);
-                            break;
-                        case CollectObjectClass.Gold:
-                            GameAudioManager.Instance.PlaySFX(AudioEffectType.Gold, player.transform.position, player.transform);
-                            break;
-                        case CollectObjectClass.Buff:
-                            GameAudioManager.Instance.PlaySFX(AudioEffectType.Drug, player.transform.position, player.transform);
-                            break;
-                    }
                 }
             }
         }

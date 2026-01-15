@@ -499,7 +499,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     {
                         if (_subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
                         {
-                            Debug.Log($"[HOTUPDATE] CANNOT MOVE {_subjectedStateType}");
+                            Debug.Log($"[HOTUPDATE] CANNOT MOVE {_picker.IsTouching}");
                             
                         }
                         _playerInputStateData = default;
@@ -508,6 +508,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                         _inputStream.Value = default;
                         HandleInputPhysics(_playerInputStateData);
                         HandleSendNetworkCommand(_inputStream.Value);
+                        for (int i = 0; i < _predictionStates.Count; i++)
+                        {
+                            var state = _predictionStates[i];
+                            state.ExecutePredictedCommands(GameSyncManager.CurrentTick);
+                        }
                         return;
                     }
                     HandleInputPhysics(_playerInputStateData);
@@ -1494,6 +1499,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
             _playerAnimationCalculator.HandleAnimation(animationState, forcePlay: false);
             GameAudioManager.Instance.PlaySFX(AudioEffectType.Hurt, transform.position, transform);
+        }
+
+        [ClientRpc]
+        public void RpcSetRb(bool isEnabled)
+        {
+            _rigidbody.isKinematic = isEnabled;
         }
     }
 }

@@ -41,7 +41,6 @@ namespace HotUpdate.Scripts.Collector
         private UIManager _uiManager;
         private PlayerAnimationOverlay _playerPropertiesOverlay;
         private HashSet<DynamicObjectData> _cachedCollects = new HashSet<DynamicObjectData>();
-        private HashSet<uint> _pickerCollects = new HashSet<uint>();
         protected override bool AutoInjectClient => false;
 
         private readonly HashSet<DynamicObjectData> _collects = new HashSet<DynamicObjectData>();
@@ -105,10 +104,6 @@ namespace HotUpdate.Scripts.Collector
                     case ObjectType.Chest:
                     case ObjectType.Rocket:
                     case ObjectType.Train:
-                        if (_pickerCollects.Contains(collect.NetId))
-                        {
-                            return;
-                        }
                         _collects.Add(collect);
                         break;
                 }
@@ -118,7 +113,6 @@ namespace HotUpdate.Scripts.Collector
         private void OnDestroy()
         {
             _collects.Clear();   
-            _pickerCollects.Clear();
             GameObjectContainer.Instance.RemoveDynamicObject(netId);
         }
         
@@ -248,10 +242,6 @@ namespace HotUpdate.Scripts.Collector
             Debug.Log($"PICKER UniTaskVoid: Collect {collect.NetId} {request.InteractionType}");
             var json = MemoryPackSerializer.Serialize(request);
             CmdSendInteract(json);
-            if (collect.Type == ObjectType.Chest)
-            {
-                GameAudioManager.Instance.PlaySFX(AudioEffectType.Chest, transform.position, transform);
-            }
             await UniTask.DelayFrame(1);
         }
         
@@ -264,7 +254,7 @@ namespace HotUpdate.Scripts.Collector
 
         public void AddPicked(uint pickupId)
         {
-            _pickerCollects.Add(pickupId);
+            //_pickerCollects.Add(pickupId);
         }
     }
 }

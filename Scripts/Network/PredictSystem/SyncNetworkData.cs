@@ -1121,6 +1121,8 @@ namespace AOTScripts.Data
         public SubjectedStateType NewState;
         [MemoryPackOrder(2)]
         public OperationType OperationType;
+        [MemoryPackOrder(3)]
+        public bool EnableRb;
 
         public NetworkCommandHeader GetHeader() => Header;
 

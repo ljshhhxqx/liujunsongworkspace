@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5499815553020989041}
   - component: {fileID: 8797745339120970929}
   - component: {fileID: 7791709210608758358}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: OldChest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,7 +54,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  mapType: 0
   lid: {fileID: 8264260236098961257}
   playerLayer:
     serializedVersion: 2
@@ -157,7 +156,7 @@ GameObject:
   - component: {fileID: 3952425206856803606}
   - component: {fileID: 3940867359665126697}
   - component: {fileID: 8101005936028331007}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: 'chest '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -255,7 +254,7 @@ GameObject:
   - component: {fileID: 385783488839557706}
   - component: {fileID: 8246018694727972300}
   - component: {fileID: 174181434836011787}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -322,7 +321,7 @@ GameObject:
   - component: {fileID: 8187517042728229358}
   - component: {fileID: 1525212474817653984}
   - component: {fileID: 2493462560702396948}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: chest cover
   m_TagString: Untagged
   m_Icon: {fileID: 0}

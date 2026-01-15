@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2738683600175288546}
   - component: {fileID: 8890038341520676885}
   - component: {fileID: 1494915499183576025}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: Gold Chest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -110,7 +110,7 @@ GameObject:
   - component: {fileID: 5181524394000796870}
   - component: {fileID: 8574990178446388607}
   - component: {fileID: 1900340756508618569}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: Gold ChestRoof
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -210,7 +210,7 @@ GameObject:
   - component: {fileID: 8320134914155921322}
   - component: {fileID: -2054284666163166625}
   - component: {fileID: -5906470670701222189}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: GoldChest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -351,7 +351,7 @@ GameObject:
   - component: {fileID: 636559772988159054}
   - component: {fileID: 8018182428388814016}
   - component: {fileID: 8971372743484552792}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}

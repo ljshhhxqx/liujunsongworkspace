@@ -470,18 +470,24 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void HandlePlayerStateChanged(PlayerStateChangedCommand playerStateChangedCommand)
         {
             var header = playerStateChangedCommand.GetHeader();
-            var playerState = GetState<PlayerPredictablePropertyState>(header.ConnectionId);
-            if (playerStateChangedCommand.OperationType == OperationType.Add)
+            var playerController = GameSyncManager.GetPlayerConnection(header.ConnectionId);
+            var rb = playerController.GetComponent<Rigidbody>();
+            if (playerStateChangedCommand.NewState != SubjectedStateType.None)
             {
-                playerState.ControlSkillType = playerState.ControlSkillType.AddState(playerStateChangedCommand.NewState);
+                var playerState = GetState<PlayerPredictablePropertyState>(header.ConnectionId);
+                if (playerStateChangedCommand.OperationType == OperationType.Add)
+                {
+                    playerState.ControlSkillType = playerState.ControlSkillType.AddState(playerStateChangedCommand.NewState);
+                }
+                else if (playerStateChangedCommand.OperationType == OperationType.Subtract)
+                {
+                    playerState.ControlSkillType = playerState.ControlSkillType.RemoveState(playerStateChangedCommand.NewState);
+                }
+                PropertyStates[header.ConnectionId] = playerState;
+                PropertyChange(header.ConnectionId);
             }
-            else if (playerStateChangedCommand.OperationType == OperationType.Subtract)
-            {
-                playerState.ControlSkillType = playerState.ControlSkillType.RemoveState(playerStateChangedCommand.NewState);
-            }
-
-            PropertyStates[header.ConnectionId] = playerState;
-            PropertyChange(header.ConnectionId);
+            rb.isKinematic = playerStateChangedCommand.EnableRb;
+            playerController.RpcSetRb(rb.isKinematic);
         }
 
         private void HandleItemAttack(PropertyItemAttackCommand propertyItemAttackCommand)
