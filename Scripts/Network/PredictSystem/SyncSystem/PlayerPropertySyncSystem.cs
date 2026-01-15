@@ -473,11 +473,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerState = GetState<PlayerPredictablePropertyState>(header.ConnectionId);
             if (playerStateChangedCommand.OperationType == OperationType.Add)
             {
-                playerState.ControlSkillType.AddState(playerStateChangedCommand.NewState);
+                playerState.ControlSkillType = playerState.ControlSkillType.AddState(playerStateChangedCommand.NewState);
             }
             else if (playerStateChangedCommand.OperationType == OperationType.Subtract)
             {
-                playerState.ControlSkillType.RemoveState(playerStateChangedCommand.NewState);
+                playerState.ControlSkillType = playerState.ControlSkillType.RemoveState(playerStateChangedCommand.NewState);
             }
 
             PropertyStates[header.ConnectionId] = playerState;

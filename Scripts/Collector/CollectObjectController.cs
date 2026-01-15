@@ -270,9 +270,9 @@ namespace HotUpdate.Scripts.Collector
             _attackCollectItem.RpcSwitchAttackMode(isAttacking);
         }
 
-        public void RpcPlayEffect()
+        public void PickerSuccess()
         {
-            throw new NotImplementedException();
+            
         }
     }
 }

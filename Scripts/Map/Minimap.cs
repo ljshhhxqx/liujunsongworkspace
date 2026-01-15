@@ -47,7 +47,9 @@ namespace HotUpdate.Scripts.Map
         private void SetMinimapItems(GameObject item, MinimapItemData minimapItemData)
         {
             var image = item.GetComponent<Image>();
-            var icon = minimapItemData.TargetType == MinimapTargetType.Treasure ? UISpriteContainer.GetSprite($"{minimapItemData.TargetType}".ToString() + "_" + minimapItemData.QualityType) : UISpriteContainer.GetSprite(minimapItemData.TargetType.ToString());
+            var icon = minimapItemData.TargetType == MinimapTargetType.Chest ? 
+                UISpriteContainer.GetSprite($"{minimapItemData.TargetType}_{minimapItemData.QualityType}") :
+                UISpriteContainer.GetSprite(minimapItemData.TargetType.ToString());
             image.sprite = icon;
             var canvasGroup = item.GetComponent<CanvasGroup>();
             canvasGroup.alpha = 1f;
@@ -122,10 +124,28 @@ namespace HotUpdate.Scripts.Map
         public static Vector2 GetMinimapPosition(Vector3 worldPosition, Bounds worldBounds, Vector2 minimapPanelSize)
         {
             Vector2 uv = GetMinimapUV(worldPosition, worldBounds);
-        
-            float localX = (uv.x - 0.5f) * minimapPanelSize.x;
-            float localY = (uv.y - 0.5f) * minimapPanelSize.y;
-        
+    
+            // 计算世界地图的纵横比
+            float worldAspect = worldBounds.size.x / worldBounds.size.z;
+            float panelAspect = minimapPanelSize.x / minimapPanelSize.y;
+    
+            float localX, localY;
+    
+            if (worldAspect > panelAspect)
+            {
+                // 世界地图更宽，用面板的整个宽度，高度按比例缩放
+                float scale = minimapPanelSize.x / worldBounds.size.x;
+                localX = (uv.x - 0.5f) * minimapPanelSize.x;
+                localY = (uv.y - 0.5f) * worldBounds.size.z * scale;
+            }
+            else
+            {
+                // 世界地图更高，用面板的整个高度，宽度按比例缩放
+                float scale = minimapPanelSize.y / worldBounds.size.z;
+                localX = (uv.x - 0.5f) * worldBounds.size.x * scale;
+                localY = (uv.y - 0.5f) * minimapPanelSize.y;
+            }
+    
             return new Vector2(localX, localY);
         }
         

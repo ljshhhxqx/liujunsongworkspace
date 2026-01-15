@@ -185,7 +185,7 @@ namespace HotUpdate.Scripts.Game.Map
 
             if (RemoveObject(netId))
             {
-                Debug.LogWarning("RemoveDynamicObject: " + netId);
+                Debug.Log("[GameObjectContainer] RemoveDynamicObject: " + netId);
             }
         }
 

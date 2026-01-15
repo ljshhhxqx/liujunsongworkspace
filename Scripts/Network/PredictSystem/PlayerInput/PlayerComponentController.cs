@@ -289,7 +289,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 var minimapItemData = new MinimapItemData
                 {
                     Id = (int)targetShowEvent.TargetId,
-                    TargetType = MinimapTargetType.Treasure,
+                    TargetType = MinimapTargetType.Chest,
                     WorldPosition = targetShowEvent.Target.transform.position,
                     QualityType = targetShowEvent.Quality,
                 };
@@ -497,7 +497,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                         GameSyncManager.CurrentTick <= 0 || !(_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)) || 
                         _subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
                     {
+                        if (_subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
+                        {
+                            Debug.Log($"[HOTUPDATE] CANNOT MOVE {_subjectedStateType}");
+                            
+                        }
                         _playerInputStateData = default;
+                        _playerInputStateData.Command = AnimationState.Idle;
+                        _playerInputStateData.InputAnimations = AnimationState.Idle;
                         _inputStream.Value = default;
                         HandleInputPhysics(_playerInputStateData);
                         HandleSendNetworkCommand(_inputStream.Value);
@@ -1055,7 +1062,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
             //执行动画
             _playerAnimationCalculator.HandleAnimation(inputData.Command, _attackAnimationCooldown.CurrentStage);
-            var data = ObjectPoolManager<PlayerGameStateData>.Instance.Get(30);
+            var data = ObjectPoolManager<PlayerGameStateData>.Instance.Get(20);
             data.Position = transform.position;
             data.Quaternion = transform.rotation;
             data.Velocity = _rigidbody.velocity;

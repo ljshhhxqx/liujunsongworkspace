@@ -41,6 +41,7 @@ namespace HotUpdate.Scripts.Collector
         private UIManager _uiManager;
         private PlayerAnimationOverlay _playerPropertiesOverlay;
         private HashSet<DynamicObjectData> _cachedCollects = new HashSet<DynamicObjectData>();
+        private HashSet<uint> _pickerCollects = new HashSet<uint>();
         protected override bool AutoInjectClient => false;
 
         private readonly HashSet<DynamicObjectData> _collects = new HashSet<DynamicObjectData>();
@@ -104,6 +105,10 @@ namespace HotUpdate.Scripts.Collector
                     case ObjectType.Chest:
                     case ObjectType.Rocket:
                     case ObjectType.Train:
+                        if (_pickerCollects.Contains(collect.NetId))
+                        {
+                            return;
+                        }
                         _collects.Add(collect);
                         break;
                 }
@@ -113,6 +118,7 @@ namespace HotUpdate.Scripts.Collector
         private void OnDestroy()
         {
             _collects.Clear();   
+            _pickerCollects.Clear();
             GameObjectContainer.Instance.RemoveDynamicObject(netId);
         }
         
@@ -195,7 +201,6 @@ namespace HotUpdate.Scripts.Collector
             {
                 _playerPropertiesOverlay = _uiManager.GetActiveUI<PlayerAnimationOverlay>(UIType.PlayerAnimationOverlay, UICanvasType.Overlay);
             }
-            //_playerPropertiesOverlay.StartProgress($"收集{collect.Type}中... + {time}秒 ", time, () => OnComplete(collect) , GetIsTouching);
             foreach (var collect in _collects)
             {
                 IsTouching = true;
@@ -255,17 +260,11 @@ namespace HotUpdate.Scripts.Collector
         {
             var request = BoxingFreeSerializer.MemoryDeserialize<SceneInteractRequest>(data);
             _interactSystem.EnqueueCommand(request);
-            if (request.InteractionType== (int)InteractionType.PickupChest)
-            {
-                RpcPlayChest();
-            }
         }
-        
-        [ClientRpc]
-        private void RpcPlayChest()
+
+        public void AddPicked(uint pickupId)
         {
-            if (LocalPlayerHandler) return;
-            GameAudioManager.Instance.PlaySFX(AudioEffectType.Chest, transform.position, transform);
+            _pickerCollects.Add(pickupId);
         }
     }
 }

@@ -141,19 +141,25 @@ namespace HotUpdate.Scripts.Audio
 
         public void StopMusic()
         {
-            _musicAudioSource.Stop();
+            _musicAudioSource?.Stop();
         }
 
         public void SetMusicVolume(float volume)
         {
-            _musicAudioSource.volume = volume;
+            if (_musicAudioSource)
+            {
+                _musicAudioSource.volume = volume;
+            }
         }
 
         public void SetSFXVolume(float volume)
         {
             foreach (var source in _activeAudioSources)
             {
-                source.volume = volume;
+                if (source)
+                {
+                    source.volume = volume;
+                }
             }
         }
     }

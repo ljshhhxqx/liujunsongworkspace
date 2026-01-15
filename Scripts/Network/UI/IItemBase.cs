@@ -623,6 +623,6 @@ namespace HotUpdate.Scripts.Network.UI
         Monster,
         Enemy,
         Npc,
-        Treasure,
+        Chest,
     }
 }

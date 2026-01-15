@@ -2,6 +2,7 @@ using System;
 using AOTScripts.Data;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
+using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
@@ -120,8 +121,9 @@ namespace HotUpdate.Scripts.Collector
 
         uint IPickable.SceneItemId => netId;
 
-        public async UniTask PickUpSuccess(Action onFinish = null)
+        public async UniTaskVoid PickUpSuccess(Action onFinish = null)
         {
+            GameAudioManager.Instance.PlaySFX(AudioEffectType.Chest, transform.position, transform);
             await OpenLid();
             onFinish?.Invoke();
             GameObjectPoolManger.Instance.ReturnObject(gameObject);

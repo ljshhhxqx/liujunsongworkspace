@@ -51,11 +51,15 @@ namespace HotUpdate.Scripts.UI.UIs.UIFollow.UIController
             canvasGroup.alpha = 1;
             _tween?.Kill();
             _tween = DOTween.Sequence();
-            _tween.AppendInterval(0.15f);
-            _tween.Append(canvasGroup.DOFade(0, 1));
-            _tween.AppendInterval(0.15f);
-            _tween.Append(canvasGroup.DOFade(1, 1));
-            _tween.SetLoops(4);
+            _tween.AppendInterval(0.1f);
+            _tween.Append(canvasGroup.DOFade(0, 0.15f));
+            _tween.AppendInterval(0.1f);
+            _tween.Append(canvasGroup.DOFade(1, 0.15f));
+            _tween.SetLoops(3);
+            _tween.OnComplete(() =>
+            {
+                canvasGroup.alpha = 0;
+            });
         }
 
         private void DoAnimationTween()

@@ -8,6 +8,7 @@ using AOTScripts.Tool;
 using AOTScripts.Tool.Coroutine;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
+using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
@@ -259,10 +260,16 @@ namespace HotUpdate.Scripts.Collector
         {
             if (ClientHandler)
             {
-                if (NetworkServer.spawned.TryGetValue(itemId, out var item))
+                if (NetworkClient.spawned.TryGetValue(itemId, out var item))
                 {
                     var component = item.GetComponent<TreasureChestComponent>();
                     component.PickUpSuccess().Forget();
+                }
+
+                if (NetworkClient.spawned.TryGetValue(pickerId, out var player))
+                {
+                    var picker = player.GetComponent<Picker>();
+                    picker.AddPicked(itemId);
                 }
             }
         }
@@ -458,7 +465,7 @@ namespace HotUpdate.Scripts.Collector
                             $"Recycle item with id: {itemId} itemConfigid {collectObjectController.CollectConfigId}");
                         //NetworkServer.Destroy(NetworkServer.spawned[itemData.ItemId].gameObject);
                         // 通知客户端
-                        //RpcPickupItem(itemId);
+                        RpcPickupItem(itemId, pickerId, (int)collectObjectController.CollectObjectData.collectObjectClass);
 
                         _processedItems.Remove(itemId);
                         _serverItemMap.Remove(itemId);
@@ -489,7 +496,33 @@ namespace HotUpdate.Scripts.Collector
                 _processedItems.Clear();
             }
         }
-        
+
+        [ClientRpc]
+        private void RpcPickupItem(uint itemId, uint pickerId, int itemClass)
+        {
+            if (ClientHandler)
+            {
+                if (NetworkClient.spawned.TryGetValue(pickerId, out var player))
+                {
+                    var picker = player.GetComponent<Picker>();
+                    picker.AddPicked(itemId);
+                
+                    switch ((CollectObjectClass)itemClass)
+                    {
+                        case CollectObjectClass.Score:
+                            GameAudioManager.Instance.PlaySFX(AudioEffectType.Gem, player.transform.position, player.transform);
+                            break;
+                        case CollectObjectClass.Gold:
+                            GameAudioManager.Instance.PlaySFX(AudioEffectType.Gold, player.transform.position, player.transform);
+                            break;
+                        case CollectObjectClass.Buff:
+                            GameAudioManager.Instance.PlaySFX(AudioEffectType.Drug, player.transform.position, player.transform);
+                            break;
+                    }
+                }
+            }
+        }
+
         [Server]
         public int GenerateRandomWeight()
         {
@@ -1197,7 +1230,7 @@ namespace HotUpdate.Scripts.Collector
                     {
                         if (hashSet.Layer != _sceneLayer)
                         {
-                            Debug.LogWarning($"Game object with id | {hashSet.Id} | layer is not equal to scene layer");
+                            //Debug.LogWarning($"Game object with id | {hashSet.Id} | layer is not equal to scene layer");
                             return false;
                         }
                     }

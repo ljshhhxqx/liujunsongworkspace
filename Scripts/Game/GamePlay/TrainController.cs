@@ -141,6 +141,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
             command.OperationType = OperationType.Add;
             var ts = _cachedTrainParts.RandomSelect();
             identity.transform.SetParent(ts);
+            identity.transform.localPosition = Vector3.zero;
             _cachedTrainParts.Remove(ts);
             _gameSyncManager.EnqueueServerCommand(command);
         }
