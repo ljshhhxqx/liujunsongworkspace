@@ -160,7 +160,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 }
                 else
                 {
-                    shopItems[kvp.Key] = randomShopData;
+                    shopItems.Update(kvp.Key, randomShopData);
                 }
             }
         }

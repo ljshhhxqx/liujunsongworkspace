@@ -330,7 +330,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 }
                 else
                 {
-                    bagItems[kvp.Key] = bagItem;
+                    bagItems.Update(kvp.Key, bagItem);
                 }
             }
         }

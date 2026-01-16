@@ -135,10 +135,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             {
                 if (_sceneItems[key].maxHealth > 1)
                 {
-                    var position = GameObjectContainer.Instance.GetDynamicObjectData(key).Position;
-                    if (Vector3.Distance(position, data.Position) < distance)
+                    var sceneItem = GameObjectContainer.Instance.GetDynamicObjectData(key);
+                    if (sceneItem != null)
                     {
-                        return position;
+                        var position = sceneItem.Position;
+                        if (Vector3.Distance(position, data.Position) < distance)
+                        {
+                            return position;
+                            
+                        }
                     }
                 }
             }

@@ -145,6 +145,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         { 
             _currentSkillConfigData = _skillConfig.GetSkillData(skillConfigId);
             var effectName = _currentSkillConfigData.particleName;
+            if (effectName == "0")
+            {
+                return;
+            }
             var resource = ResourceManager.Instance.GetResource<GameObject>(effectName);
             var effect = GameObjectPoolManger.Instance.GetObject(resource);
             effect.transform.position = position;

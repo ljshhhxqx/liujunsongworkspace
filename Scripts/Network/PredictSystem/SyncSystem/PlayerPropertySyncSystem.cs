@@ -1249,6 +1249,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private void HandleSkillHit(uint attacker, SkillHitExtraEffectData skillHitExtraEffectData, uint hitId, bool isAlly)
         {
+            Debug.Log($"HandleSkillHit: {attacker}, {hitId}, {isAlly} : {skillHitExtraEffectData}");
             if (_playerInGameManager.IsPlayer(attacker))
             {
                 var attackerId = _playerInGameManager.GetPlayerId(attacker);

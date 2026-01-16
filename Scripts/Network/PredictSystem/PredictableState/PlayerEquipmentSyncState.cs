@@ -1,6 +1,7 @@
 ﻿using AOTScripts.Data;
 using AOTScripts.Data.State;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
+using PlayerEquipmentState = HotUpdate.Scripts.Network.State.PlayerEquipmentState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {

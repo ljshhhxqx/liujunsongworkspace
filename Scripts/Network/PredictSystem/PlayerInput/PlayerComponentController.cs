@@ -406,7 +406,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .AddTo(_disposables);
             
             Observable.EveryUpdate()
-                //.Where(_ => !_picker.IsTouching && (_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)) && !_subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
                 .Subscribe(_ => {
                     if (PlayerPlatformDefine.IsWindowsPlatform())
                     {
@@ -493,6 +492,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             Observable.EveryFixedUpdate()
                 .Subscribe(_ =>
                 {
+                    _targetSpeed = _propertyPredictionState.GetMoveSpeed();
                     if (_picker.IsTouching || _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) <= 0 ||
                         GameSyncManager.CurrentTick <= 0 || !(_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)) || 
                         _subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
@@ -502,29 +502,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                             Debug.Log($"[HOTUPDATE] CANNOT MOVE {_picker.IsTouching}");
                             
                         }
-                        _playerInputStateData = default;
                         _playerInputStateData.Command = AnimationState.Idle;
                         _playerInputStateData.InputAnimations = AnimationState.Idle;
-                        _inputStream.Value = default;
-                        HandleInputPhysics(_playerInputStateData);
-                        HandleSendNetworkCommand(_inputStream.Value);
-                        for (int i = 0; i < _predictionStates.Count; i++)
-                        {
-                            var state = _predictionStates[i];
-                            state.ExecutePredictedCommands(GameSyncManager.CurrentTick);
-                        }
-                        return;
+                        _playerInputStateData.InputMovement = default;
+                        _playerInputStateData.Velocity = default;
+                        _inputStream.Value = _playerInputStateData;
+                        _targetSpeed = 0;
                     }
                     HandleInputPhysics(_playerInputStateData);
-                    if (_inputStream.Value.Command != AnimationState.None && _inputStream.Value.Command != AnimationState.Idle)
+                    if (_inputStream.Value.Command != AnimationState.None)
                     {
                         HandleSendNetworkCommand(_inputStream.Value);
                     }
-                    _targetSpeed = _propertyPredictionState.GetMoveSpeed();
                     var propertyEnvironmentChangeCommand = ObjectPoolManager<PropertyEnvironmentChangeCommand>.Instance.Get(50);
                     propertyEnvironmentChangeCommand.Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
                         CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate, NetworkCommandType.PropertyEnvironmentChange);
-                    propertyEnvironmentChangeCommand.HasInputMovement = _movement.magnitude > 0.1f;
+                    propertyEnvironmentChangeCommand.HasInputMovement = _playerInputStateData.InputMovement.magnitude > 0.1f;
                     propertyEnvironmentChangeCommand.PlayerEnvironmentState = _gameStateStream.Value;
                     propertyEnvironmentChangeCommand.IsSprinting = _playerInputStateData.Command.HasAnyState(AnimationState.Sprint);
                     _propertyPredictionState.AddPredictedCommand(propertyEnvironmentChangeCommand);
@@ -1090,10 +1083,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             switch (command)
             {
                 case AnimationState.Move:
+                    if (_targetSpeed == 0)
+                        break;
                     GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.Sprint);
                     GameAudioManager.Instance.PlayLoopingMusic(AudioEffectType.FootStep, transform.position, transform);
                     break;
                 case AnimationState.Sprint:
+                    if (_targetSpeed == 0)
+                        break;
                     GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.FootStep);
                     GameAudioManager.Instance.PlayLoopingMusic(AudioEffectType.Sprint, transform.position, transform);
                     break;
@@ -1434,11 +1431,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         
         private readonly Dictionary<PlayerEffectType, GameObject> _effectPool = new Dictionary<PlayerEffectType, GameObject>();
         private readonly Dictionary<PlayerEffectType, PlayerEffectContainer> _effectContainer = new Dictionary<PlayerEffectType, PlayerEffectContainer>();
-
-        public void UpdatePlayerInputState(PlayerInputStateData data)
-        {
-            HandleInputPhysics(data);
-        }
 
         [ClientRpc]
         public void RpcPlayEffect(PlayerEffectType effectType)

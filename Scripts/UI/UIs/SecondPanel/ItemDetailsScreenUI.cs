@@ -343,7 +343,6 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             countSliderButtonGroupData.PlayerItemType = bagItemData.PlayerItemType;
             sellCountSlider.Init(countSliderButtonGroupData);
 
-            return;
             void CountHandler(int count)
             {
                 if (count > bagItemData.Stack)

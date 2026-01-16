@@ -1,8 +1,10 @@
 ﻿using System.Linq;
+using AOTScripts.Data;
+using AOTScripts.Data.State;
 using MemoryPack;
 using UnityEngine;
 
-namespace AOTScripts.Data.State
+namespace HotUpdate.Scripts.Network.State
 {
     /// <summary>
     /// 玩家装备状态

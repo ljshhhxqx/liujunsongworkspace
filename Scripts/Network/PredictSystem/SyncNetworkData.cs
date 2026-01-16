@@ -15,7 +15,7 @@ using MemoryPack;
 using Mirror;
 using UnityEngine;
 using ISyncPropertyState = AOTScripts.Data.State.ISyncPropertyState;
-using PlayerEquipmentState = AOTScripts.Data.State.PlayerEquipmentState;
+using PlayerEquipmentState = HotUpdate.Scripts.Network.State.PlayerEquipmentState;
 using PlayerInputState = AOTScripts.Data.State.PlayerInputState;
 using PlayerItemState = AOTScripts.Data.State.PlayerItemState;
 using PlayerPredictablePropertyState = HotUpdate.Scripts.Network.State.PlayerPredictablePropertyState;

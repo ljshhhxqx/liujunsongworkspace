@@ -35,7 +35,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 return false;
             }
 
-            return SkillConfig.IsSkillCostEnough(skillConfigData, propertyCalculator) && skillChecker.IsSkillNotCd();
+            return SkillConfig.IsSkillCostEnough(skillConfigData, propertyCalculator);
         }
 
         public static ISkillChecker CreateSkillChecker(SkillConfigData skillConfigData, AnimationState key)

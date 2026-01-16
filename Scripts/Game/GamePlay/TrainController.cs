@@ -139,7 +139,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
             command.NewState = SubjectedStateType.IsCantMoved;
             command.Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Property);
             command.OperationType = OperationType.Add;
-            command.EnableRb = false;
+            command.EnableRb = true;
             var ts = _cachedTrainParts.RandomSelect();
             identity.transform.SetParent(ts);
             identity.transform.localPosition = Vector3.zero;
@@ -226,7 +226,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
                     stateChangedCommand.Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Property);
                     stateChangedCommand.OperationType = OperationType.Subtract;
                     
-                    stateChangedCommand.EnableRb = true;
+                    stateChangedCommand.EnableRb = false;
                     identity.transform.SetParent(null);
                     _gameSyncManager.EnqueueServerCommand(stateChangedCommand);
                     var takeTrainCommand = new PlayerTouchObjectCommand();

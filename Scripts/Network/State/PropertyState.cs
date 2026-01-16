@@ -9,7 +9,7 @@ namespace AOTScripts.Data.State
     /// 服务器强制同步内容
     /// </summary>
     [MemoryPackable(GenerateType.NoGenerate)]
-    [MemoryPackUnion(0, typeof(PlayerEquipmentState))]
+    [MemoryPackUnion(0, typeof(HotUpdate.Scripts.Network.State.PlayerEquipmentState))]
     [MemoryPackUnion(1, typeof(PlayerItemState))]
     [MemoryPackUnion(2, typeof(PlayerInputState))]
     [MemoryPackUnion(3, typeof(HotUpdate.Scripts.Network.State.PlayerPredictablePropertyState))]

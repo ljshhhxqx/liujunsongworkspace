@@ -11,6 +11,8 @@ using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
 using UnityEngine;
 using VContainer;
+using EquipmentData = HotUpdate.Scripts.Network.State.EquipmentData;
+using PlayerEquipmentState = HotUpdate.Scripts.Network.State.PlayerEquipmentState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
