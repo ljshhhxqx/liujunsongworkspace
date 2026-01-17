@@ -244,6 +244,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
                     _cachedTrainParts.Add(trainPart);
                 }
             }
+            _trainPlayers.Clear();
             _gameEventManager.Publish(new TrainArrivedEvent(_interactSystem.currentTrainId, trainPlayers, type));
         }
 

@@ -26,7 +26,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             Constant = constant;
         }
 
-        private static bool CheckSkillCdAndCost(ISkillChecker skillChecker, SkillConfigData skillConfigData,
+        private static bool CheckSkillCost(ISkillChecker skillChecker, SkillConfigData skillConfigData,
             PropertyCalculator propertyCalculator, AnimationState key)
         {
             if (skillChecker == null)
@@ -95,7 +95,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var skillChecker = checkers[key];
             var skillLifeCycle = skillChecker.GetSkillEffectLifeCycle();
             position = Vector3.zero;
-            if (!CheckSkillCdAndCost(skillChecker, skillConfigData, propertyCalculator, key))
+            if (!CheckSkillCost(skillChecker, skillConfigData, propertyCalculator, key))
             {
                 return false;
             }
