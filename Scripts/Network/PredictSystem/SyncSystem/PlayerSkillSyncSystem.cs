@@ -33,12 +33,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         protected override CommandType CommandType => CommandType.Skill;
         
         [Inject]
-        private void Init(IConfigProvider configProvider)
+        private void Init(IConfigProvider configProvider, IObjectResolver resolver)
         {
             _skillConfig = configProvider.GetConfig<SkillConfig>();
             _playerInGameManager = PlayerInGameManager.Instance;
             _gameObjectContainer = GameObjectContainer.Instance;
-            _interactSystem = Object.FindObjectOfType<InteractSystem>();
         }
 
         protected override void OnGameStart(bool isGameStarted)
@@ -47,7 +46,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 return;
             }
-            //游戏开始才能开始倒计时
+            _interactSystem = UnityEngine.Object.FindObjectOfType<InteractSystem>();
             UpdateEquipmentCd(_tokenSource.Token).Forget();
         }
 
@@ -94,40 +93,38 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             while (!token.IsCancellationRequested)
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(1 / GameSyncManager.TickSeconds), cancellationToken: token);
                 var players = _playerSkillSyncStates.Keys.ToArray();
                 for (int i = 0; i < players.Length; i++)
                 {
                     var playerId = players[i];
-                    var playerState = PropertyStates[playerId];
                     var playerConnection = GameSyncManager.GetPlayerConnection(playerId);
                     var skillDic = playerConnection.SkillCheckerDict;
-                    if (playerState is PlayerSkillState playerSkillState)
+                    //Debug.Log($"[PlayerSkillSyncSystem] UpdateEquipmentCd {playerId}");
+                    if (skillDic == null || skillDic.Count == 0)
                     {
-                        if (skillDic == null || skillDic.Count == 0)
-                        {
-                            return;
-                        }
-                        var keys = skillDic.Keys.ToArray();
-                        for (int j = 0; j < keys.Length; j++)
-                        {
-                            var skillChecker = skillDic[keys[j]];
-                            if (skillChecker.IsSkillEffect())
-                            {
-                                PlayerSkillCalculator.UpdateSkillFlyEffect(playerId, GameSyncManager.TickSeconds, skillChecker, _interactSystem.GetHitObjectDatas);
-                            }
-
-                            if (!skillChecker.IsSkillNotInCd())
-                            {
-                                var cooldown = skillChecker.GetCooldownHeader();
-                                cooldown = cooldown.Update(GameSyncManager.TickSeconds);
-                                skillChecker.SetCooldownHeader(cooldown);
-                            }
-                            skillDic[keys[j]] = skillChecker;
-                        }
+                        continue;
                     }
-                    PropertyStates[playerId] = playerState;
+                    //Debug.Log($"[PlayerSkillSyncSystem] UpdateEquipmentCd skill checker not null {playerId}");
+                    var keys = skillDic.Keys.ToArray();
+                    for (int j = 0; j < keys.Length; j++)
+                    {
+                        var skillChecker = skillDic[keys[j]];
+                        if (skillChecker.IsSkillEffect())
+                        {
+                            PlayerSkillCalculator.UpdateSkillFlyEffect(playerId, GameSyncManager.TickSeconds, skillChecker, _interactSystem.GetHitObjectDatas);
+                        }
+
+                        if (!skillChecker.IsSkillNotInCd())
+                        {
+                            var cooldown = skillChecker.GetCooldownHeader();
+                            cooldown = cooldown.Update(GameSyncManager.TickSeconds);
+                            skillChecker.SetCooldownHeader(cooldown);
+                        }
+                        skillDic[keys[j]] = skillChecker;
+                    }
+                    playerConnection.SkillCheckerDict = skillDic;
                 }
+                await UniTask.Delay(TimeSpan.FromSeconds(GameSyncManager.TickSeconds), cancellationToken: token);
             }
         }
 
@@ -208,6 +205,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     {
                         skillCheckers.Remove(skillLoadCommand.KeyCode);
                     }
+                    playerConnection.SkillCheckerDict = skillCheckers;
                     var skillCommonHeader = checker.GetCommonSkillCheckerHeader();
                     if (skillLoadCommand.SkillConfigId != skillCommonHeader.ConfigId)
                     {
@@ -224,6 +222,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     Debug.Log($"[SkillLoadCommand] Player {header.ConnectionId} skill {skillLoadCommand.SkillConfigId}-{skillLoadCommand.KeyCode.ToString()} load");
                     checker = PlayerSkillCalculator.CreateSkillChecker(skillData, skillLoadCommand.KeyCode);
                     skillCheckers.Add(skillLoadCommand.KeyCode, checker);
+                    playerConnection.SkillCheckerDict = skillCheckers;
                 }
                 var skillLoadOverrideAnimation = new SkillLoadOverloadAnimationCommand
                 {

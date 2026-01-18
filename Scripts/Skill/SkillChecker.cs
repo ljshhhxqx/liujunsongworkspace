@@ -94,7 +94,7 @@ namespace HotUpdate.Scripts.Skill
 
         public SkillEventType RemoveSkillEvent(float currentTime)
         {
-            if (SkillEventData==null || SkillEventData.Count == 0)
+            if (SkillEventData == null || SkillEventData.Count == 0)
             {
                 return SkillEventType.None;
             }
@@ -109,6 +109,7 @@ namespace HotUpdate.Scripts.Skill
                          OnDestroy?.Invoke();
                          break;
                      }
+                     Debug.Log($" {CasterId} 触发技能效果事件：" + eventType);
                      SkillEventData.RemoveAt(i);
                      return eventType;
                  }

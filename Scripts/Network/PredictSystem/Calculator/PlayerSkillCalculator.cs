@@ -94,11 +94,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var checkers = playerController.SkillCheckerDict;
             var skillChecker = checkers[key];
             var skillLifeCycle = skillChecker.GetSkillEffectLifeCycle();
-            position = Vector3.zero;
-            if (!CheckSkillCost(skillChecker, skillConfigData, propertyCalculator, key))
-            {
-                return false;
-            }
+            position = Vector3.zero; 
+            // if (!CheckSkillCost(skillChecker, skillConfigData, propertyCalculator, key))
+            // {
+            //     return false;
+            // }
             var header = skillCommand.Header;
             var playerNetId = playerController.netId;
             if (skillCommand.IsAutoSelectTarget)

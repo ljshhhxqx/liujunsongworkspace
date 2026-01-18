@@ -14835,27 +14835,6 @@ Transform:
   - {fileID: 194937856}
   m_Father: {fileID: 959330668}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &3456302965805282712
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6355675685999305819}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 43.999992, y: 3.791801, z: 43.999996}
-  m_Center: {x: -0.000014305115, y: 1.8958972, z: 0.000011444092}
 --- !u!1 &3659113089793626213
 GameObject:
   m_ObjectHideFlags: 0
@@ -14993,27 +14972,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 959330668}
   m_LocalEulerAnglesHint: {x: 0, y: 23.816, z: 0}
---- !u!65 &4036543724162743455
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5604659638916684179}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 44.999992, y: 4.735752, z: 45}
-  m_Center: {x: 0, y: 2.3678722, z: 0}
 --- !u!23 &4039281010366902329
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -16288,7 +16246,7 @@ GameObject:
   - component: {fileID: 5083456305795515177}
   - component: {fileID: 8152582981062904972}
   - component: {fileID: 6253032917731555398}
-  - component: {fileID: 4036543724162743455}
+  - component: {fileID: 8152582981062904973}
   m_Layer: 7
   m_Name: land christmas village
   m_TagString: Untagged
@@ -17131,7 +17089,6 @@ GameObject:
   - component: {fileID: 6014616608488767201}
   - component: {fileID: 7266538641599246660}
   - component: {fileID: 4842241704968635790}
-  - component: {fileID: 3456302965805282712}
   - component: {fileID: 7266538641599246661}
   m_Layer: 7
   m_Name: water location christmas village
@@ -17461,21 +17418,28 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6355675685999305819}
   m_Mesh: {fileID: -3381434446735947706, guid: 31f798d331b2fe74aaee1649612a945f, type: 3}
---- !u!114 &7266538641599246661
-MonoBehaviour:
+--- !u!64 &7266538641599246661
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6355675685999305819}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a22ca65cdc8a47c9a5789def65786632, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: 29
-  isMesh: 0
-  interactableCollider: {fileID: 0}
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -3381434446735947706, guid: 31f798d331b2fe74aaee1649612a945f, type: 3}
 --- !u!4 &7292861010538508922
 Transform:
   m_ObjectHideFlags: 0
@@ -18463,6 +18427,28 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5604659638916684179}
+  m_Mesh: {fileID: 4577067137910832616, guid: edc7dcd7cf4465e438cefd564f1de44d, type: 3}
+--- !u!64 &8152582981062904973
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5604659638916684179}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
   m_Mesh: {fileID: 4577067137910832616, guid: edc7dcd7cf4465e438cefd564f1de44d, type: 3}
 --- !u!1 &8170156408162613540
 GameObject:
