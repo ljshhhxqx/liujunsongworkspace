@@ -75,8 +75,10 @@ namespace HotUpdate.Scripts.Skill
 
         public event Action OnDestroy;
 
-        public SkillEffectLifeCycle(Vector3 origin, Vector3 target, float size, float speed, float expectationTime, SkillEffectFlyType skillEffectFlyType = SkillEffectFlyType.Linear,
-            float currentTime = 0)
+        public SkillEffectLifeCycle(Vector3 origin, Vector3 target, float size, float speed, float expectationTime, 
+            uint casterId,
+            SkillEffectFlyType skillEffectFlyType = SkillEffectFlyType.Linear,
+            List<SkillEventData> skillEventData = null, float currentTime = 0)
         {
             Origin = origin;
             Target = target;
@@ -85,22 +87,39 @@ namespace HotUpdate.Scripts.Skill
             ExpectationTime = expectationTime;
             CurrentTime = currentTime;
             SkillEffectFlyType = skillEffectFlyType;
+            SkillEventData = skillEventData;
             ColliderConfig = new SphereColliderConfig
             {
                 Radius = size,
-                Center = Vector3.zero
+                Center = Vector3.zero,
             };
+            CasterId = casterId;
+            CurrentPosition = origin;
+        }
+        
+        private List<SkillEventData> _cachedSkillEventData = new List<SkillEventData>();
+        
+        public void Start(SkillCheckerParams skillCheckerParams)
+        {
+            _cachedSkillEventData.Clear();
+            Origin = skillCheckerParams.PlayerPosition;
+            Target = skillCheckerParams.TargetPosition;
+            CurrentPosition = Speed == 0 ? Target : Origin;
+            foreach (var skillEventData in SkillEventData)
+            {
+                _cachedSkillEventData.Add(skillEventData);
+            }
         }
 
         public SkillEventType RemoveSkillEvent(float currentTime)
         {
-            if (SkillEventData == null || SkillEventData.Count == 0)
+            if (_cachedSkillEventData == null || _cachedSkillEventData.Count == 0)
             {
                 return SkillEventType.None;
             }
-            for (int i = 0; i < SkillEventData.Count; i++)
+            for (int i = 0; i < _cachedSkillEventData.Count; i++)
             {
-                 var skillEvent = SkillEventData[i];
+                 var skillEvent = _cachedSkillEventData[i];
                  if (skillEvent.UpdateAndCheck(currentTime))
                  {
                      var eventType = skillEvent.SkillEventType;
@@ -110,7 +129,7 @@ namespace HotUpdate.Scripts.Skill
                          break;
                      }
                      Debug.Log($" {CasterId} 触发技能效果事件：" + eventType);
-                     SkillEventData.RemoveAt(i);
+                     _cachedSkillEventData.RemoveAt(i);
                      return eventType;
                  }
             }
@@ -135,7 +154,15 @@ namespace HotUpdate.Scripts.Skill
             {
                 step = distance;
             }
-            CurrentPosition += (Target - Origin).normalized * step;
+
+            if (Speed == 0)
+            {
+                CurrentPosition = Target;
+            }
+            else
+            {
+                CurrentPosition += (Target - Origin).normalized * step;
+            }
             return isHitFunc(CasterId, CurrentPosition, ColliderConfig);
         }
     }
@@ -184,7 +211,12 @@ namespace HotUpdate.Scripts.Skill
 
         public bool Execute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams, params object[] args)
         {
-            return CheckExecute(ref checker, skillCheckerParams);
+            if (CheckExecute(ref checker, skillCheckerParams))
+            {
+                SkillEffectLifeCycle.Start(skillCheckerParams);
+                return true;
+            }
+            return false;
         }
 
         public SingleTargetFlyEffectSkillChecker(CooldownHeader cooldownHeader, CommonSkillCheckerHeader commonSkillCheckerHeader,SkillEffectLifeCycle skillEffectLifeCycle)
@@ -287,7 +319,12 @@ namespace HotUpdate.Scripts.Skill
 
         public bool Execute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams, params object[] args)
         {
-            return CheckExecute(ref checker, skillCheckerParams);
+            if (CheckExecute(ref checker, skillCheckerParams))
+            {
+                SkillEffectLifeCycle.Start(skillCheckerParams);
+                return true;
+            }
+            return false;
         }
 
         public HashSet<DynamicObjectData> UpdateFly(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<DynamicObjectData>> isHitFunc)
@@ -379,7 +416,12 @@ namespace HotUpdate.Scripts.Skill
 
         public bool Execute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams, params object[] args)
         {
-            return CheckExecute(ref checker, skillCheckerParams);
+            if (CheckExecute(ref checker, skillCheckerParams))
+            {
+                SkillEffectLifeCycle.Start(skillCheckerParams);
+                return true;
+            }
+            return false;
         }
 
         public void Destroy()
@@ -460,7 +502,12 @@ namespace HotUpdate.Scripts.Skill
 
         public bool Execute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams, params object[] args)
         {
-            return CheckExecute(ref checker, skillCheckerParams);
+            if (CheckExecute(ref checker, skillCheckerParams))
+            {
+                SkillEffectLifeCycle.Start(skillCheckerParams);
+                return true;
+            }
+            return false;
         }
 
         
@@ -542,7 +589,12 @@ namespace HotUpdate.Scripts.Skill
 
         public bool Execute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams, params object[] args)
         {
-            return CheckExecute(ref checker, skillCheckerParams);
+            if (CheckExecute(ref checker, skillCheckerParams))
+            {
+                SkillEffectLifeCycle.Start(skillCheckerParams);
+                return true;
+            }
+            return false;
         }
         
         public HashSet<DynamicObjectData> UpdateFly(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<DynamicObjectData>> isHitFunc)

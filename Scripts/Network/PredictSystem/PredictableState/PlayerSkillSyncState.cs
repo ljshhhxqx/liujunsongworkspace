@@ -97,6 +97,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     skillChecker.SetSkillData(skillData);
                     skillCheckers[skillData.AnimationState] = skillChecker;
                 }
+                _playerComponentController.SkillCheckerDict = skillCheckers;
                 foreach (var key in _skillObjects.Keys)
                 {
                     _skillObjects[key].transform.position = skillCheckers[key].GetSkillEffectPosition();

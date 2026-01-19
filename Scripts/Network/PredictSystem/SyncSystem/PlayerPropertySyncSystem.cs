@@ -12,6 +12,7 @@ using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Effect;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
+using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Server.InGame;
@@ -23,6 +24,7 @@ using UnityEngine;
 using VContainer;
 using AnimationState = AOTScripts.Data.AnimationState;
 using INetworkCommand = AOTScripts.Data.INetworkCommand;
+using Object = UnityEngine.Object;
 using PlayerPredictablePropertyState = HotUpdate.Scripts.Network.State.PlayerPredictablePropertyState;
 using PropertyAttackCommand = AOTScripts.Data.PropertyAttackCommand;
 using PropertyAutoRecoverCommand = AOTScripts.Data.PropertyAutoRecoverCommand;
@@ -59,6 +61,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private MapElementData _collectData;
         private BattleEffectConditionConfig _battleEffectConfig;
         private GameEventManager _gameEventManager;
+        private InteractSystem _interactSystem;
         private float _timeBuffTimer;
         private readonly List<(BuffBase, int)> _previousNoUnionPlayerBuff = new List<(BuffBase, int)>();
         protected override CommandType CommandType => CommandType.Property;
@@ -83,6 +86,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _skillConfig = _configProvider.GetConfig<SkillConfig>();
             _battleEffectConfig = _configProvider.GetConfig<BattleEffectConditionConfig>();
             _playerInGameManager = PlayerInGameManager.Instance;
+            _interactSystem = Object.FindObjectOfType<InteractSystem>();
             BuffDataReaderWriter.RegisterReaderWriter();
         }
 
@@ -1220,28 +1224,52 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     var equipmentSystem = GameSyncManager.GetSyncSystem<PlayerEquipmentSystem>(CommandType.Equipment);
                     for (int j = 0; j < effectData.Length; j++)
                     {
-                        var playerId = _playerInGameManager.GetPlayerId(hitPlayerId);
-                        var hitPlayerState = GetState<PlayerPredictablePropertyState>(playerId);
-                        var preHealth = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue;
+                        var isPlayer = _playerInGameManager.IsPlayer(hitPlayerId);
                         var effect = effectData[j];
                         HandleSkillHit(playerNetId, effect, hitPlayerId, false);
-                        if (effect.effectProperty == PropertyTypeEnum.Health)
-                        {
-                            if (equipmentSystem.TryGetPlayerConditionChecker(attacker, TriggerType.OnSkillHit, out var conditionChecker))
-                            {
-                                var changedHp = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue - preHealth;
-                                var maxHp = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].MaxCurrentValue;
-                                var currentHp = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue;
-                                var skillHitData = SkillHitCheckerParameters.CreateParameters(TriggerType.OnSkillHit,
-                                    changedHp, skillData.skillType, currentHp / maxHp);
-                                GameSyncManager.EnqueueServerCommand(new TriggerCommand
-                                {
-                                    Header = GameSyncManager.CreateNetworkCommandHeader(attacker, CommandType.Equipment),
-                                    TriggerType = TriggerType.OnSkillHit,
-                                    TriggerData = MemoryPackSerializer.Serialize(skillHitData),
-                                });
-                            }
-                        }
+                        // if (isPlayer)
+                        // {
+                        //     var playerId = _playerInGameManager.GetPlayerId(hitPlayerId);
+                        //     var hitPlayerState = GetState<PlayerPredictablePropertyState>(playerId);
+                        //     var  preHealth = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue;
+                        //     var changedHp = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue - preHealth;
+                        //     var maxHp = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].MaxCurrentValue;
+                        //     var currentHp = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue;
+                        //     if (effect.effectProperty == PropertyTypeEnum.Health)
+                        //     {
+                        //         if (equipmentSystem.TryGetPlayerConditionChecker(attacker, TriggerType.OnSkillHit, out var conditionChecker))
+                        //         {
+                        //             var skillHitData = SkillHitCheckerParameters.CreateParameters(TriggerType.OnSkillHit,
+                        //                 changedHp, skillData.skillType, currentHp / maxHp);
+                        //             GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                        //             {
+                        //                 Header = GameSyncManager.CreateNetworkCommandHeader(attacker, CommandType.Equipment),
+                        //                 TriggerType = TriggerType.OnSkillHit,
+                        //                 TriggerData = MemoryPackSerializer.Serialize(skillHitData),
+                        //             });
+                        //         }
+                        //     }
+                        // }
+                        // else
+                        // {
+                        //     var itemData = _interactSystem.GetSceneItemInfo(hitPlayerId);
+                        //     preHealth = itemData.health;
+                        //     changedHp = itemData.health - _jsonDataConfig.GetDamage();
+                        //     if (effect.effectProperty == PropertyTypeEnum.Health)
+                        //     {
+                        //         if (equipmentSystem.TryGetPlayerConditionChecker(attacker, TriggerType.OnSkillHit, out var conditionChecker))
+                        //         {
+                        //             var skillHitData = SkillHitCheckerParameters.CreateParameters(TriggerType.OnSkillHit,
+                        //                 changedHp, skillData.skillType, currentHp / maxHp);
+                        //             GameSyncManager.EnqueueServerCommand(new TriggerCommand
+                        //             {
+                        //                 Header = GameSyncManager.CreateNetworkCommandHeader(attacker, CommandType.Equipment),
+                        //                 TriggerType = TriggerType.OnSkillHit,
+                        //                 TriggerData = MemoryPackSerializer.Serialize(skillHitData),
+                        //             });
+                        //         }
+                        //     }
+                        // }
                     }
                 }
             }

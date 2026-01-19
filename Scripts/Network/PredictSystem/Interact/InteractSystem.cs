@@ -92,6 +92,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             NetworkGameObjectPoolManager.Instance.Spawn(_wellPrefab, startGameWellEvent.SpawnPosition,
                 Quaternion.identity);
         }
+        
+        public SceneItemInfo GetSceneItemInfo(uint uid)
+        {
+            foreach (var kvp in _sceneItems)
+            {
+                if (kvp.Value.sceneItemId == uid)
+                {
+                    return kvp.Value;
+                }
+                
+            }
+            Debug.Log($"Scene item {uid} not found");
+            return default;
+        }
 
         private void OnSceneItemsChanged(SyncIDictionary<uint, SceneItemInfo>.Operation type, uint uid, SceneItemInfo info)
         {
