@@ -434,6 +434,10 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         
         private T ConvertToMessageContent<T>(string content) where T : IMessageContent, new()
         {
+            if (string.IsNullOrEmpty( content))
+            {
+                return default;
+            }
             var messageContent = BoxingFreeSerializer.JsonDeserialize<T>(content);
             return messageContent;
             // 这里你需要将服务器返回的消息内容转换为Message对象并处理

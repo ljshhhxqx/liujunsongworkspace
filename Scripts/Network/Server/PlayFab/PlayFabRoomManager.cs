@@ -271,7 +271,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             var data = result.ParseCloudScriptResultToDic();
             if (data.TryGetValue("roomData", out var value))
             {
-                var roomData = BoxingFreeSerializer.JsonDeserialize<RoomData>(result.FunctionResult.ToString());
+                var roomData = BoxingFreeSerializer.JsonDeserialize<RoomData>(value.ToString());
                 CurrentRoomId = roomData.RoomId;
                 _uiManager.SwitchUI<RoomScreenUI>(ui =>
                 {
@@ -574,7 +574,8 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             };
         }
 
-        public void TryChangePlayerGameInfo(PlayerGameDuty duty = PlayerGameDuty.None, PlayerGameStatus status = PlayerGameStatus.None)
+        
+        ublic void /TryChangePlayerGameInfo(PlayerGameDuty duty = PlayerGameDuty.None, PlayerGameStatus status = PlayerGameStatus.None)]
         {
             var dutyEnum = (PlayerGameDuty)Enum.Parse(typeof(PlayerGameDuty), _currentGamePlayerInfo.playerDuty);
             if (dutyEnum == duty)

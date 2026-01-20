@@ -1281,8 +1281,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             if (_playerInGameManager.IsPlayer(attacker))
             {
                 var attackerId = _playerInGameManager.GetPlayerId(attacker);
-                var playerId = _playerInGameManager.GetPlayerId(hitId);
                 var playerState = GetState<PlayerPredictablePropertyState>(attackerId);
+                var playerId = _playerInGameManager.GetPlayerId(hitId);
                 if (playerId != -1)
                 {
                     var hitPlayerState = GetState<PlayerPredictablePropertyState>(playerId);

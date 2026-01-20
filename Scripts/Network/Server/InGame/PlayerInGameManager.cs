@@ -371,7 +371,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             {
                 return playerId;
             }
-            Debug.LogError($"Player uid {id} not found");
+            Debug.LogWarning($"Player uid {id} not found");
             return -1;
         }
 
