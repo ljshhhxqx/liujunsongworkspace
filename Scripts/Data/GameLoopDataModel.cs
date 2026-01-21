@@ -9,12 +9,12 @@ namespace HotUpdate.Scripts.Data
 {
     public static class GameLoopDataModel
     {
-        public static readonly ReactiveProperty<float> WarmupRemainingTime = new ReactiveProperty<float>();
-        public static readonly ReactiveProperty<float> GameRemainingTime = new ReactiveProperty<float>();
-        public static readonly ReactiveProperty<GameLoopData> GameLoopData = new ReactiveProperty<GameLoopData>();
-        public static readonly ReactiveProperty<MapType> GameSceneName = new ReactiveProperty<MapType>();
-        public static readonly ReactiveProperty<MapConfigData> MapConfig = new ReactiveProperty<MapConfigData>();
-        public static readonly ReactiveProperty<GameResultData> GameResult = new ReactiveProperty<GameResultData>();
-        public static readonly ReactiveProperty<Vector3> LocalPlayerPosition = new ReactiveProperty<Vector3>();
+        public static ReactiveProperty<float> WarmupRemainingTime { get; } = new ReactiveProperty<float>();
+        public static ReactiveProperty<float> GameRemainingTime{ get; }  = new ReactiveProperty<float>();
+        public static ReactiveProperty<GameLoopData> GameLoopData { get; } = new ReactiveProperty<GameLoopData>();
+        public static ReactiveProperty<MapType> GameSceneName { get; } = new ReactiveProperty<MapType>();
+        public static ReactiveProperty<MapConfigData> MapConfig { get; } = new ReactiveProperty<MapConfigData>();
+        public static ReactiveProperty<GameResultData> GameResult { get; } = new ReactiveProperty<GameResultData>();
+        public static ReactiveProperty<Vector3> LocalPlayerPosition { get; } = new ReactiveProperty<Vector3>();
     }
 }

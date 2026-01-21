@@ -6,7 +6,6 @@ using AOTScripts.Tool;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using HotUpdate.Scripts.Data;
-using HotUpdate.Scripts.Game;
 using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Static;
@@ -96,9 +95,9 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                 .AddTo(_warmupDisposable);
             
             GameLoopDataModel.GameRemainingTime
-                .Where(time => time <= 5&& time > 0)
-                .Take(1)
-                .Subscribe(_ => StartGameTimer(warningThreshold))
+                .Where(time => time > 0)
+                // .Take(1)
+                .Subscribe(StartGameTimer)
                 .AddTo(_gameTimerDisposable);
             GameLoopDataModel.GameResult
                 .Where(result => result.playersResultData!= null)
@@ -232,7 +231,6 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         {
             // 设置游戏计时器界面
             gameTimerPanel.gameObject.SetActive(true);
-            gameTimerTitleText.text = "剩余时间";
             gameTimerProgressBar.fillAmount = 1f;
             gameTimerText.color = normalTimeColor;
             
