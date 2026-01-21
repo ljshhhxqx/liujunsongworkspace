@@ -273,13 +273,15 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                         _playerDeathCountdowns.Remove(uid);
                         callback.Invoke(uid);
                         _playerBornCallbacks.Remove(uid);
-                        return;
+                        Debug.Log($"[UpdateAllPlayerGrids] Player {uid} born with countdown {deathCountdown}");
+                        continue;
                     }
 
                     if (deathCountdown > 0)
                     {
                         deathCountdown -= GameSyncManager.TickSeconds;
                         _playerDeathCountdowns[uid] = deathCountdown;
+                        Debug.Log($"[UpdateAllPlayerGrids] Player {uid} death countdown {deathCountdown}");
                     }
                 }
             }

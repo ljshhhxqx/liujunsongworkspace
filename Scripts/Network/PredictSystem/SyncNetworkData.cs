@@ -1123,6 +1123,8 @@ namespace AOTScripts.Data
         public OperationType OperationType;
         [MemoryPackOrder(3)]
         public bool EnableRb;
+        [MemoryPackOrder(4)]
+        public float Time;
 
         public NetworkCommandHeader GetHeader() => Header;
 

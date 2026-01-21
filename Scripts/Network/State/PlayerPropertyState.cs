@@ -18,6 +18,7 @@ namespace HotUpdate.Scripts.Network.State
         [MemoryPackOrder(0)] public MemoryDictionary<PropertyTypeEnum, PropertyCalculator> MemoryProperty;
         [MemoryPackOrder(1)] public SubjectedStateType ControlSkillType;
         [MemoryPackOrder(2)] public PlayerPropertyState PlayerState;
+        [MemoryPackOrder(3)] public bool IsDead;
         public float NowSpeedRatio => ControlSkillType.HasAnyState(SubjectedStateType.IsSlowdown) ? 0.3f : 1f;
         
         public float NowSpeed(float currentSpeed)
@@ -38,6 +39,7 @@ namespace HotUpdate.Scripts.Network.State
             sb.AppendLine($"SubjectedState: {ControlSkillType}");
             sb.AppendLine($"PlayerState: {PlayerState}");
             sb.AppendLine($"MemoryProperty:");
+            sb.AppendLine($"Is Dead: {IsDead}");
             foreach (var kvp in MemoryProperty)
             {
                 sb.AppendLine($"  {kvp.Key.ToString()}: {kvp.Value.CurrentValue} ({kvp.Value.MaxCurrentValue})");

@@ -65,14 +65,17 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private void OnGoldChanged(ValuePropertyData valuePropertyData)
         {
             if (valuePropertyData.Equals(default) || Mathf.Approximately(valuePropertyData.Health, _valuePropertyData.Health)) return;
-            deathRoot.SetActive(false);
+            if (!_isDeathCountDownStarted)
+            {
+                deathRoot.SetActive(false);
+            }
             PlayDamageEffect(_valuePropertyData.Health, valuePropertyData.Health, valuePropertyData.MaxHealth);
             _valuePropertyData = valuePropertyData;
         }
 
         public void PlayDamageEffect(float oldHealth, float newHealth, float maxHealth)
         {
-            if (oldHealth <= 0 || newHealth >= oldHealth) return;
+            if (_isDeathCountDownStarted || newHealth <= 0f || newHealth >= oldHealth ) return;
             damageRoot.SetActive(newHealth < oldHealth);
 //            Debug.Log($"PlayerDamageDeathOverlay PlayDamageEffect called  oldHealth: {oldHealth}, newHealth: {newHealth}, maxHealth: {maxHealth}");
             deathRoot.SetActive(false);
@@ -119,31 +122,97 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             _countDownTween?.Kill();
             _sliderTween?.Kill();
         }
+        
+        private bool _isDeathCountDownStarted;
 
         public void PlayDeathEffect(float deathCountDown)
         {
+            _isDeathCountDownStarted = true;
+            // 1. 激活相关对象
             deathRoot.SetActive(true);
             damageRoot.SetActive(false);
+            
+            // 2. 重置相关组件状态（关键修复点）
             countDownSlider.gameObject.SetActive(false);
             countDownSlider.value = 0f;
-            var color = damageImage.color;
-            damageImage.color = new Color(color.r, color.g, color.b, 0f);
-            countDownText.color = new Color(countDownText.color.r, countDownText.color.g, countDownText.color.b, 0.7f);
+            
+            // 3. 重置Image的透明度
+            var damageColor = damageImage.color;
+            damageImage.color = new Color(damageColor.r, damageColor.g, damageColor.b, 0f);
+            
+            // 4. 重置deathImage透明度（关键：确保初始状态正确）
+            var deathColor = deathImage.color;
+            deathImage.color = new Color(deathColor.r, deathColor.g, deathColor.b, 0f);
+            
+            // 5. 重置文本透明度
+            var textColor = countDownText.color;
+            countDownText.color = new Color(textColor.r, textColor.g, textColor.b, 0.7f);
+            
+            // 6. 重置text effect
             deathTextEffect.transitionRate = 1f;
+            
+            // 7. 停止之前的动画
             _damageSequence?.Kill();
             _deathSequence?.Kill();
             _countDownTween?.Kill();
             _sliderTween?.Kill();
-            _countDownTween = countDownText.DOFade(0.2f, 0.75f).SetLoops(int.MaxValue, LoopType.Yoyo).SetEase(Ease.Linear);
-            _sliderTween = DOTween.To(() => countDownSlider.value, x => countDownSlider.value = x, 1, deathCountDown).SetEase(Ease.Linear);
+            
+            // 8. 创建新的动画（修复后的版本）
+            
+            // 文字闪烁效果
+            _countDownTween = countDownText
+                .DOFade(0.2f, 0.75f)
+                .SetLoops(int.MaxValue, LoopType.Yoyo)
+                .SetEase(Ease.Linear)
+                .OnStart(() => {
+                    // 确保text是激活的
+                    countDownText.gameObject.SetActive(true);
+                });
+            
+            // 倒计时进度条
+            _sliderTween = countDownSlider
+                .DOValue(1f, deathCountDown)
+                .SetEase(Ease.Linear)
+                .OnStart(() => {
+                    // 在动画开始时激活slider
+                    countDownSlider.gameObject.SetActive(true);
+                    countDownSlider.value = 0f; // 再次确保初始值为0
+                });
+            
+            // 死亡动画序列
             _deathSequence = DOTween.Sequence();
-            _deathSequence.Append(deathImage.DOFade(0.2f, 2f).SetEase(Ease.Linear).OnComplete(() =>
-            {
+            
+            // 阶段1：图片淡入
+            _deathSequence.Append(
+                deathImage.DOFade(0.2f, 1f)
+                    .SetEase(Ease.Linear)
+                    .OnStart(() => {
+                        // 确保deathImage是激活的
+                        deathImage.gameObject.SetActive(true);
+                    })
+            );
+            
+            // 阶段2：显示进度条（在淡入完成后）
+            _deathSequence.AppendCallback(() => {
                 countDownSlider.gameObject.SetActive(true);
-                DOTween.To(() => deathTextEffect.transitionRate, x => deathTextEffect.transitionRate = x, 0f, 2f)
-                    .SetEase(Ease.Linear);
-            }));
-            _deathSequence.SetEase(Ease.Linear);
+            });
+            
+            // 阶段3：文字效果渐变
+            _deathSequence.Append(
+                DOTween.To(
+                    () => deathTextEffect.transitionRate,
+                    x => deathTextEffect.transitionRate = x,
+                    0f,
+                    2f
+                ).SetEase(Ease.Linear)
+            );
+            
+            // 设置序列的回调
+            _deathSequence.OnComplete(() => {
+                Debug.Log("死亡动画播放完成");
+                _isDeathCountDownStarted = false;
+                // 可以在这里添加动画完成后的逻辑
+            });
         }
     }
 }

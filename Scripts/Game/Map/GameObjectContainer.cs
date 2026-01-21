@@ -46,13 +46,13 @@ namespace HotUpdate.Scripts.Game.Map
         {
             if (!_dynamicObjectIds.TryGetValue(netId, out var index))
             {
-                Debug.LogWarning($"{netId} not found in DynamicObjectData");
+                //Debug.LogWarning($"{netId} not found in DynamicObjectData");
                 return false;
             }
 
             if (_dynamicObjectData.Count <= index)
             {
-                Debug.LogWarning("DynamicObjectData index out of range");
+                //Debug.LogWarning("DynamicObjectData index out of range");
                 return false;
             }
             

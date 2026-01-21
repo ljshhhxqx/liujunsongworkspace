@@ -996,8 +996,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcHandlePlayerDeadClient(float countdownTime)
         {
-            _playerAnimationCalculator.HandleAnimation(AnimationState.Dead, forcePlay: true);
-            var playerDamageDeathOverlay = _uiManager.GetUI<PlayerDamageDeathOverlay>();
+            _playerAnimationCalculator.PlayAnimationWithNoCondition(AnimationState.Dead);
+            var playerDamageDeathOverlay = _uiManager.GetActiveUI<PlayerDamageDeathOverlay>(UIType.PlayerDamageDeathOverlay, UICanvasType.Overlay);
             playerDamageDeathOverlay.PlayDeathEffect(countdownTime);
             Debug.Log($"[RpcHandlePlayerDeadClient] {netId}===countdownTime ->{countdownTime}");
         }
@@ -1005,8 +1005,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcHandlePlayerRespawnedClient()
         {
-            _playerAnimationCalculator.HandleAnimation(AnimationState.Idle, forcePlay: true);
-            var playerDamageDeathOverlay = _uiManager.GetUI<PlayerDamageDeathOverlay>();
+            _playerAnimationCalculator.PlayAnimationWithNoCondition(AnimationState.Idle);
+            var playerDamageDeathOverlay = _uiManager.GetActiveUI<PlayerDamageDeathOverlay>(UIType.PlayerDamageDeathOverlay, UICanvasType.Overlay);
             Debug.Log($"[RpcHandlePlayerRespawnedClient] {netId}");
             playerDamageDeathOverlay.Clear();
         }
@@ -1134,6 +1134,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         public void HandlePropertyRecover(ref PlayerPredictablePropertyState playerPredictablePropertyState)
         {
+            if (_playerInGameManager.IsPlayerDead(netId, out _))
+            {
+                return;
+            }
             _playerPropertyCalculator.HandlePropertyRecover(ref playerPredictablePropertyState);
         }
 

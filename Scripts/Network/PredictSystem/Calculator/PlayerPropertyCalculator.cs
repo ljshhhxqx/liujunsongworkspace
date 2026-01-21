@@ -138,6 +138,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var damageResultDatas = new List<DamageResultData>();
             foreach (var (key, defenderPropertyState) in defenders)
             {
+                if (defenderPropertyState.ControlSkillType.HasAnyState(SubjectedStateType.IsInvisible))
+                {
+                    continue;
+                }
                 var resultData = new DamageResultData();
                 resultData.HitterUid = attackerId;
                 resultData.DefenderUid = key;
@@ -179,6 +183,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public void HandlePropertyRecover(ref PlayerPredictablePropertyState playerPredictablePropertyState)
         {
             var propertyState = playerPredictablePropertyState;
+            if (propertyState.IsDead)
+            {
+                return;
+            }
             var state = propertyState.MemoryProperty;
             var healthRecover = state[PropertyTypeEnum.HealthRecovery];
             var strengthRecover = state[PropertyTypeEnum.StrengthRecovery];

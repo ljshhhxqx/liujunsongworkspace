@@ -174,7 +174,7 @@ namespace HotUpdate.Scripts.UI.UIBase
             return _uiDict.ContainsKey(uIType);
         }
 
-        public T GetUI<T>() where T : ScreenUIBase
+        private T GetUI<T>() where T : ScreenUIBase
         {
             foreach (var uiBase in _uIPrefabs)
             {
@@ -187,7 +187,7 @@ namespace HotUpdate.Scripts.UI.UIBase
             return null;
         }
         
-        public ScreenUIBase GetUI(UIType uIType)
+        private ScreenUIBase GetUI(UIType uIType)
         {
             foreach (var uiBase in _uIPrefabs)
             {

@@ -471,6 +471,41 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             PropertyChange(header.ConnectionId);
         }
 
+        private void PlayerStateChanged(int connectionId, float time, SubjectedStateType state, OperationType operationType)
+        {
+            var playerState = GetState<PlayerPredictablePropertyState>(connectionId);
+            if (operationType == OperationType.Add)
+            {
+                playerState.ControlSkillType = playerState.ControlSkillType.AddState(state);
+                if (time > 0)
+                {
+                    DelayInvoker.DelayInvoke(time, () =>
+                    {
+                        playerState = GetState<PlayerPredictablePropertyState>(connectionId);
+                        playerState.ControlSkillType = playerState.ControlSkillType.RemoveState(state);
+                        PropertyStates[connectionId] = playerState;
+                        PropertyChange(connectionId);
+                    });
+                }
+            }
+            else if (operationType == OperationType.Subtract)
+            {
+                playerState.ControlSkillType = playerState.ControlSkillType.RemoveState(state);
+                if (time > 0)
+                {
+                    DelayInvoker.DelayInvoke(time, () =>
+                    {
+                        playerState = GetState<PlayerPredictablePropertyState>(connectionId);
+                        playerState.ControlSkillType = playerState.ControlSkillType.AddState(state);
+                        PropertyStates[connectionId] = playerState;
+                        PropertyChange(connectionId);
+                    });
+                }
+            }
+            PropertyStates[connectionId] = playerState;
+            PropertyChange(connectionId);
+        }
+
         private void HandlePlayerStateChanged(PlayerStateChangedCommand playerStateChangedCommand)
         {
             var header = playerStateChangedCommand.GetHeader();
@@ -478,17 +513,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var rb = playerController.GetComponent<Rigidbody>();
             if (playerStateChangedCommand.NewState != SubjectedStateType.None)
             {
-                var playerState = GetState<PlayerPredictablePropertyState>(header.ConnectionId);
-                if (playerStateChangedCommand.OperationType == OperationType.Add)
-                {
-                    playerState.ControlSkillType = playerState.ControlSkillType.AddState(playerStateChangedCommand.NewState);
-                }
-                else if (playerStateChangedCommand.OperationType == OperationType.Subtract)
-                {
-                    playerState.ControlSkillType = playerState.ControlSkillType.RemoveState(playerStateChangedCommand.NewState);
-                }
-                PropertyStates[header.ConnectionId] = playerState;
-                PropertyChange(header.ConnectionId);
+                PlayerStateChanged(header.ConnectionId, playerStateChangedCommand.Time, playerStateChangedCommand.NewState, playerStateChangedCommand.OperationType);
             }
             rb.isKinematic = playerStateChangedCommand.EnableRb;
             playerController.RpcSetRb(rb.isKinematic);
@@ -498,6 +523,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerId = _playerInGameManager.GetPlayerId(propertyItemAttackCommand.TargetId);
             var playerState = GetState<PlayerPredictablePropertyState>(playerId);
+            if (playerState.ControlSkillType.HasAnyState(SubjectedStateType.IsInvisible))
+            {
+                return;
+            }
             var damageResult = PlayerPropertyCalculator.HandleItemAttack(propertyItemAttackCommand.AttackerId,
                 propertyItemAttackCommand.TargetId, ref playerState, propertyItemAttackCommand.Damage);
             var player = _playerInGameManager.GetPlayerComponent<PlayerComponentController>(playerId);
@@ -508,12 +537,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             
             if (playerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue <= 0)
             {
-                var deadManId = propertyItemAttackCommand.TargetId;
-                var deadTime = _jsonDataConfig.GameConfig.GetPlayerDeathTime((int)playerState.MemoryProperty[PropertyTypeEnum.Score].CurrentValue);
-                if (!_playerInGameManager.TryAddDeathPlayer(deadManId, deadTime, propertyItemAttackCommand.AttackerId, OnPlayerDeath, OnPlayerRespawn))
-                {
-                    Debug.LogError($"PlayerPropertySyncSystem: Failed to add death player {deadManId}");
-                }
+                PlayerDead(playerId, (int)playerState.MemoryProperty[PropertyTypeEnum.Score].CurrentValue, propertyItemAttackCommand.AttackerId);
+                // var deadManId = propertyItemAttackCommand.TargetId;
+                // var deadTime = _jsonDataConfig.GameConfig.GetPlayerDeathTime((int)playerState.MemoryProperty[PropertyTypeEnum.Score].CurrentValue);
+                // if (!_playerInGameManager.TryAddDeathPlayer(deadManId, deadTime, propertyItemAttackCommand.AttackerId, OnPlayerDeath, OnPlayerRespawn))
+                // {
+                //     Debug.LogError($"PlayerPropertySyncSystem: Failed to add death player {deadManId}");
+                // }
+                // PlayerStateChanged(playerId, deadTime + 3f, SubjectedStateType.IsInvisible, OperationType.Add);
             }
             PropertyStates[playerId] = playerState;
             PropertyChange(playerId);
@@ -632,6 +663,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 {
                     Debug.LogError($"PlayerPropertySyncSystem: Failed to add death player {deadManId}");
                 }
+                PlayerStateChanged(headerConnectionId, deadTime + 3f, SubjectedStateType.IsInvisible, OperationType.Add);
             }
             PropertyStates[headerConnectionId] = playerState;
             PropertyChange(headerConnectionId);
@@ -1007,7 +1039,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             PropertyStates[buff.TargetPlayerId] = playerState;
             PropertyChange(buff.TargetPlayerId);
         }
-        
+
         public void HandleTimedBuffRemove(TimedBuffData buff, int index = -1)
         {
             var playerState = GetState<PlayerPredictablePropertyState>(buff.targetPlayerId);
@@ -1049,13 +1081,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 PropertyChange(defenderPlayerIds[i]);
                 if (PropertyStates[defenderPlayerIds[i]] is PlayerPredictablePropertyState playerPropertyState &&
                     playerPropertyState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue <= 0)
-                {
-                    var deadManId = _playerInGameManager.GetPlayerNetId(defenderPlayerIds[i]);
-                    var deadTime = _jsonDataConfig.GameConfig.GetPlayerDeathTime((int)defendersState[playerNetId].MemoryProperty[PropertyTypeEnum.Score].CurrentValue);
-                    if (!_playerInGameManager.TryAddDeathPlayer(deadManId, deadTime, attackerUid, OnPlayerDeath, OnPlayerRespawn))
-                    {
-                        Debug.LogError($"PlayerPropertySyncSystem: Failed to add death player {deadManId}");
-                    }
+                {                    
+                    PlayerDead(defenderPlayerIds[i], (int)defendersState[playerNetId].MemoryProperty[PropertyTypeEnum.Score].CurrentValue, attackerUid);
                 }
             }
 
@@ -1165,6 +1192,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             PropertyChange(attacker);
         }
 
+        private void PlayerDead(int connectionId, int score, uint attackerUid)
+        {
+            var deadManId = _playerInGameManager.GetPlayerNetId(connectionId);
+            var deadTime = _jsonDataConfig.GameConfig.GetPlayerDeathTime(score);
+            if (!_playerInGameManager.TryAddDeathPlayer(deadManId, deadTime, attackerUid, OnPlayerDeath, OnPlayerRespawn))
+            {
+                Debug.LogError($"PlayerPropertySyncSystem: Failed to add death player {deadManId}");
+            }
+            PlayerStateChanged(connectionId, deadTime + 3f, SubjectedStateType.IsInvisible, OperationType.Add);
+        }
+
         private void OnPlayerDeath(uint playerId, uint killerId, float countdownTime)
         {
             var playerConnection = _playerInGameManager.GetPlayerId(playerId);
@@ -1209,8 +1247,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             for (int i = 0; i < hitIds.Length; i++)
             {
                 var hitPlayerId = hitIds[i];
-                //var otherPlayerNetId = _playerInGameManager.GetPlayerNetId(attacker);
-                //var isAlly = _playerInGameManager.IsOtherPlayerAlly(playerNetId, otherPlayerNetId);
                 if (skillData.conditionTarget == ConditionTargetType.Ally)
                 {
                     for (int j = 0; j < effectData.Length; j++)
@@ -1227,49 +1263,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         var isPlayer = _playerInGameManager.IsPlayer(hitPlayerId);
                         var effect = effectData[j];
                         HandleSkillHit(playerNetId, effect, hitPlayerId, false);
-                        // if (isPlayer)
-                        // {
-                        //     var playerId = _playerInGameManager.GetPlayerId(hitPlayerId);
-                        //     var hitPlayerState = GetState<PlayerPredictablePropertyState>(playerId);
-                        //     var  preHealth = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue;
-                        //     var changedHp = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue - preHealth;
-                        //     var maxHp = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].MaxCurrentValue;
-                        //     var currentHp = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue;
-                        //     if (effect.effectProperty == PropertyTypeEnum.Health)
-                        //     {
-                        //         if (equipmentSystem.TryGetPlayerConditionChecker(attacker, TriggerType.OnSkillHit, out var conditionChecker))
-                        //         {
-                        //             var skillHitData = SkillHitCheckerParameters.CreateParameters(TriggerType.OnSkillHit,
-                        //                 changedHp, skillData.skillType, currentHp / maxHp);
-                        //             GameSyncManager.EnqueueServerCommand(new TriggerCommand
-                        //             {
-                        //                 Header = GameSyncManager.CreateNetworkCommandHeader(attacker, CommandType.Equipment),
-                        //                 TriggerType = TriggerType.OnSkillHit,
-                        //                 TriggerData = MemoryPackSerializer.Serialize(skillHitData),
-                        //             });
-                        //         }
-                        //     }
-                        // }
-                        // else
-                        // {
-                        //     var itemData = _interactSystem.GetSceneItemInfo(hitPlayerId);
-                        //     preHealth = itemData.health;
-                        //     changedHp = itemData.health - _jsonDataConfig.GetDamage();
-                        //     if (effect.effectProperty == PropertyTypeEnum.Health)
-                        //     {
-                        //         if (equipmentSystem.TryGetPlayerConditionChecker(attacker, TriggerType.OnSkillHit, out var conditionChecker))
-                        //         {
-                        //             var skillHitData = SkillHitCheckerParameters.CreateParameters(TriggerType.OnSkillHit,
-                        //                 changedHp, skillData.skillType, currentHp / maxHp);
-                        //             GameSyncManager.EnqueueServerCommand(new TriggerCommand
-                        //             {
-                        //                 Header = GameSyncManager.CreateNetworkCommandHeader(attacker, CommandType.Equipment),
-                        //                 TriggerType = TriggerType.OnSkillHit,
-                        //                 TriggerData = MemoryPackSerializer.Serialize(skillHitData),
-                        //             });
-                        //         }
-                        //     }
-                        // }
                     }
                 }
             }
@@ -1327,6 +1320,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         var playerConnection = GameSyncManager.GetPlayerConnection(hitId);
                         playerConnection.RpcPlayEffect(ParticlesType.HitEffect);
                         playerConnection.RpcPlayAudioEffect(AnimationState.Hit);
+                        if (propertyCalculator.CurrentValue <= 0)
+                        {
+                            PlayerDead(playerId, (int)hitPlayerState.MemoryProperty[PropertyTypeEnum.Score].CurrentValue, attacker);
+                        }
                     }
                     hitPlayerState.MemoryProperty[skillHitExtraEffectData.effectProperty] = propertyCalculator;
                     var state = skillHitExtraEffectData.controlSkillType.ToSubjectedStateType();
@@ -1347,6 +1344,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 propertyState.ControlSkillType = propertyState.ControlSkillType.RemoveState(state);
                 PropertyStates[connectionId] = propertyState;
+                PropertyChange(connectionId);
             }
         }
 

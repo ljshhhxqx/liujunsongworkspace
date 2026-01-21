@@ -575,7 +575,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         }
 
         
-        ublic void /TryChangePlayerGameInfo(PlayerGameDuty duty = PlayerGameDuty.None, PlayerGameStatus status = PlayerGameStatus.None)]
+        public void TryChangePlayerGameInfo(PlayerGameDuty duty = PlayerGameDuty.None, PlayerGameStatus status = PlayerGameStatus.None)
         {
             var dutyEnum = (PlayerGameDuty)Enum.Parse(typeof(PlayerGameDuty), _currentGamePlayerInfo.playerDuty);
             if (dutyEnum == duty)

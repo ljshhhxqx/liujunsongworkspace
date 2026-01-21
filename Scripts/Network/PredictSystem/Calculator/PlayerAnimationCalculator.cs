@@ -68,7 +68,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
         }
 
-        public void PlayAnimationWithNoCondition(AnimationState newState, int index)
+        public void PlayAnimationWithNoCondition(AnimationState newState, int index = 0)
         {
             switch (newState)
             {
@@ -100,6 +100,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 case AnimationState.SkillE:
                     IsPlayingSpecialAction = true;
                     _animationComponent.Animator.CrossFade(GetAnimationName(AnimationState.SkillE), 0.01f);
+                    break;
+                default:
+                    _animationComponent.Animator.CrossFade(GetAnimationName(newState), 0.01f);
                     break;
             }
         }

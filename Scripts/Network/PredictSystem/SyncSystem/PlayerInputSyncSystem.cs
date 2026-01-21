@@ -342,7 +342,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 //验证玩家是否存在或者是否已死亡
                 if (playerProperty == null || playerProperty[PropertyTypeEnum.Health].CurrentValue <= 0)
                 {
-                    Debug.LogWarning($"[playerInputSyncSystem]Player {header.ConnectionId} is not exist or is dead.");
+                    //Debug.LogWarning($"[playerInputSyncSystem]Player {header.ConnectionId} is not exist or is dead.");
                     
                     return playerInputState;
                 }
@@ -493,6 +493,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 playerInputState.PlayerGameStateData.Quaternion = CompressedQuaternion.FromQuaternion(Quaternion.identity);
                 playerInputState.PlayerGameStateData.PlayerEnvironmentState = PlayerEnvironmentState.OnGround;
                 var playerController = GameSyncManager.GetPlayerConnection(header.ConnectionId);
+                playerController.transform.position = playerRebornCommand.RebornPosition;
                 playerController.RpcHandlePlayerRespawnedClient();
                 return playerInputState;
             }
