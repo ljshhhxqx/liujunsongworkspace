@@ -46,6 +46,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         [SerializeField] private CountSliderButtonGroup buyCountSlider;
         
         private UIManager _uiManager;
+        public override bool IsGameUI => true;
         private IItemBaseData _currentItemData;
         private ItemDetailsType _currentItemDetailsType;
         private ValuePropertyData _currentValuePropertyData;

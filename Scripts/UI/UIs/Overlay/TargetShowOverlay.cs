@@ -34,6 +34,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private Camera _mainCamera;
         private RectTransform _canvasRect;
         private bool IsTargetNotNull => _targets != null && _targets.Count > 0;
+        public override bool IsGameUI => true;
 
         [Inject]
         private void Init(GameEventManager gameEventManager, IConfigProvider configProvider)

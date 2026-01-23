@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace HotUpdate.Scripts.Tool.ObjectPool
@@ -21,6 +22,30 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
             }
 
             return queue;
+        }
+
+        public void ClearPool(GameObject prefab)
+        {
+            _poolDictionary.Remove(prefab.GetInstanceID());
+        }
+        
+        public void ClearAllPool()
+        {
+            var pooledObjects = Object.FindObjectsOfType<PooledObject>(true);
+            foreach (var pooledObject in pooledObjects)
+            {
+                Object.Destroy(pooledObject);
+            }
+
+            foreach (var pool in _poolDictionary.Values)
+            {
+                foreach (var obj in pool)
+                {
+                    Object.Destroy(obj);
+                }
+            }
+
+            _poolDictionary.Clear();
         }
 
         private GameObject CreateGameObject(GameObject prefab, Transform parent = null)

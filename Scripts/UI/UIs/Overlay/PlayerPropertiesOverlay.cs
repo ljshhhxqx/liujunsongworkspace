@@ -37,6 +37,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         private Dictionary<int, PropertyItemData> _propertyItemDatas;
         
+        public override bool IsGameUI => true;
         [Inject]
         private void Init(IConfigProvider configProvider)
         {

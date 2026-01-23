@@ -39,6 +39,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         private HReactiveProperty<ValuePropertyData> _goldObservable;
         private Subject<Unit> _refreshSubject = new Subject<Unit>();
         public IObservable<Unit> OnRefresh => _refreshSubject;
+        public override bool IsGameUI => true;
 
         [Inject]
         private void Init(UIManager uiManager)

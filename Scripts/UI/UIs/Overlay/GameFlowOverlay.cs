@@ -6,6 +6,7 @@ using AOTScripts.Tool;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using HotUpdate.Scripts.Data;
+using HotUpdate.Scripts.Game;
 using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Static;
@@ -71,6 +72,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         
         private Sequence _warmupSequence;
         private Sequence _gameTimerSequence;
+        private Sequence _gameOverSequence;
         private Tween _gameTimerTween;
         
         private float _totalGameTime;
@@ -78,7 +80,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private bool _isGameRunning;
         private GameResult _gameResult;
         private GameEventManager _gameEventManager;
-        
+        private GameLoopController _gameLoopController;
         private CompositeDisposable _warmupDisposable = new CompositeDisposable();
         private CompositeDisposable _gameTimerDisposable = new CompositeDisposable();
 
@@ -87,6 +89,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         {
             InitializeUI();
             //DOTween.Init();
+            _gameLoopController = FindObjectOfType<GameLoopController>();
             _gameEventManager = gameEventManager;
             GameLoopDataModel.WarmupRemainingTime
                 .Where(time => time <= 3 && time > 0)
@@ -106,14 +109,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             
             goOnButton.BindDebouncedListener(() =>
             {
-                UISpriteContainer.Clear(ResourceManager.Instance.CurrentLoadingSceneName);
-                var op = ResourceManager.Instance.UnloadCurrentScene();
-                op.Completed += _ =>
-                {
-                    uiManager.SwitchUI<MainScreenUI>();
-                    uiManager.CloseUI(Type);
-                    _gameEventManager.Publish(new PlayerListenMessageEvent());
-                };
+                _gameLoopController.ClearAll();
             });
         }
         
@@ -171,7 +167,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private void ShowGameOver(GameResultData data)
         {
             StopGameTimer();
-            GameOverCoroutine(data);
+            GameOverCoroutine(data).Forget();
         }
         
         private async void WarmupCountdownCoroutine(int seconds)
@@ -302,8 +298,9 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             return results;
         }
 
-        private async void GameOverCoroutine(GameResultData data)
+        private async UniTask GameOverCoroutine(GameResultData data)
         {
+            Cursor.lockState = CursorLockMode.None;
             var playerGameResults = GetPlayerGameResults(data);
             gameOverItemList.SetItemList(playerGameResults);
             var playerData = data.playersResultData.FirstOrDefault(x => x.isWinner && x.playerName == PlayFabData.PlayerReadOnlyData.Value.Nickname);
@@ -319,39 +316,42 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             goOnButton.transform.localScale = Vector3.zero;
             gameOverItemList.gameObject.SetActive(false);
             
+            _gameOverSequence?.Kill();
             // 创建游戏结束序列
-            var gameOverSeq = DOTween.Sequence();
+            _gameOverSequence = DOTween.Sequence();
             
-            // 面板淡入
-            gameOverSeq.Append(gameOverPanel.DOFade(1, panelFadeDuration));
+            // 面板淡入（只执行一次，不循环）
+            _gameOverSequence.Append(gameOverPanel.DOFade(1, panelFadeDuration));
             
             // 标题动画 - 弹跳进入
-            gameOverSeq.Append(messageText.transform.DOScale(1.2f, 0.5f).SetEase(Ease.OutBack));
-            gameOverSeq.Append(messageText.transform.transform.DOScale(1f, 0.2f));
+            _gameOverSequence.Append(messageText.transform.DOScale(1.2f, 0.5f).SetEase(Ease.OutBack));
+            _gameOverSequence.Append(messageText.transform.DOScale(1f, 0.2f));
             
-            // 标题闪烁效果
-            gameOverSeq.Append(messageText.DOColor(new Color(titleColor.r, titleColor.g, titleColor.b, 0.7f), 0.3f));
-            gameOverSeq.Append(messageText.DOColor(titleColor, 0.3f));
-            gameOverSeq.SetLoops(2, LoopType.Yoyo);
+            // 创建一个专门用于标题闪烁的子序列
+            var blinkSequence = DOTween.Sequence();
+            blinkSequence.Append(messageText.DOColor(new Color(titleColor.r, titleColor.g, titleColor.b, 0.7f), 0.3f));
+            blinkSequence.Append(messageText.DOColor(titleColor, 0.3f));
+            blinkSequence.SetLoops(2, LoopType.Yoyo);  // 只让这个子序列循环
+            
+            // 将闪烁序列添加到主序列
+            _gameOverSequence.Append(blinkSequence);
             
             // 得分显示
-            gameOverSeq.AppendCallback(() => gameOverItemList.gameObject.SetActive(true));
-            gameOverSeq.Append(gameOverItemList.transform.DOScale(1f, 0.4f).SetEase(Ease.OutBack));
+            _gameOverSequence.AppendCallback(() => gameOverItemList.gameObject.SetActive(true));
+            _gameOverSequence.Append(gameOverItemList.transform.DOScale(1f, 0.4f).SetEase(Ease.OutBack));
             
             // 重新开始按钮
-            gameOverSeq.AppendCallback(() => goOnButton.gameObject.SetActive(true));
-            gameOverSeq.Append(goOnButton.transform.DOScale(1.1f, 0.3f).SetEase(Ease.OutBack));
-            gameOverSeq.Append(goOnButton.transform.DOScale(1f, 0.2f));
+            _gameOverSequence.AppendCallback(() => goOnButton.gameObject.SetActive(true));
+            _gameOverSequence.Append(goOnButton.transform.DOScale(1.1f, 0.3f).SetEase(Ease.OutBack));
+            _gameOverSequence.Append(goOnButton.transform.DOScale(1f, 0.2f));
             
-            // 按钮持续脉冲效果
-            gameOverSeq.AppendCallback(() => 
+            // 按钮持续脉冲效果（不添加到序列中，独立运行）
+            _gameOverSequence.OnComplete(() => 
             {
                 goOnButton.transform.DOScale(1.1f, 0.5f)
-                    .SetLoops(-1, LoopType.Yoyo)
+                    .SetLoops(int.MaxValue, LoopType.Yoyo)
                     .SetEase(Ease.InOutSine);
             });
-            
-            gameOverSeq.Play();
             
             await UniTask.Yield();
         }

@@ -14,6 +14,7 @@ using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
 using UniRx;
 using UnityEngine;
+using VContainer;
 using AnimationEvent = AOTScripts.Data.AnimationEvent;
 using AnimationState = AOTScripts.Data.AnimationState;
 
@@ -35,13 +36,16 @@ namespace HotUpdate.Scripts.Collector.Collects
         private void FixedUpdate()
         {
             _keyframeCooldown.Update(Time.fixedDeltaTime);
-            if (IsDead || !ServerHandler || !IsAttackable || !_keyframeCooldown.IsReady() || Time.time < _lastAttackTime + _attackInfo.attackCooldown)
+            if (IsDead || !_gameSyncManager || !ServerHandler || !IsAttackable || !_keyframeCooldown.IsReady() || Time.time < _lastAttackTime + _attackInfo.attackCooldown)
             {
                 //Debug.LogError($"{name} is dead or not attackable or attack cooldown not over yet");
                 return;
             }
             
-
+            if (_gameSyncManager.isGameOver)
+            {
+                return;
+            }
             GameObjectContainer.Instance.DynamicObjectIntersects(NetId, transform.position, ColliderConfig,
                 _collectedObjects, OnInteract);
         }
@@ -135,6 +139,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         {
             // _disposable?.Dispose();
             // _disposable?.Clear();
+            _gameSyncManager ??= FindObjectOfType<GameSyncManager>();
             _attackInfo = info;
             NetId = id;
             ServerHandler = serverHandler;

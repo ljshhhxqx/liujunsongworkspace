@@ -27,6 +27,7 @@ namespace HotUpdate.Scripts.Map
         private Bounds _worldBounds;
         private readonly Dictionary<int, GameObject> _minimapItems = new Dictionary<int, GameObject>();
         private readonly Dictionary<int, Sequence> _minimapSequence = new Dictionary<int, Sequence>();
+        public override bool IsGameUI => true;
 
         [Inject]
         private void Init()

@@ -493,7 +493,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .Subscribe(_ =>
                 {
                     _targetSpeed = _propertyPredictionState.GetMoveSpeed();
-                    if (_picker.IsTouching || _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) <= 0 ||
+                    if (_gameSyncManager.isGameOver || _picker.IsTouching || _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) <= 0 ||
                         GameSyncManager.CurrentTick <= 0 || !(_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)) || 
                         _subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
                     {

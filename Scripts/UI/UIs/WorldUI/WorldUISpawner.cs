@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using AOTScripts.Tool;
-using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using HotUpdate.Scripts.UI.UIs.UIFollow.DataModel;
@@ -31,7 +30,16 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
             _gameEventManager.Subscribe<PlayerSpawnedEvent>(OnPlayerSpawned);
             _gameEventManager.Subscribe<SceneItemInfoChangedEvent>(OnSceneItemInfoChanged);
             _gameEventManager.Subscribe<SceneItemSpawnedEvent>(OnSceneItemSpawned);
+            _gameEventManager.Subscribe<ClearAllWorldUIEvent>(OnClearAllWorldUIEvent);
             _uiCanvas = transform.parent.GetComponent<Canvas>();
+        }
+
+        private void OnClearAllWorldUIEvent(ClearAllWorldUIEvent worldUIEvent)
+        {
+            foreach (var (_, controller) in _followedUIControllers)
+            {
+                GameObjectPoolManger.Instance.ReturnObject(controller.gameObject);
+            }
         }
 
         private void OnPlayerSpawned(PlayerSpawnedEvent playerSpawnedEvent)

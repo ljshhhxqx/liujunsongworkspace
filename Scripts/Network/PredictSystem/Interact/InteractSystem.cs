@@ -64,14 +64,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         }
         
         [Inject]
-        private void Init(GameEventManager gameEventManager, IConfigProvider configProvider)
+        private void Init(GameEventManager gameEventManager, IConfigProvider configProvider, IObjectResolver objectResolver)
         {
             _gameEventManager = gameEventManager;
             //_gameSyncManager = FindObjectOfType<GameSyncManager>();
             SceneItemWriter();
             _jsonConfig = configProvider.GetConfig<JsonDataConfig>();
-            _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
-            _gameSyncManager = FindObjectOfType<GameSyncManager>();
+            _itemsSpawnerManager = objectResolver.Resolve<ItemsSpawnerManager>();
+            _gameSyncManager = objectResolver.Resolve<GameSyncManager>();
             _gameEventManager.Subscribe<GameStartEvent>(OnGameStart);
             _gameEventManager.Subscribe<PlayerAttackItemEvent>(OnPlayerAttackItem);
             _gameEventManager.Subscribe<PlayerSkillItemEvent>(OnSkillItem);
@@ -316,6 +316,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 
         private void UpdateBuffs(float serverUpdateInterval)
         {
+            if (_gameSyncManager.isGameOver)
+            {
+                return;
+            }
             if (_activeBuffs.Count == 0)
             {
                 for (int i = 0; i < _activeBuffs.Count; i++)
@@ -332,7 +336,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 
         private async UniTaskVoid UpdateInteractRequests(CancellationToken cts)
         {
-            while (!_cts.IsCancellationRequested)
+            while (!_cts.IsCancellationRequested && !_gameSyncManager.isGameOver)
             {
                 await UniTask.WaitUntil(() => !_commandQueue.IsEmpty, 
                     cancellationToken: cts);

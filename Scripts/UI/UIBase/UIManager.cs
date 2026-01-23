@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Static;
+using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using HotUpdate.Scripts.UI.UIs.Popup;
 using Resource;
@@ -22,6 +23,7 @@ namespace HotUpdate.Scripts.UI.UIBase
         private List<ScreenUIBase> _uIPrefabs = new List<ScreenUIBase>();
         private UICanvasRoot[] _roots;
         private IObjectResolver _resolver;
+        private GameEventManager _gameEventManager;
         private readonly Dictionary<UIType, ScreenUIBase> _uiDict = new Dictionary<UIType, ScreenUIBase>();
         public ScreenUIBase CurrentActiveScreenUI1 { get; private set; }
 
@@ -32,9 +34,10 @@ namespace HotUpdate.Scripts.UI.UIBase
         public event Action<bool> IsUnlockMouse;
 
         [Inject]
-        private void Init(IObjectResolver resolver)
+        private void Init(IObjectResolver resolver, GameEventManager gameEventManager)
         {
             _resolver = resolver;
+            _gameEventManager = gameEventManager;
             _roots = Object.FindObjectsOfType<UICanvasRoot>();
         }
 
@@ -324,6 +327,22 @@ namespace HotUpdate.Scripts.UI.UIBase
                 if (_uIPrefabs[i].TryGetComponent<ResourceComponent>(out var resourceComponent))
                 {
                     ResourceManager.Instance.UnloadResource(resourceComponent.ResourceData);
+                }
+            }
+        }
+
+        public void ClearAllGameUI()
+        {
+            _gameEventManager.Publish(new ClearAllWorldUIEvent());
+            for (int i = 0; i < _roots.Length; i++)
+            {
+                var root = _roots[i];
+                var childs = root.GetComponentsInChildren<ScreenUIBase>();
+                for (int j = 0; j < childs.Length; j++)
+                {
+                    var child = childs[j];
+                    if (child && child.IsGameUI)
+                        Object.Destroy(child.gameObject);
                 }
             }
         }

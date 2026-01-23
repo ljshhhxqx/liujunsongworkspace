@@ -50,6 +50,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public bool isRandomUnionStart;
         [SyncVar] 
         public bool isGameStart;
+        [SyncVar] 
+        public bool isGameOver;
         
         public static int CurrentTick { get; private set; }
         
@@ -121,7 +123,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _gameEventManager.Subscribe<AllPlayerGetSpeedEvent>(OnAllPlayerGetSpeed);
             Time.fixedDeltaTime = _serverInputRate;
             Observable.EveryUpdate()
-                .Where(_ => isServer && !_isProcessing && NetworkServer.connections.Count > 0)
+                .Where(_ => isServer && !_isProcessing && NetworkServer.connections.Count > 0 && !isGameOver)
                 .Subscribe(_ =>
                 {
                     _tickTimer = 0;

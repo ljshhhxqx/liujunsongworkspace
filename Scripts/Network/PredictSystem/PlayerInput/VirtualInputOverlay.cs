@@ -15,6 +15,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private bool autoDetectControls = true;
         [SerializeField]
         private float buttonSizeMultiplier = 0.15f; // 按钮大小占屏幕比例
+        public override bool IsGameUI => true;
     
         [Header("References")]
         [SerializeField]

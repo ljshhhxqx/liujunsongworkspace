@@ -14,6 +14,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private Image holeImage;
         private static readonly int HoleRadius = Shader.PropertyToID("_Radius");
         private static readonly int HoleAlpha = Shader.PropertyToID("_Alpha");
+        public override bool IsGameUI => true;
 
         private Material _holeMaterial;
 

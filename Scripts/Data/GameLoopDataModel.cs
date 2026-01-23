@@ -16,5 +16,16 @@ namespace HotUpdate.Scripts.Data
         public static ReactiveProperty<MapConfigData> MapConfig { get; } = new ReactiveProperty<MapConfigData>();
         public static ReactiveProperty<GameResultData> GameResult { get; } = new ReactiveProperty<GameResultData>();
         public static ReactiveProperty<Vector3> LocalPlayerPosition { get; } = new ReactiveProperty<Vector3>();
+
+        public static void Clear()
+        {
+            WarmupRemainingTime.Dispose();
+            GameRemainingTime.Dispose();
+            GameLoopData.Dispose();
+            GameSceneName.Dispose();
+            MapConfig.Dispose();
+            GameResult.Dispose();
+            LocalPlayerPosition.Dispose();
+        }
     }
 }

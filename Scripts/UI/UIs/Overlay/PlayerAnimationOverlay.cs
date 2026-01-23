@@ -19,6 +19,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private ProgressItem progressItem;
         private Sequence _progressTween;
         private Dictionary<int, AnimationStateData> _playerAnimiationDatas;
+        public override bool IsGameUI => true;
 
         public void BindPlayerAnimationData(HReactiveDictionary<int, AnimationStateData> playerAnimationDatas)
         {

@@ -32,6 +32,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         
         public override UIType Type => UIType.Weather;
         public override UICanvasType CanvasType => UICanvasType.Overlay;
+        public override bool IsGameUI => true;
 
         [Inject]
         private void Init()

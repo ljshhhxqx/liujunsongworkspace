@@ -43,6 +43,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         
         public override UIType Type => UIType.PlayerDamageDeathOverlay;
         public override UICanvasType CanvasType => UICanvasType.Overlay;
+        public override bool IsGameUI => true;
 
         [Inject]
         private void Init(UIManager uiManager, IConfigProvider configProvider)

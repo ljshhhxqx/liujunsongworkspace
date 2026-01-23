@@ -16,6 +16,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
     {
         [SerializeField]
         private ContentItemList contentItemList;
+        public override bool IsGameUI => true;
 
         [SerializeField] 
         private RectTransform canvasRect;

@@ -386,6 +386,11 @@ namespace HotUpdate.Scripts.Tool.GameEvent
             Spawned = spawned;
         }
     }
+    
+    public struct ClearAllWorldUIEvent : IGameEvent
+    {
+        
+    }
 
     public struct SceneItemInfoChangedEvent : IGameEvent
     {

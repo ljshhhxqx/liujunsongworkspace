@@ -92,6 +92,7 @@ namespace HotUpdate.Scripts.Game.Map
             }
             _gameEventManager.Publish(new GameMapResourceLoadedEvent(mapName));
         }
+        
 
         public override void OnStartClient()
         {

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Game.Map;
+using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using Mirror;
 using UnityEngine;
+using VContainer;
 
 namespace HotUpdate.Scripts.Collector.Collects.Move
 {
@@ -13,13 +15,18 @@ namespace HotUpdate.Scripts.Collector.Collects.Move
         public MoveInfo _moveInfo;
         private MovementConfigLink _movementConfigLink;
         private Transform _cachedTransform;
+        private GameSyncManager _gameSyncManager;
         private HashSet<GameObjectData> _collectedItems = new HashSet<GameObjectData>();
         private Func<Vector3, bool> _checkInsideMap;
         private Func<Vector3, IColliderConfig, bool> _checkObstacle;
 
         private void FixedUpdate()
         {
-            if (_moveInfo == default || !ServerHandler || !IsMoveable)
+            if (_moveInfo == default || !ServerHandler || !IsMoveable || !_gameSyncManager)
+            {
+                return;
+            }
+            if (_gameSyncManager.isGameOver)
             {
                 return;
             }
@@ -28,8 +35,6 @@ namespace HotUpdate.Scripts.Collector.Collects.Move
 
         protected override void OnInitialize()
         {
-            _checkInsideMap = MapBoundDefiner.Instance.IsWithinMapBounds;
-            _checkObstacle = GameObjectContainer.Instance.IsIntersect;
         }
 
         public void OnSelfSpawn()
@@ -39,6 +44,9 @@ namespace HotUpdate.Scripts.Collector.Collects.Move
 
         public void Init(MoveInfo moveInfo, bool serverHandler, uint id)
         {
+            _gameSyncManager ??= FindObjectOfType<GameSyncManager>();
+            _checkInsideMap = MapBoundDefiner.Instance.IsWithinMapBounds;
+            _checkObstacle = GameObjectContainer.Instance.IsIntersect;
             _movementConfigLink ??= new MovementConfigLink();
             NetId = id;
             ServerHandler = serverHandler;

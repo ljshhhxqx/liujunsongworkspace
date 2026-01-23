@@ -255,12 +255,12 @@ namespace HotUpdate.Scripts.Network.Server.InGame
 
         private async UniTaskVoid UpdateAllPlayerGrids(CancellationToken token)
         {
-            while (!token.IsCancellationRequested && isServer)
+            while (!token.IsCancellationRequested && isServer && !_gameSyncManager.isGameOver)
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(GameSyncManager.TickSeconds), cancellationToken: token);
                 foreach (var uid in _playerNetIds.Values)
                 {
-                    var identity = isServer ? NetworkServer.spawned[uid] : NetworkClient.spawned[uid];
+                    var identity = GameStaticExtensions.GetNetworkIdentity(uid);
                     if (!identity) continue;
             
                     var position = identity.transform.position;

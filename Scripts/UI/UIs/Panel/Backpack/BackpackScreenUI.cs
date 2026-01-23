@@ -38,6 +38,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
         private BagSlotItem _draggedSlot; // 当前被拖拽的格子
 
         public static BagCommonData BagCommonData { get; private set; }
+        public override bool IsGameUI => true;
 
         [Inject]
         private void Init(IConfigProvider configProvider, UIManager uiManager)

@@ -16,8 +16,13 @@ using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.Server.PlayFab;
+using HotUpdate.Scripts.Static;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using HotUpdate.Scripts.Tool.Message;
+using HotUpdate.Scripts.Tool.ObjectPool;
+using HotUpdate.Scripts.UI.UIBase;
+using HotUpdate.Scripts.UI.UIs.Panel;
 using HotUpdate.Scripts.Weather;
 using Mirror;
 using PlayFab;
@@ -49,6 +54,7 @@ namespace HotUpdate.Scripts.Game
         private GameSyncManager _gameSyncManager;
         private JsonDataConfig _jsonDataConfig;
         private ItemsSpawnerManager _itemsSpawnerManager;
+        private UIManager _uiManager;
         private MapConfig _mapConfig;
         private GameInfo _gameInfo;
         private MapElementData _mapElementData;
@@ -61,6 +67,7 @@ namespace HotUpdate.Scripts.Game
         private WeatherManager _weatherManager;
         private bool _serverHandler;
         private bool _clientHandler;
+        
 
         [SyncVar(hook = nameof(OnEndGameChanged))] 
         public bool isEndGameSync;
@@ -120,10 +127,11 @@ namespace HotUpdate.Scripts.Game
 
         [Inject]
         private void Init(MessageCenter messageCenter, GameEventManager gameEventManager, IObjectResolver objectResolver, IConfigProvider configProvider,
-            MirrorNetworkMessageHandler messageHandler, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller)
+            MirrorNetworkMessageHandler messageHandler, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller, UIManager uiManager)
         {
             _playFabClientCloudScriptCaller = playFabClientCloudScriptCaller;
             _interactSystem = objectResolver.Resolve<InteractSystem>();
+            _uiManager = uiManager;
             _gameEventManager = gameEventManager;
             _messageCenter = messageCenter;
             _messageHandler = messageHandler;
@@ -189,7 +197,7 @@ namespace HotUpdate.Scripts.Game
                 
                 _warmupTime = _jsonDataConfig.GameConfig.warmupTime;
                 _noUnionTime = _jsonDataConfig.GameConfig.noUnionTime;
-                _mainGameTime = _gameInfo.GameTime;
+                _mainGameTime = 6f;
                 Debug.Log($"OnGameReady called {_gameInfo.GameMode}- {_gameInfo.GameTime} seconds");
                 StartGameLoop(_cts).Forget();
             }
@@ -387,6 +395,7 @@ namespace HotUpdate.Scripts.Game
             {
                 return;
             }
+            _gameSyncManager.isGameOver = true;
             Debug.Log("Save game result");
             var playerPropertySyncSystem = _gameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
             if (playerPropertySyncSystem == null)
@@ -413,19 +422,28 @@ namespace HotUpdate.Scripts.Game
                 };
                 index++;
             }
+            var json = JsonUtility.ToJson(data);
             var request = new ExecuteEntityCloudScriptRequest();
             request.FunctionName = "SaveGameResult";
             request.FunctionParameter = new
             {
                 gameId = PlayFabData.CurrentGameId.Value,
-                gameResult = JsonUtility.ToJson(data)
+                gameResult = json
             };
-            _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnSaveGameResult, OnError);
+            _playFabClientCloudScriptCaller.ExecuteCloudScript(request, r => OnSaveGameResult(r, json), OnError);
         }
 
-        private void OnSaveGameResult(ExecuteCloudScriptResult result)
+        private void OnSaveGameResult(ExecuteCloudScriptResult result, string json)
         {
             var dic = result.ParseCloudScriptResultToDic();
+            RpcStartGame(json);
+        }
+        
+        [ClientRpc]
+        private void RpcStartGame(string json)
+        {
+            var data = BoxingFreeSerializer.JsonDeserialize<GameResultData>(json);
+            GameLoopDataModel.GameResult.SetValueAndForceNotify(data);
         }
 
         private void OnError(PlayFabError error)
@@ -435,7 +453,7 @@ namespace HotUpdate.Scripts.Game
 
         private void OnDestroy()
         {
-            _gameSyncManager.isGameStart = false;
+            GameLoopDataModel.Clear();
             _cts?.Cancel();
         }
         
@@ -496,5 +514,18 @@ namespace HotUpdate.Scripts.Game
             }
         }
 
+        public void ClearAll()
+        {
+            var op = ResourceManager.Instance.UnloadCurrentScene();
+            op.Completed += _ =>
+            {
+                _uiManager.ClearAllGameUI();
+                _uiManager.UnloadAll();
+                UISpriteContainer.Clear(ResourceManager.Instance.CurrentLoadingSceneName);
+                GameObjectPoolManger.Instance.ClearAllPool();
+                _uiManager.SwitchUI<MainScreenUI>();
+                _gameEventManager.Publish(new PlayerListenMessageEvent());
+            };
+        }
     }
 }
