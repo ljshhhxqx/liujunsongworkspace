@@ -4,6 +4,7 @@ using AOTScripts.Data;
 using AOTScripts.Data.NetworkMes;
 using AOTScripts.Tool;
 using AOTScripts.Tool.Message;
+using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Buff;
@@ -524,6 +525,7 @@ namespace HotUpdate.Scripts.Game
                 PlayerInGameManager.Instance.Clear();
                 UISpriteContainer.Clear(ResourceManager.Instance.CurrentLoadingSceneName);
                 GameObjectPoolManger.Instance.ClearAllPool();
+                NetworkGameObjectPoolManager.Instance.ClearAllPools();
                 _uiManager.SwitchUI<MainScreenUI>();
                 _gameEventManager.Publish(new PlayerListenMessageEvent());
             };

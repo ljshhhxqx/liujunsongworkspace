@@ -187,7 +187,8 @@ namespace HotUpdate.Scripts.Collector.Collects
         
         void OnDestroy()
         {
-            StopCoroutine(_fadeCoroutine);
+            if(_fadeCoroutine != null || !this)
+                StopCoroutine(_fadeCoroutine);
             // 清理创建的材质实例
             if(_transparentMaterials != null)
             {

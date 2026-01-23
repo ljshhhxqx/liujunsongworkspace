@@ -83,6 +83,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private GameLoopController _gameLoopController;
         private CompositeDisposable _warmupDisposable = new CompositeDisposable();
         private CompositeDisposable _gameTimerDisposable = new CompositeDisposable();
+        public override bool IsGameUI => true;
 
         [Inject]
         private void Init(UIManager uiManager, GameEventManager gameEventManager)
@@ -128,6 +129,9 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             _warmupSequence?.Kill();
             _gameTimerSequence?.Kill();
             _gameTimerTween?.Kill();
+            _gameTimerDisposable?.Dispose();
+            _gameOverSequence?.Kill();
+            _warmupDisposable?.Dispose();
         }
         
         // 开始热身倒计时
@@ -301,6 +305,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private async UniTask GameOverCoroutine(GameResultData data)
         {
             Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
             var playerGameResults = GetPlayerGameResults(data);
             gameOverItemList.SetItemList(playerGameResults);
             var playerData = data.playersResultData.FirstOrDefault(x => x.isWinner && x.playerName == PlayFabData.PlayerReadOnlyData.Value.Nickname);

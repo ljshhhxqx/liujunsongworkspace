@@ -150,9 +150,12 @@ namespace HotUpdate.Scripts.Collector.Collects
         {
             foreach (var materialTransparencyController in MaterialTransparencyControllers)
             {
-                materialTransparencyController.SetColor(OriginalColor);
-                materialTransparencyController.SetEnabled(true);
-                materialTransparencyController.RestoreOriginalMaterials();
+                if (materialTransparencyController)
+                {
+                    materialTransparencyController.SetColor(OriginalColor);
+                    materialTransparencyController.SetEnabled(true);
+                    materialTransparencyController.RestoreOriginalMaterials();
+                }
             }
         }
 

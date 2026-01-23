@@ -118,7 +118,7 @@ namespace AOTScripts.Tool.ObjectPool
             // 预实例化对象
             for (int i = 0; i < DefaultPoolSize; i++)
             {
-                GameObject obj = Instantiate(prefab);
+                GameObject obj = Instantiate(prefab, parent: transform);
                 obj.SetActive(false);
                 //obj.transform.SetParent(transform);
                 objectPool.Enqueue(obj);
@@ -190,7 +190,6 @@ namespace AOTScripts.Tool.ObjectPool
             {
                 GameObject obj = Instantiate(prefab, parent:transform);
                 obj.SetActive(false);
-                //obj.transform.SetParent(transform);
                 pool.Enqueue(obj);
             }
         
@@ -327,7 +326,7 @@ namespace AOTScripts.Tool.ObjectPool
                 // 重新创建指定大小的池
                 for (int i = 0; i < size; i++)
                 {
-                    GameObject obj = Instantiate(prefab);
+                    GameObject obj = Instantiate(prefab, parent: transform);
                     obj.SetActive(false);
                     //obj.transform.SetParent(transform);
                     _poolDictionary[assetId].Enqueue(obj);

@@ -343,21 +343,6 @@ namespace HotUpdate.Scripts.Weather
 
         private void OnDestroy()
         {
-            // foreach (var effect in _weatherEffectsDict.Values)
-            // {
-            //     if (effect?.gameObject != null)
-            //     {
-            //         Destroy(effect.gameObject);
-            //     }
-            // }
-            //
-            // foreach (var setting in _weatherSettingDict.Values)
-            // {
-            //     if (setting?.gameObject != null)
-            //     {
-            //         Destroy(setting.gameObject);
-            //     }
-            // }
             _enableLightning?.Dispose();
             foreach (var effect in _weatherEffectPrefabs)
             {

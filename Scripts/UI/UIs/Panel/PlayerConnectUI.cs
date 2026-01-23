@@ -34,6 +34,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         private PlayFabRoomManager _playFabRoomManager;
         public override UIType Type => UIType.PlayerConnect;
         public override UICanvasType CanvasType => UICanvasType.Panel;
+        public override bool IsGameUI => true;
 
         [Inject]
         private void Init(PlayFabRoomManager playFabRoomManager,UIManager uiManager)
@@ -117,6 +118,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             serverBtn.onClick.RemoveAllListeners();
             clientBtn.onClick.RemoveAllListeners();
             quitBtn.onClick.RemoveAllListeners();
+            _playFabRoomManager.OnGameInfoChanged -= OnGameInfoChanged;
+            _playFabRoomManager.OnPlayerInfoChanged -= OnPlayerInfoChanged;
         }
     }
 }
