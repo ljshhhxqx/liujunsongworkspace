@@ -93,7 +93,8 @@ namespace HotUpdate.Scripts.Audio
         {
             if (_effectAudioClips.TryGetValue(clipType, out var clip))
             {
-                var audioSourceObj = GameObjectPoolManger.Instance.GetObject(_audioSourcePrefab, position, Quaternion.identity, parent);
+                var audioSourceObj = GameObjectPoolManger.Instance.GetObject(_audioSourcePrefab,
+                    position, Quaternion.identity, parent);
                 var audioSource = audioSourceObj.GetComponent<AudioSource>();
                 audioSource.clip = clip;
                 audioSource.Play();

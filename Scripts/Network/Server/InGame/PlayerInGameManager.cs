@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using AOTScripts.Data;
 using AOTScripts.Tool;
+using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using Data;
 using HotUpdate.Scripts.Collector;
@@ -16,6 +17,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -120,7 +122,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
 
 
         [Server]
-        public void SpawnAllBases(MapType mapType)
+        public void SpawnAllBases(MapType mapType, Transform parent)
         {
             Debug.Log("SpawnAllBases" + mapType);
             var allSpawnPoints = _gameConfigData.gameBaseData.basePositions.First(x => x.mapType == mapType);
@@ -138,8 +140,8 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             for (int i = 0; i < bases.Length; i++)
             {
                 var spawnPoint = bases[i];
-                var playerBase = Instantiate(_playerBasePrefab.gameObject, spawnPoint, Quaternion.identity);
-                NetworkServer.Spawn(playerBase);
+                var playerBase = NetworkGameObjectPoolManager.Instance.Spawn(_playerBasePrefab.gameObject,
+                    spawnPoint, Quaternion.identity);
                 _playerBases.Add(i, playerBase.GetComponent<PlayerBase>());
             }
         }
@@ -391,6 +393,8 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                         player.identity.transform.position = GetPlayerBasePositionByNetId(player.identity.netId);
                     }
                 }
+
+                _updateGridsTokenSource = new CancellationTokenSource();
                 UpdateAllPlayerGrids(_updateGridsTokenSource.Token).Forget();   
             }
         }
@@ -890,6 +894,11 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             _unionData.Clear();
             _gridPlayers.Clear();
             _playerBornCallbacks.Clear();
+            _playerIsChangedUnion.Clear();
+            _playerSpawnPoints.Clear();
+            _playerPhysicsData = default;
+            _playerBaseColliderData = default;
+            _updateGridsTokenSource.Cancel();
         }
 
         #endregion

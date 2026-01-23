@@ -82,7 +82,8 @@ namespace HotUpdate.Scripts.Map
                 {
                     return;
                 }
-                var item = GameObjectPoolManger.Instance.GetObject(targetPrefab.gameObject, Vector3.zero, Quaternion.identity, map);
+                var item = GameObjectPoolManger.Instance.GetObject(targetPrefab.gameObject, Vector3.zero, 
+                    Quaternion.identity, map);
                 SetMinimapItems(item, y);
                 _minimapItems.Add(x, item);
             }).AddTo(this);

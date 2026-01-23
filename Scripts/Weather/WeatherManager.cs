@@ -11,6 +11,7 @@ using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using HotUpdate.Scripts.Weather.WeatherEffects;
@@ -157,6 +158,7 @@ namespace HotUpdate.Scripts.Weather
                 
                         // 使用 Observable.Timer 来等待随机时间
                         return Observable.Timer(TimeSpan.FromSeconds(randomTime))
+                            .Where(_ => this)
                             .Do(_ => 
                             {
                                 var start = GetRandomPos();
@@ -228,7 +230,7 @@ namespace HotUpdate.Scripts.Weather
                     throw new Exception($"Weather Setting not found for {loadData.weatherType}");
                 }
             
-                var instance = Instantiate(prefab.gameObject);
+                var instance = GameObjectPoolManger.Instance.GetObject(prefab.gameObject, parent: transform, capacity: 1);
                 var settingComponent = instance.GetComponent<WeatherSetting>();
                 //instance.gameObject.SetActive(false);
                 //_objectResolver.Inject(settingComponent);
@@ -289,7 +291,7 @@ namespace HotUpdate.Scripts.Weather
             }
             foreach (var effect in _weatherEffectPrefabs)
             {
-                var go = Instantiate(effect);
+                var go = GameObjectPoolManger.Instance.GetObject(effect, parent: transform, capacity: 1);
                 var component = go.GetComponent<WeatherEffects.WeatherEffects>();
                 if (component)
                 {
@@ -356,7 +358,7 @@ namespace HotUpdate.Scripts.Weather
             //         Destroy(setting.gameObject);
             //     }
             // }
- 
+            _enableLightning?.Dispose();
             foreach (var effect in _weatherEffectPrefabs)
             {
                 Addressables.Release(effect);

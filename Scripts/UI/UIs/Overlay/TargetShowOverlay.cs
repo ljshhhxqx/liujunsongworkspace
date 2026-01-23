@@ -98,7 +98,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private void OnFollowTarget(FollowTargetTextEvent followTargetTextEvent)
         {
             _followTextParams.Target = followTargetTextEvent.Position;
-            var go = GameObjectPoolManger.Instance.GetObject(textUI.gameObject);
+            var go = GameObjectPoolManger.Instance.GetObject(textUI.gameObject, parent: _canvasRect);
             go.transform.localPosition = Vector3.zero;
             go.transform.localScale = Vector3.one;
             var text = go.GetComponent<TextMeshProUGUI>();

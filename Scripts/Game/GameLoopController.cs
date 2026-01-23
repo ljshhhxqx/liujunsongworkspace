@@ -191,7 +191,7 @@ namespace HotUpdate.Scripts.Game
             if (_serverHandler)
             {
                 _cts = new CancellationTokenSource();
-                PlayerInGameManager.Instance.SpawnAllBases(gameReadyEvent.GameInfo.SceneName);
+                PlayerInGameManager.Instance.SpawnAllBases(gameReadyEvent.GameInfo.SceneName, transform);
                 isEndGameSync = false;
                 IsEndGame = false;
                 
@@ -521,6 +521,7 @@ namespace HotUpdate.Scripts.Game
             {
                 _uiManager.ClearAllGameUI();
                 _uiManager.UnloadAll();
+                PlayerInGameManager.Instance.Clear();
                 UISpriteContainer.Clear(ResourceManager.Instance.CurrentLoadingSceneName);
                 GameObjectPoolManger.Instance.ClearAllPool();
                 _uiManager.SwitchUI<MainScreenUI>();

@@ -9,6 +9,7 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
 {
     public class GameObjectPoolManger : Singleton<GameObjectPoolManger>
     {
+        public Scene CurrentScene { get; set; }
         private readonly Dictionary<int, Queue<GameObject>> _poolDictionary = new Dictionary<int, Queue<GameObject>>();
         
         private Queue<GameObject> CreateOrGetPool(GameObject prefab, int capacity = 5, int assetId = 0)
@@ -22,11 +23,6 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
             }
 
             return queue;
-        }
-
-        public void ClearPool(GameObject prefab)
-        {
-            _poolDictionary.Remove(prefab.GetInstanceID());
         }
         
         public void ClearAllPool()
@@ -107,7 +103,6 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
             obj.SetActive(true);
             onSpawn?.Invoke(obj);
             poolObj.OnSelfSpawn?.Invoke();
-
             return obj;
         }
 

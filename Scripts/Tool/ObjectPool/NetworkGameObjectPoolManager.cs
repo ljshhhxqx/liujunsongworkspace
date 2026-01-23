@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace AOTScripts.Tool.ObjectPool
 {
@@ -26,6 +27,8 @@ namespace AOTScripts.Tool.ObjectPool
     
         // 已注册的预制体集合（用于避免重复注册）
         private HashSet<uint> _registeredPrefabs = new HashSet<uint>();
+        
+        public Scene CurrentScene { get; set; }
 
         /// <summary>
         /// 服务器端：从对象池生成网络对象（全自动接口）
@@ -71,11 +74,14 @@ namespace AOTScripts.Tool.ObjectPool
             {
                 obj.transform.SetParent(parent);
             }
+            else
+            {
+                obj.transform.SetParent(transform);
+            }
             obj.SetActive(true);
         
             // 使用 Mirror 的网络生成
             NetworkServer.Spawn(obj);
-        
             return obj;
         }
     
@@ -182,7 +188,7 @@ namespace AOTScripts.Tool.ObjectPool
             // 实例化新对象并添加到池中
             for (int i = 0; i < expandBy; i++)
             {
-                GameObject obj = Instantiate(prefab);
+                GameObject obj = Instantiate(prefab, parent:transform);
                 obj.SetActive(false);
                 //obj.transform.SetParent(transform);
                 pool.Enqueue(obj);
@@ -205,6 +211,7 @@ namespace AOTScripts.Tool.ObjectPool
                     poolable.OnSelfSpawn();
                 }
                 obj.SetActive(true);
+                obj.transform.SetParent( transform);
                 return obj;
             }
         
@@ -222,6 +229,7 @@ namespace AOTScripts.Tool.ObjectPool
                         poolable.OnSelfSpawn();
                     }
                     obj.SetActive(true);
+                    obj.transform.SetParent( transform);
                     return obj;
                 }
             }
@@ -233,7 +241,7 @@ namespace AOTScripts.Tool.ObjectPool
         
             // 如果扩展后仍然无法获取对象，回退到常规实例化
             Debug.LogWarning($"Failed to get object from pool for assetId {assetId}, instantiating new object");
-            return Instantiate(prefab);
+            return Instantiate(prefab, parent: transform);
         }
 
         // 自定义取消生成处理器

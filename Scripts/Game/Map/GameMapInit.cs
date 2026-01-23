@@ -1,8 +1,10 @@
 using System;
+using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using Game.Map;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using HotUpdate.Scripts.UI.UIBase;
 using Sirenix.OdinInspector;
 using UI.UIBase;
@@ -37,6 +39,8 @@ namespace HotUpdate.Scripts.Game.Map
             //uiManager.SwitchUI<LoadingScreenUI>();
             _gameEventManager = gameEventManager;
             _commonMapName = $"Town";
+            GameObjectPoolManger.Instance.CurrentScene = gameObject.scene;
+            NetworkGameObjectPoolManager.Instance.CurrentScene = gameObject.scene;
             InjectGameObjects();
             await LoadGameResources(_commonMapName);
             gameEventManager.Publish(new GameSceneResourcesLoadedEvent(_mapName));

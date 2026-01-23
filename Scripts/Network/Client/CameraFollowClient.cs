@@ -66,6 +66,7 @@ namespace HotUpdate.Scripts.Network.Client
                 Cursor.visible = !_isControlling;
             }
         }
+       
 
         private void LateUpdate()
         {
@@ -133,6 +134,9 @@ namespace HotUpdate.Scripts.Network.Client
         private void OnDestroy()
         {
             _uiManager.IsUnlockMouse -= OnUnlockMouse;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+            Debug.Log("CameraFollowClient OnDestroy");
         }
     }
 }
