@@ -21,6 +21,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.Server;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.State;
 using HotUpdate.Scripts.Network.UI;
@@ -142,6 +143,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private AnimationState _previousAnimationState;
         private KeyframeComboCooldown _attackAnimationCooldown;       
         private PlayerInGameManager _playerInGameManager;
+        private NetworkEndHandler _networkEndHandler;
         private Picker _picker;
         public IColliderConfig ColliderConfig { get; private set; }
 
@@ -239,7 +241,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             ColliderConfig = GamePhysicsSystem.CreateColliderConfig(GetComponent<Collider>());
             _configProvider = configProvider;
-
+            _networkEndHandler = FindObjectOfType<NetworkEndHandler>();
             var jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
             _gameConfigData = jsonDataConfig.GameConfig;
             _playerConfigData = jsonDataConfig.PlayerConfig;
@@ -1501,6 +1503,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public void RpcSetRb(bool isEnabled)
         {
             _rigidbody.isKinematic = isEnabled;
+        }
+
+        [Command]
+        public void CmdEndGame(int connectionId)
+        {
+            _networkEndHandler.ConfirmCleanup(connectionId);
+        }
+
+        [Command]
+        public void CmdCleanupClient(int connectionId)
+        {
+            _networkEndHandler.CmdReportCleanupCompleted(connectionId);
         }
     }
 }

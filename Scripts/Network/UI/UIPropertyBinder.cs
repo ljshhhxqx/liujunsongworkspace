@@ -223,6 +223,7 @@ namespace HotUpdate.Scripts.Network.UI
             KeyPropertyMap.Clear();
             KeyDictionaryMap.Clear();
             KeyListMap.Clear();
+            _localPlayerId = -1;
         }
 
         #endregion
@@ -261,6 +262,12 @@ namespace HotUpdate.Scripts.Network.UI
                 _localPlayerId = value;
             }
         }
+
+        public static void Clear()
+        {
+            ClearAllData();
+        }
+
         // 非泛型接口用于统一存储
         private interface IReactivePropertyWrapper { }
         private class ReactivePropertyWrapper<T> : IReactivePropertyWrapper where T : IUIDatabase

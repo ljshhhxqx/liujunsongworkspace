@@ -1,4 +1,5 @@
-﻿using AOTScripts.Data;
+﻿using System;
+using AOTScripts.Data;
 using AOTScripts.Data.NetworkMes;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Collector;
@@ -32,6 +33,7 @@ namespace HotUpdate.Scripts.Game.Inject
             RegisterComponent<PlayerNotifyManager>(builder);
             RegisterComponent<GameSyncManager>(builder);
             RegisterComponent<InteractSystem>(builder);
+            RegisterComponent<NetworkEndHandler>(builder);
             builder.Register<GameMapInjector>(Lifetime.Singleton).WithParameter(typeof(LifetimeScope), this);
             Debug.Log("GameMapLifetimeScope Configured!!!");
         }
@@ -43,7 +45,18 @@ namespace HotUpdate.Scripts.Game.Inject
                 .AsImplementedInterfaces();
         }
 
-        public MapType GetMapType() => _mapType;
+        public MapType GetMapType()
+        {
+            if (_mapType == MapType.Town)
+            {
+                if (Enum.TryParse<MapType>(gameObject.scene.name, out var type))
+                {
+                    _mapType = type;
+                }
+            }
+
+            return _mapType;
+        }
     }
 
     public interface IMapLifeScope

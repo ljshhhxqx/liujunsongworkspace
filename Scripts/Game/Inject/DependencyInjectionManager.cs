@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AOTScripts.Data;
+using AOTScripts.Tool;
 using AOTScripts.Tool.Coroutine;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Data;
@@ -84,7 +85,7 @@ namespace HotUpdate.Scripts.Game.Inject
             {
                 return null;
             }
-            if (_injectors.TryGetValue(mapType, out var lifetimeScope))
+            if (_injectors.TryGetValue(mapType, out var lifetimeScope) && lifetimeScope)
             {
                 return lifetimeScope;
             }
@@ -94,7 +95,7 @@ namespace HotUpdate.Scripts.Game.Inject
             {
                 if (scope is IMapLifeScope mapLifeScope && mapLifeScope.GetMapType() == mapType)
                 {
-                    _injectors.Add(mapType, scope);
+                    _injectors.AddOrUpdate(mapType, scope);
                     return scope;
                 }
             }

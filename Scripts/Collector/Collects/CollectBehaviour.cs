@@ -150,7 +150,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         {
             foreach (var materialTransparencyController in MaterialTransparencyControllers)
             {
-                if (materialTransparencyController)
+                if (materialTransparencyController.gameObject && materialTransparencyController.gameObject.activeInHierarchy)
                 {
                     materialTransparencyController.SetColor(OriginalColor);
                     materialTransparencyController.SetEnabled(true);

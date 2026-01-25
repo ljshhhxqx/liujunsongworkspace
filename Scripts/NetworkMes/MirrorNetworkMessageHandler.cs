@@ -60,10 +60,10 @@ namespace AOTScripts.Data.NetworkMes
 
         private void RegisterServerHandlers()
         {
-            RegisterServerHandler<MirrorPickerPickUpCollectMessage>();
-            RegisterServerHandler<MirrorPickerPickUpChestMessage>();
-            RegisterServerHandler<MirrorPlayerInputMessage>();
-            RegisterServerHandler<MirrorPlayerInputInfoMessage>();
+            // RegisterServerHandler<MirrorPickerPickUpCollectMessage>();
+            // RegisterServerHandler<MirrorPickerPickUpChestMessage>();
+            // RegisterServerHandler<MirrorPlayerInputMessage>();
+            // RegisterServerHandler<MirrorPlayerInputInfoMessage>();
             // 注册更多服务器消息处理程序...
         }
 
@@ -90,7 +90,7 @@ namespace AOTScripts.Data.NetworkMes
         {
             Action<T> handler = OnClientMessageReceived;
             _clientHandlers[typeof(T)] = handler;
-            NetworkClient.RegisterHandler(handler, false);
+            NetworkClient.ReplaceHandler(handler, false);
             //Debug.Log($"Registered client handler for {typeof(T)}");
         }
 
@@ -146,20 +146,20 @@ namespace AOTScripts.Data.NetworkMes
                 return new GameWarmupMessage(gameWarmupMessage.TimeLeft);
             }
             
-            if (networkMessage is MirrorPickerPickUpCollectMessage pickerPickUpMessage)
-            {
-                return new PickerPickUpMessage(pickerPickUpMessage.PickerID, pickerPickUpMessage.ItemID);
-            }
-
-            if (networkMessage is MirrorPickerPickUpChestMessage pickerPickUpChestMessage)
-            {
-                return new PickerPickUpChestMessage(pickerPickUpChestMessage.PickerId, pickerPickUpChestMessage.ChestID);
-            }
-            
-            if (networkMessage is MirrorPlayerInputMessage playerInputMessage)
-            {
-                return new PlayerInputMessage(playerInputMessage.playerInputInfo);
-            }
+            // if (networkMessage is MirrorPickerPickUpCollectMessage pickerPickUpMessage)
+            // {
+            //     return new PickerPickUpMessage(pickerPickUpMessage.PickerID, pickerPickUpMessage.ItemID);
+            // }
+            //
+            // if (networkMessage is MirrorPickerPickUpChestMessage pickerPickUpChestMessage)
+            // {
+            //     return new PickerPickUpChestMessage(pickerPickUpChestMessage.PickerId, pickerPickUpChestMessage.ChestID);
+            // }
+            //
+            // if (networkMessage is MirrorPlayerInputMessage playerInputMessage)
+            // {
+            //     return new PlayerInputMessage(playerInputMessage.playerInputInfo);
+            // }
             
             if (networkMessage is MirrorFrameUpdateMessage frameUpdateMessage)
             {
@@ -171,10 +171,10 @@ namespace AOTScripts.Data.NetworkMes
                 return new PlayerDamageResultMessage(frameAttackResultMessage.frame, frameAttackResultMessage.damageResults);
             }
 
-            if (networkMessage is MirrorPlayerInputInfoMessage playerInputInfoMessage)
-            {
-                return new PlayerInputInfoMessage(playerInputInfoMessage.connectionID, playerInputInfoMessage.input);
-            }
+            // if (networkMessage is MirrorPlayerInputInfoMessage playerInputInfoMessage)
+            // {
+            //     return new PlayerInputInfoMessage(playerInputInfoMessage.connectionID, playerInputInfoMessage.input);
+            // }
 
             if (networkMessage is MirrorPlayerConnectedMessage playerConnectedMessage)
             {

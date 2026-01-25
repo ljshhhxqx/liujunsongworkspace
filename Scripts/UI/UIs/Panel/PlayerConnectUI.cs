@@ -47,6 +47,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                 uiManager.CloseUI(UIType.PlayerConnect);
                 _playFabRoomManager.LeaveGame();
             }, 2f);
+            Debug.Log($"Init PlayerConnectUI");
             hostBtn.BindDebouncedListener(() => _playFabRoomManager.TryChangePlayerGameInfo(PlayerGameDuty.Host), 2f);
             serverBtn.BindDebouncedListener(() => _playFabRoomManager.TryChangePlayerGameInfo(PlayerGameDuty.Server), 2f);
             clientBtn.BindDebouncedListener(() => _playFabRoomManager.TryChangePlayerGameInfo(PlayerGameDuty.Client), 2f);

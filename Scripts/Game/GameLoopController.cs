@@ -15,8 +15,10 @@ using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.Server;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.Server.PlayFab;
+using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Static;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.HotFixSerializeTool;
@@ -66,9 +68,10 @@ namespace HotUpdate.Scripts.Game
         private BuffManager _buffManager;
         private GameAudioManager _gameAudioManager;
         private WeatherManager _weatherManager;
+        private NetworkManagerCustom _networkManager;
         private bool _serverHandler;
         private bool _clientHandler;
-        
+        private NetworkEndHandler _endHandler;
 
         [SyncVar(hook = nameof(OnEndGameChanged))] 
         public bool isEndGameSync;
@@ -90,7 +93,6 @@ namespace HotUpdate.Scripts.Game
                 if (value)
                 {
                     Debug.Log("Game Over!");
-                    _gameEventManager.Publish(new PlayerListenMessageEvent());
                     _cts?.Cancel();
                 }
 
@@ -128,9 +130,12 @@ namespace HotUpdate.Scripts.Game
 
         [Inject]
         private void Init(MessageCenter messageCenter, GameEventManager gameEventManager, IObjectResolver objectResolver, IConfigProvider configProvider,
-            MirrorNetworkMessageHandler messageHandler, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller, UIManager uiManager)
+            MirrorNetworkMessageHandler messageHandler, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller, 
+            UIManager uiManager, NetworkManagerCustom networkManager, NetworkEndHandler endHandler)
         {
+            _networkManager = networkManager;
             _playFabClientCloudScriptCaller = playFabClientCloudScriptCaller;
+            _endHandler = endHandler;
             _interactSystem = objectResolver.Resolve<InteractSystem>();
             _uiManager = uiManager;
             _gameEventManager = gameEventManager;
@@ -146,7 +151,19 @@ namespace HotUpdate.Scripts.Game
             _mapConfig = configProvider.GetConfig<MapConfig>();
             _mapElementData = configProvider.GetConfig<JsonDataConfig>().CollectData.mapElementData;
             Debug.Log($"GameLoopController Init");
+            _endHandler.OnCleanup += Cleanup;
+            _endHandler.OnDisconnected += Disconnected;
             RegisterMessage();
+        }
+
+        private void Disconnected()
+        {
+            UnloadCurrentScene().Forget();
+        }
+
+        private void Cleanup()
+        {
+            ClearAndReleaseAsync().Forget();
         }
 
         public override void OnStartClient()
@@ -437,11 +454,12 @@ namespace HotUpdate.Scripts.Game
         private void OnSaveGameResult(ExecuteCloudScriptResult result, string json)
         {
             var dic = result.ParseCloudScriptResultToDic();
-            RpcStartGame(json);
+            RpcEndGame(json);
+            _endHandler.BeginGameEndProcedure();
         }
         
         [ClientRpc]
-        private void RpcStartGame(string json)
+        private void RpcEndGame(string json)
         {
             var data = BoxingFreeSerializer.JsonDeserialize<GameResultData>(json);
             GameLoopDataModel.GameResult.SetValueAndForceNotify(data);
@@ -456,6 +474,8 @@ namespace HotUpdate.Scripts.Game
         {
             GameLoopDataModel.Clear();
             _cts?.Cancel();
+            _endHandler.OnCleanup -= Cleanup;
+            _endHandler.OnDisconnected -= Disconnected;
         }
         
         private class SubCycle
@@ -515,20 +535,27 @@ namespace HotUpdate.Scripts.Game
             }
         }
 
-        public void ClearAll()
+        public async UniTask ClearAndReleaseAsync()
         {
-            var op = ResourceManager.Instance.UnloadCurrentScene();
-            op.Completed += _ =>
-            {
-                _uiManager.ClearAllGameUI();
-                _uiManager.UnloadAll();
-                PlayerInGameManager.Instance.Clear();
-                UISpriteContainer.Clear(ResourceManager.Instance.CurrentLoadingSceneName);
-                GameObjectPoolManger.Instance.ClearAllPool();
-                NetworkGameObjectPoolManager.Instance.ClearAllPools();
-                _uiManager.SwitchUI<MainScreenUI>();
-                _gameEventManager.Publish(new PlayerListenMessageEvent());
-            };
+            PlayerInGameManager.Instance.Clear();
+            await UniTask.Yield();
+            NetworkGameObjectPoolManager.Instance.ClearAllPools();
+            await UniTask.Yield();
+        }
+        
+        public async UniTask UnloadCurrentScene()
+        {
+            _uiManager.ClearAllGameUI();
+            await UniTask.Yield();
+            _uiManager.UnloadAll();
+            await UniTask.Yield();
+            UISpriteContainer.Clear(ResourceManager.Instance.CurrentLoadingSceneName);
+            await UniTask.Yield();
+            GameObjectPoolManger.Instance.ClearAllPool();
+            await UniTask.Yield();
+            UIPropertyBinder.ClearAllData();
+            await ResourceManager.Instance.UnloadCurrentScene();
+            _uiManager.SwitchUI<MainScreenUI>();
         }
     }
 }

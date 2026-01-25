@@ -8,6 +8,8 @@ using DG.Tweening;
 using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Game;
 using HotUpdate.Scripts.Network.Data;
+using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.Server;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Static;
 using HotUpdate.Scripts.Tool.GameEvent;
@@ -81,6 +83,8 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private GameResult _gameResult;
         private GameEventManager _gameEventManager;
         private GameLoopController _gameLoopController;
+        private GameSyncManager _gameSyncManager;
+        private NetworkEndHandler _networkEndHandler;
         private CompositeDisposable _warmupDisposable = new CompositeDisposable();
         private CompositeDisposable _gameTimerDisposable = new CompositeDisposable();
         public override bool IsGameUI => true;
@@ -100,17 +104,16 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             
             GameLoopDataModel.GameRemainingTime
                 .Where(time => time > 0)
-                // .Take(1)
                 .Subscribe(StartGameTimer)
                 .AddTo(_gameTimerDisposable);
             GameLoopDataModel.GameResult
                 .Where(result => result.playersResultData!= null)
                 .Subscribe(ShowGameOver)
                 .AddTo(this);
-            
+            _networkEndHandler = FindObjectOfType<NetworkEndHandler>();
             goOnButton.BindDebouncedListener(() =>
             {
-                _gameLoopController.ClearAll();
+                _networkEndHandler.CmdConfirmCleanup();
             });
         }
         

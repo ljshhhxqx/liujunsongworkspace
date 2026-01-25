@@ -99,18 +99,18 @@ namespace HotUpdate.Scripts.Network.Client.Player
             }
         
             // 发送到服务器（除了纯动画状态）
-            if (actionType != ActionType.Animation)
-            {
-                _mirrorNetworkMessageHandler.SendToServer(new MirrorPlayerInputInfoMessage
-                {
-                    input = input,
-                    connectionID = connectionToClient.connectionId
-                });
-            }
-            else
-            {
-                _playerControlClient.ExecuteAnimationInput(input);
-            }
+            // if (actionType != ActionType.Animation)
+            // {
+            //     _mirrorNetworkMessageHandler.SendToServer(new MirrorPlayerInputInfoMessage
+            //     {
+            //         input = input,
+            //         connectionID = connectionToClient.connectionId
+            //     });
+            // }
+            // else
+            // {
+            //     _playerControlClient.ExecuteAnimationInput(input);
+            // }
         }
         
         public Queue<InputData> GetInputBuffer()

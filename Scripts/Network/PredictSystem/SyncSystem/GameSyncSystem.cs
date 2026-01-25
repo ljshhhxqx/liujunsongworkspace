@@ -57,7 +57,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         
         [SyncVar(hook = nameof(OnCurrentTickChanged))]
         private int _currentTick;
-        
+
+        private PlayerComponentController _localPlayerNetComponentController;
+
         private void OnCurrentTickChanged(int oldValue, int newValue)
         {
             //Debug.Log($"CurrentTick changed from {oldValue} to {newValue}");
@@ -221,6 +223,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             
             Debug.LogError($"No sync system found for {commandType}");
             return null;
+        }
+        
+        public PlayerComponentController GetLocalPlayerConnection()
+        {
+            if (!_localPlayerNetComponentController)
+            {
+                _localPlayerNetComponentController = GetPlayerConnection(PlayerInGameManager.Instance.LocalPlayerNetId);
+            }
+            return _localPlayerNetComponentController;
         }
 
         public PlayerComponentController GetPlayerConnection(uint playerNetId)
