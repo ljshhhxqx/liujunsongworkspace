@@ -230,7 +230,7 @@ namespace HotUpdate.Scripts.Weather
                     throw new Exception($"Weather Setting not found for {loadData.weatherType}");
                 }
             
-                var instance = GameObjectPoolManger.Instance.GetObject(prefab.gameObject, parent: transform, capacity: 1);
+                var instance = GameObjectPoolManger.Instance.GetObject(prefab.gameObject, prefab.gameObject.transform.position, prefab.gameObject.transform.rotation, parent: transform, capacity: 1);
                 var settingComponent = instance.GetComponent<WeatherSetting>();
                 //instance.gameObject.SetActive(false);
                 //_objectResolver.Inject(settingComponent);
@@ -291,7 +291,7 @@ namespace HotUpdate.Scripts.Weather
             }
             foreach (var effect in _weatherEffectPrefabs)
             {
-                var go = GameObjectPoolManger.Instance.GetObject(effect, parent: transform, capacity: 1);
+                var go = GameObjectPoolManger.Instance.GetObject(effect, effect.transform.position, effect.transform.rotation, parent: transform, capacity: 1);
                 var component = go.GetComponent<WeatherEffects.WeatherEffects>();
                 if (component)
                 {

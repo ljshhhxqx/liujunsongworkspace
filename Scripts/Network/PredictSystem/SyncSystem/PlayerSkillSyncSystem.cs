@@ -98,6 +98,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 {
                     var playerId = players[i];
                     var playerConnection = GameSyncManager.GetPlayerConnection(playerId);
+                    if (playerConnection == null)
+                    {
+                        continue;
+                    }
                     var skillDic = playerConnection.SkillCheckerDict;
                     //Debug.Log($"[PlayerSkillSyncSystem] UpdateEquipmentCd {playerId}");
                     if (skillDic == null || skillDic.Count == 0)

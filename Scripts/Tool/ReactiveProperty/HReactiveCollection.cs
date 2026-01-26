@@ -226,8 +226,15 @@ namespace HotUpdate.Scripts.Tool.ReactiveProperty
 
         protected virtual void OnCollectionChanged(NotifyCollectionChangedAction action, IList oldItems)
         {
-            var args = new NotifyCollectionChangedEventArgs(action, oldItems);
-            OnCollectionChanged(args);
+            try
+            {
+                var args = new NotifyCollectionChangedEventArgs(action, oldItems);
+                OnCollectionChanged(args);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error in collection change notification: {e}");
+            }
         }
 
         protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs args)

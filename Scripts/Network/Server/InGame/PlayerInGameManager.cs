@@ -98,7 +98,8 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                     }
                     else if (NetworkServer.active)
                     {
-                        _localPlayerId = connectionToClient.connectionId;
+                        if(connectionToClient != null)
+                            _localPlayerId = connectionToClient.connectionId;
                     }
                 }
                 return _localPlayerId;
@@ -528,7 +529,9 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             }
             var pos = playerInGameData.networkIdentity.transform.position;
             var nearestBase = _gameConfigData.GetNearestBase(GameLoopDataModel.GameSceneName.Value, pos);
-            var basePosition = _playerBases.FirstOrDefault(x => x.Value.transform.position == nearestBase);
+            var basePosition = _playerBases
+                .Where(x => x.Value)
+                .FirstOrDefault(x => x.Value.transform.position == nearestBase);
             if (basePosition.Key != 0)
             {
                 var value  = _playerBases[basePosition.Key];
@@ -898,7 +901,10 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             _playerSpawnPoints.Clear();
             _playerPhysicsData = default;
             _playerBaseColliderData = default;
+            _playerBases.Clear();
             _updateGridsTokenSource.Cancel();
+            
+            _gameEventManager.Unsubscribe<GameResourceLoadedEvent>(OnGameResourceLoaded);
         }
 
         #endregion

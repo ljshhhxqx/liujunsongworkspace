@@ -31,9 +31,9 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
             _size = shape.scale;
             
             GameLoopDataModel.MapConfig
-                .Where(x => x.weatherMapData!= null)
                 .Subscribe(weather =>
             {
+                if (weather.weatherMapData == null) return;
                 var weathers = weather.weatherMapData.First(x => x.weatherType == WeatherType.Rainy);
                 shape.scale = weathers.size;
                 shape.position = weathers.position;

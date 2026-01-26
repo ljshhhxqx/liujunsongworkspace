@@ -32,7 +32,7 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
 
         private void LateUpdate()
         {
-            if (!_target || !_target.activeSelf)
+            if (!_target || !_target.activeSelf || _followTargetParams == null)
             {
                 return; 
                 
@@ -42,5 +42,9 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
             GameStaticExtensions.FollowTarget(_followTargetParams);
         }
 
+        private void OnDestroy()
+        {
+            _followTargetParams = null;
+        }
     }
 }

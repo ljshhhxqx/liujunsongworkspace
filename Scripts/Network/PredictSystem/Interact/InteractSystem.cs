@@ -584,6 +584,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             }
         }
 
+        private void OnDestroy()
+        {
+            _gameEventManager.Unsubscribe<GameStartEvent>(OnGameStart);
+            _gameEventManager.Unsubscribe<PlayerAttackItemEvent>(OnPlayerAttackItem);
+            _gameEventManager.Unsubscribe<PlayerSkillItemEvent>(OnSkillItem);
+            _gameEventManager.Unsubscribe<SceneItemInfoChanged>(OnItemSpawned);
+            _gameEventManager.Unsubscribe<StartGameWellEvent>(OnStartGameWell);
+            _gameEventManager.Unsubscribe<StartGameTrainEvent>(OnStartGameTrain);
+            _sceneItems.OnChange -= OnSceneItemsChanged;
+            
+        }
+
         private void HandleSceneInteractRequest(SceneInteractRequest request)
         {
             var header = request.GetHeader();

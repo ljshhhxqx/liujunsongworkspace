@@ -142,7 +142,6 @@ namespace HotUpdate.Scripts.Game
             _messageCenter = messageCenter;
             _messageHandler = messageHandler;
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
-            _gameEventManager.Subscribe<GameReadyEvent>(OnGameReady);
             _itemsSpawnerManager = objectResolver.Resolve<ItemsSpawnerManager>();
             _gameAudioManager = objectResolver.Resolve<GameAudioManager>();
             _weatherManager = objectResolver.Resolve<WeatherManager>();
@@ -153,6 +152,7 @@ namespace HotUpdate.Scripts.Game
             Debug.Log($"GameLoopController Init");
             _endHandler.OnCleanup += Cleanup;
             _endHandler.OnDisconnected += Disconnected;
+            _gameEventManager.Subscribe<GameReadyEvent>(OnGameReady);
             RegisterMessage();
         }
 
@@ -462,20 +462,12 @@ namespace HotUpdate.Scripts.Game
         private void RpcEndGame(string json)
         {
             var data = BoxingFreeSerializer.JsonDeserialize<GameResultData>(json);
-            GameLoopDataModel.GameResult.SetValueAndForceNotify(data);
+            GameLoopDataModel.GameResult.SetValueAndNotify(data);
         }
 
         private void OnError(PlayFabError error)
         {
             Debug.LogError($"Failed to Save Game Result: {error.GenerateErrorReport()}");
-        }
-
-        private void OnDestroy()
-        {
-            GameLoopDataModel.Clear();
-            _cts?.Cancel();
-            _endHandler.OnCleanup -= Cleanup;
-            _endHandler.OnDisconnected -= Disconnected;
         }
         
         private class SubCycle
@@ -537,6 +529,7 @@ namespace HotUpdate.Scripts.Game
 
         public async UniTask ClearAndReleaseAsync()
         {
+            PlayFabData.PlayerList.Clear();
             PlayerInGameManager.Instance.Clear();
             await UniTask.Yield();
             NetworkGameObjectPoolManager.Instance.ClearAllPools();
@@ -556,6 +549,11 @@ namespace HotUpdate.Scripts.Game
             UIPropertyBinder.ClearAllData();
             await ResourceManager.Instance.UnloadCurrentScene();
             _uiManager.SwitchUI<MainScreenUI>();
+            _gameEventManager.Unsubscribe<GameReadyEvent>(OnGameReady);
+            GameLoopDataModel.Clear();
+            _cts?.Cancel();
+            _endHandler.OnCleanup -= Cleanup;
+            _endHandler.OnDisconnected -= Disconnected;
         }
     }
 }

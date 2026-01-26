@@ -264,14 +264,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             GetAllCalculators(configProvider, gameSyncManager);
             HandleAllSyncState();
             _uiManager.CloseUI(UIType.Main);
-            if (LocalPlayerHandler)
-            {
-                _gameEventManager.Publish(new PlayerUnListenMessageEvent());
-                _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter, gameObject, netId, true));
-                _gameEventManager.Subscribe<DevelopItemGetEvent>(OnDevelopItemGet);
-                _gameEventManager.Subscribe<GameFunctionUIShowEvent>(OnGameFunctionUIShow);
-                _gameEventManager.Subscribe<TargetShowEvent>(OnTargetShow);
-            }
         }
 
         private void OnDevelopItemGet(DevelopItemGetEvent developItemGetEvent)
@@ -353,6 +345,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             // _minimap = _uiManager.GetActiveUI<Minimap>(UIType.Minimap, UICanvasType.Overlay);
             // var sprite = UISpriteContainer.GetSprite($"{GameLoopDataModel.GameSceneName.Value.ToString()}_MiniMap");
             // _minimap.SetMinimapSprite(sprite);
+            _gameEventManager.Publish(new PlayerUnListenMessageEvent());
+            _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter, gameObject, netId, true));
+            _gameEventManager.Subscribe<DevelopItemGetEvent>(OnDevelopItemGet);
+            _gameEventManager.Subscribe<GameFunctionUIShowEvent>(OnGameFunctionUIShow);
+            _gameEventManager.Subscribe<TargetShowEvent>(OnTargetShow);
             var attackSector = gameObject.GetComponent<AttackSectorLine>();
             var radius = _propertyConfig.GetBaseValue(PropertyTypeEnum.AttackRadius);
             var range = _propertyConfig.GetBaseValue(PropertyTypeEnum.AttackAngle);
@@ -970,7 +967,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void OnDestroy()
         {
-            _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter, gameObject, netId, true));
+            _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter, gameObject, netId, false));
             GameObjectContainer.Instance.RemoveDynamicObject(netId);
             _disposables?.Clear();
             _propertyPredictionState.OnPropertyChanged -= HandlePropertyChange;
@@ -982,6 +979,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _inputState.OnPlayerInputStateChanged -= HandlePlayerInputStateChanged;
             _inputState.IsInSpecialState -= HandleSpecialState;
             _uiManager.IsUnlockMouse -= OnIsUnlockMouse;
+            _gameEventManager.Unsubscribe<DevelopItemGetEvent>(OnDevelopItemGet);
+            _gameEventManager.Unsubscribe<GameFunctionUIShowEvent>(OnGameFunctionUIShow);
+            _gameEventManager.Unsubscribe<TargetShowEvent>(OnTargetShow);
             _animationCooldowns.Clear();
             _inputStream.Dispose();
             _effectContainer.Clear();

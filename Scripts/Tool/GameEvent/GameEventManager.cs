@@ -19,11 +19,7 @@ namespace HotUpdate.Scripts.Tool.GameEvent
             var eventType = typeof(T);
             Action<IGameEvent> internalListener = e => listener((T)e);
 
-            if (!_eventListeners.ContainsKey(eventType))
-            {
-                _eventListeners[eventType] = internalListener;
-            }
-            else
+            if (!_eventListeners.TryAdd(eventType, internalListener))
             {
                 _eventListeners[eventType] += internalListener;
             }

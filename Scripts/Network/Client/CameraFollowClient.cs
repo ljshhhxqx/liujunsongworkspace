@@ -134,6 +134,7 @@ namespace HotUpdate.Scripts.Network.Client
         private void OnDestroy()
         {
             _uiManager.IsUnlockMouse-= OnUnlockMouse;
+            _gameEventManager.Unsubscribe<PlayerSpawnedEvent>(OnPlayerSpawned);
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
             Debug.Log("CameraFollowClient OnDestroy");

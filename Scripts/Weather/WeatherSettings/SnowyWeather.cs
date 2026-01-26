@@ -29,9 +29,9 @@ namespace HotUpdate.Scripts.Weather.WeatherSettings
         {
             var mainModule = snowParticles.main;
             var emission =  snowParticles.emission;
-            GameLoopDataModel.MapConfig
-                .Where(x => x.weatherMapData!= null).Subscribe(weather =>
+            GameLoopDataModel.MapConfig.Subscribe(weather =>
             {
+                if (weather.weatherMapData == null) return;
                 var weathers = weather.weatherMapData.First(x => x.weatherType == WeatherType.Snowy);
                 var shape = snowParticles.shape;
                 shape.scale = weathers.size;

@@ -566,6 +566,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 syncSystem.Value.Clear();
             }
+            _syncSystems.Clear();
+            _clientCommands.Clear();
+            _currentTickCommands.Clear();
+            Debug.Log("GameSyncSystem Destroy");
+            _playerNetComponentControllers.Clear();
+            _playerComponentControllers.Clear();
+            _gameEventManager.Unsubscribe<GameStartEvent>(OnGameStartEvent);
+            _gameEventManager.Unsubscribe<PlayerConnectEvent>(OnPlayerConnect);
+            _gameEventManager.Unsubscribe<PlayerDisconnectEvent>(OnPlayerDisconnect);
+            _gameEventManager.Unsubscribe<AddBuffToAllPlayerEvent>(OnAddBuffToAllPlayer);
+            _gameEventManager.Unsubscribe<AddDeBuffToLowScorePlayerEvent>(OnAddDeBuffToLowScorePlayer);
+            _gameEventManager.Unsubscribe<AllPlayerGetSpeedEvent>(OnAllPlayerGetSpeed);
         }
     }
 }

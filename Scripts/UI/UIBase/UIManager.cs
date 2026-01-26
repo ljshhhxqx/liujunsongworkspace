@@ -6,6 +6,7 @@ using HotUpdate.Scripts.Static;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using HotUpdate.Scripts.UI.UIs.Popup;
+using HotUpdate.Scripts.UI.UIs.WorldUI;
 using Resource;
 using UI.UIBase;
 using UI.UIs.Exception;
@@ -24,6 +25,7 @@ namespace HotUpdate.Scripts.UI.UIBase
         private UICanvasRoot[] _roots;
         private IObjectResolver _resolver;
         private GameEventManager _gameEventManager;
+        private WorldUISpawner _worldUISpawner;
         private readonly Dictionary<UIType, ScreenUIBase> _uiDict = new Dictionary<UIType, ScreenUIBase>();
         public ScreenUIBase CurrentActiveScreenUI1 { get; private set; }
 
@@ -39,6 +41,7 @@ namespace HotUpdate.Scripts.UI.UIBase
             _resolver = resolver;
             _gameEventManager = gameEventManager;
             _roots = Object.FindObjectsOfType<UICanvasRoot>();
+            _worldUISpawner = Object.FindObjectOfType<WorldUISpawner>();
         }
 
         public void InitPermanentUI()
@@ -333,7 +336,7 @@ namespace HotUpdate.Scripts.UI.UIBase
 
         public void ClearAllGameUI()
         {
-            _gameEventManager.Publish(new ClearAllWorldUIEvent());
+            _worldUISpawner.OnClearAllWorldUIEvent();
             for (int i = 0; i < _roots.Length; i++)
             {
                 var root = _roots[i];

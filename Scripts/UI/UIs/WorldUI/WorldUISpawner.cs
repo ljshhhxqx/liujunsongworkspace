@@ -30,16 +30,18 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
             _gameEventManager.Subscribe<PlayerSpawnedEvent>(OnPlayerSpawned);
             _gameEventManager.Subscribe<SceneItemInfoChangedEvent>(OnSceneItemInfoChanged);
             _gameEventManager.Subscribe<SceneItemSpawnedEvent>(OnSceneItemSpawned);
-            _gameEventManager.Subscribe<ClearAllWorldUIEvent>(OnClearAllWorldUIEvent);
             _uiCanvas = transform.parent.GetComponent<Canvas>();
         }
 
-        private void OnClearAllWorldUIEvent(ClearAllWorldUIEvent worldUIEvent)
+        public void OnClearAllWorldUIEvent()
         {
             foreach (var (_, controller) in _followedUIControllers)
             {
                 GameObjectPoolManger.Instance.ReturnObject(controller.gameObject);
             }
+            _followedUIControllers.Clear();
+            _dataModels.Clear();
+            _mainCamera = null;
         }
 
         private void OnPlayerSpawned(PlayerSpawnedEvent playerSpawnedEvent)

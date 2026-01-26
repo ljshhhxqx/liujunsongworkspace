@@ -97,17 +97,13 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             _gameLoopController = FindObjectOfType<GameLoopController>();
             _gameEventManager = gameEventManager;
             GameLoopDataModel.WarmupRemainingTime
-                .Where(time => time <= 3 && time > 0)
-                .Take(1)
                 .Subscribe(_ => StartWarmupCountdown())
                 .AddTo(_warmupDisposable);
             
             GameLoopDataModel.GameRemainingTime
-                .Where(time => time > 0)
                 .Subscribe(StartGameTimer)
                 .AddTo(_gameTimerDisposable);
             GameLoopDataModel.GameResult
-                .Where(result => result.playersResultData!= null)
                 .Subscribe(ShowGameOver)
                 .AddTo(this);
             _networkEndHandler = FindObjectOfType<NetworkEndHandler>();
@@ -137,23 +133,42 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             _warmupDisposable?.Dispose();
         }
         
+        private bool _initialized;
+        
         // 开始热身倒计时
         private void StartWarmupCountdown(int warmupSeconds = 3)
         {
+            if (_initialized)
+            {
+                return;
+            }
+            if (warmupSeconds >3 || warmupSeconds <= 0)
+            {
+                return;
+            }
+
+            _initialized = true;
             _warmupDisposable?.Dispose();
             _warmupSequence?.Kill();
             WarmupCountdownCoroutine(warmupSeconds);
         }
         
+        private bool _gameTweening;
+        
         // 开始游戏总倒计时
         private void StartGameTimer(float gameTimeSeconds)
         {
-            _gameTimerDisposable?.Dispose();
-            _totalGameTime = gameTimeSeconds;
+            if (gameTimeSeconds <= 0 )
+            {
+                return;
+            }
             _currentGameTime = gameTimeSeconds;
+            if (_isGameRunning)
+            {
+                return;
+            }
+            _totalGameTime = gameTimeSeconds;
             _isGameRunning = true;
-            
-            _gameTimerSequence?.Kill();
             GameTimerCoroutine();
         }
         
@@ -173,6 +188,10 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         // 显示游戏结束界面
         private void ShowGameOver(GameResultData data)
         {
+            if (data.playersResultData==null)
+            {
+                return;
+            }
             StopGameTimer();
             GameOverCoroutine(data).Forget();
         }
