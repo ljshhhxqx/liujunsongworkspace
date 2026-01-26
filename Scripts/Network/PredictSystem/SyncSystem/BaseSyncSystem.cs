@@ -136,6 +136,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public virtual void Clear()
         {
             PropertyStates.Clear();
+            GameSyncManager.OnServerProcessCurrentTickCommand -= OnServerProcessCommand;
+            GameSyncManager.OnBroadcastStateUpdate -= OnBroadcastStateUpdate;
+            GameSyncManager.OnClientProcessStateUpdate -= OnClientProcessStateUpdate;
+            GameSyncManager.OnPlayerConnected -= OnPlayerConnected;
+            GameSyncManager.OnPlayerDisconnected -= OnPlayerDisconnected;
+            GameSyncManager.OnGameStart -= OnGameStart;
+            GameSyncManager.OnAllSystemInit -= OnAllSystemInit;
         }
     }
 }

@@ -460,6 +460,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 }
                 //Debug.Log($"ProcessCurrentTickCommands: {command.GetHeader().CommandType}-{command.GetHeader().Tick}-{command.GetHeader().ConnectionId}");
                 //var header = command.GetHeader();
+                if (command is PropertyBuffCommand propertyBuffCommand)
+                {
+                    Debug.Log($"ProcessCurrentTickCommands: {propertyBuffCommand.GetHeader().CommandType}-{propertyBuffCommand.GetHeader().Tick}-{propertyBuffCommand.GetHeader().ConnectionId}");
+                }
                 OnServerProcessCurrentTickCommand?.Invoke(command);
                 //var syncSystem = GetSyncSystem(header.CommandType);
                 // if (syncSystem != null)
@@ -569,6 +573,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _syncSystems.Clear();
             _clientCommands.Clear();
             _currentTickCommands.Clear();
+            _serverCommands.Clear();
             Debug.Log("GameSyncSystem Destroy");
             _playerNetComponentControllers.Clear();
             _playerComponentControllers.Clear();

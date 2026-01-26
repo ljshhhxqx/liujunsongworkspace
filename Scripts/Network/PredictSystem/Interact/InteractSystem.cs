@@ -593,7 +593,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             _gameEventManager.Unsubscribe<StartGameWellEvent>(OnStartGameWell);
             _gameEventManager.Unsubscribe<StartGameTrainEvent>(OnStartGameTrain);
             _sceneItems.OnChange -= OnSceneItemsChanged;
-            
+            Clear();
         }
 
         private void HandleSceneInteractRequest(SceneInteractRequest request)

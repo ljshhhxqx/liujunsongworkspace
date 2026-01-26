@@ -215,7 +215,7 @@ namespace HotUpdate.Scripts.Game
                 
                 _warmupTime = _jsonDataConfig.GameConfig.warmupTime;
                 _noUnionTime = _jsonDataConfig.GameConfig.noUnionTime;
-                _mainGameTime = 6f;
+                _mainGameTime = 15f;
                 Debug.Log($"OnGameReady called {_gameInfo.GameMode}- {_gameInfo.GameTime} seconds");
                 StartGameLoop(_cts).Forget();
             }

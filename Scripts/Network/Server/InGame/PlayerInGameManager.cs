@@ -903,7 +903,8 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             _playerBaseColliderData = default;
             _playerBases.Clear();
             _updateGridsTokenSource.Cancel();
-            
+            _gameSyncManager = null;
+            _interactSystem = null;
             _gameEventManager.Unsubscribe<GameResourceLoadedEvent>(OnGameResourceLoaded);
         }
 
