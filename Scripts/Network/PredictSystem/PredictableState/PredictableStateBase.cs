@@ -107,6 +107,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
             //Debug.LogError($"[PredictableStateBase] Command {commandId} not found in buffer.");
         }
+        protected int ConfirmedTick;
+
+        protected int ReconciliationCount;
 
         // 清理已确认的命令
         protected virtual void CleanupConfirmedCommands(int confirmedTick)
@@ -121,19 +124,33 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             }
             LastConfirmedTick = confirmedTick;
         }
+        
 
         public virtual void ApplyServerState<T>(T state) where T : ISyncPropertyState
         {
-            CleanupConfirmedCommands(GameSyncManager.CurrentTick);
+            if (GameSyncManager.CurrentTick > LastConfirmedTick)
+            {
+                CleanupConfirmedCommands(GameSyncManager.CurrentTick);
+            }
             
             if (LocalPlayerHandler)
             {
                  if (NeedsReconciliation(state))
                  {
+                     ReconciliationCount++;
+                 }
+
+                 if (ReconciliationCount >= 2)
+                 {
+                     ReconciliationCount = 0;
                      // 重置到服务器状态
                      InitCurrentState(state);
                      
                      var commands = GetUnconfirmedCommands();
+                     // if (commands.Length > MaxUnconfirmedCommands)
+                     // {
+                     //     return;
+                     // }
                      // 仅重放未确认的命令
                      foreach (var command in commands)
                      {

@@ -47,7 +47,7 @@ MonoBehaviour:
       gridSize: 10
       onceSpawnCount: 40
       onceSpawnWeight: 100
-      spawnAttackRatio: 0.2
+      spawnAttackRatio: 0.15
       spawnMoveRatio: 0.15
       spawnHiddenRatio: 0.05
       spawnAttackMoveRatio: 0.1

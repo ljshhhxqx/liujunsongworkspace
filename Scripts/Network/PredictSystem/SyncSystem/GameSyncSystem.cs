@@ -339,12 +339,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
         }
 
-        [Command]
-        public void CmdEnqueueCommand(byte[] commandJson)
-        {
-            EnqueueCommand(commandJson);
-        }
-
         /// <summary>
         /// 客户端发送命令(不能给服务器使用)
         /// </summary>

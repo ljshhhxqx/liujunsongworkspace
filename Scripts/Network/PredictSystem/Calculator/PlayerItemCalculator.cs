@@ -377,7 +377,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             // }
         }
 
-        public static void CommandGetItem(ref PlayerItemState playerItemState, ItemsCommandData itemsData, NetworkCommandHeader header = default)
+        public static void CommandGetItem(ref PlayerItemState playerItemState, ItemsCommandData itemsData, NetworkCommandHeader header = default, bool isKilled = false)
         {
             var itemConfigData = Constant.ItemConfig.GetGameItemData(itemsData.ItemConfigId);
             if (itemConfigData.id == 0)

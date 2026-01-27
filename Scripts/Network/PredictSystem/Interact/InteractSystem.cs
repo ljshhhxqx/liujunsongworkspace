@@ -150,7 +150,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                 if (_sceneItems[key].maxHealth > 1)
                 {
                     var sceneItem = GameObjectContainer.Instance.GetDynamicObjectData(key);
-                    if (sceneItem != null)
+                    if (sceneItem != default)
                     {
                         var position = sceneItem.Position;
                         if (Vector3.Distance(position, data.Position) < distance)
@@ -231,6 +231,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                 if (sceneItemInfo.health <= 0)
                 {
                     Debug.Log($"[OnSkillItem] Scene item {playerSkillItemEvent.DefenderId} is dead");
+                    OnPlayerKillItem(playerSkillItemEvent.PlayerId, playerSkillItemEvent.DefenderId);
                     _sceneItems.Remove(playerSkillItemEvent.DefenderId);
                 }
 
@@ -243,6 +244,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             {
                 Debug.LogError($"[OnSkillItem] Scene item {playerSkillItemEvent.DefenderId} not found");
             }
+        }
+
+        private void OnPlayerKillItem(uint playerId, uint itemId)
+        {
+            _itemsSpawnerManager.PickerPickupItem(playerId, itemId, true);
         }
 
         private void HandleItemSkillBuffMove(PlayerPropertySyncSystem.SkillBuffManagerData buff, int index)
@@ -282,6 +288,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                     {
                         Debug.Log($"[OnPlayerAttackItem] Scene item {sceneItemId} is dead");
                         _sceneItems.Remove(sceneItemId);
+                        OnPlayerKillItem(playerAttackItemEvent.AttackerId, sceneItemInfo.sceneItemId);
                     }
                 }
             }
@@ -609,7 +616,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                     //     return;
                     // }
                     Debug.Log($"Player {playerNetId} pickup item {request.SceneItemId}");
-                    _itemsSpawnerManager.PickerPickupItem(playerNetId, request.SceneItemId);
+                    _itemsSpawnerManager.PickerPickupItem(playerNetId, request.SceneItemId, false);
                     break;
                 case InteractionType.PickupChest:
                     _itemsSpawnerManager.PickerPickUpChest(playerNetId, request.SceneItemId);

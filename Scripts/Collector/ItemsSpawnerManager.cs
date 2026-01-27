@@ -287,11 +287,11 @@ namespace HotUpdate.Scripts.Collector
         }
 
         [Server]
-        public void PickerPickupItem(uint pickerId, uint itemId)
+        public void PickerPickupItem(uint pickerId, uint itemId, bool killed)
         {
             if (ServerHandler)
             {
-                HandleItemPickup(itemId, pickerId);
+                HandleItemPickup(itemId, pickerId, killed);
                 JudgeEndRound();
             }
         }
@@ -405,7 +405,7 @@ namespace HotUpdate.Scripts.Collector
         }
 
         [Server]
-        private void HandleItemPickup(uint itemId, uint pickerId)
+        private void HandleItemPickup(uint itemId, uint pickerId, bool killed)
         {
             if (!ServerHandler)
             {
@@ -455,17 +455,21 @@ namespace HotUpdate.Scripts.Collector
                         var list = new MemoryList<ItemsCommandData>(2);
                         list.Add(new ItemsCommandData()
                         {
-                            ItemConfigId = itemConfigId,
+                            ItemConfigId =  itemConfigId,
                             Count = 1,
                             ItemUniqueId = new int[]
                                 { HybridIdGenerator.GenerateItemId(itemConfigId, GameSyncManager.CurrentTick) }
                         });
-                        // 处理拾取逻辑
-                        _gameSyncManager.EnqueueServerCommand(new ItemsGetCommand
+                        var getCount = killed ? Random.Range(2, 4) : 1;
+                        for (int i = 0; i < getCount; i++)
                         {
-                            Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Item),
-                            Items = list,
-                        });
+                            // 处理拾取逻辑
+                            _gameSyncManager.EnqueueServerCommand(new ItemsGetCommand
+                            {
+                                Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Item),
+                                Items = list,
+                            });
+                        }
                         var identity = NetworkServer.spawned[itemId];
 
                         var collectObjectController = identity.GetComponent<CollectObjectController>();
