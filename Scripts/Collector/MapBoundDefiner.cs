@@ -18,6 +18,16 @@ namespace HotUpdate.Scripts.Collector
         private LayerMask _sceneLayer;
         private readonly List<Vector2Int> _gridMap = new List<Vector2Int>();
         private readonly Dictionary<Vector2Int, List<Vector3>> _gridGameObjectMap = new Dictionary<Vector2Int, List<Vector3>>();
+        // Grid → 地面高度
+        private readonly Dictionary<Vector2Int, float> _gridGroundHeight = new Dictionary<Vector2Int, float>();
+
+        // Grid → 是否可生成（是否被静态物体占满）
+        private readonly HashSet<Vector2Int> _blockedGrids = new HashSet<Vector2Int>();
+        public Vector3 GridOrigin { get; private set; }
+        private readonly List<Vector2Int> _spawnableGrids = new List<Vector2Int>();
+
+
+
         private float _gridSize = 2f;
         public float GridSize => _gridSize;
         public Vector3 MapMinBoundary { get; private set; }
@@ -50,6 +60,7 @@ namespace HotUpdate.Scripts.Collector
             Debug.Log("MapBoundDefiner init");
             CalculateAdjustedBounds();
             InitializeGrid();
+            CacheGroundHeight();
         }
         
         public Vector3[] GetWaypointPositions(Vector3 position)
@@ -63,6 +74,24 @@ namespace HotUpdate.Scripts.Collector
             }
             return positions;
         }
+        
+        private void CacheGroundHeight()
+        {
+            foreach (var grid in _gridMap)
+            {
+                var center = new Vector3(
+                    grid.x * _gridSize + _gridSize * 0.5f,
+                    50f,
+                    grid.y * _gridSize + _gridSize * 0.5f
+                );
+
+                if (Physics.Raycast(center, Vector3.down, out var hit, 100f, _sceneLayer))
+                {
+                    _gridGroundHeight[grid] = hit.point.y;
+                }
+            }
+        }
+
 
         public HashSet<Vector2Int> GetBoundsCovered(Bounds bounds)
         {
@@ -73,10 +102,10 @@ namespace HotUpdate.Scripts.Collector
             Vector3 max = bounds.max;
         
             // 获取覆盖的网格范围
-            int minGridX = Mathf.FloorToInt(min.x / _gridSize);
-            int maxGridX = Mathf.FloorToInt(max.x / _gridSize);
-            int minGridZ = Mathf.FloorToInt(min.z / _gridSize);
-            int maxGridZ = Mathf.FloorToInt(max.z / _gridSize);
+            int minGridX = Mathf.FloorToInt((min.x - GridOrigin.x) / _gridSize);
+            int maxGridX = Mathf.FloorToInt((max.x - GridOrigin.x) / _gridSize);
+            int minGridZ = Mathf.FloorToInt((min.z - GridOrigin.z) / _gridSize);
+            int maxGridZ = Mathf.FloorToInt((max.z - GridOrigin.z) / _gridSize);
         
             // 遍历所有覆盖的网格
             for (int x = minGridX; x <= maxGridX; x++)
@@ -93,10 +122,11 @@ namespace HotUpdate.Scripts.Collector
         public Vector2Int GetGridPosition(Vector3 worldPos)
         {
             return new Vector2Int(
-                Mathf.FloorToInt(worldPos.x / GridSize),
-                Mathf.FloorToInt(worldPos.z / GridSize) 
+                Mathf.FloorToInt((worldPos.x - GridOrigin.x) / GridSize),
+                Mathf.FloorToInt((worldPos.z - GridOrigin.z) / GridSize)
             );
         }
+
         
         public Vector2Int FindClosestGrid(Vector3 worldPos)
         {
@@ -157,6 +187,11 @@ namespace HotUpdate.Scripts.Collector
             // 在原始边界的基础上添加安全边距
             MapMinBoundary = new Vector3(minX + _safetyMargin, 0, minZ + _safetyMargin);
             MapMaxBoundary = new Vector3(maxX - _safetyMargin, 0, maxZ - _safetyMargin);
+            GridOrigin = new Vector3(
+                MapMinBoundary.x,
+                0f,
+                MapMinBoundary.z
+            );
 
             Debug.Log($"Adjusted Map Boundaries: Min({MapMinBoundary}) Max({MapMaxBoundary})");
         }
@@ -173,15 +208,33 @@ namespace HotUpdate.Scripts.Collector
         
         private void InitializeGrid()
         {
-            for (var x = MapMinBoundary.x; x <= MapMaxBoundary.x; x += _gridSize)
+            _gridMap.Clear();
+
+            int xCount = Mathf.FloorToInt((MapMaxBoundary.x - MapMinBoundary.x) / _gridSize);
+            int zCount = Mathf.FloorToInt((MapMaxBoundary.z - MapMinBoundary.z) / _gridSize);
+
+            for (int x = 0; x <= xCount; x++)
             {
-                for (var z = MapMinBoundary.z; z <= MapMaxBoundary.z; z += _gridSize)
+                for (int z = 0; z <= zCount; z++)
                 {
-                    var gridPos = GetGridPosition(new Vector3(x, 0, z));
-                    _gridMap.Add(gridPos);
+                    _gridMap.Add(new Vector2Int(x, z));
                 }
             }
+            _spawnableGrids.Clear();
+
+            foreach (var grid in _gridMap)
+            {
+                if (_blockedGrids.Contains(grid))
+                    continue;
+
+                if (!_gridGroundHeight.ContainsKey(grid))
+                    continue;
+
+                _spawnableGrids.Add(grid);
+            }
+
         }
+
         
         // 获取周围Grid坐标（带边界检查）
         public HashSet<Vector2Int> GetSurroundingGrids(Vector2Int center, int radius)
@@ -211,6 +264,31 @@ namespace HotUpdate.Scripts.Collector
             float angle = Random.Range(0, 360);
             return new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)).normalized;
         }
+        
+        public bool TryGetRandomSpawnPoint(
+            out Vector2Int grid,
+            Func<Vector2Int, bool> gridFilter = null)
+        {
+            grid = default;
+
+            if (_spawnableGrids.Count == 0)
+                return false;
+
+            // 最多尝试 N 次，N << 原来的失败率
+            for (int i = 0; i < 5; i++)
+            {
+                var candidate = _spawnableGrids[Random.Range(0, _spawnableGrids.Count)];
+
+                if (gridFilter != null && !gridFilter(candidate))
+                    continue;
+
+                grid = candidate;
+                return true;
+            }
+
+            return false;
+        }
+
 
         [Button]
         public Vector3 GetRandomPoint(Func<Vector3, bool> isObstacle = null)
@@ -261,5 +339,20 @@ namespace HotUpdate.Scripts.Collector
             MapMaxBoundary = Vector3.zero;
             Debug.Log("MapBoundDefiner cleared");
         }
+        public bool TryGetGroundHeight(Vector2Int grid, out float height)
+        {
+            return _gridGroundHeight.TryGetValue(grid, out height);
+        }
+
+        public float GetGroundHeight(Vector2Int grid)
+        {
+            if (_gridGroundHeight.TryGetValue(grid, out var h))
+                return h;
+
+            // 防御性：极端情况下兜底
+            //Debug.LogWarning($"No ground height cached for grid {grid}");
+            return MapMinBoundary.y;
+        }
+
     }
 }

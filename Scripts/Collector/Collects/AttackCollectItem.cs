@@ -173,7 +173,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             }
 
             var distance = float.MaxValue;
-            DynamicObjectData dynamicObject = null;
+            DynamicObjectData dynamicObject = default;
             foreach (var data in _collectedObjects)
             {
                 var dis = Vector3.Distance(transform.position, data.Position);
@@ -184,7 +184,7 @@ namespace HotUpdate.Scripts.Collector.Collects
                 }
             }
 
-            if (dynamicObject != null)
+            if (dynamicObject != default)
             {
                 Debug.Log($"[ OnAttack ] {name} attack {dynamicObject.NetId}");
                 var direction = (dynamicObject.Position - transform.position).normalized;

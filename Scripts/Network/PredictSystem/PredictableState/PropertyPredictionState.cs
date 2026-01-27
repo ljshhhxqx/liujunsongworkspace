@@ -334,7 +334,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 }
 
                 var baseProperties = _propertyConfig.GetBaseValue(propertyType);
-                Debug.Log($"PropertyPredictionState [OnStartLocalPlayer]_{propertyType}_{baseProperties}");
+                //Debug.Log($"PropertyPredictionState [OnStartLocalPlayer]_{propertyType}_{baseProperties}");
                 var displayName = propertyConfig.description;
                 var consumeType = propertyConfig.consumeType;
                 itemDatas.Add((int)propertyType, new PropertyItemData

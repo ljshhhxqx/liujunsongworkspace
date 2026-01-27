@@ -12,9 +12,8 @@ namespace AOTScripts.Tool.ObjectPool
     /// </summary>
     public class NetworkGameObjectPoolManager : SingletonAutoNetMono<NetworkGameObjectPoolManager>
     {
-        [Header("Auto Pool Settings")]
-        [Tooltip("默认对象池初始大小")]
-        private const int DefaultPoolSize = 10;
+        [Header("Auto Pool Settings")] [Tooltip("默认对象池初始大小")]
+        private const int DefaultPoolSize = 5;
     
         [Tooltip("对象池自动扩展大小")]
         private const int PoolExpandSize = 5;
@@ -133,7 +132,7 @@ namespace AOTScripts.Tool.ObjectPool
             if (!isRegistered)
             {
                 _registeredPrefabs.Add(assetId);
-                Debug.Log($"Auto-created pool for {prefab.name} (assetId: {assetId}) with size {DefaultPoolSize}");
+                //Debug.Log($"Auto-created pool for {prefab.name} (assetId: {assetId}) with size {DefaultPoolSize}");
                 RpcRegisterPrefab(assetId);
             }
         

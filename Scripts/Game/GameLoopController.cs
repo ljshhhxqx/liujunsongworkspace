@@ -215,7 +215,7 @@ namespace HotUpdate.Scripts.Game
                 
                 _warmupTime = _jsonDataConfig.GameConfig.warmupTime;
                 _noUnionTime = _jsonDataConfig.GameConfig.noUnionTime;
-                _mainGameTime = 15f;
+                _mainGameTime = _gameInfo.GameTime;
                 Debug.Log($"OnGameReady called {_gameInfo.GameMode}- {_gameInfo.GameTime} seconds");
                 StartGameLoop(_cts).Forget();
             }
@@ -554,6 +554,9 @@ namespace HotUpdate.Scripts.Game
             _cts?.Cancel();
             _endHandler.OnCleanup -= Cleanup;
             _endHandler.OnDisconnected -= Disconnected;
+            
+            // GC.Collect();
+            // GC.WaitForPendingFinalizers();
         }
     }
 }

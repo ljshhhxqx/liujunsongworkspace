@@ -13,7 +13,9 @@ namespace HotUpdate.Scripts.Game.Map
         private readonly Dictionary<Vector2Int, List<GameObjectData>> _mapObjectData = new Dictionary<Vector2Int, List<GameObjectData>>();
 
         private List<DynamicObjectData> _dynamicObjectData = new List<DynamicObjectData>();
-        private Dictionary<uint, int> _dynamicObjectIds = new Dictionary<uint, int>();
+        private Dictionary<uint, int> _dynamicObjectIds = new Dictionary<uint, int>();// Grid → dynamic object index
+        private readonly Dictionary<Vector2Int, List<int>> _dynamicGridIndex = new Dictionary<Vector2Int, List<int>>();
+
 
         public void UpdateDynamicObjects(bool isServer)
         {
@@ -32,6 +34,18 @@ namespace HotUpdate.Scripts.Game.Map
                 }
                 if (identity)
                 {
+                    var newGrid = MapBoundDefiner.Instance.GetGridPosition(identity.transform.position);
+
+                    if (newGrid != data.Grid)
+                    {
+                        _dynamicGridIndex[data.Grid].Remove(i);
+
+                        if (!_dynamicGridIndex.TryGetValue(newGrid, out var list))
+                            _dynamicGridIndex[newGrid] = list = new List<int>();
+
+                        list.Add(i);
+                        data.Grid = newGrid;
+                    }
                     data.Position = identity.transform.position;
                     _dynamicObjectData[i] = data;
                 }
@@ -44,27 +58,54 @@ namespace HotUpdate.Scripts.Game.Map
 
         private bool RemoveObject(uint netId)
         {
-            if (!_dynamicObjectIds.TryGetValue(netId, out var index))
-            {
-                //Debug.LogWarning($"{netId} not found in DynamicObjectData");
+            if (!_dynamicObjectIds.TryGetValue(netId, out int index))
                 return false;
+
+            int lastIndex = _dynamicObjectData.Count - 1;
+            var removedData = _dynamicObjectData[index];
+
+            // 1. 从原 GridIndex 移除 index（防御式）
+            if (_dynamicGridIndex.TryGetValue(removedData.Grid, out var removeList))
+            {
+                for (int i = removeList.Count - 1; i >= 0; i--)
+                {
+                    if (removeList[i] == index)
+                        removeList.RemoveAt(i);
+                }
+
+                if (removeList.Count == 0)
+                    _dynamicGridIndex.Remove(removedData.Grid);
             }
 
-            if (_dynamicObjectData.Count <= index)
+            // 2. 如果删的不是最后一个，执行 swap
+            if (index != lastIndex)
             {
-                //Debug.LogWarning("DynamicObjectData index out of range");
-                return false;
+                var lastData = _dynamicObjectData[lastIndex];
+
+                _dynamicObjectData[index] = lastData;
+                _dynamicObjectIds[lastData.NetId] = index;
+
+                // 修正 lastData 在 GridIndex 中的 index
+                if (_dynamicGridIndex.TryGetValue(lastData.Grid, out var lastList))
+                {
+                    for (int i = 0; i < lastList.Count; i++)
+                    {
+                        if (lastList[i] == lastIndex)
+                        {
+                            lastList[i] = index;
+                            break;
+                        }
+                    }
+                }
             }
-            
-            var lastIndex = _dynamicObjectData.Count - 1;
-            var lastItem = _dynamicObjectData[lastIndex];
-            _dynamicObjectData[index] = lastItem;
+
+            // 3. 移除尾部
             _dynamicObjectData.RemoveAt(lastIndex);
-            _dynamicObjectIds[lastItem.NetId] = index;
             _dynamicObjectIds.Remove(netId);
 
             return true;
         }
+
 
         public HashSet<DynamicObjectData> GetIntersectedDynamicObjects(uint uid, Vector3 position,
             IColliderConfig colliderConfig)
@@ -73,38 +114,57 @@ namespace HotUpdate.Scripts.Game.Map
             DynamicObjectIntersects(uid, position, colliderConfig, result);
             return result;
         }
+        
+        public bool CanSpawnAt(Vector3 position, IColliderConfig cfg)
+        {
+            var bounds = GamePhysicsSystem.GetWorldBounds(position, cfg);
+            var grids = MapBoundDefiner.Instance.GetBoundsCovered(bounds);
+
+            foreach (var grid in grids)
+            {
+                if (_mapObjectData.TryGetValue(grid, out var list))
+                {
+                    foreach (var obj in list)
+                    {
+                        if (GamePhysicsSystem.CheckIntersectsWithMargin(
+                                position, obj.Position,
+                                cfg, obj.ColliderConfig, 0.15f))
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
 
         public bool DynamicObjectIntersects(uint uid, Vector3 position, IColliderConfig colliderConfig,
             HashSet<DynamicObjectData> intersectedObjects, Func<DynamicObjectData, bool> onIntersected = null)
         {
             intersectedObjects.Clear();
-            // var bounds = GamePhysicsSystem.GetWorldBounds(position, colliderConfig);
-            // var coveredGrids = MapBoundDefiner.Instance.GetBoundsCovered(bounds);
-            // if (coveredGrids.Count == 0)
-            // {
-            //     Debug.LogWarning("No covered grids found for " + position);
-            //     return false;
-            // }
-            for (int i = 0; i < _dynamicObjectData.Count; i++)
+            var bounds = GamePhysicsSystem.GetWorldBounds(position, colliderConfig);
+            var grids = MapBoundDefiner.Instance.GetBoundsCovered(bounds);
+
+            foreach (var grid in grids)
             {
-                var data = _dynamicObjectData[i];
-                if (data.NetId == uid)
-                {
+                if (!_dynamicGridIndex.TryGetValue(grid, out var indices))
                     continue;
-                }
-                // var gridBounds = MapBoundDefiner.Instance.FindClosestGrid(data.Position);
-                //
-                //
-                if (GamePhysicsSystem.CheckIntersectsWithMargin(position, data.Position, colliderConfig,
-                        data.ColliderConfig, 0.3f))
+
+                foreach (var i in indices)
                 {
-                    intersectedObjects.Add(data);
-                    onIntersected?.Invoke(data);
+                    var data = _dynamicObjectData[i];
+                    if (data.NetId == uid)
+                        continue;
+                    if (GamePhysicsSystem.CheckIntersectsWithMargin(
+                            position, data.Position,
+                            colliderConfig, data.ColliderConfig, 0.2f))
+                    {
+                        intersectedObjects.Add(data);
+                        onIntersected?.Invoke(data);
+                    }
                 }
             }
-            // foreach (var grid in coveredGrids)
-            // {
-            // }
             return intersectedObjects.Count > 0;
         }
 
@@ -156,25 +216,37 @@ namespace HotUpdate.Scripts.Game.Map
             return false;
         }
 
-        public void AddDynamicObject(uint netId, Vector3 position, IColliderConfig colliderConfig, ObjectType type, int layer, string tag)
+        public void AddDynamicObject(uint netId, Vector3 position, IColliderConfig colliderConfig,
+            ObjectType type, int layer, string tag)
         {
             if (netId == 0 || _dynamicObjectIds.ContainsKey(netId))
-            {
                 return;
-            }
+
+            var grid = MapBoundDefiner.Instance.GetGridPosition(position);
+
             var data = new DynamicObjectData
             {
                 NetId = netId,
                 Position = position,
+                Grid = grid,
                 ColliderConfig = colliderConfig,
                 Type = type,
                 Layer = layer,
                 Tag = tag,
             };
-            Debug.Log("AddDynamicObject: " + data);
+
+            _dynamicObjectIds[netId] = _dynamicObjectData.Count;
             _dynamicObjectData.Add(data);
-            _dynamicObjectIds.Add(netId, _dynamicObjectData.Count - 1);
+
+            if (!_dynamicGridIndex.TryGetValue(grid, out var list))
+            {
+                list = new List<int>();
+                _dynamicGridIndex[grid] = list;
+            }
+
+            list.Add(_dynamicObjectData.Count - 1);
         }
+
 
         public void RemoveDynamicObject(uint netId)
         {
@@ -193,7 +265,7 @@ namespace HotUpdate.Scripts.Game.Map
         {
             if (!_dynamicObjectIds.TryGetValue(netId, out var index))
             {
-                return null;
+                return default;
             }
             return _dynamicObjectData[index];
         }
@@ -314,10 +386,11 @@ namespace HotUpdate.Scripts.Game.Map
         Death,
     }
 
-    public class DynamicObjectData : IEquatable<DynamicObjectData>
+    public struct DynamicObjectData : IEquatable<DynamicObjectData>
     {
         public uint NetId;
         public Vector3 Position;
+        public Vector2Int Grid;
         public IColliderConfig ColliderConfig;
         public ObjectType Type;
         public LayerMask Layer;
@@ -326,14 +399,33 @@ namespace HotUpdate.Scripts.Game.Map
         public override string ToString()
         {
             
-            return $"NetId: {NetId}, Position: {Position}, ColliderConfig: {ColliderConfig} Type: {Type}, Layer: {Layer}, Tag: {Tag}";
+            return $"NetId: {NetId}, Position: {Position}, ColliderConfig: {ColliderConfig} Type: {Type}, Layer: {Layer}, Tag: {Tag}, Grid: {Grid}";
         }
 
         public bool Equals(DynamicObjectData other)
         {
-            if (other is null) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return NetId == other.NetId && Position.Equals(other.Position) && Equals(ColliderConfig, other.ColliderConfig) && Type == other.Type && Layer == other.Layer && Tag == other.Tag;
+            return NetId == other.NetId && Position.Equals(other.Position)
+                                        && Grid.Equals(other.Grid) && Equals(ColliderConfig, other.ColliderConfig) && Type == other.Type && Layer == other.Layer && Tag == other.Tag;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is DynamicObjectData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(NetId, Position, ColliderConfig, (int)Type, Layer, Tag,  Grid);
+        }
+
+        public static bool operator ==(DynamicObjectData left, DynamicObjectData right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(DynamicObjectData left, DynamicObjectData right)
+        {
+            return !left.Equals(right);
         }
     }
 

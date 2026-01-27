@@ -149,7 +149,7 @@ namespace HotUpdate.Scripts.Collector
 
         private void ChangeBehaviour()
         {
-            Debug.Log($"CollectObjectController::ChangeBehaviour call" + _collectObjectType);
+            //Debug.Log($"CollectObjectController::ChangeBehaviour call" + _collectObjectType);
             switch (_collectObjectType)
             {
                 case CollectObjectType.Attack:

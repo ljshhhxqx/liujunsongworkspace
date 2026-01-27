@@ -52,6 +52,18 @@ namespace HotUpdate.Scripts.Collector
         private static int _maxGridItems;
         private static float _itemHeight;
         private static float _gridSize; // Size of each grid cell
+        private static readonly Vector2Int[] GridDirections =
+        {
+            new(1, 0),
+            new(-1, 0),
+            new(0, 1),
+            new(0, -1),
+            new(1, 1),
+            new(-1, 1),
+            new(1, -1),
+            new(-1, -1),
+        };
+
         private static int _onceSpawnCount;
         private static int _onceSpawnWeight;
         private Transform _spawnedParent;
@@ -470,7 +482,7 @@ namespace HotUpdate.Scripts.Collector
                         _processedItems.Remove(itemId);
                         _serverItemMap.Remove(itemId);
                         _serverItemBehaviour.Remove(itemId);
-                        Debug.Log($"Player {player.name} pick up item {itemId}");
+                        //Debug.Log($"Player {player.name} pick up item {itemId}");
                     }
                     else
                     {
@@ -954,7 +966,7 @@ namespace HotUpdate.Scripts.Collector
             return new Vector2Int(x, z);
         }
 
-        private List<(int, Vector3)> SpawnItems(int totalWeight, int spawnMode)
+        private List<(int, Vector3, Vector2Int)> SpawnItems(int totalWeight, int spawnMode)
         {
             var collectTypes = new List<int>();
             var remainingWeight = totalWeight;
@@ -972,7 +984,7 @@ namespace HotUpdate.Scripts.Collector
                     break;
             }
 
-            return PlaceItems(collectTypes).Shuffle() as List<(int, Vector3)>;
+            return PlaceItems(collectTypes).Shuffle() as List<(int, Vector3, Vector2Int)>;
         }
 
         /// <summary>
@@ -1111,67 +1123,232 @@ namespace HotUpdate.Scripts.Collector
             return GamePhysicsSystem.CheckIntersectsWithMargin(player, item, playerColliderConfig, itemColliderConfig);
         }
         
-        private List<(int, Vector3)> PlaceItems(List<int> itemsToSpawn)
+        private List<(int configId, Vector3 pos, Vector2Int grid)> _callbackBuffer
+            = new List<(int, Vector3, Vector2Int grid)>();
+        private ValueTuple<int, Vector3> _itemBuffer;
+
+        
+        public Vector3 WorldPosFromGrid(Vector2Int grid)
         {
-            var startPoint = GetRandomStartPoint(_itemHeight);
-            _colliderBuffer = new Collider[itemsToSpawn.Count];
-            if (startPoint == Vector3.zero)
-            {
-                Debug.LogWarning("Failed to find valid start point");
-                return new List<(int, Vector3)>();
-            }
+            var gridOrigin = MapBoundDefiner.Instance.GridOrigin;
+            float x = gridOrigin.x + grid.x * _gridSize + _gridSize * 0.5f;
+            float z = gridOrigin.z + grid.y * _gridSize + _gridSize * 0.5f;
 
-            var direction = GetRandomDirection();
-            var spawnedIDs = new List<(int, Vector3)>();
-
-            foreach (var configId in itemsToSpawn)
-            {
-                var attempts = 0;
-                var itemPrefab = _collectiblePrefabs[configId];
-                const int maxAttempts = 5;
-                var validPosition = false;
-                var position = Vector3.zero;
-
-                while (!validPosition && attempts < maxAttempts)
-                {
-                    position = startPoint + _itemSpacing * spawnedIDs.Count * direction;
-            
-                    // 从高处发射射线
-                    var rayStart = position + Vector3.up * 50f;
-                    if (Physics.Raycast(rayStart, Vector3.down, out var hit, Mathf.Infinity, _sceneLayer))
-                    {
-                        position = hit.point + Vector3.up * _itemHeight;
-                        if (IsPositionValid(position, configId) && 
-                            IsWithinBoundary(position))
-                        {
-                            validPosition = true;
-                        }
-                    }
-            
-                    attempts++;
-                    if (!validPosition && attempts < maxAttempts)
-                    {
-                        // 尝试新的方向
-                        direction = GetRandomDirection();
-                    }
-                }
-
-                if (validPosition)
-                {
-                    var gridPos = GetGridPosition(position);
-                    if (_gridMap.TryGetValue(gridPos, out var grid))
-                    {
-                        var hashSet = grid.ItemIDs;
-                        hashSet.Add(configId);
-                        _gridMap[gridPos] = new Grid(hashSet);
-                    }
-            
-                    spawnedIDs.Add(new ValueTuple<int, Vector3> {Item1 = configId, Item2 = position});
-                }
-            }
-
-            return spawnedIDs;
+            float y = MapBoundDefiner.Instance.GetGroundHeight(grid);
+            return new Vector3(x, y + _itemHeight, z);
         }
+        
+        private bool TrySampleGrid(
+            Vector2Int origin,
+            int stride,
+            out Vector2Int grid)
+        {
+            var dir = GridDirections[Random.Range(0, GridDirections.Length)];
+            var step = Random.Range(1, 4); // 给点随机性，避免死线
+
+            grid = origin + dir * (step * stride);
+            return true;
+        }
+        
+        private bool ValidatePlacement(
+            Vector2Int grid,
+            int configId,
+            out Vector3 worldPos)
+        {
+            worldPos = default;
+
+            // 1. Grid 是否存在
+            if (!_gridMap.ContainsKey(grid))
+                return false;
+
+            // 2. Grid 是否被占
+            if (_gridMap[grid].ItemIDs.Count > 0)
+                return false;
+
+            // 3. 转世界坐标
+            worldPos = WorldPosFromGrid(grid);
+
+            // 4. Map 边界
+            if (!MapBoundDefiner.Instance.IsWithinMapBounds(worldPos))
+                return false;
+            var c = _colliderConfigs[configId];
+
+            if (!GameObjectContainer.Instance.CanSpawnAt(worldPos, c))
+                return false;
+            if (IntersectsPending(worldPos, c))
+                return false;
+
+            return true;
+        }
+
+        
+        private void CommitPlacement(
+            List<(int configId, Vector3 pos, Vector2Int grid)> buffer)
+        {
+            foreach (var item in buffer)
+            {
+                _gridMap[item.grid].ItemIDs.Add(item.configId);
+            }
+        }
+        
+        private bool IntersectsPending(
+            Vector3 pos,
+            IColliderConfig c)
+        {
+            foreach (var item in _callbackBuffer)
+            {
+                if (GamePhysicsSystem.CheckIntersectsWithMargin(
+                        pos,
+                        item.pos,
+                        c,
+                        _colliderConfigs[item.configId],
+                        0.0f))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+        private List<(int configId, Vector3 pos, Vector2Int grid)> PlaceItems(List<int> items)
+        {
+            _callbackBuffer.Clear();
+
+            // === 1. 起始点（保持你原始语义：随机一个合法起点） ===
+            if (!MapBoundDefiner.Instance.TryGetRandomSpawnPoint(out var startGrid))
+                return _callbackBuffer;
+
+            // 起始世界坐标（Grid → World，只用于起点）
+            var startPos = WorldPosFromGrid(startGrid);
+
+            // 随机方向（和你原来一致）
+            var dir = GridDirections[Random.Range(0, GridDirections.Length)].ToVector3XZ();
+
+            int placed = 0;
+            int safety = 0;
+
+            // === 2. 顺序推进（这是你原来“不会放不满”的关键） ===
+            while (placed < items.Count && safety < items.Count * 20)
+            {
+                safety++;
+
+                var configId = items[placed];
+
+                // ⚠️ 关键：仍然用 spacing 推进（不是 grid stride）
+                var candidatePos =
+                    startPos + dir * (_itemSpacing * placed);
+
+                // === 3. Raycast 到地面 / 静态物体（原逻辑） ===
+                if (Physics.Raycast(
+                        candidatePos + Vector3.up * 50f,
+                        Vector3.down,
+                        out var hit,
+                        100f,
+                        _sceneLayer))
+                {
+                    candidatePos = hit.point + Vector3.up * _itemHeight;
+                }
+                else
+                {
+                    continue; // 原来也是失败就跳
+                }
+
+                // === 4. Map 边界（原逻辑） ===
+                if (!MapBoundDefiner.Instance.IsWithinMapBounds(candidatePos))
+                    continue;
+
+                // === 5. Grid 快速过滤（⚡ 新增，但只做 early reject） ===
+                var grid = MapBoundDefiner.Instance.GetGridPosition(candidatePos);
+
+                if (!_gridMap.ContainsKey(grid))
+                    continue;
+
+                if (_gridMap[grid].ItemIDs.Count > 0)
+                    continue;
+
+                // === 6. 精确碰撞（原接口，语义不变） ===
+                if (!GameObjectContainer.Instance.CanSpawnAt(
+                        candidatePos,
+                        _colliderConfigs[configId]))
+                    continue;
+
+                // === 7. 接受这个点 ===
+                _callbackBuffer.Add((configId, candidatePos, grid));
+                placed++;
+            }
+
+            // === 8. 一次性提交占用（⚡ 优化点） ===
+            foreach (var item in _callbackBuffer)
+            {
+                _gridMap[item.grid].ItemIDs.Add(item.configId);
+            }
+
+            return _callbackBuffer;
+        }
+
+
+
+        // private List<(int, Vector3)> PlaceItems(List<int> itemsToSpawn)
+        // {
+        //     _callbackBuffer.Clear();
+        //     var startPoint = GetRandomStartPoint(_itemHeight);
+        //     if (startPoint == Vector3.zero)
+        //     {
+        //         Debug.LogWarning("Failed to find valid start point");
+        //         return _callbackBuffer;
+        //     }
+        //
+        //     var direction = GetRandomDirection();
+        //
+        //     for (var i = 0; i < itemsToSpawn.Count; i++)
+        //     {
+        //         var configId = itemsToSpawn[i];
+        //         var attempts = 0;
+        //         var validPosition = false;
+        //         var position = Vector3.zero;
+        //
+        //         while (!validPosition && attempts < maxAttempts)
+        //         {
+        //             position = startPoint + _itemSpacing * _callbackBuffer.Count * direction;
+        //     
+        //             // 从高处发射射线
+        //             var rayStart = position + Vector3.up * 50f;
+        //             if (Physics.Raycast(rayStart, Vector3.down, out var hit, Mathf.Infinity, _sceneLayer))
+        //             {
+        //                 position = hit.point + Vector3.up * _itemHeight;
+        //                 if (IsPositionValid(position, configId) && 
+        //                     IsWithinBoundary(position))
+        //                 {
+        //                     validPosition = true;
+        //                 }
+        //             }
+        //     
+        //             attempts++;
+        //             if (!validPosition && attempts < maxAttempts)
+        //             {
+        //                 // 尝试新的方向
+        //                 direction = GetRandomDirection();
+        //             }
+        //         }
+        //
+        //         if (validPosition)
+        //         {
+        //             var gridPos = GetGridPosition(position);
+        //             if (_gridMap.TryGetValue(gridPos, out var grid))
+        //             {
+        //                 var hashSet = grid.ItemIDs;
+        //                 hashSet.Add(configId);
+        //                 _gridMap[gridPos] = new Grid(hashSet);
+        //             }
+        //     
+        //             _itemBuffer = (configId, position);
+        //             _callbackBuffer.Add(_itemBuffer);
+        //         }
+        //     }
+        //
+        //     return _callbackBuffer;
+        // }
         
         private bool IsPositionValidWithoutItem(Vector3 position)
         {

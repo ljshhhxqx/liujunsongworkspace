@@ -338,6 +338,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         }
         
         private Minimap _minimap;
+        private PlayerInputStateData _lastInputStateData;
 
         protected override void InjectLocalPlayerCallback()
         {
@@ -479,7 +480,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     {
                         return;
                     }
-                    var propertyAutoRecoverCommand = ObjectPoolManager<PropertyAutoRecoverCommand>.Instance.Get(50);
+                    var propertyAutoRecoverCommand = ObjectPoolManager<PropertyAutoRecoverCommand>.Instance.Get(15);
                     propertyAutoRecoverCommand.Header = GameSyncManager.CreateNetworkCommandHeader(
                         _playerInGameManager.LocalPlayerId,
                         CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate,
@@ -496,11 +497,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                         GameSyncManager.CurrentTick <= 0 || !(_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)) || 
                         _subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
                     {
-                        if (_subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
-                        {
-                            Debug.Log($"[HOTUPDATE] CANNOT MOVE {_picker.IsTouching}");
-                            
-                        }
+                        // if (_subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
+                        // {
+                        //     Debug.Log($"[HOTUPDATE] CANNOT MOVE {_picker.IsTouching}");
+                        //     
+                        // }
                         _playerInputStateData.Command = AnimationState.Idle;
                         _playerInputStateData.InputAnimations = AnimationState.Idle;
                         _playerInputStateData.InputMovement = default;
@@ -508,22 +509,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                         _inputStream.Value = _playerInputStateData;
                         _targetSpeed = 0;
                     }
-                    HandleInputPhysics(_playerInputStateData);
-                    if (_inputStream.Value.Command != AnimationState.None)
+                    HandleInputPhysics(_inputStream.Value);
+                    if (_inputStream.Value != default)
                     {
                         HandleSendNetworkCommand(_inputStream.Value);
-                    }
-                    var propertyEnvironmentChangeCommand = ObjectPoolManager<PropertyEnvironmentChangeCommand>.Instance.Get(50);
-                    propertyEnvironmentChangeCommand.Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
-                        CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate, NetworkCommandType.PropertyEnvironmentChange);
-                    propertyEnvironmentChangeCommand.HasInputMovement = _playerInputStateData.InputMovement.magnitude > 0.1f;
-                    propertyEnvironmentChangeCommand.PlayerEnvironmentState = _gameStateStream.Value;
-                    propertyEnvironmentChangeCommand.IsSprinting = _playerInputStateData.Command.HasAnyState(AnimationState.Sprint);
-                    _propertyPredictionState.AddPredictedCommand(propertyEnvironmentChangeCommand);
-                    for (int i = 0; i < _predictionStates.Count; i++)
-                    {
-                        var state = _predictionStates[i];
-                        state.ExecutePredictedCommands(GameSyncManager.CurrentTick);
+                        var propertyEnvironmentChangeCommand = ObjectPoolManager<PropertyEnvironmentChangeCommand>.Instance.Get(15);
+                        propertyEnvironmentChangeCommand.Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
+                            CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate, NetworkCommandType.PropertyEnvironmentChange);
+                        propertyEnvironmentChangeCommand.HasInputMovement = _playerInputStateData.InputMovement.magnitude > 0.1f;
+                        propertyEnvironmentChangeCommand.PlayerEnvironmentState = _gameStateStream.Value;
+                        propertyEnvironmentChangeCommand.IsSprinting = _playerInputStateData.Command.HasAnyState(AnimationState.Sprint);
+                        _propertyPredictionState.AddPredictedCommand(propertyEnvironmentChangeCommand);
+                        for (int i = 0; i < _predictionStates.Count; i++)
+                        {
+                            var state = _predictionStates[i];
+                            state.ExecutePredictedCommands(GameSyncManager.CurrentTick);
+                        }
                     }
                 })
                 .AddTo(this);

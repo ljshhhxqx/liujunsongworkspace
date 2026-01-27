@@ -90,10 +90,11 @@ namespace HotUpdate.Scripts.Game.Map
                 throw new UnityException("Main map resource not found.");
             }
 
-            foreach (var resource in mapResource)
-            {
-                Debug.Log($"加载资源成功: {resource.name}");
-            }
+            // foreach (var resource in mapResource)
+            // {
+            //     Debug.Log($"加载资源成功: {resource.name}");
+            // }
+            Debug.Log($"加载{mapResource.Count}个资源成功: {mapResource.Count}");
             _gameEventManager.Publish(new GameMapResourceLoadedEvent(mapName));
         }
         

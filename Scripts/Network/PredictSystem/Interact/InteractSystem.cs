@@ -115,7 +115,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             }
             SceneItemInfoChanged?.Invoke(uid, value);
             _gameEventManager.Publish(new SceneItemInfoChangedEvent(uid, value, type));
-            Debug.Log($"[OnSceneItemsChanged] {type} scene item {uid} info - {value}");
+            //Debug.Log($"[OnSceneItemsChanged] {type} scene item {uid} info - {value}");
         }
 
         public HashSet<DynamicObjectData> GetHitObjectDatas(uint uid, Vector3 position, IColliderConfig config)

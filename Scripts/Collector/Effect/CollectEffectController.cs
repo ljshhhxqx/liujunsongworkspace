@@ -27,7 +27,7 @@ namespace HotUpdate.Scripts.Collector.Effect
     
         [Header("配置")]
         public bool autoInitialize = true;
-        public bool showDebugLogs = true;
+        public bool showDebugLogs = false;
     
         [Header("组件状态")]
         public bool isInitialized = false;

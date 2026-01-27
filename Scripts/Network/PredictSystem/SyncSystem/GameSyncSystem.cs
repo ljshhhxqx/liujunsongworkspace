@@ -124,15 +124,21 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _gameEventManager.Subscribe<AddDeBuffToLowScorePlayerEvent>(OnAddDeBuffToLowScorePlayer);
             _gameEventManager.Subscribe<AllPlayerGetSpeedEvent>(OnAllPlayerGetSpeed);
             Time.fixedDeltaTime = _serverInputRate;
-            Observable.EveryUpdate()
-                .Where(_ => isServer && !_isProcessing && NetworkServer.connections.Count > 0 && !isGameOver)
-                .Subscribe(_ =>
+            ProcessTickSync(_cts.Token).Forget();
+        }
+        
+        private async UniTask ProcessTickSync(CancellationToken cancellationToken)
+        {
+            while (cancellationToken.IsCancellationRequested == false)
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(TickSeconds), cancellationToken: cancellationToken);
+                if (isServer && !_isProcessing && NetworkServer.connections.Count > 0 && !isGameOver)
                 {
                     _tickTimer = 0;
                     ProcessTick();
                     _currentTick++;
-                })
-                .AddTo(this);
+                }
+            }
         }
 
         private void OnGameStartEvent(GameStartEvent gameStartEvent)

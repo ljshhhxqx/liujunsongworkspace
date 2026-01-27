@@ -128,10 +128,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             
             if (LocalPlayerHandler)
             {
-                //Debug.Log($"[PredictableStateBase] ApplyServerState {state.GetType().Name} at tick {GameSyncManager.CurrentTick}");
                  if (NeedsReconciliation(state))
                  {
-                     //Debug.Log($"[PredictableStateBase] Reconciliation needed for {state.GetType().Name} at tick {GameSyncManager.CurrentTick}");
                      // 重置到服务器状态
                      InitCurrentState(state);
                      
@@ -147,11 +145,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             {
                 InitCurrentState(state);
             }
-
-            // if (NetworkIdentity.isClient) 
-            // {
-            //     
-            // }
         }
 
         public abstract bool NeedsReconciliation<T>(T state) where T : ISyncPropertyState;
