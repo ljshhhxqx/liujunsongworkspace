@@ -140,7 +140,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             
             if (result.FunctionResult == null)
             {
-                Debug.Log("No new messages");
+                //Debug.Log("No new messages");
                 return;
             }
             
@@ -149,12 +149,12 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             {
                 if (value.ToString()== "[]")
                 {
-                    Debug.Log($"Received 0 new messages");
+                    //Debug.Log($"Received 0 new messages");
                     return;
                 }
-                Debug.Log($"Received {value} new messages");
+                //Debug.Log($"Received {value} new messages");
                 var newMessages = BoxingFreeSerializer.JsonDeserialize<GetNewMessagesResponse>(result.FunctionResult.ToString());
-                Debug.Log($"Received {newMessages.messages.Length} new messages");
+                //Debug.Log($"Received {newMessages.messages.Length} new messages");
                 ProcessMessages(newMessages.messages);
             }
         }

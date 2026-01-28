@@ -123,10 +123,13 @@ namespace HotUpdate.Scripts.Network.Server
             // ObjectInjectProvider.Instance.InjectMapGameObject(_mapName, playerGo);
             // playerGo.gameObject.SetActive(true);
             var identity = playerGo.GetComponent<NetworkIdentity>();
-            _mirrorNetworkMessageHandler.SendToAllClients(new MirrorPlayerConnectMessage(res.Name, conn.connectionId, playerGo.name, playerGo.transform.position, identity.netId));
+            Debug.Log($"[NetworkManagerCustom]: identity - {identity} {res.Name} {conn.connectionId} {playerGo.name} {playerGo.name} {playerGo.transform.position} {identity.netId}");
+            _mirrorNetworkMessageHandler.SendToAllClients(new MirrorPlayerConnectMessage(res.Name, 
+                conn.connectionId, playerGo.name, playerGo.transform.position, identity.netId));
 
+            Debug.Log($"[NetworkManagerCustom]: _mirrorNetworkMessageHandler SendToAllClients");
             _spawnPoints.Remove(spawnPoint);            
-
+            Debug.Log($"[NetworkManagerCustom]: _spawnPoints.Remove(spawnPoint)"); 
             // 详细检查
             // Debug.Log($"Connection: {conn}");
             // Debug.Log($"Player GameObject: {playerGo}");
