@@ -163,7 +163,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         {
             foreach (var message in messages)
             {
-                Debug.Log($"Processing message {JsonUtility.ToJson(message)}");
+                //Debug.Log($"Processing message {JsonUtility.ToJson(message)}");
                 switch (message.displayType)
                 {
                     case (int)DisplayType.Popup:
@@ -175,9 +175,9 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                         break;
                     case (int)DisplayType.Notification:
                         HandleMessageType(message);
-                        Debug.Log($"Message {message.id} Notification message received");
+                        //Debug.Log($"Message {message.id} Notification message received");
                         MarkAsProcessed(message.id, (MessageScope)message.messageScope);
-                        Debug.Log($"Message {message.id} marked as processed");
+                        //Debug.Log($"Message {message.id} marked as processed");
                         //_uiManager.ShowNotification(message);
                         break;
                     case (int)DisplayType.Email:
