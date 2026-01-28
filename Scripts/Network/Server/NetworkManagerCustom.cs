@@ -60,6 +60,7 @@ namespace HotUpdate.Scripts.Network.Server
             _uiManager = uIManager;
             _mirrorNetworkMessageHandler = FindObjectOfType<MirrorNetworkMessageHandler>();
             _gameConfigData = configProvider.GetConfig<JsonDataConfig>().GameConfig;
+            Debug.Log($"[NetworkManagerCustom]: init success");
         }
 
         // 服务器端有玩家连接时调用
@@ -110,10 +111,13 @@ namespace HotUpdate.Scripts.Network.Server
         private void SpawnPlayer(NetworkConnectionToClient conn)
         {
             var spawnIndex = Random.Range(0, _spawnPoints.Count);
+            Debug.Log($"[NetworkManagerCustom]: spawnIndex");
             var res = DataJsonManager.Instance.GetResourceData(_gameConfigData.playerPrefabName);
+            Debug.Log($"[NetworkManagerCustom]: res");
             var spawnPoint = _spawnPoints[spawnIndex];
-            
+            Debug.Log($"[NetworkManagerCustom]: spawnPoint");
             var playerGo = SpawnPlayer(conn.connectionId, spawnPoint);
+            Debug.Log($"[NetworkManagerCustom]: playerGo");
             //currentPlayer = resInfo.gameObject;
             // playerGo.gameObject.SetActive(false);
             // ObjectInjectProvider.Instance.InjectMapGameObject(_mapName, playerGo);
