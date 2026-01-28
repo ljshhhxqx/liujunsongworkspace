@@ -601,7 +601,10 @@ MonoBehaviour:
   - {fileID: 4755128589981924482}
   - {fileID: 3892252834831229646}
   - {fileID: 1363537439729698721}
-  functionButtons: []
+  functionButtons:
+  - {fileID: 3723033959027753127}
+  - {fileID: 8232143614267215941}
+  - {fileID: 3397738966641651995}
 --- !u!1 &4565230477965041993
 GameObject:
   m_ObjectHideFlags: 0
