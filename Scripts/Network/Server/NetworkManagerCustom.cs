@@ -124,8 +124,8 @@ namespace HotUpdate.Scripts.Network.Server
             // playerGo.gameObject.SetActive(true);
             var identity = playerGo.GetComponent<NetworkIdentity>();
             Debug.Log($"[NetworkManagerCustom]: identity - {identity} {res.Name} {conn.connectionId} {playerGo.name} {playerGo.name} {playerGo.transform.position} {identity.netId}");
-            _mirrorNetworkMessageHandler.SendToAllClients(new MirrorPlayerConnectMessage(res.Name, 
-                conn.connectionId, playerGo.name, playerGo.transform.position, identity.netId));
+            // _mirrorNetworkMessageHandler.SendToAllClients(new MirrorPlayerConnectMessage(res.Name, 
+            //     conn.connectionId, playerGo.name, playerGo.transform.position, identity.netId));
 
             Debug.Log($"[NetworkManagerCustom]: _mirrorNetworkMessageHandler SendToAllClients");
             _spawnPoints.Remove(spawnPoint);            
@@ -211,9 +211,8 @@ namespace HotUpdate.Scripts.Network.Server
                 }
             }).AddTo(this);
 
-            NetworkServer.RegisterHandler<MirrorPlayerConnectMessage>(OnServerPlayerAccountIdMessage);
+            NetworkServer.ReplaceHandler<MirrorPlayerConnectMessage>(OnServerPlayerAccountIdMessage);
         }
-        //public override void On
 
         private void OnServerPlayerAccountIdMessage(NetworkConnectionToClient conn, MirrorPlayerConnectMessage message)
         { 
@@ -276,7 +275,7 @@ namespace HotUpdate.Scripts.Network.Server
         public override void OnStartClient()
         {
             base.OnStartClient();
-            NetworkClient.RegisterHandler<MirrorPlayerConnectMessage>(OnPlayerConnectedMessage);
+            //NetworkClient.ReplaceHandler<MirrorPlayerConnectMessage>(OnPlayerConnectedMessage);
             // NetworkClient.RegisterHandler<PlayerDisconnectMessage>(OnPlayerDisconnectedMessage);
             NetworkClient.OnConnectedEvent += OnClientConnectToServer;
         }

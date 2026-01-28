@@ -41,6 +41,7 @@ namespace UI.UIs
         [Inject]
         private void Init()
         {
+            Application.targetFrameRate = 60;
             accountInputField.onValueChanged.AddListener(CheckInputField);
             loginButton.BindDebouncedListener(OnLoginButtonClick);
             registerButton.BindDebouncedListener(OnRegisterButtonClick);
