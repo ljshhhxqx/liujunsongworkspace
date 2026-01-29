@@ -486,7 +486,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void SendNetworkCommand()
         {
-            Debug.Log($"[PlayerComponentController] Start -*-- {_propertyPredictionState}");
+            Debug.Log($"[PlayerComponentController] Start -*-- {_propertyPredictionState} -- {_propertyPredictionState.PlayerPredictablePropertyState}");
             _targetSpeed = _propertyPredictionState.GetMoveSpeed();
             Debug.Log($"[PlayerComponentController] TargetSpeed: {_targetSpeed}");
             Debug.Log($"[PlayerComponentController] _gameSyncManager.isGameOver: {_gameSyncManager.isGameOver} _picker.IsTouching: {_picker.IsTouching} _propertyPredictionState.GetProperty(PropertyTypeEnum.Health): {_propertyPredictionState.GetProperty(PropertyTypeEnum.Health)} GameSyncManager.CurrentTick: {GameSyncManager.CurrentTick} _subjectedStateType: {_subjectedStateType} ");
