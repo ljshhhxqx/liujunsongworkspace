@@ -59,7 +59,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             {
                 var row = textAsset[i];
                 var data = new MapConfigData();
-                data.mapType = (int)Enum.Parse<MapType>(row[0]);
+                data.mapType = (int)Enum.Parse(typeof(MapType), row[0]);
                 data.maxPlayer = int.Parse(row[1]);
                 data.minPlayer = int.Parse(row[2]);
                 data.availableWeather = (List<WeatherType>)JsonConvert.DeserializeObject(row[3], typeof(List<WeatherType>));
