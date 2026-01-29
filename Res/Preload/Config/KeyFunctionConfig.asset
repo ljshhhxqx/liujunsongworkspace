@@ -23,5 +23,7 @@ MonoBehaviour:
   keyFunctionData:
   - keyFunction: 1
     key: Shop
+    uIType: 0
   - keyFunction: 2
     key: Inventory
+    uIType: 0
