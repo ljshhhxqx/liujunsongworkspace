@@ -561,8 +561,8 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             PlayFabData.ConnectionAddress.Value = message.mainGameInfo.ipAddress;
             PlayFabData.ConnectionPort.Value = message.mainGameInfo.port;
             PlayFabData.CurrentGameId.Value = message.mainGameInfo.gameId;
-            GameLoopDataModel.GameSceneName.Value = (MapType)message.mainGameInfo.mapType;
-            GameLoopDataModel.MapConfig.Value = _mapConfig.GetMapConfigData(GameLoopDataModel.GameSceneName.Value);
+            GameLoopDataModel.GameSceneName.Value = message.mainGameInfo.mapType;
+            GameLoopDataModel.MapConfig.Value = _mapConfig.GetMapConfigData((MapType)GameLoopDataModel.GameSceneName.Value);
             operation.Completed += (op) =>
             {
                 _playerDataManager.InitRoomPlayer(_currentRoomData);

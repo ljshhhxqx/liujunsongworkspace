@@ -13,7 +13,7 @@ namespace HotUpdate.Scripts.Game.Inject
 
         private void OnEnable()
         {
-            MapType = GameLoopDataModel.GameSceneName.Value;
+            MapType = (MapType)GameLoopDataModel.GameSceneName.Value;
         }
 
         protected override void StartClient()

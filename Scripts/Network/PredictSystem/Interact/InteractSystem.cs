@@ -310,11 +310,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             UpdateBuffs(GameSyncManager.ServerUpdateInterval);
             switch (GameLoopDataModel.GameSceneName.Value)
             {
-                case MapType.Rocket:
+                case (int)MapType.Rocket:
                     var position = _mapElementData.spawnRockerPosition;
                     NetworkGameObjectPoolManager.Instance.Spawn(_rocketPrefab, position, Quaternion.identity);
                     break;
-                case MapType.WestWild:
+                case (int)MapType.WestWild:
                     position = _mapElementData.spawnTrainPosition;
                     NetworkGameObjectPoolManager.Instance.Spawn(_trainPrefab, position, Quaternion.identity);
                     break;

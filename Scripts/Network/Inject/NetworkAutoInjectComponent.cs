@@ -24,7 +24,7 @@ namespace HotUpdate.Scripts.Network.Inject
 
         private void Start()
         {
-            _mapType = GameLoopDataModel.GameSceneName.Value;
+            _mapType = (MapType)GameLoopDataModel.GameSceneName.Value;
             if (autoInject && isForLocalPlayer)
             {
                 ObjectInjectProvider.Instance.InjectMap(_mapType, this);

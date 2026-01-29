@@ -63,7 +63,7 @@ namespace HotUpdate.Scripts.Game
 
         private async UniTask ResourcesLoadedCallback()
         {
-            _gameEventManager.Publish(new GameResourceLoadedEvent(GameLoopDataModel.GameSceneName.Value));
+            _gameEventManager.Publish(new GameResourceLoadedEvent((MapType)GameLoopDataModel.GameSceneName.Value));
             
             
             _uiManager.SwitchUI<LoginScreenUI>();

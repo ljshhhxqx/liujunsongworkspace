@@ -141,7 +141,7 @@ namespace HotUpdate.Scripts.Weather
         private void RandomWeather()
         {
             _enableLightning?.Dispose();
-            var mapData =_mapConfig.GetMapConfigData(GameLoopDataModel.GameSceneName.Value);
+            var mapData =_mapConfig.GetMapConfigData((MapType)GameLoopDataModel.GameSceneName.Value);
             var randomWeather = _weatherConfig.GetRandomWeatherData(mapData.availableWeather);
             var weatherEffectData = GetWeatherEffectData(randomWeather);
 

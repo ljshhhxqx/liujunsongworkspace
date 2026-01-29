@@ -415,7 +415,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             _playerIdsByNetId.AddOrUpdate(playerInGameData.networkIdentity.netId, connectId);
             Debug.Log($"Player connectionId : {connectId} netId : {playerInGameData.networkIdentity.netId} added");
             var pos = playerInGameData.networkIdentity.transform.position;
-            var nearestBase = _gameConfigData.GetNearestBase(GameLoopDataModel.GameSceneName.Value, pos);
+            var nearestBase = _gameConfigData.GetNearestBase((MapType)GameLoopDataModel.GameSceneName.Value, pos);
             _playerSpawnPoints[nearestBase] = playerInGameData.networkIdentity.netId;
             _playerPositions.AddOrUpdate(playerInGameData.networkIdentity.netId, pos);
             _playerGrids.AddOrUpdate(playerInGameData.networkIdentity.netId,  MapBoundDefiner.Instance.GetGridPosition(pos));
@@ -529,7 +529,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 _playerPhysicsData = GamePhysicsSystem.CreateColliderConfig(playerCollider);
             }
             var pos = playerInGameData.networkIdentity.transform.position;
-            var nearestBase = _gameConfigData.GetNearestBase(GameLoopDataModel.GameSceneName.Value, pos);
+            var nearestBase = _gameConfigData.GetNearestBase((MapType)GameLoopDataModel.GameSceneName.Value, pos);
             var basePosition = _playerBases
                 .Where(x => x.Value)
                 .FirstOrDefault(x => x.Value.transform.position == nearestBase);
