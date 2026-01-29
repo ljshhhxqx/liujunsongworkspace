@@ -41,7 +41,9 @@ namespace UI.UIs
         [Inject]
         private void Init()
         {
+#if !UNITY_EDITOR
             Application.targetFrameRate = 60;
+#endif
             accountInputField.onValueChanged.AddListener(CheckInputField);
             loginButton.BindDebouncedListener(OnLoginButtonClick);
             registerButton.BindDebouncedListener(OnRegisterButtonClick);

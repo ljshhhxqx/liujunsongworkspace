@@ -4,6 +4,7 @@ using HotUpdate.Scripts.UI.UIBase;
 using UI.UIBase;
 using UniRx;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using VContainer;
 
@@ -13,7 +14,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
     {
         [SerializeField]
         private KeyFunction keyFunction;
-        private Button _button;
+        [SerializeField]
+        private Button button;
         private KeyFunctionConfig _keyFunctionConfig;
         private UIManager _uiManager;
         private GameEventManager _gameEventManager;
@@ -24,7 +26,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _uiManager = uiManager;
             _gameEventManager = gameEventManager;
             _keyFunctionConfig = configProvider.GetConfig<KeyFunctionConfig>();
-            _button.OnClickAsObservable().Subscribe(_ => OnClick()).AddTo(this);
+            button.OnClickAsObservable().Subscribe(_ => OnClick()).AddTo(this);
         }
 
         private void OnClick()

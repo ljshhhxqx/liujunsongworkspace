@@ -139,7 +139,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private void AdaptControlsToScreen()
         {
             AdaptJoystickToScreen();
-            AdaptButtonsToScreen();
+            //AdaptButtonsToScreen();
         }
     
         private void AdaptJoystickToScreen()
