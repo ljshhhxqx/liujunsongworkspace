@@ -42,7 +42,7 @@ namespace UI.UIs
         private void Init()
         {
 #if !UNITY_EDITOR
-            Application.targetFrameRate = 60;
+            Application.targetFrameRate = 90;
 #endif
             accountInputField.onValueChanged.AddListener(CheckInputField);
             loginButton.BindDebouncedListener(OnLoginButtonClick);
