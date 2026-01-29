@@ -49,10 +49,8 @@ namespace HotUpdate.Scripts.Game.Inject
         {
             if (_mapType == MapType.Town)
             {
-                if (Enum.TryParse<MapType>(gameObject.scene.name, out var type))
-                {
-                    _mapType = type;
-                }
+                var type = Enum.Parse(typeof(MapType), gameObject.scene.name);
+                _mapType = (MapType)type;
             }
 
             return _mapType;

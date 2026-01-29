@@ -601,8 +601,8 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         {
             if (gameBaseData.basePositions == null || gameBaseData.basePositions.Length == 0)
             {
-                Debug.LogError("没有配置基地数据");
-                return default;
+                Debug.LogError($"没有配置基地数据 {gameBaseData.basePositions}");
+                return null;
             }
             for (int i = 0; i < gameBaseData.basePositions.Length; i++)
             {
@@ -649,6 +649,11 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         {
             var basePosition = GetBasePositionData(mapType);
             var nearestBase = basePosition.basePositions;
+            if (nearestBase == null || nearestBase.Length == 0)
+            {
+                Debug.LogError($"没有配置基地数据 {basePosition.basePositions}");
+                return default;
+            }
             return nearestBase.GetNearestVector(targetPosition);
         }
     }
@@ -667,7 +672,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
     }
 
     [Serializable]
-    public struct BasePositionData
+    public class BasePositionData
     {
         public int mapType;
         public Vector3[] basePositions;
