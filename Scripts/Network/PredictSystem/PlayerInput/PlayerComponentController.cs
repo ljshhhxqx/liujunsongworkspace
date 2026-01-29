@@ -262,6 +262,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _gameEventManager = gameEventManager;
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, ColliderConfig, ObjectType.Player, gameObject.layer, gameObject.tag);
 
+            Debug.Log($"[PlayerInGameController] Init: {gameObject.name}");
             _propertyConfig = _configProvider.GetConfig<PropertyConfig>();
             GetAllCalculators(configProvider, gameSyncManager);
             HandleAllSyncState();
@@ -485,7 +486,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void SendNetworkCommand()
         {
-            Debug.Log("[PlayerComponentController] Start");
+            Debug.Log($"[PlayerComponentController] Start -*-- {_propertyPredictionState}");
             _targetSpeed = _propertyPredictionState.GetMoveSpeed();
             Debug.Log($"[PlayerComponentController] TargetSpeed: {_targetSpeed}");
             Debug.Log($"[PlayerComponentController] _gameSyncManager.isGameOver: {_gameSyncManager.isGameOver} _picker.IsTouching: {_picker.IsTouching} _propertyPredictionState.GetProperty(PropertyTypeEnum.Health): {_propertyPredictionState.GetProperty(PropertyTypeEnum.Health)} GameSyncManager.CurrentTick: {GameSyncManager.CurrentTick} _subjectedStateType: {_subjectedStateType} ");
