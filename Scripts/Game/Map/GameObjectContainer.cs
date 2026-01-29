@@ -62,22 +62,19 @@ namespace HotUpdate.Scripts.Game.Map
                 return false;
 
             int lastIndex = _dynamicObjectData.Count - 1;
-            if (index <= lastIndex - 1)
+            var removedData = _dynamicObjectData[index];
+
+            // 1. 从原 GridIndex 移除 index（防御式）
+            if (_dynamicGridIndex.TryGetValue(removedData.Grid, out var removeList))
             {
-                var removedData = _dynamicObjectData[index];
-
-                // 1. 从原 GridIndex 移除 index（防御式）
-                if (_dynamicGridIndex.TryGetValue(removedData.Grid, out var removeList))
+                for (int i = removeList.Count - 1; i >= 0; i--)
                 {
-                    for (int i = removeList.Count - 1; i >= 0; i--)
-                    {
-                        if (removeList[i] == index)
-                            removeList.RemoveAt(i);
-                    }
-
-                    if (removeList.Count == 0)
-                        _dynamicGridIndex.Remove(removedData.Grid);
+                    if (removeList[i] == index)
+                        removeList.RemoveAt(i);
                 }
+
+                if (removeList.Count == 0)
+                    _dynamicGridIndex.Remove(removedData.Grid);
             }
 
             // 2. 如果删的不是最后一个，执行 swap
@@ -156,6 +153,8 @@ namespace HotUpdate.Scripts.Game.Map
 
                 foreach (var i in indices)
                 {
+                    if (i >= _dynamicObjectData.Count)
+                        continue;
                     var data = _dynamicObjectData[i];
                     if (data.NetId == uid)
                         continue;

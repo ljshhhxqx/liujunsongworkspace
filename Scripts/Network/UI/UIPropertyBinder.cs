@@ -142,7 +142,7 @@ namespace HotUpdate.Scripts.Network.UI
             {
                 var newRp = new HReactiveDictionary<int, T>();
                 dict = new ReactiveDictionaryWrapper<T>(newRp);
-                KeyDictionaryMap[key] = dict;
+                KeyDictionaryMap.TryAdd(key, dict);
             }
             if (dict is ReactiveDictionaryWrapper<T> reactiveDictionaryWrapper)
             {

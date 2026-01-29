@@ -63,6 +63,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         [Inject]
         private void Init(UIManager uiManager, PlayFabRoomManager playFabRoomManager, PlayFabAccountManager playFabAccountManager)
         {
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) => { Debug.LogError($"[CRASH] LastPoint={GameExtensions.LastPoint}"); };
             _idTitle = idText.text;
             _nameTitle = nameText.text;
             _uiManager = uiManager;

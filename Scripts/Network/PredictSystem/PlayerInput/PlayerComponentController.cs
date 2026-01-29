@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using AOTScripts.Data;
 using AOTScripts.Data.State;
 using AOTScripts.Tool;
@@ -118,6 +119,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private float _stairsSpeedRatio;
         private bool _isControlled = true;
         private SubjectedStateType _subjectedStateType;
+        
+        private float _autoRecoverTime;
         private List<IAnimationCooldown> _animationCooldowns = new List<IAnimationCooldown>();
         private List<ISkillChecker> _skillCheckers = new List<ISkillChecker>();
         private SyncDictionary<AnimationState, float> _currentAnimationCooldowns = new SyncDictionary<AnimationState, float>();
@@ -339,13 +342,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         
         private Minimap _minimap;
         private PlayerInputStateData _lastInputStateData;
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         protected override void InjectLocalPlayerCallback()
         {
             Debug.Log($"[PlayerInputController] OnStartLocalPlayer");
-            // _minimap = _uiManager.GetActiveUI<Minimap>(UIType.Minimap, UICanvasType.Overlay);
-            // var sprite = UISpriteContainer.GetSprite($"{GameLoopDataModel.GameSceneName.Value.ToString()}_MiniMap");
-            // _minimap.SetMinimapSprite(sprite);
             _gameEventManager.Publish(new PlayerUnListenMessageEvent());
             _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter, gameObject, netId, true));
             _gameEventManager.Subscribe<DevelopItemGetEvent>(OnDevelopItemGet);
@@ -374,217 +375,234 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerDeathTimeBindKey = new BindingKey(UIPropertyDefine.PlayerDeathTime, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
             _playerTraceOtherPlayerHpBindKey = new BindingKey(UIPropertyDefine.PlayerTraceOtherPlayerHp, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
             _minimumBindKey = new BindingKey(UIPropertyDefine.MinimumValue, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
-            // _capsuleCollider.OnTriggerEnterAsObservable()
-            //     .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
-            //     .Subscribe(c =>
-            //     {
-            //         _canOpenShop = PlayerInGameManager.Instance.IsPlayerInHisBase(netId, out _);
-            //     })
-            //     .AddTo(this);
-            _capsuleCollider.OnTriggerStayAsObservable()
-                .Sample(TimeSpan.FromMilliseconds(GameSyncManager.TickSeconds * 1000))
-                .Where(c => _capsuleCollider && c.gameObject.TryGetComponent<PlayerBase>(out _) && LocalPlayerHandler && _gameSyncManager.isGameStart)
-                .Subscribe(c =>
-                {
-                }).AddTo(_disposables);
-            // _capsuleCollider.OnTriggerExitAsObservable()
-            //     .Where(c => c.gameObject.TryGetComponent<PlayerBase>(out _) && isLocalPlayer)
-            //     .Subscribe(_ =>
-            //     {
-            //         _canOpenShop = false;
-            //     }).AddTo(_disposables);
             
             Observable.EveryUpdate()
                 .Subscribe(_ =>
                 {
-                    if (_keyFunctionConfig.IsKeyFunction(out var keyFunction))
+                    GameExtensions.Mark("GetFunctionButton/Enter");
+                    try
                     {
-                        var uiType = keyFunction.GetUIType();
-                        _gameEventManager.Publish(new GameFunctionUIShowEvent(uiType));
+                        GetFunctionButton();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        throw;
+                    }
+                    try
+                    {
+                        GameExtensions.Mark("GetInput/Enter");
+                        GetInput();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        throw;
                     }
                 })
-                .AddTo(_disposables);
+                .AddTo(this);
             
             Observable.EveryUpdate()
-                .Subscribe(_ => {
-                    if (PlayerPlatformDefine.IsWindowsPlatform())
-                    {
-                        _movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-                        if (_movement.magnitude == 0)
-                        {
-                            GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.FootStep);
-                            GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.Sprint);
-                        }
-                        if (Cursor.lockState != CursorLockMode.Locked || !_isControlled)
-                        {
-                            //Debug.Log("Cursor is locked or not controlled");
-                            return;
-                        }
-                        var animationStates = _inputState.GetAnimationStates();
-                        var playerInputStateData = new PlayerInputStateData
-                        {
-                            InputMovement = _movement,
-                            InputAnimations = animationStates,
-                        };
-                        var command = GetCurrentAnimationState(playerInputStateData);
-                        
-                        if (!_playerAnimationCalculator.CanPlayAnimation(command))
-                        {
-                            command = AnimationState.None;
-                        }
-                        playerInputStateData.Command = command;
-                        if (_animationCooldownsDict.TryGetValue(command, out var animationCooldown))
-                        {
-                            playerInputStateData.Command = animationCooldown.IsReady() ? command : AnimationState.None;
-                        }
-                        _playerInputStateData = playerInputStateData;
-                        _inputStream.Value = playerInputStateData;
-                    }
-                    else if (PlayerPlatformDefine.IsJoystickPlatform())
-                    {
-                        var movement = _virtualInputOverlay.GetMovementInput();
-                        if (movement.magnitude == 0)
-                        {
-                            GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.FootStep);
-                            GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.Sprint);
-                        }
-                        var animationStates = _virtualInputOverlay.ActiveButtons.First();
-                        var playerInputStateData = new PlayerInputStateData
-                        {
-                            InputMovement = movement,
-                            InputAnimations = animationStates,
-                        };
-                        var command = GetCurrentAnimationState(playerInputStateData);
-                        if (!_playerAnimationCalculator.CanPlayAnimation(command))
-                        {
-                            command = AnimationState.None;
-                        }
-                        playerInputStateData.Command = command;
-                        if (_animationCooldownsDict.TryGetValue(command, out var animationCooldown))
-                        {
-                            playerInputStateData.Command = animationCooldown.IsReady() ? command : AnimationState.None;
-                        }
-                        _playerInputStateData = playerInputStateData;
-                        _inputStream.Value = playerInputStateData;
-                    }
-                })
-                .AddTo(_disposables);
-            Observable.EveryFixedUpdate()
-                .Sample(TimeSpan.FromMilliseconds(0.25f * 1000))
-                .Where(_ => _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) > 0)
+                .Sample(TimeSpan.FromSeconds(Time.fixedDeltaTime))
                 .Subscribe(_ =>
                 {
-                    var health = _propertyPredictionState.GetCalculator(PropertyTypeEnum.Health);
-                    var strength = _propertyPredictionState.GetCalculator(PropertyTypeEnum.Strength);
-                    if (Mathf.Approximately(health.CurrentValue, health.MaxCurrentValue) && Mathf.Approximately(strength.CurrentValue, strength.MaxCurrentValue))
-                    {
-                        return;
+                    try
+                    { 
+                        GameExtensions.Mark("HandleInputPhysics/Enter");
+                        HandleNetworkCommand();
                     }
-                    var propertyAutoRecoverCommand = ObjectPoolManager<PropertyAutoRecoverCommand>.Instance.Get(15);
-                    propertyAutoRecoverCommand.Header = GameSyncManager.CreateNetworkCommandHeader(
-                        _playerInGameManager.LocalPlayerId,
-                        CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate,
-                        NetworkCommandType.PropertyAutoRecover);
-                    _propertyPredictionState.AddPredictedCommand(propertyAutoRecoverCommand);
-                    //ObjectPoolManager<PropertyAutoRecoverCommand>.Instance.Return(propertyAutoRecoverCommand);
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        throw;
+                    }
                 })
                 .AddTo(this);
             Observable.EveryFixedUpdate()
                 .Subscribe(_ =>
                 {
-                    _targetSpeed = _propertyPredictionState.GetMoveSpeed();
-                    if (_gameSyncManager.isGameOver || _picker.IsTouching || _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) <= 0 ||
-                        GameSyncManager.CurrentTick <= 0 || !(_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)) || 
-                        _subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
+                    try
                     {
-                        // if (_subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
-                        // {
-                        //     Debug.Log($"[HOTUPDATE] CANNOT MOVE {_picker.IsTouching}");
-                        //     
-                        // }
-                        _playerInputStateData.Command = AnimationState.Idle;
-                        _playerInputStateData.InputAnimations = AnimationState.Idle;
-                        _playerInputStateData.InputMovement = default;
-                        _playerInputStateData.Velocity = default;
-                        _inputStream.Value = _playerInputStateData;
-                        _targetSpeed = 0;
+                        GameExtensions.Mark("HandleNetworkCommand/Enter");
+                        HandleInputPhysics(_inputStream.Value);
                     }
-                    HandleInputPhysics(_inputStream.Value);
-                    if (_inputStream.Value != default)
+                    catch (Exception e)
                     {
-                        HandleSendNetworkCommand(_inputStream.Value);
-                        var propertyEnvironmentChangeCommand = ObjectPoolManager<PropertyEnvironmentChangeCommand>.Instance.Get(15);
-                        propertyEnvironmentChangeCommand.Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
-                            CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate, NetworkCommandType.PropertyEnvironmentChange);
-                        propertyEnvironmentChangeCommand.HasInputMovement = _playerInputStateData.InputMovement.magnitude > 0.1f;
-                        propertyEnvironmentChangeCommand.PlayerEnvironmentState = _gameStateStream.Value;
-                        propertyEnvironmentChangeCommand.IsSprinting = _playerInputStateData.Command.HasAnyState(AnimationState.Sprint);
-                        _propertyPredictionState.AddPredictedCommand(propertyEnvironmentChangeCommand);
-                        for (int i = 0; i < _predictionStates.Count; i++)
-                        {
-                            var state = _predictionStates[i];
-                            state.ExecutePredictedCommands(GameSyncManager.CurrentTick);
-                        }
+                        Console.WriteLine(e);
+                        throw;
                     }
                 })
                 .AddTo(this);
             
-            //发送网络命令
-            // _inputStream.Where(x=> LocalPlayerHandler && x.Command != AnimationState.None && x.Command != AnimationState.Idle)
-            //     .Sample(TimeSpan.FromMilliseconds(Time.fixedDeltaTime * 1000))
-            //     .Subscribe()
-            //     .AddTo(this);
-            
-            Observable.EveryFixedUpdate()
-                .Sample(TimeSpan.FromSeconds(FixedDeltaTime))
-                .Subscribe(_ =>
-                {
-                    var potentialTargets = new List<Transform>();
-                    UIPropertyBinder.UpdateDictionary(_minimumBindKey, (int)netId, new MinimapItemData
-                    {
-                        Id = (int)netId,
-                        TargetType = MinimapTargetType.Player,
-                        WorldPosition = transform.position,
-                    });
-                    foreach (var networkIdentity in NetworkClient.spawned.Values)
-                    {
-                        if (networkIdentity.TryGetComponent<PlayerComponentController>(out var component) && networkIdentity.netId != netId)
-                        {
-                            potentialTargets.Add(component.transform);
-                        }
-                    }
-                    if (potentialTargets.Count == 0)
-                    {
-                        return;
-                    }
-                    var layerMask = _gameConfigData.groundSceneLayer | _gameConfigData.stairSceneLayer | _playerConfigData.PlayerLayer;
-                    if (PlayerPhysicsCalculator.TryGetPlayersInScreen(_camera, potentialTargets, out var playersInScreen, layerMask))
-                    {
-                        var header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
-                            CommandType.Property, CommandAuthority.Client);
-                        var playerInScreenCommand = new PlayerTraceOtherPlayerHpCommand
-                        {
-                            Header = header,
-                            TargetConnectionIds = playersInScreen.ToArray(),
-                        };
-                        foreach (var player in playersInScreen)
-                        {
-                            if (NetworkClient.spawned.TryGetValue(player, out var playerObject))
-                            {
-                                UIPropertyBinder.UpdateDictionary(_minimumBindKey, (int)netId, new MinimapItemData
-                                {
-                                    Id = (int)player,
-                                    TargetType = MinimapTargetType.Enemy,
-                                    WorldPosition = playerObject.transform.position
-                                });
-                            }
-                        }
-
-                        CmdSendCommand(NetworkCommandExtensions.SerializeCommand(playerInScreenCommand).Item1);
-                    }
-                })
-                .AddTo(_disposables);
             HandleLocalInitCallback();
+        }
+
+        private void GetOtherPlayerPosition()
+        {
+            var potentialTargets = new List<Transform>();
+            UIPropertyBinder.UpdateDictionary(_minimumBindKey, (int)netId, new MinimapItemData
+            {
+                Id = (int)netId,
+                TargetType = MinimapTargetType.Player,
+                WorldPosition = transform.position,
+            });
+            foreach (var networkIdentity in NetworkClient.spawned.Values)
+            {
+                if (networkIdentity.TryGetComponent<PlayerComponentController>(out var component) && networkIdentity.netId != netId)
+                {
+                    potentialTargets.Add(component.transform);
+                }
+            }
+            if (potentialTargets.Count == 0)
+            {
+                return;
+            }
+            var layerMask = _gameConfigData.groundSceneLayer | _gameConfigData.stairSceneLayer | _playerConfigData.PlayerLayer;
+            if (PlayerPhysicsCalculator.TryGetPlayersInScreen(_camera, potentialTargets, out var playersInScreen, layerMask))
+            {
+                var header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
+                    CommandType.Property, CommandAuthority.Client);
+                var playerInScreenCommand = new PlayerTraceOtherPlayerHpCommand
+                {
+                    Header = header,
+                    TargetConnectionIds = playersInScreen.ToArray(),
+                };
+                foreach (var player in playersInScreen)
+                {
+                    if (NetworkClient.spawned.TryGetValue(player, out var playerObject))
+                    {
+                        UIPropertyBinder.UpdateDictionary(_minimumBindKey, (int)netId, new MinimapItemData
+                        {
+                            Id = (int)player,
+                            TargetType = MinimapTargetType.Enemy,
+                            WorldPosition = playerObject.transform.position
+                        });
+                    }
+                }
+            
+                CmdSendCommand(NetworkCommandExtensions.SerializeCommand(playerInScreenCommand).Item1);
+            }
+        }
+
+        private void SendNetworkCommand()
+        {
+            _targetSpeed = _propertyPredictionState.GetMoveSpeed();
+            if (_gameSyncManager.isGameOver || _picker.IsTouching || _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) <= 0 ||
+                GameSyncManager.CurrentTick <= 0 || !(_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)) || 
+                _subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
+            {
+                _playerInputStateData.Command = AnimationState.Idle;
+                _playerInputStateData.InputAnimations = AnimationState.Idle;
+                _playerInputStateData.InputMovement = default;
+                _playerInputStateData.Velocity = default;
+                _inputStream.Value = _playerInputStateData;
+                _targetSpeed = 0;
+            }
+            if (_inputStream.Value != default)
+            {
+                HandleSendNetworkCommand(_inputStream.Value);
+                var propertyEnvironmentChangeCommand = ObjectPoolManager<PropertyEnvironmentChangeCommand>.Instance.Get(15);
+                propertyEnvironmentChangeCommand.Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
+                    CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate, NetworkCommandType.PropertyEnvironmentChange);
+                propertyEnvironmentChangeCommand.HasInputMovement = _playerInputStateData.InputMovement.magnitude > 0.1f;
+                propertyEnvironmentChangeCommand.PlayerEnvironmentState = _gameStateStream.Value;
+                propertyEnvironmentChangeCommand.IsSprinting = _playerInputStateData.Command.HasAnyState(AnimationState.Sprint);
+                _propertyPredictionState.AddPredictedCommand(propertyEnvironmentChangeCommand);
+                // for (int i = 0; i < _predictionStates.Count; i++)
+                // {
+                //     var state = _predictionStates[i];
+                //     state.ExecutePredictedCommands(GameSyncManager.CurrentTick);
+                // }
+            }
+        }
+
+        private void GetFunctionButton()
+        {
+            if (_keyFunctionConfig.IsKeyFunction(out var keyFunction))
+            {
+                var uiType = keyFunction.GetUIType();
+                _gameEventManager.Publish(new GameFunctionUIShowEvent(uiType));
+            }
+        }
+
+        private void GetInput()
+        {
+            if (PlayerPlatformDefine.IsWindowsPlatform())
+            {
+                _movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+                if (_movement.magnitude == 0)
+                {
+                    GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.FootStep);
+                    GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.Sprint);
+                }
+                if (Cursor.lockState != CursorLockMode.Locked || !_isControlled)
+                {
+                    //Debug.Log("Cursor is locked or not controlled");
+                    return;
+                }
+                var animationStates = _inputState.GetAnimationStates();
+                var playerInputStateData = new PlayerInputStateData
+                {
+                    InputMovement = _movement,
+                    InputAnimations = animationStates,
+                };
+                var command = GetCurrentAnimationState(playerInputStateData);
+                        
+                if (!_playerAnimationCalculator.CanPlayAnimation(command))
+                {
+                    command = AnimationState.None;
+                }
+                playerInputStateData.Command = command;
+                if (_animationCooldownsDict.TryGetValue(command, out var animationCooldown))
+                {
+                    playerInputStateData.Command = animationCooldown.IsReady() ? command : AnimationState.None;
+                }
+                _playerInputStateData = playerInputStateData;
+                _inputStream.Value = playerInputStateData;
+            }
+            else if (PlayerPlatformDefine.IsJoystickPlatform())
+            {
+                _movement = _virtualInputOverlay.GetMovementInput();
+                if (_movement.magnitude == 0)
+                {
+                    GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.FootStep);
+                    GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.Sprint);
+                }
+                var animationStates = _virtualInputOverlay.ActiveButtons.FirstOrDefault();
+                var playerInputStateData = new PlayerInputStateData
+                {
+                    InputMovement = _movement,
+                    InputAnimations = animationStates,
+                };
+                var command = GetCurrentAnimationState(playerInputStateData);
+                if (!_playerAnimationCalculator.CanPlayAnimation(command))
+                {
+                    command = AnimationState.None;
+                }
+                playerInputStateData.Command = command;
+                if (_animationCooldownsDict.TryGetValue(command, out var animationCooldown))
+                {
+                    playerInputStateData.Command = animationCooldown.IsReady() ? command : AnimationState.None;
+                }
+                _playerInputStateData = playerInputStateData;
+                _inputStream.Value = playerInputStateData;
+            }
+        }
+
+        private void AutoRecover()
+        {
+            var health = _propertyPredictionState.GetCalculator(PropertyTypeEnum.Health);
+            var strength = _propertyPredictionState.GetCalculator(PropertyTypeEnum.Strength);
+            if (Mathf.Approximately(health.CurrentValue, health.MaxCurrentValue) && Mathf.Approximately(strength.CurrentValue, strength.MaxCurrentValue))
+            {
+                return;
+            }
+            var propertyAutoRecoverCommand = new PropertyAutoRecoverCommand();
+            propertyAutoRecoverCommand.Header = GameSyncManager.CreateNetworkCommandHeader(
+                _playerInGameManager.LocalPlayerId,
+                CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate,
+                NetworkCommandType.PropertyAutoRecover);
+            _propertyPredictionState.AddPredictedCommand(propertyAutoRecoverCommand);
         }
 
         private void HandleAllSyncState()
@@ -1516,6 +1534,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public void CmdCleanupClient(int connectionId)
         {
             _networkEndHandler.CmdReportCleanupCompleted(connectionId);
+        }
+
+        private void HandleNetworkCommand()
+        {
+            SendNetworkCommand();
+            GetOtherPlayerPosition();
+            _autoRecoverTime += Time.fixedDeltaTime;
+            if (_autoRecoverTime > 0.25f)
+            {
+                _autoRecoverTime = 0;
+                AutoRecover();
+            }
         }
     }
 }

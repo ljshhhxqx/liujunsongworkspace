@@ -1,8 +1,11 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using AOTScripts.Data;
 using AOTScripts.Data.State;
+using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Inject;
@@ -26,6 +29,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         protected abstract CommandType CommandType { get; }
         protected int InputBufferTick;
         protected NetworkIdentity NetworkIdentity;
+        protected CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
 
         [Inject]
         protected virtual void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider)
@@ -35,7 +39,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             InputBufferTick = JsonDataConfig.PlayerConfig.InputBufferTick;
             PlayerComponentController = GetComponent<PlayerComponentController>();
             NetworkIdentity = GetComponent<NetworkIdentity>();
-           // Debug.Log($"[PredictableStateBase] Initialized with input buffer tick {InputBufferTick}");
+            if (NetworkIdentity.isLocalPlayer)
+            {
+                HandleCommandAsync(CancellationTokenSource.Token).Forget();
+            }
+            // Debug.Log($"[PredictableStateBase] Initialized with input buffer tick {InputBufferTick}");
+        }
+        
+        protected virtual async UniTask HandleCommandAsync(CancellationToken cancellationToken)
+        { 
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(GameSyncManager.TickSeconds), cancellationToken: cancellationToken);
+                ExecutePredictedCommands(GameSyncManager.CurrentTick);
+            }
         }
 
         [Command]
