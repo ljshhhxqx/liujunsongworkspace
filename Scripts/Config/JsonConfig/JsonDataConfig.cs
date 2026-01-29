@@ -679,7 +679,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
             sb.AppendLine($"maxSlopeAngle: {maxSlopeAngle}");
             sb.AppendLine($"stairsCheckDistance: {stairsCheckDistance}");
             sb.AppendLine($"tickRate: {tickRate}");
-            sb.AppendLine($"gameBaseData: {gameBaseData}");
+            //sb.AppendLine($"gameBaseData: {gameBaseData}");
             sb.AppendLine($"minUnionPlayerCount: {minUnionPlayerCount}");
             return sb.ToString();
         }
