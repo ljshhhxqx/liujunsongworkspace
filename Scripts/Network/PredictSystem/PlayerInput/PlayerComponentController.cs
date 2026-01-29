@@ -88,11 +88,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private PlayerSkillSyncState _skillSyncState;
         
         [Header("Subject")]
-        private readonly HReactiveProperty<PlayerInputStateData> _inputStream = new HReactiveProperty<PlayerInputStateData>();
         private readonly Subject<int> _onAttackPoint = new Subject<int>();
         private readonly Subject<int> _onAttackEnd = new Subject<int>();
-        
-        private readonly HReactiveProperty<PlayerEnvironmentState> _gameStateStream = new HReactiveProperty<PlayerEnvironmentState>();
+
+        private PlayerEnvironmentState _gameState;
         private readonly HReactiveProperty<float> _groundDistanceStream = new HReactiveProperty<float>();
         private readonly HReactiveProperty<bool> _isSpecialActionStream = new HReactiveProperty<bool>();
         
@@ -424,7 +423,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     try
                     {
                         GameExtensions.Mark("HandleNetworkCommand/Enter");
-                        HandleInputPhysics(_inputStream.Value);
+                        HandleInputPhysics(_playerInputStateData);
                     }
                     catch (Exception e)
                     {
@@ -495,17 +494,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 _playerInputStateData.InputAnimations = AnimationState.Idle;
                 _playerInputStateData.InputMovement = default;
                 _playerInputStateData.Velocity = default;
-                _inputStream.Value = _playerInputStateData;
                 _targetSpeed = 0;
             }
-            if (_inputStream.Value != default)
+            if (_playerInputStateData != default)
             {
-                HandleSendNetworkCommand(_inputStream.Value);
+                HandleSendNetworkCommand(_playerInputStateData);
                 var propertyEnvironmentChangeCommand = ObjectPoolManager<PropertyEnvironmentChangeCommand>.Instance.Get(15);
                 propertyEnvironmentChangeCommand.Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
                     CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate, NetworkCommandType.PropertyEnvironmentChange);
                 propertyEnvironmentChangeCommand.HasInputMovement = _playerInputStateData.InputMovement.magnitude > 0.1f;
-                propertyEnvironmentChangeCommand.PlayerEnvironmentState = _gameStateStream.Value;
+                propertyEnvironmentChangeCommand.PlayerEnvironmentState = _gameState;
                 propertyEnvironmentChangeCommand.IsSprinting = _playerInputStateData.Command.HasAnyState(AnimationState.Sprint);
                 _propertyPredictionState.AddPredictedCommand(propertyEnvironmentChangeCommand);
                 // for (int i = 0; i < _predictionStates.Count; i++)
@@ -558,7 +556,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     playerInputStateData.Command = animationCooldown.IsReady() ? command : AnimationState.None;
                 }
                 _playerInputStateData = playerInputStateData;
-                _inputStream.Value = playerInputStateData;
             }
             else if (PlayerPlatformDefine.IsJoystickPlatform())
             {
@@ -585,7 +582,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     playerInputStateData.Command = animationCooldown.IsReady() ? command : AnimationState.None;
                 }
                 _playerInputStateData = playerInputStateData;
-                _inputStream.Value = playerInputStateData;
             }
         }
 
@@ -778,10 +774,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             _currentSpeed = Mathf.SmoothDamp(_currentSpeed, _targetSpeed, ref _speedSmoothVelocity, _speedSmoothTime);
             _playerPhysicsCalculator.CurrentSpeed = _currentSpeed;
-            _gameStateStream.Value = _playerPhysicsCalculator.CheckPlayerState(new CheckGroundDistanceParam(inputData.InputMovement, FixedDeltaTime));
+            _gameState = _playerPhysicsCalculator.CheckPlayerState(new CheckGroundDistanceParam(inputData.InputMovement, FixedDeltaTime));
             _groundDistanceStream.Value = _playerPhysicsCalculator.GroundDistance;
             _isSpecialActionStream.Value = _playerAnimationCalculator.IsSpecialAction;
-            _playerAnimationCalculator.SetEnvironmentState(_gameStateStream.Value);
+            _playerAnimationCalculator.SetEnvironmentState(_gameState);
             _playerAnimationCalculator.SetGroundDistance(_groundDistanceStream.Value);
             _playerAnimationCalculator.SetAnimatorParams(inputData.InputMovement.magnitude, _groundDistanceStream.Value, _currentSpeed);
             _playerAnimationCalculator.UpdateAnimationState();
@@ -1002,7 +998,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _gameEventManager.Unsubscribe<GameFunctionUIShowEvent>(OnGameFunctionUIShow);
             _gameEventManager.Unsubscribe<TargetShowEvent>(OnTargetShow);
             _animationCooldowns.Clear();
-            _inputStream.Dispose();
             _effectContainer.Clear();
             playerEffectPlayer.StopAllEffect(container => GameObjectPoolManger.Instance.ReturnObject(container.gameObject));
             _effectPool.Clear();
@@ -1055,7 +1050,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             param.InputMovement = inputData.InputMovement;
             param.InputAnimationStates = inputData.InputAnimations;
             param.GroundDistance = _groundDistanceStream.Value;
-            param.EnvironmentState = _gameStateStream.Value;
+            param.EnvironmentState = _gameState;
             ObjectPoolManager<DetermineAnimationStateParams>.Instance.Return(param);
             
             return param;    
@@ -1085,7 +1080,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             data.Position = transform.position;
             data.Quaternion = transform.rotation;
             data.Velocity = _rigidbody.velocity;
-            data.PlayerEnvironmentState = _gameStateStream.Value;
+            data.PlayerEnvironmentState = _gameState;
             data.AnimationState = inputData.Command;
             data.Index = _attackAnimationCooldown.CurrentStage;
             ObjectPoolManager<PlayerGameStateData>.Instance.Return(data);
