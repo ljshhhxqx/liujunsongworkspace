@@ -43,13 +43,13 @@
             "gridSize": 10.0,
             "onceSpawnCount": 40,
             "onceSpawnWeight": 100,
-            "spawnAttackRatio": 0.4000000059604645,
-            "spawnMoveRatio": 0.4000000059604645,
-            "spawnHiddenRatio": 0.20000000298023225,
-            "spawnAttackMoveRatio": 0.15000000596046449,
-            "spawnAttackHiddenRatio": 0.15000000596046449,
-            "spawnMoveHiddenRatio": 0.15000000596046449,
-            "spawnAttackMoveHiddenRatio": 0.05000000074505806,
+            "spawnAttackRatio": 0.15000000596046449,
+            "spawnMoveRatio": 0.15000000596046449,
+            "spawnHiddenRatio": 0.05000000074505806,
+            "spawnAttackMoveRatio": 0.10000000149011612,
+            "spawnAttackHiddenRatio": 0.05000000074505806,
+            "spawnMoveHiddenRatio": 0.07000000029802323,
+            "spawnAttackMoveHiddenRatio": 0.019999999552965165,
             "healthRange": {
                 "isPercent": false,
                 "min": 10.0,
@@ -57,8 +57,8 @@
             },
             "attackPowerRange": {
                 "isPercent": false,
-                "min": 3.0,
-                "max": 10.0
+                "min": 7.0,
+                "max": 30.0
             },
             "attackCooldown": {
                 "isPercent": false,
@@ -100,6 +100,22 @@
                 "min": 1.0,
                 "max": 2.5
             },
+            "bulletFrameData": {
+                "triggerTime": 0.3499999940395355,
+                "eventType": 2,
+                "resetCooldown": false,
+                "resetCooldownWindowTime": 0.0,
+                "tolerance": 0.10000000149011612,
+                "serverValidate": false
+            },
+            "attackFrameData": {
+                "triggerTime": 0.20000000298023225,
+                "eventType": 2,
+                "resetCooldown": false,
+                "resetCooldownWindowTime": 0.0,
+                "tolerance": 0.10000000149011612,
+                "serverValidate": false
+            },
             "speedRange": {
                 "isPercent": false,
                 "min": 0.5,
@@ -119,6 +135,49 @@
                 "isPercent": false,
                 "min": 1.0,
                 "max": 3.0
+            },
+            "commonPeriodicMovementConfig": {
+                "pathType": 2,
+                "moveSpeed": 2.0,
+                "amplitude": 3.0,
+                "frequency": 1.0,
+                "axisMultiplier": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "waypoints": [],
+                "loopWaypoints": true,
+                "timeCounter": 0.0
+            },
+            "commonEvasiveMovementConfig": {
+                "detectionRadius": 8.0,
+                "escapeSpeed": 4.0,
+                "wanderSpeed": 1.5,
+                "minSafeDistance": 3.0,
+                "directionChangeInterval": 2.0,
+                "playerPredictionFactor": 0.5,
+                "wanderTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "useObstacleAvoidance": true,
+                "avoidanceWeight": 2.0,
+                "canJump": false,
+                "jumpChance": 0.10000000149011612
+            },
+            "commonBouncingMovementConfig": {
+                "bounceHeight": 4.0,
+                "bounceSpeed": 6.0,
+                "bounceDecay": 0.8999999761581421,
+                "minBounceHeight": 0.6000000238418579,
+                "bounceDirection": {
+                    "x": 0.0,
+                    "y": 1.0,
+                    "z": 0.0
+                },
+                "groundLevel": 0.5
             },
             "translucenceRange": {
                 "isPercent": false,
@@ -141,7 +200,149 @@
                 "max": 3.0
             },
             "explodeCriticalRate": 1.0,
-            "explodeCriticalDamageRatio": 2.0
+            "explodeCriticalDamageRatio": 2.0,
+            "mapElementData": {
+                "touchWellRecoverHp": {
+                    "isPercent": false,
+                    "min": 30.0,
+                    "max": 80.0
+                },
+                "touchRocketGainScore": {
+                    "isPercent": false,
+                    "min": 150.0,
+                    "max": 250.0
+                },
+                "touchTrainGainScore": {
+                    "isPercent": false,
+                    "min": 100.0,
+                    "max": 175.0
+                },
+                "touchWellTime": 3.0,
+                "touchRocketTime": 1.5,
+                "touchTrainTime": 1.0,
+                "touchChestTime": 1.0,
+                "wellCount": 3.0,
+                "wellCd": 15.0,
+                "spawnRockerPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "spawnTrainPosition": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rocketPositions": [
+                    {
+                        "vectors": [
+                            {
+                                "x": 0.0,
+                                "y": -50.0,
+                                "z": 0.0
+                            },
+                            {
+                                "x": 0.0,
+                                "y": 30.0,
+                                "z": 0.0
+                            }
+                        ],
+                        "rotation": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 0.0
+                        }
+                    }
+                ],
+                "trainPositions": [
+                    {
+                        "vectors": [
+                            {
+                                "x": -61.38999938964844,
+                                "y": 5.0,
+                                "z": 2.0899999141693117
+                            },
+                            {
+                                "x": 69.91000366210938,
+                                "y": 5.0,
+                                "z": 2.0899999141693117
+                            }
+                        ],
+                        "rotation": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 0.0
+                        }
+                    },
+                    {
+                        "vectors": [
+                            {
+                                "x": 103.19000244140625,
+                                "y": 5.0,
+                                "z": 2.0899999141693117
+                            },
+                            {
+                                "x": -29.399999618530275,
+                                "y": 5.0,
+                                "z": 2.0899999141693117
+                            }
+                        ],
+                        "rotation": {
+                            "x": 0.0,
+                            "y": 1.0,
+                            "z": 0.0,
+                            "w": -4.371138828673793e-8
+                        }
+                    },
+                    {
+                        "vectors": [
+                            {
+                                "x": -61.38999938964844,
+                                "y": 5.0,
+                                "z": 9.09000015258789
+                            },
+                            {
+                                "x": 69.91000366210938,
+                                "y": 5.0,
+                                "z": 9.09000015258789
+                            }
+                        ],
+                        "rotation": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 0.0
+                        }
+                    },
+                    {
+                        "vectors": [
+                            {
+                                "x": 106.69999694824219,
+                                "y": 5.0,
+                                "z": 9.09000015258789
+                            },
+                            {
+                                "x": -25.200000762939454,
+                                "y": 5.0,
+                                "z": 9.09000015258789
+                            }
+                        ],
+                        "rotation": {
+                            "x": 0.0,
+                            "y": 1.0,
+                            "z": 0.0,
+                            "w": -4.371138828673793e-8
+                        }
+                    }
+                ],
+                "durationRange": {
+                    "isPercent": false,
+                    "min": 17.0,
+                    "max": 25.0
+                }
+            }
         },
         "damageData": {
             "defenseRatio": 15.0,
@@ -247,24 +448,24 @@
                         "mapType": 1,
                         "basePositions": [
                             {
-                                "x": -49.79999923706055,
-                                "y": 6.5,
-                                "z": -47.04999923706055
+                                "x": -27.700000762939454,
+                                "y": 3.1600000858306886,
+                                "z": -28.719999313354493
                             },
                             {
-                                "x": 49.709999084472659,
-                                "y": 6.5,
-                                "z": -47.04999923706055
+                                "x": -27.700000762939454,
+                                "y": 2.5799999237060549,
+                                "z": 28.829999923706056
                             },
                             {
-                                "x": 49.709999084472659,
-                                "y": 6.5,
-                                "z": 45.400001525878909
+                                "x": 27.700000762939454,
+                                "y": 3.799999952316284,
+                                "z": -28.719999313354493
                             },
                             {
-                                "x": -49.79999923706055,
-                                "y": 6.5,
-                                "z": 45.400001525878909
+                                "x": 27.700000762939454,
+                                "y": 3.0,
+                                "z": 28.829999923706056
                             }
                         ]
                     },
