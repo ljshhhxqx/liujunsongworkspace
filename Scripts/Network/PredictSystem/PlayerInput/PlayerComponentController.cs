@@ -406,16 +406,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .Sample(TimeSpan.FromSeconds(Time.fixedDeltaTime))
                 .Subscribe(_ =>
                 {
-                    try
-                    { 
-                        GameExtensions.Mark("HandleInputPhysics/Enter");
-                        HandleNetworkCommand();
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                        throw;
-                    }
+                    HandleNetworkCommand();
                 })
                 .AddTo(this);
             Observable.EveryFixedUpdate()
@@ -486,9 +477,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void SendNetworkCommand()
         {
-            //Debug.Log($"[PlayerComponentController] Start -*-- {_propertyPredictionState} -- {_propertyPredictionState.PlayerPredictablePropertyState}");
+            Debug.Log($"[PlayerComponentController] Start -*-- {_propertyPredictionState} -- {_propertyPredictionState.PlayerPredictablePropertyState}");
             _targetSpeed = _propertyPredictionState.GetMoveSpeed();
-            // Debug.Log($"[PlayerComponentController] TargetSpeed: {_targetSpeed}");
+            Debug.Log($"[PlayerComponentController] TargetSpeed: {_targetSpeed}");
             Debug.Log($"[PlayerComponentController] _gameSyncManager.isGameOver: {_gameSyncManager.isGameOver} _picker.IsTouching: {_picker.IsTouching} _propertyPredictionState.GetProperty(PropertyTypeEnum.Health): {_propertyPredictionState.GetProperty(PropertyTypeEnum.Health)} GameSyncManager.CurrentTick: {GameSyncManager.CurrentTick} _subjectedStateType: {_subjectedStateType} ");
             if (_gameSyncManager.isGameOver || _picker.IsTouching || _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) <= 0 ||
                 GameSyncManager.CurrentTick <= 0 || !(_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)) || 

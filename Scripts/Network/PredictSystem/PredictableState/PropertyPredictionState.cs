@@ -44,6 +44,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             {
                 if (CurrentState is PlayerPredictablePropertyState propertyState)
                 {
+                    Debug.Log($"PropertyPredictionState [Init] {propertyState.ToString()}");
                     _playerPredictablePropertyState = propertyState;
                 }
 
