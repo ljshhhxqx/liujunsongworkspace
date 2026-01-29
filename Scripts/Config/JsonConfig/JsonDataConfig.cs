@@ -599,6 +599,11 @@ namespace HotUpdate.Scripts.Config.JsonConfig
 
         public BasePositionData GetBasePositionData(MapType mapType)
         {
+            if (gameBaseData.basePositions == null || gameBaseData.basePositions.Length == 0)
+            {
+                Debug.LogError("没有配置基地数据");
+                return default;
+            }
             for (int i = 0; i < gameBaseData.basePositions.Length; i++)
             {
                 var basePosition = gameBaseData.basePositions[i];
@@ -642,7 +647,8 @@ namespace HotUpdate.Scripts.Config.JsonConfig
 
         public Vector3 GetNearestBase(MapType mapType, Vector3 targetPosition)
         {
-            var nearestBase = GetBasePositionData(mapType).basePositions;
+            var basePosition = GetBasePositionData(mapType);
+            var nearestBase = basePosition.basePositions;
             return nearestBase.GetNearestVector(targetPosition);
         }
     }

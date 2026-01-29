@@ -417,13 +417,13 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             var pos = playerInGameData.networkIdentity.transform.position;
             Debug.Log($"[PlayerIngameManager] Player {connectId} position : {pos} {_gameConfigData} {(MapType)GameLoopDataModel.GameSceneName.Value}");
             var nearestBase = _gameConfigData.GetNearestBase((MapType)GameLoopDataModel.GameSceneName.Value, pos);
-            Debug.Log($"[PlayerIngameManager] Player {nearestBase}");
+            Debug.Log($"[PlayerIngameManager] _gameConfigData.GetNearestBase {nearestBase}");
             _playerSpawnPoints[nearestBase] = playerInGameData.networkIdentity.netId;
-            Debug.Log($"[PlayerIngameManager] Player {_playerSpawnPoints[nearestBase]}");
+            Debug.Log($"[PlayerIngameManager] playerInGameData.networkIdentity.netId {_playerSpawnPoints[nearestBase]}");
             _playerPositions.AddOrUpdate(playerInGameData.networkIdentity.netId, pos);
-            Debug.Log($"[PlayerIngameManager] Player {playerInGameData.networkIdentity.netId}");
+            Debug.Log($"[PlayerIngameManager] _playerPositions.AddOrUpdate {playerInGameData.networkIdentity.netId}");
             _playerGrids.AddOrUpdate(playerInGameData.networkIdentity.netId,  MapBoundDefiner.Instance.GetGridPosition(pos));
-            Debug.Log($"[PlayerIngameManager] Player {MapBoundDefiner.Instance.GetGridPosition(pos)}");
+            Debug.Log($"[PlayerIngameManager] _playerGrids.AddOrUpdate {MapBoundDefiner.Instance.GetGridPosition(pos)}");
             SetCalculatorConstants(playerIdentity);
             RpcAddPlayer(connectId, playerInGameData, playerInGameData.networkIdentity);
         }

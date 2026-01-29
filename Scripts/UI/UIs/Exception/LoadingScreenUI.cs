@@ -1,5 +1,6 @@
 using System;
 using AOTScripts.Tool.Coroutine;
+using HotUpdate.Scripts.UI.UIBase;
 using UI.UIBase;
 using UnityEngine;
 using VContainer;
@@ -17,16 +18,23 @@ namespace UI.UIs.Exception
         private float _elapsedTime;
         private Quaternion _targetRotation;
         private Quaternion _initialRotation;
+        private const float MaxRotateTime = 10f;
+        private UIManager _uiManager;
         
         public override UIType Type => UIType.Loading;
         public override UICanvasType CanvasType=> UICanvasType.Exception;
         
         [Inject]
-        private void Init()
+        private void Init(UIManager uiManager)
         {
+            _uiManager = uiManager;
             logo.SetActive(true);
             logo.transform.rotation = Quaternion.identity;
             RepeatedTask.Instance.StartRepeatingTask(RotateLogo, rotationInterval);
+            DelayInvoker.DelayInvoke(MaxRotateTime, () =>
+            {
+                uiManager.CloseUI( Type);
+            });
         }
 
         private void RotateLogo()
