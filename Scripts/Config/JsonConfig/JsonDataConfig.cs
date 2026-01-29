@@ -607,7 +607,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
             for (int i = 0; i < gameBaseData.basePositions.Length; i++)
             {
                 var basePosition = gameBaseData.basePositions[i];
-                if (basePosition.mapType == mapType)
+                if (basePosition.mapType == (int)mapType)
                 {
                     return basePosition;
                 }
@@ -669,7 +669,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
     [Serializable]
     public struct BasePositionData
     {
-        public MapType mapType;
+        public int mapType;
         public Vector3[] basePositions;
     }
 

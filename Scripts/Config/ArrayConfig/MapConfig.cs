@@ -25,7 +25,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             }
             foreach (var data in mapConfigData)
             {
-                if (data.mapType == mapType)
+                if (data.mapType == (int)mapType)
                 {
                     MapConfigDataDictionary.Add(mapType, data);
                     return data;
@@ -59,7 +59,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             {
                 var row = textAsset[i];
                 var data = new MapConfigData();
-                data.mapType = (MapType) Enum.Parse(typeof(MapType), row[0]);
+                data.mapType = int.Parse(row[0]);
                 data.maxPlayer = int.Parse(row[1]);
                 data.minPlayer = int.Parse(row[2]);
                 data.availableWeather = (List<WeatherType>)JsonConvert.DeserializeObject(row[3], typeof(List<WeatherType>));
@@ -72,7 +72,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
     [Serializable]
     public struct MapConfigData
     {
-        public MapType mapType;
+        public int mapType;
         public int maxPlayer;
         public int minPlayer;
         public List<WeatherType> availableWeather;

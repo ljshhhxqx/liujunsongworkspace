@@ -127,7 +127,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         public void SpawnAllBases(MapType mapType, Transform parent)
         {
             Debug.Log("SpawnAllBases" + mapType);
-            var allSpawnPoints = _gameConfigData.gameBaseData.basePositions.First(x => x.mapType == mapType);
+            var allSpawnPoints = _gameConfigData.gameBaseData.basePositions.First(x => x.mapType == (int)mapType);
             for (var i = 0; i < allSpawnPoints.basePositions.Length; i++)
             {
                 var spawnPoint = allSpawnPoints.basePositions[i];
