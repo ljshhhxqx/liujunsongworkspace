@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using AOTScripts.Data;
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Collector;
@@ -601,6 +602,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         {
             if (gameBaseData.basePositions == null || gameBaseData.basePositions.Length == 0)
             {
+                Debug.LogWarning($"没有配置基地数据 {this.ToString()}");
                 Debug.LogError($"没有配置基地数据 {gameBaseData.basePositions}");
                 return null;
             }
@@ -656,6 +658,31 @@ namespace HotUpdate.Scripts.Config.JsonConfig
             }
             return nearestBase.GetNearestVector(targetPosition);
         }
+        
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("游戏配置数据：");   
+            sb.AppendLine($"groundSceneLayer: {groundSceneLayer}");
+            sb.AppendLine($"syncTime: {syncTime}");
+            sb.AppendLine($"gridSize: {gridSize}");
+            sb.AppendLine($"safetyMargin: {safetyMargin}");
+            sb.AppendLine($"fixedSpacing: {fixedSpacing}");
+            sb.AppendLine($"warmupTime: {warmupTime}");
+            sb.AppendLine($"developKey: {developKey}");
+            sb.AppendLine($"developKeyValue: {developKeyValue}");
+            sb.AppendLine($"stairSceneLayer: {stairSceneLayer}");
+            sb.AppendLine($"safePosition: {safePosition}");
+            sb.AppendLine($"safeHorizontalOffsetY: {safeHorizontalOffsetY}");
+            sb.AppendLine($"groundMinDistance: {groundMinDistance}");
+            sb.AppendLine($"groundMaxDistance: {groundMaxDistance}");
+            sb.AppendLine($"maxSlopeAngle: {maxSlopeAngle}");
+            sb.AppendLine($"stairsCheckDistance: {stairsCheckDistance}");
+            sb.AppendLine($"tickRate: {tickRate}");
+            sb.AppendLine($"gameBaseData: {gameBaseData}");
+            sb.AppendLine($"minUnionPlayerCount: {minUnionPlayerCount}");
+            return sb.ToString();
+        }
     }
 
 
@@ -669,6 +696,25 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         public float baseRadius;
         public float baseHeight;
         public int baseDirection;
+        
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("游戏基地数据：");
+            sb.AppendLine($"playerBaseHpRecoverRatioPerSec: {playerBaseHpRecoverRatioPerSec}");
+            sb.AppendLine($"playerBaseManaRecoverRatioPerSec: {playerBaseManaRecoverRatioPerSec}");
+            for (int i = 0; i < basePositions.Length; i++)
+            {
+                var basePosition = basePositions[i];
+                sb.AppendLine($"basePosition[{i}]: {basePosition}");
+            }
+            sb.AppendLine($"baseCenter: {baseCenter}");
+            sb.AppendLine($"baseRadius: {baseRadius}");
+            sb.AppendLine($"baseHeight: {baseHeight}");
+            sb.AppendLine($"baseDirection: {baseDirection}");
+            return sb.ToString();
+            
+        }
     }
 
     [Serializable]
@@ -676,6 +722,19 @@ namespace HotUpdate.Scripts.Config.JsonConfig
     {
         public int mapType;
         public Vector3[] basePositions;
+        
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("游戏基地数据：");
+            sb.AppendLine($"mapType: {mapType}");
+            for (int i = 0; i < basePositions.Length; i++)
+            {
+                var basePositionVector = basePositions[i];
+                sb.AppendLine($"basePosition[{i}]: {basePositionVector}");
+            }
+            return sb.ToString();
+        }
     }
 
     [Serializable]
