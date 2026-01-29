@@ -27,6 +27,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         protected override ISyncPropertyState CurrentState { get; set; }
         private AnimationConfig _animationConfig;
         private PropertyConfig _propertyConfig;
+        private PlayerPredictablePropertyState _playerPredictablePropertyState;
         private JsonDataConfig _jsonDataConfig;
         private UIManager _uiManager;
         private BindingKey _bindKey;
@@ -37,7 +38,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private HReactiveDictionary<int, PropertyItemData> _uiPropertyData = new HReactiveDictionary<int, PropertyItemData>();
         private HReactiveProperty<ValuePropertyData> _goldData;
 
-        public PlayerPredictablePropertyState PlayerPredictablePropertyState => (PlayerPredictablePropertyState)CurrentState;
+        public PlayerPredictablePropertyState PlayerPredictablePropertyState
+        {
+            get
+            {
+                if (CurrentState is PlayerPredictablePropertyState propertyState)
+                {
+                    _playerPredictablePropertyState = propertyState;
+                }
+
+                return _playerPredictablePropertyState;
+            }
+        }
 
         protected override CommandType CommandType => CommandType.Property;
 
