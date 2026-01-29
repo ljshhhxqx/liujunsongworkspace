@@ -44,10 +44,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             {
                 if (CurrentState is PlayerPredictablePropertyState propertyState)
                 {
-                    Debug.Log($"PropertyPredictionState [Init] {propertyState}");
+                    //Debug.Log($"PropertyPredictionState [Init] {propertyState}");
                     _playerPredictablePropertyState = propertyState;
                 }
-                Debug.Log($"PropertyPredictionState [CurrentState] {CurrentState}");
+                //Debug.Log($"PropertyPredictionState [CurrentState] {CurrentState}");
 
                 return _playerPredictablePropertyState;
             }

@@ -413,8 +413,9 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             _playerNetIds.AddOrUpdate(connectId, playerInGameData.networkIdentity.netId);
             _playerInGameData.AddOrUpdate(connectId, playerInGameData);
             _playerIdsByNetId.AddOrUpdate(playerInGameData.networkIdentity.netId, connectId);
-            Debug.Log($"Player connectionId : {connectId} netId : {playerInGameData.networkIdentity.netId} added");
+            Debug.Log($"[PlayerIngameManager] Player connectionId : {connectId} netId : {playerInGameData.networkIdentity.netId} added");
             var pos = playerInGameData.networkIdentity.transform.position;
+            Debug.Log($"[PlayerIngameManager] Player {connectId} position : {pos} {_gameConfigData} {(MapType)GameLoopDataModel.GameSceneName.Value}");
             var nearestBase = _gameConfigData.GetNearestBase((MapType)GameLoopDataModel.GameSceneName.Value, pos);
             _playerSpawnPoints[nearestBase] = playerInGameData.networkIdentity.netId;
             _playerPositions.AddOrUpdate(playerInGameData.networkIdentity.netId, pos);

@@ -12,6 +12,7 @@ using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using Mirror;
+using UnityEngine;
 using VContainer;
 using INetworkCommand = AOTScripts.Data.INetworkCommand;
 
@@ -186,7 +187,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         public virtual void InitCurrentState<T>(T state) where T : ISyncPropertyState
         {
-            //Debug.Log($"[PredictableStateBase] InitCurrentState {state.GetType().Name} at tick {GameSyncManager.CurrentTick}");
+            Debug.Log($"[PredictableStateBase] InitCurrentState {state} at tick {GameSyncManager.CurrentTick}");
             CurrentState = state;
         }
 
