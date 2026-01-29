@@ -499,7 +499,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             if (_playerInputStateData != default)
             {
                 HandleSendNetworkCommand(_playerInputStateData);
-                var propertyEnvironmentChangeCommand = ObjectPoolManager<PropertyEnvironmentChangeCommand>.Instance.Get(15);
+                var propertyEnvironmentChangeCommand = new PropertyEnvironmentChangeCommand();
                 propertyEnvironmentChangeCommand.Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
                     CommandType.Property, CommandAuthority.Client, CommandExecuteType.Predicate, NetworkCommandType.PropertyEnvironmentChange);
                 propertyEnvironmentChangeCommand.HasInputMovement = _playerInputStateData.InputMovement.magnitude > 0.1f;

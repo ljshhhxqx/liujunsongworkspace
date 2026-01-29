@@ -16,6 +16,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Static;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using Mirror;
@@ -408,16 +409,16 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 var playerCollider = playerIdentity.GetComponent<Collider>();
                 _playerPhysicsData = GamePhysicsSystem.CreateColliderConfig(playerCollider);
             }
-            _playerIds.TryAdd(connectId, playerInGameData.player.PlayerId);
-            _playerNetIds.TryAdd(connectId, playerInGameData.networkIdentity.netId);
-            _playerInGameData.TryAdd(connectId, playerInGameData);
-            _playerIdsByNetId.TryAdd(playerInGameData.networkIdentity.netId, connectId);
+            _playerIds.AddOrUpdate(connectId, playerInGameData.player.PlayerId);
+            _playerNetIds.AddOrUpdate(connectId, playerInGameData.networkIdentity.netId);
+            _playerInGameData.AddOrUpdate(connectId, playerInGameData);
+            _playerIdsByNetId.AddOrUpdate(playerInGameData.networkIdentity.netId, connectId);
             Debug.Log($"Player connectionId : {connectId} netId : {playerInGameData.networkIdentity.netId} added");
             var pos = playerInGameData.networkIdentity.transform.position;
             var nearestBase = _gameConfigData.GetNearestBase(GameLoopDataModel.GameSceneName.Value, pos);
             _playerSpawnPoints[nearestBase] = playerInGameData.networkIdentity.netId;
-            _playerPositions.TryAdd(playerInGameData.networkIdentity.netId, pos);
-            _playerGrids.TryAdd(playerInGameData.networkIdentity.netId,  MapBoundDefiner.Instance.GetGridPosition(pos));
+            _playerPositions.AddOrUpdate(playerInGameData.networkIdentity.netId, pos);
+            _playerGrids.AddOrUpdate(playerInGameData.networkIdentity.netId,  MapBoundDefiner.Instance.GetGridPosition(pos));
             SetCalculatorConstants(playerIdentity);
             RpcAddPlayer(connectId, playerInGameData, playerInGameData.networkIdentity);
         }
@@ -662,10 +663,10 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                     unionId = ++_currentUnionId,
                     playerIds = playerIds,
                 };
-                _unionData.Add(union.unionId, union);
+                _unionData.AddOrUpdate(union.unionId, union);
                 foreach (var playerId in playerIds)
                 {
-                    _playerUnionIds.TryAdd(playerId, union.unionId);
+                    _playerUnionIds.AddOrUpdate(playerId, union.unionId);
                 }
             }
             var noUnionPlayers = GetPlayerWithNoUnion();
@@ -869,7 +870,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         [Server]
         public bool TryAddDeathPlayer(uint playerNetId, float countdown, uint killerPlayerId, Action<uint, uint, float> playerDeathCallback, Action<uint> playerBornCallback)
         {
-            if (!_playerDeathCountdowns.TryAdd(playerNetId, countdown))
+            if (!_playerDeathCountdowns.AddOrUpdate(playerNetId, countdown))
             {
                 return false;
             }
