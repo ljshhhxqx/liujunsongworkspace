@@ -19,6 +19,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
     {
         [SerializeField] 
         private JsonConfigData jsonConfigData;
+        public JsonConfigData JsonConfigData => jsonConfigData;
 
         private readonly Dictionary<AnimationState, AnimationInfo> _animationInfos = new Dictionary<AnimationState, AnimationInfo>();
 
@@ -44,7 +45,8 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         protected override void ReadFromJson(TextAsset textAsset)
         {
             Debug.Log($"Read JsonDataConfig---{textAsset.text}");
-            jsonConfigData = BoxingFreeSerializer.JsonDeserialize<JsonConfigData>(textAsset.text);
+            var data = BoxingFreeSerializer.JsonDeserialize<JsonDataConfig>(textAsset.text);
+            jsonConfigData = data.jsonConfigData;
             Debug.Log($"JsonDataConfig---{jsonConfigData.gameConfig.fixedSpacing}");
         }
 
