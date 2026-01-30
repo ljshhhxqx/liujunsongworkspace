@@ -11,6 +11,7 @@ using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Data;
+using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.GameBase;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
@@ -115,6 +116,26 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             _gameEventManager = gameEventManager;
             _configProvider = configProvider;
             _gameEventManager.Subscribe<GameResourceLoadedEvent>(OnGameResourceLoaded);
+        }
+
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+#if !UNITY_EDITOR
+            ObjectInjectProvider.Instance.Inject(this);
+            _gameConfigData = _configProvider.GetConfig<JsonDataConfig>().GameConfig;
+            Debug.Log($"[PlayerInGameManager] OnStartServer loaded {_gameConfigData}");
+#endif
+            
+        }
+        public override void OnStartClient()
+        { 
+            base.OnStartClient();
+#if !UNITY_EDITOR
+            ObjectInjectProvider.Instance.Inject(this);
+            _gameConfigData = _configProvider.GetConfig<JsonDataConfig>().GameConfig;
+            Debug.Log($"[PlayerInGameManager] OnStartClient loaded {_gameConfigData}");
+#endif
         }
 
         private void OnGameResourceLoaded(GameResourceLoadedEvent gameResourceLoadedEvent)
