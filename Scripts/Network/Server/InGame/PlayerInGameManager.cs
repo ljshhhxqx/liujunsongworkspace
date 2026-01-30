@@ -120,6 +120,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         private void OnGameResourceLoaded(GameResourceLoadedEvent gameResourceLoadedEvent)
         {
             _gameConfigData = _configProvider.GetConfig<JsonDataConfig>().GameConfig;
+            Debug.Log($"[PlayerInGameManager] GameConfigData loaded {_gameConfigData}");
         }
 
 
