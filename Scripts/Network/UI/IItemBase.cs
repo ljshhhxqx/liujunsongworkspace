@@ -522,10 +522,18 @@ namespace HotUpdate.Scripts.Network.UI
         public Vector3 PlayerPosition;
         public PropertyTypeEnum PropertyType;
         public float DiffValue;
+        public int localPlayerId;
 
         public bool Equals(PlayerHpItemData other)
         {
-            return PlayerId == other.PlayerId && Name == other.Name && CurrentHp.Equals(other.CurrentHp) && MaxHp.Equals(other.MaxHp) && CurrentMp.Equals(other.CurrentMp) && MaxMp.Equals(other.MaxMp) && TargetPosition.Equals(other.TargetPosition) && PlayerPosition.Equals(other.PlayerPosition) && PropertyType == other.PropertyType && DiffValue.Equals(other.DiffValue);
+            return PlayerId == other.PlayerId && Name == other.Name
+                                              && CurrentHp.Equals(other.CurrentHp) && MaxHp.Equals(other.MaxHp) 
+                                              && CurrentMp.Equals(other.CurrentMp) && MaxMp.Equals(other.MaxMp) 
+                                              && TargetPosition.Equals(other.TargetPosition) 
+                                              && PlayerPosition.Equals(other.PlayerPosition) 
+                                              && PropertyType == other.PropertyType 
+                                              && DiffValue.Equals(other.DiffValue)
+                                              && localPlayerId == other.localPlayerId;
         }
 
         public override bool Equals(object obj)
@@ -546,6 +554,7 @@ namespace HotUpdate.Scripts.Network.UI
             hashCode.Add(PlayerPosition);
             hashCode.Add((int)PropertyType);
             hashCode.Add(DiffValue);
+            hashCode.Add(localPlayerId);
             return hashCode.ToHashCode();
         }
     }

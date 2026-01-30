@@ -7,6 +7,7 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.State;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Tool.ObjectPool;
@@ -76,9 +77,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         }
 
         [Inject]
-        protected void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider, UIManager uiManager)
+        protected void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider, UIManager uiManager, PlayerInGameManager playerInGameManager)
         {
-            base.Init(gameSyncManager, configProvider);
+            base.Init(gameSyncManager, configProvider, playerInGameManager);
             _uiManager = uiManager;
             _animationConfig = configProvider.GetConfig<AnimationConfig>();
             _propertyConfig = configProvider.GetConfig<PropertyConfig>();

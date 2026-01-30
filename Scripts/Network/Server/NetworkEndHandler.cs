@@ -30,10 +30,12 @@ namespace HotUpdate.Scripts.Network.Server
         private int _totalClients = 0;
         private PlayerComponentController _playerComponentController;
         private GameSyncManager _gameSyncManager;
+        private PlayerInGameManager _playerInGameManager;
         
         [Inject]
-        private void Init()
+        private void Init(PlayerInGameManager playerInGameManager)
         {
+            _playerInGameManager = playerInGameManager;
             _gameSyncManager = FindObjectOfType<GameSyncManager>();
         }
     
@@ -54,7 +56,7 @@ namespace HotUpdate.Scripts.Network.Server
         public void CmdConfirmCleanup()
         {
             _playerComponentController ??= _gameSyncManager.GetLocalPlayerConnection();
-            _playerComponentController.CmdEndGame(PlayerInGameManager.Instance.LocalPlayerId);
+            _playerComponentController.CmdEndGame(_playerInGameManager.LocalPlayerId);
         }
 
         public void ConfirmCleanup(int connectionId)
@@ -110,12 +112,12 @@ namespace HotUpdate.Scripts.Network.Server
             if (NetworkServer.active && NetworkClient.isConnected)
             {
                 Debug.Log("Host：只清理客户端部分，不断开");
-                _playerComponentController.CmdCleanupClient(PlayerInGameManager.Instance.LocalPlayerId);
+                _playerComponentController.CmdCleanupClient(_playerInGameManager.LocalPlayerId);
                 // Host只需清理，不断开网络
                 return;
             }
             OnCleanup?.Invoke();
-            _playerComponentController.CmdCleanupClient(PlayerInGameManager.Instance.LocalPlayerId);
+            _playerComponentController.CmdCleanupClient(_playerInGameManager.LocalPlayerId);
         
             await UniTask.Yield();
             

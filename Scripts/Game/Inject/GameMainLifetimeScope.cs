@@ -43,6 +43,7 @@ namespace HotUpdate.Scripts.Game.Inject
             builder.Register<GameEventManager>(Lifetime.Singleton);
             builder.Register<GameSceneManager>(Lifetime.Singleton);
             builder.Register<PlayFabMessageHandler>(Lifetime.Singleton);
+            builder.Register<PlayerInGameManager>(Lifetime.Singleton);
             builder.RegisterComponentInHierarchy<GameOnlineDefine>();
             builder.RegisterComponentInHierarchy<ObjectInjectProvider>();
             //builder.RegisterInstance(this);

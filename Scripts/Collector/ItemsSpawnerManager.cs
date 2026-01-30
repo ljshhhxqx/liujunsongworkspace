@@ -46,6 +46,7 @@ namespace HotUpdate.Scripts.Collector
         private GameMapInjector _gameMapInjector;
         private CollectObjectDataConfig _collectObjectDataConfig;
         private LayerMask _sceneLayer;
+        private PlayerInGameManager _playerInGameManager;
         private LayerMask _spawnedLayer;
         private Dictionary<Vector2Int, Grid> _gridMap = new Dictionary<Vector2Int, Grid>();
         private static float _itemSpacing;
@@ -97,11 +98,13 @@ namespace HotUpdate.Scripts.Collector
         
         [Inject]
         private void Init(UIManager uiManager, IConfigProvider configProvider, GameSyncManager gameSyncManager, 
-            GameMapInjector gameMapInjector,GameEventManager gameEventManager, MessageCenter messageCenter)
+            GameMapInjector gameMapInjector,GameEventManager gameEventManager, MessageCenter messageCenter,
+            PlayerInGameManager playerInGameManager)
         {
             _uiManager = uiManager;
             _configProvider = configProvider;
             _jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
+            _playerInGameManager = playerInGameManager;
             _gameMapInjector = gameMapInjector;
             _gameSyncManager = gameSyncManager;
             _itemConfig = _configProvider.GetConfig<ItemConfig>();
@@ -210,7 +213,7 @@ namespace HotUpdate.Scripts.Collector
                     return;
                 }
                 var playerConnection = player.connectionToClient.connectionId;
-                var playerCollider = PlayerInGameManager.Instance.PlayerPhysicsData;
+                var playerCollider = _playerInGameManager.PlayerPhysicsData;
 
                 var chestCollider = _chestColliderConfigs.GetValueOrDefault(chestData.Quality);
 
@@ -440,8 +443,8 @@ namespace HotUpdate.Scripts.Collector
                     var itemConfigId = _collectObjectDataConfig.GetCollectObjectData(itemData.ItemCollectConfigId)
                         .itemId;
                     var itemPos = item.transform.position;
-                    var playerConnectionId = PlayerInGameManager.Instance.GetPlayerId(pickerId);
-                    var playerColliderConfig = PlayerInGameManager.Instance.PlayerPhysicsData;
+                    var playerConnectionId = _playerInGameManager.GetPlayerId(pickerId);
+                    var playerColliderConfig = _playerInGameManager.PlayerPhysicsData;
                     if (!player)
                     {
                         Debug.LogError($"Cannot find player with netId: {pickerId}");

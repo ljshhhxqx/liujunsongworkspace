@@ -25,13 +25,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         protected override CommandType CommandType => CommandType.Item;
 
         [Inject]
-        private void Init(IConfigProvider configProvider)
+        private void Init(IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
         {
             _itemConfig = configProvider.GetConfig<ItemConfig>();
             _weaponConfig = configProvider.GetConfig<WeaponConfig>();
             _armorConfig = configProvider.GetConfig<ArmorConfig>();
             _interactSystem = Object.FindObjectOfType<InteractSystem>();
-            _playerInGameManager = PlayerInGameManager.Instance;
+            _playerInGameManager = playerInGameManager;
         }
 
         protected override void OnClientProcessStateUpdate(int connectionId, byte[] state, CommandType commandType)

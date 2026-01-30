@@ -68,7 +68,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public event Action<int, PropertyTypeEnum, float> OnPropertyChange;
         
         [Inject]
-        private void Init(IConfigProvider configProvider,GameEventManager gameEventManager)
+        private void Init(IConfigProvider configProvider,GameEventManager gameEventManager, PlayerInGameManager playerInGameManager)
         {
             _gameEventManager = gameEventManager;
             _configProvider = configProvider;
@@ -85,7 +85,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _itemConfig = _configProvider.GetConfig<ItemConfig>();
             _skillConfig = _configProvider.GetConfig<SkillConfig>();
             _battleEffectConfig = _configProvider.GetConfig<BattleEffectConditionConfig>();
-            _playerInGameManager = PlayerInGameManager.Instance;
+            _playerInGameManager = playerInGameManager;
             _interactSystem = Object.FindObjectOfType<InteractSystem>();
             BuffDataReaderWriter.RegisterReaderWriter();
         }

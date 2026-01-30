@@ -239,7 +239,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private void Init(IConfigProvider configProvider, 
             GameSyncManager gameSyncManager, 
             UIManager uiManager,
-            GameEventManager gameEventManager)
+            GameEventManager gameEventManager,
+            PlayerInGameManager playerInGameManager)
         {
             ColliderConfig = GamePhysicsSystem.CreateColliderConfig(GetComponent<Collider>());
             _configProvider = configProvider;
@@ -258,10 +259,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _skillConfig = _configProvider.GetConfig<SkillConfig>();
             _camera = Camera.main;
             _animationCooldowns = GetAnimationCooldowns(_configProvider.GetConfig<AnimationConfig>());
-            _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
+            _playerInGameManager = playerInGameManager;
             _gameEventManager = gameEventManager;
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, ColliderConfig, ObjectType.Player, gameObject.layer, gameObject.tag);
-
             Debug.Log($"[PlayerInGameController] Init: {gameObject.name}");
             _propertyConfig = _configProvider.GetConfig<PropertyConfig>();
             GetAllCalculators(configProvider, gameSyncManager);
@@ -908,7 +908,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 GameSyncManager = gameSyncManager,
                 SkillConfig = configProvider.GetConfig<SkillConfig>(),
                 SceneLayerMask = gameData.stairSceneLayer,
-                CasterId = netId
+                CasterId = netId,
+                PlayerInGameManager = _playerInGameManager,
             });
             _playerPhysicsCalculator = new PlayerPhysicsCalculator(new PhysicsComponent(_rigidbody, transform, _checkStairTransform, _capsuleCollider, _camera));
             _playerPropertyCalculator = new PlayerPropertyCalculator(PlayerPropertyCalculator.GetPropertyCalculators());
@@ -1442,6 +1443,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 Name = tracedInfo.PlayerName,
                 PropertyType = tracedInfo.PropertyDifferentPropertyType,
                 DiffValue = tracedInfo.PropertyDifferentValue,
+                localPlayerId = _playerInGameManager.LocalPlayerId
             };
         }
         

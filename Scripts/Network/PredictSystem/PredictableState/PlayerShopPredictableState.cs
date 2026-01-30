@@ -26,15 +26,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         protected override CommandType CommandType => CommandType.Shop;
         
         [Inject]
-        protected override void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider)
+        protected override void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
         {
-            base.Init(gameSyncManager, configProvider);
+            base.Init(gameSyncManager, configProvider, playerInGameManager);
             _shopConfig = configProvider.GetConfig<ShopConfig>();
             _itemConfig = configProvider.GetConfig<ItemConfig>();
             _propertyPredictionState = GetComponent<PropertyPredictionState>();
             _constantBuffConfig = configProvider.GetConfig<ConstantBuffConfig>();
             _randomBuffConfig = configProvider.GetConfig<RandomBuffConfig>();
-            _playerInGameManager = PlayerInGameManager.Instance;
+            _playerInGameManager = playerInGameManager;
             _bindKey = new BindingKey(UIPropertyDefine.ShopItem);
             _bagBindKey = new BindingKey(UIPropertyDefine.BagItem);
             if (CurrentState is not PlayerShopState playerShopState)

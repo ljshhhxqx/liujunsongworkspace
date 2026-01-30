@@ -40,6 +40,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         private JsonDataConfig _jsonConfig;
         private GameSyncManager _gameSyncManager;
         private GameEventManager _gameEventManager;
+        private PlayerInGameManager _playerInGameManager;
         private PlayerPropertySyncSystem _playerPropertySyncSystem;
         private List<PlayerPropertySyncSystem.SkillBuffManagerData> _activeBuffs = new List<PlayerPropertySyncSystem.SkillBuffManagerData>();
         private SyncDictionary<uint, SceneItemInfo> _sceneItems = new SyncDictionary<uint, SceneItemInfo>();
@@ -64,7 +65,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         }
         
         [Inject]
-        private void Init(GameEventManager gameEventManager, IConfigProvider configProvider, IObjectResolver objectResolver)
+        private void Init(GameEventManager gameEventManager, IConfigProvider configProvider, IObjectResolver objectResolver,
+            PlayerInGameManager playerInGameManager)
         {
             _gameEventManager = gameEventManager;
             //_gameSyncManager = FindObjectOfType<GameSyncManager>();
@@ -79,6 +81,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             _gameEventManager.Subscribe<StartGameWellEvent>(OnStartGameWell);
             _gameEventManager.Subscribe<StartGameTrainEvent>(OnStartGameTrain);
             _sceneItems.OnChange += OnSceneItemsChanged;
+            _playerInGameManager = playerInGameManager;
         }
 
         private void OnStartGameTrain(StartGameTrainEvent startGameTrainEvent)
@@ -126,7 +129,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             {
                 foreach (var objectData in result)
                 {
-                    if (PlayerInGameManager.Instance.IsPlayer(objectData.NetId))
+                    if (_playerInGameManager.IsPlayer(objectData.NetId))
                     {
                         cache.Add(objectData);
                     }
@@ -422,7 +425,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                             _sceneItems.Remove(hitObjectData.NetId);
                         }
                     }
-                    else if (PlayerInGameManager.Instance.TryGetPlayerById(hitObjectData.NetId, out var connectionId))
+                    else if (_playerInGameManager.TryGetPlayerById(hitObjectData.NetId, out var connectionId))
                     {
                         var property = _playerPropertySyncSystem.GetPlayerProperty(connectionId);
                         defense = property.GetValueOrDefault(PropertyTypeEnum.Defense).CurrentValue;
@@ -478,7 +481,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                     _sceneItems.Remove(sceneItemAttackInteractRequest.TargetId);
                 }
             }
-            else if (PlayerInGameManager.Instance.TryGetPlayerById(sceneItemAttackInteractRequest.TargetId, out var connectionId))
+            else if (_playerInGameManager.TryGetPlayerById(sceneItemAttackInteractRequest.TargetId, out var connectionId))
             {
                 var property = _playerPropertySyncSystem.GetPlayerProperty(connectionId);
                 defense = property.GetValueOrDefault(PropertyTypeEnum.Defense).CurrentValue;
@@ -536,7 +539,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 
         private void HandlePlayerChangeUnion(PlayerChangeUnionRequest playerChangeUnionRequest)
         {
-            var changedResult = PlayerInGameManager.Instance.TryPlayerExchangeUnion(playerChangeUnionRequest.KillerPlayerId,
+            var changedResult = _playerInGameManager.TryPlayerExchangeUnion(playerChangeUnionRequest.KillerPlayerId,
                 playerChangeUnionRequest.DeadPlayerId, out _, out _);
             if (changedResult)
             {
@@ -606,7 +609,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         private void HandleSceneInteractRequest(SceneInteractRequest request)
         {
             var header = request.GetHeader();
-            var playerNetId = PlayerInGameManager.Instance.GetPlayerNetId(header.RequestConnectionId);
+            var playerNetId = _playerInGameManager.GetPlayerNetId(header.RequestConnectionId);
             switch ((InteractionType)request.InteractionType)
             {
                 case InteractionType.PickupItem:

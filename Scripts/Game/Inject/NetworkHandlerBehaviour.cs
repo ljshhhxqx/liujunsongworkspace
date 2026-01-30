@@ -12,14 +12,14 @@ namespace HotUpdate.Scripts.Game.Inject
         {
             base.OnStartClient();
             ClientHandler = true;
-            StartServer();
+            StartClient();
         }
         
         public override void OnStartServer()
         {
             base.OnStartServer();
             ServerHandler = true;
-            StartClient();
+            StartServer();
         }
         
         public override void OnStartLocalPlayer()

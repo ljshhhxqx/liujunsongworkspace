@@ -6,6 +6,7 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Skill;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using Mirror;
@@ -24,9 +25,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         protected override ISyncPropertyState CurrentState { get; set; }
         protected override CommandType CommandType => CommandType.Skill;
 
-        protected override void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider)
+        protected override void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
         {
-            base.Init(gameSyncManager, configProvider);
+            base.Init(gameSyncManager, configProvider, playerInGameManager);
             _playerComponentController = GetComponent<PlayerComponentController>();
             _skillConfig = configProvider.GetConfig<SkillConfig>();
             _spawnTransform = GameObject.FindGameObjectWithTag("SpawnedObjects").transform;

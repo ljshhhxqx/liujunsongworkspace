@@ -67,7 +67,9 @@ namespace HotUpdate.Scripts.Config
         {
             if (!textAsset)
             {
+#if !UNITY_EDITOR
                 Debug.LogError($"[ConfigDebug] {ConfigName} TextAsset is NULL");
+#endif
             }
             else
             {

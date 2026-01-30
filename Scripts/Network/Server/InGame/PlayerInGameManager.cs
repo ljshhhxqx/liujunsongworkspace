@@ -6,7 +6,6 @@ using AOTScripts.Data;
 using AOTScripts.Tool;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
-using Data;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
@@ -19,15 +18,13 @@ using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Static;
 using HotUpdate.Scripts.Tool.GameEvent;
-using HotUpdate.Scripts.Tool.ObjectPool;
 using Mirror;
 using UnityEngine;
 using VContainer;
-using Object = UnityEngine.Object;
 
 namespace HotUpdate.Scripts.Network.Server.InGame
 {
-    public class PlayerInGameManager : SingletonAutoNetMono<PlayerInGameManager>
+    public class PlayerInGameManager : NetworkAutoInjectHandlerBehaviour
     {
         private readonly SyncDictionary<int, string> _playerIds = new SyncDictionary<int, string>();
         private readonly SyncDictionary<int, uint> _playerNetIds = new SyncDictionary<int, uint>();
@@ -118,10 +115,10 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             _gameEventManager.Subscribe<GameResourceLoadedEvent>(OnGameResourceLoaded);
         }
 
-        private void Start()
-        {
-            Debug.Log("[PlayerInGameManager] Start ---  instanceId :" + gameObject.GetInstanceID());
-        }
+        // private void Start()
+        // {
+        //     Debug.Log("[PlayerInGameManager] Start ---  instanceId :" + gameObject.GetInstanceID());
+        // }
 
         public override void OnStartServer()
         {
@@ -286,7 +283,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
 
         private async UniTaskVoid UpdateAllPlayerGrids(CancellationToken token)
         {
-            while (!token.IsCancellationRequested && isServer && !_gameSyncManager.isGameOver)
+            while (!token.IsCancellationRequested && ServerHandler && !_gameSyncManager.isGameOver)
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(GameSyncManager.TickSeconds), cancellationToken: token);
                 foreach (var uid in _playerNetIds.Values)
@@ -431,8 +428,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         public void AddPlayer(int connectId, PlayerInGameData playerInGameData)
         {
             var playerIdentity = playerInGameData.networkIdentity;
-            Debug.Log($"[PlayerIngameManager]  _configProvider {gameObject.GetInstanceID()} --- {playerIdentity}");
-            _gameConfigData = _configProvider.GetConfig<JsonDataConfig>().GameConfig;
+            //_gameConfigData = _configProvider.GetConfig<JsonDataConfig>().GameConfig;
             if (_playerPhysicsData == null)
             {
                 var playerCollider = playerIdentity.GetComponent<Collider>();
@@ -535,7 +531,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 GameSyncManager = _gameSyncManager,
                 IsClient = isClient,
                 IsLocalPlayer = isLocalPlayer,
-                PlayerInGameManager = Instance
+                PlayerInGameManager = this
             });
             PlayerSkillCalculator.SetConstant(new SkillCalculatorConstant
             {
@@ -544,6 +540,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 IsServer = isServer,
                 GameSyncManager = _gameSyncManager,
                 InteractSystem = _interactSystem,
+                PlayerInGameManager = this
             });
         }
 

@@ -46,12 +46,13 @@ namespace HotUpdate.Scripts.Collector
         private readonly HashSet<DynamicObjectData> _collects = new HashSet<DynamicObjectData>();
     
         [Inject]
-        private void Init(GameEventManager gameEventManager, IObjectResolver objectResolver, UIManager uiManager, IConfigProvider configProvider)
+        private void Init(GameEventManager gameEventManager, IObjectResolver objectResolver, UIManager uiManager, 
+            IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
         {
             _gameEventManager = gameEventManager;
             _collectData = configProvider.GetConfig<JsonDataConfig>().CollectData.mapElementData;
             _interactSystem = objectResolver.Resolve<InteractSystem>();
-            _playerInGameManager = PlayerInGameManager.Instance;
+            _playerInGameManager = playerInGameManager;
             _uiManager = uiManager;
             _colliderConfig = GamePhysicsSystem.CreateColliderConfig(GetComponent<Collider>());
 
@@ -128,7 +129,7 @@ namespace HotUpdate.Scripts.Collector
                 //Debug.Log($"Send Collect Request: {pickerId} {pickerType} {itemId} {itemClass}");
                 var request = new SceneInteractRequest
                 {
-                    Header = InteractSystem.CreateInteractHeader(PlayerInGameManager.Instance.GetPlayerId(pickerId), InteractCategory.PlayerToScene,
+                    Header = InteractSystem.CreateInteractHeader(_playerInGameManager.GetPlayerId(pickerId), InteractCategory.PlayerToScene,
                         transform.position, CommandAuthority.Client),
                     InteractionType = (int)InteractionType.PickupItem,
                     SceneItemId = itemId,

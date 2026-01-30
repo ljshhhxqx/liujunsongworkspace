@@ -17,12 +17,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private ItemConfig _itemConfig;
         private readonly Dictionary<int, PlayerShopPredictableState> _playerShopSyncStates = new Dictionary<int, PlayerShopPredictableState>();
         protected override CommandType CommandType => CommandType.Shop;
-        private PlayerInGameManager _playerInGameManager;
         
         [Inject]
         private void Init(IConfigProvider configProvider)
         {
-            _playerInGameManager = PlayerInGameManager.Instance;
             _shopConfig = configProvider.GetConfig<ShopConfig>();
             _itemConfig = configProvider.GetConfig<ItemConfig>();
         }

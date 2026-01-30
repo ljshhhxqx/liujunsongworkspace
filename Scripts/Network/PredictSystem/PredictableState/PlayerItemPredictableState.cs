@@ -6,6 +6,7 @@ using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Static;
 using UnityEngine;
@@ -24,9 +25,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private PropertyPredictionState _propertyPredictionState;
 
         [Inject]
-        protected override void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider)
+        protected override void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
         {
-            base.Init(gameSyncManager, configProvider);
+            base.Init(gameSyncManager, configProvider, playerInGameManager);
             _itemConfig = configProvider.GetConfig<ItemConfig>();
             _propertyPredictionState = GetComponent<PropertyPredictionState>();
             _battleEffectConditionConfig = configProvider.GetConfig<BattleEffectConditionConfig>();

@@ -11,6 +11,7 @@ using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -33,7 +34,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         protected CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
 
         [Inject]
-        protected virtual void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider)
+        protected virtual void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
         {
             GameSyncManager = gameSyncManager;
             JsonDataConfig = configProvider.GetConfig<JsonDataConfig>();

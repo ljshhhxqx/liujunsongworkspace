@@ -9,6 +9,7 @@ using HotUpdate.Scripts.Collector.Collects.Move;
 using HotUpdate.Scripts.Collector.Effect;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Effect;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
@@ -62,7 +63,7 @@ namespace HotUpdate.Scripts.Collector
         private HiddenItem _hiddenItem;
         
         [Inject]
-        private void Init(IConfigProvider configProvider)
+        private void Init(IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
         {
             var jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
@@ -86,7 +87,7 @@ namespace HotUpdate.Scripts.Collector
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _colliderConfig, ObjectType.Collectable, gameObject.layer, gameObject.tag);
             
             NetId = netId;
-            _playerTransform ??= PlayerInGameManager.Instance.LocalPlayerTransform;
+            _playerTransform ??= playerInGameManager.LocalPlayerTransform;
             ChangeBehaviour();
         }
 
@@ -95,7 +96,7 @@ namespace HotUpdate.Scripts.Collector
             if (!gameObject.TryGetComponent<AttackCollectItem>(out _attackCollectItem))
             {
                 _attackCollectItem = gameObject.AddComponent<AttackCollectItem>();
-                ObjectInjectProvider.Instance.Inject(_attackCollectItem);
+                ObjectInjectProvider.Instance.InjectMap((MapType)GameLoopDataModel.GameSceneName.Value, _attackCollectItem);
             }
             if (_config == default)
             {
@@ -122,7 +123,7 @@ namespace HotUpdate.Scripts.Collector
             if (!gameObject.TryGetComponent<MoveCollectItem>(out _moveCollectItem))
             {
                 _moveCollectItem = gameObject.AddComponent<MoveCollectItem>();
-                ObjectInjectProvider.Instance.Inject(_moveCollectItem);
+                ObjectInjectProvider.Instance.InjectMap((MapType)GameLoopDataModel.GameSceneName.Value, _moveCollectItem);
             }
             _moveCollectItem.enabled = true;
             _moveCollectItem.Init(moveInfo, ServerHandler, netId);
@@ -133,7 +134,7 @@ namespace HotUpdate.Scripts.Collector
             if (!gameObject.TryGetComponent<HiddenItem>(out _hiddenItem))
             {
                 _hiddenItem = gameObject.AddComponent<HiddenItem>();
-                ObjectInjectProvider.Instance.Inject(_hiddenItem);
+                ObjectInjectProvider.Instance.InjectMap((MapType)GameLoopDataModel.GameSceneName.Value, _hiddenItem);
             }
             _hiddenItem.enabled = true;
             _hiddenItem.Init(hiddenItemData, ServerHandler, netId);

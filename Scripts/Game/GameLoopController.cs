@@ -57,6 +57,7 @@ namespace HotUpdate.Scripts.Game
         private GameSyncManager _gameSyncManager;
         private JsonDataConfig _jsonDataConfig;
         private ItemsSpawnerManager _itemsSpawnerManager;
+        private PlayerInGameManager _playerInGameManager;
         private UIManager _uiManager;
         private MapConfig _mapConfig;
         private GameInfo _gameInfo;
@@ -131,12 +132,13 @@ namespace HotUpdate.Scripts.Game
         [Inject]
         private void Init(MessageCenter messageCenter, GameEventManager gameEventManager, IObjectResolver objectResolver, IConfigProvider configProvider,
             MirrorNetworkMessageHandler messageHandler, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller, 
-            UIManager uiManager, NetworkManagerCustom networkManager, NetworkEndHandler endHandler)
+            UIManager uiManager, NetworkManagerCustom networkManager, NetworkEndHandler endHandler, PlayerInGameManager playerInGameManager)
         {
             _networkManager = networkManager;
             _playFabClientCloudScriptCaller = playFabClientCloudScriptCaller;
             _endHandler = endHandler;
             _interactSystem = objectResolver.Resolve<InteractSystem>();
+            _playerInGameManager = playerInGameManager;
             _uiManager = uiManager;
             _gameEventManager = gameEventManager;
             _messageCenter = messageCenter;
@@ -209,7 +211,7 @@ namespace HotUpdate.Scripts.Game
             if (_serverHandler)
             {
                 _cts = new CancellationTokenSource();
-                PlayerInGameManager.Instance.SpawnAllBases(gameReadyEvent.GameInfo.SceneName, transform);
+                _playerInGameManager.SpawnAllBases(gameReadyEvent.GameInfo.SceneName, transform);
                 isEndGameSync = false;
                 IsEndGame = false;
                 
@@ -381,7 +383,7 @@ namespace HotUpdate.Scripts.Game
                 // 检查是否在分数模式下有玩家达到目标分数
                 if (_gameInfo.GameMode == GameMode.Score)
                 {
-                    if (PlayerInGameManager.Instance.IsPlayerGetTargetScore(_gameInfo.GameScore))
+                    if (_playerInGameManager.IsPlayerGetTargetScore(_gameInfo.GameScore))
                     {
                         isEndGameSync = true;
                         IsEndGame = true;
@@ -429,7 +431,7 @@ namespace HotUpdate.Scripts.Game
             foreach (var kvp in playerScores)
             {
                 Debug.Log($"{kvp.Key} - {kvp.Value}");
-                var playerData = PlayerInGameManager.Instance.GetPlayer(kvp.Key);
+                var playerData = _playerInGameManager.GetPlayer(kvp.Key);
                 var rank = index + 1;
                 data.playersResultData[index] = new PlayerGameResultData
                 {
@@ -530,7 +532,7 @@ namespace HotUpdate.Scripts.Game
         public async UniTask ClearAndReleaseAsync()
         {
             PlayFabData.PlayerList.Clear();
-            PlayerInGameManager.Instance.Clear();
+            _playerInGameManager.Clear();
             await UniTask.Yield();
             NetworkGameObjectPoolManager.Instance.ClearAllPools();
             await UniTask.Yield();

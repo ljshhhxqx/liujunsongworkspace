@@ -63,14 +63,14 @@ namespace HotUpdate.Scripts.Game.GamePlay
         
         private GameEventManager _gameEventManager;
         private InteractSystem _interactSystem;
-        
+        private PlayerInGameManager _playerInGameManager;
         private SyncHashSet<uint> _trainPlayers = new SyncHashSet<uint>();
         
         
         protected override bool AutoInjectLocalPlayer => true;
 
         [Inject]
-        private void Init(GameEventManager gameEventManager, IObjectResolver objectResolver)
+        private void Init(GameEventManager gameEventManager, IObjectResolver objectResolver, PlayerInGameManager playerInGameManager)
         {
             transform.localScale = Vector3.zero;
             _gameEventManager = gameEventManager;
@@ -83,7 +83,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
             _touchColliderConfig = GamePhysicsSystem.CreateColliderConfig(touchCollider);
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _touchColliderConfig, type, gameObject.layer, gameObject.tag);
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _deathColliderConfig, ObjectType.Death, gameObject.layer, gameObject.tag);
-
+            _playerInGameManager = playerInGameManager;
             for (int i = 0; i < trainParts.Count; i++)
             {
                 var trainPart = trainParts[i];
@@ -103,7 +103,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
             var playerIdentity = GameStaticExtensions.GetNetworkIdentity(trainAttackEvent.PlayerId);
             if (playerIdentity)
             {
-                var playerConnectionId = PlayerInGameManager.Instance.GetPlayerId(trainAttackEvent.PlayerId);
+                var playerConnectionId = _playerInGameManager.GetPlayerId(trainAttackEvent.PlayerId);
                 var rigidBody = playerIdentity.GetComponent<Rigidbody>();
                 //向玩家施加一个冲击力，基于火车运动的方向
                 Vector3 direction = (rigidBody.position - transform.position).normalized;
@@ -134,7 +134,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
             
             Debug.Log($"[TrainController] Take Train {takeEvent.PlayerId}");
 
-            var playerConnectionId = PlayerInGameManager.Instance.GetPlayerId(takeEvent.PlayerId);
+            var playerConnectionId = _playerInGameManager.GetPlayerId(takeEvent.PlayerId);
             var command = new PlayerStateChangedCommand();
             command.NewState = SubjectedStateType.IsCantMoved;
             command.Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Property);
@@ -220,7 +220,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
                 var identity = GameStaticExtensions.GetNetworkIdentity(player);
                 if (identity)
                 {
-                    var playerConnectionId = PlayerInGameManager.Instance.GetPlayerId(player);
+                    var playerConnectionId = _playerInGameManager.GetPlayerId(player);
                     var stateChangedCommand = new PlayerStateChangedCommand();
                     stateChangedCommand.NewState = SubjectedStateType.IsCantMoved;
                     stateChangedCommand.Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Property);

@@ -32,6 +32,13 @@ namespace HotUpdate.Scripts.Collector.Collects
         private KeyframeCooldown _keyframeCooldown;
         private CompositeDisposable _disposable = new CompositeDisposable();
         private GameSyncManager _gameSyncManager;
+        private PlayerInGameManager _playerInGameManager;
+
+        [Inject]
+        private void Init(PlayerInGameManager playerInGameManager)
+        {
+            _playerInGameManager = playerInGameManager;
+        }
 
         private void FixedUpdate()
         {
@@ -73,7 +80,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             }
             if (target.Type == ObjectType.Player)
             {
-                if (PlayerInGameManager.Instance.IsPlayerDead(target.NetId, out var countdown))
+                if (_playerInGameManager.IsPlayerDead(target.NetId, out var countdown))
                 {
                     return false;
                 }

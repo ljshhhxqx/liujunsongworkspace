@@ -26,6 +26,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         private Sequence _sequence;
         private PlayerHpItemData _data;
+        private int _localPlayerId;
         public int PlayerId { get; private set; }
         
         public override void SetData<T>(T data)
@@ -40,11 +41,12 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         {
             _data = playerHpItemData;
             PlayerId = playerHpItemData.PlayerId;
-            hpmpPanel.SetActive(PlayerId != PlayerInGameManager.Instance.LocalPlayerId);
+            _localPlayerId  = playerHpItemData.localPlayerId;
+            hpmpPanel.SetActive(PlayerId != _localPlayerId);
             nameText.text = playerHpItemData.Name;
             hpSlider.value = playerHpItemData.CurrentHp / playerHpItemData.MaxHp;
             mpSlider.value = playerHpItemData.CurrentMp / playerHpItemData.MaxMp;
-            if (PlayerId != PlayerInGameManager.Instance.LocalPlayerId)
+            if (PlayerId != _localPlayerId)
             {
                 SetDamageOrHealText((int)playerHpItemData.DiffValue, _data.PropertyType);
             }
@@ -56,7 +58,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             _sequence?.Kill();
             var isHeal = damageOrHeal > 0;
             var property = EnumHeaderParser.GetHeader(propertyType);
-            hpMpDamageText.gameObject.SetActive(PlayerId == PlayerInGameManager.Instance.LocalPlayerId);
+            hpMpDamageText.gameObject.SetActive(PlayerId == _localPlayerId);
             hpMpDamageText.text = isHeal ? $"{property}+{damageOrHeal}" : $"{property}-{damageOrHeal}";
             hpMpDamageText.transform.localPosition = Vector3.zero;
             hpMpDamageText.transform.localRotation = Quaternion.identity;

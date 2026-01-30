@@ -8,6 +8,7 @@ using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Static;
 using HotUpdate.Scripts.Tool.ObjectPool;
@@ -56,9 +57,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         public event Func<bool> IsInSpecialState;
 
         [Inject]
-        private void InitContainer(GameSyncManager gameSyncManager, IConfigProvider configProvider, UIManager uiManager)
+        private void InitContainer(GameSyncManager gameSyncManager, IConfigProvider configProvider, UIManager uiManager, PlayerInGameManager playerInGameManager)
         {
-            base.Init(gameSyncManager, configProvider);
+            base.Init(gameSyncManager, configProvider, playerInGameManager);
             _uiManager = uiManager;
             _propertyPredictionState = GetComponent<PropertyPredictionState>();
             _skillSyncState = GetComponent<PlayerSkillSyncState>();

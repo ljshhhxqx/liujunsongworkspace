@@ -33,10 +33,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         protected override CommandType CommandType => CommandType.Skill;
         
         [Inject]
-        private void Init(IConfigProvider configProvider, IObjectResolver resolver)
+        private void Init(IConfigProvider configProvider, IObjectResolver resolver, PlayerInGameManager playerInGameManager)
         {
             _skillConfig = configProvider.GetConfig<SkillConfig>();
-            _playerInGameManager = PlayerInGameManager.Instance;
+            _playerInGameManager = playerInGameManager;
             _gameObjectContainer = GameObjectContainer.Instance;
         }
 

@@ -23,6 +23,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
         private GameEventManager _gameEventManager;
         private GameSyncManager _gameSyncManager;
         private IAnimationCooldown _animationCooldown;
+        private PlayerInGameManager _playerInGameManager;
         protected override bool AutoInjectLocalPlayer => true;
         [SyncVar]
         private float _currentCd;
@@ -30,12 +31,13 @@ namespace HotUpdate.Scripts.Game.GamePlay
         private float _currentCount;
         
         [Inject]
-        private void Init(GameEventManager gameEventManager, IObjectResolver objectResolver, IConfigProvider configProvider)
+        private void Init(GameEventManager gameEventManager, IObjectResolver objectResolver, IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
         {
             _gameEventManager = gameEventManager;
             _collectData = configProvider.GetConfig<JsonDataConfig>().CollectData.mapElementData;
             _animationCooldown = new AnimationCooldown(AnimationState.None, _collectData.wellCd, 1);
             _currentCount = _collectData.wellCount;
+            _playerInGameManager = playerInGameManager;
             _gameSyncManager = objectResolver.Resolve<GameSyncManager>();
             _colliderConfig = GamePhysicsSystem.CreateColliderConfig(GetComponent<Collider>());
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _colliderConfig, ObjectType.Well, gameObject.layer, gameObject.tag);
@@ -63,7 +65,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
             {
                 return;
             }
-            var playerConnectionId = PlayerInGameManager.Instance.GetPlayerId(playerTouchWellEvent.PlayerId);
+            var playerConnectionId = _playerInGameManager.GetPlayerId(playerTouchWellEvent.PlayerId);
             var playerTouchObjectCommand = new PlayerTouchObjectCommand();
             playerTouchObjectCommand.Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Property);
             playerTouchObjectCommand.ObjectType = ObjectType.Well;

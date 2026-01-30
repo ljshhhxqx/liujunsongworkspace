@@ -108,7 +108,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
             else
             {
-                if (Physics.Raycast(PlayerInGameManager.Instance.GetPlayerPosition(header.ConnectionId),
+                if (Physics.Raycast(Constant.PlayerInGameManager.GetPlayerPosition(header.ConnectionId),
                         skillCommand.DirectionNormalized, out var hit, skillConfigData.maxDistance,
                         Constant.SceneLayerMask))
                 {
@@ -118,12 +118,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             if (position == Vector3.zero)
             {
                 //如果没有找到，就在玩家面朝方向最远处释放技能
-                position = PlayerInGameManager.Instance.GetPositionInPlayerDirection(header.ConnectionId, skillCommand.DirectionNormalized, skillConfigData.maxDistance);
+                position = Constant.PlayerInGameManager.GetPositionInPlayerDirection(header.ConnectionId, skillCommand.DirectionNormalized, skillConfigData.maxDistance);
             }
 
             var commonParam = new SkillCheckerParams
             {
-                PlayerPosition = PlayerInGameManager.Instance.GetPlayerPosition(header.ConnectionId),
+                PlayerPosition = Constant.PlayerInGameManager.GetPlayerPosition(header.ConnectionId),
                 TargetPosition = position,
                 Radius = skillConfigData.radius,
             };
@@ -189,5 +189,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public LayerMask SceneLayerMask;
         public bool IsServer;
         public uint CasterId;
+        public PlayerInGameManager PlayerInGameManager;
     }
 }

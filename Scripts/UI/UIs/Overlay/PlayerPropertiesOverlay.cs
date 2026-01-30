@@ -31,7 +31,6 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         [SerializeField]
         private FieldItem frameCount;
 
-        private PlayerInGameManager _playerInGameManager;
         private PlayerPropertyComponent _playerPropertyComponent;
         private PropertyConfig _propertyConfig;
 
@@ -41,7 +40,6 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         [Inject]
         private void Init(IConfigProvider configProvider)
         {
-            _playerInGameManager = PlayerInGameManager.Instance;
             _propertyConfig = configProvider.GetConfig<PropertyConfig>();
         }
 

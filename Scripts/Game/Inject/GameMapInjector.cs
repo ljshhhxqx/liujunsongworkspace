@@ -2,6 +2,7 @@
 using AOTScripts.Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using VContainer;
 using VContainer.Unity;
 
@@ -11,12 +12,13 @@ namespace HotUpdate.Scripts.Game.Inject
     {
         private readonly IObjectResolver _mainResolver;
         private readonly LifetimeScope _mapScope;
-        public MapType MapType => MapType.Town;
+        public MapType MapType { get; private set; }
 
         [Inject]
         public GameMapInjector(LifetimeScope mapScope)
         {
             _mapScope = mapScope;
+            MapType = (MapType)Enum.Parse(typeof(MapType), SceneManager.GetActiveScene().name);
             // 获取父容器（主容器）
             _mainResolver = mapScope.Parent.Container;
         }

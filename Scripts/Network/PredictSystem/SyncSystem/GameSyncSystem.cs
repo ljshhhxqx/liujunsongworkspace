@@ -6,6 +6,7 @@ using AOTScripts.Data;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
@@ -42,6 +43,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private bool _serverHandler;
         private GameEventManager _gameEventManager;
         private CancellationTokenSource _cts;
+        private PlayerInGameManager _playerInGameManager;
         private readonly Dictionary<int, PlayerComponentController> _playerComponentControllers = new Dictionary<int, PlayerComponentController>();
         private readonly Dictionary<uint, PlayerComponentController> _playerNetComponentControllers = new Dictionary<uint, PlayerComponentController>();
         private InteractSystem _interactSystem;
@@ -87,8 +89,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     Debug.Log($"No sync system found for {commandType}");
                     continue;
                 }
-                syncSystem.Initialize(this);
-                ObjectInjectProvider.Instance.Inject(syncSystem);
+                ObjectInjectProvider.Instance.InjectMap((MapType)GameLoopDataModel.GameSceneName.Value, syncSystem);
                 if (syncSystem is PlayerPropertySyncSystem playerPropertySyncSystem)
                 {
                     _playerPropertySyncSystem = playerPropertySyncSystem;
@@ -146,7 +147,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             Debug.Log("GameSyncManager OnGameStartEvent");
             isGameStart = true;
             OnGameStart?.Invoke(true);
-            PlayerInGameManager.Instance.isGameStarted = true;
+            _playerInGameManager.isGameStarted = true;
         }
 
         private void OnAllPlayerGetSpeed(AllPlayerGetSpeedEvent allPlayerGetSpeedEvent)
@@ -168,7 +169,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             if (newValue)
             {
-                PlayerInGameManager.Instance.RandomUnion(out var noUnionPlayerId);
+                _playerInGameManager.RandomUnion(out var noUnionPlayerId);
                 if (noUnionPlayerId != 0)
                 {
                     var command = new NoUnionPlayerAddMoreScoreAndGoldCommand
@@ -184,7 +185,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             if(!_serverHandler)
                 return;
-            PlayerInGameManager.Instance.RemovePlayer(disconnectEvent.ConnectionId);
+            _playerInGameManager.RemovePlayer(disconnectEvent.ConnectionId);
             OnPlayerDisconnected?.Invoke(disconnectEvent.ConnectionId);
             RpcPlayerDisconnect(disconnectEvent.ConnectionId);
         }
@@ -213,7 +214,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             if(_serverHandler)
                 return;
-            PlayerInGameManager.Instance.RemovePlayer(connectionId);
+            _playerInGameManager.RemovePlayer(connectionId);
             OnPlayerDisconnected?.Invoke(connectionId);
         }
         
@@ -235,7 +236,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             if (!_localPlayerNetComponentController)
             {
-                _localPlayerNetComponentController = GetPlayerConnection(PlayerInGameManager.Instance.LocalPlayerNetId);
+                _localPlayerNetComponentController = GetPlayerConnection(_playerInGameManager.LocalPlayerNetId);
             }
             return _localPlayerNetComponentController;
         }
@@ -279,14 +280,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 if (!_serverHandler)
                 {
-                    if (PlayerInGameManager.Instance.LocalPlayerId == connectionId)
+                    if (_playerInGameManager.LocalPlayerId == connectionId)
                     {
                         playerConnection = NetworkClient.connection.identity.GetComponent<PlayerComponentController>();
                         _playerComponentControllers.Add(connectionId, playerConnection);
                     }
                     else
                     {
-                        var playerNetId = PlayerInGameManager.Instance.GetPlayerNetId(connectionId);
+                        var playerNetId = _playerInGameManager.GetPlayerNetId(connectionId);
                         foreach (var identity in NetworkClient.spawned.Values)
                         {
                             if (playerNetId == identity.netId)

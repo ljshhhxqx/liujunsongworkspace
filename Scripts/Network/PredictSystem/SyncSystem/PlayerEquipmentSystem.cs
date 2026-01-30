@@ -25,9 +25,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         protected override CommandType CommandType => CommandType.Equipment;
 
         [Inject]
-        private void Init(IConfigProvider configProvider)
+        private void Init(IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
         {
-            _playerInGameManager = PlayerInGameManager.Instance;
+            _playerInGameManager = playerInGameManager;
             _configProvider = configProvider;
         }
 
@@ -121,7 +121,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 var battleConfigData = PlayerItemCalculator.GetBattleEffectConditionConfigData(data.Item2, data.Item3);
                 if (battleConfigData.id == 0)
                     return PropertyStates[header.ConnectionId];
-                var targetIds = PlayerInGameManager.Instance.GetPlayerIdsByTargetType(header.ConnectionId,
+                var targetIds = _playerInGameManager.GetPlayerIdsByTargetType(header.ConnectionId,
                     battleConfigData.targetCount, battleConfigData.targetType);
                 PlayerEquipmentCalculator.CommandTrigger(triggerCommand, ref playerEquipmentState, targetIds, data.Item3, data.Item2, data.Item1);
                 PropertyStates[header.ConnectionId] = playerEquipmentState;

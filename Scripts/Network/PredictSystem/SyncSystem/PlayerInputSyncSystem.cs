@@ -46,12 +46,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         protected override CommandType CommandType => CommandType.Input;
 
         [Inject]
-        private void InitContainers(IConfigProvider configProvider)
+        private void InitContainers(IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
         {
             _animationConfig = configProvider.GetConfig<AnimationConfig>();
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _skillConfig = configProvider.GetConfig<SkillConfig>();
-            _playerInGameManager = PlayerInGameManager.Instance;
+            _playerInGameManager = playerInGameManager;
         }
         protected override void OnGameStart(bool isGameStarted)
         {
