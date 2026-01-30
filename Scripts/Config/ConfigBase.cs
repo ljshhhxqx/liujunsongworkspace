@@ -65,14 +65,25 @@ namespace HotUpdate.Scripts.Config
 
         public virtual void Init(TextAsset textAsset = null)
         {
-            if (textAsset)
+            if (!textAsset)
             {
+                Debug.LogError($"[ConfigDebug] {ConfigName} TextAsset is NULL");
+            }
+            else
+            {
+                Debug.Log(
+                    $"[ConfigDebug] {ConfigName} " +
+                    $"assetName={textAsset.name}, " +
+                    $"textNull={textAsset.text == null}, " +
+                    $"textLen={textAsset.text?.Length ?? -1}"
+                );
                 LoadConfigData(textAsset);
             }
         }
         
         private void LoadConfigData(TextAsset textAsset = null)
         {
+
             if (textAsset)
             {
                 if (!isArray)
