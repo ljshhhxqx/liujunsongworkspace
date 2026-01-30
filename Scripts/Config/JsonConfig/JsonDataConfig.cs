@@ -6,6 +6,7 @@ using AOTScripts.Data;
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using UnityEngine;
 using AnimationInfo = HotUpdate.Scripts.Config.ArrayConfig.AnimationInfo;
 using AnimationState = AOTScripts.Data.AnimationState;
@@ -42,7 +43,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
 
         protected override void ReadFromJson(TextAsset textAsset)
         {
-            jsonConfigData = JsonUtility.FromJson<JsonConfigData>(textAsset.text);
+            jsonConfigData = BoxingFreeSerializer.JsonDeserialize<JsonConfigData>(textAsset.text);
         }
 
         protected override void ReadFromCsv(List<string[]> textAsset)
