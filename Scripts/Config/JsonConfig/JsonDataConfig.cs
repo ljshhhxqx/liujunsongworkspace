@@ -40,6 +40,11 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         //     if (_animationInfos.Count != 0) return;
         // }
 
+        protected override void ReadFromJson(TextAsset textAsset)
+        {
+            jsonConfigData = JsonUtility.FromJson<JsonConfigData>(textAsset.text);
+        }
+
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
             Debug.Log("JsonDataConfig is not support read from csv");

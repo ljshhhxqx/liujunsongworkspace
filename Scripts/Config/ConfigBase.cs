@@ -306,7 +306,7 @@ namespace HotUpdate.Scripts.Config
             return result;
         }
         
-        protected void ReadFromJson(TextAsset textAsset)
+        protected virtual void ReadFromJson(TextAsset textAsset)
         {
             JsonUtility.FromJsonOverwrite(textAsset.text, this);
             #if UNITY_EDITOR
