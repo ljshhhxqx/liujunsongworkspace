@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using AOTScripts.Data;
@@ -42,11 +43,35 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         //     if (_animationInfos.Count != 0) return;
         // }
 
+        public override void SaveJson()
+        {
+#if UNITY_EDITOR
+            var json = JsonUtility.ToJson(jsonConfigData, true);
+
+            // 创建保存路径
+            var path = jsonAssetReference;
+
+            // 如果文件夹不存在，则创建文件夹
+            if (!Directory.Exists(path.Path))
+            {
+                Directory.CreateDirectory(path.Path);
+            }
+
+            // 定义文件的保存路径和文件名
+            var filePath = Path.Combine(path.Path, $"{configName}.json");
+
+            // 将JSON字符串写入文件
+            File.WriteAllText(filePath, json);
+
+            // 输出日志确认保存成功
+            Debug.Log($"ScriptableObject saved to {filePath}");
+#endif
+        }
+
         protected override void ReadFromJson(TextAsset textAsset)
         {
             Debug.Log($"Read JsonDataConfig---{textAsset.text}");
-            var data = BoxingFreeSerializer.JsonDeserialize<JsonDataConfig>(textAsset.text);
-            jsonConfigData = data.jsonConfigData;
+            jsonConfigData = BoxingFreeSerializer.JsonDeserialize<JsonConfigData>(textAsset.text);
             Debug.Log($"JsonDataConfig---{jsonConfigData.gameConfig.fixedSpacing}");
         }
 

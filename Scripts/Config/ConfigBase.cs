@@ -32,7 +32,7 @@ namespace HotUpdate.Scripts.Config
         }
         
         [Button("保存为Json文件")]
-        public void SaveJson()
+        public virtual void SaveJson()
         {
 #if UNITY_EDITOR
             SaveToJson();

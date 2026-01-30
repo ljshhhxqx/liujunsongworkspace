@@ -1,1411 +1,1398 @@
 {
-    "excelAssetReference": {
-        "guid": "afcb27a37860bed489c689f04b28b549"
+    "playerConfig": {
+        "TurnSpeed": 1.2000000476837159,
+        "MouseSpeed": 1.0,
+        "Offset": {
+            "x": 0.0,
+            "y": 1.0,
+            "z": -3.0
+        },
+        "SprintSpeedFactor": 2.0,
+        "RotateSpeed": 7.0,
+        "OnStairsSpeedRatioFactor": 0.75,
+        "JumpSpeed": 50.0,
+        "RollForce": 35.0,
+        "InputBufferTick": 2,
+        "PlayerLayer": {
+            "serializedVersion": "2",
+            "m_Bits": 64
+        },
+        "NoUnionMoreGoldRatio": 1.0,
+        "NoUnionMoreScoreRatio": 1.0,
+        "SpeedToVelocityRatio": 1.100000023841858,
+        "MaxShopBuyDistance": 2.5,
+        "AttackComboWindow": 1.0,
+        "AttackComboMaxCount": 3
     },
-    "csvAssetReference": {
-        "guid": "f79490033f1ba7d4c817acd9581f3173"
-    },
-    "jsonAssetReference": {
-        "guid": "36a25296697c2fe44a5305e443be106f"
-    },
-    "configName": "JsonDataConfig",
-    "isArray": false,
-    "jsonConfigData": {
-        "playerConfig": {
-            "TurnSpeed": 1.2000000476837159,
-            "MouseSpeed": 1.0,
-            "Offset": {
+    "collectData": {
+        "itemSpacing": 3.0,
+        "maxGridItems": 10,
+        "itemHeight": 0.75,
+        "gridSize": 10.0,
+        "onceSpawnCount": 40,
+        "onceSpawnWeight": 100,
+        "spawnAttackRatio": 0.15000000596046449,
+        "spawnMoveRatio": 0.15000000596046449,
+        "spawnHiddenRatio": 0.05000000074505806,
+        "spawnAttackMoveRatio": 0.10000000149011612,
+        "spawnAttackHiddenRatio": 0.05000000074505806,
+        "spawnMoveHiddenRatio": 0.07000000029802323,
+        "spawnAttackMoveHiddenRatio": 0.019999999552965165,
+        "healthRange": {
+            "isPercent": false,
+            "min": 10.0,
+            "max": 100.0
+        },
+        "attackPowerRange": {
+            "isPercent": false,
+            "min": 7.0,
+            "max": 30.0
+        },
+        "attackCooldown": {
+            "isPercent": false,
+            "min": 0.75,
+            "max": 1.75
+        },
+        "bulletSpeedRange": {
+            "isPercent": false,
+            "min": 20.0,
+            "max": 50.0
+        },
+        "bulletLifeTimeRange": {
+            "isPercent": false,
+            "min": 1.0,
+            "max": 2.0
+        },
+        "attackRange": {
+            "isPercent": false,
+            "min": 0.5,
+            "max": 1.5
+        },
+        "criticalRateRange": {
+            "isPercent": false,
+            "min": 0.20000000298023225,
+            "max": 0.5
+        },
+        "criticalDamageRatioRange": {
+            "isPercent": false,
+            "min": 1.25,
+            "max": 2.0
+        },
+        "defenseRange": {
+            "isPercent": false,
+            "min": 3.0,
+            "max": 10.0
+        },
+        "lifeTimeRange": {
+            "isPercent": false,
+            "min": 1.0,
+            "max": 2.5
+        },
+        "bulletFrameData": {
+            "triggerTime": 0.3499999940395355,
+            "eventType": 2,
+            "resetCooldown": false,
+            "resetCooldownWindowTime": 0.0,
+            "tolerance": 0.10000000149011612,
+            "serverValidate": false
+        },
+        "attackFrameData": {
+            "triggerTime": 0.20000000298023225,
+            "eventType": 2,
+            "resetCooldown": false,
+            "resetCooldownWindowTime": 0.0,
+            "tolerance": 0.10000000149011612,
+            "serverValidate": false
+        },
+        "speedRange": {
+            "isPercent": false,
+            "min": 0.5,
+            "max": 2.0
+        },
+        "rotateSpeedRange": {
+            "isPercent": false,
+            "min": 1.5,
+            "max": 6.0
+        },
+        "patternAmplitudeRange": {
+            "isPercent": false,
+            "min": 1.0,
+            "max": 3.0
+        },
+        "patternFrequencyRange": {
+            "isPercent": false,
+            "min": 1.0,
+            "max": 3.0
+        },
+        "commonPeriodicMovementConfig": {
+            "pathType": 2,
+            "moveSpeed": 2.0,
+            "amplitude": 3.0,
+            "frequency": 1.0,
+            "axisMultiplier": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "waypoints": [],
+            "loopWaypoints": true,
+            "timeCounter": 0.0
+        },
+        "commonEvasiveMovementConfig": {
+            "detectionRadius": 8.0,
+            "escapeSpeed": 4.0,
+            "wanderSpeed": 1.5,
+            "minSafeDistance": 3.0,
+            "directionChangeInterval": 2.0,
+            "playerPredictionFactor": 0.5,
+            "wanderTarget": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "useObstacleAvoidance": true,
+            "avoidanceWeight": 2.0,
+            "canJump": false,
+            "jumpChance": 0.10000000149011612
+        },
+        "commonBouncingMovementConfig": {
+            "bounceHeight": 4.0,
+            "bounceSpeed": 6.0,
+            "bounceDecay": 0.8999999761581421,
+            "minBounceHeight": 0.6000000238418579,
+            "bounceDirection": {
                 "x": 0.0,
                 "y": 1.0,
-                "z": -3.0
-            },
-            "SprintSpeedFactor": 2.0,
-            "RotateSpeed": 7.0,
-            "OnStairsSpeedRatioFactor": 0.75,
-            "JumpSpeed": 50.0,
-            "RollForce": 35.0,
-            "InputBufferTick": 2,
-            "PlayerLayer": {
-                "serializedVersion": "2",
-                "m_Bits": 64
-            },
-            "NoUnionMoreGoldRatio": 1.0,
-            "NoUnionMoreScoreRatio": 1.0,
-            "SpeedToVelocityRatio": 1.100000023841858,
-            "MaxShopBuyDistance": 2.5,
-            "AttackComboWindow": 1.0,
-            "AttackComboMaxCount": 3
-        },
-        "collectData": {
-            "itemSpacing": 3.0,
-            "maxGridItems": 10,
-            "itemHeight": 0.75,
-            "gridSize": 10.0,
-            "onceSpawnCount": 40,
-            "onceSpawnWeight": 100,
-            "spawnAttackRatio": 0.15000000596046449,
-            "spawnMoveRatio": 0.15000000596046449,
-            "spawnHiddenRatio": 0.05000000074505806,
-            "spawnAttackMoveRatio": 0.10000000149011612,
-            "spawnAttackHiddenRatio": 0.05000000074505806,
-            "spawnMoveHiddenRatio": 0.07000000029802323,
-            "spawnAttackMoveHiddenRatio": 0.019999999552965165,
-            "healthRange": {
-                "isPercent": false,
-                "min": 10.0,
-                "max": 100.0
-            },
-            "attackPowerRange": {
-                "isPercent": false,
-                "min": 7.0,
-                "max": 30.0
-            },
-            "attackCooldown": {
-                "isPercent": false,
-                "min": 0.75,
-                "max": 1.75
-            },
-            "bulletSpeedRange": {
-                "isPercent": false,
-                "min": 20.0,
-                "max": 50.0
-            },
-            "bulletLifeTimeRange": {
-                "isPercent": false,
-                "min": 1.0,
-                "max": 2.0
-            },
-            "attackRange": {
-                "isPercent": false,
-                "min": 0.5,
-                "max": 1.5
-            },
-            "criticalRateRange": {
-                "isPercent": false,
-                "min": 0.20000000298023225,
-                "max": 0.5
-            },
-            "criticalDamageRatioRange": {
-                "isPercent": false,
-                "min": 1.25,
-                "max": 2.0
-            },
-            "defenseRange": {
-                "isPercent": false,
-                "min": 3.0,
-                "max": 10.0
-            },
-            "lifeTimeRange": {
-                "isPercent": false,
-                "min": 1.0,
-                "max": 2.5
-            },
-            "bulletFrameData": {
-                "triggerTime": 0.3499999940395355,
-                "eventType": 2,
-                "resetCooldown": false,
-                "resetCooldownWindowTime": 0.0,
-                "tolerance": 0.10000000149011612,
-                "serverValidate": false
-            },
-            "attackFrameData": {
-                "triggerTime": 0.20000000298023225,
-                "eventType": 2,
-                "resetCooldown": false,
-                "resetCooldownWindowTime": 0.0,
-                "tolerance": 0.10000000149011612,
-                "serverValidate": false
-            },
-            "speedRange": {
-                "isPercent": false,
-                "min": 0.5,
-                "max": 2.0
-            },
-            "rotateSpeedRange": {
-                "isPercent": false,
-                "min": 1.5,
-                "max": 6.0
-            },
-            "patternAmplitudeRange": {
-                "isPercent": false,
-                "min": 1.0,
-                "max": 3.0
-            },
-            "patternFrequencyRange": {
-                "isPercent": false,
-                "min": 1.0,
-                "max": 3.0
-            },
-            "commonPeriodicMovementConfig": {
-                "pathType": 2,
-                "moveSpeed": 2.0,
-                "amplitude": 3.0,
-                "frequency": 1.0,
-                "axisMultiplier": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "waypoints": [],
-                "loopWaypoints": true,
-                "timeCounter": 0.0
-            },
-            "commonEvasiveMovementConfig": {
-                "detectionRadius": 8.0,
-                "escapeSpeed": 4.0,
-                "wanderSpeed": 1.5,
-                "minSafeDistance": 3.0,
-                "directionChangeInterval": 2.0,
-                "playerPredictionFactor": 0.5,
-                "wanderTarget": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "useObstacleAvoidance": true,
-                "avoidanceWeight": 2.0,
-                "canJump": false,
-                "jumpChance": 0.10000000149011612
-            },
-            "commonBouncingMovementConfig": {
-                "bounceHeight": 4.0,
-                "bounceSpeed": 6.0,
-                "bounceDecay": 0.8999999761581421,
-                "minBounceHeight": 0.6000000238418579,
-                "bounceDirection": {
-                    "x": 0.0,
-                    "y": 1.0,
-                    "z": 0.0
-                },
-                "groundLevel": 0.5
-            },
-            "translucenceRange": {
-                "isPercent": false,
-                "min": 0.5,
-                "max": 0.800000011920929
-            },
-            "mysteryTimeRange": {
-                "isPercent": false,
-                "min": 0.15000000596046449,
-                "max": 1.0
-            },
-            "translucenceTimeRange": {
-                "isPercent": false,
-                "min": 0.15000000596046449,
-                "max": 1.0
-            },
-            "explodeRange": {
-                "isPercent": false,
-                "min": 1.0,
-                "max": 3.0
-            },
-            "explodeCriticalRate": 1.0,
-            "explodeCriticalDamageRatio": 2.0,
-            "mapElementData": {
-                "touchWellRecoverHp": {
-                    "isPercent": false,
-                    "min": 30.0,
-                    "max": 80.0
-                },
-                "touchRocketGainScore": {
-                    "isPercent": false,
-                    "min": 150.0,
-                    "max": 250.0
-                },
-                "touchTrainGainScore": {
-                    "isPercent": false,
-                    "min": 100.0,
-                    "max": 175.0
-                },
-                "touchWellTime": 3.0,
-                "touchRocketTime": 1.5,
-                "touchTrainTime": 1.0,
-                "touchChestTime": 1.0,
-                "wellCount": 3.0,
-                "wellCd": 15.0,
-                "spawnRockerPosition": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "spawnTrainPosition": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "rocketPositions": [
-                    {
-                        "vectors": [
-                            {
-                                "x": 0.0,
-                                "y": -50.0,
-                                "z": 0.0
-                            },
-                            {
-                                "x": 0.0,
-                                "y": 30.0,
-                                "z": 0.0
-                            }
-                        ],
-                        "rotation": {
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0,
-                            "w": 0.0
-                        }
-                    }
-                ],
-                "trainPositions": [
-                    {
-                        "vectors": [
-                            {
-                                "x": -61.38999938964844,
-                                "y": 5.0,
-                                "z": 2.0899999141693117
-                            },
-                            {
-                                "x": 69.91000366210938,
-                                "y": 5.0,
-                                "z": 2.0899999141693117
-                            }
-                        ],
-                        "rotation": {
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0,
-                            "w": 0.0
-                        }
-                    },
-                    {
-                        "vectors": [
-                            {
-                                "x": 103.19000244140625,
-                                "y": 5.0,
-                                "z": 2.0899999141693117
-                            },
-                            {
-                                "x": -29.399999618530275,
-                                "y": 5.0,
-                                "z": 2.0899999141693117
-                            }
-                        ],
-                        "rotation": {
-                            "x": 0.0,
-                            "y": 1.0,
-                            "z": 0.0,
-                            "w": -4.371138828673793e-8
-                        }
-                    },
-                    {
-                        "vectors": [
-                            {
-                                "x": -61.38999938964844,
-                                "y": 5.0,
-                                "z": 9.09000015258789
-                            },
-                            {
-                                "x": 69.91000366210938,
-                                "y": 5.0,
-                                "z": 9.09000015258789
-                            }
-                        ],
-                        "rotation": {
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0,
-                            "w": 0.0
-                        }
-                    },
-                    {
-                        "vectors": [
-                            {
-                                "x": 106.69999694824219,
-                                "y": 5.0,
-                                "z": 9.09000015258789
-                            },
-                            {
-                                "x": -25.200000762939454,
-                                "y": 5.0,
-                                "z": 9.09000015258789
-                            }
-                        ],
-                        "rotation": {
-                            "x": 0.0,
-                            "y": 1.0,
-                            "z": 0.0,
-                            "w": -4.371138828673793e-8
-                        }
-                    }
-                ],
-                "durationRange": {
-                    "isPercent": false,
-                    "min": 17.0,
-                    "max": 25.0
-                }
-            }
-        },
-        "damageData": {
-            "defenseRatio": 15.0,
-            "amplificationRatio": 0.0,
-            "elementalMasteryBuff": 0.0,
-            "playerGaugeUnitRatio": 0.0,
-            "enemyGaugeUnitRatio": 0.0,
-            "environmentGaugeUnitRatio": 0.0,
-            "rareBuffWeightRange": {
-                "isPercent": false,
-                "min": 0.0,
-                "max": 0.0
-            },
-            "legendaryBuffWeightRange": {
-                "isPercent": false,
-                "min": 0.0,
-                "max": 0.0
-            }
-        },
-        "buffConstantData": {
-            "buffSizeDataList": [
-                {
-                    "collectObjectBuffSize": 1,
-                    "ratio": 1.0
-                },
-                {
-                    "collectObjectBuffSize": 2,
-                    "ratio": 1.5
-                },
-                {
-                    "collectObjectBuffSize": 3,
-                    "ratio": 2.0
-                }
-            ]
-        },
-        "gameConfig": {
-            "groundSceneLayer": {
-                "serializedVersion": "2",
-                "m_Bits": 128
-            },
-            "syncTime": 0.01600000075995922,
-            "gridSize": 4.0,
-            "safetyMargin": 5.0,
-            "fixedSpacing": 1.0,
-            "warmupTime": 3.0,
-            "developKey": "DevelopKey",
-            "developKeyValue": "MultiplayerDemo",
-            "stairSceneLayer": {
-                "serializedVersion": "2",
-                "m_Bits": 256
-            },
-            "safePosition": {
-                "x": 0.0,
-                "y": 3.0,
                 "z": 0.0
             },
-            "safeHorizontalOffsetY": -10.0,
-            "groundMinDistance": 0.10000000149011612,
-            "groundMaxDistance": 0.25,
-            "maxSlopeAngle": 45.0,
-            "stairsCheckDistance": 0.75,
-            "tickRate": 50.0,
-            "stateUpdateInterval": 0.20000000298023225,
-            "serverInputRate": 0.019999999552965165,
-            "inputThreshold": 0.10000000149011612,
-            "maxCommandAge": 5.0,
-            "uiUpdateInterval": 0.5,
-            "roundInterval": 30.0,
-            "maxTraceDistance": 10.0,
-            "maxViewAngle": 180.0,
-            "obstacleCheckRadius": 0.5,
-            "screenBorderOffset": 1.0,
-            "gameBaseData": {
-                "playerBaseHpRecoverRatioPerSec": 25.0,
-                "playerBaseManaRecoverRatioPerSec": 25.0,
-                "basePositions": [
-                    {
-                        "mapType": 0,
-                        "basePositions": [
-                            {
-                                "x": -13.899999618530274,
-                                "y": 0.0,
-                                "z": -20.049999237060548
-                            },
-                            {
-                                "x": -13.899999618530274,
-                                "y": 0.0,
-                                "z": 20.049999237060548
-                            },
-                            {
-                                "x": 41.900001525878909,
-                                "y": 0.0,
-                                "z": 20.049999237060548
-                            },
-                            {
-                                "x": 41.900001525878909,
-                                "y": 0.0,
-                                "z": -20.049999237060548
-                            }
-                        ]
-                    },
-                    {
-                        "mapType": 1,
-                        "basePositions": [
-                            {
-                                "x": -27.700000762939454,
-                                "y": 3.1600000858306886,
-                                "z": -28.719999313354493
-                            },
-                            {
-                                "x": -27.700000762939454,
-                                "y": 2.5799999237060549,
-                                "z": 28.829999923706056
-                            },
-                            {
-                                "x": 27.700000762939454,
-                                "y": 3.799999952316284,
-                                "z": -28.719999313354493
-                            },
-                            {
-                                "x": 27.700000762939454,
-                                "y": 3.0,
-                                "z": 28.829999923706056
-                            }
-                        ]
-                    },
-                    {
-                        "mapType": 2,
-                        "basePositions": [
-                            {
-                                "x": -61.43000030517578,
-                                "y": 4.0,
-                                "z": -24.3799991607666
-                            },
-                            {
-                                "x": -67.81999969482422,
-                                "y": 4.0,
-                                "z": 19.860000610351564
-                            },
-                            {
-                                "x": 11.699999809265137,
-                                "y": 4.0,
-                                "z": -20.350000381469728
-                            },
-                            {
-                                "x": 12.710000038146973,
-                                "y": 4.0,
-                                "z": 20.0
-                            }
-                        ]
-                    },
-                    {
-                        "mapType": 3,
-                        "basePositions": [
-                            {
-                                "x": -0.19200000166893006,
-                                "y": 4.0,
-                                "z": -41.040000915527347
-                            },
-                            {
-                                "x": 17.799999237060548,
-                                "y": 4.0,
-                                "z": -38.79999923706055
-                            },
-                            {
-                                "x": 34.849998474121097,
-                                "y": 4.0,
-                                "z": -39.900001525878909
-                            },
-                            {
-                                "x": 54.2599983215332,
-                                "y": 4.0,
-                                "z": -33.439998626708987
-                            }
-                        ]
-                    }
-                ],
-                "baseCenter": {
-                    "x": 0.0,
-                    "y": 2.0,
-                    "z": 0.0
-                },
-                "baseRadius": 1.7000000476837159,
-                "baseHeight": 7.0,
-                "baseDirection": 1
-            },
-            "minUnionPlayerCount": 2,
-            "playerHpRatioToWarning": 0.30000001192092898,
-            "basePrefabName": "PlayerBase",
-            "noUnionTime": 30.0,
-            "playerPrefabName": "MPlayer"
+            "groundLevel": 0.5
         },
-        "dayNightCycleData": {
-            "timeMultiplier": 60.0,
-            "weatherChangeTime": 150.0,
-            "sunriseTime": 21600.0,
-            "sunsetTime": 64800.0,
-            "dayLightColor": {
-                "serializedVersion": "2",
-                "key0": {
-                    "r": 0.97686767578125,
-                    "g": 1.0,
-                    "b": 0.22506725788116456,
-                    "a": 1.0
-                },
-                "key1": {
-                    "r": 1.0,
-                    "g": 1.0,
-                    "b": 1.0,
-                    "a": 1.0
-                },
-                "key2": {
-                    "r": 1.0,
-                    "g": 1.0,
-                    "b": 1.0,
-                    "a": 0.0
-                },
-                "key3": {
-                    "r": 0.9943180680274963,
-                    "g": 1.0,
-                    "b": 0.2897573709487915,
-                    "a": 0.0
-                },
-                "key4": {
-                    "r": 0.0,
-                    "g": 0.0,
-                    "b": 0.0,
-                    "a": 0.0
-                },
-                "key5": {
-                    "r": 0.0,
-                    "g": 0.0,
-                    "b": 0.0,
-                    "a": 0.0
-                },
-                "key6": {
-                    "r": 0.0,
-                    "g": 0.0,
-                    "b": 0.0,
-                    "a": 0.0
-                },
-                "key7": {
-                    "r": 0.0,
-                    "g": 0.0,
-                    "b": 0.0,
-                    "a": 0.0
-                },
-                "ctime0": 0,
-                "ctime1": 6125,
-                "ctime2": 59410,
-                "ctime3": 65535,
-                "ctime4": 0,
-                "ctime5": 0,
-                "ctime6": 0,
-                "ctime7": 0,
-                "atime0": 0,
-                "atime1": 65535,
-                "atime2": 0,
-                "atime3": 0,
-                "atime4": 0,
-                "atime5": 0,
-                "atime6": 0,
-                "atime7": 0,
-                "m_Mode": 0,
-                "m_ColorSpace": -1,
-                "m_NumColorKeys": 4,
-                "m_NumAlphaKeys": 2
-            },
-            "nightColor": {
-                "serializedVersion": "2",
-                "key0": {
-                    "r": 1.0,
-                    "g": 0.8941177129745483,
-                    "b": 0.1764705926179886,
-                    "a": 1.0
-                },
-                "key1": {
-                    "r": 0.08235294371843338,
-                    "g": 0.0,
-                    "b": 0.6431372761726379,
-                    "a": 1.0
-                },
-                "key2": {
-                    "r": 0.23989206552505494,
-                    "g": 0.23989206552505494,
-                    "b": 0.23989206552505494,
-                    "a": 0.0
-                },
-                "key3": {
-                    "r": 0.2392157018184662,
-                    "g": 0.2352941334247589,
-                    "b": 0.24313727021217347,
-                    "a": 0.0
-                },
-                "key4": {
-                    "r": 0.0941176563501358,
-                    "g": 0.007843137718737126,
-                    "b": 0.615686297416687,
-                    "a": 0.0
-                },
-                "key5": {
-                    "r": 1.0,
-                    "g": 0.8932176828384399,
-                    "b": 0.1765497922897339,
-                    "a": 0.0
-                },
-                "key6": {
-                    "r": 0.0,
-                    "g": 0.0,
-                    "b": 0.0,
-                    "a": 0.0
-                },
-                "key7": {
-                    "r": 0.0,
-                    "g": 0.0,
-                    "b": 0.0,
-                    "a": 0.0
-                },
-                "ctime0": 0,
-                "ctime1": 11865,
-                "ctime2": 16148,
-                "ctime3": 47245,
-                "ctime4": 54013,
-                "ctime5": 65535,
-                "ctime6": 0,
-                "ctime7": 0,
-                "atime0": 0,
-                "atime1": 65535,
-                "atime2": 0,
-                "atime3": 0,
-                "atime4": 0,
-                "atime5": 0,
-                "atime6": 0,
-                "atime7": 0,
-                "m_Mode": 0,
-                "m_ColorSpace": -1,
-                "m_NumColorKeys": 6,
-                "m_NumAlphaKeys": 2
-            },
-            "oneDayDuration": 86400.0,
-            "minLightIntensity": 0.20000000298023225,
-            "cloudColorGradients": [
-                {
-                    "weatherType": 1,
-                    "cloudColor": {
-                        "serializedVersion": "2",
-                        "key0": {
-                            "r": 0.1752021312713623,
-                            "g": 0.1752021312713623,
-                            "b": 0.1752021312713623,
-                            "a": 0.6823529601097107
-                        },
-                        "key1": {
-                            "r": 0.1764705926179886,
-                            "g": 0.1764705926179886,
-                            "b": 0.1764705926179886,
-                            "a": 0.6823529601097107
-                        },
-                        "key2": {
-                            "r": 0.881401538848877,
-                            "g": 0.5032246708869934,
-                            "b": 0.0,
-                            "a": 0.0
-                        },
-                        "key3": {
-                            "r": 1.0,
-                            "g": 1.0,
-                            "b": 1.0,
-                            "a": 0.0
-                        },
-                        "key4": {
-                            "r": 1.0,
-                            "g": 1.0,
-                            "b": 1.0,
-                            "a": 0.0
-                        },
-                        "key5": {
-                            "r": 0.8823530077934265,
-                            "g": 0.501960813999176,
-                            "b": 0.0,
-                            "a": 0.0
-                        },
-                        "key6": {
-                            "r": 0.1764705926179886,
-                            "g": 0.1764705926179886,
-                            "b": 0.1764705926179886,
-                            "a": 0.0
-                        },
-                        "key7": {
-                            "r": 0.1764705926179886,
-                            "g": 0.1764705926179886,
-                            "b": 0.1764705926179886,
-                            "a": 0.0
-                        },
-                        "ctime0": 0,
-                        "ctime1": 11694,
-                        "ctime2": 15206,
-                        "ctime3": 18376,
-                        "ctime4": 45532,
-                        "ctime5": 49044,
-                        "ctime6": 52557,
-                        "ctime7": 65535,
-                        "atime0": 0,
-                        "atime1": 65535,
-                        "atime2": 0,
-                        "atime3": 0,
-                        "atime4": 0,
-                        "atime5": 0,
-                        "atime6": 0,
-                        "atime7": 0,
-                        "m_Mode": 0,
-                        "m_ColorSpace": -1,
-                        "m_NumColorKeys": 8,
-                        "m_NumAlphaKeys": 2
-                    }
-                },
-                {
-                    "weatherType": 2,
-                    "cloudColor": {
-                        "serializedVersion": "2",
-                        "key0": {
-                            "r": 0.1752021312713623,
-                            "g": 0.1752021312713623,
-                            "b": 0.1752021312713623,
-                            "a": 0.9176470637321472
-                        },
-                        "key1": {
-                            "r": 0.1764705926179886,
-                            "g": 0.1764705926179886,
-                            "b": 0.1764705926179886,
-                            "a": 0.9215686321258545
-                        },
-                        "key2": {
-                            "r": 0.881401538848877,
-                            "g": 0.5032246708869934,
-                            "b": 0.0,
-                            "a": 0.0
-                        },
-                        "key3": {
-                            "r": 1.0,
-                            "g": 1.0,
-                            "b": 1.0,
-                            "a": 0.0
-                        },
-                        "key4": {
-                            "r": 1.0,
-                            "g": 1.0,
-                            "b": 1.0,
-                            "a": 0.0
-                        },
-                        "key5": {
-                            "r": 0.8823530077934265,
-                            "g": 0.501960813999176,
-                            "b": 0.0,
-                            "a": 0.0
-                        },
-                        "key6": {
-                            "r": 0.1764705926179886,
-                            "g": 0.1764705926179886,
-                            "b": 0.1764705926179886,
-                            "a": 0.0
-                        },
-                        "key7": {
-                            "r": 0.1764705926179886,
-                            "g": 0.1764705926179886,
-                            "b": 0.1764705926179886,
-                            "a": 0.0
-                        },
-                        "ctime0": 0,
-                        "ctime1": 11694,
-                        "ctime2": 15206,
-                        "ctime3": 18376,
-                        "ctime4": 45532,
-                        "ctime5": 49044,
-                        "ctime6": 52557,
-                        "ctime7": 65535,
-                        "atime0": 0,
-                        "atime1": 65535,
-                        "atime2": 0,
-                        "atime3": 0,
-                        "atime4": 0,
-                        "atime5": 0,
-                        "atime6": 0,
-                        "atime7": 0,
-                        "m_Mode": 0,
-                        "m_ColorSpace": -1,
-                        "m_NumColorKeys": 8,
-                        "m_NumAlphaKeys": 2
-                    }
-                },
-                {
-                    "weatherType": 3,
-                    "cloudColor": {
-                        "serializedVersion": "2",
-                        "key0": {
-                            "r": 0.1752021312713623,
-                            "g": 0.1752021312713623,
-                            "b": 0.1752021312713623,
-                            "a": 0.9333333373069763
-                        },
-                        "key1": {
-                            "r": 0.1764705926179886,
-                            "g": 0.1764705926179886,
-                            "b": 0.1764705926179886,
-                            "a": 0.929411768913269
-                        },
-                        "key2": {
-                            "r": 0.8382748961448669,
-                            "g": 0.8382748961448669,
-                            "b": 0.8382748961448669,
-                            "a": 0.0
-                        },
-                        "key3": {
-                            "r": 0.8328840136528015,
-                            "g": 0.8328840136528015,
-                            "b": 0.8328840136528015,
-                            "a": 0.0
-                        },
-                        "key4": {
-                            "r": 1.0,
-                            "g": 1.0,
-                            "b": 1.0,
-                            "a": 0.0
-                        },
-                        "key5": {
-                            "r": 0.7951481342315674,
-                            "g": 0.7951481342315674,
-                            "b": 0.7951481342315674,
-                            "a": 0.0
-                        },
-                        "key6": {
-                            "r": 0.1764705926179886,
-                            "g": 0.1764705926179886,
-                            "b": 0.1764705926179886,
-                            "a": 0.0
-                        },
-                        "key7": {
-                            "r": 0.1764705926179886,
-                            "g": 0.1764705926179886,
-                            "b": 0.1764705926179886,
-                            "a": 0.0
-                        },
-                        "ctime0": 0,
-                        "ctime1": 11694,
-                        "ctime2": 15206,
-                        "ctime3": 18376,
-                        "ctime4": 45532,
-                        "ctime5": 49044,
-                        "ctime6": 52557,
-                        "ctime7": 65535,
-                        "atime0": 0,
-                        "atime1": 65535,
-                        "atime2": 0,
-                        "atime3": 0,
-                        "atime4": 0,
-                        "atime5": 0,
-                        "atime6": 0,
-                        "atime7": 0,
-                        "m_Mode": 0,
-                        "m_ColorSpace": -1,
-                        "m_NumColorKeys": 8,
-                        "m_NumAlphaKeys": 2
-                    }
-                },
-                {
-                    "weatherType": 4,
-                    "cloudColor": {
-                        "serializedVersion": "2",
-                        "key0": {
-                            "r": 0.1752021312713623,
-                            "g": 0.1752021312713623,
-                            "b": 0.1752021312713623,
-                            "a": 0.9333333373069763
-                        },
-                        "key1": {
-                            "r": 0.1764705926179886,
-                            "g": 0.1764705926179886,
-                            "b": 0.1764705926179886,
-                            "a": 0.929411768913269
-                        },
-                        "key2": {
-                            "r": 0.8382748961448669,
-                            "g": 0.8382748961448669,
-                            "b": 0.8382748961448669,
-                            "a": 0.0
-                        },
-                        "key3": {
-                            "r": 0.8328840136528015,
-                            "g": 0.8328840136528015,
-                            "b": 0.8328840136528015,
-                            "a": 0.0
-                        },
-                        "key4": {
-                            "r": 1.0,
-                            "g": 1.0,
-                            "b": 1.0,
-                            "a": 0.0
-                        },
-                        "key5": {
-                            "r": 0.7951481342315674,
-                            "g": 0.7951481342315674,
-                            "b": 0.7951481342315674,
-                            "a": 0.0
-                        },
-                        "key6": {
-                            "r": 0.1764705926179886,
-                            "g": 0.1764705926179886,
-                            "b": 0.1764705926179886,
-                            "a": 0.0
-                        },
-                        "key7": {
-                            "r": 0.1764705926179886,
-                            "g": 0.1764705926179886,
-                            "b": 0.1764705926179886,
-                            "a": 0.0
-                        },
-                        "ctime0": 0,
-                        "ctime1": 11694,
-                        "ctime2": 15206,
-                        "ctime3": 18376,
-                        "ctime4": 45532,
-                        "ctime5": 49044,
-                        "ctime6": 52557,
-                        "ctime7": 65535,
-                        "atime0": 0,
-                        "atime1": 65535,
-                        "atime2": 0,
-                        "atime3": 0,
-                        "atime4": 0,
-                        "atime5": 0,
-                        "atime6": 0,
-                        "atime7": 0,
-                        "m_Mode": 0,
-                        "m_ColorSpace": -1,
-                        "m_NumColorKeys": 8,
-                        "m_NumAlphaKeys": 2
-                    }
-                }
-            ]
+        "translucenceRange": {
+            "isPercent": false,
+            "min": 0.5,
+            "max": 0.800000011920929
         },
-        "chestCommonData": {
-            "OpenSpeed": 1.5,
-            "InitEulerAngles": {
+        "mysteryTimeRange": {
+            "isPercent": false,
+            "min": 0.15000000596046449,
+            "max": 1.0
+        },
+        "translucenceTimeRange": {
+            "isPercent": false,
+            "min": 0.15000000596046449,
+            "max": 1.0
+        },
+        "explodeRange": {
+            "isPercent": false,
+            "min": 1.0,
+            "max": 3.0
+        },
+        "explodeCriticalRate": 1.0,
+        "explodeCriticalDamageRatio": 2.0,
+        "mapElementData": {
+            "touchWellRecoverHp": {
+                "isPercent": false,
+                "min": 30.0,
+                "max": 80.0
+            },
+            "touchRocketGainScore": {
+                "isPercent": false,
+                "min": 150.0,
+                "max": 250.0
+            },
+            "touchTrainGainScore": {
+                "isPercent": false,
+                "min": 100.0,
+                "max": 175.0
+            },
+            "touchWellTime": 3.0,
+            "touchRocketTime": 1.5,
+            "touchTrainTime": 1.0,
+            "touchChestTime": 1.0,
+            "wellCount": 3.0,
+            "wellCd": 15.0,
+            "spawnRockerPosition": {
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
             },
-            "EndEulerAngles": {
-                "x": -90.0,
+            "spawnTrainPosition": {
+                "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
+            },
+            "rocketPositions": [
+                {
+                    "vectors": [
+                        {
+                            "x": 0.0,
+                            "y": -50.0,
+                            "z": 0.0
+                        },
+                        {
+                            "x": 0.0,
+                            "y": 30.0,
+                            "z": 0.0
+                        }
+                    ],
+                    "rotation": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0,
+                        "w": 0.0
+                    }
+                }
+            ],
+            "trainPositions": [
+                {
+                    "vectors": [
+                        {
+                            "x": -61.38999938964844,
+                            "y": 5.0,
+                            "z": 2.0899999141693117
+                        },
+                        {
+                            "x": 69.91000366210938,
+                            "y": 5.0,
+                            "z": 2.0899999141693117
+                        }
+                    ],
+                    "rotation": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0,
+                        "w": 0.0
+                    }
+                },
+                {
+                    "vectors": [
+                        {
+                            "x": 103.19000244140625,
+                            "y": 5.0,
+                            "z": 2.0899999141693117
+                        },
+                        {
+                            "x": -29.399999618530275,
+                            "y": 5.0,
+                            "z": 2.0899999141693117
+                        }
+                    ],
+                    "rotation": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0,
+                        "w": -4.371138828673793e-8
+                    }
+                },
+                {
+                    "vectors": [
+                        {
+                            "x": -61.38999938964844,
+                            "y": 5.0,
+                            "z": 9.09000015258789
+                        },
+                        {
+                            "x": 69.91000366210938,
+                            "y": 5.0,
+                            "z": 9.09000015258789
+                        }
+                    ],
+                    "rotation": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0,
+                        "w": 0.0
+                    }
+                },
+                {
+                    "vectors": [
+                        {
+                            "x": 106.69999694824219,
+                            "y": 5.0,
+                            "z": 9.09000015258789
+                        },
+                        {
+                            "x": -25.200000762939454,
+                            "y": 5.0,
+                            "z": 9.09000015258789
+                        }
+                    ],
+                    "rotation": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0,
+                        "w": -4.371138828673793e-8
+                    }
+                }
+            ],
+            "durationRange": {
+                "isPercent": false,
+                "min": 17.0,
+                "max": 25.0
             }
-        },
-        "weatherData": {
-            "weatherChangeTime": 10.0,
-            "maxTransitionDuration": 25.0,
-            "minTransitionDuration": 10.0
-        },
-        "gameModeData": {
-            "times": [
-                180,
-                240,
-                300,
-                500
-            ],
-            "scores": [
-                2500,
-                5000,
-                10000,
-                20000
-            ]
-        },
-        "bagCommonData": {
-            "maxBagCount": 12,
-            "maxStack": 99
-        },
-        "propertyValueData": {
-            "propertyWeightData": [
-                {
-                    "equipmentPart": 1,
-                    "propertyWeightList": [
-                        {
-                            "propertyType": 6,
-                            "buffIncreaseType": 3,
-                            "weight": 0.5
-                        },
-                        {
-                            "propertyType": 7,
-                            "buffIncreaseType": 3,
-                            "weight": 0.5
-                        }
-                    ]
-                },
-                {
-                    "equipmentPart": 2,
-                    "propertyWeightList": [
-                        {
-                            "propertyType": 3,
-                            "buffIncreaseType": 1,
-                            "weight": 0.6000000238418579
-                        },
-                        {
-                            "propertyType": 2,
-                            "buffIncreaseType": 1,
-                            "weight": 0.4000000059604645
-                        }
-                    ]
-                },
-                {
-                    "equipmentPart": 3,
-                    "propertyWeightList": [
-                        {
-                            "propertyType": 8,
-                            "buffIncreaseType": 1,
-                            "weight": 0.4000000059604645
-                        },
-                        {
-                            "propertyType": 4,
-                            "buffIncreaseType": 1,
-                            "weight": 0.6000000238418579
-                        }
-                    ]
-                },
-                {
-                    "equipmentPart": 5,
-                    "propertyWeightList": [
-                        {
-                            "propertyType": 1,
-                            "buffIncreaseType": 3,
-                            "weight": 0.699999988079071
-                        },
-                        {
-                            "propertyType": 9,
-                            "buffIncreaseType": 1,
-                            "weight": 0.30000001192092898
-                        }
-                    ]
-                },
-                {
-                    "equipmentPart": 4,
-                    "propertyWeightList": [
-                        {
-                            "propertyType": 0,
-                            "buffIncreaseType": 1,
-                            "weight": 0.6000000238418579
-                        },
-                        {
-                            "propertyType": 12,
-                            "buffIncreaseType": 3,
-                            "weight": 0.4000000059604645
-                        }
-                    ]
-                },
-                {
-                    "equipmentPart": 6,
-                    "propertyWeightList": [
-                        {
-                            "propertyType": 1,
-                            "buffIncreaseType": 3,
-                            "weight": 0.4000000059604645
-                        },
-                        {
-                            "propertyType": 12,
-                            "buffIncreaseType": 1,
-                            "weight": 0.20000000298023225
-                        },
-                        {
-                            "propertyType": 6,
-                            "buffIncreaseType": 3,
-                            "weight": 0.20000000298023225
-                        },
-                        {
-                            "propertyType": 7,
-                            "buffIncreaseType": 3,
-                            "weight": 0.20000000298023225
-                        }
-                    ]
-                }
-            ],
-            "propertyIncreaseValue": [
-                {
-                    "propertyType": 0,
-                    "propertyIncreaseValueList": [
-                        {
-                            "buffIncreaseType": 1,
-                            "value": 1000.0
-                        },
-                        {
-                            "buffIncreaseType": 2,
-                            "value": 2500.0
-                        },
-                        {
-                            "buffIncreaseType": 3,
-                            "value": 1500.0
-                        },
-                        {
-                            "buffIncreaseType": 4,
-                            "value": 3000.0
-                        }
-                    ]
-                },
-                {
-                    "propertyType": 1,
-                    "propertyIncreaseValueList": [
-                        {
-                            "buffIncreaseType": 1,
-                            "value": 20.0
-                        },
-                        {
-                            "buffIncreaseType": 2,
-                            "value": 150.0
-                        },
-                        {
-                            "buffIncreaseType": 3,
-                            "value": 30.0
-                        },
-                        {
-                            "buffIncreaseType": 4,
-                            "value": 200.0
-                        }
-                    ]
-                },
-                {
-                    "propertyType": 2,
-                    "propertyIncreaseValueList": [
-                        {
-                            "buffIncreaseType": 1,
-                            "value": 2.0
-                        },
-                        {
-                            "buffIncreaseType": 2,
-                            "value": 80.0
-                        },
-                        {
-                            "buffIncreaseType": 3,
-                            "value": 4.0
-                        },
-                        {
-                            "buffIncreaseType": 4,
-                            "value": 120.0
-                        }
-                    ]
-                },
-                {
-                    "propertyType": 3,
-                    "propertyIncreaseValueList": [
-                        {
-                            "buffIncreaseType": 1,
-                            "value": 2.0
-                        },
-                        {
-                            "buffIncreaseType": 2,
-                            "value": 200.0
-                        },
-                        {
-                            "buffIncreaseType": 3,
-                            "value": 4.0
-                        },
-                        {
-                            "buffIncreaseType": 4,
-                            "value": 320.0
-                        }
-                    ]
-                },
-                {
-                    "propertyType": 4,
-                    "propertyIncreaseValueList": [
-                        {
-                            "buffIncreaseType": 1,
-                            "value": 2.0
-                        },
-                        {
-                            "buffIncreaseType": 2,
-                            "value": 200.0
-                        },
-                        {
-                            "buffIncreaseType": 3,
-                            "value": 4.0
-                        },
-                        {
-                            "buffIncreaseType": 4,
-                            "value": 320.0
-                        }
-                    ]
-                },
-                {
-                    "propertyType": 6,
-                    "propertyIncreaseValueList": [
-                        {
-                            "buffIncreaseType": 1,
-                            "value": 500.0
-                        },
-                        {
-                            "buffIncreaseType": 2,
-                            "value": 800.0
-                        },
-                        {
-                            "buffIncreaseType": 3,
-                            "value": 600.0
-                        },
-                        {
-                            "buffIncreaseType": 4,
-                            "value": 1000.0
-                        }
-                    ]
-                },
-                {
-                    "propertyType": 7,
-                    "propertyIncreaseValueList": [
-                        {
-                            "buffIncreaseType": 1,
-                            "value": 200.0
-                        },
-                        {
-                            "buffIncreaseType": 2,
-                            "value": 500.0
-                        },
-                        {
-                            "buffIncreaseType": 3,
-                            "value": 300.0
-                        },
-                        {
-                            "buffIncreaseType": 4,
-                            "value": 600.0
-                        }
-                    ]
-                },
-                {
-                    "propertyType": 8,
-                    "propertyIncreaseValueList": [
-                        {
-                            "buffIncreaseType": 1,
-                            "value": 25.0
-                        },
-                        {
-                            "buffIncreaseType": 2,
-                            "value": 375.0
-                        },
-                        {
-                            "buffIncreaseType": 3,
-                            "value": 50.0
-                        },
-                        {
-                            "buffIncreaseType": 4,
-                            "value": 600.0
-                        }
-                    ]
-                },
-                {
-                    "propertyType": 9,
-                    "propertyIncreaseValueList": [
-                        {
-                            "buffIncreaseType": 1,
-                            "value": 25.0
-                        },
-                        {
-                            "buffIncreaseType": 2,
-                            "value": 375.0
-                        },
-                        {
-                            "buffIncreaseType": 3,
-                            "value": 50.0
-                        },
-                        {
-                            "buffIncreaseType": 4,
-                            "value": 600.0
-                        }
-                    ]
-                },
-                {
-                    "propertyType": 12,
-                    "propertyIncreaseValueList": [
-                        {
-                            "buffIncreaseType": 1,
-                            "value": 320.0
-                        },
-                        {
-                            "buffIncreaseType": 2,
-                            "value": 1200.0
-                        },
-                        {
-                            "buffIncreaseType": 3,
-                            "value": 480.0
-                        },
-                        {
-                            "buffIncreaseType": 4,
-                            "value": 1600.0
-                        }
-                    ]
-                }
-            ],
-            "qualityRatioData": [
-                {
-                    "qualityType": 0,
-                    "ratio": 1.0,
-                    "mainAttributeRatio": 1.0,
-                    "minPassiveAttributeRatio": 0.23999999463558198,
-                    "weight": 0.0
-                },
-                {
-                    "qualityType": 1,
-                    "ratio": 1.2000000476837159,
-                    "mainAttributeRatio": 0.6000000238418579,
-                    "minPassiveAttributeRatio": 0.23999999463558198,
-                    "weight": 0.20000000298023225
-                },
-                {
-                    "qualityType": 2,
-                    "ratio": 1.5,
-                    "mainAttributeRatio": 0.6000000238418579,
-                    "minPassiveAttributeRatio": 0.23999999463558198,
-                    "weight": 0.8999999761581421
-                }
-            ],
-            "valueVariance": 0.10000000149011612
-        },
-        "otherData": {
-            "animationActionData": [
-                {
-                    "actionType": 3,
-                    "animationState": 0
-                },
-                {
-                    "actionType": 1,
-                    "animationState": 1
-                },
-                {
-                    "actionType": 1,
-                    "animationState": 2
-                },
-                {
-                    "actionType": 1,
-                    "animationState": 3
-                },
-                {
-                    "actionType": 1,
-                    "animationState": 4
-                },
-                {
-                    "actionType": 2,
-                    "animationState": 5
-                },
-                {
-                    "actionType": 2,
-                    "animationState": 8
-                },
-                {
-                    "actionType": 3,
-                    "animationState": 7
-                },
-                {
-                    "actionType": 2,
-                    "animationState": 9
-                },
-                {
-                    "actionType": 3,
-                    "animationState": 6
-                },
-                {
-                    "actionType": 2,
-                    "animationState": 10
-                }
-            ]
         }
+    },
+    "damageData": {
+        "defenseRatio": 15.0,
+        "amplificationRatio": 0.0,
+        "elementalMasteryBuff": 0.0,
+        "playerGaugeUnitRatio": 0.0,
+        "enemyGaugeUnitRatio": 0.0,
+        "environmentGaugeUnitRatio": 0.0,
+        "rareBuffWeightRange": {
+            "isPercent": false,
+            "min": 0.0,
+            "max": 0.0
+        },
+        "legendaryBuffWeightRange": {
+            "isPercent": false,
+            "min": 0.0,
+            "max": 0.0
+        }
+    },
+    "buffConstantData": {
+        "buffSizeDataList": [
+            {
+                "collectObjectBuffSize": 1,
+                "ratio": 1.0
+            },
+            {
+                "collectObjectBuffSize": 2,
+                "ratio": 1.5
+            },
+            {
+                "collectObjectBuffSize": 3,
+                "ratio": 2.0
+            }
+        ]
+    },
+    "gameConfig": {
+        "groundSceneLayer": {
+            "serializedVersion": "2",
+            "m_Bits": 128
+        },
+        "syncTime": 0.01600000075995922,
+        "gridSize": 4.0,
+        "safetyMargin": 5.0,
+        "fixedSpacing": 1.0,
+        "warmupTime": 3.0,
+        "developKey": "DevelopKey",
+        "developKeyValue": "MultiplayerDemo",
+        "stairSceneLayer": {
+            "serializedVersion": "2",
+            "m_Bits": 256
+        },
+        "safePosition": {
+            "x": 0.0,
+            "y": 3.0,
+            "z": 0.0
+        },
+        "safeHorizontalOffsetY": -10.0,
+        "groundMinDistance": 0.10000000149011612,
+        "groundMaxDistance": 0.25,
+        "maxSlopeAngle": 45.0,
+        "stairsCheckDistance": 0.75,
+        "tickRate": 50.0,
+        "stateUpdateInterval": 0.20000000298023225,
+        "serverInputRate": 0.019999999552965165,
+        "inputThreshold": 0.10000000149011612,
+        "maxCommandAge": 5.0,
+        "uiUpdateInterval": 0.5,
+        "roundInterval": 30.0,
+        "maxTraceDistance": 10.0,
+        "maxViewAngle": 180.0,
+        "obstacleCheckRadius": 0.5,
+        "screenBorderOffset": 1.0,
+        "gameBaseData": {
+            "playerBaseHpRecoverRatioPerSec": 25.0,
+            "playerBaseManaRecoverRatioPerSec": 25.0,
+            "basePositions": [
+                {
+                    "mapType": 0,
+                    "basePositions": [
+                        {
+                            "x": -13.899999618530274,
+                            "y": 0.0,
+                            "z": -20.049999237060548
+                        },
+                        {
+                            "x": -13.899999618530274,
+                            "y": 0.0,
+                            "z": 20.049999237060548
+                        },
+                        {
+                            "x": 41.900001525878909,
+                            "y": 0.0,
+                            "z": 20.049999237060548
+                        },
+                        {
+                            "x": 41.900001525878909,
+                            "y": 0.0,
+                            "z": -20.049999237060548
+                        }
+                    ]
+                },
+                {
+                    "mapType": 1,
+                    "basePositions": [
+                        {
+                            "x": -27.700000762939454,
+                            "y": 3.1600000858306886,
+                            "z": -28.719999313354493
+                        },
+                        {
+                            "x": -27.700000762939454,
+                            "y": 2.5799999237060549,
+                            "z": 28.829999923706056
+                        },
+                        {
+                            "x": 27.700000762939454,
+                            "y": 3.799999952316284,
+                            "z": -28.719999313354493
+                        },
+                        {
+                            "x": 27.700000762939454,
+                            "y": 3.0,
+                            "z": 28.829999923706056
+                        }
+                    ]
+                },
+                {
+                    "mapType": 2,
+                    "basePositions": [
+                        {
+                            "x": -61.43000030517578,
+                            "y": 4.0,
+                            "z": -24.3799991607666
+                        },
+                        {
+                            "x": -67.81999969482422,
+                            "y": 4.0,
+                            "z": 19.860000610351564
+                        },
+                        {
+                            "x": 11.699999809265137,
+                            "y": 4.0,
+                            "z": -20.350000381469728
+                        },
+                        {
+                            "x": 12.710000038146973,
+                            "y": 4.0,
+                            "z": 20.0
+                        }
+                    ]
+                },
+                {
+                    "mapType": 3,
+                    "basePositions": [
+                        {
+                            "x": -0.19200000166893006,
+                            "y": 4.0,
+                            "z": -41.040000915527347
+                        },
+                        {
+                            "x": 17.799999237060548,
+                            "y": 4.0,
+                            "z": -38.79999923706055
+                        },
+                        {
+                            "x": 34.849998474121097,
+                            "y": 4.0,
+                            "z": -39.900001525878909
+                        },
+                        {
+                            "x": 54.2599983215332,
+                            "y": 4.0,
+                            "z": -33.439998626708987
+                        }
+                    ]
+                }
+            ],
+            "baseCenter": {
+                "x": 0.0,
+                "y": 2.0,
+                "z": 0.0
+            },
+            "baseRadius": 1.7000000476837159,
+            "baseHeight": 7.0,
+            "baseDirection": 1
+        },
+        "minUnionPlayerCount": 2,
+        "playerHpRatioToWarning": 0.30000001192092898,
+        "basePrefabName": "PlayerBase",
+        "noUnionTime": 30.0,
+        "playerPrefabName": "MPlayer"
+    },
+    "dayNightCycleData": {
+        "timeMultiplier": 60.0,
+        "weatherChangeTime": 150.0,
+        "sunriseTime": 21600.0,
+        "sunsetTime": 64800.0,
+        "dayLightColor": {
+            "serializedVersion": "2",
+            "key0": {
+                "r": 0.97686767578125,
+                "g": 1.0,
+                "b": 0.22506725788116456,
+                "a": 1.0
+            },
+            "key1": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "key2": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 0.0
+            },
+            "key3": {
+                "r": 0.9943180680274963,
+                "g": 1.0,
+                "b": 0.2897573709487915,
+                "a": 0.0
+            },
+            "key4": {
+                "r": 0.0,
+                "g": 0.0,
+                "b": 0.0,
+                "a": 0.0
+            },
+            "key5": {
+                "r": 0.0,
+                "g": 0.0,
+                "b": 0.0,
+                "a": 0.0
+            },
+            "key6": {
+                "r": 0.0,
+                "g": 0.0,
+                "b": 0.0,
+                "a": 0.0
+            },
+            "key7": {
+                "r": 0.0,
+                "g": 0.0,
+                "b": 0.0,
+                "a": 0.0
+            },
+            "ctime0": 0,
+            "ctime1": 6125,
+            "ctime2": 59410,
+            "ctime3": 65535,
+            "ctime4": 0,
+            "ctime5": 0,
+            "ctime6": 0,
+            "ctime7": 0,
+            "atime0": 0,
+            "atime1": 65535,
+            "atime2": 0,
+            "atime3": 0,
+            "atime4": 0,
+            "atime5": 0,
+            "atime6": 0,
+            "atime7": 0,
+            "m_Mode": 0,
+            "m_ColorSpace": -1,
+            "m_NumColorKeys": 4,
+            "m_NumAlphaKeys": 2
+        },
+        "nightColor": {
+            "serializedVersion": "2",
+            "key0": {
+                "r": 1.0,
+                "g": 0.8941177129745483,
+                "b": 0.1764705926179886,
+                "a": 1.0
+            },
+            "key1": {
+                "r": 0.08235294371843338,
+                "g": 0.0,
+                "b": 0.6431372761726379,
+                "a": 1.0
+            },
+            "key2": {
+                "r": 0.23989206552505494,
+                "g": 0.23989206552505494,
+                "b": 0.23989206552505494,
+                "a": 0.0
+            },
+            "key3": {
+                "r": 0.2392157018184662,
+                "g": 0.2352941334247589,
+                "b": 0.24313727021217347,
+                "a": 0.0
+            },
+            "key4": {
+                "r": 0.0941176563501358,
+                "g": 0.007843137718737126,
+                "b": 0.615686297416687,
+                "a": 0.0
+            },
+            "key5": {
+                "r": 1.0,
+                "g": 0.8932176828384399,
+                "b": 0.1765497922897339,
+                "a": 0.0
+            },
+            "key6": {
+                "r": 0.0,
+                "g": 0.0,
+                "b": 0.0,
+                "a": 0.0
+            },
+            "key7": {
+                "r": 0.0,
+                "g": 0.0,
+                "b": 0.0,
+                "a": 0.0
+            },
+            "ctime0": 0,
+            "ctime1": 11865,
+            "ctime2": 16148,
+            "ctime3": 47245,
+            "ctime4": 54013,
+            "ctime5": 65535,
+            "ctime6": 0,
+            "ctime7": 0,
+            "atime0": 0,
+            "atime1": 65535,
+            "atime2": 0,
+            "atime3": 0,
+            "atime4": 0,
+            "atime5": 0,
+            "atime6": 0,
+            "atime7": 0,
+            "m_Mode": 0,
+            "m_ColorSpace": -1,
+            "m_NumColorKeys": 6,
+            "m_NumAlphaKeys": 2
+        },
+        "oneDayDuration": 86400.0,
+        "minLightIntensity": 0.20000000298023225,
+        "cloudColorGradients": [
+            {
+                "weatherType": 1,
+                "cloudColor": {
+                    "serializedVersion": "2",
+                    "key0": {
+                        "r": 0.1752021312713623,
+                        "g": 0.1752021312713623,
+                        "b": 0.1752021312713623,
+                        "a": 0.6823529601097107
+                    },
+                    "key1": {
+                        "r": 0.1764705926179886,
+                        "g": 0.1764705926179886,
+                        "b": 0.1764705926179886,
+                        "a": 0.6823529601097107
+                    },
+                    "key2": {
+                        "r": 0.881401538848877,
+                        "g": 0.5032246708869934,
+                        "b": 0.0,
+                        "a": 0.0
+                    },
+                    "key3": {
+                        "r": 1.0,
+                        "g": 1.0,
+                        "b": 1.0,
+                        "a": 0.0
+                    },
+                    "key4": {
+                        "r": 1.0,
+                        "g": 1.0,
+                        "b": 1.0,
+                        "a": 0.0
+                    },
+                    "key5": {
+                        "r": 0.8823530077934265,
+                        "g": 0.501960813999176,
+                        "b": 0.0,
+                        "a": 0.0
+                    },
+                    "key6": {
+                        "r": 0.1764705926179886,
+                        "g": 0.1764705926179886,
+                        "b": 0.1764705926179886,
+                        "a": 0.0
+                    },
+                    "key7": {
+                        "r": 0.1764705926179886,
+                        "g": 0.1764705926179886,
+                        "b": 0.1764705926179886,
+                        "a": 0.0
+                    },
+                    "ctime0": 0,
+                    "ctime1": 11694,
+                    "ctime2": 15206,
+                    "ctime3": 18376,
+                    "ctime4": 45532,
+                    "ctime5": 49044,
+                    "ctime6": 52557,
+                    "ctime7": 65535,
+                    "atime0": 0,
+                    "atime1": 65535,
+                    "atime2": 0,
+                    "atime3": 0,
+                    "atime4": 0,
+                    "atime5": 0,
+                    "atime6": 0,
+                    "atime7": 0,
+                    "m_Mode": 0,
+                    "m_ColorSpace": -1,
+                    "m_NumColorKeys": 8,
+                    "m_NumAlphaKeys": 2
+                }
+            },
+            {
+                "weatherType": 2,
+                "cloudColor": {
+                    "serializedVersion": "2",
+                    "key0": {
+                        "r": 0.1752021312713623,
+                        "g": 0.1752021312713623,
+                        "b": 0.1752021312713623,
+                        "a": 0.9176470637321472
+                    },
+                    "key1": {
+                        "r": 0.1764705926179886,
+                        "g": 0.1764705926179886,
+                        "b": 0.1764705926179886,
+                        "a": 0.9215686321258545
+                    },
+                    "key2": {
+                        "r": 0.881401538848877,
+                        "g": 0.5032246708869934,
+                        "b": 0.0,
+                        "a": 0.0
+                    },
+                    "key3": {
+                        "r": 1.0,
+                        "g": 1.0,
+                        "b": 1.0,
+                        "a": 0.0
+                    },
+                    "key4": {
+                        "r": 1.0,
+                        "g": 1.0,
+                        "b": 1.0,
+                        "a": 0.0
+                    },
+                    "key5": {
+                        "r": 0.8823530077934265,
+                        "g": 0.501960813999176,
+                        "b": 0.0,
+                        "a": 0.0
+                    },
+                    "key6": {
+                        "r": 0.1764705926179886,
+                        "g": 0.1764705926179886,
+                        "b": 0.1764705926179886,
+                        "a": 0.0
+                    },
+                    "key7": {
+                        "r": 0.1764705926179886,
+                        "g": 0.1764705926179886,
+                        "b": 0.1764705926179886,
+                        "a": 0.0
+                    },
+                    "ctime0": 0,
+                    "ctime1": 11694,
+                    "ctime2": 15206,
+                    "ctime3": 18376,
+                    "ctime4": 45532,
+                    "ctime5": 49044,
+                    "ctime6": 52557,
+                    "ctime7": 65535,
+                    "atime0": 0,
+                    "atime1": 65535,
+                    "atime2": 0,
+                    "atime3": 0,
+                    "atime4": 0,
+                    "atime5": 0,
+                    "atime6": 0,
+                    "atime7": 0,
+                    "m_Mode": 0,
+                    "m_ColorSpace": -1,
+                    "m_NumColorKeys": 8,
+                    "m_NumAlphaKeys": 2
+                }
+            },
+            {
+                "weatherType": 3,
+                "cloudColor": {
+                    "serializedVersion": "2",
+                    "key0": {
+                        "r": 0.1752021312713623,
+                        "g": 0.1752021312713623,
+                        "b": 0.1752021312713623,
+                        "a": 0.9333333373069763
+                    },
+                    "key1": {
+                        "r": 0.1764705926179886,
+                        "g": 0.1764705926179886,
+                        "b": 0.1764705926179886,
+                        "a": 0.929411768913269
+                    },
+                    "key2": {
+                        "r": 0.8382748961448669,
+                        "g": 0.8382748961448669,
+                        "b": 0.8382748961448669,
+                        "a": 0.0
+                    },
+                    "key3": {
+                        "r": 0.8328840136528015,
+                        "g": 0.8328840136528015,
+                        "b": 0.8328840136528015,
+                        "a": 0.0
+                    },
+                    "key4": {
+                        "r": 1.0,
+                        "g": 1.0,
+                        "b": 1.0,
+                        "a": 0.0
+                    },
+                    "key5": {
+                        "r": 0.7951481342315674,
+                        "g": 0.7951481342315674,
+                        "b": 0.7951481342315674,
+                        "a": 0.0
+                    },
+                    "key6": {
+                        "r": 0.1764705926179886,
+                        "g": 0.1764705926179886,
+                        "b": 0.1764705926179886,
+                        "a": 0.0
+                    },
+                    "key7": {
+                        "r": 0.1764705926179886,
+                        "g": 0.1764705926179886,
+                        "b": 0.1764705926179886,
+                        "a": 0.0
+                    },
+                    "ctime0": 0,
+                    "ctime1": 11694,
+                    "ctime2": 15206,
+                    "ctime3": 18376,
+                    "ctime4": 45532,
+                    "ctime5": 49044,
+                    "ctime6": 52557,
+                    "ctime7": 65535,
+                    "atime0": 0,
+                    "atime1": 65535,
+                    "atime2": 0,
+                    "atime3": 0,
+                    "atime4": 0,
+                    "atime5": 0,
+                    "atime6": 0,
+                    "atime7": 0,
+                    "m_Mode": 0,
+                    "m_ColorSpace": -1,
+                    "m_NumColorKeys": 8,
+                    "m_NumAlphaKeys": 2
+                }
+            },
+            {
+                "weatherType": 4,
+                "cloudColor": {
+                    "serializedVersion": "2",
+                    "key0": {
+                        "r": 0.1752021312713623,
+                        "g": 0.1752021312713623,
+                        "b": 0.1752021312713623,
+                        "a": 0.9333333373069763
+                    },
+                    "key1": {
+                        "r": 0.1764705926179886,
+                        "g": 0.1764705926179886,
+                        "b": 0.1764705926179886,
+                        "a": 0.929411768913269
+                    },
+                    "key2": {
+                        "r": 0.8382748961448669,
+                        "g": 0.8382748961448669,
+                        "b": 0.8382748961448669,
+                        "a": 0.0
+                    },
+                    "key3": {
+                        "r": 0.8328840136528015,
+                        "g": 0.8328840136528015,
+                        "b": 0.8328840136528015,
+                        "a": 0.0
+                    },
+                    "key4": {
+                        "r": 1.0,
+                        "g": 1.0,
+                        "b": 1.0,
+                        "a": 0.0
+                    },
+                    "key5": {
+                        "r": 0.7951481342315674,
+                        "g": 0.7951481342315674,
+                        "b": 0.7951481342315674,
+                        "a": 0.0
+                    },
+                    "key6": {
+                        "r": 0.1764705926179886,
+                        "g": 0.1764705926179886,
+                        "b": 0.1764705926179886,
+                        "a": 0.0
+                    },
+                    "key7": {
+                        "r": 0.1764705926179886,
+                        "g": 0.1764705926179886,
+                        "b": 0.1764705926179886,
+                        "a": 0.0
+                    },
+                    "ctime0": 0,
+                    "ctime1": 11694,
+                    "ctime2": 15206,
+                    "ctime3": 18376,
+                    "ctime4": 45532,
+                    "ctime5": 49044,
+                    "ctime6": 52557,
+                    "ctime7": 65535,
+                    "atime0": 0,
+                    "atime1": 65535,
+                    "atime2": 0,
+                    "atime3": 0,
+                    "atime4": 0,
+                    "atime5": 0,
+                    "atime6": 0,
+                    "atime7": 0,
+                    "m_Mode": 0,
+                    "m_ColorSpace": -1,
+                    "m_NumColorKeys": 8,
+                    "m_NumAlphaKeys": 2
+                }
+            }
+        ]
+    },
+    "chestCommonData": {
+        "OpenSpeed": 1.5,
+        "InitEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        "EndEulerAngles": {
+            "x": -90.0,
+            "y": 0.0,
+            "z": 0.0
+        }
+    },
+    "weatherData": {
+        "weatherChangeTime": 10.0,
+        "maxTransitionDuration": 25.0,
+        "minTransitionDuration": 10.0
+    },
+    "gameModeData": {
+        "times": [
+            180,
+            240,
+            300,
+            500
+        ],
+        "scores": [
+            2500,
+            5000,
+            10000,
+            20000
+        ]
+    },
+    "bagCommonData": {
+        "maxBagCount": 12,
+        "maxStack": 99
+    },
+    "propertyValueData": {
+        "propertyWeightData": [
+            {
+                "equipmentPart": 1,
+                "propertyWeightList": [
+                    {
+                        "propertyType": 6,
+                        "buffIncreaseType": 3,
+                        "weight": 0.5
+                    },
+                    {
+                        "propertyType": 7,
+                        "buffIncreaseType": 3,
+                        "weight": 0.5
+                    }
+                ]
+            },
+            {
+                "equipmentPart": 2,
+                "propertyWeightList": [
+                    {
+                        "propertyType": 3,
+                        "buffIncreaseType": 1,
+                        "weight": 0.6000000238418579
+                    },
+                    {
+                        "propertyType": 2,
+                        "buffIncreaseType": 1,
+                        "weight": 0.4000000059604645
+                    }
+                ]
+            },
+            {
+                "equipmentPart": 3,
+                "propertyWeightList": [
+                    {
+                        "propertyType": 8,
+                        "buffIncreaseType": 1,
+                        "weight": 0.4000000059604645
+                    },
+                    {
+                        "propertyType": 4,
+                        "buffIncreaseType": 1,
+                        "weight": 0.6000000238418579
+                    }
+                ]
+            },
+            {
+                "equipmentPart": 5,
+                "propertyWeightList": [
+                    {
+                        "propertyType": 1,
+                        "buffIncreaseType": 3,
+                        "weight": 0.699999988079071
+                    },
+                    {
+                        "propertyType": 9,
+                        "buffIncreaseType": 1,
+                        "weight": 0.30000001192092898
+                    }
+                ]
+            },
+            {
+                "equipmentPart": 4,
+                "propertyWeightList": [
+                    {
+                        "propertyType": 0,
+                        "buffIncreaseType": 1,
+                        "weight": 0.6000000238418579
+                    },
+                    {
+                        "propertyType": 12,
+                        "buffIncreaseType": 3,
+                        "weight": 0.4000000059604645
+                    }
+                ]
+            },
+            {
+                "equipmentPart": 6,
+                "propertyWeightList": [
+                    {
+                        "propertyType": 1,
+                        "buffIncreaseType": 3,
+                        "weight": 0.4000000059604645
+                    },
+                    {
+                        "propertyType": 12,
+                        "buffIncreaseType": 1,
+                        "weight": 0.20000000298023225
+                    },
+                    {
+                        "propertyType": 6,
+                        "buffIncreaseType": 3,
+                        "weight": 0.20000000298023225
+                    },
+                    {
+                        "propertyType": 7,
+                        "buffIncreaseType": 3,
+                        "weight": 0.20000000298023225
+                    }
+                ]
+            }
+        ],
+        "propertyIncreaseValue": [
+            {
+                "propertyType": 0,
+                "propertyIncreaseValueList": [
+                    {
+                        "buffIncreaseType": 1,
+                        "value": 1000.0
+                    },
+                    {
+                        "buffIncreaseType": 2,
+                        "value": 2500.0
+                    },
+                    {
+                        "buffIncreaseType": 3,
+                        "value": 1500.0
+                    },
+                    {
+                        "buffIncreaseType": 4,
+                        "value": 3000.0
+                    }
+                ]
+            },
+            {
+                "propertyType": 1,
+                "propertyIncreaseValueList": [
+                    {
+                        "buffIncreaseType": 1,
+                        "value": 20.0
+                    },
+                    {
+                        "buffIncreaseType": 2,
+                        "value": 150.0
+                    },
+                    {
+                        "buffIncreaseType": 3,
+                        "value": 30.0
+                    },
+                    {
+                        "buffIncreaseType": 4,
+                        "value": 200.0
+                    }
+                ]
+            },
+            {
+                "propertyType": 2,
+                "propertyIncreaseValueList": [
+                    {
+                        "buffIncreaseType": 1,
+                        "value": 2.0
+                    },
+                    {
+                        "buffIncreaseType": 2,
+                        "value": 80.0
+                    },
+                    {
+                        "buffIncreaseType": 3,
+                        "value": 4.0
+                    },
+                    {
+                        "buffIncreaseType": 4,
+                        "value": 120.0
+                    }
+                ]
+            },
+            {
+                "propertyType": 3,
+                "propertyIncreaseValueList": [
+                    {
+                        "buffIncreaseType": 1,
+                        "value": 2.0
+                    },
+                    {
+                        "buffIncreaseType": 2,
+                        "value": 200.0
+                    },
+                    {
+                        "buffIncreaseType": 3,
+                        "value": 4.0
+                    },
+                    {
+                        "buffIncreaseType": 4,
+                        "value": 320.0
+                    }
+                ]
+            },
+            {
+                "propertyType": 4,
+                "propertyIncreaseValueList": [
+                    {
+                        "buffIncreaseType": 1,
+                        "value": 2.0
+                    },
+                    {
+                        "buffIncreaseType": 2,
+                        "value": 200.0
+                    },
+                    {
+                        "buffIncreaseType": 3,
+                        "value": 4.0
+                    },
+                    {
+                        "buffIncreaseType": 4,
+                        "value": 320.0
+                    }
+                ]
+            },
+            {
+                "propertyType": 6,
+                "propertyIncreaseValueList": [
+                    {
+                        "buffIncreaseType": 1,
+                        "value": 500.0
+                    },
+                    {
+                        "buffIncreaseType": 2,
+                        "value": 800.0
+                    },
+                    {
+                        "buffIncreaseType": 3,
+                        "value": 600.0
+                    },
+                    {
+                        "buffIncreaseType": 4,
+                        "value": 1000.0
+                    }
+                ]
+            },
+            {
+                "propertyType": 7,
+                "propertyIncreaseValueList": [
+                    {
+                        "buffIncreaseType": 1,
+                        "value": 200.0
+                    },
+                    {
+                        "buffIncreaseType": 2,
+                        "value": 500.0
+                    },
+                    {
+                        "buffIncreaseType": 3,
+                        "value": 300.0
+                    },
+                    {
+                        "buffIncreaseType": 4,
+                        "value": 600.0
+                    }
+                ]
+            },
+            {
+                "propertyType": 8,
+                "propertyIncreaseValueList": [
+                    {
+                        "buffIncreaseType": 1,
+                        "value": 25.0
+                    },
+                    {
+                        "buffIncreaseType": 2,
+                        "value": 375.0
+                    },
+                    {
+                        "buffIncreaseType": 3,
+                        "value": 50.0
+                    },
+                    {
+                        "buffIncreaseType": 4,
+                        "value": 600.0
+                    }
+                ]
+            },
+            {
+                "propertyType": 9,
+                "propertyIncreaseValueList": [
+                    {
+                        "buffIncreaseType": 1,
+                        "value": 25.0
+                    },
+                    {
+                        "buffIncreaseType": 2,
+                        "value": 375.0
+                    },
+                    {
+                        "buffIncreaseType": 3,
+                        "value": 50.0
+                    },
+                    {
+                        "buffIncreaseType": 4,
+                        "value": 600.0
+                    }
+                ]
+            },
+            {
+                "propertyType": 12,
+                "propertyIncreaseValueList": [
+                    {
+                        "buffIncreaseType": 1,
+                        "value": 320.0
+                    },
+                    {
+                        "buffIncreaseType": 2,
+                        "value": 1200.0
+                    },
+                    {
+                        "buffIncreaseType": 3,
+                        "value": 480.0
+                    },
+                    {
+                        "buffIncreaseType": 4,
+                        "value": 1600.0
+                    }
+                ]
+            }
+        ],
+        "qualityRatioData": [
+            {
+                "qualityType": 0,
+                "ratio": 1.0,
+                "mainAttributeRatio": 1.0,
+                "minPassiveAttributeRatio": 0.23999999463558198,
+                "weight": 0.0
+            },
+            {
+                "qualityType": 1,
+                "ratio": 1.2000000476837159,
+                "mainAttributeRatio": 0.6000000238418579,
+                "minPassiveAttributeRatio": 0.23999999463558198,
+                "weight": 0.20000000298023225
+            },
+            {
+                "qualityType": 2,
+                "ratio": 1.5,
+                "mainAttributeRatio": 0.6000000238418579,
+                "minPassiveAttributeRatio": 0.23999999463558198,
+                "weight": 0.8999999761581421
+            }
+        ],
+        "valueVariance": 0.10000000149011612
+    },
+    "otherData": {
+        "animationActionData": [
+            {
+                "actionType": 3,
+                "animationState": 0
+            },
+            {
+                "actionType": 1,
+                "animationState": 1
+            },
+            {
+                "actionType": 1,
+                "animationState": 2
+            },
+            {
+                "actionType": 1,
+                "animationState": 3
+            },
+            {
+                "actionType": 1,
+                "animationState": 4
+            },
+            {
+                "actionType": 2,
+                "animationState": 5
+            },
+            {
+                "actionType": 2,
+                "animationState": 8
+            },
+            {
+                "actionType": 3,
+                "animationState": 7
+            },
+            {
+                "actionType": 2,
+                "animationState": 9
+            },
+            {
+                "actionType": 3,
+                "animationState": 6
+            },
+            {
+                "actionType": 2,
+                "animationState": 10
+            }
+        ]
     }
 }
