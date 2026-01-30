@@ -43,7 +43,9 @@ namespace HotUpdate.Scripts.Config.JsonConfig
 
         protected override void ReadFromJson(TextAsset textAsset)
         {
+            Debug.Log($"Read JsonDataConfig---{textAsset.text}");
             jsonConfigData = BoxingFreeSerializer.JsonDeserialize<JsonConfigData>(textAsset.text);
+            Debug.Log($"JsonDataConfig---{jsonConfigData.gameConfig.fixedSpacing}");
         }
 
         protected override void ReadFromCsv(List<string[]> textAsset)
