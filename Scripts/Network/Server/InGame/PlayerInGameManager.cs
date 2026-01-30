@@ -405,6 +405,8 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         public void AddPlayer(int connectId, PlayerInGameData playerInGameData)
         {
             var playerIdentity = playerInGameData.networkIdentity;
+            Debug.Log($"[PlayerIngameManager]  _configProvider {_configProvider} --- {playerIdentity}");
+            _gameConfigData = _configProvider.GetConfig<JsonDataConfig>().GameConfig;
             if (_playerPhysicsData == null)
             {
                 var playerCollider = playerIdentity.GetComponent<Collider>();
