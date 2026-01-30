@@ -118,13 +118,18 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             _gameEventManager.Subscribe<GameResourceLoadedEvent>(OnGameResourceLoaded);
         }
 
+        private void Start()
+        {
+            Debug.Log("[PlayerInGameManager] Start ---  instanceId :" + gameObject.GetInstanceID());
+        }
+
         public override void OnStartServer()
         {
             base.OnStartServer();
 #if !UNITY_EDITOR
             ObjectInjectProvider.Instance.Inject(this);
             _gameConfigData = _configProvider.GetConfig<JsonDataConfig>().GameConfig;
-            Debug.Log($"[PlayerInGameManager] OnStartServer loaded {_gameConfigData}");
+            Debug.Log($"[PlayerInGameManager] OnStartServer loaded {_gameConfigData} instanceId {gameObject.GetInstanceID()}");
 #endif
             
         }
@@ -426,7 +431,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         public void AddPlayer(int connectId, PlayerInGameData playerInGameData)
         {
             var playerIdentity = playerInGameData.networkIdentity;
-            Debug.Log($"[PlayerIngameManager]  _configProvider {_configProvider} --- {playerIdentity}");
+            Debug.Log($"[PlayerIngameManager]  _configProvider {gameObject.GetInstanceID()} --- {playerIdentity}");
             _gameConfigData = _configProvider.GetConfig<JsonDataConfig>().GameConfig;
             if (_playerPhysicsData == null)
             {
