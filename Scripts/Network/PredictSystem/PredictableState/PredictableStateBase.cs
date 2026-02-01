@@ -188,7 +188,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         public virtual void InitCurrentState<T>(T state) where T : ISyncPropertyState
         {
-            Debug.Log($"[PredictableStateBase] InitCurrentState {state} at tick {GameSyncManager.CurrentTick}");
+            //Debug.Log($"[PredictableStateBase] InitCurrentState {state} at tick {GameSyncManager.CurrentTick}");
             CurrentState = state;
         }
 

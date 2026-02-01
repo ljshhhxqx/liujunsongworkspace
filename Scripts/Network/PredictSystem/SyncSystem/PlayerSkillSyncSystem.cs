@@ -13,6 +13,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Skill;
+using HotUpdate.Scripts.Static;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -137,8 +138,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerPredictableState = player.GetComponent<PlayerSkillSyncState>();
             var skillState = new PlayerSkillState();
             skillState.SkillCheckerDatas = new MemoryList<SkillCheckerData>();
-            PropertyStates.TryAdd(connectionId, skillState);
-            _playerSkillSyncStates.TryAdd(connectionId, playerPredictableState);
+            PropertyStates.AddOrUpdate(connectionId, skillState);
+            _playerSkillSyncStates.AddOrUpdate(connectionId, playerPredictableState);
             RpcSetPlayerSkillState(connectionId, netId, NetworkCommandExtensions.SerializePlayerState(skillState).Item1);
         }
 

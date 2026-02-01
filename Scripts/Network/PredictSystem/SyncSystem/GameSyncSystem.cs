@@ -69,9 +69,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         }
 
         [Inject]
-        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)
+        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager, PlayerInGameManager playerInGameManager)
         {
             _currentTick = 0;
+            _playerInGameManager = playerInGameManager;
             Debug.Log("GameSyncManager Init");
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _cts = new CancellationTokenSource();
@@ -90,6 +91,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     continue;
                 }
                 ObjectInjectProvider.Instance.InjectMap((MapType)GameLoopDataModel.GameSceneName.Value, syncSystem);
+                syncSystem.Initialize(this);
                 if (syncSystem is PlayerPropertySyncSystem playerPropertySyncSystem)
                 {
                     _playerPropertySyncSystem = playerPropertySyncSystem;

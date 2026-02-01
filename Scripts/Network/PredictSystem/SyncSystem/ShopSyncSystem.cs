@@ -5,6 +5,7 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Static;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -53,7 +54,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             state.RandomShopItems = new MemoryDictionary<int, ShopItemData>();
             for (int i = 0; i < randomItems.Length; i++)
             {
-                state.RandomShopItems.Add(randomItems[i].ShopId, randomItems[i]);
+                state.RandomShopItems.AddOrUpdate(randomItems[i].ShopId, randomItems[i]);
             }
             playerPredictableState.SetPlayerShopState(state);
             PropertyStates[connectionId] = state;

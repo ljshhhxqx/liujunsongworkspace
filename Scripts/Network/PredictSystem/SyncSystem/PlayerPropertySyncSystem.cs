@@ -281,8 +281,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var calculators = PlayerPropertyCalculator.GetPropertyCalculators();
             playerPropertyState.MemoryProperty = new MemoryDictionary<PropertyTypeEnum, PropertyCalculator>(calculators);
             playerPredictableState?.RegisterProperties(playerPropertyState);
-            PropertyStates.TryAdd(connectionId, playerPropertyState);
-            _propertyPredictionStates.TryAdd(connectionId, playerPredictableState);
+            PropertyStates.AddOrUpdate(connectionId, playerPropertyState);
+            _propertyPredictionStates.AddOrUpdate(connectionId, playerPredictableState);
             RpcSetPlayerPropertyState(connectionId, netId, NetworkCommandExtensions.SerializePlayerState(playerPropertyState).Item1);
         }
         

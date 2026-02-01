@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using AOTScripts.Data;
 using AOTScripts.Tool.ObjectPool;
 using DG.Tweening;
 using HotUpdate.Scripts.Collector;
@@ -35,7 +36,7 @@ namespace HotUpdate.Scripts.Map
             targetPrefab.gameObject.SetActive(false);
             GameLoopDataModel.GameSceneName.Subscribe(sceneName =>
             {
-                var sprite = UISpriteContainer.GetSprite($"{sceneName.ToString()}_MiniMap");
+                var sprite = UISpriteContainer.GetSprite($"{((MapType)sceneName).ToString()}_MiniMap");
                 SetMinimapSprite(sprite);
             }).AddTo(this);
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using AOTScripts.Data;
 using AOTScripts.Data.State;
+using AOTScripts.Tool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
@@ -86,8 +87,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerPredictableState = player.GetComponent<PlayerEquipmentSyncState>();
             var playerEquipmentState = new PlayerEquipmentState();
             playerEquipmentState.EquipmentDatas = new MemoryList<EquipmentData>();
-            PropertyStates.TryAdd(connectionId, playerEquipmentState);
-            _playerEquipmentSyncStates.TryAdd(connectionId, playerPredictableState);
+            PropertyStates.AddOrUpdate(connectionId, playerEquipmentState);
+            _playerEquipmentSyncStates.AddOrUpdate(connectionId, playerPredictableState);
             RpcSetPlayerEquipmentState(netId, NetworkCommandExtensions.SerializePlayerState(playerEquipmentState).Item1);
         }
 

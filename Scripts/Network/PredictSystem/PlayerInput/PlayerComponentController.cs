@@ -477,10 +477,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void SendNetworkCommand()
         {
-            Debug.Log($"[PlayerComponentController] Start -*-- {_propertyPredictionState} -- {_propertyPredictionState.PlayerPredictablePropertyState}");
+            //Debug.Log($"[PlayerComponentController] Start -*-- {_propertyPredictionState} -- {_propertyPredictionState.PlayerPredictablePropertyState}");
             _targetSpeed = _propertyPredictionState.GetMoveSpeed();
-            Debug.Log($"[PlayerComponentController] TargetSpeed: {_targetSpeed}");
-            Debug.Log($"[PlayerComponentController] _gameSyncManager.isGameOver: {_gameSyncManager.isGameOver} _picker.IsTouching: {_picker.IsTouching} _propertyPredictionState.GetProperty(PropertyTypeEnum.Health): {_propertyPredictionState.GetProperty(PropertyTypeEnum.Health)} GameSyncManager.CurrentTick: {GameSyncManager.CurrentTick} _subjectedStateType: {_subjectedStateType} ");
+            //Debug.Log($"[PlayerComponentController] TargetSpeed: {_targetSpeed}");
+            //Debug.Log($"[PlayerComponentController] _gameSyncManager.isGameOver: {_gameSyncManager.isGameOver} _picker.IsTouching: {_picker.IsTouching} _propertyPredictionState.GetProperty(PropertyTypeEnum.Health): {_propertyPredictionState.GetProperty(PropertyTypeEnum.Health)} GameSyncManager.CurrentTick: {GameSyncManager.CurrentTick} _subjectedStateType: {_subjectedStateType} ");
             if (_gameSyncManager.isGameOver || _picker.IsTouching || _propertyPredictionState.GetProperty(PropertyTypeEnum.Health) <= 0 ||
                 GameSyncManager.CurrentTick <= 0 || !(_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)) || 
                 _subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
@@ -491,12 +491,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 _playerInputStateData.InputMovement = default;
                 _playerInputStateData.Velocity = default;
                 _targetSpeed = 0;
-                Debug.Log("[PlayerComponentController] SendNetworkCommand: End");
+                //Debug.Log("[PlayerComponentController] SendNetworkCommand: End");
             }
-            Debug.Log($"[PlayerComponentController] _playerInputStateData: {_playerInputStateData}");
+            //Debug.Log($"[PlayerComponentController] _playerInputStateData: {_playerInputStateData}");
             if (_playerInputStateData != default)
             {
-                Debug.Log($"[PlayerComponentController] SendNetworkCommand: {_playerInputStateData} Start");
+                //Debug.Log($"[PlayerComponentController] SendNetworkCommand: {_playerInputStateData} Start");
                 HandleSendNetworkCommand(_playerInputStateData);
                 var propertyEnvironmentChangeCommand = new PropertyEnvironmentChangeCommand();
                 propertyEnvironmentChangeCommand.Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
@@ -505,9 +505,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 propertyEnvironmentChangeCommand.PlayerEnvironmentState = _gameState;
                 propertyEnvironmentChangeCommand.IsSprinting = _playerInputStateData.Command.HasAnyState(AnimationState.Sprint);
                 _propertyPredictionState.AddPredictedCommand(propertyEnvironmentChangeCommand);
-                Debug.Log($"[PlayerComponentController] SendNetworkCommand: {_playerInputStateData} End");
+                //Debug.Log($"[PlayerComponentController] SendNetworkCommand: {_playerInputStateData} End");
             }
-            Debug.Log("[PlayerComponentController] End");
+            //Debug.Log("[PlayerComponentController] End");
         }
 
         private void GetFunctionButton()

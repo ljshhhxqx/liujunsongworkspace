@@ -7,6 +7,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Static;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -58,8 +59,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerPredictableState = player.GetComponent<PlayerItemPredictableState>();
             var state = GetPlayerItemState();
             playerPredictableState.RegisterState(GetPlayerItemState());
-            PropertyStates.TryAdd(connectionId, state);
-            _playerItemSyncStates.TryAdd(connectionId, playerPredictableState);
+            PropertyStates.AddOrUpdate(connectionId, state);
+            _playerItemSyncStates.AddOrUpdate(connectionId, playerPredictableState);
             RpcSetPlayerItemState(connectionId, netId, NetworkCommandExtensions.SerializePlayerState(state).Item1);
             
         }

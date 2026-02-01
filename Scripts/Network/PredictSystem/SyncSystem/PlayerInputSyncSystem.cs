@@ -13,6 +13,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.State;
+using HotUpdate.Scripts.Static;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using MemoryPack;
 using Mirror;
@@ -149,8 +150,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerPredictableState = player.GetComponent<PlayerInputPredictionState>();
             var playerInputState = new PlayerInputState(new PlayerGameStateData(),
                 new PlayerAnimationCooldownState(GetStateAnimationCooldowns()));
-            PropertyStates.TryAdd(connectionId, playerInputState);
-            _inputPredictionStates.TryAdd(connectionId, playerPredictableState);
+            PropertyStates.AddOrUpdate(connectionId, playerInputState);
+            _inputPredictionStates.AddOrUpdate(connectionId, playerPredictableState);
             RpcSetPlayerInputState(connectionId, netId, NetworkCommandExtensions.SerializePlayerState(playerInputState).Item1);
             BindAniEvents(connectionId, netId);
         }

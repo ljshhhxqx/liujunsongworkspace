@@ -18,7 +18,7 @@ namespace HotUpdate.Scripts.Game.Inject
         public GameMapInjector(LifetimeScope mapScope)
         {
             _mapScope = mapScope;
-            MapType = (MapType)Enum.Parse(typeof(MapType), SceneManager.GetActiveScene().name);
+            MapType = (MapType)Enum.Parse(typeof(MapType), mapScope.gameObject.scene.name);
             // 获取父容器（主容器）
             _mainResolver = mapScope.Parent.Container;
         }
