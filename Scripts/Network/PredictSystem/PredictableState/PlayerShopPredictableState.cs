@@ -9,6 +9,7 @@ using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Static;
 using VContainer;
+using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {

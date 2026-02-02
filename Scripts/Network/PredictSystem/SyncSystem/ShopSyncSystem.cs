@@ -9,6 +9,7 @@ using HotUpdate.Scripts.Static;
 using Mirror;
 using UnityEngine;
 using VContainer;
+using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
@@ -51,7 +52,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerPredictableState = player.GetComponent<PlayerShopPredictableState>();
             var state = new PlayerShopState();
             var randomItems = PlayerShopCalculator.GetRandomShopItemData();
-            state.RandomShopItems = new MemoryDictionary<int, ShopItemData>();
+            state.RandomShopItems = new State.MemoryDictionary<int, ShopItemData>();
             for (int i = 0; i < randomItems.Length; i++)
             {
                 state.RandomShopItems.AddOrUpdate(randomItems[i].ShopId, randomItems[i]);

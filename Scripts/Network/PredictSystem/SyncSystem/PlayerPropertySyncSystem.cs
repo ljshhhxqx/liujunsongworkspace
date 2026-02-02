@@ -24,6 +24,7 @@ using UnityEngine;
 using VContainer;
 using AnimationState = AOTScripts.Data.AnimationState;
 using INetworkCommand = AOTScripts.Data.INetworkCommand;
+using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
 using Object = UnityEngine.Object;
 using PlayerPredictablePropertyState = HotUpdate.Scripts.Network.State.PlayerPredictablePropertyState;
 using PropertyAttackCommand = AOTScripts.Data.PropertyAttackCommand;
@@ -279,7 +280,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerPredictableState = player.GetComponent<PropertyPredictionState>();
             var playerPropertyState = new PlayerPredictablePropertyState();
             var calculators = PlayerPropertyCalculator.GetPropertyCalculators();
-            playerPropertyState.MemoryProperty = new MemoryDictionary<PropertyTypeEnum, PropertyCalculator>(calculators);
+            playerPropertyState.MemoryProperty = new State.MemoryDictionary<PropertyTypeEnum, PropertyCalculator>(calculators);
             playerPredictableState?.RegisterProperties(playerPropertyState);
             PropertyStates.AddOrUpdate(connectionId, playerPropertyState);
             _propertyPredictionStates.AddOrUpdate(connectionId, playerPredictableState);
@@ -638,7 +639,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 };
                 list.Add(tracedPlayerInfo);
             }
-            playerController.HandleTracedPlayerHp(headerConnectionId, (MemoryList<TracedPlayerInfo>)list);
+            playerController.HandleTracedPlayerHp(headerConnectionId, (State.MemoryList<TracedPlayerInfo>)list);
         }
 
         private void HandlePlayerTouchedBase(int headerConnectionId)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Tool;
 using AOTScripts.Tool.ObjectPool;
+using HotUpdate.Scripts.Network.State;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using MemoryPack;
 using UnityEngine;
@@ -10,7 +11,7 @@ using UnityEngine;
 namespace AOTScripts.Data.State
 {
     [MemoryPackable(GenerateType.VersionTolerant)]
-    public partial class PlayerItemState : ISyncPropertyState, IEquatable<PlayerItemState>
+    public partial class PlayerItemState : HotUpdate.Scripts.Network.State.ISyncPropertyState, IEquatable<PlayerItemState>
     {
         [MemoryPackOrder(0)]
         private PlayerBagItem[] _items;
@@ -18,9 +19,9 @@ namespace AOTScripts.Data.State
         [MemoryPackOrder(1)] 
         public int SlotCount;
 
-        [MemoryPackOrder(2)] public MemoryDictionary<int, PlayerBagItem> PlayerItems;
+        [MemoryPackOrder(2)] public HotUpdate.Scripts.Network.State.MemoryDictionary<int, PlayerBagItem> PlayerItems;
 
-        [MemoryPackOrder(3)] public MemoryDictionary<int, PlayerBagSlotItem> PlayerItemConfigIdSlotDictionary;
+        [MemoryPackOrder(3)] public HotUpdate.Scripts.Network.State.MemoryDictionary<int, PlayerBagSlotItem> PlayerItemConfigIdSlotDictionary;
         public PlayerSyncStateType GetStateType() => PlayerSyncStateType.PlayerItem;
         
         public static bool AddItems(ref PlayerItemState state, int[] itemIds, int configId, int maxStack, PlayerItemType itemType, EquipmentPart part, int skillId, ItemState itemState = ItemState.IsInBag, int count = 1)
@@ -97,8 +98,8 @@ namespace AOTScripts.Data.State
 
         public static void Init(ref PlayerItemState state, int maxSlotCount)
         {
-            state.PlayerItems = new MemoryDictionary<int, PlayerBagItem>();
-            state.PlayerItemConfigIdSlotDictionary = new MemoryDictionary<int, PlayerBagSlotItem>();
+            state.PlayerItems = new HotUpdate.Scripts.Network.State.MemoryDictionary<int, PlayerBagItem>();
+            state.PlayerItemConfigIdSlotDictionary = new HotUpdate.Scripts.Network.State.MemoryDictionary<int, PlayerBagSlotItem>();
             state.SlotCount = maxSlotCount;
         }
 
@@ -694,14 +695,14 @@ namespace AOTScripts.Data.State
         //消耗品：显示确定的属性增益
         //装备：显示主要属性增益
         [MemoryPackOrder(7)]
-        public MemoryList<AttributeIncreaseData> MainIncreaseDatas;
+        public HotUpdate.Scripts.Network.State.MemoryList<AttributeIncreaseData> MainIncreaseDatas;
         //消耗品：显示随机属性增益(精确到数值的范围最大值和最小值)
         //装备：不显示
         [MemoryPackOrder(8)]
-        public MemoryList<RandomAttributeIncreaseData> RandomIncreaseDatas;
+        public HotUpdate.Scripts.Network.State.MemoryList<RandomAttributeIncreaseData> RandomIncreaseDatas;
         //装备：显示被动属性增益
         [MemoryPackOrder(9)]
-        public MemoryList<AttributeIncreaseData> PassiveAttributeIncreaseDatas;
+        public HotUpdate.Scripts.Network.State.MemoryList<AttributeIncreaseData> PassiveAttributeIncreaseDatas;
         [MemoryPackOrder(10)]
         public EquipmentPart EquipmentPart;
         [MemoryPackOrder(11)]

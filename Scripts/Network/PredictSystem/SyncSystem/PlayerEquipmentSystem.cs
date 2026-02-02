@@ -13,6 +13,7 @@ using Mirror;
 using UnityEngine;
 using VContainer;
 using EquipmentData = HotUpdate.Scripts.Network.State.EquipmentData;
+using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
 using PlayerEquipmentState = HotUpdate.Scripts.Network.State.PlayerEquipmentState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
@@ -86,7 +87,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerPredictableState = player.GetComponent<PlayerEquipmentSyncState>();
             var playerEquipmentState = new PlayerEquipmentState();
-            playerEquipmentState.EquipmentDatas = new MemoryList<EquipmentData>();
+            playerEquipmentState.EquipmentDatas = new State.MemoryList<EquipmentData>();
             PropertyStates.AddOrUpdate(connectionId, playerEquipmentState);
             _playerEquipmentSyncStates.AddOrUpdate(connectionId, playerPredictableState);
             RpcSetPlayerEquipmentState(netId, NetworkCommandExtensions.SerializePlayerState(playerEquipmentState).Item1);

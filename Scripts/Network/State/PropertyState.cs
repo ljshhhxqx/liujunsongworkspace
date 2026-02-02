@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AOTScripts.Data.State;
 using MemoryPack;
 
-namespace AOTScripts.Data.State
+namespace HotUpdate.Scripts.Network.State
 {
     /// <summary>
     /// 服务器强制同步内容
     /// </summary>
     [MemoryPackable(GenerateType.NoGenerate)]
-    [MemoryPackUnion(0, typeof(HotUpdate.Scripts.Network.State.PlayerEquipmentState))]
+    [MemoryPackUnion(0, typeof(global::HotUpdate.Scripts.Network.State.PlayerEquipmentState))]
     [MemoryPackUnion(1, typeof(PlayerItemState))]
-    [MemoryPackUnion(2, typeof(PlayerInputState))]
-    [MemoryPackUnion(3, typeof(HotUpdate.Scripts.Network.State.PlayerPredictablePropertyState))]
+    [MemoryPackUnion(2, typeof(global::HotUpdate.Scripts.Network.State.PlayerInputState))]
+    [MemoryPackUnion(3, typeof(global::HotUpdate.Scripts.Network.State.PlayerPredictablePropertyState))]
     [MemoryPackUnion(4, typeof(PlayerShopState))]
     [MemoryPackUnion(5, typeof(PlayerSkillState))]
     public partial interface ISyncPropertyState

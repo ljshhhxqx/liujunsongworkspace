@@ -11,6 +11,7 @@ using HotUpdate.Scripts.Static;
 using Mirror;
 using UnityEngine;
 using VContainer;
+using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
 using Object = UnityEngine.Object;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem

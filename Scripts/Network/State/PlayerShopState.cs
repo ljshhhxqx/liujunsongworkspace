@@ -1,13 +1,14 @@
 ﻿using System;
+using HotUpdate.Scripts.Network.State;
 using MemoryPack;
 
 namespace AOTScripts.Data.State
 {
     [MemoryPackable]
-    public partial struct PlayerShopState : ISyncPropertyState, IEquatable<PlayerShopState>
+    public partial struct PlayerShopState : HotUpdate.Scripts.Network.State.ISyncPropertyState, IEquatable<PlayerShopState>
     {
         [MemoryPackOrder(0)]
-        public MemoryDictionary<int, ShopItemData> RandomShopItems;
+        public HotUpdate.Scripts.Network.State.MemoryDictionary<int, ShopItemData> RandomShopItems;
         public PlayerSyncStateType GetStateType() => PlayerSyncStateType.PlayerShop;
 
         public bool Equals(PlayerShopState other)
@@ -75,11 +76,11 @@ namespace AOTScripts.Data.State
         //消耗品：显示确定的属性增益
         //装备：显示主要属性增益
         [MemoryPackOrder(9)]
-        public MemoryList<AttributeIncreaseData> MainIncreaseDatas;
+        public HotUpdate.Scripts.Network.State.MemoryList<AttributeIncreaseData> MainIncreaseDatas;
         //消耗品：显示随机属性增益(精确到数值的范围最大值和最小值)
         //装备：不显示(只有进入玩家背包才会有)
         [MemoryPackOrder(10)]
-        public MemoryList<RandomAttributeIncreaseData> PassiveIncreaseDatas;
+        public HotUpdate.Scripts.Network.State.MemoryList<RandomAttributeIncreaseData> PassiveIncreaseDatas;
 
         public bool Equals(ShopItemData other)
         {

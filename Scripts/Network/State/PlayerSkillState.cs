@@ -1,12 +1,13 @@
-﻿using MemoryPack;
+﻿using HotUpdate.Scripts.Network.State;
+using MemoryPack;
 
 namespace AOTScripts.Data.State
 {
     [MemoryPackable]
-    public partial class PlayerSkillState : ISyncPropertyState
+    public partial class PlayerSkillState : HotUpdate.Scripts.Network.State.ISyncPropertyState
     {
         [MemoryPackOrder(0)]
-        public MemoryList<SkillCheckerData> SkillCheckerDatas;
+        public HotUpdate.Scripts.Network.State.MemoryList<SkillCheckerData> SkillCheckerDatas;
         public PlayerSyncStateType GetStateType() => PlayerSyncStateType.PlayerSkill;
 
 

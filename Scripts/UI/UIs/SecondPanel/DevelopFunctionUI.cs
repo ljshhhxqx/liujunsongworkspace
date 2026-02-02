@@ -127,7 +127,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
 
             if (itemData.itemType == PlayerItemType.Gold || itemData.itemType == PlayerItemType.Score)
             {
-                var items = new MemoryList<ItemsCommandData>();
+                var items = new Network.State.MemoryList<ItemsCommandData>();
                 items.Add(new ItemsCommandData
                 {
                     ItemConfigId = itemId,
@@ -147,7 +147,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 {
                     var itemIds = new int[1];
                     itemIds[0] = HybridIdGenerator.GenerateItemId(itemId, GameSyncManager.CurrentTick);
-                    var items = new MemoryList<ItemsCommandData>();
+                    var items = new Network.State.MemoryList<ItemsCommandData>();
                     items.Add(new ItemsCommandData
                     {
                         ItemUniqueId = itemIds,

@@ -50,8 +50,8 @@ using VContainer;
 using AnimationState = AOTScripts.Data.AnimationState;
 using CooldownSnapshotData = HotUpdate.Scripts.Network.State.CooldownSnapshotData;
 using InputCommand = AOTScripts.Data.InputCommand;
-using PlayerAnimationCooldownState = AOTScripts.Data.State.PlayerAnimationCooldownState;
-using PlayerGameStateData = AOTScripts.Data.State.PlayerGameStateData;
+using PlayerAnimationCooldownState = HotUpdate.Scripts.Network.State.PlayerAnimationCooldownState;
+using PlayerGameStateData = HotUpdate.Scripts.Network.State.PlayerGameStateData;
 using PlayerPredictablePropertyState = HotUpdate.Scripts.Network.State.PlayerPredictablePropertyState;
 using PropertyAutoRecoverCommand = AOTScripts.Data.PropertyAutoRecoverCommand;
 using PropertyCalculator = HotUpdate.Scripts.Network.State.PropertyCalculator;
@@ -1184,7 +1184,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             return playerState;
         }
 
-        public void HandleTracedPlayerHp(int connectionId, MemoryList<TracedPlayerInfo> tracedInfo)
+        public void HandleTracedPlayerHp(int connectionId, State.MemoryList<TracedPlayerInfo> tracedInfo)
         {
             var player = NetworkServer.connections[connectionId];
             if (player == null)
@@ -1197,7 +1197,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [TargetRpc]
         private void TargetRpcHandlePlayerHp(NetworkConnection target, byte[] data)
         {
-            var info = BoxingFreeSerializer.MemoryDeserialize<MemoryList<TracedPlayerInfo>>(data);
+            var info = BoxingFreeSerializer.MemoryDeserialize<State.MemoryList<TracedPlayerInfo>>(data);
             var dic = UIPropertyBinder.GetReactiveDictionary<PlayerHpItemData>(_playerTraceOtherPlayerHpBindKey);
             for (int i = 0; i < info.Count; i++)
             {

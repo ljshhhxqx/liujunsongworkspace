@@ -9,6 +9,7 @@ using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using MemoryPack;
 using Mirror;
 using VContainer;
+using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {

@@ -6,6 +6,7 @@ using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using Mirror;
 using UnityEngine;
 using INetworkCommand = AOTScripts.Data.INetworkCommand;
+using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {

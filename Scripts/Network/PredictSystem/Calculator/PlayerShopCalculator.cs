@@ -25,8 +25,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var shopConfigData = Constant.ShopConfig.GetShopConfigData(shopConfigId);
             var itemConfigData = Constant.ItemConfig.GetGameItemData(shopConfigData.itemId);
             var attributeData = PlayerItemCalculator.GetAttributeIncreaseDatas(itemConfigData.buffExtraData);
-            var mainAttributeData = new MemoryList<AttributeIncreaseData>(itemConfigData.buffExtraData.Length);
-            var passiveAttributeData = new MemoryList<RandomAttributeIncreaseData>(itemConfigData.buffExtraData.Length);
+            var mainAttributeData = new State.MemoryList<AttributeIncreaseData>(itemConfigData.buffExtraData.Length);
+            var passiveAttributeData = new State.MemoryList<RandomAttributeIncreaseData>(itemConfigData.buffExtraData.Length);
             for (int i = 0; i < attributeData.Length; i++)
             {
                 var expr = attributeData[i];
@@ -109,7 +109,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
             state.RandomShopItems = randomShopItems;
             
-            var itemsCommandData = new MemoryList<ItemsCommandData>(count);
+            var itemsCommandData = new State.MemoryList<ItemsCommandData>(count);
             for (var i = 0; i < count; i++)
             {
                 itemsCommandData.Add(new ItemsCommandData
@@ -169,7 +169,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 Gold = (int)value
             };
             Constant.GameSyncManager.EnqueueServerCommand(command);
-            var list = new MemoryList<SlotIndexData>(1);
+            var list = new State.MemoryList<SlotIndexData>(1);
             list.Add(new SlotIndexData
             {
                 SlotIndex = slotIndex,
@@ -191,7 +191,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var shopConfigIds = state.RandomShopItems.Values.Select(x => x.ShopConfigId).ToHashSet();
             var newShopData = GetRandomShopItemData(shopConfigIds);
             var dic = newShopData.ToDictionary(x => x.ShopId, x => x);
-            state.RandomShopItems = new MemoryDictionary<int, ShopItemData>(dic);
+            state.RandomShopItems = new State.MemoryDictionary<int, ShopItemData>(dic);
         }
 
         public static void CommandRefreshItem(ref PlayerShopState state, int connectionId, bool isServer = false)
@@ -210,7 +210,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var shopConfigIds = state.RandomShopItems.Values.Select(x => x.ShopConfigId).ToHashSet();
             var newShopData = GetRandomShopItemData(shopConfigIds);
             var dic = newShopData.ToDictionary(x => x.ShopId, x => x);
-            state.RandomShopItems = new MemoryDictionary<int, ShopItemData>(dic);
+            state.RandomShopItems = new State.MemoryDictionary<int, ShopItemData>(dic);
             var command = new PropertyGetScoreGoldCommand
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property,
@@ -220,7 +220,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             Constant.GameSyncManager.EnqueueServerCommand(command);
         }
         
-        private static void RefreshShopItems(ref MemoryDictionary<int, ShopItemData> playerShopData, ShopItemData randomShopItemData, ShopItemData otherShopItemData)
+        private static void RefreshShopItems(ref State.MemoryDictionary<int, ShopItemData> playerShopData, ShopItemData randomShopItemData, ShopItemData otherShopItemData)
         {
             var newConfigId = Constant.ShopConfig.GetRandomItem(randomShopItemData.ShopConfigId, otherShopItemData.ShopConfigId, randomShopItemData.ItemType);
             playerShopData.Remove(randomShopItemData.ShopId);

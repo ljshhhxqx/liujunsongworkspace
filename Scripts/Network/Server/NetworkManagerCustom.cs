@@ -246,20 +246,6 @@ namespace HotUpdate.Scripts.Network.Server
                 };
                 _gameEventManager.Publish(new PlayerConnectEvent(conn.connectionId, conn.identity.netId));//, message.UID, message.Name, gameInfo));
                 _gameEventManager.Publish(new GameReadyEvent(gameInfo));
-                // }
-                // if (_playerAccountIdMap.Count == playerCount)
-                // {
-                //     var gameInfo = new GameInfo
-                //     {
-                //         SceneName = _mapName,
-                //         GameMode = (GameMode)_playerDataManager.CurrentRoomData.RoomCustomInfo.GameMode,
-                //         GameTime = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameTime,
-                //         GameScore = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameScore,
-                //         PlayerCount = playerCount
-                //     };
-                //     _gameEventManager.Publish(new GameReadyEvent(gameInfo));
-                //     Debug.Log("player all ready");
-                // }
                 Debug.Log("Received PlayerAccountId from client: " + message.UID);
             }
         }

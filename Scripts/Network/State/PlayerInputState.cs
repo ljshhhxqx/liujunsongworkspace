@@ -1,10 +1,10 @@
-﻿using AOTScripts.Tool.ObjectPool;
+﻿using AOTScripts.Data;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using MemoryPack;
 using UnityEngine;
-using CooldownSnapshotData = HotUpdate.Scripts.Network.State.CooldownSnapshotData;
+using AnimationState = AOTScripts.Data.AnimationState;
 
-namespace AOTScripts.Data.State
+namespace HotUpdate.Scripts.Network.State
 {
     [MemoryPackable]
     public partial struct PlayerInputState : ISyncPropertyState
@@ -35,9 +35,9 @@ namespace AOTScripts.Data.State
     public partial struct PlayerAnimationCooldownState
     {
         [MemoryPackOrder(0)]
-        public MemoryDictionary<AnimationState, HotUpdate.Scripts.Network.State.CooldownSnapshotData> AnimationCooldowns;
+        public MemoryDictionary<AnimationState, CooldownSnapshotData> AnimationCooldowns;
         
-        public PlayerAnimationCooldownState(MemoryDictionary<AnimationState, HotUpdate.Scripts.Network.State.CooldownSnapshotData> animationCooldowns)
+        public PlayerAnimationCooldownState(MemoryDictionary<AnimationState, CooldownSnapshotData> animationCooldowns)
         {
             AnimationCooldowns = animationCooldowns;
         }

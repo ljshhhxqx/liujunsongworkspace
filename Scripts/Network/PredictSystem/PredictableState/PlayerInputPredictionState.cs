@@ -23,9 +23,10 @@ using AnimationState = AOTScripts.Data.AnimationState;
 using CooldownSnapshotData = HotUpdate.Scripts.Network.State.CooldownSnapshotData;
 using INetworkCommand = AOTScripts.Data.INetworkCommand;
 using InputCommand = AOTScripts.Data.InputCommand;
-using PlayerAnimationCooldownState = AOTScripts.Data.State.PlayerAnimationCooldownState;
-using PlayerGameStateData = AOTScripts.Data.State.PlayerGameStateData;
-using PlayerInputState = AOTScripts.Data.State.PlayerInputState;
+using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
+using PlayerAnimationCooldownState = HotUpdate.Scripts.Network.State.PlayerAnimationCooldownState;
+using PlayerGameStateData = HotUpdate.Scripts.Network.State.PlayerGameStateData;
+using PlayerInputState = HotUpdate.Scripts.Network.State.PlayerInputState;
 using PropertyClientAnimationCommand = AOTScripts.Data.PropertyClientAnimationCommand;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
@@ -159,7 +160,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _isApplyingState = false;
         }
 
-        private void UpdateUIAnimation(MemoryDictionary<AnimationState, CooldownSnapshotData> snapshot)
+        private void UpdateUIAnimation(State.MemoryDictionary<AnimationState, CooldownSnapshotData> snapshot)
         {
             if (!LocalPlayerHandler)
             {

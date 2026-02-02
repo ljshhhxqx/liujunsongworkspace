@@ -18,6 +18,7 @@ using UnityEngine;
 using VContainer;
 using AnimationState = AOTScripts.Data.AnimationState;
 using INetworkCommand = AOTScripts.Data.INetworkCommand;
+using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
 using PlayerPredictablePropertyState = HotUpdate.Scripts.Network.State.PlayerPredictablePropertyState;
 using PropertyCalculator = HotUpdate.Scripts.Network.State.PropertyCalculator;
 

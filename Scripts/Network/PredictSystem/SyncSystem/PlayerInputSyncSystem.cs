@@ -25,9 +25,10 @@ using AnimationState = AOTScripts.Data.AnimationState;
 using CooldownSnapshotData = HotUpdate.Scripts.Network.State.CooldownSnapshotData;
 using INetworkCommand = AOTScripts.Data.INetworkCommand;
 using InputCommand = AOTScripts.Data.InputCommand;
-using PlayerAnimationCooldownState = AOTScripts.Data.State.PlayerAnimationCooldownState;
-using PlayerGameStateData = AOTScripts.Data.State.PlayerGameStateData;
-using PlayerInputState = AOTScripts.Data.State.PlayerInputState;
+using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
+using PlayerAnimationCooldownState = HotUpdate.Scripts.Network.State.PlayerAnimationCooldownState;
+using PlayerGameStateData = HotUpdate.Scripts.Network.State.PlayerGameStateData;
+using PlayerInputState = HotUpdate.Scripts.Network.State.PlayerInputState;
 using PropertyAttackCommand = AOTScripts.Data.PropertyAttackCommand;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
@@ -158,7 +159,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private MemoryDictionary<AnimationState, CooldownSnapshotData> GetStateAnimationCooldowns()
         {
-            var dic = new MemoryDictionary<AnimationState, CooldownSnapshotData>(_animationConfig.AnimationInfos.Count);
+            var dic = new Dictionary<AnimationState, CooldownSnapshotData>(_animationConfig.AnimationInfos.Count);
             for (int i = 0; i < _animationConfig.AnimationInfos.Count; i++)
             {
                 var animationInfo = _animationConfig.AnimationInfos[i];
@@ -166,7 +167,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 {
                     continue;
                 }
-                var data = ObjectPoolManager<CooldownSnapshotData>.Instance.Get(_animationConfig.AnimationInfos.Count);
+
+                var data = new CooldownSnapshotData();//ObjectPoolManager<CooldownSnapshotData>.Instance.Get(_animationConfig.AnimationInfos.Count);
                 data.AnimationState = animationInfo.state;
                 data.Cooldown = animationInfo.cooldown;
                 data.AnimationSpeed = 1;
@@ -182,7 +184,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 dic.Add(animationInfo.state, data);
             }
 
-            return dic;
+            return (MemoryDictionary<AnimationState, CooldownSnapshotData>)dic;
         }
 
         [ClientRpc]

@@ -18,6 +18,7 @@ using Mirror;
 using UnityEngine;
 using VContainer;
 using AnimationState = AOTScripts.Data.AnimationState;
+using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
 using Object = UnityEngine.Object;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
@@ -137,7 +138,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerPredictableState = player.GetComponent<PlayerSkillSyncState>();
             var skillState = new PlayerSkillState();
-            skillState.SkillCheckerDatas = new MemoryList<SkillCheckerData>();
+            skillState.SkillCheckerDatas = new State.MemoryList<SkillCheckerData>();
             PropertyStates.AddOrUpdate(connectionId, skillState);
             _playerSkillSyncStates.AddOrUpdate(connectionId, playerPredictableState);
             RpcSetPlayerSkillState(connectionId, netId, NetworkCommandExtensions.SerializePlayerState(skillState).Item1);

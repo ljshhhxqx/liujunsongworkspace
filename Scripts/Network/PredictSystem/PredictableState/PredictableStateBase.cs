@@ -16,6 +16,7 @@ using Mirror;
 using UnityEngine;
 using VContainer;
 using INetworkCommand = AOTScripts.Data.INetworkCommand;
+using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {

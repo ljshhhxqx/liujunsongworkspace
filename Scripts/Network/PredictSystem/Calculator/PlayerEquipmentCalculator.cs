@@ -6,6 +6,7 @@ using HotUpdate.Scripts.Network.Item;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using Newtonsoft.Json;
 using UnityEngine;
+using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
 using PlayerEquipmentState = HotUpdate.Scripts.Network.State.PlayerEquipmentState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator

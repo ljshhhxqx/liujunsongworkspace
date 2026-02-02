@@ -14,9 +14,9 @@ using HotUpdate.Scripts.Tool.ObjectPool;
 using MemoryPack;
 using Mirror;
 using UnityEngine;
-using ISyncPropertyState = AOTScripts.Data.State.ISyncPropertyState;
+using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
 using PlayerEquipmentState = HotUpdate.Scripts.Network.State.PlayerEquipmentState;
-using PlayerInputState = AOTScripts.Data.State.PlayerInputState;
+using PlayerInputState = HotUpdate.Scripts.Network.State.PlayerInputState;
 using PlayerItemState = AOTScripts.Data.State.PlayerItemState;
 using PlayerPredictablePropertyState = HotUpdate.Scripts.Network.State.PlayerPredictablePropertyState;
 using PlayerShopState = AOTScripts.Data.State.PlayerShopState;
@@ -1471,7 +1471,7 @@ namespace AOTScripts.Data
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public MemoryList<SlotIndexData> Slots;
+        public HotUpdate.Scripts.Network.State.MemoryList<SlotIndexData> Slots;
         public NetworkCommandHeader GetHeader() => Header;
         public NetworkCommandType GetCommandType() => NetworkCommandType.ItemsSell;
 
@@ -1540,7 +1540,7 @@ namespace AOTScripts.Data
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public MemoryList<ItemsCommandData> Items;
+        public HotUpdate.Scripts.Network.State.MemoryList<ItemsCommandData> Items;
         public NetworkCommandHeader GetHeader() => Header;
         public NetworkCommandType GetCommandType() => NetworkCommandType.ItemsBuy;
 
@@ -1578,7 +1578,7 @@ namespace AOTScripts.Data
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public MemoryList<ItemsCommandData> Items;
+        public HotUpdate.Scripts.Network.State.MemoryList<ItemsCommandData> Items;
         public NetworkCommandHeader GetHeader() => Header;
         public NetworkCommandType GetCommandType() => NetworkCommandType.ItemsGet;
 
@@ -1618,7 +1618,7 @@ namespace AOTScripts.Data
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public MemoryDictionary<int, SlotIndexData> Slots;
+        public HotUpdate.Scripts.Network.State.MemoryDictionary<int, SlotIndexData> Slots;
         public NetworkCommandHeader GetHeader() => Header;
         public NetworkCommandType GetCommandType() => NetworkCommandType.ItemsUse;
 
@@ -1755,7 +1755,7 @@ namespace AOTScripts.Data
         [MemoryPackOrder(0)]
         public NetworkCommandHeader Header;
         [MemoryPackOrder(1)]
-        public MemoryDictionary<int, SlotIndexData> Slots;
+        public HotUpdate.Scripts.Network.State.MemoryDictionary<int, SlotIndexData> Slots;
         public NetworkCommandHeader GetHeader() => Header;
         public NetworkCommandType GetCommandType() => NetworkCommandType.ItemDrop;
 
@@ -2110,7 +2110,7 @@ namespace AOTScripts.Data
         [MemoryPackOrder(1)]
         public int ChestConfigId;
         [MemoryPackOrder(2)]
-        public MemoryList<int> ItemIds;
+        public HotUpdate.Scripts.Network.State.MemoryList<int> ItemIds;
     }
     
     #region Enum
