@@ -48,7 +48,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private readonly Dictionary<uint, PlayerComponentController> _playerNetComponentControllers = new Dictionary<uint, PlayerComponentController>();
         private InteractSystem _interactSystem;
 
-        [SyncVar(hook = nameof(OnIsRandomUnionStartChanged))] 
+        //[SyncVar(hook = nameof(OnIsRandomUnionStartChanged))] 
         public bool isRandomUnionStart;
         [SyncVar] 
         public bool isGameStart;
@@ -165,22 +165,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void OnAddDeBuffToLowScorePlayer(AddDeBuffToLowScorePlayerEvent addDeBuffToLowScorePlayerEvent)
         {
             _playerPropertySyncSystem.AddBuffToLowScorePlayer(addDeBuffToLowScorePlayerEvent.CurrentRound);
-        }
-
-        private void OnIsRandomUnionStartChanged(bool oldValue, bool newValue)
-        {
-            if (newValue)
-            {
-                _playerInGameManager.RandomUnion(out var noUnionPlayerId);
-                if (noUnionPlayerId != 0)
-                {
-                    var command = new NoUnionPlayerAddMoreScoreAndGoldCommand
-                    {
-                        Header = CreateNetworkCommandHeader(noUnionPlayerId, CommandType.Property, CommandAuthority.Server, CommandExecuteType.Immediate),
-                    };
-                    EnqueueServerCommand(command);
-                }
-            }
         }
 
         private void OnPlayerDisconnect(PlayerDisconnectEvent disconnectEvent)

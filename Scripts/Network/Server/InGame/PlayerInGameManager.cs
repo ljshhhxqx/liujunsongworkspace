@@ -434,10 +434,10 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 var playerCollider = playerIdentity.GetComponent<Collider>();
                 _playerPhysicsData = GamePhysicsSystem.CreateColliderConfig(playerCollider);
             }
-            _playerIds.AddOrUpdate(connectId, playerInGameData.player.PlayerId);
-            _playerNetIds.AddOrUpdate(connectId, playerInGameData.networkIdentity.netId);
-            _playerInGameData.AddOrUpdate(connectId, playerInGameData);
-            _playerIdsByNetId.AddOrUpdate(playerInGameData.networkIdentity.netId, connectId);
+            _playerIds.Add(connectId, playerInGameData.player.PlayerId);
+            _playerNetIds.Add(connectId, playerInGameData.networkIdentity.netId);
+            _playerInGameData.Add(connectId, playerInGameData);
+            _playerIdsByNetId.Add(playerInGameData.networkIdentity.netId, connectId);
             Debug.Log($"[PlayerIngameManager] Player connectionId : {connectId} netId : {playerInGameData.networkIdentity.netId} added");
             var pos = playerInGameData.networkIdentity.transform.position;
             Debug.Log($"[PlayerIngameManager] Player {connectId} position : {pos} {_gameConfigData} {(MapType)GameLoopDataModel.GameSceneName.Value}");
@@ -445,9 +445,9 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             Debug.Log($"[PlayerIngameManager] _gameConfigData.GetNearestBase {nearestBase}");
             _playerSpawnPoints[nearestBase] = playerInGameData.networkIdentity.netId;
             Debug.Log($"[PlayerIngameManager] playerInGameData.networkIdentity.netId {_playerSpawnPoints[nearestBase]}");
-            _playerPositions.AddOrUpdate(playerInGameData.networkIdentity.netId, pos);
+            _playerPositions.Add(playerInGameData.networkIdentity.netId, pos);
             Debug.Log($"[PlayerIngameManager] _playerPositions.AddOrUpdate {playerInGameData.networkIdentity.netId}");
-            _playerGrids.AddOrUpdate(playerInGameData.networkIdentity.netId,  MapBoundDefiner.Instance.GetGridPosition(pos));
+            _playerGrids.Add(playerInGameData.networkIdentity.netId,  MapBoundDefiner.Instance.GetGridPosition(pos));
             Debug.Log($"[PlayerIngameManager] _playerGrids.AddOrUpdate {MapBoundDefiner.Instance.GetGridPosition(pos)}");
             SetCalculatorConstants(playerIdentity);
             RpcAddPlayer(connectId, playerInGameData, playerInGameData.networkIdentity);
@@ -694,10 +694,10 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                     unionId = ++_currentUnionId,
                     playerIds = playerIds,
                 };
-                _unionData.AddOrUpdate(union.unionId, union);
+                _unionData.Add(union.unionId, union);
                 foreach (var playerId in playerIds)
                 {
-                    _playerUnionIds.AddOrUpdate(playerId, union.unionId);
+                    _playerUnionIds.Add(playerId, union.unionId);
                 }
             }
             var noUnionPlayers = GetPlayerWithNoUnion();

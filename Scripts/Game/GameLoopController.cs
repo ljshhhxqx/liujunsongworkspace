@@ -337,6 +337,16 @@ namespace HotUpdate.Scripts.Game
                         if (_noUnionTime <= 0)
                         {
                             _gameSyncManager.isRandomUnionStart = true;
+                            _playerInGameManager.RandomUnion(out var id);
+                            
+                            if (id != 0)
+                            {
+                                var command = new NoUnionPlayerAddMoreScoreAndGoldCommand
+                                {
+                                    Header = GameSyncManager.CreateNetworkCommandHeader(id, CommandType.Property, CommandAuthority.Server, CommandExecuteType.Immediate),
+                                };
+                                _gameSyncManager.EnqueueServerCommand(command);
+                            }
                         }
                     }
                     _messageHandler.SendToAllClients(new MirrorCountdownMessage(remainingTime));
