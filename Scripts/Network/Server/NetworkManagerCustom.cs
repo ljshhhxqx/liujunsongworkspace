@@ -19,7 +19,6 @@ using UniRx;
 using UnityEngine;
 using VContainer;
 using GameInfo = HotUpdate.Scripts.Tool.GameEvent.GameInfo;
-using PlayerInGameData = HotUpdate.Scripts.Network.Server.InGame.PlayerInGameData;
 using Random = UnityEngine.Random;
 
 namespace HotUpdate.Scripts.Network.Server
@@ -229,7 +228,7 @@ namespace HotUpdate.Scripts.Network.Server
                 _playerAccountIdMap[conn.connectionId] = message.UID;
                 _playerDataManager.UpdatePlayerConnectionId(message.UID, conn.connectionId);
                 var playerInGameData = _playerDataManager.GetPlayer(conn.connectionId);
-                _playerInGameManager.AddPlayer(conn.connectionId, new PlayerInGameData
+                _playerInGameManager.AddPlayer(conn.connectionId, new PlayerInGameDataNetData
                 {
                     player = playerInGameData.player,
                     networkIdentity = conn.identity,

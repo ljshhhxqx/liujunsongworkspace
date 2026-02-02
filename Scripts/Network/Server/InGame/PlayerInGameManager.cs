@@ -29,7 +29,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         private readonly SyncDictionary<int, string> _playerIds = new SyncDictionary<int, string>();
         private readonly SyncDictionary<int, uint> _playerNetIds = new SyncDictionary<int, uint>();
         private readonly SyncDictionary<uint, int> _playerIdsByNetId = new SyncDictionary<uint, int>();
-        private readonly SyncDictionary<int, PlayerInGameData> _playerInGameData = new SyncDictionary<int, PlayerInGameData>();
+        private readonly SyncDictionary<int, PlayerInGameDataNetData> _playerInGameData = new SyncDictionary<int, PlayerInGameDataNetData>();
         private readonly SyncDictionary<uint, Vector2Int> _playerGrids = new SyncDictionary<uint, Vector2Int>();
         private readonly SyncDictionary<uint, Vector3> _playerPositions = new SyncDictionary<uint, Vector3>();
         private readonly SyncDictionary<int, UnionData> _unionData = new SyncDictionary<int, UnionData>();
@@ -425,32 +425,36 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             }
         }
 
-        public void AddPlayer(int connectId, PlayerInGameData playerInGameData)
+        public void AddPlayer(int connectId, PlayerInGameDataNetData playerInGameDataNetData)
         {
-            var playerIdentity = playerInGameData.networkIdentity;
+            var playerIdentity = playerInGameDataNetData.networkIdentity;
             //_gameConfigData = _configProvider.GetConfig<JsonDataConfig>().GameConfig;
             if (_playerPhysicsData == null)
             {
                 var playerCollider = playerIdentity.GetComponent<Collider>();
                 _playerPhysicsData = GamePhysicsSystem.CreateColliderConfig(playerCollider);
             }
-            _playerIds.Add(connectId, playerInGameData.player.PlayerId);
-            _playerNetIds.Add(connectId, playerInGameData.networkIdentity.netId);
-            _playerInGameData.Add(connectId, playerInGameData);
-            _playerIdsByNetId.Add(playerInGameData.networkIdentity.netId, connectId);
-            Debug.Log($"[PlayerIngameManager] Player connectionId : {connectId} netId : {playerInGameData.networkIdentity.netId} added");
-            var pos = playerInGameData.networkIdentity.transform.position;
-            Debug.Log($"[PlayerIngameManager] Player {connectId} position : {pos} {_gameConfigData} {(MapType)GameLoopDataModel.GameSceneName.Value}");
+            Debug.Log($"[PlayerIngameManager] _playerPhysicsData");
+            _playerIds.Add(connectId, playerInGameDataNetData.player.PlayerId);
+            Debug.Log($"[PlayerIngameManager] _playerIds.Add(connectId, playerInGameDataNetData.player.PlayerId)");
+            _playerNetIds.Add(connectId, playerInGameDataNetData.networkIdentity.netId);
+            Debug.Log($"[PlayerIngameManager] _playerNetIds.Add(connectId, playerInGameDataNetData.networkIdentity.netId)");
+            _playerInGameData.Add(connectId, playerInGameDataNetData);
+            Debug.Log($"[PlayerIngameManager] _playerInGameData.Add(connectId, playerInGameDataNetData)");
+            _playerIdsByNetId.Add(playerInGameDataNetData.networkIdentity.netId, connectId);
+            Debug.Log($"[PlayerIngameManager] _playerIdsByNetId.Add(playerInGameDataNetData.networkIdentity.netId, connectId");
+            var pos = playerInGameDataNetData.networkIdentity.transform.position;
+            Debug.Log($"[PlayerIngameManager] var pos = playerInGameDataNetData.networkIdentity.transform.position");
             var nearestBase = _gameConfigData.GetNearestBase((MapType)GameLoopDataModel.GameSceneName.Value, pos);
-            Debug.Log($"[PlayerIngameManager] _gameConfigData.GetNearestBase {nearestBase}");
-            _playerSpawnPoints[nearestBase] = playerInGameData.networkIdentity.netId;
-            Debug.Log($"[PlayerIngameManager] playerInGameData.networkIdentity.netId {_playerSpawnPoints[nearestBase]}");
-            _playerPositions.Add(playerInGameData.networkIdentity.netId, pos);
-            Debug.Log($"[PlayerIngameManager] _playerPositions.AddOrUpdate {playerInGameData.networkIdentity.netId}");
-            _playerGrids.Add(playerInGameData.networkIdentity.netId,  MapBoundDefiner.Instance.GetGridPosition(pos));
-            Debug.Log($"[PlayerIngameManager] _playerGrids.AddOrUpdate {MapBoundDefiner.Instance.GetGridPosition(pos)}");
+            Debug.Log($"[PlayerIngameManager] var nearestBase = _gameConfigData.GetNearestBase {nearestBase}");
+            _playerSpawnPoints[nearestBase] = playerInGameDataNetData.networkIdentity.netId;
+            Debug.Log($"[PlayerIngameManager] _playerSpawnPoints[nearestBase] = playerInGameData.networkIdentity.netId {_playerSpawnPoints[nearestBase]}");
+            _playerPositions.Add(playerInGameDataNetData.networkIdentity.netId, pos);
+            Debug.Log($"[PlayerIngameManager] _playerPositions.Add {playerInGameDataNetData.networkIdentity.netId}");
+            _playerGrids.Add(playerInGameDataNetData.networkIdentity.netId,  MapBoundDefiner.Instance.GetGridPosition(pos));
+            Debug.Log($"[PlayerIngameManager] _playerGrids.Add {MapBoundDefiner.Instance.GetGridPosition(pos)}");
             SetCalculatorConstants(playerIdentity);
-            RpcAddPlayer(connectId, playerInGameData, playerInGameData.networkIdentity);
+            RpcAddPlayer(connectId, playerInGameDataNetData, playerInGameDataNetData.networkIdentity);
         }
 
         private void SetCalculatorConstants(NetworkIdentity identity)
@@ -551,15 +555,15 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         // }
 
         [ClientRpc]
-        private void RpcAddPlayer(int connectId, PlayerInGameData playerInGameData, NetworkIdentity networkIdentity)
+        private void RpcAddPlayer(int connectId, PlayerInGameDataNetData playerInGameDataNetData, NetworkIdentity networkIdentity)
         {
-            var playerIdentity = playerInGameData.networkIdentity;
+            var playerIdentity = playerInGameDataNetData.networkIdentity;
             if (_playerPhysicsData == null)
             {
                 var playerCollider = playerIdentity.GetComponent<Collider>();
                 _playerPhysicsData = GamePhysicsSystem.CreateColliderConfig(playerCollider);
             }
-            var pos = playerInGameData.networkIdentity.transform.position;
+            var pos = playerInGameDataNetData.networkIdentity.transform.position;
             var nearestBase = _gameConfigData.GetNearestBase((MapType)GameLoopDataModel.GameSceneName.Value, pos);
             var basePosition = _playerBases
                 .Where(x => x.Value)
@@ -607,7 +611,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             return false;
         }
 
-        public PlayerInGameData GetPlayer(int playerId)
+        public PlayerInGameDataNetData GetPlayer(int playerId)
         {
             return _playerInGameData.GetValueOrDefault(playerId);
         }   
@@ -633,8 +637,8 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         {
             Reader<PlayerReadOnlyData>.read = PlayerReadOnlyDataReader;
             Writer<PlayerReadOnlyData>.write = PlayerReadOnlyDataWriter;
-            Reader<PlayerInGameData>.read = PlayerInGameDataReader;
-            Writer<PlayerInGameData>.write = PlayerInGameDataWriter;
+            Reader<PlayerInGameDataNetData>.read = PlayerInGameDataReader;
+            Writer<PlayerInGameDataNetData>.write = PlayerInGameDataWriter;
         }
         
         private void PlayerReadOnlyDataWriter(NetworkWriter writer, PlayerReadOnlyData playerReadOnlyData)
@@ -662,19 +666,19 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             };
         }
         
-        private PlayerInGameData PlayerInGameDataReader(NetworkReader reader)
+        private PlayerInGameDataNetData PlayerInGameDataReader(NetworkReader reader)
         {
-            return new PlayerInGameData
+            return new PlayerInGameDataNetData
             {
                 player = PlayerReadOnlyDataReader(reader),
                 networkIdentity = reader.ReadNetworkIdentity()
             };
         }
 
-        private void PlayerInGameDataWriter(NetworkWriter writer, PlayerInGameData playerInGameData)
+        private void PlayerInGameDataWriter(NetworkWriter writer, PlayerInGameDataNetData playerInGameDataNetData)
         {
-            writer.Write(playerInGameData.player);
-            writer.Write(playerInGameData.networkIdentity);
+            writer.Write(playerInGameDataNetData.player);
+            writer.Write(playerInGameDataNetData.networkIdentity);
         }
 
         #region Union
@@ -1024,7 +1028,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
     }
 
     [Serializable]
-    public class PlayerInGameData
+    public class PlayerInGameDataNetData
     {
         public PlayerReadOnlyData player;
         public NetworkIdentity networkIdentity;
