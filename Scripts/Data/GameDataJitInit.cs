@@ -62,10 +62,6 @@ namespace HotUpdate.Scripts.Data
             // CriticalHitConditionParam criticalHitConditionParam = new CriticalHitConditionParam();
             // DodgeConditionParam dodgeConditionParam = new DodgeConditionParam();
             // DeathConditionParam deathConditionParam = new DeathConditionParam();
-            
-            SyncDictionary<int, PlayerInGameData> playerInGameDataDict = new SyncDictionary<int, PlayerInGameData>();
-            SyncDictionary<int, UnionData> unionData = new SyncDictionary<int, UnionData>();
-            SyncGridDictionary gridPlayers = new SyncGridDictionary();
 
             Debug.Log("GameDataJitInit.Init Finish");
         }
