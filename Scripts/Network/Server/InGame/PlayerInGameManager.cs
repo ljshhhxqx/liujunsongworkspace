@@ -1030,24 +1030,4 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         public NetworkIdentity networkIdentity;
         public uint playerNetId;
     }
-
-    [Serializable]
-    public struct UnionData
-    {
-        public uint[] playerIds;
-        public int unionId;
-    }
-
-    [Serializable]
-    public struct GridData
-    {
-        public uint[] playerNetIds;
-    
-        public GridData(IEnumerable<uint> ids)
-        {
-            playerNetIds = ids.ToArray();
-        }
-    }
-
-    public class SyncGridDictionary : SyncDictionary<Vector2Int, GridData> {}
 }

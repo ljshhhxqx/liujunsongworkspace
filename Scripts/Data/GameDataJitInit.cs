@@ -2,6 +2,7 @@
 using Data;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using Mirror;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Data
@@ -62,8 +63,10 @@ namespace HotUpdate.Scripts.Data
             // DodgeConditionParam dodgeConditionParam = new DodgeConditionParam();
             // DeathConditionParam deathConditionParam = new DeathConditionParam();
             
-            
-            
+            SyncDictionary<int, PlayerInGameData> playerInGameDataDict = new SyncDictionary<int, PlayerInGameData>();
+            SyncDictionary<int, UnionData> unionData = new SyncDictionary<int, UnionData>();
+            SyncGridDictionary gridPlayers = new SyncGridDictionary();
+
             Debug.Log("GameDataJitInit.Init Finish");
         }
     }
