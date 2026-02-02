@@ -118,7 +118,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 if (playerState is PlayerPredictablePropertyState playerPredictablePropertyState)
                 {
                     //return MemoryPackSerializer.Serialize(playerPredictablePropertyState);
-                    return NetworkCommandExtensions.SerializePlayerState(playerPredictablePropertyState).Item1;
+                    return NetworkCommandExtensions.SerializePlayerState(playerPredictablePropertyState).Buffer;
                 }
 
                 Debug.LogError($"Player {playerState.GetStateType().ToString()} property state is not PlayerPredictablePropertyState.");
@@ -287,7 +287,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             Debug.Log($"[PlayerPropertySyncSystem] RegisterState: {connectionId} Start");
             var playerState = NetworkCommandExtensions.SerializePlayerState(playerPropertyState);
             Debug.Log($"[PlayerPropertySyncSystem] RegisterState: {connectionId} End");
-            RpcSetPlayerPropertyState(connectionId, netId, playerState.Item1);
+            RpcSetPlayerPropertyState(connectionId, netId, playerState.Buffer);
             Debug.Log($"[PlayerPropertySyncSystem] RpcSetPlayerPropertyState: {connectionId} End");
         }
         

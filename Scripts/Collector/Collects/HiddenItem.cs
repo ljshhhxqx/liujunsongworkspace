@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using AOTScripts.Data;
+using DG.Tweening;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;

@@ -62,7 +62,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             playerPredictableState.RegisterState(GetPlayerItemState());
             PropertyStates.AddOrUpdate(connectionId, state);
             _playerItemSyncStates.AddOrUpdate(connectionId, playerPredictableState);
-            RpcSetPlayerItemState(connectionId, netId, NetworkCommandExtensions.SerializePlayerState(state).Item1);
+            RpcSetPlayerItemState(connectionId, netId, NetworkCommandExtensions.SerializePlayerState(state).Buffer);
             
         }
 
@@ -150,7 +150,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 if (playerState is PlayerItemState playerItemState)
                 {
-                    return NetworkCommandExtensions.SerializePlayerState(playerItemState).Item1;
+                    return NetworkCommandExtensions.SerializePlayerState(playerItemState).Buffer;
                 }
 
                 Debug.LogError($"Player {connectionId} equipment state is not PlayerItemState.");

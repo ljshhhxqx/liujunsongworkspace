@@ -60,7 +60,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             playerPredictableState.SetPlayerShopState(state);
             PropertyStates[connectionId] = state;
             _playerShopSyncStates[connectionId] = playerPredictableState;
-            RpcSetPlayerShopState(connectionId, netId, NetworkCommandExtensions.SerializePlayerState(state).Item1);
+            RpcSetPlayerShopState(connectionId, netId, NetworkCommandExtensions.SerializePlayerState(state).Buffer);
         }
         public override byte[] GetPlayerSerializedState(int connectionId)
         {
@@ -68,7 +68,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 if (playerState is PlayerShopState shopState)
                 {
-                    return NetworkCommandExtensions.SerializePlayerState(shopState).Item1;
+                    return NetworkCommandExtensions.SerializePlayerState(shopState).Buffer;
                 }
 
                 Debug.LogError($"Player {connectionId} property state is not PlayerPredictablePropertyState.");

@@ -1,4 +1,5 @@
 ﻿using System;
+using AOTScripts.Data;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using HotUpdate.Scripts.Config.ArrayConfig;

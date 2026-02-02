@@ -70,7 +70,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 if (playerState is PlayerInputState playerInputState)
                 {
-                    return NetworkCommandExtensions.SerializePlayerState(playerInputState).Item1;
+                    return NetworkCommandExtensions.SerializePlayerState(playerInputState).Buffer;
                 }
 
                 Debug.LogError($"Player {connectionId} input state is not PlayerInputState.");
@@ -151,7 +151,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 new PlayerAnimationCooldownState(GetStateAnimationCooldowns()));
             PropertyStates.AddOrUpdate(connectionId, playerInputState);
             _inputPredictionStates.AddOrUpdate(connectionId, playerPredictableState);
-            RpcSetPlayerInputState(connectionId, netId, NetworkCommandExtensions.SerializePlayerState(playerInputState).Item1);
+            RpcSetPlayerInputState(connectionId, netId, NetworkCommandExtensions.SerializePlayerState(playerInputState).Buffer);
             BindAniEvents(connectionId, netId);
         }
 
@@ -308,7 +308,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
                 TriggerType = TriggerType.OnAttack,
-                TriggerData = NetworkCommandExtensions.SerializeBattleCondition(triggerParams).buffer,
+                TriggerData = NetworkCommandExtensions.SerializeBattleCondition(triggerParams).Buffer,
             });
         }
 
