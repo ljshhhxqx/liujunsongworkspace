@@ -284,7 +284,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             playerPredictableState?.RegisterProperties(playerPropertyState);
             PropertyStates.AddOrUpdate(connectionId, playerPropertyState);
             _propertyPredictionStates.AddOrUpdate(connectionId, playerPredictableState);
-            RpcSetPlayerPropertyState(connectionId, netId, NetworkCommandExtensions.SerializePlayerState(playerPropertyState).Item1);
+            Debug.Log($"[PlayerPropertySyncSystem] RegisterState: {connectionId} Start");
+            var playerState = NetworkCommandExtensions.SerializePlayerState(playerPropertyState);
+            Debug.Log($"[PlayerPropertySyncSystem] RegisterState: {connectionId} End");
+            RpcSetPlayerPropertyState(connectionId, netId, playerState.Item1);
+            Debug.Log($"[PlayerPropertySyncSystem] RpcSetPlayerPropertyState: {connectionId} End");
         }
         
         [ClientRpc]
