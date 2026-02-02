@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using AOTScripts.Data;
-using AOTScripts.Data.State;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
@@ -16,7 +15,7 @@ using Mirror;
 using UnityEngine;
 using VContainer;
 using INetworkCommand = AOTScripts.Data.INetworkCommand;
-using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
+using ISyncPropertyState = AOTScripts.Data.ISyncPropertyState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {

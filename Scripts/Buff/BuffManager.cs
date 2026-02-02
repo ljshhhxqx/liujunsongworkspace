@@ -7,7 +7,7 @@ using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
 using UnityEngine;
 using VContainer;
-using PropertyCalculator = HotUpdate.Scripts.Network.State.PropertyCalculator;
+using PropertyCalculator = AOTScripts.Data.PropertyCalculator;
 
 namespace HotUpdate.Scripts.Buff
 {

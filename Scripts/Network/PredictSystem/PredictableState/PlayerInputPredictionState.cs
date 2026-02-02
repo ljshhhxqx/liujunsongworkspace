@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using AOTScripts.Data;
-using AOTScripts.Data.State;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config.ArrayConfig;
@@ -20,13 +19,13 @@ using UniRx;
 using UnityEngine;
 using VContainer;
 using AnimationState = AOTScripts.Data.AnimationState;
-using CooldownSnapshotData = HotUpdate.Scripts.Network.State.CooldownSnapshotData;
+using CooldownSnapshotData = AOTScripts.Data.CooldownSnapshotData;
 using INetworkCommand = AOTScripts.Data.INetworkCommand;
 using InputCommand = AOTScripts.Data.InputCommand;
-using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
-using PlayerAnimationCooldownState = HotUpdate.Scripts.Network.State.PlayerAnimationCooldownState;
-using PlayerGameStateData = HotUpdate.Scripts.Network.State.PlayerGameStateData;
-using PlayerInputState = HotUpdate.Scripts.Network.State.PlayerInputState;
+using ISyncPropertyState = AOTScripts.Data.ISyncPropertyState;
+using PlayerAnimationCooldownState = AOTScripts.Data.PlayerAnimationCooldownState;
+using PlayerGameStateData = AOTScripts.Data.PlayerGameStateData;
+using PlayerInputState = AOTScripts.Data.PlayerInputState;
 using PropertyClientAnimationCommand = AOTScripts.Data.PropertyClientAnimationCommand;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
@@ -160,7 +159,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _isApplyingState = false;
         }
 
-        private void UpdateUIAnimation(State.MemoryDictionary<AnimationState, CooldownSnapshotData> snapshot)
+        private void UpdateUIAnimation(MemoryDictionary<AnimationState, CooldownSnapshotData> snapshot)
         {
             if (!LocalPlayerHandler)
             {

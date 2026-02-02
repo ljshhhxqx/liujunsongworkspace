@@ -1,8 +1,7 @@
 ﻿using AOTScripts.Data;
-using AOTScripts.Data.State;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
-using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
-using PlayerEquipmentState = HotUpdate.Scripts.Network.State.PlayerEquipmentState;
+using ISyncPropertyState = AOTScripts.Data.ISyncPropertyState;
+using PlayerEquipmentState = AOTScripts.Data.PlayerEquipmentState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {

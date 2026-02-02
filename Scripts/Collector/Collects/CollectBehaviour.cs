@@ -6,7 +6,6 @@ using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Effect;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
-using HotUpdate.Scripts.Network.State;
 using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
 using UnityEngine;

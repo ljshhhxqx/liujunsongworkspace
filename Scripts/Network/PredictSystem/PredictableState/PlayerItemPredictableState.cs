@@ -1,6 +1,5 @@
 ﻿using System;
 using AOTScripts.Data;
-using AOTScripts.Data.State;
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
@@ -11,7 +10,7 @@ using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Static;
 using UnityEngine;
 using VContainer;
-using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
+using ISyncPropertyState = AOTScripts.Data.ISyncPropertyState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {
@@ -123,7 +122,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 SlotIndex = slotIndex,
                 Count = count
             };
-            var dic = new State.MemoryDictionary<int, SlotIndexData>(1);
+            var dic = new MemoryDictionary<int, SlotIndexData>(1);
             dic.Add(slotIndex, useItem);
             var useItemCommand = new ItemsUseCommand
             {
@@ -171,7 +170,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 SlotIndex = slotIndex,
                 Count = count
             };
-            var dic = new State.MemoryDictionary<int, SlotIndexData>(1);
+            var dic = new MemoryDictionary<int, SlotIndexData>(1);
             dic.Add(slotIndex, dropItem);
             var dropItemCommand = new ItemDropCommand
             {

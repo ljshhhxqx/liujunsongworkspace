@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using AOTScripts.Data;
-using AOTScripts.Data.State;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
@@ -9,7 +8,7 @@ using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using MemoryPack;
 using Mirror;
 using VContainer;
-using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
+using ISyncPropertyState = AOTScripts.Data.ISyncPropertyState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {

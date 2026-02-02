@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using AOTScripts.Data;
-using AOTScripts.Data.State;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Item;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using Newtonsoft.Json;
 using UnityEngine;
-using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
-using PlayerEquipmentState = HotUpdate.Scripts.Network.State.PlayerEquipmentState;
+using ISyncPropertyState = AOTScripts.Data.ISyncPropertyState;
+using PlayerEquipmentState = AOTScripts.Data.PlayerEquipmentState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {

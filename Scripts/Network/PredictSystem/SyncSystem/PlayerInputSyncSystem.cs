@@ -10,7 +10,6 @@ using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Server.InGame;
-using HotUpdate.Scripts.Network.State;
 using HotUpdate.Scripts.Static;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using MemoryPack;
@@ -20,13 +19,13 @@ using UnityEngine;
 using VContainer;
 using AnimationEvent = AOTScripts.Data.AnimationEvent;
 using AnimationState = AOTScripts.Data.AnimationState;
-using CooldownSnapshotData = HotUpdate.Scripts.Network.State.CooldownSnapshotData;
+using CooldownSnapshotData = AOTScripts.Data.CooldownSnapshotData;
 using INetworkCommand = AOTScripts.Data.INetworkCommand;
 using InputCommand = AOTScripts.Data.InputCommand;
-using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
-using PlayerAnimationCooldownState = HotUpdate.Scripts.Network.State.PlayerAnimationCooldownState;
-using PlayerGameStateData = HotUpdate.Scripts.Network.State.PlayerGameStateData;
-using PlayerInputState = HotUpdate.Scripts.Network.State.PlayerInputState;
+using ISyncPropertyState = AOTScripts.Data.ISyncPropertyState;
+using PlayerAnimationCooldownState = AOTScripts.Data.PlayerAnimationCooldownState;
+using PlayerGameStateData = AOTScripts.Data.PlayerGameStateData;
+using PlayerInputState = AOTScripts.Data.PlayerInputState;
 using PropertyAttackCommand = AOTScripts.Data.PropertyAttackCommand;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem

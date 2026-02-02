@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Data;
-using AOTScripts.Data.State;
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Item;
@@ -12,7 +11,7 @@ using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using Mirror;
 using Newtonsoft.Json;
 using UnityEngine;
-using PropertyCalculator = HotUpdate.Scripts.Network.State.PropertyCalculator;
+using PropertyCalculator = AOTScripts.Data.PropertyCalculator;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {
@@ -594,7 +593,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 var attributeData = GetAttributeIncreaseDatas(itemConfigData.buffExtraData);
                 if (itemConfigData.itemType.IsEquipment() && (bagItem.MainIncreaseDatas == null || bagItem.MainIncreaseDatas.Count == 0))
                 {
-                    var mainIncreaseDatas = new State.MemoryList<AttributeIncreaseData>(attributeData.Length);
+                    var mainIncreaseDatas = new MemoryList<AttributeIncreaseData>(attributeData.Length);
                     for (int i = 0; i < attributeData.Length; i++)
                     {
                         var attribute = attributeData[i];
@@ -624,8 +623,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     }
                     var equipmentBuff = Constant.RandomBuffConfig.GetEquipmentBuff(increaseType);
                     var passiveAttribute = Constant.RandomBuffConfig.GetBuff(equipmentBuff, conditionConfig.buffWeight);
-                    var passiveAttributeIncreaseDatas = new State.MemoryList<AttributeIncreaseData>(passiveAttribute.increaseDataList.Count);
-                    bagItem.PassiveAttributeIncreaseDatas = new State.MemoryList<AttributeIncreaseData>(passiveAttribute.increaseDataList.Count);
+                    var passiveAttributeIncreaseDatas = new MemoryList<AttributeIncreaseData>(passiveAttribute.increaseDataList.Count);
+                    bagItem.PassiveAttributeIncreaseDatas = new MemoryList<AttributeIncreaseData>(passiveAttribute.increaseDataList.Count);
                     for (int i = 0; i < passiveAttribute.increaseDataList.Count; i++)
                     {
                         passiveAttributeIncreaseDatas.Add(new AttributeIncreaseData
@@ -644,7 +643,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 
                 if (itemConfigData.itemType == PlayerItemType.Consume && (bagItem.RandomIncreaseDatas == null || bagItem.RandomIncreaseDatas.Count == 0))
                 {
-                    var memoryList = new State.MemoryList<RandomAttributeIncreaseData>(attributeData.Length);
+                    var memoryList = new MemoryList<RandomAttributeIncreaseData>(attributeData.Length);
                     for (int i = 0; i < attributeData.Length; i++)
                     {
                         var attribute = attributeData[i];

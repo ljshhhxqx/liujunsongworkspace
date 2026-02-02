@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using AOTScripts.Data;
-using AOTScripts.Data.State;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
@@ -12,7 +11,7 @@ using HotUpdate.Scripts.Tool.ObjectPool;
 using Mirror;
 using UnityEngine;
 using AnimationState = AOTScripts.Data.AnimationState;
-using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
+using ISyncPropertyState = AOTScripts.Data.ISyncPropertyState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {

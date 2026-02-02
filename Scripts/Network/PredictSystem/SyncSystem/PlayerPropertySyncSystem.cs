@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using AOTScripts.Data;
-using AOTScripts.Data.State;
 using AOTScripts.Tool;
 using AOTScripts.Tool.Coroutine;
 using HotUpdate.Scripts.Common;
@@ -16,7 +15,6 @@ using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Server.InGame;
-using HotUpdate.Scripts.Network.State;
 using HotUpdate.Scripts.Tool.GameEvent;
 using MemoryPack;
 using Mirror;
@@ -24,13 +22,13 @@ using UnityEngine;
 using VContainer;
 using AnimationState = AOTScripts.Data.AnimationState;
 using INetworkCommand = AOTScripts.Data.INetworkCommand;
-using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
+using ISyncPropertyState = AOTScripts.Data.ISyncPropertyState;
 using Object = UnityEngine.Object;
-using PlayerPredictablePropertyState = HotUpdate.Scripts.Network.State.PlayerPredictablePropertyState;
+using PlayerPredictablePropertyState = AOTScripts.Data.PlayerPredictablePropertyState;
 using PropertyAttackCommand = AOTScripts.Data.PropertyAttackCommand;
 using PropertyAutoRecoverCommand = AOTScripts.Data.PropertyAutoRecoverCommand;
 using PropertyBuffCommand = AOTScripts.Data.PropertyBuffCommand;
-using PropertyCalculator = HotUpdate.Scripts.Network.State.PropertyCalculator;
+using PropertyCalculator = AOTScripts.Data.PropertyCalculator;
 using PropertyClientAnimationCommand = AOTScripts.Data.PropertyClientAnimationCommand;
 using PropertyEnvironmentChangeCommand = AOTScripts.Data.PropertyEnvironmentChangeCommand;
 using PropertyServerAnimationCommand = AOTScripts.Data.PropertyServerAnimationCommand;
@@ -280,7 +278,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerPredictableState = player.GetComponent<PropertyPredictionState>();
             var playerPropertyState = new PlayerPredictablePropertyState();
             var calculators = PlayerPropertyCalculator.GetPropertyCalculators();
-            playerPropertyState.MemoryProperty = new State.MemoryDictionary<PropertyTypeEnum, PropertyCalculator>(calculators);
+            playerPropertyState.MemoryProperty = new MemoryDictionary<PropertyTypeEnum, PropertyCalculator>(calculators);
             playerPredictableState?.RegisterProperties(playerPropertyState);
             PropertyStates.AddOrUpdate(connectionId, playerPropertyState);
             _propertyPredictionStates.AddOrUpdate(connectionId, playerPredictableState);
@@ -643,7 +641,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 };
                 list.Add(tracedPlayerInfo);
             }
-            playerController.HandleTracedPlayerHp(headerConnectionId, (State.MemoryList<TracedPlayerInfo>)list);
+            playerController.HandleTracedPlayerHp(headerConnectionId, (MemoryList<TracedPlayerInfo>)list);
         }
 
         private void HandlePlayerTouchedBase(int headerConnectionId)

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using AOTScripts.Data;
-using AOTScripts.Data.State;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
@@ -18,7 +17,7 @@ using Mirror;
 using UnityEngine;
 using VContainer;
 using AnimationState = AOTScripts.Data.AnimationState;
-using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
+using ISyncPropertyState = AOTScripts.Data.ISyncPropertyState;
 using Object = UnityEngine.Object;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
@@ -138,7 +137,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerPredictableState = player.GetComponent<PlayerSkillSyncState>();
             var skillState = new PlayerSkillState();
-            skillState.SkillCheckerDatas = new State.MemoryList<SkillCheckerData>();
+            skillState.SkillCheckerDatas = new MemoryList<SkillCheckerData>();
             PropertyStates.AddOrUpdate(connectionId, skillState);
             _playerSkillSyncStates.AddOrUpdate(connectionId, playerPredictableState);
             RpcSetPlayerSkillState(connectionId, netId, NetworkCommandExtensions.SerializePlayerState(skillState).Buffer);

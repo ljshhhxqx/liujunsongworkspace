@@ -1,6 +1,5 @@
 ﻿using System;
 using AOTScripts.Data;
-using AOTScripts.Data.State;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Tool.GameEvent;
@@ -127,7 +126,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
 
             if (itemData.itemType == PlayerItemType.Gold || itemData.itemType == PlayerItemType.Score)
             {
-                var items = new Network.State.MemoryList<ItemsCommandData>();
+                var items = new MemoryList<ItemsCommandData>();
                 items.Add(new ItemsCommandData
                 {
                     ItemConfigId = itemId,
@@ -147,7 +146,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 {
                     var itemIds = new int[1];
                     itemIds[0] = HybridIdGenerator.GenerateItemId(itemId, GameSyncManager.CurrentTick);
-                    var items = new Network.State.MemoryList<ItemsCommandData>();
+                    var items = new MemoryList<ItemsCommandData>();
                     items.Add(new ItemsCommandData
                     {
                         ItemUniqueId = itemIds,

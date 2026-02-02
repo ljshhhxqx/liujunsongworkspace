@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using AOTScripts.Data;
-using AOTScripts.Data.State;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
@@ -9,7 +8,7 @@ using HotUpdate.Scripts.Static;
 using Mirror;
 using UnityEngine;
 using VContainer;
-using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
+using ISyncPropertyState = AOTScripts.Data.ISyncPropertyState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
@@ -52,7 +51,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerPredictableState = player.GetComponent<PlayerShopPredictableState>();
             var state = new PlayerShopState();
             var randomItems = PlayerShopCalculator.GetRandomShopItemData();
-            state.RandomShopItems = new State.MemoryDictionary<int, ShopItemData>();
+            state.RandomShopItems = new MemoryDictionary<int, ShopItemData>();
             for (int i = 0; i < randomItems.Length; i++)
             {
                 state.RandomShopItems.AddOrUpdate(randomItems[i].ShopId, randomItems[i]);

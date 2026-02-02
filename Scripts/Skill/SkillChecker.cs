@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using AOTScripts.Data;
-using AOTScripts.Data.State;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Game.Map;
 using UnityEngine;
 using AnimationState = AOTScripts.Data.AnimationState;
-using PropertyCalculator = HotUpdate.Scripts.Network.State.PropertyCalculator;
+using PropertyCalculator = AOTScripts.Data.PropertyCalculator;
 
 namespace HotUpdate.Scripts.Skill
 {

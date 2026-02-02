@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using AOTScripts.Data;
-using AOTScripts.Data.State;
 using AOTScripts.Tool;
 using AOTScripts.Tool.Coroutine;
 using AOTScripts.Tool.ObjectPool;
@@ -24,7 +23,6 @@ using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server;
 using HotUpdate.Scripts.Network.Server.InGame;
-using HotUpdate.Scripts.Network.State;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Player;
 using HotUpdate.Scripts.Skill;
@@ -48,13 +46,13 @@ using UniRx.Triggers;
 using UnityEngine;
 using VContainer;
 using AnimationState = AOTScripts.Data.AnimationState;
-using CooldownSnapshotData = HotUpdate.Scripts.Network.State.CooldownSnapshotData;
+using CooldownSnapshotData = AOTScripts.Data.CooldownSnapshotData;
 using InputCommand = AOTScripts.Data.InputCommand;
-using PlayerAnimationCooldownState = HotUpdate.Scripts.Network.State.PlayerAnimationCooldownState;
-using PlayerGameStateData = HotUpdate.Scripts.Network.State.PlayerGameStateData;
-using PlayerPredictablePropertyState = HotUpdate.Scripts.Network.State.PlayerPredictablePropertyState;
+using PlayerAnimationCooldownState = AOTScripts.Data.PlayerAnimationCooldownState;
+using PlayerGameStateData = AOTScripts.Data.PlayerGameStateData;
+using PlayerPredictablePropertyState = AOTScripts.Data.PlayerPredictablePropertyState;
 using PropertyAutoRecoverCommand = AOTScripts.Data.PropertyAutoRecoverCommand;
-using PropertyCalculator = HotUpdate.Scripts.Network.State.PropertyCalculator;
+using PropertyCalculator = AOTScripts.Data.PropertyCalculator;
 using PropertyEnvironmentChangeCommand = AOTScripts.Data.PropertyEnvironmentChangeCommand;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
@@ -1183,7 +1181,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             return playerState;
         }
 
-        public void HandleTracedPlayerHp(int connectionId, State.MemoryList<TracedPlayerInfo> tracedInfo)
+        public void HandleTracedPlayerHp(int connectionId, MemoryList<TracedPlayerInfo> tracedInfo)
         {
             var player = NetworkServer.connections[connectionId];
             if (player == null)
@@ -1196,7 +1194,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [TargetRpc]
         private void TargetRpcHandlePlayerHp(NetworkConnection target, byte[] data)
         {
-            var info = BoxingFreeSerializer.MemoryDeserialize<State.MemoryList<TracedPlayerInfo>>(data);
+            var info = BoxingFreeSerializer.MemoryDeserialize<MemoryList<TracedPlayerInfo>>(data);
             var dic = UIPropertyBinder.GetReactiveDictionary<PlayerHpItemData>(_playerTraceOtherPlayerHpBindKey);
             for (int i = 0; i < info.Count; i++)
             {

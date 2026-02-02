@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using AOTScripts.Data;
-using AOTScripts.Data.State;
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
@@ -9,7 +8,7 @@ using HotUpdate.Scripts.Network.UI;
 using Mirror;
 using UI.UIBase;
 using UnityEngine;
-using PlayerPredictablePropertyState = HotUpdate.Scripts.Network.State.PlayerPredictablePropertyState;
+using PlayerPredictablePropertyState = AOTScripts.Data.PlayerPredictablePropertyState;
 
 namespace HotUpdate.Scripts.Tool.GameEvent
 {

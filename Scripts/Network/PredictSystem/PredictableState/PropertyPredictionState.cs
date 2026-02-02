@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using AOTScripts.Data;
-using AOTScripts.Data.State;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
-using HotUpdate.Scripts.Network.State;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Tool.ReactiveProperty;
@@ -18,9 +16,9 @@ using UnityEngine;
 using VContainer;
 using AnimationState = AOTScripts.Data.AnimationState;
 using INetworkCommand = AOTScripts.Data.INetworkCommand;
-using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
-using PlayerPredictablePropertyState = HotUpdate.Scripts.Network.State.PlayerPredictablePropertyState;
-using PropertyCalculator = HotUpdate.Scripts.Network.State.PropertyCalculator;
+using ISyncPropertyState = AOTScripts.Data.ISyncPropertyState;
+using PlayerPredictablePropertyState = AOTScripts.Data.PlayerPredictablePropertyState;
+using PropertyCalculator = AOTScripts.Data.PropertyCalculator;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 {

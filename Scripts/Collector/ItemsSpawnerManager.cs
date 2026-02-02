@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using AOTScripts.Data;
-using AOTScripts.Data.State;
 using AOTScripts.Tool;
 using AOTScripts.Tool.Coroutine;
 using AOTScripts.Tool.ObjectPool;
@@ -224,7 +223,7 @@ namespace HotUpdate.Scripts.Collector
                          var configData = _chestConfig.GetChestConfigData(chestData.ChestConfigId);
                          var extraItems = _shopConfig.GetItemsByShopId(chestData.ShopIds);
                          extraItems.UnionWith(configData.itemIds);
-                         var list = new Network.State.MemoryList<ItemsCommandData>();
+                         var list = new MemoryList<ItemsCommandData>();
                          foreach (var extraItem in extraItems)
                          {
                              var commonData = new ItemsCommandData
@@ -455,7 +454,7 @@ namespace HotUpdate.Scripts.Collector
                     if (ValidatePickup(itemPos, player.transform.position, itemColliderData,
                             playerColliderConfig))
                     {
-                        var list = new Network.State.MemoryList<ItemsCommandData>(2);
+                        var list = new MemoryList<ItemsCommandData>(2);
                         list.Add(new ItemsCommandData()
                         {
                             ItemConfigId =  itemConfigId,

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Data;
-using AOTScripts.Data.State;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Game.Map;
@@ -13,7 +12,7 @@ using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Skill;
 using UnityEngine;
 using AnimationState = AOTScripts.Data.AnimationState;
-using PropertyCalculator = HotUpdate.Scripts.Network.State.PropertyCalculator;
+using PropertyCalculator = AOTScripts.Data.PropertyCalculator;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {

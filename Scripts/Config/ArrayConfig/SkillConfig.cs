@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using AOTScripts.CustomAttribute;
 using AOTScripts.Data;
-using AOTScripts.Data.State;
 using HotUpdate.Scripts.Collector;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -10,7 +9,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Serialization;
 using AnimationState = AOTScripts.Data.AnimationState;
-using PropertyCalculator = HotUpdate.Scripts.Network.State.PropertyCalculator;
+using PropertyCalculator = AOTScripts.Data.PropertyCalculator;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig
 {

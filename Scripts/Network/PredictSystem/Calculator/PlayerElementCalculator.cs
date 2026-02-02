@@ -1,12 +1,11 @@
 ﻿using System.Linq;
 using AOTScripts.Data;
-using AOTScripts.Data.State;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using UnityEngine;
-using ElementGaugeData = HotUpdate.Scripts.Network.State.ElementGaugeData;
-using ElementState = HotUpdate.Scripts.Network.State.ElementState;
+using ElementGaugeData = AOTScripts.Data.ElementGaugeData;
+using ElementState = AOTScripts.Data.ElementState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 {

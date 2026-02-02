@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using AOTScripts.Data;
-using AOTScripts.Data.State;
 using AOTScripts.Tool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Common;
@@ -12,9 +11,9 @@ using HotUpdate.Scripts.Network.Server.InGame;
 using Mirror;
 using UnityEngine;
 using VContainer;
-using EquipmentData = HotUpdate.Scripts.Network.State.EquipmentData;
-using ISyncPropertyState = HotUpdate.Scripts.Network.State.ISyncPropertyState;
-using PlayerEquipmentState = HotUpdate.Scripts.Network.State.PlayerEquipmentState;
+using EquipmentData = AOTScripts.Data.EquipmentData;
+using ISyncPropertyState = AOTScripts.Data.ISyncPropertyState;
+using PlayerEquipmentState = AOTScripts.Data.PlayerEquipmentState;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
@@ -87,7 +86,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerPredictableState = player.GetComponent<PlayerEquipmentSyncState>();
             var playerEquipmentState = new PlayerEquipmentState();
-            playerEquipmentState.EquipmentDatas = new State.MemoryList<EquipmentData>();
+            playerEquipmentState.EquipmentDatas = new MemoryList<EquipmentData>();
             PropertyStates.AddOrUpdate(connectionId, playerEquipmentState);
             _playerEquipmentSyncStates.AddOrUpdate(connectionId, playerPredictableState);
             RpcSetPlayerEquipmentState(netId, NetworkCommandExtensions.SerializePlayerState(playerEquipmentState).Buffer);
