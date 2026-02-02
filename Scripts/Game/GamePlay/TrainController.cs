@@ -231,7 +231,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
                     _gameSyncManager.EnqueueServerCommand(stateChangedCommand);
                     var takeTrainCommand = new PlayerTouchObjectCommand();
                     takeTrainCommand.Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Property);
-                    takeTrainCommand.ObjectType = type;
+                    takeTrainCommand.ObjectType = (int)type;
                     _gameSyncManager.EnqueueServerCommand(takeTrainCommand);
                 }
             }

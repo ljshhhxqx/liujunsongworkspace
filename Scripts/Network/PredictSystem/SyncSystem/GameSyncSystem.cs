@@ -348,7 +348,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             // {
             //     Debug.Log($"[GameSyncManager] EnqueueCommand predicted command {header.CommandId} {inputCommand.CommandAnimationState} at tick {header.Tick}");
             // }
-            ObjectPoolManager<CommandValidationResult>.Instance.Return(validCommand);
+            //ObjectPoolManager<CommandValidationResult>.Instance.Return(validCommand);
             _clientCommands.Enqueue(command);
         }
 
@@ -473,7 +473,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var header = command.GetHeader();
             var validCommand = command.ValidateCommand();
-            ObjectPoolManager<CommandValidationResult>.Instance.Return(validCommand);
+            //ObjectPoolManager<CommandValidationResult>.Instance.Return(validCommand);
             // if (!validCommand.IsValid)
             // {
             //     var sb = new StringBuilder();
@@ -538,7 +538,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public static NetworkCommandHeader CreateNetworkCommandHeader(int connectionId, CommandType commandType, CommandAuthority authority = CommandAuthority.Server, CommandExecuteType commandExecuteType = CommandExecuteType.Predicate, NetworkCommandType networkCommandType = NetworkCommandType.None)
         {
             var tick = (int?)CurrentTick;
-            var header = ObjectPoolManager<NetworkCommandHeader>.Instance.Get(50);
+            var header = new NetworkCommandHeader();
             header.Clear();
             header.CommandId = HybridIdGenerator.GenerateCommandId(authority == CommandAuthority.Server, commandType, networkCommandType, ref tick);
             header.ConnectionId = connectionId;
@@ -547,7 +547,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             header.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             header.Authority = authority;
             header.ExecuteType = commandExecuteType;
-            ObjectPoolManager<NetworkCommandHeader>.Instance.Return(header);
             return header;
         }
 
@@ -570,6 +569,35 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _gameEventManager.Unsubscribe<AddBuffToAllPlayerEvent>(OnAddBuffToAllPlayer);
             _gameEventManager.Unsubscribe<AddDeBuffToLowScorePlayerEvent>(OnAddDeBuffToLowScorePlayer);
             _gameEventManager.Unsubscribe<AllPlayerGetSpeedEvent>(OnAllPlayerGetSpeed);
+        }
+    }
+    
+    public static class GameSyncSystemExtensions
+    {
+        
+        public static BaseSyncSystem GetSyncSystem(this CommandType syncNetworkData)
+        {
+            switch (syncNetworkData)
+            {
+                case CommandType.Property:
+                    return new PlayerPropertySyncSystem();
+                case CommandType.Input:
+                    return new PlayerInputSyncSystem();
+                case CommandType.Item:
+                    return new PlayerItemSyncSystem();
+                case CommandType.Equipment:
+                    return new PlayerEquipmentSystem();
+                case CommandType.Shop:
+                    return new ShopSyncSystem();
+                case CommandType.Skill:
+                    return new PlayerSkillSyncSystem();
+                case CommandType.Interact:
+                    //Debug.LogWarning("Not implemented yet");
+                    return null;
+                // case CommandType.UI:
+                //     return new PlayerCombatSyncSystem();
+            }   
+            return null;
         }
     }
 }

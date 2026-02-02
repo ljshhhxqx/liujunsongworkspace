@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using AOTScripts.Data;
-using AOTScripts.Data.State;
-using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Config.ArrayConfig;
@@ -159,7 +157,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private MemoryDictionary<AnimationState, CooldownSnapshotData> GetStateAnimationCooldowns()
         {
-            var dic = new Dictionary<AnimationState, CooldownSnapshotData>(_animationConfig.AnimationInfos.Count);
+            var dic = new MemoryDictionary<AnimationState, CooldownSnapshotData>(_animationConfig.AnimationInfos.Count);
             for (int i = 0; i < _animationConfig.AnimationInfos.Count; i++)
             {
                 var animationInfo = _animationConfig.AnimationInfos[i];
@@ -184,7 +182,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 dic.Add(animationInfo.state, data);
             }
 
-            return dic as MemoryDictionary<AnimationState, CooldownSnapshotData>;
+            return dic;
         }
 
         [ClientRpc]
@@ -450,7 +448,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     }
                     var moveCheckerParameters = MoveCheckerParameters.CreateParameters(
                         TriggerType.OnMove, moveSpeed, moveSpeed * inputMovement.magnitude * GameSyncManager.TickSeconds);
-                    var triggerCommand = ObjectPoolManager<TriggerCommand>.Instance.Get(50);
+                    var triggerCommand = new TriggerCommand();
                     triggerCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate);
                     triggerCommand.TriggerType = TriggerType.OnMove;
                     triggerCommand.TriggerData = MemoryPackSerializer.Serialize(moveCheckerParameters);

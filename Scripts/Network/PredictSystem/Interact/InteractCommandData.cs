@@ -287,7 +287,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         public const long TIMESTAMP_TOLERANCE = 5000; // 5秒时间容差（毫秒）
         public static CommandValidationResult CommandValidResult(this IInteractRequest command)
         {
-            var result = ObjectPoolManager<CommandValidationResult>.Instance.Get(30);
+            var result = new CommandValidationResult();
+            result.Init();
             var header = command.GetHeader();
 
             // 1. Tick验证

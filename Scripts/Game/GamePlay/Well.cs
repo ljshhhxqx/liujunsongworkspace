@@ -68,7 +68,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
             var playerConnectionId = _playerInGameManager.GetPlayerId(playerTouchWellEvent.PlayerId);
             var playerTouchObjectCommand = new PlayerTouchObjectCommand();
             playerTouchObjectCommand.Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Property);
-            playerTouchObjectCommand.ObjectType = ObjectType.Well;
+            playerTouchObjectCommand.ObjectType = (int)ObjectType.Well;
             _gameSyncManager.EnqueueServerCommand(playerTouchObjectCommand);
             _animationCooldown.Use();
             _currentCount--;

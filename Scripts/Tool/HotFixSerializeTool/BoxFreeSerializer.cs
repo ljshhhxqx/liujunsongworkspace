@@ -83,8 +83,8 @@ namespace HotUpdate.Scripts.Tool.HotFixSerializeTool
     
         public static T MemoryDeserialize<T>(byte[] data)
         {
-#if UNITY_EDITOR
             return MemoryPackSerializer.Deserialize<T>(data);
+#if UNITY_EDITOR
 #endif
             var type = typeof(T);
             if (_memoryDeserializers.TryGetValue(type, out var deserializer))

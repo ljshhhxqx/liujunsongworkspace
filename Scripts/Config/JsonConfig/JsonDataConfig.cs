@@ -413,30 +413,6 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         
         #endregion
     }
-    
-    public struct DamageCalculateResultData
-    {
-        public bool IsCritical;
-        public float Damage;
-    }
-
-    public struct DamageResultData
-    {
-        public uint HitterUid;
-        public uint DefenderUid;
-        public int Hitter;
-        public int Defender;
-        public DamageCalculateResultData DamageCalculateResult;
-        public DamageType DamageType;
-        public DamageCastType DamageCastType;
-        //本次伤害是否被闪避
-        public bool IsDodged;
-        //本次伤害造成了目标的多少百分比的血量损失
-        public float DamageRatio;
-        public float HpRemainRatio;
-        public bool IsDead;
-        public bool IsCritical;
-    }
 
     [Serializable]
     public struct JsonConfigData

@@ -278,7 +278,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                                 PlayerComponentController.AnimationCooldownsDict = animationCooldowns;
                             }
                         }
-                        var animationCommand = ObjectPoolManager<PropertyClientAnimationCommand>.Instance.Get(50);
+
+                        var animationCommand = new PropertyClientAnimationCommand(); //ObjectPoolManager<PropertyClientAnimationCommand>.Instance.Get(50);
                         animationCommand.AnimationState = noStrengthState == AnimationState.None ? inputCommand.CommandAnimationState : noStrengthState;
                         animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property, CommandAuthority.Client);
                         animationCommand.SkillId = skillConfigData.id;

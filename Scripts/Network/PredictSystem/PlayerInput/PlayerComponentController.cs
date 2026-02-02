@@ -737,7 +737,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 }
             }
 
-            var inputCommand = ObjectPoolManager<InputCommand>.Instance.Get(50);
+            var inputCommand = new InputCommand();
             
             _previousAnimationState = inputData.Command;
             inputCommand.InputMovement = CompressedVector3.FromVector3(inputData.InputMovement);
@@ -1073,14 +1073,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
             //执行动画
             _playerAnimationCalculator.HandleAnimation(inputData.Command, _attackAnimationCooldown.CurrentStage);
-            var data = ObjectPoolManager<PlayerGameStateData>.Instance.Get(20);
+            var data = new PlayerGameStateData();// ObjectPoolManager<PlayerGameStateData>.Instance.Get(20);
             data.Position = transform.position;
             data.Quaternion = transform.rotation;
             data.Velocity = _rigidbody.velocity;
             data.PlayerEnvironmentState = _gameState;
             data.AnimationState = inputData.Command;
             data.Index = _attackAnimationCooldown.CurrentStage;
-            ObjectPoolManager<PlayerGameStateData>.Instance.Return(data);
             return data;
         }
         

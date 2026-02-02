@@ -444,7 +444,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerState = GetState<PlayerPredictablePropertyState>(header.ConnectionId);
             var player = _playerInGameManager.GetPlayerComponent<PlayerComponentController>(header.ConnectionId);
             var playerBase = _playerInGameManager.GetPlayerBasePositionById(header.ConnectionId);
-            switch (playerTouchObjectCommand.ObjectType)
+            switch ((ObjectType)playerTouchObjectCommand.ObjectType)
             {
                 case ObjectType.Train:
                     var trainScore = _collectData.touchTrainGainScore.GetRandomValue();
