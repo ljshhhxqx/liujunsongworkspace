@@ -184,7 +184,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 dic.Add(animationInfo.state, data);
             }
 
-            return (MemoryDictionary<AnimationState, CooldownSnapshotData>)dic;
+            return dic as MemoryDictionary<AnimationState, CooldownSnapshotData>;
         }
 
         [ClientRpc]
