@@ -434,14 +434,14 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 var playerCollider = playerIdentity.GetComponent<Collider>();
                 _playerPhysicsData = GamePhysicsSystem.CreateColliderConfig(playerCollider);
             }
-            Debug.Log($"[PlayerIngameManager] _playerPhysicsData");
-            _playerIds.Add(connectId, playerInGameDataNetData.player.PlayerId);
-            Debug.Log($"[PlayerIngameManager] _playerIds.Add(connectId, playerInGameDataNetData.player.PlayerId)");
-            _playerNetIds.Add(connectId, playerInGameDataNetData.networkIdentity.netId);
             Debug.Log($"[PlayerIngameManager] _playerNetIds.Add(connectId, playerInGameDataNetData.networkIdentity.netId)");
             _playerInGameData.Add(connectId, playerInGameDataNetData);
             Debug.Log($"[PlayerIngameManager] _playerInGameData.Add(connectId, playerInGameDataNetData)");
             _playerIdsByNetId.Add(playerInGameDataNetData.networkIdentity.netId, connectId);
+            Debug.Log($"[PlayerIngameManager] _playerPhysicsData");
+            _playerIds.Add(connectId, playerInGameDataNetData.player.PlayerId);
+            Debug.Log($"[PlayerIngameManager] _playerIds.Add(connectId, playerInGameDataNetData.player.PlayerId)");
+            _playerNetIds.Add(connectId, playerInGameDataNetData.networkIdentity.netId);
             Debug.Log($"[PlayerIngameManager] _playerIdsByNetId.Add(playerInGameDataNetData.networkIdentity.netId, connectId");
             var pos = playerInGameDataNetData.networkIdentity.transform.position;
             Debug.Log($"[PlayerIngameManager] var pos = playerInGameDataNetData.networkIdentity.transform.position");
