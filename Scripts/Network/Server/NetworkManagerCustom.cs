@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Data;
 using AOTScripts.Data.NetworkMes;
+using AOTScripts.Tool.Resource;
 using Game.Map;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;

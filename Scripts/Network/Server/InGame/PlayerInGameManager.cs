@@ -121,25 +121,25 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         //     Debug.Log("[PlayerInGameManager] Start ---  instanceId :" + gameObject.GetInstanceID());
         // }
 
-        public override void OnStartServer()
-        {
-            base.OnStartServer();
-#if !UNITY_EDITOR
-            ObjectInjectProvider.Instance.Inject(this);
-            _gameConfigData = _configProvider.GetConfig<JsonDataConfig>().GameConfig;
-            Debug.Log($"[PlayerInGameManager] OnStartServer loaded {_gameConfigData} instanceId {gameObject.GetInstanceID()}");
-#endif
-            
-        }
-        public override void OnStartClient()
-        { 
-            base.OnStartClient();
-#if !UNITY_EDITOR
-            ObjectInjectProvider.Instance.Inject(this);
-            _gameConfigData = _configProvider.GetConfig<JsonDataConfig>().GameConfig;
-            Debug.Log($"[PlayerInGameManager] OnStartClient loaded {_gameConfigData}");
-#endif
-        }
+//         public override void OnStartServer()
+//         {
+//             base.OnStartServer();
+// #if !UNITY_EDITOR
+//             ObjectInjectProvider.Instance.Inject(this);
+//             _gameConfigData = _configProvider.GetConfig<JsonDataConfig>().GameConfig;
+//             Debug.Log($"[PlayerInGameManager] OnStartServer loaded {_gameConfigData} instanceId {gameObject.GetInstanceID()}");
+// #endif
+//             
+//         }
+//         public override void OnStartClient()
+//         { 
+//             base.OnStartClient();
+// #if !UNITY_EDITOR
+//             ObjectInjectProvider.Instance.Inject(this);
+//             _gameConfigData = _configProvider.GetConfig<JsonDataConfig>().GameConfig;
+//             Debug.Log($"[PlayerInGameManager] OnStartClient loaded {_gameConfigData}");
+// #endif
+//         }
 
         private void OnGameResourceLoaded(GameResourceLoadedEvent gameResourceLoadedEvent)
         {

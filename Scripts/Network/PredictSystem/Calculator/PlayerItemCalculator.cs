@@ -68,6 +68,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
         public static IAttributeIncreaseData[] GetAttributeIncreaseDatas(BuffExtraData[] buffExtraData)
         {
+            if (buffExtraData == null || buffExtraData.Length == 0)
+            {
+                Debug.LogError($"PlayerItemCalculator <GetAttributeIncreaseDatas> buffExtraData is null or empty -- buffExtraData {buffExtraData}");
+                return Array.Empty<IAttributeIncreaseData>();
+            }
             var attributeIncreaseDatas = new IAttributeIncreaseData[buffExtraData.Length];
             for (int i = 0; i < buffExtraData.Length; i++)
             {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using AOTScripts.Tool.ObjectPool;
+using AOTScripts.Tool.Resource;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using UnityEngine;
