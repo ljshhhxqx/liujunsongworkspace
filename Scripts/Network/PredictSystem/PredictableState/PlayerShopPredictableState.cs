@@ -177,7 +177,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 Count = count
             };
             
-            CmdSendCommand(NetworkCommandExtensions.SerializeCommand(command).Item1);
+            CmdSendCommand(NetworkCommandExtensions.SerializeCommand(command).Buffer);
         }
     }
 }

@@ -269,7 +269,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void OnDevelopItemGet(DevelopItemGetEvent developItemGetEvent)
         {
-            CmdSendCommand(NetworkCommandExtensions.SerializeCommand(developItemGetEvent.ItemsGetCommand).Item1);
+            CmdSendCommand(NetworkCommandExtensions.SerializeCommand(developItemGetEvent.ItemsGetCommand).Buffer);
         }
 
         private void OnTargetShow(TargetShowEvent targetShowEvent)
@@ -329,7 +329,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                         {
                             Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId, CommandType.Shop, CommandAuthority.Client),
                         };
-                        CmdSendCommand(NetworkCommandExtensions.SerializeCommand(refreshCommand).Item1);
+                        CmdSendCommand(NetworkCommandExtensions.SerializeCommand(refreshCommand).Buffer);
                     }).AddTo(shopScreenUI.gameObject);
                     break;
                 default:
@@ -469,7 +469,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     }
                 }
             
-                CmdSendCommand(NetworkCommandExtensions.SerializeCommand(playerInScreenCommand).Item1);
+                CmdSendCommand(NetworkCommandExtensions.SerializeCommand(playerInScreenCommand).Buffer);
             }
         }
 
@@ -787,7 +787,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                         {
                             Header = header,
                         };
-                        CmdSendCommand(NetworkCommandExtensions.SerializeCommand(playerTouchedBaseCommand).Item1);
+                        CmdSendCommand(NetworkCommandExtensions.SerializeCommand(playerTouchedBaseCommand).Buffer);
                         break;
                     }
                 }

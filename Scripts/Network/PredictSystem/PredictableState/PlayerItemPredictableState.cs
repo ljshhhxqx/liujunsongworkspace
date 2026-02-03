@@ -129,7 +129,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
                 Slots = dic
             };
-            PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(useItemCommand).Item1);
+            PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(useItemCommand).Buffer);
         }
 
         private void OnEquipItem(int slotIndex, bool isEquip)
@@ -145,7 +145,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 PlayerItemType = playerItemType,
                 IsEquip = isEquip
             };
-            PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(equipItemCommand).Item1);
+            PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(equipItemCommand).Buffer);
         }
 
         private void OnLockItem(int slotIndex, bool isLock)
@@ -158,7 +158,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 SlotIndex = slotIndex,
                 IsLocked = isLock
             };
-            PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(lockItemCommand).Item1);
+            PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(lockItemCommand).Buffer);
         }
 
         private void OnDropItem(int slotIndex, int count)
@@ -177,7 +177,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
                 Slots = dic
             };
-            PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(dropItemCommand).Item1);
+            PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(dropItemCommand).Buffer);
         }
 
         private void OnExchangeItem(int fromSlotIndex, int toSlotIndex)
@@ -190,7 +190,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 FromSlotIndex = fromSlotIndex,
                 ToSlotIndex = toSlotIndex
             };
-            PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(exchangeItemCommand).Item1);
+            PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(exchangeItemCommand).Buffer);
         }
 
         private void OnSellItem(int slotIndex, int count)
@@ -203,7 +203,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 ItemSlotIndex = slotIndex,
                 Count = count
             };
-            PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(sellItemCommand).Item1);
+            PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(sellItemCommand).Buffer);
         }
 
         private void OnEnableSkill(int slotIndex, int skillId, bool isEnable)
@@ -218,7 +218,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 IsEnable = isEnable,
                 SkillConfigId = skillId
             };
-            PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(enableCommand).Item1);
+            PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(enableCommand).Buffer);
         }
         
         private int nowCount = 0;

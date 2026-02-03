@@ -87,7 +87,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             }            
             //Debug.Log($"[PredictableStateBase] start Added predicted command {header.CommandType} with id {header.CommandId} to buffer at tick {header.Tick}");
 
-            CommandBuffer.TryAdd(header.CommandId, buffer.Item1);
+            CommandBuffer.TryAdd(header.CommandId, buffer.Buffer);
             //Debug.Log($"[PredictableStateBase] finish Added predicted command {header.CommandType} with id {header.CommandId} to buffer at tick {header.Tick}");
             //Debug.Log($"[PredictableStateBase] Added predicted command {header.CommandType} at tick {header.Tick}");
         }
