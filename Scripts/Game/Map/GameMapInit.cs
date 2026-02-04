@@ -41,6 +41,7 @@ namespace HotUpdate.Scripts.Game.Map
             _gameEventManager = gameEventManager;
             _commonMapName = $"Town";
             _objectPoolManager = FindObjectOfType<NetworkGameObjectPoolManager>();
+            Debug.Log($"[GameMapInit] _objectPoolManager: {_objectPoolManager}");
             GameObjectPoolManger.Instance.CurrentScene = gameObject.scene;
             _objectPoolManager.CurrentScene = gameObject.scene;
             InjectGameObjects();
