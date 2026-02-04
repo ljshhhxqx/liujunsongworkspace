@@ -7,13 +7,13 @@ namespace HotUpdate.Scripts.Weather
     public static class WeatherDataModel
     {
         public static HReactiveProperty<float> GameTime = new HReactiveProperty<float>();
-        public static HReactiveProperty<WeatherInfo> WeatherInfo = new HReactiveProperty<WeatherInfo>();
+        public static HReactiveProperty<string> WeatherInfo = new HReactiveProperty<string>();
         public static HReactiveProperty<bool> IsDayTime = new HReactiveProperty<bool>();
         
         public static void Init()
         {
             GameTime = new HReactiveProperty<float>();
-            WeatherInfo = new HReactiveProperty<WeatherInfo>();
+            WeatherInfo = new HReactiveProperty<string>();
             IsDayTime = new HReactiveProperty<bool>();
         }
 

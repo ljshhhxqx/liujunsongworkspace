@@ -3,6 +3,7 @@ using AOTScripts.Tool;
 using Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Data;
+using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using HotUpdate.Scripts.Weather;
 using TMPro;
 using UI.UIBase;
@@ -49,7 +50,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             }).AddTo(this);
             GameLoopDataModel.GameRemainingTime.Subscribe(x => SetCountDown(x.ToHMSStr(true, true, false))).AddTo(this);
             WeatherDataModel.GameTime.Subscribe(x => SetShowTime(x.ToHMSStr(false))).AddTo(this);
-            WeatherDataModel.WeatherInfo.Subscribe(x => SetWeather(x.ToDescription())).AddTo(this);
+            WeatherDataModel.WeatherInfo.Subscribe(x => SetWeather(x)).AddTo(this);
             ResetGame();
         }
 
@@ -78,7 +79,8 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         private void SetWeather(string weather)
         {
-            weatherText.text = weather;
+            var weatherInfo = BoxingFreeSerializer.JsonDeserialize<WeatherInfo>(weather);
+            weatherText.text = weatherInfo.ToDescription();
         }
         
         private void SetShowTime(string showTime)

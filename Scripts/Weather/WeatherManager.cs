@@ -10,6 +10,7 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using HotUpdate.Scripts.Tool.Message;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using HotUpdate.Scripts.UI.UIBase;
@@ -34,7 +35,7 @@ namespace HotUpdate.Scripts.Weather
         [SyncVar]
         private bool _isDayNightCycle;
         [SyncVar(hook = nameof(OnWeatherChanged))]
-        private WeatherInfo _weatherInfo;
+        private string _weatherInfo;
         private float _updateTimer;
         private float _timeMultiplier;  
         private float _weatherCycleTimer;
@@ -78,7 +79,7 @@ namespace HotUpdate.Scripts.Weather
 //            Debug.Log($"OnDayNightCycleTimeChanged: {oldTime}, {newTime}");
         }
         
-        private void OnWeatherChanged(WeatherInfo oldWeather, WeatherInfo newWeather)
+        private void OnWeatherChanged(string oldWeather, string newWeather)
         {
             WeatherDataModel.WeatherInfo.Value = newWeather;
             //Debug.Log($"OnWeatherChanged: {oldWeather}, {newWeather}");
@@ -172,7 +173,7 @@ namespace HotUpdate.Scripts.Weather
             }
 
             var weatherLoadData = GetWeatherLoadData(randomWeather);
-            _weatherInfo = new WeatherInfo
+            var jsonWeatherInfo = new WeatherInfo
             {   
                 weatherType = weatherLoadData.weatherType,
                 density = weatherLoadData.weatherType switch
@@ -182,6 +183,7 @@ namespace HotUpdate.Scripts.Weather
                     _ => 0f
                 }
             };
+            _weatherInfo = BoxingFreeSerializer.JsonSerialize(jsonWeatherInfo);
             //SetWeather(weatherLoadData);
             RpcSetWeather(weatherLoadData);
             RpcSetWeatherEffect(weatherEffectData);
