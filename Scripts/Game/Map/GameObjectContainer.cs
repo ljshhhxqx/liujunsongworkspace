@@ -388,7 +388,7 @@ namespace HotUpdate.Scripts.Game.Map
         Death,
     }
 
-    public struct DynamicObjectData 
+    public struct DynamicObjectData : IEquatable<DynamicObjectData>
     {
         public uint NetId;
         public Vector3 Position;
@@ -402,6 +402,31 @@ namespace HotUpdate.Scripts.Game.Map
         {
             
             return $"NetId: {NetId}, Position: {Position}, ColliderConfig: {ColliderConfig} Type: {Type}, Layer: {Layer}, Tag: {Tag}, Grid: {Grid}";
+        }
+        
+        public override bool Equals(object obj)
+        {
+            return obj is DynamicObjectData other && Equals(other);
+        }
+
+        public bool Equals(DynamicObjectData other)
+        {
+            return NetId == other.NetId && Position.Equals(other.Position) && Grid.Equals(other.Grid) && Equals(ColliderConfig, other.ColliderConfig) && Type == other.Type && Layer.Equals(other.Layer) && Tag == other.Tag;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(NetId, Position, Grid, ColliderConfig, (int)Type, Layer, Tag);
+        }
+
+        public static bool operator ==(DynamicObjectData left, DynamicObjectData right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(DynamicObjectData left, DynamicObjectData right)
+        {
+            return !left.Equals(right);
         }
     }
 

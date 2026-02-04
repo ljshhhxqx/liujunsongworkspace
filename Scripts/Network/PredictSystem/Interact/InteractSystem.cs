@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using AOTScripts.Data;
 using AOTScripts.Tool;
-using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Collector.Collects;
@@ -22,7 +20,6 @@ using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using Mirror;
 using UnityEngine;
-using UnityEngine.Serialization;
 using VContainer;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.Interact
@@ -41,6 +38,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         private GameSyncManager _gameSyncManager;
         private GameEventManager _gameEventManager;
         private PlayerInGameManager _playerInGameManager;
+        private NetworkGameObjectPoolManager _networkGameObjectPoolManager;
         private PlayerPropertySyncSystem _playerPropertySyncSystem;
         private List<PlayerPropertySyncSystem.SkillBuffManagerData> _activeBuffs = new List<PlayerPropertySyncSystem.SkillBuffManagerData>();
         private SyncDictionary<uint, SceneItemInfo> _sceneItems = new SyncDictionary<uint, SceneItemInfo>();
@@ -65,23 +63,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         }
         
         [Inject]
-        private void Init(GameEventManager gameEventManager, IConfigProvider configProvider, IObjectResolver objectResolver,
-            PlayerInGameManager playerInGameManager)
+        private void Init(GameEventManager gameEventManager, IConfigProvider configProvider,
+            GameSyncManager gameSyncManager)
         {
             _gameEventManager = gameEventManager;
-            //_gameSyncManager = FindObjectOfType<GameSyncManager>();
             SceneItemWriter();
             _jsonConfig = configProvider.GetConfig<JsonDataConfig>();
-            _itemsSpawnerManager = objectResolver.Resolve<ItemsSpawnerManager>();
-            _gameSyncManager = objectResolver.Resolve<GameSyncManager>();
             _gameEventManager.Subscribe<GameStartEvent>(OnGameStart);
             _gameEventManager.Subscribe<PlayerAttackItemEvent>(OnPlayerAttackItem);
             _gameEventManager.Subscribe<PlayerSkillItemEvent>(OnSkillItem);
             _gameEventManager.Subscribe<SceneItemInfoChanged>(OnItemSpawned);
             _gameEventManager.Subscribe<StartGameWellEvent>(OnStartGameWell);
             _gameEventManager.Subscribe<StartGameTrainEvent>(OnStartGameTrain);
+            _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
+            _gameSyncManager = gameSyncManager;
+            _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
             _sceneItems.OnChange += OnSceneItemsChanged;
-            _playerInGameManager = playerInGameManager;
         }
 
         private void OnStartGameTrain(StartGameTrainEvent startGameTrainEvent)
@@ -92,7 +89,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         private void OnStartGameWell(StartGameWellEvent startGameWellEvent)
         {
             currentWellId = startGameWellEvent.WellId;
-            NetworkGameObjectPoolManager.Instance.Spawn(_wellPrefab, startGameWellEvent.SpawnPosition,
+            _networkGameObjectPoolManager.Spawn(_wellPrefab, startGameWellEvent.SpawnPosition,
                 Quaternion.identity);
         }
         
@@ -315,11 +312,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             {
                 case (int)MapType.Rocket:
                     var position = _mapElementData.spawnRockerPosition;
-                    NetworkGameObjectPoolManager.Instance.Spawn(_rocketPrefab, position, Quaternion.identity);
+                    _networkGameObjectPoolManager.Spawn(_rocketPrefab, position, Quaternion.identity);
                     break;
                 case (int)MapType.WestWild:
                     position = _mapElementData.spawnTrainPosition;
-                    NetworkGameObjectPoolManager.Instance.Spawn(_trainPrefab, position, Quaternion.identity);
+                    _networkGameObjectPoolManager.Spawn(_trainPrefab, position, Quaternion.identity);
                     break;
             }
         }
@@ -501,7 +498,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
 
         private void HandleSpawnBullet(SpawnBullet spawnBullet)
         {
-             var go = NetworkGameObjectPoolManager.Instance.Spawn(_bulletPrefab, position: spawnBullet.StartPosition + spawnBullet.Direction.ToVector3() * 0.5f, rotation: Quaternion.identity);
+             var go = _networkGameObjectPoolManager.Spawn(_bulletPrefab, position: spawnBullet.StartPosition + spawnBullet.Direction.ToVector3() * 0.5f, rotation: Quaternion.identity);
              var bullet = go.GetComponent<ItemBullet>();
              bullet.Init(spawnBullet.Direction, spawnBullet.Speed, spawnBullet.LifeTime, spawnBullet.AttackPower, spawnBullet.Spawner, spawnBullet.CriticalRate, spawnBullet.CriticalDamageRatio);
         }

@@ -67,12 +67,11 @@ namespace HotUpdate.Scripts.Game
         private IPlayFabClientCloudScriptCaller _playFabClientCloudScriptCaller;
         private InteractSystem _interactSystem;
         private BuffManager _buffManager;
-        private GameAudioManager _gameAudioManager;
         private WeatherManager _weatherManager;
-        private NetworkManagerCustom _networkManager;
         private bool _serverHandler;
         private bool _clientHandler;
         private NetworkEndHandler _endHandler;
+        private NetworkGameObjectPoolManager _networkGameObjectPoolManager;
 
         [SyncVar(hook = nameof(OnEndGameChanged))] 
         public bool isEndGameSync;
@@ -130,24 +129,24 @@ namespace HotUpdate.Scripts.Game
         }
 
         [Inject]
-        private void Init(MessageCenter messageCenter, GameEventManager gameEventManager, IObjectResolver objectResolver, IConfigProvider configProvider,
+        private void Init(MessageCenter messageCenter, GameEventManager gameEventManager, IConfigProvider configProvider,
             MirrorNetworkMessageHandler messageHandler, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller, 
-            UIManager uiManager, NetworkManagerCustom networkManager, NetworkEndHandler endHandler, PlayerInGameManager playerInGameManager)
+            UIManager uiManager, NetworkEndHandler endHandler, WeatherManager weatherManager, 
+            NetworkGameObjectPoolManager networkGameObjectPoolManager)
         {
-            _networkManager = networkManager;
             _playFabClientCloudScriptCaller = playFabClientCloudScriptCaller;
             _endHandler = endHandler;
-            _interactSystem = objectResolver.Resolve<InteractSystem>();
-            _playerInGameManager = playerInGameManager;
+            _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
             _uiManager = uiManager;
+            _weatherManager = weatherManager;
+            _networkGameObjectPoolManager = networkGameObjectPoolManager;
+            _gameSyncManager = FindObjectOfType<GameSyncManager>();
+            _interactSystem = FindObjectOfType<InteractSystem>();
+            _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
             _gameEventManager = gameEventManager;
             _messageCenter = messageCenter;
             _messageHandler = messageHandler;
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
-            _itemsSpawnerManager = objectResolver.Resolve<ItemsSpawnerManager>();
-            _gameAudioManager = objectResolver.Resolve<GameAudioManager>();
-            _weatherManager = objectResolver.Resolve<WeatherManager>();
-            _gameSyncManager = objectResolver.Resolve<GameSyncManager>();
             _roundInterval = _jsonDataConfig.GameConfig.roundInterval;
             _mapConfig = configProvider.GetConfig<MapConfig>();
             _mapElementData = configProvider.GetConfig<JsonDataConfig>().CollectData.mapElementData;
@@ -544,7 +543,7 @@ namespace HotUpdate.Scripts.Game
             PlayFabData.PlayerList.Clear();
             _playerInGameManager.Clear();
             await UniTask.Yield();
-            NetworkGameObjectPoolManager.Instance.ClearAllPools();
+            _networkGameObjectPoolManager.ClearAllPools();
             await UniTask.Yield();
         }
         

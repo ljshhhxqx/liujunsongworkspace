@@ -7,6 +7,7 @@ using HotUpdate.Scripts.Effect;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -25,6 +26,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         protected bool IsDead;
         protected MaterialTransparencyController[] MaterialTransparencyControllers;
         protected GameEventManager GameEventManager;
+        protected NetworkGameObjectPoolManager NetworkGameObjectPoolManager;
         protected uint NetId;
         [SyncVar] protected int CurrentControlSkillType;
         protected IObjectResolver ObjectResolver;
@@ -54,7 +56,9 @@ namespace HotUpdate.Scripts.Collector.Collects
             InteractSystem.ItemControlSkillChanged += OnItemControlSkillChanged;
             GameEventManager = gameEventManager;
             ObjectResolver = objectResolver;
+            NetworkGameObjectPoolManager = ObjectResolver.Resolve<NetworkGameObjectPoolManager>();
             OnInitialize();
+            
         }
 
         private void OnItemControlSkillChanged(uint id, float duration, ControlSkillType skillType)
@@ -139,7 +143,7 @@ namespace HotUpdate.Scripts.Collector.Collects
                         Radius = explodeRange,
                     };
                     InteractSystem.EnqueueCommand(request);
-                    NetworkGameObjectPoolManager.Instance.Despawn(gameObject);
+                    NetworkGameObjectPoolManager.Despawn(gameObject);
                     CollectObjectController.RpcOnDeath();
                 });
             }

@@ -8,6 +8,7 @@ using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -23,6 +24,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
         private GameSyncManager _gameSyncManager;
         private IAnimationCooldown _animationCooldown;
         private PlayerInGameManager _playerInGameManager;
+        private NetworkGameObjectPoolManager _objectPoolManager;
         protected override bool AutoInjectLocalPlayer => true;
         [SyncVar]
         private float _currentCd;
@@ -39,6 +41,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
             _playerInGameManager = playerInGameManager;
             _gameSyncManager = objectResolver.Resolve<GameSyncManager>();
             _colliderConfig = GamePhysicsSystem.CreateColliderConfig(GetComponent<Collider>());
+            _objectPoolManager = objectResolver.Resolve<NetworkGameObjectPoolManager>();
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _colliderConfig, ObjectType.Well, gameObject.layer, gameObject.tag);
             
             _gameEventManager.Subscribe<PlayerTouchWellEvent>(OnPlayerTouchWell);
@@ -73,7 +76,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
             _currentCount--;
             if (_currentCount <= 0)
             {
-                NetworkGameObjectPoolManager.Instance.Despawn(gameObject);
+                _objectPoolManager.Despawn(gameObject);
             }
         }
     }

@@ -19,6 +19,7 @@ namespace HotUpdate.Scripts.Game.Map
         private string _commonMapName;
         private int _staticObjectId;
         private GameEventManager _gameEventManager;
+        private NetworkGameObjectPoolManager _objectPoolManager;
         
 #if UNITY_EDITOR
         //[MenuItem("CONTEXT/InitMapStaticObjectsId")]
@@ -39,8 +40,9 @@ namespace HotUpdate.Scripts.Game.Map
             //uiManager.SwitchUI<LoadingScreenUI>();
             _gameEventManager = gameEventManager;
             _commonMapName = $"Town";
+            _objectPoolManager = FindObjectOfType<NetworkGameObjectPoolManager>();
             GameObjectPoolManger.Instance.CurrentScene = gameObject.scene;
-            NetworkGameObjectPoolManager.Instance.CurrentScene = gameObject.scene;
+            _objectPoolManager.CurrentScene = gameObject.scene;
             InjectGameObjects();
             await LoadGameResources(_commonMapName);
             gameEventManager.Publish(new GameSceneResourcesLoadedEvent(_mapName));

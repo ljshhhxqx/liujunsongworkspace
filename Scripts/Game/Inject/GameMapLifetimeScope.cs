@@ -10,6 +10,7 @@ using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.Server.Sync;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Weather;
 using UnityEngine;
 using VContainer;
@@ -36,6 +37,7 @@ namespace HotUpdate.Scripts.Game.Inject
             RegisterComponent<InteractSystem>(builder);
             RegisterComponent<NetworkEndHandler>(builder);
             RegisterComponent<PlayerInGameManager>(builder);
+            RegisterComponent<NetworkGameObjectPoolManager>(builder);
             builder.Register<GameMapInjector>(Lifetime.Singleton).WithParameter(typeof(LifetimeScope), this);
             Debug.Log("GameMapLifetimeScope Configured!!!");
         }

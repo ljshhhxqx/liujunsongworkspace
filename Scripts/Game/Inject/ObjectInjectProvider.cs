@@ -40,7 +40,7 @@ namespace HotUpdate.Scripts.Game.Inject
         {
             _injector.InjectMapElement(mapType, target);
         }
-        public void InjectMap<T>(MapType mapType, T target)
+        public void InjectMap(MapType mapType, object target)
         {
             _injector.InjectMapElement(mapType, target);
         }

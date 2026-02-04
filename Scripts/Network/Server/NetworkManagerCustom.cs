@@ -45,8 +45,7 @@ namespace HotUpdate.Scripts.Network.Server
 
         [Inject]
         private void Init(GameEventManager gameEventManager, UIManager uIManager, IObjectResolver objectResolver,
-            PlayerDataManager playerDataManager, IConfigProvider configProvider, PlayFabRoomManager playFabRoomManager,
-            PlayerInGameManager playerInGameManager)
+            PlayerDataManager playerDataManager, IConfigProvider configProvider, PlayFabRoomManager playFabRoomManager)
         {
             _transport = GetComponent<KcpTransport>();
             _playFabRoomManager = playFabRoomManager;
@@ -55,7 +54,7 @@ namespace HotUpdate.Scripts.Network.Server
             _spawnPoints = FindObjectsByType<NetworkStartPosition>(FindObjectsSortMode.None).ToList();
             _networkManagerHUD = GetComponent<NetworkManagerHUD>();
             _networkManagerHUD.enabled = false;
-            _playerInGameManager = playerInGameManager;
+            _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
             _gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnSceneResourcesLoaded);
             _objectResolver = objectResolver;
             _playerDataManager = playerDataManager;

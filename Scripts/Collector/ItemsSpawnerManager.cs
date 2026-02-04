@@ -21,6 +21,7 @@ using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using HotUpdate.Scripts.Tool.Message;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using HotUpdate.Scripts.UI.UIBase;
 using MemoryPack;
 using Mirror;
@@ -45,7 +46,6 @@ namespace HotUpdate.Scripts.Collector
         private GameMapInjector _gameMapInjector;
         private CollectObjectDataConfig _collectObjectDataConfig;
         private LayerMask _sceneLayer;
-        private PlayerInGameManager _playerInGameManager;
         private LayerMask _spawnedLayer;
         private Dictionary<Vector2Int, Grid> _gridMap = new Dictionary<Vector2Int, Grid>();
         private static float _itemSpacing;
@@ -77,6 +77,8 @@ namespace HotUpdate.Scripts.Collector
         private GameLoopController _gameLoopController;
         private GameSyncManager _gameSyncManager;
         private InteractSystem _interactSystem;
+        private PlayerInGameManager _playerInGameManager;
+        private NetworkGameObjectPoolManager _networkGameObjectPoolManager;
         
         // 服务器维护的核心数据
         private readonly SyncDictionary<uint, byte[]> _serverItemMap = new SyncDictionary<uint, byte[]>();
@@ -97,13 +99,12 @@ namespace HotUpdate.Scripts.Collector
         
         [Inject]
         private void Init(UIManager uiManager, IConfigProvider configProvider, GameSyncManager gameSyncManager, 
-            GameMapInjector gameMapInjector,GameEventManager gameEventManager, MessageCenter messageCenter,
-            PlayerInGameManager playerInGameManager)
+            GameMapInjector gameMapInjector,GameEventManager gameEventManager, MessageCenter messageCenter,NetworkGameObjectPoolManager networkGameObjectPoolManager)
         {
             _uiManager = uiManager;
             _configProvider = configProvider;
             _jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
-            _playerInGameManager = playerInGameManager;
+            _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
             _gameMapInjector = gameMapInjector;
             _gameSyncManager = gameSyncManager;
             _itemConfig = _configProvider.GetConfig<ItemConfig>();
@@ -116,9 +117,11 @@ namespace HotUpdate.Scripts.Collector
             _chestConfig = _configProvider.GetConfig<ChestDataConfig>();
             _shopConfig = _configProvider.GetConfig<ShopConfig>();
             _sceneLayer = _jsonDataConfig.GameConfig.groundSceneLayer;
-            _gameLoopController = FindObjectOfType<GameLoopController>();
             _spawnedParent = transform;
+            _gameLoopController = FindObjectOfType<GameLoopController>();
             _interactSystem = FindObjectOfType<InteractSystem>();
+            _networkGameObjectPoolManager = networkGameObjectPoolManager;
+            //_networkGameObjectPoolManager = objectResolver.Resolve<NetworkGameObjectPoolManager>();
             ReadWriteData();
         }
 
@@ -161,7 +164,7 @@ namespace HotUpdate.Scripts.Collector
             for (int i = 0; i < items.Length; i++)
             {
                 var item = items[i];
-                var go = NetworkGameObjectPoolManager.Instance.Spawn(_droppedItemPrefabs[item.Quality].gameObject, position, Quaternion.identity
+                var go = _networkGameObjectPoolManager.Spawn(_droppedItemPrefabs[item.Quality].gameObject, position, Quaternion.identity
                 );
                 var droppedItem = go.GetComponent<DroppedItem>();
             }
@@ -178,7 +181,7 @@ namespace HotUpdate.Scripts.Collector
             for (int i = 0; i < items.Length; i++)
             {
                 var item = items[i];
-                var go = NetworkGameObjectPoolManager.Instance.Spawn(_droppedItemPrefabs[item.Quality].gameObject, position, Quaternion.identity
+                var go = _networkGameObjectPoolManager.Spawn(_droppedItemPrefabs[item.Quality].gameObject, position, Quaternion.identity
                 );
                 var droppedItem = go.GetComponent<DroppedItem>();
             }
@@ -475,7 +478,7 @@ namespace HotUpdate.Scripts.Collector
                         var identity = NetworkServer.spawned[itemId];
 
                         var collectObjectController = identity.GetComponent<CollectObjectController>();
-                        NetworkGameObjectPoolManager.Instance.Despawn(identity.gameObject);
+                        _networkGameObjectPoolManager.Despawn(identity.gameObject);
                         var picker = player.GetComponent<Picker>();
                         picker.RpcPlayEffect((int)collectObjectController.CollectObjectData.collectObjectClass);
                         //collectObjectController.RpcRecycleItem();
@@ -564,7 +567,7 @@ namespace HotUpdate.Scripts.Collector
                 Debug.Log("Starting EndRound");
                 if (NetworkServer.spawned.TryGetValue(_serverTreasureChestMetaData.ItemId, out var chest))
                 {
-                    NetworkGameObjectPoolManager.Instance.Despawn(chest.gameObject);
+                    _networkGameObjectPoolManager.Despawn(chest.gameObject);
                     Debug.Log($"Recycle chest with id: {_serverTreasureChestMetaData.ItemId}");
                 }
                 // 清理网格数据
@@ -579,7 +582,7 @@ namespace HotUpdate.Scripts.Collector
                     if (NetworkServer.spawned.TryGetValue(itemId, out var item))
                     {
                         var controller = item.GetComponent<CollectObjectController>();
-                        NetworkGameObjectPoolManager.Instance.Despawn(item.gameObject);
+                        _networkGameObjectPoolManager.Despawn(item.gameObject);
                         Debug.Log($"Recycle item with id: {itemId} itemConfigid {controller.CollectConfigId}");
                     }
                     else
@@ -725,7 +728,7 @@ namespace HotUpdate.Scripts.Collector
                     foreach (var item in newSpawnInfos)
                     {
                         var type = _jsonDataConfig.GetCollectObjectType();
-                        var go = NetworkGameObjectPoolManager.Instance.Spawn(_collectiblePrefabs[item.Item1].gameObject, item.Item2, Quaternion.identity, null,
+                        var go = _networkGameObjectPoolManager.Spawn(_collectiblePrefabs[item.Item1].gameObject, item.Item2, Quaternion.identity, null,
                             poolSize: newSpawnInfos.Count);
                         var identity = go.GetComponent<NetworkIdentity>();
                         _serverItemBehaviour.Add(identity.netId, (int)type);
@@ -911,7 +914,7 @@ namespace HotUpdate.Scripts.Collector
             var chestData = _chestConfig.RandomOne(random);
             var position = GetRandomStartPoint(0.5f);
             var type = _jsonDataConfig.GetCollectObjectType();
-            var chestGo = NetworkGameObjectPoolManager.Instance.Spawn(_treasureChestPrefabs.GetValueOrDefault(chestData.randomItems.quality).gameObject, position,
+            var chestGo = _networkGameObjectPoolManager.Spawn(_treasureChestPrefabs.GetValueOrDefault(chestData.randomItems.quality).gameObject, position,
                 Quaternion.identity, onSpawn: (identity) =>
                 {
                     var controller = identity.GetComponent<TreasureChestComponent>();

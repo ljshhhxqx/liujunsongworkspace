@@ -3,6 +3,7 @@ using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Collector.Collects
@@ -22,6 +23,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         private float _criticalRate;
         private float _criticalDamage;
         private bool _destroyed;
+        private NetworkGameObjectPoolManager _networkGameObjectPoolManager;
         protected override bool AutoInjectLocalPlayer => false;
 
         public void Init(Vector3 direction, float speed, float lifeTime, float attackPower, uint spawnerId, float criticalRate, float criticalDamage)
@@ -50,7 +52,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             {
                 _destroyed = true;
                 _isHandle = false;
-                NetworkGameObjectPoolManager.Instance.Despawn(gameObject);
+                _networkGameObjectPoolManager.Despawn(gameObject);
                 Debug.Log($"[ItemBullet] Destroyed - {netId}");
                 return;
             }
@@ -89,7 +91,7 @@ namespace HotUpdate.Scripts.Collector.Collects
                 };
                 Debug.Log($"[ItemBullet] Send SceneItemAttackInteractRequest - SceneItemId: {request.SceneItemId} -  TargetId: {request.TargetId} -  AttackPower: {request.AttackPower} -  CriticalRate: {request.CriticalRate} -  CriticalDamage: {request.CriticalDamage}");
                 _interactSystem.EnqueueCommand(request);
-                NetworkGameObjectPoolManager.Instance.Despawn(gameObject);
+                _networkGameObjectPoolManager.Despawn(gameObject);
                 return true;
             }
 

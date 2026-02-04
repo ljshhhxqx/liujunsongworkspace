@@ -4,13 +4,13 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace AOTScripts.Tool.ObjectPool
+namespace HotUpdate.Scripts.Tool.ObjectPool
 {
     /// <summary>
     /// 全自动化的网络对象池服务
     /// 自动管理对象池的创建、扩展和清理
     /// </summary>
-    public class NetworkGameObjectPoolManager : SingletonAutoNetMono<NetworkGameObjectPoolManager>
+    public class NetworkGameObjectPoolManager : NetworkBehaviour
     {
         [Header("Auto Pool Settings")] [Tooltip("默认对象池初始大小")]
         private const int DefaultPoolSize = 5;

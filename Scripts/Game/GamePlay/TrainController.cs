@@ -13,6 +13,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using Mirror;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -64,6 +65,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
         private InteractSystem _interactSystem;
         private PlayerInGameManager _playerInGameManager;
         private SyncHashSet<uint> _trainPlayers = new SyncHashSet<uint>();
+        private NetworkGameObjectPoolManager _objectPoolManager;
         
         
         protected override bool AutoInjectLocalPlayer => true;
@@ -78,6 +80,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
             _gameEventManager.Subscribe<TrainAttackPlayerEvent>(OnTrainAttackPlayer);
             _gameSyncManager = objectResolver.Resolve<GameSyncManager>();
             _interactSystem = objectResolver.Resolve<InteractSystem>();
+            _objectPoolManager = objectResolver.Resolve<NetworkGameObjectPoolManager>();
             _deathColliderConfig = GamePhysicsSystem.CreateColliderConfig(deathCollider);
             _touchColliderConfig = GamePhysicsSystem.CreateColliderConfig(touchCollider);
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _touchColliderConfig, type, gameObject.layer, gameObject.tag);
@@ -327,7 +330,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
         {
             if (!config.smokePrefab || !config.emissionPoint) return;
         
-            var smoke = NetworkGameObjectPoolManager.Instance.Spawn(config.smokePrefab, 
+            var smoke = _objectPoolManager.Spawn(config.smokePrefab, 
                 config.emissionPoint.position, 
                 Quaternion.identity);
         

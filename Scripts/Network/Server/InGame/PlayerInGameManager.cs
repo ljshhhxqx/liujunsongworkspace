@@ -19,6 +19,7 @@ using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Static;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.HotFixSerializeTool;
+using HotUpdate.Scripts.Tool.ObjectPool;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -43,6 +44,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         private CancellationTokenSource _updateGridsTokenSource = new CancellationTokenSource();
         private IConfigProvider _configProvider;
 
+        private NetworkGameObjectPoolManager _networkGameObjectPoolManager;
         private GameConfigData _gameConfigData;
 
 
@@ -109,11 +111,13 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         }
 
         [Inject]
-        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)
+        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager, NetworkGameObjectPoolManager networkGameObjectPoolManager)
         {
             RegisterReaderWriter();
             _gameEventManager = gameEventManager;
             _configProvider = configProvider;
+            _interactSystem = FindObjectOfType<InteractSystem>();
+            _networkGameObjectPoolManager = networkGameObjectPoolManager;
             _gameConfigData = _configProvider.GetConfig<JsonDataConfig>().GameConfig;
             //_gameEventManager.Subscribe<GameResourceLoadedEvent>(OnGameResourceLoaded);
         }
@@ -168,7 +172,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             for (int i = 0; i < bases.Length; i++)
             {
                 var spawnPoint = bases[i];
-                var playerBase = NetworkGameObjectPoolManager.Instance.Spawn(_playerBasePrefab.gameObject,
+                var playerBase = _networkGameObjectPoolManager.Spawn(_playerBasePrefab.gameObject,
                     spawnPoint, Quaternion.identity);
                 _playerBases.Add(i, playerBase.GetComponent<PlayerBase>());
             }
