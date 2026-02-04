@@ -153,7 +153,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                 if (_sceneItems[key].maxHealth > 1)
                 {
                     var sceneItem = GameObjectContainer.Instance.GetDynamicObjectData(key);
-                    if (sceneItem != default)
+                    if (sceneItem.ColliderConfig != null)
                     {
                         var position = sceneItem.Position;
                         if (Vector3.Distance(position, data.Position) < distance)

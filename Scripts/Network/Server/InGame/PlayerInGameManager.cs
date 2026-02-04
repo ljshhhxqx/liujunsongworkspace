@@ -18,9 +18,11 @@ using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Static;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using Mirror;
 using UnityEngine;
 using VContainer;
+using GridData = AOTScripts.Data.GridData;
 
 namespace HotUpdate.Scripts.Network.Server.InGame
 {
@@ -439,7 +441,8 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             Debug.Log($"[PlayerIngameManager] _playerInGameData.Add(connectId, playerInGameDataNetData)");
             _playerIdsByNetId.Add(playerInGameDataNetData.networkIdentity.netId, connectId);
             Debug.Log($"[PlayerIngameManager] _playerPhysicsData");
-            _playerIds.Add(connectId, playerInGameDataNetData.player.PlayerId);
+            var json = BoxingFreeSerializer.JsonDeserialize<PlayerReadOnlyData>(playerInGameDataNetData.player);
+            _playerIds.Add(connectId, json.PlayerId);
             Debug.Log($"[PlayerIngameManager] _playerIds.Add(connectId, playerInGameDataNetData.player.PlayerId)");
             _playerNetIds.Add(connectId, playerInGameDataNetData.networkIdentity.netId);
             Debug.Log($"[PlayerIngameManager] _playerIdsByNetId.Add(playerInGameDataNetData.networkIdentity.netId, connectId");
@@ -610,7 +613,23 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             // }
             return false;
         }
+        
+        private Dictionary<int, string> _playerNames = new Dictionary<int, string>();
 
+        public string GetPlayerName(int playerId)
+        {
+            if (!_playerNames.TryGetValue(playerId, out var playerName))
+            {
+                var player = GetPlayer(playerId);
+                var jsonPlayerReadOnlyData = player.player;
+                var playerReadOnlyData = BoxingFreeSerializer.JsonDeserialize<PlayerReadOnlyData>(jsonPlayerReadOnlyData);
+                playerName = playerReadOnlyData.Nickname;
+                _playerNames.Add(playerId, playerName);
+            }
+
+            return playerName;
+        }
+        
         public PlayerInGameDataNetData GetPlayer(int playerId)
         {
             return _playerInGameData.GetValueOrDefault(playerId);
@@ -635,23 +654,25 @@ namespace HotUpdate.Scripts.Network.Server.InGame
 
         private void RegisterReaderWriter()
         {
-            Reader<PlayerReadOnlyData>.read = PlayerReadOnlyDataReader;
-            Writer<PlayerReadOnlyData>.write = PlayerReadOnlyDataWriter;
             Reader<PlayerInGameDataNetData>.read = PlayerInGameDataReader;
             Writer<PlayerInGameDataNetData>.write = PlayerInGameDataWriter;
+            Reader<GridData>.read = GridDataReader;
+            Writer<GridData>.write = GridDataWriter;
         }
-        
-        private void PlayerReadOnlyDataWriter(NetworkWriter writer, PlayerReadOnlyData playerReadOnlyData)
+
+        private void GridDataWriter(NetworkWriter writer, GridData gridData)
         {
-            writer.WriteString(playerReadOnlyData.PlayerId);
-            writer.WriteString(playerReadOnlyData.Nickname);
-            writer.WriteString(playerReadOnlyData.Email);
-            writer.WriteInt(playerReadOnlyData.Level);
-            writer.WriteInt(playerReadOnlyData.Score);
-            writer.WriteInt(playerReadOnlyData.ModifyNameCount);
-            writer.WriteString(playerReadOnlyData.Status);
+            writer.Write(gridData.playerNetIds);
         }
-        
+
+        private GridData GridDataReader(NetworkReader reader)
+        {
+            return new GridData
+            {
+                playerNetIds = reader.ReadArray<uint>()
+            };
+        }
+
         private PlayerReadOnlyData PlayerReadOnlyDataReader(NetworkReader playerReadOnlyData)
         {
             return new PlayerReadOnlyData
@@ -670,7 +691,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         {
             return new PlayerInGameDataNetData
             {
-                player = PlayerReadOnlyDataReader(reader),
+                player = reader.ReadString(),
                 networkIdentity = reader.ReadNetworkIdentity()
             };
         }
@@ -1030,7 +1051,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
     [Serializable]
     public class PlayerInGameDataNetData
     {
-        public PlayerReadOnlyData player;
+        public string player;
         public NetworkIdentity networkIdentity;
         public uint playerNetId;
     }

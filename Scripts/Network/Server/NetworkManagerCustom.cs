@@ -12,6 +12,7 @@ using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Tool.GameEvent;
+using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using HotUpdate.Scripts.UI.UIBase;
 using kcp2k;
 using Mirror;
@@ -231,7 +232,7 @@ namespace HotUpdate.Scripts.Network.Server
                 var playerInGameData = _playerDataManager.GetPlayer(conn.connectionId);
                 _playerInGameManager.AddPlayer(conn.connectionId, new PlayerInGameDataNetData
                 {
-                    player = playerInGameData.player,
+                    player = BoxingFreeSerializer.JsonSerialize(playerInGameData.player),
                     networkIdentity = conn.identity,
                     playerNetId = conn.identity.netId,
                 });

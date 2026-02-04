@@ -441,11 +441,11 @@ namespace HotUpdate.Scripts.Game
             foreach (var kvp in playerScores)
             {
                 Debug.Log($"{kvp.Key} - {kvp.Value}");
-                var playerData = _playerInGameManager.GetPlayer(kvp.Key);
                 var rank = index + 1;
+                var playerName = _playerInGameManager.GetPlayerName(kvp.Key);
                 data.playersResultData[index] = new PlayerGameResultData
                 {
-                    playerName = playerData.player.Nickname,
+                    playerName = playerName,
                     score = (int)kvp.Value,
                     rank = rank,
                     isWinner = rank == 1 || rank == 2

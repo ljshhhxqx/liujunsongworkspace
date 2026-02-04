@@ -190,7 +190,7 @@ namespace HotUpdate.Scripts.Collector.Collects
                 }
             }
 
-            if (dynamicObject != default)
+            if (dynamicObject.ColliderConfig != null)
             {
                 Debug.Log($"[ OnAttack ] {name} attack {dynamicObject.NetId}");
                 var direction = (dynamicObject.Position - transform.position).normalized;

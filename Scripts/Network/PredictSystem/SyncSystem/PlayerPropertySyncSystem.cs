@@ -237,7 +237,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerState = PropertyStates[connectionId];
             var playerController = GameSyncManager.GetPlayerConnection(connectionId);
-            var playerName = _playerInGameManager.GetPlayer(connectionId).player.Nickname;
+            var playerName = _playerInGameManager.GetPlayerName(connectionId);
             float health = 0;
             float maxHealth = 0;
             float mana = 0;
@@ -632,7 +632,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 var tracedPlayerInfo = new TracedPlayerInfo
                 {
                     PlayerId = id,
-                    PlayerName = _playerInGameManager.GetPlayer(id).player.Nickname,
+                    PlayerName = _playerInGameManager.GetPlayerName(id),
                     Hp = playerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue,
                     MaxHp = playerState.MemoryProperty[PropertyTypeEnum.Health].MaxCurrentValue,
                     Mana = playerState.MemoryProperty[PropertyTypeEnum.Strength].CurrentValue,
@@ -958,7 +958,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 var tracedPlayerInfo = new TracedPlayerInfo
                 {
                     PlayerId = targetId,
-                    PlayerName = _playerInGameManager.GetPlayer(targetId).player.Nickname,
+                    PlayerName = _playerInGameManager.GetPlayerName(targetId),
                     Hp = newCalculator.CurrentValue,
                     MaxHp = newCalculator.MaxCurrentValue,
                     Mana = newCalculator.CurrentValue,

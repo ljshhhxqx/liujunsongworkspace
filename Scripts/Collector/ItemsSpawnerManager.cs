@@ -728,7 +728,7 @@ namespace HotUpdate.Scripts.Collector
                         var go = NetworkGameObjectPoolManager.Instance.Spawn(_collectiblePrefabs[item.Item1].gameObject, item.Item2, Quaternion.identity, null,
                             poolSize: newSpawnInfos.Count);
                         var identity = go.GetComponent<NetworkIdentity>();
-                        _serverItemBehaviour.TryAdd(identity.netId, (int)type);
+                        _serverItemBehaviour.Add(identity.netId, (int)type);
                         switch (type)
                         {
                             case CollectObjectType.Attack:
