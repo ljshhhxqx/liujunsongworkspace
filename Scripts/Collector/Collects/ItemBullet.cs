@@ -38,6 +38,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             _criticalDamage = criticalDamage;
             _destroyed = false;
             _interactSystem ??= FindObjectOfType<InteractSystem>();
+            _networkGameObjectPoolManager ??= FindObjectOfType<NetworkGameObjectPoolManager>();
             _colliderConfig ??= GamePhysicsSystem.CreateColliderConfig(GetComponent<Collider>());
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _colliderConfig, ObjectType.Bullet, gameObject.layer, gameObject.tag);
         }

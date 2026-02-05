@@ -116,7 +116,6 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             RegisterReaderWriter();
             _gameEventManager = gameEventManager;
             _configProvider = configProvider;
-            _interactSystem = FindObjectOfType<InteractSystem>();
             _networkGameObjectPoolManager = networkGameObjectPoolManager;
             _gameConfigData = _configProvider.GetConfig<JsonDataConfig>().GameConfig;
             //_gameEventManager.Subscribe<GameResourceLoadedEvent>(OnGameResourceLoaded);

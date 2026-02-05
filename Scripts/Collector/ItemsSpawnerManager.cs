@@ -76,7 +76,6 @@ namespace HotUpdate.Scripts.Collector
         private GameEventManager _gameEventManager;
         private GameLoopController _gameLoopController;
         private GameSyncManager _gameSyncManager;
-        private InteractSystem _interactSystem;
         private PlayerInGameManager _playerInGameManager;
         private NetworkGameObjectPoolManager _networkGameObjectPoolManager;
         
@@ -119,9 +118,7 @@ namespace HotUpdate.Scripts.Collector
             _sceneLayer = _jsonDataConfig.GameConfig.groundSceneLayer;
             _spawnedParent = transform;
             _gameLoopController = FindObjectOfType<GameLoopController>();
-            _interactSystem = FindObjectOfType<InteractSystem>();
             _networkGameObjectPoolManager = networkGameObjectPoolManager;
-            //_networkGameObjectPoolManager = objectResolver.Resolve<NetworkGameObjectPoolManager>();
             ReadWriteData();
         }
 

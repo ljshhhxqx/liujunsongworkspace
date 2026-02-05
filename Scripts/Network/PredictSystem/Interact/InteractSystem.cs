@@ -64,7 +64,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         
         [Inject]
         private void Init(GameEventManager gameEventManager, IConfigProvider configProvider,
-            GameSyncManager gameSyncManager)
+            GameSyncManager gameSyncManager, PlayerInGameManager playerInGameManager, ItemsSpawnerManager itemsSpawnerManager, NetworkGameObjectPoolManager networkGameObjectPoolManager)
         {
             _gameEventManager = gameEventManager;
             SceneItemWriter();
@@ -76,8 +76,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             _gameEventManager.Subscribe<StartGameWellEvent>(OnStartGameWell);
             _gameEventManager.Subscribe<StartGameTrainEvent>(OnStartGameTrain);
             _gameSyncManager = gameSyncManager;
-            _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
-            _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
+            _playerInGameManager = playerInGameManager;
+            _itemsSpawnerManager = itemsSpawnerManager;
+            _networkGameObjectPoolManager = networkGameObjectPoolManager;
             _sceneItems.OnChange += OnSceneItemsChanged;
         }
 
