@@ -29,6 +29,7 @@ namespace HotUpdate.Scripts.Game.Inject
             RegisterComponent<NetworkManagerCustom>(builder);
             RegisterComponent<GameLoopController>(builder);
             RegisterComponent<GameAudioManager>(builder);
+            RegisterComponent<NetworkGameObjectPoolManager>(builder);
             RegisterComponent<ItemsSpawnerManager>(builder);
             RegisterComponent<WeatherManager>(builder);
             RegisterComponent<GameMapInit>(builder);
@@ -37,7 +38,6 @@ namespace HotUpdate.Scripts.Game.Inject
             RegisterComponent<InteractSystem>(builder);
             RegisterComponent<NetworkEndHandler>(builder);
             RegisterComponent<PlayerInGameManager>(builder);
-            RegisterComponent<NetworkGameObjectPoolManager>(builder);
             builder.Register<GameMapInjector>(Lifetime.Singleton).WithParameter(typeof(LifetimeScope), this);
             Debug.Log("GameMapLifetimeScope Configured!!!");
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HotUpdate.Scripts.Game.Inject;
 using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,7 +11,7 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
     /// 全自动化的网络对象池服务
     /// 自动管理对象池的创建、扩展和清理
     /// </summary>
-    public class NetworkGameObjectPoolManager : NetworkBehaviour
+    public class NetworkGameObjectPoolManager : NetworkAutoInjectHandlerBehaviour
     {
         [Header("Auto Pool Settings")] [Tooltip("默认对象池初始大小")]
         private const int DefaultPoolSize = 5;
