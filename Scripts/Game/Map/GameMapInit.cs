@@ -35,12 +35,12 @@ namespace HotUpdate.Scripts.Game.Map
         }
 #endif
         [Inject]
-        private async void Init(GameEventManager gameEventManager, UIManager uiManager)
+        private async void Init(GameEventManager gameEventManager, UIManager uiManager, NetworkGameObjectPoolManager networkGameObjectPoolManager)
         {
             //uiManager.SwitchUI<LoadingScreenUI>();
             _gameEventManager = gameEventManager;
             _commonMapName = $"Town";
-            _objectPoolManager = FindObjectOfType<NetworkGameObjectPoolManager>();
+            _objectPoolManager = networkGameObjectPoolManager;
             Debug.Log($"[GameMapInit] _objectPoolManager: {_objectPoolManager}");
             GameObjectPoolManger.Instance.CurrentScene = gameObject.scene;
             _objectPoolManager.CurrentScene = gameObject.scene;

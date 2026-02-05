@@ -75,9 +75,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             _gameEventManager.Subscribe<SceneItemInfoChanged>(OnItemSpawned);
             _gameEventManager.Subscribe<StartGameWellEvent>(OnStartGameWell);
             _gameEventManager.Subscribe<StartGameTrainEvent>(OnStartGameTrain);
-            _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
             _gameSyncManager = gameSyncManager;
             _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
+            _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
             _sceneItems.OnChange += OnSceneItemsChanged;
         }
 
