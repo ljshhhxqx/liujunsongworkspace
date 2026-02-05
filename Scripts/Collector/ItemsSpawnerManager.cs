@@ -97,13 +97,13 @@ namespace HotUpdate.Scripts.Collector
         private TreasureChestComponent _clientTreasureChest;
         
         [Inject]
-        private void Init(UIManager uiManager, IConfigProvider configProvider, GameSyncManager gameSyncManager, 
+        private void Init(UIManager uiManager, IConfigProvider configProvider, GameSyncManager gameSyncManager, PlayerInGameManager playerInGameManager,
             GameMapInjector gameMapInjector,GameEventManager gameEventManager, MessageCenter messageCenter,NetworkGameObjectPoolManager networkGameObjectPoolManager)
         {
             _uiManager = uiManager;
             _configProvider = configProvider;
             _jsonDataConfig = _configProvider.GetConfig<JsonDataConfig>();
-            _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
+            _playerInGameManager = playerInGameManager;
             _gameMapInjector = gameMapInjector;
             _gameSyncManager = gameSyncManager;
             _itemConfig = _configProvider.GetConfig<ItemConfig>();
@@ -117,7 +117,6 @@ namespace HotUpdate.Scripts.Collector
             _shopConfig = _configProvider.GetConfig<ShopConfig>();
             _sceneLayer = _jsonDataConfig.GameConfig.groundSceneLayer;
             _spawnedParent = transform;
-            _gameLoopController = FindObjectOfType<GameLoopController>();
             _networkGameObjectPoolManager = networkGameObjectPoolManager;
             ReadWriteData();
         }
@@ -548,6 +547,7 @@ namespace HotUpdate.Scripts.Collector
             var endRound = _serverItemMap.Count == 0 && _serverTreasureChestMetaData.ItemId == 0;
             if (endRound)
             {
+                _gameLoopController ??= FindObjectOfType<GameLoopController>();
                 _gameLoopController.IsEndRound = true;
             }
         }

@@ -762,7 +762,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
         }
 
-        private readonly HashSet<DynamicObjectData> _cachedDynamicObjectData = new HashSet<DynamicObjectData>();
+        private readonly HashSet<uint> _cachedDynamicObjectData = new HashSet<uint>();
 
         private void HandleInputPhysics(PlayerInputStateData inputData)
         {
@@ -779,7 +779,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             {
                 foreach (var data in _cachedDynamicObjectData)
                 {
-                    if (data.Type == ObjectType.Base)
+                    var objectData = GameObjectContainer.Instance.GetDynamicObjectData(data);
+                    if (objectData.Type == ObjectType.Base)
                     {
                         var header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
                             CommandType.Property, CommandAuthority.Client);

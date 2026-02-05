@@ -20,7 +20,7 @@ namespace HotUpdate.Scripts.Skill
         bool CheckExecute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams);
         bool Execute(ref ISkillChecker checker, SkillCheckerParams skillCheckerParams, params object[] args);
         void Destroy();
-        HashSet<DynamicObjectData> UpdateFly(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<DynamicObjectData>> isHitFunc);
+        HashSet<uint> UpdateFly(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<uint>> isHitFunc);
         Vector3 GetSkillEffectPosition();
         SkillEffectLifeCycle GetSkillEffectLifeCycle();
         void SetSkillEffectLifeCycle(SkillEffectLifeCycle skillEffectLifeCycle);
@@ -135,7 +135,7 @@ namespace HotUpdate.Scripts.Skill
             return SkillEventType.None;
         }
 
-        public HashSet<DynamicObjectData> Update(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<DynamicObjectData>> isHitFunc)
+        public HashSet<uint> Update(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<uint>> isHitFunc)
         {
             if (CurrentTime >= ExpectationTime)
             {
@@ -244,7 +244,7 @@ namespace HotUpdate.Scripts.Skill
         }
 
         //释放、飞行、命中后造成伤害
-        public HashSet<DynamicObjectData> UpdateFly(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<DynamicObjectData>> isHitFunc)
+        public HashSet<uint> UpdateFly(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<uint>> isHitFunc)
         {
             return SkillEffectLifeCycle.Update(deltaTime, isHitFunc);
         }
@@ -326,7 +326,7 @@ namespace HotUpdate.Scripts.Skill
             return false;
         }
 
-        public HashSet<DynamicObjectData> UpdateFly(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<DynamicObjectData>> isHitFunc)
+        public HashSet<uint> UpdateFly(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<uint>> isHitFunc)
         {
             return SkillEffectLifeCycle.Update(deltaTime, isHitFunc);
         }
@@ -429,7 +429,7 @@ namespace HotUpdate.Scripts.Skill
         }
         
         //释放、飞行、命中后造成伤害
-        public HashSet<DynamicObjectData> UpdateFly(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<DynamicObjectData>> isHitFunc)
+        public HashSet<uint> UpdateFly(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<uint>> isHitFunc)
         {
             return SkillEffectLifeCycle.Update(deltaTime, isHitFunc);
         }
@@ -510,7 +510,7 @@ namespace HotUpdate.Scripts.Skill
         }
 
         
-        public HashSet<DynamicObjectData> UpdateFly(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<DynamicObjectData>> isHitFunc)
+        public HashSet<uint> UpdateFly(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<uint>> isHitFunc)
         {
             return SkillEffectLifeCycle.Update(deltaTime, isHitFunc);
         }
@@ -596,7 +596,7 @@ namespace HotUpdate.Scripts.Skill
             return false;
         }
         
-        public HashSet<DynamicObjectData> UpdateFly(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<DynamicObjectData>> isHitFunc)
+        public HashSet<uint> UpdateFly(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<uint>> isHitFunc)
         {
             return SkillEffectLifeCycle.Update(deltaTime, isHitFunc);
         }

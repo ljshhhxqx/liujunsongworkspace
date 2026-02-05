@@ -131,8 +131,9 @@ namespace HotUpdate.Scripts.Game
         [Inject]
         private void Init(MessageCenter messageCenter, GameEventManager gameEventManager, IConfigProvider configProvider,
             MirrorNetworkMessageHandler messageHandler, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller, 
-            UIManager uiManager, NetworkEndHandler endHandler, WeatherManager weatherManager, 
-            NetworkGameObjectPoolManager networkGameObjectPoolManager, PlayerInGameManager playerInGameManager)
+            UIManager uiManager, NetworkEndHandler endHandler, WeatherManager weatherManager, GameSyncManager gameSyncManager,
+            NetworkGameObjectPoolManager networkGameObjectPoolManager, PlayerInGameManager playerInGameManager,
+            InteractSystem interactSystem, ItemsSpawnerManager itemsSpawnerManager)
         {
             _playFabClientCloudScriptCaller = playFabClientCloudScriptCaller;
             _endHandler = endHandler;
@@ -140,9 +141,9 @@ namespace HotUpdate.Scripts.Game
             _uiManager = uiManager;
             _weatherManager = weatherManager;
             _networkGameObjectPoolManager = networkGameObjectPoolManager;
-            _gameSyncManager = FindObjectOfType<GameSyncManager>();
-            _interactSystem = FindObjectOfType<InteractSystem>();
-            _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
+            _gameSyncManager = gameSyncManager;
+            _interactSystem = interactSystem;
+            _itemsSpawnerManager = itemsSpawnerManager;
             _gameEventManager = gameEventManager;
             _messageCenter = messageCenter;
             _messageHandler = messageHandler;

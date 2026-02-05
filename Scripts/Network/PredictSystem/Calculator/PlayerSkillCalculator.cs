@@ -88,7 +88,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         }
 
         public static bool ExecuteSkill(PlayerComponentController playerController, SkillConfigData skillConfigData, PropertyCalculator propertyCalculator, 
-            SkillCommand skillCommand, AnimationState key, Func<uint, Vector3, IColliderConfig, HashSet<DynamicObjectData>> isHitFunc, out Vector3 position)
+            SkillCommand skillCommand, AnimationState key, Func<uint, Vector3, IColliderConfig, HashSet<uint>> isHitFunc, out Vector3 position)
         {
             var checkers = playerController.SkillCheckerDict;
             var skillChecker = checkers[key];
@@ -152,7 +152,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return true;
         }
 
-        public static uint[] UpdateSkillFlyEffect(int connectionId, float deltaTime, ISkillChecker skillChecker, Func<uint, Vector3, IColliderConfig, HashSet<DynamicObjectData>> isHitFunc)
+        public static uint[] UpdateSkillFlyEffect(int connectionId, float deltaTime, ISkillChecker skillChecker, Func<uint, Vector3, IColliderConfig, HashSet<uint>> isHitFunc)
         {
             if (skillChecker.IsSkillEffect())
             {
@@ -164,7 +164,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 return null;
             }
 
-            var hits = hitPlayers.Select(x => x.NetId).ToArray();
+            var hits = hitPlayers.ToArray();
             var commonSkillCheckerHeader = skillChecker.GetCommonSkillCheckerHeader();
             var command = new PropertySkillCommand();
             command.Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property, CommandAuthority.Server, CommandExecuteType.Immediate);

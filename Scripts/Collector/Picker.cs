@@ -40,10 +40,10 @@ namespace HotUpdate.Scripts.Collector
         private IColliderConfig _colliderConfig;
         private UIManager _uiManager;
         private PlayerAnimationOverlay _playerPropertiesOverlay;
-        private HashSet<DynamicObjectData> _cachedCollects = new HashSet<DynamicObjectData>();
+        private HashSet<uint> _cachedCollects = new HashSet<uint>();
         protected override bool AutoInjectClient => false;
 
-        private readonly HashSet<DynamicObjectData> _collects = new HashSet<DynamicObjectData>();
+        private readonly HashSet<uint> _collects = new HashSet<uint>();
     
         [Inject]
         private void Init(GameEventManager gameEventManager, IObjectResolver objectResolver, UIManager uiManager, 
@@ -78,13 +78,14 @@ namespace HotUpdate.Scripts.Collector
                 return;
             }
 
-            foreach (var collect in _cachedCollects)
+            foreach (var id in _cachedCollects)
             {
-                if (!NetworkClient.spawned.TryGetValue(collect.NetId, out var identity))
+                if (!NetworkClient.spawned.TryGetValue(id, out var identity))
                 {
                     //Debug.LogWarning($"Identity not found for netId {collect.NetId}");
                     continue;
                 }
+                var collect = GameObjectContainer.Instance.GetDynamicObjectData( id);
 
                 switch (collect.Type)
                 {
@@ -99,13 +100,13 @@ namespace HotUpdate.Scripts.Collector
                             {
                                 return;
                             }
-                            _collects.Add(collect);
+                            _collects.Add(collect.NetId);
                         }
                         break;
                     case ObjectType.Chest:
                     case ObjectType.Rocket:
                     case ObjectType.Train:
-                        _collects.Add(collect);
+                        _collects.Add(collect.NetId);
                         break;
                 }
             }
@@ -199,8 +200,9 @@ namespace HotUpdate.Scripts.Collector
             foreach (var collect in _collects)
             {
                 IsTouching = true;
-                var time = _collectData.GetTouchTime(collect.Type);
-                _playerPropertiesOverlay.StartProgress($"收集{collect.Type}中...需要{time}秒 ", time, () => OnComplete(collect) , GetIsTouching);
+                var collectData = GameObjectContainer.Instance.GetDynamicObjectData(collect);
+                var time = _collectData.GetTouchTime(collectData.Type);
+                _playerPropertiesOverlay.StartProgress($"收集{collectData.Type}中...需要{time}秒 ", time, () => OnComplete(collectData) , GetIsTouching);
             }
             _collects.Clear();
         }

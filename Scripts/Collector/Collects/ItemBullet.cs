@@ -11,7 +11,7 @@ namespace HotUpdate.Scripts.Collector.Collects
     public class ItemBullet : NetworkAutoInjectHandlerBehaviour
     {
         private IColliderConfig _colliderConfig;
-        private HashSet<DynamicObjectData> _hitObjects = new HashSet<DynamicObjectData>();
+        private HashSet<uint> _hitObjects = new HashSet<uint>();
         private bool _isHandle;
         private Vector3 _direction;
         private float _speed;

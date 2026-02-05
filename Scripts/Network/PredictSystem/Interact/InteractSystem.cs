@@ -42,7 +42,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         private PlayerPropertySyncSystem _playerPropertySyncSystem;
         private List<PlayerPropertySyncSystem.SkillBuffManagerData> _activeBuffs = new List<PlayerPropertySyncSystem.SkillBuffManagerData>();
         private SyncDictionary<uint, SceneItemInfo> _sceneItems = new SyncDictionary<uint, SceneItemInfo>();
-        private HashSet<DynamicObjectData> _dynamicObjects = new HashSet<DynamicObjectData>();
+        private HashSet<uint> _dynamicObjects = new HashSet<uint>();
 
         [SyncVar] public int currentTrainId;
         [SyncVar] public int currentWellId;
@@ -119,19 +119,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             //Debug.Log($"[OnSceneItemsChanged] {type} scene item {uid} info - {value}");
         }
 
-        public HashSet<DynamicObjectData> GetHitObjectDatas(uint uid, Vector3 position, IColliderConfig config)
+        public HashSet<uint> GetHitObjectDatas(uint uid, Vector3 position, IColliderConfig config)
         {
-            var result = new HashSet<DynamicObjectData>();
-            var cache = new HashSet<DynamicObjectData>();
+            var result = new HashSet<uint>();
+            var cache = new HashSet<uint>();
             if (GameObjectContainer.Instance.DynamicObjectIntersects(uid, position, config, result))
             {
                 foreach (var objectData in result)
                 {
-                    if (_playerInGameManager.IsPlayer(objectData.NetId))
+                    if (_playerInGameManager.IsPlayer(objectData))
                     {
                         cache.Add(objectData);
                     }
-                    else if (_sceneItems.TryGetValue(objectData.NetId, out var sceneItemInfo))
+                    else if (_sceneItems.TryGetValue(objectData, out var sceneItemInfo))
                     {
                         if (sceneItemInfo.health > 1 && sceneItemInfo.maxHealth > 1)
                         {
@@ -403,35 +403,35 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             {
                 foreach (var hitObjectData in _dynamicObjects)
                 {
-                    if (!NetworkServer.spawned.TryGetValue(hitObjectData.NetId, out var hitObject))
+                    if (!NetworkServer.spawned.TryGetValue(hitObjectData, out var hitObject))
                     {
                         Debug.LogError($"Scene item {itemExplodeRequest.SceneItemId} not found");
                         continue;
                     }
-                    if (_sceneItems.TryGetValue(hitObjectData.NetId, out var sceneItemInfo))
+                    if (_sceneItems.TryGetValue(hitObjectData, out var sceneItemInfo))
                     {
                         defense = sceneItemInfo.defense;
                         var damage = _jsonConfig.GetDamage(itemExplodeRequest.AttackPower, defense, 1f, 2f);
-                        Debug.Log($"[HandleItemExplodeRequest] Scene item {itemExplodeRequest.SceneItemId} attack scene item {hitObjectData.NetId} with damage {damage}");
+                        Debug.Log($"[HandleItemExplodeRequest] Scene item {itemExplodeRequest.SceneItemId} attack scene item {hitObjectData} with damage {damage}");
                         sceneItemInfo.health -= damage.Damage;
                         sceneItemInfo.health = Mathf.Max(sceneItemInfo.health, 0);
-                        SceneItemInfoChanged?.Invoke(hitObjectData.NetId, sceneItemInfo);
-                        _sceneItems[hitObjectData.NetId] = sceneItemInfo;
+                        SceneItemInfoChanged?.Invoke(hitObjectData, sceneItemInfo);
+                        _sceneItems[hitObjectData] = sceneItemInfo;
                         if (sceneItemInfo.health == 0)
                         {
-                            Debug.Log($"[HandleItemExplodeRequest] Scene item {hitObjectData.NetId} is dead");
-                            _sceneItems.Remove(hitObjectData.NetId);
+                            Debug.Log($"[HandleItemExplodeRequest] Scene item {hitObjectData} is dead");
+                            _sceneItems.Remove(hitObjectData);
                         }
                     }
-                    else if (_playerInGameManager.TryGetPlayerById(hitObjectData.NetId, out var connectionId))
+                    else if (_playerInGameManager.TryGetPlayerById(hitObjectData, out var connectionId))
                     {
                         var property = _playerPropertySyncSystem.GetPlayerProperty(connectionId);
                         defense = property.GetValueOrDefault(PropertyTypeEnum.Defense).CurrentValue;
                         var damage = _jsonConfig.GetDamage(itemExplodeRequest.AttackPower, defense, 1, 2);
-                        Debug.Log($"[HandleItemExplodeRequest] Scene item {hitObjectData.NetId} attack player {hitObjectData.NetId} with damage {damage}");
+                        Debug.Log($"[HandleItemExplodeRequest] Scene item {hitObjectData} attack player {hitObjectData} with damage {damage}");
                         var command = new PropertyItemAttackCommand
                         {
-                            TargetId = hitObjectData.NetId,
+                            TargetId = hitObjectData,
                             Header = GameSyncManager.CreateNetworkCommandHeader(0, CommandType.Property, CommandAuthority.Server),
                             Damage = damage,
                             AttackerId = itemExplodeRequest.SceneItemId, 

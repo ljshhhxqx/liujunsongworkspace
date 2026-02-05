@@ -25,7 +25,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         private AttackInfo _attackInfo;
         private CollectEffectController _collectEffectController;
         private float _lastAttackTime;
-        private readonly HashSet<DynamicObjectData> _collectedObjects = new HashSet<DynamicObjectData>();
+        private readonly HashSet<uint> _collectedObjects = new HashSet<uint>();
         private AttackMainEffect _attackMainEffect;
         private bool _isAttacking;
         private KeyframeCooldown _keyframeCooldown;
@@ -180,8 +180,9 @@ namespace HotUpdate.Scripts.Collector.Collects
 
             var distance = float.MaxValue;
             DynamicObjectData dynamicObject = default;
-            foreach (var data in _collectedObjects)
+            foreach (var id in _collectedObjects)
             {
+                var data = GameObjectContainer.Instance.GetDynamicObjectData(id);
                 var dis = Vector3.Distance(transform.position, data.Position);
                 if (distance > dis)
                 {

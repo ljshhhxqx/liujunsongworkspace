@@ -61,56 +61,60 @@ namespace HotUpdate.Scripts.Game.Map
             if (!_dynamicObjectIds.TryGetValue(netId, out int index))
                 return false;
 
-            int lastIndex = _dynamicObjectData.Count - 1;
-            var removedData = _dynamicObjectData[index];
-
-            // 1. 从原 GridIndex 移除 index（防御式）
-            if (_dynamicGridIndex.TryGetValue(removedData.Grid, out var removeList))
+            if (_dynamicObjectData.Count != 0)
             {
-                for (int i = removeList.Count - 1; i >= 0; i--)
+                int lastIndex = _dynamicObjectData.Count - 1;
+                var removedData = _dynamicObjectData[index];
+                if (_dynamicGridIndex.TryGetValue(removedData.Grid, out var removeList))
                 {
-                    if (removeList[i] == index)
-                        removeList.RemoveAt(i);
+                    for (int i = removeList.Count - 1; i >= 0; i--)
+                    {
+                        if (removeList[i] == index)
+                            removeList.RemoveAt(i);
+                    }
+
+                    if (removeList.Count == 0)
+                        _dynamicGridIndex.Remove(removedData.Grid);
                 }
 
-                if (removeList.Count == 0)
-                    _dynamicGridIndex.Remove(removedData.Grid);
-            }
-
-            // 2. 如果删的不是最后一个，执行 swap
-            if (index != lastIndex)
-            {
-                var lastData = _dynamicObjectData[lastIndex];
-
-                _dynamicObjectData[index] = lastData;
-                _dynamicObjectIds[lastData.NetId] = index;
-
-                // 修正 lastData 在 GridIndex 中的 index
-                if (_dynamicGridIndex.TryGetValue(lastData.Grid, out var lastList))
+                // 2. 如果删的不是最后一个，执行 swap
+                if (index != lastIndex)
                 {
-                    for (int i = 0; i < lastList.Count; i++)
+                    var lastData = _dynamicObjectData[lastIndex];
+
+                    _dynamicObjectData[index] = lastData;
+                    _dynamicObjectIds[lastData.NetId] = index;
+
+                    // 修正 lastData 在 GridIndex 中的 index
+                    if (_dynamicGridIndex.TryGetValue(lastData.Grid, out var lastList))
                     {
-                        if (lastList[i] == lastIndex)
+                        for (int i = 0; i < lastList.Count; i++)
                         {
-                            lastList[i] = index;
-                            break;
+                            if (lastList[i] == lastIndex)
+                            {
+                                lastList[i] = index;
+                                break;
+                            }
                         }
                     }
                 }
+
+                // 3. 移除尾部
+                _dynamicObjectData.RemoveAt(lastIndex);
+                _dynamicObjectIds.Remove(netId);
+                return true;
             }
 
-            // 3. 移除尾部
-            _dynamicObjectData.RemoveAt(lastIndex);
-            _dynamicObjectIds.Remove(netId);
+            
 
-            return true;
+            return false;
         }
 
 
-        public HashSet<DynamicObjectData> GetIntersectedDynamicObjects(uint uid, Vector3 position,
+        public HashSet<uint> GetIntersectedDynamicObjects(uint uid, Vector3 position,
             IColliderConfig colliderConfig)
         {
-            var result = new HashSet<DynamicObjectData>();
+            var result = new HashSet<uint>();
             DynamicObjectIntersects(uid, position, colliderConfig, result);
             return result;
         }
@@ -140,7 +144,7 @@ namespace HotUpdate.Scripts.Game.Map
 
 
         public bool DynamicObjectIntersects(uint uid, Vector3 position, IColliderConfig colliderConfig,
-            HashSet<DynamicObjectData> intersectedObjects, Func<DynamicObjectData, bool> onIntersected = null)
+            HashSet<uint> intersectedObjects, Func<DynamicObjectData, bool> onIntersected = null)
         {
             intersectedObjects.Clear();
             var bounds = GamePhysicsSystem.GetWorldBounds(position, colliderConfig);
@@ -162,7 +166,7 @@ namespace HotUpdate.Scripts.Game.Map
                             position, data.Position,
                             colliderConfig, data.ColliderConfig, 0.2f))
                     {
-                        intersectedObjects.Add(data);
+                        intersectedObjects.Add(data.NetId);
                         onIntersected?.Invoke(data);
                     }
                 }
@@ -388,7 +392,7 @@ namespace HotUpdate.Scripts.Game.Map
         Death,
     }
 
-    public struct DynamicObjectData : IEquatable<DynamicObjectData>
+    public struct DynamicObjectData
     {
         public uint NetId;
         public Vector3 Position;
@@ -400,33 +404,12 @@ namespace HotUpdate.Scripts.Game.Map
         
         public override string ToString()
         {
-            
             return $"NetId: {NetId}, Position: {Position}, ColliderConfig: {ColliderConfig} Type: {Type}, Layer: {Layer}, Tag: {Tag}, Grid: {Grid}";
         }
         
-        public override bool Equals(object obj)
-        {
-            return obj is DynamicObjectData other && Equals(other);
-        }
-
         public bool Equals(DynamicObjectData other)
         {
             return NetId == other.NetId && Position.Equals(other.Position) && Grid.Equals(other.Grid) && Equals(ColliderConfig, other.ColliderConfig) && Type == other.Type && Layer.Equals(other.Layer) && Tag == other.Tag;
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(NetId, Position, Grid, ColliderConfig, (int)Type, Layer, Tag);
-        }
-
-        public static bool operator ==(DynamicObjectData left, DynamicObjectData right)
-        {
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(DynamicObjectData left, DynamicObjectData right)
-        {
-            return !left.Equals(right);
         }
     }
 

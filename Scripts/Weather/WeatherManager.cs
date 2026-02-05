@@ -92,7 +92,7 @@ namespace HotUpdate.Scripts.Weather
         }
 
         [Inject]
-        private async void Init(MessageCenter messageCenter, IObjectResolver objectResolver,GameEventManager gameEventManager,IConfigProvider configProvider, 
+        private async void Init(IObjectResolver objectResolver,GameEventManager gameEventManager,IConfigProvider configProvider, 
             UIManager uiManager)
         {
             WeatherReaderWriter.RegisterReaderWriter(); 
