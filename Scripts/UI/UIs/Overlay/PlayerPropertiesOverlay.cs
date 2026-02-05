@@ -20,14 +20,14 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
     {
         [SerializeField]
         private ContentItemList contentItemList;
-        [SerializeField]
-        private FieldItem animationState;
-        [SerializeField]
-        private FieldItem currentChestType;
-        [SerializeField]
-        private FieldItem playerStateProperty;
-        [SerializeField]
-        private FieldItem hasMovementInput;
+        // [SerializeField]
+        // private FieldItem animationState;
+        // [SerializeField]
+        // private FieldItem currentChestType;
+        // [SerializeField]
+        // private FieldItem playerStateProperty;
+        // [SerializeField]
+        // private FieldItem hasMovementInput;
         [SerializeField]
         private FieldItem frameCount;
 

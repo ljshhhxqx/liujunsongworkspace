@@ -676,6 +676,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             if (PlayerPlatformDefine.IsJoystickPlatform())
             {
                 _virtualInputOverlay = _uiManager.SwitchUI<VirtualInputOverlay>();
+                _virtualInputOverlay.transform.SetAsLastSibling();
             }
             _uiManager.SwitchUI<Minimap>(ui =>
             {

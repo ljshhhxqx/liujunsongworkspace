@@ -51,12 +51,6 @@ namespace HotUpdate.Scripts.Collector.Effect
             }
         }
     
-        void Update()
-        {
-            // 调试输入
-            //HandleDebugInput();
-        }
-    
         #region 初始化
     
         public void Initialize()
@@ -71,6 +65,13 @@ namespace HotUpdate.Scripts.Collector.Effect
             if (!r)
             {
                 Debug.LogError($"[CollectObjectController] {gameObject.name} 没有Renderer组件!");
+                return;
+            }
+
+            effectShader = ResourceManager.Instance.GetResource<Shader>("DisintegrationShader");
+            if (!effectShader)
+            {
+                Debug.LogError($"[CollectObjectController] 未找到效果Shader!");
                 return;
             }
         

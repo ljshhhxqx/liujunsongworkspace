@@ -34,15 +34,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _canvas = GetComponentInParent<Canvas>();
             if (_canvas.renderMode == RenderMode.ScreenSpaceCamera)
                 _camera = _canvas.worldCamera;
-        
-            // 初始隐藏摇杆
-            background.gameObject.SetActive(false);
         }
     
         public void OnPointerDown(PointerEventData eventData)
         {
             IsActive = true;
-            background.gameObject.SetActive(true);
         
             // 设置摇杆位置为点击位置
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
