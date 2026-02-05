@@ -132,11 +132,11 @@ namespace HotUpdate.Scripts.Game
         private void Init(MessageCenter messageCenter, GameEventManager gameEventManager, IConfigProvider configProvider,
             MirrorNetworkMessageHandler messageHandler, IPlayFabClientCloudScriptCaller playFabClientCloudScriptCaller, 
             UIManager uiManager, NetworkEndHandler endHandler, WeatherManager weatherManager, 
-            NetworkGameObjectPoolManager networkGameObjectPoolManager)
+            NetworkGameObjectPoolManager networkGameObjectPoolManager, PlayerInGameManager playerInGameManager)
         {
             _playFabClientCloudScriptCaller = playFabClientCloudScriptCaller;
             _endHandler = endHandler;
-            _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
+            _playerInGameManager = playerInGameManager;
             _uiManager = uiManager;
             _weatherManager = weatherManager;
             _networkGameObjectPoolManager = networkGameObjectPoolManager;
