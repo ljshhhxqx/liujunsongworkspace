@@ -32,9 +32,15 @@ namespace HotUpdate.Scripts.Network.Client
             _uiManager = uiManager;
             _uiManager.IsUnlockMouse+= OnUnlockMouse;
             _gameEventManager.Subscribe<PlayerSpawnedEvent>(OnPlayerSpawned);
+            _gameEventManager.Subscribe<TouchResetCameraEvent>(OnTouchResetCamera);
             _isWindowsApplication = PlayerPlatformDefine.IsWindowsPlatform();
             _isMobile = PlayerPlatformDefine.IsJoystickPlatform();
             Debug.Log("CameraFollowClient init");
+        }
+
+        private void OnTouchResetCamera(TouchResetCameraEvent cameraEvent)
+        {
+            _isControlling = true;
         }
 
         private void OnUnlockMouse(bool isUnlock)
@@ -92,8 +98,8 @@ namespace HotUpdate.Scripts.Network.Client
                     Touch touch = Input.GetTouch(0);
                     if (touch.phase == TouchPhase.Moved)
                     {
-                        horizontal = touch.deltaPosition.x * _playerDataConfig.TurnSpeed * Time.deltaTime;
-                        vertical = touch.deltaPosition.y * _playerDataConfig.TurnSpeed * Time.deltaTime;
+                        horizontal = touch.deltaPosition.x * _playerDataConfig.TurnSpeed * Time.deltaTime * 2;
+                        vertical = touch.deltaPosition.y * _playerDataConfig.TurnSpeed * Time.deltaTime * 2;
 
                         // 计算摄像机与水平面的角度
                         angleWithGround = Vector3.Angle(Vector3.down, _offset.normalized) - 90; // 减去90是因为原点是向下的

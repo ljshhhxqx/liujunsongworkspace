@@ -6,6 +6,7 @@ using AOTScripts.Data;
 using AOTScripts.Tool;
 using AOTScripts.Tool.Coroutine;
 using AOTScripts.Tool.ObjectPool;
+using AOTScripts.Tool.Resource;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Common;
@@ -26,6 +27,7 @@ using HotUpdate.Scripts.UI.UIBase;
 using MemoryPack;
 using Mirror;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VContainer;
 using Random = UnityEngine.Random;
 
@@ -95,7 +97,9 @@ namespace HotUpdate.Scripts.Collector
         private readonly Dictionary<QualityType, IColliderConfig> _chestColliderConfigs = new Dictionary<QualityType, IColliderConfig>();
         private readonly Dictionary<QualityType, IColliderConfig> _droppedItemColliderConfigs = new Dictionary<QualityType, IColliderConfig> ();
         private TreasureChestComponent _clientTreasureChest;
-        
+
+        public Shader EffectShader { get; private set; }
+
         [Inject]
         private void Init(UIManager uiManager, IConfigProvider configProvider, GameSyncManager gameSyncManager, PlayerInGameManager playerInGameManager,
             GameMapInjector gameMapInjector,GameEventManager gameEventManager, MessageCenter messageCenter,NetworkGameObjectPoolManager networkGameObjectPoolManager)
@@ -402,6 +406,14 @@ namespace HotUpdate.Scripts.Collector
                     }
                 }
             }
+            
+            GetShader().Forget();
+        }
+
+        private async UniTask GetShader()
+        {
+            var data = DataJsonManager.Instance.GetResourceData("DisintegrationShader");
+            EffectShader = await ResourceManager.Instance.LoadResourceAsync<Shader>(data);
         }
 
         private void OnDestroy()

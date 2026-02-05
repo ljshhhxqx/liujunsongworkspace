@@ -49,10 +49,12 @@ namespace HotUpdate.Scripts.Tool.GameEvent
     public struct GameFunctionUIShowEvent : IGameEvent
     {
         public UIType UIType { get;  private set; }
-        
-        public GameFunctionUIShowEvent(UIType uiType)
+        public bool Reset { get; private set; }
+
+        public GameFunctionUIShowEvent(UIType uiType, bool reset = false)
         {
             UIType = uiType;
+            Reset = false;
         }
     }
 
@@ -368,6 +370,11 @@ namespace HotUpdate.Scripts.Tool.GameEvent
             Position = position;
             Text = text;
         }
+    }
+
+    public struct TouchResetCameraEvent : IGameEvent
+    {
+        
     }
 
     public struct PlayerSpawnedEvent : IGameEvent

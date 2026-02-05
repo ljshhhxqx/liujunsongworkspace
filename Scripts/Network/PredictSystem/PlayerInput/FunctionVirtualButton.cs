@@ -17,13 +17,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [SerializeField]
         private Button button;
         private KeyFunctionConfig _keyFunctionConfig;
-        private UIManager _uiManager;
         private GameEventManager _gameEventManager;
 
         [Inject]
-        private void Init(UIManager uiManager, IConfigProvider configProvider, GameEventManager gameEventManager)
+        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager)
         {
-            _uiManager = uiManager;
             _gameEventManager = gameEventManager;
             _keyFunctionConfig = configProvider.GetConfig<KeyFunctionConfig>();
             button.OnClickAsObservable().Subscribe(_ => OnClick()).AddTo(this);
@@ -35,7 +33,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             if (uiType != UIType.None)
             {
                 _gameEventManager.Publish(new GameFunctionUIShowEvent(uiType));
-                _uiManager.OpenUI(uiType);
+                return;
+            }
+
+            if (keyFunction == KeyFunction.Reset)
+            {
+                _gameEventManager.Publish(new TouchResetCameraEvent());
                 return;
             }
             Debug.LogWarning($"No UIType found for {keyFunction}");

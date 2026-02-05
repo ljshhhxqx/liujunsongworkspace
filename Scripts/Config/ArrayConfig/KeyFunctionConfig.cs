@@ -65,6 +65,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         Inventory,
         Quest,
         Equip,
+        Reset
     }
 
     public static class KeyFunctionExtension

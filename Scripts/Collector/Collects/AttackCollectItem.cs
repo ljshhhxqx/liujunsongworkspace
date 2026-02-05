@@ -31,12 +31,16 @@ namespace HotUpdate.Scripts.Collector.Collects
         private KeyframeCooldown _keyframeCooldown;
         private CompositeDisposable _disposable = new CompositeDisposable();
         private GameSyncManager _gameSyncManager;
+        private ItemsSpawnerManager _itemsSpawnerManager;
         private PlayerInGameManager _playerInGameManager;
 
         [Inject]
-        private void Init(PlayerInGameManager playerInGameManager)
+        private void Init(PlayerInGameManager playerInGameManager, GameSyncManager gameSyncManager,
+            ItemsSpawnerManager itemsSpawnerManager)
         {
             _playerInGameManager = playerInGameManager;
+            _gameSyncManager = gameSyncManager;
+            _itemsSpawnerManager = itemsSpawnerManager;
         }
 
         private void FixedUpdate()
@@ -162,7 +166,7 @@ namespace HotUpdate.Scripts.Collector.Collects
                 if (!TryGetComponent(out _collectEffectController))
                 {
                     _collectEffectController = _attackMainEffect.gameObject.AddComponent<CollectEffectController>();
-                    _collectEffectController.Initialize();
+                    _collectEffectController.Initialize(_itemsSpawnerManager.EffectShader);
                     _collectEffectController.SetMinMaxAttackParameters(config.MinAttackPower, config.MaxAttackPower, config.MinAttackInterval, config.MaxAttackInterval);
                     _collectEffectController.SetAttackParameters(GameStaticExtensions.GetAttackExpectancy(_attackInfo.damage, _attackInfo.criticalRate, _attackInfo.criticalDamage),  _attackInfo.attackCooldown);
                     _collectEffectController.SwitchToTrackingMode();

@@ -26,7 +26,7 @@ namespace HotUpdate.Scripts.Collector.Effect
         private EffectController _effectController;
     
         [Header("配置")]
-        public bool autoInitialize = true;
+        public bool autoInitialize = false;
         public bool showDebugLogs = false;
     
         [Header("组件状态")]
@@ -53,7 +53,7 @@ namespace HotUpdate.Scripts.Collector.Effect
     
         #region 初始化
     
-        public void Initialize()
+        public void Initialize(Shader shader = null)
         {
             if (isInitialized) return;
         
@@ -68,12 +68,12 @@ namespace HotUpdate.Scripts.Collector.Effect
                 return;
             }
 
-            effectShader = ResourceManager.Instance.GetResource<Shader>("DisintegrationShader");
-            if (!effectShader)
+            if (!shader)
             {
                 Debug.LogError($"[CollectObjectController] 未找到效果Shader!");
                 return;
             }
+            effectShader = shader;
         
             // 2. 创建效果材质
             SetupEffectMaterial(r);
