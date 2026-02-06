@@ -923,6 +923,11 @@ namespace HotUpdate.Scripts.Collector
             var position = GetRandomStartPoint(0.5f);
             var type = _jsonDataConfig.GetCollectObjectType();
             var randomItems = BoxingFreeSerializer.JsonDeserialize<RandomItemsData>(chestData.randomItems); //chestData.randomItems;
+            if (!_treasureChestPrefabs.TryGetValue(randomItems.quality, out var value))
+            {
+                Debug.LogWarning($"TreasureChestPrefabs not found for quality {randomItems.quality}");
+                return;
+            }
             var chestGo = _networkGameObjectPoolManager.Spawn(_treasureChestPrefabs.GetValueOrDefault(randomItems.quality).gameObject, position,
                 Quaternion.identity, onSpawn: (identity) =>
                 {
