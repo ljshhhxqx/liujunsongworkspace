@@ -918,17 +918,22 @@ namespace HotUpdate.Scripts.Collector
             {
                 return;
             }
+            Debug.Log($"[SpawnTreasureChestServer] var random = Random.Range(0f, 1f");
             var random = Random.Range(0f, 1f);
+            Debug.Log($"[SpawnTreasureChestServer] var chestData = _chestConfig.RandomOne(random)");
             var chestData = _chestConfig.RandomOne(random);
+            Debug.Log($"[SpawnTreasureChestServer] var position = GetRandomStartPoint(0.5f)");
             var position = GetRandomStartPoint(0.5f);
+            Debug.Log($"[SpawnTreasureChestServer] var type = _jsonDataConfig.GetCollectObjectType()");
             var type = _jsonDataConfig.GetCollectObjectType();
+            Debug.Log($"[SpawnTreasureChestServer] var chestGo = _networkGameObjectPoolManager.Spawn(_treasureChestPrefabs.GetValueOrDefault(chestData.randomItems.quality).gameObject, position, Quaternion.identity)");
             var chestGo = _networkGameObjectPoolManager.Spawn(_treasureChestPrefabs.GetValueOrDefault(chestData.randomItems.quality).gameObject, position,
                 Quaternion.identity, onSpawn: (identity) =>
                 {
                     var controller = identity.GetComponent<TreasureChestComponent>();
                     controller.BehaviourType = (int)type;
                 });            
-            Debug.Log($"[SpawnTreasureChestServer] Spawning treasure chest chestGo - {chestGo}");
+            Debug.Log($"[SpawnTreasureChestServer] var identity = chestGo.GetComponent<NetworkIdentity>()");
 
             var identity = chestGo.GetComponent<NetworkIdentity>();
             // if (identity.netId == 0 || !NetworkServer.spawned.TryGetValue(identity.netId, out var itemInfo))
