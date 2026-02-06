@@ -162,7 +162,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             {
                 return;
             }
-            Debug.Log($"开始游戏倒计时 {gameTimeSeconds}");
+            //Debug.Log($"开始游戏倒计时 {gameTimeSeconds}");
             _currentGameTime = gameTimeSeconds;
             if (_isGameRunning)
             {

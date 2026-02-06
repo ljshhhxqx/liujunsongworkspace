@@ -14,25 +14,35 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         [Header("Settings")]
         [SerializeField]
-        private float handleRange = 1f;          // Handle 可移动的最大距离（相对于 Background 半径的倍数）
+        private float handleRange = 1f;
         [SerializeField]
-        private float deadZone = 0.2f;           // 死区（小于此值时输入为 0）
+        private float deadZone = 0.2f;
         [SerializeField]
-        private bool snapToCenter = true;        // 是否平滑过渡死区
+        private bool snapToCenter = true;
     
         [Header("Visual Feedback")]
         [SerializeField]
-        private float returnSpeed = 10f;         // Handle 回正速度（0 表示瞬间回正）
+        private float returnSpeed = 10f;
 
         private Canvas _canvas;
         private Camera _camera;
-        private Vector2 _backgroundCenter;       // Background 的屏幕坐标中心点（固定）
-        private float _backgroundRadius;         // Background 的半径（像素）
+        private Vector2 _backgroundCenter;
+        private float _backgroundRadius;
 
-        public Vector2 InputVector { get; private set; }
+        /// <summary>
+        /// ⭐ 输入向量（等同于键盘的 Horizontal/Vertical）
+        /// X: 左右 (-1 到 1)，Z: 前后 (-1 到 1)
+        /// </summary>
+        public Vector3 InputVector { get; private set; }
+        
+        /// <summary>
+        /// 2D 版本（用于 UI 显示）
+        /// </summary>
+        public Vector2 InputVector2D { get; private set; }
+        
         public bool IsActive { get; private set; }
     
-        public event Action<Vector2> OnInputChanged;
+        public event Action<Vector3> OnInputChanged;
         public event Action OnJoystickReleased;
 
         private void Start()
@@ -42,37 +52,34 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             if (_canvas.renderMode == RenderMode.ScreenSpaceCamera)
                 _camera = _canvas.worldCamera;
         
-            // 计算 Background 的固定中心点（屏幕坐标）
             _backgroundCenter = RectTransformUtility.WorldToScreenPoint(_camera, background.position);
             _backgroundRadius = background.sizeDelta.x / 2 * _canvas.scaleFactor;
         
-            // 确保 Handle 初始在中心
             handle.anchoredPosition = Vector2.zero;
         }
 
         public void OnPointerDown(PointerEventData eventData)
         {
             IsActive = true;
-            OnDrag(eventData); // 立即响应第一次触摸
+            OnDrag(eventData);
         }
 
         public void OnDrag(PointerEventData eventData)
         {
             if (!IsActive) return;
         
-            // 计算触摸点相对于 Background 中心的偏移（屏幕坐标）
             Vector2 touchOffset = eventData.position - _backgroundCenter;
-        
-            // 归一化输入（-1 到 1）
             Vector2 rawInput = touchOffset / _backgroundRadius;
-        
-            // 限制最大距离
             Vector2 clampedInput = Vector2.ClampMagnitude(rawInput, 1f);
         
             // 应用死区和归一化
-            InputVector = NormalizeInput(clampedInput);
+            InputVector2D = NormalizeInput(clampedInput);
+            
+            // ⭐ 转换为 3D 格式（等同于键盘输入）
+            // X = Horizontal（左右），Z = Vertical（前后）
+            InputVector = new Vector3(InputVector2D.x, 0, InputVector2D.y);
         
-            // 更新 Handle 位置（本地坐标，相对于 Background）
+            // 更新 Handle 位置
             handle.anchoredPosition = clampedInput * (background.sizeDelta.x / 2) * handleRange;
         
             OnInputChanged?.Invoke(InputVector);
@@ -81,9 +88,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public void OnPointerUp(PointerEventData eventData)
         {
             IsActive = false;
-            InputVector = Vector2.zero;
+            InputVector2D = Vector2.zero;
+            InputVector = Vector3.zero;
         
-            // Handle 回正（根据 returnSpeed 选择瞬间或平滑）
             if (returnSpeed > 0)
             {
                 StopAllCoroutines();
@@ -99,7 +106,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void Update()
         {
-            // 实时更新 Background 的屏幕坐标（处理屏幕旋转/缩放等情况）
             if (!IsActive)
             {
                 _backgroundCenter = RectTransformUtility.WorldToScreenPoint(_camera, background.position);
@@ -110,11 +116,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             float magnitude = input.magnitude;
         
-            // 应用死区
             if (magnitude < deadZone)
                 return Vector2.zero;
         
-            // 平滑过渡死区（可选）
             if (snapToCenter)
             {
                 float normalizedMagnitude = Mathf.Clamp01((magnitude - deadZone) / (1 - deadZone));
@@ -138,7 +142,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             handle.anchoredPosition = Vector2.zero;
         }
 
-        // 调试用：绘制摇杆范围
         private void OnDrawGizmos()
         {
             if (background == null) return;
@@ -146,10 +149,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(background.position, background.sizeDelta.x / 2);
         
-            if (handle != null)
+            if (handle != null && Application.isPlaying && IsActive)
             {
                 Gizmos.color = Color.red;
                 Gizmos.DrawLine(background.position, handle.position);
+                
+                // 调试：显示输入向量
+                Gizmos.color = Color.blue;
+                Vector3 worldPos = background.position;
+                Gizmos.DrawRay(worldPos, InputVector * 2);
             }
         }
     }

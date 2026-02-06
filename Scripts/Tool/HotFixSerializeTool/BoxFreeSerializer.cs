@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using AOTScripts.Data;
 using MemoryPack;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Tool.HotFixSerializeTool
@@ -15,7 +16,11 @@ namespace HotUpdate.Scripts.Tool.HotFixSerializeTool
         private static Dictionary<Type, Delegate> _memoryDeserializers = new Dictionary<Type, Delegate>();
         private static JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
         {
-            TypeNameHandling = TypeNameHandling.All
+            TypeNameHandling = TypeNameHandling.Auto, // 改为 Auto
+            Converters = new List<JsonConverter> 
+            { 
+                new StringEnumConverter() // 支持枚举字符串
+            }
         };
     
         // 注册结构体的序列化方法，避免运行时反射
@@ -61,9 +66,9 @@ namespace HotUpdate.Scripts.Tool.HotFixSerializeTool
         public static T JsonConvertDeserialize<T>(string json, JsonSerializerSettings settings = null)
         { 
 #if UNITY_EDITOR
-            return JsonConvert.DeserializeObject<T>(json, settings == null ? _jsonSerializerSettings : null);
+            return JsonConvert.DeserializeObject<T>(json, settings ?? _jsonSerializerSettings);
 #endif
-            var data = JsonConvert.DeserializeObject(json, settings == null ? _jsonSerializerSettings : null);
+            var data = JsonConvert.DeserializeObject(json, settings ?? _jsonSerializerSettings);
             if (data is T t)
             {
                 return t;
