@@ -92,8 +92,7 @@ namespace HotUpdate.Scripts.Collector
         private readonly SyncDictionary<uint, MoveInfo> _moveInfoMap = new SyncDictionary<uint, MoveInfo>();
         private readonly SyncDictionary<uint, HiddenItemData> _hiddenInfoMap = new SyncDictionary<uint, HiddenItemData>();
         
-        [SyncVar]
-        private string _serverTreasureChestMetaData;
+        private CollectItemMetaData _serverTreasureChestMetaData;
         private readonly Dictionary<QualityType, IColliderConfig> _chestColliderConfigs = new Dictionary<QualityType, IColliderConfig>();
         private readonly Dictionary<QualityType, IColliderConfig> _droppedItemColliderConfigs = new Dictionary<QualityType, IColliderConfig> ();
         private TreasureChestComponent _clientTreasureChest;
@@ -192,30 +191,26 @@ namespace HotUpdate.Scripts.Collector
         {
             if (ServerHandler)
             {
-                var chest = BoxingFreeSerializer.JsonDeserialize<CollectItemMetaData>(_serverTreasureChestMetaData);
-                var state = (ItemState)chest.StateFlags;
+                var state = (ItemState)_serverTreasureChestMetaData.StateFlags;
                 if (state.HasAnyState(ItemState.IsInteracting) || state.HasAnyState(ItemState.IsInBag)) return;
                 state = state.AddState(ItemState.IsInteracting);
-                chest.StateFlags = (byte)state;
-                _serverTreasureChestMetaData = BoxingFreeSerializer.JsonSerialize(_serverTreasureChestMetaData);
-                if (itemId != chest.ItemId)
+                _serverTreasureChestMetaData.StateFlags = (byte)state;
+                if (itemId != _serverTreasureChestMetaData.ItemId)
                 {
-                    Debug.LogError($"Item id {itemId} is not match with treasure chest id {chest.ItemId}");
+                    Debug.LogError($"Item id {itemId} is not match with treasure chest id {_serverTreasureChestMetaData.ItemId}");
                     state = state.RemoveState(ItemState.IsInteracting);
-                    chest.StateFlags = (byte)state;
-                    _serverTreasureChestMetaData = BoxingFreeSerializer.JsonSerialize(_serverTreasureChestMetaData);
+                    _serverTreasureChestMetaData.StateFlags = (byte)state;
                     return;
                 }
-                var chestData = chest.GetCustomData<ChestItemCustomData>();
-                var chestPos = chest.Position.ToVector3();
+                var chestData = _serverTreasureChestMetaData.GetCustomData<ChestItemCustomData>();
+                var chestPos = _serverTreasureChestMetaData.Position.ToVector3();
                 var player = NetworkServer.spawned[pickerId];
                 var connectionId = player.connectionToClient.connectionId;
                 if (!player)
                 {
                     Debug.LogError($"Player {pickerId} could not be found");
                     state = state.RemoveState(ItemState.IsInteracting);
-                    chest.StateFlags = (byte)state;
-                    _serverTreasureChestMetaData = BoxingFreeSerializer.JsonSerialize(_serverTreasureChestMetaData);
+                    _serverTreasureChestMetaData.StateFlags = (byte)state;
                     return;
                 }
                 var playerConnection = player.connectionToClient.connectionId;
@@ -260,8 +255,7 @@ namespace HotUpdate.Scripts.Collector
                     else
                     {
                         state = state.RemoveState(ItemState.IsInteracting);
-                        chest.StateFlags = (byte)state;
-                        _serverTreasureChestMetaData = BoxingFreeSerializer.JsonSerialize(_serverTreasureChestMetaData);
+                        _serverTreasureChestMetaData.StateFlags = (byte)state;
                         Debug.Log($"Player {player.netId} cannot pick up chest");
                     }
                 
@@ -269,8 +263,7 @@ namespace HotUpdate.Scripts.Collector
                 catch (Exception e)
                 {
                     state = state.RemoveState(ItemState.IsInteracting);
-                    chest.StateFlags = (byte)state;
-                    _serverTreasureChestMetaData = BoxingFreeSerializer.JsonSerialize(_serverTreasureChestMetaData);
+                    _serverTreasureChestMetaData.StateFlags = (byte)state;
                     Console.WriteLine(e);
                     throw;
                 }
@@ -562,8 +555,7 @@ namespace HotUpdate.Scripts.Collector
         [Server]
         private void JudgeEndRound()
         {
-            var chestData = BoxingFreeSerializer.JsonDeserialize<CollectItemMetaData>(_serverTreasureChestMetaData);
-            var endRound = _serverItemMap.Count == 0 && chestData.ItemId == 0;
+            var endRound = _serverItemMap.Count == 0 && _serverTreasureChestMetaData.ItemId == 0;
             if (endRound)
             {
                 _gameLoopController ??= FindObjectOfType<GameLoopController>();
@@ -581,11 +573,10 @@ namespace HotUpdate.Scripts.Collector
             try
             {
                 Debug.Log("Starting EndRound");
-                var chestData = BoxingFreeSerializer.JsonDeserialize<CollectItemMetaData>(_serverTreasureChestMetaData);
-                if (NetworkServer.spawned.TryGetValue(chestData.ItemId, out var chest))
+                if (NetworkServer.spawned.TryGetValue(_serverTreasureChestMetaData.ItemId, out var chest))
                 {
                     _networkGameObjectPoolManager.Despawn(chest.gameObject);
-                    Debug.Log($"Recycle chest with id: {chestData.ItemId}");
+                    Debug.Log($"Recycle chest with id: {_serverTreasureChestMetaData.ItemId}");
                 }
                 // 清理网格数据
                 
@@ -964,7 +955,7 @@ namespace HotUpdate.Scripts.Collector
                 Quality = chestData.randomItems.quality,
             });
             //var serverTreasureChestMetaDataBytes = MemoryPackSerializer.Serialize(metaData);
-            _serverTreasureChestMetaData = BoxingFreeSerializer.JsonSerialize(metaData) ;
+            _serverTreasureChestMetaData = metaData;
             //RpcSpawnTreasureChest(serverTreasureChestMetaDataBytes);
             GameItemManager.AddChestData(new GameChestData
             {

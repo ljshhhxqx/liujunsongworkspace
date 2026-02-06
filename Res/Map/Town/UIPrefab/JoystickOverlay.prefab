@@ -638,7 +638,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoDetectControls: 1
   buttonSizeMultiplier: 0.15
-  movementJoystick: {fileID: 0}
+  movementJoystick: {fileID: 8295102976350028171}
   actionButtons:
   - {fileID: 8427991564258457876}
   - {fileID: 1639540147633214815}
