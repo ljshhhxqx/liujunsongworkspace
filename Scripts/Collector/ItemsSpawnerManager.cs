@@ -918,6 +918,7 @@ namespace HotUpdate.Scripts.Collector
             {
                 return;
             }
+            Debug.Log($"[SpawnTreasureChestServer] Spawning treasure chest - {_treasureChestPrefabs} - {_jsonDataConfig} - {_networkGameObjectPoolManager} - {_shopConfig}");
             var random = Random.Range(0f, 1f);
             var chestData = _chestConfig.RandomOne(random);
             var position = GetRandomStartPoint(0.5f);
