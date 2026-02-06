@@ -46,7 +46,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 _camera = _canvas.worldCamera;
         
             // 初始隐藏摇杆视觉
-            HideVisual();
+            //HideVisual();
         }
 
         public void OnPointerDown(PointerEventData eventData)
@@ -110,7 +110,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             handle.localPosition = Vector2.zero;
         
             // 隐藏摇杆视觉
-            HideVisual();
+            //HideVisual();
         
             OnJoystickReleased?.Invoke();
         }

@@ -918,7 +918,6 @@ namespace HotUpdate.Scripts.Collector
             {
                 return;
             }
-            Debug.Log($"[SpawnTreasureChestServer] Spawning treasure chest - {_treasureChestPrefabs} - {_jsonDataConfig} - {_networkGameObjectPoolManager} - {_shopConfig}");
             var random = Random.Range(0f, 1f);
             var chestData = _chestConfig.RandomOne(random);
             var position = GetRandomStartPoint(0.5f);
@@ -928,7 +927,9 @@ namespace HotUpdate.Scripts.Collector
                 {
                     var controller = identity.GetComponent<TreasureChestComponent>();
                     controller.BehaviourType = (int)type;
-                });
+                });            
+            Debug.Log($"[SpawnTreasureChestServer] Spawning treasure chest chestGo - {chestGo}");
+
             var identity = chestGo.GetComponent<NetworkIdentity>();
             // if (identity.netId == 0 || !NetworkServer.spawned.TryGetValue(identity.netId, out var itemInfo))
             // {
