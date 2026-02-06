@@ -73,7 +73,7 @@ namespace HotUpdate.Scripts.Tool.HotFixSerializeTool
             {
                 return t;
             }
-            Debug.LogError($"JsonConvertDeserialize error data: {json} - type: {typeof(T).Name}");
+            Debug.LogError($"JsonConvertDeserialize error data: {json} - type: {typeof(T).Name} - realData: {data}");
             return default;
         }
 
