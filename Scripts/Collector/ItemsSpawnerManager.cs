@@ -918,16 +918,12 @@ namespace HotUpdate.Scripts.Collector
             {
                 return;
             }
-            Debug.Log($"[SpawnTreasureChestServer] var random = Random.Range(0f, 1f");
             var random = Random.Range(0f, 1f);
-            Debug.Log($"[SpawnTreasureChestServer] var chestData = _chestConfig.RandomOne(random)");
             var chestData = _chestConfig.RandomOne(random);
-            Debug.Log($"[SpawnTreasureChestServer] var position = GetRandomStartPoint(0.5f)");
             var position = GetRandomStartPoint(0.5f);
-            Debug.Log($"[SpawnTreasureChestServer] var type = _jsonDataConfig.GetCollectObjectType()");
             var type = _jsonDataConfig.GetCollectObjectType();
-            Debug.Log($"[SpawnTreasureChestServer] var chestGo = _networkGameObjectPoolManager.Spawn(_treasureChestPrefabs.GetValueOrDefault(chestData.randomItems.quality).gameObject, position, Quaternion.identity)");
-            var chestGo = _networkGameObjectPoolManager.Spawn(_treasureChestPrefabs.GetValueOrDefault(chestData.randomItems.quality).gameObject, position,
+            var randomItems = BoxingFreeSerializer.JsonDeserialize<RandomItemsData>(chestData.randomItems); //chestData.randomItems;
+            var chestGo = _networkGameObjectPoolManager.Spawn(_treasureChestPrefabs.GetValueOrDefault(randomItems.quality).gameObject, position,
                 Quaternion.identity, onSpawn: (identity) =>
                 {
                     var controller = identity.GetComponent<TreasureChestComponent>();
@@ -951,7 +947,7 @@ namespace HotUpdate.Scripts.Collector
                 30,
                 (ushort)Random.Range(0, 65535),
                 -1);
-            var qualityItems = RandomItemsData.GenerateQualityItems(chestData.randomItems, random);
+            var qualityItems = RandomItemsData.GenerateQualityItems(randomItems, random);
             var shopIds = _shopConfig.GetQualityItems(qualityItems, random);
             var chestUniqueId = HybridIdGenerator.GenerateChestId(chestData.chestId, GameSyncManager.CurrentTick);
             metaData = metaData.SetCustomData(new ChestItemCustomData
@@ -959,7 +955,7 @@ namespace HotUpdate.Scripts.Collector
                 ChestConfigId = chestData.chestId,
                 ShopIds = shopIds.ToArray(),
                 ChestUniqueId = chestUniqueId,
-                Quality = chestData.randomItems.quality,
+                Quality = randomItems.quality,
             });
             //var serverTreasureChestMetaDataBytes = MemoryPackSerializer.Serialize(metaData);
             _serverTreasureChestMetaData = metaData;

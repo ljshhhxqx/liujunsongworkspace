@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.CustomAttribute;
 using AOTScripts.Data;
+using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -17,15 +18,19 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [SerializeField]
         private List<ChestPropertyData> chestConfigData;
 
-
         public ChestPropertyData RandomOne(float weight)
         {
-            var totalWeight = chestConfigData.Sum(x => (int)x.randomItems.quality);
+            var totalWeight = chestConfigData.Sum(x =>
+            {
+                var chestRandomData = BoxingFreeSerializer.JsonDeserialize<RandomItemsData>(x.randomItems);
+                return (int)chestRandomData.quality;
+            });
             var randomWeight = weight * totalWeight;
             var currentWeight = 0.0f;
             foreach (var chestData in chestConfigData)
             {
-                currentWeight += (int)chestData.randomItems.quality;
+                var chestRandomData = BoxingFreeSerializer.JsonDeserialize<RandomItemsData>(chestData.randomItems);
+                currentWeight += (int)chestRandomData.quality;
                 if (randomWeight <= currentWeight)
                 {
                     return chestData;
@@ -45,7 +50,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 chestData.chestId = int.Parse(row[0]);
                 chestData.itemIds = (int[])JsonConvert.DeserializeObject(row[1], typeof(int[]));
                 chestData.description = row[2];
-                chestData.randomItems = (RandomItemsData)JsonUtility.FromJson(row[3], typeof(RandomItemsData));
+                chestData.randomItems = row[3];
                 chestConfigData.Add(chestData);
             }
         }
@@ -62,6 +67,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public int chestId;
         public int[] itemIds;
         public string description;
-        public RandomItemsData randomItems;
+        public string randomItems;
     }
 }
