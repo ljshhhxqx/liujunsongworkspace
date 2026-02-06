@@ -74,7 +74,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             Vector2 clampedInput = Vector2.ClampMagnitude(rawInput, 1f);
         
             // 应用死区和归一化
-            InputVector2D = NormalizeInput(clampedInput);
+            InputVector2D = clampedInput;
             
             // ⭐ 转换为 3D 格式（等同于键盘输入）
             // X = Horizontal（左右），Z = Vertical（前后）
