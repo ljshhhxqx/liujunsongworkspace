@@ -323,6 +323,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             var playerPropertiesOverlay = _uiManager.SwitchUI<PlayerPropertiesOverlay>();
             playerPropertiesOverlay.BindPlayerProperty(
                 UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_propertyBindKey));
+            playerPropertiesOverlay.transform.SetAsFirstSibling();
             Debug.Log($"PropertyPredictionState [InjectLocalPlayerCallback]  ");
             _goldBindKey = new BindingKey(UIPropertyDefine.PlayerBaseData, DataScope.LocalPlayer,
                 UIPropertyBinder.LocalPlayerId);
