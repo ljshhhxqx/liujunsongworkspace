@@ -5,6 +5,7 @@ using AOTScripts.CustomAttribute;
 using AOTScripts.Data;
 using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Random = System.Random;
@@ -17,19 +18,27 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         [ReadOnly]
         [SerializeField]
         private List<ChestPropertyData> chestConfigData;
+        private JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto, // 改为 Auto
+            Converters = new List<JsonConverter> 
+            { 
+                new StringEnumConverter() // 支持枚举字符串
+            }
+        };
 
         public ChestPropertyData RandomOne(float weight)
         {
             var totalWeight = chestConfigData.Sum(x =>
             {
-                var chestRandomData = BoxingFreeSerializer.JsonConvertDeserialize<RandomItemsData>(x.randomItems);
+                var chestRandomData = JsonConvert.DeserializeObject<RandomItemsData>(x.randomItems, _jsonSerializerSettings);
                 return (int)chestRandomData.quality;
             });
             var randomWeight = weight * totalWeight;
             var currentWeight = 0.0f;
             foreach (var chestData in chestConfigData)
             {
-                var chestRandomData = BoxingFreeSerializer.JsonConvertDeserialize<RandomItemsData>(chestData.randomItems);
+                var chestRandomData = JsonConvert.DeserializeObject<RandomItemsData>(chestData.randomItems, _jsonSerializerSettings);
                 
                 currentWeight += (int)chestRandomData.quality;
                 if (randomWeight <= currentWeight)

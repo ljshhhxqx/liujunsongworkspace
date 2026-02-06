@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using AOTScripts.Data;
-using AOTScripts.Tool;
 using AOTScripts.Tool.Coroutine;
-using AOTScripts.Tool.ObjectPool;
 using AOTScripts.Tool.Resource;
 using Cysharp.Threading.Tasks;
-using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
@@ -27,8 +24,9 @@ using HotUpdate.Scripts.Tool.ObjectPool;
 using HotUpdate.Scripts.UI.UIBase;
 using MemoryPack;
 using Mirror;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using UnityEngine;
-using UnityEngine.Serialization;
 using VContainer;
 using Random = UnityEngine.Random;
 
@@ -911,6 +909,14 @@ namespace HotUpdate.Scripts.Collector
             var configData = _collectObjectDataConfig.GetCollectObjectData(configId);
             return configData.buffExtraData;
         }
+        private JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto, // 改为 Auto
+            Converters = new List<JsonConverter> 
+            { 
+                new StringEnumConverter() // 支持枚举字符串
+            }
+        };
 
         [Server]
         public void SpawnTreasureChestServer()
@@ -923,7 +929,7 @@ namespace HotUpdate.Scripts.Collector
             var chestData = _chestConfig.RandomOne(random);
             var position = GetRandomStartPoint(0.5f);
             var type = _jsonDataConfig.GetCollectObjectType();
-            var randomItems = BoxingFreeSerializer.JsonConvertDeserialize<RandomItemsData>(chestData.randomItems); //chestData.randomItems;
+            var randomItems = JsonConvert.DeserializeObject<RandomItemsData>(chestData.randomItems, _jsonSerializerSettings); //chestData.randomItems;
             if (!_treasureChestPrefabs.TryGetValue(randomItems.quality, out var value))
             {
                 Debug.LogWarning($"TreasureChestPrefabs not found for quality {randomItems.quality}");

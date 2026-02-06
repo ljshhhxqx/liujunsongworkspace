@@ -1,4 +1,5 @@
 ﻿using System;
+using HotUpdate.Scripts.Tool.ReactiveProperty;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -83,6 +84,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             handle.anchoredPosition = clampedInput * (background.sizeDelta.x / 2) * handleRange;
         
             OnInputChanged?.Invoke(InputVector);
+            JoystickStatic.TouchedJoystick.Value = true;
         }
 
         public void OnPointerUp(PointerEventData eventData)
@@ -102,6 +104,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
         
             OnJoystickReleased?.Invoke();
+            JoystickStatic.TouchedJoystick.Value = false;
         }
 
         private void Update()
@@ -160,5 +163,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 Gizmos.DrawRay(worldPos, InputVector * 2);
             }
         }
+    }
+    
+    public static class JoystickStatic
+    {
+        public static HReactiveProperty<bool> TouchedJoystick { get; } = new HReactiveProperty<bool>();
     }
 }
