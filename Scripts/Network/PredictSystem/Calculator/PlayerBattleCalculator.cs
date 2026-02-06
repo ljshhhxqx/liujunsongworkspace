@@ -7,6 +7,7 @@ using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Tool;
 using Mirror;
 using UnityEngine;
 

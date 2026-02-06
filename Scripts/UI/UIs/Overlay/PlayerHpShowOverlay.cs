@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Network.UI;
+using HotUpdate.Scripts.Tool;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.ReactiveProperty;
 using HotUpdate.Scripts.UI.UIBase;

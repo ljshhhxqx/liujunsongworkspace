@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AOTScripts.Tool;
+using HotUpdate.Scripts.Tool;
 using Newtonsoft.Json;
-using UnityEditor;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Config.ArrayConfig

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using AOTScripts.Data;
 using AOTScripts.Tool;
+using HotUpdate.Scripts.Tool;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEditor;

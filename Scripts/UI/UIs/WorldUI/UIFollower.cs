@@ -1,4 +1,5 @@
 ﻿using AOTScripts.Tool;
+using HotUpdate.Scripts.Tool;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.UI.UIs.WorldUI

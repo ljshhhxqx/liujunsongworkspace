@@ -1,6 +1,7 @@
 ﻿using AOTScripts.Tool;
 using DG.Tweening;
 using HotUpdate.Scripts.Network.UI;
+using HotUpdate.Scripts.Tool;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

@@ -15,6 +15,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Tool;
 using HotUpdate.Scripts.Tool.GameEvent;
 using MemoryPack;
 using Mirror;

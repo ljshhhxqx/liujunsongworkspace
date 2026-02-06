@@ -16,6 +16,7 @@ using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Static;
+using HotUpdate.Scripts.Tool;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using HotUpdate.Scripts.Tool.ObjectPool;

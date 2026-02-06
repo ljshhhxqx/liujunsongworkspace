@@ -22,14 +22,15 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         {
             var totalWeight = chestConfigData.Sum(x =>
             {
-                var chestRandomData = BoxingFreeSerializer.JsonDeserialize<RandomItemsData>(x.randomItems);
+                var chestRandomData = BoxingFreeSerializer.JsonConvertDeserialize<RandomItemsData>(x.randomItems);
                 return (int)chestRandomData.quality;
             });
             var randomWeight = weight * totalWeight;
             var currentWeight = 0.0f;
             foreach (var chestData in chestConfigData)
             {
-                var chestRandomData = BoxingFreeSerializer.JsonDeserialize<RandomItemsData>(chestData.randomItems);
+                var chestRandomData = BoxingFreeSerializer.JsonConvertDeserialize<RandomItemsData>(chestData.randomItems);
+                
                 currentWeight += (int)chestRandomData.quality;
                 if (randomWeight <= currentWeight)
                 {

@@ -7,6 +7,7 @@ using AOTScripts.Data;
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Tool;
 using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using UnityEngine;
 using AnimationInfo = HotUpdate.Scripts.Config.ArrayConfig.AnimationInfo;

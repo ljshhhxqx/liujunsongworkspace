@@ -7,6 +7,7 @@ using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Static;
+using HotUpdate.Scripts.Tool;
 using VContainer;
 using ISyncPropertyState = AOTScripts.Data.ISyncPropertyState;
 

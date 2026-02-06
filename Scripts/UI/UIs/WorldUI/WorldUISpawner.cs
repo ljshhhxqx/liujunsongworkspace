@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using AOTScripts.Tool;
+using HotUpdate.Scripts.Tool;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using HotUpdate.Scripts.UI.UIs.UIFollow.DataModel;

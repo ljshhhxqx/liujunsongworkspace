@@ -8,6 +8,7 @@ using HotUpdate.Scripts.Network.Item;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Tool;
 using Mirror;
 using Newtonsoft.Json;
 using UnityEngine;

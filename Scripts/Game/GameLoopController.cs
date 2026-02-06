@@ -20,6 +20,7 @@ using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.Server.PlayFab;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Static;
+using HotUpdate.Scripts.Tool;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using HotUpdate.Scripts.Tool.Message;

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6977469129790083152}
   - component: {fileID: 6525842103487628904}
   - component: {fileID: 1270317300158113390}
+  - component: {fileID: 643422016236995410}
   m_Layer: 5
   m_Name: AnimationItem
   m_TagString: Untagged
@@ -101,6 +102,18 @@ MonoBehaviour:
   indexText: {fileID: 7143379117235150562}
   costText: {fileID: 1844940665242378125}
   countdownImage: {fileID: 7556773505433330171}
+--- !u!225 &643422016236995410
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 629027139223058177}
+  m_Enabled: 1
+  m_Alpha: 0.79
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &729890439317802362
 GameObject:
   m_ObjectHideFlags: 0

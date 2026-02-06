@@ -7,6 +7,7 @@ using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.UI;
+using HotUpdate.Scripts.Tool;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using HotUpdate.Scripts.UI.UIs.Panel.ItemList;

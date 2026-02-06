@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AOTScripts.Data;
 using MemoryPack;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Tool.HotFixSerializeTool
@@ -12,6 +13,10 @@ namespace HotUpdate.Scripts.Tool.HotFixSerializeTool
         private static Dictionary<Type, Delegate> _jsonDeserializers = new Dictionary<Type, Delegate>();
         private static Dictionary<Type, Delegate> _memorySerializers = new Dictionary<Type, Delegate>();
         private static Dictionary<Type, Delegate> _memoryDeserializers = new Dictionary<Type, Delegate>();
+        private static JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.All
+        };
     
         // 注册结构体的序列化方法，避免运行时反射
         public static void RegisterMemory<T>()
@@ -51,6 +56,20 @@ namespace HotUpdate.Scripts.Tool.HotFixSerializeTool
             RegisterJson<T>();
             json = JsonUtility.ToJson(value);
             return json;
+        }
+        
+        public static T JsonConvertDeserialize<T>(string json, JsonSerializerSettings settings = null)
+        { 
+#if UNITY_EDITOR
+            return JsonConvert.DeserializeObject<T>(json, settings == null ? _jsonSerializerSettings : null);
+#endif
+            var data = JsonConvert.DeserializeObject(json, settings == null ? _jsonSerializerSettings : null);
+            if (data is T t)
+            {
+                return t;
+            }
+            Debug.LogError($"JsonConvertDeserialize error data: {json} - type: {typeof(T).Name}");
+            return default;
         }
 
         public static T JsonDeserialize<T>(string json)

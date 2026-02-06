@@ -19,6 +19,7 @@ using HotUpdate.Scripts.Network.Item;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Tool;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.HotFixSerializeTool;
 using HotUpdate.Scripts.Tool.Message;
@@ -922,7 +923,7 @@ namespace HotUpdate.Scripts.Collector
             var chestData = _chestConfig.RandomOne(random);
             var position = GetRandomStartPoint(0.5f);
             var type = _jsonDataConfig.GetCollectObjectType();
-            var randomItems = BoxingFreeSerializer.JsonDeserialize<RandomItemsData>(chestData.randomItems); //chestData.randomItems;
+            var randomItems = BoxingFreeSerializer.JsonConvertDeserialize<RandomItemsData>(chestData.randomItems); //chestData.randomItems;
             if (!_treasureChestPrefabs.TryGetValue(randomItems.quality, out var value))
             {
                 Debug.LogWarning($"TreasureChestPrefabs not found for quality {randomItems.quality}");
