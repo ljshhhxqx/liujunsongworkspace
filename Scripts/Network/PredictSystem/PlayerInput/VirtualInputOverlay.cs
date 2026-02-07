@@ -107,9 +107,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         }
     
         // 公共输入接口
-        public Vector2 GetMovementInput()
+        public Vector3 GetMovementInput()
         {
-            return movementJoystick?.InputVector ?? Vector2.zero;
+            return movementJoystick?.InputVector ?? Vector3.zero;
         }
 
         public List<AnimationState> GetActiveButtons()
