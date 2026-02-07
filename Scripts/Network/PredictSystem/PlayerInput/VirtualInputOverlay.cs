@@ -79,7 +79,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private void OnJoystickInput(Vector3 input)
         {
             // 这里可以添加额外的输入处理逻辑
-            Debug.Log($"Joystick Input: {input}");
+            //Debug.Log($"Joystick Input: {input}");
         }
     
         private void OnJoystickReleased()

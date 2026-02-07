@@ -33,7 +33,7 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
 
         private void LateUpdate()
         {
-            if (!_target || !_target.activeSelf || _followTargetParams == null)
+            if (!_target || !_target.activeSelf || _followTargetParams == null || !_playerTransform)
             {
                 return; 
                 
