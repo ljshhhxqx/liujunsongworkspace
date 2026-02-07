@@ -106,12 +106,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             Vector2 finalInput = useInputSystemDeadzone
                 ? ApplyRadialDeadzone(clampedInput, deadZone, responseCurvePower)
                 : ApplySimpleDeadzone(clampedInput, deadZone);
-            
-            finalInput = ApplyDigital8Direction(finalInput, 0.35f);
-
-            InputVector2D = finalInput;
-            InputVector = new Vector3(finalInput.x, 0, finalInput.y);
-
 
             InputVector2D = finalInput;
 
