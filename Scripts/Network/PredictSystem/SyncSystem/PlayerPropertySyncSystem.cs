@@ -1641,31 +1641,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         }
     }
 
-    [MemoryPackable]
-    public partial struct TracedPlayerInfo
-    {
-        [MemoryPackOrder(0)]
-        public int PlayerId;
-        [MemoryPackOrder(1)]
-        public string PlayerName;
-        [MemoryPackOrder(2)]
-        public Vector3 Position;
-        [MemoryPackOrder(3)]
-        public float Hp;
-        [MemoryPackOrder(4)]
-        public float MaxHp;
-        [MemoryPackOrder(5)]
-        public float Score;
-        [MemoryPackOrder(6)]
-        public float Mana;
-        [MemoryPackOrder(7)]
-        public float MaxMana;
-        [MemoryPackOrder(8)]
-        public PropertyTypeEnum PropertyDifferentPropertyType;
-        [MemoryPackOrder(9)]
-        public float PropertyDifferentValue;
-    }
-
     public static class SkillHitExtraEffectDataExt
     {
         public static SubjectedStateType ToSubjectedStateType(this ControlSkillType controlSkillType)
