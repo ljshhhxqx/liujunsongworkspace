@@ -559,7 +559,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         {
             int? noSequence = null;
             var connectionIdValue = connectionId.GetValueOrDefault();
-            var header = ObjectPoolManager<InteractHeader>.Instance.Get(35);
+            var header = new InteractHeader();
             header.Clear();
             header.CommandId = HybridIdGenerator.GenerateCommandId(authority == CommandAuthority.Server, CommandType.Interact, 0, ref noSequence);
             header.RequestConnectionId = connectionIdValue;
@@ -568,7 +568,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             header.Position = position;
             header.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             header.Authority = authority;
-            ObjectPoolManager<InteractHeader>.Instance.Return(header);
             return header;
         }
 
@@ -693,6 +692,46 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             writer.WriteFloat(info.attackDamage);
             writer.WriteFloat(info.defense);
             writer.WriteFloat(info.speed);
+        }
+    }
+    
+    public static class InteractNetworkDataExtensions
+    {
+        // 基础验证参数配置
+        public const int MAX_TICK_DELTA = 30;      // 允许的最大tick偏差
+        public const long TIMESTAMP_TOLERANCE = 5000; // 5秒时间容差（毫秒）
+        public static CommandValidationResult CommandValidResult(this IInteractRequest command)
+        {
+            var result = new CommandValidationResult();
+            result.Init();
+            var header = command.GetHeader();
+
+            // 1. Tick验证
+            if (header.Tick <= 0)
+            {
+                result.AddError($"Invalid tick value, {header.Tick}, now tick is {GameSyncManager.CurrentTick}");
+            }
+
+            // 2. 时间戳验证
+            var currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            if (Math.Abs(currentTime - header.Timestamp) > TIMESTAMP_TOLERANCE)
+            {
+                result.AddError($"Timestamp out of sync: {currentTime - header.Timestamp}ms");
+            }
+
+            // 3. 命令类型验证
+            if (header.Category < 0 || header.Category > InteractCategory.SceneToPlayer)
+            {
+                result.AddError($"Unknown command type: {header.Category}");
+            }
+
+            // 4. 基础有效性验证
+            if (!command.IsValid())
+            {
+                result.AddError($"Command specific validation failed, type is {header.Category}");
+            }
+
+            return result;
         }
     }
 }

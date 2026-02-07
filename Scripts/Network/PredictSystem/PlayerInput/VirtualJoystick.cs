@@ -73,14 +73,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             Vector2 rawInput = touchOffset / _backgroundRadius;
             Vector2 clampedInput = Vector2.ClampMagnitude(rawInput, 1f);
         
-            // 应用死区和归一化
-            InputVector2D = clampedInput;
+            // ⭐ 应用死区处理
+            Vector2 normalizedInput = NormalizeInput(clampedInput);
+            InputVector2D = normalizedInput;
             
-            // ⭐ 转换为 3D 格式（等同于键盘输入）
+            // ⭐ 修正：转换为 3D 格式（等同于键盘输入）
             // X = Horizontal（左右），Z = Vertical（前后）
-            InputVector = new Vector3(InputVector2D.x, 0, InputVector2D.y);
+            InputVector = new Vector3(normalizedInput.x, 0, normalizedInput.y);
         
-            // 更新 Handle 位置
+            // 更新 Handle 位置（使用未处理死区的 clampedInput 以保持视觉连贯）
             handle.anchoredPosition = clampedInput * (background.sizeDelta.x / 2) * handleRange;
         
             OnInputChanged?.Invoke(InputVector);
@@ -115,15 +116,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
         }
 
+        /// <summary>
+        /// ⭐ 归一化输入并应用死区
+        /// </summary>
         private Vector2 NormalizeInput(Vector2 input)
         {
             float magnitude = input.magnitude;
         
+            // 死区过滤
             if (magnitude < deadZone)
                 return Vector2.zero;
         
             if (snapToCenter)
             {
+                // 重映射：死区外的值映射到 0-1
                 float normalizedMagnitude = Mathf.Clamp01((magnitude - deadZone) / (1 - deadZone));
                 return input.normalized * normalizedMagnitude;
             }
@@ -157,11 +163,26 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 Gizmos.color = Color.red;
                 Gizmos.DrawLine(background.position, handle.position);
                 
-                // 调试：显示输入向量
+                // ⭐ 调试：显示输入向量方向
                 Gizmos.color = Color.blue;
                 Vector3 worldPos = background.position;
-                Gizmos.DrawRay(worldPos, InputVector * 2);
+                // 将 2D 输入转换为世界空间显示
+                Vector3 debugDirection = new Vector3(InputVector2D.x, 0, InputVector2D.y);
+                Gizmos.DrawRay(worldPos, debugDirection * 2);
+                
+                // 显示文本标签
+                #if UNITY_EDITOR
+                UnityEditor.Handles.Label(
+                    worldPos + debugDirection * 2.5f, 
+                    $"Input: ({InputVector2D.x:F2}, {InputVector2D.y:F2})"
+                );
+                #endif
             }
+        }
+
+        private void OnDestroy()
+        {
+            JoystickStatic.TouchedJoystick.Value = false;
         }
     }
     

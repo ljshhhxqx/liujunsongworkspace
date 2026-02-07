@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using AOTScripts.Data;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
