@@ -1,4 +1,5 @@
 ﻿using System;
+using AOTScripts.Data;
 using UnityEngine;
 
 namespace HotUpdate.Scripts.Collector
