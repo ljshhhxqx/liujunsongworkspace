@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using HotUpdate.Scripts.Tool.ReactiveProperty;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -8,82 +9,112 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
     public class VirtualJoystick : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerUpHandler
     {
         [Header("Joystick Components")]
-        [SerializeField]
-        private RectTransform background;
-        [SerializeField]
-        private RectTransform handle;
+        [SerializeField] private RectTransform background;
+        [SerializeField] private RectTransform handle;
 
         [Header("Settings")]
-        [SerializeField]
-        private float handleRange = 1f;
-        [SerializeField]
-        private float deadZone = 0.2f;
-        [SerializeField]
-        private bool snapToCenter = true;
-    
+        [SerializeField] private float handleRange = 1f;
+
+        [Tooltip("死区（0~1），例如 0.2 表示摇杆偏移 20% 内输出为 0")]
+        [Range(0f, 1f)]
+        [SerializeField] private float deadZone = 0.2f;
+
+        [Tooltip("是否使用 InputSystem 风格的 radial deadzone 重映射（推荐开启）")]
+        [SerializeField] private bool useInputSystemDeadzone = true;
+
+        [Tooltip("是否启用轻微曲线（更接近真实摇杆的推感）。1=线性，>1 更迟钝，<1 更灵敏")]
+        [Range(0.2f, 4f)]
+        [SerializeField] private float responseCurvePower = 1.0f;
+
         [Header("Visual Feedback")]
-        [SerializeField]
-        private float returnSpeed = 10f;
+        [SerializeField] private float returnSpeed = 10f;
 
         private Canvas _canvas;
         private Camera _camera;
-        private Vector2 _backgroundCenter;
-        private float _backgroundRadius;
+
+        private float _radius;
 
         /// <summary>
-        /// ⭐ 输入向量（等同于键盘的 Horizontal/Vertical）
+        /// 输入向量（等同于键盘 Horizontal/Vertical）
         /// X: 左右 (-1 到 1)，Z: 前后 (-1 到 1)
         /// </summary>
         public Vector3 InputVector { get; private set; }
-        
+
         /// <summary>
-        /// 2D 版本（用于 UI 显示）
+        /// 2D 输入（用于 UI 显示）
         /// </summary>
         public Vector2 InputVector2D { get; private set; }
-        
+
         public bool IsActive { get; private set; }
-    
+
         public event Action<Vector3> OnInputChanged;
         public event Action OnJoystickReleased;
 
-        private void Start()
+        private void Awake()
         {
             _canvas = GetComponentInParent<Canvas>();
-        
-            if (_canvas.renderMode == RenderMode.ScreenSpaceCamera)
+
+            // Overlay 模式 camera 传 null
+            if (_canvas != null && _canvas.renderMode != RenderMode.ScreenSpaceOverlay)
                 _camera = _canvas.worldCamera;
-        
-            _backgroundCenter = RectTransformUtility.WorldToScreenPoint(_camera, background.position);
-            _backgroundRadius = background.sizeDelta.x / 2 * _canvas.scaleFactor;
-        
-            handle.anchoredPosition = Vector2.zero;
+            else
+                _camera = null;
+
+            UpdateRadius();
+            ResetJoystickImmediate();
+        }
+
+        private void UpdateRadius()
+        {
+            if (background == null) return;
+
+            // 用最小边保证圆形范围正确（防止 background 非正方形）
+            _radius = Mathf.Min(background.sizeDelta.x, background.sizeDelta.y) * 0.5f;
+            if (_radius <= 0.001f) _radius = 1f;
         }
 
         public void OnPointerDown(PointerEventData eventData)
         {
             IsActive = true;
+
+            StopAllCoroutines();
+
+            UpdateRadius();
             OnDrag(eventData);
         }
 
         public void OnDrag(PointerEventData eventData)
         {
             if (!IsActive) return;
-        
-            Vector2 touchOffset = eventData.position - _backgroundCenter;
-            Vector2 rawInput = touchOffset / _backgroundRadius;
+            if (background == null || handle == null) return;
+
+            Vector2 localPoint;
+            if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                    background,
+                    eventData.position,
+                    _camera,
+                    out localPoint))
+                return;
+
+            // 转成 [-1,1] 的输入（rawInput magnitude 理论上可 > 1）
+            Vector2 rawInput = localPoint / _radius;
+
+            // Clamp 到圆形范围
             Vector2 clampedInput = Vector2.ClampMagnitude(rawInput, 1f);
-        
-            // ⭐ 应用死区处理
-            Vector2 normalizedInput = NormalizeInput(clampedInput);
-            InputVector2D = normalizedInput;
-            
-            // ⭐ 修正：转换为 3D 格式（等同于键盘输入）
-            // X = Horizontal（左右），Z = Vertical（前后）
-            InputVector = new Vector3(normalizedInput.x, 0, normalizedInput.y);
-        
-            // 更新 Handle 位置（使用未处理死区的 clampedInput 以保持视觉连贯）
-            handle.anchoredPosition = clampedInput * (background.sizeDelta.x / 2) * handleRange;
-        
+
+            // 应用 deadzone + remap（Input System 风格）
+            Vector2 finalInput = useInputSystemDeadzone
+                ? ApplyRadialDeadzone(clampedInput, deadZone, responseCurvePower)
+                : ApplySimpleDeadzone(clampedInput, deadZone);
+
+            InputVector2D = finalInput;
+
+            // 输出等价于 Input.GetAxis
+            InputVector = new Vector3(finalInput.x, 0, finalInput.y);
+
+            // UI handle 使用 clampedInput（保持视觉连续）
+            handle.anchoredPosition = clampedInput * _radius * handleRange;
+
             OnInputChanged?.Invoke(InputVector);
             JoystickStatic.TouchedJoystick.Value = true;
         }
@@ -91,9 +122,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public void OnPointerUp(PointerEventData eventData)
         {
             IsActive = false;
+
             InputVector2D = Vector2.zero;
             InputVector = Vector3.zero;
-        
+
+            OnInputChanged?.Invoke(InputVector);
+            OnJoystickReleased?.Invoke();
+
+            JoystickStatic.TouchedJoystick.Value = false;
+
             if (returnSpeed > 0)
             {
                 StopAllCoroutines();
@@ -101,83 +138,73 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
             else
             {
-                handle.anchoredPosition = Vector2.zero;
+                ResetJoystickImmediate();
             }
-        
-            OnJoystickReleased?.Invoke();
-            JoystickStatic.TouchedJoystick.Value = false;
         }
 
-        private void Update()
+        private void ResetJoystickImmediate()
         {
-            if (!IsActive)
-            {
-                _backgroundCenter = RectTransformUtility.WorldToScreenPoint(_camera, background.position);
-            }
+            if (handle != null)
+                handle.anchoredPosition = Vector2.zero;
         }
 
         /// <summary>
-        /// ⭐ 归一化输入并应用死区
+        /// Input System 风格：Radial Deadzone + deadzone 外重新归一化
+        /// 并且可以加一个 responseCurvePower 调节手感
         /// </summary>
-        private Vector2 NormalizeInput(Vector2 input)
+        private Vector2 ApplyRadialDeadzone(Vector2 input, float deadZone, float curvePower)
         {
             float magnitude = input.magnitude;
-        
-            // 死区过滤
-            if (magnitude < deadZone)
+
+            // 死区内直接 0
+            if (magnitude <= deadZone)
                 return Vector2.zero;
-        
-            if (snapToCenter)
+
+            // deadzone 外重新映射到 0~1
+            // 这一步就是 Input System 摇杆手感的核心：保证最大仍为 1
+            float normalizedMagnitude = Mathf.Clamp01((magnitude - deadZone) / (1f - deadZone));
+
+            // 曲线控制（1=线性，>1 更迟钝，<1 更灵敏）
+            if (!Mathf.Approximately(curvePower, 1f))
             {
-                // 重映射：死区外的值映射到 0-1
-                float normalizedMagnitude = Mathf.Clamp01((magnitude - deadZone) / (1 - deadZone));
-                return input.normalized * normalizedMagnitude;
+                normalizedMagnitude = Mathf.Pow(normalizedMagnitude, curvePower);
             }
-        
+
+            return input.normalized * normalizedMagnitude;
+        }
+
+        /// <summary>
+        /// 简单死区（非 InputSystem 风格）
+        /// </summary>
+        private Vector2 ApplySimpleDeadzone(Vector2 input, float deadZone)
+        {
+            if (input.magnitude < deadZone)
+                return Vector2.zero;
+
             return input;
         }
 
-        private System.Collections.IEnumerator ReturnHandleToCenter()
+        private IEnumerator ReturnHandleToCenter()
         {
-            while (handle.anchoredPosition.magnitude > 0.01f)
+            while (handle != null && handle.anchoredPosition.magnitude > 0.01f)
             {
                 handle.anchoredPosition = Vector2.Lerp(
-                    handle.anchoredPosition, 
-                    Vector2.zero, 
+                    handle.anchoredPosition,
+                    Vector2.zero,
                     Time.deltaTime * returnSpeed
                 );
+
                 yield return null;
             }
-            handle.anchoredPosition = Vector2.zero;
+
+            if (handle != null)
+                handle.anchoredPosition = Vector2.zero;
         }
 
-        private void OnDrawGizmos()
+        private void OnRectTransformDimensionsChange()
         {
-            if (background == null) return;
-        
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(background.position, background.sizeDelta.x / 2);
-        
-            if (handle != null && Application.isPlaying && IsActive)
-            {
-                Gizmos.color = Color.red;
-                Gizmos.DrawLine(background.position, handle.position);
-                
-                // ⭐ 调试：显示输入向量方向
-                Gizmos.color = Color.blue;
-                Vector3 worldPos = background.position;
-                // 将 2D 输入转换为世界空间显示
-                Vector3 debugDirection = new Vector3(InputVector2D.x, 0, InputVector2D.y);
-                Gizmos.DrawRay(worldPos, debugDirection * 2);
-                
-                // 显示文本标签
-                #if UNITY_EDITOR
-                UnityEditor.Handles.Label(
-                    worldPos + debugDirection * 2.5f, 
-                    $"Input: ({InputVector2D.x:F2}, {InputVector2D.y:F2})"
-                );
-                #endif
-            }
+            // UI 改尺寸时自动更新半径
+            UpdateRadius();
         }
 
         private void OnDestroy()
@@ -185,7 +212,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             JoystickStatic.TouchedJoystick.Value = false;
         }
     }
-    
+
     public static class JoystickStatic
     {
         public static HReactiveProperty<bool> TouchedJoystick { get; } = new HReactiveProperty<bool>();
