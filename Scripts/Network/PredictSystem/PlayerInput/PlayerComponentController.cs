@@ -379,6 +379,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _minimumBindKey = new BindingKey(UIPropertyDefine.MinimumValue, DataScope.LocalPlayer, UIPropertyBinder.LocalPlayerId);
             
             Observable.EveryUpdate()
+                .Where(x=> LocalPlayerHandler)
                 .Subscribe(_ =>
                 {
                     try
@@ -403,6 +404,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 .AddTo(this);
             
             Observable.EveryUpdate()
+                .Where(x=> LocalPlayerHandler)
                 .Sample(TimeSpan.FromSeconds(Time.fixedDeltaTime))
                 .Subscribe(_ =>
                 {
@@ -410,6 +412,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 })
                 .AddTo(this);
             Observable.EveryFixedUpdate()
+                .Where(x=> LocalPlayerHandler)
                 .Subscribe(_ =>
                 {
                     try

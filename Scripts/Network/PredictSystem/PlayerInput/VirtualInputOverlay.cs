@@ -109,7 +109,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private void OnJoystickInput(Vector3 input)
         {
             // 这里可以添加额外的输入处理逻辑
-            //Debug.Log($"Joystick Input: {input}");
+            Debug.Log($"Joystick Input: {input}");
         }
     
         private void OnJoystickReleased()
@@ -139,7 +139,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         // 公共输入接口
         public Vector3 GetMovementInput()
         {
-            return movementJoystick?.InputVector ?? Vector3.zero;
+            if (movementJoystick)
+            {
+                Debug.Log($"[virtualInput] GetMovementInput: {movementJoystick.InputVector}");
+                return movementJoystick.InputVector;
+            }
+            return Vector3.zero;
         }
 
         public List<AnimationState> GetActiveButtons()
