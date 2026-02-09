@@ -20,7 +20,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [SerializeField]
         private float buttonSizeMultiplier = 0.15f; // 按钮大小占屏幕比例
         public override bool IsGameUI => true;
-        private Dictionary<int, AnimationStateData> _playerAnimiationDatas;
+        private Dictionary<int, AnimationStateData> _playerAnimiationDatas = new Dictionary<int, AnimationStateData>();
     
         [SerializeField]
         private ProgressItem progressItem;
@@ -168,7 +168,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         // 屏幕适配
         private void AdaptControlsToScreen()
         {
-            //AdaptJoystickToScreen();
+            AdaptJoystickToScreen();
             //AdaptButtonsToScreen();
         }
     
