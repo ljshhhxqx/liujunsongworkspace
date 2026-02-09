@@ -1,3 +1,4 @@
 keyFunction,key
 Shop,Shop
-Inventory,Inventory
+Inventory,Backpack
+Info,PlayerInGameInfo

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using AOTScripts.Tool.Resource;
+using UnityEngine;
 
 namespace UI.UIBase
 {

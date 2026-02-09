@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using HotUpdate.Scripts.Config.ArrayConfig;
-using UI.UIBase;
+using AOTScripts.Tool.Resource;
+using HotUpdate.Scripts.Network.UI;
+using HotUpdate.Scripts.Tool.ReactiveProperty;
+using HotUpdate.Scripts.UI.UIs.Overlay;
+using HotUpdate.Scripts.UI.UIs.Panel.ItemList;
+using UniRx;
 using UnityEngine;
 using VContainer;
 using AnimationState = AOTScripts.Data.AnimationState;
@@ -16,12 +20,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [SerializeField]
         private float buttonSizeMultiplier = 0.15f; // 按钮大小占屏幕比例
         public override bool IsGameUI => true;
+        private Dictionary<int, AnimationStateData> _playerAnimiationDatas;
     
+        [SerializeField]
+        private ProgressItem progressItem;
         [Header("References")]
         [SerializeField]
         private VirtualJoystick movementJoystick;
-        [SerializeField]
-        private List<VirtualButton> actionButtons;
+        private readonly List<VirtualButton> _virtualButtons = new List<VirtualButton>();
+
+        [SerializeField] private ContentItemList contentItemList;
         [SerializeField]
         private List<FunctionVirtualButton> functionButtons;
         private HashSet<AnimationState> _activeButtons = new HashSet<AnimationState>();
@@ -35,12 +43,34 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [Inject]
         private void Init(IObjectResolver objectResolver)
         {
-            InitializeInputSystem();
             for (int i = 0; i < functionButtons.Count; i++)
             {
                 var functionButton = functionButtons[i];
                 objectResolver.Inject(functionButton);
             }
+        }
+        
+        private void InitializeButton(VirtualButton button)
+        {
+            var i = _virtualButtons.IndexOf(button);
+            if (i != -1)
+            {
+                _virtualButtons[i] = button;
+                button.ButtonReleased -= button.ButtonReleased;
+                button.ButtonPressed -= button.ButtonPressed;
+                return;
+            }
+            _virtualButtons.Add(button);
+            
+            foreach (var btn in _virtualButtons)
+            {
+                btn.ButtonPressed += OnButtonPressed;
+                btn.ButtonReleased += OnButtonReleased;
+            
+                buttonStates[btn.ButtonName] = false;
+                buttonDownStates[btn.ButtonName] = false;
+            }
+            
         }
 
         private void InitializeInputSystem()
@@ -50,7 +80,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             movementJoystick.OnJoystickReleased += OnJoystickReleased;
             
             // 注册按钮事件
-            foreach (var button in actionButtons)
+            foreach (var button in _virtualButtons)
             {
                 button.ButtonPressed += OnButtonPressed;
                 button.ButtonReleased += OnButtonReleased;
@@ -138,7 +168,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         // 屏幕适配
         private void AdaptControlsToScreen()
         {
-            AdaptJoystickToScreen();
+            //AdaptJoystickToScreen();
             //AdaptButtonsToScreen();
         }
     
@@ -164,7 +194,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             float screenMin = Mathf.Min(Screen.width, Screen.height);
             float buttonSize = screenMin * buttonSizeMultiplier;
         
-            foreach (var button in actionButtons)
+            foreach (var button in _virtualButtons)
             {
                 RectTransform buttonRect = button.GetComponent<RectTransform>();
                 buttonRect.sizeDelta = new Vector2(buttonSize, buttonSize);
@@ -178,9 +208,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             // 根据按钮数量和屏幕尺寸自动排列按钮
             // 这里可以实现更复杂的布局逻辑
-            for (int i = 0; i < actionButtons.Count; i++)
+            for (int i = 0; i < _virtualButtons.Count; i++)
             {
-                RectTransform buttonRect = actionButtons[i].GetComponent<RectTransform>();
+                RectTransform buttonRect = _virtualButtons[i].GetComponent<RectTransform>();
                 float buttonSize = buttonRect.sizeDelta.x;
                 float spacing = buttonSize * 0.2f;
             
@@ -210,7 +240,117 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
         }
 
+        public bool IsProgressing()
+        {
+            return progressItem.IsProgressing();
+        }
+
         public override UIType Type => UIType.VirtualInput;
         public override UICanvasType CanvasType => UICanvasType.Overlay;
+
+        
+        public void StartProgress(string description, float countdown, Action onComplete = null, Func<bool> condition = null)
+        {
+            if (countdown <= 0)
+            {
+                onComplete?.Invoke();
+                //progressItem.SetProgress(description, countdown, onComplete, condition);
+                return;
+            }
+            Debug.Log("[PlayerPropertiesOverlay] StartProgress: " + description + " " + countdown);
+            progressItem.SetProgress(description, countdown, onComplete, condition);
+
+        }
+
+        public void BindPlayerAnimationData(HReactiveDictionary<int, AnimationStateData> animationStateDataDict)
+        {
+            progressItem.transform.localScale = Vector3.zero;
+            _playerAnimiationDatas = new Dictionary<int, AnimationStateData>();
+            foreach (var (key, animationStateData) in animationStateDataDict)
+            {
+                _playerAnimiationDatas.Add(key, animationStateData);
+            }
+            contentItemList.SetItemList(_playerAnimiationDatas);
+            for (int i = 0; i < contentItemList.ItemBases.Count; i++)
+            {
+                var item = contentItemList.ItemBases[i];
+                if (item is AnimationItem animationItem)
+                {
+                    if (animationItem.TryGetComponent<VirtualButton>(out var virtualButton))
+                    {
+                        _virtualButtons.Add(virtualButton);
+                    }
+                }
+            }
+
+            animationStateDataDict.ObserveAdd((x,y) =>
+                {
+                    if (_playerAnimiationDatas.ContainsKey(x))
+                    {
+                        return;
+                    }
+
+                    _playerAnimiationDatas.Add(x, y);
+                    var item = contentItemList.AddItem<AnimationStateData, AnimationItem>(x, y);
+                    if (item.TryGetComponent<VirtualButton>(out var virtualButton))
+                    {
+                        _virtualButtons.Add(virtualButton);
+                        virtualButton.ButtonPressed += OnButtonPressed;
+                        virtualButton.ButtonReleased += OnButtonReleased;
+            
+                        buttonStates[virtualButton.ButtonName] = false;
+                        buttonDownStates[virtualButton.ButtonName] = false;
+                    }
+                })
+                .AddTo(this);
+            animationStateDataDict.ObserveUpdate((x, y, z) =>
+                {
+                    if (!y.Equals(z))
+                    {
+                        if (_playerAnimiationDatas.ContainsKey(x))
+                        {
+                            _playerAnimiationDatas[x] = z;
+                            var item = contentItemList.ReplaceItem<AnimationStateData, AnimationItem>(x, z);
+                        }
+                    }
+                })
+                .AddTo(this);
+            animationStateDataDict.ObserveRemove((x, y) =>
+                {
+                    if (_playerAnimiationDatas.ContainsKey(x))
+                    {
+                        _playerAnimiationDatas.Remove(x);
+                        var item = contentItemList.GetItem<AnimationItem>(x);
+                        if (item)
+                        {
+                            if (item.TryGetComponent<VirtualButton>(out var virtualButton))
+                            {
+                                virtualButton.ButtonPressed -= OnButtonPressed;
+                                virtualButton.ButtonReleased -= OnButtonReleased;
+                                buttonStates.Remove(virtualButton.ButtonName);
+                                buttonDownStates.Remove(virtualButton.ButtonName);
+                                _virtualButtons.Remove(virtualButton);
+                            }
+                        }
+                        contentItemList.RemoveItem(x);
+                    }
+                })
+                .AddTo(this);
+            animationStateDataDict.ObserveClear(_ =>
+                {
+                    _playerAnimiationDatas.Clear();
+                    contentItemList.Clear();
+                    buttonStates.Clear();
+                    buttonDownStates.Clear();
+                    _virtualButtons.Clear();
+                })
+                .AddTo(this);
+            InitializeInputSystem();
+        }
+
+        public bool IsSprinting()
+        {
+            return movementJoystick.IsInputOverload;
+        }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AOTScripts.Tool.Resource;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Static;
 using HotUpdate.Scripts.Tool.GameEvent;

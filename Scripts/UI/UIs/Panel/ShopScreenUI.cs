@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AOTScripts.Data;
+using AOTScripts.Tool.Resource;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Tool.ReactiveProperty;
 using HotUpdate.Scripts.UI.UIBase;

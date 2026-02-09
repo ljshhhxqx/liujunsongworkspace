@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using AOTScripts.Data;
 using AOTScripts.Tool;
 using AOTScripts.Tool.ECS;
+using AOTScripts.Tool.Resource;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Config;

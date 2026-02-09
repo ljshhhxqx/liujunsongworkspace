@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Data;
+using AOTScripts.Tool.Resource;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Config.ArrayConfig;
@@ -40,6 +41,7 @@ namespace HotUpdate.Scripts.Collector
         private IColliderConfig _colliderConfig;
         private UIManager _uiManager;
         private PlayerAnimationOverlay _playerPropertiesOverlay;
+        private VirtualInputOverlay _virtualInputOverlay;
         private HashSet<uint> _cachedCollects = new HashSet<uint>();
         protected override bool AutoInjectClient => false;
 
@@ -55,6 +57,7 @@ namespace HotUpdate.Scripts.Collector
             _playerInGameManager = playerInGameManager;
             _uiManager = uiManager;
             _colliderConfig = GamePhysicsSystem.CreateColliderConfig(GetComponent<Collider>());
+            _gameEventManager.Subscribe<CollectEvent>(OnCollectEvent);
 
             Observable.EveryFixedUpdate()
                 .Where(_ => LocalPlayerHandler && GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, _colliderConfig, _cachedCollects))
@@ -64,6 +67,16 @@ namespace HotUpdate.Scripts.Collector
                 })
                 .AddTo(this);
             Debug.Log($"Picker Init----{_interactSystem}");
+        }
+
+        private void OnCollectEvent(CollectEvent collectEvent)
+        {
+            if (!PlayerPlatformDefine.IsJoystickPlatform())
+            {
+                return;
+            }
+
+            PerformPickup();
         }
 
         private void HandlePlayerTouched()
@@ -193,16 +206,48 @@ namespace HotUpdate.Scripts.Collector
 
         private void PerformPickup()
         {
-            if (!_playerPropertiesOverlay)
+            
+            if (PlayerPlatformDefine.IsWindowsPlatform())
             {
-                _playerPropertiesOverlay = _uiManager.GetActiveUI<PlayerAnimationOverlay>(UIType.PlayerAnimationOverlay, UICanvasType.Overlay);
+                if (!_playerPropertiesOverlay)
+                {
+                    _playerPropertiesOverlay = _uiManager.GetActiveUI<PlayerAnimationOverlay>(UIType.PlayerAnimationOverlay, UICanvasType.Overlay);
+                }
+                if (_playerPropertiesOverlay && _playerPropertiesOverlay.IsProgressing())
+                {
+                    return;
+                }
+            }
+            else if (PlayerPlatformDefine.IsJoystickPlatform())
+            {
+                if (!_virtualInputOverlay)
+                {
+                    _virtualInputOverlay = _uiManager.GetActiveUI<VirtualInputOverlay>(UIType.VirtualInput, UICanvasType.Overlay);
+                }
+                if (_virtualInputOverlay && _virtualInputOverlay.IsProgressing())
+                {
+                    return;
+                }
+            }
+
+            if (_collects == null || _collects.Count == 0)
+            {
+                return;
             }
             foreach (var collect in _collects)
             {
                 IsTouching = true;
                 var collectData = GameObjectContainer.Instance.GetDynamicObjectData(collect);
                 var time = _collectData.GetTouchTime(collectData.Type);
-                _playerPropertiesOverlay.StartProgress($"收集{collectData.Type}中...需要{time}秒 ", time, () => OnComplete(collectData) , GetIsTouching);
+                
+                if (PlayerPlatformDefine.IsWindowsPlatform())
+                {
+                    _playerPropertiesOverlay.StartProgress($"收集{collectData.Type}中...需要{time}秒 ", time, () => OnComplete(collectData) , GetIsTouching);
+                }
+                else
+                {
+                    _virtualInputOverlay.StartProgress($"收集{collectData.Type}中...需要{time}秒 ", time, () => OnComplete(collectData) , GetIsTouching);
+                }
             }
             _collects.Clear();
         }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using AOTScripts.Data;
 using AOTScripts.Tool.ObjectPool;
+using AOTScripts.Tool.Resource;
 using DG.Tweening;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Data;

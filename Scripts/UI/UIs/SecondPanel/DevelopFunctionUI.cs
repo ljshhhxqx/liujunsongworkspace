@@ -1,5 +1,6 @@
 ﻿using System;
 using AOTScripts.Data;
+using AOTScripts.Tool.Resource;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Tool.GameEvent;

@@ -1,5 +1,6 @@
 using System;
 using AOTScripts.Tool.ObjectPool;
+using AOTScripts.Tool.Resource;
 using Cysharp.Threading.Tasks;
 using Game.Map;
 using HotUpdate.Scripts.Game.Inject;

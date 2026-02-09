@@ -32,6 +32,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 data.animationState = (AnimationState) Enum.Parse(typeof(AnimationState), row[7]);
                 data.isHundredPercent = bool.Parse(row[8]);
                 data.showInHud = bool.Parse(row[9]);
+                data.showInUI = bool.Parse(row[10]);
                 propertyData.Add(data);
             }
         }
@@ -185,5 +186,6 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public AnimationState animationState;
         public bool isHundredPercent;
         public bool showInHud;
+        public bool showInUI;
     }
 }

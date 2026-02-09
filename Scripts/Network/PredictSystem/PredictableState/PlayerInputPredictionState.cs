@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Threading;
 using AOTScripts.Data;
 using AOTScripts.Tool.ObjectPool;
+using AOTScripts.Tool.Resource;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Network.UI;
@@ -80,8 +82,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
             _animationStateDataDict =
                 UIPropertyBinder.GetReactiveDictionary<AnimationStateData>(_playerAnimationKey);
-            var playerAnimationOverlay = _uiManager.SwitchUI<PlayerAnimationOverlay>();
-            playerAnimationOverlay.BindPlayerAnimationData(_animationStateDataDict);
+            if (PlayerPlatformDefine.IsWindowsPlatform())
+            {
+                var playerAnimationOverlay = _uiManager.SwitchUI<PlayerAnimationOverlay>();
+                playerAnimationOverlay.BindPlayerAnimationData(_animationStateDataDict);
+            }
+            else if (PlayerPlatformDefine.IsJoystickPlatform())
+            {
+                var virtualPlayerAnimationOverlay = _uiManager.SwitchUI<VirtualInputOverlay>();
+                virtualPlayerAnimationOverlay.transform.SetAsLastSibling();
+                virtualPlayerAnimationOverlay.BindPlayerAnimationData(_animationStateDataDict);
+            }
             var dic = new Dictionary<int, AnimationStateData>();
             var animations = _animationConfig.AnimationInfos;
             for (int i = 0; i < animations.Count; i++)

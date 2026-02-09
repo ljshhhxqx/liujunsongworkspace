@@ -1,19 +1,18 @@
 using AOTScripts.Data;
 using AOTScripts.Tool;
-using Data;
+using AOTScripts.Tool.Resource;
 using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.Data;
 using HotUpdate.Scripts.UI.UIBase;
-using Network.Data;
 using TMPro;
-using UI.UIBase;
 using UI.UIs.Common;
+using UI.UIs.SecondPanel;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
 
-namespace UI.UIs.SecondPanel
+namespace HotUpdate.Scripts.UI.UIs.SecondPanel
 {
     public class PlayerInfoScreenUI : ScreenUIBase
     {

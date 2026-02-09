@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Data;
 using AOTScripts.Tool;
+using AOTScripts.Tool.Resource;
 using Data;
 using HotUpdate.Scripts.Data;
 using HotUpdate.Scripts.Network.Data;

@@ -1,3 +1,4 @@
+using AOTScripts.Tool.Resource;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
@@ -39,6 +40,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             if (keyFunction == KeyFunction.Reset)
             {
                 _gameEventManager.Publish(new TouchResetCameraEvent());
+                return;
+            }
+            
+            if (keyFunction == KeyFunction.Collect)
+            {
+                _gameEventManager.Publish(new CollectEvent());
                 return;
             }
             Debug.LogWarning($"No UIType found for {keyFunction}");

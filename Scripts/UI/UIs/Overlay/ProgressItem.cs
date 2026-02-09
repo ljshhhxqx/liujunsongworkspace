@@ -21,6 +21,11 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         {
             SetProgress("Test11111", 1f, null, null);
         }
+        
+        public bool IsProgressing()
+        {
+            return _progressTween != null && _progressTween.IsPlaying();
+        }
 
         public void SetProgress(string text, float countdownTime, Action callback, Func<bool> condition)
         {

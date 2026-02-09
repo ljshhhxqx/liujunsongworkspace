@@ -2,6 +2,7 @@
 using AOTScripts.Data;
 using AOTScripts.Tool;
 using AOTScripts.Tool.Coroutine;
+using AOTScripts.Tool.Resource;
 using Data;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Data;

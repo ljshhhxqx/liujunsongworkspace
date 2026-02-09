@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Data;
 using AOTScripts.Tool;
+using AOTScripts.Tool.Resource;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using HotUpdate.Scripts.Data;

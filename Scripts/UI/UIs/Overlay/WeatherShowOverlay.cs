@@ -1,5 +1,6 @@
 using AOTScripts.Data;
 using AOTScripts.Tool;
+using AOTScripts.Tool.Resource;
 using Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Data;

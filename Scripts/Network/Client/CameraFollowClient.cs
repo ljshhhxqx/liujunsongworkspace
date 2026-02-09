@@ -22,6 +22,10 @@ namespace HotUpdate.Scripts.Network.Client
         private UIManager _uiManager;
         private bool _isWindowsApplication;
         private bool _isMobile;
+        private int _cameraControlTouchId = -1;
+        [SerializeField] 
+        [Range(0.3f, 0.7f)] 
+        private float screenDivideRatio = 0.5f;
 
         [Inject]
         private void Init(IConfigProvider configProvider, GameEventManager gameEventManager, UIManager uiManager)
@@ -41,6 +45,7 @@ namespace HotUpdate.Scripts.Network.Client
         private void OnTouchResetCamera(TouchResetCameraEvent cameraEvent)
         {
             _isControlling = true;
+            Cursor.lockState = CursorLockMode.Locked;
         }
 
         private void OnUnlockMouse(bool isUnlock)
@@ -73,6 +78,18 @@ namespace HotUpdate.Scripts.Network.Client
             }
         }
        
+        private bool CanTouchControlCamera(Touch touch)
+        {
+            // 情况 1：摇杆未激活 → 全屏都可以
+            if (!JoystickStatic.TouchedJoystick.Value)
+            {
+                return true;
+            }
+        
+            // 情况 2：摇杆激活中 → 只允许右半边屏幕
+            float divideX = Screen.width * screenDivideRatio;
+            return touch.position.x >= divideX;
+        }
 
         private void LateUpdate()
         {
@@ -92,31 +109,47 @@ namespace HotUpdate.Scripts.Network.Client
             }
             else if (_isMobile)
             {
-                if (!JoystickStatic.TouchedJoystick.Value)
+                if (Input.touchCount > 0)
                 {
-                    // 手机平台的输入逻辑
-                    if (Input.touchCount > 0)
+                    foreach (var touch in Input.touches)
                     {
-                        Touch touch = Input.GetTouch(0);
-                        if (touch.phase == TouchPhase.Moved)
+                        switch (touch.phase)
                         {
-                            horizontal = touch.deltaPosition.x * _playerDataConfig.TurnSpeed * Time.deltaTime * 2;
-                            vertical = touch.deltaPosition.y * _playerDataConfig.TurnSpeed * Time.deltaTime * 2;
+                            case TouchPhase.Began:
+                                // ⭐ 核心逻辑：判断是否允许这个触摸点控制摄像机
+                                if (_cameraControlTouchId == -1 && CanTouchControlCamera(touch))
+                                {
+                                    _cameraControlTouchId = touch.fingerId;
+                                }
+                                break;
 
-                            // 计算摄像机与水平面的角度
-                            angleWithGround = Vector3.Angle(Vector3.down, _offset.normalized) - 90; // 减去90是因为原点是向下的
-                            maxVerticalAngle = 90 - Mathf.Abs(angleWithGround);
-                            vertical = Mathf.Clamp(vertical, -maxVerticalAngle, maxVerticalAngle);
+                            case TouchPhase.Moved:
+                                if (touch.fingerId == _cameraControlTouchId)
+                                {
+                                    horizontal = touch.deltaPosition.x * _playerDataConfig.TurnSpeed * Time.deltaTime * 2;
+                                    vertical = touch.deltaPosition.y * _playerDataConfig.TurnSpeed * Time.deltaTime * 2;
 
-                            _offset = Quaternion.AngleAxis(horizontal, Vector3.up) * _offset;
-                            _offset = Quaternion.AngleAxis(vertical, Vector3.right) * _offset;
+                                    // 计算摄像机与水平面的角度
+                                    angleWithGround = Vector3.Angle(Vector3.down, _offset.normalized) - 90; // 减去90是因为原点是向下的
+                                    maxVerticalAngle = 90 - Mathf.Abs(angleWithGround);
+                                    vertical = Mathf.Clamp(vertical, -maxVerticalAngle, maxVerticalAngle);
+
+                                    _offset = Quaternion.AngleAxis(horizontal, Vector3.up) * _offset;
+                                    _offset = Quaternion.AngleAxis(vertical, Vector3.right) * _offset;
+                                }
+                                break;
+
+                            case TouchPhase.Ended:
+                            case TouchPhase.Canceled:
+                                if (touch.fingerId == _cameraControlTouchId)
+                                {
+                                    _cameraControlTouchId = -1;
+                                }
+                                break;
                         }
                     }
                 }
             }
-
-            
-            
 
             // 计算摄像机与水平面的角度
             angleWithGround = Vector3.Angle(Vector3.down, _offset.normalized) - 90; // 减去90是因为原点是向下的

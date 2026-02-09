@@ -1,4 +1,5 @@
 ﻿using AOTScripts.Tool;
+using AOTScripts.Tool.Resource;
 using Data;
 using HotUpdate.Scripts.Data;
 using TMPro;

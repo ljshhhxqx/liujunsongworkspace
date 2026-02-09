@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using AOTScripts.Tool.Resource;
 using DG.Tweening;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Tool.ReactiveProperty;
@@ -85,6 +86,11 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             Debug.Log("[PlayerPropertiesOverlay] StartProgress: " + description + " " + countdown);
             progressItem.SetProgress(description, countdown, onComplete, condition);
 
+        }
+        
+        public bool IsProgressing()
+        {
+            return progressItem.IsProgressing();
         }
     }
 }

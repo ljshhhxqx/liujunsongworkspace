@@ -1,4 +1,5 @@
 using AOTScripts.Tool;
+using AOTScripts.Tool.Resource;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.UI.UIBase;
 using UI.UIBase;

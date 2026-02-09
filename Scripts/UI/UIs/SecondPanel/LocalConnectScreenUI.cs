@@ -1,4 +1,5 @@
 using AOTScripts.Tool;
+using AOTScripts.Tool.Resource;
 using HotUpdate.Scripts.Network.Server;
 using HotUpdate.Scripts.UI.UIBase;
 using Network.Server;

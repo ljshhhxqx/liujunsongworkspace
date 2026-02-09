@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Data;
 using AOTScripts.Tool;
+using AOTScripts.Tool.Resource;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Server.PlayFab;

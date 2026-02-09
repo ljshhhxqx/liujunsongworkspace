@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using AOTScripts.Tool;
+using AOTScripts.Tool.Resource;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Tool;
 using HotUpdate.Scripts.Tool.GameEvent;

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using AOTScripts.Tool;
 using AOTScripts.Tool.ObjectPool;
+using AOTScripts.Tool.Resource;
 using DG.Tweening;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;

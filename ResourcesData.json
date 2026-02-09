@@ -2185,13 +2185,23 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
+            "Name": "PlayerInGameInfo",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/UIPrefab/PlayerInGameInfo.prefab"
+        },
+        {
+            "UID": 4600029,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "PlayerPropertyOverlay",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/UIPrefab/PlayerPropertyOverlay.prefab"
         },
         {
-            "UID": 4600029,
+            "UID": 4600030,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2201,7 +2211,7 @@
             "Address": "/Map/Town/UIPrefab/ShopUI.prefab"
         },
         {
-            "UID": 4600030,
+            "UID": 4600031,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2211,7 +2221,7 @@
             "Address": "/Map/Town/UIPrefab/TargetShowOverlay.prefab"
         },
         {
-            "UID": 4600031,
+            "UID": 4600032,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2221,7 +2231,7 @@
             "Address": "/Map/Town/UIPrefab/WeatherShowOverlay.prefab"
         },
         {
-            "UID": 4600032,
+            "UID": 4600033,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2231,7 +2241,7 @@
             "Address": "/Map/Town/WorldUIPrefab/CollectItemController.prefab"
         },
         {
-            "UID": 4600033,
+            "UID": 4600034,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
@@ -2241,7 +2251,7 @@
             "Address": "/Map/Town/WorldUIPrefab/Follower.prefab"
         },
         {
-            "UID": 4600034,
+            "UID": 4600035,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",

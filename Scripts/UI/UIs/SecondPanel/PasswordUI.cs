@@ -1,5 +1,6 @@
 using System;
 using AOTScripts.Tool;
+using AOTScripts.Tool.Resource;
 using Data;
 using TMPro;
 using UI.UIBase;

@@ -46,6 +46,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         public Vector2 InputVector2D { get; private set; }
 
         public bool IsActive { get; private set; }
+        
+        public bool IsInputOverload { get; private set; }
 
         public event Action<Vector3> OnInputChanged;
         public event Action OnJoystickReleased;
@@ -101,7 +103,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
             // Clamp 到圆形范围
             Vector2 clampedInput = Vector2.ClampMagnitude(rawInput, 1f);
-
+            IsInputOverload = rawInput.magnitude > 1.2f;
             // 应用 deadzone + remap（Input System 风格）
             Vector2 finalInput = useInputSystemDeadzone
                 ? ApplyRadialDeadzone(clampedInput, deadZone, responseCurvePower)
@@ -125,10 +127,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
             InputVector2D = Vector2.zero;
             InputVector = Vector3.zero;
+            IsInputOverload = false;
 
             OnInputChanged?.Invoke(InputVector);
             OnJoystickReleased?.Invoke();
-
             JoystickStatic.TouchedJoystick.Value = false;
 
             if (returnSpeed > 0)

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using AOTScripts;
+using AOTScripts.Tool.Resource;
 using UI.UIBase;
 using UnityEngine;
 using UnityEngine.UI;

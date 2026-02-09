@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AOTScripts.Data;
 using AOTScripts.Data.NetworkMes;
+using AOTScripts.Tool.Resource;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Inject;

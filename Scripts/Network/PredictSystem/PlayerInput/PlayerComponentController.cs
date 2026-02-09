@@ -6,6 +6,7 @@ using AOTScripts.Data;
 using AOTScripts.Tool;
 using AOTScripts.Tool.Coroutine;
 using AOTScripts.Tool.ObjectPool;
+using AOTScripts.Tool.Resource;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Common;
@@ -332,6 +333,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                         CmdSendCommand(NetworkCommandExtensions.SerializeCommand(refreshCommand).Buffer);
                     }).AddTo(shopScreenUI.gameObject);
                     break;
+                case UIType.PlayerInGameInfo:
+                    _propertyPredictionState.OpenPlayerInGameInfo();
+                    break;
                 default:
                     Debug.LogWarning($"Not support UIType: {gameFunctionUIShowEvent.UIType}");
                     break;
@@ -554,12 +558,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             else if (PlayerPlatformDefine.IsJoystickPlatform())
             {
                 _movement = _virtualInputOverlay.GetMovementInput();
+                var isSprinting = _virtualInputOverlay.IsSprinting();
                 if (_movement.magnitude == 0)
                 {
                     GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.FootStep);
                     GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.Sprint);
                 }
                 var animationStates = _virtualInputOverlay.ActiveButtons.FirstOrDefault();
+                if (isSprinting)
+                {
+                    animationStates = animationStates.AddState(AnimationState.Sprint);
+                }
                 var playerInputStateData = new PlayerInputStateData
                 {
                     InputMovement = _movement,
@@ -673,11 +682,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _uiHoleOverlay.gameObject.SetActive(false);
 
             _uiManager.SwitchUI<TargetShowOverlay>();
-            if (PlayerPlatformDefine.IsJoystickPlatform())
-            {
-                _virtualInputOverlay = _uiManager.SwitchUI<VirtualInputOverlay>();
-                _virtualInputOverlay.transform.SetAsLastSibling();
-            }
             _uiManager.SwitchUI<Minimap>(ui =>
             {
                 ui.BindPositions(UIPropertyBinder.GetReactiveDictionary<MinimapItemData>(_minimumBindKey));
@@ -685,6 +689,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         }
         
 
+        
         private bool HandleSpecialState()
         {
             //Debug.Log($"[HandleSpecialState] -> {_playerAnimationCalculator.IsSpecialAction}");

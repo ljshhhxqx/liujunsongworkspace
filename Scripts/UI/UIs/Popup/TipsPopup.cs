@@ -1,5 +1,6 @@
 ﻿using System;
 using AOTScripts;
+using AOTScripts.Tool.Resource;
 using HotUpdate.Scripts.UI.UIBase;
 using UI.UIBase;
 using UnityEngine;

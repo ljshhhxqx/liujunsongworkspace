@@ -1,4 +1,5 @@
 using System;
+using AOTScripts.Tool.Resource;
 using HotUpdate.Scripts.Network.UI;
 using HotUpdate.Scripts.Tool.ReactiveProperty;
 using UI.UIBase;

@@ -16,6 +16,8 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private TextMeshProUGUI changedText;
         [SerializeField]
         private Image iconImage;
+        [SerializeField]
+        private bool showIcon = true;
         private PropertyItemData _propertyData;
         private Sequence _sq;
         private HorizontalLayoutGroup _horizontalLayoutGroup;
@@ -53,7 +55,10 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                 case PropertyConsumeType.Number:
                     var currentValueInt = Mathf.RoundToInt(currentValue);
                     valueText.text = _propertyData.IsPercentage ? $"{currentValue * 100:0}%" : currentValueInt.ToString("0");
-                    iconImage.transform.parent.gameObject.SetActive(false);
+                    if (showIcon)
+                    {
+                        iconImage.transform.parent.gameObject.SetActive(false);
+                    }
                     if (changeValue != 0)
                     {
                         changedText.transform.localScale = Vector3.one;
@@ -65,8 +70,11 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                     currentValueInt = Mathf.RoundToInt(currentValue);
                     var maxValueInt = Mathf.RoundToInt(maxValue);
                     valueText.text = $"{currentValueInt}/{maxValueInt}";
-                    iconImage.transform.parent.gameObject.SetActive(true);
-                    iconImage.fillAmount = ratio;
+                    if (showIcon)
+                    {
+                        iconImage.transform.parent.gameObject.SetActive(true);
+                        iconImage.fillAmount = ratio;
+                    }
                     if (!_propertyData.IsAutoRecover && changeValue > 0)
                     {
                         changedText.transform.localScale = Vector3.one;

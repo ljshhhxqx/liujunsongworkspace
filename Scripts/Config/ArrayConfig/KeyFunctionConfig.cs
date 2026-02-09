@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AOTScripts.Tool.Resource;
 using Sirenix.OdinInspector;
 using UI.UIBase;
 using UnityEngine;
@@ -65,6 +66,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         Inventory,
         Quest,
         Equip,
+        Collect,
+        Info,
         Reset
     }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AOTScripts.Data;
 using AOTScripts.Tool;
+using AOTScripts.Tool.Resource;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.UI;
@@ -373,6 +374,10 @@ namespace HotUpdate.Scripts.Tool.GameEvent
     }
 
     public struct TouchResetCameraEvent : IGameEvent
+    {
+        
+    }
+    public struct CollectEvent : IGameEvent
     {
         
     }

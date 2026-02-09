@@ -1,4 +1,5 @@
 ﻿using System;
+using AOTScripts.Tool.Resource;
 using Coffee.UIEffects;
 using DG.Tweening;
 using HotUpdate.Scripts.Config.JsonConfig;

@@ -1,4 +1,5 @@
 ﻿using System;
+using AOTScripts.Tool.Resource;
 using TMPro;
 using UI.UIBase;
 using UniRx;

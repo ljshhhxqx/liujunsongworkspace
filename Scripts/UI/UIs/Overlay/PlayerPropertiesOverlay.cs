@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AOTScripts.Tool.Resource;
 using DG.Tweening;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Client.Player;

@@ -1,4 +1,5 @@
 using AOTScripts.Tool;
+using AOTScripts.Tool.Resource;
 using Cysharp.Threading.Tasks;
 using Data;
 using HotUpdate.Scripts.Data;

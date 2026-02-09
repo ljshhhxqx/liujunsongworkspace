@@ -1,4 +1,5 @@
 using AOTScripts.Tool;
+using AOTScripts.Tool.Resource;
 using PlayFab;
 using PlayFab.ClientModels;
 using TMPro;

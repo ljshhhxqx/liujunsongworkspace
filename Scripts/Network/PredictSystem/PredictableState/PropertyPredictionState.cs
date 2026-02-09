@@ -12,6 +12,7 @@ using HotUpdate.Scripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Tool.ReactiveProperty;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Overlay;
+using HotUpdate.Scripts.UI.UIs.SecondPanel;
 using UnityEngine;
 using VContainer;
 using AnimationState = AOTScripts.Data.AnimationState;
@@ -315,14 +316,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             }
             UIPropertyBinder.SetProperty(_goldBindKey, goldData);
         }
+        
+        public void OpenPlayerInGameInfo()
+        {
+            var reactiveDictionary =
+                UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_propertyBindKey);
+            var playerInGameInfo = _uiManager.SwitchUI<PlayerInGameInfoScreenUI>();
+            playerInGameInfo.BindPlayerProperty(reactiveDictionary);
+        }
 
         protected override void InjectLocalPlayerCallback()
         {
             _propertyBindKey = new BindingKey(UIPropertyDefine.PlayerProperty, DataScope.LocalPlayer,
                 UIPropertyBinder.LocalPlayerId);
             var playerPropertiesOverlay = _uiManager.SwitchUI<PlayerPropertiesOverlay>();
-            playerPropertiesOverlay.BindPlayerProperty(
-                UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_propertyBindKey));
+            var reactiveDictionary =
+                UIPropertyBinder.GetReactiveDictionary<PropertyItemData>(_propertyBindKey);
+            playerPropertiesOverlay.BindPlayerProperty(reactiveDictionary);
             playerPropertiesOverlay.transform.SetAsFirstSibling();
             Debug.Log($"PropertyPredictionState [InjectLocalPlayerCallback]  ");
             _goldBindKey = new BindingKey(UIPropertyDefine.PlayerBaseData, DataScope.LocalPlayer,
