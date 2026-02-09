@@ -554,8 +554,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
             else if (PlayerPlatformDefine.IsJoystickPlatform())
             {
-                _virtualInputOverlay ??=
-                    _uiManager.GetActiveUI<VirtualInputOverlay>(UIType.VirtualInput, UICanvasType.Overlay);
+                _virtualInputOverlay ??= _inputState.VirtualPlayerAnimationOverlay;
                 _movement = _virtualInputOverlay ? _virtualInputOverlay.GetMovementInput() : Vector3.zero;
                 var isSprinting = _virtualInputOverlay && _virtualInputOverlay.IsSprinting();
                 if (_movement.magnitude == 0)

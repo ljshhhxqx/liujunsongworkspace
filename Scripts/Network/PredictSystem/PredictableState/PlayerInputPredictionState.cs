@@ -45,7 +45,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private BindingKey _playerAnimationKey;
         private UIManager _uiManager;
         private bool _isSimulating;
-
+        private VirtualInputOverlay _virtualPlayerAnimationOverlay;
         private float _updatePositionTimer;
         
         protected override CommandType CommandType => CommandType.Input;
@@ -57,6 +57,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         public event Action<PlayerAnimationCooldownState> OnPlayerAnimationCooldownChanged;
         public event Action<PlayerInputStateData> OnPlayerInputStateChanged;
         public event Func<bool> IsInSpecialState;
+        
+        public VirtualInputOverlay VirtualPlayerAnimationOverlay => _virtualPlayerAnimationOverlay;
 
         [Inject]
         private void InitContainer(GameSyncManager gameSyncManager, IConfigProvider configProvider, UIManager uiManager, PlayerInGameManager playerInGameManager)
@@ -89,9 +91,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             }
             else if (PlayerPlatformDefine.IsJoystickPlatform())
             {
-                var virtualPlayerAnimationOverlay = _uiManager.SwitchUI<VirtualInputOverlay>();
-                virtualPlayerAnimationOverlay.transform.SetAsLastSibling();
-                virtualPlayerAnimationOverlay.BindPlayerAnimationData(_animationStateDataDict);
+                _virtualPlayerAnimationOverlay = _uiManager.SwitchUI<VirtualInputOverlay>();
+                _virtualPlayerAnimationOverlay.transform.SetAsLastSibling();
+                _virtualPlayerAnimationOverlay.BindPlayerAnimationData(_animationStateDataDict);
             }
             var dic = new Dictionary<int, AnimationStateData>();
             var animations = _animationConfig.AnimationInfos;
