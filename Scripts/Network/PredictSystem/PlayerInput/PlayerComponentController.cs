@@ -554,50 +554,38 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
             else if (PlayerPlatformDefine.IsJoystickPlatform())
             {
-                Debug.Log("[PlayerComponentController] _virtualInputOverlay.GetMovementInput()");
-                _movement = _virtualInputOverlay.GetMovementInput();
-                Debug.Log("[PlayerComponentController] _virtualInputOverlay.IsSprinting()");
-                var isSprinting = _virtualInputOverlay.IsSprinting();
+                _virtualInputOverlay ??=
+                    _uiManager.GetActiveUI<VirtualInputOverlay>(UIType.VirtualInput, UICanvasType.Overlay);
+                _movement = _virtualInputOverlay ? _virtualInputOverlay.GetMovementInput() : Vector3.zero;
+                var isSprinting = _virtualInputOverlay && _virtualInputOverlay.IsSprinting();
                 if (_movement.magnitude == 0)
                 {
                     GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.FootStep);
                     GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.Sprint);
                 }
 
-                Debug.Log("[PlayerComponentController] _virtualInputOverlay.ActiveButtons.FirstOrDefault();");
                 var animationStates = _virtualInputOverlay.ActiveButtons.FirstOrDefault();
                 if (isSprinting)
                 {
-                    Debug.Log(
-                        "[PlayerComponentController] animationStates = animationStates != default ? animationStates.AddState(AnimationState.Sprint) : AnimationState.Sprint");
                     animationStates = animationStates != default
                         ? animationStates.AddState(AnimationState.Sprint)
                         : AnimationState.Sprint;
                 }
-
-                Debug.Log("[PlayerComponentController] var playerInputStateData = new PlayerInputStateData");
 
                 var playerInputStateData = new PlayerInputStateData
                 {
                     InputMovement = _movement,
                     InputAnimations = animationStates,
                 };
-                Debug.Log("[PlayerComponentController] var command = GetCurrentAnimationState(playerInputStateData)");
                 var command = GetCurrentAnimationState(playerInputStateData);
-                Debug.Log("[PlayerComponentController] if (!_playerAnimationCalculator.CanPlayAnimation(command))");
                 if (!_playerAnimationCalculator.CanPlayAnimation(command))
                 {
-                    Debug.Log("[PlayerComponentController] command = AnimationState.None");
                     command = AnimationState.None;
                 }
 
                 playerInputStateData.Command = command;
-                Debug.Log(
-                    "[PlayerComponentController] if (_animationCooldownsDict.TryGetValue(command, out var animationCooldown))");
                 if (_animationCooldownsDict.TryGetValue(command, out var animationCooldown))
                 {
-                    Debug.Log(
-                        "[PlayerComponentController] playerInputStateData.Command = animationCooldown.IsReady() ? command : AnimationState.None");
                     playerInputStateData.Command = animationCooldown.IsReady() ? command : AnimationState.None;
                     {
                         _playerInputStateData = playerInputStateData;
