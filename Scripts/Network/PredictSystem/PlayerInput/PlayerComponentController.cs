@@ -565,9 +565,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.Sprint);
                 }
                 var animationStates = _virtualInputOverlay.ActiveButtons.FirstOrDefault();
-                if (animationStates != default && isSprinting)
+                if (isSprinting)
                 {
-                    animationStates = animationStates.AddState(AnimationState.Sprint);
+                    animationStates = animationStates != default ? animationStates.AddState(AnimationState.Sprint) : AnimationState.Sprint;
                 }
                 var playerInputStateData = new PlayerInputStateData
                 {
