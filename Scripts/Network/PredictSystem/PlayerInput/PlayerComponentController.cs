@@ -560,7 +560,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 _virtualInputOverlay ??= _inputState.VirtualPlayerAnimationOverlay;
                 _movement = _virtualInputOverlay ? _virtualInputOverlay.GetMovementInput() : Vector3.zero;
                 var isSprinting = _virtualInputOverlay && _virtualInputOverlay.IsSprinting();
-                Debug.Log($"[PlayerComponentController] GetInput: {_movement}");
+                if (_virtualInputOverlay && Mathf.Approximately(_movement.magnitude, 1))
+                {
+                    Debug.Log($"[PlayerComponentController] GetInput: {_movement}");
+                    return;
+                }
                 if (_movement.magnitude == 0)
                 {
                     GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.FootStep);

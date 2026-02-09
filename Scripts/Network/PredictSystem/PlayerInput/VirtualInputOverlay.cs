@@ -141,7 +141,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             if (movementJoystick)
             {
-                Debug.Log($"[virtualInput] GetMovementInput: {movementJoystick.InputVector}");
+                if (Mathf.Approximately(movementJoystick.InputVector.magnitude, 1))
+                {
+                    Debug.Log($"[virtualInput] GetMovementInput: {movementJoystick.InputVector}");
+                }
                 return movementJoystick.InputVector;
             }
             return Vector3.zero;
