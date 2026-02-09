@@ -1001,7 +1001,6 @@ MonoBehaviour:
   buttonSizeMultiplier: 0.15
   progressItem: {fileID: 6603846120527448076}
   movementJoystick: {fileID: 8295102976350028171}
-  actionButtons: []
   contentItemList: {fileID: 2125381165113526162}
   functionButtons:
   - {fileID: 3723033959027753127}
@@ -1177,7 +1176,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -212, y: 330}
+  m_AnchoredPosition: {x: -300, y: 334}
   m_SizeDelta: {x: 299.07373, y: 299.07373}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2944127077995815233
