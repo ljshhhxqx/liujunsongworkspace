@@ -23,16 +23,10 @@ MonoBehaviour:
   keyFunctionData:
   - keyFunction: 1
     key: Shop
-    uIType: 0
+    uIType: 27
   - keyFunction: 2
     key: Inventory
-    uIType: 0
-  - keyFunction: 1
-    key: Shop
-    uIType: 0
-  - keyFunction: 2
-    key: Backpack
-    uIType: 0
+    uIType: 24
   - keyFunction: 6
     key: PlayerInGameInfo
-    uIType: 0
+    uIType: 19

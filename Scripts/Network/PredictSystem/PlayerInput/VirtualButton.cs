@@ -24,6 +24,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             _originalScale = transform.localScale;
         }
+        
+        public void SetButtonName(AnimationState btnName)
+        {
+            buttonName = btnName;
+        }
     
         public void OnPointerDown(PointerEventData eventData)
         {

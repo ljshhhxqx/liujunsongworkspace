@@ -49,29 +49,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 objectResolver.Inject(functionButton);
             }
         }
-        
-        private void InitializeButton(VirtualButton button)
-        {
-            var i = _virtualButtons.IndexOf(button);
-            if (i != -1)
-            {
-                _virtualButtons[i] = button;
-                button.ButtonReleased -= button.ButtonReleased;
-                button.ButtonPressed -= button.ButtonPressed;
-                return;
-            }
-            _virtualButtons.Add(button);
-            
-            foreach (var btn in _virtualButtons)
-            {
-                btn.ButtonPressed += OnButtonPressed;
-                btn.ButtonReleased += OnButtonReleased;
-            
-                buttonStates[btn.ButtonName] = false;
-                buttonDownStates[btn.ButtonName] = false;
-            }
-            
-        }
 
         private void InitializeInputSystem()
         {
@@ -286,6 +263,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 {
                     if (animationItem.TryGetComponent<VirtualButton>(out var virtualButton))
                     {
+                        virtualButton.SetButtonName(animationItem.State);
                         _virtualButtons.Add(virtualButton);
                     }
                 }
@@ -302,6 +280,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     var item = contentItemList.AddItem<AnimationStateData, AnimationItem>(x, y);
                     if (item.TryGetComponent<VirtualButton>(out var virtualButton))
                     {
+                        virtualButton.SetButtonName(item.State);
                         _virtualButtons.Add(virtualButton);
                         virtualButton.ButtonPressed += OnButtonPressed;
                         virtualButton.ButtonReleased += OnButtonReleased;
@@ -319,6 +298,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                         {
                             _playerAnimiationDatas[x] = z;
                             var item = contentItemList.ReplaceItem<AnimationStateData, AnimationItem>(x, z);
+                            if (item.TryGetComponent<VirtualButton>(out var btn))
+                            {
+                                btn.SetButtonName(item.State);
+                            }
                         }
                     }
                 })

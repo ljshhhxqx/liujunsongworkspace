@@ -3,6 +3,7 @@ using HotUpdate.Scripts.Network.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using AnimationState = AOTScripts.Data.AnimationState;
 
 namespace HotUpdate.Scripts.UI.UIs.Overlay
 {
@@ -22,11 +23,14 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         private TextMeshProUGUI costText;
         [SerializeField]
         private Image countdownImage;
-        
+
+        public AnimationState State { get;private set; }
+
         public override void SetData<T>(T data)
         {
             if (data is AnimationStateData animationStateData)
             {
+                State = animationStateData.State;
                 var isReady = animationStateData.Timer < 0.1f;
                 frameImage.sprite = !animationStateData.Frame ? frameImage.sprite : animationStateData.Frame;
                 iconImage.sprite = !animationStateData.Icon ? iconImage.sprite : animationStateData.Icon;

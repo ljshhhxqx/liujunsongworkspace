@@ -1111,6 +1111,7 @@ MonoBehaviour:
   valueText: {fileID: 2889049349535430557}
   changedText: {fileID: 894384787309130590}
   iconImage: {fileID: 7187966749132164953}
+  showIcon: 1
 --- !u!1 &8860480809425841646
 GameObject:
   m_ObjectHideFlags: 0

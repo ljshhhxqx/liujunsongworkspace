@@ -16,12 +16,14 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         
         protected override void ReadFromCsv(List<string[]> textAsset)
         {
+            keyFunctionData.Clear();
             for (int i = 1; i < textAsset.Count; i++)
             {
                 var data = new KeyFunctionData();
                 var text = textAsset[i];
                 data.keyFunction = (KeyFunction) Enum.Parse(typeof(KeyFunction), text[0]);
                 data.key = text[1];
+                data.uIType = (UIType) Enum.Parse(typeof(UIType), text[2]);
                 keyFunctionData.Add(data);
             }
         }

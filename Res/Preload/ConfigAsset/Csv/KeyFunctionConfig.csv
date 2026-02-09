@@ -1,4 +1,4 @@
-keyFunction,key
-Shop,Shop
-Inventory,Backpack
-Info,PlayerInGameInfo
+keyFunction,key,uiType
+Shop,Shop,Shop
+Inventory,Inventory,Backpack
+Info,PlayerInGameInfo,PlayerInGameInfo

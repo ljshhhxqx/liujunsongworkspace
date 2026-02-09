@@ -562,7 +562,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 var isSprinting = _virtualInputOverlay && _virtualInputOverlay.IsSprinting();
                 if (_virtualInputOverlay && Mathf.Approximately(_movement.magnitude, 1))
                 {
-                    Debug.Log($"[PlayerComponentController] GetInput: {_movement}");
+                    Debug.Log($"[PlayerComponentController] GetInput_{_movement} ;is sprinting_{isSprinting}");
                     return;
                 }
                 if (_movement.magnitude == 0)
@@ -594,10 +594,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 if (_animationCooldownsDict.TryGetValue(command, out var animationCooldown))
                 {
                     playerInputStateData.Command = animationCooldown.IsReady() ? command : AnimationState.None;
-                    {
-                        _playerInputStateData = playerInputStateData;
-                    }
                 }
+                _playerInputStateData = playerInputStateData;
             }
         }
 

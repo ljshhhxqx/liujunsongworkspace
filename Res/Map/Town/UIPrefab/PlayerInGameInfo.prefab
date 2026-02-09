@@ -1023,6 +1023,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   contentItemList: {fileID: 1755465151633710212}
+  closeButton: {fileID: 4852051616337833849}
 --- !u!1 &5851300359942302716
 GameObject:
   m_ObjectHideFlags: 0
