@@ -192,7 +192,7 @@ namespace HotUpdate.Scripts.Collector
             {
                 Debug.Log($"[ItemSpawnerManager] Picker {pickerId} pick up chest {itemId}");
                 var state = (ItemState)_serverTreasureChestMetaData.StateFlags;
-                Debug.Log($"[ItemSpawnerManager] var state = (ItemState)_serverTreasureChestMetaData.StateFlags");
+                Debug.Log($"[ItemSpawnerManager] var state = (ItemState)_serverTreasureChestMetaData.StateFlags - {state}");
                 if (state.HasAnyState(ItemState.IsInteracting) || state.HasAnyState(ItemState.IsInBag)) return;
                 Debug.Log($"[ItemSpawnerManager] state = state.AddState(ItemState.IsInteracting)");
                 state = state.AddState(ItemState.IsInteracting);
