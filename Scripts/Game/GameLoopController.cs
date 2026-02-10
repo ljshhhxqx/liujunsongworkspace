@@ -316,7 +316,7 @@ namespace HotUpdate.Scripts.Game
             _gameEventManager.Publish(new AllPlayerGetSpeedEvent());
             var remainingTime = _mainGameTime;
             var endGameFlag = false;
-            var interval = Time.fixedDeltaTime;
+            var interval = GameSyncManager.TickSeconds;
 
             // 定义一个Action，用于更新剩余时间
             Action updateRemainingTime = () =>

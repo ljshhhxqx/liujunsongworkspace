@@ -123,8 +123,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private List<ISkillChecker> _skillCheckers = new List<ISkillChecker>();
         private SyncDictionary<AnimationState, float> _currentAnimationCooldowns = new SyncDictionary<AnimationState, float>();
         
-        private static float FixedDeltaTime => Time.fixedDeltaTime;
-        private static float DeltaTime => Time.deltaTime;
+        private static float FixedDeltaTime => GameSyncManager.TickSeconds;
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private GameSyncManager _gameSyncManager;
         private IConfigProvider _configProvider;
@@ -405,7 +404,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             
             Observable.EveryUpdate()
                 .Where(x=> LocalPlayerHandler)
-                .Sample(TimeSpan.FromSeconds(Time.fixedDeltaTime))
+                .Sample(TimeSpan.FromSeconds(GameSyncManager.TickSeconds))
                 .Subscribe(_ =>
                 {
                     HandleNetworkCommand();
@@ -560,11 +559,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 _virtualInputOverlay ??= _inputState.VirtualPlayerAnimationOverlay;
                 _movement = _virtualInputOverlay ? _virtualInputOverlay.GetMovementInput() : Vector3.zero;
                 var isSprinting = _virtualInputOverlay && _virtualInputOverlay.IsSprinting();
-                if (_virtualInputOverlay && Mathf.Approximately(_movement.magnitude, 1))
-                {
-                    Debug.Log($"[PlayerComponentController] GetInput_{_movement} ;is sprinting_{isSprinting}");
-                    return;
-                }
                 if (_movement.magnitude == 0)
                 {
                     GameAudioManager.Instance.StopLoopingMusic(AudioEffectType.FootStep);
@@ -577,6 +571,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     animationStates = animationStates != default
                         ? animationStates.AddState(AnimationState.Sprint)
                         : AnimationState.Sprint;
+                    Debug.Log($"[PlayerComponentController] GetInput_{_movement}; animationState - {animationStates}");
                 }
 
                 var playerInputStateData = new PlayerInputStateData
@@ -1548,7 +1543,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             SendNetworkCommand();
             GetOtherPlayerPosition();
-            _autoRecoverTime += Time.fixedDeltaTime;
+            _autoRecoverTime += GameSyncManager.TickSeconds;
             if (_autoRecoverTime > 0.25f)
             {
                 _autoRecoverTime = 0;

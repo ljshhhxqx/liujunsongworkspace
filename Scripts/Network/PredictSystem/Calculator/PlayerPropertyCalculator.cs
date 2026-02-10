@@ -5,6 +5,7 @@ using AOTScripts.Tool;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
+using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using UnityEngine;
 using AnimationState = AOTScripts.Data.AnimationState;
 using PlayerPredictablePropertyState = AOTScripts.Data.PlayerPredictablePropertyState;
@@ -220,7 +221,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
             var propertyState = playerPredictablePropertyState;
             var state = propertyState.MemoryProperty;
-            cost *= command == AnimationState.Sprint ? Time.fixedDeltaTime : 1f;
+            cost *= command == AnimationState.Sprint ? GameSyncManager.TickSeconds : 1f;
             //Debug.Log($"playerPropertyCalculator: execute {command} animation, current: {state[PropertyTypeEnum.Strength].CurrentValue}, cost: {cost}");
             var strength = state[PropertyTypeEnum.Strength];
             if (cost > strength.CurrentValue)

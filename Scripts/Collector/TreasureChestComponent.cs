@@ -7,6 +7,7 @@ using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.Message;
 using HotUpdate.Scripts.Tool.ObjectPool;
@@ -98,7 +99,7 @@ namespace HotUpdate.Scripts.Collector
             // 当宝箱盖子没有完全打开时
             while (Quaternion.Angle(lid.transform.rotation, targetRotation) > 0.5f)
             {
-                lid.transform.rotation = Quaternion.Slerp(lid.transform.rotation, targetRotation, Time.fixedDeltaTime * _chestCommonData.OpenSpeed);
+                lid.transform.rotation = Quaternion.Slerp(lid.transform.rotation, targetRotation, GameSyncManager.TickSeconds * _chestCommonData.OpenSpeed);
                 await UniTask.Yield();
             }
         }

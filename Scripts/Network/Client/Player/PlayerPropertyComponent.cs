@@ -5,6 +5,7 @@ using AOTScripts.Tool.Coroutine;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Data.PredictableObject;
+using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using Mirror;
@@ -345,7 +346,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
             {
                 if (animationState == AnimationState.Sprint)
                 {
-                    return strength >= cost * Time.fixedDeltaTime * 1.1f;
+                    return strength >= cost * GameSyncManager.TickSeconds * 1.1f;
                 }
 
                 return strength >= cost;

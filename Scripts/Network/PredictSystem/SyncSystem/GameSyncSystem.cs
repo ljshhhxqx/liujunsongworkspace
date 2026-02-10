@@ -126,7 +126,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _gameEventManager.Subscribe<AddBuffToAllPlayerEvent>(OnAddBuffToAllPlayer);
             _gameEventManager.Subscribe<AddDeBuffToLowScorePlayerEvent>(OnAddDeBuffToLowScorePlayer);
             _gameEventManager.Subscribe<AllPlayerGetSpeedEvent>(OnAllPlayerGetSpeed);
-            Time.fixedDeltaTime = _serverInputRate;
             ProcessTickSync(_cts.Token).Forget();
         }
         
@@ -134,7 +133,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             while (cancellationToken.IsCancellationRequested == false)
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(TickSeconds), cancellationToken: cancellationToken);
+                await UniTask.Delay(TimeSpan.FromSeconds(TickSeconds), ignoreTimeScale:true, cancellationToken: cancellationToken);
                 if (isServer && !_isProcessing && NetworkServer.connections.Count > 0 && !isGameOver)
                 {
                     _tickTimer = 0;
@@ -360,7 +359,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             //Debug.Log($"GameSyncManager ProcessTick in tick-{_currentTick}");
             try
             {
-                _syncTimer += Time.fixedDeltaTime;
+                _syncTimer += TickSeconds;
                 // 将客户端待处理命令移到当前tick的命令队列
                 MoveCommandsToCurrentTick();
                 // 处理当前tick的所有命令
