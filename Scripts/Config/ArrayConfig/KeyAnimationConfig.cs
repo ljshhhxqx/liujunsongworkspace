@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AOTScripts.Tool;
 using HotUpdate.Scripts.Common;
 using Newtonsoft.Json;
 using UnityEngine;

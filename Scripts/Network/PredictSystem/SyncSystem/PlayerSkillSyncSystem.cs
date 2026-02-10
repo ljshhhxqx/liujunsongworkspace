@@ -19,6 +19,7 @@ using VContainer;
 using AnimationState = AOTScripts.Data.AnimationState;
 using ISyncPropertyState = AOTScripts.Data.ISyncPropertyState;
 using Object = UnityEngine.Object;
+using StateOperations = AOTScripts.Tool.StateOperations;
 
 namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 {
@@ -158,7 +159,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var header = command.GetHeader();
             var playerState = PropertyStates[header.ConnectionId];
-            if (!header.CommandType.HasAnyState(CommandType.Skill) || playerState is not PlayerSkillState playerSkillState)
+            if (!StateOperations.HasAnyState(header.CommandType, CommandType.Skill) || playerState is not PlayerSkillState playerSkillState)
                 return null;
 
             if (command is SkillCommand skillCommand)

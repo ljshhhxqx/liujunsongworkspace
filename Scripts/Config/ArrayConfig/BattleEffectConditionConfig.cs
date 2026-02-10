@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using AOTScripts.CustomAttribute;
 using AOTScripts.Data;
+using AOTScripts.Tool;
 using HotUpdate.Scripts.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;

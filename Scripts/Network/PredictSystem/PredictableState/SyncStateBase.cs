@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using AOTScripts.Data;
+using AOTScripts.Tool;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Game.Inject;

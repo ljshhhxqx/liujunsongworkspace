@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using AOTScripts.Data;
+using AOTScripts.Tool;
 using AOTScripts.Tool.ObjectPool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Common;

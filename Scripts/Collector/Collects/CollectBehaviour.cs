@@ -1,4 +1,5 @@
 ﻿using AOTScripts.Data;
+using AOTScripts.Tool;
 using AOTScripts.Tool.Coroutine;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Common;
