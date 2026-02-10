@@ -190,10 +190,15 @@ namespace HotUpdate.Scripts.Collector
         {
             if (ServerHandler)
             {
+                Debug.Log($"[ItemSpawnerManager] Picker {pickerId} pick up chest {itemId}");
                 var state = (ItemState)_serverTreasureChestMetaData.StateFlags;
+                Debug.Log($"[ItemSpawnerManager] var state = (ItemState)_serverTreasureChestMetaData.StateFlags");
                 if (state.HasAnyState(ItemState.IsInteracting) || state.HasAnyState(ItemState.IsInBag)) return;
+                Debug.Log($"[ItemSpawnerManager] state = state.AddState(ItemState.IsInteracting)");
                 state = state.AddState(ItemState.IsInteracting);
+                Debug.Log($"[ItemSpawnerManager] _serverTreasureChestMetaData.StateFlags = (byte)state");
                 _serverTreasureChestMetaData.StateFlags = (byte)state;
+                Debug.Log($"if (itemId != _serverTreasureChestMetaData.ItemId)");
                 if (itemId != _serverTreasureChestMetaData.ItemId)
                 {
                     Debug.LogError($"Item id {itemId} is not match with treasure chest id {_serverTreasureChestMetaData.ItemId}");
@@ -201,10 +206,14 @@ namespace HotUpdate.Scripts.Collector
                     _serverTreasureChestMetaData.StateFlags = (byte)state;
                     return;
                 }
+                Debug.Log($"[ItemSpawnerManager] var chestData = _serverTreasureChestMetaData.GetCustomData<ChestItemCustomData>()");
                 var chestData = _serverTreasureChestMetaData.GetCustomData<ChestItemCustomData>();
+                Debug.Log($"[ItemSpawnerManager] var chestCollider = _chestColliderConfigs.GetValueOrDefault(chestData.Quality)");
                 var chestPos = _serverTreasureChestMetaData.Position.ToVector3();
+                Debug.Log($"[ItemSpawnerManager] var chestPos = _serverTreasureChestMetaData.Position.ToVector3()");
                 var player = NetworkServer.spawned[pickerId];
-                var connectionId = player.connectionToClient.connectionId;
+                Debug.Log($"[ItemSpawnerManager] var player = NetworkServer.spawned[pickerId]");
+                var connectionId = _playerInGameManager.GetPlayerId(player.netId);
                 if (!player)
                 {
                     Debug.LogError($"Player {pickerId} could not be found");
@@ -212,7 +221,6 @@ namespace HotUpdate.Scripts.Collector
                     _serverTreasureChestMetaData.StateFlags = (byte)state;
                     return;
                 }
-                var playerConnection = player.connectionToClient.connectionId;
                 var playerCollider = _playerInGameManager.PlayerPhysicsData;
 
                 var chestCollider = _chestColliderConfigs.GetValueOrDefault(chestData.Quality);
@@ -563,7 +571,7 @@ namespace HotUpdate.Scripts.Collector
         }
 
         [Server]
-        public async UniTask EndRound()
+        public async UniTask EndRound()  
         {
             if (!ServerHandler)
             {

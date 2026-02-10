@@ -620,6 +620,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                     _itemsSpawnerManager.PickerPickupItem(playerNetId, request.SceneItemId, false);
                     break;
                 case InteractionType.PickupChest:
+                    Debug.Log($"Player {playerNetId} pickup chest {request.SceneItemId}");
                     _itemsSpawnerManager.PickerPickUpChest(playerNetId, request.SceneItemId);
                     break;
                 case InteractionType.TouchRocket:
