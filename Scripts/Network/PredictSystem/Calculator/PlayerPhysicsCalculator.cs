@@ -30,6 +30,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public float GroundDistance { get; private set; }
         public float StepHeight = 0.5f;
         public float StepCheckDistance = 0.35f;
+        public event Action<Vector3> OnAirTooLong;
+
+        private Vector3 _lastSafeGroundPosition;
+        private float _inAirTimer;
+
+        public float MaxAirTime = 5f;
+        public bool EnableAirTimeout = true;
 
         
         public float CurrentSpeed
@@ -42,6 +49,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         {
             _physicsComponent = component;
             IsClient = isClient;
+            
+            _lastSafeGroundPosition = _physicsComponent.Transform.position;
         }
         
         public static void SetPhysicsDetermineConstant(PhysicsDetermineConstant constant)
@@ -109,46 +118,61 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         
         public PlayerEnvironmentState CheckPlayerState(CheckGroundDistanceParam param)
         {
+            var oldState = _playerEnvironmentState;
+
             CheckGroundDistance(param);
             TryStepClimb(param);
-            PlayerEnvironmentState newEnvironmentState; // 默认保持当前状态
 
-            // 检查楼梯状态
+            PlayerEnvironmentState newEnvironmentState;
+
             if (CheckStairs(out _stairsNormal, out _stairsHitNormal))
-            {
                 newEnvironmentState = PlayerEnvironmentState.OnStairs;
-            }
-            // 如果不在楼梯上，检查是否在地面
             else if (GroundDistance <= PhysicsDetermineConstant.GroundMinDistance)
-            {
                 newEnvironmentState = PlayerEnvironmentState.OnGround;
-            }
-            // 既不在楼梯也不在地面，则在空中
             else
-            {
                 newEnvironmentState = PlayerEnvironmentState.InAir;
-            }
 
-            // 只有状态发生改变时才更新
             if (newEnvironmentState != _playerEnvironmentState)
             {
                 _playerEnvironmentState = newEnvironmentState;
 
-                // 如果新状态是楼梯状态，更新朝向
-                if (newEnvironmentState == PlayerEnvironmentState.OnStairs)
+                // ⭐ 离开楼梯，清理楼梯残留速度
+                if (oldState == PlayerEnvironmentState.OnStairs &&
+                    newEnvironmentState != PlayerEnvironmentState.OnStairs)
                 {
-                    // 计算垂直于楼梯的方向（使用楼梯的法线）
-                    var desiredForward = -_stairsHitNormal;
-                    // 保持y轴垂直，只在水平面上旋转
-                    desiredForward.y = 0;
-                    desiredForward.Normalize();
-    
-                    // 立即更新玩家朝向
-                    _physicsComponent.Transform.rotation = Quaternion.LookRotation(desiredForward);
+                    var vel = _physicsComponent.Rigidbody.velocity;
+                    vel.x = 0;
+                    vel.z = 0;
+                    _physicsComponent.Rigidbody.velocity = vel;
+
+                    _physicsComponent.Rigidbody.useGravity = true;
                 }
             }
+            
+            if (_playerEnvironmentState == PlayerEnvironmentState.OnGround ||
+                _playerEnvironmentState == PlayerEnvironmentState.OnStairs)
+            {
+                _lastSafeGroundPosition = _physicsComponent.Transform.position;
+                _inAirTimer = 0f;
+            }
+            else if (_playerEnvironmentState == PlayerEnvironmentState.InAir)
+            {
+                if (EnableAirTimeout)
+                {
+                    _inAirTimer += param.FixedDeltaTime;
+
+                    if (_inAirTimer >= MaxAirTime)
+                    {
+                        _inAirTimer = 0f; // 防止连续触发
+                        _physicsComponent.Rigidbody.position = _lastSafeGroundPosition;
+                        OnAirTooLong?.Invoke(_lastSafeGroundPosition);
+                    }
+                }
+            }
+
             return _playerEnvironmentState;
         }
+
 
         public void HandlePlayerJump()
         {
@@ -237,10 +261,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     _physicsComponent.Rigidbody.AddForce(Physics.gravity * param.FixedDeltaTime, ForceMode.VelocityChange);
                     //_verticalSpeed = _rigidbody.velocity.y;
                 }
-                else if (_playerEnvironmentState == PlayerEnvironmentState.OnStairs)
-                {
-                    _physicsComponent.Rigidbody.velocity = _stairsHitNormal.normalized * -2f;
-                }
             }
             return GroundDistance;
         }
@@ -260,7 +280,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         }
 
         public void HandleMove(MoveParam moveParam, bool isLocalPlayer = true)
-        {
+        {    
+            _physicsComponent.Rigidbody.useGravity = _playerEnvironmentState != PlayerEnvironmentState.OnStairs;
             //Debug.Log($"[HandleMove] START  moveParam.InputMovement-> {moveParam.InputMovement}  moveParam.IsClearVelocity-> {moveParam.IsClearVelocity} moveParam.IsMovingState-> {moveParam.IsMovingState}  moveParam.CameraForward-> {moveParam.CameraForward}  moveParam.DeltaTime-> {moveParam.DeltaTime} isLocalPlayer-> {isLocalPlayer}");
             var hasMovementInput = moveParam.InputMovement.magnitude > 0f;
             _isMoving = hasMovementInput;
@@ -471,28 +492,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         public float SpeedToVelocityRatio;
         public bool IsClient;
         public bool IsLocalPlayer;
-
-        public PhysicsDetermineConstant(float groundMinDistance, float groundMaxDistance, float maxSlopeAngle, float stairsCheckDistance, 
-            LayerMask groundSceneLayer, LayerMask stairsSceneLayer, float rotateSpeed, float maxDetermineDistance, 
-            float viewAngle, float obstructionCheckRadius, float rollForce, float jumpSpeed, float speedToVelocityRatio, bool isLocalPlayer, bool isClient, bool isServer = false)
-        {
-            GroundMinDistance = groundMinDistance;
-            GroundMaxDistance = groundMaxDistance;
-            MaxSlopeAngle = maxSlopeAngle;
-            StairsCheckDistance = stairsCheckDistance;
-            GroundSceneLayer = groundSceneLayer;
-            StairsSceneLayer = stairsSceneLayer;
-            RotateSpeed = rotateSpeed;
-            IsServer = isServer;
-            MaxDetermineDistance = maxDetermineDistance;
-            ViewAngle = viewAngle;
-            ObstructionCheckRadius = obstructionCheckRadius;
-            RollForce = rollForce;
-            JumpSpeed = jumpSpeed;
-            SpeedToVelocityRatio = speedToVelocityRatio;
-            IsLocalPlayer = isLocalPlayer;
-            IsClient = isClient;
-        }
     }
 
     public struct MoveParam : IPoolObject

@@ -571,7 +571,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     animationStates = animationStates != default
                         ? animationStates.AddState(AnimationState.Sprint)
                         : AnimationState.Sprint;
-                    Debug.Log($"[PlayerComponentController] GetInput_{_movement}; animationState - {animationStates}");
                 }
 
                 var playerInputStateData = new PlayerInputStateData
