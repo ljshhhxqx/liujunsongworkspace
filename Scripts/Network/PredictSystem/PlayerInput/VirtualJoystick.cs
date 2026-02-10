@@ -103,7 +103,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
             // Clamp 到圆形范围
             Vector2 clampedInput = Vector2.ClampMagnitude(rawInput, 1f);
-            IsInputOverload = rawInput.magnitude > 1.2f;
+            IsInputOverload = rawInput.magnitude >= 1.1f;
             // 应用 deadzone + remap（Input System 风格）
             Vector2 finalInput = useInputSystemDeadzone
                 ? ApplyRadialDeadzone(clampedInput, deadZone, responseCurvePower)
