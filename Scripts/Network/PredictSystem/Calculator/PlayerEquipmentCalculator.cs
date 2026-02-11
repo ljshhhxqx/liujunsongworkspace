@@ -99,12 +99,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 }
 
                 step = 14;
+                Debug.Log($"Try add equipment data -- item {itemId} -- config {configId} -- part {itemConfig.equipmentPart} condition {conditionChecker.GetConditionCheckerHeader().TriggerType} -- connection {header.ConnectionId}");
                 if (!PlayerEquipmentState.TryAddEquipmentData(ref playerEquipmentState, itemId,  equipmentCommand.EquipmentConfigId, itemConfig.equipmentPart, 
                         conditionChecker))
                 {
                     Debug.LogWarning($"Can't equip this item {itemId} to player {header.ConnectionId}");
                     return;
                 }
+                Debug.Log("Try add equipment data end");
 
                 step = 15;
                 var mainAttribute = JsonConvert.DeserializeObject<AttributeIncreaseData[]>(equipmentCommand.EquipmentMainEffectData);
