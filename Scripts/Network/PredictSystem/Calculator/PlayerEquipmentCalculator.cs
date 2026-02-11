@@ -31,10 +31,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             return conditionChecker;
         }
         
-        public static ISyncPropertyState CommandEquipment(EquipmentCommand equipmentCommand, ref PlayerEquipmentState playerEquipmentState)
+        public static void CommandEquipment(EquipmentCommand equipmentCommand, ref PlayerEquipmentState playerEquipmentState)
         {
             if (!Constant.IsServer)
-                return playerEquipmentState;
+                return;
             var header = equipmentCommand.Header;
             var configId = PlayerItemCalculator.GetItemConfigId(equipmentCommand.EquipmentPart, equipmentCommand.EquipmentConfigId);
             var itemConfig = Constant.ItemConfig.GetGameItemData(configId); 
@@ -43,7 +43,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             if (itemId == 0 || !GameItemManager.HasGameItemData(itemId))
             {
                 Debug.LogWarning($"Can't find item data {itemId}"); 
-                return null;
+                return;
             }
 
             var propertyEquipmentChangedCommand = new PropertyEquipmentChangedCommand
@@ -70,12 +70,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             {
                 Constant.GameSyncManager.EnqueueServerCommand(propertyEquipmentChangedCommand);
                 Constant.GameSyncManager.EnqueueServerCommand(propertyEquipPassiveCommand);
-                return playerEquipmentState;
+                return;
             }
             var conditionChecker = GetConditionChecker(itemConfig.itemType, configId);
             if (conditionChecker == null)
             {
-                return playerEquipmentState;
+                return;
             }
             if (conditionChecker.GetConditionCheckerHeader().TriggerType == TriggerType.None)
             {
@@ -86,7 +86,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     conditionChecker))
             {
                 Debug.LogWarning($"Can't equip this item {itemId} to player {header.ConnectionId}");
-                return null;
+                return;
             }
 
             var mainAttribute = JsonConvert.DeserializeObject<AttributeIncreaseData[]>(equipmentCommand.EquipmentMainEffectData);
@@ -94,12 +94,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             if (!PlayerEquipmentState.TryAddEquipmentPassiveEffectData(ref playerEquipmentState, itemId, equipmentCommand.EquipmentConfigId, itemConfig.equipmentPart,mainAttribute, subAttribute))
             {
                 Debug.LogWarning($"Can't add passive effect data for item {itemId}");
-                return null;
+                return;
             }
 
             Constant.GameSyncManager.EnqueueServerCommand(propertyEquipmentChangedCommand);
             //todo:
-            return playerEquipmentState;
         }
 
         public static bool CommandTrigger(TriggerCommand triggerCommand, ref PlayerEquipmentState playerEquipmentState, int[] playerIds, EquipmentPart equipmentPart,

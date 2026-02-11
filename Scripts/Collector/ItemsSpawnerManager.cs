@@ -366,8 +366,9 @@ namespace HotUpdate.Scripts.Collector
             {
                 foreach (var data in _treasureChestPrefabs.Values)
                 {
-                    var gameObjectCollider = data.GetComponent<Collider>();
-                    var config = GamePhysicsSystem.CreateColliderConfig(gameObjectCollider);
+                    var gameObjectCollider = data.GetComponentInChildren<CollectCollider>();
+                    var collectCollider = gameObjectCollider.GetComponent<Collider>();
+                    var config = GamePhysicsSystem.CreateColliderConfig(collectCollider);
                     if (config != null)
                     {
                         _chestColliderConfigs.Add(data.Quality, config);

@@ -64,7 +64,7 @@ namespace HotUpdate.Scripts.Collector
             }
             _chestCollider = collectCollider.GetComponent<Collider>();
             var colliderConfig = GamePhysicsSystem.CreateColliderConfig(_chestCollider);
-            GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, colliderConfig, ObjectType.Chest, gameObject.layer, gameObject.tag);
+            GameObjectContainer.Instance.AddDynamicObject(netId, _chestCollider.transform.position, colliderConfig, ObjectType.Chest, gameObject.layer, gameObject.tag);
             //_chestDataConfig = configProvider.GetConfig<ChestDataConfig>();
             _chestCommonData = _jsonDataConfig.ChestCommonData;
 

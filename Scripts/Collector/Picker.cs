@@ -119,6 +119,7 @@ namespace HotUpdate.Scripts.Collector
                     case ObjectType.Chest:
                     case ObjectType.Rocket:
                     case ObjectType.Train:
+                        //Debug.Log($"Picker HandlePlayerTouched - {collect.NetId}-{collect.Type}-{collect.Position}");
                         _collects.Add(collect.NetId);
                         break;
                 }
