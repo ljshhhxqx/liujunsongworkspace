@@ -116,15 +116,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         // 公共输入接口
         public Vector3 GetMovementInput()
         {
-            if (movementJoystick)
-            {
-                if (Mathf.Approximately(movementJoystick.InputVector.magnitude, 1))
-                {
-                    Debug.Log($"[virtualInput] GetMovementInput: {movementJoystick.InputVector}");
-                }
-                return movementJoystick.InputVector;
-            }
-            return Vector3.zero;
+            return movementJoystick ?
+                // if (Mathf.Approximately(movementJoystick.InputVector.magnitude, 1))
+                // {
+                //     Debug.Log($"[virtualInput] GetMovementInput: {movementJoystick.InputVector}");
+                // }
+                movementJoystick.InputVector : Vector3.zero;
         }
 
         public List<AnimationState> GetActiveButtons()
