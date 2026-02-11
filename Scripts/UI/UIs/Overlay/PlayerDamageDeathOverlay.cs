@@ -173,7 +173,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             
             // 倒计时进度条
             _sliderTween = countDownSlider
-                .DOValue(1f, deathCountDown)
+                .DOValue(0.95f, deathCountDown)
                 .SetEase(Ease.Linear)
                 .OnStart(() => {
                     // 在动画开始时激活slider

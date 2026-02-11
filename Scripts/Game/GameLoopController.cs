@@ -314,110 +314,192 @@ namespace HotUpdate.Scripts.Game
         {
             _gameSyncManager.isGameStart = true;
             _gameEventManager.Publish(new AllPlayerGetSpeedEvent());
-            var remainingTime = _mainGameTime;
-            var endGameFlag = false;
-            var interval = GameSyncManager.TickSeconds;
 
-            // 定义一个Action，用于更新剩余时间
-            Action updateRemainingTime = () =>
+            var remainingTime = _mainGameTime;
+            var interval = GameSyncManager.TickSeconds;
+            var endGameFlag = false;
+
+            // ⭐ 创建独立的 CancellationTokenSource 用于倒计时
+            var timerCts = CancellationTokenSource.CreateLinkedTokenSource(token);
+
+            // ⭐ 启动独立的倒计时协程
+            var timerTask = RunGlobalTimerAsync(
+                () => remainingTime,
+                (newTime) => remainingTime = newTime,
+                () => endGameFlag,
+                interval,
+                timerCts.Token
+            ).SuppressCancellationThrow();
+
+            try
             {
-                try
+                // 主游戏循环（不再负责倒计时）
+                while (!endGameFlag && !token.IsCancellationRequested)
                 {
+                    Debug.Log($"[GameTimer] Starting Round {_currentRound}, Remaining Time: {remainingTime:F1}s");
+
+                    // 开始新的回合
+                    IsEndRound = false;
+
+                    // 执行回合循环（不再传递 updateRemainingTime）
+                    var subCycle = new SubCycle(
+                        maxTime: (int)_roundInterval,
+                        interval: interval,
+                        endCondition: IsEndRoundFunc,
+                        roundStartHandler: RoundStartAsync,
+                        roundEndAction: RoundEndAsync
+                    );
+
+                    await subCycle.StartAsync(token);
+
+                    // 回合结束
+                    _currentRound++;
+                    IsEndRound = true;
+
+                    Debug.Log($"[GameTimer] Round {_currentRound - 1} completed, calling EndRound()");
+                    await _itemsSpawnerManager.EndRound();
+
+                    // 检查分数模式下是否有玩家达到目标分数
+                    if (_gameInfo.GameMode == GameMode.Score)
+                    {
+                        if (_playerInGameManager.IsPlayerGetTargetScore(_gameInfo.GameScore))
+                        {
+                            Debug.Log("[GameTimer] Target score reached!");
+                            endGameFlag = true;
+                            break;
+                        }
+                    }
+
+                    await UniTask.Yield();
+                }
+
+                Debug.Log($"[GameTimer] Main loop ended. EndGameFlag: {endGameFlag}, Token Cancelled: {token.IsCancellationRequested}");
+            }
+            finally
+            {
+                // ⭐ 停止倒计时协程
+                timerCts.Cancel();
+                timerCts.Dispose();
+
+                // 等待倒计时协程完全结束
+                await timerTask;
+
+                // 确保游戏结束逻辑只执行一次
+                if (!IsEndGame)
+                {
+                    isEndGameSync = true;
+                    IsEndGame = true;
+                    _gameEventManager.Publish(new PlayerListenMessageEvent());
+                    SaveGameResult();
+                    Debug.Log("[GameTimer] Game ended and results saved.");
+                }
+            }
+        }
+        private async UniTask RunGlobalTimerAsync(
+            Func<float> getRemainingTime,
+            Action<float> setRemainingTime,
+            Func<bool> isEndGame,
+            float interval,
+            CancellationToken token)
+        {
+            var lastUpdateTime = Time.realtimeSinceStartup;
+            var intervalMs = (int)(interval * 1000);
+
+            Debug.Log($"[GlobalTimer] Started with interval {interval}s ({intervalMs}ms)");
+
+            try
+            {
+                while (!isEndGame() && !token.IsCancellationRequested)
+                {
+                    // ⭐ 使用 Realtime 确保精度
+                    await UniTask.Delay(intervalMs, DelayType.Realtime, cancellationToken: token);
+
+                    // ⭐ 计算实际流逝时间（更精确）
+                    var currentTime = Time.realtimeSinceStartup;
+                    var actualDelta = currentTime - lastUpdateTime;
+                    lastUpdateTime = currentTime;
+
+                    // 更新剩余时间
+                    var currentRemaining = getRemainingTime();
+                    float newRemaining;
+
                     if (_gameInfo.GameMode == GameMode.Time)
                     {
-                        remainingTime -= interval;
+                        newRemaining = currentRemaining - actualDelta;
                     }
                     else if (_gameInfo.GameMode == GameMode.Score)
                     {
-                        remainingTime += interval;
+                        newRemaining = currentRemaining + actualDelta;
+                    }
+                    else
+                    {
+                        newRemaining = currentRemaining;
                     }
 
+                    setRemainingTime(newRemaining);
+
+                    // 更新随机联盟计时
                     if (!_gameSyncManager.isRandomUnionStart)
                     {
-                        _noUnionTime -= interval;
+                        _noUnionTime -= actualDelta;
                         if (_noUnionTime <= 0)
                         {
                             _gameSyncManager.isRandomUnionStart = true;
                             _playerInGameManager.RandomUnion(out var id);
-                            
+
                             if (id != 0)
                             {
                                 var command = new NoUnionPlayerAddMoreScoreAndGoldCommand
                                 {
-                                    Header = GameSyncManager.CreateNetworkCommandHeader(id, CommandType.Property, CommandAuthority.Server, CommandExecuteType.Immediate),
+                                    Header = GameSyncManager.CreateNetworkCommandHeader(
+                                        id, 
+                                        CommandType.Property, 
+                                        CommandAuthority.Server, 
+                                        CommandExecuteType.Immediate
+                                    ),
                                 };
                                 _gameSyncManager.EnqueueServerCommand(command);
                             }
                         }
                     }
-                    _messageHandler.SendToAllClients(new MirrorCountdownMessage(remainingTime));
 
-                    // 检查是否满足结束游戏的条件
-                    if (IsEndGameWithCountDown(remainingTime))
+                    // 发送倒计时消息给客户端
+                    _messageHandler.SendToAllClients(new MirrorCountdownMessage(newRemaining));
+
+                    // 检查是否满足结束条件
+                    if (IsEndGameWithCountDown(newRemaining))
                     {
+                        Debug.Log($"[GlobalTimer] End condition met at {newRemaining:F1}s");
                         isEndGameSync = true;
                         IsEndGame = true;
                         _gameEventManager.Publish(new PlayerListenMessageEvent());
                         SaveGameResult();
-                        endGameFlag = true;
+                        break;
                     }
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogError($"Error updating remaining time: {ex.Message}");
-                    isEndGameSync = true;
-                    IsEndGame = true;
-                    _gameEventManager.Publish(new PlayerListenMessageEvent());
-                    SaveGameResult();
-                    endGameFlag = true;
-                }
-            };
 
-            while (!endGameFlag && !token.IsCancellationRequested)
+                    // 可选：每秒输出一次日志
+                    // if (Mathf.Abs(newRemaining % 1.0f) < interval)
+                    // {
+                    //     Debug.Log($"[GlobalTimer] Remaining: {newRemaining:F1}s");
+                    // }
+                }
+            }
+            catch (OperationCanceledException)
             {
-                Debug.Log($"Main Game Timer: {remainingTime:F1} seconds remaining");
-
-                // 开始新的回合
-                IsEndRound = false;
-                Debug.Log($"Starting Round {_currentRound}");
-
-                // 执行回合循环，并传递更新倒计时的Action
-                var subCycle = new SubCycle((int)_roundInterval, interval, IsEndRoundFunc, RoundStartAsync, updateRemainingTime, RoundEndAsync);
-                await subCycle.StartAsync(token);
-
-                // 回合结束，增加回合数
-                _currentRound++;
-                IsEndRound = true;
-                await _itemsSpawnerManager.EndRound();
-                Debug.Log($"Round {_currentRound - 1} completed");
-
-                // 检查是否在分数模式下有玩家达到目标分数
-                if (_gameInfo.GameMode == GameMode.Score)
-                {
-                    if (_playerInGameManager.IsPlayerGetTargetScore(_gameInfo.GameScore))
-                    {
-                        isEndGameSync = true;
-                        IsEndGame = true;
-                        _gameEventManager.Publish(new PlayerListenMessageEvent());
-                        SaveGameResult();
-                        endGameFlag = true;
-                        await UniTask.Yield();
-                        return;
-                    }
-                }
-                await UniTask.Yield();
+                Debug.Log("[GlobalTimer] Cancelled");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[GlobalTimer] Error: {ex.Message}\n{ex.StackTrace}");
+                
+                // 发生异常时强制结束游戏
+                isEndGameSync = true;
+                IsEndGame = true;
+                _gameEventManager.Publish(new PlayerListenMessageEvent());
+                SaveGameResult();
             }
 
-            if (IsEndGame)
-            {
-                return;
-            }
-            _cts?.Cancel();
-            isEndGameSync = true;
-            IsEndGame = true;
-            _gameEventManager.Publish(new PlayerListenMessageEvent());
-            SaveGameResult();
-            Debug.Log("Main game timer ended.");
+            Debug.Log("[GlobalTimer] Stopped");
         }
 
         private void SaveGameResult()
@@ -490,11 +572,14 @@ namespace HotUpdate.Scripts.Game
             private readonly Func<bool> _endCondition;
             private readonly Func<UniTask> _roundStartHandler;
             private readonly Func<UniTask> _roundEndAction;
-            private readonly Action _updateCountdownAction; // 新增的Action
             private readonly float _interval;
 
-            public SubCycle(int maxTime, float interval, Func<bool> endCondition, Func<UniTask> roundStartHandler = null, 
-                Action updateCountdownAction = null, Func<UniTask> roundEndAction = null)
+            public SubCycle(
+                int maxTime, 
+                float interval, 
+                Func<bool> endCondition, 
+                Func<UniTask> roundStartHandler = null,
+                Func<UniTask> roundEndAction = null)
             {
                 _subCycleTime = maxTime;
                 _interval = interval;
@@ -502,41 +587,53 @@ namespace HotUpdate.Scripts.Game
                 _roundStartHandler = roundStartHandler;
                 _isEventHandled = false;
                 _roundEndAction = roundEndAction;
-                _updateCountdownAction = updateCountdownAction;
             }
 
             public async UniTask<bool> StartAsync(CancellationToken token)
             {
-                Debug.Log($"Starting SubCycle with {_subCycleTime} seconds");
+                Debug.Log($"[SubCycle] Starting with duration {_subCycleTime}s");
 
                 float elapsedTime = 0;
-                var milliseconds = (int)(_interval * 1000);
+                var intervalMs = (int)(_interval * 1000);
+                var startTime = Time.realtimeSinceStartup;
 
-                while (elapsedTime < _subCycleTime && !_endCondition() && !token.IsCancellationRequested)
+                try
                 {
-                    if (_roundStartHandler != null && !_isEventHandled)
+                    while (elapsedTime < _subCycleTime && !_endCondition() && !token.IsCancellationRequested)
                     {
-                        Debug.Log("Random event triggered.");
-                        await _roundStartHandler();
-                        _isEventHandled = true;
+                        // 触发回合开始事件（只执行一次）
+                        if (_roundStartHandler != null && !_isEventHandled)
+                        {
+                            Debug.Log("[SubCycle] Triggering round start handler");
+                            await _roundStartHandler();
+                            _isEventHandled = true;
+                        }
+
+                        // ⭐ 使用 Realtime 延迟
+                        await UniTask.Delay(intervalMs, DelayType.Realtime, cancellationToken: token);
+
+                        // ⭐ 使用实际流逝时间
+                        elapsedTime = Time.realtimeSinceStartup - startTime;
+
+                        // 可选：输出剩余时间
+                        // Debug.Log($"[SubCycle] Elapsed: {elapsedTime:F1}s / {_subCycleTime}s");
                     }
 
-                    // 执行传入的倒计时Action
-                    _updateCountdownAction?.Invoke();
+                    // 执行回合结束逻辑
+                    if (_roundEndAction != null)
+                    {
+                        Debug.Log("[SubCycle] Executing round end action");
+                        await _roundEndAction();
+                    }
 
-                    await UniTask.Delay(milliseconds, DelayType.Realtime, cancellationToken: token);
-                    elapsedTime += _interval;
-
-                    // 可选的日志输出
-                    // Debug.Log($"SubCycle Timer: {_subCycleTime - elapsedTime} seconds remaining");
+                    Debug.Log($"[SubCycle] Ended. Elapsed: {elapsedTime:F1}s, EndCondition: {_endCondition()}");
+                    return true;
                 }
-                // 回合结束，执行传入的回合结束Action
-                if (_roundEndAction != null)
+                catch (OperationCanceledException)
                 {
-                    await _roundEndAction();
+                    Debug.Log("[SubCycle] Cancelled");
+                    return false;
                 }
-                Debug.Log("SubCycle Timer ended or end condition met. SubCycle Ended.");
-                return true;
             }
         }
 
