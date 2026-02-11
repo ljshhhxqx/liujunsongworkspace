@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using AOTScripts.Data;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.Item;
@@ -89,16 +90,126 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 return;
             }
 
-            var mainAttribute = JsonConvert.DeserializeObject<AttributeIncreaseData[]>(equipmentCommand.EquipmentMainEffectData);
-            var subAttribute = JsonConvert.DeserializeObject<AttributeIncreaseData[]>(equipmentCommand.EquipmentPassiveEffectData);
-            if (!PlayerEquipmentState.TryAddEquipmentPassiveEffectData(ref playerEquipmentState, itemId, equipmentCommand.EquipmentConfigId, itemConfig.equipmentPart,mainAttribute, subAttribute))
+             // ⭐⭐⭐ 关键修复：安全的 JSON 反序列化
+            AttributeIncreaseData[] mainAttribute = null;
+            AttributeIncreaseData[] subAttribute = null;
+
+            try
+            {
+                // ⭐ 验证主属性 JSON
+                if (string.IsNullOrEmpty(equipmentCommand.EquipmentMainEffectData))
+                {
+                    Debug.LogWarning($"[CommandEquipment] EquipmentMainEffectData is null or empty for item {itemId}");
+                    mainAttribute = Array.Empty<AttributeIncreaseData>();
+                }
+                else
+                {
+                    // ⭐ 去除可能的 BOM 和空白字符
+                    var mainJson = equipmentCommand.EquipmentMainEffectData.Trim().TrimStart('\uFEFF', '\u200B');
+                    
+                    if (mainJson.Length == 0 || mainJson == "null")
+                    {
+                        mainAttribute = Array.Empty<AttributeIncreaseData>();
+                    }
+                    else
+                    {
+                        mainAttribute = JsonConvert.DeserializeObject<AttributeIncreaseData[]>(mainJson);
+                        
+                        // ⭐ 防止反序列化返回 null
+                        if (mainAttribute == null)
+                        {
+                            Debug.LogWarning($"[CommandEquipment] MainAttribute deserialized to null for item {itemId}");
+                            mainAttribute = Array.Empty<AttributeIncreaseData>();
+                        }
+                    }
+                }
+            }
+            catch (JsonException ex)
+            {
+                Debug.LogError($"[CommandEquipment] Failed to deserialize EquipmentMainEffectData for item {itemId}");
+                Debug.LogError($"JSON: {equipmentCommand.EquipmentMainEffectData}");
+                Debug.LogError($"Error: {ex.Message}");
+                mainAttribute = Array.Empty<AttributeIncreaseData>();
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                Debug.LogError($"[CommandEquipment] ArgumentOutOfRangeException in EquipmentMainEffectData for item {itemId}");
+                Debug.LogError($"Parameter: {ex.ParamName}");
+                Debug.LogError($"JSON Length: {equipmentCommand.EquipmentMainEffectData?.Length ?? -1}");
+                Debug.LogError($"JSON: {equipmentCommand.EquipmentMainEffectData}");
+                mainAttribute = Array.Empty<AttributeIncreaseData>();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[CommandEquipment] Unexpected error deserializing EquipmentMainEffectData: {ex.Message}\n{ex.StackTrace}");
+                mainAttribute = Array.Empty<AttributeIncreaseData>();
+            }
+
+            try
+            {
+                // ⭐ 验证被动属性 JSON
+                if (string.IsNullOrEmpty(equipmentCommand.EquipmentPassiveEffectData))
+                {
+                    Debug.LogWarning($"[CommandEquipment] EquipmentPassiveEffectData is null or empty for item {itemId}");
+                    subAttribute = Array.Empty<AttributeIncreaseData>();
+                }
+                else
+                {
+                    // ⭐ 去除可能的 BOM 和空白字符
+                    var subJson = equipmentCommand.EquipmentPassiveEffectData.Trim().TrimStart('\uFEFF', '\u200B');
+                    
+                    if (subJson.Length == 0 || subJson == "null")
+                    {
+                        subAttribute = Array.Empty<AttributeIncreaseData>();
+                    }
+                    else
+                    {
+                        subAttribute = JsonConvert.DeserializeObject<AttributeIncreaseData[]>(subJson);
+                        
+                        // ⭐ 防止反序列化返回 null
+                        if (subAttribute == null)
+                        {
+                            Debug.LogWarning($"[CommandEquipment] SubAttribute deserialized to null for item {itemId}");
+                            subAttribute = Array.Empty<AttributeIncreaseData>();
+                        }
+                    }
+                }
+            }
+            catch (JsonException ex)
+            {
+                Debug.LogError($"[CommandEquipment] Failed to deserialize EquipmentPassiveEffectData for item {itemId}");
+                Debug.LogError($"JSON: {equipmentCommand.EquipmentPassiveEffectData}");
+                Debug.LogError($"Error: {ex.Message}");
+                subAttribute = Array.Empty<AttributeIncreaseData>();
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                Debug.LogError($"[CommandEquipment] ArgumentOutOfRangeException in EquipmentPassiveEffectData for item {itemId}");
+                Debug.LogError($"Parameter: {ex.ParamName}");
+                Debug.LogError($"JSON Length: {equipmentCommand.EquipmentPassiveEffectData?.Length ?? -1}");
+                Debug.LogError($"JSON: {equipmentCommand.EquipmentPassiveEffectData}");
+                subAttribute = Array.Empty<AttributeIncreaseData>();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[CommandEquipment] Unexpected error deserializing EquipmentPassiveEffectData: {ex.Message}\n{ex.StackTrace}");
+                subAttribute = Array.Empty<AttributeIncreaseData>();
+            }
+
+            // ⭐ 添加被动效果数据
+            if (!PlayerEquipmentState.TryAddEquipmentPassiveEffectData(
+                ref playerEquipmentState, 
+                itemId, 
+                equipmentCommand.EquipmentConfigId, 
+                itemConfig.equipmentPart, 
+                mainAttribute, 
+                subAttribute))
             {
                 Debug.LogWarning($"Can't add passive effect data for item {itemId}");
                 return;
             }
 
             Constant.GameSyncManager.EnqueueServerCommand(propertyEquipmentChangedCommand);
-            //todo:
         }
 
         public static bool CommandTrigger(TriggerCommand triggerCommand, ref PlayerEquipmentState playerEquipmentState, int[] playerIds, EquipmentPart equipmentPart,
