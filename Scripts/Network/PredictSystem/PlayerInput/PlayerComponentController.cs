@@ -486,7 +486,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 GameSyncManager.CurrentTick <= 0 || !(_subjectedStateType.HasAllStates(SubjectedStateType.None) || _subjectedStateType.HasAllStates(SubjectedStateType.IsInvisible)) || 
                 _subjectedStateType.HasAnyState(SubjectedStateType.IsCantMoved))
             {
-                Debug.Log("[PlayerComponentController] SendNetworkCommand: Idle");
+                //Debug.Log("[PlayerComponentController] SendNetworkCommand: Idle");
                 _playerInputStateData.Command = AnimationState.Idle;
                 _playerInputStateData.InputAnimations = AnimationState.Idle;
                 _playerInputStateData.InputMovement = default;

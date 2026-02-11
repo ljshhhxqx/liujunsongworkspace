@@ -247,7 +247,7 @@ namespace HotUpdate.Scripts.Game
             while (remainingTime > 0 && !token.IsCancellationRequested)
             {
                 Debug.Log($"Warmup Timer: {remainingTime} seconds remaining");
-                await UniTask.Delay(1000, ignoreTimeScale: true, cancellationToken: token);
+                await UniTask.Delay(1000, DelayType.Realtime, cancellationToken: token);
                 remainingTime--;
                
                 _messageHandler.SendToAllClients(new MirrorGameWarmupMessage(remainingTime)); 
@@ -524,7 +524,7 @@ namespace HotUpdate.Scripts.Game
                     // 执行传入的倒计时Action
                     _updateCountdownAction?.Invoke();
 
-                    await UniTask.Delay(milliseconds, ignoreTimeScale:true, cancellationToken: token);
+                    await UniTask.Delay(milliseconds, DelayType.Realtime, cancellationToken: token);
                     elapsedTime += _interval;
 
                     // 可选的日志输出

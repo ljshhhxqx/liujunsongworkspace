@@ -263,7 +263,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         {
             while (!token.IsCancellationRequested && ServerHandler && !_gameSyncManager.isGameOver)
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(GameSyncManager.TickSeconds), ignoreTimeScale:true, cancellationToken: token);
+                await UniTask.Delay(TimeSpan.FromSeconds(GameSyncManager.TickSeconds), DelayType.Realtime, cancellationToken: token);
                 foreach (var uid in _playerNetIds.Values)
                 {
                     var identity = GameStaticExtensions.GetNetworkIdentity(uid);
@@ -279,7 +279,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                         _playerDeathCountdowns.Remove(uid);
                         callback.Invoke(uid);
                         _playerBornCallbacks.Remove(uid);
-                        Debug.Log($"[UpdateAllPlayerGrids] Player {uid} born with countdown {deathCountdown}");
+                        //Debug.Log($"[UpdateAllPlayerGrids] Player {uid} born with countdown {deathCountdown}");
                         continue;
                     }
 
@@ -287,7 +287,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                     {
                         deathCountdown -= GameSyncManager.TickSeconds;
                         _playerDeathCountdowns[uid] = deathCountdown;
-                        Debug.Log($"[UpdateAllPlayerGrids] Player {uid} death countdown {deathCountdown}");
+                        //Debug.Log($"[UpdateAllPlayerGrids] Player {uid} death countdown {deathCountdown}");
                     }
                 }
             }

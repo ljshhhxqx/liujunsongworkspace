@@ -133,7 +133,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             while (cancellationToken.IsCancellationRequested == false)
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(TickSeconds), ignoreTimeScale:true, cancellationToken: cancellationToken);
+                await UniTask.Delay(TimeSpan.FromSeconds(TickSeconds), DelayType.Realtime, cancellationToken: cancellationToken);
                 if (isServer && !_isProcessing && NetworkServer.connections.Count > 0 && !isGameOver)
                 {
                     _tickTimer = 0;

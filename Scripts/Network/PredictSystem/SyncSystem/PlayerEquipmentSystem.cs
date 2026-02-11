@@ -52,7 +52,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             while (!token.IsCancellationRequested)
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(1 / GameSyncManager.TickSeconds),ignoreTimeScale: true, cancellationToken: token);
+                await UniTask.Delay(TimeSpan.FromSeconds(1 / GameSyncManager.TickSeconds),DelayType.Realtime, cancellationToken: token);
                 foreach (var playerId in PropertyStates.Keys)
                 {
                     var playerState = PropertyStates[playerId];

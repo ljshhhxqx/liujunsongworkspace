@@ -210,7 +210,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             warmupPanel.alpha = 0;
             warmupPanel.DOFade(1, panelFadeDuration);
             
-            await UniTask.Delay(TimeSpan.FromSeconds(panelFadeDuration),ignoreTimeScale: true);
+            await UniTask.Delay(TimeSpan.FromSeconds(panelFadeDuration), DelayType.Realtime);
             
             // 创建热身倒计时序列
             _warmupSequence = DOTween.Sequence();
@@ -262,7 +262,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             gameTimerPanel.alpha = 0;
             gameTimerPanel.DOFade(1, panelFadeDuration);
             
-            await UniTask.Delay(TimeSpan.FromSeconds(panelFadeDuration),ignoreTimeScale: true);
+            await UniTask.Delay(TimeSpan.FromSeconds(panelFadeDuration), DelayType.Realtime);
             
             // 更新计时器显示
             UpdateGameTimerDisplay();

@@ -52,7 +52,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         { 
             while (!cancellationToken.IsCancellationRequested)
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(GameSyncManager.TickSeconds), ignoreTimeScale: true, cancellationToken: cancellationToken);
+                await UniTask.Delay(TimeSpan.FromSeconds(GameSyncManager.TickSeconds), DelayType.Realtime, cancellationToken: cancellationToken);
                 ExecutePredictedCommands(GameSyncManager.CurrentTick);
             }
         }

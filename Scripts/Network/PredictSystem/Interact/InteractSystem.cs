@@ -347,8 +347,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         {
             while (!_cts.IsCancellationRequested && !_gameSyncManager.isGameOver)
             {
-                await UniTask.WaitUntil(() => !_commandQueue.IsEmpty, 
-                    cancellationToken: cts);
+                await UniTask.Delay(TimeSpan.FromSeconds(GameSyncManager.TickSeconds), DelayType.Realtime, cancellationToken: cts);
                 while (_commandQueue.TryDequeue(out var command))
                 {
                     switch (command)

@@ -330,7 +330,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             while (!token.IsCancellationRequested && !_isApplyingState && !_isSimulating)
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(deltaTime), cancellationToken: token);
+                await UniTask.Delay(TimeSpan.FromSeconds(deltaTime), DelayType.Realtime, cancellationToken: token);
                 PlayerComponentController.UpdateAnimation(deltaTime);
             }
         }
