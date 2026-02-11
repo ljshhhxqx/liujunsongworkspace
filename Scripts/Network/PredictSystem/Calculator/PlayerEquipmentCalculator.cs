@@ -34,182 +34,100 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         
         public static void CommandEquipment(EquipmentCommand equipmentCommand, ref PlayerEquipmentState playerEquipmentState)
         {
-            if (!Constant.IsServer)
-                return;
-            var header = equipmentCommand.Header;
-            var configId = PlayerItemCalculator.GetItemConfigId(equipmentCommand.EquipmentPart, equipmentCommand.EquipmentConfigId);
-            var itemConfig = Constant.ItemConfig.GetGameItemData(configId); 
-            var itemId = equipmentCommand.ItemId;
-            var equipConfigId = equipmentCommand.EquipmentConfigId;
-            if (itemId == 0 || !GameItemManager.HasGameItemData(itemId))
+            var step = 0;
+            try
             {
-                Debug.LogWarning($"Can't find item data {itemId}"); 
-                return;
-            }
+                step = 1;
+                if (!Constant.IsServer)
+                    return;
+                step = 2;
+                var header = equipmentCommand.Header;
+                step = 3;
+                var configId = PlayerItemCalculator.GetItemConfigId(equipmentCommand.EquipmentPart, equipmentCommand.EquipmentConfigId);
+                step = 4;
+                var itemConfig = Constant.ItemConfig.GetGameItemData(configId); 
+                step = 5;
+                var itemId = equipmentCommand.ItemId;
+                step = 6;
+                var equipConfigId = equipmentCommand.EquipmentConfigId;
+                step = 7;
+                if (itemId == 0 || !GameItemManager.HasGameItemData(itemId))
+                {
+                    Debug.LogWarning($"Can't find item data {itemId}"); 
+                    return;
+                }
+                step = 8;
 
-            var propertyEquipmentChangedCommand = new PropertyEquipmentChangedCommand
-            {
-                Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property,
-                    CommandAuthority.Client, CommandExecuteType.Immediate),
-                EquipConfigId = itemConfig.id,
-                EquipItemId = itemId,
-                IsEquipped = equipmentCommand.IsEquip,
-                ItemConfigId = itemConfig.id,
-                EquipmentPart = itemConfig.equipmentPart,
-            };
-            var propertyEquipPassiveCommand = new PropertyEquipmentPassiveCommand
-            {
-                Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property,
-                    CommandAuthority.Client, CommandExecuteType.Immediate),
-                EquipItemConfigId = equipConfigId,
-                EquipItemId = itemId,
-                PlayerItemType = itemConfig.itemType,
-                IsEquipped = equipmentCommand.IsEquip,
-            };
+                var propertyEquipmentChangedCommand = new PropertyEquipmentChangedCommand
+                {
+                    Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property,
+                        CommandAuthority.Client, CommandExecuteType.Immediate),
+                    EquipConfigId = itemConfig.id,
+                    EquipItemId = itemId,
+                    IsEquipped = equipmentCommand.IsEquip,
+                    ItemConfigId = itemConfig.id,
+                    EquipmentPart = itemConfig.equipmentPart,
+                };
+                step = 9;
+                var propertyEquipPassiveCommand = new PropertyEquipmentPassiveCommand
+                {
+                    Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property,
+                        CommandAuthority.Client, CommandExecuteType.Immediate),
+                    EquipItemConfigId = equipConfigId,
+                    EquipItemId = itemId,
+                    PlayerItemType = itemConfig.itemType,
+                    IsEquipped = equipmentCommand.IsEquip,
+                };
+                step = 10;
+                if (!equipmentCommand.IsEquip && PlayerEquipmentState.TryUnequipped(ref playerEquipmentState, itemId, itemConfig.equipmentPart, out var unequippedEquipment))
+                {
+                    Constant.GameSyncManager.EnqueueServerCommand(propertyEquipmentChangedCommand);
+                    Constant.GameSyncManager.EnqueueServerCommand(propertyEquipPassiveCommand);
+                    return;
+                }
+                step = 11;
+                var conditionChecker = GetConditionChecker(itemConfig.itemType, configId);
+                step = 12;
+                if (conditionChecker == null)
+                {
+                    return;
+                }
+                step = 13;
+                if (conditionChecker.GetConditionCheckerHeader().TriggerType == TriggerType.None)
+                {
+                    Constant.GameSyncManager.EnqueueServerCommand(propertyEquipPassiveCommand);
+                }
 
-            if (!equipmentCommand.IsEquip && PlayerEquipmentState.TryUnequipped(ref playerEquipmentState, itemId, itemConfig.equipmentPart, out var unequippedEquipment))
-            {
+                step = 14;
+                if (!PlayerEquipmentState.TryAddEquipmentData(ref playerEquipmentState, itemId,  equipmentCommand.EquipmentConfigId, itemConfig.equipmentPart, 
+                        conditionChecker))
+                {
+                    Debug.LogWarning($"Can't equip this item {itemId} to player {header.ConnectionId}");
+                    return;
+                }
+
+                step = 15;
+                var mainAttribute = JsonConvert.DeserializeObject<AttributeIncreaseData[]>(equipmentCommand.EquipmentMainEffectData);
+                step = 16;
+                var subAttribute = JsonConvert.DeserializeObject<AttributeIncreaseData[]>(equipmentCommand.EquipmentPassiveEffectData);
+                step = 17;
+                if (!PlayerEquipmentState.TryAddEquipmentPassiveEffectData(ref playerEquipmentState, itemId, equipmentCommand.EquipmentConfigId, itemConfig.equipmentPart,mainAttribute, subAttribute))
+                {
+                    Debug.LogWarning($"Can't add passive effect data for item {itemId}");
+                    return;
+                }
+                step = 18;
+
                 Constant.GameSyncManager.EnqueueServerCommand(propertyEquipmentChangedCommand);
-                Constant.GameSyncManager.EnqueueServerCommand(propertyEquipPassiveCommand);
-                return;
             }
-            var conditionChecker = GetConditionChecker(itemConfig.itemType, configId);
-            if (conditionChecker == null)
-            {
-                return;
-            }
-            if (conditionChecker.GetConditionCheckerHeader().TriggerType == TriggerType.None)
-            {
-                Constant.GameSyncManager.EnqueueServerCommand(propertyEquipPassiveCommand);
-            }
-
-            if (!PlayerEquipmentState.TryAddEquipmentData(ref playerEquipmentState, itemId,  equipmentCommand.EquipmentConfigId, itemConfig.equipmentPart, 
-                    conditionChecker))
-            {
-                Debug.LogWarning($"Can't equip this item {itemId} to player {header.ConnectionId}");
-                return;
-            }
-
-             // ⭐⭐⭐ 关键修复：安全的 JSON 反序列化
-            AttributeIncreaseData[] mainAttribute = null;
-            AttributeIncreaseData[] subAttribute = null;
-
-            try
-            {
-                // ⭐ 验证主属性 JSON
-                if (string.IsNullOrEmpty(equipmentCommand.EquipmentMainEffectData))
-                {
-                    Debug.LogWarning($"[CommandEquipment] EquipmentMainEffectData is null or empty for item {itemId}");
-                    mainAttribute = Array.Empty<AttributeIncreaseData>();
-                }
-                else
-                {
-                    // ⭐ 去除可能的 BOM 和空白字符
-                    var mainJson = equipmentCommand.EquipmentMainEffectData.Trim().TrimStart('\uFEFF', '\u200B');
-                    
-                    if (mainJson.Length == 0 || mainJson == "null")
-                    {
-                        mainAttribute = Array.Empty<AttributeIncreaseData>();
-                    }
-                    else
-                    {
-                        mainAttribute = JsonConvert.DeserializeObject<AttributeIncreaseData[]>(mainJson);
-                        
-                        // ⭐ 防止反序列化返回 null
-                        if (mainAttribute == null)
-                        {
-                            Debug.LogWarning($"[CommandEquipment] MainAttribute deserialized to null for item {itemId}");
-                            mainAttribute = Array.Empty<AttributeIncreaseData>();
-                        }
-                    }
-                }
-            }
-            catch (JsonException ex)
-            {
-                Debug.LogError($"[CommandEquipment] Failed to deserialize EquipmentMainEffectData for item {itemId}");
-                Debug.LogError($"JSON: {equipmentCommand.EquipmentMainEffectData}");
-                Debug.LogError($"Error: {ex.Message}");
-                mainAttribute = Array.Empty<AttributeIncreaseData>();
-            }
+            
             catch (ArgumentOutOfRangeException ex)
             {
-                Debug.LogError($"[CommandEquipment] ArgumentOutOfRangeException in EquipmentMainEffectData for item {itemId}");
-                Debug.LogError($"Parameter: {ex.ParamName}");
-                Debug.LogError($"JSON Length: {equipmentCommand.EquipmentMainEffectData?.Length ?? -1}");
-                Debug.LogError($"JSON: {equipmentCommand.EquipmentMainEffectData}");
-                mainAttribute = Array.Empty<AttributeIncreaseData>();
+                Debug.LogError($"[CommandEquipment] Exception at step {step}");
+                Debug.LogError($"Parameter: {ex.ParamName}, Message: {ex.Message}");
+                Debug.LogError($"StackTrace:\n{ex.StackTrace}");
             }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[CommandEquipment] Unexpected error deserializing EquipmentMainEffectData: {ex.Message}\n{ex.StackTrace}");
-                mainAttribute = Array.Empty<AttributeIncreaseData>();
-            }
-
-            try
-            {
-                // ⭐ 验证被动属性 JSON
-                if (string.IsNullOrEmpty(equipmentCommand.EquipmentPassiveEffectData))
-                {
-                    Debug.LogWarning($"[CommandEquipment] EquipmentPassiveEffectData is null or empty for item {itemId}");
-                    subAttribute = Array.Empty<AttributeIncreaseData>();
-                }
-                else
-                {
-                    // ⭐ 去除可能的 BOM 和空白字符
-                    var subJson = equipmentCommand.EquipmentPassiveEffectData.Trim().TrimStart('\uFEFF', '\u200B');
-                    
-                    if (subJson.Length == 0 || subJson == "null")
-                    {
-                        subAttribute = Array.Empty<AttributeIncreaseData>();
-                    }
-                    else
-                    {
-                        subAttribute = JsonConvert.DeserializeObject<AttributeIncreaseData[]>(subJson);
-                        
-                        // ⭐ 防止反序列化返回 null
-                        if (subAttribute == null)
-                        {
-                            Debug.LogWarning($"[CommandEquipment] SubAttribute deserialized to null for item {itemId}");
-                            subAttribute = Array.Empty<AttributeIncreaseData>();
-                        }
-                    }
-                }
-            }
-            catch (JsonException ex)
-            {
-                Debug.LogError($"[CommandEquipment] Failed to deserialize EquipmentPassiveEffectData for item {itemId}");
-                Debug.LogError($"JSON: {equipmentCommand.EquipmentPassiveEffectData}");
-                Debug.LogError($"Error: {ex.Message}");
-                subAttribute = Array.Empty<AttributeIncreaseData>();
-            }
-            catch (ArgumentOutOfRangeException ex)
-            {
-                Debug.LogError($"[CommandEquipment] ArgumentOutOfRangeException in EquipmentPassiveEffectData for item {itemId}");
-                Debug.LogError($"Parameter: {ex.ParamName}");
-                Debug.LogError($"JSON Length: {equipmentCommand.EquipmentPassiveEffectData?.Length ?? -1}");
-                Debug.LogError($"JSON: {equipmentCommand.EquipmentPassiveEffectData}");
-                subAttribute = Array.Empty<AttributeIncreaseData>();
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[CommandEquipment] Unexpected error deserializing EquipmentPassiveEffectData: {ex.Message}\n{ex.StackTrace}");
-                subAttribute = Array.Empty<AttributeIncreaseData>();
-            }
-
-            // ⭐ 添加被动效果数据
-            if (!PlayerEquipmentState.TryAddEquipmentPassiveEffectData(
-                ref playerEquipmentState, 
-                itemId, 
-                equipmentCommand.EquipmentConfigId, 
-                itemConfig.equipmentPart, 
-                mainAttribute, 
-                subAttribute))
-            {
-                Debug.LogWarning($"Can't add passive effect data for item {itemId}");
-                return;
-            }
-
-            Constant.GameSyncManager.EnqueueServerCommand(propertyEquipmentChangedCommand);
+            
         }
 
         public static bool CommandTrigger(TriggerCommand triggerCommand, ref PlayerEquipmentState playerEquipmentState, int[] playerIds, EquipmentPart equipmentPart,
