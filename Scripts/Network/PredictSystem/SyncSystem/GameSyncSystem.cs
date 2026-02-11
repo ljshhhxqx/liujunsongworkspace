@@ -332,8 +332,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public void EnqueueCommand(byte[] commandJson)
         {
             var command = NetworkCommandExtensions.DeserializeCommand(commandJson);
-            var header = command.GetHeader();
-            var validCommand = command.ValidateCommand();
             // if (!validCommand.IsValid)
             // {
             //     foreach (var str in validCommand.Errors)
