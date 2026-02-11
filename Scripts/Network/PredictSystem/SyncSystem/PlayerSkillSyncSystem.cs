@@ -130,7 +130,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     }
                     playerConnection.SkillCheckerDict = skillDic;
                 }
-                await UniTask.Delay(TimeSpan.FromSeconds(GameSyncManager.TickSeconds), cancellationToken: token);
+                await UniTask.Delay(TimeSpan.FromSeconds(GameSyncManager.TickSeconds), ignoreTimeScale: true,cancellationToken: token);
             }
         }
 

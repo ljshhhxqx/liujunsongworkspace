@@ -96,7 +96,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _isStartAnimation = true;
             while (!token.IsCancellationRequested)
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(deltaTime), cancellationToken: token);
+                await UniTask.Delay(TimeSpan.FromSeconds(deltaTime), ignoreTimeScale: true, cancellationToken: token);
                 UpdatePlayerAnimationCooldowns(deltaTime);
             }
         }

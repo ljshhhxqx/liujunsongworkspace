@@ -77,7 +77,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _cts = new CancellationTokenSource();
             _tickRate = _jsonDataConfig.GameConfig.tickRate;
-            Debug.Log($"[gamesyncmanager] tickRate: {_tickRate}");
             _serverInputRate = _jsonDataConfig.GameConfig.serverInputRate;
             _maxCommandAge = _jsonDataConfig.GameConfig.maxCommandAge;
             _serverUpdateStateInterval = _jsonDataConfig.GameConfig.stateUpdateInterval;

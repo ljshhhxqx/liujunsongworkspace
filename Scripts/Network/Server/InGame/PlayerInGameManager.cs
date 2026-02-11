@@ -263,7 +263,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         {
             while (!token.IsCancellationRequested && ServerHandler && !_gameSyncManager.isGameOver)
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(GameSyncManager.TickSeconds), cancellationToken: token);
+                await UniTask.Delay(TimeSpan.FromSeconds(GameSyncManager.TickSeconds), ignoreTimeScale:true, cancellationToken: token);
                 foreach (var uid in _playerNetIds.Values)
                 {
                     var identity = GameStaticExtensions.GetNetworkIdentity(uid);
