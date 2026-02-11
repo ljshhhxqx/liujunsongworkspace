@@ -100,8 +100,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
                 step = 14;
                 Debug.Log($"Try add equipment data -- item {itemId} -- config {configId} -- part {itemConfig.equipmentPart} condition {conditionChecker.GetConditionCheckerHeader().TriggerType} -- connection {header.ConnectionId}");
-                if (!PlayerEquipmentState.TryAddEquipmentData(ref playerEquipmentState, itemId,  equipmentCommand.EquipmentConfigId, itemConfig.equipmentPart, 
-                        conditionChecker))
+                if (!PlayerEquipmentState.TryAddEquipmentData(ref playerEquipmentState, itemId,  equipmentCommand.EquipmentConfigId, itemConfig.equipmentPart))
                 {
                     Debug.LogWarning($"Can't equip this item {itemId} to player {header.ConnectionId}");
                     return;
