@@ -318,11 +318,19 @@ namespace HotUpdate.Scripts.Network.UI
         public float MaxProperty;
         public bool IsPercentage;
         public bool IsAutoRecover;
+        public bool IsShowInHud;
+        public bool IsShowInUI;
 
         public bool Equals(PropertyItemData other)
         {
             return PropertyType == other.PropertyType&& IsPercentage == other.IsPercentage
-                                                     && Name == other.Name && ConsumeType == other.ConsumeType && Mathf.Approximately(CurrentProperty, other.CurrentProperty) && Mathf.Approximately(MaxProperty, other.MaxProperty);
+                                                     && Name == other.Name 
+                                                     && ConsumeType == other.ConsumeType 
+                                                     && Mathf.Approximately(CurrentProperty, other.CurrentProperty) 
+                                                     && Mathf.Approximately(MaxProperty, other.MaxProperty)
+                                                     && IsAutoRecover == other.IsAutoRecover
+                                                     && IsShowInHud == other.IsShowInHud
+                                                     && IsShowInUI == other.IsShowInUI;
         }
 
         public override bool Equals(object obj)
@@ -332,7 +340,17 @@ namespace HotUpdate.Scripts.Network.UI
 
         public override int GetHashCode()
         {
-            return HashCode.Combine((int)PropertyType, Name, (int)ConsumeType, CurrentProperty, MaxProperty, IsPercentage);
+            var hashCode = new HashCode();
+            hashCode.Add(PropertyType);
+            hashCode.Add(Name);
+            hashCode.Add(ConsumeType);
+            hashCode.Add(CurrentProperty);
+            hashCode.Add(MaxProperty);
+            hashCode.Add(IsPercentage);
+            hashCode.Add(IsAutoRecover);
+            hashCode.Add(IsShowInHud);
+            hashCode.Add(IsShowInUI);
+            return hashCode.ToHashCode();
         }
     }
     
@@ -397,6 +415,19 @@ namespace HotUpdate.Scripts.Network.UI
             hashCode.Add(IsEquip);
             hashCode.Add(IsLock);
             hashCode.Add(MaxStack);
+            hashCode.Add(IsEnable);
+            hashCode.Add(ConditionDescription);
+            hashCode.Add(PassiveDescription);
+            hashCode.Add(SkillDescription);
+            hashCode.Add(QualityIcon);
+            hashCode.Add(SkillId);
+            hashCode.Add((int)EquipmentPart);
+            hashCode.Add(OnUseItem);
+            hashCode.Add(OnDropItem);
+            hashCode.Add(OnExchangeItem);
+            hashCode.Add(OnLockItem);
+            hashCode.Add(OnEquipItem);
+            hashCode.Add(OnEnableSkill);
             return hashCode.ToHashCode();
         }
 

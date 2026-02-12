@@ -294,6 +294,7 @@ namespace HotUpdate.Scripts.Collector
         {
             if (ServerHandler)
             {
+                Debug.Log($"Picker {pickerId} pickup item {itemId} --- killed {killed}");
                 HandleItemPickup(itemId, pickerId, killed);
                 JudgeEndRound();
             }

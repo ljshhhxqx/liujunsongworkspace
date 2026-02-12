@@ -236,31 +236,35 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             foreach (var kvp in predictablePropertyState.MemoryProperty)
             {
                 var property = kvp.Value;
-                if (property.IsShowInHud())
+                var configData = _propertyConfig.GetPropertyConfigData((PropertyTypeEnum)kvp.Key);
+                if (!configData.showInUI)
                 {
-                    if (!_uiPropertyData.TryGetValue((int)kvp.Key, out var propertyData))
-                    {
-                        propertyData = new PropertyItemData
-                        {
-                            Name = _propertyConfig.GetPropertyConfigData((PropertyTypeEnum)kvp.Key).description,
-                            PropertyType = (PropertyTypeEnum)kvp.Key,
-                            CurrentProperty = property.CurrentValue,
-                            MaxProperty = property.MaxCurrentValue,
-                            ConsumeType = _propertyConfig.GetPropertyConfigData((PropertyTypeEnum)kvp.Key).consumeType,
-                            IsPercentage = _propertyConfig.IsHundredPercent((PropertyTypeEnum)kvp.Key),
-                            IsAutoRecover = isRecover,
-                        };
-                    }
-                    else
-                    {
-                        propertyData.CurrentProperty = property.CurrentValue;
-                        propertyData.MaxProperty = property.MaxCurrentValue;
-                        propertyData.IsAutoRecover = isRecover;
-                    }
-                    _uiPropertyData.Update((int)kvp.Key, propertyData);
-                    OnPropertyChanged?.Invoke(kvp.Key, property);
-                    UIPropertyBinder.UpdateDictionary(_propertyBindKey, (int)kvp.Key, propertyData);
+                    continue;
                 }
+                if (!_uiPropertyData.TryGetValue((int)kvp.Key, out var propertyData))
+                {
+                    propertyData = new PropertyItemData
+                    {
+                        Name = configData.description,
+                        PropertyType = (PropertyTypeEnum)kvp.Key,
+                        CurrentProperty = property.CurrentValue,
+                        MaxProperty = property.MaxCurrentValue,
+                        ConsumeType = configData.consumeType,
+                        IsPercentage = _propertyConfig.IsHundredPercent((PropertyTypeEnum)kvp.Key),
+                        IsAutoRecover = isRecover,
+                        IsShowInHud = configData.showInHud,
+                        IsShowInUI = configData.showInUI,
+                    };
+                }
+                else
+                {
+                    propertyData.CurrentProperty = property.CurrentValue;
+                    propertyData.MaxProperty = property.MaxCurrentValue;
+                    propertyData.IsAutoRecover = isRecover;
+                }
+                _uiPropertyData.Update((int)kvp.Key, propertyData);
+                OnPropertyChanged?.Invoke(kvp.Key, property);
+                UIPropertyBinder.UpdateDictionary(_propertyBindKey, (int)kvp.Key, propertyData);
                 //Debug.Log($"predictablePropertyState.MemoryProperty changed {kvp}: {property.CurrentValue} {property.MaxCurrentValue}");
                 //;
 

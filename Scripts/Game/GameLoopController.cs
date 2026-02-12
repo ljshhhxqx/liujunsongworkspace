@@ -402,7 +402,7 @@ namespace HotUpdate.Scripts.Game
             float interval,
             CancellationToken token)
         {
-            var lastUpdateTime = Time.realtimeSinceStartup;
+            var lastUpdateTime = Time.time;
             var intervalMs = (int)(interval * 1000);
 
             Debug.Log($"[GlobalTimer] Started with interval {interval}s ({intervalMs}ms)");
@@ -415,7 +415,7 @@ namespace HotUpdate.Scripts.Game
                     await UniTask.Delay(intervalMs, DelayType.Realtime, cancellationToken: token);
 
                     // ⭐ 计算实际流逝时间（更精确）
-                    var currentTime = Time.realtimeSinceStartup;
+                    var currentTime = Time.time;
                     var actualDelta = currentTime - lastUpdateTime;
                     lastUpdateTime = currentTime;
 
@@ -595,7 +595,7 @@ namespace HotUpdate.Scripts.Game
 
                 float elapsedTime = 0;
                 var intervalMs = (int)(_interval * 1000);
-                var startTime = Time.realtimeSinceStartup;
+                var startTime = Time.time;
 
                 try
                 {
@@ -613,7 +613,7 @@ namespace HotUpdate.Scripts.Game
                         await UniTask.Delay(intervalMs, DelayType.Realtime, cancellationToken: token);
 
                         // ⭐ 使用实际流逝时间
-                        elapsedTime = Time.realtimeSinceStartup - startTime;
+                        elapsedTime = Time.time - startTime;
 
                         // 可选：输出剩余时间
                         // Debug.Log($"[SubCycle] Elapsed: {elapsedTime:F1}s / {_subCycleTime}s");

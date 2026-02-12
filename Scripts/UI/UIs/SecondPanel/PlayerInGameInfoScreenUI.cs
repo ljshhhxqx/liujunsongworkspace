@@ -48,13 +48,6 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 _propertyItemDatas.Add(item.Key, item.Value);
             }
             contentItemList.SetItemList(_propertyItemDatas);
-            foreach (var key in playerPropertyData.Keys)
-            {
-                var slot = playerPropertyData[key];
-                _propertyItemDatas.Add(key, slot);
-            }
-
-            contentItemList.SetItemList(_propertyItemDatas);
             playerPropertyData.ObserveUpdate((x, y, z) =>
                 {
                     _propertyItemDatas[x] = z;

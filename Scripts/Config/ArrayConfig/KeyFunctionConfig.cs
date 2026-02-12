@@ -83,6 +83,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                     return UIType.Shop;
                 case KeyFunction.Inventory:
                     return UIType.Backpack;
+                case KeyFunction.Info:
+                    return UIType.PlayerInGameInfo;
                 default:
                     return UIType.None;
             }

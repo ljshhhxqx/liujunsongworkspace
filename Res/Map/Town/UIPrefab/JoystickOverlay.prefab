@@ -899,7 +899,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0177dae6da1d4b45a0b402121d13a37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  keyFunction: 5
+  keyFunction: 7
   button: {fileID: 5083439921892537297}
 --- !u!114 &5083439921892537297
 MonoBehaviour:

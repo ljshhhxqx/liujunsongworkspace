@@ -289,8 +289,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                     if (sceneItemInfo.health == 0)
                     {
                         Debug.Log($"[OnPlayerAttackItem] Scene item {sceneItemId} is dead");
-                        _sceneItems.Remove(sceneItemId);
                         OnPlayerKillItem(playerAttackItemEvent.AttackerId, sceneItemInfo.sceneItemId);
+                        _sceneItems.Remove(sceneItemId);
                     }
                 }
             }

@@ -1705,10 +1705,10 @@
             "ResourceType": "UnityEngine.Texture2D",
             "AssetType": 3,
             "Extension": ".png",
-            "Name": "Town_MiniMap",
+            "Name": "Town_Minimap",
             "IsPermanent": false,
             "IsPreload": false,
-            "Address": "/Map/Town/MapSnapshots/Town_MiniMap.png"
+            "Address": "/Map/Town/MapSnapshots/Town_Minimap.png"
         },
         {
             "UID": 4500003,

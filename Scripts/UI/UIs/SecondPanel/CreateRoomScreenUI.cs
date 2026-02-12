@@ -62,7 +62,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             var options = new List<TMP_Dropdown.OptionData>();
             foreach (var configData in mapConfigDatas)
             {
-                options.Add(new TMP_Dropdown.OptionData(configData.mapType.ToString()));
+                options.Add(new TMP_Dropdown.OptionData(((MapType)configData.mapType).ToString()));
             }
             mapDropdown.ClearOptions();
             mapDropdown.AddOptions(options);

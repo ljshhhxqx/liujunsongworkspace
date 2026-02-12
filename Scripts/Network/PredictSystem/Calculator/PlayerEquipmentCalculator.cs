@@ -34,30 +34,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         
         public static void CommandEquipment(EquipmentCommand equipmentCommand, ref PlayerEquipmentState playerEquipmentState)
         {
-            var step = 0;
             try
             {
-                step = 1;
                 if (!Constant.IsServer)
                     return;
-                step = 2;
                 var header = equipmentCommand.Header;
-                step = 3;
                 var configId = PlayerItemCalculator.GetItemConfigId(equipmentCommand.EquipmentPart, equipmentCommand.EquipmentConfigId);
-                step = 4;
                 var itemConfig = Constant.ItemConfig.GetGameItemData(configId); 
-                step = 5;
                 var itemId = equipmentCommand.ItemId;
-                step = 6;
                 var equipConfigId = equipmentCommand.EquipmentConfigId;
-                step = 7;
                 if (itemId == 0 || !GameItemManager.HasGameItemData(itemId))
                 {
                     Debug.LogWarning($"Can't find item data {itemId}"); 
                     return;
                 }
-                step = 8;
-
                 var propertyEquipmentChangedCommand = new PropertyEquipmentChangedCommand
                 {
                     Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property,
@@ -68,7 +58,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     ItemConfigId = itemConfig.id,
                     EquipmentPart = itemConfig.equipmentPart,
                 };
-                step = 9;
                 var propertyEquipPassiveCommand = new PropertyEquipmentPassiveCommand
                 {
                     Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property,
@@ -78,53 +67,41 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     PlayerItemType = itemConfig.itemType,
                     IsEquipped = equipmentCommand.IsEquip,
                 };
-                step = 10;
                 if (!equipmentCommand.IsEquip && PlayerEquipmentState.TryUnequipped(ref playerEquipmentState, itemId, itemConfig.equipmentPart, out var unequippedEquipment))
                 {
                     Constant.GameSyncManager.EnqueueServerCommand(propertyEquipmentChangedCommand);
                     Constant.GameSyncManager.EnqueueServerCommand(propertyEquipPassiveCommand);
                     return;
                 }
-                step = 11;
                 var conditionChecker = GetConditionChecker(itemConfig.itemType, configId);
-                step = 12;
                 if (conditionChecker == null)
                 {
                     return;
                 }
-                step = 13;
                 if (conditionChecker.GetConditionCheckerHeader().TriggerType == TriggerType.None)
                 {
                     Constant.GameSyncManager.EnqueueServerCommand(propertyEquipPassiveCommand);
                 }
-
-                step = 14;
-                Debug.Log($"Try add equipment data -- item {itemId} -- config {configId} -- part {itemConfig.equipmentPart} condition {conditionChecker.GetConditionCheckerHeader().TriggerType} -- connection {header.ConnectionId}");
                 if (!PlayerEquipmentState.TryAddEquipmentData(ref playerEquipmentState, itemId,  equipmentCommand.EquipmentConfigId, itemConfig.equipmentPart))
                 {
                     Debug.LogWarning($"Can't equip this item {itemId} to player {header.ConnectionId}");
                     return;
                 }
-                Debug.Log("Try add equipment data end");
-
-                step = 15;
                 var mainAttribute = JsonConvert.DeserializeObject<AttributeIncreaseData[]>(equipmentCommand.EquipmentMainEffectData);
-                step = 16;
+
                 var subAttribute = JsonConvert.DeserializeObject<AttributeIncreaseData[]>(equipmentCommand.EquipmentPassiveEffectData);
-                step = 17;
+
                 if (!PlayerEquipmentState.TryAddEquipmentPassiveEffectData(ref playerEquipmentState, itemId, equipmentCommand.EquipmentConfigId, itemConfig.equipmentPart,mainAttribute, subAttribute))
                 {
                     Debug.LogWarning($"Can't add passive effect data for item {itemId}");
                     return;
                 }
-                step = 18;
 
                 Constant.GameSyncManager.EnqueueServerCommand(propertyEquipmentChangedCommand);
             }
             
             catch (ArgumentOutOfRangeException ex)
             {
-                Debug.LogError($"[CommandEquipment] Exception at step {step}");
                 Debug.LogError($"Parameter: {ex.ParamName}, Message: {ex.Message}");
                 Debug.LogError($"StackTrace:\n{ex.StackTrace}");
             }
