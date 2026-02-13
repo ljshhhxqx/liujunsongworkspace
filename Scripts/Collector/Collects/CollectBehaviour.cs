@@ -128,25 +128,25 @@ namespace HotUpdate.Scripts.Collector.Collects
             if (SceneItemInfo.health <= 0)
             {
                 IsDead = true;
-                var explodeRange = Random.Range(1f, 2.5f);
-                DelayInvoker.DelayInvoke(1.9f, () =>
-                {
-                    if (!gameObject.activeInHierarchy)
-                    {
-                        return;
-                    }
-                    var request = new ItemExplodeRequest
-                    {
-                        Header = InteractSystem.CreateInteractHeader(0, InteractCategory.SceneToPlayer, transform.position),
-                        InteractionType = InteractionType.ItemExplode,
-                        SceneItemId = NetId,
-                        AttackPower = info.attackDamage,
-                        Radius = explodeRange,
-                    };
-                    InteractSystem.EnqueueCommand(request);
-                    NetworkGameObjectPoolManager.Despawn(gameObject);
-                    CollectObjectController.RpcOnDeath();
-                });
+                // var explodeRange = Random.Range(1f, 2.5f);
+                // DelayInvoker.DelayInvoke(1.9f, () =>
+                // {
+                //     if (!gameObject.activeInHierarchy)
+                //     {
+                //         return;
+                //     }
+                //     var request = new ItemExplodeRequest
+                //     {
+                //         Header = InteractSystem.CreateInteractHeader(0, InteractCategory.SceneToPlayer, transform.position),
+                //         InteractionType = InteractionType.ItemExplode,
+                //         SceneItemId = NetId,
+                //         AttackPower = info.attackDamage,
+                //         Radius = explodeRange,
+                //     };
+                //     InteractSystem.EnqueueCommand(request);
+                //     NetworkGameObjectPoolManager.Despawn(gameObject);
+                //     CollectObjectController.RpcOnDeath();
+                // });
             }
         }
 

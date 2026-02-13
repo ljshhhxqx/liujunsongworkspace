@@ -496,6 +496,11 @@ namespace HotUpdate.Scripts.Collector
                         // 通知客户端
                         RpcPickupItem(itemId, pickerId, (int)collectObjectController.CollectObjectData.collectObjectClass);
 
+                        if (killed)
+                        {
+                            collectObjectController.RpcOnDeath();
+                            _networkGameObjectPoolManager.Despawn(item.gameObject);
+                        }
                         _processedItems.Remove(itemId);
                         _serverItemMap.Remove(itemId);
                         _serverItemBehaviour.Remove(itemId);

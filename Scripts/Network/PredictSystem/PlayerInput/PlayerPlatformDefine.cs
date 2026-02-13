@@ -23,13 +23,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         public static bool IsJoystickPlatform()
         {
-            return true; JoystickPlatforms.Contains(Application.platform);
+            return JoystickPlatforms.Contains(Application.platform);
         }
         
         public static bool IsWindowsPlatform()
         {
             #if UNITY_EDITOR
-            return false;
+            return true;
             #endif
             return WindowsPlatforms.Contains(Application.platform);
         }

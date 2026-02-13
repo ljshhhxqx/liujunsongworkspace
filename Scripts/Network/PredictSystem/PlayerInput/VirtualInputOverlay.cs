@@ -40,16 +40,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private HashSet<AnimationState> _animationStates = new HashSet<AnimationState>();
 
-        [Inject]
-        private void Init(IObjectResolver objectResolver)
-        {
-            for (int i = 0; i < functionButtons.Count; i++)
-            {
-                var functionButton = functionButtons[i];
-                objectResolver.Inject(functionButton);
-            }
-        }
-
         private void InitializeInputSystem()
         {
             // 注册摇杆事件
