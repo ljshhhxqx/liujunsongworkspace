@@ -1,0 +1,351 @@
+{
+    "excelAssetReference": {
+        "guid": "afcb27a37860bed489c689f04b28b549"
+    },
+    "csvAssetReference": {
+        "guid": "f79490033f1ba7d4c817acd9581f3173"
+    },
+    "jsonAssetReference": {
+        "guid": "36a25296697c2fe44a5305e443be106f"
+    },
+    "configName": "WeaponConfig",
+    "isArray": true,
+    "weaponConfigData": [
+        {
+            "weaponID": 1,
+            "weaponName": "单手剑1",
+            "itemID": 3001,
+            "quality": 1,
+            "weaponType": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 2,
+            "weaponName": "单手剑1",
+            "itemID": 3002,
+            "quality": 2,
+            "weaponType": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 51,
+            "battleEffectConditionDescription": "[PassiveEffect]None、概率100%、Buff目标对象1个Self、冷却0秒、持续时间-1秒、Buff权重0.2、Buff增益类型Multiplier",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 3,
+            "weaponName": "单手剑1",
+            "itemID": 3003,
+            "quality": 3,
+            "weaponType": 1,
+            "skillID": 1,
+            "battleEffectConditionId": 52,
+            "battleEffectConditionDescription": "[PassiveEffect]None、概率100%、Buff目标对象1个Self、冷却0秒、持续时间-1秒、Buff权重0.7、Buff增益类型Multiplier",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 4,
+            "weaponName": "单手剑2",
+            "itemID": 3004,
+            "quality": 1,
+            "weaponType": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 5,
+            "weaponName": "单手剑2",
+            "itemID": 3005,
+            "quality": 2,
+            "weaponType": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 53,
+            "battleEffectConditionDescription": "[PassiveEffect]OnHpChange、概率50%、Buff目标对象1个Self、冷却10秒、持续时间5秒、生命值百分比:[0,0]、Buff权重0.3、Buff增益类型Multiplier",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 6,
+            "weaponName": "单手剑2",
+            "itemID": 3006,
+            "quality": 3,
+            "weaponType": 2,
+            "skillID": 2,
+            "battleEffectConditionId": 54,
+            "battleEffectConditionDescription": "[PassiveEffect]OnHpChange、概率80%、Buff目标对象1个Self、冷却7秒、持续时间7秒、生命值百分比:[0,0]、Buff权重0.8、Buff增益类型Multiplier",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 7,
+            "weaponName": "单手剑3",
+            "itemID": 3007,
+            "quality": 1,
+            "weaponType": 3,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 8,
+            "weaponName": "单手剑3",
+            "itemID": 3008,
+            "quality": 2,
+            "weaponType": 3,
+            "skillID": 0,
+            "battleEffectConditionId": 55,
+            "battleEffectConditionDescription": "[PassiveEffect]OnMove、概率5%、Buff目标对象1个Self、冷却10秒、持续时间5秒、Buff权重0.5、Buff增益类型Extra",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 9,
+            "weaponName": "单手剑3",
+            "itemID": 3009,
+            "quality": 3,
+            "weaponType": 3,
+            "skillID": 3,
+            "battleEffectConditionId": 56,
+            "battleEffectConditionDescription": "[PassiveEffect]OnMove、概率10%、Buff目标对象1个Self、冷却7秒、持续时间7秒、Buff权重1、Buff增益类型Extra",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 10,
+            "weaponName": "单手剑4",
+            "itemID": 3010,
+            "quality": 1,
+            "weaponType": 4,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 11,
+            "weaponName": "单手剑4",
+            "itemID": 3011,
+            "quality": 2,
+            "weaponType": 4,
+            "skillID": 0,
+            "battleEffectConditionId": 57,
+            "battleEffectConditionDescription": "[PassiveEffect]OnCriticalHit、概率100%、Buff目标对象1个Self、冷却10秒、持续时间5秒、目标类型:Enemy、造成伤害类型:None、造成伤害百分比:[0,0]、造成伤害:[0,0]、伤害来源:None、Buff权重0.3、Buff增益类型Base",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 12,
+            "weaponName": "单手剑4",
+            "itemID": 3012,
+            "quality": 3,
+            "weaponType": 4,
+            "skillID": 4,
+            "battleEffectConditionId": 58,
+            "battleEffectConditionDescription": "[PassiveEffect]OnCriticalHit、概率100%、Buff目标对象1个Self、冷却5秒、持续时间5秒、目标类型:Enemy、造成伤害类型:None、造成伤害百分比:[0,0]、造成伤害:[0,0]、伤害来源:None、Buff权重0.8、Buff增益类型Base",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 13,
+            "weaponName": "单手剑5",
+            "itemID": 3013,
+            "quality": 1,
+            "weaponType": 5,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 14,
+            "weaponName": "单手剑5",
+            "itemID": 3014,
+            "quality": 2,
+            "weaponType": 5,
+            "skillID": 0,
+            "battleEffectConditionId": 59,
+            "battleEffectConditionDescription": "[PassiveEffect]OnAttackHit、概率50%、Buff目标对象1个Self、冷却10秒、持续时间7秒、目标类型:Enemy、造成伤害百分比:[0,0]、造成伤害:[0,0]、攻击范围:None、Buff权重0.3、Buff增益类型Multiplier",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 15,
+            "weaponName": "单手剑5",
+            "itemID": 3015,
+            "quality": 3,
+            "weaponType": 5,
+            "skillID": 5,
+            "battleEffectConditionId": 60,
+            "battleEffectConditionDescription": "[PassiveEffect]OnAttackHit、概率70%、Buff目标对象1个Self、冷却7秒、持续时间10秒、目标类型:Enemy、造成伤害百分比:[0,0]、造成伤害:[0,0]、攻击范围:None、Buff权重0.85、Buff增益类型Multiplier",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 16,
+            "weaponName": "单手剑5",
+            "itemID": 3016,
+            "quality": 3,
+            "weaponType": 5,
+            "skillID": 5,
+            "battleEffectConditionId": 61,
+            "battleEffectConditionDescription": "[PassiveEffect]OnAttackHit、概率50%、Buff目标对象1个Self、冷却7秒、持续时间7秒、目标类型:Enemy、造成伤害百分比:[20%,20%]、造成伤害:[0,0]、攻击范围:None、Buff权重1、Buff增益类型Multiplier",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 17,
+            "weaponName": "单手剑6",
+            "itemID": 3017,
+            "quality": 1,
+            "weaponType": 6,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 18,
+            "weaponName": "单手剑6",
+            "itemID": 3018,
+            "quality": 2,
+            "weaponType": 6,
+            "skillID": 0,
+            "battleEffectConditionId": 62,
+            "battleEffectConditionDescription": "[PassiveEffect]OnAttack、概率20%、Buff目标对象1个Self、冷却10秒、持续时间5秒、攻击力:0、攻击范围:None、Buff权重0.4、Buff增益类型Base",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 19,
+            "weaponName": "单手剑6",
+            "itemID": 3019,
+            "quality": 3,
+            "weaponType": 6,
+            "skillID": 6,
+            "battleEffectConditionId": 63,
+            "battleEffectConditionDescription": "[PassiveEffect]OnAttack、概率40%、Buff目标对象1个Self、冷却8秒、持续时间5秒、攻击力:0、攻击范围:None、Buff权重0.85、Buff增益类型Base",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 20,
+            "weaponName": "单手剑7",
+            "itemID": 3020,
+            "quality": 1,
+            "weaponType": 7,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 21,
+            "weaponName": "单手剑7",
+            "itemID": 3021,
+            "quality": 2,
+            "weaponType": 7,
+            "skillID": 0,
+            "battleEffectConditionId": 64,
+            "battleEffectConditionDescription": "[PassiveEffect]OnSkillHit、概率80%、Buff目标对象1个Self、冷却10秒、持续时间5秒、目标类型:None、技能类型:None、消耗MP百分比:[0,0]、造成伤害百分比:[0,0]、造成伤害:[0,0]、Buff权重0.3、Buff增益类型Multiplier",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 22,
+            "weaponName": "单手剑7",
+            "itemID": 3022,
+            "quality": 3,
+            "weaponType": 7,
+            "skillID": 7,
+            "battleEffectConditionId": 65,
+            "battleEffectConditionDescription": "[PassiveEffect]OnSkillHit、概率100%、Buff目标对象1个Self、冷却10秒、持续时间7.5秒、目标类型:None、技能类型:None、消耗MP百分比:[0,0]、造成伤害百分比:[0,0]、造成伤害:[0,0]、Buff权重0.8、Buff增益类型Multiplier",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 23,
+            "weaponName": "单手剑8",
+            "itemID": 3023,
+            "quality": 1,
+            "weaponType": 8,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 24,
+            "weaponName": "单手剑8",
+            "itemID": 3024,
+            "quality": 2,
+            "weaponType": 8,
+            "skillID": 0,
+            "battleEffectConditionId": 66,
+            "battleEffectConditionDescription": "[PassiveEffect]OnSkillCast、概率50%、Buff目标对象1个Self、冷却10秒、持续时间5秒、技能类型:None、消耗MP百分比:[0,0]、Buff权重0.35、Buff增益类型Multiplier",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 25,
+            "weaponName": "单手剑8",
+            "itemID": 3025,
+            "quality": 3,
+            "weaponType": 8,
+            "skillID": 8,
+            "battleEffectConditionId": 67,
+            "battleEffectConditionDescription": "[PassiveEffect]OnSkillCast、概率80%、Buff目标对象1个Self、冷却5秒、持续时间5秒、技能类型:None、消耗MP百分比:[0,0]、Buff权重0.8、Buff增益类型Multiplier",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 26,
+            "weaponName": "单手剑9",
+            "itemID": 3026,
+            "quality": 1,
+            "weaponType": 9,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 27,
+            "weaponName": "单手剑9",
+            "itemID": 3027,
+            "quality": 2,
+            "weaponType": 9,
+            "skillID": 0,
+            "battleEffectConditionId": 68,
+            "battleEffectConditionDescription": "[PassiveEffect]OnTakeDamage、概率50%、Buff目标对象1个Self、冷却10秒、持续时间5秒、受到伤害类型:None、受到伤害百分比:[0,0]、受到伤害:[0,0]、伤害来源:None、Buff权重0.35、Buff增益类型Multiplier",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 28,
+            "weaponName": "单手剑9",
+            "itemID": 3028,
+            "quality": 2,
+            "weaponType": 9,
+            "skillID": 0,
+            "battleEffectConditionId": 69,
+            "battleEffectConditionDescription": "[PassiveEffect]OnTakeDamage、概率100%、Buff目标对象1个Self、冷却10秒、持续时间5秒、受到伤害类型:None、受到伤害百分比:[30%,30%]、受到伤害:[0,0]、伤害来源:None、Buff权重0.35、Buff增益类型Multiplier",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 29,
+            "weaponName": "单手剑9",
+            "itemID": 3029,
+            "quality": 3,
+            "weaponType": 9,
+            "skillID": 9,
+            "battleEffectConditionId": 70,
+            "battleEffectConditionDescription": "[PassiveEffect]OnTakeDamage、概率50%、Buff目标对象1个Self、冷却10秒、持续时间5秒、受到伤害类型:None、受到伤害百分比:[0,0]、受到伤害:[0,0]、伤害来源:None、Buff权重0.8、Buff增益类型Multiplier",
+            "prefabName": ""
+        },
+        {
+            "weaponID": 30,
+            "weaponName": "单手剑9",
+            "itemID": 3030,
+            "quality": 3,
+            "weaponType": 9,
+            "skillID": 9,
+            "battleEffectConditionId": 71,
+            "battleEffectConditionDescription": "[PassiveEffect]OnTakeDamage、概率100%、Buff目标对象1个Self、冷却10秒、持续时间10秒、受到伤害类型:None、受到伤害百分比:[20%,20%]、受到伤害:[0,0]、伤害来源:None、Buff权重0.8、Buff增益类型Multiplier",
+            "prefabName": ""
+        }
+    ],
+    "constantBuffConfig": {
+        "instanceID": 40746
+    },
+    "battleEffectConditionConfig": {
+        "instanceID": 40748
+    }
+}

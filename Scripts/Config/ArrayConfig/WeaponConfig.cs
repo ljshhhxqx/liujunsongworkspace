@@ -93,6 +93,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 weaponConfig.quality = (QualityType)Enum.Parse(typeof(QualityType), data[5]);
                 weaponConfig.battleEffectConditionId = int.Parse(data[6]);
                 weaponConfig.battleEffectConditionDescription = data[7];
+                weaponConfig.prefabName = data[8];
                 weaponConfigData.Add(weaponConfig);
             }
         }
@@ -202,6 +203,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         public int skillID;
         public int battleEffectConditionId;
         public string battleEffectConditionDescription;
+        public string prefabName;
     }
 
     //默认值

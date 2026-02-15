@@ -265,9 +265,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         case PropertyTypeEnum.Alpha:
                             playerController.RpcSetPlayerAlpha(propertyValue.CurrentValue);
                             break;
-                        case PropertyTypeEnum.View:
-                            //playerController.RpcPlayEffect();
-                            break;
+                        // case PropertyTypeEnum.View:
+                        //     playerController.RpcSetPlayerView();
+                        //     break;
                     }
                 }
                 playerController.RpcSetPlayerInfo(health, mana, maxHealth, maxMana, playerController.netId, playerName);

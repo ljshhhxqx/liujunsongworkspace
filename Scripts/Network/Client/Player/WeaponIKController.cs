@@ -1,4 +1,5 @@
-﻿using UniRx;
+﻿using HotUpdate.Scripts.Network.PredictSystem.Calculator;
+using UniRx;
 using UnityEngine;
 using AnimationState = AOTScripts.Data.AnimationState;
 
@@ -10,7 +11,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
         private Animator animator;
         [SerializeField]
         private Transform rightHandIKTarget;
-        private WeaponComponent _weaponComponent;
+        private PlayerAnimationCalculator _playerAnimationCalculator;
 
         [Header("IK Weights")]
         [Range(0, 1)]
@@ -20,31 +21,33 @@ namespace HotUpdate.Scripts.Network.Client.Player
         [SerializeField]
         private float rotationWeight = 1.0f;
         private const float MaxWeight = 1.0f;
-        private IReadOnlyReactiveProperty<AnimationState> _animationState;
-
-        private void Start()
-        {
-            var animatorController = GetComponent<PlayerAnimationComponent>();
-            _weaponComponent = rightHandIKTarget.GetComponentInChildren<WeaponComponent>();
-            if (animatorController)
-            {
-                _animationState = animatorController.CurrentState;
-            }
-        }
+        private GameObject _weapon;
 
         private void OnAnimatorIK(int layerIndex)
         {
-            if (animator && _weaponComponent && _animationState != null)
+            if (animator && rightHandIKTarget && _playerAnimationCalculator != null)
             {
-                // 设置右手 IK 目标的位置和旋转
-                if (rightHandIKTarget)
-                {
-                    animator.SetIKPosition(AvatarIKGoal.RightHand, rightHandIKTarget.position);
-                    animator.SetIKRotation(AvatarIKGoal.RightHand, rightHandIKTarget.rotation);
-                    animator.SetIKPositionWeight(AvatarIKGoal.RightHand, _animationState.Value == AnimationState.Attack ? MaxWeight : positionWeight);
-                    animator.SetIKRotationWeight(AvatarIKGoal.RightHand, _animationState.Value == AnimationState.Attack ? MaxWeight : rotationWeight);
-                }
+                animator.SetIKPosition(AvatarIKGoal.RightHand, rightHandIKTarget.position);
+                animator.SetIKRotation(AvatarIKGoal.RightHand, rightHandIKTarget.rotation);
+                animator.SetIKPositionWeight(AvatarIKGoal.RightHand, _playerAnimationCalculator.CurrentAnimationState == AnimationState.Attack ? MaxWeight : positionWeight);
+                animator.SetIKRotationWeight(AvatarIKGoal.RightHand, _playerAnimationCalculator.CurrentAnimationState == AnimationState.Attack ? MaxWeight : rotationWeight);
             }
+        }
+        
+        public void SetPlayerAnimationCalculator(PlayerAnimationCalculator playerAnimationCalculator)
+        {
+            _playerAnimationCalculator = playerAnimationCalculator;
+        }
+
+        public void SetWeapon(GameObject weapon)
+        {
+            if (!weapon)
+            {
+                Destroy(_weapon);
+                _weapon = null;
+            }
+            _weapon = weapon;
+            _weapon.transform.SetParent(rightHandIKTarget);
         }
     }
 }

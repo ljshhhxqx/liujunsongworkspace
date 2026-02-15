@@ -29,6 +29,7 @@ MonoBehaviour:
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
+    prefabName: 
   - weaponID: 2
     weaponName: "\u5355\u624B\u52511"
     itemID: 3002
@@ -37,6 +38,7 @@ MonoBehaviour:
     skillID: 0
     battleEffectConditionId: 51
     battleEffectConditionDescription: "[PassiveEffect]None\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53740\u79D2\u3001\u6301\u7EED\u65F6\u95F4-1\u79D2\u3001Buff\u6743\u91CD0.2\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
+    prefabName: 
   - weaponID: 3
     weaponName: "\u5355\u624B\u52511"
     itemID: 3003
@@ -45,6 +47,7 @@ MonoBehaviour:
     skillID: 1
     battleEffectConditionId: 52
     battleEffectConditionDescription: "[PassiveEffect]None\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53740\u79D2\u3001\u6301\u7EED\u65F6\u95F4-1\u79D2\u3001Buff\u6743\u91CD0.7\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
+    prefabName: 
   - weaponID: 4
     weaponName: "\u5355\u624B\u52512"
     itemID: 3004
@@ -53,6 +56,7 @@ MonoBehaviour:
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
+    prefabName: 
   - weaponID: 5
     weaponName: "\u5355\u624B\u52512"
     itemID: 3005
@@ -61,6 +65,7 @@ MonoBehaviour:
     skillID: 0
     battleEffectConditionId: 53
     battleEffectConditionDescription: "[PassiveEffect]OnHpChange\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u751F\u547D\u503C\u767E\u5206\u6BD4:[0,0]\u3001Buff\u6743\u91CD0.3\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
+    prefabName: 
   - weaponID: 6
     weaponName: "\u5355\u624B\u52512"
     itemID: 3006
@@ -69,6 +74,7 @@ MonoBehaviour:
     skillID: 2
     battleEffectConditionId: 54
     battleEffectConditionDescription: "[PassiveEffect]OnHpChange\u3001\u6982\u738780%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53747\u79D2\u3001\u6301\u7EED\u65F6\u95F47\u79D2\u3001\u751F\u547D\u503C\u767E\u5206\u6BD4:[0,0]\u3001Buff\u6743\u91CD0.8\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
+    prefabName: 
   - weaponID: 7
     weaponName: "\u5355\u624B\u52513"
     itemID: 3007
@@ -77,6 +83,7 @@ MonoBehaviour:
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
+    prefabName: 
   - weaponID: 8
     weaponName: "\u5355\u624B\u52513"
     itemID: 3008
@@ -85,6 +92,7 @@ MonoBehaviour:
     skillID: 0
     battleEffectConditionId: 55
     battleEffectConditionDescription: "[PassiveEffect]OnMove\u3001\u6982\u73875%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001Buff\u6743\u91CD0.5\u3001Buff\u589E\u76CA\u7C7B\u578BExtra"
+    prefabName: 
   - weaponID: 9
     weaponName: "\u5355\u624B\u52513"
     itemID: 3009
@@ -93,6 +101,7 @@ MonoBehaviour:
     skillID: 3
     battleEffectConditionId: 56
     battleEffectConditionDescription: "[PassiveEffect]OnMove\u3001\u6982\u738710%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53747\u79D2\u3001\u6301\u7EED\u65F6\u95F47\u79D2\u3001Buff\u6743\u91CD1\u3001Buff\u589E\u76CA\u7C7B\u578BExtra"
+    prefabName: 
   - weaponID: 10
     weaponName: "\u5355\u624B\u52514"
     itemID: 3010
@@ -101,6 +110,7 @@ MonoBehaviour:
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
+    prefabName: 
   - weaponID: 11
     weaponName: "\u5355\u624B\u52514"
     itemID: 3011
@@ -109,6 +119,7 @@ MonoBehaviour:
     skillID: 0
     battleEffectConditionId: 57
     battleEffectConditionDescription: "[PassiveEffect]OnCriticalHit\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u76EE\u6807\u7C7B\u578B:Enemy\u3001\u9020\u6210\u4F24\u5BB3\u7C7B\u578B:None\u3001\u9020\u6210\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u9020\u6210\u4F24\u5BB3:[0,0]\u3001\u4F24\u5BB3\u6765\u6E90:None\u3001Buff\u6743\u91CD0.3\u3001Buff\u589E\u76CA\u7C7B\u578BBase"
+    prefabName: 
   - weaponID: 12
     weaponName: "\u5355\u624B\u52514"
     itemID: 3012
@@ -117,6 +128,7 @@ MonoBehaviour:
     skillID: 4
     battleEffectConditionId: 58
     battleEffectConditionDescription: "[PassiveEffect]OnCriticalHit\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53745\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u76EE\u6807\u7C7B\u578B:Enemy\u3001\u9020\u6210\u4F24\u5BB3\u7C7B\u578B:None\u3001\u9020\u6210\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u9020\u6210\u4F24\u5BB3:[0,0]\u3001\u4F24\u5BB3\u6765\u6E90:None\u3001Buff\u6743\u91CD0.8\u3001Buff\u589E\u76CA\u7C7B\u578BBase"
+    prefabName: 
   - weaponID: 13
     weaponName: "\u5355\u624B\u52515"
     itemID: 3013
@@ -125,6 +137,7 @@ MonoBehaviour:
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
+    prefabName: 
   - weaponID: 14
     weaponName: "\u5355\u624B\u52515"
     itemID: 3014
@@ -133,6 +146,7 @@ MonoBehaviour:
     skillID: 0
     battleEffectConditionId: 59
     battleEffectConditionDescription: "[PassiveEffect]OnAttackHit\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F47\u79D2\u3001\u76EE\u6807\u7C7B\u578B:Enemy\u3001\u9020\u6210\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u9020\u6210\u4F24\u5BB3:[0,0]\u3001\u653B\u51FB\u8303\u56F4:None\u3001Buff\u6743\u91CD0.3\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
+    prefabName: 
   - weaponID: 15
     weaponName: "\u5355\u624B\u52515"
     itemID: 3015
@@ -141,6 +155,7 @@ MonoBehaviour:
     skillID: 5
     battleEffectConditionId: 60
     battleEffectConditionDescription: "[PassiveEffect]OnAttackHit\u3001\u6982\u738770%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53747\u79D2\u3001\u6301\u7EED\u65F6\u95F410\u79D2\u3001\u76EE\u6807\u7C7B\u578B:Enemy\u3001\u9020\u6210\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u9020\u6210\u4F24\u5BB3:[0,0]\u3001\u653B\u51FB\u8303\u56F4:None\u3001Buff\u6743\u91CD0.85\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
+    prefabName: 
   - weaponID: 16
     weaponName: "\u5355\u624B\u52515"
     itemID: 3016
@@ -149,6 +164,7 @@ MonoBehaviour:
     skillID: 5
     battleEffectConditionId: 61
     battleEffectConditionDescription: "[PassiveEffect]OnAttackHit\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53747\u79D2\u3001\u6301\u7EED\u65F6\u95F47\u79D2\u3001\u76EE\u6807\u7C7B\u578B:Enemy\u3001\u9020\u6210\u4F24\u5BB3\u767E\u5206\u6BD4:[20%,20%]\u3001\u9020\u6210\u4F24\u5BB3:[0,0]\u3001\u653B\u51FB\u8303\u56F4:None\u3001Buff\u6743\u91CD1\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
+    prefabName: 
   - weaponID: 17
     weaponName: "\u5355\u624B\u52516"
     itemID: 3017
@@ -157,6 +173,7 @@ MonoBehaviour:
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
+    prefabName: 
   - weaponID: 18
     weaponName: "\u5355\u624B\u52516"
     itemID: 3018
@@ -165,6 +182,7 @@ MonoBehaviour:
     skillID: 0
     battleEffectConditionId: 62
     battleEffectConditionDescription: "[PassiveEffect]OnAttack\u3001\u6982\u738720%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u653B\u51FB\u529B:0\u3001\u653B\u51FB\u8303\u56F4:None\u3001Buff\u6743\u91CD0.4\u3001Buff\u589E\u76CA\u7C7B\u578BBase"
+    prefabName: 
   - weaponID: 19
     weaponName: "\u5355\u624B\u52516"
     itemID: 3019
@@ -173,6 +191,7 @@ MonoBehaviour:
     skillID: 6
     battleEffectConditionId: 63
     battleEffectConditionDescription: "[PassiveEffect]OnAttack\u3001\u6982\u738740%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53748\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u653B\u51FB\u529B:0\u3001\u653B\u51FB\u8303\u56F4:None\u3001Buff\u6743\u91CD0.85\u3001Buff\u589E\u76CA\u7C7B\u578BBase"
+    prefabName: 
   - weaponID: 20
     weaponName: "\u5355\u624B\u52517"
     itemID: 3020
@@ -181,6 +200,7 @@ MonoBehaviour:
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
+    prefabName: 
   - weaponID: 21
     weaponName: "\u5355\u624B\u52517"
     itemID: 3021
@@ -189,6 +209,7 @@ MonoBehaviour:
     skillID: 0
     battleEffectConditionId: 64
     battleEffectConditionDescription: "[PassiveEffect]OnSkillHit\u3001\u6982\u738780%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u76EE\u6807\u7C7B\u578B:None\u3001\u6280\u80FD\u7C7B\u578B:None\u3001\u6D88\u8017MP\u767E\u5206\u6BD4:[0,0]\u3001\u9020\u6210\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u9020\u6210\u4F24\u5BB3:[0,0]\u3001Buff\u6743\u91CD0.3\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
+    prefabName: 
   - weaponID: 22
     weaponName: "\u5355\u624B\u52517"
     itemID: 3022
@@ -197,6 +218,7 @@ MonoBehaviour:
     skillID: 7
     battleEffectConditionId: 65
     battleEffectConditionDescription: "[PassiveEffect]OnSkillHit\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F47.5\u79D2\u3001\u76EE\u6807\u7C7B\u578B:None\u3001\u6280\u80FD\u7C7B\u578B:None\u3001\u6D88\u8017MP\u767E\u5206\u6BD4:[0,0]\u3001\u9020\u6210\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u9020\u6210\u4F24\u5BB3:[0,0]\u3001Buff\u6743\u91CD0.8\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
+    prefabName: 
   - weaponID: 23
     weaponName: "\u5355\u624B\u52518"
     itemID: 3023
@@ -205,6 +227,7 @@ MonoBehaviour:
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
+    prefabName: 
   - weaponID: 24
     weaponName: "\u5355\u624B\u52518"
     itemID: 3024
@@ -213,6 +236,7 @@ MonoBehaviour:
     skillID: 0
     battleEffectConditionId: 66
     battleEffectConditionDescription: "[PassiveEffect]OnSkillCast\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u6280\u80FD\u7C7B\u578B:None\u3001\u6D88\u8017MP\u767E\u5206\u6BD4:[0,0]\u3001Buff\u6743\u91CD0.35\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
+    prefabName: 
   - weaponID: 25
     weaponName: "\u5355\u624B\u52518"
     itemID: 3025
@@ -221,6 +245,7 @@ MonoBehaviour:
     skillID: 8
     battleEffectConditionId: 67
     battleEffectConditionDescription: "[PassiveEffect]OnSkillCast\u3001\u6982\u738780%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53745\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u6280\u80FD\u7C7B\u578B:None\u3001\u6D88\u8017MP\u767E\u5206\u6BD4:[0,0]\u3001Buff\u6743\u91CD0.8\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
+    prefabName: 
   - weaponID: 26
     weaponName: "\u5355\u624B\u52519"
     itemID: 3026
@@ -229,6 +254,7 @@ MonoBehaviour:
     skillID: 0
     battleEffectConditionId: 0
     battleEffectConditionDescription: 0
+    prefabName: 
   - weaponID: 27
     weaponName: "\u5355\u624B\u52519"
     itemID: 3027
@@ -237,6 +263,7 @@ MonoBehaviour:
     skillID: 0
     battleEffectConditionId: 68
     battleEffectConditionDescription: "[PassiveEffect]OnTakeDamage\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u53D7\u5230\u4F24\u5BB3\u7C7B\u578B:None\u3001\u53D7\u5230\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u53D7\u5230\u4F24\u5BB3:[0,0]\u3001\u4F24\u5BB3\u6765\u6E90:None\u3001Buff\u6743\u91CD0.35\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
+    prefabName: 
   - weaponID: 28
     weaponName: "\u5355\u624B\u52519"
     itemID: 3028
@@ -245,6 +272,7 @@ MonoBehaviour:
     skillID: 0
     battleEffectConditionId: 69
     battleEffectConditionDescription: "[PassiveEffect]OnTakeDamage\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u53D7\u5230\u4F24\u5BB3\u7C7B\u578B:None\u3001\u53D7\u5230\u4F24\u5BB3\u767E\u5206\u6BD4:[30%,30%]\u3001\u53D7\u5230\u4F24\u5BB3:[0,0]\u3001\u4F24\u5BB3\u6765\u6E90:None\u3001Buff\u6743\u91CD0.35\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
+    prefabName: 
   - weaponID: 29
     weaponName: "\u5355\u624B\u52519"
     itemID: 3029
@@ -253,6 +281,7 @@ MonoBehaviour:
     skillID: 9
     battleEffectConditionId: 70
     battleEffectConditionDescription: "[PassiveEffect]OnTakeDamage\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u53D7\u5230\u4F24\u5BB3\u7C7B\u578B:None\u3001\u53D7\u5230\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u53D7\u5230\u4F24\u5BB3:[0,0]\u3001\u4F24\u5BB3\u6765\u6E90:None\u3001Buff\u6743\u91CD0.8\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
+    prefabName: 
   - weaponID: 30
     weaponName: "\u5355\u624B\u52519"
     itemID: 3030
@@ -261,29 +290,6 @@ MonoBehaviour:
     skillID: 9
     battleEffectConditionId: 71
     battleEffectConditionDescription: "[PassiveEffect]OnTakeDamage\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F410\u79D2\u3001\u53D7\u5230\u4F24\u5BB3\u7C7B\u578B:None\u3001\u53D7\u5230\u4F24\u5BB3\u767E\u5206\u6BD4:[20%,20%]\u3001\u53D7\u5230\u4F24\u5BB3:[0,0]\u3001\u4F24\u5BB3\u6765\u6E90:None\u3001Buff\u6743\u91CD0.8\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
-  - weaponID: 31
-    weaponName: "\u5355\u624B\u525110"
-    itemID: 3031
-    quality: 1
-    weaponType: 10
-    skillID: 0
-    battleEffectConditionId: 0
-    battleEffectConditionDescription: 0
-  - weaponID: 32
-    weaponName: "\u5355\u624B\u525110"
-    itemID: 3032
-    quality: 2
-    weaponType: 10
-    skillID: 0
-    battleEffectConditionId: 72
-    battleEffectConditionDescription: "[PassiveEffect]OnKill\u3001\u6982\u738780%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2AEnemy\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F410\u79D2\u3001\u76EE\u6807\u7C7B\u578B:Enemy\u3001\u51FB\u6740\u76EE\u6807\u6570\u91CF:1\u3001\u65F6\u95F4\u7A97\u53E3:0\u3001Buff\u6743\u91CD0.4\u3001Buff\u589E\u76CA\u7C7B\u578BCorrectionFactor"
-  - weaponID: 33
-    weaponName: "\u5355\u624B\u525110"
-    itemID: 3033
-    quality: 3
-    weaponType: 10
-    skillID: 10
-    battleEffectConditionId: 73
-    battleEffectConditionDescription: "[PassiveEffect]OnKill\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2AEnemy\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F410\u79D2\u3001\u76EE\u6807\u7C7B\u578B:Enemy\u3001\u51FB\u6740\u76EE\u6807\u6570\u91CF:1\u3001\u65F6\u95F4\u7A97\u53E3:0\u3001Buff\u6743\u91CD0.9\u3001Buff\u589E\u76CA\u7C7B\u578BCorrectionFactor"
+    prefabName: 
   constantBuffConfig: {fileID: 11400000, guid: 35e3c4f0b7f37c746b61bfdd3070e326, type: 2}
   battleEffectConditionConfig: {fileID: 11400000, guid: 89287f01766e3ba4ba3c1f0a507c3975, type: 2}

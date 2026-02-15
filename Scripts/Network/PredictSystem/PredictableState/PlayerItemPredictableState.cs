@@ -54,7 +54,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             if (CurrentState is not PlayerItemState playerItemState)
             {
-                return default;
+                return null;
             }
             return playerItemState;
         }

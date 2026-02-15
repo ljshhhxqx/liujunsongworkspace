@@ -14,6 +14,7 @@ using HotUpdate.Scripts.Effect;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Map;
+using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
@@ -137,6 +138,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private KeyframeComboCooldown _attackAnimationCooldown;       
         private PlayerInGameManager _playerInGameManager;
         private NetworkEndHandler _networkEndHandler;
+        private WeaponIKController _weaponIKController;
         private Picker _picker;
         public IColliderConfig ColliderConfig { get; private set; }
 
@@ -677,7 +679,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 var playerHpShowOverlay = _uiManager.SwitchUI<PlayerHpShowOverlay>();
                 playerHpShowOverlay.BindPlayersHp(UIPropertyBinder.GetReactiveDictionary<PlayerHpItemData>(_playerTraceOtherPlayerHpBindKey), followData);
             }
-            _uiHoleOverlay.gameObject.SetActive(false);
 
             _uiManager.SwitchUI<TargetShowOverlay>();
             _uiManager.SwitchUI<Minimap>(ui =>
@@ -965,6 +966,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             var constant = PlayerSkillCalculator.Constant;
             constant.IsServer = isServer;
             PlayerSkillCalculator.SetConstant(constant);
+            _weaponIKController = GetComponent<WeaponIKController>();
+            _weaponIKController.SetPlayerAnimationCalculator(_playerAnimationCalculator);
         }
 
         private void OnAttack(int stage)
@@ -1276,6 +1279,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             var actualAlpha = alpha * 0.001f;
             if(Mathf.Approximately(actualAlpha, 1))
                 return;
+            
+            Debug.Log($"RpcSetPlayerAlpha: {alpha}");
             playerControlEffect.SetTransparency( 1 -actualAlpha);
         }
 

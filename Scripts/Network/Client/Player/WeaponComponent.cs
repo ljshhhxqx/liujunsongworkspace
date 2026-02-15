@@ -8,31 +8,10 @@ using UnityEngine;
 
 namespace HotUpdate.Scripts.Network.Client.Player
 {
+    /// <summary>
+    /// 负责拿武器并改变武器样貌
+    /// </summary>
     public class WeaponComponent : NetworkBehaviour
     {
-        [SerializeField] 
-        private WeaponType weaponType;
-
-        private void Reset()
-        {
-            ChangeWeaponType();
-        }
-
-        private void ChangeWeaponType()
-        {
-            if (!name.IsNullOrWhitespace())
-            {
-                var splitType = name.Split('_');
-                foreach (var type in splitType)
-                {
-                    if (Enum.TryParse(type, out WeaponType result))
-                    {
-                        weaponType = result;
-                        return;
-                    }
-                }
-                Debug.LogError($"WeaponType转换失败 {splitType}");
-            }
-        }
     }
 }
