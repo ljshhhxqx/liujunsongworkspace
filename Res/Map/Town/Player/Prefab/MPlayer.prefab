@@ -8063,7 +8063,10 @@ MonoBehaviour:
   animator: {fileID: 7780707582190085363}
   rightHandIKTarget: {fileID: 80366730537133186}
   positionWeight: 0.207
-  rotationWeight: 0.22
+  rotationWeight: 0.351
+  weaponOffset: {x: -0.043, y: 0.103, z: -0.044}
+  weaponRotation: {x: 0.26759422, y: 0.7702359, z: 0.028492011, w: 0.57820255}
+  weaponScale: 0.7
 --- !u!114 &3106744384954794610
 MonoBehaviour:
   m_ObjectHideFlags: 0

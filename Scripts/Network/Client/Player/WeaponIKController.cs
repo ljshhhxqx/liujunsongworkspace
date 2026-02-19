@@ -20,6 +20,12 @@ namespace HotUpdate.Scripts.Network.Client.Player
         [Range(0, 1)]
         [SerializeField]
         private float rotationWeight = 1.0f;
+        [SerializeField]
+        private Vector3 weaponOffset;
+        [SerializeField]
+        private Quaternion weaponRotation;
+        [SerializeField]
+        private float weaponScale;
         private const float MaxWeight = 1.0f;
         private GameObject _weapon;
 
@@ -43,11 +49,19 @@ namespace HotUpdate.Scripts.Network.Client.Player
         {
             if (!weapon)
             {
-                Destroy(_weapon);
-                _weapon = null;
+                if (_weapon)
+                {
+                    Destroy(_weapon);
+                    _weapon = null;
+                }
+                return;
             }
-            _weapon = weapon;
-            _weapon.transform.SetParent(rightHandIKTarget);
+            Debug.Log($"SetWeapon ---- {weapon.name}");
+            var go = Instantiate(weapon, rightHandIKTarget.position, Quaternion.identity, rightHandIKTarget);
+            go.transform.localPosition = weaponOffset;
+            go.transform.localRotation = weaponRotation;
+            go.transform.localScale = Vector3.one * weaponScale;
+            _weapon = go;
         }
     }
 }

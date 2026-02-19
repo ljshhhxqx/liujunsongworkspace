@@ -30,6 +30,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         public void SetHoleMaterial(float radius, float alpha)
         {
+            //Debug.Log($"[uihole] SetHoleMaterial: radius:{radius}, alpha:{alpha}");
             _holeMaterial.SetFloat(HoleRadius, radius);
             _holeMaterial.SetFloat(HoleAlpha, alpha);
         }

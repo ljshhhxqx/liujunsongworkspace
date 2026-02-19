@@ -45,7 +45,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 {
                     isWeaponEquipped = true;
                     weaponConfigData =  _weaponConfig.GetWeaponConfigData(data.EquipConfigId);
-                    _currentWeaponType = _weaponConfigData.weaponType;
+                    _currentWeaponType = weaponConfigData.weaponType;
                 }
             }
 

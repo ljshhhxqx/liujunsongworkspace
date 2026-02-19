@@ -20,7 +20,7 @@
             "skillID": 0,
             "battleEffectConditionId": 0,
             "battleEffectConditionDescription": "0",
-            "prefabName": ""
+            "prefabName": "Sword1_Gold"
         },
         {
             "weaponID": 2,
@@ -31,7 +31,7 @@
             "skillID": 0,
             "battleEffectConditionId": 51,
             "battleEffectConditionDescription": "[PassiveEffect]None、概率100%、Buff目标对象1个Self、冷却0秒、持续时间-1秒、Buff权重0.2、Buff增益类型Multiplier",
-            "prefabName": ""
+            "prefabName": "Sword1_Sliver"
         },
         {
             "weaponID": 3,
@@ -42,7 +42,7 @@
             "skillID": 1,
             "battleEffectConditionId": 52,
             "battleEffectConditionDescription": "[PassiveEffect]None、概率100%、Buff目标对象1个Self、冷却0秒、持续时间-1秒、Buff权重0.7、Buff增益类型Multiplier",
-            "prefabName": ""
+            "prefabName": "Sword1_Gold"
         },
         {
             "weaponID": 4,
@@ -53,7 +53,7 @@
             "skillID": 0,
             "battleEffectConditionId": 0,
             "battleEffectConditionDescription": "0",
-            "prefabName": ""
+            "prefabName": "Sword2_Green"
         },
         {
             "weaponID": 5,
@@ -64,7 +64,7 @@
             "skillID": 0,
             "battleEffectConditionId": 53,
             "battleEffectConditionDescription": "[PassiveEffect]OnHpChange、概率50%、Buff目标对象1个Self、冷却10秒、持续时间5秒、生命值百分比:[0,0]、Buff权重0.3、Buff增益类型Multiplier",
-            "prefabName": ""
+            "prefabName": "Sword2_Red"
         },
         {
             "weaponID": 6,
@@ -75,7 +75,7 @@
             "skillID": 2,
             "battleEffectConditionId": 54,
             "battleEffectConditionDescription": "[PassiveEffect]OnHpChange、概率80%、Buff目标对象1个Self、冷却7秒、持续时间7秒、生命值百分比:[0,0]、Buff权重0.8、Buff增益类型Multiplier",
-            "prefabName": ""
+            "prefabName": "Sword2_Yellow"
         },
         {
             "weaponID": 7,
@@ -86,7 +86,7 @@
             "skillID": 0,
             "battleEffectConditionId": 0,
             "battleEffectConditionDescription": "0",
-            "prefabName": ""
+            "prefabName": "Sword3_Green"
         },
         {
             "weaponID": 8,
@@ -97,7 +97,7 @@
             "skillID": 0,
             "battleEffectConditionId": 55,
             "battleEffectConditionDescription": "[PassiveEffect]OnMove、概率5%、Buff目标对象1个Self、冷却10秒、持续时间5秒、Buff权重0.5、Buff增益类型Extra",
-            "prefabName": ""
+            "prefabName": "Sword3_Blue"
         },
         {
             "weaponID": 9,
@@ -108,7 +108,7 @@
             "skillID": 3,
             "battleEffectConditionId": 56,
             "battleEffectConditionDescription": "[PassiveEffect]OnMove、概率10%、Buff目标对象1个Self、冷却7秒、持续时间7秒、Buff权重1、Buff增益类型Extra",
-            "prefabName": ""
+            "prefabName": "Sword3_Red"
         },
         {
             "weaponID": 10,
@@ -119,7 +119,7 @@
             "skillID": 0,
             "battleEffectConditionId": 0,
             "battleEffectConditionDescription": "0",
-            "prefabName": ""
+            "prefabName": "Sword4_Blue"
         },
         {
             "weaponID": 11,
@@ -130,7 +130,7 @@
             "skillID": 0,
             "battleEffectConditionId": 57,
             "battleEffectConditionDescription": "[PassiveEffect]OnCriticalHit、概率100%、Buff目标对象1个Self、冷却10秒、持续时间5秒、目标类型:Enemy、造成伤害类型:None、造成伤害百分比:[0,0]、造成伤害:[0,0]、伤害来源:None、Buff权重0.3、Buff增益类型Base",
-            "prefabName": ""
+            "prefabName": "Sword4_Red"
         },
         {
             "weaponID": 12,
@@ -141,7 +141,7 @@
             "skillID": 4,
             "battleEffectConditionId": 58,
             "battleEffectConditionDescription": "[PassiveEffect]OnCriticalHit、概率100%、Buff目标对象1个Self、冷却5秒、持续时间5秒、目标类型:Enemy、造成伤害类型:None、造成伤害百分比:[0,0]、造成伤害:[0,0]、伤害来源:None、Buff权重0.8、Buff增益类型Base",
-            "prefabName": ""
+            "prefabName": "Sword4_Yellow"
         },
         {
             "weaponID": 13,
@@ -152,7 +152,7 @@
             "skillID": 0,
             "battleEffectConditionId": 0,
             "battleEffectConditionDescription": "0",
-            "prefabName": ""
+            "prefabName": "Sword5_Blue"
         },
         {
             "weaponID": 14,
@@ -163,7 +163,7 @@
             "skillID": 0,
             "battleEffectConditionId": 59,
             "battleEffectConditionDescription": "[PassiveEffect]OnAttackHit、概率50%、Buff目标对象1个Self、冷却10秒、持续时间7秒、目标类型:Enemy、造成伤害百分比:[0,0]、造成伤害:[0,0]、攻击范围:None、Buff权重0.3、Buff增益类型Multiplier",
-            "prefabName": ""
+            "prefabName": "Sword5_Red"
         },
         {
             "weaponID": 15,
@@ -174,7 +174,7 @@
             "skillID": 5,
             "battleEffectConditionId": 60,
             "battleEffectConditionDescription": "[PassiveEffect]OnAttackHit、概率70%、Buff目标对象1个Self、冷却7秒、持续时间10秒、目标类型:Enemy、造成伤害百分比:[0,0]、造成伤害:[0,0]、攻击范围:None、Buff权重0.85、Buff增益类型Multiplier",
-            "prefabName": ""
+            "prefabName": "Sword5_Gold"
         },
         {
             "weaponID": 16,
@@ -185,7 +185,7 @@
             "skillID": 5,
             "battleEffectConditionId": 61,
             "battleEffectConditionDescription": "[PassiveEffect]OnAttackHit、概率50%、Buff目标对象1个Self、冷却7秒、持续时间7秒、目标类型:Enemy、造成伤害百分比:[20%,20%]、造成伤害:[0,0]、攻击范围:None、Buff权重1、Buff增益类型Multiplier",
-            "prefabName": ""
+            "prefabName": "Sword5_Yellow"
         },
         {
             "weaponID": 17,
@@ -196,7 +196,7 @@
             "skillID": 0,
             "battleEffectConditionId": 0,
             "battleEffectConditionDescription": "0",
-            "prefabName": ""
+            "prefabName": "Sword6_Blue"
         },
         {
             "weaponID": 18,
@@ -207,7 +207,7 @@
             "skillID": 0,
             "battleEffectConditionId": 62,
             "battleEffectConditionDescription": "[PassiveEffect]OnAttack、概率20%、Buff目标对象1个Self、冷却10秒、持续时间5秒、攻击力:0、攻击范围:None、Buff权重0.4、Buff增益类型Base",
-            "prefabName": ""
+            "prefabName": "Sword6_Red"
         },
         {
             "weaponID": 19,
@@ -218,7 +218,7 @@
             "skillID": 6,
             "battleEffectConditionId": 63,
             "battleEffectConditionDescription": "[PassiveEffect]OnAttack、概率40%、Buff目标对象1个Self、冷却8秒、持续时间5秒、攻击力:0、攻击范围:None、Buff权重0.85、Buff增益类型Base",
-            "prefabName": ""
+            "prefabName": "Sword6_Yellow"
         },
         {
             "weaponID": 20,
@@ -229,7 +229,7 @@
             "skillID": 0,
             "battleEffectConditionId": 0,
             "battleEffectConditionDescription": "0",
-            "prefabName": ""
+            "prefabName": "Sword7_Green"
         },
         {
             "weaponID": 21,
@@ -240,7 +240,7 @@
             "skillID": 0,
             "battleEffectConditionId": 64,
             "battleEffectConditionDescription": "[PassiveEffect]OnSkillHit、概率80%、Buff目标对象1个Self、冷却10秒、持续时间5秒、目标类型:None、技能类型:None、消耗MP百分比:[0,0]、造成伤害百分比:[0,0]、造成伤害:[0,0]、Buff权重0.3、Buff增益类型Multiplier",
-            "prefabName": ""
+            "prefabName": "Sword7_Blue"
         },
         {
             "weaponID": 22,
@@ -251,7 +251,7 @@
             "skillID": 7,
             "battleEffectConditionId": 65,
             "battleEffectConditionDescription": "[PassiveEffect]OnSkillHit、概率100%、Buff目标对象1个Self、冷却10秒、持续时间7.5秒、目标类型:None、技能类型:None、消耗MP百分比:[0,0]、造成伤害百分比:[0,0]、造成伤害:[0,0]、Buff权重0.8、Buff增益类型Multiplier",
-            "prefabName": ""
+            "prefabName": "Sword7_Red"
         },
         {
             "weaponID": 23,
@@ -262,7 +262,7 @@
             "skillID": 0,
             "battleEffectConditionId": 0,
             "battleEffectConditionDescription": "0",
-            "prefabName": ""
+            "prefabName": "Sword8_White"
         },
         {
             "weaponID": 24,
@@ -273,7 +273,7 @@
             "skillID": 0,
             "battleEffectConditionId": 66,
             "battleEffectConditionDescription": "[PassiveEffect]OnSkillCast、概率50%、Buff目标对象1个Self、冷却10秒、持续时间5秒、技能类型:None、消耗MP百分比:[0,0]、Buff权重0.35、Buff增益类型Multiplier",
-            "prefabName": ""
+            "prefabName": "Sword8_Corrupted"
         },
         {
             "weaponID": 25,
@@ -284,7 +284,7 @@
             "skillID": 8,
             "battleEffectConditionId": 67,
             "battleEffectConditionDescription": "[PassiveEffect]OnSkillCast、概率80%、Buff目标对象1个Self、冷却5秒、持续时间5秒、技能类型:None、消耗MP百分比:[0,0]、Buff权重0.8、Buff增益类型Multiplier",
-            "prefabName": ""
+            "prefabName": "Sword8_Gold"
         },
         {
             "weaponID": 26,
@@ -295,7 +295,7 @@
             "skillID": 0,
             "battleEffectConditionId": 0,
             "battleEffectConditionDescription": "0",
-            "prefabName": ""
+            "prefabName": "Sword9_White"
         },
         {
             "weaponID": 27,
@@ -306,7 +306,7 @@
             "skillID": 0,
             "battleEffectConditionId": 68,
             "battleEffectConditionDescription": "[PassiveEffect]OnTakeDamage、概率50%、Buff目标对象1个Self、冷却10秒、持续时间5秒、受到伤害类型:None、受到伤害百分比:[0,0]、受到伤害:[0,0]、伤害来源:None、Buff权重0.35、Buff增益类型Multiplier",
-            "prefabName": ""
+            "prefabName": "Sword9_Green"
         },
         {
             "weaponID": 28,
@@ -317,7 +317,7 @@
             "skillID": 0,
             "battleEffectConditionId": 69,
             "battleEffectConditionDescription": "[PassiveEffect]OnTakeDamage、概率100%、Buff目标对象1个Self、冷却10秒、持续时间5秒、受到伤害类型:None、受到伤害百分比:[30%,30%]、受到伤害:[0,0]、伤害来源:None、Buff权重0.35、Buff增益类型Multiplier",
-            "prefabName": ""
+            "prefabName": "Sword9_Blue"
         },
         {
             "weaponID": 29,
@@ -328,7 +328,7 @@
             "skillID": 9,
             "battleEffectConditionId": 70,
             "battleEffectConditionDescription": "[PassiveEffect]OnTakeDamage、概率50%、Buff目标对象1个Self、冷却10秒、持续时间5秒、受到伤害类型:None、受到伤害百分比:[0,0]、受到伤害:[0,0]、伤害来源:None、Buff权重0.8、Buff增益类型Multiplier",
-            "prefabName": ""
+            "prefabName": "Sword9_Purple"
         },
         {
             "weaponID": 30,
@@ -339,7 +339,7 @@
             "skillID": 9,
             "battleEffectConditionId": 71,
             "battleEffectConditionDescription": "[PassiveEffect]OnTakeDamage、概率100%、Buff目标对象1个Self、冷却10秒、持续时间10秒、受到伤害类型:None、受到伤害百分比:[20%,20%]、受到伤害:[0,0]、伤害来源:None、Buff权重0.8、Buff增益类型Multiplier",
-            "prefabName": ""
+            "prefabName": "Sword9_Red"
         }
     ],
     "constantBuffConfig": {

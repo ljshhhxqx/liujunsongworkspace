@@ -237,10 +237,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             {
                 var property = kvp.Value;
                 var configData = _propertyConfig.GetPropertyConfigData((PropertyTypeEnum)kvp.Key);
-                if (!configData.showInUI)
-                {
-                    continue;
-                }
                 if (!_uiPropertyData.TryGetValue((int)kvp.Key, out var propertyData))
                 {
                     propertyData = new PropertyItemData
@@ -305,14 +301,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                         goldData.Alpha = property.CurrentValue;
                         break;
                 }
-                // if (data.ConsumeType!= PropertyConsumeType.None)
-                // {
-                //     data.CurrentProperty = property.CurrentValue;
-                //     data.IsPercentage = property.IsPercentage();
-                //     data.IsAutoRecover = isRecover;
-                //     _uiPropertyData[(int)kvp.Key] = data;
-                //     Debug.Log($"uiPropertyData[{kvp.Key}]: {data}");
-                // }
                 if (kvp.Key == PropertyTypeEnum.AttackSpeed)
                 {
                     PlayerComponentController.RpcSetAnimatorSpeed(AnimationState.Attack, property.CurrentValue);
