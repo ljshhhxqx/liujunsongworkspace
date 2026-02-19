@@ -56,7 +56,7 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 }
                 return;
             }
-            Debug.Log($"SetWeapon ---- {weapon.name}");
+            // Debug.Log($"SetWeapon ---- {weapon.name}");
             var go = Instantiate(weapon, rightHandIKTarget.position, Quaternion.identity, rightHandIKTarget);
             go.transform.localPosition = weaponOffset;
             go.transform.localRotation = weaponRotation;

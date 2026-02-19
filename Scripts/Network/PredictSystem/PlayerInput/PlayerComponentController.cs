@@ -259,7 +259,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _propertyConfig = _configProvider.GetConfig<PropertyConfig>();
             GetAllCalculators(configProvider, gameSyncManager);
             HandleAllSyncState();
-            _uiManager.CloseUI(UIType.Main);
         }
 
         private void OnDevelopItemGet(DevelopItemGetEvent developItemGetEvent)

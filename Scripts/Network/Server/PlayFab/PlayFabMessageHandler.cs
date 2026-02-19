@@ -164,7 +164,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         {
             foreach (var message in messages)
             {
-                //Debug.Log($"Processing message {JsonUtility.ToJson(message)}");
+                Debug.Log($"Processing message {JsonUtility.ToJson(message)}");
                 switch (message.displayType)
                 {
                     case (int)DisplayType.Popup:
@@ -286,6 +286,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                             }
                             _uiManager.CloseUI(UIType.PlayerConnect);
                             _uiManager.CloseUI(UIType.Loading);
+                            _uiManager.CloseUI(UIType.Main);
                         }
                         break;
                     default:
