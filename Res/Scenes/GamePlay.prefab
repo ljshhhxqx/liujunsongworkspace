@@ -337,6 +337,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f27a3edd13fe4e33889850de510735a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  screenDivideRatio: 0.5
 --- !u!1 &2773928309172760175
 GameObject:
   m_ObjectHideFlags: 0
@@ -675,6 +676,7 @@ GameObject:
   - component: {fileID: 7417334043322785623}
   - component: {fileID: 7209223841439762443}
   - component: {fileID: 2661418833082528190}
+  - component: {fileID: 1204380913975683561}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -773,6 +775,15 @@ MonoBehaviour:
   evaluationMethod: 0
   evaluationInterval: 3
   timeInterpolationGui: 0
+  discovery: {fileID: 0}
+  cachedGameInfo:
+    roomId: 
+    gameId: 
+    ipAddress: 
+    mapType: 0
+    port: 0
+    playersInfo: []
+  myDuty: 0
 --- !u!114 &7209223841439762443
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -816,6 +827,27 @@ MonoBehaviour:
   debugLog: 0
   statisticsGUI: 0
   statisticsLog: 0
+--- !u!114 &1204380913975683561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5337076116759970323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09f0b68710014cbdb63784d9f8e146c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enableActiveDiscovery: 1
+  BroadcastAddress: 
+  serverBroadcastListenPort: 47777
+  ActiveDiscoveryInterval: 3
+  transport: {fileID: 2661418833082528190}
+  OnServerFound:
+    m_PersistentCalls:
+      m_Calls: []
+  secretHandshake: -8751730772844186824
 --- !u!1 &5971685296137895904
 GameObject:
   m_ObjectHideFlags: 0

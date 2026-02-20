@@ -29,6 +29,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         private bool _isProcessingTest;
         private PlayFabAccountManager _playFabAccountManager;
         private PlayFabRoomManager _playFabRoomManager;
+        private NetworkManagerCustom _networkManager;
         private readonly Dictionary<int, string> _lastMessageIds = new Dictionary<int, string>
         {
             { (int)MessageScope.System, "0-0" },
@@ -262,31 +263,16 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                     case (int) MessageType.GameStartConnection:
                         Debug.Log("GameStartConnection message received");
                         var gameStartConnectionMessage = ConvertToMessageContent<GameStartConnectionMessage>(message.content);
-                        var networkManager = Object.FindObjectOfType<NetworkManagerCustom>();
-                        if (networkManager && gameStartConnectionMessage.targetPlayerInfo.playerId == PlayFabData.PlayFabId.Value)
+                        _networkManager ??= Object.FindObjectOfType<NetworkManagerCustom>();
+                        if (_networkManager && gameStartConnectionMessage.targetPlayerInfo.playerId == PlayFabData.PlayFabId.Value)
                         {
-                            Debug.Log($"Start game connection with {gameStartConnectionMessage.targetPlayerInfo.playerName}--{gameStartConnectionMessage.targetPlayerInfo.playerDuty}");
-                            var duty = (PlayerGameDuty)Enum.Parse(typeof(PlayerGameDuty), gameStartConnectionMessage.targetPlayerInfo.playerDuty);
-                            switch (duty)
-                            {
-                                case PlayerGameDuty.Host:
-                                    networkManager.StartHost();
-                                    _playFabRoomManager.StartServerSuccess();
-                                    Debug.Log("Start host");
-                                    break;
-                                case PlayerGameDuty.Client:
-                                    networkManager.StartClient();
-                                    Debug.Log("Start client");
-                                    break;
-                                case PlayerGameDuty.Server:
-                                    networkManager.StartServer();
-                                    _playFabRoomManager.StartServerSuccess();
-                                    Debug.Log("Start server");
-                                    break;
-                            }
+                            Debug.Log($"收到启动数据: {gameStartConnectionMessage.targetPlayerInfo.playerName} -- {gameStartConnectionMessage.targetPlayerInfo.playerDuty}");
+
+                            _networkManager.StartGameFromCloud(gameStartConnectionMessage);
                             _uiManager.CloseUI(UIType.PlayerConnect);
-                            _uiManager.CloseUI(UIType.Loading);
                             _uiManager.CloseUI(UIType.Main);
+                            _uiManager.CloseUI(UIType.Loading);
+                            _uiManager.CloseUI(UIType.Login);
                         }
                         break;
                     default:

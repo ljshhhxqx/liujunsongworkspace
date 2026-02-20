@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Data;
@@ -40,14 +41,24 @@ namespace HotUpdate.Scripts.Network.Server
         private KcpTransport _transport;
         private MirrorNetworkMessageHandler _mirrorNetworkMessageHandler;
         private PlayFabRoomManager _playFabRoomManager;
-        
+        [Header("Discovery")]
+        private NetworkDiscoveryCustom _discovery;
+
+        [Header("Runtime State")]
+        public MainGameInfo cachedGameInfo;
+        public PlayerGameDuty myDuty;
+        private bool isStartAllowed = false;
         private readonly Dictionary<int, NetworkConnectionToClient> _connectionToClients = new Dictionary<int, NetworkConnectionToClient>();
 
         [Inject]
         private void Init(GameEventManager gameEventManager, UIManager uIManager, IObjectResolver objectResolver,
             PlayerDataManager playerDataManager, IConfigProvider configProvider, PlayFabRoomManager playFabRoomManager, PlayerInGameManager playerInGameManager)
         {
-            _transport = GetComponent<KcpTransport>();
+            if (transport is KcpTransport kcpTransport)
+            {
+                _transport = kcpTransport;
+            }
+            _discovery = GetComponent<NetworkDiscoveryCustom>();
             _playFabRoomManager = playFabRoomManager;
             PropertyTypeReaderWriter.RegisterReaderWriter();
             _gameEventManager = gameEventManager;
@@ -97,6 +108,11 @@ namespace HotUpdate.Scripts.Network.Server
             base.OnClientDisconnect();
             UIPropertyBinder.LocalPlayerId = -1;
             
+            if (myDuty == PlayerGameDuty.Client)
+            {
+                Debug.Log("客户端断线，重新发现服务器");
+                _discovery.StartFindServer(cachedGameInfo.roomId);
+            }
         }
 
         private GameObject SpawnPlayer(int connectionId, NetworkStartPosition spawnPoint)
@@ -212,6 +228,7 @@ namespace HotUpdate.Scripts.Network.Server
                 }
             }).AddTo(this);
 
+            _discovery.StartBroadcast(cachedGameInfo.roomId);
             NetworkServer.ReplaceHandler<MirrorPlayerConnectMessage>(OnServerPlayerAccountIdMessage);
         }
 
@@ -316,5 +333,71 @@ namespace HotUpdate.Scripts.Network.Server
         {
             _gameEventManager.Unsubscribe<GameSceneResourcesLoadedEvent>(OnSceneResourcesLoaded);
         }
+
+        #region 外部调用接口
+
+        
+        public void StartGameFromCloud(GameStartConnectionMessage msg)
+        {
+            cachedGameInfo = msg.mainGameInfo;
+
+            myDuty = (PlayerGameDuty)Enum.Parse(
+                typeof(PlayerGameDuty),
+                msg.targetPlayerInfo.playerDuty
+            );
+            ConfigureTransport();
+
+            StartCoroutine(DelayedStart());
+        }
+
+        #endregion
+
+        #region 启动流程
+
+        private IEnumerator DelayedStart()
+        {
+            yield return new WaitForSeconds(0.5f);
+
+            switch (myDuty)
+            {
+                case PlayerGameDuty.Host:
+                    StartHost();
+                    break;
+
+                case PlayerGameDuty.Server:
+                    StartServer();
+                    break;
+
+                case PlayerGameDuty.Client:
+                    StartClientSmart();
+                    break;
+            }
+        }
+
+        void ConfigureTransport()
+        {
+            if (_transport)
+            {
+                _transport.Port = (ushort)cachedGameInfo.port;
+                Debug.Log($"KCP 端口设置为: {_transport.Port}");
+            }
+        }
+        
+        void StartClientSmart()
+        {
+            if (!string.IsNullOrEmpty(cachedGameInfo.ipAddress))
+            {
+                networkAddress = cachedGameInfo.ipAddress;
+                StartClient();
+                Debug.Log($"客户端直连服务器: {networkAddress}");
+            }
+            else
+            {
+                _discovery.StartFindServer(cachedGameInfo.roomId);
+                Debug.Log("客户端开始局域网发现");
+            }
+        }
+
+        #endregion
     }
 }
