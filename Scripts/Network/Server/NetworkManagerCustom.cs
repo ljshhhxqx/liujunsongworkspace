@@ -361,9 +361,6 @@ namespace HotUpdate.Scripts.Network.Server
         
         public void OnServerReady()
         {
-            if (myDuty != PlayerGameDuty.Client)
-                return;
-
             Debug.Log("服务器已就绪，客户端开始连接");
 
             StartClientSmart();
