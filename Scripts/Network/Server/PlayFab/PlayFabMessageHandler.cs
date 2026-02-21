@@ -263,12 +263,21 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                     case (int) MessageType.GameStartConnection:
                         Debug.Log("GameStartConnection message received");
                         var gameStartConnectionMessage = ConvertToMessageContent<GameStartConnectionMessage>(message.content);
+                        
                         _networkManager ??= Object.FindObjectOfType<NetworkManagerCustom>();
                         if (_networkManager && gameStartConnectionMessage.targetPlayerInfo.playerId == PlayFabData.PlayFabId.Value)
-                        {
-                            Debug.Log($"收到启动数据: {gameStartConnectionMessage.targetPlayerInfo.playerName} -- {gameStartConnectionMessage.targetPlayerInfo.playerDuty}");
-
-                            _networkManager.StartGameFromCloud(gameStartConnectionMessage);
+                        { 
+                            var duty = (PlayerGameDuty)Enum.Parse(typeof(PlayerGameDuty),
+                                gameStartConnectionMessage.targetPlayerInfo.playerDuty);
+                            if (duty == PlayerGameDuty.Client)
+                            {
+                                _networkManager.OnServerReady();
+                            }
+                            else
+                            {
+                                Debug.Log($"收到启动数据: {gameStartConnectionMessage.targetPlayerInfo.playerName} -- {gameStartConnectionMessage.targetPlayerInfo.playerDuty}");
+                                _networkManager.StartGameFromCloud(gameStartConnectionMessage);
+                            }
                             _uiManager.CloseUI(UIType.PlayerConnect);
                             _uiManager.CloseUI(UIType.Main);
                             _uiManager.CloseUI(UIType.Loading);

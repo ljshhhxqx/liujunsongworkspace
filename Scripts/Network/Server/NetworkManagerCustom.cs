@@ -47,7 +47,6 @@ namespace HotUpdate.Scripts.Network.Server
         [Header("Runtime State")]
         public MainGameInfo cachedGameInfo;
         public PlayerGameDuty myDuty;
-        private bool isStartAllowed = false;
         private readonly Dictionary<int, NetworkConnectionToClient> _connectionToClients = new Dictionary<int, NetworkConnectionToClient>();
 
         [Inject]
@@ -209,6 +208,8 @@ namespace HotUpdate.Scripts.Network.Server
         public override void OnStartServer()
         {
             base.OnStartServer();
+            
+            _playFabRoomManager.StartServerSuccess();
             // 监听服务器上的连接和断开事件
             NetworkServer.OnConnectedEvent += HandleServerConnected;
             NetworkServer.OnDisconnectedEvent += HandleServerDisconnected;
@@ -335,8 +336,6 @@ namespace HotUpdate.Scripts.Network.Server
         }
 
         #region 外部调用接口
-
-        
         public void StartGameFromCloud(GameStartConnectionMessage msg)
         {
             cachedGameInfo = msg.mainGameInfo;
@@ -345,34 +344,42 @@ namespace HotUpdate.Scripts.Network.Server
                 typeof(PlayerGameDuty),
                 msg.targetPlayerInfo.playerDuty
             );
+
             ConfigureTransport();
 
-            StartCoroutine(DelayedStart());
+            if (myDuty == PlayerGameDuty.Host ||
+                myDuty == PlayerGameDuty.Server)
+            {
+                StartServerSide();
+            }
+            else
+            {
+                // 客户端等待 ServerReady
+                Debug.Log("客户端等待服务器就绪信号");
+            }
+        }
+        
+        public void OnServerReady()
+        {
+            if (myDuty != PlayerGameDuty.Client)
+                return;
+
+            Debug.Log("服务器已就绪，客户端开始连接");
+
+            StartClientSmart();
+        }
+        
+        void StartServerSide()
+        {
+            if (myDuty == PlayerGameDuty.Host)
+                StartHost();
+            else
+                StartServer();
         }
 
         #endregion
 
         #region 启动流程
-
-        private IEnumerator DelayedStart()
-        {
-            yield return new WaitForSeconds(0.5f);
-
-            switch (myDuty)
-            {
-                case PlayerGameDuty.Host:
-                    StartHost();
-                    break;
-
-                case PlayerGameDuty.Server:
-                    StartServer();
-                    break;
-
-                case PlayerGameDuty.Client:
-                    StartClientSmart();
-                    break;
-            }
-        }
 
         void ConfigureTransport()
         {
