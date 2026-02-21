@@ -513,7 +513,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             {
                 FunctionName = "StartGame",
                 GeneratePlayStreamEvent = true,
-                FunctionParameter = new { ipAddress = "127.0.0.1", port = 7777, roomId = CurrentRoomId },
+                FunctionParameter = new { ipAddress = "", port = 7777, roomId = CurrentRoomId },
                 Entity = PlayFabData.EntityKey.Value,
             };
             _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnStartGameSuccess, OnError);
