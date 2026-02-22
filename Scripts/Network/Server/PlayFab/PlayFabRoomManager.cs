@@ -610,6 +610,12 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                 _uiManager.ShowTips(value.ToString());
             }
         }
+        
+        public void ChangeGameInfo(MainGameInfo gameInfo)
+        { 
+            _currentMainGameInfo = gameInfo;
+            OnGameInfoChanged?.Invoke(gameInfo);
+        }
 
         public void OnChangeGameInfo(ChangeGameInfoMessage changeGameInfoMessage)
         {

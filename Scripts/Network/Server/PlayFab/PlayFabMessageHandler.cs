@@ -60,7 +60,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
 
         private void OnLoginEvent(PlayerListenMessageEvent playerListenMessageEvent)
         {
-            RepeatedTask.Instance.StartRepeatingTask(GetNewMessages, 2.5f);
+            RepeatedTask.Instance.StartRepeatingTask(GetNewMessages, 1.5f);
         }
 
         public void SendMessage(Message message)
@@ -262,8 +262,10 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                         break;
                     case (int) MessageType.GameStartConnection:
                         Debug.Log("GameStartConnection message received");
+                        _uiManager.ShowTips($"所有玩家已经确立职责，游戏开始即将开始！");
                         var gameStartConnectionMessage = ConvertToMessageContent<GameStartConnectionMessage>(message.content);
                         
+                        _playFabRoomManager.ChangeGameInfo(gameStartConnectionMessage.mainGameInfo);
                         _networkManager ??= Object.FindObjectOfType<NetworkManagerCustom>();
                         if (_networkManager && gameStartConnectionMessage.targetPlayerInfo.playerId == PlayFabData.PlayFabId.Value)
                         { 
