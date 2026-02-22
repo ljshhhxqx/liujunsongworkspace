@@ -359,10 +359,11 @@ namespace HotUpdate.Scripts.Network.Server
             }
         }
         
-        public void OnServerReady()
+        public void OnServerReady(GameStartConnectionMessage msg)
         {
             Debug.Log("服务器已就绪，客户端开始连接");
 
+            cachedGameInfo = msg.mainGameInfo;
             StartClientSmart();
         }
         

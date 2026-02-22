@@ -26,11 +26,13 @@ namespace HotUpdate.Scripts.Network.Server
         {
             _connected = false;
             _targetRoomId = roomId;
+            Debug.Log($"开始查找房间服务器: {roomId}");
             StartDiscovery();
         }
 
         protected override DiscoveryRequest GetRequest()
         {
+            Debug.Log($"发送房间服务器查找请求: {_targetRoomId}");
             return new DiscoveryRequest
             {
                 roomId = _targetRoomId
@@ -46,6 +48,7 @@ namespace HotUpdate.Scripts.Network.Server
 
             var uri = transport.ServerUri();
 
+            Debug.Log($"收到房间服务器查找请求: {request.roomId} -- address--{uri.Host}:port--{uri.Port}");
             return new DiscoveryResponse
             {
                 roomId = _targetRoomId,

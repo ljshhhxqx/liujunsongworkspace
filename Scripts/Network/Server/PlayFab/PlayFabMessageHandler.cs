@@ -271,7 +271,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                                 gameStartConnectionMessage.targetPlayerInfo.playerDuty);
                             if (duty == PlayerGameDuty.Client)
                             {
-                                _networkManager.OnServerReady();
+                                _networkManager.OnServerReady(gameStartConnectionMessage);
                             }
                             else
                             {
