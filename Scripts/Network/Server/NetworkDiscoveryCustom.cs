@@ -1,28 +1,11 @@
-﻿using Mirror;
+﻿using System.Net;
+using AOTScripts.Data;
 using Mirror.Discovery;
 using UnityEngine;
-using System;
-using System.Net;
-using kcp2k;
 
 namespace HotUpdate.Scripts.Network.Server
 {
-
-    [Serializable]
-    public struct DiscoveryRequest : NetworkMessage
-    {
-        public string roomId;
-    }
-
-    [Serializable]
-    public struct DiscoveryResponse : NetworkMessage
-    {
-        public string roomId;
-        public Uri uri;
-    }
-
-    public class NetworkDiscoveryCustom 
-        : NetworkDiscoveryBase<DiscoveryRequest, DiscoveryResponse>
+    public class NetworkDiscoveryCustom : NetworkDiscoveryBase<DiscoveryRequest, DiscoveryResponse>
     {
         private bool _connected;
         private string _targetRoomId;
@@ -66,7 +49,8 @@ namespace HotUpdate.Scripts.Network.Server
             return new DiscoveryResponse
             {
                 roomId = _targetRoomId,
-                uri = uri
+                address = uri.Host,
+                port = (ushort)uri.Port
             };
         }
 
