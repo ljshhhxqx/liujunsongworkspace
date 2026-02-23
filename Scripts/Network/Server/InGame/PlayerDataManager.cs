@@ -139,11 +139,15 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         
         public void UpdatePlayerConnectionId(string playerId, int connectionId)
         {
-            var player = _players.Find(p => p.player.PlayerId == playerId);
-            if (player != null)
+            for (int i = 0; i < _players.Count; i++)
             {
-                player.connectionId = connectionId;
+                if (_players[i].player.PlayerId == playerId)
+                {
+                    _players[i].connectionId = connectionId;
+                    return;
+                }
             }
+            Debug.LogError($"Player not found - {playerId}");
         }
 
         // public void InitPlayerProperty(PlayerPropertyComponent playerProperty)
