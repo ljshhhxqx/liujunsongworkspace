@@ -30,6 +30,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         private PlayFabAccountManager _playFabAccountManager;
         private PlayFabRoomManager _playFabRoomManager;
         private NetworkManagerCustom _networkManager;
+        private PlayerGameDuty _playerGameDuty;
         private readonly Dictionary<int, string> _lastMessageIds = new Dictionary<int, string>
         {
             { (int)MessageScope.System, "0-0" },
@@ -60,7 +61,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
 
         private void OnLoginEvent(PlayerListenMessageEvent playerListenMessageEvent)
         {
-            RepeatedTask.Instance.StartRepeatingTask(GetNewMessages, 1.5f);
+            RepeatedTask.Instance.StartRepeatingTask(GetNewMessages, 2f);
         }
 
         public void SendMessage(Message message)
@@ -132,7 +133,8 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         {
             if (result.Error != null)
             {
-                throw new Exception($"{result.Error.Error}-${result.Error.Message}-${result.Error.StackTrace}");
+                Debug.LogError($"{result.Error.Error}-${result.Error.Message}-${result.Error.StackTrace}");
+                return;
             }
             if (!_isProcessingTest)
             {
@@ -254,7 +256,12 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                         break;
                     case (int)MessageType.ChangeGameInfo:
                         var changeGameInfoMessage = ConvertToMessageContent<ChangeGameInfoMessage>(message.content);
-                        _playFabRoomManager.OnChangeGameInfo(changeGameInfoMessage);
+                        var gameInfo =  _playFabRoomManager.OnChangeGameInfo(changeGameInfoMessage);
+                        _playerGameDuty = _playFabRoomManager.GetPlayerGameDuty();
+                        if (_playerGameDuty == PlayerGameDuty.Host || _playerGameDuty == PlayerGameDuty.Server)
+                        {
+                            _playFabRoomManager.TryStartGame();
+                        }
                         break;
                     case (int) MessageType.LeaveGame:
                         var leaveGameMessage = ConvertToMessageContent<LeaveGameMessage>(message.content);
@@ -269,9 +276,9 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                         _networkManager ??= Object.FindObjectOfType<NetworkManagerCustom>();
                         if (_networkManager && gameStartConnectionMessage.targetPlayerInfo.playerId == PlayFabData.PlayFabId.Value)
                         { 
-                            var duty = (PlayerGameDuty)Enum.Parse(typeof(PlayerGameDuty),
+                            _playerGameDuty = (PlayerGameDuty)Enum.Parse(typeof(PlayerGameDuty),
                                 gameStartConnectionMessage.targetPlayerInfo.playerDuty);
-                            if (duty == PlayerGameDuty.Client)
+                            if (_playerGameDuty == PlayerGameDuty.Client)
                             {
                                 _networkManager.OnServerReady(gameStartConnectionMessage);
                             }

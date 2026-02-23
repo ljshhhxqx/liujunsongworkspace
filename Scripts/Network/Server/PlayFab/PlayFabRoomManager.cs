@@ -333,10 +333,14 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
 
         public void OnLeaveRoom(RoomData roomData = default)
         {
-            if (roomData.RoomId == null)
+            if (roomData.RoomId != null)
             {
                 OnPlayerJoined?.Invoke(roomData);
                 Debug.Log("有人退出了房间");
+            }
+            else
+            {
+                
             }
         }
 
@@ -616,8 +620,14 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             _currentMainGameInfo = gameInfo;
             OnGameInfoChanged?.Invoke(gameInfo);
         }
+        
+        public PlayerGameDuty GetPlayerGameDuty()
+        {
+            var dutyEnum = (PlayerGameDuty)Enum.Parse(typeof(PlayerGameDuty), _currentGamePlayerInfo.playerDuty);
+            return dutyEnum;
+        }
 
-        public void OnChangeGameInfo(ChangeGameInfoMessage changeGameInfoMessage)
+        public MainGameInfo OnChangeGameInfo(ChangeGameInfoMessage changeGameInfoMessage)
         {
             for (int i = 0; i < _currentMainGameInfo.playersInfo.Length; i++)
             {
@@ -641,6 +651,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                 PlayFabData.PlayerList.Add(changeGameInfoMessage.gamePlayerInfo);
             }
             OnGameInfoChanged?.Invoke(_currentMainGameInfo);
+            return _currentMainGameInfo;
         }
 
         public void OnLeaveGame(LeaveGameMessage leaveGameMessage)
@@ -659,6 +670,23 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             }
             _currentMainGameInfo = leaveGameMessage.mainGameInfo;
             OnGameInfoChanged?.Invoke(_currentMainGameInfo);
+        }
+
+        public void TryStartGame()
+        {
+            var request = new ExecuteEntityCloudScriptRequest
+            {
+                FunctionName = "GameBegin",
+                GeneratePlayStreamEvent = true,
+                FunctionParameter = new { gameId = _currentMainGameInfo.gameId, playerId = PlayFabData.PlayFabId.Value },
+                Entity = PlayFabData.EntityKey.Value,
+            };
+            _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnGameBegin, OnError);
+        }
+
+        private void OnGameBegin(ExecuteCloudScriptResult result)
+        {
+            var data = result.ParseCloudScriptResultToDic();
         }
 
         public void StartServerSuccess()

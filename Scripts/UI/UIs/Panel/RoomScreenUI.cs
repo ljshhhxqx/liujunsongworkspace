@@ -116,6 +116,11 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                 startButton.interactable = roomInfo.CreatorId == PlayFabData.PlayFabId.Value;
                 roomContentListPrefab.SetItemList(_roomPlayers);
             }
+            else
+            {
+                _uiManager.CloseUI(UIType.RoomScreen);
+                _uiManager.OpenUI(UIType.Main);
+            }
         }
 
         private void OnDestroy()
