@@ -75,6 +75,10 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                     Level = playerInfo.playerLevel,
                     Status =  (PlayerGameStatus)Enum.Parse(typeof(PlayerGameStatus), playerInfo.playerStatus),
                 };
+                if (dict.TryGetValue(playerInfo.id, out var value))
+                {
+                    continue;
+                }
                 dict.Add(playerInfo.id, data);
             }
             contentItemList.SetItemList(dict);
