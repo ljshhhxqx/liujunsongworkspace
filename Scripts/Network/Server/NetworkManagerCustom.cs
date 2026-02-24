@@ -290,7 +290,7 @@ namespace HotUpdate.Scripts.Network.Server
             // 获取当前连接
             NetworkConnection conn = NetworkClient.connection;
             //
-            var msg = new MirrorPlayerConnectMessage("Creator1", conn.connectionId, "asdw", new AotCompressedVector3(), 0);
+            var msg = new MirrorPlayerConnectMessage(PlayFabData.PlayFabId.Value, conn.connectionId, PlayFabData.PlayerReadOnlyData.Value.Nickname, new AotCompressedVector3(), (uint)PlayFabData.PlayerReadOnlyData.Value.Id);
             conn.Send(msg);
             // 发送 PlayerAccountId 给服务器
             // TODO: 取消注释
