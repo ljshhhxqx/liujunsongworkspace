@@ -232,9 +232,9 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
                     return obj;
                 }
             }
-            else
+            else if (NetworkClient.prefabs.TryGetValue(assetId, out var prefab1))
             {
-                prefab = NetworkClient.prefabs[assetId];
+                prefab = prefab1;
                 _prefabDictionary.Add(assetId, prefab);
             }
         

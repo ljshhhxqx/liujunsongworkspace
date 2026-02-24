@@ -775,7 +775,6 @@ MonoBehaviour:
   evaluationMethod: 0
   evaluationInterval: 3
   timeInterpolationGui: 0
-  discovery: {fileID: 0}
   cachedGameInfo:
     roomId: 
     gameId: 
