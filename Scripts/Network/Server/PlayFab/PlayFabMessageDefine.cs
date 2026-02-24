@@ -181,6 +181,7 @@ namespace AOTScripts.Data
     public struct ChangeGameInfoMessage : IMessageContent
     {
         public GamePlayerInfo gamePlayerInfo;
+        public MainGameInfo mainGameInfo;
     }
     
     [Serializable]

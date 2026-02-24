@@ -629,14 +629,15 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
 
         public MainGameInfo OnChangeGameInfo(ChangeGameInfoMessage changeGameInfoMessage)
         {
+            _currentMainGameInfo = changeGameInfoMessage.mainGameInfo;
             for (int i = 0; i < _currentMainGameInfo.playersInfo.Length; i++)
             {
                 var playerInfo = _currentMainGameInfo.playersInfo[i];
                 if (_currentGamePlayerInfo.playerId == playerInfo.playerId)
                 {
-                    _currentGamePlayerInfo = changeGameInfoMessage.gamePlayerInfo;
+                    _currentGamePlayerInfo = playerInfo;
                 }
-                if (changeGameInfoMessage.gamePlayerInfo.playerId == _currentMainGameInfo.playersInfo[i].playerId)
+                if (playerInfo.playerId == _currentMainGameInfo.playersInfo[i].playerId)
                 {
                     _currentMainGameInfo.playersInfo[i] = changeGameInfoMessage.gamePlayerInfo;
                     OnPlayerInfoChanged?.Invoke(_currentGamePlayerInfo.playerId, _currentMainGameInfo.playersInfo[i]);
