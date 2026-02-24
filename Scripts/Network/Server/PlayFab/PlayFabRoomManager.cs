@@ -633,14 +633,14 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             for (int i = 0; i < _currentMainGameInfo.playersInfo.Length; i++)
             {
                 var playerInfo = _currentMainGameInfo.playersInfo[i];
-                if (_currentGamePlayerInfo.playerId == playerInfo.playerId)
+                if (_currentGamePlayerInfo.playerId == changeGameInfoMessage.gamePlayerInfo.playerId)
                 {
-                    _currentGamePlayerInfo = playerInfo;
+                    _currentGamePlayerInfo = changeGameInfoMessage.gamePlayerInfo;
                 }
-                if (playerInfo.playerId == _currentMainGameInfo.playersInfo[i].playerId)
+                if (changeGameInfoMessage.gamePlayerInfo.playerId == playerInfo.playerId)
                 {
                     _currentMainGameInfo.playersInfo[i] = changeGameInfoMessage.gamePlayerInfo;
-                    OnPlayerInfoChanged?.Invoke(_currentGamePlayerInfo.playerId, _currentMainGameInfo.playersInfo[i]);
+                    OnPlayerInfoChanged?.Invoke(playerInfo.playerId, playerInfo);
                     _uiManager.ShowTips("玩家信息更新成功");
                     break;
                 }
