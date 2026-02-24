@@ -56,7 +56,12 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
             if (!playerSpawnedEvent.Spawned)
             {
                 dataModel.Dispose();
-                _dataModels[WorldUIType.PlayerItem].Remove(playerSpawnedEvent.PlayerId);
+                if (!_dataModels.TryGetValue(WorldUIType.PlayerItem, out var playerItemModels))
+                {
+                    Debug.LogWarning($"No data model found for {WorldUIType.PlayerItem}");
+                    return;
+                }
+                playerItemModels.Remove(playerSpawnedEvent.PlayerId);
                 _followedUIControllers.Remove(playerSpawnedEvent.PlayerId);
                 GameObjectPoolManger.Instance.ReturnObject(_followedUIControllers[playerSpawnedEvent.PlayerId].gameObject);
                 return;
