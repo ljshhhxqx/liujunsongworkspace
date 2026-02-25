@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using AOTScripts.Data;
+using AOTScripts.Tool.Resource;
 using HotUpdate.Scripts.Game.Inject;
 using Mirror;
 using UnityEngine;
@@ -27,8 +30,109 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
     
         // 已注册的预制体集合（用于避免重复注册）
         private HashSet<uint> _registeredPrefabs = new HashSet<uint>();
-        
+        private Dictionary<uint, GameObject> _uidToPrefab = new Dictionary<uint, GameObject>();
+        private Dictionary<uint, Queue<GameObject>> _uidToPool = new Dictionary<uint, Queue<GameObject>>();
+        private readonly SyncDictionary<uint, uint> serverAssetIdToUid = new SyncDictionary<uint, uint>();
+        private bool mappingReceived = false;
+        private Queue<SpawnMessage> pendingSpawnMessages = new Queue<SpawnMessage>();
+
         public Scene CurrentScene { get; set; }
+        
+        protected override void InjectServerCallback()
+        {
+            BuildMappingOnServer();
+        }
+        
+        protected override void InjectClientCallback()
+        {
+            
+            serverAssetIdToUid.OnChange += OnMappingChanged;
+
+            // 如果字典已经有一些数据（极少情况），立即处理缓存
+            if (serverAssetIdToUid.Count > 0)
+            {
+                mappingReceived = true;
+                ProcessPendingSpawns();
+
+            }
+            var prefabs = NetworkClient.prefabs.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            
+            foreach (var kvp in prefabs)
+            {
+                uint assetId = kvp.Key;
+                GameObject prefab = kvp.Value;
+                // 取消默认注册，改用自定义
+                NetworkClient.UnregisterPrefab(prefab);
+                NetworkClient.RegisterSpawnHandler(assetId, SpawnHandler, UnspawnHandler);
+            }
+        }
+
+        private void OnMappingChanged(SyncIDictionary<uint, uint>.Operation op, uint key, uint value)
+        {
+            // 只要字典有内容，就认为映射已接收（可根据需要更精细控制）
+            if (!mappingReceived && serverAssetIdToUid.Count > 0)
+            {
+                mappingReceived = true;
+                ProcessPendingSpawns();
+            }
+        } 
+        public bool TryGetUid(uint assetId, out uint uid, SpawnMessage msg = default)
+        {
+            if (mappingReceived)
+            {
+                return serverAssetIdToUid.TryGetValue(assetId, out uid);
+            }
+            else
+            {
+                // 映射尚未到达，缓存消息以便后续处理
+                if (msg.assetId != 0)
+                {
+                    lock (pendingSpawnMessages)
+                    {
+                        pendingSpawnMessages.Enqueue(msg);
+                    }
+                }
+                uid = 0;
+                return false;
+            }
+        }
+        
+        private void ProcessPendingSpawns()
+        {
+            lock (pendingSpawnMessages)
+            {
+                while (pendingSpawnMessages.Count > 0)
+                {
+                    SpawnMessage msg = pendingSpawnMessages.Dequeue();
+                    // 重新触发自定义 SpawnHandler（需通过某种方式调用）
+                    // 这里可以直接调用自定义的生成逻辑，例如通过事件或直接调用对象池的 SpawnHandler
+                    SpawnHandler(msg);
+                }
+            }
+        }
+
+        [Server]
+        private void BuildMappingOnServer()
+        {
+            // 遍历所有已注册的预制体（NetworkServer.prefabs 包含所有通过 NetworkManager 注册的预制体）
+            foreach (var prefab in NetworkManager.singleton.spawnPrefabs)
+            {
+                var networkIdentity = prefab.GetComponent<NetworkIdentity>();
+                var assetId = networkIdentity.assetId;
+
+                // 通过预制体名称从 ResourceManager 获取 UID（假设 ResourceManager 已根据 JSON 建立映射）
+                uint uid = DataJsonManager.Instance.GetUid(prefab.name);
+                if (uid != 0)
+                {
+                    serverAssetIdToUid[assetId] = uid;
+                    Debug.Log($"[Server] Mapped assetId {assetId} ({prefab.name}) -> UID {uid}");
+                }
+                else
+                {
+                    Debug.LogWarning($"[Server] No UID found for prefab {prefab.name} (assetId {assetId})");
+                }
+            }
+        }
 
         /// <summary>
         /// 服务器端：从对象池生成网络对象（全自动接口）
@@ -84,7 +188,7 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
             NetworkServer.Spawn(obj);
             return obj;
         }
-    
+
         /// <summary>
         /// 服务器端：回收网络对象到对象池（全自动接口）
         /// </summary>
@@ -134,17 +238,23 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
             {
                 _registeredPrefabs.Add(assetId);
                 //Debug.Log($"Auto-created pool for {prefab.name} (assetId: {assetId}) with size {DefaultPoolSize}");
-                RpcRegisterPrefab(assetId);
+                RpcRegisterPrefab(prefab.name);
             }
         
         }
 
         [ClientRpc]
-        public void RpcRegisterPrefab(uint assetId)
+        public void RpcRegisterPrefab(string prefabName)
         {
-            var prefab = NetworkClient.prefabs[assetId];
-            NetworkClient.UnregisterPrefab(prefab);
-            NetworkClient.RegisterPrefab(prefab, SpawnHandler, UnspawnHandler);
+            foreach (var kvp in NetworkClient.prefabs)
+            {
+                if (kvp.Value.name == prefabName)
+                {
+                    var prefab = kvp.Value;
+                    NetworkClient.UnregisterPrefab(prefab);
+                    NetworkClient.RegisterPrefab(prefab, SpawnHandler, UnspawnHandler);
+                }
+            }
         }
 
         /// <summary>
@@ -195,84 +305,168 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
         
             Debug.Log($"Expanded pool for assetId {assetId} by {expandBy} objects. New size: {pool.Count}");
         }
+        public GameObject CustomSpawnHandler(SpawnMessage msg)
+        {
+            // 尝试通过映射获取 UID
+            if (TryGetUid(msg.assetId, out uint uid, msg))
+            {
+                // 从池中获取对象
+                GameObject obj = GetPooledObject(uid);
+                if (obj == null)
+                {
+                    Debug.LogError($"[Client] No object in pool for UID {uid}, falling back to instantiate.");
+                    // 回退：从 ResourceManager 获取预制体并实例化
+                    var resData = DataJsonManager.Instance.GetResourceData(uid);
+                    var prefab = ResourceManager.Instance.GetResource<GameObject>(resData);
+                    if (prefab == null) return null;
+                    obj = Instantiate(prefab);
+                }
 
+                // 应用 Transform
+                obj.transform.position = msg.position;
+                obj.transform.rotation = msg.rotation;
+                obj.transform.localScale = msg.scale;
+                obj.SetActive(true);
+                return obj;
+            }
+            else
+            {
+                // 映射未就绪，消息已被缓存，返回 null 表示稍后处理
+                // 注意：Mirror 期望 SpawnHandler 返回一个 GameObject，如果返回 null 会出错。
+                // 因此更好的做法是：在映射未就绪时，先临时创建一个占位对象或直接实例化，
+                // 等映射到达后再替换？但这样复杂。推荐在映射未就绪时，直接实例化（不池化），
+                // 等映射到达后，再将该对象放回池中（如果类型匹配），但实现复杂。
+                // 另一种方式是：在客户端连接后，延迟 Spawn 直到映射就绪（但服务器可能急于生成）。
+                // 最简单的方式：映射未就绪时，直接使用 Mirror 默认生成（即 NetworkClient.prefabs 实例化），
+                // 但这样会失去池化。不过这种情况只发生在连接初期，短暂的不池化可以接受。
+
+                // 这里采用回退：直接实例化（从默认注册的预制体）
+                if (NetworkClient.prefabs.TryGetValue(msg.assetId, out GameObject fallbackPrefab))
+                {
+                    Debug.LogWarning($"[Client] Mapping not ready for assetId {msg.assetId}, instantiating fallback.");
+                    GameObject obj = Instantiate(fallbackPrefab);
+                    // 仍然应用 transform 和 payload
+                    obj.transform.position = msg.position;
+                    obj.transform.rotation = msg.rotation;
+                    obj.transform.localScale = msg.scale;
+                    // 应用 payload...
+                    return obj;
+                }
+                return null;
+            }
+        }
+
+        // 从池中获取对象
+        public GameObject GetPooledObject(uint uid)
+        {
+            if (_poolDictionary.TryGetValue(uid, out Queue<GameObject> pool) && pool.Count > 0)
+            {
+                return pool.Dequeue();
+            }
+            return null;
+        }
+
+        // 将对象归还池中（需在 UnspawnHandler 中调用）
+        public void ReturnToPool(GameObject obj)
+        {
+            // 假设对象上挂载了 PooledObject 组件，记录了 UID
+            PooledObject pooled = obj.GetComponent<PooledObject>();
+            if (pooled == null)
+            {
+                Debug.LogError("Object has no PooledObject component, destroying instead.");
+                Destroy(obj);
+                return;
+            }
+
+            var uid = DataJsonManager.Instance.GetUid(pooled.name);
+            if (!_poolDictionary.ContainsKey(uid))
+                _poolDictionary[uid] = new Queue<GameObject>();
+
+            // 重置对象状态
+            ResetPooledObject(obj);
+            obj.SetActive(false);
+            obj.transform.SetParent(transform);
+            _poolDictionary[uid].Enqueue(obj);
+        }
+        
         // 自定义生成处理器
         private GameObject SpawnHandler(SpawnMessage msg)
         {
-            uint assetId = msg.assetId;
-        
-            if (_poolDictionary.TryGetValue(assetId, out Queue<GameObject> pool) && pool.Count > 0)
-            {
-                // 从对象池获取对象
-                GameObject obj = pool.Dequeue();
-                if (obj.TryGetComponent<IPoolable>(out var poolable))
-                {
-                    poolable.OnSelfSpawn();
-                }
-                obj.SetActive(true);
-                obj.transform.SetParent( transform);
-                return obj;
-            }
-        
-            // 对象池为空，尝试扩展并获取对象
-            if (_prefabDictionary.TryGetValue(assetId, out GameObject prefab))
-            {
-                Debug.LogWarning($"Object pool for assetId {assetId} is empty, expanding pool");
-                ExpandPool(assetId, PoolExpandSize);
-            
-                if (_poolDictionary.TryGetValue(assetId, out pool) && pool.Count > 0)
-                {
-                    GameObject obj = pool.Dequeue();
-                    if (obj.TryGetComponent<IPoolable>(out var poolable))
-                    {
-                        poolable.OnSelfSpawn();
-                    }
-                    obj.SetActive(true);
-                    obj.transform.SetParent( transform);
-                    return obj;
-                }
-            }
-            else if (NetworkClient.prefabs.TryGetValue(assetId, out var prefab1))
-            {
-                prefab = prefab1;
-                _prefabDictionary.Add(assetId, prefab);
-            }
-        
-            // 如果扩展后仍然无法获取对象，回退到常规实例化
-            Debug.LogWarning($"Failed to get object from pool for assetId {assetId}, instantiating new object");
-            return Instantiate(prefab, parent: transform);
+            return CustomSpawnHandler(msg);
+            // uint assetId = msg.assetId;
+            //
+            // if (_poolDictionary.TryGetValue(assetId, out Queue<GameObject> pool) && pool.Count > 0)
+            // {
+            //     // 从对象池获取对象
+            //     GameObject obj = pool.Dequeue();
+            //     if (obj.TryGetComponent<IPoolable>(out var poolable))
+            //     {
+            //         poolable.OnSelfSpawn();
+            //     }
+            //     obj.SetActive(true);
+            //     obj.transform.SetParent( transform);
+            //     return obj;
+            // }
+            //
+            // // 对象池为空，尝试扩展并获取对象
+            // if (_prefabDictionary.TryGetValue(assetId, out GameObject prefab))
+            // {
+            //     Debug.LogWarning($"Object pool for assetId {assetId} is empty, expanding pool");
+            //     ExpandPool(assetId, PoolExpandSize);
+            //
+            //     if (_poolDictionary.TryGetValue(assetId, out pool) && pool.Count > 0)
+            //     {
+            //         GameObject obj = pool.Dequeue();
+            //         if (obj.TryGetComponent<IPoolable>(out var poolable))
+            //         {
+            //             poolable.OnSelfSpawn();
+            //         }
+            //         obj.SetActive(true);
+            //         obj.transform.SetParent( transform);
+            //         return obj;
+            //     }
+            // }
+            // else if (NetworkClient.prefabs.TryGetValue(assetId, out var prefab1))
+            // {
+            //     prefab = prefab1;
+            //     _prefabDictionary.Add(assetId, prefab);
+            // }
+            //
+            // // 如果扩展后仍然无法获取对象，回退到常规实例化
+            // Debug.LogWarning($"Failed to get object from pool for assetId {assetId}, instantiating new object");
+            // return Instantiate(prefab, parent: transform);
         }
 
         // 自定义取消生成处理器
         private void UnspawnHandler(GameObject obj)
         {
+            ReturnToPool(obj);
             // 直接从对象的 NetworkIdentity 获取 assetId
-            NetworkIdentity identity = obj.GetComponent<NetworkIdentity>();
-            if (identity == null)
-            {
-                Debug.LogError($"Object {obj.name} has no NetworkIdentity, cannot return to pool");
-                Destroy(obj);
-                return;
-            }
-        
-            uint assetId = identity.assetId;
-        
-            if (_poolDictionary.TryGetValue(assetId, out Queue<GameObject> pool))
-            {
-                // 重置对象状态
-                ResetPooledObject(obj);
-            
-                // 返回对象池
-                obj.SetActive(false);
-                obj.transform.SetParent(transform);
-                pool.Enqueue(obj);
-            }
-            else
-            {
-                // 没有找到对应的对象池，直接销毁
-                Debug.LogWarning($"No pool found for assetId {assetId}, destroying object");
-                Destroy(obj);
-            }
+            // NetworkIdentity identity = obj.GetComponent<NetworkIdentity>();
+            // if (identity == null)
+            // {
+            //     Debug.LogError($"Object {obj.name} has no NetworkIdentity, cannot return to pool");
+            //     Destroy(obj);
+            //     return;
+            // }
+            //
+            // uint assetId = identity.assetId;
+            // if (_poolDictionary.TryGetValue(assetId, out Queue<GameObject> pool))
+            // {
+            //     // 重置对象状态
+            //     ResetPooledObject(obj);
+            //
+            //     // 返回对象池
+            //     obj.SetActive(false);
+            //     obj.transform.SetParent(transform);
+            //     pool.Enqueue(obj);
+            // }
+            // else
+            // {
+            //     // 没有找到对应的对象池，直接销毁
+            //     Debug.LogWarning($"No pool found for assetId {assetId}, destroying object");
+            //     Destroy(obj);
+            // }
         }
 
         // 重置池化对象的状态
@@ -375,5 +569,7 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
             sb.AppendLine($"Total Pools: {_poolDictionary.Count}");
             return sb.ToString();
         }
+
+        
     }
 }
