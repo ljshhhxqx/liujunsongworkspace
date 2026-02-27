@@ -46,12 +46,14 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
             {
                 var prefab = NetworkManager.singleton.spawnPrefabs[i];
                 var identity = prefab.GetComponent<NetworkIdentity>();
-                Debug.Log($"[NetworkGameObjectPoolManager] Prefab: {prefab.name} | AssetId: {identity.assetId} | SceneId: {identity.sceneId}");
+                Debug.Log($"[NetworkGameObjectPoolManager ] Prefab: {prefab.name} | AssetId: {identity.assetId} | SceneId: {identity.sceneId}");
             }
 
             foreach (var kvp in NetworkClient.prefabs)
             {
                 var identity = kvp.Value.GetComponent<NetworkIdentity>();
+                NetworkClient.UnregisterPrefab(kvp.Value);
+                NetworkClient.RegisterPrefab(kvp.Value, SpawnHandler, UnspawnHandler);
                 Debug.Log($"[NetworkGameObjectPoolManager] Prefab: {kvp.Value.name} | AssetId: {identity.assetId}-{kvp.Key} | SceneId: {identity.sceneId}");
             }
         }
@@ -160,17 +162,8 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
             {
                 _registeredPrefabs.Add(assetId);
                 //Debug.Log($"Auto-created pool for {prefab.name} (assetId: {assetId}) with size {DefaultPoolSize}");
-                RpcRegisterPrefab(assetId);
             }
         
-        }
-
-        [ClientRpc]
-        public void RpcRegisterPrefab(uint assetId)
-        {
-            var prefab = NetworkClient.prefabs[assetId];
-            NetworkClient.UnregisterPrefab(prefab);
-            NetworkClient.RegisterPrefab(prefab, SpawnHandler, UnspawnHandler);
         }
 
         /// <summary>
@@ -226,7 +219,7 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
         private GameObject SpawnHandler(SpawnMessage msg)
         {
             uint assetId = msg.assetId;
-            
+            Debug.Log($"Spawning object for assetId {assetId}");
             if (_poolDictionary.TryGetValue(assetId, out Queue<GameObject> pool) && pool.Count > 0)
             {
                 // 从对象池获取对象
