@@ -200,7 +200,7 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
         private GameObject SpawnHandler(SpawnMessage msg)
         {
             uint assetId = msg.assetId;
-        
+            
             if (_poolDictionary.TryGetValue(assetId, out Queue<GameObject> pool) && pool.Count > 0)
             {
                 // 从对象池获取对象
@@ -235,7 +235,8 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
             else if (NetworkClient.prefabs.TryGetValue(assetId, out var prefab1))
             {
                 prefab = prefab1;
-                _prefabDictionary.Add(assetId, prefab);
+                EnsurePoolExists(prefab, assetId);
+                return prefab;
             }
         
             // 如果扩展后仍然无法获取对象，回退到常规实例化
