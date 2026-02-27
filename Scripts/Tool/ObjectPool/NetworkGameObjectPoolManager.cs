@@ -47,6 +47,7 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
             foreach (var kvp in prefabs)
             {
                 var identity = kvp.Value.GetComponent<NetworkIdentity>();
+                EnsurePoolExists(kvp.Value, identity.assetId);
                 NetworkClient.UnregisterPrefab(kvp.Value);
                 NetworkClient.RegisterPrefab(kvp.Value, SpawnHandler, UnspawnHandler);
                 Debug.Log($"[NetworkGameObjectPoolManager] Prefab: {kvp.Value.name} | AssetId: {identity.assetId}-{kvp.Key} | SceneId: {identity.sceneId}");
@@ -250,7 +251,6 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
             else if (NetworkClient.prefabs.TryGetValue(assetId, out var prefab1))
             {
                 prefab = prefab1;
-                EnsurePoolExists(prefab, assetId);
                 return prefab;
             }
         

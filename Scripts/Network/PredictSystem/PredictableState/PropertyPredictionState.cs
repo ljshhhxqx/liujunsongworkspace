@@ -301,7 +301,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                         goldData.Alpha = property.CurrentValue;
                         break;
                 }
-                if (kvp.Key == PropertyTypeEnum.AttackSpeed)
+                if (kvp.Key == PropertyTypeEnum.AttackSpeed && ServerHandler)
                 {
                     PlayerComponentController.RpcSetAnimatorSpeed(AnimationState.Attack, property.CurrentValue);
                 }
