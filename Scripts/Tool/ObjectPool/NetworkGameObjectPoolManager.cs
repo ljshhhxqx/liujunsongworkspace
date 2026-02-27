@@ -29,6 +29,32 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
         private HashSet<uint> _registeredPrefabs = new HashSet<uint>();
         
         public Scene CurrentScene { get; set; }
+        
+        protected override void InjectServerCallback()
+        {
+            for (int i = 0; i < NetworkManager.singleton.spawnPrefabs.Count; i++)
+            {
+                var prefab = NetworkManager.singleton.spawnPrefabs[i];
+                var identity = prefab.GetComponent<NetworkIdentity>();
+                Debug.Log($"[NetworkGameObjectPoolManager] Prefab: {prefab.name} | AssetId: {identity.assetId} | SceneId: {identity.sceneId}");
+            }
+        }
+        
+        protected override void InjectClientCallback()
+        {
+            for (int i = 0; i < NetworkManager.singleton.spawnPrefabs.Count; i++)
+            {
+                var prefab = NetworkManager.singleton.spawnPrefabs[i];
+                var identity = prefab.GetComponent<NetworkIdentity>();
+                Debug.Log($"[NetworkGameObjectPoolManager] Prefab: {prefab.name} | AssetId: {identity.assetId} | SceneId: {identity.sceneId}");
+            }
+
+            foreach (var kvp in NetworkClient.prefabs)
+            {
+                var identity = kvp.Value.GetComponent<NetworkIdentity>();
+                Debug.Log($"[NetworkGameObjectPoolManager] Prefab: {kvp.Value.name} | AssetId: {identity.assetId}-{kvp.Key} | SceneId: {identity.sceneId}");
+            }
+        }
 
         /// <summary>
         /// 服务器端：从对象池生成网络对象（全自动接口）
