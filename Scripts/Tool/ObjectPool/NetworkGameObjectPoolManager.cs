@@ -103,6 +103,7 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
             }
             obj.SetActive(true);
         
+            Debug.Log($"[NetworkGameObjectPoolManager] Spawned object {obj.name} with assetId {assetId}");
             // 使用 Mirror 的网络生成
             NetworkServer.Spawn(obj);
             return obj;
@@ -214,7 +215,7 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
         private GameObject SpawnHandler(SpawnMessage msg)
         {
             uint assetId = msg.assetId;
-            Debug.Log($"Spawning object for assetId {assetId}");
+            Debug.Log($"[NetworkGameObjectPoolManager] client spawn handler spawning object with assetId {assetId}");
             if (_poolDictionary.TryGetValue(assetId, out Queue<GameObject> pool) && pool.Count > 0)
             {
                 // 从对象池获取对象
