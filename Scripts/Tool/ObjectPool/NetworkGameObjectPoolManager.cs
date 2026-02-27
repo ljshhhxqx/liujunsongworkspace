@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using HotUpdate.Scripts.Game.Inject;
 using Mirror;
 using UnityEngine;
@@ -42,14 +43,8 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
         
         protected override void InjectClientCallback()
         {
-            for (int i = 0; i < NetworkManager.singleton.spawnPrefabs.Count; i++)
-            {
-                var prefab = NetworkManager.singleton.spawnPrefabs[i];
-                var identity = prefab.GetComponent<NetworkIdentity>();
-                Debug.Log($"[NetworkGameObjectPoolManager ] Prefab: {prefab.name} | AssetId: {identity.assetId} | SceneId: {identity.sceneId}");
-            }
-
-            foreach (var kvp in NetworkClient.prefabs)
+            var prefabs = NetworkClient.prefabs.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            foreach (var kvp in prefabs)
             {
                 var identity = kvp.Value.GetComponent<NetworkIdentity>();
                 NetworkClient.UnregisterPrefab(kvp.Value);
