@@ -36,6 +36,7 @@ namespace HotUpdate.Scripts.Collector.Collects
 
         public void Init(HiddenItemData hiddenItemData, bool serverHandler, uint id)
         {
+            Debug.Log($"[HiddenItem] {name} Init");
             _hiddenItemData = hiddenItemData;
             NetId = id;
             ServerHandler = serverHandler;
@@ -51,6 +52,7 @@ namespace HotUpdate.Scripts.Collector.Collects
                     //TranslucenceItem();
                     break;
             }
+            HideItem();
         }
 
         private void TranslucenceItem()
@@ -104,16 +106,19 @@ namespace HotUpdate.Scripts.Collector.Collects
             _sequence.SetLoops(int.MaxValue, LoopType.Restart);
         }
 
-        public void OnSelfSpawn()
-        {
-            HideItem();
-        }
-
-        public void OnSelfDespawn()
+        private void OnDisable()
         {
             _sequence?.Kill();
             
             SetEnabled(true);
+        }
+
+        public void OnSelfSpawn()
+        {
+        }
+
+        public void OnSelfDespawn()
+        {
         }
     }
 }

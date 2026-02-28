@@ -27,7 +27,6 @@ namespace HotUpdate.Scripts.Collector.Collects
         protected bool IsDead;
         protected MaterialTransparencyController[] MaterialTransparencyControllers;
         protected GameEventManager GameEventManager;
-        protected NetworkGameObjectPoolManager NetworkGameObjectPoolManager;
         protected uint NetId;
         [SyncVar] protected int CurrentControlSkillType;
         protected IObjectResolver ObjectResolver;
@@ -57,7 +56,6 @@ namespace HotUpdate.Scripts.Collector.Collects
             InteractSystem.ItemControlSkillChanged += OnItemControlSkillChanged;
             GameEventManager = gameEventManager;
             ObjectResolver = objectResolver;
-            NetworkGameObjectPoolManager = ObjectResolver.Resolve<NetworkGameObjectPoolManager>();
             OnInitialize();
             
         }

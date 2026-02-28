@@ -63,10 +63,11 @@ namespace HotUpdate.Scripts.Collector
                 .Where(_ => LocalPlayerHandler && GameObjectContainer.Instance.DynamicObjectIntersects(netId, transform.position, _colliderConfig, _cachedCollects))
                 .Subscribe(_ =>
                 {
+                    Debug.Log("[Picker] Touch");
                     HandlePlayerTouched();
                 })
                 .AddTo(this);
-            Debug.Log($"Picker Init----{_interactSystem}");
+            Debug.Log($"[Picker] Picker Init----{_interactSystem}");
         }
 
         private void OnCollectEvent(CollectEvent collectEvent)

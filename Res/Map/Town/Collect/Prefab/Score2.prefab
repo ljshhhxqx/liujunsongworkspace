@@ -136,7 +136,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncDirection: 0
   syncMode: 0
-  syncInterval: 0.15
+  syncInterval: 0.055
   target: {fileID: 7453687624451344437}
   syncPosition: 1
   syncRotation: 1

@@ -11,7 +11,7 @@ namespace HotUpdate.Scripts.Game.Inject
         protected virtual bool AutoInjectLocalPlayer => true;
         protected MapType MapType;
 
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             MapType = (MapType)GameLoopDataModel.GameSceneName.Value;
         }

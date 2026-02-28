@@ -44,7 +44,14 @@ namespace HotUpdate.Scripts.Collector.Collects
             _itemsSpawnerManager = itemsSpawnerManager;
         }
 
-        private void FixedUpdate()
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+            Debug.Log($"[AttackCollectItem] {name} Start Server");
+            RepeatedTask.Instance.StartRepeatingTask(StartAttack, Time.fixedDeltaTime);
+        }
+
+        private void StartAttack()
         {
             _keyframeCooldown.Update(Time.fixedDeltaTime);
             if (IsDead || !_gameSyncManager || !ServerHandler || !IsAttackable || !_keyframeCooldown.IsReady() || Time.time < _lastAttackTime + _attackInfo.attackCooldown)
@@ -150,6 +157,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         {
             // _disposable?.Dispose();
             // _disposable?.Clear();
+            Debug.Log($"[AttackCollectItem] {name} Init");
             _gameSyncManager ??= FindObjectOfType<GameSyncManager>();
             _attackInfo = info;
             NetId = id;
@@ -215,10 +223,20 @@ namespace HotUpdate.Scripts.Collector.Collects
 
         public void OnSelfDespawn()
         {
+        }
+
+        private void OnDisable()
+        {
             _lastAttackTime = 0;
             _attackInfo = default;
             _collectedObjects.Clear();
             GameEventManager.Publish(new SceneItemSpawnedEvent(NetId, gameObject, false, null));
+        }
+
+        private void OnDestroy()
+        {
+            _disposable?.Dispose();
+            RepeatedTask.Instance.StopRepeatingTask(StartAttack);
         }
 
         public static KeyframeData KeyframeData;

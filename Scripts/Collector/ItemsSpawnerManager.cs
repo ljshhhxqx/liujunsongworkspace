@@ -149,6 +149,7 @@ namespace HotUpdate.Scripts.Collector
 
         private void UpdateDynamicObjects()
         {
+            Debug.Log("[ItemsSpawnerManager] UpdateDynamicObjects start");
             GameObjectContainer.Instance.UpdateDynamicObjects(ServerHandler);
         }
 

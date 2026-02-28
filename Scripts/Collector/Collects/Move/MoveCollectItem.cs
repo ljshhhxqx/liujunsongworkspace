@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AOTScripts.Data;
+using AOTScripts.Tool.Coroutine;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
@@ -21,7 +22,15 @@ namespace HotUpdate.Scripts.Collector.Collects.Move
         private Func<Vector3, bool> _checkInsideMap;
         private Func<Vector3, IColliderConfig, bool> _checkObstacle;
 
-        private void FixedUpdate()
+
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+            Debug.Log($"[MoveItem] {name} Initialize");
+            RepeatedTask.Instance.StartRepeatingTask(StartMove, Time.fixedDeltaTime);
+        }
+        
+        private void StartMove()
         {
             if (_moveInfo == default || !ServerHandler || !IsMoveable || !_gameSyncManager)
             {
@@ -40,11 +49,12 @@ namespace HotUpdate.Scripts.Collector.Collects.Move
 
         public void OnSelfSpawn()
         {
-            _movementConfigLink.ItemMovement?.ResetMovement();
         }
 
         public void Init(MoveInfo moveInfo, bool serverHandler, uint id)
         {
+            _movementConfigLink.ItemMovement?.ResetMovement();
+            Debug.Log($"[MoveItem] {name} Initialize");
             _gameSyncManager ??= FindObjectOfType<GameSyncManager>();
             _checkInsideMap = MapBoundDefiner.Instance.IsWithinMapBounds;
             _checkObstacle = GameObjectContainer.Instance.IsIntersect;
@@ -73,6 +83,11 @@ namespace HotUpdate.Scripts.Collector.Collects.Move
         public void OnSelfDespawn()
         {
             
+        }
+
+        private void OnDestroy()
+        {
+            RepeatedTask.Instance.StopRepeatingTask(StartMove);
         }
     }
 }
