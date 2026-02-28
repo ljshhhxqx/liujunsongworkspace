@@ -1,6 +1,7 @@
 ﻿using System;
 using AOTScripts.Data;
 using HotUpdate.Scripts.Data;
+using UnityEngine;
 
 namespace HotUpdate.Scripts.Game.Inject
 {
@@ -26,6 +27,7 @@ namespace HotUpdate.Scripts.Game.Inject
             }
 
             ObjectInjectProvider.Instance.InjectMap(MapType, this);
+            Debug.Log($"InjectClient + {MapType} + {name}");
             InjectClientCallback();
         }
         
@@ -39,6 +41,7 @@ namespace HotUpdate.Scripts.Game.Inject
             }
 
             ObjectInjectProvider.Instance.InjectMap(MapType, this);
+            Debug.Log($"InjectServer + {MapType} + {name}");
             InjectServerCallback();
         }
 
@@ -52,6 +55,7 @@ namespace HotUpdate.Scripts.Game.Inject
             }
 
             ObjectInjectProvider.Instance.InjectMap(MapType, this);
+            Debug.Log($"InjectLocalPlayer + {MapType} + {name}");
             InjectLocalPlayerCallback();
         }
 

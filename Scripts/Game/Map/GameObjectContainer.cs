@@ -168,7 +168,7 @@ namespace HotUpdate.Scripts.Game.Map
                     {
                         intersectedObjects.Add(data.NetId);
                         onIntersected?.Invoke(data);
-                        Debug.Log("[GameObjectContainer] Intersected: " + data.NetId);
+                        //Debug.Log("[GameObjectContainer] Intersected: " + data.NetId);
                     }
                 }
             }
