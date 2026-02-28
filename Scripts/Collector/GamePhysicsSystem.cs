@@ -74,44 +74,45 @@ namespace HotUpdate.Scripts.Collector
             var isIntersects = aBounds.Intersects(bBounds);
             return isIntersects;
         }
+
         public static Bounds GetWorldBounds(Vector3 position, IColliderConfig config)
         {
             if (config == null)
                 return new Bounds();
+    
+            // ⭐ 世界空间中心 = 物体位置 + collider 中心偏移
+            var worldCenter = position + config.Center;
+    
             return config.ColliderType switch
             {
-                ColliderType.Box => new Bounds(position, config.Size),
-                ColliderType.Sphere => new Bounds(position, Vector3.one * (config.Radius * 2)),
-                ColliderType.Capsule => GetCapsuleBounds(position, config),
+                ColliderType.Box => new Bounds(worldCenter, config.Size),
+        
+                ColliderType.Sphere => new Bounds(worldCenter, Vector3.one * (config.Radius * 2)),
+        
+                ColliderType.Capsule => GetCapsuleBounds(worldCenter, config),
+        
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
 
-        public static Bounds GetCapsuleBounds(Vector3 position, IColliderConfig config)
+        // ⭐ Capsule 的 Bounds 要根据方向分轴计算
+        private static Bounds GetCapsuleBounds(Vector3 worldCenter, IColliderConfig config)
         {
-            var axis = config.Direction switch
+            float r = config.Radius;
+            float h = config.Height;
+
+            // Direction: 0 = X轴, 1 = Y轴, 2 = Z轴
+            Vector3 size = config.Direction switch
             {
-                0 => Vector3.right,
-                1 => Vector3.up,
-                2 => Vector3.forward,
-                _ => Vector3.up
+                0 => new Vector3(h, r * 2, r * 2),   // 沿 X 轴
+                1 => new Vector3(r * 2, h, r * 2),   // 沿 Y 轴（最常见）
+                2 => new Vector3(r * 2, r * 2, h),   // 沿 Z 轴
+                _ => new Vector3(r * 2, h, r * 2),   // 默认 Y 轴
             };
 
-            var halfHeight = Mathf.Max(config.Height * 0.5f, config.Radius);
-            var center = position + config.Center;
-            var top = center + axis * halfHeight;
-            var bottom = center - axis * halfHeight;
-
-            return new Bounds
-            {
-                center = (top + bottom) * 0.5f,
-                size = new Vector3(
-                    config.Radius * 2 + (axis == Vector3.right ? config.Height : 0),
-                    config.Radius * 2 + (axis == Vector3.up ? config.Height : 0),
-                    config.Radius * 2 + (axis == Vector3.forward ? config.Height : 0)
-                )
-            };
+            return new Bounds(worldCenter, size);
         }
+
         
         public static IColliderConfig CreateColliderConfig(ColliderType colliderType, Vector3 size, Vector3 center, float radius, float height = 0, int direction = 1)
         {

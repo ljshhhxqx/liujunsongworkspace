@@ -251,6 +251,7 @@ namespace HotUpdate.Scripts.Game.Map
                 _dynamicGridIndex[grid] = list;
             }
 
+            //Debug.Log($"[GameObjectContainer] Add DynamicObject {netId}");
             list.Add(_dynamicObjectData.Count - 1);
         }
 

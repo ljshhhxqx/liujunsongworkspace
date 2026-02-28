@@ -25,6 +25,7 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
         [Inject]
         private void Init(GameEventManager gameEventManager)
         {
+            
             _gameEventManager = gameEventManager;
             _gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnGameSceneResourcesLoaded);
             _gameEventManager.Subscribe<PlayerInfoChangedEvent>(OnPlayerInfoChanged);
@@ -129,7 +130,7 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
             controller.InitFollowedInstance(sceneItemSpawnedEvent.SpawnedObject, sceneItemSpawnedEvent.ItemId, sceneItemSpawnedEvent.Player, MainCamera);
             controller.BindToModel(dataModel);
             _followedUIControllers.Add(sceneItemSpawnedEvent.ItemId, controller);
-            Debug.Log($"Spawned {sceneItemSpawnedEvent.SpawnedObject.name} with id {sceneItemSpawnedEvent.ItemId}");
+            //Debug.Log($"Spawned {sceneItemSpawnedEvent.SpawnedObject.name} with id {sceneItemSpawnedEvent.ItemId}");
         }
 
         private void OnPlayerInfoChanged(PlayerInfoChangedEvent playerInfoChangedEvent)

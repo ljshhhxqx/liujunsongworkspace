@@ -104,7 +104,7 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
             }
             obj.SetActive(true);
         
-            Debug.Log($"[NetworkGameObjectPoolManager] Spawned object {obj.name} with assetId {assetId}");
+            //Debug.Log($"[NetworkGameObjectPoolManager] Spawned object {obj.name} with assetId {assetId}");
             // 使用 Mirror 的网络生成
             NetworkServer.Spawn(obj);
             return obj;
@@ -209,14 +209,14 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
                 pool.Enqueue(obj);
             }
         
-            Debug.Log($"Expanded pool for assetId {assetId} by {expandBy} objects. New size: {pool.Count}");
+            //Debug.Log($"Expanded pool for assetId {assetId} by {expandBy} objects. New size: {pool.Count}");
         }
 
         // 自定义生成处理器
         private GameObject SpawnHandler(SpawnMessage msg)
         {
             uint assetId = msg.assetId;
-            Debug.Log($"[NetworkGameObjectPoolManager] client spawn handler spawning object with assetId {assetId}");
+            //Debug.Log($"[NetworkGameObjectPoolManager] client spawn handler spawning object with assetId {assetId}");
             if (_poolDictionary.TryGetValue(assetId, out Queue<GameObject> pool) && pool.Count > 0)
             {
                 // 从对象池获取对象

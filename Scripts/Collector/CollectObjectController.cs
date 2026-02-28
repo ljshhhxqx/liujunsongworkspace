@@ -40,7 +40,8 @@ namespace HotUpdate.Scripts.Collector
         private AttackMainEffect attackMainEffect;
         private LayerMask _playerLayer;  
         protected LayerMask _sceneLayer;
-        private CollectObjectType _collectObjectType;
+        [SyncVar(hook = nameof(OnCollectObjectTypeChanged))]
+        public int collectObjectType;
         public int CollectConfigId => collectConfigId;
         public override Collider Collider => _collider;
         public CollectObjectData CollectObjectData { get; private set; }
@@ -65,9 +66,9 @@ namespace HotUpdate.Scripts.Collector
         [Inject]
         private void Init(IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
         {
+//            Debug.Log($"{name} CollectObjectController Init -- {ServerHandler} {ClientHandler}");
             var jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _itemsSpawnerManager = FindObjectOfType<ItemsSpawnerManager>();
-            _collectObjectType = _itemsSpawnerManager.GetCollectObjectType(netId);
             var playerConfig = jsonDataConfig.PlayerConfig;
             _playerLayer = playerConfig.PlayerLayer;
             _sceneLayer = jsonDataConfig.GameConfig.groundSceneLayer;
@@ -88,7 +89,24 @@ namespace HotUpdate.Scripts.Collector
             
             NetId = netId;
             _playerTransform ??= playerInGameManager.LocalPlayerTransform;
-            ChangeBehaviour();
+            // if (ClientHandler)
+            // {
+            //     Debug.Log("[CollectObjectController] ClientHandler Change Behaviour -- " + (CollectObjectType)collectObjectType);
+            //     ChangeBehaviour(collectObjectType);
+            // }
+        }
+
+        private void OnCollectObjectTypeChanged(int oldValue, int newValue)
+        {
+            //Debug.Log("[CollectObjectController] OnCollectObjectTypeChanged -- " + (CollectObjectType)newValue);
+            ChangeBehaviour(newValue);
+        }
+
+        public void ServerChangeBehaviour()
+        {
+            //Debug.Log("[CollectObjectController] ServerHandler ChangeBehaviour");
+            ChangeBehaviour(collectObjectType);
+            
         }
 
         private void InitAttackItem(AttackInfo attackInfo)
@@ -148,10 +166,10 @@ namespace HotUpdate.Scripts.Collector
             }
         }
 
-        private void ChangeBehaviour()
+        private void ChangeBehaviour(int collectObjectType)
         {
-            //Debug.Log($"CollectObjectController::ChangeBehaviour call" + _collectObjectType);
-            switch (_collectObjectType)
+//            Debug.Log($"CollectObjectController::ChangeBehaviour call" + _collectObjectType);
+            switch ((CollectObjectType)collectObjectType)
             {
                 case CollectObjectType.Attack:
                     var attackInfo = _itemsSpawnerManager.GetAttackInfo(NetId);
@@ -218,14 +236,14 @@ namespace HotUpdate.Scripts.Collector
             if (ClientHandler && _collider)
             {
                 Debug.Log("Local player collider enabled");
-                ChangeBehaviour();
+                ChangeBehaviour(collectObjectType);
             }
         }
 
         public override void OnSelfDespawn()
         {
             base.OnSelfDespawn();
-            Debug.Log("Local player collider disabled");
+            //Debug.Log("Local player collider disabled");
             if (_collider)
             {
                 _collider.enabled = false;

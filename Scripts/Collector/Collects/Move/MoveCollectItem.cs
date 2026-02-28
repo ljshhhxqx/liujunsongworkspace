@@ -53,12 +53,12 @@ namespace HotUpdate.Scripts.Collector.Collects.Move
 
         public void Init(MoveInfo moveInfo, bool serverHandler, uint id)
         {
-            _movementConfigLink.ItemMovement?.ResetMovement();
-            Debug.Log($"[MoveItem] {name} Initialize");
+            //Debug.Log($"[MoveItem] {name} Initialize");
             _gameSyncManager ??= FindObjectOfType<GameSyncManager>();
             _checkInsideMap = MapBoundDefiner.Instance.IsWithinMapBounds;
             _checkObstacle = GameObjectContainer.Instance.IsIntersect;
             _movementConfigLink ??= new MovementConfigLink();
+            _movementConfigLink.ItemMovement?.ResetMovement();
             NetId = id;
             ServerHandler = serverHandler;
             if (moveInfo.bouncingConfig != default)

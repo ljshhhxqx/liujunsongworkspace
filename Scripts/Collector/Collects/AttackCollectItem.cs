@@ -157,7 +157,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         {
             // _disposable?.Dispose();
             // _disposable?.Clear();
-            Debug.Log($"[AttackCollectItem] {name} Init");
+//            Debug.Log($"[AttackCollectItem] {name} Init");
             _gameSyncManager ??= FindObjectOfType<GameSyncManager>();
             _attackInfo = info;
             NetId = id;

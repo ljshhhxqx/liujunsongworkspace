@@ -83,7 +83,6 @@ namespace HotUpdate.Scripts.Collector
         
         // 服务器维护的核心数据
         private readonly SyncDictionary<uint, byte[]> _serverItemMap = new SyncDictionary<uint, byte[]>();
-        private readonly SyncDictionary<uint, int> _serverItemBehaviour = new SyncDictionary<uint, int>();
         private readonly Dictionary<int, IColliderConfig> _colliderConfigs = new Dictionary<int, IColliderConfig>();
         private readonly HashSet<uint> _processedItems = new HashSet<uint>();
         private readonly Dictionary<uint, CollectObjectController> _clientCollectObjectControllers = new Dictionary<uint, CollectObjectController>();
@@ -504,7 +503,6 @@ namespace HotUpdate.Scripts.Collector
                         }
                         _processedItems.Remove(itemId);
                         _serverItemMap.Remove(itemId);
-                        _serverItemBehaviour.Remove(itemId);
                         //Debug.Log($"Player {player.name} pick up item {itemId}");
                     }
                     else
@@ -610,7 +608,6 @@ namespace HotUpdate.Scripts.Collector
                 // 通知客户端清理
                 //RpcEndRound();
                 _serverItemMap.Clear();
-                _serverItemBehaviour.Clear();
                 Debug.Log("EndRound finished on server");
                 await UniTask.Yield();
                 
@@ -746,7 +743,7 @@ namespace HotUpdate.Scripts.Collector
                         var go = _networkGameObjectPoolManager.Spawn(_collectiblePrefabs[item.Item1].gameObject, item.Item2, Quaternion.identity, null,
                             poolSize: newSpawnInfos.Count);
                         var identity = go.GetComponent<NetworkIdentity>();
-                        _serverItemBehaviour.Add(identity.netId, (int)type);
+                        // Debug.Log($"[ItemSpawnerManager] Spawned {item.Item1} with id {identity.netId} with type {type}");
                         switch (type)
                         {
                             case CollectObjectType.Attack:
@@ -871,7 +868,7 @@ namespace HotUpdate.Scripts.Collector
                                     }));
                                 break;
                         }
-                        Debug.Log($"Get Object with id: {identity.netId} itemConfigid {item.Item1}");
+                        //Debug.Log($"Get Object with id: {identity.netId} itemConfigid {item.Item1}");
                         
                         var buffData = GetBuffExtraData(item.Item1);
                         var buff = _randomBuffConfig.GetRandomBuffData(buffData.buffId);
@@ -892,8 +889,11 @@ namespace HotUpdate.Scripts.Collector
                             -1);
                         itemMetaData = itemMetaData.SetCustomData(extraData);
                         var itemInfo = MemoryPackSerializer.Serialize(itemMetaData);
-                        Debug.Log($"[SpawnManyItems] Adding item to map with id: {identity.netId} itemConfigid {item.Item1}");
+                        //Debug.Log($"[SpawnManyItems] Adding item to map with id: {identity.netId} itemConfigid {item.Item1}");
                         _serverItemMap.Add(identity.netId, itemInfo);
+                        var collectObjectController = go.GetComponent<CollectObjectController>();
+                        collectObjectController.collectObjectType = (int)type;
+                        collectObjectController.ServerChangeBehaviour();
                         await UniTask.Yield();
                     }
                     //Debug.Log($"Calculated {spawnedCount} spawn positions");
@@ -949,7 +949,7 @@ namespace HotUpdate.Scripts.Collector
                     var controller = identity.GetComponent<TreasureChestComponent>();
                     controller.BehaviourType = (int)type;
                 });            
-            Debug.Log($"[SpawnTreasureChestServer] var identity = chestGo.GetComponent<NetworkIdentity>()");
+            //Debug.Log($"[SpawnTreasureChestServer] var identity = chestGo.GetComponent<NetworkIdentity>()");
 
             var identity = chestGo.GetComponent<NetworkIdentity>();
             // if (identity.netId == 0 || !NetworkServer.spawned.TryGetValue(identity.netId, out var itemInfo))
@@ -957,7 +957,7 @@ namespace HotUpdate.Scripts.Collector
             //     NetworkServer.Spawn(chestGo);
             //     itemInfo = chestGo.GetComponent<NetworkIdentity>();
             // }
-            Debug.Log($"Spawning treasure chest at position: {position} with id: {identity.netId}");
+            //Debug.Log($"Spawning treasure chest at position: {position} with id: {identity.netId}");
             //chestGo.transform.position = position;
             var metaData = new CollectItemMetaData(identity.netId,
                 position,
@@ -1545,11 +1545,6 @@ namespace HotUpdate.Scripts.Collector
             writer.Write(data.translucence);
             writer.Write(data.mysteryTime);
             writer.Write(data.translucenceTime);
-        }
-
-        public CollectObjectType GetCollectObjectType(uint id)
-        {
-            return (CollectObjectType)_serverItemBehaviour.FirstOrDefault(x => x.Key == id).Value;
         }
     }
     

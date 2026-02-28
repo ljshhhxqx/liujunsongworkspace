@@ -184,7 +184,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                     criticalRate = sceneItemInfoChanged.SceneItemInfo.criticalRate,
                     criticalDamageRatio = sceneItemInfoChanged.SceneItemInfo.criticalDamageRatio,
                 };
-                Debug.Log($"Add scene item {sceneItemInfoChanged.ItemId} to scene items");
+                //Debug.Log($"Add scene item {sceneItemInfoChanged.ItemId} to scene items");
                 _sceneItems.Add(sceneItemInfoChanged.ItemId, sceneItemInfo);
             }
         }

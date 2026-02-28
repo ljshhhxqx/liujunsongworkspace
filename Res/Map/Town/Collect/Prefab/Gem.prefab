@@ -154,6 +154,7 @@ MonoBehaviour:
   collectConfigId: 3
   fillRenderer: {fileID: 0}
   attackMainEffect: {fileID: 6646602406143252812}
+  collectObjectType: 0
   NetId: 0
 --- !u!114 &-2325120657532671922
 MonoBehaviour:
@@ -212,7 +213,7 @@ MonoBehaviour:
   interpolatePosition: 1
   interpolateRotation: 1
   interpolateScale: 1
-  coordinateSpace: 0
+  coordinateSpace: 1
   timelineOffset: 1
   showGizmos: 0
   showOverlay: 0
