@@ -48,7 +48,7 @@ MonoBehaviour:
       onceSpawnCount: 40
       onceSpawnWeight: 100
       spawnAttackRatio: 0.15
-      spawnMoveRatio: 0.15
+      spawnMoveRatio: 0.1
       spawnHiddenRatio: 0.05
       spawnAttackMoveRatio: 0.1
       spawnAttackHiddenRatio: 0.05

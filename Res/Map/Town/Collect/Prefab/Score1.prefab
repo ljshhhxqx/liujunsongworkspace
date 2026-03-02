@@ -80,7 +80,7 @@ GameObject:
   - component: {fileID: 6635798248674193094}
   - component: {fileID: 8865806653543488869}
   m_Layer: 0
-  m_Name: Score1
+  m_Name: Play
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

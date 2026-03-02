@@ -72,6 +72,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void Init(IConfigProvider configProvider, GameEventManager gameEventManager, PlayerInGameManager playerInGameManager)
         {
             _currentTick = 0;
+            CurrentTick = 0;
             _playerInGameManager = playerInGameManager;
             Debug.Log("GameSyncManager Init");
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
@@ -139,6 +140,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     _tickTimer = 0;
                     ProcessTick();
                     _currentTick++;
+                    CurrentTick = _currentTick;
                 }
             }
         }
@@ -149,6 +151,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             isGameStart = true;
             OnGameStart?.Invoke(true);
             _playerInGameManager.isGameStarted = true;
+            _playerInGameManager.UpdatePlayerGridAsync();
         }
 
         private void OnAllPlayerGetSpeed(AllPlayerGetSpeedEvent allPlayerGetSpeedEvent)

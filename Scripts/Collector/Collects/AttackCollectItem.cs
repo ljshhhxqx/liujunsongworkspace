@@ -34,6 +34,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         private GameSyncManager _gameSyncManager;
         private ItemsSpawnerManager _itemsSpawnerManager;
         private PlayerInGameManager _playerInGameManager;
+        private NetworkIdentity _networkIdentity;
 
         [Inject]
         private void Init(PlayerInGameManager playerInGameManager, GameSyncManager gameSyncManager,
@@ -41,14 +42,9 @@ namespace HotUpdate.Scripts.Collector.Collects
         {
             _playerInGameManager = playerInGameManager;
             _gameSyncManager = gameSyncManager;
+            _collectEffectController = GetComponent<CollectEffectController>();
+            _networkIdentity = GetComponent<NetworkIdentity>();
             _itemsSpawnerManager = itemsSpawnerManager;
-        }
-
-        public override void OnStartServer()
-        {
-            base.OnStartServer();
-            Debug.Log($"[AttackCollectItem] {name} Start Server");
-            RepeatedTask.Instance.StartRepeatingTask(StartAttack, Time.fixedDeltaTime);
         }
 
         private void StartAttack()
@@ -70,6 +66,10 @@ namespace HotUpdate.Scripts.Collector.Collects
 
         public void RpcSwitchAttackMode(bool isAttacking)
         {
+            if (!_collectEffectController)
+            {
+                return;
+            }
             if (isAttacking)
             {
                 _collectEffectController.SwitchToAttackMode();
@@ -104,7 +104,7 @@ namespace HotUpdate.Scripts.Collector.Collects
                 }
                 _lastAttackTime = Time.time;
                 _keyframeCooldown.Use();
-                _collectEffectController.TriggerAttack();
+                CollectObjectController.RpcTriggerAttack();
                 if (!_attackInfo.isRemoteAttack)
                 {
                     CollectObjectController.RpcPlayEffect(ParticlesType.Slash);
@@ -112,6 +112,11 @@ namespace HotUpdate.Scripts.Collector.Collects
                 return true;
             }
             return false;
+        }
+        
+        public void TriggerAttack()
+        { 
+            _collectEffectController.TriggerAttack();
         }
 
         private void Attack(Vector3 direction, uint targetNetId)
@@ -153,7 +158,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         }
         
         public void Init(AttackInfo info, bool serverHandler, uint id, bool clientHandler, Transform player, AttackConfig config,
-            KeyframeData[] keyframeData, AttackMainEffect attackMainEffect)
+            KeyframeData[] keyframeData, AttackMainEffect attackMainEffect, NetworkIdentity networkIdentity)
         {
             // _disposable?.Dispose();
             // _disposable?.Clear();
@@ -169,7 +174,8 @@ namespace HotUpdate.Scripts.Collector.Collects
                 .Subscribe(_ => OnAttack())
                 .AddTo(_disposable);
             _attackMainEffect ??= attackMainEffect;
-            if (clientHandler)
+            _networkIdentity = networkIdentity;
+            if (_networkIdentity && _networkIdentity.isClient)
             {
                 GameEventManager.Publish(new SceneItemSpawnedEvent(NetId, gameObject, true, player));
                 if (!TryGetComponent(out _collectEffectController))
@@ -180,6 +186,10 @@ namespace HotUpdate.Scripts.Collector.Collects
                     _collectEffectController.SetAttackParameters(GameStaticExtensions.GetAttackExpectancy(_attackInfo.damage, _attackInfo.criticalRate, _attackInfo.criticalDamage),  _attackInfo.attackCooldown);
                     _collectEffectController.SwitchToTrackingMode();
                 }
+            }
+            if (_networkIdentity && _networkIdentity.isServer)
+            {
+                RepeatedTask.Instance.StartRepeatingTask(StartAttack, Time.fixedDeltaTime);
             }
         }
 

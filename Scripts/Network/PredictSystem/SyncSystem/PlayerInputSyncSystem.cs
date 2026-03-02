@@ -493,8 +493,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 playerInputState.PlayerGameStateData.Quaternion = CompressedQuaternion.FromQuaternion(Quaternion.identity);
                 playerInputState.PlayerGameStateData.PlayerEnvironmentState = PlayerEnvironmentState.OnGround;
                 var playerController = GameSyncManager.GetPlayerConnection(header.ConnectionId);
-                playerController.transform.position = playerRebornCommand.RebornPosition;
-                playerController.RpcHandlePlayerRespawnedClient();
+                playerController.RpcHandlePlayerRespawnedClient(playerRebornCommand.RebornPosition);
                 return playerInputState;
             }
 

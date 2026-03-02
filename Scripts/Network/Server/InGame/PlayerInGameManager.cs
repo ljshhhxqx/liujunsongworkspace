@@ -258,8 +258,24 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         {
             return _playerPositions.GetValueOrDefault(GetPlayerNetId(LocalPlayerId));
         }
+        
+        public void UpdatePlayerGridAsync()
+        { 
+            if (ServerHandler)
+            {
+                foreach (var key in _playerNetIds.Keys)
+                {
+                    var player = NetworkServer.connections[key];
+                    if (player == null) continue;
+                    player.identity.transform.position = GetPlayerBasePositionByNetId(player.identity.netId);
+                }
+            }
 
-        private async UniTaskVoid UpdateAllPlayerGrids(CancellationToken token)
+            _updateGridsTokenSource = new CancellationTokenSource();
+            UpdateAllPlayerGrids(_updateGridsTokenSource.Token).Forget();
+        }
+
+        public async UniTaskVoid UpdateAllPlayerGrids(CancellationToken token)
         {
             while (!token.IsCancellationRequested && ServerHandler && !_gameSyncManager.isGameOver)
             {
@@ -279,7 +295,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                         _playerDeathCountdowns.Remove(uid);
                         callback.Invoke(uid);
                         _playerBornCallbacks.Remove(uid);
-                        //Debug.Log($"[UpdateAllPlayerGrids] Player {uid} born with countdown {deathCountdown}");
+                        Debug.Log($"[UpdateAllPlayerGrids] Player {uid} born with countdown {deathCountdown}");
                         continue;
                     }
 
@@ -287,7 +303,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                     {
                         deathCountdown -= GameSyncManager.TickSeconds;
                         _playerDeathCountdowns[uid] = deathCountdown;
-                        //Debug.Log($"[UpdateAllPlayerGrids] Player {uid} death countdown {deathCountdown}");
+                        Debug.Log($"[UpdateAllPlayerGrids] Player {uid} death countdown {deathCountdown}");
                     }
                 }
             }
@@ -388,18 +404,6 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             if (newIsGameStarted)
             {
                 _playerCollider = ResourceManager.Instance.GetResource<Collider>(_gameConfigData.playerPrefabName);
-                if (isServer)
-                {
-                    foreach (var key in _playerNetIds.Keys)
-                    {
-                        var player = NetworkServer.connections[key];
-                        if (player == null) continue;
-                        player.identity.transform.position = GetPlayerBasePositionByNetId(player.identity.netId);
-                    }
-                }
-
-                _updateGridsTokenSource = new CancellationTokenSource();
-                UpdateAllPlayerGrids(_updateGridsTokenSource.Token).Forget();   
             }
         }
 
@@ -412,26 +416,16 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 var playerCollider = playerIdentity.GetComponent<Collider>();
                 _playerPhysicsData = GamePhysicsSystem.CreateColliderConfig(playerCollider);
             }
-            Debug.Log($"[PlayerIngameManager] _playerNetIds.Add(connectId, playerInGameDataNetData.networkIdentity.netId)");
             _playerInGameData.Add(connectId, playerInGameDataNetData);
-            Debug.Log($"[PlayerIngameManager] _playerInGameData.Add(connectId, playerInGameDataNetData)");
             _playerIdsByNetId.Add(playerInGameDataNetData.networkIdentity.netId, connectId);
-            Debug.Log($"[PlayerIngameManager] _playerPhysicsData");
             var json = BoxingFreeSerializer.JsonDeserialize<PlayerReadOnlyData>(playerInGameDataNetData.player);
             _playerIds.Add(connectId, json.PlayerId);
-            Debug.Log($"[PlayerIngameManager] _playerIds.Add(connectId, playerInGameDataNetData.player.PlayerId)");
             _playerNetIds.Add(connectId, playerInGameDataNetData.networkIdentity.netId);
-            Debug.Log($"[PlayerIngameManager] _playerIdsByNetId.Add(playerInGameDataNetData.networkIdentity.netId, connectId");
             var pos = playerInGameDataNetData.networkIdentity.transform.position;
-            Debug.Log($"[PlayerIngameManager] var pos = playerInGameDataNetData.networkIdentity.transform.position");
             var nearestBase = _gameConfigData.GetNearestBase((MapType)GameLoopDataModel.GameSceneName.Value, pos);
-            Debug.Log($"[PlayerIngameManager] var nearestBase = _gameConfigData.GetNearestBase {nearestBase}");
             _playerSpawnPoints[nearestBase] = playerInGameDataNetData.networkIdentity.netId;
-            Debug.Log($"[PlayerIngameManager] _playerSpawnPoints[nearestBase] = playerInGameData.networkIdentity.netId {_playerSpawnPoints[nearestBase]}");
             _playerPositions.Add(playerInGameDataNetData.networkIdentity.netId, pos);
-            Debug.Log($"[PlayerIngameManager] _playerPositions.Add {playerInGameDataNetData.networkIdentity.netId}");
             _playerGrids.Add(playerInGameDataNetData.networkIdentity.netId,  MapBoundDefiner.Instance.GetGridPosition(pos));
-            Debug.Log($"[PlayerIngameManager] _playerGrids.Add {MapBoundDefiner.Instance.GetGridPosition(pos)}");
             SetCalculatorConstants(playerIdentity);
             RpcAddPlayer(connectId, playerInGameDataNetData, playerInGameDataNetData.networkIdentity);
         }

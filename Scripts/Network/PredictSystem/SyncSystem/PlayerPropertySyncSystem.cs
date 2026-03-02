@@ -541,14 +541,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             
             if (playerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue <= 0)
             {
-                PlayerDead(playerId, (int)playerState.MemoryProperty[PropertyTypeEnum.Score].CurrentValue, propertyItemAttackCommand.AttackerId);
-                // var deadManId = propertyItemAttackCommand.TargetId;
-                // var deadTime = _jsonDataConfig.GameConfig.GetPlayerDeathTime((int)playerState.MemoryProperty[PropertyTypeEnum.Score].CurrentValue);
-                // if (!_playerInGameManager.TryAddDeathPlayer(deadManId, deadTime, propertyItemAttackCommand.AttackerId, OnPlayerDeath, OnPlayerRespawn))
-                // {
-                //     Debug.LogError($"PlayerPropertySyncSystem: Failed to add death player {deadManId}");
-                // }
-                // PlayerStateChanged(playerId, deadTime + 3f, SubjectedStateType.IsInvisible, OperationType.Add);
+                PlayerDead(playerId, (int)playerState.MemoryProperty[PropertyTypeEnum.Score].CurrentValue,
+                    propertyItemAttackCommand.AttackerId);
             }
             PropertyStates[playerId] = playerState;
             PropertyChange(playerId);
@@ -1234,6 +1228,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             playerState.ControlSkillType = playerState.ControlSkillType.RemoveState(SubjectedStateType.IsDead);
             var playerController = GameSyncManager.GetPlayerConnection(playerConnection);
             playerState = playerController.HandlePlayerRespawn(playerState);
+            Debug.Log($"PlayerPropertySyncSystem: Player {playerId} respawn");
             GameSyncManager.EnqueueServerCommand(new PlayerRebornCommand
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(playerConnection, CommandType.Input, CommandAuthority.Server, CommandExecuteType.Immediate),

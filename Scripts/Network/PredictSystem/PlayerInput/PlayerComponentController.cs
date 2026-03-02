@@ -984,7 +984,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void OnDestroy()
         {
-            _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter, gameObject, netId, false));
+            // if (rotateCenter && this)
+            // {
+            //     _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter, gameObject, netId, false));
+            // }
             GameObjectContainer.Instance.RemoveDynamicObject(netId);
             _disposables?.Clear();
             _propertyPredictionState.OnPropertyChanged -= HandlePropertyChange;
@@ -1021,8 +1024,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         }
 
         [ClientRpc]
-        public void RpcHandlePlayerRespawnedClient()
+        public void RpcHandlePlayerRespawnedClient(CompressedVector3 rebornPosition)
         {
+            transform.position = rebornPosition;
             _playerAnimationCalculator.PlayAnimationWithNoCondition(AnimationState.Idle);
             var playerDamageDeathOverlay = _uiManager.GetActiveUI<PlayerDamageDeathOverlay>(UIType.PlayerDamageDeathOverlay, UICanvasType.Overlay);
             Debug.Log($"[RpcHandlePlayerRespawnedClient] {netId}");
@@ -1502,6 +1506,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcPlayEffect(ParticlesType type)
         {
+            Debug.Log($"[PlayerComponentController] RpcPlayEffect {type}");
             EffectPlayer.Instance.PlayEffect(type, transform.position, transform);
         }
 

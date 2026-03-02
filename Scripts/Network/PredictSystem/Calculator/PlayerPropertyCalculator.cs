@@ -123,6 +123,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 Debug.Log($"PlayerConnectionId: {defenderId} is invisible, cannot attack.");
                 damageResultData.IsDodged = true;
             }
+            Debug.Log($"[HandleItemAttack] DamageResultData: {damageResultData}");
             return damageResultData;
         }
 

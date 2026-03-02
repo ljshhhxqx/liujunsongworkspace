@@ -89,24 +89,32 @@ namespace HotUpdate.Scripts.Collector
             
             NetId = netId;
             _playerTransform ??= playerInGameManager.LocalPlayerTransform;
-            // if (ClientHandler)
-            // {
-            //     Debug.Log("[CollectObjectController] ClientHandler Change Behaviour -- " + (CollectObjectType)collectObjectType);
-            //     ChangeBehaviour(collectObjectType);
-            // }
         }
 
         private void OnCollectObjectTypeChanged(int oldValue, int newValue)
         {
-            //Debug.Log("[CollectObjectController] OnCollectObjectTypeChanged -- " + (CollectObjectType)newValue);
+            Debug.Log("[CollectObjectController] OnCollectObjectTypeChanged -- " + (CollectObjectType)newValue);
+            if (ServerHandler)
+            {
+                return;
+            }
             ChangeBehaviour(newValue);
         }
 
         public void ServerChangeBehaviour()
         {
-            //Debug.Log("[CollectObjectController] ServerHandler ChangeBehaviour");
+            Debug.Log("[CollectObjectController] ServerHandler ChangeBehaviour -- " + (CollectObjectType)collectObjectType);
             ChangeBehaviour(collectObjectType);
-            
+            if (collectObjectType == 0)
+            {
+                RpcPlayAnimation();
+            }
+        }
+
+        [ClientRpc]
+        private void RpcPlayAnimation()
+        {
+            _collectAnimationComponent.Play();
         }
 
         private void InitAttackItem(AttackInfo attackInfo)
@@ -133,7 +141,7 @@ namespace HotUpdate.Scripts.Collector
             {
                 keyframeDatas = new[] { _collectData.attackFrameData };
             }
-            _attackCollectItem.Init(attackInfo, ServerHandler, netId, ClientHandler, _playerTransform, _config, keyframeDatas, attackMainEffect);
+            _attackCollectItem.Init(attackInfo, ServerHandler, netId, ClientHandler, _playerTransform, _config, keyframeDatas, attackMainEffect, netIdentity);
         }
         
         private void InitMoveItem(MoveInfo moveInfo)
@@ -166,10 +174,10 @@ namespace HotUpdate.Scripts.Collector
             }
         }
 
-        private void ChangeBehaviour(int collectObjectType)
+        private void ChangeBehaviour(int collectType)
         {
-//            Debug.Log($"CollectObjectController::ChangeBehaviour call" + _collectObjectType);
-            switch ((CollectObjectType)collectObjectType)
+            //Debug.Log($"CollectObjectController::ChangeBehaviour call" + collectType);
+            switch ((CollectObjectType)collectType)
             {
                 case CollectObjectType.Attack:
                     var attackInfo = _itemsSpawnerManager.GetAttackInfo(NetId);
@@ -222,10 +230,6 @@ namespace HotUpdate.Scripts.Collector
                     DisableComponent<MoveCollectItem>();
                     DisableComponent<HiddenItem>();
                     DisableComponent<AttackCollectItem>();
-                    if (ClientHandler)
-                    {
-                        _collectAnimationComponent?.Play();
-                    }
                     break;
             }
         }
@@ -233,10 +237,10 @@ namespace HotUpdate.Scripts.Collector
         public override void OnSelfSpawn()
         {
             base.OnSelfSpawn();
-            if (ClientHandler && _collider)
+            if (ClientHandler)
             {
                 Debug.Log("Local player collider enabled");
-                ChangeBehaviour(collectObjectType);
+                //ChangeBehaviour(collectObjectType);
             }
         }
 
@@ -262,11 +266,6 @@ namespace HotUpdate.Scripts.Collector
             GameObjectContainer.Instance.RemoveDynamicObject(netId);
         }
 
-        public void CollectSuccess()
-        {
-            _collectParticlePlayer.Play(_collectAnimationComponent.OutlineColorValue);
-        }
-
         [ClientRpc]
         public void RpcOnDeath()
         {
@@ -287,6 +286,12 @@ namespace HotUpdate.Scripts.Collector
         public void RpcSwitchAttackMode(bool isAttacking)
         {
             _attackCollectItem.RpcSwitchAttackMode(isAttacking);
+        }
+        
+        [ClientRpc]
+        public void RpcTriggerAttack( )
+        {
+            _attackCollectItem.TriggerAttack();
         }
 
         public void PickerSuccess()

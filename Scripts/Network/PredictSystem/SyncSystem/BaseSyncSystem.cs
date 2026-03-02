@@ -101,7 +101,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         protected virtual bool ValidateCommand(INetworkCommand command)
         {
             var header = command.GetHeader();
-            if (!PropertyStates.ContainsKey(header.ConnectionId))
+            if (command.GetHeader().Authority == CommandAuthority.Client && !PropertyStates.ContainsKey(header.ConnectionId))
             {
                 Debug.LogError($"{command.GetType().Name} not valid command playerId {header.ConnectionId}");
                 return false;

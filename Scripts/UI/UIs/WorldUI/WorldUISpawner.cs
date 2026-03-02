@@ -63,8 +63,8 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
                     return;
                 }
                 playerItemModels.Remove(playerSpawnedEvent.PlayerId);
-                _followedUIControllers.Remove(playerSpawnedEvent.PlayerId);
                 GameObjectPoolManger.Instance.ReturnObject(_followedUIControllers[playerSpawnedEvent.PlayerId].gameObject);
+                _followedUIControllers.Remove(playerSpawnedEvent.PlayerId);
                 return;
             }
 
@@ -109,7 +109,7 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
         {
             var dataModel = GetDataModel(WorldUIType.CollectItem, sceneItemSpawnedEvent.ItemId, out var dataModels);
 
-            if (!sceneItemSpawnedEvent.Spawned)
+            if (!sceneItemSpawnedEvent.Spawned && _followedUIControllers.ContainsKey(sceneItemSpawnedEvent.ItemId))
             {
                 GameObjectPoolManger.Instance.ReturnObject(_followedUIControllers[sceneItemSpawnedEvent.ItemId].gameObject);
                 dataModel.Dispose();

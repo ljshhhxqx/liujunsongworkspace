@@ -82,7 +82,7 @@ namespace HotUpdate.Scripts.Collector.Effect
             AttackState previousState = currentState;
             currentState = newState;
 
-            Debug.Log($"Attack State Changed: {previousState} -> {newState}");
+            //Debug.Log($"Attack State Changed: {previousState} -> {newState}");
         }
 
         private void StartSearchingAnimation()

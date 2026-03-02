@@ -400,7 +400,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     AddPlayerItems(itemsData, header, ref playerItemState);
                     break;
                 case PlayerItemType.Collect:
-                    if (header.ConnectionId < 0 || !Constant.IsServer)
+                    if (!Constant.IsServer)
                     {
                         break;
                     }
@@ -415,11 +415,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     {
                         buffCommand.BuffExtraData = buffExtra;
                         Constant.GameSyncManager.EnqueueServerCommand(buffCommand);
+                        Debug.Log($"[PlayerItemCalculator] Add buff {buffExtra.buffId} to {header.ConnectionId}");
                     }
                     break;
                 case PlayerItemType.Gold:
                 case PlayerItemType.Score:
-                    if (header.ConnectionId < 0 || !Constant.IsServer)
+                    if (!Constant.IsServer)
                     {
                         break;
                     }

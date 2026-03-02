@@ -21,14 +21,6 @@ namespace HotUpdate.Scripts.Collector.Collects.Move
         private HashSet<GameObjectData> _collectedItems = new HashSet<GameObjectData>();
         private Func<Vector3, bool> _checkInsideMap;
         private Func<Vector3, IColliderConfig, bool> _checkObstacle;
-
-
-        public override void OnStartServer()
-        {
-            base.OnStartServer();
-            Debug.Log($"[MoveItem] {name} Initialize");
-            RepeatedTask.Instance.StartRepeatingTask(StartMove, Time.fixedDeltaTime);
-        }
         
         private void StartMove()
         {
@@ -78,6 +70,10 @@ namespace HotUpdate.Scripts.Collector.Collects.Move
             }
             _movementConfigLink.ItemMovement.Initialize(transform, ColliderConfig, _checkInsideMap, _checkObstacle);
             _moveInfo = moveInfo;
+            if (serverHandler)
+            {
+                RepeatedTask.Instance.StartRepeatingTask(StartMove, Time.fixedDeltaTime);
+            }
         }
 
         public void OnSelfDespawn()

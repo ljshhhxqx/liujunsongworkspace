@@ -889,7 +889,7 @@ namespace HotUpdate.Scripts.Collector
                             -1);
                         itemMetaData = itemMetaData.SetCustomData(extraData);
                         var itemInfo = MemoryPackSerializer.Serialize(itemMetaData);
-                        //Debug.Log($"[SpawnManyItems] Adding item to map with id: {identity.netId} itemConfigid {item.Item1}");
+                        Debug.Log($"[SpawnManyItems] Adding item to map with id: {identity.netId} itemConfigid {item.Item1}");
                         _serverItemMap.Add(identity.netId, itemInfo);
                         var collectObjectController = go.GetComponent<CollectObjectController>();
                         collectObjectController.collectObjectType = (int)type;
