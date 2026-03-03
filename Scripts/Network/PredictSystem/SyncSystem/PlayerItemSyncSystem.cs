@@ -108,6 +108,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 case ItemsGetCommand itemsGetCommand:
                     for (var i = 0; i < itemsGetCommand.Items.Count; i++)
                     {
+                        Debug.Log("ItemsGetCommand Items[" + i + "]");
                         PlayerItemCalculator.CommandGetItem(ref playerItemState, itemsGetCommand.Items[i], header);
                     }
                     break;

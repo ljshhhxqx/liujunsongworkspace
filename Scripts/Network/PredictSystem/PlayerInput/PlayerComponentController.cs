@@ -263,6 +263,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void OnDevelopItemGet(DevelopItemGetEvent developItemGetEvent)
         {
+            Debug.Log($"[PlayerInGameController] OnDevelopItemGet: {developItemGetEvent.ItemsGetCommand}");
             CmdSendCommand(NetworkCommandExtensions.SerializeCommand(developItemGetEvent.ItemsGetCommand).Buffer);
         }
 
@@ -1273,7 +1274,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcSetPlayerInfo(float hp, float mp, float maxHp, float maxMp, uint playerId, string playerName)
         {
-            _gameEventManager.Publish(new PlayerInfoChangedEvent(hp, mp, maxHp, maxMp, playerId, playerName));
+            if (playerId == netId)
+            {
+                return;
+            }
+            _gameEventManager.Publish(new PlayerInfoChangedEvent(hp, maxHp, mp, maxMp, playerId, playerName));
         }
 
         [ClientRpc]
@@ -1496,6 +1501,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             _gameSyncManager.EnqueueCommand(commandJson);
         }
+        
         [ClientRpc]
         public void RpcSpawnSkillEffect(int skillConfigId, Vector3 position, AnimationState code)
         {

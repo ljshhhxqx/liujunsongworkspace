@@ -404,6 +404,34 @@ namespace HotUpdate.Scripts.Tool
             var direction = localPos - (Vector2)followParams.IndicatorUI.localPosition;
             var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             followParams.IndicatorUI.localRotation = Quaternion.Euler(0, 0, angle);
+            if (followParams.IsFollowingSelf)
+            {
+                // 死区：摄像机小幅度移动时不更新
+                var deltaPos = clampedPos - (Vector2)followParams.IndicatorUI.localPosition;
+                if (deltaPos.magnitude < 10f) // 10像素死区
+                {
+                    return;
+                }
+
+                // 平滑移动
+                followParams.IndicatorUI.localPosition = Vector2.Lerp(
+                    followParams.IndicatorUI.localPosition,
+                    clampedPos,
+                    Time.deltaTime * 5f // 平滑系数
+                );
+
+                // 固定旋转（不跟随方向）
+                followParams.IndicatorUI.localRotation = Quaternion.identity;
+            }
+            else
+            {
+                // 其他目标：正常更新
+                followParams.IndicatorUI.localPosition = clampedPos;
+        
+                direction = localPos - (Vector2)followParams.IndicatorUI.localPosition;
+                angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                followParams.IndicatorUI.localRotation = Quaternion.Euler(0, 0, angle);
+            }
         }
 
         private static Vector2 ClampToScreen(FollowTargetParams targetParams, Vector2 position)
@@ -458,5 +486,6 @@ namespace HotUpdate.Scripts.Tool
         // 可选：直接传入Canvas的渲染摄像机
         public Camera CanvasCamera;
         public bool ShowBehindIndicator;
+        public bool IsFollowingSelf;
     }
 }

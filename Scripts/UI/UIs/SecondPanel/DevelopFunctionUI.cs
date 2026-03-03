@@ -3,6 +3,7 @@ using AOTScripts.Data;
 using AOTScripts.Tool.Resource;
 using HotUpdate.Scripts.Config.ArrayConfig;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
+using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
 using Mirror;
@@ -27,11 +28,13 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         [SerializeField] private Button giveScoreButton;
         [SerializeField] private TMP_InputField inputField;
         private ItemConfig _itemConfig;
+        private PlayerInGameManager _playerInGameManager;
 
         [Inject]
         private void Initialize(IConfigProvider configProvider, UIManager uiManager, GameEventManager gameEventManager)
         {
             _itemConfig = configProvider.GetConfig<ItemConfig>();
+            _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
             giveMoneyButton.OnClickAsObservable()
                 .Subscribe(_ =>
                 {
@@ -136,9 +139,10 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 });
                 var itemGetCommand = new ItemsGetCommand();
                 itemGetCommand.Header =
-                    GameSyncManager.CreateNetworkCommandHeader(NetworkClient.connection.connectionId, CommandType.Item);
+                    GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId, CommandType.Item);
                 itemGetCommand.Items = items;
                 gameEventManager.Publish(new DevelopItemGetEvent(itemGetCommand));
+                Debug.Log($"发送指令:{itemGetCommand} - {_playerInGameManager.LocalPlayerId}");
                 //gameEventManager.CmdEnqueueCommand(NetworkCommandExtensions.SerializeCommand(itemGetCommand).Item1);
             }
             else

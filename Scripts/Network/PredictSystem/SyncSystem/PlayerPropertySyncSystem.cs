@@ -481,6 +481,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             if (operationType == OperationType.Add)
             {
                 playerState.ControlSkillType = playerState.ControlSkillType.AddState(state);
+                Debug.Log($"PlayerPropertySyncSystem: {connectionId} add state {state}");
                 if (time > 0)
                 {
                     DelayInvoker.DelayInvoke(time, () =>
@@ -489,12 +490,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         playerState.ControlSkillType = playerState.ControlSkillType.RemoveState(state);
                         PropertyStates[connectionId] = playerState;
                         PropertyChange(connectionId);
+                        Debug.Log($"PlayerPropertySyncSystem: {connectionId} remove state {state}");
                     });
                 }
             }
             else if (operationType == OperationType.Subtract)
             {
                 playerState.ControlSkillType = playerState.ControlSkillType.RemoveState(state);
+                Debug.Log($"PlayerPropertySyncSystem: {connectionId} subtract state {state}");
                 if (time > 0)
                 {
                     DelayInvoker.DelayInvoke(time, () =>
@@ -503,6 +506,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         playerState.ControlSkillType = playerState.ControlSkillType.AddState(state);
                         PropertyStates[connectionId] = playerState;
                         PropertyChange(connectionId);
+                        Debug.Log($"PlayerPropertySyncSystem: {connectionId} add state {state}");
                     });
                 }
             }
@@ -517,10 +521,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var rb = playerController.GetComponent<Rigidbody>();
             if (playerStateChangedCommand.NewState != SubjectedStateType.None)
             {
+                Debug.Log($"PlayerPropertySyncSystem - playerStateChangedCommand.NewState != SubjectedStateType.None: {header.ConnectionId} {playerStateChangedCommand.NewState} {playerStateChangedCommand.OperationType}");
                 PlayerStateChanged(header.ConnectionId, playerStateChangedCommand.Time, playerStateChangedCommand.NewState, playerStateChangedCommand.OperationType);
             }
             rb.isKinematic = playerStateChangedCommand.EnableRb;
             playerController.RpcSetRb(rb.isKinematic);
+            Debug.Log($"PlayerPropertySyncSystem playerController.RpcSetRb(rb.isKinematic): {header.ConnectionId} {playerStateChangedCommand.NewState} {playerStateChangedCommand.OperationType}");
         }
 
         private void HandleItemAttack(PropertyItemAttackCommand propertyItemAttackCommand)

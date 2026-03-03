@@ -74,7 +74,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
         [Inject]
         private void Init(GameEventManager gameEventManager, IObjectResolver objectResolver, PlayerInGameManager playerInGameManager)
         {
-            transform.localScale = Vector3.zero;
+            SetTrainScale(Vector3.zero);
             _gameEventManager = gameEventManager;
             _gameEventManager.Subscribe<StartGameTrainEvent>(OnStartTrain);
             _gameEventManager.Subscribe<TakeTrainEvent>(OnTakeTrain);
@@ -95,6 +95,18 @@ namespace HotUpdate.Scripts.Game.GamePlay
                     _cachedTrainParts.Add(trainPart);
                 }
             }
+        }
+
+        private void SetTrainScale(Vector3 scale)
+        {
+            transform.localScale = scale;
+            RpcSetTrainScale(scale);
+        }
+
+        [ClientRpc]
+        private void RpcSetTrainScale(Vector3 scale)
+        {
+            transform.localScale = scale;
         }
 
         private void OnTrainAttackPlayer(TrainAttackPlayerEvent trainAttackEvent)
@@ -144,10 +156,22 @@ namespace HotUpdate.Scripts.Game.GamePlay
             command.OperationType = OperationType.Add;
             command.EnableRb = true;
             var ts = _cachedTrainParts.RandomSelect();
-            identity.transform.SetParent(ts);
-            identity.transform.localPosition = Vector3.zero;
+            var index = _cachedTrainParts.IndexOf(ts);
             _cachedTrainParts.Remove(ts);
+            TpcSetPlayerParent(identity.connectionToClient, index, true);
             _gameSyncManager.EnqueueServerCommand(command);
+        }
+
+        [TargetRpc]
+        private void TpcSetPlayerParent(NetworkConnectionToClient toClient, int index, bool isSet)
+        {
+            if (!isSet)
+            {
+                toClient.identity.transform.SetParent(null);
+                return;
+            }
+            toClient.identity.transform.SetParent(trainParts[index]);
+            toClient.identity.transform.localPosition = Vector3.zero;
         }
 
         private void OnStartTrain(StartGameTrainEvent startEvent)
@@ -162,7 +186,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
             }
             _movementDuration = startEvent.MoveDuration;
             Debug.Log($"[TrainController] Start Game Train {startEvent.TrainId} {startEvent.StartPosition} {startEvent.TargetPosition}");
-            transform.localScale = Vector3.one;
+            SetTrainScale(Vector3.one);
             _origin = startEvent.StartPosition;
             _target = startEvent.TargetPosition;
             transform.position = _origin;
@@ -203,7 +227,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
                     StopWheelRotation();
                     StopSmokeEmission();
                     OnTrainArrived();
-                    transform.localScale = Vector3.zero;
+                    SetTrainScale(Vector3.zero);
                     Debug.Log("[TrainController] Stop Game Train");
                 }));
         }
@@ -230,7 +254,7 @@ namespace HotUpdate.Scripts.Game.GamePlay
                     stateChangedCommand.OperationType = OperationType.Subtract;
                     
                     stateChangedCommand.EnableRb = false;
-                    identity.transform.SetParent(null);
+                    TpcSetPlayerParent(identity.connectionToClient, i, false);
                     _gameSyncManager.EnqueueServerCommand(stateChangedCommand);
                     var takeTrainCommand = new PlayerTouchObjectCommand();
                     takeTrainCommand.Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Property);
