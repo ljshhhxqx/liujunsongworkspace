@@ -10,6 +10,7 @@ using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
+using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
 using HotUpdate.Scripts.Network.PredictSystem.SyncSystem;
 using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool;
@@ -74,7 +75,6 @@ namespace HotUpdate.Scripts.Game.GamePlay
         [Inject]
         private void Init(GameEventManager gameEventManager, IObjectResolver objectResolver, PlayerInGameManager playerInGameManager)
         {
-            SetTrainScale(Vector3.zero);
             _gameEventManager = gameEventManager;
             _gameEventManager.Subscribe<StartGameTrainEvent>(OnStartTrain);
             _gameEventManager.Subscribe<TakeTrainEvent>(OnTakeTrain);
@@ -95,18 +95,17 @@ namespace HotUpdate.Scripts.Game.GamePlay
                     _cachedTrainParts.Add(trainPart);
                 }
             }
+
+            if (ServerHandler)
+            {
+                SetTrainScale(Vector3.zero);
+            }
         }
 
         private void SetTrainScale(Vector3 scale)
         {
             transform.localScale = scale;
-            RpcSetTrainScale(scale);
-        }
-
-        [ClientRpc]
-        private void RpcSetTrainScale(Vector3 scale)
-        {
-            transform.localScale = scale;
+            _playerInGameManager.RpcSetObjectScale(netId, scale);
         }
 
         private void OnTrainAttackPlayer(TrainAttackPlayerEvent trainAttackEvent)
@@ -155,23 +154,12 @@ namespace HotUpdate.Scripts.Game.GamePlay
             command.Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Property);
             command.OperationType = OperationType.Add;
             command.EnableRb = true;
+            var playerIdentity = identity.GetComponent<PlayerComponentController>();
             var ts = _cachedTrainParts.RandomSelect();
-            var index = _cachedTrainParts.IndexOf(ts);
             _cachedTrainParts.Remove(ts);
-            TpcSetPlayerParent(identity.connectionToClient, index, true);
+            playerIdentity.SetPlayerParentServer(ts);
+            Debug.Log($"[TrainController] Set Player {takeEvent.PlayerId} Parent {identity.connectionToClient}");
             _gameSyncManager.EnqueueServerCommand(command);
-        }
-
-        [TargetRpc]
-        private void TpcSetPlayerParent(NetworkConnectionToClient toClient, int index, bool isSet)
-        {
-            if (!isSet)
-            {
-                toClient.identity.transform.SetParent(null);
-                return;
-            }
-            toClient.identity.transform.SetParent(trainParts[index]);
-            toClient.identity.transform.localPosition = Vector3.zero;
         }
 
         private void OnStartTrain(StartGameTrainEvent startEvent)
@@ -254,7 +242,8 @@ namespace HotUpdate.Scripts.Game.GamePlay
                     stateChangedCommand.OperationType = OperationType.Subtract;
                     
                     stateChangedCommand.EnableRb = false;
-                    TpcSetPlayerParent(identity.connectionToClient, i, false);
+                    var playerIdentity = identity.GetComponent<PlayerComponentController>();
+                    playerIdentity.SetPlayerParentServer(null);
                     _gameSyncManager.EnqueueServerCommand(stateChangedCommand);
                     var takeTrainCommand = new PlayerTouchObjectCommand();
                     takeTrainCommand.Header = GameSyncManager.CreateNetworkCommandHeader(playerConnectionId, CommandType.Property);

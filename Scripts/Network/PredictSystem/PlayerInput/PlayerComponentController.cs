@@ -63,6 +63,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private Animator _animator;
         [SerializeField]
         private Transform _checkStairTransform;
+        [SerializeField]
+        private NetworkTransformUnreliable _clientTransform;
+        [SerializeField]
+        private NetworkTransformUnreliable _serverTransform;
         private Camera _camera;
         [SerializeField]
         private PlayerEffectPlayer playerEffectPlayer;
@@ -74,6 +78,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private Transform rotateCenter;
         protected override bool AutoInjectClient => false;
         private PropertyConfig _propertyConfig;
+        private NetworkRigidbodyUnreliable _networkRigidbody;
         
         [Header("States-NetworkBehaviour")]
         private PlayerInputPredictionState _inputState;
@@ -159,6 +164,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         [SyncVar] 
         public bool isDead;
+
+        private Transform _originParent;
 
         public int CurrentComboStage { get; private set; }
         public IObservable<int> AttackPointReached => _onAttackPoint;
@@ -248,6 +255,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _uiManager = uiManager;
             _rigidbody = GetComponent<Rigidbody>();
             _capsuleCollider = GetComponent<CapsuleCollider>();
+            _networkRigidbody = GetComponent<NetworkRigidbodyUnreliable>();
             _animator = GetComponent<Animator>();
             _skillConfig = _configProvider.GetConfig<SkillConfig>();
             _camera = Camera.main;
@@ -259,6 +267,64 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _propertyConfig = _configProvider.GetConfig<PropertyConfig>();
             GetAllCalculators(configProvider, gameSyncManager);
             HandleAllSyncState();
+            _clientTransform.enabled = true;
+            _serverTransform.enabled = false;
+            if (ServerHandler)
+            {
+                _originParent = transform.parent;
+            }
+        }
+
+        [Server]
+        public void SetPlayerTransformServer(Vector3 position, Quaternion rotation, bool reset)
+        {
+            if (reset)
+            {
+                _clientTransform.enabled = true;
+                _serverTransform.enabled = false;
+            }
+            RpcSetPlayerPosition(position, rotation, reset);
+        }
+
+        [ClientRpc]
+        private void RpcSetPlayerPosition(Vector3 position, Quaternion rotation, bool reset)
+        {
+            if (reset)
+            {
+                _clientTransform.enabled = true;
+                _serverTransform.enabled = false;
+            }
+            transform.position = position;
+            transform.rotation = rotation;
+        }
+
+        [Server]
+        public void SetPlayerParentServer(Transform parent)
+        {
+            if (!parent)
+            {
+                _serverTransform.transform.SetParent(_originParent);
+                SetPlayerTransformServer(_originParent.transform.position, Quaternion.identity, true);
+                _clientTransform.enabled = true;
+                _serverTransform.enabled = false;
+                Debug.Log($"[PlayerInGameController] SetPlayerParentServer: {parent}");
+                return;
+            }
+            _clientTransform.enabled = false;
+            _serverTransform.enabled = true;
+            RpcSetPlayerTransform(false);
+            DelayInvoker.DelayInvoke(0.2f, () =>
+            {
+                _serverTransform.transform.SetParent(parent);
+                _serverTransform.transform.localPosition = Vector3.zero;
+            });
+        }
+
+        [ClientRpc]
+        private void RpcSetPlayerTransform(bool client)
+        {
+            _clientTransform.enabled = client;
+            _serverTransform.enabled = !client;
         }
 
         private void OnDevelopItemGet(DevelopItemGetEvent developItemGetEvent)
@@ -1025,9 +1091,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         }
 
         [ClientRpc]
-        public void RpcHandlePlayerRespawnedClient(CompressedVector3 rebornPosition)
+        public void RpcHandlePlayerRespawnedClient()
         {
-            transform.position = rebornPosition;
             _playerAnimationCalculator.PlayAnimationWithNoCondition(AnimationState.Idle);
             var playerDamageDeathOverlay = _uiManager.GetActiveUI<PlayerDamageDeathOverlay>(UIType.PlayerDamageDeathOverlay, UICanvasType.Overlay);
             Debug.Log($"[RpcHandlePlayerRespawnedClient] {netId}");

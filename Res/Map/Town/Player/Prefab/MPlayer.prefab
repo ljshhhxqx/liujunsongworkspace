@@ -7893,7 +7893,6 @@ GameObject:
   - component: {fileID: 3106744384954794610}
   - component: {fileID: 5077450697729136885}
   - component: {fileID: 8677930179464285273}
-  - component: {fileID: 168169212319342474}
   - component: {fileID: 8481695034306105822}
   - component: {fileID: 566814416672649618}
   - component: {fileID: 20022805378543967}
@@ -7903,6 +7902,7 @@ GameObject:
   - component: {fileID: 991941666967559954}
   - component: {fileID: 8195309564239869377}
   - component: {fileID: 4077696970261223102}
+  - component: {fileID: 2478416760192305655}
   m_Layer: 6
   m_Name: MPlayer
   m_TagString: Player
@@ -8086,6 +8086,8 @@ MonoBehaviour:
   _capsuleCollider: {fileID: 5839059580005103042}
   _animator: {fileID: 7780707582190085363}
   _checkStairTransform: {fileID: 7564044400887088144}
+  _clientTransform: {fileID: 8677930179464285273}
+  _serverTransform: {fileID: 2478416760192305655}
   playerEffectPlayer: {fileID: 3940613001798115561}
   effectContainer: {fileID: 602517458217082247}
   playerControlEffect: {fileID: 5077450697729136885}
@@ -8185,39 +8187,6 @@ MonoBehaviour:
   positionSensitivity: 0.01
   rotationSensitivity: 0.01
   scaleSensitivity: 0.01
---- !u!114 &168169212319342474
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8351228888613827031}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a553cb17010b2403e8523b558bffbc14, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 6440390397820898895}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 1
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  bufferResetMultiplier: 3
-  positionSensitivity: 0.01
-  rotationSensitivity: 0.01
-  scaleSensitivity: 0.01
 --- !u!114 &8481695034306105822
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8232,7 +8201,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncDirection: 1
   syncMode: 0
-  syncInterval: 0
+  syncInterval: 0.1
   clientAuthority: 0
   animator: {fileID: 7780707582190085363}
 --- !u!114 &566814416672649618
@@ -8449,6 +8418,39 @@ MonoBehaviour:
   lineColor: {r: 1, g: 0, b: 0, a: 1}
   lineWidth: 0.1
   init: 0
+--- !u!114 &2478416760192305655
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8351228888613827031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a553cb17010b2403e8523b558bffbc14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 6440390397820898895}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 1
+  timelineOffset: 1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  bufferResetMultiplier: 3
+  positionSensitivity: 0.01
+  rotationSensitivity: 0.01
+  scaleSensitivity: 0.01
 --- !u!1 &8357527339398811249
 GameObject:
   m_ObjectHideFlags: 0

@@ -267,7 +267,9 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                 {
                     var player = NetworkServer.connections[key];
                     if (player == null) continue;
-                    player.identity.transform.position = GetPlayerBasePositionByNetId(player.identity.netId);
+                    var playerComponent = player.identity.GetComponent<PlayerComponentController>();
+                    var position = GetPlayerBasePositionByNetId(player.identity.netId);
+                    playerComponent.SetPlayerTransformServer( position, Quaternion.identity, false);
                 }
             }
 
@@ -1001,6 +1003,16 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             var player = NetworkServer.connections[headerConnectionId].identity.transform;
             var newPosition = playerPosition + (direction == Vector3.zero ? player.forward : direction.normalized) * distance;
             return newPosition;
+        }
+        
+        [ClientRpc]
+        public void RpcSetObjectScale(uint objectNetId, Vector3 scale)
+        {
+            if (objectNetId == 0) return;
+            if (NetworkClient.spawned.TryGetValue(objectNetId, out var networkIdentity))
+            {
+                networkIdentity.gameObject.transform.localScale = scale;
+            }
         }
 
         // public int[] GetHitPlayers(Vector3 position, IColliderConfig colliderConfig)

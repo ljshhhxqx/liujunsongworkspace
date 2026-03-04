@@ -41,7 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6599555745271577745}
   m_Layer: 7
-  m_Name: GameObject (1)
+  m_Name: RocketSet1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -103,7 +103,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8036306907477106707}
   m_Layer: 7
-  m_Name: GameObject (2)
+  m_Name: RocketSet2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -510,7 +510,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1987829126925596662}
   m_Layer: 7
-  m_Name: GameObject (3)
+  m_Name: RocketSet3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -945,7 +945,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7676910854842966016}
   m_Layer: 7
-  m_Name: GameObject (4)
+  m_Name: RocketSet4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -447,18 +447,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerState = GetState<PlayerPredictablePropertyState>(header.ConnectionId);
             var player = _playerInGameManager.GetPlayerComponent<PlayerComponentController>(header.ConnectionId);
             var playerBase = _playerInGameManager.GetPlayerBasePositionById(header.ConnectionId);
+            var targetPosition = playerBase + new Vector3(0, 0.5f, 0);
             switch ((ObjectType)playerTouchObjectCommand.ObjectType)
             {
                 case ObjectType.Train:
                     var trainScore = _collectData.touchTrainGainScore.GetRandomValue();
-                    player.transform.position = playerBase + new Vector3(0, 0.5f, 0);
                     Debug.Log($"PlayerPropertySyncSystem: {header.ConnectionId} gain {trainScore} score by touch train");
                     playerState.MemoryProperty[PropertyTypeEnum.Score] = playerState.MemoryProperty[PropertyTypeEnum.Score].UpdateCurrentValue(trainScore);
                     break;
                 case ObjectType.Rocket:
                     var rockerScore = _collectData.touchRocketGainScore.GetRandomValue();
                     Debug.Log($"PlayerPropertySyncSystem: {header.ConnectionId} gain {rockerScore} score by touch rocket");
-                    player.transform.position = playerBase + new Vector3(0, 0.5f, 0);
                     playerState.MemoryProperty[PropertyTypeEnum.Score] = playerState.MemoryProperty[PropertyTypeEnum.Score].UpdateCurrentValue(rockerScore);
                     break;
                 case ObjectType.Well:
@@ -470,7 +469,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     Debug.LogWarning($"无交互的物品类型{playerTouchObjectCommand.ObjectType}");
                     break;
             }
-            
+            player.SetPlayerTransformServer(targetPosition, Quaternion.identity, false);
             PropertyStates[header.ConnectionId] = playerState;
             PropertyChange(header.ConnectionId);
         }
