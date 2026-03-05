@@ -152,7 +152,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                 if (_sceneItems[key].maxHealth > 1)
                 {
                     var sceneItem = GameObjectContainer.Instance.GetDynamicObjectData(key);
-                    if (sceneItem.ColliderConfig != null)
+                    if (sceneItem != null)
                     {
                         var position = sceneItem.Position;
                         if (Vector3.Distance(position, data.Position) < distance)
@@ -163,7 +163,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                     }
                 }
             }
-            return Vector3.zero;
+            return data.Position;
         }
 
         private void OnItemSpawned(SceneItemInfoChanged sceneItemInfoChanged)

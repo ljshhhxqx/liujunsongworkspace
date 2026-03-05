@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using AOTScripts.Data;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Config.ArrayConfig;
@@ -44,29 +45,44 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             {
                 return;
             }
-            if (command is SkillLoadCommand skillLoadCommand)
+            
+            try
             {
-                Debug.Log($"[SkillLoadCommand] Player {NetworkIdentity.netId} skill {skillLoadCommand.SkillConfigId} start load");
-                ISkillChecker checker;
-                var skillData = _skillConfig.GetSkillData(skillLoadCommand.SkillConfigId);
-                var skillCheckers = _playerComponentController.SkillCheckerDict;
-                if (!skillLoadCommand.IsLoad)
+                if (command is SkillLoadCommand skillLoadCommand)
                 {
-                    checker = skillCheckers[skillLoadCommand.KeyCode];
-                    var skillCommonHeader = checker.GetCommonSkillCheckerHeader();
-                    if (skillLoadCommand.SkillConfigId != skillCommonHeader.ConfigId)
+                    IsPredicting = true;
+                    Debug.Log($"[SkillLoadCommand] Player {NetworkIdentity.netId} skill {skillLoadCommand.SkillConfigId} start load");
+                    ISkillChecker checker;
+                    var skillData = _skillConfig.GetSkillData(skillLoadCommand.SkillConfigId);
+                    var skillCheckers = _playerComponentController.SkillCheckerDict;
+                    if (!skillLoadCommand.IsLoad)
                     {
-                        return;
-                    }
+                        checker = skillCheckers[skillLoadCommand.KeyCode];
+                        var skillCommonHeader = checker.GetCommonSkillCheckerHeader();
+                        if (skillLoadCommand.SkillConfigId != skillCommonHeader.ConfigId)
+                        {
+                            return;
+                        }
 
-                    skillCheckers.Remove(skillLoadCommand.KeyCode);
+                        skillCheckers.Remove(skillLoadCommand.KeyCode);
+                    }
+                    else
+                    {
+                        checker = PlayerSkillCalculator.CreateSkillChecker(skillData, skillLoadCommand.KeyCode);
+                        skillCheckers.Add(skillLoadCommand.KeyCode, checker);
+                    }
                 }
-                else
-                {
-                    checker = PlayerSkillCalculator.CreateSkillChecker(skillData, skillLoadCommand.KeyCode);
-                    skillCheckers.Add(skillLoadCommand.KeyCode, checker);
-                }
+
                 CurrentState = playerSkillState;
+                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            finally
+            {
+                IsPredicting = false;
             }
         }
         
@@ -80,11 +96,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         public void ApplyState<T>(T state) where T : ISyncPropertyState
         {
+            if (IsPredicting)
+            {
+                return;
+            }
             if (state is PlayerSkillState appliedState && CurrentState is PlayerSkillState playerSkillState)
             {
                 var skillCheckers = _playerComponentController.SkillCheckerDict;
                 if (appliedState.SkillCheckerDatas.Count == 0 && skillCheckers.Count == 0)
                 {
+                    //Debug.Log($"[SkillLoadCommand] Player {NetworkIdentity.netId} skill checkers is empty");
+                    
                     return;
                 }
                 for (int i = 0; i < playerSkillState.SkillCheckerDatas.Count; i++)

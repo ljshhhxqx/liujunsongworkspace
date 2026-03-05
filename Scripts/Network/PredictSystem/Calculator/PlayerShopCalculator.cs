@@ -22,9 +22,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         private static ShopItemData CreateShopItemData(int shopConfigId)
         {
             var shopConfigData = Constant.ShopConfig.GetShopConfigData(shopConfigId);
-            Debug.Log($"[GetResourceData] ShopId: {shopConfigId}, ItemId: {shopConfigData.itemId}");
+//            Debug.Log($"[GetResourceData] ShopId: {shopConfigId}, ItemId: {shopConfigData.itemId}");
             var itemConfigData = Constant.ItemConfig.GetGameItemData(shopConfigData.itemId);
-            Debug.Log($"[GetResourceData] item Id: {itemConfigData.id}");
+            //Debug.Log($"[GetResourceData] item Id: {itemConfigData.id}");
             var attributeData = PlayerItemCalculator.GetAttributeIncreaseDatas(itemConfigData.buffExtraData);
             var mainAttributeData = new MemoryList<AttributeIncreaseData>(itemConfigData.buffExtraData.Length);
             var passiveAttributeData = new MemoryList<RandomAttributeIncreaseData>(itemConfigData.buffExtraData.Length);

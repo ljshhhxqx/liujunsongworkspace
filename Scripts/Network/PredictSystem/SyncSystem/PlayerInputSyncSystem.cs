@@ -195,6 +195,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private void BindAniEvents(int connectionId, uint netId)
         {
+            if (!GameSyncManager.isServer)
+            {
+                return;
+            }
             Debug.Log($"[BindAniEvents] player {connectionId} bind ani events");
             var playerController = GameSyncManager.GetPlayerConnection(netId);
             var animationCooldowns = playerController.GetAnimationCooldownsDict(_animationConfig);
@@ -314,7 +318,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public override CommandType HandledCommandType => CommandType.Input;
         public override ISyncPropertyState ProcessCommand(INetworkCommand command)
         {
-            //UpdatePlayerAnimationAsync(_cts.Token, GameSyncManager.TickSeconds).Forget();
             var header = command.GetHeader();
             if (!PropertyStates.ContainsKey(header.ConnectionId) || PropertyStates[header.ConnectionId] is not PlayerInputState playerInputState)
                 return null;
@@ -324,7 +327,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 {
                     Debug.Log($"[PlayerInputSyncSystem] - Simulate {inputCommand.CommandAnimationState} with {inputCommand.InputMovement} input.");
                 }
-                //Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input command {inputCommand.InputMovement} {inputCommand.InputAnimationStates}");
+//                Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input command {inputCommand.InputMovement} {inputCommand.InputAnimationStates}");
                 var playerSyncSystem = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
                 var playerController = GameSyncManager.GetPlayerConnection(header.ConnectionId);
                 if (playerController.IsInSpecialState())

@@ -93,7 +93,7 @@ namespace HotUpdate.Scripts.Collector
 
         private void OnCollectObjectTypeChanged(int oldValue, int newValue)
         {
-            Debug.Log("[CollectObjectController] OnCollectObjectTypeChanged -- " + (CollectObjectType)newValue);
+            //Debug.Log("[CollectObjectController] OnCollectObjectTypeChanged -- " + (CollectObjectType)newValue);
             if (ServerHandler)
             {
                 return;
@@ -103,7 +103,7 @@ namespace HotUpdate.Scripts.Collector
 
         public void ServerChangeBehaviour()
         {
-            Debug.Log("[CollectObjectController] ServerHandler ChangeBehaviour -- " + (CollectObjectType)collectObjectType);
+//            Debug.Log("[CollectObjectController] ServerHandler ChangeBehaviour -- " + (CollectObjectType)collectObjectType);
             ChangeBehaviour(collectObjectType);
             if (collectObjectType == 0)
             {
@@ -239,7 +239,7 @@ namespace HotUpdate.Scripts.Collector
             base.OnSelfSpawn();
             if (ClientHandler)
             {
-                Debug.Log("Local player collider enabled");
+                //Debug.Log("Local player collider enabled");
                 //ChangeBehaviour(collectObjectType);
             }
         }

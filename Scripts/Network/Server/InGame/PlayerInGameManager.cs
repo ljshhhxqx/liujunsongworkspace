@@ -563,6 +563,11 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             _playerPositions.Remove(_playerNetIds.GetValueOrDefault(connectId));
         }
         
+        public int[] GetAllPlayerConnections()
+        {
+            return _playerIds.Keys.ToArray();
+        }
+        
         public IEnumerable<uint> GetAllPlayers()
         {
             return _playerNetIds.Values;

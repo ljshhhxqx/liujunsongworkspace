@@ -136,8 +136,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 case ItemSkillEnableCommand itemSkillEnableCommand:
                     PlayerItemCalculator.CommandEnablePlayerSkill(ref playerItemState, itemSkillEnableCommand.SkillConfigId, itemSkillEnableCommand.SlotIndex, itemSkillEnableCommand.IsEnable, header.ConnectionId);
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
             PropertyStates[header.ConnectionId] = playerItemState;
             return playerItemState;

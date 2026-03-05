@@ -1,4 +1,5 @@
-﻿using AOTScripts.Data;
+﻿using System;
+using AOTScripts.Data;
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Common;
 using HotUpdate.Scripts.Config.ArrayConfig;
@@ -47,7 +48,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         public override void ApplyServerState<T>(T state)
         {
-            if (state is not PlayerShopState playerShopState)
+            if (state is not PlayerShopState playerShopState || IsPredicting)
             {
                 return;
             }
@@ -77,19 +78,35 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 return;
             }
 
-            switch (command)
+            try
             {
-                case BuyCommand buyCommand:
-                    PlayerShopCalculator.CommandBuyItem(ref playerShopState, header.ConnectionId, buyCommand.ShopId, buyCommand.Count);
-                    break;
-                case RefreshShopCommand:
-                    PlayerShopCalculator.CommandRefreshItem(ref playerShopState, header.ConnectionId);
-                    break;
-                case SellCommand sellCommand:
-                    PlayerShopCalculator.CommandSellItem(header.ConnectionId, sellCommand.ItemSlotIndex, sellCommand.Count);
-                    break;
+                IsPredicting = true;
+                switch (command)
+                {
+                    case BuyCommand buyCommand:
+                        PlayerShopCalculator.CommandBuyItem(ref playerShopState, header.ConnectionId, buyCommand.ShopId,
+                            buyCommand.Count);
+                        break;
+                    case RefreshShopCommand:
+                        PlayerShopCalculator.CommandRefreshItem(ref playerShopState, header.ConnectionId);
+                        break;
+                    case SellCommand sellCommand:
+                        PlayerShopCalculator.CommandSellItem(header.ConnectionId, sellCommand.ItemSlotIndex,
+                            sellCommand.Count);
+                        break;
+                }
+
+                OnPlayerShopStateChanged(playerShopState);
             }
-            OnPlayerShopStateChanged(playerShopState);
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            finally
+            {
+                IsPredicting = false;
+            }
+
         }
 
         private void OnPlayerShopStateChanged(PlayerShopState playerShopState)

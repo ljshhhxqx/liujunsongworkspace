@@ -294,7 +294,8 @@ namespace HotUpdate.Scripts.UI.UIBase
                 ui = go.GetComponent<T>();
                 if (!ui)
                 {
-                    throw new Exception($"UI对象{uIType}没有{typeof(T).Name}组件");
+                    Debug.Log($"UI对象{uIType}没有{typeof(T).Name}组件");
+                    return null;
                 }
                 if (ui.CanvasType == UICanvasType.Panel)
                 {

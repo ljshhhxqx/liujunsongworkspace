@@ -130,14 +130,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         [Server]
         public void AddBuffToAllPlayer(int currentRound)
         {
-            var connections = NetworkServer.connections;
-            var buffs = _timedBuffConfig.GetRandomBuffs(BuffSourceType.Round, connections.Count);
+            var connections = _playerInGameManager.GetAllPlayerConnections();
+            var buffs = _timedBuffConfig.GetRandomBuffs(BuffSourceType.Round, connections.Length);
             if (buffs == null || buffs.Count == 0)
             {
                 Debug.LogError($"No buffs available for {currentRound}");
                 return;
             }
-            foreach (var id in connections.Keys)
+            foreach (var id in connections)
             {
                 var buff = buffs.RandomSelect();
                 buffs.Remove(buff);

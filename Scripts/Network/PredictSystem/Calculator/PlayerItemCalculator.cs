@@ -350,7 +350,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                         IsLoad = false,
                         KeyCode = SkillConfig.GetAnimationState(exchangedItem.PlayerItemType),
                     };
-                    Constant.GameSyncManager.EnqueueServerCommand(skillLoadCommand);
+                    if (Constant.IsServer)
+                    {
+                        Constant.GameSyncManager.EnqueueServerCommand(skillLoadCommand);
+                    }
+                    else
+                    {
+                        Constant.PlayerComponentController.PlayerAddCommand(CommandType.Skill, skillLoadCommand);
+                    }
                 }
             }
             Constant.GameSyncManager.EnqueueServerCommand(new EquipmentCommand
@@ -470,7 +477,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 IsLoad = isEnable,
                 KeyCode = SkillConfig.GetAnimationState(bagItem.PlayerItemType),
             };
-            Constant.PlayerComponentController.PlayerAddCommand(CommandType.Skill, skillEnableCommand);
+            Debug.Log($"[PlayerItemCalculator] Send skill enable command {skillEnableCommand}");
+            if (Constant.IsServer)
+            {
+                Constant.GameSyncManager.EnqueueServerCommand(skillEnableCommand);
+            }
+            else
+            {
+                Constant.PlayerComponentController.PlayerAddCommand(CommandType.Skill, skillEnableCommand);
+            }
         }
 
         public static bool TryUnloadSkill(ref PlayerItemState playerItemState, int connectionId, int slotIndex, out PlayerBagSlotItem unloadedItem)
@@ -495,7 +510,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                         IsLoad = false,
                         KeyCode = SkillConfig.GetAnimationState(unloadedItem.PlayerItemType)
                     };
-                    Constant.GameSyncManager.EnqueueServerCommand(skillEnableCommand);
+                    if (Constant.IsServer)
+                    {
+                        Constant.GameSyncManager.EnqueueServerCommand(skillEnableCommand);
+                    }
+                    else
+                    {
+                        Constant.PlayerComponentController.PlayerAddCommand(CommandType.Skill, skillEnableCommand);
+                    }
                 }
                 playerItemState.PlayerItemConfigIdSlotDictionary[unloadedItem.IndexSlot] = unloadedItem;
                 return true;
@@ -552,7 +574,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     equipmentCommand.ItemId = itemsData.ItemUniqueId[0];
                     equipmentCommand.EquipmentPassiveEffectData = JsonConvert.SerializeObject(equipSlotItem.PassiveAttributeIncreaseDatas);
                     equipmentCommand.EquipmentMainEffectData = JsonConvert.SerializeObject(equipSlotItem.MainIncreaseDatas);
-                    Constant.GameSyncManager.EnqueueServerCommand(equipmentCommand);
+                    if (Constant.IsServer)
+                    {
+                        Constant.GameSyncManager.EnqueueServerCommand(equipmentCommand);
+                    }
+                    else
+                    {
+                        Constant.PlayerComponentController.PlayerAddCommand(CommandType.Equipment, equipmentCommand);
+                    }
                 }
             }
 

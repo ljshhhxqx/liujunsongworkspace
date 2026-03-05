@@ -54,7 +54,7 @@ namespace HotUpdate.Scripts.Collector.Effect
                 ResetAllEffects();
                 isInitialized = true;
             
-                Debug.Log($"EffectController initialized for {gameObject.name}");
+                //Debug.Log($"EffectController initialized for {gameObject.name}");
             }
             else
             {

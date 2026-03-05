@@ -31,6 +31,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         protected abstract CommandType CommandType { get; }
         protected int InputBufferTick;
         protected NetworkIdentity NetworkIdentity;
+        protected bool IsPredicting;
         protected CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
 
         [Inject]

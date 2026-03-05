@@ -31,7 +31,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         private PlayerInGameManager _playerInGameManager;
 
         [Inject]
-        private void Initialize(IConfigProvider configProvider, UIManager uiManager, GameEventManager gameEventManager)
+        private void Init(IConfigProvider configProvider, UIManager uiManager, GameEventManager gameEventManager)
         {
             _itemConfig = configProvider.GetConfig<ItemConfig>();
             _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
@@ -139,7 +139,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 });
                 var itemGetCommand = new ItemsGetCommand();
                 itemGetCommand.Header =
-                    GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId, CommandType.Item);
+                    GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId, CommandType.Item, CommandAuthority.Client);
                 itemGetCommand.Items = items;
                 gameEventManager.Publish(new DevelopItemGetEvent(itemGetCommand));
                 Debug.Log($"发送指令:{itemGetCommand} - {_playerInGameManager.LocalPlayerId}");
@@ -161,7 +161,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                     });
                     var itemGetCommand = new ItemsGetCommand();
                     itemGetCommand.Header =
-                        GameSyncManager.CreateNetworkCommandHeader(NetworkClient.connection.connectionId, CommandType.Item);
+                        GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId, CommandType.Item, CommandAuthority.Client);
                     itemGetCommand.Items = items;
                     gameEventManager.Publish(new DevelopItemGetEvent(itemGetCommand));
                 }

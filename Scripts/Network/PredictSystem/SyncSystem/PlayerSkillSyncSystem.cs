@@ -165,6 +165,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             if (command is SkillCommand skillCommand)
             {
                 var checker = GetSkillChecker(skillCommand.KeyCode, header.ConnectionId);
+                Debug.Log($"[PlayerSkillSyncSystem] ProcessCommand {skillCommand.KeyCode} {skillCommand.SkillConfigId} {header.ConnectionId}");
                 var skillCommonHeader = checker.GetCommonSkillCheckerHeader();
                 //释放的技能与当前技能不一致
                 if (skillCommand.SkillConfigId != skillCommonHeader.ConfigId)
@@ -206,11 +207,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 if (!skillLoadCommand.IsLoad)
                 {
                     Debug.Log($"[SkillLoadCommand] Player {header.ConnectionId} skill {skillLoadCommand.SkillConfigId}-{skillLoadCommand.KeyCode} unload");
-                    checker = skillCheckers[skillLoadCommand.KeyCode];
-                    if (skillCheckers.ContainsKey(skillLoadCommand.KeyCode))
+                    if (!skillCheckers.TryGetValue(skillLoadCommand.KeyCode, out checker))
                     {
-                        skillCheckers.Remove(skillLoadCommand.KeyCode);
+                        Debug.LogError($"Player {header.ConnectionId} skill checker not found for player {header.ConnectionId}");
+                        return PropertyStates[header.ConnectionId];
                     }
+                    skillCheckers.Remove(skillLoadCommand.KeyCode);
                     playerConnection.SkillCheckerDict = skillCheckers;
                     var skillCommonHeader = checker.GetCommonSkillCheckerHeader();
                     if (skillLoadCommand.SkillConfigId != skillCommonHeader.ConfigId)

@@ -24,6 +24,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private BindingKey _itemBindKey;
         private BindingKey _equipBindKey;
         private PropertyPredictionState _propertyPredictionState;
+        private PlayerInGameManager _playerInGameManager;
 
         [Inject]
         protected override void Init(GameSyncManager gameSyncManager, IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
@@ -34,6 +35,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _battleEffectConditionConfig = configProvider.GetConfig<BattleEffectConditionConfig>();
             _itemBindKey = new BindingKey(UIPropertyDefine.BagItem);
             _equipBindKey = new BindingKey(UIPropertyDefine.EquipmentItem);
+            _playerInGameManager = playerInGameManager;
         }
 
         public override bool NeedsReconciliation<T>(T state)
@@ -62,50 +64,61 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         public override void Simulate(INetworkCommand command)
         {
             var header = command.GetHeader();
-            if (header.CommandType.HasAnyState(CommandType) || CurrentState is not PlayerItemState playerItemState)
+            if (CurrentState is not PlayerItemState playerItemState)
             {
                 return;
             }
-            switch (command)
+
+            try
             {
-                case ItemsGetCommand itemsGetCommand:
-                    for (var i = 0; i < itemsGetCommand.Items.Count; i++)
-                    {
-                        PlayerItemCalculator.CommandGetItem(ref playerItemState, itemsGetCommand.Items[i], header);
-                    }
-                    break;
-                case ItemsUseCommand itemUseCommand:
-                    PlayerItemCalculator.CommandUseItems(itemUseCommand, ref playerItemState);
-                    break;
-                case ItemEquipCommand itemEquipCommand:
-                    PlayerItemCalculator.CommandEquipItem(itemEquipCommand, ref playerItemState, header.ConnectionId);
-                    break;
-                case ItemLockCommand itemLockCommand:
-                    PlayerItemCalculator.CommandLockItem(itemLockCommand, ref playerItemState);
-                    break;
-                case ItemDropCommand itemDropCommand:
-                    PlayerItemCalculator.CommandDropItem(itemDropCommand, ref playerItemState , header.ConnectionId);
-                    break;
-                case ItemsBuyCommand itemBuyCommand:
-                    PlayerItemCalculator.CommandBuyItem(itemBuyCommand, ref playerItemState);
-                    break;
-                case ItemsSellCommand itemSellCommand:
-                    PlayerItemCalculator.CommandSellItem(itemSellCommand, ref playerItemState, header.ConnectionId);
-                    break;
-                case ItemExchangeCommand itemExchangeCommand:
-                    PlayerItemCalculator.CommandExchangeItem(itemExchangeCommand, ref playerItemState);
-                    break;
-                case ItemSkillEnableCommand itemSkillEnableCommand:
-                    PlayerItemCalculator.CommandEnablePlayerSkill(ref playerItemState, itemSkillEnableCommand.SkillConfigId, itemSkillEnableCommand.SlotIndex, itemSkillEnableCommand.IsEnable, header.ConnectionId);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                IsPredicting = true;
+                switch (command)
+                {
+                    case ItemsGetCommand itemsGetCommand:
+                        for (var i = 0; i < itemsGetCommand.Items.Count; i++)
+                        {
+                            PlayerItemCalculator.CommandGetItem(ref playerItemState, itemsGetCommand.Items[i], header);
+                        }
+                        break;
+                    case ItemsUseCommand itemUseCommand:
+                        PlayerItemCalculator.CommandUseItems(itemUseCommand, ref playerItemState);
+                        break;
+                    case ItemEquipCommand itemEquipCommand:
+                        PlayerItemCalculator.CommandEquipItem(itemEquipCommand, ref playerItemState, header.ConnectionId);
+                        break;
+                    case ItemLockCommand itemLockCommand:
+                        PlayerItemCalculator.CommandLockItem(itemLockCommand, ref playerItemState);
+                        break;
+                    case ItemDropCommand itemDropCommand:
+                        PlayerItemCalculator.CommandDropItem(itemDropCommand, ref playerItemState , header.ConnectionId);
+                        break;
+                    case ItemsBuyCommand itemBuyCommand:
+                        PlayerItemCalculator.CommandBuyItem(itemBuyCommand, ref playerItemState);
+                        break;
+                    case ItemsSellCommand itemSellCommand:
+                        PlayerItemCalculator.CommandSellItem(itemSellCommand, ref playerItemState, header.ConnectionId);
+                        break;
+                    case ItemExchangeCommand itemExchangeCommand:
+                        PlayerItemCalculator.CommandExchangeItem(itemExchangeCommand, ref playerItemState);
+                        break;
+                    case ItemSkillEnableCommand itemSkillEnableCommand:
+                        PlayerItemCalculator.CommandEnablePlayerSkill(ref playerItemState, itemSkillEnableCommand.SkillConfigId, itemSkillEnableCommand.SlotIndex, itemSkillEnableCommand.IsEnable, header.ConnectionId);
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            finally
+            {
+                IsPredicting = false;
             }
         }
 
         public override void ApplyServerState<T>(T state)
         {
-            if (state is not PlayerItemState playerItemState)
+            if (state is not PlayerItemState playerItemState || IsPredicting)
             {
                 return;
             }
@@ -127,10 +140,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             dic.Add(slotIndex, useItem);
             var useItemCommand = new ItemsUseCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
+                Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId, CommandType.Item, CommandAuthority.Client),
                 Slots = dic
             };
-            PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(useItemCommand).Buffer);
+            PlayerComponentController.PlayerAddCommand(CommandType.Item, useItemCommand);
         }
 
         private void OnEquipItem(int slotIndex, bool isEquip)
@@ -141,12 +154,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             var playerItemType = state.PlayerItemConfigIdSlotDictionary[slotIndex].PlayerItemType;
             var equipItemCommand = new ItemEquipCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
+                Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId, CommandType.Item, CommandAuthority.Client),
                 SlotIndex = slotIndex,
                 PlayerItemType = playerItemType,
                 IsEquip = isEquip
             };
-            PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(equipItemCommand).Buffer);
+            PlayerComponentController.PlayerAddCommand(CommandType.Item, equipItemCommand);
         }
 
         private void OnLockItem(int slotIndex, bool isLock)
@@ -155,11 +168,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 return;
             var lockItemCommand = new ItemLockCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
+                Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId, CommandType.Item, CommandAuthority.Client),
                 SlotIndex = slotIndex,
                 IsLocked = isLock
             };
-            PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(lockItemCommand).Buffer);
+            PlayerComponentController.PlayerAddCommand(CommandType.Item, lockItemCommand);
         }
 
         private void OnDropItem(int slotIndex, int count)
@@ -175,10 +188,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             dic.Add(slotIndex, dropItem);
             var dropItemCommand = new ItemDropCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
+                Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId, CommandType.Item, CommandAuthority.Client),
                 Slots = dic
             };
-            PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(dropItemCommand).Buffer);
         }
 
         private void OnExchangeItem(int fromSlotIndex, int toSlotIndex)
@@ -187,11 +199,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 return;
             var exchangeItemCommand = new ItemExchangeCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Item, CommandAuthority.Client),
+                Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId, CommandType.Item, CommandAuthority.Client),
                 FromSlotIndex = fromSlotIndex,
                 ToSlotIndex = toSlotIndex
             };
-            PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(exchangeItemCommand).Buffer);
+            PlayerComponentController.PlayerAddCommand(CommandType.Item, exchangeItemCommand);
         }
 
         private void OnSellItem(int slotIndex, int count)
@@ -200,11 +212,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 return;
             var sellItemCommand = new SellCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Shop, CommandAuthority.Client),
+                Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId, CommandType.Shop, CommandAuthority.Client),
                 ItemSlotIndex = slotIndex,
                 Count = count
             };
-            PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(sellItemCommand).Buffer);
+            PlayerComponentController.PlayerAddCommand(CommandType.Item, sellItemCommand);
+            //PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(sellItemCommand).Buffer);
         }
 
         private void OnEnableSkill(int slotIndex, int skillId, bool isEnable)
@@ -213,16 +226,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 return;
             var enableCommand = new ItemSkillEnableCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(NetworkIdentity.connectionToClient.connectionId, CommandType.Item,
+                Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId, CommandType.Item,
                     CommandAuthority.Client),
                 SlotIndex = slotIndex,
                 IsEnable = isEnable,
                 SkillConfigId = skillId
             };
-            PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(enableCommand).Buffer);
+            Debug.Log($"[PlayerItemPredictableState] Client OnEnableSkill: {slotIndex} {skillId} {isEnable}");
+            PlayerComponentController.PlayerAddCommand(CommandType.Item, enableCommand);
         }
         
-        private int nowCount = 0;
+        private int _nowCount;
 
         private void OnPlayerItemUpdate(PlayerItemState playerItemState)
         {
@@ -231,8 +245,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             //Debug.Log("OnPlayerItemUpdate");
             CurrentState = playerItemState;
             var bagItems = UIPropertyBinder.GetReactiveDictionary<BagItemData>(_itemBindKey);
-            var isDebug = nowCount != bagItems.Count;
-            nowCount = bagItems.Count;
+            var isDebug = _nowCount != bagItems.Count;
+            _nowCount = bagItems.Count;
             if (playerItemState.PlayerItemConfigIdSlotDictionary.Count == 0)
             {
                 if (bagItems.Count > 0)

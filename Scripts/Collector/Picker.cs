@@ -99,7 +99,7 @@ namespace HotUpdate.Scripts.Collector
                     //Debug.LogWarning($"Identity not found for netId {collect.NetId}");
                     continue;
                 }
-                var collect = GameObjectContainer.Instance.GetDynamicObjectData( id);
+                var collect = GameObjectContainer.Instance.GetDynamicObjectData(id);
 
                 switch (collect.Type)
                 {

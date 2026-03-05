@@ -83,6 +83,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [Header("States-NetworkBehaviour")]
         private PlayerInputPredictionState _inputState;
         private PropertyPredictionState _propertyPredictionState;
+        private PlayerItemPredictableState _itemPredictionState;
         private PlayerSkillSyncState _skillSyncState;
         
         [Header("Subject")]
@@ -329,7 +330,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void OnDevelopItemGet(DevelopItemGetEvent developItemGetEvent)
         {
-            Debug.Log($"[PlayerInGameController] OnDevelopItemGet: {developItemGetEvent.ItemsGetCommand}");
+            Debug.Log($"[PlayerInGameController] OnDevelopItemGet: {developItemGetEvent.ItemsGetCommand} - {developItemGetEvent.ItemsGetCommand.GetHeader().ConnectionId}");
             CmdSendCommand(NetworkCommandExtensions.SerializeCommand(developItemGetEvent.ItemsGetCommand).Buffer);
         }
 
@@ -686,6 +687,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _inputState = GetComponent<PlayerInputPredictionState>();
             _propertyPredictionState = GetComponent<PropertyPredictionState>();
             _skillSyncState = GetComponent<PlayerSkillSyncState>();
+            _itemPredictionState = GetComponent<PlayerItemPredictableState>();
             _propertyPredictionState.OnPropertyChanged += HandlePropertyChange;
             _propertyPredictionState.OnStateChanged += HandlePropertyStateChanged;
             //_propertyPredictionState.OnPlayerDead += HandlePlayerDeadClient;
@@ -821,6 +823,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             switch (commandType)
             {
+                case CommandType.Item:
+                    Debug.Log($"[PlayerAddCommand] -> Item == {command.GetCommandType()}");
+                    _itemPredictionState.AddPredictedCommand(command);
+                    break;
                 case CommandType.Property:
                     _propertyPredictionState.AddPredictedCommand(command);
                     break;
@@ -1057,14 +1063,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             // }
             GameObjectContainer.Instance.RemoveDynamicObject(netId);
             _disposables?.Clear();
-            _propertyPredictionState.OnPropertyChanged -= HandlePropertyChange;
-            _propertyPredictionState.OnStateChanged -= HandlePropertyStateChanged;
             // _propertyPredictionState.OnPlayerDead -= HandlePlayerDeadClient;
             // _propertyPredictionState.OnPlayerRespawned -= HandlePlayerRespawnedClient;
-            _inputState.OnPlayerStateChanged -= HandlePlayerStateChanged;
-            _inputState.OnPlayerAnimationCooldownChanged -= HandlePlayerAnimationCooldownChanged;
-            _inputState.OnPlayerInputStateChanged -= HandlePlayerInputStateChanged;
-            _inputState.IsInSpecialState -= HandleSpecialState;
             _uiManager.IsUnlockMouse -= OnIsUnlockMouse;
             _gameEventManager.Unsubscribe<DevelopItemGetEvent>(OnDevelopItemGet);
             _gameEventManager.Unsubscribe<GameFunctionUIShowEvent>(OnGameFunctionUIShow);

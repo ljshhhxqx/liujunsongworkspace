@@ -44,7 +44,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         private PlayerSkillSyncState _skillSyncState;
         private BindingKey _playerAnimationKey;
         private UIManager _uiManager;
-        private bool _isSimulating;
         private VirtualInputOverlay _virtualPlayerAnimationOverlay;
         private float _updatePositionTimer;
         
@@ -131,7 +130,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         public override void ApplyServerState<T>(T state) 
         {
-            if (state is not PlayerInputState propertyState)
+            if (state is not PlayerInputState propertyState || IsPredicting || _isApplyingState)
                 return;
             _isApplyingState = true;
             base.ApplyServerState(propertyState);
@@ -217,9 +216,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             var header = command.GetHeader();
             try
             {
-                if (_isSimulating || _isApplyingState || IsInSpecialState?.Invoke() == true)
+                if (IsPredicting || _isApplyingState || IsInSpecialState?.Invoke() == true)
                     return;
-                _isSimulating = true;
+                IsPredicting = true;
                 if (header.CommandType == CommandType.Input && command is InputCommand inputCommand)
                 {
                     if (!_propertyPredictionState.CanDoAnimation(inputCommand.CommandAnimationState))
@@ -321,14 +320,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             }
             finally
             {
-                _isSimulating = false;
+                IsPredicting = false;
             }
             
         }
         
         private async UniTaskVoid UpdateAnimationCooldowns(CancellationToken token, float deltaTime)
         {
-            while (!token.IsCancellationRequested && !_isApplyingState && !_isSimulating)
+            while (!token.IsCancellationRequested && !_isApplyingState && !IsPredicting)
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(deltaTime), DelayType.Realtime, cancellationToken: token);
                 PlayerComponentController.UpdateAnimation(deltaTime);

@@ -8064,8 +8064,8 @@ MonoBehaviour:
   rightHandIKTarget: {fileID: 80366730537133186}
   positionWeight: 0.207
   rotationWeight: 0.351
-  weaponOffset: {x: -0.043, y: 0.103, z: -0.044}
-  weaponRotation: {x: 0.26759422, y: 0.7702359, z: 0.028492011, w: 0.57820255}
+  weaponOffset: {x: -0.062, y: 0.07, z: 0.04}
+  weaponRotation: {x: 0.26974398, y: 0.91109496, z: 0.041883636, w: 0.30885255}
   weaponScale: 0.7
 --- !u!114 &3106744384954794610
 MonoBehaviour:
