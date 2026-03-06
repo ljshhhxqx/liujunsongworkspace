@@ -559,7 +559,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             int? noSequence = null;
             var connectionIdValue = connectionId.GetValueOrDefault();
             var header = new InteractHeader();
-            header.Clear();
             header.CommandId = HybridIdGenerator.GenerateCommandId(authority == CommandAuthority.Server, CommandType.Interact, 0, ref noSequence);
             header.RequestConnectionId = connectionIdValue;
             header.Tick = GameSyncManager.CurrentTick;
@@ -567,6 +566,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             header.Position = position;
             header.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             header.Authority = authority;
+            Debug.Log($"[CreateInteractHeader] {header}");
             return header;
         }
 
@@ -716,7 +716,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             var currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             if (Math.Abs(currentTime - header.Timestamp) > TIMESTAMP_TOLERANCE)
             {
-                result.AddError($"Timestamp out of sync: {currentTime - header.Timestamp}ms");
+                result.AddError($"Timestamp out of sync {currentTime}-{header.Timestamp} : {currentTime - header.Timestamp}ms");
             }
 
             // 3. 命令类型验证
