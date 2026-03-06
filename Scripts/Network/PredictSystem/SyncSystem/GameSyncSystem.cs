@@ -56,9 +56,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         public bool isGameOver;
         
         public static int CurrentTick { get; private set; }
+        public static long CurrentUtc { get; private set; }
         
         [SyncVar(hook = nameof(OnCurrentTickChanged))]
         private int _currentTick;
+        [SyncVar(hook = nameof(OnCurrentUtcChanged))]
+        private long _currentUtc;
 
         private PlayerComponentController _localPlayerNetComponentController;
 
@@ -67,12 +70,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             //Debug.Log($"CurrentTick changed from {oldValue} to {newValue}");
             CurrentTick = newValue;
         }
+        
+        private void OnCurrentUtcChanged(long oldValue, long newValue)
+        {
+            //Debug.Log($"CurrentUtc changed from {oldValue} to {newValue}");
+            CurrentUtc = newValue;
+        }
 
         [Inject]
         private void Init(IConfigProvider configProvider, GameEventManager gameEventManager, PlayerInGameManager playerInGameManager)
         {
             _currentTick = 0;
             CurrentTick = 0;
+            _currentUtc = 0;
+            CurrentUtc = 0;
             _playerInGameManager = playerInGameManager;
             Debug.Log("GameSyncManager Init");
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
@@ -141,6 +152,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     ProcessTick();
                     _currentTick++;
                     CurrentTick = _currentTick;
+                    _currentUtc = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                    CurrentUtc = _currentUtc;
                 }
             }
         }
@@ -544,7 +557,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             header.ConnectionId = connectionId;
             header.CommandType = commandType;
             header.Tick = tick.GetValueOrDefault();
-            header.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            header.Timestamp = CurrentUtc;
             header.Authority = authority;
             header.ExecuteType = commandExecuteType;
             return header;
@@ -599,5 +612,59 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }   
             return null;
         }
+    }
+    
+    public static class SyncNetworkDataExtensions
+    {
+        // 基础验证参数配置
+        public const int MAX_TICK_DELTA = 30;      // 允许的最大tick偏差
+        public const long TIMESTAMP_TOLERANCE = 5000; // 5秒时间容差（毫秒）
+
+        public static NetworkCommandHeader CreateCommand(CommandType commandType, int tick,
+            long timeStamp, CommandAuthority authority = CommandAuthority.Client)
+        {
+            return new NetworkCommandHeader
+            {
+                ConnectionId = NetworkServer.localConnection.connectionId,
+                Tick = tick,
+                CommandType = commandType,
+                Timestamp = timeStamp,
+                Authority = authority
+            };
+        }
+
+        public static CommandValidationResult ValidateCommand(this INetworkCommand command)
+        {
+            var result = new CommandValidationResult();
+            var header = command.GetHeader();
+
+            // 1. Tick验证
+            if (header.Tick <= 0)
+            {
+                result.AddError($"{command.GetCommandType().ToString()}Invalid tick value {header.Tick}");
+            }
+
+            // 2. 时间戳验证
+            var currentTime = GameSyncManager.CurrentUtc;
+            if (Math.Abs(currentTime - header.Timestamp) > TIMESTAMP_TOLERANCE)
+            {
+                result.AddError($"Timestamp out of sync: {currentTime - header.Timestamp}ms");
+            }
+
+            // 3. 命令类型验证
+            if (header.CommandType < 0 || header.CommandType > CommandType.Shop)
+            {
+                result.AddError($"Unknown command type: {header.CommandType}");
+            }
+
+            // 4. 基础有效性验证
+            if (!command.IsValid())
+            {
+                result.AddError("Command specific validation failed");
+            }
+
+            return result;
+        }
+        
     }
 }

@@ -564,9 +564,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             header.Tick = GameSyncManager.CurrentTick;
             header.Category = category;
             header.Position = position;
-            header.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            header.Timestamp = GameSyncManager.CurrentUtc;
             header.Authority = authority;
-            Debug.Log($"[CreateInteractHeader] {header}");
             return header;
         }
 
@@ -699,7 +698,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
     {
         // 基础验证参数配置
         public const int MAX_TICK_DELTA = 30;      // 允许的最大tick偏差
-        public const long TIMESTAMP_TOLERANCE = 5000; // 5秒时间容差（毫秒）
+        public const long TIMESTAMP_TOLERANCE = 5000;
         public static CommandValidationResult CommandValidResult(this IInteractRequest command)
         {
             var result = new CommandValidationResult();
@@ -713,7 +712,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
             }
 
             // 2. 时间戳验证
-            var currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            var currentTime = GameSyncManager.CurrentUtc;
             if (Math.Abs(currentTime - header.Timestamp) > TIMESTAMP_TOLERANCE)
             {
                 result.AddError($"Timestamp out of sync {currentTime}-{header.Timestamp} : {currentTime - header.Timestamp}ms");
