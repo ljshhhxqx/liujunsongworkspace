@@ -1356,6 +1356,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             Debug.Log($"RpcSetPlayerAlpha: {alpha}");
             playerControlEffect.SetTransparency( 1 -actualAlpha);
         }
+        
+        [Client]
+        public void SetAnimatorSpeed(AnimationState animationState, float speed)
+        {
+            var propertyConfig = _configProvider.GetConfig<PropertyConfig>();
+            var property = propertyConfig.GetPropertyType(animationState);
+            var minMaxAttackSpeed = propertyConfig.GetMinMaxProperty(property);
+            var cooldown = _animationCooldowns.Find(x => x.AnimationState == animationState);
+            if (cooldown == null)
+            {
+                return;
+            }
+            speed = Mathf.Clamp(speed, minMaxAttackSpeed.Item1, minMaxAttackSpeed.Item2);
+
+            cooldown.SetAnimationSpeed(speed);
+            _playerAnimationCalculator.SetClipSpeed(animationState, speed);
+        }
 
         [ClientRpc]
         public void RpcSetAnimatorSpeed(AnimationState animationState, float speed)

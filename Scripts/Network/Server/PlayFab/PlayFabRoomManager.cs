@@ -47,6 +47,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         private GameEventManager _gameEventManager;
         private MapConfig _mapConfig;
         private IConfigProvider _configProvider;
+        public bool IsRoomOwner { get; private set; }
         public RoomData[] RoomsData { get; private set; } = Array.Empty<RoomData>();
         public static string CurrentRoomId { get; private set; }
         public bool IsMatchmaking {
@@ -235,6 +236,10 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             {
                 var roomData = BoxingFreeSerializer.JsonDeserialize<RoomData>(value.ToString());
                 CurrentRoomId = roomData.RoomId;
+                if (roomData.CreatorId == PlayFabData.PlayFabId.Value)
+                {
+                    IsRoomOwner = true;
+                }
                 _uiManager.SwitchUI<RoomScreenUI>(ui =>
                 {
                     _currentRoomData = roomData;
@@ -576,6 +581,20 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                 _uiManager.CloseUI(UIType.RoomScreen);
                 _uiManager.SwitchUI<PlayerConnectUI>();
                 OnGameInfoChanged?.Invoke(_currentMainGameInfo);
+                
+                if (IsRoomOwner)
+                {
+                    IsRoomOwner = false;
+                    
+                    var request = new ExecuteEntityCloudScriptRequest
+                    {
+                        FunctionName = "DeleteRoom",
+                        GeneratePlayStreamEvent = true,
+                        FunctionParameter = new { roomId = CurrentRoomId },
+                        Entity = PlayFabData.EntityKey.Value,
+                    };
+                    _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnRefreshRoomDataSuccess, OnError, false);
+                }
             };
         }
 
