@@ -45,10 +45,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             if (NetworkIdentity.isLocalPlayer)
             {
                 HandleCommandAsync(CancellationTokenSource.Token).Forget();
-            }
-            // Debug.Log($"[PredictableStateBase] Initialized with input buffer tick {InputBufferTick}");
+            } 
+            Debug.Log($"[PredictableStateBase] Initialized with input buffer tick {InputBufferTick}---LocalPlayerHandler=>{LocalPlayerHandler} ---  ServerHandler=>{ServerHandler} --- ClientHandler=>{ClientHandler} NetworkIdentity.isLocalPlayer=>{NetworkIdentity.isLocalPlayer}--- NetworkIdentity.isServer=>{NetworkIdentity.isServer}--- NetworkIdentity.isClient=>{NetworkIdentity.isClient}");
+        }
+
+
+        protected override void InjectLocalPlayerCallback()
+        {
+            base.InjectLocalPlayerCallback();
+            Debug.Log($"[PredictableStateBase] InjectLocalPlayerCallback");
         }
         
+        protected override void InjectClientCallback()
+        {
+            base.InjectClientCallback();
+            Debug.Log($"[PredictableStateBase] InjectClientCallback");
+        }
+
         protected virtual async UniTask HandleCommandAsync(CancellationToken cancellationToken)
         { 
             while (!cancellationToken.IsCancellationRequested)
@@ -148,35 +161,35 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         public virtual void ApplyServerState<T>(T state) where T : ISyncPropertyState
         {
-            if (GameSyncManager.CurrentTick > LastConfirmedTick)
-            {
-                CleanupConfirmedCommands(GameSyncManager.CurrentTick);
-            }
-            
             if (LocalPlayerHandler)
             {
-                 if (NeedsReconciliation(state))
-                 {
-                     ReconciliationCount++;
-                 }
+                if (GameSyncManager.CurrentTick > LastConfirmedTick)
+                {
+                    CleanupConfirmedCommands(GameSyncManager.CurrentTick);
+                }
 
-                 if (ReconciliationCount >= 2)
-                 {
-                     ReconciliationCount = 0;
-                     // 重置到服务器状态
-                     InitCurrentState(state);
-                     
-                     var commands = GetUnconfirmedCommands();
-                     // if (commands.Length > MaxUnconfirmedCommands)
-                     // {
-                     //     return;
-                     // }
-                     // 仅重放未确认的命令
-                     foreach (var command in commands)
-                     {
-                         Simulate(command);
-                     }
-                 }
+                if (NeedsReconciliation(state))
+                {
+                    ReconciliationCount++;
+                }
+
+                if (ReconciliationCount >= 2)
+                {
+                    ReconciliationCount = 0;
+                    // 重置到服务器状态
+                    InitCurrentState(state);
+
+                    var commands = GetUnconfirmedCommands();
+                    // if (commands.Length > MaxUnconfirmedCommands)
+                    // {
+                    //     return;
+                    // }
+                    // 仅重放未确认的命令
+                    foreach (var command in commands)
+                    {
+                        Simulate(command);
+                    }
+                }
             }
             else
             {
@@ -189,6 +202,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         public virtual void InitCurrentState<T>(T state) where T : ISyncPropertyState
         {
+            if (!NetworkIdentity)
+            {
+                return;
+            }
             //Debug.Log($"[PredictableStateBase] InitCurrentState {state} at tick {GameSyncManager.CurrentTick}");
             CurrentState = state;
         }

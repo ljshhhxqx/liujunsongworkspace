@@ -230,7 +230,7 @@ namespace HotUpdate.Scripts.Network.Server
             }).AddTo(this);
 
             _discovery.StartBroadcast(cachedGameInfo.roomId);
-            NetworkServer.ReplaceHandler<MirrorPlayerConnectMessage>(OnServerPlayerAccountIdMessage);
+            NetworkServer.RegisterHandler<MirrorPlayerConnectMessage>(OnServerPlayerAccountIdMessage);
         }
 
         private void OnServerPlayerAccountIdMessage(NetworkConnectionToClient conn, MirrorPlayerConnectMessage message)
@@ -240,7 +240,7 @@ namespace HotUpdate.Scripts.Network.Server
                 Debug.LogError($"Player already connected: {uid}");
                 return;
             }
-            Debug.Log($"Received PlayerAccountId from client: {message.UID}");
+            Debug.Log($"Received PlayerAccountId from client: {message.UID} -- {conn.identity} -- {message.ConnectionID}");
             // 获取已添加的玩家对象
             if (conn.identity)
             {
@@ -265,7 +265,7 @@ namespace HotUpdate.Scripts.Network.Server
                 };
                 _gameEventManager.Publish(new PlayerConnectEvent(conn.connectionId, conn.identity.netId));//, message.UID, message.Name, gameInfo));
                 _gameEventManager.Publish(new GameReadyEvent(gameInfo));
-                Debug.Log("Received PlayerAccountId from client: " + message.UID);
+                Debug.Log($"conn.identity is true ==== Received PlayerAccountId from client:  {message.UID} -- {conn.identity} -- {message.ConnectionID}");
             }
         }
 
@@ -289,6 +289,7 @@ namespace HotUpdate.Scripts.Network.Server
         {
             // 获取当前连接
             NetworkConnection conn = NetworkClient.connection;
+            Debug.Log($"NetworkClient ===> {conn.connectionId} +++ Connected to server");
             //
             var msg = new MirrorPlayerConnectMessage(PlayFabData.PlayFabId.Value, conn.connectionId, PlayFabData.PlayerReadOnlyData.Value.Nickname, new AotCompressedVector3(), (uint)PlayFabData.PlayerReadOnlyData.Value.Id);
             conn.Send(msg);

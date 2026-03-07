@@ -70,10 +70,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _keyAnimationConfig = configProvider.GetConfig<KeyAnimationConfig>();
             _skillConfig = configProvider.GetConfig<SkillConfig>();
-            if (NetworkIdentity.isLocalPlayer)
-            {
-                
-            }
         }
 
         protected override void InjectLocalPlayerCallback()

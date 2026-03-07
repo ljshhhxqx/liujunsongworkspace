@@ -585,15 +585,18 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                 if (IsRoomOwner)
                 {
                     IsRoomOwner = false;
-                    
-                    var request = new ExecuteEntityCloudScriptRequest
+                 
+                    DelayInvoker.DelayInvoke(1f, ()=>
                     {
-                        FunctionName = "DeleteRoom",
-                        GeneratePlayStreamEvent = true,
-                        FunctionParameter = new { roomId = CurrentRoomId },
-                        Entity = PlayFabData.EntityKey.Value,
-                    };
-                    _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnRefreshRoomDataSuccess, OnError, false);
+                        var request = new ExecuteEntityCloudScriptRequest
+                        {
+                            FunctionName = "DeleteRoom",
+                            GeneratePlayStreamEvent = true,
+                            FunctionParameter = new { roomId = CurrentRoomId },
+                            Entity = PlayFabData.EntityKey.Value,
+                        };
+                        _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnRefreshRoomDataSuccess, OnError, false);
+                    });
                 }
             };
         }

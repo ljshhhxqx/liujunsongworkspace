@@ -45,7 +45,7 @@ namespace HotUpdate.Scripts.Game.Inject
 
         protected override void StartLocalPlayer()
         {
-            base.StartServer();
+            base.StartLocalPlayer();
             if (!AutoInjectLocalPlayer)
             {
                 InjectLocalPlayerCallback();

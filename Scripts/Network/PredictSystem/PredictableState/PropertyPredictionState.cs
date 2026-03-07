@@ -229,7 +229,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             //Debug.Log($"[PropertyChanged] {predictablePropertyState.ToString()}");
             if (!LocalPlayerHandler || _isDead)
             {
-                Debug.LogError($"PropertyChanged {predictablePropertyState.ToString()} {!NetworkIdentity.isLocalPlayer} is not a player or is dead {_isDead}");
+                Debug.LogError($"PropertyChanged  {!NetworkIdentity.isLocalPlayer} is not a player or is dead {_isDead}");
                 return;
             }
             if (!_isDead && !_subjectedStateType.HasAnyState(SubjectedStateType.IsDead) && predictablePropertyState.ControlSkillType.HasAnyState(SubjectedStateType.IsDead))

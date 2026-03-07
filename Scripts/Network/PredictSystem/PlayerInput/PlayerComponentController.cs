@@ -1377,9 +1377,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcSetAnimatorSpeed(AnimationState animationState, float speed)
         {
-            var propertyConfig = _configProvider.GetConfig<PropertyConfig>();
-            var property = propertyConfig.GetPropertyType(animationState);
-            var minMaxAttackSpeed = propertyConfig.GetMinMaxProperty(property);
+            var property = _propertyConfig.GetPropertyType(animationState);
+            var minMaxAttackSpeed = _propertyConfig.GetMinMaxProperty(property);
             var cooldown = _animationCooldowns.Find(x => x.AnimationState == animationState);
             if (cooldown == null)
             {
