@@ -288,12 +288,15 @@ namespace HotUpdate.Scripts.Network.Server
 
         private void OnClientConnectToServer()
         {
-            // 获取当前连接
-            NetworkConnection conn = NetworkClient.connection;
-            Debug.Log($"NetworkClient ===> {conn.connectionId} +++ Connected to server");
-            //
-            var msg = new MirrorPlayerConnectMessage(PlayFabData.PlayFabId.Value, conn.connectionId, PlayFabData.PlayerReadOnlyData.Value.Nickname, new AotCompressedVector3(), (uint)PlayFabData.PlayerReadOnlyData.Value.Id);
-            conn.Send(msg);
+            DelayInvoker.DelayInvoke(Random.Range(0.1f, 0.25f), () =>
+            {
+                // 获取当前连接
+                NetworkConnection conn = NetworkClient.connection;
+                Debug.Log($"NetworkClient ===> {conn.connectionId} +++ Connected to server");
+                //
+                var msg = new MirrorPlayerConnectMessage(PlayFabData.PlayFabId.Value, conn.connectionId, PlayFabData.PlayerReadOnlyData.Value.Nickname, new AotCompressedVector3(), (uint)PlayFabData.PlayerReadOnlyData.Value.Id);
+                conn.Send(msg);
+            });
             // 发送 PlayerAccountId 给服务器
             // TODO: 取消注释
             //var msg = new PlayerConnectMessage(PlayFabData.PlayFabId.Value, conn.connectionId, PlayFabData.PlayerReadOnlyData.Value.Nickname);
