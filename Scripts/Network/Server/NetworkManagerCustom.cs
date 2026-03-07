@@ -31,7 +31,6 @@ namespace HotUpdate.Scripts.Network.Server
     {
         private GameEventManager _gameEventManager;
         private List<NetworkStartPosition> _spawnPoints;
-        private NetworkManagerHUD _networkManagerHUD;
         private UIManager _uiManager;
         private IObjectResolver _objectResolver;
         private readonly Dictionary<int, string> _playerAccountIdMap = new Dictionary<int, string>();
@@ -63,8 +62,6 @@ namespace HotUpdate.Scripts.Network.Server
             PropertyTypeReaderWriter.RegisterReaderWriter();
             _gameEventManager = gameEventManager;
             _spawnPoints = FindObjectsByType<NetworkStartPosition>(FindObjectsSortMode.None).ToList();
-            _networkManagerHUD = GetComponent<NetworkManagerHUD>();
-            _networkManagerHUD.enabled = false;
             _playerInGameManager = playerInGameManager;
             _gameEventManager.Subscribe<GameSceneResourcesLoadedEvent>(OnSceneResourcesLoaded);
             _objectResolver = objectResolver;
@@ -115,83 +112,26 @@ namespace HotUpdate.Scripts.Network.Server
             }
         }
 
-        private GameObject SpawnPlayer(int connectionId, NetworkStartPosition spawnPoint)
-        {
-            var res = DataJsonManager.Instance.GetResourceData(_gameConfigData.playerPrefabName);
-            var resInfo = ResourceManager.Instance.GetResource<GameObject>(res);
-            var playerGo = Instantiate(resInfo.gameObject, spawnPoint.transform.position, Quaternion.identity, spawnPoint.transform);
-            playerGo.name = playerGo.name.Replace("(Clone)", connectionId.ToString());
-            Debug.Log("Spawned player: " + playerGo.name);
-            return playerGo;
-        }
-
-        private void SpawnPlayer(NetworkConnectionToClient conn)
-        {
-            var spawnIndex = Random.Range(0, _spawnPoints.Count);
-            Debug.Log($"[NetworkManagerCustom]: spawnIndex");
-            var res = DataJsonManager.Instance.GetResourceData(_gameConfigData.playerPrefabName);
-            Debug.Log($"[NetworkManagerCustom]: res");
-            var spawnPoint = _spawnPoints[spawnIndex];
-            Debug.Log($"[NetworkManagerCustom]: spawnPoint");
-            var playerGo = SpawnPlayer(conn.connectionId, spawnPoint);
-            Debug.Log($"[NetworkManagerCustom]: playerGo");
-            //currentPlayer = resInfo.gameObject;
-            // playerGo.gameObject.SetActive(false);
-            // ObjectInjectProvider.Instance.InjectMapGameObject(_mapName, playerGo);
-            // playerGo.gameObject.SetActive(true);
-            var identity = playerGo.GetComponent<NetworkIdentity>();
-            Debug.Log($"[NetworkManagerCustom]: identity - {identity} {res.Name} {conn.connectionId} {playerGo.name} {playerGo.name} {playerGo.transform.position} {identity.netId}");
-            // _mirrorNetworkMessageHandler.SendToAllClients(new MirrorPlayerConnectMessage(res.Name, 
-            //     conn.connectionId, playerGo.name, playerGo.transform.position, identity.netId));
-
-            Debug.Log($"[NetworkManagerCustom]: _mirrorNetworkMessageHandler SendToAllClients");
-            _spawnPoints.Remove(spawnPoint);            
-            Debug.Log($"[NetworkManagerCustom]: _spawnPoints.Remove(spawnPoint)"); 
-            // 详细检查
-            // Debug.Log($"Connection: {conn}");
-            // Debug.Log($"Player GameObject: {playerGo}");
-            // Debug.Log($"NetworkIdentity: {playerGo.GetComponent<NetworkIdentity>()}");
-            //
-            // // 检查所有 NetworkBehaviour 组件
-            // NetworkBehaviour[] behaviours = playerGo.GetComponents<NetworkBehaviour>();
-            // foreach (var behaviour in behaviours)
-            // {
-            //     Debug.Log($"NetworkBehaviour: {behaviour} - Type: {behaviour.GetType()}");
-            //     if (behaviour == null)
-            //     {
-            //         Debug.LogError("Found null NetworkBehaviour!");
-            //     }
-            // }
-    
-            try
-            {
-                NetworkServer.AddPlayerForConnection(conn, playerGo);
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogError($"AddPlayerForConnection failed: {e}");
-                Destroy(playerGo);
-            }
-            
-        }
+        // private GameObject SpawnPlayer(int connectionId, NetworkStartPosition spawnPoint)
+        // {
+        //     var res = DataJsonManager.Instance.GetResourceData(_gameConfigData.playerPrefabName);
+        //     var resInfo = ResourceManager.Instance.GetResource<GameObject>(res);
+        //     var playerGo = Instantiate(resInfo.gameObject, spawnPoint.transform.position, Quaternion.identity, spawnPoint.transform);
+        //     playerGo.name = playerGo.name.Replace("(Clone)", connectionId.ToString());
+        //     Debug.Log("Spawned player: " + playerGo.name);
+        //     return playerGo;
+        // }
 
 
-        public override void OnServerAddPlayer(NetworkConnectionToClient conn)
-        {
-            Debug.Log("OnServerAddPlayer");
-            
-            var hasHost = PlayFabData.PlayerList.Any(player => (PlayerGameDuty)Enum.Parse(typeof(PlayerGameDuty), player.playerDuty) == PlayerGameDuty.Host);
-            if (_connectionToClients.Count == PlayFabData.PlayerList.Count - (hasHost ? 0 : 1))
-            {
-                _uiManager.CloseAllPanel();
-                Debug.Log("关闭主界面");
-                foreach (var connection in _connectionToClients.Values)
-                {
-                    SpawnPlayer(connection);
-                }
-                _uiManager.CloseUI(UIType.Loading);
-            }
-        }
+        // public override void OnServerAddPlayer(NetworkConnectionToClient conn)
+        // {
+        //     Debug.Log("OnServerAddPlayer");
+        //     var spawnIndex = Random.Range(0, _spawnPoints.Count);
+        //     var spawnPoint = _spawnPoints[spawnIndex];
+        //     _spawnPoints.Remove(spawnPoint);         
+        //     base.OnServerAddPlayer(conn);
+        //     conn.identity.transform.position = spawnPoint.transform.position;
+        // }
 
         private void OnSceneResourcesLoaded(GameSceneResourcesLoadedEvent sceneResourcesLoadedEvent)
         {
@@ -203,7 +143,6 @@ namespace HotUpdate.Scripts.Network.Server
                 return;
             }
             Debug.Log("map resources loaded fail");
-            _networkManagerHUD.enabled = false;
         }
  
         public override void OnStartServer()
