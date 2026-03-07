@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Data;
 using AOTScripts.Data.NetworkMes;
+using AOTScripts.Tool.Coroutine;
 using AOTScripts.Tool.Resource;
 using Game.Map;
 using HotUpdate.Scripts.Config.ArrayConfig;
@@ -394,7 +395,7 @@ namespace HotUpdate.Scripts.Network.Server
             if (!string.IsNullOrEmpty(cachedGameInfo.ipAddress))
             {
                 networkAddress = cachedGameInfo.ipAddress;
-                StartClient();
+                DelayStartClient();
                 Debug.Log($"客户端直连服务器: {networkAddress}");
             }
             else
@@ -402,6 +403,14 @@ namespace HotUpdate.Scripts.Network.Server
                 _discovery.StartFindServer(cachedGameInfo.roomId);
                 Debug.Log("客户端开始局域网发现");
             }
+        }
+
+
+        public void DelayStartClient()
+        {
+            var delay = Random.Range(0.1f, 1f);
+            Debug.Log($"延迟启动客户端: {delay}");
+            DelayInvoker.DelayInvoke(delay, StartClient);
         }
 
         #endregion

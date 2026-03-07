@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using AOTScripts.Data;
+using AOTScripts.Tool.Coroutine;
 using Mirror.Discovery;
 using UnityEngine;
 
@@ -70,7 +71,7 @@ namespace HotUpdate.Scripts.Network.Server
             _connected = true;
 
             _networkManagerCustom.networkAddress = endpoint.Address.ToString();
-            _networkManagerCustom.StartClient();
+            _networkManagerCustom.DelayStartClient();
 
             StopDiscovery();
 
