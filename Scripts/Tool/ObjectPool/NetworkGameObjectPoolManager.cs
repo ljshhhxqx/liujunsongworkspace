@@ -50,7 +50,7 @@ namespace HotUpdate.Scripts.Tool.ObjectPool
                 EnsurePoolExists(kvp.Value, identity.assetId);
                 NetworkClient.UnregisterPrefab(kvp.Value);
                 NetworkClient.RegisterPrefab(kvp.Value, SpawnHandler, UnspawnHandler);
-                Debug.Log($"[NetworkGameObjectPoolManager] Prefab: {kvp.Value.name} | AssetId: {identity.assetId}-{kvp.Key} | SceneId: {identity.sceneId}");
+                //Debug.Log($"[NetworkGameObjectPoolManager] Prefab: {kvp.Value.name} | AssetId: {identity.assetId}-{kvp.Key} | SceneId: {identity.sceneId}");
             }
         }
 

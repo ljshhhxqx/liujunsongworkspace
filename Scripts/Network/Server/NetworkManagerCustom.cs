@@ -408,7 +408,7 @@ namespace HotUpdate.Scripts.Network.Server
 
         public void DelayStartClient()
         {
-            var delay = Random.Range(0.1f, 1f);
+            var delay = Random.Range(0.1f, 1.5f);
             Debug.Log($"延迟启动客户端: {delay}");
             DelayInvoker.DelayInvoke(delay, StartClient);
         }
