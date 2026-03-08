@@ -946,29 +946,29 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private void HandlePlayerPropertyDifference(int targetId, PropertyCalculator oldCalculator, PropertyCalculator newCalculator, PropertyTypeEnum propertyType)
         {
-            var difference = PropertyCalculator.GetDifferences(oldCalculator, newCalculator);
-            if (difference.Count == 0)
-            {
-                return;
-            }
-            var currentValueDifference = difference.FirstOrDefault(x => x.Item1 == BuffIncreaseType.Current);
-            if (currentValueDifference.Item2 != 0)
-            {
-                var playerController = GameSyncManager.GetPlayerConnection(targetId);
-                var tracedPlayerInfo = new TracedPlayerInfo
-                {
-                    PlayerId = targetId,
-                    PlayerName = _playerInGameManager.GetPlayerName(targetId),
-                    Hp = newCalculator.CurrentValue,
-                    MaxHp = newCalculator.MaxCurrentValue,
-                    Mana = newCalculator.CurrentValue,
-                    MaxMana = newCalculator.MaxCurrentValue,
-                    Position = playerController.transform.position,
-                    PropertyDifferentPropertyType = propertyType,
-                    PropertyDifferentValue = currentValueDifference.Item2,
-                };
-                playerController.HandlePlayerPropertyDifference(MemoryPackSerializer.Serialize(tracedPlayerInfo));
-            }
+            // var difference = PropertyCalculator.GetDifferences(oldCalculator, newCalculator);
+            // if (difference.Count == 0)
+            // {
+            //     return;
+            // }
+            // var currentValueDifference = difference.FirstOrDefault(x => x.Item1 == BuffIncreaseType.Current);
+            // if (currentValueDifference.Item2 != 0)
+            // {
+            //     var playerController = GameSyncManager.GetPlayerConnection(targetId);
+            //     var tracedPlayerInfo = new TracedPlayerInfo
+            //     {
+            //         PlayerId = targetId,
+            //         PlayerName = _playerInGameManager.GetPlayerName(targetId),
+            //         Hp = newCalculator.CurrentValue,
+            //         MaxHp = newCalculator.MaxCurrentValue,
+            //         Mana = newCalculator.CurrentValue,
+            //         MaxMana = newCalculator.MaxCurrentValue,
+            //         Position = playerController.transform.position,
+            //         PropertyDifferentPropertyType = propertyType,
+            //         PropertyDifferentValue = currentValueDifference.Item2,
+            //     };
+            //     playerController.HandlePlayerPropertyDifference(MemoryPackSerializer.Serialize(tracedPlayerInfo));
+            // }
         }
 
         private void HandleEquipProperty(int targetId, BuffExtraData buffExtraData, int equipItemConfigId, int equipItemId)

@@ -64,9 +64,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [SerializeField]
         private Transform _checkStairTransform;
         [SerializeField]
-        private NetworkTransformUnreliable _clientTransform;
+        private NetworkTransformReliable _clientTransform;
         [SerializeField]
-        private NetworkTransformUnreliable _serverTransform;
+        private NetworkTransformReliable _serverTransform;
         private Camera _camera;
         [SerializeField]
         private PlayerEffectPlayer playerEffectPlayer;
