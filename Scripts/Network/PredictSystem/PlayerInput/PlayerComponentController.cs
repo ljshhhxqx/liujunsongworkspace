@@ -281,6 +281,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             if (ServerHandler)
             {
                 _originParent = transform.parent;
+                _clientTransform.enabled = false;
+                _serverTransform.enabled = true;
+                _clientNetworkAnimator.enabled = false;
+                _serverNetworkAnimator.enabled = true;
             }
 
             if (ClientHandler && !LocalPlayerHandler)
