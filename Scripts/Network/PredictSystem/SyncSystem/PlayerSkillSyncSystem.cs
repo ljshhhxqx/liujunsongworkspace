@@ -270,8 +270,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         public override void SetState<T>(int connectionId, T state)
         {
-            var playerPredictableState = _playerSkillSyncStates[connectionId];
-            playerPredictableState.ApplyState(state);
+            if (_playerSkillSyncStates.TryGetValue(connectionId, out var playerSkillState))
+            {
+                playerSkillState.ApplyState(state);
+            }
         }
 
         public override bool HasStateChanged(ISyncPropertyState oldState, ISyncPropertyState newState)
