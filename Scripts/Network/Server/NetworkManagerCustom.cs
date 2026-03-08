@@ -170,7 +170,7 @@ namespace HotUpdate.Scripts.Network.Server
             }).AddTo(this);
 
             _discovery.StartBroadcast(cachedGameInfo.roomId);
-            NetworkServer.RegisterHandler<MirrorPlayerConnectMessage>(OnServerPlayerAccountIdMessage);
+            NetworkServer.ReplaceHandler<MirrorPlayerConnectMessage>(OnServerPlayerAccountIdMessage);
         }
 
         private void OnServerPlayerAccountIdMessage(NetworkConnectionToClient conn, MirrorPlayerConnectMessage message)
