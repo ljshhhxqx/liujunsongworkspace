@@ -260,10 +260,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                             maxMana = propertyValue.MaxCurrentValue;
                             break;
                         case PropertyTypeEnum.AttackSpeed:
-                            playerController.RpcSetAnimatorSpeed(AnimationState.Attack, propertyValue.CurrentValue);
+                            playerController.TpcSetAnimatorSpeed(playerController.netIdentity.connectionToClient, AnimationState.Attack, propertyValue.CurrentValue);
                             break;
                         case PropertyTypeEnum.Alpha:
-                            playerController.RpcSetPlayerAlpha(propertyValue.CurrentValue);
+                            playerController.TpcSetPlayerAlpha(playerController.netIdentity.connectionToClient, propertyValue.CurrentValue);
                             break;
                         // case PropertyTypeEnum.View:
                         //     playerController.RpcSetPlayerView();

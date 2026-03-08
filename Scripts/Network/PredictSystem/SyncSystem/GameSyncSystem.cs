@@ -111,7 +111,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 _syncSystems.Add(commandType, syncSystem);
             }
             OnAllSystemInit?.Invoke();
-            ProcessImmediateCommands(_cts.Token);
         }
 
         public override void OnStartClient()
@@ -139,6 +138,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _gameEventManager.Subscribe<AddDeBuffToLowScorePlayerEvent>(OnAddDeBuffToLowScorePlayer);
             _gameEventManager.Subscribe<AllPlayerGetSpeedEvent>(OnAllPlayerGetSpeed);
             ProcessTickSync(_cts.Token).Forget();
+            ProcessImmediateCommands(_cts.Token);
         }
         
         private async UniTask ProcessTickSync(CancellationToken cancellationToken)

@@ -1346,8 +1346,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _gameEventManager.Publish(new PlayerInfoChangedEvent(hp, maxHp, mp, maxMp, playerId, playerName));
         }
 
-        [ClientRpc]
-        public void RpcSetPlayerAlpha(float alpha)
+        [TargetRpc]
+        public void TpcSetPlayerAlpha(NetworkConnectionToClient target, float alpha)
         {
             var actualAlpha = alpha * 0.001f;
             if(Mathf.Approximately(actualAlpha, 1))
@@ -1374,8 +1374,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerAnimationCalculator.SetClipSpeed(animationState, speed);
         }
 
-        [ClientRpc]
-        public void RpcSetAnimatorSpeed(AnimationState animationState, float speed)
+        [TargetRpc]
+        public void TpcSetAnimatorSpeed(NetworkConnectionToClient target, AnimationState animationState, float speed)
         {
             var property = _propertyConfig.GetPropertyType(animationState);
             var minMaxAttackSpeed = _propertyConfig.GetMinMaxProperty(property);
