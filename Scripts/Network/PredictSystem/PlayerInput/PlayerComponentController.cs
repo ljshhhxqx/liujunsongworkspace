@@ -39,6 +39,7 @@ using MemoryPack;
 using Mirror;
 using UniRx;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VContainer;
 using AnimationState = AOTScripts.Data.AnimationState;
 using CooldownSnapshotData = AOTScripts.Data.CooldownSnapshotData;
@@ -67,6 +68,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private NetworkTransformReliable _clientTransform;
         [SerializeField]
         private NetworkTransformReliable _serverTransform;
+        [SerializeField]
+        private NetworkAnimator _clientNetworkAnimator;
+        [SerializeField]
+        private NetworkAnimator _serverNetworkAnimator;
+        [SerializeField]
         private Camera _camera;
         [SerializeField]
         private PlayerEffectPlayer playerEffectPlayer;
@@ -270,9 +276,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             HandleAllSyncState();
             _clientTransform.enabled = true;
             _serverTransform.enabled = false;
+            _clientNetworkAnimator.enabled = true;
+            _serverNetworkAnimator.enabled = false;
             if (ServerHandler)
             {
                 _originParent = transform.parent;
+            }
+
+            if (ClientHandler && !LocalPlayerHandler)
+            {
+                _clientTransform.enabled = false;
+                _serverTransform.enabled = true;
+                _clientNetworkAnimator.enabled = false;
+                _serverNetworkAnimator.enabled = true;
             }
         }
 
@@ -284,11 +300,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 _clientTransform.enabled = true;
                 _serverTransform.enabled = false;
             }
-            RpcSetPlayerPosition(position, rotation, reset);
+            RpcSetPlayerPosition(connectionToClient, position, rotation, reset);
         }
 
-        [ClientRpc]
-        private void RpcSetPlayerPosition(Vector3 position, Quaternion rotation, bool reset)
+        [TargetRpc]
+        private void RpcSetPlayerPosition(NetworkConnectionToClient connection, Vector3 position, Quaternion rotation, bool reset)
         {
             if (reset)
             {
@@ -313,7 +329,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
             _clientTransform.enabled = false;
             _serverTransform.enabled = true;
-            RpcSetPlayerTransform(false);
+            RpcSetPlayerTransform(connectionToClient, false);
             DelayInvoker.DelayInvoke(0.2f, () =>
             {
                 _serverTransform.transform.SetParent(parent);
@@ -321,8 +337,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             });
         }
 
-        [ClientRpc]
-        private void RpcSetPlayerTransform(bool client)
+        [TargetRpc]
+        private void RpcSetPlayerTransform(NetworkConnectionToClient connection, bool client)
         {
             _clientTransform.enabled = client;
             _serverTransform.enabled = !client;
