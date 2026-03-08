@@ -184,17 +184,23 @@ namespace HotUpdate.Scripts.Network.Server
             // 获取已添加的玩家对象
             if (conn.identity)
             {
+                Debug.Log($"[OnServerPlayerAccountIdMessage] Player already connected: {conn.identity.name}");
                 _playerAccountIdMap[conn.connectionId] = message.UID;
+                Debug.Log($"[OnServerPlayerAccountIdMessage] _playerAccountIdMap[conn.connectionId] = message.UID: {message.UID} -- {conn.identity.name}");
                 _playerDataManager.UpdatePlayerConnectionId(message.UID, conn.connectionId);
+                Debug.Log($"[OnServerPlayerAccountIdMessage] _playerDataManager.UpdatePlayerConnectionId(message.UID, conn.connectionId): {message.UID} -- {conn.identity.name}");
                 var playerInGameData = _playerDataManager.GetPlayer(conn.connectionId);
+                Debug.Log($"[OnServerPlayerAccountIdMessage] playerInGameData: {playerInGameData.player.PlayerId}");
                 _playerInGameManager.AddPlayer(conn.connectionId, new PlayerInGameDataNetData
                 {
                     player = BoxingFreeSerializer.JsonSerialize(playerInGameData.player),
                     networkIdentity = conn.identity,
                     playerNetId = conn.identity.netId,
                 });
+                Debug.Log($"[OnServerPlayerAccountIdMessage] _playerInGameManager.AddPlayer(conn.connectionId, new PlayerInGameDataNetData)");
                 
                 var playerCount = _playerDataManager.GetPlayers().Count;
+                Debug.Log($"[OnServerPlayerAccountIdMessage] playerCount: {playerCount}");
                 var gameInfo = new GameInfo
                 {
                     SceneName = _mapName,
@@ -203,9 +209,11 @@ namespace HotUpdate.Scripts.Network.Server
                     GameScore = _playerDataManager.CurrentRoomData.RoomCustomInfo.GameScore,
                     PlayerCount = playerCount
                 };
+                Debug.Log($"[OnServerPlayerAccountIdMessage] gameInfo: {gameInfo.SceneName} -- {gameInfo.GameMode} -- {gameInfo.GameTime} -- {gameInfo.GameScore} -- {gameInfo.PlayerCount}");
                 _gameEventManager.Publish(new PlayerConnectEvent(conn.connectionId, conn.identity.netId));//, message.UID, message.Name, gameInfo));
+                Debug.Log($"[OnServerPlayerAccountIdMessage] _gameEventManager.Publish(new PlayerConnectEvent(conn.connectionId, conn.identity.netId))");
                 _gameEventManager.Publish(new GameReadyEvent(gameInfo));
-                Debug.Log($"conn.identity is true ==== Received PlayerAccountId from client:  {message.UID} -- {conn.identity} -- {message.ConnectionID}");
+                Debug.Log($"[OnServerPlayerAccountIdMessage] conn.identity is true ==== Received PlayerAccountId from client:  {message.UID} -- {conn.identity} -- {message.ConnectionID}");
             }
         }
 
