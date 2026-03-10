@@ -81,6 +81,13 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                 }
                 dict.Add(playerInfo.id, data);
             }
+
+            if ( info.playersInfo.Length == 1)
+            {
+                serverBtn.interactable = false;
+                clientBtn.interactable = false;
+            }
+
             contentItemList.SetItemList(dict);
         }
 

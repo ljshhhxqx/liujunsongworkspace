@@ -104,7 +104,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             var animationInfo = GetAnimationInfo(state);
             if (animationInfo.animationNames == null || animationInfo.animationNames.Length <= index)
             {
-                Debug.LogError("AnimationNames not found for state: " + state + " index: " + index);
+//                Debug.LogError("AnimationNames not found for state: " + state + " index: " + index);
                 return null;
             }
 

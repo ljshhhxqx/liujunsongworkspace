@@ -79,7 +79,7 @@ namespace HotUpdate.Scripts.Collector
         public override void OnStartClient()
         {
             base.OnStartClient();
-            _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+            _playerTransform = NetworkClient.localPlayer.transform;
             Debug.Log("Init Chest send TargetShowEvent from client called on OnStartClient");
             _gameEventManager?.Publish(new TargetShowEvent(transform, _playerTransform, netId, quality));
         }

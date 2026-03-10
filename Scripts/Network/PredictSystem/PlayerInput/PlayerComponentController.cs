@@ -65,14 +65,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [SerializeField]
         private Transform _checkStairTransform;
         [SerializeField]
-        private NetworkTransformReliable _clientTransform;
+        private NetworkTransformUnreliable _clientTransform;
         [SerializeField]
-        private NetworkTransformReliable _serverTransform;
-        [SerializeField]
-        private NetworkAnimator _clientNetworkAnimator;
-        [SerializeField]
-        private NetworkAnimator _serverNetworkAnimator;
-        [SerializeField]
+        private NetworkTransformUnreliable _serverTransform;
         private Camera _camera;
         [SerializeField]
         private PlayerEffectPlayer playerEffectPlayer;
@@ -262,7 +257,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _uiManager = uiManager;
             _rigidbody = GetComponent<Rigidbody>();
             _capsuleCollider = GetComponent<CapsuleCollider>();
-            _networkRigidbody = GetComponent<NetworkRigidbodyUnreliable>();
             _animator = GetComponent<Animator>();
             _skillConfig = _configProvider.GetConfig<SkillConfig>();
             _camera = Camera.main;
@@ -276,24 +270,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             HandleAllSyncState();
             _clientTransform.enabled = true;
             _serverTransform.enabled = false;
-            _clientNetworkAnimator.enabled = true;
-            _serverNetworkAnimator.enabled = false;
-            if (ServerHandler)
-            {
-                _originParent = transform.parent;
-                _clientTransform.enabled = false;
-                _serverTransform.enabled = true;
-                _clientNetworkAnimator.enabled = false;
-                _serverNetworkAnimator.enabled = true;
-            }
-
-            if (ClientHandler && !LocalPlayerHandler)
-            {
-                _clientTransform.enabled = false;
-                _serverTransform.enabled = true;
-                _clientNetworkAnimator.enabled = false;
-                _serverNetworkAnimator.enabled = true;
-            }
         }
 
         [Server]
@@ -333,7 +309,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             }
             _clientTransform.enabled = false;
             _serverTransform.enabled = true;
-            RpcSetPlayerTransform(connectionToClient, false);
+            RpcSetPlayerTransform(false);
             DelayInvoker.DelayInvoke(0.2f, () =>
             {
                 _serverTransform.transform.SetParent(parent);
@@ -341,8 +317,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             });
         }
 
-        [TargetRpc]
-        private void RpcSetPlayerTransform(NetworkConnectionToClient connection, bool client)
+        [ClientRpc]
+        private void RpcSetPlayerTransform(bool client)
         {
             _clientTransform.enabled = client;
             _serverTransform.enabled = !client;
