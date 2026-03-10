@@ -53,7 +53,7 @@ using PropertyEnvironmentChangeCommand = AOTScripts.Data.PropertyEnvironmentChan
 
 namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 {
-    public class PlayerComponentController : NetworkAutoInjectHandlerBehaviour, IAttackAnimationEvent, IEffectPlayer, IAnimationPlayer
+    public class PlayerComponentController : NetworkAutoInjectHandlerBehaviour, IAttackAnimationEvent, IEffectPlayer
     {
         [Header("Components")]
         [SerializeField]
@@ -780,7 +780,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             // _rigidbody.velocity = newState.Velocity;
             // _gameStateStream.Value = newState.PlayerEnvironmentState;
             // _playerAnimationCalculator.SetEnvironmentState(newState.PlayerEnvironmentState);
-            if(LocalPlayerHandler)
+            if(LocalPlayerHandler || PlayerAnimationCalculator.IsMovingState(newState.AnimationState))
                 return;
             
             _playerAnimationCalculator.PlayAnimationWithNoCondition(newState.AnimationState, newState.Index);
@@ -986,7 +986,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _playerPhysicsCalculator = new PlayerPhysicsCalculator(new PhysicsComponent(_rigidbody, transform, _checkStairTransform, _capsuleCollider, _camera));
             _playerPropertyCalculator = new PlayerPropertyCalculator(PlayerPropertyCalculator.GetPropertyCalculators());
             _playerAnimationCalculator = new PlayerAnimationCalculator(new AnimationComponent{ Animator = _animator});
-            _playerBattleCalculator = new PlayerBattleCalculator(new PlayerBattleComponent(transform, _interactSystem));
+            _playerBattleCalculator = new PlayerBattleCalculator(new PlayerBattleComponent(transform, _interactSystem, _playerInGameManager));
             _playerItemCalculator = new PlayerItemCalculator();
             _playerElementCalculator = new PlayerElementCalculator();
             _playerEquipmentCalculator = new PlayerEquipmentCalculator();
@@ -1080,6 +1080,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcHandlePlayerDeadClient(float countdownTime)
         {
+            if (_playerAnimationCalculator == null)
+            {
+                return;
+            }
             _playerAnimationCalculator.PlayAnimationWithNoCondition(AnimationState.Dead);
             var playerDamageDeathOverlay = _uiManager.GetActiveUI<PlayerDamageDeathOverlay>(UIType.PlayerDamageDeathOverlay, UICanvasType.Overlay);
             playerDamageDeathOverlay.PlayDeathEffect(countdownTime);
@@ -1089,6 +1093,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcHandlePlayerRespawnedClient()
         {
+            if (_playerAnimationCalculator == null)
+            {
+                return;
+            }
             _playerAnimationCalculator.PlayAnimationWithNoCondition(AnimationState.Idle);
             var playerDamageDeathOverlay = _uiManager.GetActiveUI<PlayerDamageDeathOverlay>(UIType.PlayerDamageDeathOverlay, UICanvasType.Overlay);
             Debug.Log($"[RpcHandlePlayerRespawnedClient] {netId}");
@@ -1582,6 +1590,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcSpawnSkillEffect(int skillConfigId, Vector3 position, AnimationState code)
         {
+            if (_skillSyncState == null)
+            {
+                return;
+            }
             _skillSyncState.SpawnSkillEffect(skillConfigId, position, code);
            
         }
@@ -1596,6 +1608,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcPlayAnimation(AnimationState animationState, bool forcePlay)
         {
+            if (_playerAnimationCalculator == null || !_picker )
+            {
+                return;
+            }
             Debug.Log($"[PlayerComponentController] RpcPlayAnimation {animationState} {forcePlay}");
             if (animationState == AnimationState.Hit)
             {
@@ -1608,6 +1624,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcSetRb(bool isEnabled)
         {
+            if (!_rigidbody)
+            {
+                return;
+            }
             _rigidbody.isKinematic = isEnabled;
         }
 

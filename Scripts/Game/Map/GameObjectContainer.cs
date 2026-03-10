@@ -185,6 +185,10 @@ namespace HotUpdate.Scripts.Game.Map
                     var data = _dynamicObjectData[i];
                     var gridBounds = MapBoundDefiner.Instance.GetGridPosition(data.Position);
 
+                    if (data.NetId == 13 || data.NetId == 14)
+                    {
+                        Debug.Log("[GameObjectContainer] players grid -- " + gridBounds);
+                    }
                     if (gridBounds == grid)
                     {
                         hashSet.Add(data.NetId);

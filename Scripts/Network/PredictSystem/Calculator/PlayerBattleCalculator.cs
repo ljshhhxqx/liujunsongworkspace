@@ -109,11 +109,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
     {
         public Transform Transform;
         public InteractSystem InteractSystem;
+        public PlayerInGameManager PlayerInGameManager;
         
-        public PlayerBattleComponent(Transform transform, InteractSystem interactSystem)
+        public PlayerBattleComponent(Transform transform, InteractSystem interactSystem, PlayerInGameManager playerInGameManager)
         {
             Transform = transform;
             InteractSystem = interactSystem;
+            PlayerInGameManager = playerInGameManager;
         }
     }
 

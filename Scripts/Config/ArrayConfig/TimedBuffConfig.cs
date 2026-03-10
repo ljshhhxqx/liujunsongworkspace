@@ -142,8 +142,16 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             double d, GrowthType type = GrowthType.Exponential, bool allowOutOfBounds = true)
         {
             // 基础参数验证
-            if (a <= e) throw new ArgumentException("a必须大于e");
-            if (d < 0) throw new ArgumentException("陡峭度d不能为负数");
+            if (a <= e)
+            {
+                Debug.LogError("a必须大于e");
+                return 0;
+            }
+            if (d < 0)
+            {
+                Debug.LogError("陡峭度d不能为负数");
+                return 0;
+            }
 
             // 越界处理（当允许越界时立即返回极值）
             if (allowOutOfBounds)
@@ -154,7 +162,10 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
             else // 严格区间限制
             {
                 if (x < e || x > a)
-                    throw new ArgumentException($"x必须在[{e}, {a}]范围内");
+                {
+                    Debug.LogError($"x必须在[{e}, {a}]范围内");
+                    return 0;
+                }
             }
 
             // 计算归一化参数（此时x必然在(e,a)区间）
@@ -171,10 +182,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
                 
                 case GrowthType.Sigmoid:
                     return Sigmoid(b, c, t, d);
-                
-                default:
-                    throw new ArgumentException("未知的增长类型");
             }
+            return 0;
         }
 
         // 线性增长

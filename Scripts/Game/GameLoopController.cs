@@ -639,7 +639,7 @@ namespace HotUpdate.Scripts.Game
 
         public async UniTask ClearAndReleaseAsync()
         {
-            PlayFabData.PlayerList.Clear();
+            PlayFabData.PlayerList?.Clear();
             _playerInGameManager.Clear();
             await UniTask.Yield();
             _networkGameObjectPoolManager.ClearAllPools();

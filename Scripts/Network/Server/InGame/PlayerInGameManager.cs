@@ -178,6 +178,8 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         {
             return _playerIds.Keys.Where(id => id != selfId).Take(count).ToArray();
         }
+        
+        
 
         private int[] GetPlayerIdsWithEnemy(int selfId, int count)
         {

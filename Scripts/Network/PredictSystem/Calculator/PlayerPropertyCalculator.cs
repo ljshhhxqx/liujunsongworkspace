@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using AOTScripts.Data;
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Common;
@@ -135,17 +136,18 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             var attack = propertyState[PropertyTypeEnum.Attack].CurrentValue;
             var critical = propertyState[PropertyTypeEnum.CriticalRate].CurrentValue;
             var criticalDamage = propertyState[PropertyTypeEnum.CriticalDamageRatio].CurrentValue;
-            var defenderPropertyStates = defenders;
+            var defenderPropertyStates = defenders.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             var damageResultDatas = new List<DamageResultData>();
-            foreach (var (key, defenderPropertyState) in defenders)
+            foreach (var kvp in defenders)
             {
-                if (defenderPropertyState.ControlSkillType.HasAnyState(SubjectedStateType.IsInvisible))
+                var defender = defenderPropertyStates[kvp.Key];
+                if (defender.ControlSkillType.HasAnyState(SubjectedStateType.IsInvisible))
                 {
                     continue;
                 }
                 var resultData = new DamageResultData();
                 resultData.HitterUid = attackerId;
-                resultData.DefenderUid = key;
+                resultData.DefenderUid = kvp.Key;
                 resultData.DamageCalculateResult = new DamageCalculateResultData();
                 resultData.DamageCalculateResult.Damage = 0;
                 resultData.DamageCalculateResult.IsCritical = false;
@@ -154,22 +156,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 resultData.DamageCastType = DamageCastType.NormalAttack;
                 resultData.DamageRatio = 0;
                 resultData.IsDead = false;
-                if (defenderPropertyState.ControlSkillType.HasAnyState(SubjectedStateType.IsInvisible))
+                if (defender.ControlSkillType.HasAnyState(SubjectedStateType.IsInvisible))
                 {
-                    Debug.Log($"PlayerConnectionId: {key} is invisible, cannot attack.");
+                    Debug.Log($"PlayerConnectionId: {kvp.Key} is invisible, cannot attack.");
                     resultData.IsDodged = true;
                     damageResultDatas.Add(resultData);
                     continue;
                 }
-                var defense = defenderPropertyState.MemoryProperty[PropertyTypeEnum.Defense].CurrentValue;
+                var defense = defender.MemoryProperty[PropertyTypeEnum.Defense].CurrentValue;
                 resultData.DamageCalculateResult = getDamageFunction(attack, defense, critical, criticalDamage);
                 resultData.IsCritical = resultData.DamageCalculateResult.IsCritical;
                 resultData.DamageRatio = resultData.DamageCalculateResult.Damage /
-                                         defenderPropertyState.MemoryProperty[PropertyTypeEnum.Health].MaxCurrentValue;
-                var remainHealth = GetRemainHealth(defenderPropertyState.MemoryProperty[PropertyTypeEnum.Health], resultData.DamageCalculateResult.Damage);
-                defenderPropertyState.MemoryProperty[PropertyTypeEnum.Health] = remainHealth;
-                defenderPropertyStates[key] = defenderPropertyState;
-                resultData.HpRemainRatio = remainHealth.CurrentValue / defenderPropertyState.MemoryProperty[PropertyTypeEnum.Health].MaxCurrentValue;
+                                         defender.MemoryProperty[PropertyTypeEnum.Health].MaxCurrentValue;
+                var remainHealth = GetRemainHealth(defender.MemoryProperty[PropertyTypeEnum.Health], resultData.DamageCalculateResult.Damage);
+                defender.MemoryProperty[PropertyTypeEnum.Health] = remainHealth;
+                defenderPropertyStates[kvp.Key] = kvp.Value;
+                resultData.HpRemainRatio = remainHealth.CurrentValue / defender.MemoryProperty[PropertyTypeEnum.Health].MaxCurrentValue;
                 if (remainHealth.CurrentValue <= 0)
                 {
                     resultData.IsDead = true;

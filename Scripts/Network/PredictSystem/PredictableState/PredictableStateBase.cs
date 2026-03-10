@@ -46,7 +46,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             {
                 HandleCommandAsync(CancellationTokenSource.Token).Forget();
             } 
-            Debug.Log($"[PredictableStateBase] Initialized with input buffer tick {InputBufferTick}---LocalPlayerHandler=>{LocalPlayerHandler} ---  ServerHandler=>{ServerHandler} --- ClientHandler=>{ClientHandler} NetworkIdentity.isLocalPlayer=>{NetworkIdentity.isLocalPlayer}--- NetworkIdentity.isServer=>{NetworkIdentity.isServer}--- NetworkIdentity.isClient=>{NetworkIdentity.isClient}");
+            //Debug.Log($"[PredictableStateBase] Initialized with input buffer tick {InputBufferTick}---LocalPlayerHandler=>{LocalPlayerHandler} ---  ServerHandler=>{ServerHandler} --- ClientHandler=>{ClientHandler} NetworkIdentity.isLocalPlayer=>{NetworkIdentity.isLocalPlayer}--- NetworkIdentity.isServer=>{NetworkIdentity.isServer}--- NetworkIdentity.isClient=>{NetworkIdentity.isClient}");
         }
 
 

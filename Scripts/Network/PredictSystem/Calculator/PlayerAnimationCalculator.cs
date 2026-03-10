@@ -68,9 +68,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 SetAnimationSpeed(clipName, speedFactor);
             }
         }
+        private AnimationState _currentForcedAnimationState = AnimationState.Idle;
+        private int _currentForcedAnimationIndex;
 
         public void PlayAnimationWithNoCondition(AnimationState newState, int index = 0)
         {
+            if (newState == _currentForcedAnimationState && _currentForcedAnimationIndex == index)
+            {
+                return;
+            }
+            _currentForcedAnimationState = newState;
+            _currentForcedAnimationIndex = index;
             switch (newState)
             {
                 case AnimationState.Jump:

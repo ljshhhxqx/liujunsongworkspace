@@ -241,16 +241,19 @@ namespace HotUpdate.Scripts.Collector
         {
             var grids = new HashSet<Vector2Int>();
     
+            Debug.Log($"[GetSurroundingGrids] GetSurroundingGrids: center: {center} radius: {radius}");
             // 先找出所有可能的网格
             for (var x = -radius; x <= radius; x++)
             {
                 for (var y = -radius; y <= radius; y++)
                 {
                     var potentialGrid = new Vector2Int(center.x + x, center.y + y);
+                    Debug.Log($"[GetSurroundingGrids] Trying to add potential grid: {potentialGrid}");
             
                     // 检查这个网格是否在有效网格列表中
                     if (_gridMap.Contains(potentialGrid))
                     {
+                        Debug.Log($"[GetSurroundingGrids] Adding potential grid: {potentialGrid}");
                         grids.Add(potentialGrid);
                     }
                 }

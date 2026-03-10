@@ -330,6 +330,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 //                Debug.Log($"[PlayerInputSyncSystem]Player {header.ConnectionId} input command {inputCommand.InputMovement} {inputCommand.InputAnimationStates}");
                 var playerSyncSystem = GameSyncManager.GetSyncSystem<PlayerPropertySyncSystem>(CommandType.Property);
                 var playerController = GameSyncManager.GetPlayerConnection(header.ConnectionId);
+                if (!playerController)
+                {
+                    return playerInputState;
+                }
                 if (playerController.IsInSpecialState())
                 {
                     Debug.LogWarning($"[playerInputSyncSystem]Player {header.ConnectionId} is in special state, cannot input.");

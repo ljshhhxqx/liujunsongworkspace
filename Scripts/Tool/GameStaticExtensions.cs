@@ -90,7 +90,10 @@ namespace HotUpdate.Scripts.Tool
         public static T RandomSelect<T>(this IList<T> list)
         {
             if (list == null || list.Count == 0)
-                throw new ArgumentException("At least one item is required");
+            {
+                Debug.LogError("List is empty");
+                return default;
+            }
         
             return list[UnityEngine.Random.Range(0, list.Count)];
         }
