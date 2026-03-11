@@ -27,6 +27,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         private static readonly int EnvironmentState = Animator.StringToHash("EnvironmentState");
         private static readonly int SpecialAction = Animator.StringToHash("IsSpecialAction");
         private static readonly int IsSprinting = Animator.StringToHash("IsSprinting");
+        private static readonly int IsHit = Animator.StringToHash("IsHit");
         private Dictionary<string, float> _originalSpeeds = new Dictionary<string, float>();
         public AnimationState CurrentAnimationState { get; private set; }
         private List<AnimationInfo> _animationInfos;
@@ -73,8 +74,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
         public void PlayAnimationWithNoCondition(AnimationState newState, int index = 0)
         {
-            if (newState == _currentForcedAnimationState && _currentForcedAnimationIndex == index)
+            if (newState == _currentForcedAnimationState)
             {
+                if (_currentForcedAnimationIndex == index)
+                {
+                    return;
+                }
+
+                if (newState == AnimationState.Hit)
+                {
+                    _animationComponent.Animator.SetTrigger(IsHit);
+                }
                 return;
             }
             _currentForcedAnimationState = newState;
@@ -211,6 +221,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             {
                 if (!_currentAnimationCanPlay)
                 {
+                    return;
+                }
+                if (newState == AnimationState.Hit)
+                {
+                    _animationComponent.Animator.SetTrigger(IsHit);
                     return;
                 }
             }

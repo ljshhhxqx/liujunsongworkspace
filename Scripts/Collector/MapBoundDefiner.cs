@@ -11,7 +11,7 @@ namespace HotUpdate.Scripts.Collector
 {
     public class MapBoundDefiner : Singleton<MapBoundDefiner>
     {
-        private float _safetyMargin = 5.0f;
+        private float _safetyMargin = 0.25f;
         private GameObject[] _walls;
         private IConfigProvider _configProvider;
         private JsonDataConfig _jsonDataConfig;
@@ -185,8 +185,8 @@ namespace HotUpdate.Scripts.Collector
             }
 
             // 在原始边界的基础上添加安全边距
-            MapMinBoundary = new Vector3(minX + _safetyMargin, 0, minZ + _safetyMargin);
-            MapMaxBoundary = new Vector3(maxX - _safetyMargin, 0, maxZ - _safetyMargin);
+            MapMinBoundary = new Vector3(minX - _safetyMargin, 0, minZ - _safetyMargin);
+            MapMaxBoundary = new Vector3(maxX + _safetyMargin, 0, maxZ + _safetyMargin);
             GridOrigin = new Vector3(
                 MapMinBoundary.x,
                 0f,
