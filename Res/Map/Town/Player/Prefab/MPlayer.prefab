@@ -7994,7 +7994,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8351228888613827031}
   serializedVersion: 4
-  m_Mass: 5
+  m_Mass: 50
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -8088,9 +8088,6 @@ MonoBehaviour:
   _checkStairTransform: {fileID: 7564044400887088144}
   _clientTransform: {fileID: 335889531431638936}
   _serverTransform: {fileID: 1062056439528624245}
-  _clientNetworkAnimator: {fileID: 8481695034306105822}
-  _serverNetworkAnimator: {fileID: 0}
-  _camera: {fileID: 0}
   playerEffectPlayer: {fileID: 3940613001798115561}
   effectContainer: {fileID: 602517458217082247}
   playerControlEffect: {fileID: 5077450697729136885}

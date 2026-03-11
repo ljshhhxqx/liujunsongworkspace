@@ -278,6 +278,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var playerController = GameSyncManager.GetPlayerConnection(connectionId);
             GameAudioManager.Instance.PlaySFX(AudioEffectType.Roll, playerController.transform.position, playerController.transform);
+            Debug.Log($"[HandlePlayerRoll] player {connectionId} roll {isRollStart}");
             GameSyncManager.EnqueueServerCommand(new PropertyInvincibleChangedCommand
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Property, CommandAuthority.Server, CommandExecuteType.Immediate),

@@ -140,13 +140,13 @@ MonoBehaviour:
       eventType: 0
       resetCooldown: 0
       resetCooldownWindowTime: 0
-      tolerance: 0.1
+      tolerance: 0.05
       serverValidate: 1
     - triggerTime: 0.35
       eventType: 1
       resetCooldown: 0
       resetCooldownWindowTime: 0
-      tolerance: 0.1
+      tolerance: 0.05
       serverValidate: 1
     isClearVelocity: 1
     cooldownType: 1

@@ -688,6 +688,11 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         [Server]
         public void RandomUnion(out int noUnionPlayerId)
         {
+            if (_playerIds.Count <= 2)
+            {
+                noUnionPlayerId = 0;
+                return;
+            }
             var allPlayers = GetAllPlayers();
             var chunkedPlayers = allPlayers.Chunk(_gameConfigData.minUnionPlayerCount);
             foreach (var chunkedPlayer in chunkedPlayers)

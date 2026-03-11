@@ -144,6 +144,7 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
 
             if (dataModel is InfoDataModel infoDataModel)
             {
+                //Debug.Log($"Updating player info for {playerInfoChangedEvent.PlayerId} - {playerInfoChangedEvent.PlayerName}- {playerInfoChangedEvent.Health}-{playerInfoChangedEvent.MaxHealth}-{playerInfoChangedEvent.Mana}-{playerInfoChangedEvent.MaxMana}");
                 infoDataModel.Health.Value = (int)playerInfoChangedEvent.Health;
                 infoDataModel.MaxHealth.Value = (int)playerInfoChangedEvent.MaxHealth;
                 infoDataModel.Mana.Value = (int)playerInfoChangedEvent.Mana;

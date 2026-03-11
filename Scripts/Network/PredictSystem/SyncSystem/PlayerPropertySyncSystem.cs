@@ -254,10 +254,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         case PropertyTypeEnum.Health:
                             health = propertyValue.CurrentValue;
                             maxHealth = propertyValue.MaxCurrentValue;
+                            Debug.Log($"[Player Property Change]{playerName} - {property} - {health}/{maxHealth}");
                             break;
                         case PropertyTypeEnum.Strength:
                             mana = propertyValue.CurrentValue;
                             maxMana = propertyValue.MaxCurrentValue;
+                            Debug.Log($"[Player Property Change]{playerName} - {property} - {mana}/{maxMana}");
                             break;
                         case PropertyTypeEnum.AttackSpeed:
                             playerController.TpcSetAnimatorSpeed(playerController.netIdentity.connectionToClient, AnimationState.Attack, propertyValue.CurrentValue);
@@ -265,12 +267,24 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         case PropertyTypeEnum.Alpha:
                             playerController.TpcSetPlayerAlpha(playerController.netIdentity.connectionToClient, propertyValue.CurrentValue);
                             break;
-                        // case PropertyTypeEnum.View:
-                        //     playerController.RpcSetPlayerView();
-                        //     break;
                     }
                 }
-                playerController.RpcSetPlayerInfo(health, mana, maxHealth, maxMana, playerController.netId, playerName);
+            }
+
+            if (health == 0 && maxHealth == 0 && mana == 0 && maxMana == 0)
+            {
+                //Debug.LogError($"No properties available for {connectionId} - {playerName}");
+                return;
+            }
+
+            foreach (var id in PropertyStates.Keys)
+            {
+                var connection = GameSyncManager.GetPlayerConnection(id);
+                if (connection.netId == playerController.netId)
+                {
+                    continue;
+                }
+                connection.RpcSetPlayerInfo(health, mana, maxHealth, maxMana, playerController.netId, playerName);
             }
         }
 
@@ -372,6 +386,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         var player = attackCommand.TargetIds[i];
                         if (otherPlayers.Contains(player))
                         {
+                            Debug.Log($"PlayerPropertySyncSystem: {header.ConnectionId} attack {player} in union");
                             hitPlayer.Remove(player);
                         }
                     }
@@ -537,6 +552,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var playerState = GetState<PlayerPredictablePropertyState>(playerId);
             if (playerState.ControlSkillType.HasAnyState(SubjectedStateType.IsInvisible))
             {
+                Debug.Log($"PlayerPropertySyncSystem: {propertyItemAttackCommand.TargetId} is invisible");
                 return;
             }
             var damageResult = PlayerPropertyCalculator.HandleItemAttack(propertyItemAttackCommand.AttackerId,

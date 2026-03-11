@@ -248,7 +248,7 @@ namespace HotUpdate.Scripts.Collector
                 for (var y = -radius; y <= radius; y++)
                 {
                     var potentialGrid = new Vector2Int(center.x + x, center.y + y);
-                    Debug.Log($"[GetSurroundingGrids] Trying to add potential grid: {potentialGrid}");
+                    //Debug.Log($"[GetSurroundingGrids] Trying to add potential grid: {potentialGrid}");
             
                     // 检查这个网格是否在有效网格列表中
                     if (_gridMap.Contains(potentialGrid))

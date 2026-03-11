@@ -489,7 +489,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         private void GetOtherPlayerPosition()
         {
-            var potentialTargets = new List<Transform>();
             UIPropertyBinder.UpdateDictionary(_minimumBindKey, (int)netId, new MinimapItemData
             {
                 Id = (int)netId,
@@ -500,38 +499,41 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             {
                 if (networkIdentity.TryGetComponent<PlayerComponentController>(out var component) && networkIdentity.netId != netId)
                 {
-                    potentialTargets.Add(component.transform);
-                }
-            }
-            if (potentialTargets.Count == 0)
-            {
-                return;
-            }
-            var layerMask = _gameConfigData.groundSceneLayer | _gameConfigData.stairSceneLayer | _playerConfigData.PlayerLayer;
-            if (PlayerPhysicsCalculator.TryGetPlayersInScreen(_camera, potentialTargets, out var playersInScreen, layerMask))
-            {
-                var header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
-                    CommandType.Property, CommandAuthority.Client);
-                var playerInScreenCommand = new PlayerTraceOtherPlayerHpCommand
-                {
-                    Header = header,
-                    TargetConnectionIds = playersInScreen.ToArray(),
-                };
-                foreach (var player in playersInScreen)
-                {
-                    if (NetworkClient.spawned.TryGetValue(player, out var playerObject))
+                    //Debug.Log($"[PlayerInputController] GetOtherPlayerPosition: {networkIdentity.name}");
+                    UIPropertyBinder.UpdateDictionary(_minimumBindKey, (int)networkIdentity.netId, new MinimapItemData
                     {
-                        UIPropertyBinder.UpdateDictionary(_minimumBindKey, (int)netId, new MinimapItemData
-                        {
-                            Id = (int)player,
-                            TargetType = MinimapTargetType.Enemy,
-                            WorldPosition = playerObject.transform.position
-                        });
-                    }
+                        Id = (int)networkIdentity.netId,
+                        TargetType = MinimapTargetType.Player,
+                        WorldPosition = component.transform.position,
+                    });
                 }
-            
-                CmdSendCommand(NetworkCommandExtensions.SerializeCommand(playerInScreenCommand).Buffer);
             }
+            // var layerMask = _gameConfigData.groundSceneLayer | _gameConfigData.stairSceneLayer | _playerConfigData.PlayerLayer;
+            // if (PlayerPhysicsCalculator.TryGetPlayersInScreen(_camera, potentialTargets, out var playersInScreen, layerMask))
+            // {
+            //     Debug.Log($"[PlayerInputController] GetOtherPlayerPosition: {playersInScreen.Count} other player found");
+            //     var header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId,
+            //         CommandType.Property, CommandAuthority.Client);
+            //     var playerInScreenCommand = new PlayerTraceOtherPlayerHpCommand
+            //     {
+            //         Header = header,
+            //         TargetConnectionIds = playersInScreen.ToArray(),
+            //     };
+            //     foreach (var player in playersInScreen)
+            //     {
+            //         if (NetworkClient.spawned.TryGetValue(player, out var playerObject))
+            //         {
+            //             UIPropertyBinder.UpdateDictionary(_minimumBindKey, (int)netId, new MinimapItemData
+            //             {
+            //                 Id = (int)player,
+            //                 TargetType = MinimapTargetType.Enemy,
+            //                 WorldPosition = playerObject.transform.position
+            //             });
+            //         }
+            //     }
+            //
+            //     CmdSendCommand(NetworkCommandExtensions.SerializeCommand(playerInScreenCommand).Buffer);
+            // }
         }
 
         private void SendNetworkCommand()
@@ -1343,10 +1345,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcSetPlayerInfo(float hp, float mp, float maxHp, float maxMp, uint playerId, string playerName)
         {
-            if (playerId == netId)
+            if (playerId == netId || _gameEventManager == null)
             {
+                //Debug.Log($"RpcSetPlayerInfo: {playerId}=={netId}");
                 return;
             }
+            //Debug.Log($"RpcSetPlayerInfo: {playerId} -- hp:{hp} mp:{mp} maxHp:{maxHp} maxMp:{maxMp}");
             _gameEventManager.Publish(new PlayerInfoChangedEvent(hp, maxHp, mp, maxMp, playerId, playerName));
         }
 
