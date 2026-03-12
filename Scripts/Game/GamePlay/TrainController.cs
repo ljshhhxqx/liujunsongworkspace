@@ -90,8 +90,9 @@ namespace HotUpdate.Scripts.Game.GamePlay
             for (int i = 0; i < trainParts.Count; i++)
             {
                 var trainPart = trainParts[i];
-                if (trainPart)
+                if (trainPart && !_cachedTrainParts.Contains(trainPart))
                 {
+                    Debug.Log($"[TrainController] Train Part {trainPart.name}");
                     _cachedTrainParts.Add(trainPart);
                 }
             }

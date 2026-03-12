@@ -501,7 +501,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 playerInputState.PlayerGameStateData.Quaternion = CompressedQuaternion.FromQuaternion(Quaternion.identity);
                 playerInputState.PlayerGameStateData.PlayerEnvironmentState = PlayerEnvironmentState.OnGround;
                 var playerController = GameSyncManager.GetPlayerConnection(header.ConnectionId);
-                playerController.SetPlayerTransformServer(playerRebornCommand.RebornPosition, Quaternion.identity, false);
+                playerController.SetPlayerTransformServer(playerRebornCommand.RebornPosition, Quaternion.identity, false, false);
                 playerController.RpcHandlePlayerRespawnedClient();
                 return playerInputState;
             }

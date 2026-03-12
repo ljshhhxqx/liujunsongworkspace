@@ -1397,8 +1397,15 @@ namespace HotUpdate.Scripts.Collector
     
         private Vector3 GetRandomStartPoint(float height)
         {
-            var randomPos = MapBoundDefiner.Instance.GetRandomPoint(IsPositionValidWithoutItem);
-            return new Vector3(randomPos.x, randomPos.y + height, randomPos.z);
+            if (MapBoundDefiner.Instance.TryGetRandomSpawnPoint(out var startGrid))
+            {
+                var startPos = WorldPosFromGrid(startGrid);
+
+                Debug.Log("Random Start Point: " + startPos);
+                return new Vector3(startPos.x, startPos.y + height, startPos.z);
+            }
+            Debug.LogWarning("Failed to find valid start point");
+            return Vector3.zero;
         }
     
         private Vector3 GetRandomDirection()

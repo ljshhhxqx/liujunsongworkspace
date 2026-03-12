@@ -270,15 +270,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             HandleAllSyncState();
             _clientTransform.enabled = true;
             _serverTransform.enabled = false;
+            _originParent = transform.parent;
         }
 
         [Server]
-        public void SetPlayerTransformServer(Vector3 position, Quaternion rotation, bool reset)
+        public void SetPlayerTransformServer(Vector3 position, Quaternion rotation, bool reset, bool isBornPosition)
         {
             if (reset)
             {
                 _clientTransform.enabled = true;
                 _serverTransform.enabled = false;
+                
+                transform.SetParent(null);
+            }
+            if (isBornPosition)
+            {
+                _bornPosition = position;
             }
             RpcSetPlayerPosition(connectionToClient, position, rotation, reset);
         }
@@ -300,11 +307,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             if (!parent)
             {
-                _serverTransform.transform.SetParent(_originParent);
-                SetPlayerTransformServer(_originParent.transform.position, Quaternion.identity, true);
-                _clientTransform.enabled = true;
-                _serverTransform.enabled = false;
-                Debug.Log($"[PlayerInGameController] SetPlayerParentServer: {parent}");
+                transform.SetParent(null);
+                transform.position = _bornPosition;
+                RpcSetPlayerTransform(true);
+                SetPlayerTransformServer(_originParent ? _originParent.transform.position : _bornPosition, Quaternion.identity, true, false);
+
+                Debug.Log($"[PlayerInGameController] SetPlayerParentServer: {parent} - {_bornPosition}");
                 return;
             }
             _clientTransform.enabled = false;
@@ -1087,9 +1095,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 return;
             }
             _playerAnimationCalculator.PlayAnimationWithNoCondition(AnimationState.Dead);
-            var playerDamageDeathOverlay = _uiManager.GetActiveUI<PlayerDamageDeathOverlay>(UIType.PlayerDamageDeathOverlay, UICanvasType.Overlay);
-            playerDamageDeathOverlay.PlayDeathEffect(countdownTime);
-            Debug.Log($"[RpcHandlePlayerDeadClient] {netId}===countdownTime ->{countdownTime}");
+            if (LocalPlayerHandler)
+            {
+                var playerDamageDeathOverlay = _uiManager.GetActiveUI<PlayerDamageDeathOverlay>(UIType.PlayerDamageDeathOverlay, UICanvasType.Overlay);
+                playerDamageDeathOverlay.PlayDeathEffect(countdownTime);
+                Debug.Log($"[RpcHandlePlayerDeadClient] {netId}===countdownTime ->{countdownTime}");
+            }
         }
 
         [ClientRpc]
@@ -1342,16 +1353,22 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _interactSystem.EnqueueCommand(playerChangeUnionCommand);
         }
 
-        [ClientRpc]
-        public void RpcSetPlayerInfo(float hp, float mp, float maxHp, float maxMp, uint playerId, string playerName)
+        [TargetRpc]
+        public void TpcSetPlayerInfo(NetworkConnection connection, string json)
         {
-            if (playerId == netId || _gameEventManager == null)
-            {
-                //Debug.Log($"RpcSetPlayerInfo: {playerId}=={netId}");
-                return;
-            }
+            var playerInfo = BoxingFreeSerializer.JsonDeserialize<PlayerPropertySyncSystem.PlayerBaseInfo>(json);
             //Debug.Log($"RpcSetPlayerInfo: {playerId} -- hp:{hp} mp:{mp} maxHp:{maxHp} maxMp:{maxMp}");
-            _gameEventManager.Publish(new PlayerInfoChangedEvent(hp, maxHp, mp, maxMp, playerId, playerName));
+            _gameEventManager.Publish(new PlayerInfoChangedEvent(playerInfo.hp, playerInfo.maxHp, playerInfo.strength, playerInfo.maxStrength, playerInfo.playerId, playerInfo.name));
+        }
+
+        [ClientRpc]
+        public void RpcSetPlayerInfo(string json)
+        {
+            if (LocalPlayerHandler || _gameEventManager == null)
+                return;
+            var playerInfo = BoxingFreeSerializer.JsonDeserialize<PlayerPropertySyncSystem.PlayerBaseInfo>(json);
+            //Debug.Log($"RpcSetPlayerInfo: {playerId} -- hp:{hp} mp:{mp} maxHp:{maxHp} maxMp:{maxMp}");
+            _gameEventManager.Publish(new PlayerInfoChangedEvent(playerInfo.hp, playerInfo.maxHp, playerInfo.strength, playerInfo.maxStrength, playerInfo.playerId, playerInfo.name));
         }
 
         [TargetRpc]

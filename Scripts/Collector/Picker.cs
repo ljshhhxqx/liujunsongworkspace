@@ -187,7 +187,7 @@ namespace HotUpdate.Scripts.Collector
 
         private void Update()
         {
-            if (!LocalPlayerHandler)
+            if (!LocalPlayerHandler || gameObject.activeInHierarchy == false)
             {
                 return;
             }
@@ -208,7 +208,6 @@ namespace HotUpdate.Scripts.Collector
 
         private void PerformPickup()
         {
-            
             if (PlayerPlatformDefine.IsWindowsPlatform())
             {
                 if (!_playerPropertiesOverlay)
@@ -238,8 +237,12 @@ namespace HotUpdate.Scripts.Collector
             }
             foreach (var collect in _collects)
             {
-                IsTouching = true;
                 var collectData = GameObjectContainer.Instance.GetDynamicObjectData(collect);
+                if (collectData == null)
+                {
+                    continue;
+                }
+                IsTouching = true;
                 var time = _collectData.GetTouchTime(collectData.Type);
                 
                 if (PlayerPlatformDefine.IsWindowsPlatform())

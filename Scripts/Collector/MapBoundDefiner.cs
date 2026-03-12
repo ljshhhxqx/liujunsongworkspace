@@ -11,12 +11,13 @@ namespace HotUpdate.Scripts.Collector
 {
     public class MapBoundDefiner : Singleton<MapBoundDefiner>
     {
-        private float _safetyMargin = 0.25f;
+        private float _safetyMargin = 0.1f;
         private GameObject[] _walls;
         private IConfigProvider _configProvider;
         private JsonDataConfig _jsonDataConfig;
         private LayerMask _sceneLayer;
         private readonly List<Vector2Int> _gridMap = new List<Vector2Int>();
+        private readonly List<Vector2Int> _safeGridMap = new List<Vector2Int>();
         private readonly Dictionary<Vector2Int, List<Vector3>> _gridGameObjectMap = new Dictionary<Vector2Int, List<Vector3>>();
         // Grid → 地面高度
         private readonly Dictionary<Vector2Int, float> _gridGroundHeight = new Dictionary<Vector2Int, float>();
@@ -26,9 +27,7 @@ namespace HotUpdate.Scripts.Collector
         public Vector3 GridOrigin { get; private set; }
         private readonly List<Vector2Int> _spawnableGrids = new List<Vector2Int>();
 
-
-
-        private float _gridSize = 2f;
+        private float _gridSize = 1f;
         public float GridSize => _gridSize;
         public Vector3 MapMinBoundary { get; private set; }
         public Vector3 MapMaxBoundary { get; private set; }
@@ -209,6 +208,7 @@ namespace HotUpdate.Scripts.Collector
         private void InitializeGrid()
         {
             _gridMap.Clear();
+            _safeGridMap.Clear();
 
             int xCount = Mathf.FloorToInt((MapMaxBoundary.x - MapMinBoundary.x) / _gridSize);
             int zCount = Mathf.FloorToInt((MapMaxBoundary.z - MapMinBoundary.z) / _gridSize);
@@ -218,6 +218,7 @@ namespace HotUpdate.Scripts.Collector
                 for (int z = 0; z <= zCount; z++)
                 {
                     _gridMap.Add(new Vector2Int(x, z));
+                    _safeGridMap.Add(new Vector2Int(x, z));
                 }
             }
             _spawnableGrids.Clear();
@@ -311,7 +312,7 @@ namespace HotUpdate.Scripts.Collector
                 var randomZ = Random.Range(gridPos.y * _gridSize- _gridSize/2, gridPos.y * _gridSize + _gridSize/2);
                 var position = new Vector3(randomX, 20, randomZ);
                 //Debug.Log($"GetRandomPoint position: {position}");
-                if (Physics.Raycast(position, Vector3.down, out var hit, Mathf.Infinity, _sceneLayer))
+                if (Physics.Raycast(position, Vector3.down, out var hit, 25f, _sceneLayer))
                 {
                     var startPoint = new Vector3(randomX, hit.point.y, randomZ);
                     //Debug.Log($"GetRandomPoint startPoint: {startPoint}");

@@ -245,21 +245,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             float maxMana = 0;
             if (playerState is PlayerPredictablePropertyState playerPredictablePropertyState)
             {
-                foreach (var property in playerPredictablePropertyState.MemoryProperty.Keys)
+                foreach (var property in playerPredictablePropertyState.MemoryProperty)
                 {
-                    var propertyValue = playerPredictablePropertyState.MemoryProperty[property];
-                    OnPropertyChange?.Invoke(connectionId, propertyValue.PropertyType, propertyValue.CurrentValue);
-                    switch (property)
+                    var propertyValue = property.Value;
+                    switch (property.Key)
                     {
                         case PropertyTypeEnum.Health:
                             health = propertyValue.CurrentValue;
                             maxHealth = propertyValue.MaxCurrentValue;
-                            Debug.Log($"[Player Property Change]{playerName} - {property} - {health}/{maxHealth}");
+                            //Debug.Log($"[Player Property Change]{playerName} - {property} - {health}/{maxHealth}");
                             break;
                         case PropertyTypeEnum.Strength:
                             mana = propertyValue.CurrentValue;
                             maxMana = propertyValue.MaxCurrentValue;
-                            Debug.Log($"[Player Property Change]{playerName} - {property} - {mana}/{maxMana}");
+                            //Debug.Log($"[Player Property Change]{playerName} - {property} - {mana}/{maxMana}");
                             break;
                         case PropertyTypeEnum.AttackSpeed:
                             playerController.TpcSetAnimatorSpeed(playerController.netIdentity.connectionToClient, AnimationState.Attack, propertyValue.CurrentValue);
@@ -267,24 +266,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         case PropertyTypeEnum.Alpha:
                             playerController.TpcSetPlayerAlpha(playerController.netIdentity.connectionToClient, propertyValue.CurrentValue);
                             break;
+                        default:
+                            continue;
                     }
+                    OnPropertyChange?.Invoke(connectionId, propertyValue.PropertyType, propertyValue.CurrentValue);
                 }
-            }
-
-            if (health == 0 && maxHealth == 0 && mana == 0 && maxMana == 0)
-            {
-                //Debug.LogError($"No properties available for {connectionId} - {playerName}");
-                return;
-            }
-
-            foreach (var id in PropertyStates.Keys)
-            {
-                var connection = GameSyncManager.GetPlayerConnection(id);
-                if (connection.netId == playerController.netId)
-                {
-                    continue;
-                }
-                connection.RpcSetPlayerInfo(health, mana, maxHealth, maxMana, playerController.netId, playerName);
             }
         }
 
@@ -487,7 +473,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     Debug.LogWarning($"无交互的物品类型{playerTouchObjectCommand.ObjectType}");
                     break;
             }
-            player.SetPlayerTransformServer(targetPosition, Quaternion.identity, false);
+            player.SetPlayerTransformServer(targetPosition, Quaternion.identity, false, false);
             PropertyStates[header.ConnectionId] = playerState;
             PropertyChange(header.ConnectionId);
         }
@@ -562,13 +548,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var rb = player.GetComponent<Rigidbody>();
             rb.velocity = new Vector3(0, rb.velocity.y, 0);
             player.RpcPlayAnimation(AnimationState.Hit, false);
-            
             if (playerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue <= 0)
             {
                 PlayerDead(playerId, (int)playerState.MemoryProperty[PropertyTypeEnum.Score].CurrentValue,
                     propertyItemAttackCommand.AttackerId);
             }
             PropertyStates[playerId] = playerState;
+            var baseInfo = GetPlayerBaseInfo(playerId);
+            player.RpcSetPlayerInfo(JsonUtility.ToJson(baseInfo));
             PropertyChange(playerId);
         }
 
@@ -1087,6 +1074,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             var attackerUid = _playerInGameManager.GetPlayerNetId(attacker);
             var propertyState = GetState<PlayerPredictablePropertyState>(attacker);
+            var attackerConnection = GameSyncManager.GetPlayerConnection(attacker); 
             var defendersState = PropertyStates
                 .Where(x => defenderPlayerIds.Contains(x.Key))
                 .ToDictionary(x => _playerInGameManager.GetPlayerNetId(x.Key), x => (PlayerPredictablePropertyState)x.Value);
@@ -1101,6 +1089,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 playerConnection.RpcPlayAnimation(AnimationState.Hit, false);
                 PropertyStates[defenderPlayerIds[i]] = defendersState[playerNetId];
                 PropertyChange(defenderPlayerIds[i]);
+                var baseValue = GetPlayerBaseInfo(defenderPlayerIds[i]);
+                attackerConnection.TpcSetPlayerInfo(attackerConnection.connectionToClient, JsonUtility.ToJson(baseValue));
                 if (PropertyStates[defenderPlayerIds[i]] is PlayerPredictablePropertyState playerPropertyState &&
                     playerPropertyState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue <= 0)
                 {                    
@@ -1298,6 +1288,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 var attackerId = _playerInGameManager.GetPlayerId(attacker);
                 var playerState = GetState<PlayerPredictablePropertyState>(attackerId);
+                var attackerConnection = GameSyncManager.GetPlayerConnection(attackerId);
                 var playerId = _playerInGameManager.GetPlayerId(hitId);
                 if (playerId != -1)
                 {
@@ -1354,6 +1345,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     DelayInvoker.DelayInvoke(skillHitExtraEffectData.duration, () => RevertPlayerState(playerId, state));
                     PropertyStates[playerId] = hitPlayerState;
                     PropertyChange(playerId);
+                    
+                    var baseValue = GetPlayerBaseInfo(playerId);
+                    attackerConnection.TpcSetPlayerInfo(attackerConnection.connectionToServer, JsonUtility.ToJson(baseValue));
                     HandlePlayerControl(playerId, skillHitExtraEffectData.controlSkillType);
                     return;
                 }
@@ -1468,6 +1462,35 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             playerController.HandleAnimationCost(ref playerState, command, cost);
             PropertyStates[connectionId] = playerState;
             PropertyChange(connectionId);
+        }
+        
+        private PlayerBaseInfo GetPlayerBaseInfo(int connectionId)
+        {
+            var playerState = GetState<PlayerPredictablePropertyState>(connectionId);
+            var connection = GameSyncManager.GetPlayerConnection(connectionId);
+            var playerBaseInfo = new PlayerBaseInfo();
+            playerBaseInfo.playerId = connection.netId;
+            playerBaseInfo.name = connection.name;
+            foreach (var kvp in playerState.MemoryProperty)
+            {
+                switch (kvp.Key)
+                {
+                    case PropertyTypeEnum.Health:
+                        playerBaseInfo.hp = kvp.Value.CurrentValue;
+                        playerBaseInfo.maxHp = kvp.Value.MaxCurrentValue;
+                        break;
+                    case PropertyTypeEnum.Strength:
+                        playerBaseInfo.strength = kvp.Value.CurrentValue;
+                        playerBaseInfo.maxStrength = kvp.Value.MaxCurrentValue;
+                        break;
+                }
+
+                if (playerBaseInfo.hp != 0 && playerBaseInfo.maxHp != 0 && playerBaseInfo.strength != 0 && playerBaseInfo.maxStrength != 0)
+                {
+                    break;
+                }
+            }
+            return playerBaseInfo;
         }
 
         private void HandleEnvironmentChange(int connectionId, bool hasInputMovement, PlayerEnvironmentState environmentType, bool isSprinting)
@@ -1659,6 +1682,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 data.BuffData = data.BuffData.Update(serverUpdateInterval);
                 return data;
             }
+        }
+        
+        [Serializable]
+        public struct PlayerBaseInfo
+        {
+            public uint playerId;
+            public float hp;
+            public float strength;
+            public float maxHp;
+            public float maxStrength;
+            public string name;
         }
     }
 

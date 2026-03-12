@@ -214,7 +214,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             }
             return allyIds.Take(count).ToArray();
         }
-        private Vector3 GetPlayerBasePositionByNetId(uint id)
+        public Vector3 GetPlayerBasePositionByNetId(uint id)
         {
             foreach (var vKey in _playerSpawnPoints.Keys)
             {
@@ -271,7 +271,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
                     if (player == null) continue;
                     var playerComponent = player.identity.GetComponent<PlayerComponentController>();
                     var position = GetPlayerBasePositionByNetId(player.identity.netId);
-                    playerComponent.SetPlayerTransformServer( position, Quaternion.identity, false);
+                    playerComponent.SetPlayerTransformServer( position, Quaternion.identity, false, true);
                 }
             }
 
