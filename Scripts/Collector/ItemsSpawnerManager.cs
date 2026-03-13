@@ -152,39 +152,39 @@ namespace HotUpdate.Scripts.Collector
             GameObjectContainer.Instance.UpdateDynamicObjects(ServerHandler);
         }
 
-        [Server]
-        public void SpawnItemsByDroppedItems(byte[] droppedItemsBytes, Vector3 position)
-        {
-            if (!ServerHandler)
-            {
-                return;
-            }
-            var items = BoxingFreeSerializer.MemoryDeserialize<DroppedItemData[]>(droppedItemsBytes);
-            for (int i = 0; i < items.Length; i++)
-            {
-                var item = items[i];
-                var go = _networkGameObjectPoolManager.Spawn(_droppedItemPrefabs[item.Quality].gameObject, position, Quaternion.identity
-                );
-                var droppedItem = go.GetComponent<DroppedItem>();
-            }
-        }
-        
-        [ClientRpc]
-        public void SpawnItemsByDroppedItemsClientRpc(byte[] droppedItemsBytes, Vector3 position)
-        {
-            if (!ClientHandler)
-            {
-                return;
-            }
-            var items = BoxingFreeSerializer.MemoryDeserialize<DroppedItemData[]>(droppedItemsBytes);
-            for (int i = 0; i < items.Length; i++)
-            {
-                var item = items[i];
-                var go = _networkGameObjectPoolManager.Spawn(_droppedItemPrefabs[item.Quality].gameObject, position, Quaternion.identity
-                );
-                var droppedItem = go.GetComponent<DroppedItem>();
-            }
-        }
+        // [Server]
+        // public void SpawnItemsByDroppedItems(byte[] droppedItemsBytes, Vector3 position)
+        // {
+        //     if (!ServerHandler)
+        //     {
+        //         return;
+        //     }
+        //     var items = BoxingFreeSerializer.MemoryDeserialize<DroppedItemData[]>(droppedItemsBytes);
+        //     for (int i = 0; i < items.Length; i++)
+        //     {
+        //         var item = items[i];
+        //         var go = _networkGameObjectPoolManager.Spawn(_droppedItemPrefabs[item.Quality].gameObject, position, Quaternion.identity
+        //         );
+        //         var droppedItem = go.GetComponent<DroppedItem>();
+        //     }
+        // }
+        //
+        // [ClientRpc]
+        // public void SpawnItemsByDroppedItemsClientRpc(byte[] droppedItemsBytes, Vector3 position)
+        // {
+        //     if (!ClientHandler)
+        //     {
+        //         return;
+        //     }
+        //     var items = BoxingFreeSerializer.MemoryDeserialize<DroppedItemData[]>(droppedItemsBytes);
+        //     for (int i = 0; i < items.Length; i++)
+        //     {
+        //         var item = items[i];
+        //         var go = _networkGameObjectPoolManager.Spawn(_droppedItemPrefabs[item.Quality].gameObject, position, Quaternion.identity
+        //         );
+        //         var droppedItem = go.GetComponent<DroppedItem>();
+        //     }
+        // }
 
         [Server]
         public void PickerPickUpChest(uint pickerId, uint itemId)

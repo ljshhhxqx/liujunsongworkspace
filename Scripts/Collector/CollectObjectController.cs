@@ -53,6 +53,7 @@ namespace HotUpdate.Scripts.Collector
 
         private MirrorNetworkMessageHandler _mirrorNetworkMessageHandler;
         private Collider _collider;
+        private Collider _gameObjectCollider;
         private CollectObjectDataConfig _collectObjectDataConfig;
         private IDisposable _disposable;
         private ItemsSpawnerManager _itemsSpawnerManager;
@@ -77,6 +78,7 @@ namespace HotUpdate.Scripts.Collector
             _collider = collectCollider.GetComponent<Collider>();
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
+            _gameObjectCollider = GetComponent<Collider>();
             _collectData = jsonDataConfig.CollectData;
             CollectObjectData = collectObjectDataConfig.GetCollectObjectData(collectConfigId);
             if (!collectCollider)
@@ -89,6 +91,7 @@ namespace HotUpdate.Scripts.Collector
             
             NetId = netId;
             _playerTransform ??= playerInGameManager.LocalPlayerTransform;
+            _gameObjectCollider.enabled = false;
         }
 
         private void OnCollectObjectTypeChanged(int oldValue, int newValue)
