@@ -50,12 +50,22 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             contentItemList.SetItemList(_propertyItemDatas);
             playerPropertyData.ObserveUpdate((x, y, z) =>
                 {
+                    var propertyItem = _propertyConfig.GetPropertyConfigData(y.PropertyType);
+                    if (!propertyItem.showInUI)
+                    {
+                        return;
+                    }
                     _propertyItemDatas[x] = z;
                     contentItemList.ReplaceItem<PropertyItemData, PropertyItems>(x, z);
                 })
                 .AddTo(this);
             playerPropertyData.ObserveAdd((x,y) =>
                 {
+                    var propertyItem = _propertyConfig.GetPropertyConfigData(y.PropertyType);
+                    if (!propertyItem.showInUI)
+                    {
+                        return;
+                    }
                     if (!_propertyItemDatas.ContainsKey(x))
                     {
                         _propertyItemDatas.Add(x,y);

@@ -11,7 +11,7 @@ namespace HotUpdate.Scripts.Collector
 {
     public class MapBoundDefiner : Singleton<MapBoundDefiner>
     {
-        private float _safetyMargin = 0.1f;
+        private float _safetyMargin;
         private GameObject[] _walls;
         private IConfigProvider _configProvider;
         private JsonDataConfig _jsonDataConfig;
@@ -31,6 +31,9 @@ namespace HotUpdate.Scripts.Collector
         public float GridSize => _gridSize;
         public Vector3 MapMinBoundary { get; private set; }
         public Vector3 MapMaxBoundary { get; private set; }
+        
+        public Vector3 SafeMinBoundary { get; private set; }
+        public Vector3 SafeMaxBoundary { get; private set; }
         public List<Vector2Int> GridMap => _gridMap;
         private Bounds _mapBounds;
 
@@ -184,8 +187,10 @@ namespace HotUpdate.Scripts.Collector
             }
 
             // 在原始边界的基础上添加安全边距
-            MapMinBoundary = new Vector3(minX - _safetyMargin, 0, minZ - _safetyMargin);
-            MapMaxBoundary = new Vector3(maxX + _safetyMargin, 0, maxZ + _safetyMargin);
+            MapMinBoundary = new Vector3(minX, 0, minZ);
+            MapMaxBoundary = new Vector3(maxX, 0, maxZ);
+            SafeMinBoundary = new Vector3(minX + _safetyMargin, 0, minZ + _safetyMargin);
+            SafeMaxBoundary = new Vector3(maxX - _safetyMargin, 0, maxZ - _safetyMargin);
             GridOrigin = new Vector3(
                 MapMinBoundary.x,
                 0f,
@@ -197,10 +202,10 @@ namespace HotUpdate.Scripts.Collector
         
         public bool IsWithinMapBounds(Vector3 position) 
         {
-            var xMinInMap = position.x >= MapMinBoundary.x;
-            var xMaxInMap = position.x <= MapMaxBoundary.x;
-            var zMinInMap = position.z >= MapMinBoundary.z;
-            var zMaxInMap = position.z <= MapMaxBoundary.z;
+            var xMinInMap = position.x >= SafeMinBoundary.x;
+            var xMaxInMap = position.x <= SafeMaxBoundary.x;
+            var zMinInMap = position.z >= SafeMinBoundary.z;
+            var zMaxInMap = position.z <= SafeMaxBoundary.z;
             //Debug.Log($"IsWithinMapBounds: xMinInMap-xMaxInMap-zMinInMap-zMaxInMap: {xMinInMap} {xMaxInMap} {zMinInMap} {zMaxInMap}");
             return xMinInMap && xMaxInMap && zMinInMap && zMaxInMap;
         }
@@ -212,18 +217,28 @@ namespace HotUpdate.Scripts.Collector
 
             int xCount = Mathf.FloorToInt((MapMaxBoundary.x - MapMinBoundary.x) / _gridSize);
             int zCount = Mathf.FloorToInt((MapMaxBoundary.z - MapMinBoundary.z) / _gridSize);
+            
+            int safeXCount = Mathf.FloorToInt((SafeMaxBoundary.x - SafeMinBoundary.x) / _gridSize);
+            int safeZCount = Mathf.FloorToInt((SafeMaxBoundary.z - SafeMinBoundary.z) / _gridSize);
 
             for (int x = 0; x <= xCount; x++)
             {
                 for (int z = 0; z <= zCount; z++)
                 {
                     _gridMap.Add(new Vector2Int(x, z));
+                }
+            }
+            
+            for (int x = 0; x <= safeXCount; x++)
+            {
+                for (int z = 0; z <= safeZCount; z++)
+                {
                     _safeGridMap.Add(new Vector2Int(x, z));
                 }
             }
             _spawnableGrids.Clear();
 
-            foreach (var grid in _gridMap)
+            foreach (var grid in _safeGridMap)
             {
                 if (_blockedGrids.Contains(grid))
                     continue;
@@ -269,6 +284,13 @@ namespace HotUpdate.Scripts.Collector
             return new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)).normalized;
         }
         
+        public bool IsWithinSafeGrid(Vector2Int grid)
+        { 
+            if (_safeGridMap.Contains(grid))
+                return true;
+            return false;
+        }
+        
         public bool TryGetRandomSpawnPoint(
             out Vector2Int grid,
             Func<Vector2Int, bool> gridFilter = null)
@@ -301,13 +323,13 @@ namespace HotUpdate.Scripts.Collector
             while (count < 10)
             {
                 //Debug.Log($"GetRandomPoint count: {count}");
-                if (_gridMap.Count == 0)
+                if (_spawnableGrids.Count == 0)
                 {
                     Debug.LogError("No grid position available.");
                     return Vector3.zero;
                 }
-                var index = Random.Range(0, _gridMap.Count - 1);
-                var gridPos = _gridMap[index];
+                var index = Random.Range(0, _spawnableGrids.Count - 1);
+                var gridPos = _spawnableGrids[index];
                 var randomX = Random.Range(gridPos.x * _gridSize- _gridSize/2, gridPos.x * _gridSize + _gridSize/2);
                 var randomZ = Random.Range(gridPos.y * _gridSize- _gridSize/2, gridPos.y * _gridSize + _gridSize/2);
                 var position = new Vector3(randomX, 20, randomZ);
@@ -341,6 +363,8 @@ namespace HotUpdate.Scripts.Collector
             _walls = null;
             MapMinBoundary = Vector3.zero;
             MapMaxBoundary = Vector3.zero;
+            SafeMinBoundary = Vector3.zero;
+            SafeMaxBoundary = Vector3.zero;
             Debug.Log("MapBoundDefiner cleared");
         }
         public bool TryGetGroundHeight(Vector2Int grid, out float height)

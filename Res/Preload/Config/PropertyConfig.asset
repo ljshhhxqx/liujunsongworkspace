@@ -130,7 +130,7 @@ MonoBehaviour:
     animationState: 0
     isHundredPercent: 0
     showInHud: 0
-    showInUI: 1
+    showInUI: 0
   - propertyType: 9
     baseValue: 0.5
     minValue: 0
@@ -141,7 +141,7 @@ MonoBehaviour:
     animationState: 0
     isHundredPercent: 0
     showInHud: 0
-    showInUI: 1
+    showInUI: 0
   - propertyType: 12
     baseValue: 1
     minValue: 0.5

@@ -282,10 +282,7 @@ namespace HotUpdate.Scripts.Game
             switch (_gameInfo.SceneName)
             {
                 case MapType.Christmas:
-                    var wellPosition = MapBoundDefiner.Instance.GetRandomPoint(v =>
-                    {
-                        return v.y < 0.5f && v.y > -0.5f;
-                    });
+                    var wellPosition = MapBoundDefiner.Instance.GetRandomPoint();
                     var rotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
                     _gameEventManager.Publish(new StartGameWellEvent(wellPosition, rotation, ++_interactSystem.currentWellId));
                     break;

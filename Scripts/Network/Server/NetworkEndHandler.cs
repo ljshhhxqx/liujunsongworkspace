@@ -43,8 +43,8 @@ namespace HotUpdate.Scripts.Network.Server
         [Server]
         public void BeginGameEndProcedure()
         {
-            var isHost = NetworkServer.active && NetworkClient.isConnected;
-            _totalClients = isHost ? NetworkServer.connections.Count : NetworkServer.connections.Count - 1;
+            var serverOnly = NetworkServer.active && !NetworkClient.isConnected;
+            _totalClients = serverOnly ? NetworkServer.connections.Count - 1 : NetworkServer.connections.Count;
             _cleanupConfirmedClients = 0;
             _cleanupCompletedClients = 0;
             _confirmedClientIds.Clear();

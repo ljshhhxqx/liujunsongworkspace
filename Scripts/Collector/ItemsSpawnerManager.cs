@@ -999,7 +999,7 @@ namespace HotUpdate.Scripts.Collector
             }
         }
 
-        private Vector2Int GetGridPosition(Vector3 position)
+        public Vector2Int GetGridPosition(Vector3 position)
         {
             var x = Mathf.FloorToInt(position.x / _gridSize);
             var z = Mathf.FloorToInt(position.z / _gridSize);
@@ -1168,14 +1168,14 @@ namespace HotUpdate.Scripts.Collector
         private ValueTuple<int, Vector3> _itemBuffer;
 
         
-        public Vector3 WorldPosFromGrid(Vector2Int grid)
+        public Vector3 WorldPosFromGrid(Vector2Int grid, bool hasHeight = true)
         {
             var gridOrigin = MapBoundDefiner.Instance.GridOrigin;
             float x = gridOrigin.x + grid.x * _gridSize + _gridSize * 0.5f;
             float z = gridOrigin.z + grid.y * _gridSize + _gridSize * 0.5f;
 
             float y = MapBoundDefiner.Instance.GetGroundHeight(grid);
-            return new Vector3(x, y + _itemHeight, z);
+            return new Vector3(x, y + (hasHeight ? _itemHeight : 0), z);
         }
         
         private bool TrySampleGrid(
@@ -1397,15 +1397,8 @@ namespace HotUpdate.Scripts.Collector
     
         private Vector3 GetRandomStartPoint(float height)
         {
-            if (MapBoundDefiner.Instance.TryGetRandomSpawnPoint(out var startGrid))
-            {
-                var startPos = WorldPosFromGrid(startGrid);
-
-                Debug.Log("Random Start Point: " + startPos);
-                return new Vector3(startPos.x, startPos.y + height, startPos.z);
-            }
-            Debug.LogWarning("Failed to find valid start point");
-            return Vector3.zero;
+            var startPos = MapBoundDefiner.Instance.GetRandomPoint(IsWithinBoundary);
+            return new Vector3(startPos.x, startPos.y + height, startPos.z);
         }
     
         private Vector3 GetRandomDirection()

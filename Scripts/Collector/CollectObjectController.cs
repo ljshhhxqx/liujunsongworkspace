@@ -90,8 +90,8 @@ namespace HotUpdate.Scripts.Collector
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _colliderConfig, ObjectType.Collectable, gameObject.layer, gameObject.tag);
             
             NetId = netId;
-            _playerTransform ??= playerInGameManager.LocalPlayerTransform;
             _gameObjectCollider.enabled = false;
+            _playerTransform ??= playerInGameManager.LocalPlayerTransform;
         }
 
         private void OnCollectObjectTypeChanged(int oldValue, int newValue)
@@ -102,12 +102,20 @@ namespace HotUpdate.Scripts.Collector
                 return;
             }
             ChangeBehaviour(newValue);
+            if (newValue == (int)CollectObjectType.AttackMove || newValue == (int)CollectObjectType.AttackHidden || newValue == (int)CollectObjectType.AttackMoveHidden || newValue == (int)CollectObjectType.Attack)
+            {
+                _gameObjectCollider.enabled = true;
+            }
         }
 
         public void ServerChangeBehaviour()
         {
 //            Debug.Log("[CollectObjectController] ServerHandler ChangeBehaviour -- " + (CollectObjectType)collectObjectType);
             ChangeBehaviour(collectObjectType);
+            if (collectObjectType == (int)CollectObjectType.AttackMove || collectObjectType == (int)CollectObjectType.AttackHidden || collectObjectType == (int)CollectObjectType.AttackMoveHidden || collectObjectType == (int)CollectObjectType.Attack)
+            {
+                _gameObjectCollider.enabled = true;
+            }
             if (collectObjectType == 0)
             {
                 RpcPlayAnimation();
