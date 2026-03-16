@@ -187,13 +187,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
         }
 
-        public static void RefreshShopFree(ref PlayerShopState state)
-        {
-            var shopConfigIds = state.RandomShopItems.Values.Select(x => x.ShopConfigId).ToHashSet();
-            var newShopData = GetRandomShopItemData(shopConfigIds);
-            var dic = newShopData.ToDictionary(x => x.ShopId, x => x);
-            state.RandomShopItems = new MemoryDictionary<int, ShopItemData>(dic);
-        }
+        // public static void RefreshShopFree(ref PlayerShopState state)
+        // {
+        //     var shopConfigIds = state.RandomShopItems.Values.Select(x => x.ShopConfigId).ToHashSet();
+        //     var newShopData = GetRandomShopItemData(shopConfigIds);
+        //     var dic = newShopData.ToDictionary(x => x.ShopId, x => x);
+        //     state.RandomShopItems = new MemoryDictionary<int, ShopItemData>(dic);
+        // }
 
         public static void CommandRefreshItem(ref PlayerShopState state, int connectionId, bool isServer = false)
         {

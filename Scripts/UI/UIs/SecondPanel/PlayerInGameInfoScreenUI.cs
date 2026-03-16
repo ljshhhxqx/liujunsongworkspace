@@ -55,8 +55,8 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                     {
                         return;
                     }
-                    _propertyItemDatas[x] = z;
-                    contentItemList.ReplaceItem<PropertyItemData, PropertyItems>(x, z);
+                    _propertyItemDatas[x] = y;
+                    contentItemList.ReplaceItem<PropertyItemData, PropertyItems>(x, y);
                 })
                 .AddTo(this);
             playerPropertyData.ObserveAdd((x,y) =>

@@ -49,8 +49,8 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                     {
                         if (_playerAnimiationDatas.ContainsKey(x))
                         {
-                            _playerAnimiationDatas[x] = z;
-                            contentItemList.ReplaceItem<AnimationStateData, AnimationItem>(x, z);
+                            _playerAnimiationDatas[x] = y;
+                            contentItemList.SetItemList(_playerAnimiationDatas);
                         }
                     }
                 })
@@ -60,7 +60,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                     if (_playerAnimiationDatas.ContainsKey(x))
                     {
                         _playerAnimiationDatas.Remove(x);
-                        contentItemList.RemoveItem(x);
+                        contentItemList.SetItemList(_playerAnimiationDatas);
                     }
                 })
                 .AddTo(this);

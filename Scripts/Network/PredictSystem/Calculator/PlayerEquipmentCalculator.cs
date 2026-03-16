@@ -51,7 +51,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 var propertyEquipmentChangedCommand = new PropertyEquipmentChangedCommand
                 {
                     Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property,
-                        CommandAuthority.Client, CommandExecuteType.Immediate),
+                        CommandAuthority.Server, CommandExecuteType.Immediate),
                     EquipConfigId = itemConfig.id,
                     EquipItemId = itemId,
                     IsEquipped = equipmentCommand.IsEquip,
@@ -61,7 +61,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 var propertyEquipPassiveCommand = new PropertyEquipmentPassiveCommand
                 {
                     Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property,
-                        CommandAuthority.Client, CommandExecuteType.Immediate),
+                        CommandAuthority.Server, CommandExecuteType.Immediate),
                     EquipItemConfigId = equipConfigId,
                     EquipItemId = itemId,
                     PlayerItemType = itemConfig.itemType,

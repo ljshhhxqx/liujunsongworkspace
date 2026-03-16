@@ -29,6 +29,7 @@ namespace HotUpdate.Scripts.Collector.Collects
         protected GameEventManager GameEventManager;
         protected uint NetId;
         [SyncVar] protected int CurrentControlSkillType;
+        protected Collider Collider;
         protected IObjectResolver ObjectResolver;
         protected override bool AutoInjectLocalPlayer => false;
         public SubjectedStateType CurrentSubjectedStateType => (SubjectedStateType)CurrentControlSkillType;
@@ -56,6 +57,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             InteractSystem.ItemControlSkillChanged += OnItemControlSkillChanged;
             GameEventManager = gameEventManager;
             ObjectResolver = objectResolver;
+            Collider = GetComponent<Collider>();
             OnInitialize();
             
         }

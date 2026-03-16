@@ -52,7 +52,6 @@ namespace HotUpdate.Scripts.Network.Client.Player
                 if (_weapon)
                 {
                     Destroy(_weapon);
-                    _weapon = null;
                 }
                 return;
             }

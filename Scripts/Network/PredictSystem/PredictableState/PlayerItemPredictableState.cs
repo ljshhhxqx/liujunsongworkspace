@@ -191,6 +191,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId, CommandType.Item, CommandAuthority.Client),
                 Slots = dic
             };
+            PlayerComponentController.PlayerAddCommand(CommandType.Item, dropItemCommand);
         }
 
         private void OnExchangeItem(int fromSlotIndex, int toSlotIndex)
@@ -210,13 +211,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
         {
             if(!NetworkIdentity.isLocalPlayer)
                 return;
-            var sellItemCommand = new SellCommand
+            var sellItemCommand = new SellCommand()
             {
                 Header = GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId, CommandType.Shop, CommandAuthority.Client),
                 ItemSlotIndex = slotIndex,
-                Count = count
+                Count =  count,
             };
-            PlayerComponentController.PlayerAddCommand(CommandType.Item, sellItemCommand);
+            PlayerComponentController.PlayerAddCommand(CommandType.Shop, sellItemCommand);
             //PlayerComponentController.CmdSendCommand(NetworkCommandExtensions.SerializeCommand(sellItemCommand).Buffer);
         }
 
@@ -249,10 +250,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             _nowCount = bagItems.Count;
             if (playerItemState.PlayerItemConfigIdSlotDictionary.Count == 0)
             {
-                if (bagItems.Count > 0)
-                {
-                    bagItems.Clear();
-                }
+                UIPropertyBinder.ClearDictionary<BagItemData>(_itemBindKey);
                 return;
             }
             if (bagItems.Count > playerItemState.PlayerItemConfigIdSlotDictionary.Count)
@@ -268,7 +266,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
                 if (removeKey != 0)
                 {
-                    bagItems.Remove(removeKey);
+                    UIPropertyBinder.RemoveFromDictionary<BagItemData>(_itemBindKey, removeKey);
                 }
             }
 
@@ -340,14 +338,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     // }
                 }
 
-                if (!bagItems.ContainsKey(kvp.Key))
-                {
-                    bagItems.Add(kvp.Key, bagItem);
-                }
-                else
-                {
-                    bagItems.Update(kvp.Key, bagItem);
-                }
+                UIPropertyBinder.UpdateDictionary(_itemBindKey, kvp.Key, bagItem);
             }
         }
     }

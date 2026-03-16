@@ -86,6 +86,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private PropertyPredictionState _propertyPredictionState;
         private PlayerItemPredictableState _itemPredictionState;
         private PlayerSkillSyncState _skillSyncState;
+        private PlayerShopPredictableState _shopState;
         
         [Header("Subject")]
         private readonly Subject<int> _onAttackPoint = new Subject<int>();
@@ -694,6 +695,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _propertyPredictionState = GetComponent<PropertyPredictionState>();
             _skillSyncState = GetComponent<PlayerSkillSyncState>();
             _itemPredictionState = GetComponent<PlayerItemPredictableState>();
+            _shopState = GetComponent<PlayerShopPredictableState>();
             _propertyPredictionState.OnPropertyChanged += HandlePropertyChange;
             _propertyPredictionState.OnStateChanged += HandlePropertyStateChanged;
             //_propertyPredictionState.OnPlayerDead += HandlePlayerDeadClient;
@@ -842,6 +844,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 case CommandType.Skill:
                     _skillSyncState.AddPredictedCommand(command);
                     break;
+                case CommandType.Shop:
+                    Debug.Log($"[PlayerAddCommand] -> Shop == {command.GetCommandType()}");
+                    _shopState.AddPredictedCommand(command);
+                    break;
             }
         }
 
@@ -974,7 +980,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 GameSyncManager = gameSyncManager,
                 ItemConfig = configProvider.GetConfig<ItemConfig>(),
                 SkillConfig = _configProvider.GetConfig<SkillConfig>(),
-                
+                IsServer = ServerHandler,
+                IsLocalPlayer = LocalPlayerHandler,
+                IsClient = ClientHandler
             });
             PlayerShopCalculator.SetConstant(new ShopCalculatorConstant
             {
@@ -1674,6 +1682,20 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 _autoRecoverTime = 0;
                 AutoRecover();
             }
+        }
+        
+
+        [ClientRpc]
+        public void RpcSetPlayerWeapon(string prefabName)
+        {
+            if (string.IsNullOrWhiteSpace(prefabName))
+            {
+                Debug.Log($"RpcSetPlayerWeapon null ");
+                _weaponIKController.SetWeapon(null);
+                return;
+            }
+            var res = ResourceManager.Instance.GetResource<GameObject>(prefabName);
+            _weaponIKController.SetWeapon(res);
         }
     }
 }

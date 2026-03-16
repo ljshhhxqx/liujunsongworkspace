@@ -191,6 +191,7 @@ namespace HotUpdate.Scripts.Collector.Collects
             {
                 RepeatedTask.Instance.StartRepeatingTask(StartAttack, Time.fixedDeltaTime);
             }
+            Collider.enabled = true;
         }
 
         private void OnAttack()

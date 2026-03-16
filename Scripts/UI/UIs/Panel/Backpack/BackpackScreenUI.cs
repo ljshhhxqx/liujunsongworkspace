@@ -53,61 +53,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
                 .Subscribe(_ => _uiManager.CloseUI(Type))
                 .AddTo(this);
         }
-
-        // public void BindEquipItemData(ReactiveDictionary<int, EquipItemData> slotEquipItemData)
-        // {
-        //     _slotEquipItemData = new Dictionary<int, EquipItemData>();
-        //     foreach (var key in slotEquipItemData.Keys)
-        //     {
-        //         var slot = slotEquipItemData[key];
-        //         _slotEquipItemData.Add(key, slot);
-        //     }
-        //     _slotItems = new Dictionary<int, EquipmentSlotItem>();
-        //     slotEquipItemData.ObserveAdd()
-        //         .Subscribe(x =>
-        //         {
-        //             if (!_slotEquipItemData.ContainsKey(x.Key))
-        //             {
-        //                 _slotEquipItemData.Add(x.Key, x.Value);
-        //                 equipmentItemList.AddItem(x.Key, x.Value);
-        //             }
-        //             //equipmentItemList.SetItemList(_slotEquipItemData);
-        //         })
-        //         .AddTo(this);
-        //     slotEquipItemData.ObserveRemove()
-        //         .Subscribe(x =>
-        //         {
-        //             if (_slotEquipItemData.ContainsKey(x.Key))
-        //             {
-        //
-        //                 _slotEquipItemData.Remove(x.Key);
-        //                 equipmentItemList.RemoveItem(x.Key);
-        //             }
-        //             //equipmentItemList.SetItemList(_slotEquipItemData);
-        //         })
-        //         .AddTo(this);
-        //     slotEquipItemData.ObserveReplace()
-        //         .Subscribe(x =>
-        //         {
-        //             if (!x.NewValue.Equals(x.OldValue))
-        //             {
-        //                 _slotEquipItemData[x.Key] = x.NewValue;
-        //                 equipmentItemList.ReplaceItem(x.Key, x.NewValue);
-        //             }
-        //             //equipmentItemList.SetItemList(_slotEquipItemData);
-        //         })
-        //         .AddTo(this);
-        //     slotEquipItemData.ObserveReset()
-        //         .Subscribe(x =>
-        //         {
-        //             _slotEquipItemData.Clear();
-        //             equipmentItemList.Clear();
-        //             //equipmentItemList.SetItemList(_slotEquipItemData);
-        //         })
-        //         .AddTo(this);
-        //     RefreshEquip(_slotEquipItemData);
-        // }
-
+        
         private void RefreshEquip(IDictionary<int, EquipItemData> slotEquipItemData)
         {
             equipmentItemList.SetItemList(slotEquipItemData);
@@ -128,40 +74,30 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             InitializeEquipSlots();
             bagItemData.ObserveAdd((x, y) =>
                 {
-                    if (!_bagItemData.ContainsKey(x))
+                    if (_bagItemData.ContainsKey(x))
                     {
-                        _bagItemData.Add(x, y);
-                        if (y.PlayerItemType.IsEquipment() && y.IsEquip)
-                        {
-                            equipmentItemList.AddItem<BagItemData, EquipmentSlotItem>(x, y);
-                        }
-                        bagItemList.AddItem<BagItemData, BagSlotItem>(x, y);
+                        return;
                     }
+                    _bagItemData.Add(x, y);
+                    RefreshBag(_bagItemData);
                 })
                 .AddTo(this);
             bagItemData.ObserveRemove((x, y) =>
                 {
-                    if (_bagItemData.ContainsKey(x))
+                    if (!_bagItemData.ContainsKey(x))
                     {
-                        _bagItemData.Remove(x);
-                        bagItemList.RemoveItem(x);
-                        if (y.PlayerItemType.IsEquipment() && !y.IsEquip)
-                        {
-                            equipmentItemList.RemoveItem(x);
-                        }
+                        return;
                     }
+                    _bagItemData.Remove(x);
+                    RefreshBag(_bagItemData);
                 })
                 .AddTo(this);
             bagItemData.ObserveUpdate((x,y,z) =>
                 {
                     if (!z.Equals(y))
                     {
-                        _bagItemData[x] = z;
-                        bagItemList.ReplaceItem<BagItemData, BagSlotItem>(x, z);
-                        if (z.PlayerItemType.IsEquipment() && z.IsEquip)
-                        {
-                            equipmentItemList.ReplaceItem<BagItemData, EquipmentSlotItem>(x, z);
-                        }
+                        _bagItemData[x] = y;
+                        RefreshBag(_bagItemData);
                     }
                 })
                 .AddTo(this);
@@ -182,6 +118,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
             //     var data = originalData.ItemName != null ? originalData : new BagItemData();
             //     _bagItemData.Add(data);
             // }
+            bagItemList.Clear();
+            equipmentItemList.Clear();
             bagItemList.SetItemList(bagItemData);
             var equippedItems = new Dictionary<int, BagItemData>();
             var equipParts = Enum.GetValues(typeof(EquipmentPart)).Cast<EquipmentPart>().ToArray();
@@ -192,7 +130,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
                 {
                     continue;
                 }
-                var bagItem = bagItemData.FirstOrDefault(x => x.Value.EquipmentPart == equipPart);
+                var bagItem = bagItemData.FirstOrDefault(x => x.Value.EquipmentPart == equipPart && x.Value.IsEquip);
                 if (!bagItem.Value.Equals(default(BagItemData)))
                 {
                     equippedItems.Add((int)bagItem.Value.EquipmentPart, bagItem.Value);

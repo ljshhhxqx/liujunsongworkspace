@@ -528,7 +528,7 @@ namespace HotUpdate.Scripts.Game
                     playerName = playerName,
                     score = (int)kvp.Value,
                     rank = rank,
-                    isWinner = rank == 1 || rank == 2
+                    isWinner = rank == 1
                 };
                 index++;
             }

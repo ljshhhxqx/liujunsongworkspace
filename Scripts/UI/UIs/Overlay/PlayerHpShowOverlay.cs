@@ -70,15 +70,15 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             }).AddTo(this); 
             playerHpItemDatas.ObserveUpdate((x,y, z)  =>
             {
-                _playerHpItemDatas[x] = z;
-                contentItemList.ReplaceItem<PlayerHpItemData, PlayerHpItem>(x, z);
+                _playerHpItemDatas[x] = y;
+                contentItemList.ReplaceItem<PlayerHpItemData, PlayerHpItem>(x, y);
                 var item = contentItemList.GetItem<PlayerHpItem>(x);
                 if (item)
                 {
                     _defaultFollowTargetParams.Target = z.TargetPosition;
                     _defaultFollowTargetParams.Player = z.PlayerPosition;
                     item.Show(_defaultFollowTargetParams);
-                    item.DataChanged(z);
+                    item.DataChanged(y);
                 }
             }).AddTo(this);
             playerHpItemDatas.ObserveClear(_ =>

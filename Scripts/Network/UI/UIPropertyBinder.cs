@@ -136,6 +136,13 @@ namespace HotUpdate.Scripts.Network.UI
             }
         }
 
+        public static void ClearDictionary<T>(BindingKey dictKey) where T : IUIDatabase
+        {
+            var dic = GetOrCreateDictionary<T>(dictKey).Dictionary;
+            dic.Clear();
+            KeyDictionaryMap.Remove(dictKey);
+        }
+
         private static ReactiveDictionaryWrapper<T> GetOrCreateDictionary<T>(BindingKey key) where T : IUIDatabase
         {
             if (!KeyDictionaryMap.TryGetValue(key, out var dict))

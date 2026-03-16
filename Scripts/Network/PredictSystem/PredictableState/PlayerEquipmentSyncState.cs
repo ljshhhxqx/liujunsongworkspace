@@ -33,6 +33,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             if (state is not PlayerEquipmentState equipmentState)
                 return;
 
+            CurrentState = equipmentState;
             bool isWeaponEquipped = false;
             WeaponConfigData weaponConfigData = default;
             for (int i = 0; i < equipmentState.EquipmentDatas.Count; i++)
@@ -48,7 +49,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     _currentWeaponType = weaponConfigData.weaponType;
                 }
             }
-
+            
             if (!isWeaponEquipped)
             {
                 _currentWeaponType = WeaponType.None;

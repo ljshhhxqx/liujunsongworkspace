@@ -283,10 +283,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     ItemIds = Constant.IsServer ? removedItemIds : Array.Empty<int>(),
                 }); 
             }
-            if (!Constant.IsServer)
-            {
-                return;
-            }
             var player = NetworkServer.connections[connectionId].identity.netId;
             var playerComponent = NetworkServer.spawned[player];
 
@@ -318,7 +314,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             }
             Debug.Log($"Item {itemEquipCommand.SlotIndex} equipped");
             if (!PlayerItemState.TryGetSlotItemBySlotIndex(playerItemState, itemEquipCommand.SlotIndex, out var bagItem)
-                || bagItem.PlayerItemType == PlayerItemType.None || !Constant.IsServer)
+                || bagItem.PlayerItemType == PlayerItemType.None)
             {
                 return;
             }
@@ -328,15 +324,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
             if (exchangedItem!= null)
             {
                 var exchangedConfigId = GetEquipmentConfigId(exchangedItem.PlayerItemType, exchangedItem.ConfigId);
+                
                 Constant.GameSyncManager.EnqueueServerCommand(new EquipmentCommand
                 {
-                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Client, CommandExecuteType.Immediate),
+                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
                     EquipmentConfigId = exchangedConfigId,
                     EquipmentPart = exchangedItem.EquipmentPart,
                     IsEquip = false,
                     ItemId = exchangedItem.ItemIds.First(),
-                    EquipmentPassiveEffectData = JsonConvert.SerializeObject(exchangedItem.MainIncreaseDatas),
-                    EquipmentMainEffectData = JsonConvert.SerializeObject(exchangedItem.PassiveAttributeIncreaseDatas),
+                    EquipmentPassiveEffectData = JsonConvert.SerializeObject(bagItem.MainIncreaseDatas),
+                    EquipmentMainEffectData = JsonConvert.SerializeObject(bagItem.PassiveAttributeIncreaseDatas),
                 });
 
                 if (bagItem.IsEnableSkill)
@@ -350,19 +347,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                         IsLoad = false,
                         KeyCode = SkillConfig.GetAnimationState(exchangedItem.PlayerItemType),
                     };
-                    if (Constant.IsServer)
-                    {
-                        Constant.GameSyncManager.EnqueueServerCommand(skillLoadCommand);
-                    }
-                    else
-                    {
-                        Constant.PlayerComponentController.PlayerAddCommand(CommandType.Skill, skillLoadCommand);
-                    }
+                    Constant.GameSyncManager.EnqueueServerCommand(skillLoadCommand);
                 }
             }
             Constant.GameSyncManager.EnqueueServerCommand(new EquipmentCommand
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Client, CommandExecuteType.Immediate),
+                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
                 EquipmentConfigId = configId,
                 EquipmentPart = bagItem.EquipmentPart,
                 IsEquip = itemEquipCommand.IsEquip,
@@ -370,23 +360,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 EquipmentPassiveEffectData = JsonConvert.SerializeObject(bagItem.MainIncreaseDatas),
                 EquipmentMainEffectData = JsonConvert.SerializeObject(bagItem.PassiveAttributeIncreaseDatas),
             });
-            //var animationState = SkillConfig.GetAnimationState(bagItem.PlayerItemType);
-            // if (bagItem.SkillId != 0 && animationState != AnimationState.None)
-            // {
-            //     Constant.GameSyncManager.EnqueueServerCommand(new SkillLoadCommand
-            //     {
-            //         Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill, CommandAuthority.Server, CommandExecuteType.Immediate),
-            //         SkillConfigId = bagItem.SkillId,
-            //         IsLoad = true,
-            //         KeyCode = animationState  
-            //     });
-            //     Constant.GameSyncManager.EnqueueServerCommand(new SkillChangedCommand
-            //     {
-            //         Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Input, CommandAuthority.Server, CommandExecuteType.Immediate),
-            //         SkillId = bagItem.SkillId,
-            //         AnimationState = animationState
-            //     });
-            // }
         }
 
         public static void CommandGetItem(ref PlayerItemState playerItemState, ItemsCommandData itemsData, NetworkCommandHeader header = default, bool isKilled = false)
@@ -567,21 +540,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                         return;
                     }
                     var equipmentCommand = new EquipmentCommand();
-                    equipmentCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Equipment, CommandAuthority.Client, CommandExecuteType.Immediate);
+                    equipmentCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate);
                     equipmentCommand.EquipmentPart = itemConfigData.equipmentPart;
                     equipmentCommand.IsEquip = true;
                     equipmentCommand.EquipmentConfigId = GetEquipmentConfigId(itemConfigData.itemType, itemsData.ItemConfigId);
                     equipmentCommand.ItemId = itemsData.ItemUniqueId[0];
                     equipmentCommand.EquipmentPassiveEffectData = JsonConvert.SerializeObject(equipSlotItem.PassiveAttributeIncreaseDatas);
                     equipmentCommand.EquipmentMainEffectData = JsonConvert.SerializeObject(equipSlotItem.MainIncreaseDatas);
-                    if (Constant.IsServer)
-                    {
-                        Constant.GameSyncManager.EnqueueServerCommand(equipmentCommand);
-                    }
-                    else
-                    {
-                        Constant.PlayerComponentController.PlayerAddCommand(CommandType.Equipment, equipmentCommand);
-                    }
+                    
+                    Constant.GameSyncManager.EnqueueServerCommand(equipmentCommand);
                 }
             }
 
@@ -708,11 +675,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
         public static void CommandUseItems(ItemsUseCommand itemsUseCommand, ref PlayerItemState playerItemState)
         {
-
-            if (!Constant.IsServer)
-            {
-                return;
-            }
             if (itemsUseCommand.Slots.Count == 0)
             {
                 return;
@@ -773,11 +735,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 }
             }
         }
-    }
-    
-
-    public class PlayerItemComponent
-    {
     }
 
     public class PlayerItemConstant

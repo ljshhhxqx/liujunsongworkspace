@@ -94,15 +94,15 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.ItemList
             return (TItem)itemBase;
         }
 
-        public void SetItemList<T>(IDictionary<int, T> itemDict) where T : IItemBaseData
+        public void SetItemList<T>(IDictionary<int, T> itemDict, bool clearCollection = true) where T : IItemBaseData
         {
-            itemPrefab.gameObject.SetActive(true);
             foreach (var key in ItemBaseDatas.Keys)
             {
                 GameObjectPoolManger.Instance.ReturnObject(ItemBases[key].gameObject);
             }
             ItemBases.Clear();
             ItemBaseDatas.Clear();
+            itemPrefab.gameObject.SetActive(true);
             if (itemDict.Count > 0)
             {
                 foreach (var itemData in itemDict)

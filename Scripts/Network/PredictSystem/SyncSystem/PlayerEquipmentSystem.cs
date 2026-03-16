@@ -5,6 +5,8 @@ using AOTScripts.Data;
 using AOTScripts.Tool;
 using Cysharp.Threading.Tasks;
 using HotUpdate.Scripts.Common;
+using HotUpdate.Scripts.Config.ArrayConfig;
+using HotUpdate.Scripts.Network.Client.Player;
 using HotUpdate.Scripts.Network.PredictSystem.Calculator;
 using HotUpdate.Scripts.Network.PredictSystem.PredictableState;
 using HotUpdate.Scripts.Network.Server.InGame;
@@ -23,6 +25,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
         private IConfigProvider _configProvider;
         private PlayerInGameManager _playerInGameManager;
+        private WeaponConfig _weaponConfig;
         protected override CommandType CommandType => CommandType.Equipment;
 
         [Inject]
@@ -30,6 +33,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         {
             _playerInGameManager = playerInGameManager;
             _configProvider = configProvider;
+            _weaponConfig = configProvider.GetConfig<WeaponConfig>();
         }
 
         protected override void OnGameStart(bool isGameStarted)
@@ -110,6 +114,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 return null;
             if (command is EquipmentCommand equipmentCommand)
             {
+                var connection = GameSyncManager.GetPlayerConnection(header.ConnectionId);
+                if (equipmentCommand.EquipmentPart == EquipmentPart.Weapon)
+                {
+                    if (equipmentCommand.IsEquip)
+                    {
+                        var weaponConfigData =  _weaponConfig.GetWeaponConfigData(equipmentCommand.EquipmentConfigId);
+                        connection.RpcSetPlayerWeapon(weaponConfigData.prefabName);
+                    }
+                    else
+                    {
+                        connection.RpcSetPlayerWeapon("");
+                    }
+                }
                 PlayerEquipmentCalculator.CommandEquipment(equipmentCommand, ref playerEquipmentState);
                 PropertyStates[header.ConnectionId] = playerEquipmentState;
                 return PropertyStates[header.ConnectionId];

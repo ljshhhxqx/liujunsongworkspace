@@ -53,7 +53,6 @@ namespace HotUpdate.Scripts.Collector
 
         private MirrorNetworkMessageHandler _mirrorNetworkMessageHandler;
         private Collider _collider;
-        private Collider _gameObjectCollider;
         private CollectObjectDataConfig _collectObjectDataConfig;
         private IDisposable _disposable;
         private ItemsSpawnerManager _itemsSpawnerManager;
@@ -78,7 +77,6 @@ namespace HotUpdate.Scripts.Collector
             _collider = collectCollider.GetComponent<Collider>();
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
-            _gameObjectCollider = GetComponent<Collider>();
             _collectData = jsonDataConfig.CollectData;
             CollectObjectData = collectObjectDataConfig.GetCollectObjectData(collectConfigId);
             if (!collectCollider)
@@ -90,7 +88,6 @@ namespace HotUpdate.Scripts.Collector
             GameObjectContainer.Instance.AddDynamicObject(netId, transform.position, _colliderConfig, ObjectType.Collectable, gameObject.layer, gameObject.tag);
             
             NetId = netId;
-            _gameObjectCollider.enabled = false;
             _playerTransform ??= playerInGameManager.LocalPlayerTransform;
         }
 
@@ -102,20 +99,12 @@ namespace HotUpdate.Scripts.Collector
                 return;
             }
             ChangeBehaviour(newValue);
-            if (newValue == (int)CollectObjectType.AttackMove || newValue == (int)CollectObjectType.AttackHidden || newValue == (int)CollectObjectType.AttackMoveHidden || newValue == (int)CollectObjectType.Attack)
-            {
-                _gameObjectCollider.enabled = true;
-            }
         }
 
         public void ServerChangeBehaviour()
         {
 //            Debug.Log("[CollectObjectController] ServerHandler ChangeBehaviour -- " + (CollectObjectType)collectObjectType);
             ChangeBehaviour(collectObjectType);
-            if (collectObjectType == (int)CollectObjectType.AttackMove || collectObjectType == (int)CollectObjectType.AttackHidden || collectObjectType == (int)CollectObjectType.AttackMoveHidden || collectObjectType == (int)CollectObjectType.Attack)
-            {
-                _gameObjectCollider.enabled = true;
-            }
             if (collectObjectType == 0)
             {
                 RpcPlayAnimation();

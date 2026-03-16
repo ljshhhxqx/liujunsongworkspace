@@ -119,7 +119,7 @@ namespace HotUpdate.Scripts.Network.Server
             OnCleanup?.Invoke();
             _playerComponentController.CmdCleanupClient(_playerInGameManager.LocalPlayerId);
         
-            await UniTask.Yield();
+            await UniTask.Delay(1000);
             
             DisconnectClient();
             OnDisconnected?.Invoke();
@@ -180,10 +180,12 @@ namespace HotUpdate.Scripts.Network.Server
             {
                 if (NetworkClient.isConnected)
                 {
+                    Debug.Log("服务器：断开客户端连接");
                     NetworkManager.singleton.StopHost();
                 }
                 else
                 {
+                    Debug.Log("服务器：已停止");
                     NetworkManager.singleton.StopServer();
                 }
             }
