@@ -45,7 +45,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
         // }
 
         public override void SaveJson()
-        {
+        { 
 #if UNITY_EDITOR
             var json = JsonUtility.ToJson(jsonConfigData, true);
 
