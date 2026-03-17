@@ -432,7 +432,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 return;
             }
 
-            if (TryUnloadSkill(ref playerItemState, connectionId, slotIndex, out var unloadedItem))
+            if (!isEnable && TryUnloadSkill(ref playerItemState, connectionId, slotIndex, out var unloadedItem))
             {
                 Debug.Log($"Skill {skillId} unloaded from slot {slotIndex}");
                 unloadedItem.IsEnableSkill = false;
@@ -443,21 +443,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 bagItem.IsEnableSkill = isEnable;
                 playerItemState.PlayerItemConfigIdSlotDictionary[slotIndex] = bagItem;
             }
-            var skillEnableCommand = new SkillLoadCommand
-            {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill, CommandAuthority.Client),
-                SkillConfigId = skillId,
-                IsLoad = isEnable,
-                KeyCode = SkillConfig.GetAnimationState(bagItem.PlayerItemType),
-            };
-            Debug.Log($"[PlayerItemCalculator] Send skill enable command {skillEnableCommand}");
             if (Constant.IsServer)
             {
+                var skillEnableCommand = new SkillLoadCommand
+                {
+                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Skill, CommandAuthority.Client),
+                    SkillConfigId = skillId,
+                    IsLoad = isEnable,
+                    KeyCode = SkillConfig.GetAnimationState(bagItem.PlayerItemType),
+                };
+                Debug.Log($"[PlayerItemCalculator] Send skill enable command {skillEnableCommand}");
                 Constant.GameSyncManager.EnqueueServerCommand(skillEnableCommand);
-            }
-            else
-            {
-                Constant.PlayerComponentController.PlayerAddCommand(CommandType.Skill, skillEnableCommand);
             }
         }
 

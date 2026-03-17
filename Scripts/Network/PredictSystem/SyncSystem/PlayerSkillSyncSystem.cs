@@ -100,7 +100,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 {
                     var playerId = players[i];
                     var playerConnection = GameSyncManager.GetPlayerConnection(playerId);
-                    if (playerConnection == null)
+                    if (!playerConnection)
                     {
                         continue;
                     }
@@ -117,6 +117,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         var skillChecker = skillDic[keys[j]];
                         if (skillChecker.IsSkillEffect())
                         {
+                            //Debug.Log($"[PlayerSkillSyncSystem] Update UpdateEquipment Skill");
                             PlayerSkillCalculator.UpdateSkillFlyEffect(playerId, GameSyncManager.TickSeconds, skillChecker, _interactSystem.GetHitObjectDatas);
                         }
 

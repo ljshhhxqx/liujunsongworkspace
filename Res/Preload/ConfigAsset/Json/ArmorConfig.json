@@ -1,0 +1,771 @@
+{
+    "excelAssetReference": {
+        "guid": "afcb27a37860bed489c689f04b28b549"
+    },
+    "csvAssetReference": {
+        "guid": "f79490033f1ba7d4c817acd9581f3173"
+    },
+    "jsonAssetReference": {
+        "guid": "36a25296697c2fe44a5305e443be106f"
+    },
+    "configName": "ArmorConfig",
+    "isArray": true,
+    "armorConfigs": [
+        {
+            "armorID": 1,
+            "armorName": "普通上衣1",
+            "equipmentPart": 2,
+            "itemID": 3031,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 2,
+            "armorName": "普通上衣2",
+            "equipmentPart": 2,
+            "itemID": 3032,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 3,
+            "armorName": "普通上衣3",
+            "equipmentPart": 2,
+            "itemID": 3033,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 4,
+            "armorName": "普通上衣4",
+            "equipmentPart": 2,
+            "itemID": 3034,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 5,
+            "armorName": "普通上衣5",
+            "equipmentPart": 2,
+            "itemID": 3035,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 6,
+            "armorName": "稀有上衣1",
+            "equipmentPart": 2,
+            "itemID": 3036,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 1,
+            "battleEffectConditionDescription": "[PassiveEffect]None、概率100%、Buff目标对象1个Self、冷却0秒、持续时间-1秒、Buff权重0.2、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 7,
+            "armorName": "稀有上衣2",
+            "equipmentPart": 2,
+            "itemID": 3037,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 2,
+            "battleEffectConditionDescription": "[PassiveEffect]OnTakeDamage、概率50%、Buff目标对象1个Self、冷却10秒、持续时间5秒、受到伤害类型:None、受到伤害百分比:[0,0]、受到伤害:[0,0]、伤害来源:None、Buff权重0.3、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 8,
+            "armorName": "稀有上衣3",
+            "equipmentPart": 2,
+            "itemID": 3038,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 3,
+            "battleEffectConditionDescription": "[PassiveEffect]OnHpChange、概率50%、Buff目标对象1个Self、冷却10秒、持续时间5秒、生命值百分比:[0,0]、Buff权重0.3、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 9,
+            "armorName": "稀有上衣4",
+            "equipmentPart": 2,
+            "itemID": 3039,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 4,
+            "battleEffectConditionDescription": "[PassiveEffect]OnAttack、概率50%、Buff目标对象1个Self、冷却8秒、持续时间5秒、攻击力:0、攻击范围:None、Buff权重0.4、Buff增益类型Base"
+        },
+        {
+            "armorID": 10,
+            "armorName": "稀有上衣5",
+            "equipmentPart": 2,
+            "itemID": 3040,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 5,
+            "battleEffectConditionDescription": "[PassiveEffect]OnMove、概率5%、Buff目标对象1个Self、冷却10秒、持续时间5秒、Buff权重0.5、Buff增益类型Extra"
+        },
+        {
+            "armorID": 11,
+            "armorName": "传奇上衣1",
+            "equipmentPart": 2,
+            "itemID": 3041,
+            "quality": 3,
+            "skillID": 1,
+            "battleEffectConditionId": 6,
+            "battleEffectConditionDescription": "[PassiveEffect]None、概率100%、Buff目标对象1个Self、冷却0秒、持续时间-1秒、Buff权重0.6、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 12,
+            "armorName": "传奇上衣2",
+            "equipmentPart": 2,
+            "itemID": 3042,
+            "quality": 3,
+            "skillID": 10,
+            "battleEffectConditionId": 7,
+            "battleEffectConditionDescription": "[PassiveEffect]OnTakeDamage、概率80%、Buff目标对象1个Self、冷却5秒、持续时间7秒、受到伤害类型:None、受到伤害百分比:[0,0]、受到伤害:[0,0]、伤害来源:None、Buff权重0.9、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 13,
+            "armorName": "传奇上衣3",
+            "equipmentPart": 2,
+            "itemID": 3043,
+            "quality": 3,
+            "skillID": 15,
+            "battleEffectConditionId": 8,
+            "battleEffectConditionDescription": "[PassiveEffect]OnHpChange、概率80%、Buff目标对象1个Self、冷却7秒、持续时间7秒、生命值百分比:[0,0]、Buff权重0.9、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 14,
+            "armorName": "传奇上衣4",
+            "equipmentPart": 2,
+            "itemID": 3044,
+            "quality": 3,
+            "skillID": 17,
+            "battleEffectConditionId": 9,
+            "battleEffectConditionDescription": "[PassiveEffect]OnAttack、概率80%、Buff目标对象1个Self、冷却8秒、持续时间5秒、攻击力:0、攻击范围:None、Buff权重0.9、Buff增益类型Base"
+        },
+        {
+            "armorID": 15,
+            "armorName": "传奇上衣5",
+            "equipmentPart": 2,
+            "itemID": 3045,
+            "quality": 3,
+            "skillID": 19,
+            "battleEffectConditionId": 10,
+            "battleEffectConditionDescription": "[PassiveEffect]OnMove、概率15%、Buff目标对象1个Self、冷却5秒、持续时间7秒、Buff权重0.9、Buff增益类型Extra"
+        },
+        {
+            "armorID": 16,
+            "armorName": "普通鞋子1",
+            "equipmentPart": 4,
+            "itemID": 3046,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 17,
+            "armorName": "普通鞋子2",
+            "equipmentPart": 4,
+            "itemID": 3047,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 18,
+            "armorName": "普通鞋子3",
+            "equipmentPart": 4,
+            "itemID": 3048,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 19,
+            "armorName": "普通鞋子4",
+            "equipmentPart": 4,
+            "itemID": 3049,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 20,
+            "armorName": "普通鞋子5",
+            "equipmentPart": 4,
+            "itemID": 3050,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 21,
+            "armorName": "稀有鞋子1",
+            "equipmentPart": 4,
+            "itemID": 3051,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 11,
+            "battleEffectConditionDescription": "[PassiveEffect]None、概率100%、Buff目标对象1个Self、冷却0秒、持续时间-1秒、Buff权重0.6、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 22,
+            "armorName": "稀有鞋子2",
+            "equipmentPart": 4,
+            "itemID": 3052,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 12,
+            "battleEffectConditionDescription": "[PassiveEffect]OnTakeDamage、概率50%、Buff目标对象1个Self、冷却10秒、持续时间5秒、受到伤害类型:None、受到伤害百分比:[0,0]、受到伤害:[0,0]、伤害来源:None、Buff权重0.35、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 23,
+            "armorName": "稀有鞋子3",
+            "equipmentPart": 4,
+            "itemID": 3053,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 13,
+            "battleEffectConditionDescription": "[PassiveEffect]OnAttack、概率50%、Buff目标对象1个Self、冷却8秒、持续时间5秒、攻击力:0、攻击范围:None、Buff权重0.9、Buff增益类型Base"
+        },
+        {
+            "armorID": 24,
+            "armorName": "稀有鞋子4",
+            "equipmentPart": 4,
+            "itemID": 3054,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 14,
+            "battleEffectConditionDescription": "[PassiveEffect]OnMove、概率5%、Buff目标对象1个Self、冷却10秒、持续时间5秒、Buff权重0.9、Buff增益类型Extra"
+        },
+        {
+            "armorID": 25,
+            "armorName": "稀有鞋子5",
+            "equipmentPart": 4,
+            "itemID": 3055,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 15,
+            "battleEffectConditionDescription": "[PassiveEffect]OnManaChange、概率20%、Buff目标对象1个Self、冷却10秒、持续时间5秒、魔法值百分比:[0,0]、Buff权重0.75、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 26,
+            "armorName": "传奇鞋子1",
+            "equipmentPart": 4,
+            "itemID": 3056,
+            "quality": 3,
+            "skillID": 16,
+            "battleEffectConditionId": 16,
+            "battleEffectConditionDescription": "[PassiveEffect]None、概率100%、Buff目标对象1个Self、冷却0秒、持续时间-1秒、Buff权重0.75、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 27,
+            "armorName": "传奇鞋子2",
+            "equipmentPart": 4,
+            "itemID": 3057,
+            "quality": 3,
+            "skillID": 17,
+            "battleEffectConditionId": 17,
+            "battleEffectConditionDescription": "[PassiveEffect]OnTakeDamage、概率50%、Buff目标对象1个Self、冷却10秒、持续时间5秒、受到伤害类型:None、受到伤害百分比:[0,0]、受到伤害:[0,0]、伤害来源:None、Buff权重0.8、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 28,
+            "armorName": "传奇鞋子3",
+            "equipmentPart": 4,
+            "itemID": 3058,
+            "quality": 3,
+            "skillID": 9,
+            "battleEffectConditionId": 18,
+            "battleEffectConditionDescription": "[PassiveEffect]OnAttack、概率80%、Buff目标对象1个Self、冷却5秒、持续时间10秒、攻击力:0、攻击范围:None、Buff权重1、Buff增益类型Base"
+        },
+        {
+            "armorID": 29,
+            "armorName": "传奇鞋子4",
+            "equipmentPart": 4,
+            "itemID": 3059,
+            "quality": 3,
+            "skillID": 11,
+            "battleEffectConditionId": 19,
+            "battleEffectConditionDescription": "[PassiveEffect]OnMove、概率15%、Buff目标对象1个Self、冷却10秒、持续时间10秒、Buff权重1、Buff增益类型Extra"
+        },
+        {
+            "armorID": 30,
+            "armorName": "传奇鞋子5",
+            "equipmentPart": 4,
+            "itemID": 3060,
+            "quality": 3,
+            "skillID": 14,
+            "battleEffectConditionId": 20,
+            "battleEffectConditionDescription": "[PassiveEffect]OnManaChange、概率30%、Buff目标对象1个Self、冷却10秒、持续时间7秒、魔法值百分比:[0,0]、Buff权重0.75、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 31,
+            "armorName": "普通裤子1",
+            "equipmentPart": 3,
+            "itemID": 3061,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 32,
+            "armorName": "普通裤子2",
+            "equipmentPart": 3,
+            "itemID": 3062,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 33,
+            "armorName": "普通裤子3",
+            "equipmentPart": 3,
+            "itemID": 3063,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 34,
+            "armorName": "普通裤子4",
+            "equipmentPart": 3,
+            "itemID": 3064,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 35,
+            "armorName": "普通裤子5",
+            "equipmentPart": 3,
+            "itemID": 3065,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 36,
+            "armorName": "稀有裤子1",
+            "equipmentPart": 3,
+            "itemID": 3066,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 21,
+            "battleEffectConditionDescription": "[PassiveEffect]None、概率100%、Buff目标对象1个Self、冷却0秒、持续时间-1秒、Buff权重0.2、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 37,
+            "armorName": "稀有裤子2",
+            "equipmentPart": 3,
+            "itemID": 3067,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 22,
+            "battleEffectConditionDescription": "[PassiveEffect]OnHpChange、概率50%、Buff目标对象1个Self、冷却10秒、持续时间5秒、生命值百分比:[0,0]、Buff权重0.3、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 38,
+            "armorName": "稀有裤子3",
+            "equipmentPart": 3,
+            "itemID": 3068,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 23,
+            "battleEffectConditionDescription": "[PassiveEffect]OnMove、概率5%、Buff目标对象1个Self、冷却10秒、持续时间5秒、Buff权重0.5、Buff增益类型Extra"
+        },
+        {
+            "armorID": 39,
+            "armorName": "稀有裤子4",
+            "equipmentPart": 3,
+            "itemID": 3069,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 24,
+            "battleEffectConditionDescription": "[PassiveEffect]OnAttack、概率50%、Buff目标对象1个Self、冷却8秒、持续时间5秒、攻击力:0、攻击范围:None、Buff权重0.9、Buff增益类型Base"
+        },
+        {
+            "armorID": 40,
+            "armorName": "稀有裤子5",
+            "equipmentPart": 3,
+            "itemID": 3070,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 25,
+            "battleEffectConditionDescription": "[PassiveEffect]OnManaChange、概率20%、Buff目标对象1个Self、冷却10秒、持续时间5秒、魔法值百分比:[0,0]、Buff权重0.75、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 41,
+            "armorName": "传奇裤子1",
+            "equipmentPart": 3,
+            "itemID": 3071,
+            "quality": 3,
+            "skillID": 1,
+            "battleEffectConditionId": 26,
+            "battleEffectConditionDescription": "[PassiveEffect]None、概率100%、Buff目标对象1个Self、冷却0秒、持续时间-1秒、Buff权重0.6、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 42,
+            "armorName": "传奇裤子2",
+            "equipmentPart": 3,
+            "itemID": 3072,
+            "quality": 3,
+            "skillID": 2,
+            "battleEffectConditionId": 27,
+            "battleEffectConditionDescription": "[PassiveEffect]OnHpChange、概率80%、Buff目标对象1个Self、冷却7秒、持续时间7秒、生命值百分比:[0,0]、Buff权重0.8、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 43,
+            "armorName": "传奇裤子3",
+            "equipmentPart": 3,
+            "itemID": 3073,
+            "quality": 3,
+            "skillID": 3,
+            "battleEffectConditionId": 28,
+            "battleEffectConditionDescription": "[PassiveEffect]OnMove、概率10%、Buff目标对象1个Self、冷却7秒、持续时间7秒、Buff权重1、Buff增益类型Extra"
+        },
+        {
+            "armorID": 44,
+            "armorName": "传奇裤子4",
+            "equipmentPart": 3,
+            "itemID": 3074,
+            "quality": 3,
+            "skillID": 4,
+            "battleEffectConditionId": 29,
+            "battleEffectConditionDescription": "[PassiveEffect]OnAttack、概率80%、Buff目标对象1个Self、冷却5秒、持续时间10秒、攻击力:0、攻击范围:None、Buff权重1、Buff增益类型Base"
+        },
+        {
+            "armorID": 45,
+            "armorName": "传奇裤子5",
+            "equipmentPart": 3,
+            "itemID": 3075,
+            "quality": 3,
+            "skillID": 5,
+            "battleEffectConditionId": 30,
+            "battleEffectConditionDescription": "[PassiveEffect]OnManaChange、概率50%、Buff目标对象1个Self、冷却7秒、持续时间7秒、魔法值百分比:[0,0]、Buff权重0.9、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 46,
+            "armorName": "普通头盔1",
+            "equipmentPart": 1,
+            "itemID": 3076,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 47,
+            "armorName": "普通头盔2",
+            "equipmentPart": 1,
+            "itemID": 3077,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 48,
+            "armorName": "普通头盔3",
+            "equipmentPart": 1,
+            "itemID": 3078,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 49,
+            "armorName": "普通头盔4",
+            "equipmentPart": 1,
+            "itemID": 3079,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 50,
+            "armorName": "普通头盔5",
+            "equipmentPart": 1,
+            "itemID": 3080,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 51,
+            "armorName": "稀有头盔1",
+            "equipmentPart": 1,
+            "itemID": 3081,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 31,
+            "battleEffectConditionDescription": "[PassiveEffect]None、概率100%、Buff目标对象1个Self、冷却0秒、持续时间-1秒、Buff权重0.2、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 52,
+            "armorName": "稀有头盔2",
+            "equipmentPart": 1,
+            "itemID": 3082,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 32,
+            "battleEffectConditionDescription": "[PassiveEffect]OnAttack、概率50%、Buff目标对象1个Self、冷却8秒、持续时间5秒、攻击力:0、攻击范围:None、Buff权重0.3、Buff增益类型Base"
+        },
+        {
+            "armorID": 53,
+            "armorName": "稀有头盔3",
+            "equipmentPart": 1,
+            "itemID": 3083,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 33,
+            "battleEffectConditionDescription": "[PassiveEffect]OnAttackHit、概率50%、Buff目标对象1个Self、冷却10秒、持续时间7秒、目标类型:Enemy、造成伤害百分比:[0,0]、造成伤害:[0,0]、攻击范围:None、Buff权重0.25、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 54,
+            "armorName": "稀有头盔4",
+            "equipmentPart": 1,
+            "itemID": 3084,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 34,
+            "battleEffectConditionDescription": "[PassiveEffect]OnCriticalHit、概率100%、Buff目标对象1个Self、冷却10秒、持续时间5秒、目标类型:Enemy、造成伤害类型:None、造成伤害百分比:[0,0]、造成伤害:[0,0]、伤害来源:None、Buff权重0.35、Buff增益类型Base"
+        },
+        {
+            "armorID": 55,
+            "armorName": "稀有头盔5",
+            "equipmentPart": 1,
+            "itemID": 3085,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 35,
+            "battleEffectConditionDescription": "[PassiveEffect]OnSkillHit、概率100%、Buff目标对象1个Self、冷却10秒、持续时间7.5秒、目标类型:Enemy、技能类型:None、消耗MP百分比:[0,0]、造成伤害百分比:[0,0]、造成伤害:[0,0]、Buff权重0.35、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 56,
+            "armorName": "传奇头盔1",
+            "equipmentPart": 1,
+            "itemID": 3086,
+            "quality": 3,
+            "skillID": 7,
+            "battleEffectConditionId": 36,
+            "battleEffectConditionDescription": "[PassiveEffect]None、概率100%、Buff目标对象1个Self、冷却0秒、持续时间-1秒、Buff权重0.6、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 57,
+            "armorName": "传奇头盔2",
+            "equipmentPart": 1,
+            "itemID": 3087,
+            "quality": 3,
+            "skillID": 7,
+            "battleEffectConditionId": 37,
+            "battleEffectConditionDescription": "[PassiveEffect]OnAttack、概率80%、Buff目标对象1个Self、冷却7秒、持续时间7秒、攻击力:0、攻击范围:None、Buff权重0.8、Buff增益类型Base"
+        },
+        {
+            "armorID": 58,
+            "armorName": "传奇头盔3",
+            "equipmentPart": 1,
+            "itemID": 3088,
+            "quality": 3,
+            "skillID": 8,
+            "battleEffectConditionId": 38,
+            "battleEffectConditionDescription": "[PassiveEffect]OnAttackHit、概率80%、Buff目标对象1个Self、冷却10秒、持续时间10秒、目标类型:Enemy、造成伤害百分比:[0,0]、造成伤害:[0,0]、攻击范围:None、Buff权重0.9、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 59,
+            "armorName": "传奇头盔4",
+            "equipmentPart": 1,
+            "itemID": 3089,
+            "quality": 3,
+            "skillID": 9,
+            "battleEffectConditionId": 39,
+            "battleEffectConditionDescription": "[PassiveEffect]OnCriticalHit、概率100%、Buff目标对象1个Self、冷却5秒、持续时间10秒、目标类型:Enemy、造成伤害类型:None、造成伤害百分比:[0,0]、造成伤害:[0,0]、伤害来源:None、Buff权重1、Buff增益类型Base"
+        },
+        {
+            "armorID": 60,
+            "armorName": "传奇头盔5",
+            "equipmentPart": 1,
+            "itemID": 3090,
+            "quality": 3,
+            "skillID": 10,
+            "battleEffectConditionId": 40,
+            "battleEffectConditionDescription": "[PassiveEffect]OnSkillHit、概率100%、Buff目标对象1个Self、冷却10秒、持续时间7.5秒、目标类型:Enemy、技能类型:None、消耗MP百分比:[0,0]、造成伤害百分比:[0,0]、造成伤害:[0,0]、Buff权重1、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 61,
+            "armorName": "普通腰带1",
+            "equipmentPart": 5,
+            "itemID": 3091,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 62,
+            "armorName": "普通腰带2",
+            "equipmentPart": 5,
+            "itemID": 3092,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 63,
+            "armorName": "普通腰带3",
+            "equipmentPart": 5,
+            "itemID": 3093,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 64,
+            "armorName": "普通腰带4",
+            "equipmentPart": 5,
+            "itemID": 3094,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 65,
+            "armorName": "普通腰带5",
+            "equipmentPart": 5,
+            "itemID": 3095,
+            "quality": 1,
+            "skillID": 0,
+            "battleEffectConditionId": 0,
+            "battleEffectConditionDescription": "0"
+        },
+        {
+            "armorID": 66,
+            "armorName": "稀有腰带1",
+            "equipmentPart": 5,
+            "itemID": 3096,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 41,
+            "battleEffectConditionDescription": "[PassiveEffect]None、概率100%、Buff目标对象1个Self、冷却0秒、持续时间-1秒、Buff权重0.2、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 67,
+            "armorName": "稀有腰带2",
+            "equipmentPart": 5,
+            "itemID": 3097,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 42,
+            "battleEffectConditionDescription": "[PassiveEffect]OnAttack、概率50%、Buff目标对象1个Self、冷却8秒、持续时间5秒、攻击力:0、攻击范围:None、Buff权重0.3、Buff增益类型Base"
+        },
+        {
+            "armorID": 68,
+            "armorName": "稀有腰带3",
+            "equipmentPart": 5,
+            "itemID": 3098,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 43,
+            "battleEffectConditionDescription": "[PassiveEffect]OnHpChange、概率50%、Buff目标对象1个Self、冷却10秒、持续时间5秒、生命值百分比:[0,0]、Buff权重0.25、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 69,
+            "armorName": "稀有腰带4",
+            "equipmentPart": 5,
+            "itemID": 3099,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 44,
+            "battleEffectConditionDescription": "[PassiveEffect]OnTakeDamage、概率50%、Buff目标对象1个Self、冷却10秒、持续时间5秒、受到伤害类型:None、受到伤害百分比:[0,0]、受到伤害:[0,0]、伤害来源:None、Buff权重0.25、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 70,
+            "armorName": "稀有腰带5",
+            "equipmentPart": 5,
+            "itemID": 3100,
+            "quality": 2,
+            "skillID": 0,
+            "battleEffectConditionId": 45,
+            "battleEffectConditionDescription": "[PassiveEffect]OnDeath、概率100%、Buff目标对象2个AllyPlayer、冷却30秒、持续时间15秒、Buff权重0.15、Buff增益类型CorrectionFactor"
+        },
+        {
+            "armorID": 71,
+            "armorName": "传奇腰带1",
+            "equipmentPart": 5,
+            "itemID": 3101,
+            "quality": 3,
+            "skillID": 11,
+            "battleEffectConditionId": 46,
+            "battleEffectConditionDescription": "[PassiveEffect]None、概率100%、Buff目标对象1个Self、冷却0秒、持续时间-1秒、Buff权重0.6、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 72,
+            "armorName": "传奇腰带2",
+            "equipmentPart": 5,
+            "itemID": 3102,
+            "quality": 3,
+            "skillID": 13,
+            "battleEffectConditionId": 47,
+            "battleEffectConditionDescription": "[PassiveEffect]OnAttack、概率70%、Buff目标对象1个Self、冷却7秒、持续时间7秒、攻击力:0、攻击范围:None、Buff权重0.9、Buff增益类型Base"
+        },
+        {
+            "armorID": 73,
+            "armorName": "传奇腰带3",
+            "equipmentPart": 5,
+            "itemID": 3103,
+            "quality": 3,
+            "skillID": 15,
+            "battleEffectConditionId": 48,
+            "battleEffectConditionDescription": "[PassiveEffect]OnHpChange、概率50%、Buff目标对象1个Self、冷却10秒、持续时间10秒、生命值百分比:[0,0]、Buff权重0.9、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 74,
+            "armorName": "传奇腰带4",
+            "equipmentPart": 5,
+            "itemID": 3104,
+            "quality": 3,
+            "skillID": 17,
+            "battleEffectConditionId": 49,
+            "battleEffectConditionDescription": "[PassiveEffect]OnTakeDamage、概率50%、Buff目标对象1个Self、冷却10秒、持续时间10秒、受到伤害类型:None、受到伤害百分比:[0,0]、受到伤害:[0,0]、伤害来源:None、Buff权重0.9、Buff增益类型Multiplier"
+        },
+        {
+            "armorID": 75,
+            "armorName": "传奇腰带5",
+            "equipmentPart": 5,
+            "itemID": 3105,
+            "quality": 3,
+            "skillID": 19,
+            "battleEffectConditionId": 50,
+            "battleEffectConditionDescription": "[PassiveEffect]OnDeath、概率100%、Buff目标对象2个AllyPlayer、冷却10秒、持续时间10秒、Buff权重0.4、Buff增益类型CorrectionFactor"
+        }
+    ],
+    "constantBuffConfig": {
+        "instanceID": 41346
+    },
+    "battleEffectConditionConfig": {
+        "instanceID": 41348
+    }
+}

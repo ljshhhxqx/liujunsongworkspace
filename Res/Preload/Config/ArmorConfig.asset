@@ -138,7 +138,7 @@ MonoBehaviour:
     equipmentPart: 2
     itemID: 3045
     quality: 3
-    skillID: 21
+    skillID: 19
     battleEffectConditionId: 10
     battleEffectConditionDescription: "[PassiveEffect]OnMove\u3001\u6982\u738715%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53745\u79D2\u3001\u6301\u7EED\u65F6\u95F47\u79D2\u3001Buff\u6743\u91CD0.9\u3001Buff\u589E\u76CA\u7C7B\u578BExtra"
   - armorID: 16
@@ -234,7 +234,7 @@ MonoBehaviour:
     equipmentPart: 4
     itemID: 3057
     quality: 3
-    skillID: 18
+    skillID: 17
     battleEffectConditionId: 17
     battleEffectConditionDescription: "[PassiveEffect]OnTakeDamage\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u53D7\u5230\u4F24\u5BB3\u7C7B\u578B:None\u3001\u53D7\u5230\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u53D7\u5230\u4F24\u5BB3:[0,0]\u3001\u4F24\u5BB3\u6765\u6E90:None\u3001Buff\u6743\u91CD0.8\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
   - armorID: 28
@@ -242,7 +242,7 @@ MonoBehaviour:
     equipmentPart: 4
     itemID: 3058
     quality: 3
-    skillID: 21
+    skillID: 9
     battleEffectConditionId: 18
     battleEffectConditionDescription: "[PassiveEffect]OnAttack\u3001\u6982\u738780%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53745\u79D2\u3001\u6301\u7EED\u65F6\u95F410\u79D2\u3001\u653B\u51FB\u529B:0\u3001\u653B\u51FB\u8303\u56F4:None\u3001Buff\u6743\u91CD1\u3001Buff\u589E\u76CA\u7C7B\u578BBase"
   - armorID: 29
@@ -466,7 +466,7 @@ MonoBehaviour:
     equipmentPart: 1
     itemID: 3086
     quality: 3
-    skillID: 6
+    skillID: 7
     battleEffectConditionId: 36
     battleEffectConditionDescription: "[PassiveEffect]None\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53740\u79D2\u3001\u6301\u7EED\u65F6\u95F4-1\u79D2\u3001Buff\u6743\u91CD0.6\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
   - armorID: 57
@@ -594,7 +594,7 @@ MonoBehaviour:
     equipmentPart: 5
     itemID: 3102
     quality: 3
-    skillID: 12
+    skillID: 13
     battleEffectConditionId: 47
     battleEffectConditionDescription: "[PassiveEffect]OnAttack\u3001\u6982\u738770%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53747\u79D2\u3001\u6301\u7EED\u65F6\u95F47\u79D2\u3001\u653B\u51FB\u529B:0\u3001\u653B\u51FB\u8303\u56F4:None\u3001Buff\u6743\u91CD0.9\u3001Buff\u589E\u76CA\u7C7B\u578BBase"
   - armorID: 73
@@ -602,7 +602,7 @@ MonoBehaviour:
     equipmentPart: 5
     itemID: 3103
     quality: 3
-    skillID: 13
+    skillID: 15
     battleEffectConditionId: 48
     battleEffectConditionDescription: "[PassiveEffect]OnHpChange\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F410\u79D2\u3001\u751F\u547D\u503C\u767E\u5206\u6BD4:[0,0]\u3001Buff\u6743\u91CD0.9\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
   - armorID: 74
@@ -610,7 +610,7 @@ MonoBehaviour:
     equipmentPart: 5
     itemID: 3104
     quality: 3
-    skillID: 14
+    skillID: 17
     battleEffectConditionId: 49
     battleEffectConditionDescription: "[PassiveEffect]OnTakeDamage\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F410\u79D2\u3001\u53D7\u5230\u4F24\u5BB3\u7C7B\u578B:None\u3001\u53D7\u5230\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u53D7\u5230\u4F24\u5BB3:[0,0]\u3001\u4F24\u5BB3\u6765\u6E90:None\u3001Buff\u6743\u91CD0.9\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
   - armorID: 75
@@ -618,7 +618,7 @@ MonoBehaviour:
     equipmentPart: 5
     itemID: 3105
     quality: 3
-    skillID: 15
+    skillID: 19
     battleEffectConditionId: 50
     battleEffectConditionDescription: "[PassiveEffect]OnDeath\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C612\u4E2AAllyPlayer\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F410\u79D2\u3001Buff\u6743\u91CD0.4\u3001Buff\u589E\u76CA\u7C7B\u578BCorrectionFactor"
   constantBuffConfig: {fileID: 11400000, guid: 35e3c4f0b7f37c746b61bfdd3070e326, type: 2}

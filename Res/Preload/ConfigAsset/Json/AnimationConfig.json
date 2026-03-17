@@ -12,147 +12,402 @@
     "isArray": true,
     "animationInfos": [
         {
-            "state": 0,
-            "cost": 0.0,
-            "cooldown": 0.0,
-            "priority": 0,
-            "animationType": 0,
-            "canBeInterrupted": true,
-            "actionType": 0,
-            "animationNames": [],
-            "keyframeData": [],
-            "isClearVelocity": false,
-            "cooldownType": 0
-        },
-        {
             "state": 1,
             "cost": 0.0,
             "cooldown": 0.0,
             "priority": 0,
             "animationType": 0,
             "canBeInterrupted": true,
-            "actionType": 0,
-            "animationNames": [],
+            "actionType": 3,
+            "animationNames": [
+                "MoveBlend"
+            ],
             "keyframeData": [],
             "isClearVelocity": false,
-            "cooldownType": 0
+            "cooldownType": 0,
+            "noStrengthState": 0,
+            "showInHud": false,
+            "animationSpeed": 1.0,
+            "icon": "0",
+            "frame": 1,
+            "isOverrideCost": false,
+            "isOverrideCooldown": false,
+            "isOverridePriority": false,
+            "isOverrideAnimationSpeed": false
         },
         {
             "state": 2,
+            "cost": 0.0,
+            "cooldown": 0.0,
+            "priority": 0,
+            "animationType": 0,
+            "canBeInterrupted": true,
+            "actionType": 1,
+            "animationNames": [
+                "MoveBlend"
+            ],
+            "keyframeData": [],
+            "isClearVelocity": false,
+            "cooldownType": 0,
+            "noStrengthState": 0,
+            "showInHud": false,
+            "animationSpeed": 1.0,
+            "icon": "0",
+            "frame": 1,
+            "isOverrideCost": false,
+            "isOverrideCooldown": false,
+            "isOverridePriority": false,
+            "isOverrideAnimationSpeed": false
+        },
+        {
+            "state": 4,
             "cost": 15.0,
             "cooldown": 0.0,
             "priority": 0,
             "animationType": 0,
             "canBeInterrupted": true,
-            "actionType": 0,
-            "animationNames": [],
+            "actionType": 1,
+            "animationNames": [
+                "MoveBlend"
+            ],
             "keyframeData": [],
             "isClearVelocity": false,
-            "cooldownType": 0
+            "cooldownType": 0,
+            "noStrengthState": 2,
+            "showInHud": false,
+            "animationSpeed": 1.0,
+            "icon": "0",
+            "frame": 1,
+            "isOverrideCost": false,
+            "isOverrideCooldown": false,
+            "isOverridePriority": false,
+            "isOverrideAnimationSpeed": false
         },
         {
-            "state": 3,
+            "state": 8,
             "cost": 10.0,
             "cooldown": 1.0,
-            "priority": 1,
+            "priority": 2,
             "animationType": 1,
             "canBeInterrupted": true,
-            "actionType": 0,
-            "animationNames": [],
+            "actionType": 1,
+            "animationNames": [
+                "Jump"
+            ],
             "keyframeData": [],
             "isClearVelocity": false,
-            "cooldownType": 0
+            "cooldownType": 0,
+            "noStrengthState": 0,
+            "showInHud": true,
+            "animationSpeed": 1.0,
+            "icon": "Jump",
+            "frame": 1,
+            "isOverrideCost": false,
+            "isOverrideCooldown": false,
+            "isOverridePriority": false,
+            "isOverrideAnimationSpeed": false
         },
         {
-            "state": 4,
+            "state": 16,
             "cost": 12.0,
             "cooldown": 1.0,
-            "priority": 1,
+            "priority": 2,
             "animationType": 1,
             "canBeInterrupted": true,
-            "actionType": 0,
-            "animationNames": [],
+            "actionType": 1,
+            "animationNames": [
+                "JumpMove"
+            ],
             "keyframeData": [],
             "isClearVelocity": false,
-            "cooldownType": 0
+            "cooldownType": 0,
+            "noStrengthState": 0,
+            "showInHud": true,
+            "animationSpeed": 1.0,
+            "icon": "SprintJump",
+            "frame": 1,
+            "isOverrideCost": false,
+            "isOverrideCooldown": false,
+            "isOverridePriority": false,
+            "isOverrideAnimationSpeed": false
         },
         {
-            "state": 5,
+            "state": 32,
             "cost": 20.0,
             "cooldown": 2.0,
-            "priority": 1,
+            "priority": 2,
             "animationType": 1,
             "canBeInterrupted": false,
-            "actionType": 0,
-            "animationNames": [],
-            "keyframeData": [],
-            "isClearVelocity": false,
-            "cooldownType": 0
+            "actionType": 2,
+            "animationNames": [
+                "Roll"
+            ],
+            "keyframeData": [
+                {
+                    "triggerTime": 0.05000000074505806,
+                    "eventType": 0,
+                    "resetCooldown": false,
+                    "resetCooldownWindowTime": 0.0,
+                    "tolerance": 0.05000000074505806,
+                    "serverValidate": true
+                },
+                {
+                    "triggerTime": 0.3499999940395355,
+                    "eventType": 1,
+                    "resetCooldown": false,
+                    "resetCooldownWindowTime": 0.0,
+                    "tolerance": 0.05000000074505806,
+                    "serverValidate": true
+                }
+            ],
+            "isClearVelocity": true,
+            "cooldownType": 1,
+            "noStrengthState": 0,
+            "showInHud": true,
+            "animationSpeed": 1.0,
+            "icon": "Roll",
+            "frame": 2,
+            "isOverrideCost": false,
+            "isOverrideCooldown": false,
+            "isOverridePriority": false,
+            "isOverrideAnimationSpeed": false
         },
         {
-            "state": 6,
+            "state": 64,
             "cost": 0.0,
             "cooldown": 0.0,
             "priority": 0,
             "animationType": 0,
             "canBeInterrupted": false,
-            "actionType": 0,
-            "animationNames": [],
+            "actionType": 3,
+            "animationNames": [
+                "Falling"
+            ],
             "keyframeData": [],
             "isClearVelocity": false,
-            "cooldownType": 0
+            "cooldownType": 0,
+            "noStrengthState": 0,
+            "showInHud": false,
+            "animationSpeed": 1.0,
+            "icon": "0",
+            "frame": 1,
+            "isOverrideCost": false,
+            "isOverrideCooldown": false,
+            "isOverridePriority": false,
+            "isOverrideAnimationSpeed": false
         },
         {
-            "state": 7,
+            "state": 128,
             "cost": 0.0,
             "cooldown": 0.0,
             "priority": 0,
             "animationType": 1,
             "canBeInterrupted": true,
-            "actionType": 0,
-            "animationNames": [],
+            "actionType": 3,
+            "animationNames": [
+                "Landed"
+            ],
             "keyframeData": [],
             "isClearVelocity": false,
-            "cooldownType": 0
+            "cooldownType": 0,
+            "noStrengthState": 0,
+            "showInHud": false,
+            "animationSpeed": 1.0,
+            "icon": "0",
+            "frame": 1,
+            "isOverrideCost": false,
+            "isOverrideCooldown": false,
+            "isOverridePriority": false,
+            "isOverrideAnimationSpeed": false
         },
         {
-            "state": 8,
+            "state": 256,
             "cost": 10.0,
             "cooldown": 2.0,
-            "priority": 1,
+            "priority": 2,
             "animationType": 2,
             "canBeInterrupted": true,
-            "actionType": 0,
-            "animationNames": [],
-            "keyframeData": [],
-            "isClearVelocity": false,
-            "cooldownType": 0
+            "actionType": 2,
+            "animationNames": [
+                "Attack1",
+                "Attack2",
+                "Attack3"
+            ],
+            "keyframeData": [
+                {
+                    "triggerTime": 0.5600000023841858,
+                    "eventType": 2,
+                    "resetCooldown": true,
+                    "resetCooldownWindowTime": 1.0,
+                    "tolerance": 0.03999999910593033,
+                    "serverValidate": true
+                },
+                {
+                    "triggerTime": 0.5699999928474426,
+                    "eventType": 2,
+                    "resetCooldown": true,
+                    "resetCooldownWindowTime": 1.0,
+                    "tolerance": 0.03999999910593033,
+                    "serverValidate": true
+                },
+                {
+                    "triggerTime": 0.3499999940395355,
+                    "eventType": 2,
+                    "resetCooldown": true,
+                    "resetCooldownWindowTime": 1.0,
+                    "tolerance": 0.03999999910593033,
+                    "serverValidate": true
+                }
+            ],
+            "isClearVelocity": true,
+            "cooldownType": 3,
+            "noStrengthState": 0,
+            "showInHud": true,
+            "animationSpeed": 1.0,
+            "icon": "Attack",
+            "frame": 2,
+            "isOverrideCost": false,
+            "isOverrideCooldown": false,
+            "isOverridePriority": false,
+            "isOverrideAnimationSpeed": false
         },
         {
-            "state": 9,
+            "state": 512,
             "cost": 0.0,
-            "cooldown": 0.0,
+            "cooldown": 10.0,
             "priority": 999,
             "animationType": 1,
             "canBeInterrupted": false,
-            "actionType": 0,
-            "animationNames": [],
+            "actionType": 2,
+            "animationNames": [
+                "Death"
+            ],
             "keyframeData": [],
-            "isClearVelocity": false,
-            "cooldownType": 0
+            "isClearVelocity": true,
+            "cooldownType": 0,
+            "noStrengthState": 0,
+            "showInHud": false,
+            "animationSpeed": 1.0,
+            "icon": "0",
+            "frame": 1,
+            "isOverrideCost": false,
+            "isOverrideCooldown": false,
+            "isOverridePriority": false,
+            "isOverrideAnimationSpeed": false
         },
         {
-            "state": 10,
+            "state": 1024,
             "cost": 0.0,
             "cooldown": 0.0,
+            "priority": 1,
+            "animationType": 1,
+            "canBeInterrupted": true,
+            "actionType": 2,
+            "animationNames": [
+                "Hit"
+            ],
+            "keyframeData": [],
+            "isClearVelocity": true,
+            "cooldownType": 0,
+            "noStrengthState": 0,
+            "showInHud": false,
+            "animationSpeed": 1.0,
+            "icon": "0",
+            "frame": 1,
+            "isOverrideCost": false,
+            "isOverrideCooldown": false,
+            "isOverridePriority": false,
+            "isOverrideAnimationSpeed": false
+        },
+        {
+            "state": 2048,
+            "cost": 0.0,
+            "cooldown": 0.0,
+            "priority": 1,
+            "animationType": 1,
+            "canBeInterrupted": true,
+            "actionType": 2,
+            "animationNames": [
+                "Collect"
+            ],
+            "keyframeData": [],
+            "isClearVelocity": false,
+            "cooldownType": 0,
+            "noStrengthState": 0,
+            "showInHud": false,
+            "animationSpeed": 1.0,
+            "icon": "0",
+            "frame": 1,
+            "isOverrideCost": false,
+            "isOverrideCooldown": false,
+            "isOverridePriority": false,
+            "isOverrideAnimationSpeed": false
+        },
+        {
+            "state": 4096,
+            "cost": 70.0,
+            "cooldown": 15.0,
             "priority": 2,
             "animationType": 1,
             "canBeInterrupted": true,
-            "actionType": 0,
-            "animationNames": [],
-            "keyframeData": [],
-            "isClearVelocity": false,
-            "cooldownType": 0
+            "actionType": 2,
+            "animationNames": [
+                "Skill"
+            ],
+            "keyframeData": [
+                {
+                    "triggerTime": 0.75,
+                    "eventType": 3,
+                    "resetCooldown": false,
+                    "resetCooldownWindowTime": 0.0,
+                    "tolerance": 0.10000000149011612,
+                    "serverValidate": true
+                }
+            ],
+            "isClearVelocity": true,
+            "cooldownType": 1,
+            "noStrengthState": 0,
+            "showInHud": true,
+            "animationSpeed": 1.5,
+            "icon": "SkillE",
+            "frame": 2,
+            "isOverrideCost": true,
+            "isOverrideCooldown": true,
+            "isOverridePriority": false,
+            "isOverrideAnimationSpeed": false
+        },
+        {
+            "state": 8192,
+            "cost": 70.0,
+            "cooldown": 15.0,
+            "priority": 2,
+            "animationType": 1,
+            "canBeInterrupted": true,
+            "actionType": 2,
+            "animationNames": [
+                "Skill"
+            ],
+            "keyframeData": [
+                {
+                    "triggerTime": 1.25,
+                    "eventType": 4,
+                    "resetCooldown": false,
+                    "resetCooldownWindowTime": 0.0,
+                    "tolerance": 0.10000000149011612,
+                    "serverValidate": true
+                }
+            ],
+            "isClearVelocity": true,
+            "cooldownType": 1,
+            "noStrengthState": 0,
+            "showInHud": true,
+            "animationSpeed": 1.0,
+            "icon": "SkillQ",
+            "frame": 3,
+            "isOverrideCost": true,
+            "isOverrideCooldown": true,
+            "isOverridePriority": false,
+            "isOverrideAnimationSpeed": false
         }
     ]
 }

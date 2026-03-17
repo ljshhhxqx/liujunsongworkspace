@@ -71,7 +71,7 @@ MonoBehaviour:
     itemID: 3006
     quality: 3
     weaponType: 2
-    skillID: 2
+    skillID: 3
     battleEffectConditionId: 54
     battleEffectConditionDescription: "[PassiveEffect]OnHpChange\u3001\u6982\u738780%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53747\u79D2\u3001\u6301\u7EED\u65F6\u95F47\u79D2\u3001\u751F\u547D\u503C\u767E\u5206\u6BD4:[0,0]\u3001Buff\u6743\u91CD0.8\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
     prefabName: Sword2_Yellow
@@ -98,7 +98,7 @@ MonoBehaviour:
     itemID: 3009
     quality: 3
     weaponType: 3
-    skillID: 3
+    skillID: 5
     battleEffectConditionId: 56
     battleEffectConditionDescription: "[PassiveEffect]OnMove\u3001\u6982\u738710%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53747\u79D2\u3001\u6301\u7EED\u65F6\u95F47\u79D2\u3001Buff\u6743\u91CD1\u3001Buff\u589E\u76CA\u7C7B\u578BExtra"
     prefabName: Sword3_Red
@@ -125,7 +125,7 @@ MonoBehaviour:
     itemID: 3012
     quality: 3
     weaponType: 4
-    skillID: 4
+    skillID: 7
     battleEffectConditionId: 58
     battleEffectConditionDescription: "[PassiveEffect]OnCriticalHit\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53745\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u76EE\u6807\u7C7B\u578B:Enemy\u3001\u9020\u6210\u4F24\u5BB3\u7C7B\u578B:None\u3001\u9020\u6210\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u9020\u6210\u4F24\u5BB3:[0,0]\u3001\u4F24\u5BB3\u6765\u6E90:None\u3001Buff\u6743\u91CD0.8\u3001Buff\u589E\u76CA\u7C7B\u578BBase"
     prefabName: Sword4_Yellow
@@ -152,7 +152,7 @@ MonoBehaviour:
     itemID: 3015
     quality: 3
     weaponType: 5
-    skillID: 5
+    skillID: 10
     battleEffectConditionId: 60
     battleEffectConditionDescription: "[PassiveEffect]OnAttackHit\u3001\u6982\u738770%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53747\u79D2\u3001\u6301\u7EED\u65F6\u95F410\u79D2\u3001\u76EE\u6807\u7C7B\u578B:Enemy\u3001\u9020\u6210\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u9020\u6210\u4F24\u5BB3:[0,0]\u3001\u653B\u51FB\u8303\u56F4:None\u3001Buff\u6743\u91CD0.85\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
     prefabName: Sword5_Gold
@@ -161,7 +161,7 @@ MonoBehaviour:
     itemID: 3016
     quality: 3
     weaponType: 5
-    skillID: 5
+    skillID: 11
     battleEffectConditionId: 61
     battleEffectConditionDescription: "[PassiveEffect]OnAttackHit\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53747\u79D2\u3001\u6301\u7EED\u65F6\u95F47\u79D2\u3001\u76EE\u6807\u7C7B\u578B:Enemy\u3001\u9020\u6210\u4F24\u5BB3\u767E\u5206\u6BD4:[20%,20%]\u3001\u9020\u6210\u4F24\u5BB3:[0,0]\u3001\u653B\u51FB\u8303\u56F4:None\u3001Buff\u6743\u91CD1\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
     prefabName: Sword5_Yellow
@@ -188,7 +188,7 @@ MonoBehaviour:
     itemID: 3019
     quality: 3
     weaponType: 6
-    skillID: 6
+    skillID: 15
     battleEffectConditionId: 63
     battleEffectConditionDescription: "[PassiveEffect]OnAttack\u3001\u6982\u738740%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53748\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u653B\u51FB\u529B:0\u3001\u653B\u51FB\u8303\u56F4:None\u3001Buff\u6743\u91CD0.85\u3001Buff\u589E\u76CA\u7C7B\u578BBase"
     prefabName: Sword6_Yellow
@@ -215,7 +215,7 @@ MonoBehaviour:
     itemID: 3022
     quality: 3
     weaponType: 7
-    skillID: 7
+    skillID: 17
     battleEffectConditionId: 65
     battleEffectConditionDescription: "[PassiveEffect]OnSkillHit\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F47.5\u79D2\u3001\u76EE\u6807\u7C7B\u578B:None\u3001\u6280\u80FD\u7C7B\u578B:None\u3001\u6D88\u8017MP\u767E\u5206\u6BD4:[0,0]\u3001\u9020\u6210\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u9020\u6210\u4F24\u5BB3:[0,0]\u3001Buff\u6743\u91CD0.8\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
     prefabName: Sword7_Red
@@ -242,7 +242,7 @@ MonoBehaviour:
     itemID: 3025
     quality: 3
     weaponType: 8
-    skillID: 8
+    skillID: 19
     battleEffectConditionId: 67
     battleEffectConditionDescription: "[PassiveEffect]OnSkillCast\u3001\u6982\u738780%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u53745\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u6280\u80FD\u7C7B\u578B:None\u3001\u6D88\u8017MP\u767E\u5206\u6BD4:[0,0]\u3001Buff\u6743\u91CD0.8\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
     prefabName: Sword8_Gold
@@ -278,7 +278,7 @@ MonoBehaviour:
     itemID: 3029
     quality: 3
     weaponType: 9
-    skillID: 9
+    skillID: 8
     battleEffectConditionId: 70
     battleEffectConditionDescription: "[PassiveEffect]OnTakeDamage\u3001\u6982\u738750%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F45\u79D2\u3001\u53D7\u5230\u4F24\u5BB3\u7C7B\u578B:None\u3001\u53D7\u5230\u4F24\u5BB3\u767E\u5206\u6BD4:[0,0]\u3001\u53D7\u5230\u4F24\u5BB3:[0,0]\u3001\u4F24\u5BB3\u6765\u6E90:None\u3001Buff\u6743\u91CD0.8\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
     prefabName: Sword9_Purple
@@ -287,7 +287,7 @@ MonoBehaviour:
     itemID: 3030
     quality: 3
     weaponType: 9
-    skillID: 9
+    skillID: 12
     battleEffectConditionId: 71
     battleEffectConditionDescription: "[PassiveEffect]OnTakeDamage\u3001\u6982\u7387100%\u3001Buff\u76EE\u6807\u5BF9\u8C611\u4E2ASelf\u3001\u51B7\u537410\u79D2\u3001\u6301\u7EED\u65F6\u95F410\u79D2\u3001\u53D7\u5230\u4F24\u5BB3\u7C7B\u578B:None\u3001\u53D7\u5230\u4F24\u5BB3\u767E\u5206\u6BD4:[20%,20%]\u3001\u53D7\u5230\u4F24\u5BB3:[0,0]\u3001\u4F24\u5BB3\u6765\u6E90:None\u3001Buff\u6743\u91CD0.8\u3001Buff\u589E\u76CA\u7C7B\u578BMultiplier"
     prefabName: Sword9_Red

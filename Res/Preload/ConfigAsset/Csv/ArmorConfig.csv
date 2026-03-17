@@ -14,7 +14,7 @@ int,int,string,EquipmentPart,int,QualityType,int,string
 12,3042,传奇上衣2,Body,10,Legendary,7,"[PassiveEffect]OnTakeDamage、概率80%、Buff目标对象1个Self、冷却5秒、持续时间7秒、受到伤害类型:None、受到伤害百分比:[0,0]、受到伤害:[0,0]、伤害来源:None、Buff权重0.9、Buff增益类型Multiplier"
 13,3043,传奇上衣3,Body,15,Legendary,8,"[PassiveEffect]OnHpChange、概率80%、Buff目标对象1个Self、冷却7秒、持续时间7秒、生命值百分比:[0,0]、Buff权重0.9、Buff增益类型Multiplier"
 14,3044,传奇上衣4,Body,17,Legendary,9,[PassiveEffect]OnAttack、概率80%、Buff目标对象1个Self、冷却8秒、持续时间5秒、攻击力:0、攻击范围:None、Buff权重0.9、Buff增益类型Base
-15,3045,传奇上衣5,Body,21,Legendary,10,[PassiveEffect]OnMove、概率15%、Buff目标对象1个Self、冷却5秒、持续时间7秒、Buff权重0.9、Buff增益类型Extra
+15,3045,传奇上衣5,Body,19,Legendary,10,[PassiveEffect]OnMove、概率15%、Buff目标对象1个Self、冷却5秒、持续时间7秒、Buff权重0.9、Buff增益类型Extra
 16,3046,普通鞋子1,Feet,0,Normal,0,0
 17,3047,普通鞋子2,Feet,0,Normal,0,0
 18,3048,普通鞋子3,Feet,0,Normal,0,0
@@ -26,8 +26,8 @@ int,int,string,EquipmentPart,int,QualityType,int,string
 24,3054,稀有鞋子4,Feet,0,Rare,14,[PassiveEffect]OnMove、概率5%、Buff目标对象1个Self、冷却10秒、持续时间5秒、Buff权重0.9、Buff增益类型Extra
 25,3055,稀有鞋子5,Feet,0,Rare,15,"[PassiveEffect]OnManaChange、概率20%、Buff目标对象1个Self、冷却10秒、持续时间5秒、魔法值百分比:[0,0]、Buff权重0.75、Buff增益类型Multiplier"
 26,3056,传奇鞋子1,Feet,16,Legendary,16,[PassiveEffect]None、概率100%、Buff目标对象1个Self、冷却0秒、持续时间-1秒、Buff权重0.75、Buff增益类型Multiplier
-27,3057,传奇鞋子2,Feet,18,Legendary,17,"[PassiveEffect]OnTakeDamage、概率50%、Buff目标对象1个Self、冷却10秒、持续时间5秒、受到伤害类型:None、受到伤害百分比:[0,0]、受到伤害:[0,0]、伤害来源:None、Buff权重0.8、Buff增益类型Multiplier"
-28,3058,传奇鞋子3,Feet,21,Legendary,18,[PassiveEffect]OnAttack、概率80%、Buff目标对象1个Self、冷却5秒、持续时间10秒、攻击力:0、攻击范围:None、Buff权重1、Buff增益类型Base
+27,3057,传奇鞋子2,Feet,17,Legendary,17,"[PassiveEffect]OnTakeDamage、概率50%、Buff目标对象1个Self、冷却10秒、持续时间5秒、受到伤害类型:None、受到伤害百分比:[0,0]、受到伤害:[0,0]、伤害来源:None、Buff权重0.8、Buff增益类型Multiplier"
+28,3058,传奇鞋子3,Feet,9,Legendary,18,[PassiveEffect]OnAttack、概率80%、Buff目标对象1个Self、冷却5秒、持续时间10秒、攻击力:0、攻击范围:None、Buff权重1、Buff增益类型Base
 29,3059,传奇鞋子4,Feet,11,Legendary,19,[PassiveEffect]OnMove、概率15%、Buff目标对象1个Self、冷却10秒、持续时间10秒、Buff权重1、Buff增益类型Extra
 30,3060,传奇鞋子5,Feet,14,Legendary,20,"[PassiveEffect]OnManaChange、概率30%、Buff目标对象1个Self、冷却10秒、持续时间7秒、魔法值百分比:[0,0]、Buff权重0.75、Buff增益类型Multiplier"
 31,3061,普通裤子1,Leg,0,Normal,0,0
@@ -55,7 +55,7 @@ int,int,string,EquipmentPart,int,QualityType,int,string
 53,3083,稀有头盔3,Head,0,Rare,33,"[PassiveEffect]OnAttackHit、概率50%、Buff目标对象1个Self、冷却10秒、持续时间7秒、目标类型:Enemy、造成伤害百分比:[0,0]、造成伤害:[0,0]、攻击范围:None、Buff权重0.25、Buff增益类型Multiplier"
 54,3084,稀有头盔4,Head,0,Rare,34,"[PassiveEffect]OnCriticalHit、概率100%、Buff目标对象1个Self、冷却10秒、持续时间5秒、目标类型:Enemy、造成伤害类型:None、造成伤害百分比:[0,0]、造成伤害:[0,0]、伤害来源:None、Buff权重0.35、Buff增益类型Base"
 55,3085,稀有头盔5,Head,0,Rare,35,"[PassiveEffect]OnSkillHit、概率100%、Buff目标对象1个Self、冷却10秒、持续时间7.5秒、目标类型:Enemy、技能类型:None、消耗MP百分比:[0,0]、造成伤害百分比:[0,0]、造成伤害:[0,0]、Buff权重0.35、Buff增益类型Multiplier"
-56,3086,传奇头盔1,Head,6,Legendary,36,[PassiveEffect]None、概率100%、Buff目标对象1个Self、冷却0秒、持续时间-1秒、Buff权重0.6、Buff增益类型Multiplier
+56,3086,传奇头盔1,Head,7,Legendary,36,[PassiveEffect]None、概率100%、Buff目标对象1个Self、冷却0秒、持续时间-1秒、Buff权重0.6、Buff增益类型Multiplier
 57,3087,传奇头盔2,Head,7,Legendary,37,[PassiveEffect]OnAttack、概率80%、Buff目标对象1个Self、冷却7秒、持续时间7秒、攻击力:0、攻击范围:None、Buff权重0.8、Buff增益类型Base
 58,3088,传奇头盔3,Head,8,Legendary,38,"[PassiveEffect]OnAttackHit、概率80%、Buff目标对象1个Self、冷却10秒、持续时间10秒、目标类型:Enemy、造成伤害百分比:[0,0]、造成伤害:[0,0]、攻击范围:None、Buff权重0.9、Buff增益类型Multiplier"
 59,3089,传奇头盔4,Head,9,Legendary,39,"[PassiveEffect]OnCriticalHit、概率100%、Buff目标对象1个Self、冷却5秒、持续时间10秒、目标类型:Enemy、造成伤害类型:None、造成伤害百分比:[0,0]、造成伤害:[0,0]、伤害来源:None、Buff权重1、Buff增益类型Base"
@@ -71,7 +71,7 @@ int,int,string,EquipmentPart,int,QualityType,int,string
 69,3099,稀有腰带4,Waist,0,Rare,44,"[PassiveEffect]OnTakeDamage、概率50%、Buff目标对象1个Self、冷却10秒、持续时间5秒、受到伤害类型:None、受到伤害百分比:[0,0]、受到伤害:[0,0]、伤害来源:None、Buff权重0.25、Buff增益类型Multiplier"
 70,3100,稀有腰带5,Waist,0,Rare,45,[PassiveEffect]OnDeath、概率100%、Buff目标对象2个AllyPlayer、冷却30秒、持续时间15秒、Buff权重0.15、Buff增益类型CorrectionFactor
 71,3101,传奇腰带1,Waist,11,Legendary,46,[PassiveEffect]None、概率100%、Buff目标对象1个Self、冷却0秒、持续时间-1秒、Buff权重0.6、Buff增益类型Multiplier
-72,3102,传奇腰带2,Waist,12,Legendary,47,[PassiveEffect]OnAttack、概率70%、Buff目标对象1个Self、冷却7秒、持续时间7秒、攻击力:0、攻击范围:None、Buff权重0.9、Buff增益类型Base
-73,3103,传奇腰带3,Waist,13,Legendary,48,"[PassiveEffect]OnHpChange、概率50%、Buff目标对象1个Self、冷却10秒、持续时间10秒、生命值百分比:[0,0]、Buff权重0.9、Buff增益类型Multiplier"
-74,3104,传奇腰带4,Waist,14,Legendary,49,"[PassiveEffect]OnTakeDamage、概率50%、Buff目标对象1个Self、冷却10秒、持续时间10秒、受到伤害类型:None、受到伤害百分比:[0,0]、受到伤害:[0,0]、伤害来源:None、Buff权重0.9、Buff增益类型Multiplier"
-75,3105,传奇腰带5,Waist,15,Legendary,50,[PassiveEffect]OnDeath、概率100%、Buff目标对象2个AllyPlayer、冷却10秒、持续时间10秒、Buff权重0.4、Buff增益类型CorrectionFactor
+72,3102,传奇腰带2,Waist,13,Legendary,47,[PassiveEffect]OnAttack、概率70%、Buff目标对象1个Self、冷却7秒、持续时间7秒、攻击力:0、攻击范围:None、Buff权重0.9、Buff增益类型Base
+73,3103,传奇腰带3,Waist,15,Legendary,48,"[PassiveEffect]OnHpChange、概率50%、Buff目标对象1个Self、冷却10秒、持续时间10秒、生命值百分比:[0,0]、Buff权重0.9、Buff增益类型Multiplier"
+74,3104,传奇腰带4,Waist,17,Legendary,49,"[PassiveEffect]OnTakeDamage、概率50%、Buff目标对象1个Self、冷却10秒、持续时间10秒、受到伤害类型:None、受到伤害百分比:[0,0]、受到伤害:[0,0]、伤害来源:None、Buff权重0.9、Buff增益类型Multiplier"
+75,3105,传奇腰带5,Waist,19,Legendary,50,[PassiveEffect]OnDeath、概率100%、Buff目标对象2个AllyPlayer、冷却10秒、持续时间10秒、Buff权重0.4、Buff增益类型CorrectionFactor

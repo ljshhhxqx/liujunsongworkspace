@@ -72,7 +72,7 @@
             "itemID": 3006,
             "quality": 3,
             "weaponType": 2,
-            "skillID": 2,
+            "skillID": 3,
             "battleEffectConditionId": 54,
             "battleEffectConditionDescription": "[PassiveEffect]OnHpChange、概率80%、Buff目标对象1个Self、冷却7秒、持续时间7秒、生命值百分比:[0,0]、Buff权重0.8、Buff增益类型Multiplier",
             "prefabName": "Sword2_Yellow"
@@ -105,7 +105,7 @@
             "itemID": 3009,
             "quality": 3,
             "weaponType": 3,
-            "skillID": 3,
+            "skillID": 5,
             "battleEffectConditionId": 56,
             "battleEffectConditionDescription": "[PassiveEffect]OnMove、概率10%、Buff目标对象1个Self、冷却7秒、持续时间7秒、Buff权重1、Buff增益类型Extra",
             "prefabName": "Sword3_Red"
@@ -138,7 +138,7 @@
             "itemID": 3012,
             "quality": 3,
             "weaponType": 4,
-            "skillID": 4,
+            "skillID": 7,
             "battleEffectConditionId": 58,
             "battleEffectConditionDescription": "[PassiveEffect]OnCriticalHit、概率100%、Buff目标对象1个Self、冷却5秒、持续时间5秒、目标类型:Enemy、造成伤害类型:None、造成伤害百分比:[0,0]、造成伤害:[0,0]、伤害来源:None、Buff权重0.8、Buff增益类型Base",
             "prefabName": "Sword4_Yellow"
@@ -171,7 +171,7 @@
             "itemID": 3015,
             "quality": 3,
             "weaponType": 5,
-            "skillID": 5,
+            "skillID": 10,
             "battleEffectConditionId": 60,
             "battleEffectConditionDescription": "[PassiveEffect]OnAttackHit、概率70%、Buff目标对象1个Self、冷却7秒、持续时间10秒、目标类型:Enemy、造成伤害百分比:[0,0]、造成伤害:[0,0]、攻击范围:None、Buff权重0.85、Buff增益类型Multiplier",
             "prefabName": "Sword5_Gold"
@@ -182,7 +182,7 @@
             "itemID": 3016,
             "quality": 3,
             "weaponType": 5,
-            "skillID": 5,
+            "skillID": 11,
             "battleEffectConditionId": 61,
             "battleEffectConditionDescription": "[PassiveEffect]OnAttackHit、概率50%、Buff目标对象1个Self、冷却7秒、持续时间7秒、目标类型:Enemy、造成伤害百分比:[20%,20%]、造成伤害:[0,0]、攻击范围:None、Buff权重1、Buff增益类型Multiplier",
             "prefabName": "Sword5_Yellow"
@@ -215,7 +215,7 @@
             "itemID": 3019,
             "quality": 3,
             "weaponType": 6,
-            "skillID": 6,
+            "skillID": 15,
             "battleEffectConditionId": 63,
             "battleEffectConditionDescription": "[PassiveEffect]OnAttack、概率40%、Buff目标对象1个Self、冷却8秒、持续时间5秒、攻击力:0、攻击范围:None、Buff权重0.85、Buff增益类型Base",
             "prefabName": "Sword6_Yellow"
@@ -248,7 +248,7 @@
             "itemID": 3022,
             "quality": 3,
             "weaponType": 7,
-            "skillID": 7,
+            "skillID": 17,
             "battleEffectConditionId": 65,
             "battleEffectConditionDescription": "[PassiveEffect]OnSkillHit、概率100%、Buff目标对象1个Self、冷却10秒、持续时间7.5秒、目标类型:None、技能类型:None、消耗MP百分比:[0,0]、造成伤害百分比:[0,0]、造成伤害:[0,0]、Buff权重0.8、Buff增益类型Multiplier",
             "prefabName": "Sword7_Red"
@@ -281,7 +281,7 @@
             "itemID": 3025,
             "quality": 3,
             "weaponType": 8,
-            "skillID": 8,
+            "skillID": 19,
             "battleEffectConditionId": 67,
             "battleEffectConditionDescription": "[PassiveEffect]OnSkillCast、概率80%、Buff目标对象1个Self、冷却5秒、持续时间5秒、技能类型:None、消耗MP百分比:[0,0]、Buff权重0.8、Buff增益类型Multiplier",
             "prefabName": "Sword8_Gold"
@@ -325,7 +325,7 @@
             "itemID": 3029,
             "quality": 3,
             "weaponType": 9,
-            "skillID": 9,
+            "skillID": 8,
             "battleEffectConditionId": 70,
             "battleEffectConditionDescription": "[PassiveEffect]OnTakeDamage、概率50%、Buff目标对象1个Self、冷却10秒、持续时间5秒、受到伤害类型:None、受到伤害百分比:[0,0]、受到伤害:[0,0]、伤害来源:None、Buff权重0.8、Buff增益类型Multiplier",
             "prefabName": "Sword9_Purple"
@@ -336,16 +336,16 @@
             "itemID": 3030,
             "quality": 3,
             "weaponType": 9,
-            "skillID": 9,
+            "skillID": 12,
             "battleEffectConditionId": 71,
             "battleEffectConditionDescription": "[PassiveEffect]OnTakeDamage、概率100%、Buff目标对象1个Self、冷却10秒、持续时间10秒、受到伤害类型:None、受到伤害百分比:[20%,20%]、受到伤害:[0,0]、伤害来源:None、Buff权重0.8、Buff增益类型Multiplier",
             "prefabName": "Sword9_Red"
         }
     ],
     "constantBuffConfig": {
-        "instanceID": 40746
+        "instanceID": 41346
     },
     "battleEffectConditionConfig": {
-        "instanceID": 40748
+        "instanceID": 41348
     }
 }

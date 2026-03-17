@@ -2445,13 +2445,23 @@
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
+            "Name": "ArmorConfig",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/ConfigAsset/Json/ArmorConfig.json"
+        },
+        {
+            "UID": 4700019,
+            "ResourceType": "UnityEngine.TextAsset",
+            "AssetType": 5,
+            "Extension": ".json",
             "Name": "ChestDataConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/ConfigAsset/Json/ChestDataConfig.json"
         },
         {
-            "UID": 4700019,
+            "UID": 4700020,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -2461,7 +2471,7 @@
             "Address": "/Preload/ConfigAsset/Json/CollectObjectDataConfig.json"
         },
         {
-            "UID": 4700020,
+            "UID": 4700021,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -2471,7 +2481,7 @@
             "Address": "/Preload/ConfigAsset/Json/ConstantBuffConfig.json"
         },
         {
-            "UID": 4700021,
+            "UID": 4700022,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -2481,7 +2491,7 @@
             "Address": "/Preload/ConfigAsset/Json/ItemConfig.json"
         },
         {
-            "UID": 4700022,
+            "UID": 4700023,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -2491,7 +2501,7 @@
             "Address": "/Preload/ConfigAsset/Json/JsonDataConfig.json"
         },
         {
-            "UID": 4700023,
+            "UID": 4700024,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -2501,7 +2511,7 @@
             "Address": "/Preload/ConfigAsset/Json/MapConfig.json"
         },
         {
-            "UID": 4700024,
+            "UID": 4700025,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -2511,7 +2521,7 @@
             "Address": "/Preload/ConfigAsset/Json/PropertyConfig.json"
         },
         {
-            "UID": 4700025,
+            "UID": 4700026,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -2521,7 +2531,7 @@
             "Address": "/Preload/ConfigAsset/Json/RandomBuffConfig.json"
         },
         {
-            "UID": 4700026,
+            "UID": 4700027,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
@@ -2531,7 +2541,7 @@
             "Address": "/Preload/ConfigAsset/Json/WeaponConfig.json"
         },
         {
-            "UID": 4700027,
+            "UID": 4700028,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",

@@ -283,7 +283,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     {
                         if (_playerAnimiationDatas.ContainsKey(x))
                         {
-                            _playerAnimiationDatas[x] = z;
+                            _playerAnimiationDatas[x] = y;
                             var item = contentItemList.ReplaceItem<AnimationStateData, AnimationItem>(x, z);
                             if (item.TryGetComponent<VirtualButton>(out var btn))
                             {

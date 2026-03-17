@@ -93,9 +93,10 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 .AddTo(_disposables);
             shopItem.ObserveUpdate((x, y,z) =>
                 {
-                    if (_currentItemData is RandomShopItemData randomShopItemData && randomShopItemData.ShopId == z.ShopId && !randomShopItemData.Equals(z))
+                    if (_currentItemData is RandomShopItemData randomShopItemData && randomShopItemData.ShopId == y.ShopId && !randomShopItemData.Equals(y))
                     {
-                        OpenShop(z);
+                        Debug.Log($"shop item update - {y}");
+                        OpenShop(y);
                     }
                 })
                 .AddTo(_disposables);
@@ -109,9 +110,10 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 .AddTo(_disposables);
             bagItem.ObserveUpdate((x, y,z) =>
                 {
-                    if (_currentItemData is BagItemData bagItemData && z.ConfigId == bagItemData.ConfigId && !bagItemData.Equals(z))
+                    if (_currentItemData is BagItemData bagItemData && y.ConfigId == bagItemData.ConfigId && !bagItemData.Equals(y))
                     {
-                        OpenBag(z);
+                        Debug.Log($"bag item update - {y}");
+                        OpenBag(y);
                     }
                 })
                 .AddTo(_disposables);
@@ -465,6 +467,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             if (_currentItemData is BagItemData bagItemData && bagItemData.SkillId > 0)
             {
                 bool newState = !bagItemData.IsEnable;
+                Debug.Log($"bagItemData {bagItemData.ItemName}-{bagItemData.Index} changed skill state to {newState}");
                 bagItemData.OnEnableSkill?.Invoke(bagItemData.Index, bagItemData.SkillId, newState);
                 bagItemData.IsEnable = newState;
                 _currentItemData = bagItemData;
