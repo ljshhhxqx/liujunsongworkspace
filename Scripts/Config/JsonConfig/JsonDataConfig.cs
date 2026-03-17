@@ -57,7 +57,7 @@ namespace HotUpdate.Scripts.Config.JsonConfig
             {
                 Directory.CreateDirectory(path.Path);
             }
-
+ 
             // 定义文件的保存路径和文件名
             var filePath = Path.Combine(path.Path, $"{configName}.json");
 
