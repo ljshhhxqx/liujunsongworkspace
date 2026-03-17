@@ -927,19 +927,22 @@ namespace HotUpdate.Scripts.Network.Server.InGame
 
         public void Clear()
         {
-            _playerIds.Clear();
-            _playerNetIds.Clear();
-            _playerIdsByNetId.Clear();
-            _playerInGameData.Clear();
-            _playerGrids.Clear();
-            _playerPositions.Clear();
-            _playerDeathCountdowns.Clear();
-            _playerUnionIds.Clear();
-            _unionData.Clear();
-            _gridPlayers.Clear();
+            if (ServerHandler)
+            {
+                _playerIds.Clear();
+                _playerNetIds.Clear();
+                _playerIdsByNetId.Clear();
+                _playerInGameData.Clear();
+                _playerGrids.Clear();
+                _playerPositions.Clear();
+                _playerDeathCountdowns.Clear();
+                _playerUnionIds.Clear();
+                _unionData.Clear();
+                _gridPlayers.Clear();
+                _playerSpawnPoints.Clear();
+                _playerIsChangedUnion.Clear();
+            }
             _playerBornCallbacks.Clear();
-            _playerIsChangedUnion.Clear();
-            _playerSpawnPoints.Clear();
             _playerPhysicsData = default;
             _playerBaseColliderData = default;
             _playerBases.Clear();

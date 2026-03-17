@@ -510,7 +510,7 @@ MonoBehaviour:
       minTransitionDuration: 10
     gameModeData:
       times: b4000000f00000002c010000f4010000
-      scores: c40900008813000010270000204e0000
+      scores: 
     bagCommonData:
       maxBagCount: 12
       maxStack: 99

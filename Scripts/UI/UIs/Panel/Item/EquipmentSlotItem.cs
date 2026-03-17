@@ -48,7 +48,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Item
 
         private void UpdateSlotUI()
         {
-            var itemIsNull = _currentItem.Equals(default);
+            var itemIsNull = _currentItem.QualityIcon == null;
             itemImage.sprite = itemIsNull ? null : _currentItem.Icon;
             if (!itemIsNull)
             {

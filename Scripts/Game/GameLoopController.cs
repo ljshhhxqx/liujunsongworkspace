@@ -80,6 +80,7 @@ namespace HotUpdate.Scripts.Game
         public void OnEndGameChanged(bool oldValue, bool newValue)
         {
             IsEndGame = newValue;
+            _gameEventManager.Publish(new PlayerListenMessageEvent());
         }
 
         public bool IsEndGame
@@ -492,8 +493,12 @@ namespace HotUpdate.Scripts.Game
                 // 发生异常时强制结束游戏
                 isEndGameSync = true;
                 IsEndGame = true;
-                _gameEventManager.Publish(new PlayerListenMessageEvent());
                 SaveGameResult();
+            }
+            finally
+            {
+                
+                _gameEventManager.Publish(new PlayerListenMessageEvent());
             }
 
             Debug.Log("[GlobalTimer] Stopped");

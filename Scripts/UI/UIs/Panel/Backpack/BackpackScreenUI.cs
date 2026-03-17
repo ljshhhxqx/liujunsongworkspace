@@ -105,7 +105,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel.Backpack
                 {
                     _bagItemData.Clear();
                     bagItemList.Clear();
-                    equipmentItemList.Clear();
+                    //equipmentItemList.Clear();
                 })
                 .AddTo(this);
         }

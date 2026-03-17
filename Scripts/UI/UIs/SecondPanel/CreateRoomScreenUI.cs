@@ -62,7 +62,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             var options = new List<TMP_Dropdown.OptionData>();
             foreach (var configData in mapConfigDatas)
             {
-                options.Add(new TMP_Dropdown.OptionData(((MapType)configData.mapType).ToString()));
+                options.Add(new TMP_Dropdown.OptionData(EnumHeaderParser.GetHeader((MapType)configData.mapType)));
             }
             mapDropdown.ClearOptions();
             mapDropdown.AddOptions(options);
@@ -95,8 +95,8 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
 
             mapMode.ClearOptions();
             var optionsMode = new List<TMP_Dropdown.OptionData>();
-            optionsMode.Add(new TMP_Dropdown.OptionData(GameMode.Time.ToString()));
-            optionsMode.Add(new TMP_Dropdown.OptionData(GameMode.Score.ToString()));
+            optionsMode.Add(new TMP_Dropdown.OptionData(EnumHeaderParser.GetHeader(GameMode.Time)));
+            //optionsMode.Add(new TMP_Dropdown.OptionData(GameMode.Score.ToString()));
             mapMode.AddOptions(optionsMode);
             mapMode.onValueChanged.AddListener(value =>
             {
@@ -108,7 +108,9 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             createRoomButton.BindDebouncedListener(() =>
             {
                 var time = int.Parse(mapTime.options[mapTime.value].text);
-                var score = int.Parse(mapScore.options[mapScore.value].text);
+                
+                //var score = int.Parse(mapScore.options[mapScore.value].text);
+
                 var customInfo = new RoomCustomInfo();
                 customInfo.RoomName = string.IsNullOrEmpty(roomNameInputField.text)
                     ? roomNameInputField.placeholder.GetComponent<TextMeshProUGUI>().text
@@ -119,7 +121,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 customInfo.MapType = mapDropdown.value;
                 customInfo.GameMode = mapMode.value;
                 customInfo.GameTime = time;
-                customInfo.GameScore = score;
+                customInfo.GameScore = 0;
                 _playFabRoomManager.CreateRoom(customInfo);
             });
         }

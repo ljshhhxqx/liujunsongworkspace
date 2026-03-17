@@ -367,6 +367,7 @@ namespace HotUpdate.Scripts.Weather
             {
                 _uiManager.CloseUI(UIType.Weather);
             }
+            _uiManager.CloseUI(UIType.GameFlow);
         }
     }
 

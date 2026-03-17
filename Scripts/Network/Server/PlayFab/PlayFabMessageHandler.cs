@@ -57,6 +57,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
         private void OnLogoutEvent(PlayerUnListenMessageEvent playerUnListenMessageEvent)
         {
             RepeatedTask.Instance.StopRepeatingTask(GetNewMessages);
+            _networkManager = null;
         }
 
         private void OnLoginEvent(PlayerListenMessageEvent playerListenMessageEvent)
