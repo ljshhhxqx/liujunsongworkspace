@@ -463,7 +463,7 @@ namespace HotUpdate.Scripts.Collector
 
                     // 验证位置和碰撞
                     if (ValidatePickup(itemPos, player.transform.position, itemColliderData,
-                            playerColliderConfig))
+                            playerColliderConfig) || killed)
                     {
                         var list = new MemoryList<ItemsCommandData>(2);
                         list.Add(new ItemsCommandData()

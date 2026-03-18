@@ -2535,13 +2535,23 @@
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",
+            "Name": "SkillConfig",
+            "IsPermanent": false,
+            "IsPreload": true,
+            "Address": "/Preload/ConfigAsset/Json/SkillConfig.json"
+        },
+        {
+            "UID": 4700028,
+            "ResourceType": "UnityEngine.TextAsset",
+            "AssetType": 5,
+            "Extension": ".json",
             "Name": "WeaponConfig",
             "IsPermanent": false,
             "IsPreload": true,
             "Address": "/Preload/ConfigAsset/Json/WeaponConfig.json"
         },
         {
-            "UID": 4700028,
+            "UID": 4700029,
             "ResourceType": "UnityEngine.TextAsset",
             "AssetType": 5,
             "Extension": ".json",

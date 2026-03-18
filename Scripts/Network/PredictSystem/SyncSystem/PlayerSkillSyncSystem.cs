@@ -115,18 +115,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     for (int j = 0; j < keys.Length; j++)
                     {
                         var skillChecker = skillDic[keys[j]];
-                        if (skillChecker.IsSkillEffect())
+                        if (!skillChecker.IsSkillEffect())
                         {
                             //Debug.Log($"[PlayerSkillSyncSystem] Update UpdateEquipment Skill");
-                            PlayerSkillCalculator.UpdateSkillFlyEffect(playerId, GameSyncManager.TickSeconds, skillChecker, _interactSystem.GetHitObjectDatas);
+                            continue;
                         }
-
-                        if (!skillChecker.IsSkillNotInCd())
-                        {
-                            var cooldown = skillChecker.GetCooldownHeader();
-                            cooldown = cooldown.Update(GameSyncManager.TickSeconds);
-                            skillChecker.SetCooldownHeader(cooldown);
-                        }
+                        PlayerSkillCalculator.UpdateSkillFlyEffect(playerId, GameSyncManager.TickSeconds, skillChecker, _interactSystem.GetHitObjectDatas);
                         skillDic[keys[j]] = skillChecker;
                     }
                     playerConnection.SkillCheckerDict = skillDic;

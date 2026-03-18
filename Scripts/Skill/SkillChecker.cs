@@ -74,10 +74,18 @@ namespace HotUpdate.Scripts.Skill
 
         public event Action OnDestroy;
 
+        private void Reset()
+        {
+            Target = default;
+            CurrentTime = -1f;
+            CurrentPosition = default;
+            Origin = default;
+        }
+
         public SkillEffectLifeCycle(Vector3 origin, Vector3 target, float size, float speed, float expectationTime, 
             uint casterId,
             SkillEffectFlyType skillEffectFlyType = SkillEffectFlyType.Linear,
-            List<SkillEventData> skillEventData = null, float currentTime = 0)
+            List<SkillEventData> skillEventData = null, float currentTime = -1f)
         {
             Origin = origin;
             Target = target;
@@ -95,7 +103,7 @@ namespace HotUpdate.Scripts.Skill
             CasterId = casterId;
             CurrentPosition = origin;
         }
-        
+
         private List<SkillEventData> _cachedSkillEventData = new List<SkillEventData>();
         
         public void Start(SkillCheckerParams skillCheckerParams)
@@ -103,6 +111,7 @@ namespace HotUpdate.Scripts.Skill
             _cachedSkillEventData.Clear();
             Origin = skillCheckerParams.PlayerPosition;
             Target = skillCheckerParams.TargetPosition;
+            CurrentTime = 0;
             CurrentPosition = Speed == 0 ? Target : Origin;
             foreach (var skillEventData in SkillEventData)
             {
@@ -137,7 +146,7 @@ namespace HotUpdate.Scripts.Skill
 
         public HashSet<uint> Update(float deltaTime, Func<uint, Vector3, IColliderConfig, HashSet<uint>> isHitFunc)
         {
-            if (CurrentTime >= ExpectationTime)
+            if (Mathf.Approximately(CurrentTime, -1))
             {
                 return null;
             }
@@ -156,11 +165,18 @@ namespace HotUpdate.Scripts.Skill
 
             if (Speed == 0)
             {
+                Debug.Log($"【SkillChecker】 CurrentPosition is {CurrentPosition} - {CurrentTime}");
                 CurrentPosition = Target;
             }
             else
             {
                 CurrentPosition += (Target - Origin).normalized * step;
+            }
+
+            if (CurrentTime > ExpectationTime)
+            {
+                Debug.Log($"【SkillChecker】 CurrentPosition is reset");
+                Reset();
             }
             return isHitFunc(CasterId, CurrentPosition, ColliderConfig);
         }
@@ -196,7 +212,7 @@ namespace HotUpdate.Scripts.Skill
 
         public bool IsSkillEffect()
         {
-            return SkillEffectLifeCycle != null;
+            return SkillEffectLifeCycle != null && !Mathf.Approximately(SkillEffectLifeCycle.CurrentTime, -1);
         }
 
         public CooldownHeader GetCooldownHeader() => CooldownHeader;
@@ -284,7 +300,7 @@ namespace HotUpdate.Scripts.Skill
 
         public bool IsSkillEffect()
         {
-            return SkillEffectLifeCycle != null;
+            return SkillEffectLifeCycle != null && !Mathf.Approximately(SkillEffectLifeCycle.CurrentTime, -1);
         }
         public Vector3 GetSkillEffectPosition() => SkillEffectLifeCycle.CurrentPosition;
         public SkillEffectLifeCycle GetSkillEffectLifeCycle() => SkillEffectLifeCycle;
@@ -394,7 +410,7 @@ namespace HotUpdate.Scripts.Skill
 
         public bool IsSkillEffect()
         {
-            return SkillEffectLifeCycle != null;
+            return SkillEffectLifeCycle != null && !Mathf.Approximately(SkillEffectLifeCycle.CurrentTime, -1);
         }
         public CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader)
         {
@@ -479,7 +495,7 @@ namespace HotUpdate.Scripts.Skill
 
         public bool IsSkillEffect()
         {
-            return SkillEffectLifeCycle != null;
+            return SkillEffectLifeCycle != null && !Mathf.Approximately(SkillEffectLifeCycle.CurrentTime, -1);
         }
 
         public CooldownHeader SetCooldownHeader(CooldownHeader cooldownHeader)
@@ -564,7 +580,7 @@ namespace HotUpdate.Scripts.Skill
 
         public bool IsSkillEffect()
         {
-            return SkillEffectLifeCycle != null;
+            return SkillEffectLifeCycle != null && !Mathf.Approximately(SkillEffectLifeCycle.CurrentTime, -1);
         }
         
         public CooldownHeader GetCooldownHeader() => CooldownHeader;

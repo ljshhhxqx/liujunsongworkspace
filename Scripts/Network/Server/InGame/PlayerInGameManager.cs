@@ -916,7 +916,10 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             }
             Debug.Log($"[PlayerInGameManager] Add death player {playerNetId}");
             playerDeathCallback?.Invoke(playerNetId,killerPlayerId, countdown);
-            _playerBornCallbacks.Add(playerNetId, playerBornCallback);
+            if (!_playerBornCallbacks.TryGetValue(playerNetId, out var callback))
+            {
+                _playerBornCallbacks.Add(playerNetId, playerBornCallback);
+            }
             return true;
         }
 

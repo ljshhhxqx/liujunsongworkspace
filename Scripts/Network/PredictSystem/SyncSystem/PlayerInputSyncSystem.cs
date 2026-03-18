@@ -261,8 +261,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 case SkillAudioType.Heal:
                     GameAudioManager.Instance.PlaySFX(AudioEffectType.Heal, playerController.transform.position, playerController.transform);
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
             GameSyncManager.EnqueueServerCommand(new SkillCommand
             {

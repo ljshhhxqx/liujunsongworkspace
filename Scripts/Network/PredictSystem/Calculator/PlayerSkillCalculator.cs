@@ -154,10 +154,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
 
         public static uint[] UpdateSkillFlyEffect(int connectionId, float deltaTime, ISkillChecker skillChecker, Func<uint, Vector3, IColliderConfig, HashSet<uint>> isHitFunc)
         {
-            if (skillChecker.IsSkillEffect())
-            {
-                
-            }
             var hitPlayers = skillChecker.UpdateFly(deltaTime, isHitFunc);
             if (hitPlayers == null || hitPlayers.Count == 0)
             {

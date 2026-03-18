@@ -317,7 +317,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 }
                 if (kvp.Key == PropertyTypeEnum.AttackSpeed)
                 {
-                    PlayerComponentController.SetAnimatorSpeed(AnimationState.Attack, property.CurrentValue);
+                    //PlayerComponentController.SetAnimatorSpeed(AnimationState.Attack, property.CurrentValue);
                 }
                 OnPropertyChanged?.Invoke(kvp.Key, property);
             }

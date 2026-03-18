@@ -19,6 +19,7 @@ using HotUpdate.Scripts.UI.UIBase;
 using HotUpdate.Scripts.UI.UIs.Overlay;
 using MemoryPack;
 using Mirror;
+using NUnit.Framework;
 using UI.UIBase;
 using UniRx;
 using UnityEngine;
@@ -238,7 +239,7 @@ namespace HotUpdate.Scripts.Collector
             foreach (var collect in _collects)
             {
                 var collectData = GameObjectContainer.Instance.GetDynamicObjectData(collect);
-                if (collectData == null)
+                if (collectData.Tag == null)
                 {
                     continue;
                 }

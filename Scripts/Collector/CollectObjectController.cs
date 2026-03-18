@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AOTScripts.Data;
 using AOTScripts.Data.NetworkMes;
+using AOTScripts.Tool.Coroutine;
 using AOTScripts.Tool.ObjectPool;
 using HotUpdate.Scripts.Audio;
 using HotUpdate.Scripts.Collector.Collects;
@@ -15,6 +16,7 @@ using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Game.Map;
 using HotUpdate.Scripts.Network.PredictSystem.Interact;
 using HotUpdate.Scripts.Network.Server.InGame;
+using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
 using Sirenix.OdinInspector;
 using UniRx;
@@ -56,15 +58,15 @@ namespace HotUpdate.Scripts.Collector
         private CollectObjectDataConfig _collectObjectDataConfig;
         private IDisposable _disposable;
         private ItemsSpawnerManager _itemsSpawnerManager;
+        private GameEventManager _gameEventManager;
         private IColliderConfig _colliderConfig;
-        protected HashSet<DynamicObjectData> CachedDynamicObjectData = new HashSet<DynamicObjectData>();
         public uint NetId;
         private AttackCollectItem _attackCollectItem;
         private MoveCollectItem _moveCollectItem;
         private HiddenItem _hiddenItem;
         
         [Inject]
-        private void Init(IConfigProvider configProvider, PlayerInGameManager playerInGameManager)
+        private void Init(IConfigProvider configProvider, PlayerInGameManager playerInGameManager, GameEventManager gameEventManager)
         {
 //            Debug.Log($"{name} CollectObjectController Init -- {ServerHandler} {ClientHandler}");
             var jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
@@ -78,6 +80,7 @@ namespace HotUpdate.Scripts.Collector
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
             _collectAnimationComponent = GetComponent<CollectAnimationComponent>();
             _collectData = jsonDataConfig.CollectData;
+            _gameEventManager = gameEventManager;
             CollectObjectData = collectObjectDataConfig.GetCollectObjectData(collectConfigId);
             if (!collectCollider)
             {
@@ -109,6 +112,20 @@ namespace HotUpdate.Scripts.Collector
             {
                 RpcPlayAnimation();
             }
+        }
+
+        [ClientRpc]
+        public void RpcOnItemControlSkillChanged(float duration, int skillType)
+        {
+            //todo：飘字+特效
+            DelayInvoker.DelayInvoke(duration, StopControlSkillEffect);
+            //EffectPlayer.Instance.PlayEffect(ParticlesType.AttackDebuff, transform.position, transform);
+            _gameEventManager.Publish(new FollowTargetTextEvent(transform.position,  skillType != 0 ? EnumHeaderParser.GetHeader((SkillType)skillType) : ""));
+        }
+
+        private static void StopControlSkillEffect()
+        {
+            EffectPlayer.Instance.StopEffect(ParticlesType.AttackDebuff);
         }
 
         [ClientRpc]

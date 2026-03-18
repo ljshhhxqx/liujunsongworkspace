@@ -70,26 +70,17 @@ namespace HotUpdate.Scripts.Collector.Collects
             }
             CurrentControlSkillType = (int)skillType;
             DelayInvoker.DelayInvoke(duration, ReverseControlSkillType);
-            RpcOnItemControlSkillChanged(duration, skillType);
+            if (!gameObject || !gameObject.activeInHierarchy)
+            {
+                return;
+            }
+
+            CollectObjectController.RpcOnItemControlSkillChanged(duration, CurrentControlSkillType);
         }
 
         private void ReverseControlSkillType()
         {
             CurrentControlSkillType = 0;
-        }
-
-        [ClientRpc]
-        private void RpcOnItemControlSkillChanged(float duration, ControlSkillType skillType)
-        {
-            //todo：飘字+特效
-            DelayInvoker.DelayInvoke(duration, StopControlSkillEffect);
-            EffectPlayer.Instance.PlayEffect(ParticlesType.AttackDebuff, transform.position, transform);
-            GameEventManager.Publish(new FollowTargetTextEvent(transform.position, EnumHeaderParser.GetHeader(skillType)));
-        }
-
-        private static void StopControlSkillEffect()
-        {
-            EffectPlayer.Instance.StopEffect(ParticlesType.AttackDebuff);
         }
 
         protected void SetColor(Color color)

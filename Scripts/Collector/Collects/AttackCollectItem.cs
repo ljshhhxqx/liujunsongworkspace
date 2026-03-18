@@ -12,6 +12,7 @@ using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool;
 using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
+using NUnit.Framework;
 using UniRx;
 using UnityEngine;
 using VContainer;
@@ -207,6 +208,10 @@ namespace HotUpdate.Scripts.Collector.Collects
             foreach (var id in _collectedObjects)
             {
                 var data = GameObjectContainer.Instance.GetDynamicObjectData(id);
+                if (data.Tag == null)
+                {
+                    continue;
+                }
                 var dis = Vector3.Distance(transform.position, data.Position);
                 if (distance > dis)
                 {

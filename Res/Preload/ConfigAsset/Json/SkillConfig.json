@@ -1,0 +1,1502 @@
+{
+    "excelAssetReference": {
+        "guid": "afcb27a37860bed489c689f04b28b549"
+    },
+    "csvAssetReference": {
+        "guid": "f79490033f1ba7d4c817acd9581f3173"
+    },
+    "jsonAssetReference": {
+        "guid": "36a25296697c2fe44a5305e443be106f"
+    },
+    "configName": "SkillConfig",
+    "isArray": true,
+    "skillData": [
+        {
+            "id": 1,
+            "name": "波动球",
+            "description": "在目标处释放一个延时爆炸的波动球，2秒后爆炸对周围敌人造成{value}伤害",
+            "cooldown": 10.0,
+            "animationState": 0,
+            "particleName": "AoE slash green 1",
+            "maxDistance": 4.0,
+            "radius": 0.5,
+            "isAreaOfRange": true,
+            "costProperty": 4,
+            "flySpeed": 0.0,
+            "duration": 2.200000047683716,
+            "operationType": 1,
+            "colliderType": 1,
+            "cost": 50.0,
+            "isCostCurrentPercent": false,
+            "events": [
+                {
+                    "skillEventType": 1,
+                    "fireTime": 0.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 2.0
+                },
+                {
+                    "skillEventType": 3,
+                    "fireTime": 2.0999999046325685
+                }
+            ],
+            "conditionTarget": 2,
+            "extraEffects": [
+                {
+                    "target": 2,
+                    "baseValue": 50.0,
+                    "buffProperty": 1,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.25,
+                    "effectProperty": 3,
+                    "operation": 0,
+                    "buffIncreaseType": 5,
+                    "duration": 0.0,
+                    "controlSkillType": 0
+                }
+            ],
+            "skillType": 6,
+            "controlSkillType": 0
+        },
+        {
+            "id": 2,
+            "name": "力量法阵",
+            "description": "技能引导后，在目标处释放力量法阵，每0.5秒对区域内命中的友军提供{value}额外攻击力，持续0.5秒",
+            "cooldown": 10.0,
+            "animationState": 4096,
+            "particleName": "Buff 1",
+            "maxDistance": 4.0,
+            "radius": 0.5,
+            "isAreaOfRange": true,
+            "costProperty": 4,
+            "flySpeed": 0.0,
+            "duration": 3.0,
+            "operationType": 0,
+            "colliderType": 1,
+            "cost": 70.0,
+            "isCostCurrentPercent": false,
+            "events": [
+                {
+                    "skillEventType": 1,
+                    "fireTime": 0.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.009999999776482582
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 2.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 2.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 3.0
+                },
+                {
+                    "skillEventType": 3,
+                    "fireTime": 3.009999990463257
+                }
+            ],
+            "conditionTarget": 4,
+            "extraEffects": [
+                {
+                    "target": 4,
+                    "baseValue": 0.15000000596046449,
+                    "buffProperty": 1,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.15000000596046449,
+                    "effectProperty": 1,
+                    "operation": 0,
+                    "buffIncreaseType": 3,
+                    "duration": 0.5,
+                    "controlSkillType": 0
+                }
+            ],
+            "skillType": 3,
+            "controlSkillType": 0
+        },
+        {
+            "id": 3,
+            "name": "寒冰冲击",
+            "description": "技能引导后，在目标处释放冰锥，对周围敌人造成{value}伤害，并施加1秒晕眩效果",
+            "cooldown": 15.0,
+            "animationState": 8192,
+            "particleName": "Crystals crossfade 2",
+            "maxDistance": 4.0,
+            "radius": 0.5,
+            "isAreaOfRange": true,
+            "costProperty": 4,
+            "flySpeed": 0.0,
+            "duration": 2.0,
+            "operationType": 1,
+            "colliderType": 1,
+            "cost": 70.0,
+            "isCostCurrentPercent": false,
+            "events": [
+                {
+                    "skillEventType": 1,
+                    "fireTime": 0.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.5
+                },
+                {
+                    "skillEventType": 3,
+                    "fireTime": 2.0
+                }
+            ],
+            "conditionTarget": 2,
+            "extraEffects": [
+                {
+                    "target": 2,
+                    "baseValue": 25.0,
+                    "buffProperty": 1,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.15000000596046449,
+                    "effectProperty": 3,
+                    "operation": 0,
+                    "buffIncreaseType": 5,
+                    "duration": 1.0,
+                    "controlSkillType": 1
+                }
+            ],
+            "skillType": 3,
+            "controlSkillType": 0
+        },
+        {
+            "id": 4,
+            "name": "虚弱法阵",
+            "description": "技能引导后，在目标处释放虚弱法阵，每0.5秒对区域内命中的敌军降低{value}总移动速度和{value}总攻击力，持续0.5秒",
+            "cooldown": 10.0,
+            "animationState": 4096,
+            "particleName": "Debuff 1",
+            "maxDistance": 4.0,
+            "radius": 0.5,
+            "isAreaOfRange": true,
+            "costProperty": 4,
+            "flySpeed": 0.0,
+            "duration": 3.0,
+            "operationType": 1,
+            "colliderType": 1,
+            "cost": 70.0,
+            "isCostCurrentPercent": false,
+            "events": [
+                {
+                    "skillEventType": 1,
+                    "fireTime": 0.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.009999999776482582
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 2.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 2.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 3.0
+                },
+                {
+                    "skillEventType": 3,
+                    "fireTime": 3.009999990463257
+                }
+            ],
+            "conditionTarget": 2,
+            "extraEffects": [
+                {
+                    "target": 2,
+                    "baseValue": 5.0,
+                    "buffProperty": 1,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.07000000029802323,
+                    "effectProperty": 1,
+                    "operation": 0,
+                    "buffIncreaseType": 4,
+                    "duration": 0.5,
+                    "controlSkillType": 0
+                },
+                {
+                    "target": 2,
+                    "baseValue": 5.0,
+                    "buffProperty": 0,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.07000000029802323,
+                    "effectProperty": 0,
+                    "operation": 0,
+                    "buffIncreaseType": 4,
+                    "duration": 0.5,
+                    "controlSkillType": 0
+                }
+            ],
+            "skillType": 3,
+            "controlSkillType": 0
+        },
+        {
+            "id": 5,
+            "name": "沙尘袭击",
+            "description": "在目标处释放沙尘，每0.5秒对区域内命中的敌军造成{value}伤害，并致盲0.5秒",
+            "cooldown": 20.0,
+            "animationState": 8192,
+            "particleName": "Dust ground 1",
+            "maxDistance": 4.0,
+            "radius": 0.5,
+            "isAreaOfRange": true,
+            "costProperty": 4,
+            "flySpeed": 0.0,
+            "duration": 3.0,
+            "operationType": 1,
+            "colliderType": 1,
+            "cost": 70.0,
+            "isCostCurrentPercent": false,
+            "events": [
+                {
+                    "skillEventType": 1,
+                    "fireTime": 0.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.009999999776482582
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 2.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 2.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 3.0
+                },
+                {
+                    "skillEventType": 3,
+                    "fireTime": 3.009999990463257
+                }
+            ],
+            "conditionTarget": 2,
+            "extraEffects": [
+                {
+                    "target": 2,
+                    "baseValue": 25.0,
+                    "buffProperty": 1,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.15000000596046449,
+                    "effectProperty": 3,
+                    "operation": 0,
+                    "buffIncreaseType": 5,
+                    "duration": 0.5,
+                    "controlSkillType": 2
+                }
+            ],
+            "skillType": 3,
+            "controlSkillType": 0
+        },
+        {
+            "id": 6,
+            "name": "横扫",
+            "description": "朝目标方向处释放电击，对命中的第一个敌人造成{value}伤害并施加1秒晕眩效果",
+            "cooldown": 10.0,
+            "animationState": 0,
+            "particleName": "Electro slash 1",
+            "maxDistance": 1.0,
+            "radius": 0.5,
+            "isAreaOfRange": true,
+            "costProperty": 4,
+            "flySpeed": 0.0,
+            "duration": 3.0,
+            "operationType": 1,
+            "colliderType": 1,
+            "cost": 30.0,
+            "isCostCurrentPercent": false,
+            "events": [
+                {
+                    "skillEventType": 1,
+                    "fireTime": 0.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.5
+                },
+                {
+                    "skillEventType": 3,
+                    "fireTime": 2.0
+                }
+            ],
+            "conditionTarget": 2,
+            "extraEffects": [
+                {
+                    "target": 2,
+                    "baseValue": 60.0,
+                    "buffProperty": 1,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.30000001192092898,
+                    "effectProperty": 3,
+                    "operation": 0,
+                    "buffIncreaseType": 5,
+                    "duration": 1.0,
+                    "controlSkillType": 1
+                }
+            ],
+            "skillType": 1,
+            "controlSkillType": 0
+        },
+        {
+            "id": 7,
+            "name": "霜冻领域",
+            "description": "技能引导后，在目标处释放霜冻领域，每0.5秒对区域内命中的敌军造成{value}伤害，并减速持续0.5秒",
+            "cooldown": 15.0,
+            "animationState": 4096,
+            "particleName": "Freeze circle 1",
+            "maxDistance": 4.0,
+            "radius": 0.5,
+            "isAreaOfRange": true,
+            "costProperty": 4,
+            "flySpeed": 0.0,
+            "duration": 4.0,
+            "operationType": 1,
+            "colliderType": 1,
+            "cost": 70.0,
+            "isCostCurrentPercent": false,
+            "events": [
+                {
+                    "skillEventType": 1,
+                    "fireTime": 0.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.009999999776482582
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 2.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 2.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 3.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 3.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 4.0
+                },
+                {
+                    "skillEventType": 3,
+                    "fireTime": 4.010000228881836
+                }
+            ],
+            "conditionTarget": 2,
+            "extraEffects": [
+                {
+                    "target": 2,
+                    "baseValue": 25.0,
+                    "buffProperty": 1,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.15000000596046449,
+                    "effectProperty": 3,
+                    "operation": 0,
+                    "buffIncreaseType": 5,
+                    "duration": 0.0,
+                    "controlSkillType": 0
+                },
+                {
+                    "target": 2,
+                    "baseValue": 0.05000000074505806,
+                    "buffProperty": 0,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.07000000029802323,
+                    "effectProperty": 0,
+                    "operation": 0,
+                    "buffIncreaseType": 4,
+                    "duration": 0.5,
+                    "controlSkillType": 0
+                }
+            ],
+            "skillType": 3,
+            "controlSkillType": 0
+        },
+        {
+            "id": 8,
+            "name": "轰鸣",
+            "description": "在目标处释放炸弹爆炸，爆炸对周围敌人造成{value}伤害，并击退周围敌人1米",
+            "cooldown": 10.0,
+            "animationState": 0,
+            "particleName": "Ground AOE explosion 1",
+            "maxDistance": 4.0,
+            "radius": 0.5,
+            "isAreaOfRange": true,
+            "costProperty": 4,
+            "flySpeed": 0.0,
+            "duration": 3.0,
+            "operationType": 1,
+            "colliderType": 1,
+            "cost": 70.0,
+            "isCostCurrentPercent": false,
+            "events": [
+                {
+                    "skillEventType": 1,
+                    "fireTime": 0.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.75
+                },
+                {
+                    "skillEventType": 3,
+                    "fireTime": 2.0
+                }
+            ],
+            "conditionTarget": 2,
+            "extraEffects": [
+                {
+                    "target": 2,
+                    "baseValue": 25.0,
+                    "buffProperty": 1,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.15000000596046449,
+                    "effectProperty": 3,
+                    "operation": 0,
+                    "buffIncreaseType": 5,
+                    "duration": 0.0,
+                    "controlSkillType": 0
+                },
+                {
+                    "target": 2,
+                    "baseValue": 1.0,
+                    "buffProperty": -1,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.0,
+                    "effectProperty": -1,
+                    "operation": 0,
+                    "buffIncreaseType": 5,
+                    "duration": 0.0,
+                    "controlSkillType": 0
+                }
+            ],
+            "skillType": 3,
+            "controlSkillType": 0
+        },
+        {
+            "id": 9,
+            "name": "治疗之雨",
+            "description": "技能引导后，在目标处释放治疗法阵，每0.5秒对区域内命中的友军恢复{value}当前生命值，持续4秒",
+            "cooldown": 20.0,
+            "animationState": 8192,
+            "particleName": "Healing circle 1",
+            "maxDistance": 4.0,
+            "radius": 0.5,
+            "isAreaOfRange": true,
+            "costProperty": 4,
+            "flySpeed": 0.0,
+            "duration": 4.0,
+            "operationType": 1,
+            "colliderType": 1,
+            "cost": 70.0,
+            "isCostCurrentPercent": false,
+            "events": [
+                {
+                    "skillEventType": 1,
+                    "fireTime": 0.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.009999999776482582
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 2.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 2.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 3.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 3.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 4.0
+                },
+                {
+                    "skillEventType": 3,
+                    "fireTime": 4.010000228881836
+                }
+            ],
+            "conditionTarget": 2,
+            "extraEffects": [
+                {
+                    "target": 4,
+                    "baseValue": 15.0,
+                    "buffProperty": 3,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.20000000298023225,
+                    "effectProperty": 3,
+                    "operation": 0,
+                    "buffIncreaseType": 5,
+                    "duration": 0.0,
+                    "controlSkillType": 0
+                }
+            ],
+            "skillType": 3,
+            "controlSkillType": 0
+        },
+        {
+            "id": 10,
+            "name": "雷神之击",
+            "description": "在目标处释放电击，对周围敌人造成{value}伤害",
+            "cooldown": 10.0,
+            "animationState": 0,
+            "particleName": "Holy hit 1",
+            "maxDistance": 4.0,
+            "radius": 0.5,
+            "isAreaOfRange": true,
+            "costProperty": 4,
+            "flySpeed": 0.0,
+            "duration": 1.0,
+            "operationType": 1,
+            "colliderType": 1,
+            "cost": 70.0,
+            "isCostCurrentPercent": false,
+            "events": [
+                {
+                    "skillEventType": 1,
+                    "fireTime": 0.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.10000000149011612
+                },
+                {
+                    "skillEventType": 3,
+                    "fireTime": 1.0
+                }
+            ],
+            "conditionTarget": 2,
+            "extraEffects": [
+                {
+                    "target": 2,
+                    "baseValue": 50.0,
+                    "buffProperty": 1,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.30000001192092898,
+                    "effectProperty": 3,
+                    "operation": 0,
+                    "buffIncreaseType": 5,
+                    "duration": 0.0,
+                    "controlSkillType": 0
+                }
+            ],
+            "skillType": 3,
+            "controlSkillType": 0
+        },
+        {
+            "id": 11,
+            "name": "天罚降临",
+            "description": "技能引导后，在目标处释放天罚领域，每0.5秒对区域内命中的敌军造成{value}伤害，并降低{value}总攻击力持续0.5秒",
+            "cooldown": 20.0,
+            "animationState": 8192,
+            "particleName": "Laser AOE 1",
+            "maxDistance": 4.0,
+            "radius": 0.5,
+            "isAreaOfRange": true,
+            "costProperty": 4,
+            "flySpeed": 0.0,
+            "duration": 3.0,
+            "operationType": 1,
+            "colliderType": 1,
+            "cost": 70.0,
+            "isCostCurrentPercent": false,
+            "events": [
+                {
+                    "skillEventType": 1,
+                    "fireTime": 0.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.009999999776482582
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 2.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 2.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 3.0
+                },
+                {
+                    "skillEventType": 3,
+                    "fireTime": 3.009999990463257
+                }
+            ],
+            "conditionTarget": 2,
+            "extraEffects": [
+                {
+                    "target": 2,
+                    "baseValue": 20.0,
+                    "buffProperty": 1,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.11999999731779099,
+                    "effectProperty": 3,
+                    "operation": 0,
+                    "buffIncreaseType": 5,
+                    "duration": 0.0,
+                    "controlSkillType": 0
+                },
+                {
+                    "target": 2,
+                    "baseValue": 0.10000000149011612,
+                    "buffProperty": 1,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.11999999731779099,
+                    "effectProperty": 1,
+                    "operation": 0,
+                    "buffIncreaseType": 4,
+                    "duration": 0.0,
+                    "controlSkillType": 0
+                }
+            ],
+            "skillType": 3,
+            "controlSkillType": 0
+        },
+        {
+            "id": 12,
+            "name": "电汽领域",
+            "description": "技能引导后，在目标处释放电汽领域，每0.5秒对区域内命中的敌军造成{value}伤害，并降低{value}总防御力持续0.5秒",
+            "cooldown": 20.0,
+            "animationState": 8192,
+            "particleName": "Lightning aura 1",
+            "maxDistance": 4.0,
+            "radius": 0.5,
+            "isAreaOfRange": true,
+            "costProperty": 4,
+            "flySpeed": 0.0,
+            "duration": 4.0,
+            "operationType": 1,
+            "colliderType": 1,
+            "cost": 70.0,
+            "isCostCurrentPercent": false,
+            "events": [
+                {
+                    "skillEventType": 1,
+                    "fireTime": 0.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.009999999776482582
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 2.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 2.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 3.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 3.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 4.0
+                },
+                {
+                    "skillEventType": 3,
+                    "fireTime": 4.010000228881836
+                }
+            ],
+            "conditionTarget": 2,
+            "extraEffects": [
+                {
+                    "target": 2,
+                    "baseValue": 20.0,
+                    "buffProperty": 1,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.15000000596046449,
+                    "effectProperty": 3,
+                    "operation": 0,
+                    "buffIncreaseType": 5,
+                    "duration": 0.0,
+                    "controlSkillType": 0
+                },
+                {
+                    "target": 2,
+                    "baseValue": 0.10000000149011612,
+                    "buffProperty": 2,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.11999999731779099,
+                    "effectProperty": 2,
+                    "operation": 0,
+                    "buffIncreaseType": 4,
+                    "duration": 0.0,
+                    "controlSkillType": 0
+                }
+            ],
+            "skillType": 3,
+            "controlSkillType": 0
+        },
+        {
+            "id": 13,
+            "name": "引力洞",
+            "description": "技能引导后，在目标处释放引力法阵，每0.5秒对区域内命中的敌军造成{value}伤害，并拖拽周围敌军至框内",
+            "cooldown": 20.0,
+            "animationState": 8192,
+            "particleName": "Magic circle 2",
+            "maxDistance": 4.0,
+            "radius": 0.5,
+            "isAreaOfRange": true,
+            "costProperty": 4,
+            "flySpeed": 0.0,
+            "duration": 4.0,
+            "operationType": 1,
+            "colliderType": 1,
+            "cost": 50.0,
+            "isCostCurrentPercent": false,
+            "events": [
+                {
+                    "skillEventType": 1,
+                    "fireTime": 0.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.009999999776482582
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 2.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 2.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 3.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 3.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 4.0
+                },
+                {
+                    "skillEventType": 3,
+                    "fireTime": 4.010000228881836
+                }
+            ],
+            "conditionTarget": 2,
+            "extraEffects": [
+                {
+                    "target": 2,
+                    "baseValue": 20.0,
+                    "buffProperty": 1,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.15000000596046449,
+                    "effectProperty": 3,
+                    "operation": 0,
+                    "buffIncreaseType": 5,
+                    "duration": 0.0,
+                    "controlSkillType": 0
+                },
+                {
+                    "target": 2,
+                    "baseValue": 0.0,
+                    "buffProperty": -1,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.0,
+                    "effectProperty": -1,
+                    "operation": 0,
+                    "buffIncreaseType": 5,
+                    "duration": 0.0,
+                    "controlSkillType": 0
+                }
+            ],
+            "skillType": 3,
+            "controlSkillType": 0
+        },
+        {
+            "id": 14,
+            "name": "失真领域",
+            "description": "在目标处释放护盾领域，在领域内的友军免疫一切伤害，持续2.5秒",
+            "cooldown": 20.0,
+            "animationState": 0,
+            "particleName": "Magic shield blue 1",
+            "maxDistance": 2.5,
+            "radius": 0.5,
+            "isAreaOfRange": true,
+            "costProperty": 4,
+            "flySpeed": 0.0,
+            "duration": 2.5,
+            "operationType": 4,
+            "colliderType": 1,
+            "cost": 70.0,
+            "isCostCurrentPercent": false,
+            "events": [
+                {
+                    "skillEventType": 1,
+                    "fireTime": 0.0
+                },
+                {
+                    "skillEventType": 3,
+                    "fireTime": 2.509999990463257
+                }
+            ],
+            "conditionTarget": 2,
+            "extraEffects": [
+                {
+                    "target": 4,
+                    "baseValue": 0.0,
+                    "buffProperty": 0,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.0,
+                    "effectProperty": 0,
+                    "operation": 0,
+                    "buffIncreaseType": 0,
+                    "duration": 0.0,
+                    "controlSkillType": 0
+                }
+            ],
+            "skillType": 3,
+            "controlSkillType": 0
+        },
+        {
+            "id": 15,
+            "name": "弹幕时间",
+            "description": "技能引导后，在目标处释放弹幕，每0.5秒对区域内命中的敌军造成{value}伤害，并减少{value}总暴击率持续0.5秒",
+            "cooldown": 20.0,
+            "animationState": 8192,
+            "particleName": "Meteors AOE 1",
+            "maxDistance": 4.0,
+            "radius": 0.5,
+            "isAreaOfRange": true,
+            "costProperty": 4,
+            "flySpeed": 0.0,
+            "duration": 4.0,
+            "operationType": 1,
+            "colliderType": 1,
+            "cost": 70.0,
+            "isCostCurrentPercent": false,
+            "events": [
+                {
+                    "skillEventType": 1,
+                    "fireTime": 0.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.009999999776482582
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 2.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 2.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 3.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 3.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 4.0
+                },
+                {
+                    "skillEventType": 3,
+                    "fireTime": 4.010000228881836
+                }
+            ],
+            "conditionTarget": 2,
+            "extraEffects": [
+                {
+                    "target": 2,
+                    "baseValue": 15.0,
+                    "buffProperty": 1,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.15000000596046449,
+                    "effectProperty": 3,
+                    "operation": 0,
+                    "buffIncreaseType": 5,
+                    "duration": 0.0,
+                    "controlSkillType": 0
+                },
+                {
+                    "target": 2,
+                    "baseValue": 0.10000000149011612,
+                    "buffProperty": 6,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.15000000596046449,
+                    "effectProperty": 6,
+                    "operation": 0,
+                    "buffIncreaseType": 4,
+                    "duration": 0.0,
+                    "controlSkillType": 0
+                }
+            ],
+            "skillType": 3,
+            "controlSkillType": 0
+        },
+        {
+            "id": 16,
+            "name": "电汽轰鸣",
+            "description": "在目标处释放炸弹爆炸，爆炸对周围敌人造成{value}伤害，并减速周围敌人持续2秒",
+            "cooldown": 12.0,
+            "animationState": 4096,
+            "particleName": "Plexus AoE 1",
+            "maxDistance": 4.0,
+            "radius": 0.5,
+            "isAreaOfRange": true,
+            "costProperty": 4,
+            "flySpeed": 0.0,
+            "duration": 1.0,
+            "operationType": 1,
+            "colliderType": 1,
+            "cost": 70.0,
+            "isCostCurrentPercent": false,
+            "events": [
+                {
+                    "skillEventType": 1,
+                    "fireTime": 0.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.3499999940395355
+                },
+                {
+                    "skillEventType": 3,
+                    "fireTime": 1.0
+                }
+            ],
+            "conditionTarget": 2,
+            "extraEffects": [
+                {
+                    "target": 2,
+                    "baseValue": 0.44999998807907107,
+                    "buffProperty": 1,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.25,
+                    "effectProperty": 3,
+                    "operation": 0,
+                    "buffIncreaseType": 5,
+                    "duration": 0.0,
+                    "controlSkillType": 0
+                },
+                {
+                    "target": 2,
+                    "baseValue": 0.10000000149011612,
+                    "buffProperty": 0,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.10000000149011612,
+                    "effectProperty": 0,
+                    "operation": 0,
+                    "buffIncreaseType": 4,
+                    "duration": 2.0,
+                    "controlSkillType": 0
+                }
+            ],
+            "skillType": 3,
+            "controlSkillType": 0
+        },
+        {
+            "id": 17,
+            "name": "血色轰鸣",
+            "description": "在目标处释放一个延时爆炸的波动球，1.2秒后爆炸对周围敌人造成{value}伤害，并晕眩周围敌人1秒",
+            "cooldown": 15.0,
+            "animationState": 0,
+            "particleName": "Red energy explosion 1",
+            "maxDistance": 4.0,
+            "radius": 0.5,
+            "isAreaOfRange": true,
+            "costProperty": 4,
+            "flySpeed": 0.0,
+            "duration": 2.0,
+            "operationType": 1,
+            "colliderType": 1,
+            "cost": 50.0,
+            "isCostCurrentPercent": false,
+            "events": [
+                {
+                    "skillEventType": 1,
+                    "fireTime": 0.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.100000023841858
+                },
+                {
+                    "skillEventType": 3,
+                    "fireTime": 2.0
+                }
+            ],
+            "conditionTarget": 2,
+            "extraEffects": [
+                {
+                    "target": 2,
+                    "baseValue": 40.0,
+                    "buffProperty": 1,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.18000000715255738,
+                    "effectProperty": 3,
+                    "operation": 0,
+                    "buffIncreaseType": 5,
+                    "duration": 1.0,
+                    "controlSkillType": 1
+                }
+            ],
+            "skillType": 6,
+            "controlSkillType": 0
+        },
+        {
+            "id": 18,
+            "name": "血月斩",
+            "description": "朝目标方向释放一个飞行的血月，对经过的敌人造成{value}伤害",
+            "cooldown": 5.0,
+            "animationState": 0,
+            "particleName": "Slash",
+            "maxDistance": 5.0,
+            "radius": 0.5,
+            "isAreaOfRange": true,
+            "costProperty": 4,
+            "flySpeed": 5.0,
+            "duration": 2.0,
+            "operationType": 1,
+            "colliderType": 1,
+            "cost": 30.0,
+            "isCostCurrentPercent": false,
+            "events": [
+                {
+                    "skillEventType": 1,
+                    "fireTime": 0.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.009999999776482582
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.10000000149011612
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.20000000298023225
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.30000001192092898
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.4000000059604645
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.6000000238418579
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.699999988079071
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.800000011920929
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.8999999761581421
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.100000023841858
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.2000000476837159
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.2999999523162842
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.399999976158142
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.600000023841858
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.7000000476837159
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.7999999523162842
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.899999976158142
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 2.0
+                },
+                {
+                    "skillEventType": 3,
+                    "fireTime": 2.009999990463257
+                }
+            ],
+            "conditionTarget": 2,
+            "extraEffects": [
+                {
+                    "target": 2,
+                    "baseValue": 40.0,
+                    "buffProperty": 1,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.3499999940395355,
+                    "effectProperty": 3,
+                    "operation": 0,
+                    "buffIncreaseType": 5,
+                    "duration": 0.0,
+                    "controlSkillType": 0
+                }
+            ],
+            "skillType": 4,
+            "controlSkillType": 0
+        },
+        {
+            "id": 19,
+            "name": "冰雪时间",
+            "description": "技能引导后，在目标处释放弹幕，每0.5秒对区域内命中的敌军造成{value}伤害，并减少{value}总移动速度持续0.5秒",
+            "cooldown": 20.0,
+            "animationState": 8192,
+            "particleName": "Snow AOE 1",
+            "maxDistance": 4.0,
+            "radius": 0.5,
+            "isAreaOfRange": true,
+            "costProperty": 4,
+            "flySpeed": 0.0,
+            "duration": 4.0,
+            "operationType": 1,
+            "colliderType": 1,
+            "cost": 70.0,
+            "isCostCurrentPercent": false,
+            "events": [
+                {
+                    "skillEventType": 1,
+                    "fireTime": 0.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.009999999776482582
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 1.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 2.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 2.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 3.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 3.5
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 4.0
+                },
+                {
+                    "skillEventType": 3,
+                    "fireTime": 4.010000228881836
+                }
+            ],
+            "conditionTarget": 2,
+            "extraEffects": [
+                {
+                    "target": 2,
+                    "baseValue": 25.0,
+                    "buffProperty": 1,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.20000000298023225,
+                    "effectProperty": 3,
+                    "operation": 0,
+                    "buffIncreaseType": 5,
+                    "duration": 0.0,
+                    "controlSkillType": 0
+                },
+                {
+                    "target": 2,
+                    "baseValue": 0.15000000596046449,
+                    "buffProperty": 0,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.15000000596046449,
+                    "effectProperty": 0,
+                    "operation": 0,
+                    "buffIncreaseType": 4,
+                    "duration": 0.5,
+                    "controlSkillType": 0
+                }
+            ],
+            "skillType": 3,
+            "controlSkillType": 0
+        },
+        {
+            "id": 20,
+            "name": "雪崩",
+            "description": "在目标处释放雪击，对周围敌人造成{value}伤害并减少{value}总移动速度持续2秒",
+            "cooldown": 10.0,
+            "animationState": 0,
+            "particleName": "Snow hit 1",
+            "maxDistance": 4.0,
+            "radius": 0.5,
+            "isAreaOfRange": true,
+            "costProperty": 4,
+            "flySpeed": 0.0,
+            "duration": 1.0,
+            "operationType": 1,
+            "colliderType": 1,
+            "cost": 70.0,
+            "isCostCurrentPercent": false,
+            "events": [
+                {
+                    "skillEventType": 1,
+                    "fireTime": 0.0
+                },
+                {
+                    "skillEventType": 2,
+                    "fireTime": 0.10000000149011612
+                },
+                {
+                    "skillEventType": 3,
+                    "fireTime": 1.0
+                }
+            ],
+            "conditionTarget": 2,
+            "extraEffects": [
+                {
+                    "target": 2,
+                    "baseValue": 35.0,
+                    "buffProperty": 1,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.25,
+                    "effectProperty": 3,
+                    "operation": 0,
+                    "buffIncreaseType": 5,
+                    "duration": 0.0,
+                    "controlSkillType": 0
+                },
+                {
+                    "target": 2,
+                    "baseValue": 0.20000000298023225,
+                    "buffProperty": 0,
+                    "isBuffMaxProperty": false,
+                    "extraRatio": 0.15000000596046449,
+                    "effectProperty": 0,
+                    "operation": 0,
+                    "buffIncreaseType": 4,
+                    "duration": 2.0,
+                    "controlSkillType": 0
+                }
+            ],
+            "skillType": 3,
+            "controlSkillType": 0
+        },
+        {
+            "id": 21,
+            "name": "闪现",
+            "description": "朝目标处瞬间移动一段距离",
+            "cooldown": 10.0,
+            "animationState": 0,
+            "particleName": "0",
+            "maxDistance": 2.0,
+            "radius": 0.0,
+            "isAreaOfRange": false,
+            "costProperty": 4,
+            "flySpeed": 0.0,
+            "duration": 0.0,
+            "operationType": 4,
+            "colliderType": 4,
+            "cost": 25.0,
+            "isCostCurrentPercent": false,
+            "events": [],
+            "conditionTarget": 2,
+            "extraEffects": [],
+            "skillType": 5,
+            "controlSkillType": 0
+        }
+    ]
+}

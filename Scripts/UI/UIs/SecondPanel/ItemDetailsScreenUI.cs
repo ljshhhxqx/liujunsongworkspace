@@ -441,8 +441,6 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                     _currentItemData = bagItemData;
                     UpdateButtonStates();
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
 

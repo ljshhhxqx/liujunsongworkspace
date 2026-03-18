@@ -147,6 +147,23 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         public Vector3 GetNearestObject(uint uid, float distance)
         {
             var data = GameObjectContainer.Instance.GetDynamicObjectData(uid);
+            foreach (var key in _playerInGameManager.GetAllPlayers())
+            {
+                var player = GameObjectContainer.Instance.GetDynamicObjectData(key);
+                if (player != null)
+                {
+                    if (player.NetId == uid)
+                    {
+                        continue;
+                    }
+                    var position = player.Position;
+                    if (Vector3.Distance(position, data.Position) < distance)
+                    {
+                        Debug.Log($"[GetNearestObject] {key} - {player.Position} - {player.Type}");
+                        return position;
+                    }
+                }
+            }
             foreach (var key in _sceneItems.Keys)
             {
                 if (_sceneItems[key].maxHealth > 1)
@@ -154,9 +171,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
                     var sceneItem = GameObjectContainer.Instance.GetDynamicObjectData(key);
                     if (sceneItem != null)
                     {
+                        if (sceneItem.NetId == uid)
+                        {
+                            continue;
+                        }
                         var position = sceneItem.Position;
                         if (Vector3.Distance(position, data.Position) < distance)
                         {
+                            Debug.Log($"[GetNearestObject] {key} - {sceneItem.Position} - {sceneItem.Type}");
                             return position;
                             
                         }
@@ -193,53 +215,57 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Interact
         {
             var effectData = playerSkillItemEvent.SkillHitExtraEffectData;
             var memoryProperty = playerSkillItemEvent.PlayerState.MemoryProperty;
-            if (_sceneItems.TryGetValue(playerSkillItemEvent.DefenderId, out var sceneItemInfo) && sceneItemInfo.health > 1)
+            if (_sceneItems.TryGetValue(playerSkillItemEvent.DefenderId, out var sceneItemInfo))
             {
-                float value;
-                if (effectData.baseValue < 1)
+                if (sceneItemInfo.health > 1)
                 {
-                    value = memoryProperty.GetValueOrDefault(effectData.buffProperty).CurrentValue * (effectData.baseValue + effectData.extraRatio);
-                }
-                else
-                {
-                    value = effectData.baseValue + memoryProperty.GetValueOrDefault(effectData.buffProperty).CurrentValue * effectData.extraRatio;
-                }
-                if (effectData.effectProperty == PropertyTypeEnum.Health)
-                {
-                    var damageResult = _jsonConfig.GetDamage(value, sceneItemInfo.defense, memoryProperty.GetValueOrDefault(PropertyTypeEnum.CriticalRate).CurrentValue, memoryProperty.GetValueOrDefault(PropertyTypeEnum.CriticalDamageRatio).CurrentValue);
-                    Debug.Log($"[OnSkillItem] Player {playerSkillItemEvent.PlayerId} attack scene item {playerSkillItemEvent.DefenderId} with damage {damageResult.Damage}");
-                    sceneItemInfo.health -= damageResult.Damage;
-                    sceneItemInfo.health = Mathf.Max(sceneItemInfo.health, 0);
-                }
-                else if (effectData.effectProperty is PropertyTypeEnum.Defense or PropertyTypeEnum.Attack or PropertyTypeEnum.CriticalRate 
-                         or PropertyTypeEnum.CriticalDamageRatio or PropertyTypeEnum.AttackRadius or PropertyTypeEnum.Speed || effectData.isBuffMaxProperty)
-                {
-                    sceneItemInfo = sceneItemInfo.UpdateItemInfo(effectData.effectProperty, effectData.isBuffMaxProperty, value);
-                    var buff = new PlayerPropertySyncSystem.SkillBuffManagerData
+                    float value;
+                    if (effectData.baseValue < 1)
                     {
-                        playerId = playerSkillItemEvent.DefenderId,
-                        value = value,
-                        duration = effectData.duration,
-                        operationType = effectData.operation,
-                        increaseType = effectData.buffIncreaseType,
-                        currentTime = effectData.duration,
-                        propertyType = effectData.effectProperty,
-                        skillType = effectData.controlSkillType,
-                    };
-                    _activeBuffs.Add(buff);
+                        value = memoryProperty.GetValueOrDefault(effectData.buffProperty).CurrentValue * (effectData.baseValue + effectData.extraRatio);
+                    }
+                    else
+                    {
+                        value = effectData.baseValue + memoryProperty.GetValueOrDefault(effectData.buffProperty).CurrentValue * effectData.extraRatio;
+                    }
+                    if (effectData.effectProperty == PropertyTypeEnum.Health)
+                    {
+                        var damageResult = _jsonConfig.GetDamage(value, sceneItemInfo.defense, memoryProperty.GetValueOrDefault(PropertyTypeEnum.CriticalRate).CurrentValue, memoryProperty.GetValueOrDefault(PropertyTypeEnum.CriticalDamageRatio).CurrentValue);
+                        Debug.Log($"[OnSkillItem] Player {playerSkillItemEvent.PlayerId} attack scene item {playerSkillItemEvent.DefenderId} with damage {damageResult.Damage}");
+                        sceneItemInfo.health -= damageResult.Damage;
+                        sceneItemInfo.health = Mathf.Max(sceneItemInfo.health, 0);
+                    }
+                    else if (effectData.effectProperty is PropertyTypeEnum.Defense or PropertyTypeEnum.Attack or PropertyTypeEnum.CriticalRate 
+                             or PropertyTypeEnum.CriticalDamageRatio or PropertyTypeEnum.AttackRadius or PropertyTypeEnum.Speed || effectData.isBuffMaxProperty)
+                    {
+                        sceneItemInfo = sceneItemInfo.UpdateItemInfo(effectData.effectProperty, effectData.isBuffMaxProperty, value);
+                        var buff = new PlayerPropertySyncSystem.SkillBuffManagerData
+                        {
+                            playerId = playerSkillItemEvent.DefenderId,
+                            value = value,
+                            duration = effectData.duration,
+                            operationType = effectData.operation,
+                            increaseType = effectData.buffIncreaseType,
+                            currentTime = effectData.duration,
+                            propertyType = effectData.effectProperty,
+                            skillType = effectData.controlSkillType,
+                        };
+                        _activeBuffs.Add(buff);
+                    }
+                    _sceneItems[playerSkillItemEvent.DefenderId] = sceneItemInfo;
+                    SceneItemInfoChanged?.Invoke(playerSkillItemEvent.DefenderId, sceneItemInfo);
+
+                    if (effectData.controlSkillType!= ControlSkillType.None)
+                    {
+                        ItemControlSkillChanged?.Invoke(playerSkillItemEvent.DefenderId, playerSkillItemEvent.SkillHitExtraEffectData.duration, playerSkillItemEvent.SkillHitExtraEffectData.controlSkillType);
+                    }
                 }
-                _sceneItems[playerSkillItemEvent.DefenderId] = sceneItemInfo;
-                SceneItemInfoChanged?.Invoke(playerSkillItemEvent.DefenderId, sceneItemInfo);
-                if (sceneItemInfo.health <= 0)
+                
+                if (sceneItemInfo.health == 0)
                 {
                     Debug.Log($"[OnSkillItem] Scene item {playerSkillItemEvent.DefenderId} is dead");
                     OnPlayerKillItem(playerSkillItemEvent.PlayerId, playerSkillItemEvent.DefenderId);
                     _sceneItems.Remove(playerSkillItemEvent.DefenderId);
-                }
-
-                if (effectData.controlSkillType!= ControlSkillType.None)
-                {
-                    ItemControlSkillChanged?.Invoke(playerSkillItemEvent.DefenderId, playerSkillItemEvent.SkillHitExtraEffectData.duration, playerSkillItemEvent.SkillHitExtraEffectData.controlSkillType);
                 }
             }
             else
