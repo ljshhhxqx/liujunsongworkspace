@@ -288,10 +288,10 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                                 Debug.Log($"收到启动数据: {gameStartConnectionMessage.targetPlayerInfo.playerName} -- {gameStartConnectionMessage.targetPlayerInfo.playerDuty}");
                                 _networkManager.StartGameFromCloud(gameStartConnectionMessage);
                             }
+                            _uiManager.CloseUI(UIType.Login);
                             _uiManager.CloseUI(UIType.PlayerConnect);
                             _uiManager.CloseUI(UIType.Main);
                             _uiManager.CloseUI(UIType.Loading);
-                            _uiManager.CloseUI(UIType.Login);
                         }
                         break;
                     default:

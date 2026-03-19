@@ -76,6 +76,7 @@ namespace UI.UIs
 
         private void OnRegisterButtonClick()
         {
+            _uiManager.CloseUI(Type);
             _uiManager.SwitchUI<RegisterScreenUI>();
         }
 
