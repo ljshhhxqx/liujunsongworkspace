@@ -333,6 +333,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 {
                     return playerInputState;
                 }
+                if (inputCommand.CommandAnimationState == AnimationState.SkillE || inputCommand.CommandAnimationState == AnimationState.SkillQ)
+                {
+                    Debug.Log($"[PlayerInputSyncSystem] - Simulate {inputCommand.CommandAnimationState} with input.");
+                    if (!playerController.SkillCheckerDict.ContainsKey(inputCommand.CommandAnimationState))
+                    {
+                        Debug.LogWarning($"[playerInputSyncSystem] skill {inputCommand.CommandAnimationState} not found.");
+                        return playerInputState;
+                    }
+                }
                 if (playerController.IsInSpecialState())
                 {
                     Debug.LogWarning($"[playerInputSyncSystem]Player {header.ConnectionId} is in special state, cannot input.");

@@ -807,14 +807,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             {
                 return;
             }
-
-            if (inputData.Command == AnimationState.SkillE || inputData.Command == AnimationState.SkillQ)
-            {
-                if (!_skillSyncState.IsSkillExist(inputData.Command))
-                {
-                    return;
-                }
-            }
+            // if (inputData.Command == AnimationState.SkillE || inputData.Command == AnimationState.SkillQ)
+            // {
+            //     if (!_skillSyncState.IsSkillExist(inputData.Command))
+            //     {
+            //         return;
+            //     }
+            // }
 
             var inputCommand = new InputCommand();
             
@@ -1691,11 +1690,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             if (string.IsNullOrWhiteSpace(prefabName))
             {
                 Debug.Log($"RpcSetPlayerWeapon null ");
-                _weaponIKController.SetWeapon(null);
+                _weaponIKController?.SetWeapon(null);
                 return;
             }
             var res = ResourceManager.Instance.GetResource<GameObject>(prefabName);
-            _weaponIKController.SetWeapon(res);
+            _weaponIKController?.SetWeapon(res);
         }
     }
 }

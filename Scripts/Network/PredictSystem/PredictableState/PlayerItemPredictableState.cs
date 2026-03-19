@@ -72,36 +72,36 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
             try
             {
                 IsPredicting = true;
-                // switch (command)
-                // {
-                //     case ItemsGetCommand itemsGetCommand:
-                //         for (var i = 0; i < itemsGetCommand.Items.Count; i++)
-                //         {
-                //             PlayerItemCalculator.CommandGetItem(ref playerItemState, itemsGetCommand.Items[i], header);
-                //         }
-                //         break;
-                //     case ItemsUseCommand itemUseCommand:
-                //         PlayerItemCalculator.CommandUseItems(itemUseCommand, ref playerItemState);
-                //         break;
-                //     case ItemEquipCommand itemEquipCommand:
-                //         PlayerItemCalculator.CommandEquipItem(itemEquipCommand, ref playerItemState, header.ConnectionId);
-                //         break;
-                //     case ItemLockCommand itemLockCommand:
-                //         PlayerItemCalculator.CommandLockItem(itemLockCommand, ref playerItemState);
-                //         break;
-                //     case ItemDropCommand itemDropCommand:
-                //         PlayerItemCalculator.CommandDropItem(itemDropCommand, ref playerItemState , header.ConnectionId);
-                //         break;
-                //     case ItemsBuyCommand itemBuyCommand:
-                //         PlayerItemCalculator.CommandBuyItem(itemBuyCommand, ref playerItemState);
-                //         break;
-                //     case ItemsSellCommand itemSellCommand:
-                //         PlayerItemCalculator.CommandSellItem(itemSellCommand, ref playerItemState, header.ConnectionId);
-                //         break;
-                //     case ItemExchangeCommand itemExchangeCommand:
-                //         PlayerItemCalculator.CommandExchangeItem(itemExchangeCommand, ref playerItemState);
-                //         break;
-                // }
+                switch (command)
+                {
+                    case ItemsGetCommand itemsGetCommand:
+                        for (var i = 0; i < itemsGetCommand.Items.Count; i++)
+                        {
+                            PlayerItemCalculator.CommandGetItem(ref playerItemState, itemsGetCommand.Items[i], header);
+                        }
+                        break;
+                    case ItemsUseCommand itemUseCommand:
+                        PlayerItemCalculator.CommandUseItems(itemUseCommand, ref playerItemState);
+                        break;
+                    case ItemEquipCommand itemEquipCommand:
+                        PlayerItemCalculator.CommandEquipItem(itemEquipCommand, ref playerItemState, header.ConnectionId);
+                        break;
+                    case ItemLockCommand itemLockCommand:
+                        PlayerItemCalculator.CommandLockItem(itemLockCommand, ref playerItemState);
+                        break;
+                    case ItemDropCommand itemDropCommand:
+                        PlayerItemCalculator.CommandDropItem(itemDropCommand, ref playerItemState , header.ConnectionId);
+                        break;
+                    case ItemsBuyCommand itemBuyCommand:
+                        PlayerItemCalculator.CommandBuyItem(itemBuyCommand, ref playerItemState);
+                        break;
+                    case ItemsSellCommand itemSellCommand:
+                        PlayerItemCalculator.CommandSellItem(itemSellCommand, ref playerItemState, header.ConnectionId);
+                        break;
+                    case ItemExchangeCommand itemExchangeCommand:
+                        PlayerItemCalculator.CommandExchangeItem(itemExchangeCommand, ref playerItemState);
+                        break;
+                }
             }
             catch (Exception e)
             {

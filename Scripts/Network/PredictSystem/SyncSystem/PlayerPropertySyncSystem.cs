@@ -1347,7 +1347,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     PropertyChange(playerId);
                     
                     var baseValue = GetPlayerBaseInfo(playerId);
-                    attackerConnection.TpcSetPlayerInfo(attackerConnection.connectionToServer, JsonUtility.ToJson(baseValue));
+                    attackerConnection.TpcSetPlayerInfo(attackerConnection.connectionToClient, JsonUtility.ToJson(baseValue));
                     HandlePlayerControl(playerId, skillHitExtraEffectData.controlSkillType);
                     return;
                 }

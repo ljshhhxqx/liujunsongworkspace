@@ -416,8 +416,6 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                     enableButton.gameObject.SetActive(false);
                     groupContent.gameObject.SetActive(false);
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(_currentItemData));
             }
             skillText.gameObject.SetActive(!string.IsNullOrEmpty(skillText.text));
 
@@ -438,8 +436,8 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                     var newEquipState = !bagItemData.IsEquip;
                     bagItemData.OnEquipItem?.Invoke(bagItemData.Index, newEquipState);
                     bagItemData.IsEquip = newEquipState;
-                    _currentItemData = bagItemData;
-                    UpdateButtonStates();
+                    // _currentItemData = bagItemData;
+                    // UpdateButtonStates();
                     break;
             }
         }
@@ -452,8 +450,8 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                     bool newLockState = !bagItemData.IsLock;
                     bagItemData.OnLockItem?.Invoke(bagItemData.Index, newLockState);
                     bagItemData.IsLock = newLockState;
-                    _currentItemData = bagItemData;
-                    UpdateButtonStates();
+                    // _currentItemData = bagItemData;
+                    // UpdateButtonStates();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(_currentItemData));
@@ -468,8 +466,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 Debug.Log($"bagItemData {bagItemData.ItemName}-{bagItemData.Index} changed skill state to {newState}");
                 bagItemData.OnEnableSkill?.Invoke(bagItemData.Index, bagItemData.SkillId, newState);
                 bagItemData.IsEnable = newState;
-                _currentItemData = bagItemData;
-                UpdateButtonStates();
+                //UpdateButtonStates();
             }
         }
         #endregion

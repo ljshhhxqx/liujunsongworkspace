@@ -124,7 +124,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     }
                     else
                     {
-                        connection.RpcSetPlayerWeapon("");
+                        connection.RpcSetPlayerWeapon(string.Empty);
                     }
                 }
                 PlayerEquipmentCalculator.CommandEquipment(equipmentCommand, ref playerEquipmentState);
