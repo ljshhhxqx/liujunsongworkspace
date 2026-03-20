@@ -10,8 +10,8 @@
         "SprintSpeedFactor": 2.0,
         "RotateSpeed": 7.0,
         "OnStairsSpeedRatioFactor": 0.75,
-        "JumpSpeed": 50.0,
-        "RollForce": 35.0,
+        "JumpSpeed": 500.0,
+        "RollForce": 350.0,
         "InputBufferTick": 2,
         "PlayerLayer": {
             "serializedVersion": "2",
@@ -32,7 +32,7 @@
         "onceSpawnCount": 40,
         "onceSpawnWeight": 100,
         "spawnAttackRatio": 0.15000000596046449,
-        "spawnMoveRatio": 0.15000000596046449,
+        "spawnMoveRatio": 0.10000000149011612,
         "spawnHiddenRatio": 0.05000000074505806,
         "spawnAttackMoveRatio": 0.10000000149011612,
         "spawnAttackHiddenRatio": 0.05000000074505806,
@@ -373,7 +373,7 @@
         },
         "syncTime": 0.01600000075995922,
         "gridSize": 4.0,
-        "safetyMargin": 5.0,
+        "safetyMargin": 2.0,
         "fixedSpacing": 1.0,
         "warmupTime": 3.0,
         "developKey": "DevelopKey",
@@ -996,12 +996,7 @@
             300,
             500
         ],
-        "scores": [
-            2500,
-            5000,
-            10000,
-            20000
-        ]
+        "scores": []
     },
     "bagCommonData": {
         "maxBagCount": 12,
