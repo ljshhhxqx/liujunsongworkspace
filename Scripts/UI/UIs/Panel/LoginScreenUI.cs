@@ -44,6 +44,8 @@ namespace UI.UIs
         {
 #if !UNITY_EDITOR
             Application.targetFrameRate = 90;
+
+            Debug.Log($"登录界面初始化成功 -- {Application.targetFrameRate}"); 
 #endif
             accountInputField.onValueChanged.AddListener(CheckInputField);
             loginButton.BindDebouncedListener(OnLoginButtonClick);

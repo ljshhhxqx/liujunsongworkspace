@@ -45,6 +45,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         private Button infoButton;
         [SerializeField]
         private Button friendButton;
+        [SerializeField]
+        private Button settingButton;
         [SerializeField] 
         private TextMeshProUGUI timerText;
         [SerializeField] 
@@ -80,6 +82,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             logoutButton.BindDebouncedListener(OnLogoutButtonClick);
             quitButton.BindDebouncedListener(OnQuitButtonClick);
             friendButton.BindDebouncedListener(OnFriendButtonClick);
+            settingButton.BindDebouncedListener(OnSettingButtonClick);
             Debug.Log("MainScreenUI Init");
             PlayFabData.PlayerReadOnlyData.Subscribe(value =>
             {
@@ -88,6 +91,11 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
                 nameText.text = _nameTitle + value.Nickname;
             })
             .AddTo(this);
+        }
+
+        private void OnSettingButtonClick()
+        {
+            _uiManager.SwitchUI<QualitySettingUI>();
         }
 
         private void OnFriendButtonClick()

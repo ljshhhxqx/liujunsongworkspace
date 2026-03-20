@@ -402,6 +402,9 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 case UIType.PlayerInGameInfo:
                     _propertyPredictionState.OpenPlayerInGameInfo();
                     break;
+                case UIType.QualitySetting:
+                    _uiManager.SwitchUI<QualitySettingUI>();
+                    break;
                 default:
                     Debug.LogWarning($"Not support UIType: {gameFunctionUIShowEvent.UIType}");
                     break;

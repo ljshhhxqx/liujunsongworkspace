@@ -70,7 +70,8 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
         Equip,
         Collect,
         Info,
-        Reset
+        Reset,
+        Setting
     }
 
     public static class KeyFunctionExtension
