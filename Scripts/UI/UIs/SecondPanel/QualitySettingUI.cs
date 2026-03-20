@@ -72,6 +72,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
         private void Init(UIManager uiManager)
         {
             _uiManager = uiManager;
+            Debug.Log("QualitySettingUI Init");
             InitializeDropdowns();
             BindEvents();
             QualitySettingManager.Instance.QualitySetting

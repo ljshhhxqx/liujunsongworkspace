@@ -95,6 +95,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
 
         private void OnSettingButtonClick()
         {
+            Debug.Log("QualitySettingUI Click");
             _uiManager.SwitchUI<QualitySettingUI>();
         }
 
