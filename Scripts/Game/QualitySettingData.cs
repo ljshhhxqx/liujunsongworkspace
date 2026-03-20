@@ -49,7 +49,7 @@ namespace HotUpdate.Scripts.Game
         [Tooltip("是否启用垂直同步 (VSync)")]
         public bool enableVSync = true;
         [Tooltip("目标帧率上限 (-1 为无限制)")]
-        public int targetFrameRate = -1;
+        public int targetFrameRate = 60;
 
         [Header("=== 贴图质量 ===")]
         [Tooltip("材质质量等级 (0=低 1=中 2=高)")]
@@ -155,7 +155,7 @@ namespace HotUpdate.Scripts.Game
                     settings.shadowDistance = 200f;
                     settings.enableTextureStreaming = true;
                     settings.particleDrawDistance = 300f;
-                    settings.targetFrameRate = -1;
+                    settings.targetFrameRate = 90;
                     break;
             }
 

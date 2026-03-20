@@ -87,7 +87,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
             qualityLevelDropdown.AddOptions(new List<TMP_Dropdown.OptionData>() { new TMP_Dropdown.OptionData("低"), new TMP_Dropdown.OptionData("中"), new TMP_Dropdown.OptionData("高"), new TMP_Dropdown.OptionData("极致") });
 
             targetFrameRateDropdown.ClearOptions();
-            targetFrameRateDropdown.AddOptions(new List<TMP_Dropdown.OptionData>() { new TMP_Dropdown.OptionData("无限制"), new TMP_Dropdown.OptionData("30"), new TMP_Dropdown.OptionData("60"), new TMP_Dropdown.OptionData("120"), new TMP_Dropdown.OptionData("144"), new TMP_Dropdown.OptionData("240") });
+            targetFrameRateDropdown.AddOptions(new List<TMP_Dropdown.OptionData>() { new TMP_Dropdown.OptionData("无限制"), new TMP_Dropdown.OptionData("30"), new TMP_Dropdown.OptionData("60"), new TMP_Dropdown.OptionData("90")});
             
 
             materialQualityDropdown.ClearOptions();
