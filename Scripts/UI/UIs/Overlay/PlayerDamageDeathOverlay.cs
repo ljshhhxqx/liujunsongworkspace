@@ -71,11 +71,11 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             {
                 deathRoot.SetActive(false);
             }
-            PlayDamageEffect(_valuePropertyData.Health, valuePropertyData.Health, valuePropertyData.MaxHealth);
+            PlayDamageEffect((int)_valuePropertyData.Health, (int)valuePropertyData.Health, (int)valuePropertyData.MaxHealth);
             _valuePropertyData = valuePropertyData;
         }
 
-        public void PlayDamageEffect(float oldHealth, float newHealth, float maxHealth)
+        public void PlayDamageEffect(int oldHealth, int newHealth, int maxHealth)
         {
             if (_isDeathCountDownStarted || newHealth <= 0f || newHealth >= oldHealth ) return;
             damageRoot.SetActive(newHealth < oldHealth);
@@ -90,7 +90,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
             _damageSequence.Append(damageImage.DOFade(0, 0.05f).SetEase(Ease.Linear));
             _damageSequence.OnComplete(() =>
             {
-                if (oldHealth / maxHealth < _hpRatioToWarning)
+                if (oldHealth / (float)maxHealth < _hpRatioToWarning)
                 {
                     damageRoot.SetActive(true);
                     var color = damageImage.color;
@@ -112,7 +112,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
         [Button]
         private void TestDamageEffect(float oldHealth, float newHealth, float maxHealth)
         {
-            PlayDamageEffect(10f, 5f, 10f);
+            PlayDamageEffect(10, 5, 10);
         }
 
         public void Clear()

@@ -36,7 +36,6 @@ namespace HotUpdate.Scripts.Network.Server
         private void Init(PlayerInGameManager playerInGameManager)
         {
             _playerInGameManager = playerInGameManager;
-            _gameSyncManager = FindObjectOfType<GameSyncManager>();
         }
     
         // 服务器开始结束流程
@@ -55,6 +54,7 @@ namespace HotUpdate.Scripts.Network.Server
 
         public void CmdConfirmCleanup()
         {
+            _gameSyncManager = FindObjectOfType<GameSyncManager>();
             _playerComponentController ??= _gameSyncManager.GetLocalPlayerConnection();
             _playerComponentController.CmdEndGame(_playerInGameManager.LocalPlayerId);
         }

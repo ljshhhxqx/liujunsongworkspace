@@ -545,14 +545,14 @@ namespace HotUpdate.Scripts.Network.UI
     {
         public int PlayerId;
         public string Name;
-        public float CurrentHp;
-        public float MaxHp;
-        public float CurrentMp;
-        public float MaxMp;
+        public int CurrentHp;
+        public int MaxHp;
+        public int CurrentMp;
+        public int MaxMp;
         public Vector3 TargetPosition;
         public Vector3 PlayerPosition;
         public PropertyTypeEnum PropertyType;
-        public float DiffValue;
+        public int DiffValue;
         public int localPlayerId;
 
         public bool Equals(PlayerHpItemData other)

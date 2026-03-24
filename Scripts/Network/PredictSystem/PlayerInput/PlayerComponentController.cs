@@ -1308,10 +1308,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                     PlayerId = tracedInfo.PlayerId,
                     PlayerPosition = transform.position,
                     TargetPosition = tracedInfo.Position,
-                    MaxMp = tracedInfo.MaxMana,
-                    CurrentHp = tracedInfo.Hp,
-                    CurrentMp = tracedInfo.Mana,
-                    MaxHp = tracedInfo.MaxHp,
+                    MaxMp = (int)tracedInfo.MaxMana,
+                    CurrentHp = (int)tracedInfo.Hp,
+                    CurrentMp = (int)tracedInfo.Mana,
+                    MaxHp = (int)tracedInfo.MaxHp,
                     Name = tracedInfo.PlayerName,
                 };
             }
@@ -1567,13 +1567,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
                 PlayerId = tracedInfo.PlayerId,
                 PlayerPosition = transform.position,
                 TargetPosition = tracedInfo.Position,
-                MaxMp = tracedInfo.MaxMana,
-                CurrentHp = tracedInfo.Hp,
-                CurrentMp = tracedInfo.Mana,
-                MaxHp = tracedInfo.MaxHp,
+                MaxMp = (int)tracedInfo.MaxMana,
+                CurrentHp = (int)tracedInfo.Hp,
+                CurrentMp = (int)tracedInfo.Mana,
+                MaxHp = (int)tracedInfo.MaxHp,
                 Name = tracedInfo.PlayerName,
                 PropertyType = tracedInfo.PropertyDifferentPropertyType,
-                DiffValue = tracedInfo.PropertyDifferentValue,
+                DiffValue = (int)tracedInfo.PropertyDifferentValue,
                 localPlayerId = _playerInGameManager.LocalPlayerId
             };
         }
