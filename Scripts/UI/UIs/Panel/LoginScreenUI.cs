@@ -43,7 +43,7 @@ namespace UI.UIs
         private void Init()
         {
 #if !UNITY_EDITOR
-            Application.targetFrameRate = 90;
+            Application.targetFrameRate = 60;
 
             Debug.Log($"登录界面初始化成功 -- {Application.targetFrameRate}"); 
 #endif

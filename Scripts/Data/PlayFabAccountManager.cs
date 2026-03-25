@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AOTScripts.Data;
 using AOTScripts.Tool;
+using AOTScripts.Tool.Resource;
 using Data;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.Data;
@@ -82,6 +83,7 @@ namespace HotUpdate.Scripts.Data
             PlayerPrefs.Save();
             _uiManager.ShowTips("注册成功！", () =>
             {
+                _uiManager.CloseUI(UIType.Register);
                 var loginUI = _uiManager.SwitchUI<LoginScreenUI>();
                 if (loginUI)
                 {
@@ -118,6 +120,7 @@ namespace HotUpdate.Scripts.Data
                 {
                     _uiManager.SwitchLoadingPanel(false);
                     OnLoginSuccess(s);
+                    _uiManager.CloseUI(UIType.Login);
                 }, f => 
                 { 
                     _uiManager.SwitchLoadingPanel(false);
@@ -139,6 +142,7 @@ namespace HotUpdate.Scripts.Data
                 {
                     _uiManager.SwitchLoadingPanel(false);
                     OnLoginSuccess(s);
+                    _uiManager.CloseUI(UIType.Login);
                     //_uiManager.SwitchUI<EntityObjectTest>();
                 }, f => 
                 { 

@@ -48,6 +48,7 @@ namespace UI.UIs
 
         private void OnCancelButtonClick()
         {
+            _uiManager.CloseUI(Type);
             _uiManager.SwitchUI<LoginScreenUI>();
         }
 

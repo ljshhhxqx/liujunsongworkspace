@@ -659,8 +659,12 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 return;
             }
 
-            var recoverHpRatio = isPlayerInHisBase ? _gameConfigData.gameBaseData.playerBaseHpRecoverRatioPerSec : -_gameConfigData.gameBaseData.playerBaseHpRecoverRatioPerSec;
-            var recoverMpRatio = isPlayerInHisBase ? _gameConfigData.gameBaseData.playerBaseManaRecoverRatioPerSec : -_gameConfigData.gameBaseData.playerBaseManaRecoverRatioPerSec;
+            var recoverHpRatio = isPlayerInHisBase ? _gameConfigData.gameBaseData.playerBaseHpRecoverRatioPerSec : 0;
+            var recoverMpRatio = isPlayerInHisBase ? _gameConfigData.gameBaseData.playerBaseManaRecoverRatioPerSec : 0;
+            if (recoverHpRatio == 0 && recoverMpRatio == 0)
+            {
+                return;
+            }
             playerState.MemoryProperty[PropertyTypeEnum.Health] = playerState.MemoryProperty[PropertyTypeEnum.Health].UpdateCurrentValueByRatio(recoverHpRatio);
             playerState.MemoryProperty[PropertyTypeEnum.Strength] = playerState.MemoryProperty[PropertyTypeEnum.Strength].UpdateCurrentValueByRatio(recoverMpRatio);
 
