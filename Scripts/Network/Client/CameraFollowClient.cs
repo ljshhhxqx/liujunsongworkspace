@@ -2,6 +2,7 @@
 using Game.Map;
 using HotUpdate.Scripts.Config.JsonConfig;
 using HotUpdate.Scripts.Network.PredictSystem.PlayerInput;
+using HotUpdate.Scripts.Network.Server.InGame;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.UI.UIBase;
 using UnityEngine;
@@ -23,12 +24,13 @@ namespace HotUpdate.Scripts.Network.Client
         private bool _isWindowsApplication;
         private bool _isMobile;
         private int _cameraControlTouchId = -1;
+        private PlayerInGameManager _playerInGameManager;
         [SerializeField] 
         [Range(0.3f, 0.7f)] 
         private float screenDivideRatio = 0.5f;
 
         [Inject]
-        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager, UIManager uiManager)
+        private void Init(IConfigProvider configProvider, GameEventManager gameEventManager, UIManager uiManager )
         {
             _gameEventManager = gameEventManager;
             _jsonDataConfig = configProvider.GetConfig<JsonDataConfig>();
@@ -38,6 +40,7 @@ namespace HotUpdate.Scripts.Network.Client
             _gameEventManager.Subscribe<PlayerSpawnedEvent>(OnPlayerSpawned);
             _gameEventManager.Subscribe<TouchResetCameraEvent>(OnTouchResetCamera);
             _isWindowsApplication = PlayerPlatformDefine.IsWindowsPlatform();
+            _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
             _isMobile = PlayerPlatformDefine.IsJoystickPlatform();
             Debug.Log("CameraFollowClient init");
         }
@@ -59,6 +62,11 @@ namespace HotUpdate.Scripts.Network.Client
             if (!playerSpawnedEvent.Target)
             {
                 Debug.LogError("player has no tag!");
+                return;
+            }
+
+            if (playerSpawnedEvent.PlayerId != _playerInGameManager.LocalPlayerNetId)
+            {
                 return;
             }
 

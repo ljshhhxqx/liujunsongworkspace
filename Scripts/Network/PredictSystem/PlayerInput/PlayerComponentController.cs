@@ -415,11 +415,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private PlayerInputStateData _lastInputStateData;
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
+        protected override void InjectClientCallback()
+        {
+            _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter, gameObject, netId, true));
+        }
+
         protected override void InjectLocalPlayerCallback()
         {
             Debug.Log($"[PlayerInputController] OnStartLocalPlayer");
             _gameEventManager.Publish(new PlayerUnListenMessageEvent());
-            _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter, gameObject, netId, true));
             _gameEventManager.Subscribe<DevelopItemGetEvent>(OnDevelopItemGet);
             _gameEventManager.Subscribe<GameFunctionUIShowEvent>(OnGameFunctionUIShow);
             _gameEventManager.Subscribe<TargetShowEvent>(OnTargetShow);
