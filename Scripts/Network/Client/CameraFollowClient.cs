@@ -37,7 +37,7 @@ namespace HotUpdate.Scripts.Network.Client
             _playerDataConfig = _jsonDataConfig.PlayerConfig;
             _uiManager = uiManager;
             _uiManager.IsUnlockMouse+= OnUnlockMouse;
-            _gameEventManager.Subscribe<PlayerSpawnedEvent>(OnPlayerSpawned);
+            _gameEventManager.Subscribe<LocalPlayerSpawnedEvent>(OnPlayerSpawned);
             _gameEventManager.Subscribe<TouchResetCameraEvent>(OnTouchResetCamera);
             _isWindowsApplication = PlayerPlatformDefine.IsWindowsPlatform();
             _playerInGameManager = FindObjectOfType<PlayerInGameManager>();
@@ -47,8 +47,9 @@ namespace HotUpdate.Scripts.Network.Client
 
         private void OnTouchResetCamera(TouchResetCameraEvent cameraEvent)
         {
-            _isControlling = true;
             Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            _isControlling = true;
         }
 
         private void OnUnlockMouse(bool isUnlock)
@@ -57,20 +58,15 @@ namespace HotUpdate.Scripts.Network.Client
             Cursor.visible = isUnlock;
         }
 
-        private void OnPlayerSpawned(PlayerSpawnedEvent playerSpawnedEvent)
+        private void OnPlayerSpawned(LocalPlayerSpawnedEvent localPlayerSpawnedEvent)
         {
-            if (!playerSpawnedEvent.Target)
+            if (!localPlayerSpawnedEvent.Target)
             {
                 Debug.LogError("player has no tag!");
                 return;
             }
 
-            if (playerSpawnedEvent.PlayerId != _playerInGameManager.LocalPlayerNetId)
-            {
-                return;
-            }
-
-            _target = playerSpawnedEvent.CameraFollowTarget;
+            _target = localPlayerSpawnedEvent.CameraFollowTarget;
             _offset = _jsonDataConfig.PlayerConfig.Offset;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -184,7 +180,7 @@ namespace HotUpdate.Scripts.Network.Client
         private void OnDestroy()
         {
             _uiManager.IsUnlockMouse-= OnUnlockMouse;
-            _gameEventManager.Unsubscribe<PlayerSpawnedEvent>(OnPlayerSpawned);
+            _gameEventManager.Unsubscribe<LocalPlayerSpawnedEvent>(OnPlayerSpawned);
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
             Debug.Log("CameraFollowClient OnDestroy");

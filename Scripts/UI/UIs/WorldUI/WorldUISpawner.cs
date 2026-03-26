@@ -5,6 +5,7 @@ using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.ObjectPool;
 using HotUpdate.Scripts.UI.UIs.UIFollow.DataModel;
 using HotUpdate.Scripts.UI.UIs.UIFollow.UIController;
+using Mirror;
 using UnityEngine;
 using VContainer;
 
@@ -46,15 +47,15 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
             _mainCamera = null;
         }
 
-        private void OnPlayerSpawned(PlayerSpawnedEvent playerSpawnedEvent)
+        private void OnPlayerSpawned(PlayerSpawnedEvent localPlayerSpawnedEvent)
         {
-            if (_followedUIControllers.ContainsKey(playerSpawnedEvent.PlayerId))
+            if (_followedUIControllers.ContainsKey(localPlayerSpawnedEvent.PlayerId) || NetworkClient.localPlayer.netId == localPlayerSpawnedEvent.PlayerId)
             {
                 return;
             }
-            var dataModel = GetDataModel(WorldUIType.CollectItem, playerSpawnedEvent.PlayerId, out var dataModels);
+            var dataModel = GetDataModel(WorldUIType.CollectItem, localPlayerSpawnedEvent.PlayerId, out var dataModels);
 
-            if (!playerSpawnedEvent.Spawned)
+            if (!localPlayerSpawnedEvent.Spawned)
             {
                 dataModel.Dispose();
                 if (!_dataModels.TryGetValue(WorldUIType.PlayerItem, out var playerItemModels))
@@ -62,9 +63,9 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
                     Debug.LogWarning($"No data model found for {WorldUIType.PlayerItem}");
                     return;
                 }
-                playerItemModels.Remove(playerSpawnedEvent.PlayerId);
-                GameObjectPoolManger.Instance.ReturnObject(_followedUIControllers[playerSpawnedEvent.PlayerId].gameObject);
-                _followedUIControllers.Remove(playerSpawnedEvent.PlayerId);
+                playerItemModels.Remove(localPlayerSpawnedEvent.PlayerId);
+                GameObjectPoolManger.Instance.ReturnObject(_followedUIControllers[localPlayerSpawnedEvent.PlayerId].gameObject);
+                _followedUIControllers.Remove(localPlayerSpawnedEvent.PlayerId);
                 return;
             }
 
@@ -77,9 +78,9 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
             _dataModels[WorldUIType.PlayerItem] = dataModels;
             var go = GameObjectPoolManger.Instance.GetObject(prefab, parent: transform);
             var controller = go.GetComponent<FollowedUIController>();
-            controller.InitFollowedInstance(playerSpawnedEvent.Target, playerSpawnedEvent.PlayerId, playerSpawnedEvent.Target.transform, MainCamera);
+            controller.InitFollowedInstance(localPlayerSpawnedEvent.Target, localPlayerSpawnedEvent.PlayerId, localPlayerSpawnedEvent.Target.transform, MainCamera);
             controller.BindToModel(dataModel);
-            _followedUIControllers.Add(playerSpawnedEvent.PlayerId, controller);
+            _followedUIControllers.Add(localPlayerSpawnedEvent.PlayerId, controller);
         }
         
         private IUIDataModel GetDataModel(WorldUIType uiType, uint id, out Dictionary<uint, IUIDataModel> dataModels)

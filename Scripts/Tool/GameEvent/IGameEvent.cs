@@ -381,7 +381,7 @@ namespace HotUpdate.Scripts.Tool.GameEvent
     {
         
     }
-
+    
     public struct PlayerSpawnedEvent : IGameEvent
     {
         public Transform CameraFollowTarget { get; private set; }
@@ -390,6 +390,22 @@ namespace HotUpdate.Scripts.Tool.GameEvent
         public bool Spawned { get; private set; }
         
         public PlayerSpawnedEvent(Transform cameraFollowTarget, GameObject target, uint playerId, bool spawned)
+        {
+            CameraFollowTarget = cameraFollowTarget;
+            Target = target;
+            PlayerId = playerId;
+            Spawned = spawned;
+        }
+    }
+
+    public struct LocalPlayerSpawnedEvent : IGameEvent
+    {
+        public Transform CameraFollowTarget { get; private set; }
+        public GameObject Target { get; private set; }
+        public uint PlayerId { get; private set; }
+        public bool Spawned { get; private set; }
+        
+        public LocalPlayerSpawnedEvent(Transform cameraFollowTarget, GameObject target, uint playerId, bool spawned)
         {
             CameraFollowTarget = cameraFollowTarget;
             Target = target;

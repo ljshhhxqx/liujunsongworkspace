@@ -424,6 +424,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         {
             Debug.Log($"[PlayerInputController] OnStartLocalPlayer");
             _gameEventManager.Publish(new PlayerUnListenMessageEvent());
+            _gameEventManager.Publish(new LocalPlayerSpawnedEvent(rotateCenter, gameObject, netId, true));
             _gameEventManager.Subscribe<DevelopItemGetEvent>(OnDevelopItemGet);
             _gameEventManager.Subscribe<GameFunctionUIShowEvent>(OnGameFunctionUIShow);
             _gameEventManager.Subscribe<TargetShowEvent>(OnTargetShow);
@@ -1625,11 +1626,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcSpawnSkillEffect(int skillConfigId, Vector3 position, AnimationState code)
         {
-            if (_skillSyncState == null)
-            {
-                return;
-            }
-            _skillSyncState.SpawnSkillEffect(skillConfigId, position, code);
+            _skillSyncState?.SpawnSkillEffect(skillConfigId, position, code);
            
         }
         
