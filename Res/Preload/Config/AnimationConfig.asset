@@ -315,7 +315,7 @@ MonoBehaviour:
     animationNames:
     - Skill
     keyframeData:
-    - triggerTime: 0.75
+    - triggerTime: 0.375
       eventType: 3
       resetCooldown: 0
       resetCooldownWindowTime: 0
@@ -342,7 +342,7 @@ MonoBehaviour:
     animationNames:
     - Skill
     keyframeData:
-    - triggerTime: 1.25
+    - triggerTime: 0.65
       eventType: 4
       resetCooldown: 0
       resetCooldownWindowTime: 0

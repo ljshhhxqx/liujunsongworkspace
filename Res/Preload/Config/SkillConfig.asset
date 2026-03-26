@@ -27,7 +27,7 @@ MonoBehaviour:
     cooldown: 10
     animationState: 0
     particleName: AoE slash green 1
-    maxDistance: 4
+    maxDistance: 6
     radius: 0.5
     isAreaOfRange: 1
     costProperty: 4
@@ -64,7 +64,7 @@ MonoBehaviour:
     cooldown: 10
     animationState: 4096
     particleName: Buff 1
-    maxDistance: 4
+    maxDistance: 6
     radius: 0.5
     isAreaOfRange: 1
     costProperty: 4
@@ -113,7 +113,7 @@ MonoBehaviour:
     cooldown: 15
     animationState: 8192
     particleName: Crystals crossfade 2
-    maxDistance: 4
+    maxDistance: 6
     radius: 0.5
     isAreaOfRange: 1
     costProperty: 4
@@ -150,7 +150,7 @@ MonoBehaviour:
     cooldown: 10
     animationState: 4096
     particleName: Debuff 1
-    maxDistance: 4
+    maxDistance: 6
     radius: 0.5
     isAreaOfRange: 1
     costProperty: 4
@@ -209,7 +209,7 @@ MonoBehaviour:
     cooldown: 20
     animationState: 8192
     particleName: Dust ground 1
-    maxDistance: 4
+    maxDistance: 6
     radius: 0.5
     isAreaOfRange: 1
     costProperty: 4
@@ -258,7 +258,7 @@ MonoBehaviour:
     cooldown: 10
     animationState: 0
     particleName: Electro slash 1
-    maxDistance: 1
+    maxDistance: 3
     radius: 0.5
     isAreaOfRange: 1
     costProperty: 4
@@ -295,7 +295,7 @@ MonoBehaviour:
     cooldown: 15
     animationState: 4096
     particleName: Freeze circle 1
-    maxDistance: 4
+    maxDistance: 6
     radius: 0.5
     isAreaOfRange: 1
     costProperty: 4
@@ -358,7 +358,7 @@ MonoBehaviour:
     cooldown: 10
     animationState: 0
     particleName: Ground AOE explosion 1
-    maxDistance: 4
+    maxDistance: 6
     radius: 0.5
     isAreaOfRange: 1
     costProperty: 4
@@ -405,7 +405,7 @@ MonoBehaviour:
     cooldown: 20
     animationState: 8192
     particleName: Healing circle 1
-    maxDistance: 4
+    maxDistance: 6
     radius: 0.5
     isAreaOfRange: 1
     costProperty: 4
@@ -458,7 +458,7 @@ MonoBehaviour:
     cooldown: 10
     animationState: 0
     particleName: Holy hit 1
-    maxDistance: 4
+    maxDistance: 6
     radius: 0.5
     isAreaOfRange: 1
     costProperty: 4
@@ -495,7 +495,7 @@ MonoBehaviour:
     cooldown: 20
     animationState: 8192
     particleName: Laser AOE 1
-    maxDistance: 4
+    maxDistance: 6
     radius: 0.5
     isAreaOfRange: 1
     costProperty: 4
@@ -554,7 +554,7 @@ MonoBehaviour:
     cooldown: 20
     animationState: 8192
     particleName: Lightning aura 1
-    maxDistance: 4
+    maxDistance: 6
     radius: 0.5
     isAreaOfRange: 1
     costProperty: 4
@@ -617,7 +617,7 @@ MonoBehaviour:
     cooldown: 20
     animationState: 8192
     particleName: Magic circle 2
-    maxDistance: 4
+    maxDistance: 6
     radius: 0.5
     isAreaOfRange: 1
     costProperty: 4
@@ -680,7 +680,7 @@ MonoBehaviour:
     cooldown: 20
     animationState: 0
     particleName: Magic shield blue 1
-    maxDistance: 2.5
+    maxDistance: 5
     radius: 0.5
     isAreaOfRange: 1
     costProperty: 4
@@ -715,7 +715,7 @@ MonoBehaviour:
     cooldown: 20
     animationState: 8192
     particleName: Meteors AOE 1
-    maxDistance: 4
+    maxDistance: 6
     radius: 0.5
     isAreaOfRange: 1
     costProperty: 4
@@ -778,7 +778,7 @@ MonoBehaviour:
     cooldown: 12
     animationState: 4096
     particleName: Plexus AoE 1
-    maxDistance: 4
+    maxDistance: 6
     radius: 0.5
     isAreaOfRange: 1
     costProperty: 4
@@ -825,7 +825,7 @@ MonoBehaviour:
     cooldown: 15
     animationState: 0
     particleName: Red energy explosion 1
-    maxDistance: 4
+    maxDistance: 6
     radius: 0.5
     isAreaOfRange: 1
     costProperty: 4
@@ -862,7 +862,7 @@ MonoBehaviour:
     cooldown: 5
     animationState: 0
     particleName: Slash
-    maxDistance: 5
+    maxDistance: 7
     radius: 0.5
     isAreaOfRange: 1
     costProperty: 4
@@ -939,7 +939,7 @@ MonoBehaviour:
     cooldown: 20
     animationState: 8192
     particleName: Snow AOE 1
-    maxDistance: 4
+    maxDistance: 6
     radius: 0.5
     isAreaOfRange: 1
     costProperty: 4
@@ -1002,7 +1002,7 @@ MonoBehaviour:
     cooldown: 10
     animationState: 0
     particleName: Snow hit 1
-    maxDistance: 4
+    maxDistance: 6
     radius: 0.5
     isAreaOfRange: 1
     costProperty: 4
@@ -1049,7 +1049,7 @@ MonoBehaviour:
     cooldown: 10
     animationState: 0
     particleName: 0
-    maxDistance: 2
+    maxDistance: 3
     radius: 0
     isAreaOfRange: 0
     costProperty: 4

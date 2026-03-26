@@ -10,5 +10,4076 @@
     },
     "configName": "ItemConfig",
     "isArray": true,
-    "gameItemDatas": []
+    "gameItemDatas": [
+        {
+            "id": 1001,
+            "name": "金币",
+            "desc": "货币资源",
+            "price": 1.0,
+            "sellPriceRatio": 0.0,
+            "itemType": 6,
+            "maxStack": 999999999,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 1,
+            "equipmentPart": 0,
+            "buffExtraData": [],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": false
+        },
+        {
+            "id": 1002,
+            "name": "银币拾取物",
+            "desc": "拾取物(银币)",
+            "price": 1.0,
+            "sellPriceRatio": 0.0,
+            "itemType": 5,
+            "maxStack": 0,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 1,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 130,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 1003,
+            "name": "金币拾取物",
+            "desc": "拾取物(金币)",
+            "price": 5.0,
+            "sellPriceRatio": 0.0,
+            "itemType": 5,
+            "maxStack": 0,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 2,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 131,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 1004,
+            "name": "钻石拾取物",
+            "desc": "拾取物(钻石)",
+            "price": 10.0,
+            "sellPriceRatio": 0.0,
+            "itemType": 5,
+            "maxStack": 0,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 3,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 144,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2001,
+            "name": "宝藏(中)",
+            "desc": "宝藏中的金币(中)",
+            "price": 50.0,
+            "sellPriceRatio": 0.0,
+            "itemType": 5,
+            "maxStack": 0,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 2,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 145,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2002,
+            "name": "宝藏分数(中)",
+            "desc": "宝藏中的分数(中)",
+            "price": 50.0,
+            "sellPriceRatio": 0.0,
+            "itemType": 5,
+            "maxStack": 0,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 2,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 136,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2003,
+            "name": "宝藏(大)",
+            "desc": "宝藏中的金币(大)",
+            "price": 100.0,
+            "sellPriceRatio": 1.0,
+            "itemType": 5,
+            "maxStack": 0,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 3,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 132,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2004,
+            "name": "宝藏分数(大)",
+            "desc": "宝藏中的分数(大)",
+            "price": 100.0,
+            "sellPriceRatio": 1.0,
+            "itemType": 5,
+            "maxStack": 0,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 3,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 137,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2005,
+            "name": "能量药剂Ⅰ(小)",
+            "desc": "立即恢复15%体力",
+            "price": 10.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 5,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 1,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 127,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2006,
+            "name": "能量药剂Ⅱ(小)",
+            "desc": "立即恢复获得少量体力",
+            "price": 10.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 5,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 1,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 79,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2007,
+            "name": "能量药剂Ⅰ(中)",
+            "desc": "立即恢复35%体力",
+            "price": 30.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 5,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 2,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 128,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2008,
+            "name": "能量药剂Ⅱ(中)",
+            "desc": "立即恢复获得中等量体力",
+            "price": 30.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 5,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 2,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 80,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2009,
+            "name": "能量药剂Ⅰ(大)",
+            "desc": "立即恢复65%体力",
+            "price": 50.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 5,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 3,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 129,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2010,
+            "name": "能量药剂Ⅱ(大)",
+            "desc": "立即恢复大量体力",
+            "price": 50.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 5,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 3,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 81,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2011,
+            "name": "治疗药剂Ⅰ(小)",
+            "desc": "立即恢复15%生命",
+            "price": 10.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 5,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 1,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 124,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2012,
+            "name": "治疗药剂Ⅱ(小)",
+            "desc": "立即恢复获得少量生命",
+            "price": 10.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 5,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 1,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 82,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2013,
+            "name": "治疗药剂Ⅰ(中)",
+            "desc": "立即恢复35%生命",
+            "price": 30.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 5,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 2,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 125,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2014,
+            "name": "治疗药剂Ⅱ(中)",
+            "desc": "立即恢复获得中等量生命",
+            "price": 30.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 5,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 2,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 83,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2015,
+            "name": "治疗药剂Ⅰ(大)",
+            "desc": "立即恢复65%生命",
+            "price": 50.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 5,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 3,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 126,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2016,
+            "name": "治疗药剂Ⅱ(大)",
+            "desc": "立即恢复大量生命",
+            "price": 50.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 5,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 3,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 84,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2017,
+            "name": "大力药剂Ⅰ(小)",
+            "desc": "获得少量额外攻击力、暴击率，持续一定时间",
+            "price": 20.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "AttackPotion-Small",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 1,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 85,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 86,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2018,
+            "name": "大力药剂Ⅱ(小)",
+            "desc": "获得少量总攻击力、暴击率，持续一定时间",
+            "price": 30.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "AttackPotion-Small",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 1,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 87,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 88,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2019,
+            "name": "大力药剂Ⅰ(中)",
+            "desc": "获得中等量额外攻击力、暴击率，持续一定时间",
+            "price": 40.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "AttackPotion-Medium",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 2,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 89,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 90,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2020,
+            "name": "大力药剂Ⅱ(中)",
+            "desc": "获得中等量总攻击力、暴击率，持续一定时间",
+            "price": 50.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "AttackPotion-Medium",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 2,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 91,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 92,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2021,
+            "name": "大力药剂Ⅰ(大)",
+            "desc": "获得大量额外攻击力、暴击率，持续一定时间",
+            "price": 70.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "AttackPotion-Large",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 3,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 93,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 94,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2022,
+            "name": "大力药剂Ⅱ(大)",
+            "desc": "获得大量总攻击力、暴击率，持续一定时间",
+            "price": 100.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "AttackPotion-Large",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 3,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 95,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 96,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2023,
+            "name": "轻盈药剂Ⅰ(小)",
+            "desc": "获得少量额外移动速度、攻击速度，持续一定时间",
+            "price": 20.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "SpeedPotion-Small",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 1,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 97,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 98,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2024,
+            "name": "轻盈药剂Ⅱ(小)",
+            "desc": "获得少量总移动速度、攻击速度，持续一定时间",
+            "price": 30.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "SpeedPotion-Small",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 1,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 99,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 100,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2025,
+            "name": "轻盈药剂Ⅰ(中)",
+            "desc": "获得中等量额外移动速度、攻击速度，持续一定时间",
+            "price": 40.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "SpeedPotion-Medium",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 2,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 101,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 102,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2026,
+            "name": "轻盈药剂Ⅱ(中)",
+            "desc": "获得中等量总移动速度、攻击速度，持续一定时间",
+            "price": 50.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "SpeedPotion-Medium",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 2,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 103,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 104,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2027,
+            "name": "轻盈药剂Ⅰ(大)",
+            "desc": "获得大量额外移动速度、攻击速度，持续一定时间",
+            "price": 70.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "SpeedPotion-Large",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 3,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 105,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 106,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2028,
+            "name": "轻盈药剂Ⅱ(大)",
+            "desc": "获得大量总移动速度、攻击速度，持续一定时间",
+            "price": 100.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "SpeedPotion-Large",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 3,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 107,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 108,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2029,
+            "name": "坚韧药剂Ⅰ(小)",
+            "desc": "获得少量额外防御力、生命恢复，持续一定时间",
+            "price": 20.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "DefensePotion-Small",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 1,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 109,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 110,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2030,
+            "name": "坚韧药剂Ⅱ(小)",
+            "desc": "获得少量总防御力、生命恢复，持续一定时间",
+            "price": 30.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "DefensePotion-Small",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 1,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 111,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 112,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2031,
+            "name": "坚韧药剂Ⅰ(中)",
+            "desc": "获得中等量额外防御力、生命恢复，持续一定时间",
+            "price": 40.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "DefensePotion-Medium",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 2,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 113,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 114,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2032,
+            "name": "坚韧药剂Ⅱ(中)",
+            "desc": "获得中等量总防御力、生命恢复，持续一定时间",
+            "price": 50.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "DefensePotion-Medium",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 2,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 115,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 116,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2033,
+            "name": "坚韧药剂Ⅰ(大)",
+            "desc": "获得大量额外防御力、生命恢复，持续一定时间",
+            "price": 70.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "DefensePotion-Large",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 3,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 117,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 118,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2034,
+            "name": "坚韧药剂Ⅱ(大)",
+            "desc": "获得大量总防御力、生命恢复，持续一定时间",
+            "price": 100.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "DefensePotion-Large",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 3,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 119,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 120,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2035,
+            "name": "续航药剂Ⅰ(小)",
+            "desc": "获得少量额外最大体力值、体力恢复，持续一定时间",
+            "price": 20.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "StrengthPotion-Small",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 1,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 121,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 122,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2036,
+            "name": "续航药剂Ⅱ(小)",
+            "desc": "获得少量总最大体力值、体力恢复，持续一定时间",
+            "price": 30.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "StrengthPotion-Small",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 1,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 123,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 124,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2037,
+            "name": "续航药剂Ⅰ(中)",
+            "desc": "获得中等量额外最大体力值、体力恢复，持续一定时间",
+            "price": 40.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "StrengthPotion-Medium",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 2,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 125,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 126,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2038,
+            "name": "续航药剂Ⅱ(中)",
+            "desc": "获得中等量总最大体力值、体力恢复，持续一定时间",
+            "price": 50.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "StrengthPotion-Medium",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 2,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 127,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 128,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2039,
+            "name": "续航药剂Ⅰ(大)",
+            "desc": "获得大量额外最大体力值、体力恢复，持续一定时间",
+            "price": 70.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "StrengthPotion-Large",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 3,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 129,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 130,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2040,
+            "name": "续航药剂Ⅱ(大)",
+            "desc": "获得大量总最大体力值、体力恢复，持续一定时间",
+            "price": 100.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "StrengthPotion-Large",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 3,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 131,
+                    "buffType": 2
+                },
+                {
+                    "buffId": 132,
+                    "buffType": 2
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2041,
+            "name": "贪财药剂(小)",
+            "desc": "15秒内金币获得量提升15%",
+            "price": 25.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "TreasurePotion-Small",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 1,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 138,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2042,
+            "name": "贪财药剂(中)",
+            "desc": "30秒内金币获得量提升25%",
+            "price": 60.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "TreasurePotion-Medium",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 2,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 139,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2043,
+            "name": "贪财药剂(大)",
+            "desc": "60秒内金币获得量提升50%",
+            "price": 150.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "TreasurePotion-Large",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 3,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 140,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2044,
+            "name": "飞升药剂(小)",
+            "desc": "15秒内分数获得量提升15%",
+            "price": 25.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "ScorePotion-Small",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 1,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 141,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2045,
+            "name": "飞升药剂(中)",
+            "desc": "30秒内分数获得量提升25%",
+            "price": 60.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "ScorePotion-Medium",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 2,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 142,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 2046,
+            "name": "飞升药剂(大)",
+            "desc": "60秒内分数获得量提升50%",
+            "price": 150.0,
+            "sellPriceRatio": 0.75,
+            "itemType": 3,
+            "maxStack": 99,
+            "weight": 0,
+            "iconName": "ScorePotion-Large",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 3,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 143,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3001,
+            "name": "单手剑1",
+            "desc": "普通单手剑形态1",
+            "price": 50.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword1",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 8,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 30,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+3,[Extra]|暴击伤害+5%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3002,
+            "name": "单手剑1",
+            "desc": "稀有单手剑形态1",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword1",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 31,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 25,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+6,[Extra]|暴击伤害+10%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3003,
+            "name": "单手剑1",
+            "desc": "传奇单手剑形态1",
+            "price": 300.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword1",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 32,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 27,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+12,[Extra]|暴击伤害+20%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3004,
+            "name": "单手剑2",
+            "desc": "普通单手剑形态2",
+            "price": 50.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword2",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 8,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 33,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+3,[Extra]|暴击率+3%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3005,
+            "name": "单手剑2",
+            "desc": "稀有单手剑形态2",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword2",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 31,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 34,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+6,[Extra]|暴击率+6%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3006,
+            "name": "单手剑2",
+            "desc": "传奇单手剑形态2",
+            "price": 300.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword2",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 32,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 35,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+12,[Extra]|暴击率+12%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3007,
+            "name": "单手剑3",
+            "desc": "普通单手剑形态3",
+            "price": 50.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword3",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 8,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 14,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+3,[Extra]|攻击速度+10%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3008,
+            "name": "单手剑3",
+            "desc": "稀有单手剑形态3",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword3",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 31,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 15,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+6,[Extra]|攻击速度+20%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3009,
+            "name": "单手剑3",
+            "desc": "传奇单手剑形态3",
+            "price": 300.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword3",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 32,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 36,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+12,[Extra]|攻击速度+40%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3010,
+            "name": "单手剑4",
+            "desc": "普通单手剑形态4",
+            "price": 50.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword4",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 11,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 37,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+5,[Extra]|暴击伤害+2.5%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3011,
+            "name": "单手剑4",
+            "desc": "稀有单手剑形态4",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword4",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 13,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 30,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+10,[Extra]|暴击伤害+5%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3012,
+            "name": "单手剑4",
+            "desc": "传奇单手剑形态4",
+            "price": 300.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword4",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 38,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 25,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+20,[Extra]|暴击伤害+10%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3013,
+            "name": "单手剑5",
+            "desc": "普通单手剑形态5",
+            "price": 50.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword5",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 11,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 39,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+5,[Extra]|暴击率+1.5%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3014,
+            "name": "单手剑5",
+            "desc": "稀有单手剑形态5",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword5",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 13,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 33,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+10,[Extra]|暴击率+3%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3015,
+            "name": "单手剑5",
+            "desc": "传奇单手剑形态5",
+            "price": 300.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword5",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 38,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 34,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+20,[Extra]|暴击率+6%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3016,
+            "name": "单手剑5",
+            "desc": "传奇单手剑形态5",
+            "price": 300.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword5",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 40,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 41,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+15,[Extra]|暴击率+8%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3017,
+            "name": "单手剑6",
+            "desc": "普通单手剑形态6",
+            "price": 50.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword6",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 11,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 42,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+5,[Extra]|攻击速度+5%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3018,
+            "name": "单手剑6",
+            "desc": "稀有单手剑形态6",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword6",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 13,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 14,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+10,[Extra]|攻击速度+10%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3019,
+            "name": "单手剑6",
+            "desc": "传奇单手剑形态6",
+            "price": 300.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword6",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 40,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 15,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+15,[Extra]|攻击速度+20%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3020,
+            "name": "单手剑7",
+            "desc": "普通单手剑形态7",
+            "price": 50.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword7",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 43,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 34,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+1.5,[Extra]|暴击率+6%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3021,
+            "name": "单手剑7",
+            "desc": "稀有单手剑形态7",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword7",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 8,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 35,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+3,[Extra]|暴击率+12%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3022,
+            "name": "单手剑7",
+            "desc": "传奇单手剑形态7",
+            "price": 300.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword7",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 31,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 44,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+6,[Extra]|暴击率+24%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3023,
+            "name": "单手剑8",
+            "desc": "普通单手剑形态8",
+            "price": 50.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword8",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 43,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 25,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+1.5,[Extra]|暴击伤害+10%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3024,
+            "name": "单手剑8",
+            "desc": "稀有单手剑形态8",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword8",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 8,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 27,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+3,[Extra]|暴击伤害+20%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3025,
+            "name": "单手剑8",
+            "desc": "传奇单手剑形态8",
+            "price": 300.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword8",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 31,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 29,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+6,[Extra]|暴击伤害+40%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3026,
+            "name": "单手剑9",
+            "desc": "普通单手剑形态9",
+            "price": 50.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword9",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 43,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 45,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+1.5,[Extra]|攻击速度+15%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3027,
+            "name": "单手剑9",
+            "desc": "稀有单手剑形态9",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword9",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 8,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 16,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+3,[Extra]|攻击速度+25%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3028,
+            "name": "单手剑9",
+            "desc": "稀有单手剑形态9",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword9",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 9,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 15,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+4,[Extra]|攻击速度+20%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3029,
+            "name": "单手剑9",
+            "desc": "传奇单手剑形态9",
+            "price": 300.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword9",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 46,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 36,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+8,[Extra]|攻击速度+40%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3030,
+            "name": "单手剑9",
+            "desc": "传奇单手剑形态9",
+            "price": 300.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 1,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Sword9",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 6,
+            "buffExtraData": [
+                {
+                    "buffId": 31,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 47,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+6,[Extra]|攻击速度+50%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3031,
+            "name": "上衣1",
+            "desc": "普通上衣1",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "BodyArmor_1",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 2,
+            "buffExtraData": [
+                {
+                    "buffId": 48,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 49,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|生命值+20,[Base]|防御力+5",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3032,
+            "name": "上衣2",
+            "desc": "普通上衣2",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "BodyArmor_2",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 2,
+            "buffExtraData": [
+                {
+                    "buffId": 50,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 51,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|生命值+10,[Base]|防御力+10",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3033,
+            "name": "上衣3",
+            "desc": "普通上衣3",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "BodyArmor_3",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 2,
+            "buffExtraData": [
+                {
+                    "buffId": 52,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 53,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|生命值+25,[Base]|防御力+2.5",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3034,
+            "name": "上衣4",
+            "desc": "普通上衣4",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "BodyArmor_4",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 2,
+            "buffExtraData": [
+                {
+                    "buffId": 54,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|生命值+50",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3035,
+            "name": "上衣5",
+            "desc": "普通上衣5",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "BodyArmor_5",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 2,
+            "buffExtraData": [
+                {
+                    "buffId": 55,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|防御力+15",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3036,
+            "name": "上衣1",
+            "desc": "稀有上衣1",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "BodyArmor_1",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 2,
+            "buffExtraData": [
+                {
+                    "buffId": 56,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 57,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|生命值+30,[Base]|防御力+7.5",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3037,
+            "name": "上衣2",
+            "desc": "稀有上衣2",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "BodyArmor_2",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 2,
+            "buffExtraData": [
+                {
+                    "buffId": 58,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 55,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|生命值+15,[Base]|防御力+15",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3038,
+            "name": "上衣3",
+            "desc": "稀有上衣3",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "BodyArmor_3",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 2,
+            "buffExtraData": [
+                {
+                    "buffId": 59,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 60,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|生命值+37.5,[Base]|防御力+4.5",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3039,
+            "name": "上衣4",
+            "desc": "稀有上衣4",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "BodyArmor_4",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 2,
+            "buffExtraData": [
+                {
+                    "buffId": 61,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|生命值+75",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3040,
+            "name": "上衣5",
+            "desc": "稀有上衣5",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "BodyArmor_5",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 2,
+            "buffExtraData": [
+                {
+                    "buffId": 62,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|防御力+22.5",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3041,
+            "name": "上衣1",
+            "desc": "传奇上衣1",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "BodyArmor_1",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 2,
+            "buffExtraData": [
+                {
+                    "buffId": 63,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 57,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|生命值+45,[Base]|防御力+7.5",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3042,
+            "name": "上衣2",
+            "desc": "传奇上衣2",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "BodyArmor_2",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 2,
+            "buffExtraData": [
+                {
+                    "buffId": 52,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 55,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|生命值+25,[Base]|防御力+15",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3043,
+            "name": "上衣3",
+            "desc": "传奇上衣3",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "BodyArmor_3",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 2,
+            "buffExtraData": [
+                {
+                    "buffId": 54,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 57,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|生命值+50,[Base]|防御力+7.5",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3044,
+            "name": "上衣4",
+            "desc": "传奇上衣4",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "BodyArmor_4",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 2,
+            "buffExtraData": [
+                {
+                    "buffId": 64,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|生命值+100",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3045,
+            "name": "上衣5",
+            "desc": "传奇上衣5",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "BodyArmor_5",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 2,
+            "buffExtraData": [
+                {
+                    "buffId": 65,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|防御力+25",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3046,
+            "name": "鞋子1",
+            "desc": "普通鞋子1",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Boots_1",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 4,
+            "buffExtraData": [
+                {
+                    "buffId": 66,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 42,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|移动速度、攻击速度+5%,[Extra]|攻击速度+5%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3047,
+            "name": "鞋子2",
+            "desc": "普通鞋子2",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Boots_2",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 4,
+            "buffExtraData": [
+                {
+                    "buffId": 67,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 68,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|移动速度、攻击速度+7.5%,[Extra]|攻击速度+2.5%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3048,
+            "name": "鞋子3",
+            "desc": "普通鞋子3",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Boots_3",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 4,
+            "buffExtraData": [
+                {
+                    "buffId": 69,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 70,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|移动速度、攻击速度+1%,[Extra]|攻击速度+9%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3049,
+            "name": "鞋子4",
+            "desc": "普通鞋子4",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Boots_4",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 4,
+            "buffExtraData": [
+                {
+                    "buffId": 71,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|移动速度、攻击速度+10%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3050,
+            "name": "鞋子5",
+            "desc": "普通鞋子5",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Boots_5",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 4,
+            "buffExtraData": [
+                {
+                    "buffId": 72,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 73,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|移动速度、攻击速度+2.5%,[Extra]|攻击速度+7.5%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3051,
+            "name": "鞋子1",
+            "desc": "稀有鞋子1",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Boots_1",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 4,
+            "buffExtraData": [
+                {
+                    "buffId": 67,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 73,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|移动速度、攻击速度+7.5%,[Extra]|攻击速度+7.5%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3052,
+            "name": "鞋子2",
+            "desc": "稀有鞋子2",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Boots_2",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 4,
+            "buffExtraData": [
+                {
+                    "buffId": 74,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 75,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|移动速度、攻击速度+10.5%,[Extra]|攻击速度+4.5%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3053,
+            "name": "鞋子3",
+            "desc": "稀有鞋子3",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Boots_3",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 4,
+            "buffExtraData": [
+                {
+                    "buffId": 72,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 76,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|移动速度、攻击速度+2.5%,[Extra]|攻击速度+12.5%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3054,
+            "name": "鞋子4",
+            "desc": "稀有鞋子4",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Boots_4",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 4,
+            "buffExtraData": [
+                {
+                    "buffId": 77,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|移动速度、攻击速度+15%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3055,
+            "name": "鞋子5",
+            "desc": "稀有鞋子5",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Boots_5",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 4,
+            "buffExtraData": [
+                {
+                    "buffId": 66,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 14,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|移动速度、攻击速度+5%,[Extra]|攻击速度+10%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3056,
+            "name": "鞋子1",
+            "desc": "传奇鞋子1",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Boots_1",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 4,
+            "buffExtraData": [
+                {
+                    "buffId": 71,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 14,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|移动速度、攻击速度+10%,[Extra]|攻击速度+10%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3057,
+            "name": "鞋子2",
+            "desc": "传奇鞋子2",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Boots_2",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 4,
+            "buffExtraData": [
+                {
+                    "buffId": 78,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 79,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|移动速度、攻击速度+14%,[Extra]|攻击速度+6%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3058,
+            "name": "鞋子3",
+            "desc": "传奇鞋子3",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Boots_3",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 4,
+            "buffExtraData": [
+                {
+                    "buffId": 66,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 45,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|移动速度、攻击速度+5%,[Extra]|攻击速度+15%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3059,
+            "name": "鞋子4",
+            "desc": "传奇鞋子4",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Boots_4",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 4,
+            "buffExtraData": [
+                {
+                    "buffId": 80,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|移动速度、攻击速度+22.5%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3060,
+            "name": "鞋子5",
+            "desc": "传奇鞋子5",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Boots_5",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 4,
+            "buffExtraData": [
+                {
+                    "buffId": 67,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 45,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|移动速度、攻击速度+7.5%,[Extra]|攻击速度+15%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3061,
+            "name": "裤子1",
+            "desc": "普通裤子1",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Pants_1",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 3,
+            "buffExtraData": [
+                {
+                    "buffId": 81,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 82,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|体力值+20,[Base]|体力恢复+1",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3062,
+            "name": "裤子2",
+            "desc": "普通裤子2",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Pants_2",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 3,
+            "buffExtraData": [
+                {
+                    "buffId": 83,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 84,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|体力值+30,[Base]|体力恢复+0.5",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3063,
+            "name": "裤子3",
+            "desc": "普通裤子3",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Pants_3",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 3,
+            "buffExtraData": [
+                {
+                    "buffId": 85,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 86,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|体力值+15,[Base]|体力恢复+2",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3064,
+            "name": "裤子4",
+            "desc": "普通裤子4",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Pants_4",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 3,
+            "buffExtraData": [
+                {
+                    "buffId": 87,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|体力值+50",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3065,
+            "name": "裤子5",
+            "desc": "普通裤子5",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Pants_5",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 3,
+            "buffExtraData": [
+                {
+                    "buffId": 88,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|体力恢复+5",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3066,
+            "name": "裤子1",
+            "desc": "稀有裤子1",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Pants_1",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 3,
+            "buffExtraData": [
+                {
+                    "buffId": 83,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 89,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|体力值+30,[Base]|体力恢复+1.5",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3067,
+            "name": "裤子2",
+            "desc": "稀有裤子2",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Pants_2",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 3,
+            "buffExtraData": [
+                {
+                    "buffId": 90,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 91,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|体力值+45,[Base]|体力恢复+0.75",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3068,
+            "name": "裤子3",
+            "desc": "稀有裤子3",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Pants_3",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 3,
+            "buffExtraData": [
+                {
+                    "buffId": 92,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 93,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|体力值+22.5,[Base]|体力恢复+3",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3069,
+            "name": "裤子4",
+            "desc": "稀有裤子4",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Pants_4",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 3,
+            "buffExtraData": [
+                {
+                    "buffId": 94,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|体力值+75",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3070,
+            "name": "裤子5",
+            "desc": "稀有裤子5",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Pants_5",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 3,
+            "buffExtraData": [
+                {
+                    "buffId": 95,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|体力恢复+7.5",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3071,
+            "name": "裤子1",
+            "desc": "传奇裤子1",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Pants_1",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 3,
+            "buffExtraData": [
+                {
+                    "buffId": 90,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 96,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|体力值+45,[Base]|体力恢复+2.25",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3072,
+            "name": "裤子2",
+            "desc": "传奇裤子2",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Pants_2",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 3,
+            "buffExtraData": [
+                {
+                    "buffId": 97,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 98,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|体力值+60,[Base]|体力恢复+1.25",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3073,
+            "name": "裤子3",
+            "desc": "传奇裤子3",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Pants_3",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 3,
+            "buffExtraData": [
+                {
+                    "buffId": 99,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 100,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|体力值+35,[Base]|体力恢复+4.5",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3074,
+            "name": "裤子4",
+            "desc": "传奇裤子4",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Pants_4",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 3,
+            "buffExtraData": [
+                {
+                    "buffId": 101,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|体力值+120",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3075,
+            "name": "裤子5",
+            "desc": "传奇裤子5",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Pants_5",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 3,
+            "buffExtraData": [
+                {
+                    "buffId": 102,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|体力恢复+10",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3076,
+            "name": "头盔1",
+            "desc": "普通头盔1",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Helmet_1",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 1,
+            "buffExtraData": [
+                {
+                    "buffId": 33,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 103,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Extra]|暴击率+3%,[Extra]|暴击伤害+8%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3077,
+            "name": "头盔2",
+            "desc": "普通头盔2",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Helmet_2",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 1,
+            "buffExtraData": [
+                {
+                    "buffId": 20,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 30,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Extra]|暴击率+5%,[Extra]|暴击伤害+5%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3078,
+            "name": "头盔3",
+            "desc": "普通头盔3",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Helmet_3",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 1,
+            "buffExtraData": [
+                {
+                    "buffId": 104,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 105,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Extra]|暴击率+2%,[Extra]|暴击伤害+7.5%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3079,
+            "name": "头盔4",
+            "desc": "普通头盔4",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Helmet_4",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 1,
+            "buffExtraData": [
+                {
+                    "buffId": 41,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Extra]|暴击率+8%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3080,
+            "name": "头盔5",
+            "desc": "普通头盔5",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Helmet_5",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 1,
+            "buffExtraData": [
+                {
+                    "buffId": 26,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Extra]|暴击伤害+15%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3081,
+            "name": "头盔1",
+            "desc": "稀有头盔1",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Helmet_1",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 1,
+            "buffExtraData": [
+                {
+                    "buffId": 106,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 107,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Extra]|暴击率+4.5%,[Extra]|暴击伤害+12%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3082,
+            "name": "头盔2",
+            "desc": "稀有头盔2",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Helmet_2",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 1,
+            "buffExtraData": [
+                {
+                    "buffId": 108,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 105,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Extra]|暴击率+7.5%,[Extra]|暴击伤害+7.5%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3083,
+            "name": "头盔3",
+            "desc": "稀有头盔3",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Helmet_3",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 1,
+            "buffExtraData": [
+                {
+                    "buffId": 33,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 25,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Extra]|暴击率+3%,[Extra]|暴击伤害+10%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3084,
+            "name": "头盔4",
+            "desc": "稀有头盔4",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Helmet_4",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 1,
+            "buffExtraData": [
+                {
+                    "buffId": 35,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Extra]|暴击率+12%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3085,
+            "name": "头盔5",
+            "desc": "稀有头盔5",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Helmet_5",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 1,
+            "buffExtraData": [
+                {
+                    "buffId": 109,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Extra]|暴击伤害+24%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3086,
+            "name": "头盔1",
+            "desc": "传奇头盔1",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Helmet_1",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 1,
+            "buffExtraData": [
+                {
+                    "buffId": 108,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 26,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Extra]|暴击率+7.5%,[Extra]|暴击伤害+15%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3087,
+            "name": "头盔2",
+            "desc": "传奇头盔2",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Helmet_2",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 1,
+            "buffExtraData": [
+                {
+                    "buffId": 22,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 25,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Extra]|暴击率+10%,[Extra]|暴击伤害+10%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3088,
+            "name": "头盔3",
+            "desc": "传奇头盔3",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Helmet_3",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 1,
+            "buffExtraData": [
+                {
+                    "buffId": 20,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 110,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Extra]|暴击率+5%,[Extra]|暴击伤害+25%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3089,
+            "name": "头盔4",
+            "desc": "传奇头盔4",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Helmet_4",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 1,
+            "buffExtraData": [
+                {
+                    "buffId": 111,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Extra]|暴击率+18%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3090,
+            "name": "头盔5",
+            "desc": "传奇头盔5",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Helmet_5",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 1,
+            "buffExtraData": [
+                {
+                    "buffId": 112,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Extra]|暴击伤害+36%",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3091,
+            "name": "腰带1",
+            "desc": "普通腰带1",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Belt_1",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 5,
+            "buffExtraData": [
+                {
+                    "buffId": 43,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 113,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+1.5,[Base]|生命恢复+0.5",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3092,
+            "name": "腰带2",
+            "desc": "普通腰带2",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Belt_2",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 5,
+            "buffExtraData": [
+                {
+                    "buffId": 7,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 114,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+2,[Base]|生命恢复+0.25",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3093,
+            "name": "腰带3",
+            "desc": "普通腰带3",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Belt_3",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 5,
+            "buffExtraData": [
+                {
+                    "buffId": 6,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 115,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+1,[Base]|生命恢复+1",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3094,
+            "name": "腰带4",
+            "desc": "普通腰带4",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Belt_4",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 5,
+            "buffExtraData": [
+                {
+                    "buffId": 11,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+5",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3095,
+            "name": "腰带5",
+            "desc": "普通腰带5",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Belt_5",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 1,
+            "equipmentPart": 5,
+            "buffExtraData": [
+                {
+                    "buffId": 116,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|生命恢复+2",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3096,
+            "name": "腰带1",
+            "desc": "稀有腰带1",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Belt_1",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 5,
+            "buffExtraData": [
+                {
+                    "buffId": 117,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 118,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+2.5,[Base]|生命恢复+0.75",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3097,
+            "name": "腰带2",
+            "desc": "稀有腰带2",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Belt_2",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 5,
+            "buffExtraData": [
+                {
+                    "buffId": 8,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 113,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+3,[Base]|生命恢复+0.5",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3098,
+            "name": "腰带3",
+            "desc": "稀有腰带3",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Belt_3",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 5,
+            "buffExtraData": [
+                {
+                    "buffId": 43,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 119,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+1.5,[Base]|生命恢复+1.5",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3099,
+            "name": "腰带4",
+            "desc": "稀有腰带4",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Belt_4",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 5,
+            "buffExtraData": [
+                {
+                    "buffId": 120,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+7.5",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3100,
+            "name": "腰带5",
+            "desc": "稀有腰带5",
+            "price": 25.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Belt_5",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 2,
+            "equipmentPart": 5,
+            "buffExtraData": [
+                {
+                    "buffId": 121,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|生命恢复+3",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3101,
+            "name": "腰带1",
+            "desc": "传奇腰带1",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Belt_1",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 5,
+            "buffExtraData": [
+                {
+                    "buffId": 9,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 115,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+4,[Base]|生命恢复+1",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3102,
+            "name": "腰带2",
+            "desc": "传奇腰带2",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Belt_2",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 5,
+            "buffExtraData": [
+                {
+                    "buffId": 11,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 118,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+5,[Base]|生命恢复+0.75",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3103,
+            "name": "腰带3",
+            "desc": "传奇腰带3",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Belt_3",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 5,
+            "buffExtraData": [
+                {
+                    "buffId": 7,
+                    "buffType": 1
+                },
+                {
+                    "buffId": 122,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+2,[Base]|生命恢复+2.5",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3104,
+            "name": "腰带4",
+            "desc": "传奇腰带4",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Belt_4",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 5,
+            "buffExtraData": [
+                {
+                    "buffId": 13,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|攻击力+10",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 3105,
+            "name": "腰带5",
+            "desc": "传奇腰带5",
+            "price": 100.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 2,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "Belt_5",
+            "prefabName": "1",
+            "duration": -1.0,
+            "quality": 3,
+            "equipmentPart": 5,
+            "buffExtraData": [
+                {
+                    "buffId": 123,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "[Base]|生命恢复+5",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 4001,
+            "name": "分数",
+            "desc": "分数资源",
+            "price": 1.0,
+            "sellPriceRatio": 0.0,
+            "itemType": 7,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 1,
+            "equipmentPart": 0,
+            "buffExtraData": [],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": false
+        },
+        {
+            "id": 4002,
+            "name": "分数1",
+            "desc": "增加1点分数",
+            "price": 1.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 5,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 1,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 133,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 4003,
+            "name": "分数2",
+            "desc": "增加5点分数",
+            "price": 5.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 5,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 1,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 134,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        },
+        {
+            "id": 4004,
+            "name": "分数3",
+            "desc": "增加10点分数",
+            "price": 10.0,
+            "sellPriceRatio": 0.6000000238418579,
+            "itemType": 5,
+            "maxStack": 1,
+            "weight": 0,
+            "iconName": "1",
+            "prefabName": "1",
+            "duration": 0.0,
+            "quality": 2,
+            "equipmentPart": 0,
+            "buffExtraData": [
+                {
+                    "buffId": 135,
+                    "buffType": 1
+                }
+            ],
+            "propertyDesc": "null",
+            "isDealWithBuffExtraData": true
+        }
+    ],
+    "itemOtherData": {
+        "maxBagSize": 8
+    },
+    "propertyConfig": {
+        "instanceID": 37794
+    },
+    "constantBuffConfig": {
+        "instanceID": 36906
+    },
+    "equipmentConfig": {
+        "instanceID": 36908
+    },
+    "armorConfig": {
+        "instanceID": 37080
+    }
 }

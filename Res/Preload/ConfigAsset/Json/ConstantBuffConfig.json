@@ -17,11 +17,14 @@
             "duration": 30.0,
             "increaseDataList": [
                 {
-                    "increaseType": 3,
-                    "increaseValue": 0.20000000298023225
+                    "increaseType": 4,
+                    "increaseValue": 0.20000000298023225,
+                    "operationType": 0
                 }
             ],
-            "isCollectBuff": false
+            "sourceType": 5,
+            "mainIncreaseType": 4,
+            "playerEffectType": 0
         },
         {
             "buffId": 2,
@@ -29,11 +32,14 @@
             "duration": 30.0,
             "increaseDataList": [
                 {
-                    "increaseType": 3,
-                    "increaseValue": 0.20000000298023225
+                    "increaseType": 4,
+                    "increaseValue": 0.20000000298023225,
+                    "operationType": 0
                 }
             ],
-            "isCollectBuff": false
+            "sourceType": 5,
+            "mainIncreaseType": 4,
+            "playerEffectType": 0
         },
         {
             "buffId": 3,
@@ -41,11 +47,14 @@
             "duration": 30.0,
             "increaseDataList": [
                 {
-                    "increaseType": 3,
-                    "increaseValue": 0.20000000298023225
+                    "increaseType": 4,
+                    "increaseValue": 0.20000000298023225,
+                    "operationType": 0
                 }
             ],
-            "isCollectBuff": false
+            "sourceType": 5,
+            "mainIncreaseType": 4,
+            "playerEffectType": 0
         },
         {
             "buffId": 4,
@@ -53,11 +62,14 @@
             "duration": 30.0,
             "increaseDataList": [
                 {
-                    "increaseType": 3,
-                    "increaseValue": 0.20000000298023225
+                    "increaseType": 4,
+                    "increaseValue": 0.20000000298023225,
+                    "operationType": 0
                 }
             ],
-            "isCollectBuff": false
+            "sourceType": 5,
+            "mainIncreaseType": 4,
+            "playerEffectType": 0
         },
         {
             "buffId": 5,
@@ -65,11 +77,2129 @@
             "duration": 0.0,
             "increaseDataList": [
                 {
-                    "increaseType": 3,
-                    "increaseValue": 0.20000000298023225
+                    "increaseType": 5,
+                    "increaseValue": 50.0,
+                    "operationType": 0
                 }
             ],
-            "isCollectBuff": false
+            "sourceType": 5,
+            "mainIncreaseType": 5,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 6,
+            "propertyType": 1,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 1.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 7,
+            "propertyType": 1,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 2.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 8,
+            "propertyType": 1,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 3.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 9,
+            "propertyType": 1,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 4.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 10,
+            "propertyType": 1,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 4.5,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 11,
+            "propertyType": 1,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 5.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 12,
+            "propertyType": 1,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 7.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 13,
+            "propertyType": 1,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 10.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 14,
+            "propertyType": 12,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.10000000149011612,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 15,
+            "propertyType": 12,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.20000000298023225,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 16,
+            "propertyType": 12,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.25,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 17,
+            "propertyType": 12,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.30000001192092898,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 18,
+            "propertyType": 12,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.44999998807907107,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 19,
+            "propertyType": 12,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.6000000238418579,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 20,
+            "propertyType": 6,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.05000000074505806,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 21,
+            "propertyType": 6,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.07000000029802323,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 22,
+            "propertyType": 6,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.10000000149011612,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 23,
+            "propertyType": 6,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.15000000596046449,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 24,
+            "propertyType": 6,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.20000000298023225,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 25,
+            "propertyType": 7,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.10000000149011612,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 26,
+            "propertyType": 7,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.15000000596046449,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 27,
+            "propertyType": 7,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.20000000298023225,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 28,
+            "propertyType": 7,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.30000001192092898,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 29,
+            "propertyType": 7,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.4000000059604645,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 30,
+            "propertyType": 7,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.05000000074505806,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 31,
+            "propertyType": 1,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 6.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 32,
+            "propertyType": 1,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 12.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 33,
+            "propertyType": 6,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.029999999329447748,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 34,
+            "propertyType": 6,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.05999999865889549,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 35,
+            "propertyType": 6,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.11999999731779099,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 36,
+            "propertyType": 12,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.4000000059604645,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 37,
+            "propertyType": 7,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.02500000037252903,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 38,
+            "propertyType": 1,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 20.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 39,
+            "propertyType": 6,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.014999999664723874,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 40,
+            "propertyType": 1,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 15.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 41,
+            "propertyType": 6,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.07999999821186066,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 42,
+            "propertyType": 12,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.05000000074505806,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 43,
+            "propertyType": 1,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 1.5,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 44,
+            "propertyType": 6,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.23999999463558198,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 45,
+            "propertyType": 12,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.15000000596046449,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 46,
+            "propertyType": 1,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 8.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 47,
+            "propertyType": 12,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.5,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 48,
+            "propertyType": 3,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 20.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 49,
+            "propertyType": 2,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 5.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 50,
+            "propertyType": 3,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 10.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 51,
+            "propertyType": 2,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 10.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 52,
+            "propertyType": 3,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 25.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 53,
+            "propertyType": 2,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 2.5,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 54,
+            "propertyType": 3,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 50.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 55,
+            "propertyType": 2,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 15.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 56,
+            "propertyType": 3,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 30.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 57,
+            "propertyType": 2,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 7.5,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 58,
+            "propertyType": 3,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 15.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 59,
+            "propertyType": 3,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 37.5,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 60,
+            "propertyType": 2,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 4.5,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 61,
+            "propertyType": 3,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 75.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 62,
+            "propertyType": 2,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 22.5,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 63,
+            "propertyType": 3,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 45.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 64,
+            "propertyType": 3,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 100.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 65,
+            "propertyType": 2,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 25.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 66,
+            "propertyType": 0,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 0.05000000074505806,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 67,
+            "propertyType": 0,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 0.07500000298023224,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 68,
+            "propertyType": 12,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.02500000037252903,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 69,
+            "propertyType": 0,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 0.009999999776482582,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 70,
+            "propertyType": 12,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.09000000357627869,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 71,
+            "propertyType": 0,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 0.10000000149011612,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 72,
+            "propertyType": 0,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 0.02500000037252903,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 73,
+            "propertyType": 12,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.07500000298023224,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 74,
+            "propertyType": 0,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 0.10499999672174454,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 75,
+            "propertyType": 12,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.04500000178813934,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 76,
+            "propertyType": 12,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.125,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 77,
+            "propertyType": 0,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 0.15000000596046449,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 78,
+            "propertyType": 0,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 0.14000000059604646,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 79,
+            "propertyType": 12,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.05999999865889549,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 80,
+            "propertyType": 0,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 0.22499999403953553,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 81,
+            "propertyType": 4,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 20.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 82,
+            "propertyType": 4,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 1.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 83,
+            "propertyType": 4,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 30.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 84,
+            "propertyType": 4,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 0.5,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 85,
+            "propertyType": 4,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 15.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 86,
+            "propertyType": 4,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 2.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 87,
+            "propertyType": 4,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 50.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 88,
+            "propertyType": 4,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 5.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 89,
+            "propertyType": 4,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 1.5,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 90,
+            "propertyType": 4,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 45.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 91,
+            "propertyType": 4,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 0.75,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 92,
+            "propertyType": 4,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 22.5,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 93,
+            "propertyType": 4,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 3.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 94,
+            "propertyType": 4,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 75.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 95,
+            "propertyType": 4,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 7.5,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 96,
+            "propertyType": 4,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 2.25,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 97,
+            "propertyType": 4,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 60.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 98,
+            "propertyType": 4,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 1.25,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 99,
+            "propertyType": 4,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 35.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 100,
+            "propertyType": 4,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 4.5,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 101,
+            "propertyType": 4,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 120.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 102,
+            "propertyType": 4,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 10.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 103,
+            "propertyType": 7,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.07999999821186066,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 104,
+            "propertyType": 6,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.019999999552965165,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 105,
+            "propertyType": 7,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.07500000298023224,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 106,
+            "propertyType": 6,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.04500000178813934,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 107,
+            "propertyType": 7,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.11999999731779099,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 108,
+            "propertyType": 6,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.07500000298023224,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 109,
+            "propertyType": 7,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.23999999463558198,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 110,
+            "propertyType": 7,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.25,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 111,
+            "propertyType": 6,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.18000000715255738,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 112,
+            "propertyType": 7,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 3,
+                    "increaseValue": 0.36000001430511477,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 3,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 113,
+            "propertyType": 3,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 0.5,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 114,
+            "propertyType": 3,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 0.25,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 115,
+            "propertyType": 3,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 1.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 116,
+            "propertyType": 3,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 2.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 117,
+            "propertyType": 1,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 2.5,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 118,
+            "propertyType": 3,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 0.75,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 119,
+            "propertyType": 3,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 1.5,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 120,
+            "propertyType": 1,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 7.5,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 121,
+            "propertyType": 3,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 3.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 122,
+            "propertyType": 3,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 2.5,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 123,
+            "propertyType": 3,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 1,
+                    "increaseValue": 5.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 3,
+            "mainIncreaseType": 1,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 124,
+            "propertyType": 3,
+            "duration": 0.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 5,
+                    "increaseValue": 15.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 1,
+            "mainIncreaseType": 5,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 125,
+            "propertyType": 3,
+            "duration": 0.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 5,
+                    "increaseValue": 35.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 1,
+            "mainIncreaseType": 5,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 126,
+            "propertyType": 3,
+            "duration": 0.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 5,
+                    "increaseValue": 65.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 1,
+            "mainIncreaseType": 5,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 127,
+            "propertyType": 4,
+            "duration": 0.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 5,
+                    "increaseValue": 15.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 1,
+            "mainIncreaseType": 5,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 128,
+            "propertyType": 4,
+            "duration": 0.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 5,
+                    "increaseValue": 35.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 1,
+            "mainIncreaseType": 5,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 129,
+            "propertyType": 4,
+            "duration": 0.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 5,
+                    "increaseValue": 65.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 1,
+            "mainIncreaseType": 5,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 130,
+            "propertyType": 16,
+            "duration": 0.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 5,
+                    "increaseValue": 1.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 1,
+            "mainIncreaseType": 5,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 131,
+            "propertyType": 16,
+            "duration": 0.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 5,
+                    "increaseValue": 5.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 1,
+            "mainIncreaseType": 5,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 132,
+            "propertyType": 16,
+            "duration": 0.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 5,
+                    "increaseValue": 100.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 2,
+            "mainIncreaseType": 5,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 133,
+            "propertyType": 5,
+            "duration": 0.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 5,
+                    "increaseValue": 1.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 1,
+            "mainIncreaseType": 5,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 134,
+            "propertyType": 5,
+            "duration": 0.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 5,
+                    "increaseValue": 5.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 1,
+            "mainIncreaseType": 5,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 135,
+            "propertyType": 5,
+            "duration": 0.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 5,
+                    "increaseValue": 10.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 1,
+            "mainIncreaseType": 5,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 136,
+            "propertyType": 5,
+            "duration": 0.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 5,
+                    "increaseValue": 50.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 1,
+            "mainIncreaseType": 5,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 137,
+            "propertyType": 5,
+            "duration": 0.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 5,
+                    "increaseValue": 100.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 1,
+            "mainIncreaseType": 5,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 138,
+            "propertyType": 16,
+            "duration": 15.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 4,
+                    "increaseValue": 0.15000000596046449,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 2,
+            "mainIncreaseType": 4,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 139,
+            "propertyType": 16,
+            "duration": 30.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 4,
+                    "increaseValue": 0.25,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 2,
+            "mainIncreaseType": 4,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 140,
+            "propertyType": 16,
+            "duration": 60.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 4,
+                    "increaseValue": 0.5,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 2,
+            "mainIncreaseType": 4,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 141,
+            "propertyType": 5,
+            "duration": 15.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 4,
+                    "increaseValue": 0.15000000596046449,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 2,
+            "mainIncreaseType": 4,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 142,
+            "propertyType": 5,
+            "duration": 30.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 4,
+                    "increaseValue": 0.25,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 2,
+            "mainIncreaseType": 4,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 143,
+            "propertyType": 5,
+            "duration": 60.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 4,
+                    "increaseValue": 0.5,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 2,
+            "mainIncreaseType": 4,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 144,
+            "propertyType": 16,
+            "duration": 0.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 5,
+                    "increaseValue": 10.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 1,
+            "mainIncreaseType": 5,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 145,
+            "propertyType": 16,
+            "duration": 0.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 5,
+                    "increaseValue": 50.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 1,
+            "mainIncreaseType": 5,
+            "playerEffectType": 0
+        },
+        {
+            "buffId": 146,
+            "propertyType": 5,
+            "duration": -1.0,
+            "increaseDataList": [
+                {
+                    "increaseType": 4,
+                    "increaseValue": 1.0,
+                    "operationType": 0
+                }
+            ],
+            "sourceType": 6,
+            "mainIncreaseType": 4,
+            "playerEffectType": 0
         }
     ]
 }

@@ -13,69 +13,219 @@
     "collectConfigDatas": [
         {
             "id": 1,
-            "weight": 5,
+            "itemId": 1002,
+            "description": "增加1点金币",
+            "weight": 1,
             "buffExtraData": {
-                "buffId": 1,
-                "buffType": 2
+                "buffId": 130,
+                "buffType": 1
             },
-            "buffSize": 1,
             "collectObjectClass": 1,
-            "isRandomBuff": false
+            "qualityType": 0
         },
         {
             "id": 2,
-            "weight": 10,
+            "itemId": 1003,
+            "description": "增加5点金币",
+            "weight": 5,
             "buffExtraData": {
-                "buffId": 2,
-                "buffType": 2
+                "buffId": 131,
+                "buffType": 1
             },
-            "buffSize": 2,
             "collectObjectClass": 1,
-            "isRandomBuff": false
+            "qualityType": 0
         },
         {
             "id": 3,
-            "weight": 20,
+            "itemId": 1004,
+            "description": "增加10点金币",
+            "weight": 10,
             "buffExtraData": {
-                "buffId": 3,
-                "buffType": 2
+                "buffId": 144,
+                "buffType": 1
             },
-            "buffSize": 3,
             "collectObjectClass": 1,
-            "isRandomBuff": false
+            "qualityType": 0
         },
         {
             "id": 4,
+            "itemId": 2005,
+            "description": "立即恢复15%体力",
             "weight": 10,
             "buffExtraData": {
-                "buffId": 0,
-                "buffType": 0
+                "buffId": 127,
+                "buffType": 1
             },
-            "buffSize": 1,
             "collectObjectClass": 2,
-            "isRandomBuff": true
+            "qualityType": 0
         },
         {
             "id": 5,
-            "weight": 20,
+            "itemId": 2006,
+            "description": "立即恢复获得少量体力",
+            "weight": 10,
             "buffExtraData": {
-                "buffId": 0,
-                "buffType": 0
+                "buffId": 79,
+                "buffType": 2
             },
-            "buffSize": 2,
             "collectObjectClass": 2,
-            "isRandomBuff": true
+            "qualityType": 0
         },
         {
             "id": 6,
+            "itemId": 2007,
+            "description": "立即恢复35%体力",
             "weight": 30,
             "buffExtraData": {
-                "buffId": 0,
-                "buffType": 0
+                "buffId": 128,
+                "buffType": 1
             },
-            "buffSize": 3,
             "collectObjectClass": 2,
-            "isRandomBuff": true
+            "qualityType": 0
+        },
+        {
+            "id": 7,
+            "itemId": 2008,
+            "description": "立即恢复获得中等量体力",
+            "weight": 30,
+            "buffExtraData": {
+                "buffId": 80,
+                "buffType": 2
+            },
+            "collectObjectClass": 2,
+            "qualityType": 0
+        },
+        {
+            "id": 8,
+            "itemId": 2009,
+            "description": "立即恢复65%体力",
+            "weight": 50,
+            "buffExtraData": {
+                "buffId": 129,
+                "buffType": 1
+            },
+            "collectObjectClass": 2,
+            "qualityType": 0
+        },
+        {
+            "id": 9,
+            "itemId": 2010,
+            "description": "立即恢复大量体力",
+            "weight": 50,
+            "buffExtraData": {
+                "buffId": 81,
+                "buffType": 2
+            },
+            "collectObjectClass": 2,
+            "qualityType": 0
+        },
+        {
+            "id": 10,
+            "itemId": 2011,
+            "description": "立即恢复15%生命",
+            "weight": 10,
+            "buffExtraData": {
+                "buffId": 124,
+                "buffType": 1
+            },
+            "collectObjectClass": 2,
+            "qualityType": 0
+        },
+        {
+            "id": 11,
+            "itemId": 2012,
+            "description": "立即恢复获得少量生命",
+            "weight": 10,
+            "buffExtraData": {
+                "buffId": 82,
+                "buffType": 2
+            },
+            "collectObjectClass": 2,
+            "qualityType": 0
+        },
+        {
+            "id": 12,
+            "itemId": 2013,
+            "description": "立即恢复35%生命",
+            "weight": 30,
+            "buffExtraData": {
+                "buffId": 125,
+                "buffType": 1
+            },
+            "collectObjectClass": 2,
+            "qualityType": 0
+        },
+        {
+            "id": 13,
+            "itemId": 2014,
+            "description": "立即恢复获得中等量生命",
+            "weight": 30,
+            "buffExtraData": {
+                "buffId": 83,
+                "buffType": 2
+            },
+            "collectObjectClass": 2,
+            "qualityType": 0
+        },
+        {
+            "id": 14,
+            "itemId": 2015,
+            "description": "立即恢复65%生命",
+            "weight": 50,
+            "buffExtraData": {
+                "buffId": 126,
+                "buffType": 1
+            },
+            "collectObjectClass": 2,
+            "qualityType": 0
+        },
+        {
+            "id": 15,
+            "itemId": 2016,
+            "description": "立即恢复大量生命",
+            "weight": 50,
+            "buffExtraData": {
+                "buffId": 84,
+                "buffType": 2
+            },
+            "collectObjectClass": 2,
+            "qualityType": 0
+        },
+        {
+            "id": 16,
+            "itemId": 4002,
+            "description": "增加1点分数",
+            "weight": 1,
+            "buffExtraData": {
+                "buffId": 133,
+                "buffType": 1
+            },
+            "collectObjectClass": 0,
+            "qualityType": 0
+        },
+        {
+            "id": 17,
+            "itemId": 4003,
+            "description": "增加5点分数",
+            "weight": 5,
+            "buffExtraData": {
+                "buffId": 134,
+                "buffType": 1
+            },
+            "collectObjectClass": 0,
+            "qualityType": 0
+        },
+        {
+            "id": 18,
+            "itemId": 4004,
+            "description": "增加10点分数",
+            "weight": 10,
+            "buffExtraData": {
+                "buffId": 135,
+                "buffType": 1
+            },
+            "collectObjectClass": 0,
+            "qualityType": 0
         }
     ]
 }

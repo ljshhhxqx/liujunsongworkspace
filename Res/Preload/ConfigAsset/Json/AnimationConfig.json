@@ -356,7 +356,7 @@
             ],
             "keyframeData": [
                 {
-                    "triggerTime": 0.75,
+                    "triggerTime": 0.375,
                     "eventType": 3,
                     "resetCooldown": false,
                     "resetCooldownWindowTime": 0.0,
@@ -389,7 +389,7 @@
             ],
             "keyframeData": [
                 {
-                    "triggerTime": 1.25,
+                    "triggerTime": 0.6499999761581421,
                     "eventType": 4,
                     "resetCooldown": false,
                     "resetCooldownWindowTime": 0.0,

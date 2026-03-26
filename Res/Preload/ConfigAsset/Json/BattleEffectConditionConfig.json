@@ -1,0 +1,1883 @@
+{
+    "excelAssetReference": {
+        "guid": "afcb27a37860bed489c689f04b28b549"
+    },
+    "csvAssetReference": {
+        "guid": "f79490033f1ba7d4c817acd9581f3173"
+    },
+    "jsonAssetReference": {
+        "guid": "36a25296697c2fe44a5305e443be106f"
+    },
+    "configName": "BattleEffectConditionConfig",
+    "isArray": true,
+    "conditionList": [
+        {
+            "id": 1,
+            "triggerType": 1,
+            "probability": 100.0,
+            "interval": 0.0,
+            "targetType": 1,
+            "buffWeight": 0.20000000298023225,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": -2
+            }
+        },
+        {
+            "id": 2,
+            "triggerType": 7,
+            "probability": 50.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.30000001192092898,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1000
+            }
+        },
+        {
+            "id": 3,
+            "triggerType": 9,
+            "probability": 50.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.30000001192092898,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1001
+            }
+        },
+        {
+            "id": 4,
+            "triggerType": 3,
+            "probability": 50.0,
+            "interval": 8.0,
+            "targetType": 1,
+            "buffWeight": 0.4000000059604645,
+            "buffIncreaseType": 1,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1002
+            }
+        },
+        {
+            "id": 5,
+            "triggerType": 5,
+            "probability": 5.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.5,
+            "buffIncreaseType": 3,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": -2
+            }
+        },
+        {
+            "id": 6,
+            "triggerType": 1,
+            "probability": 100.0,
+            "interval": 0.0,
+            "targetType": 1,
+            "buffWeight": 0.6000000238418579,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": -2
+            }
+        },
+        {
+            "id": 7,
+            "triggerType": 7,
+            "probability": 80.0,
+            "interval": 5.0,
+            "targetType": 1,
+            "buffWeight": 0.8999999761581421,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1003
+            }
+        },
+        {
+            "id": 8,
+            "triggerType": 9,
+            "probability": 80.0,
+            "interval": 7.0,
+            "targetType": 1,
+            "buffWeight": 0.8999999761581421,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1004
+            }
+        },
+        {
+            "id": 9,
+            "triggerType": 3,
+            "probability": 80.0,
+            "interval": 8.0,
+            "targetType": 1,
+            "buffWeight": 0.8999999761581421,
+            "buffIncreaseType": 1,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1005
+            }
+        },
+        {
+            "id": 10,
+            "triggerType": 5,
+            "probability": 15.0,
+            "interval": 5.0,
+            "targetType": 1,
+            "buffWeight": 0.8999999761581421,
+            "buffIncreaseType": 3,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": -2
+            }
+        },
+        {
+            "id": 11,
+            "triggerType": 1,
+            "probability": 100.0,
+            "interval": 0.0,
+            "targetType": 1,
+            "buffWeight": 0.6000000238418579,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": -2
+            }
+        },
+        {
+            "id": 12,
+            "triggerType": 7,
+            "probability": 50.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.3499999940395355,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1006
+            }
+        },
+        {
+            "id": 13,
+            "triggerType": 3,
+            "probability": 50.0,
+            "interval": 8.0,
+            "targetType": 1,
+            "buffWeight": 0.8999999761581421,
+            "buffIncreaseType": 1,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1007
+            }
+        },
+        {
+            "id": 14,
+            "triggerType": 5,
+            "probability": 5.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.8999999761581421,
+            "buffIncreaseType": 3,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": -2
+            }
+        },
+        {
+            "id": 15,
+            "triggerType": 10,
+            "probability": 20.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.75,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1008
+            }
+        },
+        {
+            "id": 16,
+            "triggerType": 1,
+            "probability": 100.0,
+            "interval": 0.0,
+            "targetType": 1,
+            "buffWeight": 0.75,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": -2
+            }
+        },
+        {
+            "id": 17,
+            "triggerType": 7,
+            "probability": 50.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.800000011920929,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1009
+            }
+        },
+        {
+            "id": 18,
+            "triggerType": 3,
+            "probability": 80.0,
+            "interval": 5.0,
+            "targetType": 1,
+            "buffWeight": 1.0,
+            "buffIncreaseType": 1,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1010
+            }
+        },
+        {
+            "id": 19,
+            "triggerType": 5,
+            "probability": 15.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 1.0,
+            "buffIncreaseType": 3,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": -2
+            }
+        },
+        {
+            "id": 20,
+            "triggerType": 10,
+            "probability": 30.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.75,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1011
+            }
+        },
+        {
+            "id": 21,
+            "triggerType": 1,
+            "probability": 100.0,
+            "interval": 0.0,
+            "targetType": 1,
+            "buffWeight": 0.20000000298023225,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": -2
+            }
+        },
+        {
+            "id": 22,
+            "triggerType": 9,
+            "probability": 50.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.30000001192092898,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1012
+            }
+        },
+        {
+            "id": 23,
+            "triggerType": 5,
+            "probability": 5.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.5,
+            "buffIncreaseType": 3,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": -2
+            }
+        },
+        {
+            "id": 24,
+            "triggerType": 3,
+            "probability": 50.0,
+            "interval": 8.0,
+            "targetType": 1,
+            "buffWeight": 0.8999999761581421,
+            "buffIncreaseType": 1,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1013
+            }
+        },
+        {
+            "id": 25,
+            "triggerType": 10,
+            "probability": 20.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.75,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1014
+            }
+        },
+        {
+            "id": 26,
+            "triggerType": 1,
+            "probability": 100.0,
+            "interval": 0.0,
+            "targetType": 1,
+            "buffWeight": 0.6000000238418579,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": -2
+            }
+        },
+        {
+            "id": 27,
+            "triggerType": 9,
+            "probability": 80.0,
+            "interval": 7.0,
+            "targetType": 1,
+            "buffWeight": 0.800000011920929,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1015
+            }
+        },
+        {
+            "id": 28,
+            "triggerType": 5,
+            "probability": 10.0,
+            "interval": 7.0,
+            "targetType": 1,
+            "buffWeight": 1.0,
+            "buffIncreaseType": 3,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": -2
+            }
+        },
+        {
+            "id": 29,
+            "triggerType": 3,
+            "probability": 80.0,
+            "interval": 5.0,
+            "targetType": 1,
+            "buffWeight": 1.0,
+            "buffIncreaseType": 1,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1016
+            }
+        },
+        {
+            "id": 30,
+            "triggerType": 10,
+            "probability": 50.0,
+            "interval": 7.0,
+            "targetType": 1,
+            "buffWeight": 0.8999999761581421,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1017
+            }
+        },
+        {
+            "id": 31,
+            "triggerType": 1,
+            "probability": 100.0,
+            "interval": 0.0,
+            "targetType": 1,
+            "buffWeight": 0.20000000298023225,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": -2
+            }
+        },
+        {
+            "id": 32,
+            "triggerType": 3,
+            "probability": 50.0,
+            "interval": 8.0,
+            "targetType": 1,
+            "buffWeight": 0.30000001192092898,
+            "buffIncreaseType": 1,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1018
+            }
+        },
+        {
+            "id": 33,
+            "triggerType": 2,
+            "probability": 50.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.25,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1019
+            }
+        },
+        {
+            "id": 34,
+            "triggerType": 11,
+            "probability": 100.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.3499999940395355,
+            "buffIncreaseType": 1,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1020
+            }
+        },
+        {
+            "id": 35,
+            "triggerType": 4,
+            "probability": 100.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.3499999940395355,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1021
+            }
+        },
+        {
+            "id": 36,
+            "triggerType": 1,
+            "probability": 100.0,
+            "interval": 0.0,
+            "targetType": 1,
+            "buffWeight": 0.6000000238418579,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": -2
+            }
+        },
+        {
+            "id": 37,
+            "triggerType": 3,
+            "probability": 80.0,
+            "interval": 7.0,
+            "targetType": 1,
+            "buffWeight": 0.800000011920929,
+            "buffIncreaseType": 1,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1022
+            }
+        },
+        {
+            "id": 38,
+            "triggerType": 2,
+            "probability": 80.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.8999999761581421,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1023
+            }
+        },
+        {
+            "id": 39,
+            "triggerType": 11,
+            "probability": 100.0,
+            "interval": 5.0,
+            "targetType": 1,
+            "buffWeight": 1.0,
+            "buffIncreaseType": 1,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1024
+            }
+        },
+        {
+            "id": 40,
+            "triggerType": 4,
+            "probability": 100.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 1.0,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1025
+            }
+        },
+        {
+            "id": 41,
+            "triggerType": 1,
+            "probability": 100.0,
+            "interval": 0.0,
+            "targetType": 1,
+            "buffWeight": 0.20000000298023225,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": -2
+            }
+        },
+        {
+            "id": 42,
+            "triggerType": 3,
+            "probability": 50.0,
+            "interval": 8.0,
+            "targetType": 1,
+            "buffWeight": 0.30000001192092898,
+            "buffIncreaseType": 1,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1026
+            }
+        },
+        {
+            "id": 43,
+            "triggerType": 9,
+            "probability": 50.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.25,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1027
+            }
+        },
+        {
+            "id": 44,
+            "triggerType": 7,
+            "probability": 50.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.25,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1028
+            }
+        },
+        {
+            "id": 45,
+            "triggerType": 13,
+            "probability": 100.0,
+            "interval": 30.0,
+            "targetType": 12,
+            "buffWeight": 0.15000000596046449,
+            "buffIncreaseType": 4,
+            "targetCount": 2,
+            "conditionParam": {
+                "rid": -2
+            }
+        },
+        {
+            "id": 46,
+            "triggerType": 1,
+            "probability": 100.0,
+            "interval": 0.0,
+            "targetType": 1,
+            "buffWeight": 0.6000000238418579,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": -2
+            }
+        },
+        {
+            "id": 47,
+            "triggerType": 3,
+            "probability": 70.0,
+            "interval": 7.0,
+            "targetType": 1,
+            "buffWeight": 0.8999999761581421,
+            "buffIncreaseType": 1,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1029
+            }
+        },
+        {
+            "id": 48,
+            "triggerType": 9,
+            "probability": 50.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.8999999761581421,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1030
+            }
+        },
+        {
+            "id": 49,
+            "triggerType": 7,
+            "probability": 50.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.8999999761581421,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1031
+            }
+        },
+        {
+            "id": 50,
+            "triggerType": 13,
+            "probability": 100.0,
+            "interval": 10.0,
+            "targetType": 12,
+            "buffWeight": 0.4000000059604645,
+            "buffIncreaseType": 4,
+            "targetCount": 2,
+            "conditionParam": {
+                "rid": -2
+            }
+        },
+        {
+            "id": 51,
+            "triggerType": 1,
+            "probability": 100.0,
+            "interval": 0.0,
+            "targetType": 1,
+            "buffWeight": 0.20000000298023225,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": -2
+            }
+        },
+        {
+            "id": 52,
+            "triggerType": 1,
+            "probability": 100.0,
+            "interval": 0.0,
+            "targetType": 1,
+            "buffWeight": 0.699999988079071,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": -2
+            }
+        },
+        {
+            "id": 53,
+            "triggerType": 9,
+            "probability": 50.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.30000001192092898,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1032
+            }
+        },
+        {
+            "id": 54,
+            "triggerType": 9,
+            "probability": 80.0,
+            "interval": 7.0,
+            "targetType": 1,
+            "buffWeight": 0.800000011920929,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1033
+            }
+        },
+        {
+            "id": 55,
+            "triggerType": 5,
+            "probability": 5.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.5,
+            "buffIncreaseType": 3,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": -2
+            }
+        },
+        {
+            "id": 56,
+            "triggerType": 5,
+            "probability": 10.0,
+            "interval": 7.0,
+            "targetType": 1,
+            "buffWeight": 1.0,
+            "buffIncreaseType": 3,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": -2
+            }
+        },
+        {
+            "id": 57,
+            "triggerType": 11,
+            "probability": 100.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.30000001192092898,
+            "buffIncreaseType": 1,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1034
+            }
+        },
+        {
+            "id": 58,
+            "triggerType": 11,
+            "probability": 100.0,
+            "interval": 5.0,
+            "targetType": 1,
+            "buffWeight": 0.800000011920929,
+            "buffIncreaseType": 1,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1035
+            }
+        },
+        {
+            "id": 59,
+            "triggerType": 2,
+            "probability": 50.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.30000001192092898,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1036
+            }
+        },
+        {
+            "id": 60,
+            "triggerType": 2,
+            "probability": 70.0,
+            "interval": 7.0,
+            "targetType": 1,
+            "buffWeight": 0.8500000238418579,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1037
+            }
+        },
+        {
+            "id": 61,
+            "triggerType": 2,
+            "probability": 50.0,
+            "interval": 7.0,
+            "targetType": 1,
+            "buffWeight": 1.0,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1038
+            }
+        },
+        {
+            "id": 62,
+            "triggerType": 3,
+            "probability": 20.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.4000000059604645,
+            "buffIncreaseType": 1,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1039
+            }
+        },
+        {
+            "id": 63,
+            "triggerType": 3,
+            "probability": 40.0,
+            "interval": 8.0,
+            "targetType": 1,
+            "buffWeight": 0.8500000238418579,
+            "buffIncreaseType": 1,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1040
+            }
+        },
+        {
+            "id": 64,
+            "triggerType": 4,
+            "probability": 80.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.30000001192092898,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1041
+            }
+        },
+        {
+            "id": 65,
+            "triggerType": 4,
+            "probability": 100.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.800000011920929,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1042
+            }
+        },
+        {
+            "id": 66,
+            "triggerType": 6,
+            "probability": 50.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.3499999940395355,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1043
+            }
+        },
+        {
+            "id": 67,
+            "triggerType": 6,
+            "probability": 80.0,
+            "interval": 5.0,
+            "targetType": 1,
+            "buffWeight": 0.800000011920929,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1044
+            }
+        },
+        {
+            "id": 68,
+            "triggerType": 7,
+            "probability": 50.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.3499999940395355,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1045
+            }
+        },
+        {
+            "id": 69,
+            "triggerType": 7,
+            "probability": 100.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.3499999940395355,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1046
+            }
+        },
+        {
+            "id": 70,
+            "triggerType": 7,
+            "probability": 50.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.800000011920929,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1047
+            }
+        },
+        {
+            "id": 71,
+            "triggerType": 7,
+            "probability": 100.0,
+            "interval": 10.0,
+            "targetType": 1,
+            "buffWeight": 0.800000011920929,
+            "buffIncreaseType": 2,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1048
+            }
+        },
+        {
+            "id": 72,
+            "triggerType": 8,
+            "probability": 80.0,
+            "interval": 10.0,
+            "targetType": 2,
+            "buffWeight": 0.4000000059604645,
+            "buffIncreaseType": 4,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1049
+            }
+        },
+        {
+            "id": 73,
+            "triggerType": 8,
+            "probability": 100.0,
+            "interval": 10.0,
+            "targetType": 2,
+            "buffWeight": 0.8999999761581421,
+            "buffIncreaseType": 4,
+            "targetCount": 1,
+            "conditionParam": {
+                "rid": 1050
+            }
+        }
+    ],
+    "effectData": {
+        "id": 0,
+        "triggerType": 1,
+        "probability": 74.0,
+        "interval": 30.0,
+        "targetType": 8,
+        "buffWeight": 0.0,
+        "buffIncreaseType": 0,
+        "targetCount": 2,
+        "conditionParam": {
+            "rid": -2
+        }
+    },
+    "references": {
+        "version": 2,
+        "RefIds": [
+            {
+                "rid": -2,
+                "type": {
+                    "class": "",
+                    "ns": "",
+                    "asm": ""
+                },
+                "data": {}
+            },
+            {
+                "rid": 1000,
+                "type": {
+                    "class": "TakeDamageConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "damageType": 0,
+                    "damageCastType": 0,
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1001,
+                "type": {
+                    "class": "HpChangeConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1002,
+                "type": {
+                    "class": "AttackConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "attackRangeType": 0,
+                    "attack": 0.0
+                }
+            },
+            {
+                "rid": 1003,
+                "type": {
+                    "class": "TakeDamageConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "damageType": 0,
+                    "damageCastType": 0,
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1004,
+                "type": {
+                    "class": "HpChangeConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1005,
+                "type": {
+                    "class": "AttackConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "attackRangeType": 0,
+                    "attack": 0.0
+                }
+            },
+            {
+                "rid": 1006,
+                "type": {
+                    "class": "TakeDamageConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "damageType": 0,
+                    "damageCastType": 0,
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1007,
+                "type": {
+                    "class": "AttackConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "attackRangeType": 0,
+                    "attack": 0.0
+                }
+            },
+            {
+                "rid": 1008,
+                "type": {
+                    "class": "MpChangeConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "mpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1009,
+                "type": {
+                    "class": "TakeDamageConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "damageType": 0,
+                    "damageCastType": 0,
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1010,
+                "type": {
+                    "class": "AttackConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "attackRangeType": 0,
+                    "attack": 0.0
+                }
+            },
+            {
+                "rid": 1011,
+                "type": {
+                    "class": "MpChangeConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "mpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1012,
+                "type": {
+                    "class": "HpChangeConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1013,
+                "type": {
+                    "class": "AttackConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "attackRangeType": 0,
+                    "attack": 0.0
+                }
+            },
+            {
+                "rid": 1014,
+                "type": {
+                    "class": "MpChangeConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "mpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1015,
+                "type": {
+                    "class": "HpChangeConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1016,
+                "type": {
+                    "class": "AttackConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "attackRangeType": 0,
+                    "attack": 0.0
+                }
+            },
+            {
+                "rid": 1017,
+                "type": {
+                    "class": "MpChangeConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "mpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1018,
+                "type": {
+                    "class": "AttackConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "attackRangeType": 0,
+                    "attack": 0.0
+                }
+            },
+            {
+                "rid": 1019,
+                "type": {
+                    "class": "AttackHitConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "targetType": 0,
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "attackRangeType": 0
+                }
+            },
+            {
+                "rid": 1020,
+                "type": {
+                    "class": "CriticalHitConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "targetType": 0,
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "damageType": 0,
+                    "damageCastType": 0
+                }
+            },
+            {
+                "rid": 1021,
+                "type": {
+                    "class": "SkillHitConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "targetType": 0,
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "skillType": 0,
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1022,
+                "type": {
+                    "class": "AttackConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "attackRangeType": 0,
+                    "attack": 0.0
+                }
+            },
+            {
+                "rid": 1023,
+                "type": {
+                    "class": "AttackHitConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "targetType": 0,
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "attackRangeType": 0
+                }
+            },
+            {
+                "rid": 1024,
+                "type": {
+                    "class": "CriticalHitConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "targetType": 0,
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "damageType": 0,
+                    "damageCastType": 0
+                }
+            },
+            {
+                "rid": 1025,
+                "type": {
+                    "class": "SkillHitConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "targetType": 0,
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "skillType": 0,
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1026,
+                "type": {
+                    "class": "AttackConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "attackRangeType": 0,
+                    "attack": 0.0
+                }
+            },
+            {
+                "rid": 1027,
+                "type": {
+                    "class": "HpChangeConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1028,
+                "type": {
+                    "class": "TakeDamageConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "damageType": 0,
+                    "damageCastType": 0,
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1029,
+                "type": {
+                    "class": "AttackConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "attackRangeType": 0,
+                    "attack": 0.0
+                }
+            },
+            {
+                "rid": 1030,
+                "type": {
+                    "class": "HpChangeConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1031,
+                "type": {
+                    "class": "TakeDamageConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "damageType": 0,
+                    "damageCastType": 0,
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1032,
+                "type": {
+                    "class": "HpChangeConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1033,
+                "type": {
+                    "class": "HpChangeConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1034,
+                "type": {
+                    "class": "CriticalHitConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "targetType": 0,
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "damageType": 0,
+                    "damageCastType": 0
+                }
+            },
+            {
+                "rid": 1035,
+                "type": {
+                    "class": "CriticalHitConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "targetType": 0,
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "damageType": 0,
+                    "damageCastType": 0
+                }
+            },
+            {
+                "rid": 1036,
+                "type": {
+                    "class": "AttackHitConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "targetType": 0,
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "attackRangeType": 0
+                }
+            },
+            {
+                "rid": 1037,
+                "type": {
+                    "class": "AttackHitConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "targetType": 0,
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "attackRangeType": 0
+                }
+            },
+            {
+                "rid": 1038,
+                "type": {
+                    "class": "AttackHitConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "targetType": 0,
+                    "hpRange": {
+                        "isPercent": true,
+                        "min": 0.20000000298023225,
+                        "max": 0.20000000298023225
+                    },
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "attackRangeType": 0
+                }
+            },
+            {
+                "rid": 1039,
+                "type": {
+                    "class": "AttackConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "attackRangeType": 0,
+                    "attack": 0.0
+                }
+            },
+            {
+                "rid": 1040,
+                "type": {
+                    "class": "AttackConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "attackRangeType": 0,
+                    "attack": 0.0
+                }
+            },
+            {
+                "rid": 1041,
+                "type": {
+                    "class": "SkillHitConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "targetType": 0,
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "skillType": 0,
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1042,
+                "type": {
+                    "class": "SkillHitConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "targetType": 0,
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "skillType": 0,
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1043,
+                "type": {
+                    "class": "SkillCastConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "mpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "skillType": 0
+                }
+            },
+            {
+                "rid": 1044,
+                "type": {
+                    "class": "SkillCastConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "mpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "skillType": 0
+                }
+            },
+            {
+                "rid": 1045,
+                "type": {
+                    "class": "TakeDamageConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "damageType": 0,
+                    "damageCastType": 0,
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1046,
+                "type": {
+                    "class": "TakeDamageConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "hpRange": {
+                        "isPercent": true,
+                        "min": 0.30000001192092898,
+                        "max": 0.30000001192092898
+                    },
+                    "damageType": 0,
+                    "damageCastType": 0,
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1047,
+                "type": {
+                    "class": "TakeDamageConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "hpRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "damageType": 0,
+                    "damageCastType": 0,
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1048,
+                "type": {
+                    "class": "TakeDamageConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "hpRange": {
+                        "isPercent": true,
+                        "min": 0.20000000298023225,
+                        "max": 0.20000000298023225
+                    },
+                    "damageType": 0,
+                    "damageCastType": 0,
+                    "damageRange": {
+                        "isPercent": false,
+                        "min": 0.0,
+                        "max": 0.0
+                    }
+                }
+            },
+            {
+                "rid": 1049,
+                "type": {
+                    "class": "KillConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "targetCount": 1,
+                    "timeWindow": 0.0,
+                    "targetType": 0
+                }
+            },
+            {
+                "rid": 1050,
+                "type": {
+                    "class": "KillConditionParam",
+                    "ns": "AOTScripts.Data",
+                    "asm": "AOTDll"
+                },
+                "data": {
+                    "targetCount": 1,
+                    "timeWindow": 0.0,
+                    "targetType": 0
+                }
+            }
+        ]
+    }
+}

@@ -30,3 +30,6 @@ MonoBehaviour:
   - keyFunction: 6
     key: PlayerInGameInfo
     uIType: 19
+  - keyFunction: 8
+    key: QualitySetting
+    uIType: 41

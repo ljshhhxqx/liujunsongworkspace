@@ -2,3 +2,4 @@ keyFunction,key,uiType
 Shop,Shop,Shop
 Inventory,Inventory,Backpack
 Info,PlayerInGameInfo,PlayerInGameInfo
+Setting,QualitySetting,QualitySetting

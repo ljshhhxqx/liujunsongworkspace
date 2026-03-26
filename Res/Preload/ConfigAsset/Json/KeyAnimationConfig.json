@@ -1,0 +1,80 @@
+{
+    "excelAssetReference": {
+        "guid": "afcb27a37860bed489c689f04b28b549"
+    },
+    "csvAssetReference": {
+        "guid": "f79490033f1ba7d4c817acd9581f3173"
+    },
+    "jsonAssetReference": {
+        "guid": "36a25296697c2fe44a5305e443be106f"
+    },
+    "configName": "KeyAnimationConfig",
+    "isArray": true,
+    "keyAnimationConfigData": [
+        {
+            "animationState": 4,
+            "isComboKey": false,
+            "animationKeys": [
+                "Running"
+            ],
+            "isGetButton": true
+        },
+        {
+            "animationState": 8,
+            "isComboKey": false,
+            "animationKeys": [
+                "Jump"
+            ],
+            "isGetButton": true
+        },
+        {
+            "animationState": 16,
+            "isComboKey": true,
+            "animationKeys": [
+                "Running",
+                "Jump"
+            ],
+            "isGetButton": true
+        },
+        {
+            "animationState": 32,
+            "isComboKey": false,
+            "animationKeys": [
+                "Roll"
+            ],
+            "isGetButton": true
+        },
+        {
+            "animationState": 256,
+            "isComboKey": false,
+            "animationKeys": [
+                "Fire1"
+            ],
+            "isGetButton": true
+        },
+        {
+            "animationState": 2048,
+            "isComboKey": false,
+            "animationKeys": [
+                "Collect"
+            ],
+            "isGetButton": true
+        },
+        {
+            "animationState": 4096,
+            "isComboKey": false,
+            "animationKeys": [
+                "SkillE"
+            ],
+            "isGetButton": true
+        },
+        {
+            "animationState": 8192,
+            "isComboKey": false,
+            "animationKeys": [
+                "SkillQ"
+            ],
+            "isGetButton": true
+        }
+    ]
+}
