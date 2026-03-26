@@ -51,8 +51,10 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
         {
             if (_followedUIControllers.ContainsKey(localPlayerSpawnedEvent.PlayerId) || NetworkClient.localPlayer.netId == localPlayerSpawnedEvent.PlayerId)
             {
+                Debug.Log($"[WorldUISpawner] OnPlayerSpawned not init {localPlayerSpawnedEvent.PlayerId}");
                 return;
             }
+            Debug.Log($"[WorldUISpawner] OnPlayerSpawned {localPlayerSpawnedEvent.PlayerId}");
             var dataModel = GetDataModel(WorldUIType.CollectItem, localPlayerSpawnedEvent.PlayerId, out var dataModels);
 
             if (!localPlayerSpawnedEvent.Spawned)

@@ -417,12 +417,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         protected override void InjectClientCallback()
         {
+            Debug.Log($"[PlayerInputController] Player Inject Client {netId}");
             _gameEventManager.Publish(new PlayerSpawnedEvent(rotateCenter, gameObject, netId, true));
         }
 
         protected override void InjectLocalPlayerCallback()
         {
-            Debug.Log($"[PlayerInputController] OnStartLocalPlayer");
+            //Debug.Log($"[PlayerInputController] OnStartLocalPlayer");
             _gameEventManager.Publish(new PlayerUnListenMessageEvent());
             _gameEventManager.Publish(new LocalPlayerSpawnedEvent(rotateCenter, gameObject, netId, true));
             _gameEventManager.Subscribe<DevelopItemGetEvent>(OnDevelopItemGet);
