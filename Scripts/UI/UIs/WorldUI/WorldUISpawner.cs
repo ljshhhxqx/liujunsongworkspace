@@ -49,7 +49,7 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
 
         private void OnPlayerSpawned(PlayerSpawnedEvent localPlayerSpawnedEvent)
         {
-            if (_followedUIControllers.ContainsKey(localPlayerSpawnedEvent.PlayerId) || NetworkClient.localPlayer.netId == localPlayerSpawnedEvent.PlayerId)
+            if (_followedUIControllers.ContainsKey(localPlayerSpawnedEvent.PlayerId) || (NetworkClient.localPlayer && NetworkClient.localPlayer.netId == localPlayerSpawnedEvent.PlayerId))
             {
                 Debug.Log($"[WorldUISpawner] OnPlayerSpawned not init {localPlayerSpawnedEvent.PlayerId}");
                 return;

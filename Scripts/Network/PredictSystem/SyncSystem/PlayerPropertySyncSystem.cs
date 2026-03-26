@@ -661,10 +661,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
             var recoverHpRatio = isPlayerInHisBase ? _gameConfigData.gameBaseData.playerBaseHpRecoverRatioPerSec : 0;
             var recoverMpRatio = isPlayerInHisBase ? _gameConfigData.gameBaseData.playerBaseManaRecoverRatioPerSec : 0;
-            if (recoverHpRatio == 0 && recoverMpRatio == 0)
-            {
-                return;
-            }
+            // if (recoverHpRatio == 0 && recoverMpRatio == 0)
+            // {
+            //     return;
+            // }
             playerState.MemoryProperty[PropertyTypeEnum.Health] = playerState.MemoryProperty[PropertyTypeEnum.Health].UpdateCurrentValueByRatio(recoverHpRatio);
             playerState.MemoryProperty[PropertyTypeEnum.Strength] = playerState.MemoryProperty[PropertyTypeEnum.Strength].UpdateCurrentValueByRatio(recoverMpRatio);
 
