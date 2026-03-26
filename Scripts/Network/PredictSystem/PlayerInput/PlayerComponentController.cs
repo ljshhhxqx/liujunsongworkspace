@@ -77,7 +77,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private PlayerControlEffect playerControlEffect;
         [SerializeField]
         private Transform rotateCenter;
-        protected override bool AutoInjectClient => false;
         private PropertyConfig _propertyConfig;
         private NetworkRigidbodyUnreliable _networkRigidbody;
         
