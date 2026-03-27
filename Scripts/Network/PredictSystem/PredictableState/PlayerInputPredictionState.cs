@@ -286,11 +286,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                             }
                         }
 
-                        var animationCommand = new PropertyClientAnimationCommand(); //ObjectPoolManager<PropertyClientAnimationCommand>.Instance.Get(50);
-                        animationCommand.AnimationState = noStrengthState == AnimationState.None ? inputCommand.CommandAnimationState : noStrengthState;
-                        animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property, CommandAuthority.Client);
-                        animationCommand.SkillId = skillConfigData.id;
-                        _propertyPredictionState.AddPredictedCommand(animationCommand);
+                        if (inputCommand.CommandAnimationState != AnimationState.SkillE && inputCommand.CommandAnimationState != AnimationState.SkillQ)
+                        {
+                            var animationCommand = new PropertyClientAnimationCommand();
+                            animationCommand.AnimationState = noStrengthState == AnimationState.None ? inputCommand.CommandAnimationState : noStrengthState;
+                            animationCommand.Header = GameSyncManager.CreateNetworkCommandHeader(header.ConnectionId, CommandType.Property, CommandAuthority.Client);
+                            animationCommand.SkillId = skillConfigData.id;
+                            _propertyPredictionState.AddPredictedCommand(animationCommand);
+                        }
                     }
 
                     if (skillConfigData.animationState != AnimationState.None)

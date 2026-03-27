@@ -51,7 +51,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.25,
                     "effectProperty": 3,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 5,
                     "duration": 0.0,
                     "controlSkillType": 0
@@ -173,7 +173,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.15000000596046449,
                     "effectProperty": 3,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 5,
                     "duration": 1.0,
                     "controlSkillType": 1
@@ -246,7 +246,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.07000000029802323,
                     "effectProperty": 1,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 4,
                     "duration": 0.5,
                     "controlSkillType": 0
@@ -258,7 +258,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.07000000029802323,
                     "effectProperty": 0,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 4,
                     "duration": 0.5,
                     "controlSkillType": 0
@@ -331,7 +331,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.15000000596046449,
                     "effectProperty": 3,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 5,
                     "duration": 0.5,
                     "controlSkillType": 2
@@ -380,7 +380,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.30000001192092898,
                     "effectProperty": 3,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 5,
                     "duration": 1.0,
                     "controlSkillType": 1
@@ -461,7 +461,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.15000000596046449,
                     "effectProperty": 3,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 5,
                     "duration": 0.0,
                     "controlSkillType": 0
@@ -473,7 +473,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.07000000029802323,
                     "effectProperty": 0,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 4,
                     "duration": 0.5,
                     "controlSkillType": 0
@@ -522,7 +522,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.15000000596046449,
                     "effectProperty": 3,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 5,
                     "duration": 0.0,
                     "controlSkillType": 0
@@ -534,7 +534,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.0,
                     "effectProperty": -1,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 5,
                     "duration": 0.0,
                     "controlSkillType": 0
@@ -664,7 +664,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.30000001192092898,
                     "effectProperty": 3,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 5,
                     "duration": 0.0,
                     "controlSkillType": 0
@@ -737,7 +737,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.11999999731779099,
                     "effectProperty": 3,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 5,
                     "duration": 0.0,
                     "controlSkillType": 0
@@ -749,7 +749,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.11999999731779099,
                     "effectProperty": 1,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 4,
                     "duration": 0.0,
                     "controlSkillType": 0
@@ -830,7 +830,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.15000000596046449,
                     "effectProperty": 3,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 5,
                     "duration": 0.0,
                     "controlSkillType": 0
@@ -842,7 +842,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.11999999731779099,
                     "effectProperty": 2,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 4,
                     "duration": 0.0,
                     "controlSkillType": 0
@@ -923,7 +923,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.15000000596046449,
                     "effectProperty": 3,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 5,
                     "duration": 0.0,
                     "controlSkillType": 0
@@ -935,7 +935,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.0,
                     "effectProperty": -1,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 5,
                     "duration": 0.0,
                     "controlSkillType": 0
@@ -1061,7 +1061,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.15000000596046449,
                     "effectProperty": 3,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 5,
                     "duration": 0.0,
                     "controlSkillType": 0
@@ -1073,7 +1073,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.15000000596046449,
                     "effectProperty": 6,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 4,
                     "duration": 0.0,
                     "controlSkillType": 0
@@ -1122,7 +1122,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.25,
                     "effectProperty": 3,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 5,
                     "duration": 0.0,
                     "controlSkillType": 0
@@ -1134,7 +1134,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.10000000149011612,
                     "effectProperty": 0,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 4,
                     "duration": 2.0,
                     "controlSkillType": 0
@@ -1183,7 +1183,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.18000000715255738,
                     "effectProperty": 3,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 5,
                     "duration": 1.0,
                     "controlSkillType": 1
@@ -1312,7 +1312,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.3499999940395355,
                     "effectProperty": 3,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 5,
                     "duration": 0.0,
                     "controlSkillType": 0
@@ -1393,7 +1393,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.20000000298023225,
                     "effectProperty": 3,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 5,
                     "duration": 0.0,
                     "controlSkillType": 0
@@ -1405,7 +1405,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.15000000596046449,
                     "effectProperty": 0,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 4,
                     "duration": 0.5,
                     "controlSkillType": 0
@@ -1454,7 +1454,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.25,
                     "effectProperty": 3,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 5,
                     "duration": 0.0,
                     "controlSkillType": 0
@@ -1466,7 +1466,7 @@
                     "isBuffMaxProperty": false,
                     "extraRatio": 0.15000000596046449,
                     "effectProperty": 0,
-                    "operation": 0,
+                    "operation": 1,
                     "buffIncreaseType": 4,
                     "duration": 2.0,
                     "controlSkillType": 0

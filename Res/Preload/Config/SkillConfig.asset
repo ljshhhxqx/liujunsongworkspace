@@ -52,7 +52,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.25
       effectProperty: 3
-      operation: 0
+      operation: 1
       buffIncreaseType: 5
       duration: 0
       controlSkillType: 0
@@ -138,7 +138,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.15
       effectProperty: 3
-      operation: 0
+      operation: 1
       buffIncreaseType: 5
       duration: 1
       controlSkillType: 1
@@ -187,7 +187,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.07
       effectProperty: 1
-      operation: 0
+      operation: 1
       buffIncreaseType: 4
       duration: 0.5
       controlSkillType: 0
@@ -197,7 +197,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.07
       effectProperty: 0
-      operation: 0
+      operation: 1
       buffIncreaseType: 4
       duration: 0.5
       controlSkillType: 0
@@ -246,7 +246,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.15
       effectProperty: 3
-      operation: 0
+      operation: 1
       buffIncreaseType: 5
       duration: 0.5
       controlSkillType: 2
@@ -283,7 +283,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.3
       effectProperty: 3
-      operation: 0
+      operation: 1
       buffIncreaseType: 5
       duration: 1
       controlSkillType: 1
@@ -336,7 +336,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.15
       effectProperty: 3
-      operation: 0
+      operation: 1
       buffIncreaseType: 5
       duration: 0
       controlSkillType: 0
@@ -346,7 +346,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.07
       effectProperty: 0
-      operation: 0
+      operation: 1
       buffIncreaseType: 4
       duration: 0.5
       controlSkillType: 0
@@ -383,7 +383,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.15
       effectProperty: 3
-      operation: 0
+      operation: 1
       buffIncreaseType: 5
       duration: 0
       controlSkillType: 0
@@ -393,7 +393,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0
       effectProperty: -1
-      operation: 0
+      operation: 1
       buffIncreaseType: 5
       duration: 0
       controlSkillType: 0
@@ -483,7 +483,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.3
       effectProperty: 3
-      operation: 0
+      operation: 1
       buffIncreaseType: 5
       duration: 0
       controlSkillType: 0
@@ -532,7 +532,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.12
       effectProperty: 3
-      operation: 0
+      operation: 1
       buffIncreaseType: 5
       duration: 0
       controlSkillType: 0
@@ -542,7 +542,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.12
       effectProperty: 1
-      operation: 0
+      operation: 1
       buffIncreaseType: 4
       duration: 0
       controlSkillType: 0
@@ -595,7 +595,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.15
       effectProperty: 3
-      operation: 0
+      operation: 1
       buffIncreaseType: 5
       duration: 0
       controlSkillType: 0
@@ -605,7 +605,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.12
       effectProperty: 2
-      operation: 0
+      operation: 1
       buffIncreaseType: 4
       duration: 0
       controlSkillType: 0
@@ -658,7 +658,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.15
       effectProperty: 3
-      operation: 0
+      operation: 1
       buffIncreaseType: 5
       duration: 0
       controlSkillType: 0
@@ -668,7 +668,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0
       effectProperty: -1
-      operation: 0
+      operation: 1
       buffIncreaseType: 5
       duration: 0
       controlSkillType: 0
@@ -756,7 +756,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.15
       effectProperty: 3
-      operation: 0
+      operation: 1
       buffIncreaseType: 5
       duration: 0
       controlSkillType: 0
@@ -766,7 +766,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.15
       effectProperty: 6
-      operation: 0
+      operation: 1
       buffIncreaseType: 4
       duration: 0
       controlSkillType: 0
@@ -803,7 +803,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.25
       effectProperty: 3
-      operation: 0
+      operation: 1
       buffIncreaseType: 5
       duration: 0
       controlSkillType: 0
@@ -813,7 +813,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.1
       effectProperty: 0
-      operation: 0
+      operation: 1
       buffIncreaseType: 4
       duration: 2
       controlSkillType: 0
@@ -850,7 +850,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.18
       effectProperty: 3
-      operation: 0
+      operation: 1
       buffIncreaseType: 5
       duration: 1
       controlSkillType: 1
@@ -927,7 +927,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.35
       effectProperty: 3
-      operation: 0
+      operation: 1
       buffIncreaseType: 5
       duration: 0
       controlSkillType: 0
@@ -980,7 +980,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.2
       effectProperty: 3
-      operation: 0
+      operation: 1
       buffIncreaseType: 5
       duration: 0
       controlSkillType: 0
@@ -990,7 +990,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.15
       effectProperty: 0
-      operation: 0
+      operation: 1
       buffIncreaseType: 4
       duration: 0.5
       controlSkillType: 0
@@ -1027,7 +1027,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.25
       effectProperty: 3
-      operation: 0
+      operation: 1
       buffIncreaseType: 5
       duration: 0
       controlSkillType: 0
@@ -1037,7 +1037,7 @@ MonoBehaviour:
       isBuffMaxProperty: 0
       extraRatio: 0.15
       effectProperty: 0
-      operation: 0
+      operation: 1
       buffIncreaseType: 4
       duration: 2
       controlSkillType: 0

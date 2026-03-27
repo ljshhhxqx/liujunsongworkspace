@@ -1318,6 +1318,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         operationType = skillHitExtraEffectData.operation,
                         increaseType = skillHitExtraEffectData.buffIncreaseType,
                     };
+                    Debug.Log($"HandleSkillHit buffIncreaseData--{buffIncreaseData.increaseType} --{skillHitExtraEffectData.operation} --{skillHitExtraEffectData.effectProperty}");
                     propertyCalculator = propertyCalculator.UpdateCalculator(propertyCalculator, buffIncreaseData);
                     if (skillHitExtraEffectData.duration > 0)
                     {

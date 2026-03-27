@@ -1469,11 +1469,11 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
 
         public void UpdateAnimation(float deltaTime)
         {
-            for (int i = _animationCooldowns.Count - 1; i >= 0; i--)
-            {
-                var cooldown = _animationCooldowns[i];
-                cooldown.Update(deltaTime);
-            }
+            // for (int i = _animationCooldowns.Count - 1; i >= 0; i--)
+            // {
+            //     var cooldown = _animationCooldowns[i];
+            //     cooldown.Update(deltaTime);
+            // }
         }
 
         public void UpdateAnimation(float deltaTime, ref PlayerAnimationCooldownState snapshotData)
