@@ -139,7 +139,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                 });
                 var itemGetCommand = new ItemsGetCommand();
                 itemGetCommand.Header =
-                    GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId, CommandType.Item, CommandAuthority.Client);
+                    GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId, CommandType.Item, CommandAuthority.Server);
                 itemGetCommand.Items = items;
                 gameEventManager.Publish(new DevelopItemGetEvent(itemGetCommand));
                 Debug.Log($"发送指令:{itemGetCommand} - {_playerInGameManager.LocalPlayerId}");
@@ -161,7 +161,7 @@ namespace HotUpdate.Scripts.UI.UIs.SecondPanel
                     });
                     var itemGetCommand = new ItemsGetCommand();
                     itemGetCommand.Header =
-                        GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId, CommandType.Item, CommandAuthority.Client);
+                        GameSyncManager.CreateNetworkCommandHeader(_playerInGameManager.LocalPlayerId, CommandType.Item, CommandAuthority.Server);
                     itemGetCommand.Items = items;
                     gameEventManager.Publish(new DevelopItemGetEvent(itemGetCommand));
                 }

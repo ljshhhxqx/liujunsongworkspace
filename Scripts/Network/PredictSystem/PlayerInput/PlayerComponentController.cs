@@ -335,7 +335,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         private void OnDevelopItemGet(DevelopItemGetEvent developItemGetEvent)
         {
             Debug.Log($"[PlayerInGameController] OnDevelopItemGet: {developItemGetEvent.ItemsGetCommand} - {developItemGetEvent.ItemsGetCommand.GetHeader().ConnectionId}");
-            _itemPredictionState.AddPredictedCommand(developItemGetEvent.ItemsGetCommand);
+            CmdSendCommand(NetworkCommandExtensions.SerializeCommand(developItemGetEvent.ItemsGetCommand).Buffer);
         }
 
         private void OnTargetShow(TargetShowEvent targetShowEvent)
