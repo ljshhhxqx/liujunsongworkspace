@@ -1312,6 +1312,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 var playerId = _playerInGameManager.GetPlayerId(hitId);
                 if (playerId != -1)
                 {
+                    if (_playerInGameManager.IsPlayerDeath(hitId))
+                    {
+                        return;
+                    }
                     var hitPlayerState = GetState<PlayerPredictablePropertyState>(playerId);
                     if (!isAlly && skillHitExtraEffectData.effectProperty == PropertyTypeEnum.Health &&
                         hitPlayerState.ControlSkillType.HasAnyState(SubjectedStateType.IsInvisible))
@@ -1321,10 +1325,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         return;
                     }
                     var propertyCalculator = hitPlayerState.MemoryProperty[skillHitExtraEffectData.effectProperty];
-                    if (propertyCalculator.CurrentValue <= 0 && skillHitExtraEffectData.effectProperty == PropertyTypeEnum.Health)
-                    {
-                        return;
-                    }
                     var playerCalculator = playerState.MemoryProperty[skillHitExtraEffectData.buffProperty];
                     float value;
                     var preHealth = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue;
@@ -1342,8 +1342,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         operationType = skillHitExtraEffectData.operation,
                         increaseType = skillHitExtraEffectData.buffIncreaseType,
                     };
+                    if (skillHitExtraEffectData.effectProperty == PropertyTypeEnum.Health)
+                        propertyCalculator = propertyCalculator.UpdateCalculator(propertyCalculator, buffIncreaseData);
                     Debug.Log($"HandleSkillHit buffIncreaseData--{buffIncreaseData.increaseType} --{skillHitExtraEffectData.operation} --{skillHitExtraEffectData.effectProperty}");
-                    propertyCalculator = propertyCalculator.UpdateCalculator(propertyCalculator, buffIncreaseData);
+                    
                     if (skillHitExtraEffectData.duration > 0)
                     {
                         var data = new SkillBuffManagerData();
@@ -1356,6 +1358,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         data.currentTime = skillHitExtraEffectData.duration;
                         data.skillType = skillHitExtraEffectData.controlSkillType;
                         _skillBuffs.Add(data);
+                        Debug.Log($"skillHitExtraEffectData ++ {skillHitExtraEffectData.duration} --{skillHitExtraEffectData.operation}-  {skillHitExtraEffectData.effectProperty} - {skillHitExtraEffectData.controlSkillType}");
                     }
 
                     if (skillHitExtraEffectData.effectProperty == PropertyTypeEnum.Health && !isAlly)
@@ -1470,7 +1473,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             _skillBuffs.RemoveAt(index);
             PropertyStates[playerId] = playerState;
             PropertyChange(playerId);
-            HandlePlayerControl(playerId, ControlSkillType.None);
+            //HandlePlayerControl(playerId, ControlSkillType.None);
         }
 
         private void HandleAnimationCommand(int connectionId, AnimationState command, int skillId = 0)

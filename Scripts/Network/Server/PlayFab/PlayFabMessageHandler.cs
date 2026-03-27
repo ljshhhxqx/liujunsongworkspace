@@ -62,7 +62,7 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
 
         private void OnLoginEvent(PlayerListenMessageEvent playerListenMessageEvent)
         {
-            RepeatedTask.Instance.StartRepeatingTask(GetNewMessages, 2.5f);
+            RepeatedTask.Instance.StartRepeatingTask(GetNewMessages, 2f);
         }
 
         public void SendMessage(Message message)
