@@ -4071,15 +4071,15 @@
         "maxBagSize": 8
     },
     "propertyConfig": {
-        "instanceID": 37794
+        "instanceID": 39966
     },
     "constantBuffConfig": {
-        "instanceID": 36906
+        "instanceID": 39956
     },
     "equipmentConfig": {
-        "instanceID": 36908
+        "instanceID": 39968
     },
     "armorConfig": {
-        "instanceID": 37080
+        "instanceID": 39954
     }
 }
