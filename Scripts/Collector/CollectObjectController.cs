@@ -302,12 +302,20 @@ namespace HotUpdate.Scripts.Collector
         [ClientRpc]
         public void RpcSwitchAttackMode(bool isAttacking)
         {
+            if (!_attackCollectItem)
+            {
+                return;
+            }
             _attackCollectItem.RpcSwitchAttackMode(isAttacking);
         }
         
         [ClientRpc]
         public void RpcTriggerAttack( )
         {
+            if (!_attackCollectItem)
+            {
+                return;
+            }
             _attackCollectItem.TriggerAttack();
         }
 

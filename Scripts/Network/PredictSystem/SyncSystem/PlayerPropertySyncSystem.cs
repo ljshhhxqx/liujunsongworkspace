@@ -661,12 +661,17 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
             var recoverHpRatio = isPlayerInHisBase ? _gameConfigData.gameBaseData.playerBaseHpRecoverRatioPerSec : 0;
             var recoverMpRatio = isPlayerInHisBase ? _gameConfigData.gameBaseData.playerBaseManaRecoverRatioPerSec : 0;
-            // if (recoverHpRatio == 0 && recoverMpRatio == 0)
-            // {
-            //     return;
-            // }
-            playerState.MemoryProperty[PropertyTypeEnum.Health] = playerState.MemoryProperty[PropertyTypeEnum.Health].UpdateCurrentValueByRatio(recoverHpRatio);
-            playerState.MemoryProperty[PropertyTypeEnum.Strength] = playerState.MemoryProperty[PropertyTypeEnum.Strength].UpdateCurrentValueByRatio(recoverMpRatio);
+            if (recoverHpRatio!=0)
+            {
+                playerState.MemoryProperty[PropertyTypeEnum.Health] = playerState.MemoryProperty[PropertyTypeEnum.Health].UpdateCurrentValueByRatio(recoverHpRatio);
+
+            }
+
+            if (recoverMpRatio != 0)
+            {            
+                playerState.MemoryProperty[PropertyTypeEnum.Strength] = playerState.MemoryProperty[PropertyTypeEnum.Strength].UpdateCurrentValueByRatio(recoverMpRatio);
+            }
+
 
             if (playerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue <= 0)
             {
@@ -676,6 +681,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 {
                     Debug.LogError($"PlayerPropertySyncSystem: Failed to add death player {deadManId}");
                 }
+                PlayerDead(headerConnectionId, (int)playerState.MemoryProperty[PropertyTypeEnum.Score].CurrentValue, 0);
                 PlayerStateChanged(headerConnectionId, deadTime + 3f, SubjectedStateType.IsInvisible, OperationType.Add);
             }
             PropertyStates[headerConnectionId] = playerState;

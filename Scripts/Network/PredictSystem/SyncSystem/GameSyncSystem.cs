@@ -113,13 +113,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             OnAllSystemInit?.Invoke();
         }
 
-        public override void OnStartClient()
-        {
-            base.OnStartClient();
-            // _gameEventManager.Subscribe<PlayerConnectEvent>(OnPlayerConnect);
-            // _gameEventManager.Subscribe<PlayerDisconnectEvent>(OnPlayerDisconnect);
-        }
-
         public override void OnStartServer()
         {
             base.OnStartServer();
