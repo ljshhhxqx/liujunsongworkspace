@@ -1614,7 +1614,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcPlayControlledEffect(ControlSkillType controlSkillType)
         {
-            playerControlEffect.SetEffect(controlSkillType);
+            //playerControlEffect.SetEffect(controlSkillType);
         }
         
         [Command(channel = Channels.Unreliable)]/**/
