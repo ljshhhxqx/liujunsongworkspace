@@ -1338,7 +1338,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         _skillBuffs.Add(data);
                     }
 
-                    if (skillHitExtraEffectData.effectProperty == PropertyTypeEnum.Health && !isAlly)
+                    if (skillHitExtraEffectData.effectProperty == PropertyTypeEnum.Health && !isAlly && propertyCalculator.CurrentValue > 0)
                     {
                         var playerConnection = GameSyncManager.GetPlayerConnection(hitId);
                         if (propertyCalculator.CurrentValue <= 0)
