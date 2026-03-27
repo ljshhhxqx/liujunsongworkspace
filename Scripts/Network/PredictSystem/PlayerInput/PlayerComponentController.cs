@@ -1121,13 +1121,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
         [ClientRpc]
         public void RpcHandlePlayerRespawnedClient()
         {
-            if (_playerAnimationCalculator == null)
+            if (!LocalPlayerHandler)
             {
                 return;
             }
             _playerAnimationCalculator.PlayAnimationWithNoCondition(AnimationState.Idle);
             var playerDamageDeathOverlay = _uiManager.GetActiveUI<PlayerDamageDeathOverlay>(UIType.PlayerDamageDeathOverlay, UICanvasType.Overlay);
-            Debug.Log($"[RpcHandlePlayerRespawnedClient] {netId}");
+            //Debug.Log($"[RpcHandlePlayerRespawnedClient] {netId}");
             playerDamageDeathOverlay.Clear();
         }
 
