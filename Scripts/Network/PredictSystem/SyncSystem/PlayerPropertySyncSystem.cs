@@ -1341,11 +1341,15 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     if (skillHitExtraEffectData.effectProperty == PropertyTypeEnum.Health && !isAlly)
                     {
                         var playerConnection = GameSyncManager.GetPlayerConnection(hitId);
-                        playerConnection.RpcPlayEffect(ParticlesType.HitEffect);
-                        playerConnection.RpcPlayAudioEffect(AnimationState.Hit);
                         if (propertyCalculator.CurrentValue <= 0)
                         {
                             PlayerDead(playerId, (int)hitPlayerState.MemoryProperty[PropertyTypeEnum.Score].CurrentValue, attacker);
+                            
+                        }
+                        else
+                        {
+                            playerConnection.RpcPlayEffect(ParticlesType.HitEffect);
+                            playerConnection.RpcPlayAudioEffect(AnimationState.Hit);
                         }
                     }
                     hitPlayerState.MemoryProperty[skillHitExtraEffectData.effectProperty] = propertyCalculator;

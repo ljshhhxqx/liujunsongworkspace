@@ -688,7 +688,7 @@ namespace HotUpdate.Scripts.Network.Server.InGame
         [Server]
         public void RandomUnion(out int noUnionPlayerId)
         {
-            if (_playerIds.Count <= 2)
+            if (_playerIds.Count <= 4)
             {
                 noUnionPlayerId = 0;
                 return;
