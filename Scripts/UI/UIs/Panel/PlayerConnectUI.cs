@@ -29,6 +29,8 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
         [SerializeField]
         private Button clientBtn;
         [SerializeField]
+        private Button cancelBtn;
+        [SerializeField]
         private Button quitBtn;
         [SerializeField]
         private ContentItemList contentItemList;
@@ -52,6 +54,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             hostBtn.BindDebouncedListener(() => _playFabRoomManager.TryChangePlayerGameInfo(PlayerGameDuty.Host), 2f);
             serverBtn.BindDebouncedListener(() => _playFabRoomManager.TryChangePlayerGameInfo(PlayerGameDuty.Server), 2f);
             clientBtn.BindDebouncedListener(() => _playFabRoomManager.TryChangePlayerGameInfo(PlayerGameDuty.Client), 2f);
+            cancelBtn.BindDebouncedListener(() => _playFabRoomManager.TryChangePlayerGameInfo(), 2f);
         }
 
         private void OnGameInfoChanged(MainGameInfo info)
@@ -131,6 +134,7 @@ namespace HotUpdate.Scripts.UI.UIs.Panel
             serverBtn.onClick.RemoveAllListeners();
             clientBtn.onClick.RemoveAllListeners();
             quitBtn.onClick.RemoveAllListeners();
+            cancelBtn.onClick.RemoveAllListeners();
             _playFabRoomManager.OnGameInfoChanged -= OnGameInfoChanged;
             _playFabRoomManager.OnPlayerInfoChanged -= OnPlayerInfoChanged;
         }
