@@ -1300,6 +1300,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     if (!isAlly && skillHitExtraEffectData.effectProperty == PropertyTypeEnum.Health &&
                         hitPlayerState.ControlSkillType.HasAnyState(SubjectedStateType.IsInvisible))
                         return;
+                    if (skillHitExtraEffectData.effectProperty == PropertyTypeEnum.None || skillHitExtraEffectData.buffProperty == PropertyTypeEnum.None)
+                    {
+                        return;
+                    }
                     var propertyCalculator = hitPlayerState.MemoryProperty[skillHitExtraEffectData.effectProperty];
                     var playerCalculator = playerState.MemoryProperty[skillHitExtraEffectData.buffProperty];
                     float value;

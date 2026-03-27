@@ -1241,6 +1241,7 @@ MonoBehaviour:
   hostBtn: {fileID: 1134364155895014126}
   serverBtn: {fileID: 1174187959435153825}
   clientBtn: {fileID: 431791632404833978}
+  cancelBtn: {fileID: 7997226848902492953}
   quitBtn: {fileID: 5252571536130069058}
   contentItemList: {fileID: 4424895780684273375}
 --- !u!1 &3446906352727607770
