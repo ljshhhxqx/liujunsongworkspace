@@ -3,6 +3,7 @@ using AOTScripts.Tool.ObjectPool;
 using AOTScripts.Tool.Resource;
 using Cysharp.Threading.Tasks;
 using Game.Map;
+using HotUpdate.Scripts.Collector;
 using HotUpdate.Scripts.Game.Inject;
 using HotUpdate.Scripts.Tool.GameEvent;
 using HotUpdate.Scripts.Tool.ObjectPool;
@@ -53,6 +54,7 @@ namespace HotUpdate.Scripts.Game.Map
             _mapName ??= gameObject.scene.name;
             uiManager.CloseUI(UIType.Loading);
             Debug.Log("game map init complete!!!!!!!!!!");
+            MapBoundDefiner.Instance.Initialize();
         }
 
         private void InjectGameObjects()

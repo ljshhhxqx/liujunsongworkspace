@@ -60,6 +60,10 @@ namespace HotUpdate.Scripts.Collector
             _gridSize = _jsonDataConfig.GameConfig.gridSize;
             _sceneLayer = _jsonDataConfig.GameConfig.groundSceneLayer;
             Debug.Log("MapBoundDefiner init");
+        }
+        
+        public void Initialize()
+        {
             CalculateAdjustedBounds();
             InitializeGrid();
             CacheGroundHeight();

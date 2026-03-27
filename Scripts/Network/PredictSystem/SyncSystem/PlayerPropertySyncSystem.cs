@@ -1305,6 +1305,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         return;
                     }
                     var propertyCalculator = hitPlayerState.MemoryProperty[skillHitExtraEffectData.effectProperty];
+                    if (propertyCalculator.CurrentValue <= 0 && skillHitExtraEffectData.effectProperty == PropertyTypeEnum.Health)
+                    {
+                        return;
+                    }
                     var playerCalculator = playerState.MemoryProperty[skillHitExtraEffectData.buffProperty];
                     float value;
                     var preHealth = hitPlayerState.MemoryProperty[PropertyTypeEnum.Health].CurrentValue;
@@ -1338,7 +1342,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                         _skillBuffs.Add(data);
                     }
 
-                    if (skillHitExtraEffectData.effectProperty == PropertyTypeEnum.Health && !isAlly && propertyCalculator.CurrentValue > 0)
+                    if (skillHitExtraEffectData.effectProperty == PropertyTypeEnum.Health && !isAlly)
                     {
                         var playerConnection = GameSyncManager.GetPlayerConnection(hitId);
                         if (propertyCalculator.CurrentValue <= 0)
