@@ -610,6 +610,8 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
                 _uiManager.ShowTips("已经是该职位了");
                 return;
             }
+
+            _currentGamePlayerInfo.playerDuty = duty.ToString();
             _currentGamePlayerInfo.playerStatus = status == PlayerGameStatus.None ? _currentGamePlayerInfo.playerStatus : status.ToString();
             
             var request = new ExecuteEntityCloudScriptRequest
