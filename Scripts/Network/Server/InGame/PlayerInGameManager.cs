@@ -907,13 +907,19 @@ namespace HotUpdate.Scripts.Network.Server.InGame
             return true;
         }
 
+        public bool IsPlayerDeath(uint playerNetId)
+        {
+            return _playerDeathCountdowns.ContainsKey(playerNetId);
+        } 
+
         [Server]
         public bool TryAddDeathPlayer(uint playerNetId, float countdown, uint killerPlayerId, Action<uint, uint, float> playerDeathCallback, Action<uint> playerBornCallback)
         {
-            if (!_playerDeathCountdowns.AddOrUpdate(playerNetId, countdown))
+            if (_playerDeathCountdowns.ContainsKey(playerNetId))
             {
                 return false;
             }
+            _playerDeathCountdowns.Add(playerNetId, countdown);
             Debug.Log($"[PlayerInGameManager] Add death player {playerNetId}");
             playerDeathCallback?.Invoke(playerNetId,killerPlayerId, countdown);
             if (!_playerBornCallbacks.TryGetValue(playerNetId, out var callback))

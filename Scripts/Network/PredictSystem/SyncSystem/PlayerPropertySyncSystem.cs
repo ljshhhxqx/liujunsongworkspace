@@ -535,6 +535,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
         private void HandleItemAttack(PropertyItemAttackCommand propertyItemAttackCommand)
         {
             var playerId = _playerInGameManager.GetPlayerId(propertyItemAttackCommand.TargetId);
+            if (_playerInGameManager.IsPlayerDeath(propertyItemAttackCommand.TargetId))
+            {
+                return;
+            }
             var playerState = GetState<PlayerPredictablePropertyState>(playerId);
             if (playerState.ControlSkillType.HasAnyState(SubjectedStateType.IsInvisible))
             {
@@ -1088,10 +1092,16 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             var defendersState = PropertyStates
                 .Where(x => defenderPlayerIds.Contains(x.Key))
                 .ToDictionary(x => _playerInGameManager.GetPlayerNetId(x.Key), x => (PlayerPredictablePropertyState)x.Value);
+            defendersState = defendersState.Where(x => !_playerInGameManager.IsPlayerDeath(x.Key))
+                .ToDictionary(x => x.Key, x => x.Value);
             var damageDatas = PlayerPropertyCalculator.HandleAttack(attackerUid, ref propertyState, ref defendersState, _jsonDataConfig.GetDamage);
             for (int i = 0; i < defenderPlayerIds.Length; i++)
             {
                 var playerNetId = _playerInGameManager.GetPlayerNetId(defenderPlayerIds[i]);
+                if (_playerInGameManager.IsPlayerDead(playerNetId, out _))
+                {
+                    continue;
+                }
                 var playerConnection = GameSyncManager.GetPlayerConnection(defenderPlayerIds[i]);
                 var rb = playerConnection.GetComponent<Rigidbody>();
                 rb.velocity = new Vector3(0, rb.velocity.y, 0);

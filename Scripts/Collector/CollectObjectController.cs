@@ -294,6 +294,10 @@ namespace HotUpdate.Scripts.Collector
         [ClientRpc]
         public void RpcPlayEffect(ParticlesType type)
         {
+            if (!this)
+            {
+                return;
+            }
             EffectPlayer.Instance.PlayEffect(type, transform.position, transform);
         }
 
@@ -317,11 +321,6 @@ namespace HotUpdate.Scripts.Collector
                 return;
             }
             _attackCollectItem.TriggerAttack();
-        }
-
-        public void PickerSuccess()
-        {
-            
         }
     }
 }
