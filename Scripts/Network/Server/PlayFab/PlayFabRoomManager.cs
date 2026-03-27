@@ -490,14 +490,14 @@ namespace HotUpdate.Scripts.Network.Server.PlayFab
             {
                 return;
             }
-            var request = new ExecuteEntityCloudScriptRequest
-            {
-                FunctionName = "CheckPlayerOnline",
-                GeneratePlayStreamEvent = true,
-                FunctionParameter = new { roomId = CurrentRoomId },
-                Entity = PlayFabData.EntityKey.Value,
-            };
-            _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnRefreshRoomDataSuccess, OnError, false);
+            // var request = new ExecuteEntityCloudScriptRequest
+            // {
+            //     FunctionName = "CheckPlayerOnline",
+            //     GeneratePlayStreamEvent = true,
+            //     FunctionParameter = new { roomId = CurrentRoomId },
+            //     Entity = PlayFabData.EntityKey.Value,
+            // };
+            // _playFabClientCloudScriptCaller.ExecuteCloudScript(request, OnRefreshRoomDataSuccess, OnError, false);
         }
 
         private void OnRefreshRoomDataSuccess(ExecuteCloudScriptResult result)
