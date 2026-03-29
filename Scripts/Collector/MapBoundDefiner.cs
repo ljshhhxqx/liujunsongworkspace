@@ -252,7 +252,6 @@ namespace HotUpdate.Scripts.Collector
 
                 _spawnableGrids.Add(grid);
             }
-
         }
 
         
@@ -369,6 +368,11 @@ namespace HotUpdate.Scripts.Collector
             MapMaxBoundary = Vector3.zero;
             SafeMinBoundary = Vector3.zero;
             SafeMaxBoundary = Vector3.zero;
+
+            _mapBounds = default;
+            GridOrigin = default;
+            _safeGridMap.Clear();
+            _spawnableGrids.Clear();
             Debug.Log("MapBoundDefiner cleared");
         }
         public bool TryGetGroundHeight(Vector2Int grid, out float height)

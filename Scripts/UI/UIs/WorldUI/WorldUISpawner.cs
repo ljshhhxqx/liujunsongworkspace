@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using AOTScripts.Data;
 using AOTScripts.Tool;
 using HotUpdate.Scripts.Tool;
 using HotUpdate.Scripts.Tool.GameEvent;
@@ -169,7 +170,7 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
             {
                 infoDataModel.Health.Value = (int)sceneItemInfoChangedEvent.SceneItemInfo.health;
                 infoDataModel.MaxHealth.Value = (int)sceneItemInfoChangedEvent.SceneItemInfo.maxHealth;
-                infoDataModel.Name.Value ??= $"{WorldUIType.CollectItem.ToString()}/{sceneItemInfoChangedEvent.ItemId}";
+                infoDataModel.Name.Value ??= $"{EnumHeaderParser.GetHeader(WorldUIType.CollectItem)}-{sceneItemInfoChangedEvent.ItemId}";
             }
         }
 
@@ -194,7 +195,9 @@ namespace HotUpdate.Scripts.UI.UIs.WorldUI
     public enum WorldUIType
     {
         None,
+        [Header("收集物")]
         CollectItem,
+        [Header("玩家")]
         PlayerItem,
     }
 }

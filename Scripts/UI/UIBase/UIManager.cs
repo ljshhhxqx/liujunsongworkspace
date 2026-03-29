@@ -167,7 +167,7 @@ namespace HotUpdate.Scripts.UI.UIBase
                     uI =root.GetComponentInChildren<T>();
                     if (uI)
                     {
-                        _uiDict.Add(uIType, uI);
+                        _uiDict.AddOrUpdate(uIType, uI);
                         return uI;
                     }
                 }

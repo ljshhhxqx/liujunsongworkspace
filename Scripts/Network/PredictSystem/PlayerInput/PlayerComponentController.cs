@@ -1524,44 +1524,44 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PlayerInput
             _previousAnimationState = AnimationState.None;
         }
 
-        [ClientRpc]
-        public void HandlePlayerPropertyDifference(byte[] data)
-        {
-            if (!LocalPlayerHandler)
-            {
-                return;
-            }
-            var tracedInfo = BoxingFreeSerializer.MemoryDeserialize<TracedPlayerInfo>(data);
-
-            PlayerComponentController playerComponent;
-            if (tracedInfo.PlayerId == _playerInGameManager.LocalPlayerId)
-            {
-                playerComponent = this;
-            }
-            else
-            {
-                var otherPlayer = _gameSyncManager.GetPlayerConnection(tracedInfo.PlayerId).transform;
-                playerComponent = otherPlayer.GetComponent<PlayerComponentController>();
-                
-                var transforms = new List<Transform> { otherPlayer };
-                var layerMask = _gameConfigData.groundSceneLayer | _gameConfigData.stairSceneLayer | _playerConfigData.PlayerLayer;
-                
-                if (PlayerPhysicsCalculator.TryGetPlayersInScreen(_camera, transforms, out var playersInScreen, layerMask))
-                {
-                    if (playersInScreen.Count == 0)
-                    {
-                        return;       
-                    }
-                    var player = playersInScreen[0];
-                    if (player != tracedInfo.PlayerId)
-                    {
-                        return;
-                    }
-                }
-            }
-
-            playerComponent.HandlePlayerPropertyChange(tracedInfo);
-        }
+        // [ClientRpc]
+        // public void HandlePlayerPropertyDifference(byte[] data)
+        // {
+        //     if (!LocalPlayerHandler)
+        //     {
+        //         return;
+        //     }
+        //     var tracedInfo = BoxingFreeSerializer.MemoryDeserialize<TracedPlayerInfo>(data);
+        //
+        //     PlayerComponentController playerComponent;
+        //     if (tracedInfo.PlayerId == _playerInGameManager.LocalPlayerId)
+        //     {
+        //         playerComponent = this;
+        //     }
+        //     else
+        //     {
+        //         var otherPlayer = _gameSyncManager.GetPlayerConnection(tracedInfo.PlayerId).transform;
+        //         playerComponent = otherPlayer.GetComponent<PlayerComponentController>();
+        //         
+        //         var transforms = new List<Transform> { otherPlayer };
+        //         var layerMask = _gameConfigData.groundSceneLayer | _gameConfigData.stairSceneLayer | _playerConfigData.PlayerLayer;
+        //         
+        //         if (PlayerPhysicsCalculator.TryGetPlayersInScreen(_camera, transforms, out var playersInScreen, layerMask))
+        //         {
+        //             if (playersInScreen.Count == 0)
+        //             {
+        //                 return;       
+        //             }
+        //             var player = playersInScreen[0];
+        //             if (player != tracedInfo.PlayerId)
+        //             {
+        //                 return;
+        //             }
+        //         }
+        //     }
+        //
+        //     playerComponent.HandlePlayerPropertyChange(tracedInfo);
+        // }
 
         [Client]
         private void HandlePlayerPropertyChange(TracedPlayerInfo tracedInfo)
