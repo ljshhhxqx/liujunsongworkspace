@@ -456,11 +456,13 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             {
                 case ObjectType.Train:
                     var trainScore = _collectData.touchTrainGainScore.GetRandomValue();
+                    player.SetPlayerTransformServer(targetPosition, Quaternion.identity, false, false);
                     Debug.Log($"PlayerPropertySyncSystem: {header.ConnectionId} gain {trainScore} score by touch train");
                     playerState.MemoryProperty[PropertyTypeEnum.Score] = playerState.MemoryProperty[PropertyTypeEnum.Score].UpdateCurrentValue(trainScore);
                     break;
                 case ObjectType.Rocket:
                     var rockerScore = _collectData.touchRocketGainScore.GetRandomValue();
+                    player.SetPlayerTransformServer(targetPosition, Quaternion.identity, false, false);
                     Debug.Log($"PlayerPropertySyncSystem: {header.ConnectionId} gain {rockerScore} score by touch rocket");
                     playerState.MemoryProperty[PropertyTypeEnum.Score] = playerState.MemoryProperty[PropertyTypeEnum.Score].UpdateCurrentValue(rockerScore);
                     break;
@@ -473,7 +475,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                     Debug.LogWarning($"无交互的物品类型{playerTouchObjectCommand.ObjectType}");
                     break;
             }
-            player.SetPlayerTransformServer(targetPosition, Quaternion.identity, false, false);
             PropertyStates[header.ConnectionId] = playerState;
             PropertyChange(header.ConnectionId);
         }
