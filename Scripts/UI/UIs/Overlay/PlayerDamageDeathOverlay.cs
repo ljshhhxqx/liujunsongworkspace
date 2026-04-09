@@ -77,7 +77,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         public void PlayDamageEffect(int oldHealth, int newHealth, int maxHealth)
         {
-            damageRoot.SetActive(newHealth < oldHealth);
+            damageRoot.SetActive(newHealth < oldHealth && maxHealth>newHealth);
             if (_isDeathCountDownStarted || newHealth < 1f || newHealth > oldHealth) return;
             deathRoot.SetActive(false);
             _damageSequence?.Kill();
