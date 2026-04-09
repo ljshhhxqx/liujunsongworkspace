@@ -13,6 +13,7 @@ using HotUpdate.Scripts.Tool;
 using HotUpdate.Scripts.Tool.GameEvent;
 using Mirror;
 using NUnit.Framework;
+using NPBehave;
 using UniRx;
 using UnityEngine;
 using VContainer;
