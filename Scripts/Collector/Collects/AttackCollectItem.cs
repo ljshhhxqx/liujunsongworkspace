@@ -96,7 +96,6 @@ namespace HotUpdate.Scripts.Collector.Collects
                 {
                     return false;
                 }
-                //Attack(_direction, target.NetId);
                 if (!_isAttacking)
                 {
                     Debug.Log($"[ AttackCollectItem ] Start Attack");

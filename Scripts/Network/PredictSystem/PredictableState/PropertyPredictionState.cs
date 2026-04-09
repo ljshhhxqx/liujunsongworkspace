@@ -221,22 +221,14 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
         private void PropertyChanged(PlayerPredictablePropertyState predictablePropertyState, bool isRecover = false)
         {
-            // foreach (var key in predictablePropertyState.MemoryProperty.Keys)
-            // {
-            //     var property = PlayerPredictablePropertyState.MemoryProperty[key];
-            //     //Debug.Log($"PropertyChanged {key}: {property}");
-            // }
-            //Debug.Log($"[PropertyChanged] {predictablePropertyState.ToString()}");
             if (!LocalPlayerHandler || _isDead)
             {
-                //Debug.LogError($"PropertyChanged  {!NetworkIdentity.isLocalPlayer} is not a player or is dead {_isDead}");
                 return;
             }
             if (!_isDead && !_subjectedStateType.HasAnyState(SubjectedStateType.IsDead) && predictablePropertyState.ControlSkillType.HasAnyState(SubjectedStateType.IsDead))
             {
                 var countDown = _jsonDataConfig.GameConfig.GetPlayerDeathTime((int)predictablePropertyState.MemoryProperty[PropertyTypeEnum.Score].CurrentValue);
                 OnPlayerDead?.Invoke(countDown);
-                //Debug.Log($"OnPlayerDead {countDown}");
                 _isDead = true;
                 return;
             }
@@ -275,13 +267,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 _uiPropertyData.Update((int)kvp.Key, propertyData);
                 OnPropertyChanged?.Invoke(kvp.Key, property);
                 UIPropertyBinder.UpdateDictionary(_propertyBindKey, (int)kvp.Key, propertyData);
-                //Debug.Log($"predictablePropertyState.MemoryProperty changed {kvp}: {property.CurrentValue} {property.MaxCurrentValue}");
-                //;
-
-                // data.CurrentProperty = property.CurrentValue;
-                // data.MaxProperty = property.MaxCurrentValue;
-                // data.IsAutoRecover = isRecover;
-                // UIPropertyBinder.UpdateDictionary(_propertyBindKey, (int)kvp.Key, data);
                 switch (kvp.Key)
                 {
                     case PropertyTypeEnum.Gold:
@@ -306,7 +291,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                     case PropertyTypeEnum.Strength:
                         goldData.Mana = property.CurrentValue;
                         goldData.MaxMana = property.MaxCurrentValue;
-                        //Debug.Log($"goldData.MaxMana: {goldData.MaxMana} goldData.Mana: {goldData.Mana}");
                         break;
                     case PropertyTypeEnum.View:
                         goldData.Fov = property.CurrentValue;

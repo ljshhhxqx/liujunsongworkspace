@@ -75,7 +75,7 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
                         iconImage.transform.parent.gameObject.SetActive(true);
                         iconImage.fillAmount = ratio;
                     }
-                    if (!_propertyData.IsAutoRecover && changeValue > 0)
+                    if (!_propertyData.IsAutoRecover && Mathf.Abs(changeValue) >= 5)
                     {
                         changedText.transform.localScale = Vector3.one;
                         DoAnimation(changeValue);
@@ -86,14 +86,13 @@ namespace HotUpdate.Scripts.UI.UIs.Overlay
 
         private void DoAnimation(float changeValue)
         {
-            changedText.transform.localPosition = valueText.transform.localPosition;
-            changedText.text = changeValue > 0 ? $"+{changeValue:0}" : $"-{changeValue:0}";
-            changedText.color = changeValue > 0 ? Color.green : Color.red;
             if (_sq != null && _sq.IsActive())
             {
-                _sq.Complete();
-                _sq.Kill();
+                return;
             }
+            changedText.transform.localPosition = valueText.transform.localPosition;
+            changedText.text = changeValue > 0 ? $"+{changeValue:0}" : $"{changeValue:0}";
+            changedText.color = changeValue > 0 ? Color.green : Color.red;
             _sq = DOTween.Sequence();
             _sq.Append(changedText.transform.DOLocalMoveX(-50f, 0.5f).SetEase(Ease.Linear));
             _sq.AppendInterval(0.5f);
