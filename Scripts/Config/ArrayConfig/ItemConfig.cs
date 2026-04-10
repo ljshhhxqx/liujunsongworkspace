@@ -262,16 +262,7 @@ namespace HotUpdate.Scripts.Config.ArrayConfig
 #endif
         public int RandomLegendaryEquipmentId()
         {
-            var list = new List<int>(_equipmentIds.Count);
-            for (int i = 0; i < gameItemDatas.Count; i++)
-            {
-                var gameItemData = gameItemDatas[i];
-                if (gameItemData.itemType.IsEquipment() && gameItemData.quality == QualityType.Legendary)
-                {
-                    list.Add(gameItemData.id);
-                }
-            }
-
+            int[] list = { 3041, 3042, 3043, 3044, 3045, 3059, 3071, 3073,3075, 3086, 3087, 3101, 3003,3006,3009,3012,3015,3016,3019,3025 };
             return list.RandomSelect();
         }
     }

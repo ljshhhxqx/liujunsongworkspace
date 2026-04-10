@@ -36,8 +36,6 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
         {
             try
             {
-                if (!Constant.IsServer)
-                    return;
                 var header = equipmentCommand.Header;
                 var configId = PlayerItemCalculator.GetItemConfigId(equipmentCommand.EquipmentPart, equipmentCommand.EquipmentConfigId);
                 var itemConfig = Constant.ItemConfig.GetGameItemData(configId); 

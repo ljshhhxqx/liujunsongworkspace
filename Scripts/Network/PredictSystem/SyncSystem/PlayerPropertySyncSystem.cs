@@ -751,25 +751,27 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
         private void HandleEquipPropertyUnload(int targetId, int equipConfigId, int equipItemId, int index = 0)
         {
-            var playerState = GetState<PlayerPredictablePropertyState>(targetId);
             var changed = false;
+            EquipmentData data = default;
             if (index == 0)
             {
                 for (int i = 0; i < _activeEquipments.Count; i++)
                 {
-                    var equipment = _activeEquipments[i];
-                    if (equipment.equipItemConfigId == equipConfigId && equipment.equipItemId == equipItemId)
+                    data = _activeEquipments[i];
+                    if (data.equipItemConfigId == equipConfigId && data.equipItemId == equipItemId)
                     {
                         _activeEquipments.RemoveAt(i);
+                        index = i;
                         changed = true;
+                        
                         break;
                     }
                 }
             }
             else
             {
-                var equipment = _activeEquipments[index];
-                if (equipment.equipItemConfigId == equipConfigId && equipment.equipItemId == equipItemId)
+                data = _activeEquipments[index];
+                if (data.equipItemConfigId == equipConfigId && data.equipItemId == equipItemId)
                 {
                     _activeEquipments[index] = new EquipmentData();
                     changed = true;
@@ -778,8 +780,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
 
             if (changed)
             {
-                PropertyStates[targetId] = playerState;
-                PropertyChange(targetId);
+                HandleEquipPropertyReverse(data.BuffData, index);
                 return;
             }
             Debug.Log($"PlayerPropertySyncSystem: Equipment {equipConfigId} {equipItemId} not found in active equipments list");
@@ -1010,15 +1011,25 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             PropertyChange(targetId);
         }
 
+        private void HandleEquipPropertyReverse(BuffBase buff, int index)
+        {
+            var playerState = GetState<PlayerPredictablePropertyState>(buff.TargetPlayerId);
+            var propertyCalculator = playerState.MemoryProperty[buff.BuffData.propertyType];
+            propertyCalculator = HandleBuffInfo(propertyCalculator, buff, true);
+            playerState.MemoryProperty[buff.BuffData.propertyType] = propertyCalculator;
+            PropertyStates[buff.TargetPlayerId] = playerState;
+            PropertyChange(buff.TargetPlayerId);
+        }
+
         private void HandleEquipPassivePropertyUnload(int targetId, int equipItemConfigId, int equipItemId)
         {
-            var playerState = GetState<PlayerPredictablePropertyState>(targetId);
-            
             var changed = false;
+            var index = 0;
+            EquipmentPassiveData passiveData = default;
             for (int i = 0; i < _passiveBuffs.Count; i++)
             {
-                var passiveBuff = _passiveBuffs[i];
-                if (passiveBuff.equipConfigId == equipItemConfigId && passiveBuff.equipItemId == equipItemId)
+                passiveData = _passiveBuffs[i];
+                if (passiveData.equipConfigId == equipItemConfigId && passiveData.equipItemId == equipItemId)
                 {
                     changed = true;
                     _passiveBuffs.RemoveAt(i);
@@ -1026,6 +1037,10 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
             if (changed)
             {
+                var playerState = GetState<PlayerPredictablePropertyState>(targetId);
+                var propertyCalculator = playerState.MemoryProperty[passiveData.BuffData.BuffData.propertyType];
+                propertyCalculator = HandleBuffInfo(propertyCalculator, passiveData.BuffData, true);
+                playerState.MemoryProperty[passiveData.BuffData.BuffData.propertyType] = propertyCalculator;
                 PropertyStates[targetId] = playerState;
                 PropertyChange(targetId);
                 return;
