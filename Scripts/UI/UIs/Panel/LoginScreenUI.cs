@@ -1,3 +1,4 @@
+using System;
 using AOTScripts.Tool;
 using AOTScripts.Tool.Resource;
 using Data;
@@ -42,11 +43,7 @@ namespace UI.UIs
         [Inject]
         private void Init()
         {
-#if !UNITY_EDITOR
-            Application.targetFrameRate = 60;
-
-            Debug.Log($"登录界面初始化成功 -- {Application.targetFrameRate}"); 
-#endif
+            Debug.Log($"你好，天上友嘉");
             accountInputField.onValueChanged.AddListener(CheckInputField);
             loginButton.BindDebouncedListener(OnLoginButtonClick);
             registerButton.BindDebouncedListener(OnRegisterButtonClick);
@@ -131,6 +128,15 @@ namespace UI.UIs
             registerButton.onClick.RemoveAllListeners();
             
             BoxingFreeExtension.UnregisterMainSceneData();
+        }
+
+        private void Start()
+        {
+#if !UNITY_EDITOR
+            Application.targetFrameRate = 60;
+
+            Debug.Log($"登录界面初始化成功 -- {Application.targetFrameRate}"); 
+#endif
         }
     }
 }
