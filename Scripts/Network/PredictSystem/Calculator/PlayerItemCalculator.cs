@@ -312,7 +312,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 Debug.LogError($"Failed to equip item {itemEquipCommand.SlotIndex}");
                 return;
             }
-            Debug.Log($"Item {itemEquipCommand.SlotIndex} equipped");
+            Debug.Log($"[CommandEquipItem] Item {itemEquipCommand.SlotIndex} equipped");
             if (!PlayerItemState.TryGetSlotItemBySlotIndex(playerItemState, itemEquipCommand.SlotIndex, out var bagItem)
                 || bagItem.PlayerItemType == PlayerItemType.None)
             {
@@ -350,16 +350,19 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                     Constant.GameSyncManager.EnqueueServerCommand(skillLoadCommand);
                 }
             }
-            Constant.GameSyncManager.EnqueueServerCommand(new EquipmentCommand
+            else
             {
-                Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
-                EquipmentConfigId = configId,
-                EquipmentPart = bagItem.EquipmentPart,
-                IsEquip = itemEquipCommand.IsEquip,
-                ItemId = bagItem.ItemIds.First(),
-                EquipmentPassiveEffectData = JsonConvert.SerializeObject(bagItem.MainIncreaseDatas),
-                EquipmentMainEffectData = JsonConvert.SerializeObject(bagItem.PassiveAttributeIncreaseDatas),
-            });
+                Constant.GameSyncManager.EnqueueServerCommand(new EquipmentCommand
+                {
+                    Header = GameSyncManager.CreateNetworkCommandHeader(connectionId, CommandType.Equipment, CommandAuthority.Server, CommandExecuteType.Immediate),
+                    EquipmentConfigId = configId,
+                    EquipmentPart = bagItem.EquipmentPart,
+                    IsEquip = itemEquipCommand.IsEquip,
+                    ItemId = bagItem.ItemIds.First(),
+                    EquipmentPassiveEffectData = JsonConvert.SerializeObject(bagItem.MainIncreaseDatas),
+                    EquipmentMainEffectData = JsonConvert.SerializeObject(bagItem.PassiveAttributeIncreaseDatas),
+                });
+            }
         }
 
         public static void CommandGetItem(ref PlayerItemState playerItemState, ItemsCommandData itemsData, NetworkCommandHeader header = default, bool isKilled = false)

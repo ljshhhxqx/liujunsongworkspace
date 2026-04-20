@@ -122,6 +122,7 @@ namespace Game
             {
                 return;
             }
+            Debug.Log("Sending logout request");
             PlayFabCloudScriptAPI.ExecuteEntityCloudScript(new ExecuteEntityCloudScriptRequest
             {
                 FunctionName = "PlayerLogout",

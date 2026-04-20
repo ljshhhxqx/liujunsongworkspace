@@ -2,10 +2,9 @@
 using UnityEngine;
 namespace HotUpdate.Scripts.Network.Server
 {
-
     public class AndroidMulticastHelper : MonoBehaviour
     {
-#if !UNITY_ANDROID && UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
     private AndroidJavaObject multicastLock;
 
     void Awake()

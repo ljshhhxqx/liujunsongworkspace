@@ -509,7 +509,7 @@ MonoBehaviour:
       maxTransitionDuration: 25
       minTransitionDuration: 10
     gameModeData:
-      times: 78000000b4000000f00000002c010000f4010000
+      times: 3c00000078000000b4000000f00000002c010000f4010000
       scores: 
     bagCommonData:
       maxBagCount: 12

@@ -69,6 +69,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.Calculator
                 {
                     Constant.GameSyncManager.EnqueueServerCommand(propertyEquipmentChangedCommand);
                     Constant.GameSyncManager.EnqueueServerCommand(propertyEquipPassiveCommand);
+                    Debug.Log($"CommandEquipment -- Unequipped {unequippedEquipment}");
                     return;
                 }
                 var conditionChecker = GetConditionChecker(itemConfig.itemType, configId);
