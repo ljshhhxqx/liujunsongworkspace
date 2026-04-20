@@ -1675,13 +1675,23 @@
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
+            "Name": "railway station",
+            "IsPermanent": false,
+            "IsPreload": false,
+            "Address": "/Map/Town/MapScenePrefab/railway station.prefab"
+        },
+        {
+            "UID": 4400002,
+            "ResourceType": "UnityEngine.GameObject",
+            "AssetType": 2,
+            "Extension": ".prefab",
             "Name": "Stairs",
             "IsPermanent": false,
             "IsPreload": false,
             "Address": "/Map/Town/MapScenePrefab/Stairs.prefab"
         },
         {
-            "UID": 4400002,
+            "UID": 4400003,
             "ResourceType": "UnityEngine.GameObject",
             "AssetType": 2,
             "Extension": ".prefab",
