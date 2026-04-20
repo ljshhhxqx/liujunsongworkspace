@@ -1183,8 +1183,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 23.81361, y: 1.9877033, z: 12.173889}
-  m_Center: {x: 0, y: 0.99385166, z: 0}
+  m_Size: {x: 23.084663, y: 1.9877033, z: 12.173889}
+  m_Center: {x: 0.36447382, y: 0.99385166, z: 0}
 --- !u!114 &206493047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6130,7 +6130,6 @@ Transform:
   m_Children:
   - {fileID: 1722573527}
   - {fileID: 1754599946403893781}
-  - {fileID: 6452437813649165253}
   - {fileID: 4446247351940733453}
   - {fileID: 4446247351712752437}
   - {fileID: 163704628}
@@ -21870,7 +21869,7 @@ Transform:
   - {fileID: 206493041}
   - {fileID: 977005950}
   - {fileID: 2054079555}
-  m_Father: {fileID: 992121946}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &6596156564705662006
 MeshFilter:
@@ -24922,5 +24921,6 @@ SceneRoots:
   - {fileID: 113660328}
   - {fileID: 578426450}
   - {fileID: 1172852104}
+  - {fileID: 6452437813649165253}
   - {fileID: 992121946}
   - {fileID: 1667271775}
