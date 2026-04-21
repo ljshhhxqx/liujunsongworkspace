@@ -362,6 +362,7 @@ namespace HotUpdate.Scripts.Game.Map
             _idToGameObject.TryAdd(staticObject.Id, gameObject);
             if (isMesh)
             {
+                Debug.LogWarning("[GameStaticContainer] Static object " + collider.name + " has already been added to " + grid);
                 collider.enabled = false;
             }
             
