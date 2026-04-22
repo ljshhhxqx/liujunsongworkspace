@@ -617,7 +617,7 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             }
             if (preNoUnionPlayer != 0)
             {
-                for (int i = 0; i < _previousNoUnionPlayerBuff.Count; i++)
+                for (int i = _previousNoUnionPlayerBuff.Count - 1; i >= 0; i--)
                 {
                     var buffTuple = _previousNoUnionPlayerBuff[i];
                     HandleBuffRemove(buffTuple.Item1, buffTuple.Item2);
@@ -741,48 +741,44 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
                 foreach (var buffData in buffExtraData)
                 {
                     HandleEquipProperty(targetId, buffData, equipConfigId, equipConfigItemId);
+                    Debug.Log($"[HandleEquipProperty] Equipment isEquipped {buffData} {targetId} {equipConfigItemId} {equipConfigId} ");
                 }
             }
             else
             {
                 HandleEquipPropertyUnload(targetId, equipConfigId, equipConfigItemId);
+                Debug.Log($"[HandleEquipProperty] Equipment isEquipped false {targetId} {equipConfigItemId} {equipConfigId} ");
             }
         }
 
         private void HandleEquipPropertyUnload(int targetId, int equipConfigId, int equipItemId, int index = 0)
         {
-            var playerState = GetState<PlayerPredictablePropertyState>(targetId);
             var changed = false;
+            EquipmentData data = default;
             if (index == 0)
             {
-                for (int i = 0; i < _activeEquipments.Count; i++)
+                for (int i = _activeEquipments.Count - 1; i >= 0; i--)
                 {
-                    var equipment = _activeEquipments[i];
-                    if (equipment.equipItemConfigId == equipConfigId && equipment.equipItemId == equipItemId)
+                    data = _activeEquipments[i];
+                    if (data.equipItemId == equipItemId)
                     {
                         _activeEquipments.RemoveAt(i);
-                        changed = true;
-                        break;
+                        index = i;
+                        HandleEquipPropertyReverse(data.BuffData, index);
+                        Debug.Log($"PlayerPropertySyncSystem: Equipment {equipConfigId} {equipItemId} not found in active equipments list");
                     }
                 }
             }
             else
             {
-                var equipment = _activeEquipments[index];
-                if (equipment.equipItemConfigId == equipConfigId && equipment.equipItemId == equipItemId)
+                data = _activeEquipments[index];
+                if (data.equipItemId == equipItemId)
                 {
                     _activeEquipments[index] = new EquipmentData();
-                    changed = true;
+                    HandleEquipPropertyReverse(data.BuffData, index);
+                    Debug.Log($"PlayerPropertySyncSystem: Equipment {equipConfigId} {equipItemId} not found in active equipments list");
                 }
             }
-
-            if (changed)
-            {
-                PropertyStates[targetId] = playerState;
-                PropertyChange(targetId);
-                return;
-            }
-            Debug.Log($"PlayerPropertySyncSystem: Equipment {equipConfigId} {equipItemId} not found in active equipments list");
         }
 
         private void HandleInvincibleChanged(int headerConnectionId, bool isInvincible)
@@ -1010,27 +1006,33 @@ namespace HotUpdate.Scripts.Network.PredictSystem.SyncSystem
             PropertyChange(targetId);
         }
 
+        private void HandleEquipPropertyReverse(BuffBase buff, int index)
+        {
+            var playerState = GetState<PlayerPredictablePropertyState>(buff.TargetPlayerId);
+            var propertyCalculator = playerState.MemoryProperty[buff.BuffData.propertyType];
+            propertyCalculator = HandleBuffInfo(propertyCalculator, buff, true);
+            playerState.MemoryProperty[buff.BuffData.propertyType] = propertyCalculator;
+            PropertyStates[buff.TargetPlayerId] = playerState;
+            PropertyChange(buff.TargetPlayerId);
+        }
+
         private void HandleEquipPassivePropertyUnload(int targetId, int equipItemConfigId, int equipItemId)
         {
-            var playerState = GetState<PlayerPredictablePropertyState>(targetId);
-            
-            var changed = false;
-            for (int i = 0; i < _passiveBuffs.Count; i++)
+            EquipmentPassiveData passiveData = default;
+            for (int i = _passiveBuffs.Count - 1; i >= 0; i--)
             {
-                var passiveBuff = _passiveBuffs[i];
-                if (passiveBuff.equipConfigId == equipItemConfigId && passiveBuff.equipItemId == equipItemId)
+                passiveData = _passiveBuffs[i];
+                if (passiveData.equipItemId == equipItemId)
                 {
-                    changed = true;
                     _passiveBuffs.RemoveAt(i);
+                    var playerState = GetState<PlayerPredictablePropertyState>(targetId);
+                    var propertyCalculator = playerState.MemoryProperty[passiveData.BuffData.BuffData.propertyType];
+                    propertyCalculator = HandleBuffInfo(propertyCalculator, passiveData.BuffData, true);
+                    playerState.MemoryProperty[passiveData.BuffData.BuffData.propertyType] = propertyCalculator;
+                    PropertyStates[targetId] = playerState;
+                    PropertyChange(targetId);
                 }
             }
-            if (changed)
-            {
-                PropertyStates[targetId] = playerState;
-                PropertyChange(targetId);
-                return;
-            }
-            Debug.Log($"PlayerPropertySyncSystem: Equipment {equipItemConfigId} {equipItemId} not found in passive buffs list");
         }
 
         private void HandleEquipPassiveProperty(int targetId, BuffExtraData buffExtraData, int equipItemConfigId, int equipItemId, PlayerItemType playerItemType, float weight = 1, float interval = 0)

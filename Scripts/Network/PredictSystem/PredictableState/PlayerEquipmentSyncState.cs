@@ -34,44 +34,44 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
                 return;
 
             CurrentState = equipmentState;
-            bool isWeaponEquipped = false;
-            WeaponConfigData weaponConfigData = default;
-            for (int i = 0; i < equipmentState.EquipmentDatas.Count; i++)
-            {
-                var data = equipmentState.EquipmentDatas[i];
-                if (data == null)
-                    continue;
-                equipmentState.EquipmentDatas[i] = data;
-                if (data.EquipmentPartType == EquipmentPart.Weapon)
-                {
-                    isWeaponEquipped = true;
-                    weaponConfigData =  _weaponConfig.GetWeaponConfigData(data.EquipConfigId);
-                    _currentWeaponType = weaponConfigData.weaponType;
-                }
-            }
-            
-            if (!isWeaponEquipped)
-            {
-                _currentWeaponType = WeaponType.None;
-                _weaponConfigData = default;
-            }
-            
-            if (_currentWeaponType != WeaponType.None)
-            {
-                if (_currentWeaponType != _weaponConfigData.weaponType)
-                {
-                    _weaponConfigData = weaponConfigData;
-                    var res = ResourceManager.Instance.GetResource<GameObject>(_weaponConfigData.prefabName);
-                    if (res != null)
-                    {
-                        _weaponIKController.SetWeapon(res);
-                    }
-                }
-            }
-            else
-            {
-                _weaponIKController.SetWeapon(null);
-            }
+            // bool isWeaponEquipped = false;
+            // WeaponConfigData weaponConfigData = default;
+            // for (int i = 0; i < equipmentState.EquipmentDatas.Count; i++)
+            // {
+            //     var data = equipmentState.EquipmentDatas[i];
+            //     if (data == null)
+            //         continue;
+            //     equipmentState.EquipmentDatas[i] = data;
+            //     if (data.EquipmentPartType == EquipmentPart.Weapon)
+            //     {
+            //         isWeaponEquipped = true;
+            //         weaponConfigData =  _weaponConfig.GetWeaponConfigData(data.EquipConfigId);
+            //         _currentWeaponType = weaponConfigData.weaponType;
+            //     }
+            // }
+            //
+            // if (!isWeaponEquipped)
+            // {
+            //     _currentWeaponType = WeaponType.None;
+            //     _weaponConfigData = default;
+            // }
+            //
+            // if (_currentWeaponType != WeaponType.None)
+            // {
+            //     if (_currentWeaponType != _weaponConfigData.weaponType)
+            //     {
+            //         _weaponConfigData = weaponConfigData;
+            //         var res = ResourceManager.Instance.GetResource<GameObject>(_weaponConfigData.prefabName);
+            //         if (res != null)
+            //         {
+            //             _weaponIKController.SetWeapon(res);
+            //         }
+            //     }
+            // }
+            // else
+            // {
+            //     _weaponIKController.SetWeapon(null);
+            // }
         }
 
         protected override void ProcessCommand(INetworkCommand networkCommand)
@@ -83,8 +83,8 @@ namespace HotUpdate.Scripts.Network.PredictSystem.PredictableState
 
             if (networkCommand is EquipmentCommand equipmentCommand)
             {
-                PlayerEquipmentCalculator.CommandEquipment(equipmentCommand, ref equipmentState);
-                CurrentState = equipmentState;
+                // PlayerEquipmentCalculator.CommandEquipment(equipmentCommand, ref equipmentState);
+                // CurrentState = equipmentState;
             }
         }
 
